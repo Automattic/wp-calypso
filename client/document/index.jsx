@@ -97,8 +97,6 @@ class Document extends Component {
 		const isJetpackWooCommerceFlow =
 			'jetpack-connect' === sectionName && 'woocommerce-onboarding' === requestFrom;
 
-		const isJetpackWooBlazeFlow = 'jetpack-connect' === sectionName && 'woo-blaze' === requestFrom;
-
 		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 
 		const theme = config( 'theme' );
@@ -171,7 +169,6 @@ class Document extends Component {
 									[ 'is-section-' + sectionName ]: sectionName,
 									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
-									'is-jetpack-woo-blaze-flow': isJetpackWooBlazeFlow,
 								} ) }
 							>
 								<div className="layout__content">

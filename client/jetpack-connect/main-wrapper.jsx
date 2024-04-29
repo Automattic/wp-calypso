@@ -34,7 +34,6 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			isWooOnboarding,
 			isWooCoreProfiler,
 			isWpcomMigration,
-			isWooBlazeFlow,
 			isFromAutomatticForAgenciesPlugin,
 			className,
 			children,
@@ -49,7 +48,6 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		const wrapperClassName = classNames( 'jetpack-connect__main', {
 			'is-wide': isWide,
 			'is-woocommerce': isWooOnboarding || isWooDna || isWooCoreProfiler,
-			'is-jetpack-woo-blaze-flow': isWooBlazeFlow,
 			'is-woocommerce-core-profiler-flow': isWooCoreProfiler,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-wpcom-migration': isWpcomMigration,
@@ -73,7 +71,6 @@ export class JetpackConnectMainWrapper extends PureComponent {
 							isWooOnboarding={ isWooOnboarding }
 							isWooCoreProfiler={ isWooCoreProfiler }
 							isWooDna={ isWooDna }
-							isWooBlazeFlow={ isWooBlazeFlow }
 							width={ width }
 							darkColorScheme={ darkColorScheme }
 						/>

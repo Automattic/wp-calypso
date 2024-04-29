@@ -164,10 +164,6 @@ $image-height: 47px;
 	@include woocommerce-colors();
 }
 
-.layout.is-jetpack-woo-blaze-flow {
-	@include woo-blaze-colors();
-}
-
 .layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) {
 
 	.login__form input:focus,

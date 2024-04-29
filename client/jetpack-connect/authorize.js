@@ -52,7 +52,6 @@ import {
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
-import isQueryFromWooBlaze from 'calypso/state/selectors/is-from-woo-blaze';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
@@ -455,11 +454,6 @@ export class JetpackAuthorize extends Component {
 	isWooCoreProfiler( props = this.props ) {
 		const { from } = props.authQuery;
 		return 'woocommerce-core-profiler' === from;
-	}
-
-	isWooBlazeFlow( props = this.props ) {
-		const { from } = props.authQuery;
-		return 'woo-blaze' === from;
 	}
 
 	getWooDnaConfig( props = this.props ) {
@@ -1112,11 +1106,6 @@ export class JetpackAuthorize extends Component {
 			return wooDnaFooterLinks;
 		}
 
-		const wooBlazeFooterLinks = this.renderWooBlazeFooterLinks();
-		if ( wooBlazeFooterLinks ) {
-			return wooBlazeFooterLinks;
-		}
-
 		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
 
 		return (
@@ -1157,29 +1146,6 @@ export class JetpackAuthorize extends Component {
 					{ translate( 'Create a new account or connect as a different user' ) }
 				</LoggedOutFormLinkItem>
 				<HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } />
-				{ this.renderBackToWpAdminLink() }
-			</LoggedOutFormLinks>
-		);
-	}
-
-	renderWooBlazeFooterLinks() {
-		const { translate, isWooBlazeFlow } = this.props;
-		if ( ! isWooBlazeFlow ) {
-			return null;
-		}
-		// /* translators: serviceName is the name of the Woo extension that initiated the connection flow */
-		// const helpButtonLabel = translate( 'Get help setting up %(serviceName)s', {
-		// 	args: {
-		// 		serviceName: 'Woo Blaze',
-		// 	},
-		// } );
-
-		return (
-			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
-					{ translate( 'Create a new account or connect as a different user' ) }
-				</LoggedOutFormLinkItem>
-				{ /* <HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } /> */ }
 				{ this.renderBackToWpAdminLink() }
 			</LoggedOutFormLinks>
 		);
@@ -1285,7 +1251,6 @@ export class JetpackAuthorize extends Component {
 				isWooCoreProfiler={ this.isWooCoreProfiler() }
 				isWpcomMigration={ this.isFromMigrationPlugin() }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-				isWooBlazeFlow={ this.isWooBlazeFlow() }
 				wooDnaConfig={ wooDna }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
@@ -1301,7 +1266,6 @@ export class JetpackAuthorize extends Component {
 						/>
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
-							isWooBlazeFlow={ this.isWooBlazeFlow() }
 							isWooOnboarding={ this.isWooOnboarding() }
 							isWooCoreProfiler={ this.isWooCoreProfiler() }
 							isWpcomMigration={ this.isFromMigrationPlugin() }
@@ -1341,7 +1305,6 @@ const connectComponent = connect(
 			isRequestingSitePurchases: isFetchingSitePurchases( state ),
 			isSiteBlocked: isSiteBlockedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
-			isWooBlazeFlow: isQueryFromWooBlaze( state ),
 			mobileAppRedirect,
 			partnerID: getPartnerIdFromQuery( state ),
 			partnerSlug: getPartnerSlugFromQuery( state ),

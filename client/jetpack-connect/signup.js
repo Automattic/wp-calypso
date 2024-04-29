@@ -132,11 +132,6 @@ export class JetpackSignup extends Component {
 		return 'woocommerce-core-profiler' === from;
 	}
 
-	isWooBlazeFlow( props = this.props ) {
-		const { from } = props.authQuery;
-		return 'woo-blaze' === from;
-	}
-
 	getWooDnaConfig() {
 		const { authQuery } = this.props;
 		return wooDnaConfig( authQuery );
@@ -495,7 +490,6 @@ export class JetpackSignup extends Component {
 			<MainWrapper
 				isWooOnboarding={ this.isWooOnboarding() }
 				isWooCoreProfiler={ this.isWooCoreProfiler() }
-				isWooBlazeFlow={ this.isWooBlazeFlow() }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">

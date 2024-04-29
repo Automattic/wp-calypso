@@ -50,7 +50,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
-import isQueryFromWooBlaze from 'calypso/state/selectors/is-from-woo-blaze';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -315,7 +314,6 @@ class Layout extends Component {
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
-			'is-jetpack-woo-blaze-flow': this.props.isJetpackWooBlazeFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
 			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,
 			woo: this.props.isWooCoreProfilerFlow,
@@ -515,8 +513,6 @@ export default withCurrentRoute(
 			const isJetpackWooDnaFlow =
 				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 				wooDnaConfig( currentQuery ).isWooDnaFlow();
-			const isJetpackWooBlazeFlow =
-				[ 'jetpack-connect', 'login' ].includes( sectionName ) && isQueryFromWooBlaze( state );
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const wccomFrom = currentQuery?.[ 'wccom-from' ];
 			const isEligibleForJITM = [
@@ -543,7 +539,6 @@ export default withCurrentRoute(
 				isJetpackLogin,
 				isJetpackWooCommerceFlow,
 				isJetpackWooDnaFlow,
-				isJetpackWooBlazeFlow,
 				isJetpackMobileFlow,
 				isWooCoreProfilerFlow,
 				isFromAutomatticForAgenciesPlugin,

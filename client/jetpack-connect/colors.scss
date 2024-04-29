@@ -41,26 +41,6 @@
 	}
 }
 
-@mixin woo-blaze-colors() {
-	// Override accent variables with Woo Blaze colors
-	--color-accent: var(--studio-purple-50);
-	--color-accent-light: var(--studio-purple-30);
-	--color-accent-dark: var(--studio-purple-70);
-
-	// Override global colors with accent variables
-	--color-primary: var(--color-accent-dark);
-	--color-primary-10: var(--color-neutral-60);
-	--color-neutral-20: var(--color-neutral-60);
-	--color-primary-20: var(--color-neutral-60);
-	--color-primary-light: var(--color-accent-light);
-	--color-accent-60: var(--color-accent-dark);
-
-	::selection {
-		color: var(--color-text-inverted);
-		background: var(--color-accent);
-	}
-}
-
 @mixin wpcom-migration-colors() {
 	--color-accent: var(--studio-blue);
 	--color-primary: var(--studio-blue-40);

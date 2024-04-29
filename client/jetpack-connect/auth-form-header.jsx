@@ -18,7 +18,6 @@ import { authQueryPropTypes } from './utils';
 export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
-		isWooBlazeFlow: PropTypes.bool,
 		isWooOnboarding: PropTypes.bool,
 		isWooCoreProfiler: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
@@ -56,7 +55,6 @@ export class AuthFormHeader extends Component {
 		const {
 			translate,
 			partnerSlug,
-			isWooBlazeFlow,
 			isWooOnboarding,
 			isWooCoreProfiler,
 			wooDnaConfig,
@@ -66,10 +64,6 @@ export class AuthFormHeader extends Component {
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
 			return wooDnaConfig.getServiceName();
-		}
-
-		if ( isWooBlazeFlow ) {
-			return translate( 'Woo Blaze' );
 		}
 
 		let host = '';
@@ -149,7 +143,6 @@ export class AuthFormHeader extends Component {
 	getSubHeaderText() {
 		const {
 			translate,
-			isWooBlazeFlow,
 			isWooOnboarding,
 			isWooCoreProfiler,
 			wooDnaConfig,
@@ -223,19 +216,6 @@ export class AuthFormHeader extends Component {
 						);
 					}
 					return translate( 'Approve your connection' );
-			}
-		}
-
-		if ( isWooBlazeFlow ) {
-			switch ( currentState ) {
-				case 'logged-in-success':
-					return translate( "You're all set!" );
-				case 'auth-in-progress':
-					return translate( 'Connecting your site' );
-				default:
-					return translate(
-						'Approve your connection. Your account will enable you to start using the features and benefits offered by Woo Blaze'
-					);
 			}
 		}
 

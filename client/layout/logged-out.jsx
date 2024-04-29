@@ -43,7 +43,6 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
-import isQueryFromWooBlaze from 'calypso/state/selectors/is-from-woo-blaze';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
@@ -56,7 +55,6 @@ const LayoutLoggedOut = ( {
 	isPopup,
 	isJetpackWooCommerceFlow,
 	isJetpackWooDnaFlow,
-	isJetpackWooBlazeFlow,
 	isP2Login,
 	isGravatar,
 	isWPJobManager,
@@ -137,7 +135,6 @@ const LayoutLoggedOut = ( {
 		'is-popup': isPopup,
 		'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
-		'is-jetpack-woo-blaze-flow': isJetpackWooBlazeFlow,
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
 		'is-wp-job-manager': isWPJobManager,
@@ -312,7 +309,6 @@ export default withCurrentRoute(
 			const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
-			const isJetpackWooBlazeFlow = isQueryFromWooBlaze( currentQuery );
 			const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
@@ -367,7 +363,6 @@ export default withCurrentRoute(
 				isPopup,
 				isJetpackWooCommerceFlow,
 				isJetpackWooDnaFlow,
-				isJetpackWooBlazeFlow,
 				isP2Login,
 				isGravatar,
 				isWPJobManager,
