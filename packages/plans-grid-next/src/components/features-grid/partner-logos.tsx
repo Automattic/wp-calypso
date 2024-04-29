@@ -25,7 +25,8 @@ const PartnerLogos = ( { renderedGridPlans, options }: PreviousFeaturesIncludedT
 
 	return renderedGridPlans.map( ( { planSlug, features: { wpcomFeatures, jetpackFeatures } } ) => {
 		const shouldRenderLogos = isWpcomEnterpriseGridPlan( planSlug );
-		const shouldCoverFullColumn = wpcomFeatures.length === 0 && jetpackFeatures.length === 0;
+		const shouldCoverFullColumn =
+			( wpcomFeatures.length === 0 && jetpackFeatures.length === 0 ) || renderCategorisedFeatures;
 		const rowspanProp =
 			options?.isTableCell && shouldRenderLogos
 				? {

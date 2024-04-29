@@ -416,6 +416,8 @@ const PlansFeaturesMain = ( {
 	const resolvedDeemphasizeFreePlan = useDeemphasizeFreePlan( flowName, paidDomainName );
 	const deemphasizeFreePlan = deemphasizeFreePlanFromProps || resolvedDeemphasizeFreePlan.result;
 
+	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
+
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -455,6 +457,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		includeAllFeatures: trailMapExperiment?.result,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -739,8 +742,6 @@ const PlansFeaturesMain = ( {
 	);
 
 	const onFreePlanCTAClick = useActionCallback( { planSlug: PLAN_FREE } );
-
-	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
 	const hasWooExpressFeatures = useMemo( () => {
