@@ -7,12 +7,14 @@ type ReplyToSettingProps = {
 	value?: string;
 	disabled?: boolean;
 	updateFields?: ( fields: { [ key: string ]: unknown } ) => void;
+	isWPcomSite?: boolean;
 };
 
 export const ReplyToSetting = ( {
 	value = 'no-reply',
 	disabled,
 	updateFields,
+	isWPcomSite,
 }: ReplyToSettingProps ) => {
 	const translate = useTranslate();
 	return (
@@ -32,6 +34,19 @@ export const ReplyToSetting = ( {
 					label={ translate( 'Replies are not allowed.' ) }
 				/>
 			</FormLabel>
+			{ isWPcomSite && (
+				<>
+					<FormLabel>
+						<FormRadio
+							checked={ value === 'comment' }
+							value="comment"
+							onChange={ () => updateFields?.( { jetpack_subscriptions_reply_to: 'comment' } ) }
+							disabled={ disabled }
+							label={ translate( 'Replies will be a public comment on the post.' ) }
+						/>
+					</FormLabel>
+				</>
+			) }
 			<FormLabel>
 				<FormRadio
 					checked={ value === 'author' }
