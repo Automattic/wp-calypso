@@ -13,12 +13,12 @@ import versionCompare from 'calypso/lib/version-compare';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
-import isQueryFromWooBlaze from 'calypso/state/selectors/is-from-woo-blaze';
 import { authQueryPropTypes } from './utils';
 
 export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
+		isWooBlazeFlow: PropTypes.bool,
 		isWooOnboarding: PropTypes.bool,
 		isWooCoreProfiler: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
@@ -319,6 +319,5 @@ export default connect( ( state ) => {
 		authorize: getAuthorizationData( state ),
 		user: getCurrentUser( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
-		isWooBlazeFlow: isQueryFromWooBlaze( state ),
 	};
 } )( localize( AuthFormHeader ) );

@@ -1301,6 +1301,7 @@ export class JetpackAuthorize extends Component {
 						/>
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
+							isWooBlazeFlow={ this.isWooBlazeFlow() }
 							isWooOnboarding={ this.isWooOnboarding() }
 							isWooCoreProfiler={ this.isWooCoreProfiler() }
 							isWpcomMigration={ this.isFromMigrationPlugin() }
