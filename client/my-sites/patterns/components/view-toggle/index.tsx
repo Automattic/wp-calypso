@@ -5,29 +5,30 @@ import {
 	PatternLibraryToggleOption,
 } from 'calypso/my-sites/patterns/components/toggle';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
+import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import { PatternTypeFilter, PatternView } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
-// On the client, the URL query string may contain a search term. If so, we want to preserve that
 function getViewToggleUrlPath(
 	category: string,
 	patternTypeFilter: PatternTypeFilter,
-	isGridView: boolean
+	isGridView: boolean,
+	searchTerm: string
 ): string {
-	if ( typeof window !== 'undefined' ) {
-		const url = new URL( window.location.href );
-		url.searchParams.delete( 'grid' );
+	const path = getCategoryUrlPath( category, patternTypeFilter, false );
+	const params = new URLSearchParams();
 
-		if ( isGridView ) {
-			url.searchParams.set( 'grid', '1' );
-		}
-
-		return url.toString();
+	if ( isGridView ) {
+		params.set( 'grid', '1' );
 	}
 
-	return getCategoryUrlPath( category, patternTypeFilter, false, isGridView );
+	if ( searchTerm ) {
+		params.set( QUERY_PARAM_SEARCH, searchTerm );
+	}
+
+	return params.size ? `${ path }?${ params }` : path;
 }
 
 type ViewToggleProps = {
@@ -36,7 +37,7 @@ type ViewToggleProps = {
 
 export function ViewToggle( { onChange }: ViewToggleProps ) {
 	const translate = useTranslate();
-	const { category, isGridView, patternTypeFilter } = usePatternsContext();
+	const { category, isGridView, patternTypeFilter, searchTerm } = usePatternsContext();
 	const currentView = isGridView ? 'grid' : 'list';
 
 	const listViewLabel = translate( 'List view', {
@@ -57,7 +58,7 @@ export function ViewToggle( { onChange }: ViewToggleProps ) {
 		>
 			<PatternLibraryToggleOption
 				aria-label={ listViewLabel }
-				href={ getViewToggleUrlPath( category, patternTypeFilter, false ) }
+				href={ getViewToggleUrlPath( category, patternTypeFilter, false, searchTerm ) }
 				tooltipText={ listViewLabel }
 				value="list"
 			>
@@ -66,7 +67,7 @@ export function ViewToggle( { onChange }: ViewToggleProps ) {
 
 			<PatternLibraryToggleOption
 				aria-label={ gridViewLabel }
-				href={ getViewToggleUrlPath( category, patternTypeFilter, true ) }
+				href={ getViewToggleUrlPath( category, patternTypeFilter, true, searchTerm ) }
 				tooltipText={ gridViewLabel }
 				value="grid"
 			>
