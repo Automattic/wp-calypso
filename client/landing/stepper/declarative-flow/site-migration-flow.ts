@@ -301,7 +301,6 @@ const siteMigration: Flow = {
 							siteSlug: siteSlug,
 							destination: destination,
 							plan: providedDependencies.plan as string,
-							forceRedirection: true,
 							cancelDestination: `/setup/${ FLOW_NAME }/${
 								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
 							}?${ urlQueryParams.toString() }`,
