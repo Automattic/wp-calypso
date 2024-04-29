@@ -167,19 +167,19 @@ const SitesDashboardV2 = ( {
 		showHidden: true,
 	} );
 
-	// Filter sites list by search query.
-	const filteredSites = useSitesListFiltering( currentStatusGroup, {
-		search: dataViewsState.search,
-	} );
-
 	// Perform sorting actions
-	const sortedSites = useSitesListSorting( filteredSites, {
+	const sortedSites = useSitesListSorting( currentStatusGroup, {
 		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
 			?.sortKey as SitesSortKey,
 		sortOrder: dataViewsState.sort.direction || undefined,
 	} );
 
-	const paginatedSites = sortedSites.slice(
+	// Filter sites list by search query.
+	const filteredSites = useSitesListFiltering( sortedSites, {
+		search: dataViewsState.search,
+	} );
+
+	const paginatedSites = filteredSites.slice(
 		( dataViewsState.page - 1 ) * dataViewsState.perPage,
 		dataViewsState.page * dataViewsState.perPage
 	);
