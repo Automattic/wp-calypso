@@ -27,6 +27,13 @@
 	.dataviews-filters__view-actions {
 		border-bottom: 0;
 	}
+
+	table.dataviews-view-table thead .dataviews-view-table__row th {
+		span,
+		.dataviews-view-table-header-button {
+			color: inherit;
+		}
+	}
 }
 
 // Styles for actions (search, filters).
