@@ -25,6 +25,7 @@ export const requestPlans = ( action ) =>
 			path: '/plans',
 			query: {
 				coupon_code: action.coupon,
+				test: 'niranjan',
 			},
 		},
 		action
