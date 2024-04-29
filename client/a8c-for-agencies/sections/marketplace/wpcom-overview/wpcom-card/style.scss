@@ -22,9 +22,12 @@
 }
 
 .wpcom-plan-card__title {
-	font-size: 1rem;
-	font-weight: 500;
+	font-size: 1.125rem; // stylelint-disable-line
+	font-weight: 510; // stylelint-disable-line
 	line-height: 1.5;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .wpcom-plan-card__price-actual-value {
@@ -59,4 +62,8 @@
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 48px;
+}
+
+.wpcom-plan-card__features.is-jetpack .simple-list-icon {
+	fill: var(--color-jetpack);
 }

@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, JetpackLogo } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -77,7 +77,16 @@ export default function WPCOMPlanCard( { plan, quantity, discount }: Props ) {
 					{ features2.length && <SimpleList items={ features2 } /> }
 				</div>
 			</div>
-			<div className="wpcom-plan-card__section"></div>
+			<div className="wpcom-plan-card__section">
+				<h2 className="wpcom-plan-card__title">
+					<JetpackLogo size={ 20 } /> { translate( 'Premium Jetpack features included' ) }{ ' ' }
+				</h2>
+
+				<div className="wpcom-plan-card__features is-jetpack">
+					{ features1.length && <SimpleList items={ features1 } /> }
+					{ features2.length && <SimpleList items={ features2 } /> }
+				</div>
+			</div>
 		</div>
 	);
 }
