@@ -25,6 +25,7 @@ export interface ItemData {
 	color?: string;
 	blogId?: number;
 	isDotcomSite?: boolean;
+	adminUrl?: string;
 }
 
 export interface PreviewPaneProps {
@@ -36,4 +37,9 @@ export interface PreviewPaneProps {
 	isSmallScreen?: boolean;
 	hasError?: boolean;
 	addTourDetails?: { id: string; tourId: TourId };
+	itemPreviewPaneHeaderExtraProps?: ItemPreviewPaneHeaderExtraProps;
+}
+
+export interface ItemPreviewPaneHeaderExtraProps {
+	externalIconSize?: number;
 }

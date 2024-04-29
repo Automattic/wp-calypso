@@ -37,6 +37,15 @@
 		padding-block-start: 24px;
 	}
 
+	.item-preview__content {
+		.hosting-overview,
+		.site-monitoring-overview {
+			overflow-y: initial;
+			max-height: initial;
+			padding-bottom: 88px;
+		}
+	}
+
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -82,6 +91,10 @@
 		&.sites-dashboard__layout {
 			.sites-overview {
 				overflow: hidden;
+
+				.a4a-layout__viewport {
+					padding-inline: 16px;
+				}
 
 				.sites-overview__page-title-container {
 					display: flex;
@@ -195,7 +208,8 @@
 
 		.dataviews-view-table-wrapper {
 			overflow-y: auto;
-			max-height: calc(100vh - 326px); /* 326px is the size of all the height above and below the dataview, from the edges of the screen, plus 10px offset from the padding. Currently below 9px + 309 above */
+			// Without masterbar
+			max-height: calc(100vh - 285px); /* 285px is the size of all the height above and below the dataviews-view-table-wrapper */
 
 			table {
 				width: 100%;
@@ -213,6 +227,12 @@
 				padding-inline-end: 12px;
 				text-align: end;
 			}
+		}
+	}
+
+	@media (max-width: 600px) {
+		.dataviews-view-table-wrapper {
+			max-height: calc(100vh - 323px); /* 323px is the size of all the height above and below the dataviews-view-table-wrapper */
 		}
 	}
 
@@ -246,7 +266,7 @@
 
 			.is-hiding-navigation .dataviews-view-table-wrapper {
 				overflow-y: auto;
-				max-height: calc(100vh - 260px); /* 260px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
+				max-height: calc(100vh - 277px); /* 277px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
 			}
 		}
 

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { __experimentalText as Text } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -46,6 +45,10 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ timestamp, setTimestamp ] = useState< number >(
 		scheduleForEdit ? scheduleForEdit?.timestamp * 1000 : Date.now()
 	);
+	const [ healthCheckPaths, setHealthCheckPaths ] = useState< string[] >(
+		scheduleForEdit?.health_check_paths || []
+	);
+
 	const scheduledTimeSlots = schedules.map( ( schedule ) => ( {
 		timestamp: schedule.timestamp,
 		frequency: schedule.schedule,
@@ -89,6 +92,7 @@ export const ScheduleForm = ( props: Props ) => {
 			schedule: {
 				timestamp,
 				interval: frequency,
+				health_check_paths: healthCheckPaths,
 			},
 		};
 
@@ -158,12 +162,12 @@ export const ScheduleForm = ( props: Props ) => {
 				} }
 			/>
 
-			{ isEnabled( 'plugins/multisite-scheduled-updates' ) && (
-				<>
-					<Text>{ translate( 'Step 3' ) }</Text>
-					<ScheduleFormPaths borderWrapper={ false } />
-				</>
-			) }
+			<Text>{ translate( 'Step 3' ) }</Text>
+			<ScheduleFormPaths
+				paths={ healthCheckPaths }
+				borderWrapper={ false }
+				onChange={ setHealthCheckPaths }
+			/>
 		</form>
 	);
 };

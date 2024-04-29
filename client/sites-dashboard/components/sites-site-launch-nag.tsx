@@ -25,6 +25,7 @@ const SiteLaunchDonutContainer = styled.div( {
 	position: 'relative',
 	flexShrink: 0,
 	height: '25px',
+	zIndex: 0,
 } );
 
 const SiteLaunchNagLink = styled.a( {

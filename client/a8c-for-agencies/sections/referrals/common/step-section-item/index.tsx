@@ -1,6 +1,7 @@
 import { Button, Badge } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import React from 'react';
+import StatusBadge from './status-badge';
 
 import './style.scss';
 
@@ -11,7 +12,7 @@ interface StepSectionItemProps {
 	heading: string;
 	description: string;
 	buttonProps?: React.ComponentProps< typeof Button >;
-	statusProps?: React.ComponentProps< typeof Badge >;
+	statusProps?: React.ComponentProps< typeof Badge > & { tooltip?: string };
 }
 
 export default function StepSectionItem( {
@@ -21,7 +22,7 @@ export default function StepSectionItem( {
 	buttonProps,
 	statusProps,
 }: StepSectionItemProps ) {
-	const status = <Badge { ...statusProps } />;
+	const status = <StatusBadge statusProps={ statusProps } />;
 
 	return (
 		<div className="step-section-item">
