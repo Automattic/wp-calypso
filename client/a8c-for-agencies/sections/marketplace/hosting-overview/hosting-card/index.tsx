@@ -42,6 +42,8 @@ export default function HostingCard( { plan, pressableOwnership }: Props ) {
 					{ pressableOwnership && <Badge type="success">{ translate( 'You own this' ) }</Badge> }
 				</div>
 
+				<p className="hosting-card__description">{ description }</p>
+
 				<div className="hosting-card__price">
 					<b className="hosting-card__price-value">
 						{ translate( 'Starting at %(price)s', {
@@ -49,12 +51,12 @@ export default function HostingCard( { plan, pressableOwnership }: Props ) {
 						} ) }
 					</b>
 					<div className="hosting-card__price-interval">
-						{ plan.price_interval === 'day' && translate( 'USD per plan per day' ) }
-						{ plan.price_interval === 'month' && translate( 'USD per plan per month' ) }
+						{ plan.price_interval === 'day' &&
+							translate( 'USD per plan per day, billed annually' ) }
+						{ plan.price_interval === 'month' &&
+							translate( 'USD per plan per month, billed annually' ) }
 					</div>
 				</div>
-
-				<p className="hosting-card__description">{ description }</p>
 
 				{ ! pressableOwnership ? (
 					<Button
