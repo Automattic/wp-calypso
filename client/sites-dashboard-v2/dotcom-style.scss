@@ -181,9 +181,7 @@
 	}
 }
 
-.wpcom-site .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
-	.div.is-group-sites-dashboard:not(.has-no-masterbar) & {
-		// With masterbar
-		max-height: calc(100vh - 347px); /* 347px is the size of all the height above and below the dataviews-view-table-wrapper */
-	}
+.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
+	// With masterbar
+	max-height: calc(100vh - 347px); /* 347px is the size of all the height above and below the dataviews-view-table-wrapper */
 }
