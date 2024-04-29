@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Card } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -6,6 +7,7 @@ import FilterSearch from 'calypso/a8c-for-agencies/components/filter-search';
 import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import SimpleList from '../../common/simple-list';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { getCheapestPlan } from '../../lib/hosting';
 import ListingSection from '../../listing-section';
@@ -85,6 +87,29 @@ export default function HostingList( { selectedSite }: Props ) {
 					<HostingCard plan={ cheapestPressablePlan } pressableOwnership={ hasPressablePlan } />
 				) }
 			</ListingSection>
+
+			<Card className="hosting-list__features">
+				<h3 className="hosting-list__features-heading">
+					{ translate( 'Pressable & WordPress.com include:' ) }
+				</h3>
+				<SimpleList
+					className="hosting-list__features-list"
+					items={ [
+						<li>{ translate( 'Global edge caching' ) }</li>,
+						<li>{ translate( 'Global CDN with 28+ locations' ) }</li>,
+						<li>{ translate( 'Automated datacenter failover' ) }</li>,
+						<li>{ translate( 'Free managed migrations' ) }</li>,
+						<li>{ translate( 'Jetpack Protect' ) }</li>,
+						<li>{ translate( 'Plugin update manager' ) }</li>,
+						<li>{ translate( '24/7 expert support' ) }</li>,
+						<li>{ translate( 'Free staging sites with sync tools' ) }</li>,
+						<li>{ translate( 'SFTP/SSH, WP-CLI, Git tools' ) }</li>,
+						<li>{ translate( '10 PHP workers with auto-scaling' ) }</li>,
+						<li>{ translate( 'Resource isolation across every site' ) }</li>,
+						<li>{ translate( 'Jetpack real-time backups' ) }</li>,
+					] }
+				/>
+			</Card>
 		</div>
 	);
 }
