@@ -57,7 +57,7 @@ export const ProviderWrappedLayout = ( {
 	useEffect( () => {
 		if ( ! isLoading ) {
 			setPlansListExperiment(
-				'wpcom_plan_name_change_starter_to_beginner',
+				'wpcom_plan_name_change_starter_to_beginner_v2',
 				experimentAssignment?.variationName
 			);
 		}
