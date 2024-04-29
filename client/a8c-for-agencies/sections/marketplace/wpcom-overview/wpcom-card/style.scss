@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .wpcom-plan-card {
 	border: 1px solid var(--color-neutral-5);
 	border-radius: 4px;
@@ -60,8 +63,12 @@
 .wpcom-plan-card__features {
 	width: 100%;
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 1fr;
 	gap: 48px;
+
+	@include break-large {
+		grid-template-columns: 1fr 1fr;
+	}
 }
 
 .wpcom-plan-card__features.is-jetpack .simple-list-icon {
