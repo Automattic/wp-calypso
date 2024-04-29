@@ -9,7 +9,7 @@ export default function SimpleList( { items }: { items: ReactNode[] } ) {
 			{ items.map( ( item, index ) => (
 				<li key={ `item-${ index }` }>
 					<Icon className="simple-list-icon" icon={ check } size={ 24 } />
-					{ item }
+					<div className="simple-list-text">{ item }</div>
 				</li>
 			) ) }
 		</ul>

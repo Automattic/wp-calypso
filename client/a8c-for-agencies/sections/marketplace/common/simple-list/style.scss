@@ -8,6 +8,8 @@
 	list-style: none;
 
 	li {
+		display: flex;
+		flex-direction: row;
 		font-size: 1rem;
 		line-height: 1.6;
 		font-weight: 400;
@@ -18,4 +20,6 @@
 	margin-inline-end: 4px;
 	fill: var(--color-primary-40);
 	margin-block-end: -6px;
+	min-width: 24px;
+	min-height: 24px;
 }
