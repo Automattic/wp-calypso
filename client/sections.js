@@ -217,9 +217,9 @@ const sections = [
 	},
 	{
 		name: 'hosting-overview',
-		paths: [ '/hosting-overview' ],
+		paths: [ '/hosting' ],
 		module: 'calypso/hosting-overview',
-		group: 'sites-dashboard',
+		group: 'sites',
 	},
 	{
 		name: 'jetpack-connect',
@@ -548,7 +548,7 @@ const sections = [
 	{
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
-		module: 'calypso/my-sites/hosting',
+		module: 'calypso/hosting-overview',
 		group: 'sites',
 	},
 	{
@@ -700,13 +700,13 @@ const sections = [
 	{
 		name: 'site-monitoring',
 		paths: [ '/site-monitoring', '/site-logs' ],
-		module: 'calypso/my-sites/site-monitoring',
+		module: 'calypso/site-monitoring',
 		group: 'sites',
 	},
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
-		module: 'calypso/my-sites/github-deployments',
+		module: 'calypso/github-deployments',
 		group: 'sites',
 	},
 	{
@@ -777,15 +777,16 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-referrals',
-		paths: [ '/referrals' ],
+		paths: [ '/referrals', '/referrals/bank-details' ],
 		module: 'calypso/a8c-for-agencies/sections/referrals',
 		group: 'a8c-for-agencies',
 	},
 	{
 		name: 'a8c-for-agencies-signup',
-		paths: [ '/signup' ],
+		paths: [ '/signup', '/signup/finish', '/signup/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/signup',
 		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
 	},
 ];
 

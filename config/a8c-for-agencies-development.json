@@ -8,6 +8,9 @@
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
 	"logout_url": "https://automattic.com/for/agencies",
+	"wpcom_signup_url": "https://wordpress.com/start",
+	"wpcom_login_url": "https://wordpress.com/log-in",
+	"wpcom_authorize_endpoint": "https://public-api.wordpress.com/oauth2/authorize",
 	"site_name": "Automattic For Agencies",
 	"meta": [
 		{
@@ -26,11 +29,13 @@
 	"oauth_client_id": 95928,
 	"features": {
 		"a8c-for-agencies": true,
+		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
 		"always_use_logout_url": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"oauth": true,
-		"a4a/site-details-pane": true
+		"a4a/site-details-pane": true,
+		"a4a-logged-out-signup": true
 	},
 	"enable_all_sections": false,
 	"sections": {

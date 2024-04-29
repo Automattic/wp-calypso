@@ -15,6 +15,7 @@ const useGridPlansForComparisonGrid = (
 		allFeaturesList,
 		coupon,
 		eligibleForFreeHostingTrial,
+		hasRedeemedDomainCredit,
 		hiddenPlans,
 		intent,
 		isDisplayingPlansNeededForFeature,
@@ -51,6 +52,7 @@ const useGridPlansForComparisonGrid = (
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
 		gridPlans: gridPlans || [],
 		allFeaturesList,
+		hasRedeemedDomainCredit,
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,

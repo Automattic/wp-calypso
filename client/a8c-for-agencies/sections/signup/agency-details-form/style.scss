@@ -37,4 +37,16 @@
 		}
 	}
 
+	.agency-details-form__footer-error {
+		margin: 8px 0 0;
+		color: var(--color-scary-40);
+		font-style: italic;
+		font-size: 0.9rem; /* stylelint-disable-line scales/font-sizes */
+		line-height: 14px;
+	}
+
+	.company-details-form__tos p {
+		font-size: 1rem;
+	}
+
 }

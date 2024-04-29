@@ -27,11 +27,11 @@ export const PatternsGetAccessModal = ( {
 	const hasEnTranslation = useHasEnTranslation();
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
-	const { category, patternTypeFilter } = usePatternsContext();
+	const { category } = usePatternsContext();
 	const { data: categories = [] } = usePatternCategories( locale );
 
 	const isLoggedIn = false;
-	const redirectUrl = getPatternPermalink( pattern, category, patternTypeFilter, categories );
+	const redirectUrl = getPatternPermalink( pattern, category, categories );
 
 	const signupUrl = localizeUrl(
 		`//wordpress.com/start/account/user?${ new URLSearchParams( {

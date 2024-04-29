@@ -49,7 +49,6 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 		isLoadingProducts,
 		plans,
 		backupAddons,
-		products,
 		wooExtensions,
 		data,
 		suggestedProductSlugs,
@@ -304,8 +303,22 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 					</ListingSection>
 				) }
 
+				{ wooExtensions.length > 0 && (
+					<ListingSection
+						id="woocommerce-extensions"
+						icon={ <WooLogo width={ 45 } height={ 28 } /> }
+						title={ translate( 'WooCommerce Extensions' ) }
+						description={ translate(
+							'You must have WooCommerce installed to utilize these paid extensions.'
+						) }
+					>
+						{ getProductCards( wooExtensions ) }
+					</ListingSection>
+				) }
+
 				{ plans.length > 0 && (
 					<ListingSection
+						id="jetpack-plans"
 						icon={ <JetpackLogo size={ 26 } /> }
 						title={ translate( 'Jetpack Plans' ) }
 						description={ translate(
@@ -314,18 +327,6 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 						isTwoColumns
 					>
 						{ getProductCards( plans ) }
-					</ListingSection>
-				) }
-
-				{ products.length > 0 && (
-					<ListingSection
-						icon={ <JetpackLogo size={ 26 } /> }
-						title={ translate( 'Jetpack Products' ) }
-						description={ translate(
-							'Mix and match powerful security, performance, and growth tools for your sites.'
-						) }
-					>
-						{ getProductCards( products ) }
 					</ListingSection>
 				) }
 

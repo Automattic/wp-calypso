@@ -1,0 +1,29 @@
+.pending-actions {
+	.fade-in {
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out;
+	}
+
+	.fade-in.active {
+		opacity: 1;
+	}
+
+	ul.pending-actions__list {
+		margin-top: 5px;
+		li {
+			margin-bottom: 0;
+		}
+	}
+
+	&__action {
+		display: inline-flex;
+
+		&--icon {
+			fill: #008a20;
+		}
+
+		.components-spinner {
+			margin: 5px 11px -3px;
+		}
+	}
+}

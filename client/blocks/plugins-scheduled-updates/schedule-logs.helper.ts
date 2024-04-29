@@ -1,8 +1,9 @@
 import { translate } from 'i18n-calypso';
 import type { CorePlugin } from 'calypso/data/plugins/types';
 import type { ScheduleLog } from 'calypso/data/plugins/use-update-schedule-logs-query';
+import type { SiteSlug } from 'calypso/types';
 
-export const getLogDetails = ( log: ScheduleLog, plugins: CorePlugin[] ) => {
+export const getLogDetails = ( log: ScheduleLog, plugins: CorePlugin[], siteSlug: SiteSlug ) => {
 	const pluginName =
 		plugins.find( ( p ) => p.plugin === log.context?.plugin_name )?.name ||
 		log.context?.plugin_name;
@@ -39,6 +40,14 @@ export const getLogDetails = ( log: ScheduleLog, plugins: CorePlugin[] ) => {
 		case 'PLUGIN_SITE_HEALTH_CHECK_SUCCESS':
 			return translate( 'Site health check completed' );
 		case 'PLUGIN_SITE_HEALTH_CHECK_FAILURE':
+			if ( log.context?.path ) {
+				const path = log.context?.path === '/' ? '' : log.context?.path;
+				return translate( 'Site health check failed on %(path)s', {
+					args: {
+						path: siteSlug + path,
+					},
+				} );
+			}
 			return translate( 'Site health check failed' );
 	}
 };

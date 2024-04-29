@@ -1,8 +1,9 @@
-import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import moment from 'moment';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-export const responseCartWithRenewal: Pick< ResponseCart, 'products' > = {
+export const responseCartWithRenewal: ResponseCart = {
+	...getEmptyResponseCart(),
 	products: [
 		{
 			...getEmptyResponseCartProduct(),

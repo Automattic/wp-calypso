@@ -12,6 +12,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import { ShoppingCartContext } from '../context';
@@ -28,6 +29,8 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 
 	const { selectedCartItems, setSelectedCartItems, onRemoveCartItem } = useShoppingCart();
 
+	const { isLoading } = useProductsQuery();
+
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
 
 	const sites = useSelector( getSites );
@@ -40,6 +43,20 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 			setSelectedSite( site );
 		}
 	}, [ siteId, sites ] );
+
+	useEffect( () => {
+		if ( window.location.hash && ! isLoading ) {
+			const target = window.location.hash.replace( '#', '' );
+			const element = document.getElementById( target );
+
+			if ( element ) {
+				element.scrollIntoView( {
+					behavior: 'smooth',
+					block: 'start',
+				} );
+			}
+		}
+	}, [ isLoading ] );
 
 	return (
 		<Layout

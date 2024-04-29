@@ -408,11 +408,11 @@ function StatsCommercialFlowOptOutForm( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ comemercialClassificationRunAt, siteId ]
 	);
-	const hasRunLessThan3DAgo =
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
+	const canReverify = Date.now() - commercialClassificationLastRunAt > 1000 * 60 * 60 * 24 * 1; // 1 day
+	const hasClassificationStarted = commercialClassificationLastRunAt > 0;
 	const isClassificationInProgress =
-		commercialClassificationLastRunAt > 0 &&
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
+		hasClassificationStarted && Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 30; // half an hour
+	const isClassificationFinished = hasClassificationStarted && ! isClassificationInProgress;
 
 	const isFormSubmissionDisabled =
 		! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
@@ -444,8 +444,6 @@ function StatsCommercialFlowOptOutForm( {
 				}
 		  )
 		: translate( 'To use a non-commercial license you must agree to the following:' );
-	const formButton = isCommercial ? translate( 'Contact support' ) : translate( 'Continue' );
-	const formHandler = isCommercial ? handleRequestUpdateClick : handleSwitchToPersonalClick;
 
 	return (
 		<>
@@ -496,21 +494,34 @@ function StatsCommercialFlowOptOutForm( {
 				</ul>
 			</div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				{ supportsOnDemandCommercialClassification && isCommercial && (
+				{ ! isCommercial && (
 					<Button
 						variant="secondary"
-						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled }
-						onClick={ handleCommercialClassification }
+						disabled={ isFormSubmissionDisabled }
+						onClick={ handleSwitchToPersonalClick }
 					>
-						{ translate( 'Reverify' ) }
+						{ translate( 'Continue' ) }
 					</Button>
 				) }
-				{ ( ! supportsOnDemandCommercialClassification ||
-					! isCommercial ||
-					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
-					<Button variant="secondary" disabled={ isFormSubmissionDisabled } onClick={ formHandler }>
-						{ formButton }
-					</Button>
+				{ isCommercial && (
+					<>
+						{ supportsOnDemandCommercialClassification && (
+							<Button
+								variant="secondary"
+								disabled={ ! canReverify || isFormSubmissionDisabled }
+								onClick={ handleCommercialClassification }
+							>
+								{ translate( 'Reverify' ) }
+							</Button>
+						) }
+						{ ( ! supportsOnDemandCommercialClassification ||
+							isClassificationFinished ||
+							errorMessage ) && (
+							<Button variant="secondary" onClick={ handleRequestUpdateClick }>
+								{ translate( 'Contact support' ) }
+							</Button>
+						) }
+					</>
 				) }
 			</div>
 			{ supportsOnDemandCommercialClassification && isCommercial && (
@@ -520,18 +531,18 @@ function StatsCommercialFlowOptOutForm( {
 					) }
 					{ isClassificationInProgress && ! errorMessage && (
 						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-							{ translate( 'We are verifying your site. Please come back later…' ) }
+							{ translate(
+								'We are working on verifying your site… Please come back in about 30 minutes. You will have an option to contact support when the process is finished.'
+							) }
 						</p>
 					) }
-					{ ! isClassificationInProgress &&
-						commercialClassificationLastRunAt > 0 &&
-						! errorMessage && (
-							<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-								{ translate(
-									'We have finished verify your site. If you still think this is an error, please contact our support.'
-								) }
-							</p>
-						) }
+					{ isClassificationFinished && ! errorMessage && (
+						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+							{ translate(
+								'We have finished verifying your site. If you still think this is an error, please contact support by clicking the button above.'
+							) }
+						</p>
+					) }
 				</>
 			) }
 		</>

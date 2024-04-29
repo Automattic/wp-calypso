@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -30,17 +31,22 @@ export default function HostingList( { selectedSite }: Props ) {
 
 	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
 
-	const { isLoadingProducts, pressablePlans } = useProductAndPlans( {
+	const { isLoadingProducts, pressablePlans, wpcomPlans } = useProductAndPlans( {
 		selectedSite,
 		productSearchQuery,
 	} );
+
+	const isWPCOMOptionEnabled = isEnabled( 'a8c-for-agencies/wpcom-creator-plan-purchase-flow' );
 
 	const cheapestPressablePlan = useMemo(
 		() => ( pressablePlans.length ? getCheapestPlan( pressablePlans ) : null ),
 		[ pressablePlans ]
 	);
 
-	const cheapestWPCOMPlan = null; // FIXME: Need to fetch from API
+	const cheapestWPCOMPlan = useMemo(
+		() => ( isWPCOMOptionEnabled && wpcomPlans.length ? getCheapestPlan( wpcomPlans ) : null ),
+		[ isWPCOMOptionEnabled, wpcomPlans ]
+	);
 
 	const onProductSearch = useCallback(
 		( value: string ) => {
@@ -73,10 +79,11 @@ export default function HostingList( { selectedSite }: Props ) {
 				) }
 				isTwoColumns
 			>
+				{ cheapestWPCOMPlan && <HostingCard plan={ cheapestWPCOMPlan } /> }
+
 				{ cheapestPressablePlan && (
 					<HostingCard plan={ cheapestPressablePlan } pressableOwnership={ hasPressablePlan } />
 				) }
-				{ cheapestWPCOMPlan && <HostingCard plan={ cheapestWPCOMPlan } /> }
 			</ListingSection>
 		</div>
 	);

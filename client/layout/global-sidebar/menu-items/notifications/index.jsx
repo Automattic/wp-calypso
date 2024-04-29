@@ -8,7 +8,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarMenuItem from 'calypso/layout/global-sidebar/menu-items/menu-item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
+import { getShouldShowGlobalSiteSidebar } from 'calypso/state/global-sidebar/selectors';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
@@ -27,7 +27,7 @@ class SidebarNotifications extends Component {
 		isNotificationsOpen: PropTypes.bool,
 		hasUnseenNotifications: PropTypes.bool,
 		tooltip: TranslatableString,
-		shouldShowCollapsedGlobalSidebar: PropTypes.bool,
+		shouldShowGlobalSiteSidebar: PropTypes.bool,
 	};
 
 	notificationLink = createRef();
@@ -137,9 +137,7 @@ class SidebarNotifications extends Component {
 					className={ classes }
 					ref={ this.notificationLink }
 					key={ this.state.animationState }
-					tooltipPlacement={
-						this.props.shouldShowCollapsedGlobalSidebar ? 'bottom-left' : 'bottom'
-					}
+					tooltipPlacement={ this.props.shouldShowGlobalSiteSidebar ? 'bottom-left' : 'bottom' }
 				/>
 				<div className="sidebar-notifications__panel" ref={ this.notificationPanel }>
 					<AsyncLoad
@@ -160,7 +158,7 @@ const mapStateToProps = ( state, { currentSection } ) => {
 	const sectionGroup = currentSection?.group ?? null;
 	const sectionName = currentSection?.name ?? null;
 	const siteId = getSelectedSiteId( state );
-	const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
+	const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
 		state,
 		siteId,
 		sectionGroup,
@@ -169,7 +167,7 @@ const mapStateToProps = ( state, { currentSection } ) => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
 		hasUnseenNotifications: hasUnseenNotifications( state ),
-		shouldShowCollapsedGlobalSidebar,
+		shouldShowGlobalSiteSidebar,
 	};
 };
 const mapDispatchToProps = {

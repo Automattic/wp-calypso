@@ -65,8 +65,6 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import FailedPurchaseDetails from './failed-purchase-details';
-import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
@@ -98,12 +96,6 @@ declare global {
 	}
 }
 
-type ComponentAndPrimaryPurchaseAndDomain =
-	| []
-	| [ string | false ]
-	| [ string | false, ReceiptPurchase | undefined ]
-	| [ string | false, ReceiptPurchase | undefined, string | undefined ];
-
 export interface CheckoutThankYouProps {
 	domainOnlySiteFlow: boolean;
 	email: string;
@@ -111,7 +103,6 @@ export interface CheckoutThankYouProps {
 	gsuiteReceiptId: number;
 	selectedFeature: string;
 	selectedSite: null | SiteDetails;
-	siteUnlaunchedBeforeUpgrade: boolean;
 	upgradeIntent: string;
 	redirectTo?: string;
 	displayMode?: string;
@@ -163,10 +154,6 @@ export function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPur
 		...( props?.receipt?.data?.purchases ?? [] ),
 		...( props?.gsuiteReceipt?.data?.purchases ?? [] ),
 	];
-}
-
-export function getFailedPurchases( props: CheckoutThankYouCombinedProps ) {
-	return ( props.receipt.data && props.receipt.data.failedPurchases ) || [];
 }
 
 function findPurchaseAndDomain(
@@ -409,13 +396,9 @@ export class CheckoutThankYou extends Component<
 	primaryCta = () => {
 		const { selectedSite, upgradeIntent, redirectTo } = this.props;
 
-		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
+		if ( ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
 			const siteSlug = selectedSite?.slug;
-
-			if ( ! siteSlug && getFailedPurchases( this.props ).length > 0 ) {
-				return page( '/start/domain-first' );
-			}
 
 			if ( redirectTo && ! isExternal( redirectTo ) ) {
 				return page( redirectTo );
@@ -546,7 +529,7 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** REFACTORED REDESIGN */
-		if ( this.isDataLoaded() && isRefactoredForThankYouV2( this.props ) ) {
+		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 			const domainPurchase = getDomainPurchase( purchases );
 			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
@@ -649,7 +632,18 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
+				<Card className="checkout-thank-you__content">
+					<div>
+						<CheckoutThankYouHeader
+							selectedSite={ this.props.selectedSite }
+							upgradeIntent={ this.props.upgradeIntent }
+							primaryCta={ this.primaryCta }
+							displayMode={ this.props.displayMode }
+							purchases={ purchases }
+							currency={ this.props.receipt.data?.currency }
+						/>
+					</div>
+				</Card>
 				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
 						<HappinessSupport
@@ -676,78 +670,6 @@ export class CheckoutThankYou extends Component<
 				selectedSite?.slug ?? '',
 				delayedTransferPurchase?.meta ?? ''
 			)
-		);
-	};
-
-	/**
-	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
-	 * just performed by the user.
-	 *
-	 * returns an array of varying size with the component instance,
-	 * then an optional purchase object possibly followed by a domain name
-	 */
-	getComponentAndPrimaryPurchaseAndDomain = (): ComponentAndPrimaryPurchaseAndDomain => {
-		if ( ! this.isDataLoaded() || this.isGenericReceipt() ) {
-			return [];
-		}
-		const failedPurchases = getFailedPurchases( this.props );
-		const hasFailedPurchases = failedPurchases.length > 0;
-		if ( hasFailedPurchases ) {
-			return [ 'failed-purchase-details' ];
-		}
-
-		return [];
-	};
-
-	productRelatedMessages = () => {
-		const {
-			selectedSite,
-			siteUnlaunchedBeforeUpgrade,
-			upgradeIntent,
-			isSimplified,
-			displayMode,
-			receipt,
-		} = this.props;
-		const purchases = getPurchases( this.props );
-		const failedPurchases = getFailedPurchases( this.props );
-		const hasFailedPurchases = failedPurchases.length > 0;
-		const componentAndPrimaryPurchaseAndDomain = this.getComponentAndPrimaryPurchaseAndDomain();
-		const [ component, primaryPurchase ] = componentAndPrimaryPurchaseAndDomain;
-
-		return (
-			<div>
-				<CheckoutThankYouHeader
-					isDataLoaded={ this.isDataLoaded() }
-					isSimplified={ isSimplified }
-					primaryPurchase={ primaryPurchase }
-					selectedSite={ selectedSite }
-					hasFailedPurchases={ hasFailedPurchases }
-					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
-					upgradeIntent={ upgradeIntent }
-					primaryCta={ this.primaryCta }
-					displayMode={ displayMode }
-					purchases={ purchases }
-					currency={ receipt.data?.currency }
-				>
-					{ ! isSimplified && primaryPurchase && (
-						<CheckoutThankYouFeaturesHeader
-							isDataLoaded={ this.isDataLoaded() }
-							isGenericReceipt={ this.isGenericReceipt() }
-							purchases={ purchases }
-							hasFailedPurchases={ hasFailedPurchases }
-						/>
-					) }
-
-					{ ! isSimplified && component && (
-						<div className="checkout-thank-you__purchase-details-list">
-							<PurchaseDetailsWrapper
-								{ ...this.props }
-								componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
-							/>
-						</div>
-					) }
-				</CheckoutThankYouHeader>
-			</div>
 		);
 	};
 }
@@ -808,23 +730,3 @@ export default connect(
 		requestSite,
 	}
 )( localize( CheckoutThankYou ) );
-
-/**
- * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
- * just performed by the user.
- */
-function PurchaseDetailsWrapper(
-	props: CheckoutThankYouCombinedProps & {
-		componentAndPrimaryPurchaseAndDomain: ComponentAndPrimaryPurchaseAndDomain;
-	}
-): JSX.Element | null {
-	const purchases = getPurchases( props );
-	const failedPurchases = getFailedPurchases( props );
-	const hasFailedPurchases = failedPurchases.length > 0;
-
-	if ( hasFailedPurchases ) {
-		return <FailedPurchaseDetails purchases={ purchases } failedPurchases={ failedPurchases } />;
-	}
-
-	return null;
-}

@@ -1,3 +1,5 @@
+@import "~@automattic/color-studio/dist/color-variables";
+
 .plugins-update-manager-multisite {
 	h1 {
 		font-size: 2rem;
@@ -5,6 +7,8 @@
 	}
 
 	.schedule-form {
+		margin-bottom: 1.25rem;
+
 		& > .form-control-container {
 			margin-bottom: 1.25rem;
 
@@ -20,6 +24,40 @@
 					width: 100%;
 				}
 			}
+		}
+	}
+
+	.plugins-update-manager-multisite-table {
+		th,
+		td {
+			font-size: 0.875rem;
+			padding: 1rem 0;
+			color: var(--studio-gray-60);
+			border-bottom: solid 1px var(--studio-gray-0);
+		}
+
+		th {
+			font-weight: 500;
+		}
+
+		td {
+			padding: 0.5rem 0;
+			vertical-align: middle;
+
+			&.last-update {
+				min-width: 200px;
+
+			}
+
+			.badge-component {
+				line-height: 2;
+
+			}
+		}
+
+
+		&__expanded {
+			background-color: var(--studio-gray-0);
 		}
 	}
 }

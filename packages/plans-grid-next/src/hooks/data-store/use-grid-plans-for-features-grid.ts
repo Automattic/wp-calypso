@@ -9,6 +9,7 @@ const useGridPlansForFeaturesGrid = (
 		allFeaturesList,
 		coupon,
 		eligibleForFreeHostingTrial,
+		hasRedeemedDomainCredit,
 		hiddenPlans,
 		intent,
 		isDisplayingPlansNeededForFeature,
@@ -29,6 +30,7 @@ const useGridPlansForFeaturesGrid = (
 		allFeaturesList,
 		coupon,
 		eligibleForFreeHostingTrial,
+		hasRedeemedDomainCredit,
 		hiddenPlans,
 		intent,
 		isDisplayingPlansNeededForFeature,
@@ -46,6 +48,7 @@ const useGridPlansForFeaturesGrid = (
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		gridPlans: gridPlans || [],
 		allFeaturesList,
+		hasRedeemedDomainCredit,
 		intent,
 		isInSignup,
 		selectedFeature,

@@ -5,15 +5,20 @@ import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
 import type { Step } from '../../types';
 
-const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
+const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const queryParams = useQuery();
+	const hideFreeMigrationTrialForNonVerifiedEmail =
+		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? false;
 
 	const selectedPlanData = useSelectedPlanUpgradeQuery();
 	const selectedPlanPathSlug = selectedPlanData.data;
@@ -25,33 +30,45 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 	if ( ! siteItem || ! siteSlug || ! plan ) {
 		return;
 	}
+	const migrateFrom = queryParams.get( 'from' );
+	const showMigrationModal = queryParams.get( 'showModal' );
 
 	const stepContent = (
-		<UpgradePlan
-			site={ siteItem }
-			ctaText={ translate( 'Upgrade and migrate' ) }
-			subTitleText=""
-			isBusy={ false }
-			hideTitleAndSubTitle
-			sendIntentWhenCreatingTrial
-			onCtaClick={ () => {
-				navigation.submit?.( {
-					goToCheckout: true,
-					plan: plan.getPathSlug ? plan.getPathSlug() : '',
-				} );
-			} }
-			onFreeTrialSelectionSuccess={ () => {
-				navigation.submit?.( { freeTrialSelected: true } );
-			} }
-			navigateToVerifyEmailStep={ () => {
-				navigation.submit?.( { verifyEmail: true } );
-			} }
-		/>
+		<>
+			{ showMigrationModal && (
+				<MigrationAssistanceModal
+					onConfirm={ () => {} }
+					migrateFrom={ migrateFrom }
+					navigateBack={ navigation.goBack }
+				/>
+			) }
+			<UpgradePlan
+				site={ siteItem }
+				ctaText={ translate( 'Upgrade and migrate' ) }
+				subTitleText=""
+				isBusy={ false }
+				hideTitleAndSubTitle
+				sendIntentWhenCreatingTrial
+				onCtaClick={ () => {
+					navigation.submit?.( {
+						goToCheckout: true,
+						plan: plan.getPathSlug ? plan.getPathSlug() : '',
+					} );
+				} }
+				onFreeTrialSelectionSuccess={ () => {
+					navigation.submit?.( { freeTrialSelected: true } );
+				} }
+				navigateToVerifyEmailStep={ () => {
+					navigation.submit?.( { verifyEmail: true } );
+				} }
+				hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
+			/>
+		</>
 	);
 
 	return (
 		<>
-			<DocumentHead title="Upgrade your plan" />
+			<DocumentHead title={ translate( 'Upgrade your plan', { textOnly: true } ) } />
 			<StepContainer
 				stepName="site-migration-upgrade-plan"
 				shouldHideNavButtons={ false }

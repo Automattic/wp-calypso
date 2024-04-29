@@ -6,10 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
-import {
-	getShouldShowCollapsedGlobalSidebar,
-	getShouldShowGlobalSidebar,
-} from 'calypso/state/global-sidebar/selectors';
+import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -41,14 +38,6 @@ const useSiteMenuItems = () => {
 	const { currentSection } = useCurrentRoute();
 	const shouldShowGlobalSidebar = useSelector( ( state ) => {
 		return getShouldShowGlobalSidebar(
-			state,
-			selectedSiteId,
-			currentSection?.group,
-			currentSection?.name
-		);
-	} );
-	const shouldShowCollapsedGlobalSidebar = useSelector( ( state ) => {
-		return getShouldShowCollapsedGlobalSidebar(
 			state,
 			selectedSiteId,
 			currentSection?.group,
@@ -122,7 +111,7 @@ const useSiteMenuItems = () => {
 		} );
 	}, [ isJetpack, menuItems, siteDomain, translate ] );
 
-	if ( shouldShowGlobalSidebar || shouldShowCollapsedGlobalSidebar ) {
+	if ( shouldShowGlobalSidebar ) {
 		return globalSidebarMenu();
 	}
 
@@ -161,7 +150,25 @@ const useSiteMenuItems = () => {
 		showSiteMonitoring: isAtomic,
 	};
 
-	return menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );
+	const result = menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );
+
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		return result.map( ( menu ) => {
+			if ( Array.isArray( menu.children ) ) {
+				return {
+					...menu,
+					children: menu.children.filter(
+						( menuItem ) =>
+							! [ '/hosting-config/', '/site-monitoring' ].some( ( path ) =>
+								menuItem.url.startsWith( path )
+							)
+					),
+				};
+			}
+			return menu;
+		} );
+	}
+	return result;
 };
 
 export default useSiteMenuItems;

@@ -23,6 +23,7 @@ import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-co
 import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { AppState, SiteId, SiteSlug } from 'calypso/types';
+import type { PropsWithChildren } from 'react';
 
 import './difm-lite-in-progress.scss';
 
@@ -36,7 +37,7 @@ type Props = {
 	siteId?: SiteId;
 };
 
-function SupportLink( { siteId }: { siteId?: number } ) {
+function SupportLink( { siteId, children }: PropsWithChildren< { siteId?: number } > ) {
 	const translate = useTranslate();
 	// Create URLSearchParams for send feedback by email command
 	const { setInitialRoute, setShowHelpCenter, setSubject, setSite } =
@@ -47,6 +48,7 @@ function SupportLink( { siteId }: { siteId?: number } ) {
 	const emailUrl = `/contact-form?${ new URLSearchParams( {
 		mode: 'EMAIL',
 		'disable-gpt': 'true',
+		'skip-resources': 'true',
 	} ).toString() }`;
 
 	return (
@@ -60,7 +62,7 @@ function SupportLink( { siteId }: { siteId?: number } ) {
 				setShowHelpCenter( true );
 			} }
 		>
-			{ translate( 'Contact support' ) }
+			{ children }
 		</Button>
 	);
 }
@@ -85,34 +87,34 @@ function WebsiteContentSubmissionPending( { siteId, siteSlug }: Props ) {
 		}
 	}
 
-	const lineTextTranslateOptions = {
-		components: {
-			br: <br />,
-			SupportLink: <SupportLink siteId={ siteId } />,
-		},
-	};
-
 	const lineText = contentSubmissionDueDate
 		? translate(
-				'Click the button below to provide the content we need to build your site by %(contentSubmissionDueDate)s.{{br}}{{/br}}' +
-					'{{SupportLink}}{{/SupportLink}} if you have any questions.',
+				'Click the button below to provide the content we need to build your site by %(contentSubmissionDueDate)s.',
 				{
-					...lineTextTranslateOptions,
 					args: {
 						contentSubmissionDueDate: moment( contentSubmissionDueDate ).format( 'MMMM Do, YYYY' ),
 					},
 				}
 		  )
-		: translate(
-				'Click the button below to provide the content we need to build your site.{{br}}{{/br}}' +
-					'{{SupportLink}}{{/SupportLink}} if you have any questions.',
-				lineTextTranslateOptions
-		  );
+		: translate( 'Click the button below to provide the content we need to build your site.' );
 
 	return (
 		<EmptyContent
 			title={ translate( 'Website content not submitted' ) }
-			line={ <h3 className="empty-content__line">{ lineText }</h3> }
+			line={
+				<h3 className="empty-content__line">
+					{ lineText }
+					<br />
+					{ translate(
+						'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
+						{
+							components: {
+								SupportLink: <SupportLink siteId={ siteId } />,
+							},
+						}
+					) }
+				</h3>
+			}
 			action={ translate( 'Provide website content' ) }
 			actionURL={ `/start/site-content-collection/website-content?siteSlug=${ siteSlug }` }
 			illustration={ WebsiteContentRequiredIllustration }
@@ -147,14 +149,18 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug, siteId }: Props ) {
 			line={
 				<h3 className="empty-content__line">
 					{ translate(
-						"We are currently building your site and will send you an email when it's ready, within %d business days.{{br}}{{/br}}" +
-							'{{SupportLink}}{{/SupportLink}} if you have any questions.',
+						"We are currently building your site and will send you an email when it's ready, within %d business days.",
+						{
+							args: [ 4 ],
+						}
+					) }
+					<br />
+					{ translate(
+						'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
 						{
 							components: {
-								br: <br />,
 								SupportLink: <SupportLink siteId={ siteId } />,
 							},
-							args: [ 4 ],
 						}
 					) }
 				</h3>

@@ -1,4 +1,4 @@
-import { PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
+import { WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { DataResponse, GridPlan, PlanActionOverrides } from '../../types';
@@ -23,12 +23,12 @@ type TableProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
+	showRefundPeriod?: boolean;
 	showUpgradeableStorage: boolean;
 	stickyRowOffset: number;
 	options?: {
@@ -46,12 +46,12 @@ const Table = ( {
 	isInSignup,
 	isLaunchPage,
 	onStorageAddOnClick,
-	onUpgradeClick,
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
 	renderedGridPlans,
 	selectedFeature,
+	showRefundPeriod,
 	showUpgradeableStorage,
 	stickyRowOffset,
 }: TableProps ) => {
@@ -111,6 +111,7 @@ const Table = ( {
 				<tr>
 					<BillingTimeframes
 						renderedGridPlans={ gridPlansWithoutSpotlight }
+						showRefundPeriod={ showRefundPeriod }
 						options={ { isTableCell: true } }
 					/>
 				</tr>
@@ -128,7 +129,6 @@ const Table = ( {
 							isLaunchPage={ isLaunchPage }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							planActionOverrides={ planActionOverrides }
-							onUpgradeClick={ onUpgradeClick }
 						/>
 					) }
 				</StickyContainer>

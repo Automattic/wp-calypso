@@ -12,6 +12,10 @@ body.is-section-plans.is-ecommerce-trial-plan {
 
 	.e-commerce-trial-plans__banner-wrapper {
 		margin: 20px 0;
+
+		&.reduced-margin {
+			margin-top: -20px;
+		}
 	}
 
 	.plans,
