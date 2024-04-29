@@ -25,10 +25,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from '../../use-cart-key';
 import type { Theme } from '@automattic/composite-checkout';
-import type {
-	CostOverrideForDisplay,
-	LineItemCostOverrideForDisplay,
-} from '@automattic/wpcom-checkout';
+import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
 
 const CostOverridesListStyle = styled.div`
 	grid-area: discounts;
@@ -44,10 +41,6 @@ const CostOverridesListStyle = styled.div`
 		justify-content: space-between;
 		grid-template-columns: auto auto;
 		gap: 0 16px;
-	}
-
-	& .cost-overrides-list-item--coupon {
-		margin-top: 16px;
 	}
 
 	& .cost-overrides-list-item__actions {
@@ -74,111 +67,6 @@ const DeleteButton = styled( Button )< { theme?: Theme; shouldUseCheckoutV2: boo
 	font-size: ${ ( props ) => ( props.shouldUseCheckoutV2 ? '12px' : 'inherit' ) };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
-
-export function CostOverridesList( {
-	costOverridesList,
-	currency,
-	removeCoupon,
-	couponCode,
-	showOnlyCoupons,
-}: {
-	costOverridesList: Array< CostOverrideForDisplay >;
-	currency: string;
-	removeCoupon?: RemoveCouponFromCart;
-	couponCode: ResponseCart[ 'coupon' ];
-	showOnlyCoupons?: boolean;
-} ) {
-	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
-
-	const translate = useTranslate();
-	// Let's put the coupon code last because it will have its own "Remove" button.
-	const nonCouponOverrides = costOverridesList.filter(
-		( override ) => override.overrideCode !== 'coupon-discount'
-	);
-	const couponOverrides = costOverridesList.filter(
-		( override ) => override.overrideCode === 'coupon-discount'
-	);
-	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== FormStatus.READY;
-	return (
-		<CostOverridesListStyle>
-			{ ! showOnlyCoupons &&
-				nonCouponOverrides.map( ( costOverride ) => {
-					const isPriceIncrease = costOverride.discountAmount < 0;
-					return (
-						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-							<span
-								className={
-									isPriceIncrease
-										? 'cost-overrides-list-item__reason'
-										: 'cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount'
-								}
-							>
-								{ costOverride.humanReadableReason }
-							</span>
-							<span className="cost-overrides-list-item__discount">
-								{ formatCurrency( -costOverride.discountAmount, currency, {
-									isSmallestUnit: true,
-									signForPositive: true,
-								} ) }
-							</span>
-						</div>
-					);
-				} ) }
-			{ ! removeCoupon &&
-				couponOverrides.map( ( costOverride ) => {
-					return (
-						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-							<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
-								{ couponCode.length > 0
-									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
-									: costOverride.humanReadableReason }
-							</span>
-							<span className="cost-overrides-list-item__discount">
-								{ formatCurrency( -costOverride.discountAmount, currency, {
-									isSmallestUnit: true,
-									signForPositive: true,
-								} ) }
-							</span>
-						</div>
-					);
-				} ) }
-			{ removeCoupon &&
-				couponOverrides.map( ( costOverride ) => {
-					return (
-						<div
-							className="cost-overrides-list-item cost-overrides-list-item--coupon"
-							key={ costOverride.humanReadableReason }
-						>
-							<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
-								{ couponCode.length > 0
-									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
-									: costOverride.humanReadableReason }
-							</span>
-							<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
-								{ formatCurrency( -costOverride.discountAmount, currency, {
-									isSmallestUnit: true,
-									signForPositive: true,
-								} ) }
-							</span>
-							<span className="cost-overrides-list-item__actions">
-								<DeleteButton
-									buttonType="text-button"
-									disabled={ isDisabled }
-									className="cost-overrides-list-item__actions-remove"
-									onClick={ removeCoupon }
-									aria-label={ translate( 'Remove coupon' ) }
-									shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-								>
-									{ translate( 'Remove' ) }
-								</DeleteButton>
-							</span>
-						</div>
-					);
-				} ) }
-		</CostOverridesListStyle>
-	);
-}
 
 /**
  * Introductory offers sometimes have complex pricing plans that are not easy
@@ -404,8 +292,18 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 	);
 }
 
-function CouponCostOverride( { responseCart }: { responseCart: ResponseCart } ) {
+export function CouponCostOverride( {
+	responseCart,
+	removeCoupon,
+}: {
+	responseCart: ResponseCart;
+	removeCoupon?: RemoveCouponFromCart;
+} ) {
 	const translate = useTranslate();
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
+
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
 	}
@@ -415,7 +313,7 @@ function CouponCostOverride( { responseCart }: { responseCart: ResponseCart } ) 
 	} );
 	return (
 		<CostOverridesListStyle>
-			<div className="cost-overrides-list-item">
+			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
 				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 					{ label }
 				</span>
@@ -425,6 +323,20 @@ function CouponCostOverride( { responseCart }: { responseCart: ResponseCart } ) 
 					} ) }
 				</span>
 			</div>
+			{ removeCoupon && (
+				<span className="cost-overrides-list-item__actions">
+					<DeleteButton
+						buttonType="text-button"
+						disabled={ isDisabled }
+						className="cost-overrides-list-item__actions-remove"
+						onClick={ removeCoupon }
+						aria-label={ translate( 'Remove coupon' ) }
+						shouldUseCheckoutV2={ shouldUseCheckoutV2 }
+					>
+						{ translate( 'Remove' ) }
+					</DeleteButton>
+				</span>
+			) }
 		</CostOverridesListStyle>
 	);
 }
