@@ -91,7 +91,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const isHighlightedFeature = selectedFeature
 					? currentFeature.getSlug() === selectedFeature
 					: currentFeature?.isHighlighted ||
-					  currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN ||
+					  ( currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && paidDomainName ) ||
 					  ! currentFeature.availableForCurrentPlan;
 
 				const divClasses = classNames( '', getPlanClass( planSlug ), {
