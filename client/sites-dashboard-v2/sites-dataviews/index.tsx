@@ -85,10 +85,9 @@ const DotcomSitesDataViews = ( {
 				id: 'status',
 				header: __( 'Status' ),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
-				type: 'enumeration',
 				elements: siteStatusGroups,
 				filterBy: {
-					operators: [ 'in' ],
+					operators: [ 'is' ],
 				},
 				enableHiding: false,
 				enableSorting: false,

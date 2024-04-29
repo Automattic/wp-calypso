@@ -112,7 +112,7 @@ const SitesDashboardV2 = ( {
 				: [
 						{
 							field: 'status',
-							operator: 'in',
+							operator: 'is',
 							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
 				  ],
