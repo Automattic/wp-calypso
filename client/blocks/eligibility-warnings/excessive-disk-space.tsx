@@ -36,7 +36,7 @@ const ExcessiveDiskSpace = ( { translate }: { translate: LocalizeProps[ 'transla
 			{ ! displayUpgradeLink && (
 				<span>
 					{ translate(
-						' To active Hosting Features, you can either {{a}}upgrade to additional storage{{/a}} or {{b}}delete media files{{/b}} until you have less than 95% space usage.',
+						'You can either {{a}}buy additional storage{{/a}} or {{b}}delete media files{{/b}} until you have less than 95% space usage.',
 						{
 							components: {
 								a: <a href={ `/add-ons/${ siteSlug }` } />,
