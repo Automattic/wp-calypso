@@ -102,7 +102,9 @@
 .wpcom-site .is-group-sites.is-global-sidebar-collapsed,
 .wpcom-site .is-group-sites.is-global-sidebar-visible {
 	.layout__content {
-		padding: 16px 16px 16px calc(var(--sidebar-width-max));
+		@include break-medium {
+			padding: 16px 16px 16px calc(var(--sidebar-width-max));
+		}
 	}
 
 	.layout__secondary .global-sidebar {
@@ -124,13 +126,15 @@
 		}
 	}
 	.is-global-sidebar-collapsed {
-		.global-sidebar {
-			.sidebar__body {
-				.sidebar__menu-link {
-					width: fit-content;
+		@media ( min-width: 660px ) {
+			.global-sidebar {
+				.sidebar__body {
+					.sidebar__menu-link {
+						width: fit-content;
 
-					> :first-child {
-						margin-right: 0;
+						> :first-child {
+							margin-right: 0;
+						}
 					}
 				}
 			}
