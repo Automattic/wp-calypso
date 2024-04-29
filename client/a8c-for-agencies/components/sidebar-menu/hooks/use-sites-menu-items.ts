@@ -1,4 +1,4 @@
-import { category, starEmpty, warning } from '@wordpress/icons';
+import { category, starEmpty, warning, tool } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
@@ -6,6 +6,7 @@ import {
 	A4A_SITES_LINK,
 	A4A_SITES_LINK_FAVORITE,
 	A4A_SITES_LINK_NEEDS_ATTENTION,
+	A4A_SITES_LINK_NEEDS_SETUP,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -39,9 +40,21 @@ const useSitesMenuItems = ( path: string ) => {
 					icon: warning,
 					path: A4A_SITES_LINK,
 					link: A4A_SITES_LINK_NEEDS_ATTENTION,
-					title: translate( 'Needs Attention' ),
+					title: translate( 'Needs attention' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Sites / Needs Attention',
+					},
+				},
+				path
+			),
+			createItem(
+				{
+					icon: tool,
+					path: A4A_SITES_LINK,
+					link: A4A_SITES_LINK_NEEDS_SETUP,
+					title: translate( 'Needs setup' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Sites / Needs Setup',
 					},
 				},
 				path
