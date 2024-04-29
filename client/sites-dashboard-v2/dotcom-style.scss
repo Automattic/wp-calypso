@@ -12,6 +12,31 @@
 	background: var(--color-sidebar-background);
 }
 
+.wpcom-site .main.a4a-layout.sites-dashboard {
+	.a4a-layout__top-wrapper,
+	.a4a-layout__body {
+		> * {
+			padding-inline: 8px;
+
+			@include breakpoint-deprecated( ">660px" ) {
+				padding-inline: 8px;
+			}
+
+			@include breakpoint-deprecated( ">960px" ) {
+				padding-inline: 64px;
+			}
+		}
+	}
+
+	.a4a-layout__header-main {
+		display: block;
+	}
+
+	.a4a-layout__header-title {
+		display: block;
+	}
+}
+
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
 	background: var(--studio-white);
 
