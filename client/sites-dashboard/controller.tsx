@@ -65,6 +65,15 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 
 		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
 			height: calc( 100vh - 32px );
+			padding-bottom: 0;
+			box-shadow: none;
+		}
+
+		div.is-group-sites-dashboard:not( .has-no-masterbar ) {
+			.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
+				// Fix for scrollbars when global-sidebar is not visible because masterbar is visible
+				height: calc( 100vh - 95px );
+			}
 		}
 
 		// Update body margin to account for the sidebar width
