@@ -79,10 +79,11 @@ export default function HostingList( { selectedSite }: Props ) {
 				) }
 				isTwoColumns
 			>
+				{ cheapestWPCOMPlan && <HostingCard plan={ cheapestWPCOMPlan } /> }
+
 				{ cheapestPressablePlan && (
 					<HostingCard plan={ cheapestPressablePlan } pressableOwnership={ hasPressablePlan } />
 				) }
-				{ cheapestWPCOMPlan && <HostingCard plan={ cheapestWPCOMPlan } /> }
 			</ListingSection>
 		</div>
 	);
