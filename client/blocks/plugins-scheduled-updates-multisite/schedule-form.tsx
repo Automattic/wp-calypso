@@ -8,6 +8,7 @@ import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query
 import { ScheduleFormFrequency } from '../plugins-scheduled-updates/schedule-form-frequency';
 import { ScheduleFormPlugins } from '../plugins-scheduled-updates/schedule-form-plugins';
 import { validateSites, validatePlugins } from '../plugins-scheduled-updates/schedule-form.helper';
+import { useErrors } from './hooks/use-errors';
 import { ScheduleFormSites } from './schedule-form-sites';
 
 type Props = {
@@ -21,6 +22,8 @@ export const ScheduleForm = ( { onNavBack }: Props ) => {
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >( 'daily' );
 	const [ timestamp, setTimestamp ] = useState< number >( Date.now() );
+
+	const { addError, clearErrors } = useErrors();
 
 	const translate = useTranslate();
 
@@ -68,6 +71,10 @@ export const ScheduleForm = ( { onNavBack }: Props ) => {
 		}
 	}, [ plugins ] );
 
+	useEffect( () => {
+		clearErrors();
+	}, [] );
+
 	const selectedSiteSlugs = sites
 		? sites.filter( ( site ) => selectedSites.includes( site.ID ) ).map( ( site ) => site.slug )
 		: [];
@@ -92,6 +99,11 @@ export const ScheduleForm = ( { onNavBack }: Props ) => {
 		const successfulSiteSlugs = createResults
 			.filter( ( result ) => ! result.error )
 			.map( ( result ) => result.siteSlug );
+		// Store errors
+		createResults
+			.filter( ( result ) => result.error )
+			.forEach( ( result ) => addError( result.siteSlug, ( result.error as Error ).message ) );
+
 		// Create monitors for sites that have been successfully scheduled
 		createMonitors( successfulSiteSlugs );
 		onNavBack && onNavBack();

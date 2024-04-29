@@ -2,11 +2,13 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
 	Button,
+	Notice,
 	Spinner,
 } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { useErrors } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-errors';
 import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -31,6 +33,8 @@ export const ScheduleList = ( props: Props ) => {
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >();
 	const [ selectedSiteSlugs, setSelectedSiteSlugs ] = useState< string[] >( [] );
+
+	const { clearErrors, errors } = useErrors();
 
 	useEffect( () => {
 		const schedule = schedules?.find( ( schedule ) => schedule.schedule_id === selectedScheduleId );
@@ -72,6 +76,18 @@ export const ScheduleList = ( props: Props ) => {
 	const isLoading = isLoadingSchedules;
 	const ScheduleListComponent = isMobile ? null : ScheduleListTable;
 
+	// Be sure to update this with new translations/mappings
+	const translatedErrorsMap: { [ original: string ]: string } = {
+		'Server could not read response.': translate( 'Server could not read response.' ),
+		'Sorry, you can not create more than two schedules at this time.': translate(
+			'Sorry, you can not create more than two schedules at this time.'
+		),
+		'Invalid schedule': translate( 'Invalid schedule' ),
+		'Sorry, you can not create a schedule with the same time as an existing schedule.': translate(
+			'Sorry, you can not create a schedule with the same time as an existing schedule.'
+		),
+	};
+
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">
 			<h1 className="wp-brand-font">List schedules</h1>
@@ -84,9 +100,24 @@ export const ScheduleList = ( props: Props ) => {
 			>
 				{ translate( 'Add new schedule' ) }
 			</Button>
-
+			{ errors.length ? (
+				<Notice status="warning" isDismissible={ true } onDismiss={ () => clearErrors() }>
+					{ translate(
+						'An error was encountered while creating the schedule.',
+						'Some errors were encountered while creating the schedule.',
+						{ count: errors.length }
+					) }
+					<ul>
+						{ errors.map( ( error, idx ) => (
+							<li key={ `${ error.siteSlug }.${ idx }` }>
+								<strong>{ error.site?.title }: </strong>{ ' ' }
+								{ translatedErrorsMap[ error.error ] || error.error }
+							</li>
+						) ) }
+					</ul>
+				</Notice>
+			) : null }
 			{ schedules.length === 0 && isLoading && <Spinner /> }
-
 			{ isFetched && filteredSchedules && ScheduleListComponent ? (
 				<ScheduleListComponent
 					schedules={ filteredSchedules }
