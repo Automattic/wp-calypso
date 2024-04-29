@@ -396,7 +396,7 @@ export class CheckoutThankYou extends Component<
 	primaryCta = () => {
 		const { selectedSite, upgradeIntent, redirectTo } = this.props;
 
-		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
+		if ( ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
 			const siteSlug = selectedSite?.slug;
 
@@ -529,7 +529,7 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** REFACTORED REDESIGN */
-		if ( this.isDataLoaded() && isRefactoredForThankYouV2( this.props ) ) {
+		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 			const domainPurchase = getDomainPurchase( purchases );
 			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
@@ -635,7 +635,6 @@ export class CheckoutThankYou extends Component<
 				<Card className="checkout-thank-you__content">
 					<div>
 						<CheckoutThankYouHeader
-							isDataLoaded={ this.isDataLoaded() }
 							selectedSite={ this.props.selectedSite }
 							upgradeIntent={ this.props.upgradeIntent }
 							primaryCta={ this.primaryCta }
