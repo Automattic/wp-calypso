@@ -202,6 +202,16 @@
 				}
 			}
 		}
+
+		.item-preview__header-content .item-preview__close-preview {
+			height: 16px;
+			padding-left: 0;
+			padding-right: 0;
+
+			@include break-medium {
+				height: 32px;
+			}
+		}
 	}
 }
 
