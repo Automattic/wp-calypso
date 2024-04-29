@@ -1,7 +1,8 @@
-import { getSiteAdminUrl, getSiteSlug, usesWPAdminInterface } from '../sites/selectors';
+import { getSiteAdminUrl, getSiteSlug, isAdminInterfaceWPAdmin } from '../sites/selectors';
+import type { AppState } from 'calypso/types';
 
 export default function getThemeInstallUrl( state: AppState, siteId?: number | null ) {
-	if ( ! usesWPAdminInterface( state, siteId ) ) {
+	if ( ! isAdminInterfaceWPAdmin( state, siteId ) ) {
 		const siteSlug = getSiteSlug( state, siteId );
 		return `/themes/${ siteSlug }`;
 	}

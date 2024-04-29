@@ -35,7 +35,12 @@ const Action: FC< ActionProps > = ( { icon, href, text } ) => {
 const QuickActionsCard: FC = () => {
 	const hasEnTranslation = useHasEnTranslation();
 	const site = useSelector( getSelectedSite );
-	const editorUrl = useSelector( ( state ) => ( site?.ID ? getEditorUrl( state, site.ID ) : '#' ) );
+	const { editorUrl, themeInstallUrl, pluginInstallUrl, statsUrl } = useSelector( ( state ) => ( {
+		editorUrl: site?.ID ? getEditorUrl( state, site.ID ) : '#',
+		themeInstallUrl: getThemeInstallUrl( state, site?.ID ) ?? '',
+		pluginInstallUrl: getPluginInstallUrl( state, site?.ID ) ?? '',
+		statsUrl: getStatsUrl( state, site?.ID ) ?? '',
+	} ) );
 	const translate = useTranslate();
 
 	return (
@@ -54,17 +59,17 @@ const QuickActionsCard: FC = () => {
 					icon={
 						<SidebarCustomIcon icon="dashicons-admin-appearance hosting-overview__dashicon" />
 					}
-					href={ getThemeInstallUrl( state, site?.ID ) }
+					href={ themeInstallUrl }
 					text={ translate( 'Change theme' ) }
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins hosting-overview__dashicon" /> }
-					href={ getPluginInstallUrl( state, site?.ID ) }
+					href={ pluginInstallUrl }
 					text={ translate( 'Install plugins' ) }
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-chart-bar hosting-overview__dashicon" /> }
-					href={ getStatsUrl( state, site?.ID ) }
+					href={ statsUrl }
 					text={ translate( 'See Jetpack Stats' ) }
 				/>
 			</ul>
