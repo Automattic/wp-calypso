@@ -7,11 +7,13 @@ export function useSyncSelectedSiteFeature( {
 	selectedSite,
 	initialSiteFeature,
 	dataViewsState,
+	featureToRouteMap,
 	queryParamKeys,
 }: {
 	selectedSite?: SiteDetails | null;
 	initialSiteFeature: string;
 	dataViewsState: DataViewsState;
+	featureToRouteMap: { [ key: string ]: string };
 	queryParamKeys: string[];
 } ) {
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( initialSiteFeature );
@@ -33,7 +35,9 @@ export function useSyncSelectedSiteFeature( {
 			}
 		} );
 
-		let newUrl = siteSlug ? '/' + selectedSiteFeature.replace( ':site', siteSlug ) : '/sites';
+		let newUrl = siteSlug
+			? '/' + featureToRouteMap[ selectedSiteFeature ].replace( ':site', siteSlug )
+			: '/sites';
 		if ( newSearchParams.size > 0 ) {
 			newUrl += '?' + newSearchParams.toString();
 		}

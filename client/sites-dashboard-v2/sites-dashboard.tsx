@@ -35,7 +35,7 @@ import {
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useSyncSelectedSite } from './hooks/use-sync-selected-site';
 import { useSyncSelectedSiteFeature } from './hooks/use-sync-selected-site-feature';
-import { DOTCOM_OVERVIEW } from './site-preview-pane/constants';
+import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
@@ -127,6 +127,7 @@ const SitesDashboardV2 = ( {
 		selectedSite,
 		initialSiteFeature,
 		dataViewsState,
+		featureToRouteMap: FEATURE_TO_ROUTE_MAP,
 		queryParamKeys: [ 'page', 'per-page', 'status' ],
 	} );
 
