@@ -37,21 +37,17 @@ const CostOverridesListStyle = styled.div`
 	justify-content: space-between;
 	font-size: 12px;
 	font-weight: 400;
+	gap: 2px;
 
 	& .cost-overrides-list-item {
 		display: grid;
 		justify-content: space-between;
 		grid-template-columns: auto auto;
-		margin-top: 4px;
 		gap: 0 16px;
 	}
 
 	& .cost-overrides-list-item--coupon {
 		margin-top: 16px;
-	}
-
-	& .cost-overrides-list-item:nth-of-type( 1 ) {
-		margin-top: 0;
 	}
 
 	& .cost-overrides-list-item__actions {
@@ -374,22 +370,7 @@ const SingleProductAndCostOverridesListWrapper = styled.div`
 	justify-content: space-between;
 	font-size: 12px;
 	font-weight: 400;
-
-	& .cost-overrides-list-item {
-		display: grid;
-		justify-content: space-between;
-		grid-template-columns: auto auto;
-		margin-top: 4px;
-		gap: 0 16px;
-	}
-
-	& .cost-overrides-list-item__reason--is-discount {
-		color: #008a20;
-	}
-
-	& .cost-overrides-list-item__discount {
-		white-space: nowrap;
-	}
+	gap: 2px;
 `;
 
 const ProductTitleAreaForCostOverridesList = styled.div`
@@ -433,7 +414,7 @@ function CouponCostOverride( { responseCart }: { responseCart: ResponseCart } ) 
 		args: { couponCode: responseCart.coupon },
 	} );
 	return (
-		<SingleProductAndCostOverridesListWrapper>
+		<CostOverridesListStyle>
 			<div className="cost-overrides-list-item">
 				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 					{ label }
@@ -444,7 +425,7 @@ function CouponCostOverride( { responseCart }: { responseCart: ResponseCart } ) 
 					} ) }
 				</span>
 			</div>
-		</SingleProductAndCostOverridesListWrapper>
+		</CostOverridesListStyle>
 	);
 }
 
