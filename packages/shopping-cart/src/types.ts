@@ -661,7 +661,13 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	signup?: boolean;
 	headstart_theme?: string;
 	feature_slug?: string;
-	hosting_intent?: string;
+	/**
+	 * On the new site-migration flow, we use Migration Guru which requires us to
+	 * create databases in UTF-8. This extra is included on the plan bundle to signal
+	 * this to the backend. The name isn't great, but it will be removed once all of
+	 * our hosting migration flows are migrated to Migration Guru from Jetpack.
+	 */
+	hosting_intent?: 'migrate';
 }
 
 export interface GSuiteProductUser {
