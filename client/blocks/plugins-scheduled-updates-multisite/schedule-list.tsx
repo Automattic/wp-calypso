@@ -76,18 +76,6 @@ export const ScheduleList = ( props: Props ) => {
 	const isLoading = isLoadingSchedules;
 	const ScheduleListComponent = isMobile ? null : ScheduleListTable;
 
-	// Be sure to update this with new translations/mappings
-	const translatedErrorsMap: { [ original: string ]: string } = {
-		'Server could not read response.': translate( 'Server could not read response.' ),
-		'Sorry, you can not create more than two schedules at this time.': translate(
-			'Sorry, you can not create more than two schedules at this time.'
-		),
-		'Invalid schedule': translate( 'Invalid schedule' ),
-		'Sorry, you can not create a schedule with the same time as an existing schedule.': translate(
-			'Sorry, you can not create a schedule with the same time as an existing schedule.'
-		),
-	};
-
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">
 			<h1 className="wp-brand-font">List schedules</h1>
@@ -110,8 +98,7 @@ export const ScheduleList = ( props: Props ) => {
 					<ul>
 						{ errors.map( ( error, idx ) => (
 							<li key={ `${ error.siteSlug }.${ idx }` }>
-								<strong>{ error.site?.title }: </strong>{ ' ' }
-								{ translatedErrorsMap[ error.error ] || error.error }
+								<strong>{ error.site?.title }: </strong> { error.error }
 							</li>
 						) ) }
 					</ul>
