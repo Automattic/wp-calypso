@@ -1,6 +1,6 @@
 import { Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { DataViews } from 'calypso/components/dataviews';
 import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
@@ -54,6 +54,7 @@ export type ItemsDataViewsProps = {
 
 const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsProps ) => {
 	const translate = useTranslate();
+	const itemsDataViewsRef = useRef< HTMLDivElement & { selectedItem: Element | null } >( null );
 
 	// Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
 	// todo: The DataViews v0.9 has the spinner support. Remove this once we upgrade the package.
@@ -76,10 +77,37 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 		spinnerWrapper.classList.add( 'spinner-wrapper' );
 		// Render the SpinnerWrapper component inside the spinner wrapper
 		ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
+
+		if ( ! isLoading && itemsDataViewsRef.current ) {
+			// Very hacky fix for https://github.com/Automattic/dotcom-forge/issues/6782.
+			// Due to the DataViews component we're using initializes with an empty array for selection, so we can't have an initial selection.
+			const noSelectedItem =
+				dataviewsWrapper.querySelectorAll( '.dataviews-view-list li.is-selected' ).length === 0;
+			if ( noSelectedItem && data.dataViewsState.selectedItem ) {
+				const itemIndex = data?.items?.findIndex(
+					( item ) => item.ID === data.dataViewsState.selectedItem.ID
+				);
+				if ( itemIndex && itemIndex !== -1 ) {
+					const selectedItem =
+						dataviewsWrapper.querySelectorAll( '.dataviews-view-list li' )[ itemIndex ];
+					itemsDataViewsRef.current.selectedItem = selectedItem;
+					selectedItem.classList.add( 'is-selected' );
+					selectedItem.scrollIntoView();
+				}
+			}
+		}
 	}
 
+	const onSelectionChange = () => {
+		// Very hacky fix for https://github.com/Automattic/dotcom-forge/issues/6782.
+		if ( itemsDataViewsRef?.current?.selectedItem ) {
+			itemsDataViewsRef.current.selectedItem.classList.remove( 'is-selected' );
+			itemsDataViewsRef.current.selectedItem = null;
+		}
+	};
+
 	return (
-		<div className={ className }>
+		<div className={ className } ref={ itemsDataViewsRef }>
 			<DataViews
 				data={ data.items }
 				paginationInfo={ data.pagination }
@@ -99,6 +127,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				supportedLayouts={ [ 'table' ] }
 				actions={ data.actions }
 				isLoading={ isLoading }
+				onSelectionChange={ onSelectionChange }
 			/>
 		</div>
 	);
