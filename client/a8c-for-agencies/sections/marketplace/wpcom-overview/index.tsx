@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -15,6 +16,7 @@ import {
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import HostingOverview from '../common/hosting-overview';
+import HostingOverviewFeatures from '../common/hosting-overview-features';
 import useProductAndPlans from '../hooks/use-product-and-plans';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getCheapestPlan } from '../lib/hosting';
@@ -100,6 +102,53 @@ export default function WpcomOverview() {
 				<HostingOverview
 					title={ translate( 'Powerful development & platform tools' ) }
 					subtitle={ translate( 'Build for developers, by developers' ) }
+				/>
+
+				<HostingOverviewFeatures
+					items={ [
+						{
+							icon: code,
+							title: translate( 'WPI-CLI' ),
+							description: translate(
+								`Run WP-CLI commands to manage users, plugins, themes, site settings, and more.`
+							),
+						},
+						{
+							icon: login,
+							title: translate( 'SSH/SFTP' ),
+							description: translate(
+								'Effortlessly transfer files to and from your site using SFTP and SSH on WordPress.com.'
+							),
+						},
+						{
+							icon: reusableBlock,
+							title: translate( 'Staging sites' ),
+							description: translate(
+								`Test changes on a WordPress.com staging site first, so you can identify and fix any vulnerabilities before they impact your live site.`
+							),
+						},
+						{
+							icon: desktop,
+							title: translate( 'Local development environment' ),
+							description: translate(
+								'Build fast, ship faster with Studio by WordPress.com, a new local development environment.'
+							),
+						},
+						{
+							icon: globe,
+							title: translate( 'Domain management' ),
+							description: translate(
+								'Everything you need to manage your domains—from registration, transfer, and mapping to DNS configuration, email forwarding, and privacy.'
+							),
+						},
+						{
+							icon: blockMeta,
+							title: translate( 'Easy site migration' ),
+							description: translate(
+								'Import and take any WordPress site further with our developer-first tools and secure, lightning-fast platform.'
+							),
+						},
+					] }
 				/>
 			</LayoutBody>
 		</Layout>
