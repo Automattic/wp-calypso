@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { TransferStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteTransferStatusQueryKey } from './query';
@@ -19,10 +19,11 @@ const startTransfer = ( siteId: number ): Promise< InitiateAtomicTransferRespons
 		},
 	} );
 
+type Options = Pick< UseMutationOptions, 'retry' >;
 /**
  *  Mutation hook to initiate a site transfer
  */
-export const useSiteTransferMutation = ( siteId?: number ) => {
+export const useSiteTransferMutation = ( siteId?: number, options?: Options ) => {
 	const query = useQueryClient();
 
 	const mutation = () =>
@@ -37,6 +38,7 @@ export const useSiteTransferMutation = ( siteId?: number ) => {
 		mutationKey: [ 'sites', siteId, 'atomic', 'transfers' ],
 		mutationFn: mutation,
 		onSuccess: refreshSiteStatus,
+		retry: options?.retry ?? 10,
 		onSettled: ( data, error ) => {
 			recordTracksEvent( 'calypso_site_transfer_started', {
 				site_id: siteId,

@@ -1,21 +1,32 @@
+import { UseQueryOptions } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useSiteTransferMutation } from './mutation';
 import { useSiteTransferStatusQuery } from './query';
 
+type Status = 'idle' | 'pending' | 'success' | 'error';
 /**
  * Hook to initiate a site transfer and monitor its progress
  */
-export const useSiteMigrationTransfer = ( siteId?: number ) => {
+
+type Options = Pick< UseQueryOptions, 'retry' >;
+
+export const useSiteMigrationTransfer = ( siteId?: number, options?: Options ) => {
 	const {
 		mutate: startTransfer,
 		status: startTransferStatus,
 		error: startTransferError,
-	} = useSiteTransferMutation( siteId );
+	} = useSiteTransferMutation( siteId, options );
 
-	const { data, error: statusError } = useSiteTransferStatusQuery( siteId );
-	const { status: transferStatus, isReadyToTransfer, completed, isTransferring } = data || {};
+	const {
+		data,
+		error: statusError,
+		fetchStatus: transferFetchStatus,
+	} = useSiteTransferStatusQuery( siteId, options );
+	const { isReadyToTransfer = false, completed = false, isTransferring } = data || {};
+
 	const isNotStarting = startTransferStatus === 'idle';
 	const shouldStartTransfer = isReadyToTransfer && isNotStarting;
+	const error = statusError || startTransferError;
 
 	useEffect( () => {
 		if ( shouldStartTransfer ) {
@@ -23,10 +34,25 @@ export const useSiteMigrationTransfer = ( siteId?: number ) => {
 		}
 	}, [ shouldStartTransfer, startTransfer ] );
 
+	const getStatus = (): Status => {
+		if ( completed ) {
+			return 'success';
+		}
+
+		if ( isTransferring || isReadyToTransfer || transferFetchStatus === 'fetching' ) {
+			return 'pending';
+		}
+
+		if ( error ) {
+			return 'error';
+		}
+
+		return 'idle';
+	};
+
 	return {
 		completed,
-		isTransferring,
-		status: transferStatus,
+		status: getStatus(),
 		error: statusError || startTransferError || null,
 	};
 };
