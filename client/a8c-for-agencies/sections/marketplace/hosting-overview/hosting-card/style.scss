@@ -7,6 +7,14 @@
 	.button {
 		width: 100%;
 	}
+
+	.woo-logo {
+		margin: 0;
+
+		path {
+			fill: var(--color-woocommerce);
+		}
+	}
 }
 
 .hosting-card__section {

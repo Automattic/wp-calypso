@@ -1,5 +1,6 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 
 /**
  * Returns hosting name and description with given product slug.
@@ -25,7 +26,11 @@ export default function useHostingDescription( slug: string ): {
 					'Best for developers and agencies who need advanced hosting controls and management tools.'
 				);
 				features = [
-					translate( 'Optimized for high-traffic WooCommerce stores' ),
+					translate( 'Optimized for high-traffic WooCommerce stores {{img/}}', {
+						components: {
+							img: <WooCommerceLogo size={ 32 } />,
+						},
+					} ),
 					translate( '100% uptime SLA' ),
 					translate( 'Great for teams with granular permission needs' ),
 					translate( 'Tooling to help you manage sites at scale with one-click config options' ),
