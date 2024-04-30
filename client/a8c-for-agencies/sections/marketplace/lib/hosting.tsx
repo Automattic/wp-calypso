@@ -22,6 +22,17 @@ export function getCheapestPlan( plans: APIProductFamilyProduct[] ) {
 }
 
 /**
+ * Get the WPCOM Creator plan from a list of plans
+ * @param {APIProductFamilyProduct[]} plans - List of plans
+ * @returns {APIProductFamilyProduct} - WPCOM Creator plan
+ */
+export function getWPCOMCreatorPlan( plans: APIProductFamilyProduct[] ) {
+	return plans.find( ( plan: APIProductFamilyProduct ) => {
+		return plan.slug === 'wpcom-hosting-business';
+	} );
+}
+
+/**
  * Get the URL for a hosting provider
  * @param {string} slug - Hosting provider slug
  * @returns {string} - Hosting provider URL

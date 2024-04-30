@@ -31,7 +31,7 @@ import HostingOverview from '../common/hosting-overview';
 import HostingOverviewFeatures from '../common/hosting-overview-features';
 import useProductAndPlans from '../hooks/use-product-and-plans';
 import useShoppingCart from '../hooks/use-shopping-cart';
-import { getCheapestPlan } from '../lib/hosting';
+import { getWPCOMCreatorPlan } from '../lib/hosting';
 import ShoppingCart from '../shopping-cart';
 import WPCOMBulkSelector from './bulk-selection';
 import wpcomBulkOptions from './lib/wpcom-bulk-options';
@@ -55,7 +55,8 @@ export default function WpcomOverview() {
 
 	const { wpcomPlans } = useProductAndPlans( {} );
 
-	const cheapestWPCOMPlan = getCheapestPlan( wpcomPlans );
+	const creatorPlan = getWPCOMCreatorPlan( wpcomPlans );
+
 	const onclickMoreInfo = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_hosting_wpcom_view_all_features_click' )
@@ -113,11 +114,13 @@ export default function WpcomOverview() {
 				/>
 				<WPCOMBulkSelector selectedCount={ selectedCount } onSelectCount={ onSelectCount } />
 
-				<WPCOMPlanCard
-					plan={ cheapestWPCOMPlan }
-					quantity={ selectedCount.value }
-					discount={ selectedCount.discount }
-				/>
+				{ creatorPlan && (
+					<WPCOMPlanCard
+						plan={ creatorPlan }
+						quantity={ selectedCount.value }
+						discount={ selectedCount.discount }
+					/>
+				) }
 
 				<HostingOverview
 					title={ translate( 'Powerful development & platform tools' ) }
