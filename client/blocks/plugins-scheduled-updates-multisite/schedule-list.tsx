@@ -7,11 +7,13 @@ import {
 } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useErrors } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-errors';
+import { MultisitePluginUpdateManagerContext } from 'calypso/blocks/plugins-scheduled-updates-multisite/context';
 import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { ScheduleListFilter } from './schedule-list-filter';
 import { ScheduleListTable } from './schedule-list-table';
 
 type Props = {
@@ -29,7 +31,7 @@ export const ScheduleList = ( props: Props ) => {
 	} = useMultisiteUpdateScheduleQuery( true );
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
-	const [ search ] = useState( '' );
+	const { searchTerm } = useContext( MultisitePluginUpdateManagerContext );
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >();
 	const [ selectedSiteSlugs, setSelectedSiteSlugs ] = useState< string[] >( [] );
@@ -63,16 +65,23 @@ export const ScheduleList = ( props: Props ) => {
 		closeRemoveConfirm();
 	};
 
-	const filteredSchedules = schedules?.filter( ( schedule ) => {
-		if ( ! search || ! search.length ) {
-			return true;
-		}
+	const filteredSchedules = schedules
+		?.map( ( schedule ) => {
+			if ( ! searchTerm || ! searchTerm.length ) {
+				return schedule;
+			}
 
-		return (
-			schedule.sites.filter( ( site ) => site.title.toLowerCase().includes( search.toLowerCase() ) )
-				.length > 0
-		);
-	} );
+			const filteredSites = schedule.sites.filter( ( site ) =>
+				site.title.toLowerCase().includes( searchTerm.toLowerCase() )
+			);
+
+			return {
+				...schedule,
+				sites: filteredSites,
+			};
+		} )
+		.filter( ( schedule ) => schedule.sites.length > 0 );
+
 	const isLoading = isLoadingSchedules;
 	const ScheduleListComponent = isMobile ? null : ScheduleListTable;
 
@@ -106,12 +115,15 @@ export const ScheduleList = ( props: Props ) => {
 			) : null }
 			{ schedules.length === 0 && isLoading && <Spinner /> }
 			{ isFetched && filteredSchedules && ScheduleListComponent ? (
-				<ScheduleListComponent
-					schedules={ filteredSchedules }
-					onRemoveClick={ openRemoveDialog }
-					onEditClick={ onEditSchedule }
-					onLogsClick={ onShowLogs }
-				/>
+				<>
+					<ScheduleListFilter />
+					<ScheduleListComponent
+						schedules={ filteredSchedules }
+						onRemoveClick={ openRemoveDialog }
+						onEditClick={ onEditSchedule }
+						onLogsClick={ onShowLogs }
+					/>
+				</>
 			) : null }
 			<ConfirmDialog
 				isOpen={ removeDialogOpen }
