@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 interface ApiResponse {
@@ -10,12 +10,14 @@ const getMigrationKey = async ( siteId: number ): Promise< ApiResponse > =>
 		apiNamespace: 'wpcom/v2',
 	} );
 
-export const useSiteMigrationKey = ( siteId?: number ) => {
+type Options = Pick< UseQueryOptions, 'enabled' >;
+
+export const useSiteMigrationKey = ( siteId?: number, options?: Options ) => {
 	return useQuery( {
 		queryKey: [ 'site-migration-key', siteId ],
 		queryFn: () => getMigrationKey( siteId! ),
 		retry: false,
-		enabled: !! siteId,
+		enabled: !! siteId && ( options?.enabled ?? true ),
 		select: ( data ) => ( { migrationKey: data?.migration_key } ),
 		refetchOnWindowFocus: false,
 	} );
