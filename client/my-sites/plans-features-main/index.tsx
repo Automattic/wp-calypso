@@ -842,7 +842,6 @@ const PlansFeaturesMain = ( {
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 										useActionCallback={ useActionCallback }
 										enableFeatureTooltips={ ! isTrailMapCopy }
-										renderCategorisedFeatures={ isTrailMapStructure }
 										featureGroupMap={ isTrailMapStructure ? featureGroupMap : undefined }
 									/>
 								) }
