@@ -159,20 +159,20 @@ export type GridContextProps = {
 	coupon?: string;
 	enableFeatureTooltips?: boolean;
 	/**
-	 * `renderCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
+	 * `enableCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
 	 * for rendering features with categories based on available/associated feature group map.
 	 */
-	renderCategorisedFeatures?: boolean;
+	enableCategorisedFeatures?: boolean;
 	/**
 	 * `featureGroupMap` is relevant for rendering features with categories.
-	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `renderCategorisedFeatures` is set).
+	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `enableCategorisedFeatures` is set).
 	 */
 	featureGroupMap: Partial< FeatureGroupMap >;
 };
 
 export type ComparisonGridExternalProps = Omit<
 	GridContextProps,
-	'children' | 'renderCategorisedFeatures'
+	'children' | 'enableCategorisedFeatures'
 > &
 	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
 		className?: string;

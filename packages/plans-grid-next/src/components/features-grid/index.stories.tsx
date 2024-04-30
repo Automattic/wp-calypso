@@ -15,7 +15,7 @@ const RenderFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 			allFeaturesList: getFeaturesList(),
 			useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
 			storageAddOns: [],
-			includeAllFeatures: props.renderCategorisedFeatures,
+			includeAllFeatures: props.enableCategorisedFeatures,
 		},
 		useGridPlans
 	);
@@ -24,7 +24,7 @@ const RenderFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		<FeaturesGrid
 			{ ...props }
 			gridPlans={ gridPlans || [] }
-			featureGroupMap={ props.renderCategorisedFeatures ? getPlanFeaturesGrouped() : undefined }
+			featureGroupMap={ props.enableCategorisedFeatures ? getPlanFeaturesGrouped() : undefined }
 		/>
 	);
 };
@@ -82,6 +82,6 @@ export const CategorisedFeatures: Story = {
 	args: {
 		...PlansFlow.args,
 		gridPlanForSpotlight: undefined,
-		renderCategorisedFeatures: true,
+		enableCategorisedFeatures: true,
 	},
 };
