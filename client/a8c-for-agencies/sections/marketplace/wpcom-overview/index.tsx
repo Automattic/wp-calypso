@@ -1,7 +1,17 @@
 import page from '@automattic/calypso-router';
-import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpress/icons';
+import { Button } from '@automattic/components';
+import {
+	Icon,
+	blockMeta,
+	code,
+	desktop,
+	globe,
+	login,
+	reusableBlock,
+	external,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -15,6 +25,8 @@ import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingOverview from '../common/hosting-overview';
 import HostingOverviewFeatures from '../common/hosting-overview-features';
 import useProductAndPlans from '../hooks/use-product-and-plans';
@@ -29,6 +41,7 @@ import './style.scss';
 
 export default function WpcomOverview() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
 
@@ -43,6 +56,13 @@ export default function WpcomOverview() {
 	const { wpcomPlans } = useProductAndPlans( {} );
 
 	const cheapestWPCOMPlan = getCheapestPlan( wpcomPlans );
+	const onclickMoreInfo = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_wpcom_view_all_features_click' )
+		);
+	}, [ dispatch ] );
+
+	const WPCOM_PRICING_PAGE_LINK = 'https://wordpress.com/pricing/';
 
 	return (
 		<Layout
@@ -150,6 +170,18 @@ export default function WpcomOverview() {
 						},
 					] }
 				/>
+
+				<section className="pressable-overview__footer">
+					<Button
+						className="pressable-overview__learn-more-link"
+						href={ WPCOM_PRICING_PAGE_LINK }
+						onClick={ onclickMoreInfo }
+						target="_blank"
+					>
+						{ translate( 'View all WordPress.com features' ) }
+						<Icon icon={ external } size={ 18 } />
+					</Button>
+				</section>
 			</LayoutBody>
 		</Layout>
 	);
