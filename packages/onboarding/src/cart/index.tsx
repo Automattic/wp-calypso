@@ -182,7 +182,7 @@ export const createSiteWithCart = async (
 			lang_id: getLanguage( locale as string )?.value,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-			options: { has_segmentation_survey: hasSegmentationSurvey },
+			options: { ...newSiteParams.options, has_segmentation_survey: hasSegmentationSurvey },
 		},
 	} );
 
