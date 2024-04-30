@@ -6,7 +6,6 @@ import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { useSiteMigrationTransfer } from '../';
-import { transferStates } from '../../../../../state/automated-transfer/constants';
 
 const Wrapper =
 	( queryClient: QueryClient ) =>
@@ -14,13 +13,10 @@ const Wrapper =
 		return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
 	};
 
-const render = ( { siteId } ) => {
+const render = ( { siteId, retry = 0 } ) => {
 	const queryClient = new QueryClient();
 
-	// It is important to set the retry option to false to avoid the hook to retry the request when it fails.
-	queryClient.setDefaultOptions( { queries: { retry: false } } );
-
-	const renderResult = renderHook( () => useSiteMigrationTransfer( siteId ), {
+	const renderResult = renderHook( () => useSiteMigrationTransfer( siteId, { retry } ), {
 		wrapper: Wrapper( queryClient ),
 	} );
 
@@ -84,28 +80,88 @@ describe( 'useSiteMigrationTransfer', () => {
 		jest.useRealTimers();
 	} );
 
-	it( 'returns errors', async () => {
+	beforeEach( () => {
+		nock.cleanAll();
+	} );
+
+	it( 'returns idle when there is no siteId available', () => {
+		const { result } = render( { siteId: undefined } );
+
+		expect( result.current ).toEqual( {
+			completed: false,
+			status: 'idle',
+			error: null,
+		} );
+	} );
+
+	it( 'returns pending when is waiting the site to be ready', async () => {
+		const siteId = 123;
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.persist()
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.reply( 200, TRANSFER_ACTIVE );
+
+		const { result } = render( { siteId } );
+
+		await waitFor(
+			() => {
+				expect( result.current ).toEqual( {
+					completed: false,
+					status: 'pending',
+					error: null,
+				} );
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	it( 'returns an error when there is an error to fetch the status', async () => {
 		const siteId = 123;
 
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.once()
+			.times( 2 )
 			.reply( 500, new Error( 'Internal Server Error' ) );
 
-		const { result } = render( { siteId } );
+		const { result } = render( { siteId, retry: 1 } );
 
-		await waitFor( () => {
-			expect( result.current ).toEqual( {
-				completed: undefined,
-				status: undefined,
-				error: expect.any( Error ),
-				isTransferring: undefined,
-			} );
-		} );
+		await waitFor(
+			() => {
+				expect( result.current ).toEqual( {
+					completed: false,
+					status: 'error',
+					error: expect.any( Error ),
+				} );
+			},
+			{ timeout: 3000 }
+		);
 	} );
 
-	it( 'returns the latest transfer status', async () => {
+	it( 'returns pending while is retrying to get the status', async () => {
 		const siteId = 123;
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.times( 2 )
+			.reply( 500, new Error( 'Internal Server Error' ) );
+
+		const { result } = render( { siteId, retry: 1 } );
+
+		await waitFor(
+			() => {
+				expect( result.current ).toEqual( {
+					completed: false,
+					status: 'pending',
+					error: null,
+				} );
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	it( 'returns success the latest transfer returns completed', async () => {
+		const siteId = 12345;
 
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
@@ -117,40 +173,10 @@ describe( 'useSiteMigrationTransfer', () => {
 		await waitFor( () => {
 			expect( result.current ).toEqual( {
 				completed: true,
-				status: transferStates.COMPLETED,
-				isTransferring: false,
+				status: 'success',
 				error: null,
 			} );
 		} );
-	} );
-
-	it( 'starts the transfer process if it is not transferring', async () => {
-		const siteId = 123;
-
-		nock( 'https://public-api.wordpress.com:443' )
-			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.once()
-			.reply( 404, TRANSFER_NOT_INITIATED )
-			.post( `/wpcom/v2/sites/123/atomic/transfers`, {
-				context: 'unknown',
-				transfer_intent: 'migrate',
-			} )
-			.once()
-			.reply( 200, TRANSFER_ACTIVE( siteId ) );
-
-		const { result } = render( { siteId } );
-
-		await waitFor(
-			() => {
-				expect( result.current ).toEqual( {
-					isTransferring: true,
-					completed: false,
-					status: transferStates.ACTIVE,
-					error: null,
-				} );
-			},
-			{ timeout: 3000 }
-		);
 	} );
 
 	it( 'starts to pool the status after start a new flow', async () => {
@@ -164,7 +190,6 @@ describe( 'useSiteMigrationTransfer', () => {
 				context: 'unknown',
 				transfer_intent: 'migrate',
 			} )
-			.once()
 			.reply( 200, TRANSFER_ACTIVE( siteId ) )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
 			.once()
@@ -176,8 +201,7 @@ describe( 'useSiteMigrationTransfer', () => {
 			() => {
 				expect( result.current ).toEqual( {
 					completed: true,
-					isTransferring: false,
-					status: transferStates.COMPLETED,
+					status: 'success',
 					error: null,
 				} );
 			},
@@ -206,8 +230,7 @@ describe( 'useSiteMigrationTransfer', () => {
 			() => {
 				expect( result.current ).toEqual( {
 					completed: true,
-					isTransferring: false,
-					status: transferStates.COMPLETED,
+					status: 'success',
 					error: null,
 				} );
 			},
