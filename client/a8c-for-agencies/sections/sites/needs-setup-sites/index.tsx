@@ -23,10 +23,11 @@ export default function NeedSetup() {
 
 	const { mutate: createWPCOMSite, isPending: isCreatingSite } = useCreateWPCOMSiteMutation();
 
-	const availableSites = data.filter(
-		( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
-			features.wpcom_atomic.state === 'pending'
-	);
+	const availableSites =
+		data?.filter(
+			( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
+				features.wpcom_atomic.state === 'pending'
+		) ?? [];
 
 	const availablePlans: AvailablePlans[] = availableSites.length
 		? [
@@ -40,7 +41,7 @@ export default function NeedSetup() {
 
 	const isProvisioning =
 		isCreatingSite ||
-		data.find(
+		data?.find(
 			( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
 				features.wpcom_atomic.state === 'provisioning'
 		);
