@@ -334,6 +334,7 @@ function InstalledInOrPricing( {
 			installedText = translate( 'Installed on %d site', 'Installed on %d sites', {
 				args: [ sitesWithPlugin.length ],
 				count: sitesWithPlugin.length,
+				comment: '%d is the number of sites the user has the plugin installed on.',
 			} );
 		}
 		if ( atomicSiteHasEquivalentFeatureToPluginItem ) {
