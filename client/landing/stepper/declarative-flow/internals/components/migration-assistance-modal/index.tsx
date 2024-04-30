@@ -1,7 +1,14 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import { setMigrationAssistanceAccepted } from 'calypso/blocks/importer/wordpress/utils';
 import './style.scss';
+
+const EVENT_NAMES = {
+	accepted: 'calypso_migration_assistance_modal_deal_accepted',
+	declined: 'calypso_migration_assistance_modal_no_thanks_or_closed',
+};
+
 interface MigrationAssistanceModalProps {
 	navigateBack: ( () => void ) | undefined;
 	migrateFrom: string | null;
@@ -13,8 +20,22 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 	const translate = useTranslate();
 	const importSiteHostName = props.migrateFrom || translate( 'your site' );
 
+	const logEvent = ( acceptedDeal: boolean = false ) => {
+		const eventName = acceptedDeal ? EVENT_NAMES.accepted : EVENT_NAMES.declined;
+		recordTracksEvent( eventName, {
+			user_site: importSiteHostName,
+		} );
+	};
+
+	const navigateBackOrCloseModal = () => {
+		logEvent();
+		props.navigateBack?.();
+	};
+
 	const acceptMigrationAssistance = () => {
+		const acceptedDeal = true;
 		setMigrationAssistanceAccepted();
+		logEvent( acceptedDeal );
 		props.onConfirm?.();
 	};
 
@@ -24,7 +45,7 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 			title={ translate( 'Migration sounds daunting? It shouldn’t be!' ) }
 			confirmText={ translate( 'Take the deal' ) }
 			cancelText={ translate( 'No, thanks' ) }
-			onClose={ props.navigateBack }
+			onClose={ navigateBackOrCloseModal }
 			onConfirm={ acceptMigrationAssistance }
 		>
 			<p>
