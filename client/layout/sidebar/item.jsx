@@ -51,6 +51,7 @@ export default function SidebarItem( props ) {
 				onClick={ handleNavigate }
 				href={ props.link }
 				onMouseEnter={ itemPreload }
+				data-tooltip={ props.tooltip }
 				{ ...linkProps }
 			>
 				{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } size={ 24 } /> }
@@ -92,6 +93,7 @@ export default function SidebarItem( props ) {
 
 SidebarItem.propTypes = {
 	label: TranslatableString.isRequired,
+	tooltip: TranslatableString,
 	className: PropTypes.string,
 	link: PropTypes.string.isRequired,
 	onNavigate: PropTypes.func,
