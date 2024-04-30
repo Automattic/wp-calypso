@@ -2286,9 +2286,9 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Min/max order quantities' )
 				: i18n.translate( 'Min/max order quantity' ),
 		getDescription: () =>
-			i18n.translate(
-				'Set minimum and maximum quantity limits for orders to prevent over-ordering or under-ordering.'
-			),
+			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CUSTOM_STORE ]: {
 		getSlug: () => FEATURE_CUSTOM_STORE,
