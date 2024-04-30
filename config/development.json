@@ -205,7 +205,6 @@
 		"stats/checkout-flows-v2": true,
 		"stats/date-control": true,
 		"stats/devices": true,
-		"stats/new-video-summary": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/plan-usage": true,
