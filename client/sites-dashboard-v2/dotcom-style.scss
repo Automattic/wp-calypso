@@ -41,10 +41,10 @@
 	background: var(--studio-white);
 
 	.a4a-layout__top-wrapper {
-		border-block-end: 0;
+		border-block-end: none;
 
 		@include break-medium {
-			border-block-end: 1px solid var(--studio-gray-0);
+			border-block-end: 1px solid var(--color-border-secondary);
 			margin-bottom: 24px;
 		}
 	}
@@ -59,10 +59,16 @@
 	}
 
 	table.dataviews-view-table thead .dataviews-view-table__row th {
+		border-bottom-color: var(--color-border-secondary);
+
 		span,
 		.dataviews-view-table-header-button {
 			color: inherit;
 		}
+	}
+
+	table.dataviews-view-table .dataviews-view-table__row td {
+		border-bottom-color: var(--color-border-secondary);
 	}
 }
 
@@ -83,7 +89,7 @@
 		// Places search above filters
 		z-index: 1;
 		border-radius: 2px;
-		border: 1px solid var(--studio-gray-10);
+		border: 1px solid var(--color-border-subtle);
 		background-color: var(--color-surface, $white);
 
 		.components-input-control__input {
