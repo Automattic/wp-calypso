@@ -8,6 +8,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import SitesHeaderActions from '../sites-header-actions';
 import { AvailablePlans } from './plan-field';
@@ -19,6 +20,8 @@ export default function NeedSetup() {
 	const title = translate( 'Sites' );
 
 	const { data, isFetching } = useFetchPendingSites();
+
+	const { mutate: createWPCOMSite, isPending: isCreatingSite } = useCreateWPCOMSiteMutation();
 
 	const availableSites = data.filter(
 		( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
@@ -35,14 +38,26 @@ export default function NeedSetup() {
 		  ]
 		: [];
 
-	const isProvisioning = data.find(
-		( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
-			features.wpcom_atomic.state === 'provisioning'
-	);
+	const isProvisioning =
+		isCreatingSite ||
+		data.find(
+			( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
+				features.wpcom_atomic.state === 'provisioning'
+		);
 
-	const onCreateSite = useCallback( () => {
-		// FIXME: Implement this
-	}, [] );
+	const onCreateSite = useCallback(
+		( id: number ) => {
+			createWPCOMSite(
+				{ id },
+				{
+					onSuccess: () => {
+						// refetch pending sites
+					},
+				}
+			);
+		},
+		[ createWPCOMSite ]
+	);
 
 	return (
 		<Layout className="sites-dashboard sites-dashboard__layout preview-hidden" wide title={ title }>
