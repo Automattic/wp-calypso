@@ -429,7 +429,6 @@ export const FEATURE_UNLIMITED_PRODUCTS = 'unlimited-products';
 export const FEATURE_DISPLAY_PRODUCTS_BRAND = 'display-products-brand';
 export const FEATURE_PRODUCT_ADD_ONS = 'product-add-ons';
 export const FEATURE_ASSEMBLED_KITS = 'assembled-kits';
-export const FEATURE_MIN_MAX_QTY = 'min-max-qty';
 export const FEATURE_STOCK_NOTIFS = 'stock-notifs';
 export const FEATURE_DYNAMIC_UPSELLS = 'dynamic-upsells';
 export const FEATURE_LOYALTY_PROG = 'loyalty-prog';

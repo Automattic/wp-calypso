@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
-import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import SupportIcon from './assets/images/support.svg';
@@ -288,7 +288,6 @@ import {
 	FEATURE_DISPLAY_PRODUCTS_BRAND,
 	FEATURE_PRODUCT_ADD_ONS,
 	FEATURE_ASSEMBLED_KITS,
-	FEATURE_MIN_MAX_QTY,
 	FEATURE_STOCK_NOTIFS,
 	FEATURE_DYNAMIC_UPSELLS,
 	FEATURE_LOYALTY_PROG,
@@ -653,8 +652,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SEO_PREVIEW_TOOLS ]: {
 		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
-		getTitle: () =>
-			isTrailMapVariant() ? i18n.translate( 'SEO tools' ) : i18n.translate( 'SEO tools' ),
+		getTitle: () => i18n.translate( 'SEO tools' ),
 		getDescription: () =>
 			i18n.translate(
 				'Edit your page titles and meta descriptions, and preview how your content will appear on social media.'
@@ -972,16 +970,6 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Help center support' )
 				: i18n.translate( 'Community support' ),
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
-	},
-
-	[ FEATURE_EMAIL_SUPPORT ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () =>
-			isTrailMapVariant()
-				? i18n.translate( 'Email support' )
-				: i18n.translate( 'Unlimited customer support via email' ),
-		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
@@ -2009,9 +1997,22 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 	},
+
+	[ FEATURE_EMAIL_SUPPORT ]: {
+		getSlug: () => FEATURE_EMAIL_SUPPORT,
+		getTitle: () =>
+			isTrailMapVariant()
+				? i18n.translate( 'Email support' )
+				: i18n.translate( 'Unlimited customer support via email' ),
+		getDescription: () =>
+			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
+	},
 	[ FEATURE_SUPPORT_EMAIL ]: {
 		getSlug: () => FEATURE_SUPPORT_EMAIL,
-		getTitle: () => i18n.translate( 'Support via email' ),
+		getTitle: () =>
+			isTrailMapVariant()
+				? i18n.translate( 'Email support' )
+				: i18n.translate( 'Support via email' ),
 		getIcon: () => <img src={ SupportIcon } alt={ i18n.translate( 'Customer support' ) } />,
 		getAlternativeTitle: () => i18n.translate( 'Customer support' ),
 		getCompareTitle: () => i18n.translate( 'Unlimited support via emails.' ),
@@ -2077,8 +2078,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			isTrailMapVariant()
 				? i18n.translate( 'Global CDN with 28+ locations' )
-				: i18n.translate( 'Global CDN with 28+ locations' ),
-		getAlternativeTitle: () => i18n.translate( 'Global CDN' ),
+				: i18n.translate( 'Global CDN' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Rely on ultra-fast site speeds, from any location on earth.' ),
 		getDescription: () =>
@@ -2136,16 +2136,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowNewString =
-				( localeSlug && englishLocales.includes( localeSlug ) ) ||
-				i18n.hasTranslation( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' );
-
-			return shouldShowNewString
-				? i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' )
-				: i18n.translate( 'SFTP/SSH, WP-CLI, Git tools' );
-		},
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
@@ -2551,7 +2542,6 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PRODUCT_ADD_ONS ]: {
 		getSlug: () => FEATURE_PRODUCT_ADD_ONS,
 		getTitle: () => i18n.translate( 'Product add-ons' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Increase your revenue with add-ons like gift wrapping or personalizations like engraving.'
@@ -2567,15 +2557,6 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Give customers the freedom to build their own products utilizing your existing items.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
-		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
-	},
-	[ FEATURE_MIN_MAX_QTY ]: {
-		getSlug: () => FEATURE_MIN_MAX_QTY,
-		getTitle: () => i18n.translate( 'Min/max order quantities' ),
-
-		getDescription: () =>
-			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
 		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
@@ -2882,10 +2863,6 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_DEVELOPER_TOOLS ]: {
 		getSlug: () => FEATURE_DEVELOPER_TOOLS,
 		getTitle: () => i18n.translate( 'Developer tools' ),
-	},
-	[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ]: {
-		getSlug: () => FEATURE_DYNAMIC_PRODUCT_UPSELLS,
-		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
 	},
 	[ FEATURE_FREE_MIGRATIONS ]: {
 		getSlug: () => FEATURE_FREE_MIGRATIONS,
