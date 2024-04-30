@@ -73,16 +73,16 @@ const useSegmentationSurveyNavigation = ( {
 			return;
 		}
 
-		if ( answers?.[ currentQuestion.key ] ) {
-			recordTracksEvent( 'calypso_segmentation_survey_continue', {
-				survey_key: surveyKey,
-				question_key: currentQuestion.key,
-				answer_keys: answers?.[ currentQuestion.key ].join( ',' ) || '',
-			} );
-		} else {
+		if ( ! answers?.[ currentQuestion.key ] ) {
 			await skipToNextPage();
 			return;
 		}
+
+		recordTracksEvent( 'calypso_segmentation_survey_continue', {
+			survey_key: surveyKey,
+			question_key: currentQuestion.key,
+			answer_keys: answers?.[ currentQuestion.key ].join( ',' ) || '',
+		} );
 
 		await onContinue?.( currentQuestion );
 		nextPage();
