@@ -49,7 +49,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
 				__( 'Hosting Config' ),
-				true,
+				isDotcomSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -81,7 +81,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
 				__( 'GitHub Deployments' ),
-				true,
+				isDotcomSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
