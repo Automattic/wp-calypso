@@ -12,6 +12,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import {
 	isSiteOnWooExpressEcommerceTrial,
+	isSiteOnWooExpress,
 	getCurrentPlan,
 } from 'calypso/state/sites/plans/selectors';
 import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
@@ -94,8 +95,10 @@ export async function maybeRedirect( context, next ) {
 				const currentPlan = getCurrentPlan( refetchedState, siteId );
 				const purchase = getByPurchaseId( refetchedState, currentPlan?.id );
 
+				const isWooExpressPlatform =
+					isSiteOnWooExpress( refetchedState, siteId ) || purchase?.isWooExpressTrial;
 				const shouldUseCalypsoMyHome =
-					config.isEnabled( 'entrepreneur-my-home' ) && ! purchase?.isWooExpressTrial;
+					config.isEnabled( 'entrepreneur-my-home' ) && ! isWooExpressPlatform;
 
 				const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
 				const isSSOEnabled = !! isJetpackModuleActive( refetchedState, siteId, 'sso' );

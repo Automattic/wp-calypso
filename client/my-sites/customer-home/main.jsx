@@ -47,6 +47,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
 	isSiteOnWooExpressEcommerceTrial,
+	isSiteOnWooExpress,
 	isRequestingSitePlans as isFetchingSitePlans,
 } from 'calypso/state/sites/plans/selectors';
 import {
@@ -75,6 +76,7 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
+	isSiteWooExpress,
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
@@ -159,7 +161,10 @@ const Home = ( {
 		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
 		( fetchingJetpackModules || ssoModuleActive ) &&
 		( config.isEnabled( 'entrepreneur-my-home' )
-			? isRequestingSitePlans || isRequestingSitePurchases || purchase?.isWooExpressTrial
+			? isRequestingSitePlans ||
+			  isRequestingSitePurchases ||
+			  isSiteWooExpress ||
+			  purchase?.isWooExpressTrial
 			: true )
 	) {
 		return <WooCommerceHomePlaceholder />;
@@ -327,6 +332,7 @@ const mapStateToProps = ( state ) => {
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
+		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 		isSiteWooExpressEcommerceTrial: isSiteOnWooExpressEcommerceTrial( state, siteId ),
 		ssoModuleActive: !! isJetpackModuleActive( state, siteId, 'sso' ),
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
