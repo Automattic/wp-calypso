@@ -74,11 +74,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 
 	const includedWithAtomicPlanButton = (
 		<div className="plugin-details-cta__install">
-			<Button
-				className="plugin-details-cta__install-button"
-				href={ `/checkout/${ selectedSiteSlug }/${ preinstalledPremiumPluginProduct }` }
-				disabled
-			>
+			<Button className="plugin-details-cta__install-button" disabled>
 				{ translate( 'Included with your plan' ) }
 			</Button>
 		</div>
