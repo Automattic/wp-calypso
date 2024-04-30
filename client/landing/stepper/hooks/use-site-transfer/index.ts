@@ -9,7 +9,7 @@ type Options = Pick< UseQueryOptions, 'retry' >;
 /**
  * Hook to initiate a site transfer and monitor its progress
  */
-export const useSiteMigrationTransfer = ( siteId?: number, options?: Options ) => {
+export const useSiteTransfer = ( siteId?: number, options?: Options ) => {
 	const {
 		mutate: startTransfer,
 		status: startTransferStatus,

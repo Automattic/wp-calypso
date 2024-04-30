@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { useSiteMigrationTransfer } from '../';
+import { useSiteTransfer } from '..';
 
 const Wrapper =
 	( queryClient: QueryClient ) =>
@@ -16,7 +16,7 @@ const Wrapper =
 const render = ( { siteId, retry = 0 } ) => {
 	const queryClient = new QueryClient();
 
-	const renderResult = renderHook( () => useSiteMigrationTransfer( siteId, { retry } ), {
+	const renderResult = renderHook( () => useSiteTransfer( siteId, { retry } ), {
 		wrapper: Wrapper( queryClient ),
 	} );
 
@@ -57,7 +57,7 @@ const TRANSFER_ACTIVE = ( siteId: number ) => ( {
  * Running on Node env, like the tests, the TRANSFER_NOT_INITIATED response should be a 404 status code.
  * On the other hand, when running on the browser, the response should be a 200 status code with a JSON body with status 404.
  */
-describe( 'useSiteMigrationTransfer', () => {
+describe( 'useSiteTransfer', () => {
 	beforeAll( () => {
 		// Advance all node timers to avoid the hook to wait the default time to pool the status.
 		jest.useFakeTimers( { advanceTimers: 500 } );
