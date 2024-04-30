@@ -8,6 +8,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import SitesHeaderActions from '../sites-header-actions';
+import NeedSetupTable from './table';
 
 export default function NeedSetup() {
 	const translate = useTranslate();
@@ -26,6 +27,8 @@ export default function NeedSetup() {
 						</Actions>
 					</LayoutHeader>
 				</LayoutTop>
+
+				<NeedSetupTable />
 			</LayoutColumn>
 		</Layout>
 	);
