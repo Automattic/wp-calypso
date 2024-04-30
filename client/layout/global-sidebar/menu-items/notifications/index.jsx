@@ -55,6 +55,8 @@ class SidebarNotifications extends Component {
 		}
 	}
 
+	// This toggle gets called both on the calypso and panel sides.
+	// Throttle it to prevent calls on both sides from conflicting and cancelling each other out.
 	checkToggleNotes = throttle(
 		( event, forceToggle ) => {
 			const target = event ? event.target : false;
