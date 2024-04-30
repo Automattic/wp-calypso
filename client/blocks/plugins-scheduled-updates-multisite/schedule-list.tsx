@@ -8,8 +8,8 @@ import {
 import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState } from 'react';
-import { useErrors } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-errors';
 import { MultisitePluginUpdateManagerContext } from 'calypso/blocks/plugins-scheduled-updates-multisite/context';
+import { useErrors } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-errors';
 import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -64,15 +64,16 @@ export const ScheduleList = ( props: Props ) => {
 		}
 		closeRemoveConfirm();
 	};
-
+	const lowercasedSearchTerm = searchTerm?.toLowerCase();
 	const filteredSchedules = schedules
 		?.map( ( schedule ) => {
 			if ( ! searchTerm || ! searchTerm.length ) {
 				return schedule;
 			}
-
-			const filteredSites = schedule.sites.filter( ( site ) =>
-				site.title.toLowerCase().includes( searchTerm.toLowerCase() )
+			const filteredSites = schedule.sites.filter(
+				( site ) =>
+					site.title.toLowerCase().includes( lowercasedSearchTerm ) ||
+					site.URL.toLowerCase().includes( lowercasedSearchTerm )
 			);
 
 			return {
