@@ -47,6 +47,6 @@ p.listing-section-description {
 
 .listing-section.is-two-columns .listing-section-content {
 	@include break-wide {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(3, 1fr);
 	}
 }
