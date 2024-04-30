@@ -64,5 +64,7 @@ export const STATS_FEATURE_SUMMARY_LINKS_ALL = 'StatsModuleSummaryLinks/all';
 // UTM Stats which is already in use, so didn't align with the naming convertion.
 export const STATS_FEATURE_UTM_STATS = 'stats_utm';
 
+export const STATS_FEATURES_DEVICES_EVENT_NAME = 'stats_devices_module';
+
 // other
 export const STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE = 'DoYouLoveJetpackStatsNotice';

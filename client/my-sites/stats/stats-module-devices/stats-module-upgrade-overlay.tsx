@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import { STATS_TYPE_DEVICE_STATS } from '../constants';
+import { STATS_FEATURES_DEVICES_EVENT_NAME } from '../constants';
 import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
 import StatsListCard from '../stats-list/stats-list-card';
 
@@ -64,10 +64,10 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 				<StatsCardUpsellJetpack
 					className="stats-module__upsell"
 					siteId={ siteId }
-					statType={ STATS_TYPE_DEVICE_STATS }
+					statType={ STATS_FEATURES_DEVICES_EVENT_NAME }
 				/>
 			}
-		></StatsListCard>
+		/>
 	);
 };
 
