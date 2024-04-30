@@ -65,14 +65,18 @@ const PlanFeaturesList = ( {
 			);
 
 			if ( featureGroup && ! filteredWpcomFeatures.length ) {
-				// Render a placeholder to keep the grid aligned
-				return (
-					<PlanDivOrTdContainer
-						key={ `${ planSlug }-${ mapIndex }` }
-						isTableCell={ options?.isTableCell }
-						className="plan-features-2023-grid__table-item"
-					/>
-				);
+				if ( options?.isTableCell ) {
+					// Render a placeholder to keep the grid aligned
+					return (
+						<PlanDivOrTdContainer
+							key={ `${ planSlug }-${ mapIndex }` }
+							isTableCell={ options?.isTableCell }
+							className="plan-features-2023-grid__table-item"
+						/>
+					);
+				}
+				// No placeholder required if the element is not a part of the table.
+				return;
 			}
 
 			return (
