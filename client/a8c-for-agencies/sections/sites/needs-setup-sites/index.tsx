@@ -19,7 +19,8 @@ export default function NeedSetup() {
 	const { data, isFetching } = useFetchPendingSites();
 
 	const totalAvailableSites = data.filter(
-		( { state }: { state: string } ) => state === 'pending'
+		( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
+			features.wpcom_atomic.state === 'pending'
 	).length;
 
 	const availablePlans = totalAvailableSites
