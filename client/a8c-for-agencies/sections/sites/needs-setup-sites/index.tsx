@@ -19,12 +19,12 @@ export default function NeedSetup() {
 
 	const title = translate( 'Sites' );
 
-	const { data, isFetching } = useFetchPendingSites();
+	const { data: pendingSites, isFetching, refetch: refetchPendingSites } = useFetchPendingSites();
 
 	const { mutate: createWPCOMSite, isPending: isCreatingSite } = useCreateWPCOMSiteMutation();
 
 	const availableSites =
-		data?.filter(
+		pendingSites?.filter(
 			( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
 				features.wpcom_atomic.state === 'pending'
 		) ?? [];
@@ -41,7 +41,7 @@ export default function NeedSetup() {
 
 	const isProvisioning =
 		isCreatingSite ||
-		data?.find(
+		pendingSites?.find(
 			( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
 				features.wpcom_atomic.state === 'provisioning'
 		);
@@ -53,11 +53,12 @@ export default function NeedSetup() {
 				{
 					onSuccess: () => {
 						// refetch pending sites
+						refetchPendingSites();
 					},
 				}
 			);
 		},
-		[ createWPCOMSite ]
+		[ createWPCOMSite, refetchPendingSites ]
 	);
 
 	return (
