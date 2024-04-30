@@ -7,6 +7,7 @@ import {
 	useSaveAnswersMutation,
 	useSurveyStructureQuery,
 } from 'calypso/data/segmentaton-survey';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-navigation';
 
 type SegmentationSurveyProps = {
@@ -30,17 +31,28 @@ const SegmentationSurvey = ( { surveyKey, onBack, onComplete }: SegmentationSurv
 
 	const handleSave = useCallback(
 		async ( currentQuestion: Question, answerKeys: string[] ) => {
-			await mutateAsync( {
-				questionKey: currentQuestion.key,
-				answerKeys,
-			} );
+			try {
+				await mutateAsync( {
+					questionKey: currentQuestion.key,
+					answerKeys,
+				} );
 
-			if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
-				clearAnswers();
-				onComplete?.();
+				if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
+					clearAnswers();
+					onComplete?.();
+				}
+			} catch ( e ) {
+				const error = e as Error;
+
+				recordTracksEvent( 'calypso_segmentation_survey_error', {
+					survey_key: surveyKey,
+					question_key: currentQuestion.key,
+					answer_keys: answerKeys,
+					error_message: error.message,
+				} );
 			}
 		},
-		[ clearAnswers, mutateAsync, onComplete, questions ]
+		[ clearAnswers, mutateAsync, onComplete, questions, surveyKey ]
 	);
 
 	const onContinue = useCallback(
@@ -52,7 +64,7 @@ const SegmentationSurvey = ( { surveyKey, onBack, onComplete }: SegmentationSurv
 
 	const onSkip = useCallback(
 		async ( currentQuestion: Question ) => {
-			await handleSave( currentQuestion, [ 'skip' ] );
+			await handleSave( currentQuestion, [ 'skipp' ] );
 		},
 		[ handleSave ]
 	);
