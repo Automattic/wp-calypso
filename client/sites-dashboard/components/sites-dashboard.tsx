@@ -182,7 +182,7 @@ export function SitesDashboard( {
 		ref: 'topbar',
 	} );
 	const { __, _n } = useI18n();
-	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
@@ -203,8 +203,6 @@ export function SitesDashboard( {
 	} );
 
 	const isMobile = useMobileBreakpoint();
-
-	const allSites = liveSites.concat( deletedSites );
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
