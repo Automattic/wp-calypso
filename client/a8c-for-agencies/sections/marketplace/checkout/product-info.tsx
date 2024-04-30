@@ -1,5 +1,6 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { useTranslate } from 'i18n-calypso';
+import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/hooks/use-license-lightbox-data';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
@@ -36,6 +37,22 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 				count: presablePlan.install,
 				comment:
 					'The `install`, `visits` & `storage` are the count of WordPress installs, visits per month, and storage per month in the plan description.',
+			}
+		);
+	}
+
+	if ( product.family_slug === 'wpcom-hosting' ) {
+		productIcon = wpcomIcon;
+		productTitle = product.name;
+		productDescription = translate(
+			'Plan with %(install)d managed WordPress install, with 50GB of storage each.',
+			'Plan with %(install)d managed WordPress installs, with 50GB of storage each.',
+			{
+				args: {
+					install: product.quantity,
+				},
+				count: product.quantity,
+				comment: 'The `install` are the count of WordPress installs.',
 			}
 		);
 	}
