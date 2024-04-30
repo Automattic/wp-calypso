@@ -47,7 +47,7 @@ const SegmentationSurvey = ( { surveyKey, onBack, onComplete }: SegmentationSurv
 				recordTracksEvent( 'calypso_segmentation_survey_error', {
 					survey_key: surveyKey,
 					question_key: currentQuestion.key,
-					answer_keys: answerKeys,
+					answer_keys: answerKeys.join( ',' ),
 					error_message: error.message,
 				} );
 			}
