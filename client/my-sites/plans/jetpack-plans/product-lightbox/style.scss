@@ -72,8 +72,16 @@
 	}
 }
 
+.product-lightbox__variants-dropdown-link {
+	text-decoration: underline;
+}
+
 .product-lightbox__tiers-dropdown {
 	margin-bottom: 1rem;
+
+	.select-dropdown__item.is-disabled {
+		opacity: 1;
+	}
 
 	.select-dropdown__container {
 		width: 100%;
