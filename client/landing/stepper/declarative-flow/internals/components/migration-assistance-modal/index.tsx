@@ -7,7 +7,7 @@ import './style.scss';
 
 const EVENT_NAMES = {
 	accepted: 'calypso_migration_assistance_modal_deal_accepted',
-	declined: 'calypso_migration_assistance_modal_no_thanks_or_closed',
+	declined: 'calypso_migration_assistance_modal_deal_declined',
 };
 
 interface MigrationAssistanceModalProps {
