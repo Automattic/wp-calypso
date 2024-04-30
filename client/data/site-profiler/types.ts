@@ -81,3 +81,12 @@ export interface HostingProviderQueryResponse {
 	domain: string;
 	hosting_provider: HostingProvider;
 }
+
+export interface UrlBasicMetricsQueryResponse {
+	cls: number;
+	fid: number;
+	lcp: number;
+	fcp: number;
+	ttfb: number;
+	inp: number;
+}

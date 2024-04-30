@@ -4,12 +4,14 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
+import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
 import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
 import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
+import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
@@ -63,6 +65,16 @@ export default function SiteProfiler( props: Props ) {
 		urlData
 	);
 
+	const url = getValidUrl( routerDomain );
+
+	const {
+		data: basicMetrics,
+		error: errorBasicMetrics,
+		isFetching: isFetchingBasicMetrics,
+	} = useUrlBasicMetricsQuery( url );
+
+	const showBasicMetrics = basicMetrics && ! isFetchingBasicMetrics && ! errorBasicMetrics;
+
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
@@ -91,18 +103,16 @@ export default function SiteProfiler( props: Props ) {
 						// Translators: %s is the domain name searched
 						<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
 					}
-					{ showResultScreen && (
-						<LayoutBlockSection>
-							<HeadingInformation
-								domain={ domain }
-								conversionAction={ conversionAction }
-								onCheckAnotherSite={ () => updateDomainRouteParam( '' ) }
-								hostingProvider={ hostingProviderData?.hosting_provider }
-								urlData={ urlData }
-								domainCategory={ domainCategory }
-							/>
-						</LayoutBlockSection>
-					) }
+					<LayoutBlockSection>
+						<HeadingInformation
+							domain={ domain }
+							conversionAction={ conversionAction }
+							onCheckAnotherSite={ () => updateDomainRouteParam( '' ) }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							urlData={ urlData }
+							domainCategory={ domainCategory }
+						/>
+					</LayoutBlockSection>
 					{ siteProfilerData && ! siteProfilerData.is_domain_available && (
 						<>
 							<LayoutBlockSection>
@@ -121,6 +131,25 @@ export default function SiteProfiler( props: Props ) {
 								/>
 							</LayoutBlockSection>
 						</>
+					) }
+					{ showBasicMetrics && (
+						<LayoutBlockSection>
+							<div className="basic-metrics">
+								<h3>{ translate( 'Basic Metrics' ) }</h3>
+								<ul className="basic-metric-details result-list">
+									{ Object.entries( basicMetrics ).map( ( [ key, value ] ) => {
+										return (
+											<li>
+												<div className="name">
+													<a href={ `https://web.dev/articles/${ key }` }>{ key }</a>
+												</div>
+												<div>{ value }</div>
+											</li>
+										);
+									} ) }
+								</ul>
+							</div>
+						</LayoutBlockSection>
 					) }
 				</LayoutBlock>
 			) }
