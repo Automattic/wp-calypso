@@ -51,7 +51,7 @@ const useSitesMenuItems = ( path: string ) => {
 				icon: warning,
 				path: A4A_SITES_LINK,
 				link: A4A_SITES_LINK_NEEDS_ATTENTION,
-				title: translate( 'Needs Attention' ),
+				title: translate( 'Needs attention' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Sites / Needs Attention',
 				},
