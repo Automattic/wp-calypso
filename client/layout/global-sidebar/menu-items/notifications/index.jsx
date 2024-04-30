@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { debounce } from 'lodash';
+import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
@@ -55,22 +55,26 @@ class SidebarNotifications extends Component {
 		}
 	}
 
-	checkToggleNotes = debounce( ( event, forceToggle ) => {
-		const target = event ? event.target : false;
+	checkToggleNotes = throttle(
+		( event, forceToggle ) => {
+			const target = event ? event.target : false;
 
-		// Ignore clicks or other events which occur inside of the notification panel.
-		if (
-			target &&
-			( this.notificationLink.current.contains( target ) ||
-				this.notificationPanel.current.contains( target ) )
-		) {
-			return;
-		}
+			// Ignore clicks or other events which occur inside of the notification panel.
+			if (
+				target &&
+				( this.notificationLink.current.contains( target ) ||
+					this.notificationPanel.current.contains( target ) )
+			) {
+				return;
+			}
 
-		if ( this.props.isNotificationsOpen || forceToggle === true ) {
-			this.toggleNotesFrame( event );
-		}
-	}, 100 );
+			if ( this.props.isNotificationsOpen || forceToggle === true ) {
+				this.toggleNotesFrame( event );
+			}
+		},
+		100,
+		{ leading: true, trailing: false }
+	);
 
 	toggleNotesFrame = ( event ) => {
 		if ( event ) {
