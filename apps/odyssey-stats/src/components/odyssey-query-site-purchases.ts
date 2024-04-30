@@ -1,97 +1,34 @@
 /**
  * This is a Odyssey implementation of 'calypso/components/data/query-site-purchases'.
  */
-import { APIError } from '@automattic/data-stores';
-import { useQuery } from '@tanstack/react-query';
-import { isError } from 'lodash';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import wpcom from 'calypso/lib/wp';
-import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
-import {
-	PURCHASES_SITE_FETCH,
-	PURCHASES_SITE_FETCH_COMPLETED,
-	PURCHASES_SITE_FETCH_FAILED,
-} from 'calypso/state/action-types';
-import { getApiNamespace, getApiPath } from '../lib/get-api';
-
-async function queryOdysseyQuerySitePurchases( siteId: number | null ) {
-	if ( ! siteId ) {
-		return;
-	}
-
-	return wpcom.req
-		.get( {
-			path: getApiPath( '/site/purchases', { siteId } ),
-			apiNamespace: getApiNamespace(),
-		} )
-		.then( ( res: { data: string } ) => JSON.parse( res.data ) )
-		.catch( ( error: APIError ) => error );
-}
-/**
- * Update site products in the Redux store by fetching purchases via API for Odyssey Stats.
- */
-
-const useOdysseyQuerySitePurchases = ( siteId: number | null ) => {
-	return useQuery( {
-		...getDefaultQueryParams(),
-		queryKey: [ 'odyssey-stats', 'site-purchases', siteId ],
-		queryFn: () => queryOdysseyQuerySitePurchases( siteId ),
-		staleTime: 10 * 1000,
-		// If the module is not active, we don't want to retry the query.
-		retry: false,
-	} );
-};
+import { useSelector } from 'calypso/state';
+import { PURCHASES_SITE_FETCH_COMPLETED } from 'calypso/state/action-types';
+import { getSiteProducts } from 'calypso/state/sites/selectors';
 
 export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number | null } ) {
-	const {
-		data: purchases,
-		isFetching,
-		isError: hasOtherErrors,
-	} = useOdysseyQuerySitePurchases( siteId );
 	const reduxDispatch = useDispatch();
+	const purchasedProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 
 	useEffect( () => {
-		// Dispatch evet marking as requesting
 		reduxDispatch( {
-			type: PURCHASES_SITE_FETCH,
+			type: PURCHASES_SITE_FETCH_COMPLETED,
 			siteId,
+			purchases:
+				purchasedProducts?.map( ( product, index ) => ( {
+					ID: index,
+					product_id: product.productId,
+					product_slug: product.productSlug,
+					product_name: product.productName,
+					expired: product.expired,
+					expiry_status: product.expired ? 'expired' : 'active',
+					active: ! product.expired,
+					blog_id: siteId,
+					product_type: 'jetpack',
+				} ) ) ?? [],
 		} );
-
-		if ( isFetching ) {
-			return;
-		}
-
-		if ( isError( purchases ) || hasOtherErrors ) {
-			if ( ( purchases as APIError ).status !== 403 ) {
-				// Dispatch to the Purchases reducer for error status
-				reduxDispatch( {
-					type: PURCHASES_SITE_FETCH_FAILED,
-					error: 'purchase_fetch_failed',
-				} );
-			} else {
-				// TODO: Remove this after fixing the API permission issue from Jetpack.
-				reduxDispatch( {
-					type: PURCHASES_SITE_FETCH_COMPLETED,
-					siteId,
-					purchases: [
-						{
-							expiry_status: 'active',
-							product_slug: 'jetpack_stats_pwyw_yearly',
-							blog_id: siteId,
-						},
-					],
-				} );
-			}
-		} else {
-			// Dispatch to the Purchases reducer for consistent requesting status
-			reduxDispatch( {
-				type: PURCHASES_SITE_FETCH_COMPLETED,
-				siteId,
-				purchases: purchases,
-			} );
-		}
-	}, [ purchases, isFetching, reduxDispatch, hasOtherErrors, siteId ] );
+	}, [ reduxDispatch, siteId ] );
 
 	return null;
 }
