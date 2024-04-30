@@ -101,15 +101,10 @@ export default function PressableOverview() {
 				/>
 				<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 
-				<section className="pressable-overview__banner">
-					<h1 className="pressable-overview__banner-title">
-						{ translate( 'The Pressable Promise' ) }
-					</h1>
-
-					<h2 className="pressable-overview__banner-subtitle">
-						{ translate( 'Flexible plans that are designed to grow with your business.' ) }
-					</h2>
-				</section>
+				<HostingOverview
+					title={ translate( 'The Pressable Promise' ) }
+					subtitle={ translate( 'Flexible plans that are designed to grow with your business.' ) }
+				/>
 
 				<PressableOverviewFeatures />
 

@@ -3,7 +3,7 @@ import { getHostingLogo } from '../../lib/hosting';
 import './style.scss';
 
 interface HostingOverviewProps {
-	slug: string;
+	slug?: string;
 	title: string;
 	subtitle: string;
 }
@@ -11,7 +11,7 @@ interface HostingOverviewProps {
 export default function HostingOverview( { slug, title, subtitle }: HostingOverviewProps ) {
 	return (
 		<section className="hosting-overview__banner">
-			<div className="hosting-overview__banner-logo">{ getHostingLogo( slug ) }</div>
+			{ slug && <div className="hosting-overview__banner-logo">{ getHostingLogo( slug ) }</div> }
 			<h1 className="hosting-overview__banner-title">{ title }</h1>
 			<h2 className="hosting-overview__banner-subtitle">{ subtitle }</h2>
 		</section>
