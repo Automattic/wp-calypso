@@ -1,3 +1,4 @@
+import { MultisitePluginUpdateManagerContextProvider } from 'calypso/blocks/plugins-scheduled-updates-multisite/context';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleList } from './schedule-list';
 
@@ -18,15 +19,21 @@ export const PluginsScheduledUpdatesMultisite = ( {
 	onEditSchedule,
 	onShowLogs,
 }: Props ) => {
-	switch ( context ) {
-		case 'create':
-			return <ScheduleCreate onNavBack={ onNavBack } />;
-	}
 	return (
-		<ScheduleList
-			onCreateNewSchedule={ onCreateNewSchedule }
-			onEditSchedule={ onEditSchedule }
-			onShowLogs={ onShowLogs }
-		/>
+		<MultisitePluginUpdateManagerContextProvider>
+			{ ( () => {
+				switch ( context ) {
+					case 'create':
+						return <ScheduleCreate onNavBack={ onNavBack } />;
+				}
+				return (
+					<ScheduleList
+						onCreateNewSchedule={ onCreateNewSchedule }
+						onEditSchedule={ onEditSchedule }
+						onShowLogs={ onShowLogs }
+					/>
+				);
+			} )() }
+		</MultisitePluginUpdateManagerContextProvider>
 	);
 };
