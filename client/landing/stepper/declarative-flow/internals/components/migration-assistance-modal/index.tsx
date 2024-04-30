@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import { setMigrationAssistanceAccepted } from 'calypso/blocks/importer/wordpress/utils';
@@ -38,6 +39,12 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 		logEvent( acceptedDeal );
 		props.onConfirm?.();
 	};
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_migration_assistance_modal_loaded', {
+			user_site: importSiteHostName,
+		} );
+	}, [ importSiteHostName ] );
 
 	return (
 		<ConfirmModal
