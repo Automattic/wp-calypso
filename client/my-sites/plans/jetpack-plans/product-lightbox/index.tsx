@@ -147,7 +147,7 @@ const ProductLightbox: React.FC< Props > = ( {
 
 		const customTier = {
 			value: 'support',
-			label: translate( '{{a}}> %(largestTierValue)s %(unit)s /mo Contact Us{{/a}}', {
+			label: translate( '> %(largestTierValue)s %(unit)s /mo {{a}}Contact Us{{/a}}', {
 				args: {
 					largestTierValue: largestTierValue ?? 0,
 					unit: getTierUnitName( product.productSlug ),
