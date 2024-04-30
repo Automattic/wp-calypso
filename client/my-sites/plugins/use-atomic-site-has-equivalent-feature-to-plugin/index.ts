@@ -29,7 +29,7 @@ export default function useAtomicSiteHasEquivalentFeatureToPlugin( pluginSlug: s
 		'jetpack-social': FEATURE_REPUBLICIZE,
 		'jetpack-search': WPCOM_FEATURES_CLASSIC_SEARCH,
 	};
-	const featureEquivalentToPluginItem =
+	const featureEquivalentToPlugin =
 		( isAtomic &&
 			atomicFeaturesIncludedInPluginsMap[
 				pluginSlug as keyof typeof atomicFeaturesIncludedInPluginsMap
@@ -37,6 +37,6 @@ export default function useAtomicSiteHasEquivalentFeatureToPlugin( pluginSlug: s
 		'';
 
 	return useSelector( ( state ) =>
-		siteHasFeature( state, selectedSiteId, featureEquivalentToPluginItem )
+		siteHasFeature( state, selectedSiteId, featureEquivalentToPlugin )
 	);
 }

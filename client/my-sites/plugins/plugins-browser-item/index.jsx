@@ -14,7 +14,7 @@ import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
-import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin-item';
+import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
 import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';

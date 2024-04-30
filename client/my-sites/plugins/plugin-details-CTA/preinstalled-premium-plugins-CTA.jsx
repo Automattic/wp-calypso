@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin-item';
+import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
