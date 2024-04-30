@@ -18,7 +18,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * @param   {string}  pluginSlug - The slug of the plugin to check.
  * @returns {boolean} True if the plugin is equivalent to any of the Atomic site features.
  */
-export default function useAtomicSiteHasEquivalentFeatureToPluginItem( pluginSlug: string ) {
+export default function useAtomicSiteHasEquivalentFeatureToPlugin( pluginSlug: string ) {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 

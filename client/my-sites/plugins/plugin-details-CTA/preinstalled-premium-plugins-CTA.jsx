@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import useAtomicSiteHasEquivalentFeatureToPluginItem from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin-item';
+import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin-item';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -42,7 +42,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 
 	// Atomic sites already include features such as Jetpack backup, scan, videopress, publicize, and search. So
 	// therefore we should prevent users from installing these standalone plugin equivalents.
-	const atomicSiteHasEquivalentFeatureToPluginItem = useAtomicSiteHasEquivalentFeatureToPluginItem(
+	const atomicSiteHasEquivalentFeatureToPlugin = useAtomicSiteHasEquivalentFeatureToPlugin(
 		plugin.slug
 	);
 
@@ -115,7 +115,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		</div>
 	);
 
-	if ( atomicSiteHasEquivalentFeatureToPluginItem ) {
+	if ( atomicSiteHasEquivalentFeatureToPlugin ) {
 		return includedWithAtomicPlanButton;
 	}
 

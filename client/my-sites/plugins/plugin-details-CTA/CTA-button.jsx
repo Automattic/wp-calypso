@@ -11,7 +11,7 @@ import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
-import useAtomicSiteHasEquivalentFeatureToPluginItem from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin-item';
+import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin-item';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
@@ -103,7 +103,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 
 	// Atomic sites already include features such as Jetpack backup, scan, videopress, publicize, and search. So
 	// therefore we should prevent users from installing these standalone plugin equivalents.
-	const atomicSiteHasEquivalentFeatureToPluginItem = useAtomicSiteHasEquivalentFeatureToPluginItem(
+	const atomicSiteHasEquivalentFeatureToPlugin = useAtomicSiteHasEquivalentFeatureToPlugin(
 		plugin.slug
 	);
 
@@ -120,7 +120,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		buttonText = translate( 'Upgrade your plan' );
 	} else if ( shouldUpgrade ) {
 		buttonText = translate( 'Upgrade and activate' );
-	} else if ( atomicSiteHasEquivalentFeatureToPluginItem ) {
+	} else if ( atomicSiteHasEquivalentFeatureToPlugin ) {
 		buttonText = translate( 'Included with your plan' );
 	}
 
@@ -209,7 +209,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 				disabled={
 					( isJetpackSelfHosted && isMarketplaceProduct ) ||
 					isSiteConnected === false ||
-					atomicSiteHasEquivalentFeatureToPluginItem ||
+					atomicSiteHasEquivalentFeatureToPlugin ||
 					disabled
 				}
 			>

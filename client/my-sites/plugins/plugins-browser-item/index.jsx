@@ -14,7 +14,7 @@ import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
-import useAtomicSiteHasEquivalentFeatureToPluginItem from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin-item';
+import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin-item';
 import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
@@ -121,7 +121,7 @@ const PluginsBrowserListElement = ( props ) => {
 
 	// Atomic sites already include features such as Jetpack backup, scan, videopress, publicize, and search. So
 	// therefore we should prevent users from installing these standalone plugin equivalents.
-	const atomicSiteHasEquivalentFeatureToPluginItem = useAtomicSiteHasEquivalentFeatureToPluginItem(
+	const atomicSiteHasEquivalentFeatureToPlugin = useAtomicSiteHasEquivalentFeatureToPlugin(
 		plugin.slug
 	);
 
@@ -131,13 +131,13 @@ const PluginsBrowserListElement = ( props ) => {
 			( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
 				isWpcomPreinstalled ||
 				isPreinstalledPremiumPluginUpgraded ||
-				atomicSiteHasEquivalentFeatureToPluginItem ),
+				atomicSiteHasEquivalentFeatureToPlugin ),
 		[
 			selectedSite?.ID,
 			sitesWithPlugin,
 			isWpcomPreinstalled,
 			isPreinstalledPremiumPluginUpgraded,
-			atomicSiteHasEquivalentFeatureToPluginItem,
+			atomicSiteHasEquivalentFeatureToPlugin,
 		]
 	);
 
@@ -247,9 +247,7 @@ const PluginsBrowserListElement = ( props ) => {
 						<InstalledInOrPricing
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
-							atomicSiteHasEquivalentFeatureToPluginItem={
-								atomicSiteHasEquivalentFeatureToPluginItem
-							}
+							atomicSiteHasEquivalentFeatureToPlugin={ atomicSiteHasEquivalentFeatureToPlugin }
 							plugin={ plugin }
 							shouldUpgrade={ shouldUpgrade }
 							canInstallPlugins={ canInstallPlugins }
@@ -292,7 +290,7 @@ const PluginsBrowserListElement = ( props ) => {
 function InstalledInOrPricing( {
 	sitesWithPlugin,
 	isWpcomPreinstalled,
-	atomicSiteHasEquivalentFeatureToPluginItem,
+	atomicSiteHasEquivalentFeatureToPlugin,
 	plugin,
 	shouldUpgrade,
 	canInstallPlugins,
@@ -309,8 +307,7 @@ function InstalledInOrPricing( {
 	)?.active;
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 
-	const active =
-		isWpcomPreinstalled || isPluginActive || atomicSiteHasEquivalentFeatureToPluginItem;
+	const active = isWpcomPreinstalled || isPluginActive || atomicSiteHasEquivalentFeatureToPlugin;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isSaasProduct = useSelector( ( state ) => isSaasProductSelector( state, plugin.slug ) );
 
@@ -318,14 +315,14 @@ function InstalledInOrPricing( {
 	// is atomicSite and is plugin one of the keys of atomicFeaturesIncludedInPluginsMap?
 	// return does the site have the feature?
 
-	if ( isPreinstalledPremiumPlugin && ! atomicSiteHasEquivalentFeatureToPluginItem ) {
+	if ( isPreinstalledPremiumPlugin && ! atomicSiteHasEquivalentFeatureToPlugin ) {
 		return <PreinstalledPremiumPluginBrowserItemPricing plugin={ plugin } />;
 	}
 
 	if (
 		( sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
 		isWpcomPreinstalled ||
-		atomicSiteHasEquivalentFeatureToPluginItem
+		atomicSiteHasEquivalentFeatureToPlugin
 	) {
 		let installedText = '';
 		if ( isWpcomPreinstalled || currentSites?.length === 1 ) {
@@ -337,7 +334,7 @@ function InstalledInOrPricing( {
 				comment: '%d is the number of sites the user has the plugin installed on.',
 			} );
 		}
-		if ( atomicSiteHasEquivalentFeatureToPluginItem ) {
+		if ( atomicSiteHasEquivalentFeatureToPlugin ) {
 			installedText = translate( 'Included with your plan' );
 		}
 
