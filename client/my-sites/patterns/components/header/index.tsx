@@ -337,7 +337,7 @@ export const PatternsHeader = () => {
 				comment: 'Heading of the Pattern Library "Store" category page',
 			} ),
 			patternsDescription: translate(
-				'Give your site the clean, browstable look and feel of an online store with patterns designed to showcase and promote your products.',
+				'Give your site the clean, browsable look and feel of an online store with patterns designed to showcase and promote your products.',
 				{ comment: 'Intro text on the Pattern Library "Store" category page' }
 			),
 			layoutsMetaDescription: translate(
