@@ -79,42 +79,20 @@
 		gap: 1rem;
 		flex-wrap: wrap;
 
-		.subscribers__filter-control {
-
-			&.select-dropdown,
-			.select-dropdown__header {
-				height: 48px;
-				width: fit-content;
-				justify-content: space-between;
-
-				.gridicon {
-					margin-left: 1rem;
-				}
-
-				.select-dropdown__header-text {
-					font-weight: 400;
-				}
-			}
-
-			.select-dropdown__item.is-selected {
-				background-color: var(--color-primary);
-			}
-		}
-
 		.search-component {
-			min-width: min(400px, 100%);
+			min-width: min(25rem, 100%);
 			flex: 1;
 
-			max-width: 500px;
-			height: 48px;
+			max-width: 30rem;
+			height: 3rem;
 			box-sizing: border-box;
 
 			border: 1px solid $studio-gray-10;
 			border-radius: 2px;
 
-			.subscriptions-manager__search-icon {
-				margin-left: 18.5px;
-				margin-right: 14px;
+			.plugins-update-manager-multisite-filter__search-icon {
+				margin-left: 1rem;
+				margin-right: 0.875rem;
 			}
 
 			input.search-component__input[type="search"]::placeholder {
@@ -124,14 +102,6 @@
 			.components-spinner {
 				display: none;
 			}
-		}
-
-		.subscription-manager-sort-controls {
-			margin-left: auto;
-		}
-
-		&-spacer {
-			flex: 1;
 		}
 	}
 }
