@@ -24,15 +24,17 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
+	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingOverview from '../common/hosting-overview';
 import HostingOverviewFeatures from '../common/hosting-overview-features';
 import useProductAndPlans from '../hooks/use-product-and-plans';
 import useShoppingCart from '../hooks/use-shopping-cart';
-import { getCheapestPlan } from '../lib/hosting';
-import ShoppingCart from '../shopping-cart';
+import { getWPCOMCreatorPlan } from '../lib/hosting';
+import ShoppingCart, { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
 import WPCOMBulkSelector from './bulk-selection';
 import wpcomBulkOptions from './lib/wpcom-bulk-options';
 import WPCOMPlanCard from './wpcom-card';
@@ -43,7 +45,7 @@ export default function WpcomOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
+	const { selectedCartItems, onRemoveCartItem, setSelectedCartItems } = useShoppingCart();
 
 	const [ selectedCount, setSelectedCount ] = useState( wpcomBulkOptions[ 0 ] );
 
@@ -55,12 +57,28 @@ export default function WpcomOverview() {
 
 	const { wpcomPlans } = useProductAndPlans( {} );
 
-	const cheapestWPCOMPlan = getCheapestPlan( wpcomPlans );
+	const creatorPlan = getWPCOMCreatorPlan( wpcomPlans );
+
 	const onclickMoreInfo = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_hosting_wpcom_view_all_features_click' )
 		);
 	}, [ dispatch ] );
+
+	const onAddToCart = useCallback(
+		( plan: APIProductFamilyProduct, quantity: number ) => {
+			if ( plan ) {
+				// We will need to remove first any existing Pressable plan in the cart as we do not allow multiple Pressable plans to be purchase.
+				const items = selectedCartItems?.filter(
+					( cartItem ) => cartItem.family_slug !== 'wpcom-hosting'
+				);
+
+				setSelectedCartItems( [ ...items, { ...plan, quantity } ] );
+				page( A4A_MARKETPLACE_PRODUCTS_LINK + CART_URL_HASH_FRAGMENT );
+			}
+		},
+		[ selectedCartItems, setSelectedCartItems ]
+	);
 
 	const WPCOM_PRICING_PAGE_LINK = 'https://wordpress.com/pricing/';
 
@@ -113,11 +131,14 @@ export default function WpcomOverview() {
 				/>
 				<WPCOMBulkSelector selectedCount={ selectedCount } onSelectCount={ onSelectCount } />
 
-				<WPCOMPlanCard
-					plan={ cheapestWPCOMPlan }
-					quantity={ selectedCount.value }
-					discount={ selectedCount.discount }
-				/>
+				{ creatorPlan && (
+					<WPCOMPlanCard
+						plan={ creatorPlan }
+						quantity={ selectedCount.value }
+						discount={ selectedCount.discount }
+						onSelect={ onAddToCart }
+					/>
+				) }
 
 				<HostingOverview
 					title={ translate( 'Powerful development & platform tools' ) }
