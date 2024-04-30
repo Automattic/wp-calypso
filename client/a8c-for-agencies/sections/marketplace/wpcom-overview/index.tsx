@@ -142,7 +142,7 @@ export default function WpcomOverview() {
 
 				<HostingOverview
 					title={ translate( 'Powerful development & platform tools' ) }
-					subtitle={ translate( 'Build for developers, by developers' ) }
+					subtitle={ translate( 'Built for developers, by developers' ) }
 				/>
 
 				<HostingOverviewFeatures
