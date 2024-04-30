@@ -20,6 +20,7 @@ import {
 	filterCostOverridesForLineItem,
 	getLabel,
 	hasCheckoutVersion,
+	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -73,12 +74,22 @@ const DeleteButton = styled( Button )< { theme?: Theme; shouldUseCheckoutV2: boo
  * to display as a simple discount. This component displays more details about
  * certain offers.
  */
-function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseCartProduct } ) {
+function LineItemIntroOfferCostOverrideDetail( {
+	product,
+	costOverride,
+}: {
+	product: ResponseCartProduct;
+	costOverride: LineItemCostOverrideForDisplay;
+} ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
+	}
+
+	if ( ! isOverrideCodeIntroductoryOffer( costOverride.overrideCode ) ) {
+		return false;
 	}
 
 	// We only want to display this info for introductory offers which have
@@ -117,6 +128,10 @@ function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseC
 			: undefined;
 	const dueAmount = tosData?.renewal_price_integer;
 	const renewAmount = tosData?.regular_renewal_price_integer;
+	const dueTodayAmount =
+		product.cost_overrides?.find(
+			( override ) => override.override_code === costOverride.overrideCode
+		)?.new_subtotal_integer ?? product.item_subtotal_integer;
 	if ( ! dueDate || ! dueAmount || ! renewAmount ) {
 		return null;
 	}
@@ -132,7 +147,7 @@ function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseC
 			<div>
 				{ translate( 'Due today: %(price)s', {
 					args: {
-						price: formatCurrency( product.item_subtotal_integer, product.currency, {
+						price: formatCurrency( dueTodayAmount, product.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ),
@@ -205,7 +220,7 @@ function LineItemCostOverride( {
 	if ( isPriceIncrease ) {
 		return (
 			<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-				<LineItemIntroOfferCostOverrideDetail product={ product } />
+				<LineItemIntroOfferCostOverrideDetail product={ product } costOverride={ costOverride } />
 			</div>
 		);
 	}
@@ -221,7 +236,7 @@ function LineItemCostOverride( {
 						signForPositive: true,
 					} ) }
 			</span>
-			<LineItemIntroOfferCostOverrideDetail product={ product } />
+			<LineItemIntroOfferCostOverrideDetail product={ product } costOverride={ costOverride } />
 		</div>
 	);
 }
