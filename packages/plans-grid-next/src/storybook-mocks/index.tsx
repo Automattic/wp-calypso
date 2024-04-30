@@ -24,4 +24,5 @@ export const defaultArgs = {
 	showRefundPeriod: false,
 	recordTracksEvent: () => {},
 	planUpgradeCreditsApplicable: 418,
+	useActionCallback: () => () => {},
 };
