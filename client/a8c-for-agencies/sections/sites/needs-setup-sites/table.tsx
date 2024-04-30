@@ -7,7 +7,11 @@ import PlanField, { AvailablePlans } from './plan-field';
 
 import './style.scss';
 
-export default function NeedSetupTable() {
+type Props = {
+	availablePlans: AvailablePlans[];
+};
+
+export default function NeedSetupTable( { availablePlans }: Props ) {
 	const translate = useTranslate();
 
 	const fields = [
@@ -29,12 +33,7 @@ export default function NeedSetupTable() {
 
 	return (
 		<DataViews
-			data={ [
-				{
-					name: translate( 'WordPress.com Creator' ),
-					available: 1,
-				},
-			] }
+			data={ availablePlans }
 			paginationInfo={ { totalItems: 1, totalPages: 1 } }
 			fields={ fields }
 			view={ {

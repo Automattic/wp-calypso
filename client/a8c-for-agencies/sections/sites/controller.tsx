@@ -6,7 +6,7 @@ import {
 	DEFAULT_SORT_DIRECTION,
 	DEFAULT_SORT_FIELD,
 } from './constants';
-import NeedSetup from './need-setup';
+import NeedSetup from './needs-setup-sites';
 import SitesDashboard from './sites-dashboard';
 import { SitesDashboardProvider } from './sites-dashboard-provider';
 import type { DashboardSortInterface } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';

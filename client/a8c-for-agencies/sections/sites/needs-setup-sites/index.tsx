@@ -28,7 +28,14 @@ export default function NeedSetup() {
 					</LayoutHeader>
 				</LayoutTop>
 
-				<NeedSetupTable />
+				<NeedSetupTable
+					availablePlans={ [
+						{
+							name: translate( 'WordPress.com Creator' ),
+							available: 1,
+						},
+					] }
+				/>
 			</LayoutColumn>
 		</Layout>
 	);
