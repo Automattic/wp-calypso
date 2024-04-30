@@ -7,6 +7,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import SitesHeaderActions from '../sites-header-actions';
 import NeedSetupTable from './table';
 
@@ -14,6 +15,21 @@ export default function NeedSetup() {
 	const translate = useTranslate();
 
 	const title = translate( 'Sites' );
+
+	const { data, isFetching } = useFetchPendingSites();
+
+	const totalAvailableSites = data.filter(
+		( { state }: { state: string } ) => state === 'pending'
+	).length;
+
+	const availablePlans = totalAvailableSites
+		? [
+				{
+					name: translate( 'WordPress.com Creator' ),
+					available: totalAvailableSites,
+				},
+		  ]
+		: [];
 
 	return (
 		<Layout className="sites-dashboard sites-dashboard__layout preview-hidden" wide title={ title }>
@@ -28,14 +44,7 @@ export default function NeedSetup() {
 					</LayoutHeader>
 				</LayoutTop>
 
-				<NeedSetupTable
-					availablePlans={ [
-						{
-							name: translate( 'WordPress.com Creator' ),
-							available: 1,
-						},
-					] }
-				/>
+				<NeedSetupTable availablePlans={ availablePlans } isLoading={ isFetching } />
 			</LayoutColumn>
 		</Layout>
 	);
