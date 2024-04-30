@@ -9,6 +9,8 @@ import { getSiteProducts } from 'calypso/state/sites/selectors';
 
 export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number | null } ) {
 	const reduxDispatch = useDispatch();
+	// Site products are in the site object loaded before anything is rendered.
+	// The selector returns a new object everytime, so we can depend on it in useEffect.
 	const purchasedProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 
 	useEffect( () => {
