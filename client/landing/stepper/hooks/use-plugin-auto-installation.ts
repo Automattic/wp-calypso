@@ -19,6 +19,8 @@ interface SiteMigrationStatus {
 	error: Error | null;
 }
 
+type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
+
 const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
 	wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
 		apiNamespace: 'rest/v1.2',
@@ -39,7 +41,6 @@ const activatePlugin = async ( siteId: number, pluginName: string ) =>
 		},
 	} );
 
-type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
 const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options ) => {
 	return useQuery( {
 		queryKey: [ 'onboarding-site-plugin-status', siteId, pluginSlug ],

@@ -25,13 +25,15 @@ const getPluginActivationEndpoint = ( siteId: number ) =>
 
 const SITE_ID = 123;
 
-const render = ( { retry = 0 } = {} ) => {
+const render = ( { retry = 0, enabled = true } = {} ) => {
 	const queryClient = new QueryClient();
 
-	queryClient.setDefaultOptions( { queries: { retry } } );
-	const renderResult = renderHook( () => usePluginAutoInstallation( PLUGIN, SITE_ID, { retry } ), {
-		wrapper: Wrapper( queryClient ),
-	} );
+	const renderResult = renderHook(
+		() => usePluginAutoInstallation( PLUGIN, SITE_ID, { retry, enabled } ),
+		{
+			wrapper: Wrapper( queryClient ),
+		}
+	);
 
 	return {
 		...renderResult,
@@ -128,7 +130,7 @@ describe( 'usePluginAutoInstallation', () => {
 		);
 	} );
 
-	it( 'returns completed when all steps are successful', async () => {
+	it( 'returns completed and status success when all steps are successful', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( getSitePluginsEndpoint( SITE_ID ) )
 			.once()
@@ -195,5 +197,15 @@ describe( 'usePluginAutoInstallation', () => {
 			},
 			{ timeout: 3000 }
 		);
+	} );
+
+	it( "doesn't start the operation when the enabled is set to false", async () => {
+		const { result } = render( { enabled: false } );
+
+		expect( result.current ).toEqual( {
+			status: 'idle',
+			error: null,
+			completed: false,
+		} );
 	} );
 } );
