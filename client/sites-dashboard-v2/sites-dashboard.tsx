@@ -128,7 +128,7 @@ const SitesDashboardV2 = ( {
 		initialSiteFeature,
 		dataViewsState,
 		featureToRouteMap: FEATURE_TO_ROUTE_MAP,
-		queryParamKeys: [ 'page', 'per-page', 'status' ],
+		queryParamKeys: [ 'page', 'per-page', 'status', 'search' ],
 	} );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
@@ -189,11 +189,12 @@ const SitesDashboardV2 = ( {
 		const queryParams = {
 			search: dataViewsState.search?.trim(),
 			status: statusSlug === DEFAULT_STATUS_GROUP ? undefined : statusSlug,
+			page: dataViewsState.page > 1 ? dataViewsState.page : undefined,
 			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
 		window.setTimeout( () => handleQueryParamChange( queryParams ) );
-	}, [ dataViewsState.search, dataViewsState.perPage, statusSlug ] );
+	}, [ dataViewsState.search, dataViewsState.page, dataViewsState.perPage, statusSlug ] );
 
 	// Update site sorting preference on change
 	useEffect( () => {

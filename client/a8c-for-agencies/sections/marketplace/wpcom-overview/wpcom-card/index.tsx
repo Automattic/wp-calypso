@@ -11,9 +11,10 @@ type Props = {
 	plan: APIProductFamilyProduct;
 	quantity: number;
 	discount: number;
+	onSelect: ( plan: APIProductFamilyProduct, quantity: number ) => void;
 };
 
-export default function WPCOMPlanCard( { plan, quantity, discount }: Props ) {
+export default function WPCOMPlanCard( { plan, quantity, discount, onSelect }: Props ) {
 	const translate = useTranslate();
 
 	const originalPrice = Number( plan.amount ) * quantity;
@@ -54,7 +55,7 @@ export default function WPCOMPlanCard( { plan, quantity, discount }: Props ) {
 					</div>
 				</div>
 
-				<Button primary>
+				<Button primary onClick={ () => onSelect( plan, quantity ) }>
 					{ quantity > 1
 						? translate( 'Add %(quantity)s %(planName)s sites to cart', {
 								args: {

@@ -17,11 +17,12 @@ export const defaultArgs = {
 	planActionOverrides: {},
 	showLegacyStorageFeature: false,
 	showUpgradeableStorage: true,
-	stickyRowOffset: 32,
+	stickyRowOffset: 0,
 	useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
 	allFeaturesList: getFeaturesList(),
 	onStorageAddOnClick: () => {},
 	showRefundPeriod: false,
 	recordTracksEvent: () => {},
 	planUpgradeCreditsApplicable: 418,
+	useActionCallback: () => () => {},
 };

@@ -1,3 +1,5 @@
+import { VIPLogo } from '@automattic/components';
+import { translate } from 'i18n-calypso';
 import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
@@ -22,6 +24,17 @@ export function getCheapestPlan( plans: APIProductFamilyProduct[] ) {
 }
 
 /**
+ * Get the WPCOM Creator plan from a list of plans
+ * @param {APIProductFamilyProduct[]} plans - List of plans
+ * @returns {APIProductFamilyProduct} - WPCOM Creator plan
+ */
+export function getWPCOMCreatorPlan( plans: APIProductFamilyProduct[] ) {
+	return plans.find( ( plan: APIProductFamilyProduct ) => {
+		return plan.slug === 'wpcom-hosting-business';
+	} );
+}
+
+/**
  * Get the URL for a hosting provider
  * @param {string} slug - Hosting provider slug
  * @returns {string} - Hosting provider URL
@@ -32,6 +45,8 @@ export function getHostingPageUrl( slug: string ) {
 			return A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK;
 		case 'wpcom-hosting':
 			return A4A_MARKETPLACE_HOSTING_WPCOM_LINK;
+		case 'vip':
+			return 'https://wpvip.com/contact/';
 	}
 
 	return A4A_MARKETPLACE_HOSTING_LINK;
@@ -48,6 +63,13 @@ export function getHostingLogo( slug: string ) {
 			return <img src={ PressableLogo } alt="" />;
 		case 'wpcom-hosting':
 			return <img src={ WPCOMLogo } alt="" />;
+		case 'vip':
+			return (
+				<div className="wordpress-vip-logo">
+					<VIPLogo height={ 30 } width={ 67 } />
+					{ translate( '(Enterprise)' ) }
+				</div>
+			);
 	}
 
 	return null;

@@ -38,15 +38,6 @@
 		padding-block-start: 24px;
 	}
 
-	.item-preview__content {
-		.hosting-overview,
-		.site-monitoring-overview {
-			overflow-y: initial;
-			max-height: initial;
-			padding-bottom: 88px;
-		}
-	}
-
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -73,6 +64,7 @@
 		.dataviews-view-table tr td:last-child {
 			padding-right: 64px;
 			width: 20px;
+			white-space: nowrap;
 		}
 	}
 
@@ -185,7 +177,7 @@
 			display: none;
 		}
 
-		td:nth-child(n+2):nth-child(-n+5) {
+		.dataviews-view-table-wrapper td:nth-child(n+2):nth-child(-n+5) {
 			display: none;
 		}
 

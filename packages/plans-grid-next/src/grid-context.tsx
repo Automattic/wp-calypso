@@ -1,6 +1,6 @@
 import { createContext, useContext } from '@wordpress/element';
 import type { UseActionCallback, GridContextProps, GridPlan, PlansIntent } from './types';
-import type { FeatureList } from '@automattic/calypso-products';
+import type { FeatureList, FeatureGroupMap } from '@automattic/calypso-products';
 import type { Plans } from '@automattic/data-stores';
 
 interface PlansGridContext {
@@ -15,6 +15,17 @@ interface PlansGridContext {
 		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
 	};
 	coupon?: string;
+	enableFeatureTooltips?: boolean;
+	/**
+	 * `enableCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
+	 * for rendering features with categories based on available/associated feature group map.
+	 */
+	enableCategorisedFeatures?: boolean;
+	/**
+	 * `featureGroupMap` is relevant for rendering features with categories.
+	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `enableCategorisedFeatures` is set).
+	 */
+	featureGroupMap: Partial< FeatureGroupMap >;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -29,6 +40,9 @@ const PlansGridContextProvider = ( {
 	siteId,
 	children,
 	coupon,
+	enableFeatureTooltips,
+	enableCategorisedFeatures,
+	featureGroupMap,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -48,6 +62,9 @@ const PlansGridContextProvider = ( {
 				allFeaturesList,
 				helpers: { useCheckPlanAvailabilityForPurchase, useActionCallback, recordTracksEvent },
 				coupon,
+				enableFeatureTooltips,
+				enableCategorisedFeatures,
+				featureGroupMap,
 			} }
 		>
 			{ children }

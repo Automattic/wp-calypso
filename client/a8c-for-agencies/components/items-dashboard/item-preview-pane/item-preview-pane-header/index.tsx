@@ -68,7 +68,6 @@ export default function ItemPreviewPaneHeader( {
 								variant="link"
 								className="item-preview__header-summary-link"
 								href={ `${ itemData.adminUrl }` }
-								target="_blank"
 							>
 								<span>{ translate( 'WP Admin' ) }</span>
 							</Button>

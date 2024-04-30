@@ -32,7 +32,10 @@ export const MySitesSidebarUnifiedBody = ( { path, children, onMenuItemClick } )
 		<>
 			{ menuItems &&
 				menuItems.map( ( item, i ) => {
-					const isSelected = item?.url && itemLinkMatches( item.url, path );
+					const isSelected =
+						( item?.url && itemLinkMatches( item.url, path ) ) ||
+						// Keep the Sites icon selected when there is a selected site.
+						( item.slug === 'sites' && site );
 
 					if ( 'current-site' === item?.type ) {
 						return (
