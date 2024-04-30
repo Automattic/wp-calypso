@@ -64,7 +64,7 @@ const SegmentationSurvey = ( { surveyKey, onBack, onComplete }: SegmentationSurv
 
 	const onSkip = useCallback(
 		async ( currentQuestion: Question ) => {
-			await handleSave( currentQuestion, [ 'skipp' ] );
+			await handleSave( currentQuestion, [ 'skip' ] );
 		},
 		[ handleSave ]
 	);
