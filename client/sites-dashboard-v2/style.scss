@@ -37,14 +37,6 @@
 		padding-block-start: 24px;
 	}
 
-	.item-preview__content {
-		.hosting-overview,
-		.site-monitoring-overview {
-			overflow-y: initial;
-			max-height: initial;
-		}
-	}
-
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -81,6 +73,8 @@
 	}
 
 	@media (max-width: $break-large) {
+		height: calc(100vh - 120px); /* Matches the offset defined in PR #65520 */
+
 		.section-nav__mobile-header {
 			padding: 13px;
 		}
@@ -181,7 +175,7 @@
 			display: none;
 		}
 
-		td:nth-child(n+2):nth-child(-n+5) {
+		.dataviews-view-table-wrapper td:nth-child(n+2):nth-child(-n+5) {
 			display: none;
 		}
 

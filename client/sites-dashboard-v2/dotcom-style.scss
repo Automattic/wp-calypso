@@ -35,6 +35,18 @@
 	.a4a-layout__header-title {
 		display: block;
 	}
+
+	.item-preview__content {
+		.hosting-overview,
+		.site-monitoring-overview {
+			overflow-y: initial;
+			max-height: initial;
+		}
+	}
+
+	@media (max-width: $break-large) {
+		height: calc(100vh - 32px);
+	}
 }
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
