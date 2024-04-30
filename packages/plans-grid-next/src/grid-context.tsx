@@ -17,13 +17,13 @@ interface PlansGridContext {
 	coupon?: string;
 	enableFeatureTooltips?: boolean;
 	/**
-	 * `renderCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
+	 * `enableCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
 	 * for rendering features with categories based on available/associated feature group map.
 	 */
-	renderCategorisedFeatures?: boolean;
+	enableCategorisedFeatures?: boolean;
 	/**
 	 * `featureGroupMap` is relevant for rendering features with categories.
-	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `renderCategorisedFeatures` is set).
+	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `enableCategorisedFeatures` is set).
 	 */
 	featureGroupMap: Partial< FeatureGroupMap >;
 }
@@ -41,7 +41,7 @@ const PlansGridContextProvider = ( {
 	children,
 	coupon,
 	enableFeatureTooltips,
-	renderCategorisedFeatures,
+	enableCategorisedFeatures,
 	featureGroupMap,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
@@ -63,7 +63,7 @@ const PlansGridContextProvider = ( {
 				helpers: { useCheckPlanAvailabilityForPurchase, useActionCallback, recordTracksEvent },
 				coupon,
 				enableFeatureTooltips,
-				renderCategorisedFeatures,
+				enableCategorisedFeatures,
 				featureGroupMap,
 			} }
 		>

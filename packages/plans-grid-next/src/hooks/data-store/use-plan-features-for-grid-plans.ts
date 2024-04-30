@@ -3,7 +3,6 @@ import {
 	applyTestFiltersToPlansList,
 	isMonthly,
 } from '@automattic/calypso-products';
-import { uniqueBy } from '@automattic/js-utils';
 import { useMemo } from '@wordpress/element';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import useHighlightedFeatures from './use-highlighted-features';
@@ -203,15 +202,23 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 				previousPlan = planSlug;
 
+				if ( includeAllFeatures ) {
+					// Add the previous plan features only if it is not present in the current plan features.
+					previousPlanFeatures.wpcomFeatures.forEach( ( feature ) => {
+						if (
+							! wpcomFeaturesTransformed.find(
+								( featureToFind ) => featureToFind.getSlug() === feature.getSlug()
+							)
+						) {
+							wpcomFeaturesTransformed.push( feature );
+						}
+					} );
+				}
+
 				return {
 					...acc,
 					[ planSlug ]: {
-						wpcomFeatures: includeAllFeatures
-							? uniqueBy(
-									[ ...previousPlanFeatures.wpcomFeatures, ...wpcomFeaturesTransformed ],
-									( featureA, featureB ) => featureA.getSlug() === featureB.getSlug()
-							  )
-							: wpcomFeaturesTransformed,
+						wpcomFeatures: wpcomFeaturesTransformed,
 						jetpackFeatures: jetpackFeaturesTransformed,
 						storageOptions:
 							planConstantObj.get2023PricingGridSignupStorageOptions?.(

@@ -107,7 +107,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		isInAdmin,
 		className,
 		enableFeatureTooltips,
-		renderCategorisedFeatures,
+		enableCategorisedFeatures,
 		featureGroupMap = {},
 	} = props;
 
@@ -139,7 +139,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				enableFeatureTooltips={ enableFeatureTooltips }
-				renderCategorisedFeatures={ renderCategorisedFeatures }
+				enableCategorisedFeatures={ enableCategorisedFeatures }
 				featureGroupMap={ featureGroupMap }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />

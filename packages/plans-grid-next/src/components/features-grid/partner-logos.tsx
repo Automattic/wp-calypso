@@ -21,12 +21,12 @@ type PreviousFeaturesIncludedTitleProps = {
 };
 
 const PartnerLogos = ( { renderedGridPlans, options }: PreviousFeaturesIncludedTitleProps ) => {
-	const { featureGroupMap, renderCategorisedFeatures } = usePlansGridContext();
+	const { featureGroupMap, enableCategorisedFeatures } = usePlansGridContext();
 
 	return renderedGridPlans.map( ( { planSlug, features: { wpcomFeatures, jetpackFeatures } } ) => {
 		const shouldRenderLogos = isWpcomEnterpriseGridPlan( planSlug );
 		const shouldCoverFullColumn =
-			( wpcomFeatures.length === 0 && jetpackFeatures.length === 0 ) || renderCategorisedFeatures;
+			( wpcomFeatures.length === 0 && jetpackFeatures.length === 0 ) || enableCategorisedFeatures;
 		const rowspanProp =
 			options?.isTableCell && shouldRenderLogos
 				? {
@@ -36,7 +36,7 @@ const PartnerLogos = ( { renderedGridPlans, options }: PreviousFeaturesIncludedT
 							 * - the number of feature groups + 2 (1 this row + 1 row of storage) in case of feature categories,
 							 * - otherwise: 4 (1 this row + 1 row of features + 1 row of storage + 1 row for the "everything in ... plus" part)
 							 */
-							rowSpan: renderCategorisedFeatures ? Object.values( featureGroupMap ).length + 2 : 4,
+							rowSpan: enableCategorisedFeatures ? Object.values( featureGroupMap ).length + 2 : 4,
 						} ),
 				  }
 				: {};
