@@ -4,12 +4,11 @@ import { useSiteTransferMutation } from './mutation';
 import { useSiteTransferStatusQuery } from './query';
 
 type Status = 'idle' | 'pending' | 'success' | 'error';
+type Options = Pick< UseQueryOptions, 'retry' >;
+
 /**
  * Hook to initiate a site transfer and monitor its progress
  */
-
-type Options = Pick< UseQueryOptions, 'retry' >;
-
 export const useSiteMigrationTransfer = ( siteId?: number, options?: Options ) => {
 	const {
 		mutate: startTransfer,

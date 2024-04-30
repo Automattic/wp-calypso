@@ -38,30 +38,18 @@ const TRANSFER_PROVISIONED = ( siteId: number ) => ( {
 	atomic_transfer_id: '1254451',
 	blog_id: siteId,
 	status: 'provisioned',
-	created_at: '2024-04-24 08:32:07',
-	is_stuck: false,
-	is_stuck_reset: false,
-	in_lossless_revert: false,
 } );
 
 const TRANSFER_COMPLETED = ( siteId: number ) => ( {
 	atomic_transfer_id: '1254451',
 	blog_id: siteId,
 	status: 'completed',
-	created_at: '2024-04-24 08:32:07',
-	is_stuck: false,
-	is_stuck_reset: false,
-	in_lossless_revert: false,
 } );
 
 const TRANSFER_ACTIVE = ( siteId: number ) => ( {
-	atomic_transfer_id: 1253811,
+	atomic_transfer_id: '1253811',
 	blog_id: siteId,
 	status: 'active',
-	created_at: '2024-04-23 16:21:01',
-	is_stuck: false,
-	is_stuck_reset: false,
-	in_lossless_revert: false,
 } );
 
 /**
@@ -84,7 +72,7 @@ describe( 'useSiteMigrationTransfer', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'returns idle when there is no siteId available', () => {
+	it( 'returns status "idle" when there is no siteId available', () => {
 		const { result } = render( { siteId: undefined } );
 
 		expect( result.current ).toEqual( {
@@ -94,92 +82,7 @@ describe( 'useSiteMigrationTransfer', () => {
 		} );
 	} );
 
-	it( 'returns pending when is waiting the site to be ready', async () => {
-		const siteId = 123;
-
-		nock( 'https://public-api.wordpress.com:443' )
-			.persist()
-			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.reply( 200, TRANSFER_ACTIVE );
-
-		const { result } = render( { siteId } );
-
-		await waitFor(
-			() => {
-				expect( result.current ).toEqual( {
-					completed: false,
-					status: 'pending',
-					error: null,
-				} );
-			},
-			{ timeout: 3000 }
-		);
-	} );
-
-	it( 'returns an error when there is an error to fetch the status', async () => {
-		const siteId = 123;
-
-		nock( 'https://public-api.wordpress.com:443' )
-			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.times( 2 )
-			.reply( 500, new Error( 'Internal Server Error' ) );
-
-		const { result } = render( { siteId, retry: 1 } );
-
-		await waitFor(
-			() => {
-				expect( result.current ).toEqual( {
-					completed: false,
-					status: 'error',
-					error: expect.any( Error ),
-				} );
-			},
-			{ timeout: 3000 }
-		);
-	} );
-
-	it( 'returns pending while is retrying to get the status', async () => {
-		const siteId = 123;
-
-		nock( 'https://public-api.wordpress.com:443' )
-			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.times( 2 )
-			.reply( 500, new Error( 'Internal Server Error' ) );
-
-		const { result } = render( { siteId, retry: 1 } );
-
-		await waitFor(
-			() => {
-				expect( result.current ).toEqual( {
-					completed: false,
-					status: 'pending',
-					error: null,
-				} );
-			},
-			{ timeout: 3000 }
-		);
-	} );
-
-	it( 'returns success the latest transfer returns completed', async () => {
-		const siteId = 12345;
-
-		nock( 'https://public-api.wordpress.com:443' )
-			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.once()
-			.reply( 200, TRANSFER_COMPLETED );
-
-		const { result } = render( { siteId } );
-
-		await waitFor( () => {
-			expect( result.current ).toEqual( {
-				completed: true,
-				status: 'success',
-				error: null,
-			} );
-		} );
-	} );
-
-	it( 'starts to pool the status after start a new flow', async () => {
+	it( 'returns the status "success" when all flow was executed with success', async () => {
 		const siteId = 4444;
 
 		nock( 'https://public-api.wordpress.com:443' )
@@ -209,32 +112,88 @@ describe( 'useSiteMigrationTransfer', () => {
 		);
 	} );
 
-	it( 'stops to pool when the transfer is completed', async () => {
-		const siteId = 555;
+	it( 'returns the status "success" when the transfer status is "completed"', async () => {
+		const siteId = 12345;
 
-		const scope = nock( 'https://public-api.wordpress.com:443' );
-		scope
-			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.once()
-			.reply( 200, TRANSFER_ACTIVE )
-			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.once()
-			.reply( 200, TRANSFER_PROVISIONED( siteId ) )
+		nock( 'https://public-api.wordpress.com:443' )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
 			.once()
 			.reply( 200, TRANSFER_COMPLETED( siteId ) );
 
 		const { result } = render( { siteId } );
 
+		await waitFor( () => {
+			expect( result.current ).toEqual( {
+				completed: true,
+				status: 'success',
+				error: null,
+			} );
+		} );
+	} );
+
+	it( 'returns the status "pending" while is retrying to get the status', async () => {
+		const siteId = 123;
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.times( 2 )
+			.reply( 500, new Error( 'Internal Server Error' ) );
+
+		const { result } = render( { siteId, retry: 1 } );
+
 		await waitFor(
 			() => {
 				expect( result.current ).toEqual( {
-					completed: true,
-					status: 'success',
+					completed: false,
+					status: 'pending',
 					error: null,
 				} );
 			},
-			{ timeout: 9000 }
+			{ timeout: 3000 }
+		);
+	} );
+
+	it( 'returns status "pending" when the status transfer is different of "completed', async () => {
+		const siteId = 123;
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.persist()
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.reply( 200, TRANSFER_PROVISIONED( siteId ) );
+
+		const { result } = render( { siteId } );
+
+		await waitFor(
+			() => {
+				expect( result.current ).toEqual( {
+					completed: false,
+					status: 'pending',
+					error: null,
+				} );
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	it( 'returns the status "error" when the retry limit was reached', async () => {
+		const siteId = 123;
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.times( 2 )
+			.reply( 500, new Error( 'Internal Server Error' ) );
+
+		const { result } = render( { siteId, retry: 1 } );
+
+		await waitFor(
+			() => {
+				expect( result.current ).toEqual( {
+					completed: false,
+					status: 'error',
+					error: expect.any( Error ),
+				} );
+			},
+			{ timeout: 3000 }
 		);
 	} );
 } );
