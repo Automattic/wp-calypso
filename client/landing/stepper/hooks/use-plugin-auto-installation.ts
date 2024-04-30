@@ -23,33 +23,33 @@ interface SiteMigrationStatus {
 	error: Error | null;
 }
 
-const fetchPluginsForSite = async ( siteIdOrSlug: string ): Promise< Response > =>
-	wpcom.req.get( `/sites/${ siteIdOrSlug }/plugins?http_envelope=1`, {
+const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
+	wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
 		apiNamespace: 'rest/v1.2',
 	} );
 
-const installPlugin = async ( siteIdOrSlug: string, pluginSlug: string ) =>
+const installPlugin = async ( siteId: number, pluginSlug: string ) =>
 	wpcom.req.post( {
-		path: `/sites/${ siteIdOrSlug }/plugins/${ pluginSlug }/install`,
+		path: `/sites/${ siteId }/plugins/${ pluginSlug }/install`,
 		apiNamespace: 'rest/v1.2',
 	} );
 
-const activatePlugin = async ( siteIdOrSlug: string, pluginName: string ) =>
+const activatePlugin = async ( siteId: number, pluginName: string ) =>
 	wpcom.req.post( {
-		path: `/sites/${ siteIdOrSlug }/plugins/${ encodeURIComponent( pluginName ) }`,
+		path: `/sites/${ siteId }/plugins/${ encodeURIComponent( pluginName ) }`,
 		apiNamespace: 'rest/v1.2',
 		body: {
 			active: true,
 		},
 	} );
 
-const usePluginStatus = ( pluginSlug: string, siteIdOrSlug?: string ) => {
+const usePluginStatus = ( pluginSlug: string, siteId?: number ) => {
 	return useQuery( {
-		queryKey: [ 'onboarding-site-plugin-status', siteIdOrSlug, pluginSlug ],
 		queryFn: () => fetchPluginsForSite( siteIdOrSlug! ),
 		enabled: !! siteIdOrSlug,
 		retry: true,
 		retryDelay: 2000,
+		queryKey: [ 'onboarding-site-plugin-status', siteId, pluginSlug ],
 		select: ( data ) => {
 			return {
 				isActive: data.plugins.some( ( plugin ) => plugin.slug === pluginSlug && plugin.active ),
@@ -59,45 +59,46 @@ const usePluginStatus = ( pluginSlug: string, siteIdOrSlug?: string ) => {
 	} );
 };
 
-const usePluginInstallation = ( pluginSlug: string, siteIdOrSlug: string ) => {
+const usePluginInstallation = ( pluginSlug: string, siteId?: number ) => {
 	return useMutation( {
-		mutationKey: [ 'onboarding-site-plugin-installation', siteIdOrSlug, pluginSlug ],
-		mutationFn: async () => installPlugin( siteIdOrSlug, pluginSlug ),
 		retry: true,
 		retryDelay: 2000,
+		mutationKey: [ 'onboarding-site-plugin-installation', siteId, pluginSlug ],
+		mutationFn: async () => installPlugin( siteId!, pluginSlug ),
 	} );
 };
 
-const usePluginActivation = ( pluginName: string, siteIdOrSlug: string ) => {
+const usePluginActivation = ( pluginName: string, siteId?: number ) => {
 	return useMutation( {
-		mutationKey: [ 'onboarding-site-plugin-activation', siteIdOrSlug, pluginName ],
 		mutationFn: async () => activatePlugin( siteIdOrSlug, pluginName ),
 		retry: true,
+		mutationKey: [ 'onboarding-site-plugin-activation', siteId, pluginName ],
+		mutationFn: async () => activatePlugin( siteId!, pluginName ),
 		retryDelay: 2000,
 	} );
 };
 
 export const usePluginAutoInstallation = (
 	plugin: SitePluginParam,
-	siteIdOrSlug?: string
+	siteId?: number
 ): SiteMigrationStatus => {
 	const {
 		data: status,
 		error: statusError,
 		status: provisioningStatus,
-	} = usePluginStatus( plugin.slug, siteIdOrSlug );
+	} = usePluginStatus( plugin.slug, siteId );
 
 	const {
 		mutate: install,
 		error: installationError,
 		status: instalationRequestStatus,
-	} = usePluginInstallation( plugin.slug, siteIdOrSlug! );
+	} = usePluginInstallation( plugin.slug, siteId );
 
 	const {
 		mutate: activatePlugin,
 		status: activationRequestStatus,
 		error: activationError,
-	} = usePluginActivation( plugin.name, siteIdOrSlug! );
+	} = usePluginActivation( plugin.name, siteId );
 
 	const skipped: SkipStatus = {
 		installation: status?.isInstalled,
