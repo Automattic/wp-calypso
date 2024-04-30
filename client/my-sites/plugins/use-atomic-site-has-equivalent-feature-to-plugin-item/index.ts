@@ -31,7 +31,6 @@ export default function useAtomicSiteHasEquivalentFeatureToPluginItem( pluginSlu
 	};
 	const featureEquivalentToPluginItem =
 		( isAtomic &&
-			pluginSlug in atomicFeaturesIncludedInPluginsMap &&
 			atomicFeaturesIncludedInPluginsMap[
 				pluginSlug as keyof typeof atomicFeaturesIncludedInPluginsMap
 			] ) ||
