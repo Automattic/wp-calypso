@@ -1098,6 +1098,19 @@
 	}
 }
 
+.dataviews-pagination {
+	box-sizing: border-box;
+	width: 100%;
+
+	@media only screen and ( min-width: 600px ) {
+		width: calc(100% - 48px);
+	}
+
+	@media only screen and ( min-width: 782px ) {
+		width: calc(100% - ( var(--sidebar-width-max) + 16px));
+	}
+}
+
 /* See wp-calypso/client/layout/style.scss for the original style - this is removed on sites dashboard to enable pagination to display properly. */
 .layout__primary .preview-hidden {
 	@include breakpoint-deprecated( ">960px" ) {
