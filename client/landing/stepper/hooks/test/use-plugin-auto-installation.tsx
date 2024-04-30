@@ -60,7 +60,7 @@ describe( 'usePluginAutoInstallation', () => {
 		} );
 	} );
 
-	it( 'returns pending when the the retrying to fetch the plugin list after an error', async () => {
+	it( 'returns status "pending" when a retry is required to get the plugin list', async () => {
 		const siteId = 123;
 
 		nock( 'https://public-api.wordpress.com:443' )
@@ -82,7 +82,7 @@ describe( 'usePluginAutoInstallation', () => {
 		);
 	} );
 
-	it( 'returns pending when is retrying install the plugin', async () => {
+	it( 'returns "pending" when a retry is required to install a plugin', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( getSitePluginsEndpoint( SITE_ID ) )
 			.once()
@@ -104,7 +104,7 @@ describe( 'usePluginAutoInstallation', () => {
 		);
 	} );
 
-	it( 'returns pending when is retrying to active plugin', async () => {
+	it( 'returns "pending" when a retry is required to active a plugin', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( getSitePluginsEndpoint( SITE_ID ) )
 			.once()
@@ -138,7 +138,7 @@ describe( 'usePluginAutoInstallation', () => {
 			.post( getPluginActivationEndpoint( SITE_ID ) )
 			.reply( 200 );
 
-		const { result } = render( { retry: 2 } );
+		const { result } = render( { retry: 0 } );
 
 		await waitFor(
 			() => {
