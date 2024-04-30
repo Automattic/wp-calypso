@@ -55,10 +55,10 @@ class SidebarNotifications extends Component {
 		}
 	}
 
-	// This toggle gets called both on the calypso and panel sides.
-	// Throttle it to prevent calls on both sides from conflicting and cancelling each other out.
+	// This toggle gets called both on the calypso and panel sides. Throttle it to prevent calls on
+	// both sides from conflicting and cancelling each other out.
 	checkToggleNotes = throttle(
-		( event, forceToggle ) => {
+		( event, forceToggle, forceOpen = false ) => {
 			const target = event ? event.target : false;
 
 			// Ignore clicks or other events which occur inside of the notification panel.
@@ -70,7 +70,12 @@ class SidebarNotifications extends Component {
 				return;
 			}
 
-			if ( this.props.isNotificationsOpen || forceToggle === true ) {
+			// Prevent toggling closed if we are opting to open.
+			if ( forceOpen && this.props.isNotificationsOpen ) {
+				return;
+			}
+
+			if ( this.props.isNotificationsOpen || forceToggle === true || forceOpen === true ) {
 				this.toggleNotesFrame( event );
 			}
 		},
