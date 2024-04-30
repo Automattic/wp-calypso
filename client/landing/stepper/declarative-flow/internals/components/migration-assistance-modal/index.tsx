@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
+import { setMigrationAssistanceAccepted } from 'calypso/blocks/importer/wordpress/utils';
 import './style.scss';
 interface MigrationAssistanceModalProps {
 	navigateBack: ( () => void ) | undefined;
@@ -12,6 +13,11 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 	const translate = useTranslate();
 	const importSiteHostName = props.migrateFrom || translate( 'your site' );
 
+	const acceptMigrationAssistance = () => {
+		setMigrationAssistanceAccepted();
+		props.onConfirm?.();
+	};
+
 	return (
 		<ConfirmModal
 			compact={ false }
@@ -19,7 +25,7 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 			confirmText={ translate( 'Take the deal' ) }
 			cancelText={ translate( 'No, thanks' ) }
 			onClose={ props.navigateBack }
-			onConfirm={ () => {} }
+			onConfirm={ acceptMigrationAssistance }
 		>
 			<p>
 				{ translate(
