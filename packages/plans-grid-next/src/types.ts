@@ -7,6 +7,7 @@ import type {
 	WPComStorageAddOnSlug,
 	FeatureObject,
 	StorageOption,
+	FeatureGroupMap,
 } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -157,13 +158,42 @@ export type GridContextProps = {
 	children: React.ReactNode;
 	coupon?: string;
 	enableFeatureTooltips?: boolean;
+	/**
+	 * `renderCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
+	 * for rendering features with categories based on available/associated feature group map.
+	 */
+	renderCategorisedFeatures?: boolean;
+	/**
+	 * `featureGroupMap` is relevant for rendering features with categories.
+	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `renderCategorisedFeatures` is set).
+	 */
+	featureGroupMap: Partial< FeatureGroupMap >;
 };
 
-export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
-	ComparisonGridProps & { className?: string };
+export type ComparisonGridExternalProps = Omit<
+	GridContextProps,
+	'children' | 'renderCategorisedFeatures'
+> &
+	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
+		className?: string;
+		onUpgradeClick?: (
+			cartItems?: MinimalRequestCartProduct[] | null,
+			clickedPlanSlug?: PlanSlug
+		) => void;
+	};
 
-export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< FeaturesGridProps, 'isLargeCurrency' | 'translate' > & { className?: string };
+export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' | 'featureGroupMap' > &
+	Omit<
+		FeaturesGridProps,
+		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'gridContainerRef' | 'gridSize'
+	> & {
+		className?: string;
+		onUpgradeClick?: (
+			cartItems?: MinimalRequestCartProduct[] | null,
+			clickedPlanSlug?: PlanSlug
+		) => void;
+		featureGroupMap?: Partial< FeatureGroupMap >; // make it optional for Features Grid
+	};
 
 /************************
  * PlanTypeSelector Types:

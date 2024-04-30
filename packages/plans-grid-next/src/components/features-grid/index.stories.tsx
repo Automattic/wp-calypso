@@ -1,4 +1,4 @@
-import { getFeaturesList } from '@automattic/calypso-products';
+import { getFeaturesList, getPlanFeaturesGrouped } from '@automattic/calypso-products';
 import { Meta, StoryObj } from '@storybook/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { FeaturesGrid, FeaturesGridExternalProps, useGridPlansForFeaturesGrid } from '../..';
@@ -15,11 +15,18 @@ const RenderFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 			allFeaturesList: getFeaturesList(),
 			useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
 			storageAddOns: [],
+			includeAllFeatures: props.renderCategorisedFeatures,
 		},
 		useGridPlans
 	);
 
-	return <FeaturesGrid { ...props } gridPlans={ gridPlans || [] } />;
+	return (
+		<FeaturesGrid
+			{ ...props }
+			gridPlans={ gridPlans || [] }
+			featureGroupMap={ props.renderCategorisedFeatures ? getPlanFeaturesGrouped() : undefined }
+		/>
+	);
 };
 
 const meta: Meta< typeof FeaturesGrid > = {
@@ -70,3 +77,11 @@ export const NewsletterFlow: Story = {
 };
 
 NewsletterFlow.storyName = '/setup/newsletter';
+
+export const CategorisedFeatures: Story = {
+	args: {
+		...PlansFlow.args,
+		gridPlanForSpotlight: undefined,
+		renderCategorisedFeatures: true,
+	},
+};

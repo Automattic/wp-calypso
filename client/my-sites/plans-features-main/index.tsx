@@ -11,6 +11,9 @@ import {
 	UrlFriendlyTermType,
 	isValidFeatureKey,
 	getFeaturesList,
+	getWooExpressFeaturesGrouped,
+	getPlanFeaturesGrouped,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -377,6 +380,8 @@ const PlansFeaturesMain = ( {
 	const resolvedDeemphasizeFreePlan = useDeemphasizeFreePlan( flowName, paidDomainName );
 	const deemphasizeFreePlan = deemphasizeFreePlanFromProps || resolvedDeemphasizeFreePlan.result;
 
+	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
+
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -416,6 +421,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		includeAllFeatures: trailMapExperiment?.result,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -701,7 +707,17 @@ const PlansFeaturesMain = ( {
 
 	const onFreePlanCTAClick = useActionCallback( { planSlug: PLAN_FREE } );
 
-	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
+	// Check to see if we have at least one Woo Express plan we're comparing.
+	const hasWooExpressFeatures = useMemo( () => {
+		return gridPlansForComparisonGrid?.some(
+			( { planSlug, isVisible } ) => isVisible && isWooExpressPlan( planSlug )
+		);
+	}, [ gridPlansForComparisonGrid ] );
+
+	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
+	const featureGroupMap = hasWooExpressFeatures
+		? getWooExpressFeaturesGrouped()
+		: getPlanFeaturesGrouped();
 
 	return (
 		<>
@@ -819,6 +835,8 @@ const PlansFeaturesMain = ( {
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 										useActionCallback={ useActionCallback }
 										enableFeatureTooltips={ ! trailMapExperiment.result }
+										renderCategorisedFeatures={ trailMapExperiment.result }
+										featureGroupMap={ trailMapExperiment.result ? featureGroupMap : undefined }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -895,6 +913,7 @@ const PlansFeaturesMain = ( {
 														useCheckPlanAvailabilityForPurchase
 													}
 													enableFeatureTooltips={ ! trailMapExperiment.result }
+													featureGroupMap={ featureGroupMap }
 												/>
 											) }
 											<ComparisonGridToggle
