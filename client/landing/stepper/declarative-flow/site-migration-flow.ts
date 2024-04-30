@@ -228,7 +228,9 @@ const siteMigration: Flow = {
 
 				case STEPS.BUNDLE_TRANSFER.slug: {
 					if ( isEnabled( 'migration-flow/remove-processing-step' ) ) {
-						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug );
+						return navigate(
+							addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug )
+						);
 					}
 					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
 				}
@@ -248,7 +250,7 @@ const siteMigration: Flow = {
 						if ( siteSlug ) {
 							// Remove the in_site_migration_flow option at the end of the flow.
 							await saveSiteSettings( siteSlug, {
-								in_site_migration_flow: false,
+								in_site_migration_flow: '',
 							} );
 						}
 
@@ -279,7 +281,7 @@ const siteMigration: Flow = {
 						if ( siteSlug ) {
 							// Set the in_site_migration_flow option if the user needs to be verified.
 							await saveSiteSettings( siteSlug, {
-								in_site_migration_flow: true,
+								in_site_migration_flow: flowName,
 							} );
 						}
 						return navigate( STEPS.VERIFY_EMAIL.slug );

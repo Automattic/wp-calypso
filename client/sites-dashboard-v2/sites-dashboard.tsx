@@ -8,8 +8,9 @@ import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-lis
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -31,13 +32,15 @@ import {
 	useShowSiteCreationNotice,
 	useShowSiteTransferredNotice,
 } from 'calypso/sites-dashboard/components/sites-dashboard';
-import { useDispatch } from 'calypso/state';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { useSyncSelectedSite } from './hooks/use-sync-selected-site';
+import { useSyncSelectedSiteFeature } from './hooks/use-sync-selected-site-feature';
+import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
+import type { SiteDetails } from '@automattic/data-stores';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -47,7 +50,9 @@ import './dotcom-style.scss';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
-	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
+	selectedSite?: SiteDetails | null;
+	initialSiteFeature?: string;
+	selectedSiteFeaturePreview?: React.ReactNode;
 }
 
 const siteSortingKeys = [
@@ -69,10 +74,11 @@ const SitesDashboardV2 = ( {
 		newSiteID,
 		status = DEFAULT_STATUS_GROUP,
 	},
-	updateQueryParams = handleQueryParamChange,
+	selectedSite,
+	initialSiteFeature = DOTCOM_OVERVIEW,
+	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
-	const dispatch = useDispatch();
 	const initialSortApplied = useRef( false );
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -110,8 +116,20 @@ const SitesDashboardV2 = ( {
 							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
 				  ],
-	};
+		selectedItem: selectedSite,
+		type: selectedSite ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+	} as DataViewsState;
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
+
+	useSyncSelectedSite( dataViewsState );
+
+	const { selectedSiteFeature, setSelectedSiteFeature } = useSyncSelectedSiteFeature( {
+		selectedSite,
+		initialSiteFeature,
+		dataViewsState,
+		featureToRouteMap: FEATURE_TO_ROUTE_MAP,
+		queryParamKeys: [ 'page', 'per-page', 'status' ],
+	} );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
 	// initial mount.
@@ -149,33 +167,22 @@ const SitesDashboardV2 = ( {
 		showHidden: true,
 	} );
 
-	// Filter sites list by search query.
-	const filteredSites = useSitesListFiltering( currentStatusGroup, {
-		search: dataViewsState.search,
-	} );
-
 	// Perform sorting actions
-	const sortedSites = useSitesListSorting( filteredSites, {
+	const sortedSites = useSitesListSorting( currentStatusGroup, {
 		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
 			?.sortKey as SitesSortKey,
 		sortOrder: dataViewsState.sort.direction || undefined,
 	} );
 
-	const paginatedSites = sortedSites.slice(
+	// Filter sites list by search query.
+	const filteredSites = useSitesListFiltering( sortedSites, {
+		search: dataViewsState.search,
+	} );
+
+	const paginatedSites = filteredSites.slice(
 		( dataViewsState.page - 1 ) * dataViewsState.perPage,
 		dataViewsState.page * dataViewsState.perPage
 	);
-
-	// Site is selected:
-	useEffect( () => {
-		if ( dataViewsState.selectedItem ) {
-			// Set the selected site ID globally at Dotcom
-			dispatch( setSelectedSiteId( dataViewsState.selectedItem.ID ) );
-		} else {
-			// Reset the selected site ID globally at Dotcom
-			dispatch( setSelectedSiteId( null ) );
-		}
-	}, [ dataViewsState.selectedItem ] );
 
 	// Update URL with view control params on change.
 	useEffect( () => {
@@ -185,11 +192,8 @@ const SitesDashboardV2 = ( {
 			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
-		// There is a chance that the URL is not up to date when it mounts, so bump the
-		// updateQueryParams call to the back of the stack to avoid it getting the incorrect URL and
-		// then redirecting back to the previous path.
-		window.setTimeout( () => updateQueryParams( queryParams ) );
-	}, [ dataViewsState.search, dataViewsState.perPage, statusSlug, updateQueryParams ] );
+		window.setTimeout( () => handleQueryParamChange( queryParams ) );
+	}, [ dataViewsState.search, dataViewsState.perPage, statusSlug ] );
 
 	// Update site sorting preference on change
 	useEffect( () => {
@@ -252,6 +256,9 @@ const SitesDashboardV2 = ( {
 				<LayoutColumn className="site-preview-pane" wide>
 					<DotcomPreviewPane
 						site={ dataViewsState.selectedItem }
+						selectedSiteFeature={ selectedSiteFeature }
+						selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
+						setSelectedSiteFeature={ setSelectedSiteFeature }
 						closeSitePreviewPane={ closeSitePreviewPane }
 					/>
 				</LayoutColumn>

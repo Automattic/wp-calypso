@@ -83,6 +83,10 @@
 			.sites-overview {
 				overflow: hidden;
 
+				.a4a-layout__viewport {
+					padding-inline: 16px;
+				}
+
 				.sites-overview__page-title-container {
 					display: flex;
 				}
@@ -126,7 +130,7 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
-			padding: 8px 24px 8px 8px;
+			padding: 8px 24px 8px 16px;
 		}
 		.dataviews-view-table tr td:last-child {
 			padding: 0;
@@ -171,7 +175,7 @@
 			display: none;
 		}
 
-		td:nth-child(n+2):nth-child(-n+5) {
+		.dataviews-view-table-wrapper td:nth-child(n+2):nth-child(-n+5) {
 			display: none;
 		}
 
@@ -195,7 +199,8 @@
 
 		.dataviews-view-table-wrapper {
 			overflow-y: auto;
-			max-height: calc(100vh - 326px); /* 326px is the size of all the height above and below the dataview, from the edges of the screen, plus 10px offset from the padding. Currently below 9px + 309 above */
+			// Without masterbar
+			max-height: calc(100vh - 285px); /* 285px is the size of all the height above and below the dataviews-view-table-wrapper */
 
 			table {
 				width: 100%;
@@ -213,6 +218,12 @@
 				padding-inline-end: 12px;
 				text-align: end;
 			}
+		}
+	}
+
+	@media (max-width: 600px) {
+		.dataviews-view-table-wrapper {
+			max-height: calc(100vh - 323px); /* 323px is the size of all the height above and below the dataviews-view-table-wrapper */
 		}
 	}
 
@@ -246,7 +257,7 @@
 
 			.is-hiding-navigation .dataviews-view-table-wrapper {
 				overflow-y: auto;
-				max-height: calc(100vh - 260px); /* 260px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
+				max-height: calc(100vh - 277px); /* 277px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
 			}
 		}
 
@@ -1075,6 +1086,19 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+}
+
+.dataviews-pagination {
+	box-sizing: border-box;
+	width: 100%;
+
+	@media only screen and ( min-width: 600px ) {
+		width: calc(100% - 48px);
+	}
+
+	@media only screen and ( min-width: 782px ) {
+		width: calc(100% - ( var(--sidebar-width-max) + 16px));
 	}
 }
 

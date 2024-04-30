@@ -1,5 +1,17 @@
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
+import {
+	Icon,
+	blockMeta,
+	code,
+	desktop,
+	globe,
+	login,
+	reusableBlock,
+	external,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -13,13 +25,44 @@ import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import HostingOverview from '../common/hosting-overview';
+import HostingOverviewFeatures from '../common/hosting-overview-features';
+import useProductAndPlans from '../hooks/use-product-and-plans';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import { getCheapestPlan } from '../lib/hosting';
 import ShoppingCart from '../shopping-cart';
+import WPCOMBulkSelector from './bulk-selection';
+import wpcomBulkOptions from './lib/wpcom-bulk-options';
+import WPCOMPlanCard from './wpcom-card';
+
+import './style.scss';
 
 export default function WpcomOverview() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
+
+	const [ selectedCount, setSelectedCount ] = useState( wpcomBulkOptions[ 0 ] );
+
+	const onSelectCount = ( count: number ) => {
+		setSelectedCount(
+			wpcomBulkOptions.find( ( option ) => option.value === count ) ?? wpcomBulkOptions[ 0 ]
+		);
+	};
+
+	const { wpcomPlans } = useProductAndPlans( {} );
+
+	const cheapestWPCOMPlan = getCheapestPlan( wpcomPlans );
+	const onclickMoreInfo = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_wpcom_view_all_features_click' )
+		);
+	}, [ dispatch ] );
+
+	const WPCOM_PRICING_PAGE_LINK = 'https://wordpress.com/pricing/';
 
 	return (
 		<Layout
@@ -60,7 +103,86 @@ export default function WpcomOverview() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>WordPress.com hosting here</LayoutBody>
+			<LayoutBody>
+				<HostingOverview
+					slug="wpcom-hosting"
+					title={ translate( 'Powerful WordPress Hosting' ) }
+					subtitle={ translate(
+						'When you build and host your sites with WordPress.com, everything’s integrated, secure, and scalable.'
+					) }
+				/>
+				<WPCOMBulkSelector selectedCount={ selectedCount } onSelectCount={ onSelectCount } />
+
+				<WPCOMPlanCard
+					plan={ cheapestWPCOMPlan }
+					quantity={ selectedCount.value }
+					discount={ selectedCount.discount }
+				/>
+
+				<HostingOverview
+					title={ translate( 'Powerful development & platform tools' ) }
+					subtitle={ translate( 'Build for developers, by developers' ) }
+				/>
+
+				<HostingOverviewFeatures
+					items={ [
+						{
+							icon: code,
+							title: translate( 'WPI-CLI' ),
+							description: translate(
+								`Run WP-CLI commands to manage users, plugins, themes, site settings, and more.`
+							),
+						},
+						{
+							icon: login,
+							title: translate( 'SSH/SFTP' ),
+							description: translate(
+								'Effortlessly transfer files to and from your site using SFTP and SSH on WordPress.com.'
+							),
+						},
+						{
+							icon: reusableBlock,
+							title: translate( 'Staging sites' ),
+							description: translate(
+								`Test changes on a WordPress.com staging site first, so you can identify and fix any vulnerabilities before they impact your live site.`
+							),
+						},
+						{
+							icon: desktop,
+							title: translate( 'Local development environment' ),
+							description: translate(
+								'Build fast, ship faster with Studio by WordPress.com, a new local development environment.'
+							),
+						},
+						{
+							icon: globe,
+							title: translate( 'Domain management' ),
+							description: translate(
+								'Everything you need to manage your domains—from registration, transfer, and mapping to DNS configuration, email forwarding, and privacy.'
+							),
+						},
+						{
+							icon: blockMeta,
+							title: translate( 'Easy site migration' ),
+							description: translate(
+								'Import and take any WordPress site further with our developer-first tools and secure, lightning-fast platform.'
+							),
+						},
+					] }
+				/>
+
+				<section className="pressable-overview__footer">
+					<Button
+						className="pressable-overview__learn-more-link"
+						href={ WPCOM_PRICING_PAGE_LINK }
+						onClick={ onclickMoreInfo }
+						target="_blank"
+					>
+						{ translate( 'View all WordPress.com features' ) }
+						<Icon icon={ external } size={ 18 } />
+					</Button>
+				</section>
+			</LayoutBody>
 		</Layout>
 	);
 }

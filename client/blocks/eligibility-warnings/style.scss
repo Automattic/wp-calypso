@@ -176,6 +176,7 @@
 
 .eligibility-warnings__action a,
 .eligibility-warnings__hold-action a {
+	text-wrap: nowrap;
 	.gridicons-help-outline {
 		color: var(--color-neutral-light);
 	}

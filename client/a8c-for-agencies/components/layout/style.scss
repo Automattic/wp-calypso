@@ -124,7 +124,7 @@ html,
 
 	@include breakpoint-deprecated( "<1280px" ) {
 		flex-wrap: wrap;
-		row-gap: 16px;
+		gap: 16px;
 
 		> * + * {
 			margin-inline-start: 0;

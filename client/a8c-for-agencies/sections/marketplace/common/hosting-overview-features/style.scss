@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.pressable-overview-features {
+.hosting-overview-features {
 	display: grid;
 	grid-template-columns: 1fr;
 	column-gap: 48px;
@@ -12,7 +12,7 @@
 	}
 }
 
-.pressable-overview-features__item {
+.hosting-overview-features__item {
 	display: flex;
 	flex-direction: row;
 	gap: 32px;
@@ -20,24 +20,24 @@
 
 }
 
-.pressable-overview-features__item-icon {
+.hosting-overview-features__item-icon {
 	min-width: 48px;
 	height: 48px;
 	fill: var(--color-primary-40);
 }
 
-.pressable-overview-features__item-content {
+.hosting-overview-features__item-content {
 	flex-grow: 1;
 }
 
-.pressable-overview-features__item-title {
+.hosting-overview-features__item-title {
 	font-size: rem(18px);
 	line-height: 1.4;
 	font-weight: 500;
 	margin-block-end: 8px;
 }
 
-.pressable-overview-features__item-description {
+.hosting-overview-features__item-description {
 	font-size: 1rem;
 	line-height: 1.6;
 	font-weight: 400;

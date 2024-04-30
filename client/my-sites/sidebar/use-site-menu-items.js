@@ -150,7 +150,25 @@ const useSiteMenuItems = () => {
 		showSiteMonitoring: isAtomic,
 	};
 
-	return menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );
+	const result = menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );
+
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		return result.map( ( menu ) => {
+			if ( Array.isArray( menu.children ) ) {
+				return {
+					...menu,
+					children: menu.children.filter(
+						( menuItem ) =>
+							! [ '/hosting-config/', '/site-monitoring' ].some( ( path ) =>
+								menuItem.url.startsWith( path )
+							)
+					),
+				};
+			}
+			return menu;
+		} );
+	}
+	return result;
 };
 
 export default useSiteMenuItems;
