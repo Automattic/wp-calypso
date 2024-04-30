@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
-import { styled } from '@automattic/wpcom-checkout';
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
