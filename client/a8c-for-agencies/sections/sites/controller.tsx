@@ -58,3 +58,9 @@ export const sitesContext: Callback = ( context: Context, next ) => {
 	configureSitesContext( context );
 	next();
 };
+
+export const needsSetupContext: Callback = ( context: Context, next ) => {
+	context.primary = <div>Needs Setup</div>; // TODO: Implement Needs Setup
+	context.secondary = <SitesSidebar path={ context.path } />;
+	next();
+};
