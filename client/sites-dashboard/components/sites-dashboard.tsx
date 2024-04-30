@@ -187,12 +187,6 @@ export function SitesDashboard( {
 		( site ) => ! site.options?.is_domain_only
 	);
 
-	const { data: deletedSites = [] } = useSiteExcerptsQuery(
-		[],
-		( site ) => ! site.options?.is_domain_only,
-		'deleted'
-	);
-
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const elementRef = useRef( window );
 
