@@ -6,44 +6,40 @@ interface Props {
 	flowName?: string | null;
 }
 
-export enum TrailMapVariant {
-	Control = 'control',
-	TreatmentCopy = 'treatment-copy',
-	TreatmentStructure = 'treatment-structure',
-	TreatmentCopyAndStructure = 'treatment-copy-and-structure',
-}
+export const TrailMapVariant = {
+	Control: 'control',
+	TreatmentCopy: 'treatment-copy',
+	TreatmentStructure: 'treatment-structure',
+	TreatmentCopyAndStructure: 'treatment-copy-and-structure',
+} as const;
 
-function useExperimentForTrailMap( { flowName }: Props ): DataResponse< TrailMapVariant > {
-	const [ isLoading, experimentAssignment ] = useExperiment(
+export type VariantType = ( typeof TrailMapVariant )[ keyof typeof TrailMapVariant ];
+
+function useExperimentForTrailMap( { flowName }: Props ): DataResponse< VariantType > {
+	const [ isLoading, assignment ] = useExperiment(
 		'calypso_signup_onboarding_plans_trail_map_feature_grid',
 		{
 			isEligible: flowName === 'onboarding',
 		}
 	);
 
-	let result = TrailMapVariant.Control;
-
-	switch ( experimentAssignment?.variationName ) {
-		case 'treatment_copy':
-			result = TrailMapVariant.TreatmentCopy;
-		case 'treatment_structure':
-			result = TrailMapVariant.TreatmentStructure;
-		case 'treatment_copy_and_structure':
-			result = TrailMapVariant.TreatmentCopyAndStructure;
-	}
-
+	/**
+	 * If a feature flag is enabled we don't care about the explat experiment
+	 */
 	if ( config.isEnabled( 'onboarding/trail-map-feature-grid-copy' ) ) {
-		result = TrailMapVariant.TreatmentCopy;
+		return { isLoading: false, result: TrailMapVariant.TreatmentCopy };
 	} else if ( config.isEnabled( 'onboarding/trail-map-feature-grid-structure' ) ) {
-		result = TrailMapVariant.TreatmentStructure;
+		return { isLoading: false, result: TrailMapVariant.TreatmentCopy };
 	} else if ( config.isEnabled( 'onboarding/trail-map-feature-grid' ) ) {
-		result = TrailMapVariant.TreatmentCopyAndStructure;
+		return { isLoading: false, result: TrailMapVariant.TreatmentCopy };
 	}
 
-	return {
-		isLoading,
-		result,
-	};
+	/**
+	 * Currently assumes a 1:1 mapping between actual experiment variant name and logical enum name
+	 * See: 21737-explat-experiment
+	 */
+	const result = ( assignment?.variationName ?? TrailMapVariant.Control ) as VariantType;
+	return { isLoading, result };
 }
 
 export default useExperimentForTrailMap;
