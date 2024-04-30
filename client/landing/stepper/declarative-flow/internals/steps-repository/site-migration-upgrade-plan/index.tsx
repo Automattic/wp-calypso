@@ -1,4 +1,9 @@
-import { PLAN_BUSINESS, getPlan, getPlanByPathSlug } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	getPlan,
+	getPlanByPathSlug,
+} from '@automattic/calypso-products';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
@@ -48,15 +53,18 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				subTitleText=""
 				isBusy={ false }
 				hideTitleAndSubTitle
-				sendIntentWhenCreatingTrial
 				onCtaClick={ () => {
 					navigation.submit?.( {
 						goToCheckout: true,
 						plan: plan.getPathSlug ? plan.getPathSlug() : '',
 					} );
 				} }
-				onFreeTrialSelectionSuccess={ () => {
-					navigation.submit?.( { freeTrialSelected: true } );
+				onFreeTrialClick={ () => {
+					navigation.submit?.( {
+						goToCheckout: true,
+						plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+						sendIntentWhenCreatingTrial: true,
+					} );
 				} }
 				navigateToVerifyEmailStep={ () => {
 					navigation.submit?.( { verifyEmail: true } );
