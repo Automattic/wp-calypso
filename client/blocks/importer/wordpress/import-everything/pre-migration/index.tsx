@@ -32,6 +32,7 @@ interface PreMigrationProps {
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	navigateToVerifyEmailStep: () => void;
 	onContentOnlyClick: () => void;
+	onFreeTrialClick: () => void;
 }
 
 export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = (
@@ -47,6 +48,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		startImport,
 		navigateToVerifyEmailStep,
 		onContentOnlyClick,
+		onFreeTrialClick,
 	} = props;
 
 	const translate = useTranslate();
@@ -240,6 +242,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						isBusy={
 							isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
 						}
+						onFreeTrialClick={ onFreeTrialClick }
 						ctaText={ translate( 'Upgrade and migrate' ) }
 						onCtaClick={ onUpgradeAndMigrateClick }
 						onContentOnlyClick={ onContentOnlyClick }

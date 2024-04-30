@@ -125,7 +125,7 @@ const PlanCard: FC = () => {
 						<Button
 							className="hosting-overview__link-button"
 							plain
-							href={ `/plans/${ site?.slug }` }
+							href={ `/add-ons/${ site?.slug }` }
 						>
 							{ translate( 'Need more storage?' ) }
 						</Button>

@@ -41,7 +41,8 @@ export default function useShoppingCart() {
 					return (
 						product.slug === slug &&
 						( quantity === 1 ||
-							product.supported_bundles.map( ( bundle ) => bundle.quantity ).includes( quantity ) )
+							product.supported_bundles.map( ( bundle ) => bundle.quantity ).includes( quantity ) ||
+							product.family_slug === 'wpcom-hosting' )
 					);
 				} );
 

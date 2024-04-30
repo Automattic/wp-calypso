@@ -1,4 +1,9 @@
-import { PLAN_BUSINESS, getPlan, getPlanByPathSlug } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	getPlan,
+	getPlanByPathSlug,
+} from '@automattic/calypso-products';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
@@ -33,11 +38,18 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 
+	const goToMigrationAssistanceCheckout = () => {
+		navigation?.submit?.( {
+			goToCheckout: true,
+			plan: plan.getPathSlug ? plan.getPathSlug() : '',
+		} );
+	};
+
 	const stepContent = (
 		<>
 			{ showMigrationModal && (
 				<MigrationAssistanceModal
-					onConfirm={ () => {} }
+					onConfirm={ goToMigrationAssistanceCheckout }
 					migrateFrom={ migrateFrom }
 					navigateBack={ navigation.goBack }
 				/>
@@ -48,15 +60,13 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				subTitleText=""
 				isBusy={ false }
 				hideTitleAndSubTitle
-				sendIntentWhenCreatingTrial
-				onCtaClick={ () => {
+				onCtaClick={ goToMigrationAssistanceCheckout }
+				onFreeTrialClick={ () => {
 					navigation.submit?.( {
 						goToCheckout: true,
-						plan: plan.getPathSlug ? plan.getPathSlug() : '',
+						plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+						sendIntentWhenCreatingTrial: true,
 					} );
-				} }
-				onFreeTrialSelectionSuccess={ () => {
-					navigation.submit?.( { freeTrialSelected: true } );
 				} }
 				navigateToVerifyEmailStep={ () => {
 					navigation.submit?.( { verifyEmail: true } );
