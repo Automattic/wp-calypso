@@ -4,6 +4,7 @@ import { useMediaQuery } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
+import { useEffect, useRef } from 'react';
 import SiteFavicon from '../../site-favicon';
 import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
 
@@ -26,6 +27,15 @@ export default function ItemPreviewPaneHeader( {
 }: Props ) {
 	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
 	const size = isLargerThan960px ? 64 : 50;
+
+	const focusRef = useRef< HTMLInputElement >( null );
+
+	// Use useEffect to set the focus when the component mounts
+	useEffect( () => {
+		if ( focusRef.current ) {
+			focusRef.current.focus();
+		}
+	}, [] );
 
 	return (
 		<div className={ classNames( 'item-preview__header', className ) }>
@@ -58,7 +68,6 @@ export default function ItemPreviewPaneHeader( {
 								variant="link"
 								className="item-preview__header-summary-link"
 								href={ `${ itemData.adminUrl }` }
-								target="_blank"
 							>
 								<span>{ translate( 'WP Admin' ) }</span>
 							</Button>
@@ -69,6 +78,7 @@ export default function ItemPreviewPaneHeader( {
 					onClick={ closeItemPreviewPane }
 					className="item-preview__close-preview"
 					aria-label={ translate( 'Close Preview' ) }
+					ref={ focusRef }
 				>
 					<Gridicon icon="cross" size={ ICON_SIZE } />
 				</Button>

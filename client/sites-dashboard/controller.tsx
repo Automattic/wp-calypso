@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	siteLaunchStatusGroupValues,
@@ -8,9 +7,7 @@ import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
-import SitesDashboardV2 from 'calypso/sites-dashboard-v2';
 import { removeNotice } from 'calypso/state/notices/actions';
-import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { SitesDashboard } from './components/sites-dashboard';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
@@ -63,6 +60,10 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			}
 		}
 
+		body.is-group-sites-dashboard.rtl .layout__content {
+			padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;
+		}
+
 		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
 			height: calc( 100vh - 32px );
 			padding-bottom: 0;
@@ -112,19 +113,10 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) ? (
-				// Sites Dashboard V2 - Dotcom Nav Redesign V2
-				<SitesDashboardV2 queryParams={ queryParams } />
-			) : (
-				<SitesDashboard queryParams={ queryParams } />
-			) }
+			<SitesDashboard queryParams={ queryParams } />
 		</>
 	);
 
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		// By definition, Sites Management does not select any one specific site
-		context.store.dispatch( setAllSitesSelected() );
-	}
 	next();
 }
 

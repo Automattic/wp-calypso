@@ -1,13 +1,9 @@
 import { getFeaturesList } from '@automattic/calypso-products';
-import { gridPlans } from './gird-plans';
-import { gridPlanForSpotlight } from './grid-plan-for-spotlight';
 
 export const defaultArgs = {
-	gridPlans,
-	gridPlanForSpotlight,
 	generatedWPComSubdomain: {
 		isLoading: false,
-		result: {},
+		result: { domain_name: '' },
 	},
 	isCustomDomainAllowedOnFreePlan: false,
 	isInSignup: true,
@@ -19,7 +15,6 @@ export const defaultArgs = {
 	hideUnavailableFeatures: false,
 	currentSitePlanSlug: undefined,
 	planActionOverrides: {},
-	intent: 'plans-default-wpcom',
 	showLegacyStorageFeature: false,
 	showUpgradeableStorage: true,
 	stickyRowOffset: 32,

@@ -16,8 +16,9 @@ import {
 	PRODUCT_FILTER_PRODUCTS,
 	PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
 	PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
+	PRODUCT_FILTER_WPCOM_PLANS,
 } from '../constants';
-import { isPressableHostingProduct } from '../lib/hosting';
+import { isPressableHostingProduct, isWPCOMHostingProduct } from '../lib/hosting';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // Plans and Products that we can merged into 1 card.
@@ -69,6 +70,12 @@ const getProductsAndPlansByFilter = (
 			return (
 				allProductsAndPlans?.filter( ( { family_slug } ) =>
 					isPressableHostingProduct( family_slug )
+				) || []
+			);
+		case PRODUCT_FILTER_WPCOM_PLANS:
+			return (
+				allProductsAndPlans?.filter( ( { family_slug } ) =>
+					isWPCOMHostingProduct( family_slug )
 				) || []
 			);
 	}
@@ -183,6 +190,10 @@ export default function useProductAndPlans( {
 			),
 			pressablePlans: getProductsAndPlansByFilter(
 				PRODUCT_FILTER_PRESSABLE_PLANS,
+				filteredProductsAndBundles
+			),
+			wpcomPlans: getProductsAndPlansByFilter(
+				PRODUCT_FILTER_WPCOM_PLANS,
 				filteredProductsAndBundles
 			),
 			suggestedProductSlugs,

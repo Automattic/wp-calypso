@@ -112,7 +112,9 @@ describe( 'SiteMigrationUpgradePlan', () => {
 			await userEvent.click( screen.getByRole( 'button', { name: /Try 7 days for free/ } ) );
 
 			expect( navigation.submit ).toHaveBeenCalledWith( {
-				freeTrialSelected: true,
+				goToCheckout: true,
+				plan: 'wp_bundle_migration_trial_monthly',
+				sendIntentWhenCreatingTrial: true,
 			} );
 		} );
 	} );

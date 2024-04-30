@@ -6,6 +6,10 @@
 		.item-preview__header-title-summary {
 			word-wrap: anywhere;
 		}
+
+		.item-preview__close-preview {
+			align-self: flex-start;
+		}
 	}
 
 	@media ( min-width: $break-large ) {
@@ -46,6 +50,7 @@
 
 						&:focus {
 							box-shadow: none;
+							outline: thin dotted;
 						}
 					}
 				}

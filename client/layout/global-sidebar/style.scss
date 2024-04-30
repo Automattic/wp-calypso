@@ -412,31 +412,38 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-.is-global-sidebar-collapsed {
-	.global-sidebar {
-		.sidebar__header,
-		.sidebar__footer {
-			flex-direction: column;
+@media ( min-width: 660px ) {
+	.is-global-sidebar-collapsed {
+		.global-sidebar {
+			.sidebar__header,
+			.sidebar__footer {
+				flex-direction: column;
 
-			.sidebar__footer-profile {
-				padding: 0;
+				.sidebar__footer-profile {
+					padding: 0;
+				}
 			}
-		}
 
-		.sidebar__header {
-			span.dotcom {
-				background-position: left;
-				width: 24px;
-				margin-left: 6px;
+			.sidebar__header {
+				span.dotcom {
+					background-position: left;
+					width: 24px;
+					margin-left: 6px;
+
+					.rtl & {
+						background-position: right;
+						margin-right: 6px;
+					}
+				}
 			}
-		}
 
-		.sidebar__body {
-			.sidebar__menu-item-parent .sidebar__menu-link {
-				margin: 0 auto;
+			.sidebar__body {
+				.sidebar__menu-item-parent .sidebar__menu-link {
+					margin: 0 auto;
 
-				> *:not(:first-child) {
-					display: none;
+					> *:not(:first-child) {
+						display: none;
+					}
 				}
 			}
 		}

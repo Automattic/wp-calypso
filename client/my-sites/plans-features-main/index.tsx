@@ -45,7 +45,6 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -65,6 +64,7 @@ import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/s
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
+import PlansPageSubheader from './components/plans-page-subheader';
 import useGenerateActionCallback from './hooks/use-action-callback';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
@@ -85,23 +85,6 @@ import type {
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
-
-const FreePlanSubHeader = styled.p`
-	margin: -32px 0 40px 0;
-	color: var( --studio-gray-60 );
-	font-size: 1rem;
-	text-align: center;
-	button.is-borderless {
-		font-weight: 500;
-		color: var( --studio-gray-90 );
-		text-decoration: underline;
-		font-size: 16px;
-		padding: 0;
-	}
-	@media ( max-width: 960px ) {
-		margin-top: -16px;
-	}
-`;
 
 const PlanComparisonHeader = styled.h1`
 	.plans .step-container .step-container__content &&,
@@ -192,25 +175,6 @@ export interface PlansFeaturesMainProps {
 	 */
 	deemphasizeFreePlan?: boolean;
 }
-
-const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
-	const translate = useTranslate();
-	const headerText = translate( 'Upgrade your plan to access this feature and more' );
-	const subHeaderText = (
-		<Button className="plans-features-main__view-all-plans is-link" href={ `/plans/${ siteSlug }` }>
-			{ translate( 'View all plans' ) }
-		</Button>
-	);
-
-	return (
-		<FormattedHeader
-			headerText={ headerText }
-			subHeaderText={ subHeaderText }
-			compactOnMobile
-			isSecondary
-		/>
-	);
-};
 
 const PlansFeaturesMain = ( {
 	paidDomainName,
@@ -793,19 +757,13 @@ const PlansFeaturesMain = ( {
 							} ) }
 					/>
 				) }
-				{ deemphasizeFreePlan && (
-					<FreePlanSubHeader>
-						{ translate(
-							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
-							{
-								components: {
-									link: <Button onClick={ onFreePlanCTAClick } borderless />,
-								},
-							}
-						) }
-					</FreePlanSubHeader>
-				) }
-				{ isDisplayingPlansNeededForFeature && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
+				<PlansPageSubheader
+					siteSlug={ siteSlug }
+					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+					deemphasizeFreePlan={ deemphasizeFreePlan }
+					onFreePlanCTAClick={ onFreePlanCTAClick }
+					showPlanBenefits={ isInSignup && trailMapExperiment.result }
+				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
 					<>
@@ -860,6 +818,7 @@ const PlansFeaturesMain = ( {
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 										useActionCallback={ useActionCallback }
+										enableFeatureTooltips={ ! trailMapExperiment.result }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -935,6 +894,7 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
+													enableFeatureTooltips={ ! trailMapExperiment.result }
 												/>
 											) }
 											<ComparisonGridToggle

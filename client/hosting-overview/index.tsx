@@ -6,10 +6,9 @@ import {
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { handleHostingPanelRedirect } from 'calypso/my-sites/hosting/controller';
-import globalSiteLayout from 'calypso/sites-dashboard-v2/global-site-layout';
+import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
 import {
 	DOTCOM_HOSTING_CONFIG,
-	DOTCOM_HOSTING_CONFIG_ACTIVATE,
 	DOTCOM_OVERVIEW,
 } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
 import { hostingOverview, hostingConfiguration, hostingActivate } from './controller';
@@ -19,8 +18,9 @@ export default function () {
 	page(
 		'/hosting/:site',
 		siteSelection,
+		navigation,
 		hostingOverview,
-		globalSiteLayout( DOTCOM_OVERVIEW ),
+		siteDashboard( DOTCOM_OVERVIEW ),
 		makeLayout,
 		clientRender
 	);
@@ -36,7 +36,7 @@ export default function () {
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		handleHostingPanelRedirect,
 		hostingConfiguration,
-		globalSiteLayout( DOTCOM_HOSTING_CONFIG ),
+		siteDashboard( DOTCOM_HOSTING_CONFIG ),
 		makeLayout,
 		clientRender
 	);
@@ -50,7 +50,7 @@ export default function () {
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		handleHostingPanelRedirect,
 		hostingActivate,
-		globalSiteLayout( DOTCOM_HOSTING_CONFIG, DOTCOM_HOSTING_CONFIG_ACTIVATE ),
+		siteDashboard( DOTCOM_HOSTING_CONFIG ),
 		makeLayout,
 		clientRender
 	);

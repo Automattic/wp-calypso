@@ -1,30 +1,29 @@
 import { getFeaturesList } from '@automattic/calypso-products';
-import { Meta } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { FeaturesGrid, useGridPlansForFeaturesGrid } from '../..';
+import { FeaturesGrid, FeaturesGridExternalProps, useGridPlansForFeaturesGrid } from '../..';
 import { defaultArgs } from '../../storybook-mocks';
+import * as mockGridPlans from '../../storybook-mocks/grid-plans';
 
 const queryClient = new QueryClient();
 
-const RenderFeaturesGrid = ( props: any ) => {
-	const useGridPlans = () => defaultArgs.gridPlans;
+const RenderFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
+	const useGridPlans = () => props.gridPlans;
 
-	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid(
+	const gridPlans = useGridPlansForFeaturesGrid(
 		{
 			allFeaturesList: getFeaturesList(),
-			selectedFeature: props.selectedFeature,
-			showLegacyStorageFeature: props.showLegacyStorageFeature,
 			useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
 			storageAddOns: [],
 		},
 		useGridPlans
 	);
 
-	return <FeaturesGrid { ...props } gridPlans={ gridPlansForFeaturesGrid } />;
+	return <FeaturesGrid { ...props } gridPlans={ gridPlans || [] } />;
 };
 
-export default {
-	title: 'plans-grid-next',
+const meta: Meta< typeof FeaturesGrid > = {
+	title: 'FeaturesGrid',
 	component: RenderFeaturesGrid,
 	decorators: [
 		( Story ) => (
@@ -38,12 +37,36 @@ export default {
 			defaultViewport: 'LARGE',
 		},
 	},
-} as Meta;
-
-const storyDefaults = {
-	args: defaultArgs,
 };
 
-export const FeaturesGridTest = {
-	...storyDefaults,
+export default meta;
+
+type Story = StoryObj< typeof FeaturesGrid >;
+
+export const PlansFlow: Story = {
+	args: {
+		...defaultArgs,
+		intent: 'plans-default-wpcom',
+		gridPlans: [
+			mockGridPlans.free,
+			mockGridPlans.personal,
+			mockGridPlans.value,
+			mockGridPlans.business,
+			mockGridPlans.ecommerce,
+			mockGridPlans.enterprise,
+		],
+		gridPlanForSpotlight: mockGridPlans.spotlight,
+	},
 };
+
+PlansFlow.storyName = '/plans';
+
+export const NewsletterFlow: Story = {
+	args: {
+		...defaultArgs,
+		intent: 'plans-newsletter',
+		gridPlans: [ mockGridPlans.free, mockGridPlans.personal, mockGridPlans.value ],
+	},
+};
+
+NewsletterFlow.storyName = '/setup/newsletter';

@@ -286,8 +286,6 @@ module.exports = {
 	],
 	env: {
 		jest: true,
-		// mocha is only still on because we have not finished porting all of our tests to jest's syntax
-		mocha: true,
 		node: true,
 	},
 	globals: {

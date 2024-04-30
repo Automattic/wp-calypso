@@ -26,6 +26,7 @@
 	],
 	"features": {
 		"a8c-for-agencies": true,
+		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": false,
 		"oauth": false,
 		"a4a/site-details-pane": true
 	},

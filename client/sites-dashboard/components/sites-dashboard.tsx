@@ -151,6 +151,11 @@ const ManageAllDomainsButton = styled( Button )`
 const DownloadIcon = styled( Icon )`
 	margin-right: 8px;
 	vertical-align: bottom;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
 `;
 
 const popoverHoverStyles = css`
