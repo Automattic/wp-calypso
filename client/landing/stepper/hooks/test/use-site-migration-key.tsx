@@ -36,4 +36,17 @@ describe( 'useSiteMigrationKey', () => {
 
 		await waitFor( () => expect( result.current.isFetching ).toBe( false ) );
 	} );
+
+	it( 'skip the request when enabled is set as false', async () => {
+		const queryClient = new QueryClient();
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+
+		const { result } = renderHook( () => useSiteMigrationKey( 123, { enabled: false } ), {
+			wrapper,
+		} );
+
+		await waitFor( () => expect( result.current.isFetching ).toBe( false ) );
+	} );
 } );
