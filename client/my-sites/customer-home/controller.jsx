@@ -1,11 +1,4 @@
 import config from '@automattic/calypso-config';
-import {
-	PLAN_ECOMMERCE,
-	PLAN_ECOMMERCE_MONTHLY,
-	PLAN_ECOMMERCE_2_YEARS,
-	PLAN_ECOMMERCE_3_YEARS,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
@@ -14,7 +7,9 @@ import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { fetchSitePurchases } from 'calypso/state/purchases/actions';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors/get-by-purchase-id';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import {
 	isSiteOnWooExpressEcommerceTrial,
 	getCurrentPlan,
@@ -24,7 +19,6 @@ import {
 	getSelectedSiteSlug,
 	getSelectedSiteId,
 	getSelectedSite,
-	getSelectedPurchase,
 } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
@@ -60,6 +54,7 @@ export async function maybeRedirect( context, next ) {
 	if ( isSiteOnWooExpressEcommerceTrial( state, siteId ) ) {
 		// Pre-fetch plugins and modules to avoid flashing content prior deciding whether to redirect.
 		fetchPromise = Promise.allSettled( [
+			context.store.dispatch( fetchSitePlans( siteId ) ),
 			context.store.dispatch( fetchSitePurchases( siteId ) ),
 			context.store.dispatch( fetchSitePlugins( siteId ) ),
 			context.store.dispatch( fetchModuleList( siteId ) ),
@@ -92,25 +87,16 @@ export async function maybeRedirect( context, next ) {
 		// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
 		// So we need to trigger a fetch of site plugins
 		fetchPromise.then( () => {
-			const siteUrl = getSiteUrl( state, siteId );
+			const refetchedState = context.store.getState();
+			const siteUrl = getSiteUrl( refetchedState, siteId );
 
 			if ( siteUrl !== null ) {
-				const currentPlan = getCurrentPlan( state, siteId );
-				const purchase = getSelectedPurchase( state );
+				const currentPlan = getCurrentPlan( refetchedState, siteId );
+				const purchase = getByPurchaseId( refetchedState, currentPlan?.id );
 
-				const currentPlanSlug = currentPlan?.productSlug || site?.plan?.product_slug;
-				const isEcommerce = [
-					PLAN_ECOMMERCE,
-					PLAN_ECOMMERCE_MONTHLY,
-					PLAN_ECOMMERCE_2_YEARS,
-					PLAN_ECOMMERCE_3_YEARS,
-				].includes( currentPlanSlug );
-				const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-				const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.isWooExpressTrial;
 				const shouldUseCalypsoMyHome =
-					config.isEnabled( 'entrepreneur-my-home' ) && ( isEcommerce || isEntrepreneurTrial );
+					config.isEnabled( 'entrepreneur-my-home' ) && ! purchase?.isWooExpressTrial;
 
-				const refetchedState = context.store.getState();
 				const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
 				const isSSOEnabled = !! isJetpackModuleActive( refetchedState, siteId, 'sso' );
 

@@ -45,7 +45,10 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
-import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
+import {
+	isSiteOnWooExpressEcommerceTrial,
+	isRequestingSitePlans as isFetchingSitePlans,
+} from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
@@ -108,6 +111,7 @@ const Home = ( {
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
 
+	const isRequestingSitePlans = useSelector( isFetchingSitePlans );
 	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
 	const purchase = useSelector( getSelectedPurchase );
 
@@ -146,14 +150,16 @@ const Home = ( {
 		);
 	}
 
-	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
-	// while doing the redirection.
+	// While fetching all the data, show placeholder.
+	// After fetching all the data:
+	//  - For eCommerce & eCommerce trial, don't show placeholder.
+	//  - For Woo Express Trial, Essential & Performance, show placeholder while redirecting to WooCommerce Home (search for `wc-admin` under customer-home/controller.jsx).
 	if (
 		isSiteWooExpressEcommerceTrial &&
 		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
 		( fetchingJetpackModules || ssoModuleActive ) &&
 		( config.isEnabled( 'entrepreneur-my-home' )
-			? isRequestingSitePurchases || purchase?.isWooExpressTrial
+			? isRequestingSitePlans || isRequestingSitePurchases || purchase?.isWooExpressTrial
 			: true )
 	) {
 		return <WooCommerceHomePlaceholder />;
