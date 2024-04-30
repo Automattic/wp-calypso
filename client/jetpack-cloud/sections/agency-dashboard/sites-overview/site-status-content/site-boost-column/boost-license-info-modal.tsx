@@ -2,8 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useMemo } from 'react';
-import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { CART_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/sections/marketplace/shopping-cart';
+import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import ExternalLink from 'calypso/components/external-link';
@@ -30,7 +29,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 
-	const { sitesViewState, showOnlyFavorites } = useContext( SitesDashboardContext );
+	const { dataViewsState, showOnlyFavorites } = useContext( SitesDashboardContext );
 
 	const { isLargeScreen } = useContext( DashboardDataContext );
 
@@ -46,14 +45,14 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 			isA4AEnabled
 				? [
 						'jetpack-agency-dashboard-sites',
-						sitesViewState?.search,
-						sitesViewState?.page,
+						dataViewsState?.search,
+						dataViewsState?.page,
 						{
-							issueTypes: getSelectedFilters( sitesViewState?.filters ),
+							issueTypes: getSelectedFilters( dataViewsState?.filters ),
 							showOnlyFavorites: showOnlyFavorites || false,
 						},
-						sitesViewState.sort,
-						sitesViewState?.perPage,
+						dataViewsState.sort,
+						dataViewsState?.perPage,
 						...( agencyId ? [ agencyId ] : [] ),
 				  ]
 				: [
@@ -66,11 +65,11 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 				  ],
 		[
 			isA4AEnabled,
-			sitesViewState?.search,
-			sitesViewState?.page,
-			sitesViewState?.filters,
-			sitesViewState.sort,
-			sitesViewState?.perPage,
+			dataViewsState?.search,
+			dataViewsState?.page,
+			dataViewsState?.filters,
+			dataViewsState.sort,
+			dataViewsState?.perPage,
 			showOnlyFavorites,
 			agencyId,
 			search,
@@ -103,8 +102,8 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 	}, [ status, onClose ] );
 
 	const productPurchaseLink = isA4AEnabled
-		? `${ A4A_MARKETPLACE_PRODUCTS_LINK }?product_slug=jetpack-boost&source=sitesdashboard&site_id=${ siteId }${ CART_URL_HASH_FRAGMENT }`
-		: undefined;
+		? `${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=jetpack-boost&source=sitesdashboard&site_id=${ siteId }`
+		: '#';
 
 	return (
 		<LicenseInfoModal

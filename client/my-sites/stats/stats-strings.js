@@ -210,9 +210,16 @@ export default function () {
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views from a country.',
 		} ),
-		empty: translate( 'No devices recorded', {
-			context: 'Stats: Info box label when the Devices module is empty',
-		} ),
+		empty: translate(
+			'Stats on visitors and {{link}}their viewing device{{/link}} will appear here.',
+			{
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#devices-stats` ) } />,
+				},
+				context: 'Stats: Info box label when the Devices module is empty',
+			}
+		),
 	};
 
 	statsStrings.clients = {

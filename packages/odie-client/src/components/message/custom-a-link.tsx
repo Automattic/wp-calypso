@@ -15,8 +15,8 @@ const CustomALink = ( {
 	children,
 	inline = true,
 }: {
-	href: string;
-	children: React.ReactNode;
+	href?: string;
+	children?: React.ReactNode;
 	inline?: boolean;
 } ) => {
 	const { trackEvent } = useOdieAssistantContext();
@@ -25,7 +25,7 @@ const CustomALink = ( {
 		'odie-sources-inline': inline,
 	} );
 
-	const transformedHref = uriTransformer( href );
+	const transformedHref = uriTransformer( href ?? '' );
 
 	return (
 		<span className={ classNames }>

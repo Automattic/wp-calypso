@@ -75,12 +75,16 @@ body.command-palette-modal-open {
 
 	// Themes sets it own padding/margin
 	.is-section-theme &,
-	.is-section-themes.has-no-sidebar & {
+	.is-section-themes.has-no-sidebar &,
+	.theme-default .layout.is-section-theme &,
+	.theme-default .layout.is-section-themes.has-no-sidebar &,
+	.theme-default .layout.is-section-themes:not(.is-logged-in) & {
 		padding: 0;
 		margin: 0;
 	}
 
-	.is-section-themes.has-no-sidebar.is-logged-in & {
+	.is-section-themes.has-no-sidebar.is-logged-in &,
+	.theme-default .is-section-themes.has-no-sidebar.is-logged-in & {
 		padding: 79px 32px 32px;
 	}
 
@@ -139,8 +143,9 @@ body.command-palette-modal-open {
 // Add extra bottom padding for smaller screens to prevent
 // floating inline help from overlapping content.
 .layout__primary .main {
+	// The height is set to 100% in /sites page so we want to ensure that padding doesn't take us over 100% total height.
+	box-sizing: border-box;
 	padding-bottom: 88px;
-
 	@include breakpoint-deprecated( ">1400px" ) {
 		padding-bottom: 0;
 	}
@@ -377,7 +382,6 @@ body.is-mobile-app-view {
 // This is done since most has-no-masterbar section have their own padding set already that we don't want to overwrite
 .layout.has-no-masterbar.is-group-me,
 .layout.has-no-masterbar.is-group-sites,
-.layout.has-no-masterbar.is-group-sites-dashboard,
 .layout.has-no-masterbar.is-section-reader {
 	--masterbar-height: 0;
 
@@ -398,9 +402,9 @@ body.is-mobile-app-view {
 
 // Ensure reader streams have the neutral background.
 .layout.is-section-reader {
-	background: var(--color-neutral-0);
+	background: var(--studio-white);
 	min-height: 100vh;
 	.layout__content {
-		background: var(--color-neutral-0);
+		background: var(--studio-white);
 	}
 }

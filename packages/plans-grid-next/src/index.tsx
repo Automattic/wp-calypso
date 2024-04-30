@@ -10,16 +10,19 @@ import useGridPlanForSpotlight from './hooks/data-store/use-grid-plan-for-spotli
 import useGridPlans from './hooks/data-store/use-grid-plans';
 import useGridPlansForComparisonGrid from './hooks/data-store/use-grid-plans-for-comparison-grid';
 import useGridPlansForFeaturesGrid from './hooks/data-store/use-grid-plans-for-features-grid';
+import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
+import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
 import useGridSize from './hooks/use-grid-size';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
 import type { ComparisonGridExternalProps, FeaturesGridExternalProps } from './types';
 import './style.scss';
 
 const WrappedComparisonGrid = ( {
-	selectedSiteId,
+	siteId,
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
+	useActionCallback,
 	recordTracksEvent,
 	allFeaturesList,
 	intervalType,
@@ -60,9 +63,10 @@ const WrappedComparisonGrid = ( {
 		<div ref={ gridContainerRef } className={ classNames }>
 			<PlansGridContextProvider
 				intent={ intent }
-				selectedSiteId={ selectedSiteId }
+				siteId={ siteId }
 				gridPlans={ gridPlans }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useActionCallback={ useActionCallback }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				coupon={ coupon }
@@ -72,7 +76,7 @@ const WrappedComparisonGrid = ( {
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					selectedSiteId={ selectedSiteId }
+					siteId={ siteId }
 					selectedPlan={ selectedPlan }
 					selectedFeature={ selectedFeature }
 					showUpgradeableStorage={ showUpgradeableStorage }
@@ -88,10 +92,11 @@ const WrappedComparisonGrid = ( {
 
 const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 	const {
-		selectedSiteId,
+		siteId,
 		intent,
 		gridPlans,
 		useCheckPlanAvailabilityForPurchase,
+		useActionCallback,
 		recordTracksEvent,
 		allFeaturesList,
 		coupon,
@@ -119,10 +124,11 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		<div ref={ gridContainerRef } className={ classNames }>
 			<PlansGridContextProvider
 				intent={ intent }
-				selectedSiteId={ selectedSiteId }
+				siteId={ siteId }
 				gridPlans={ gridPlans }
 				coupon={ coupon }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useActionCallback={ useActionCallback }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 			>
@@ -157,4 +163,6 @@ export {
 	useGridPlansForFeaturesGrid,
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
+	usePlanFeaturesForGridPlans,
+	useRestructuredPlanFeaturesForComparisonGrid,
 };

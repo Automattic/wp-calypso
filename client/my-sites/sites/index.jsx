@@ -147,6 +147,9 @@ class Sites extends Component {
 			case 'hosting-config':
 				path = translate( 'Hosting Configuration' );
 				break;
+			case 'hosting-overview':
+				path = translate( 'Hosting Overview' );
+				break;
 			case 'jetpack-search':
 				path = 'Jetpack Search';
 				break;

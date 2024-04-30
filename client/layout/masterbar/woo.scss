@@ -1399,20 +1399,15 @@ $breakpoint-mobile: 660px;
 					height: 48px;
 					padding: 8px 16px;
 					align-items: center;
-					gap: 60px;
 					align-self: stretch;
 					border-radius: 8px; // stylelint-disable-line scales/radii
-					border: 2px solid var(--studio-gray-10);
+					border: 2px solid var(--studio-gray-10) !important;
 					width: 100%;
 					margin: 0;
 					text-decoration: none;
 
 					&:hover {
 						background: var(--studio-gray-0, #f6f7f7);
-					}
-
-					svg {
-						margin: 0;
 					}
 				}
 
@@ -1422,7 +1417,6 @@ $breakpoint-mobile: 660px;
 					font-weight: 500;
 					line-height: 24px;
 					color: var(--studio-gray-100);
-					margin: 0;
 				}
 
 				.social-icons {
@@ -1507,6 +1501,7 @@ $breakpoint-mobile: 660px;
 				padding: 0;
 				border: 0;
 				border-radius: 0;
+				width: 100%;
 			}
 
 			.gravatar.continue-as-user__gravatar {

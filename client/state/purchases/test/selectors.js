@@ -110,6 +110,7 @@ describe( 'selectors', () => {
 				isRefundable: false,
 				isRenewable: false,
 				isRenewal: false,
+				isWooExpressTrial: false,
 				meta: undefined,
 				mostRecentRenewDate: undefined,
 				ownershipId: NaN,

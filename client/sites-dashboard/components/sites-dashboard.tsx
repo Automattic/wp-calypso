@@ -74,6 +74,7 @@ const HeaderControls = styled.div( {
 	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
+	paddingTop: '32px',
 	display: 'flex',
 	flexDirection: 'row',
 	alignItems: 'flex-start',
@@ -150,6 +151,11 @@ const ManageAllDomainsButton = styled( Button )`
 const DownloadIcon = styled( Icon )`
 	margin-right: 8px;
 	vertical-align: bottom;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
 `;
 
 const popoverHoverStyles = css`
@@ -370,7 +376,10 @@ export function SitesDashboard( {
 	);
 }
 
-function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: number | undefined ) {
+export function useShowSiteCreationNotice(
+	allSites: SiteExcerptData[],
+	newSiteID: number | undefined
+) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const shownSiteCreationNotice = useRef( false );
@@ -407,7 +416,7 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: numb
 	}, [ __, allSites, dispatch, newSiteID ] );
 }
 
-function useShowSiteTransferredNotice() {
+export function useShowSiteTransferredNotice() {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	useEffect( () => {

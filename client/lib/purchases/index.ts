@@ -30,6 +30,7 @@ import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import i18n, { TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -249,7 +250,7 @@ export function getName( purchase: Purchase ): string {
 export function getDisplayName( purchase: Purchase ): TranslateResult {
 	const { productName, productSlug, purchaseRenewalQuantity } = purchase;
 
-	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
+	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames( 'full' );
 	if ( jetpackProductsDisplayNames[ productSlug ] ) {
 		return jetpackProductsDisplayNames[ productSlug ];
 	}
@@ -323,7 +324,9 @@ export function handleRenewNowClick(
 			}
 			debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
-			page( isJetpackCloud() ? `https://wordpress.com${ renewalUrl }` : renewalUrl );
+			page(
+				isJetpackCloud() || isA8CForAgencies() ? `https://wordpress.com${ renewalUrl }` : renewalUrl
+			);
 		} catch ( error ) {
 			dispatch( errorNotice( ( error as Error ).message ) );
 		}

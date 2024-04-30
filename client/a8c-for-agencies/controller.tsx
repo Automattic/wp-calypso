@@ -1,12 +1,14 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
-import { addQueryArgs } from 'calypso/lib/route';
+import { getQueryArgs, addQueryArgs } from '@wordpress/url';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { A4A_LANDING_LINK } from './components/sidebar-menu/lib/constants';
 
-export const redirectToOverviewContext: Callback = () => {
+export const redirectToLandingContext: Callback = () => {
 	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 	if ( isA4AEnabled ) {
-		page( '/overview' );
+		const args = getQueryArgs( window.location.href );
+		page.redirect( addQueryArgs( A4A_LANDING_LINK, args ) );
 		return;
 	}
 	window.location.href = 'https://automattic.com/for/agencies';
@@ -23,12 +25,6 @@ export const requireAccessContext: Callback = ( context, next ) => {
 		return;
 	}
 
-	page.redirect(
-		addQueryArgs(
-			{
-				return: pathname + hash + search,
-			},
-			'/landing'
-		)
-	);
+	const args = getQueryArgs( window.location.href );
+	page.redirect( addQueryArgs( A4A_LANDING_LINK, { ...args, return: pathname + search + hash } ) );
 };

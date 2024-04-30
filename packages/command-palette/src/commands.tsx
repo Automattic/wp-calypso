@@ -24,6 +24,7 @@ import {
 	postComments as postCommentsIcon,
 	reusableBlock as cacheIcon,
 	seen as seenIcon,
+	replace as switchIcon,
 	settings as settingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
@@ -69,6 +70,7 @@ export interface Command {
 	filterSelfHosted?: boolean;
 	filterNotice?: string;
 	emptyListNotice?: string;
+	alwaysUseSiteSelector?: boolean;
 }
 
 const siteFilters = {
@@ -101,6 +103,28 @@ export const COMMANDS: { [ key: string ]: Command } = {
 			_x( 'sites dashboard', 'Keyword for the View my sites command', __i18n_text_domain__ ),
 		].join( ' ' ),
 		icon: wordpressIcon,
+	},
+	switchSite: {
+		name: 'switchSite',
+		label: __( 'Switch site', __i18n_text_domain__ ),
+		searchLabel: [
+			_x( 'change site', 'Keyword for the Switch site command', __i18n_text_domain__ ),
+			_x( 'swap site', 'Keyword for the Switch site command', __i18n_text_domain__ ),
+		].join( ' ' ),
+		siteSelector: true,
+		siteSelectorLabel: __( 'Select site to switch to', __i18n_text_domain__ ),
+		callback: ( params ) => {
+			let path;
+			if ( params.currentRoute.startsWith( '/wp-admin' ) ) {
+				path = `/switch-site?route=${ encodeURIComponent( params.currentRoute ) }`;
+			} else {
+				// On a global page, navigate to the dashboard, otherwise keep current route.
+				path = params.currentRoute.includes( ':site' ) ? params.currentRoute : '/home/:site';
+			}
+			return commandNavigation( path )( params );
+		},
+		emptyListNotice: __( "You don't have other sites to switch to.", __i18n_text_domain__ ),
+		icon: switchIcon,
 	},
 	getHelp: {
 		name: 'getHelp',
@@ -306,7 +330,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	},
 	openReader: {
 		name: 'openReader',
-		label: __( 'Open reader', __i18n_text_domain__ ),
+		label: __( 'Open Reader', __i18n_text_domain__ ),
 		callback: commandNavigation( '/read' ),
 		icon: (
 			<svg height="24" viewBox="4 4 24 24" width="24" xmlns="http://www.w3.org/2000/svg">

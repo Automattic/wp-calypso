@@ -51,7 +51,7 @@ export const UpgradePlanHostingDetailsTooltip = ( {
 				hideArrow={ props.hideArrow }
 				showOnMobile={ showOnMobile }
 			>
-				<div className="import__upgrade-plan-hosting-details-tooltipz">
+				<div>
 					<div className="import__upgrade-plan-hosting-details-tooltip-user-text">
 						{ props.customerTestimonial }
 					</div>

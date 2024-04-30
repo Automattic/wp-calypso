@@ -1,7 +1,8 @@
 import page from '@automattic/calypso-router';
 import { includes, some } from 'lodash';
 import { createElement } from 'react';
-import { PluginsUpdateManager } from 'calypso/blocks/plugins-update-manager';
+import { PluginsScheduledUpdates } from 'calypso/blocks/plugins-scheduled-updates';
+import { PluginsScheduledUpdatesMultisite } from 'calypso/blocks/plugins-scheduled-updates-multisite';
 import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
@@ -112,7 +113,7 @@ export function plugins( context, next ) {
 	next();
 }
 
-export function updatesManager( context, next ) {
+export function scheduledUpdates( context, next ) {
 	const siteSlug = context?.params?.site_slug;
 	const scheduleId = context?.params?.schedule_id;
 	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/${ siteSlug }` );
@@ -129,7 +130,7 @@ export function updatesManager( context, next ) {
 
 	switch ( context.params.action ) {
 		case 'logs':
-			context.primary = createElement( PluginsUpdateManager, {
+			context.primary = createElement( PluginsScheduledUpdates, {
 				siteSlug,
 				scheduleId,
 				context: 'logs',
@@ -138,7 +139,7 @@ export function updatesManager( context, next ) {
 			break;
 
 		case 'create':
-			context.primary = createElement( PluginsUpdateManager, {
+			context.primary = createElement( PluginsScheduledUpdates, {
 				siteSlug,
 				context: 'create',
 				onNavBack: goToScheduledUpdatesList,
@@ -146,23 +147,64 @@ export function updatesManager( context, next ) {
 			break;
 
 		case 'edit':
-			context.primary = createElement( PluginsUpdateManager, {
+			context.primary = createElement( PluginsScheduledUpdates, {
 				siteSlug,
 				scheduleId,
 				context: 'edit',
 				onNavBack: goToScheduledUpdatesList,
 			} );
 			break;
-
+		case 'notifications':
+			context.primary = createElement( PluginsScheduledUpdates, {
+				siteSlug,
+				context: 'notifications',
+				onNavBack: goToScheduledUpdatesList,
+			} );
+			break;
 		case 'list':
 		default:
-			context.primary = createElement( PluginsUpdateManager, {
+			context.primary = createElement( PluginsScheduledUpdates, {
 				siteSlug,
 				context: 'list',
 				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/${ siteSlug }` ),
+				onNotificationManagement: () =>
+					page.show( `/plugins/scheduled-updates/notifications/${ siteSlug }` ),
 				onEditSchedule: ( id ) =>
 					page.show( `/plugins/scheduled-updates/edit/${ siteSlug }/${ id }` ),
 				onShowLogs: ( id ) => page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }` ),
+			} );
+			break;
+	}
+
+	next();
+}
+
+export function scheduledUpdatesMultisite( context, next ) {
+	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/` );
+	switch ( context.params.action ) {
+		case 'create':
+			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
+				onNavBack: goToScheduledUpdatesList,
+				context: 'create',
+			} );
+			break;
+
+		case 'edit':
+			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
+				onNavBack: goToScheduledUpdatesList,
+				scheduleId: context.params.scheduleId,
+				context: 'edit',
+			} );
+			break;
+
+		default:
+			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
+				onNavBack: goToScheduledUpdatesList,
+				context: 'list',
+				onEditSchedule: ( id ) => page.show( `/plugins/scheduled-updates/edit/${ id }` ),
+				onShowLogs: ( id, siteSlug ) =>
+					page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }` ),
+				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/` ),
 			} );
 			break;
 	}

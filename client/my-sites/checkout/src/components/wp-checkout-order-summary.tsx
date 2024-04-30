@@ -26,6 +26,7 @@ import {
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	isNewsletterOrLinkInBioFlow,
 	isAnyHostingFlow,
@@ -38,19 +39,21 @@ import {
 	getSubtotalWithoutDiscounts,
 	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
+	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
+import { hasTranslation } from '@wordpress/i18n';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
+import { getAcceptedAssistedFreeMigration } from 'calypso/blocks/importer/wordpress/utils';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
@@ -90,7 +93,7 @@ export function WPCheckoutOrderSummary( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	return (
 		<CheckoutSummaryCard
@@ -128,7 +131,7 @@ export function CheckoutSummaryFeaturedList( {
 	) => void;
 } ) {
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	// Return early if the cart is only Chargebacks fees
 	if ( responseCart.products.every( isChargeback || isCredits ) ) {
@@ -182,7 +185,7 @@ function CheckoutSummaryPriceList() {
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
 
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	return (
 		<>
@@ -477,6 +480,7 @@ export function CheckoutSummaryFeaturesList( props: {
 	const hasSingleProduct = responseCart.products.length === 1;
 
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const hasNoAdsAddOn = responseCart.products.some( ( product ) => isNoAds( product ) );
 
@@ -484,8 +488,19 @@ export function CheckoutSummaryFeaturesList( props: {
 		isDomainTransfer( product )
 	);
 
+	const hasFreeMigrationAssistance = getAcceptedAssistedFreeMigration();
+	const hasFreeMigrationAssistanceTranslation =
+		( isEnglishLocale || hasTranslation( 'Assisted free site migration' ) ) ??
+		translate( 'Assisted free site migration' );
+
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
+			{ hasFreeMigrationAssistance && hasFreeMigrationAssistanceTranslation && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="features-list-support-free-migration-assistance" />
+					{ translate( 'Assisted free site migration' ) }
+				</CheckoutSummaryFeaturesListItem>
+			) }
 			{ hasDomainsInCart &&
 				domains.map( ( domain ) => {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
@@ -794,7 +809,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 } ) {
 	const translate = useTranslate();
 	const productSlug = props.plan?.product_slug;
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	if ( ! productSlug || ! isWpComPlan( productSlug ) ) {
 		return null;
 	}

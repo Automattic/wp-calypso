@@ -3,8 +3,8 @@ import page from '@automattic/calypso-router';
 import { ExternalLink } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -24,10 +24,12 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import isRewindPoliciesInitialized from 'calypso/state/rewind/selectors/is-rewind-policies-initialized';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -72,10 +74,16 @@ const BackupPage = ( { queryDate } ) => {
 		<ExternalLink href="https://jetpack.com/support/backup/">Learn more</ExternalLink>
 	);
 
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( loadTrackingTool( 'LogRocket' ) );
+	}, [ dispatch ] );
+
 	return (
 		<div
 			className={ classNames( 'backup__page', {
-				wordpressdotcom: ! isJetpackCloud(),
+				wordpressdotcom: ! ( isJetpackCloud() || isA8CForAgencies() ),
 			} ) }
 		>
 			<Main
@@ -85,7 +93,7 @@ const BackupPage = ( { queryDate } ) => {
 			>
 				{ isJetpackCloud() && <SidebarNavigation /> }
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-				{ ! isJetpackCloud() && (
+				{ ! ( isJetpackCloud() || isA8CForAgencies() ) && (
 					<NavigationHeader
 						navigationItems={ [] }
 						title={ translate( 'Jetpack VaultPress Backup' ) }
@@ -197,7 +205,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	return (
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
-				{ isJetpackCloud() && (
+				{ ( isJetpackCloud() || isA8CForAgencies() ) && (
 					<div className="backup__header">
 						<div className="backup__header-left">
 							<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>

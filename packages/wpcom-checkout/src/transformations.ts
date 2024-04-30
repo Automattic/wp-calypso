@@ -181,7 +181,10 @@ export interface LineItemCostOverrideForDisplay {
 	discountAmount?: number;
 }
 
-function isUserVisibleCostOverride( costOverride: ResponseCartCostOverride ): boolean {
+export function isUserVisibleCostOverride( costOverride: {
+	does_override_original_cost: boolean;
+	override_code: string;
+} ): boolean {
 	if ( costOverride.does_override_original_cost ) {
 		// We won't display original cost overrides since they are
 		// included in the original cost that's being displayed. They
@@ -272,22 +275,23 @@ function getBillPeriodMonthsForIntroductoryOfferInterval(
  * discount for an annual plan).
  */
 export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
-	product: ResponseCartProduct
+	costOverrides: { override_code: string }[] | undefined,
+	introductoryOfferTerms: ResponseCartProduct[ 'introductory_offer_terms' ] | undefined,
+	monthsPerBillPeriodForProduct: number | undefined | null
 ): boolean {
 	if (
-		product.cost_overrides?.some(
-			( costOverride ) => costOverride.override_code !== 'introductory-offer'
-		)
+		costOverrides?.some( ( costOverride ) => {
+			costOverride.override_code !== 'introductory-offer';
+		} )
 	) {
 		return false;
 	}
-	if ( ! product.introductory_offer_terms?.enabled ) {
+	if ( ! introductoryOfferTerms?.enabled ) {
 		return false;
 	}
 	if (
-		getBillPeriodMonthsForIntroductoryOfferInterval(
-			product.introductory_offer_terms.interval_unit
-		) === product.months_per_bill_period
+		getBillPeriodMonthsForIntroductoryOfferInterval( introductoryOfferTerms.interval_unit ) ===
+		monthsPerBillPeriodForProduct
 	) {
 		return false;
 	}
@@ -350,7 +354,13 @@ export function filterCostOverridesForLineItem(
 				// annual plan) need to be displayed differently because the
 				// discount is only temporary and the user will still be charged
 				// the remainder before the next renewal.
-				if ( doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
+				if (
+					doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+						product.cost_overrides,
+						product.introductory_offer_terms,
+						product.months_per_bill_period
+					)
+				) {
 					return {
 						humanReadableReason: costOverride.human_readable_reason,
 						overrideCode: costOverride.override_code,

@@ -1,6 +1,7 @@
 import { startsWith } from 'lodash';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -20,7 +21,7 @@ export const Link = ( { content, onClick, children } ) => {
 	const isWordPressLink = startsWith( originalUrl, 'https://wordpress.com' );
 
 	// Don't render links to WordPress.com inside Jetpack Cloud
-	if ( isWordPressLink && isJetpackCloud() ) {
+	if ( isWordPressLink && ( isJetpackCloud() || isA8CForAgencies() ) ) {
 		return children;
 	}
 
@@ -50,7 +51,7 @@ export const Post = ( { content, children } ) => {
 	let titleContent = children;
 
 	// Don't render links to WordPress.com inside Jetpack Cloud
-	if ( ! isJetpackCloud() ) {
+	if ( ! ( isJetpackCloud() || isA8CForAgencies() ) ) {
 		if ( content.isTrashed ) {
 			titleContent = <a href={ `/posts/${ content.siteId }/trash` }>{ children }</a>;
 		} else {
@@ -65,7 +66,7 @@ export const Post = ( { content, children } ) => {
 
 export const Comment = ( { content, children } ) => {
 	// Don't render links to WordPress.com inside Jetpack Cloud
-	if ( isJetpackCloud() ) {
+	if ( isJetpackCloud() || isA8CForAgencies() ) {
 		return children;
 	}
 
@@ -80,7 +81,7 @@ export const Comment = ( { content, children } ) => {
 
 export const Person = ( { content, onClick, meta, children } ) => {
 	// Don't render links to WordPress.com inside Jetpack Cloud
-	if ( isJetpackCloud() ) {
+	if ( isJetpackCloud() || isA8CForAgencies() ) {
 		return <strong>{ children }</strong>;
 	}
 
@@ -99,7 +100,7 @@ export const Person = ( { content, onClick, meta, children } ) => {
 
 export const Plugin = ( { content, onClick, meta, children } ) => {
 	// Don't render links to WordPress.com inside Jetpack Cloud
-	if ( isJetpackCloud() ) {
+	if ( isJetpackCloud() || isA8CForAgencies() ) {
 		return children;
 	}
 
@@ -124,7 +125,7 @@ export const Theme = ( { content, onClick, meta, children } ) => {
 
 	if ( /wordpress\.com/.test( themeUri ) ) {
 		// Don't render links to WordPress.com inside Jetpack Cloud
-		return isJetpackCloud() ? (
+		return isJetpackCloud() || isA8CForAgencies() ? (
 			children
 		) : (
 			<a

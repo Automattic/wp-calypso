@@ -14,6 +14,7 @@
 
 .reader-full-post__story-content {
 	@extend %rendered-block-content;
+	font-family: $sans;
 	padding-top: 16px;
 	line-height: 1.7;
 }

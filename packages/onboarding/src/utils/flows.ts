@@ -18,11 +18,13 @@ export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
 export const SENSEI_FLOW = 'sensei';
 export const ECOMMERCE_FLOW = 'ecommerce';
+export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const WOOEXPRESS_FLOW = 'wooexpress';
 export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 export const MIGRATION_FLOW = 'import-focused';
 export const SITE_MIGRATION_FLOW = 'site-migration';
+export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
@@ -115,12 +117,20 @@ export const isCopySiteFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ COPY_SITE_FLOW ].includes( flowName ) );
 };
 
+export const isEntrepreneurFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ ENTREPRENEUR_FLOW ].includes( flowName ) );
+};
+
 export const isWooExpressFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ WOOEXPRESS_FLOW ].includes( flowName ) );
 };
 
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
+};
+
+export const isMigrationSignupFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ MIGRATION_SIGNUP_FLOW ].includes( flowName ) );
 };
 
 export const isBuildFlow = ( flowName: string | null ) => {

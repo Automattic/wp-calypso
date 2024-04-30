@@ -1372,7 +1372,11 @@ function CheckoutLineItem( {
 	} );
 
 	const isIntroductoryOfferWithDifferentLength =
-		doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product );
+		doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+			product.cost_overrides,
+			product.introductory_offer_terms,
+			product.months_per_bill_period
+		);
 	const amountWithIntroductoryOfferOnly = product.cost_overrides?.reduce(
 		( total, costOverride ) =>
 			costOverride.override_code === 'introductory-offer'

@@ -7,12 +7,30 @@
 	"hostname": "agencies.automattic.com",
 	"i18n_default_locale_slug": "en",
 	"logout_url": "https://automattic.com/for/agencies",
+	"wpcom_signup_url": "https://wordpress.com/start",
+	"wpcom_login_url": "https://wordpress.com/log-in",
+	"wpcom_authorize_endpoint": "https://public-api.wordpress.com/oauth2/authorize",
 	"site_name": "Automattic For Agencies",
+	"meta": [
+		{
+			"name": "description",
+			"content": "Welcome to a new era of partnership with Automattic"
+		},
+		{
+			"property": "og:description",
+			"content": "Welcome to a new era of partnership with Automattic"
+		},
+		{
+			"property": "og:image",
+			"content": "https://agencies.automattic.com/calypso/images/a8c-for-agencies/a8c-logo.jpeg"
+		}
+	],
 	"oauth_client_id": 95931,
 	"features": {
 		"a8c-for-agencies": true,
+		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": false,
 		"oauth": true,
-		"a4a/mock-api-data": false
+		"a4a/site-details-pane": true
 	},
 	"enable_all_sections": false,
 	"sections": {

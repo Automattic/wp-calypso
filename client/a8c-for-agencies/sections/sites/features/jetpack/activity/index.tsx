@@ -1,24 +1,18 @@
+import { JetpackFeaturePreview } from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-feature';
+import { Site } from 'calypso/a8c-for-agencies/sections/sites/types';
 import ActivityLogV2 from 'calypso/my-sites/activity/activity-log-v2';
-import { useDispatch } from 'calypso/state';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import SitePreviewPaneContent from '../../../site-preview-pane/site-preview-pane-content';
 
 import 'calypso/my-sites/activity/activity-log-v2/style.scss';
 import './style.scss';
 
 type Props = {
-	siteId: number;
+	site: Site;
 };
 
-export function JetpackActivityPreview( { siteId }: Props ) {
-	const dispatch = useDispatch();
-
-	if ( siteId ) {
-		dispatch( setSelectedSiteId( siteId ) );
-	}
+export function JetpackActivityPreview( { site }: Props ) {
 	return (
-		<SitePreviewPaneContent>
+		<JetpackFeaturePreview site={ site }>
 			<ActivityLogV2 />
-		</SitePreviewPaneContent>
+		</JetpackFeaturePreview>
 	);
 }

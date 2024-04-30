@@ -1,20 +1,10 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import {
-	useLocale,
-	addLocaleToPathLocaleInFront,
-	useHasEnTranslation,
-} from '@automattic/i18n-utils';
+import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import {
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
-	Tooltip,
-} from '@wordpress/components';
-import { ToggleGroupControlOptionProps } from '@wordpress/components/build-types/toggle-group-control/types';
-import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
+import { Icon, category as iconCategory } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { Substitution, useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -24,20 +14,22 @@ import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
 import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
-import { CATEGORY_PAGE } from 'calypso/my-sites/patterns/constants';
+import { TypeToggle } from 'calypso/my-sites/patterns/components/type-toggle';
+import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
+import { filterPatternsByType } from 'calypso/my-sites/patterns/lib/filter-patterns-by-type';
 import { getPatternPermalink } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
-import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
+import { getCategoryUrlPath, getOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
 	PatternView,
-	type CategoryGalleryFC,
-	type Pattern,
-	type PatternGalleryFC,
+	CategoryGalleryFC,
+	PatternGalleryFC,
 } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -50,36 +42,6 @@ import './style.scss';
 const PatternLibraryBody = styled.div``;
 
 export const patternFiltersClassName = 'pattern-library__filters';
-
-const ToggleGroupControlOptionWithNarrowTooltip = (
-	props: ToggleGroupControlOptionProps & {
-		className: string;
-		showToolTip?: boolean;
-		toolTipText: string;
-	}
-) => {
-	const { showToolTip, toolTipText, ...toggleControlProps } = props;
-	const toolTipProps = { style: { maxWidth: '200px', top: '3px' }, text: toolTipText };
-
-	if ( ! showToolTip ) {
-		return <ToggleGroupControlOption { ...toggleControlProps } />;
-	}
-
-	return (
-		<Tooltip { ...toolTipProps }>
-			<ToggleGroupControlOption { ...toggleControlProps } />
-		</Tooltip>
-	);
-};
-
-function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
-	return patterns.filter( ( pattern ) => {
-		const categorySlugs = Object.keys( pattern.categories );
-		const isPage = categorySlugs.includes( CATEGORY_PAGE );
-
-		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
-	} );
-}
 
 // Scroll to anchoring position of category pill navigation element
 function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowThreshold = false ) {
@@ -117,22 +79,24 @@ export const PatternLibrary = ( {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const navRef = useRef< HTMLDivElement >( null );
+
+	const { recordPatternsEvent } = useRecordPatternsEvent();
 	const { category, searchTerm, isGridView, patternTypeFilter, referrer, patternPermalinkId } =
 		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
-	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
-		select( patterns ) {
-			if ( searchTerm ) {
-				return filterPatternsByTerm( patterns, searchTerm );
-			}
+	const { data: rawPatterns = [], isFetching: isFetchingPatterns } = usePatterns(
+		locale,
+		category,
+		{ enabled: Boolean( category || searchTerm ) }
+	);
 
-			return filterPatternsByType( patterns, patternTypeFilter );
-		},
-	} );
+	const patterns = searchTerm
+		? filterPatternsByTerm( rawPatterns, searchTerm )
+		: filterPatternsByType( rawPatterns, patternTypeFilter );
 
-	const hasEnTranslation = useHasEnTranslation();
 	let patternPermalinkName;
+
 	if ( patternPermalinkId && ! isFetchingPatterns ) {
 		patternPermalinkName = patterns.find( ( pattern ) => pattern.ID === patternPermalinkId )?.name;
 	}
@@ -156,24 +120,6 @@ export const PatternLibrary = ( {
 	};
 
 	const currentView = isGridView ? 'grid' : 'list';
-
-	const handleViewChange = ( view: PatternView ) => {
-		if ( currentView === view ) {
-			return;
-		}
-
-		recordClickEvent( 'calypso_pattern_library_view_switch', view, patternTypeFilter );
-
-		const url = new URL( window.location.href );
-		url.searchParams.delete( 'grid' );
-
-		if ( view === 'grid' ) {
-			url.searchParams.set( 'grid', '1' );
-		}
-
-		// Removing the origin ensures that a full refresh is not attempted
-		page( url.href.replace( url.origin, '' ) );
-	};
 
 	// If the user has scrolled below the anchoring position of the category pill navigation then we
 	// scroll back up when the category changes
@@ -212,6 +158,28 @@ export const PatternLibrary = ( {
 		};
 	}, [] );
 
+	// `calypso-router` has trouble with the onboarding URL we use. This code prevents click
+	// events on onboarding links from propagating to the `calypso-router` event listener,
+	// which fixes the problem.
+	useEffect( () => {
+		const onboardingUrl = getOnboardingUrl( locale, isLoggedIn );
+
+		function stopPropagationOnClick( event: MouseEvent ) {
+			if (
+				event.target instanceof HTMLAnchorElement &&
+				event.target.getAttribute( 'href' ) === onboardingUrl
+			) {
+				event.stopPropagation();
+			}
+		}
+
+		document.addEventListener( 'click', stopPropagationOnClick, { capture: true } );
+
+		return () => {
+			document.removeEventListener( 'click', stopPropagationOnClick );
+		};
+	}, [ locale, isLoggedIn ] );
+
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 	const shouldDisplayPatternTypeToggle =
 		category && ! searchTerm && !! categoryObject?.pagePatternCount;
@@ -223,9 +191,7 @@ export const PatternLibrary = ( {
 		return {
 			id: category.name,
 			label: category.label,
-			link:
-				getCategoryUrlPath( category.name, patternTypeFilterFallback, false ) +
-				( isGridView ? '?grid=1' : '' ),
+			link: getCategoryUrlPath( category.name, patternTypeFilterFallback, false, isGridView ),
 		};
 	} );
 
@@ -234,17 +200,45 @@ export const PatternLibrary = ( {
 		? `${ searchTerm }-${ category }-${ patternTypeFilter }`
 		: `${ category }-${ patternTypeFilter }`;
 
+	let mainHeading: Substitution = '';
+
+	if ( searchTerm && isFetchingPatterns && ! patterns.length ) {
+		// Non-breaking space
+		mainHeading = '\u00A0';
+	} else if ( searchTerm ) {
+		mainHeading = translate( '%(count)d pattern', '%(count)d patterns', {
+			count: patterns.length,
+			args: { count: patterns.length },
+		} );
+	} else if ( patternTypeFilter === PatternTypeFilter.PAGES ) {
+		mainHeading = translate( 'Page Layouts', {
+			comment: 'Refers to block patterns that contain entire page layouts',
+		} );
+	} else if ( patternTypeFilter === PatternTypeFilter.REGULAR ) {
+		mainHeading = translate( 'Patterns', {
+			comment: 'Refers to block patterns',
+		} );
+	}
+
 	return (
 		<>
-			<PatternsPageViewTracker
-				category={ category }
-				patternPermalinkName={ patternPermalinkName }
-				patternTypeFilter={ patternTypeFilter }
-				view={ currentView }
-				searchTerm={ searchTerm }
-				referrer={ referrer }
-				patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
-			/>
+			{ isHomePage ? (
+				<PatternsPageViewTracker
+					searchTerm={ searchTerm }
+					referrer={ referrer }
+					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
+				/>
+			) : (
+				<PatternsPageViewTracker
+					category={ category }
+					patternPermalinkName={ patternPermalinkName }
+					patternTypeFilter={ patternTypeFilter }
+					view={ currentView }
+					searchTerm={ searchTerm }
+					referrer={ referrer }
+					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
+				/>
+			) }
 
 			<PatternsDocumentHead category={ category } />
 
@@ -268,12 +262,16 @@ export const PatternLibrary = ( {
 							buttons={ [
 								{
 									icon: <Icon icon={ iconCategory } size={ 26 } />,
+									id: 'all',
 									label: translate( 'All Categories' ),
 									link: addLocaleToPathLocaleInFront( '/patterns' ),
 									isActive: ! category,
 								},
 							] }
 							categories={ categoryNavList }
+							onSelect={ ( selectedId ) =>
+								recordPatternsEvent( 'calypso_pattern_library_filter', { category: selectedId } )
+							}
 						/>
 
 						<div className="pattern-library__body-search">
@@ -305,95 +303,33 @@ export const PatternLibrary = ( {
 									'pattern-library__title--search': searchTerm,
 								} ) }
 							>
-								{ searchTerm &&
-									translate( '%(count)d pattern', '%(count)d patterns', {
-										count: patterns.length,
-										args: { count: patterns.length },
-									} ) }
-								{ ! searchTerm &&
-									patternTypeFilter === PatternTypeFilter.PAGES &&
-									translate( 'Page Layouts', {
-										comment: 'Refers to block patterns that contain entire page layouts',
-									} ) }
-								{ ! searchTerm &&
-									patternTypeFilter === PatternTypeFilter.REGULAR &&
-									translate( 'Patterns', {
-										comment: 'Refers to block patterns',
-									} ) }
+								{ mainHeading }
 							</h1>
 
 							{ shouldDisplayPatternTypeToggle && (
-								<ToggleGroupControl
-									className="pattern-library__toggle--pattern-type"
-									isBlock
-									label=""
-									onChange={ ( value ) => {
-										const href =
-											getCategoryUrlPath( category, value as PatternTypeFilter ) +
-											( isGridView ? '?grid=1' : '' );
-										recordClickEvent(
-											'calypso_pattern_library_type_switch',
-											currentView,
-											value as PatternTypeFilter
-										);
-										page( href );
+								<TypeToggle
+									onChange={ ( type ) => {
+										recordClickEvent( 'calypso_pattern_library_type_switch', currentView, type );
 									} }
-									value={ patternTypeFilter }
-								>
-									<ToggleGroupControlOptionWithNarrowTooltip
-										className="pattern-library__toggle-option"
-										label={ translate( 'Patterns', {
-											comment: 'Refers to block patterns',
-											textOnly: true,
-										} ) }
-										showToolTip={ hasEnTranslation(
-											'A collection of blocks that make up one section of a page'
-										) }
-										toolTipText={ translate(
-											'A collection of blocks that make up one section of a page'
-										) }
-										value={ PatternTypeFilter.REGULAR }
-									/>
-									<ToggleGroupControlOptionWithNarrowTooltip
-										className="pattern-library__toggle-option"
-										label={ translate( 'Page Layouts', {
-											comment: 'Refers to block patterns that contain entire page layouts',
-											textOnly: true,
-										} ) }
-										showToolTip={ hasEnTranslation(
-											'A collection of patterns that form an entire page'
-										) }
-										toolTipText={ translate( 'A collection of patterns that form an entire page' ) }
-										value={ PatternTypeFilter.PAGES }
-									/>
-								</ToggleGroupControl>
+								/>
 							) }
 
-							<ToggleGroupControl
-								className="pattern-library__toggle--view"
-								label=""
-								isBlock
-								value={ isGridView ? 'grid' : 'list' }
-							>
-								<ToggleGroupControlOption
-									className="pattern-library__toggle-option--list-view"
-									label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
-									value="list"
-									onClick={ () => handleViewChange( 'list' ) }
-								/>
-								<ToggleGroupControlOption
-									className="pattern-library__toggle-option--grid-view"
-									label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
-									value="grid"
-									onClick={ () => handleViewChange( 'grid' ) }
-								/>
-							</ToggleGroupControl>
+							<ViewToggle
+								onChange={ ( view ) => {
+									recordClickEvent(
+										'calypso_pattern_library_view_switch',
+										view,
+										patternTypeFilter
+									);
+								} }
+							/>
 						</div>
 
 						<PatternGallery
 							category={ category }
+							displayPlaceholder={ isFetchingPatterns && ! patterns.length }
 							getPatternPermalink={ ( pattern ) =>
-								getPatternPermalink( pattern, category, patternTypeFilter, categories )
+								getPatternPermalink( pattern, category, categories )
 							}
 							isGridView={ isGridView }
 							key={ `pattern-gallery-${ patternGalleryKey }` }

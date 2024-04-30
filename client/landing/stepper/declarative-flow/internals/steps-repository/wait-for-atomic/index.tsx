@@ -117,7 +117,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 				stopPollingTransfer = transferStatus === transferStates.COMPLETED;
 			}
 
-			return { finishedWaitingForAtomic: true, siteSlug: data?.siteSlug };
+			return { finishedWaitingForAtomic: true, siteId, siteSlug: data?.siteSlug };
 		} );
 
 		submit?.();

@@ -294,6 +294,7 @@ class Layout extends Component {
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
+			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,
 			woo: this.props.isWooCoreProfilerFlow,
 			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
 			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
@@ -320,6 +321,10 @@ class Layout extends Component {
 
 		const shouldDisableSidebarScrollSynchronizer =
 			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
+
+		const shouldEnableCommandPalette =
+			// There is a custom command palette in the "Switch site" page, so we disable it.
+			config.isEnabled( 'yolo/command-palette' ) && this.props.currentRoute !== '/switch-site';
 
 		return (
 			<div className={ sectionClass }>
@@ -409,7 +414,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'yolo/command-palette' ) && (
+				{ shouldEnableCommandPalette && (
 					<AsyncLoad
 						require="@automattic/command-palette"
 						placeholder={ null }
@@ -443,11 +448,17 @@ export default withCurrentRoute(
 			const isWooCoreProfilerFlow =
 				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 				isWooCommerceCoreProfilerFlow( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
 			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
 				state,
 				siteId,
-				sectionGroup
+				sectionGroup,
+				sectionName
 			);
 			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
@@ -464,6 +475,8 @@ export default withCurrentRoute(
 				// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 				! sectionName ||
 				( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
+			const isFromAutomatticForAgenciesPlugin =
+				'automattic-for-agencies-client' === currentQuery?.from;
 			const masterbarIsHidden =
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
@@ -507,6 +520,7 @@ export default withCurrentRoute(
 				isJetpackWooDnaFlow,
 				isJetpackMobileFlow,
 				isWooCoreProfilerFlow,
+				isFromAutomatticForAgenciesPlugin,
 				isEligibleForJITM,
 				oauth2Client,
 				wccomFrom,

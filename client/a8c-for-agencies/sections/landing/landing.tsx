@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { getQueryArg } from '@wordpress/url';
+import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -16,6 +16,15 @@ import { useSelector } from 'calypso/state';
 import { getActiveAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 import './style.scss';
+
+/**
+ * Redirect with Current Query
+ * Adds all of the current location's query parameters to the provided URL before redirecting.
+ */
+const redirectWithCurrentQuery = ( url: string ) => {
+	const args = getQueryArgs( window.location.href );
+	return page.redirect( addQueryArgs( url, args ) );
+};
 
 export default function Landing() {
 	const translate = useTranslate();
@@ -37,10 +46,10 @@ export default function Landing() {
 				return;
 			}
 
-			page.redirect( A4A_OVERVIEW_LINK );
+			return redirectWithCurrentQuery( A4A_OVERVIEW_LINK );
 		}
 
-		page.redirect( A4A_SIGNUP_LINK );
+		redirectWithCurrentQuery( A4A_SIGNUP_LINK );
 	}, [ agency, hasFetched ] );
 
 	return (

@@ -213,6 +213,9 @@ export interface CommandPaletteProps {
 	useCommands: () => PaletteCommand[];
 	useSites: () => SiteExcerptData[];
 	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
+	selectedCommand?: PaletteCommand;
+	onBack?: () => void;
+	shouldCloseOnClickOutside?: boolean;
 }
 
 const COMMAND_PALETTE_MODAL_OPEN_CLASSNAME = 'command-palette-modal-open';
@@ -234,6 +237,9 @@ const CommandPalette = ( {
 	useCommands,
 	useSites,
 	userCapabilities,
+	selectedCommand,
+	onBack,
+	shouldCloseOnClickOutside,
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
@@ -291,6 +297,18 @@ const CommandPalette = ( {
 		return () => document.removeEventListener( 'keydown', down );
 	}, [ toggle ] );
 
+	useEffect( () => {
+		if ( ! selectedCommand ) {
+			return;
+		}
+
+		setSearch( '' );
+		setSelectedCommandName( selectedCommand.name );
+		if ( selectedCommand.siteSelector ) {
+			setPlaceholderOverride( selectedCommand.siteSelectorLabel || '' );
+		}
+	}, [ selectedCommand ] );
+
 	const reset = () => {
 		setPlaceholderOverride( '' );
 		setSearch( '' );
@@ -308,7 +326,11 @@ const CommandPalette = ( {
 			search_text: search,
 			from_keyboard: fromKeyboard,
 		} );
-		reset();
+		if ( onBack ) {
+			onBack();
+		} else {
+			reset();
+		}
 	};
 
 	if ( ! isOpen ) {
@@ -363,6 +385,7 @@ const CommandPalette = ( {
 				overlayClassName="commands-command-menu__overlay"
 				onRequestClose={ closeAndReset }
 				__experimentalHideHeader
+				shouldCloseOnClickOutside={ shouldCloseOnClickOutside }
 			>
 				<StyledCommandsMenuContainer className="commands-command-menu__container">
 					<Command

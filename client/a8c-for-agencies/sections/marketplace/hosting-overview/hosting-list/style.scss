@@ -10,3 +10,18 @@
 	margin: 16px 0 32px;
 	justify-content: space-between;
 }
+
+.hosting-list__features {
+	border: 1px solid var(--color-neutral-10);
+	box-shadow: none;
+	border-radius: 4px;
+}
+
+.hosting-list__features-heading {
+	margin-bottom: 24px;
+}
+
+.hosting-list__features-list {
+	display: block;
+	column-count: 2;
+}

@@ -59,5 +59,14 @@ export function getHostingLogo( slug: string ) {
  * @returns boolean True if Pressable hosting product, false if not
  */
 export function isPressableHostingProduct( keyOrSlug: string ) {
-	return keyOrSlug.startsWith( 'pressable-hosting' );
+	return keyOrSlug.startsWith( 'pressable-hosting' ) || keyOrSlug.startsWith( 'jetpack-pressable' );
+}
+
+/**
+ * Determine if current slug is a WPCOM hosting product.
+ * @param {string} slug - Product slug
+ * @returns {boolean} - True if WPCOM hosting product, false if not
+ */
+export function isWPCOMHostingProduct( slug: string ) {
+	return slug.startsWith( 'wpcom-hosting' );
 }

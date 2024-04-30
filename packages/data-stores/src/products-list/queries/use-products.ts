@@ -1,5 +1,7 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import * as ProductsList from '../../products-list';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { StoreProductSlug, Product, RawAPIProductsList } from '../types';
 
@@ -12,15 +14,22 @@ type ProductsIndex = {
  * - Only properties needed by the UI are included (which can gradually be expanded as needed)
  * @returns Query result
  */
-function useProducts(): UseQueryResult< ProductsIndex > {
+function useProducts(
+	productSlugs?: ProductsList.StoreProductSlug[]
+): UseQueryResult< ProductsIndex > {
 	const queryKeys = useQueryKeysFactory();
+	const product_slugs = productSlugs?.join( ',' ) ?? null;
+	const locale = useLocale();
 
 	return useQuery( {
-		queryKey: queryKeys.products(),
+		queryKey: [ ...queryKeys.products(), product_slugs, locale ],
 		queryFn: async (): Promise< ProductsIndex > => {
 			const apiProducts: RawAPIProductsList = await wpcomRequest( {
 				path: `/products`,
 				apiVersion: '1.1',
+				...( product_slugs
+					? { query: new URLSearchParams( { product_slugs, locale } ).toString() }
+					: {} ),
 			} );
 
 			return Object.fromEntries(

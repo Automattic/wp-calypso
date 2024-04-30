@@ -1,30 +1,54 @@
-import { FeatureList } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import { GridPlan, PlansIntent } from '../../types';
+import useGridPlans from './use-grid-plans';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
+import type { UseGridPlansParams, UseGridPlansType } from './types';
+import type { GridPlan } from '../../types';
 
-interface Params {
-	allFeaturesList: FeatureList;
-	availableGridPlans: Omit< GridPlan, 'features' >[];
-	gridPlans: Omit< GridPlan, 'features' >[];
-	intent?: PlansIntent;
-	isInSignup?: boolean;
-	selectedFeature?: string | null;
-	showLegacyStorageFeature?: boolean;
-}
-
-const useGridPlansForFeaturesGrid = ( {
-	allFeaturesList,
-	availableGridPlans,
-	gridPlans,
-	intent,
-	isInSignup,
-	selectedFeature,
-	showLegacyStorageFeature,
-}: Params ): GridPlan[] => {
-	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
+const useGridPlansForFeaturesGrid = (
+	{
 		allFeaturesList,
-		gridPlans: availableGridPlans,
+		coupon,
+		eligibleForFreeHostingTrial,
+		hasRedeemedDomainCredit,
+		hiddenPlans,
+		intent,
+		isDisplayingPlansNeededForFeature,
+		isInSignup,
+		isSubdomainNotGenerated,
+		selectedFeature,
+		selectedPlan,
+		showLegacyStorageFeature,
+		siteId,
+		storageAddOns,
+		term,
+		useCheckPlanAvailabilityForPurchase,
+		useFreeTrialPlanSlugs,
+	}: UseGridPlansParams,
+	useGridPlansData: UseGridPlansType = useGridPlans
+): GridPlan[] | null => {
+	const gridPlans = useGridPlansData( {
+		allFeaturesList,
+		coupon,
+		eligibleForFreeHostingTrial,
+		hasRedeemedDomainCredit,
+		hiddenPlans,
+		intent,
+		isDisplayingPlansNeededForFeature,
+		isSubdomainNotGenerated,
+		selectedFeature,
+		selectedPlan,
+		siteId,
+		showLegacyStorageFeature,
+		storageAddOns,
+		term,
+		useCheckPlanAvailabilityForPurchase,
+		useFreeTrialPlanSlugs,
+	} );
+
+	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
+		gridPlans: gridPlans || [],
+		allFeaturesList,
+		hasRedeemedDomainCredit,
 		intent,
 		isInSignup,
 		selectedFeature,
@@ -32,6 +56,10 @@ const useGridPlansForFeaturesGrid = ( {
 	} );
 
 	return useMemo( () => {
+		if ( ! gridPlans ) {
+			return null;
+		}
+
 		return gridPlans.reduce( ( acc, gridPlan ) => {
 			if ( gridPlan.isVisible ) {
 				return [

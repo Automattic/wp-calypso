@@ -1028,17 +1028,21 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar__unified {
-	.masterbar__item-wordpress {
-		padding-left: 7px;
-		padding-right: 1px;
+	.masterbar__item {
+		gap: 6px;
+		padding: 0 7px;
+	}
+
+	.masterbar__item-me {
+		gap: 0;
 	}
 
 	.masterbar__item-all-sites {
-		gap: 4px;
-	}
+		gap: 2px;
 
-	.masterbar__item-current-site {
-		gap: 6px;
+		@media only screen and ( min-width: 783px ) {
+			padding: 0 8px 0 4px;
+		}
 	}
 
 	.masterbar__item-notifications {

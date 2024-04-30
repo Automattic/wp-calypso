@@ -8,8 +8,8 @@ const OverviewBody = () => {
 		<div className="overview-body">
 			<OverviewBodyIntroCards />
 			<OverviewBodyNextSteps />
-			<OverviewBodyProducts />
 			<OverviewBodyHosting />
+			<OverviewBodyProducts />
 		</div>
 	);
 };

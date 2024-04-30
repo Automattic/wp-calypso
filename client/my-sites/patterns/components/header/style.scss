@@ -31,7 +31,6 @@
 			letter-spacing: 0.4px;
 			line-height: 1.4;
 			padding-bottom: 32px;
-			text-wrap: pretty;
 			width: 450px;
 		}
 
@@ -57,7 +56,8 @@
 
 	@media ( max-width: $break-wide ) {
 		.patterns-header__inner {
-			padding: 90px 24px 24px;
+			padding-top: 90px;
+			padding-bottom: 24px;
 			background: none;
 
 			h1 {

@@ -176,8 +176,14 @@ $brand-text: "SF Pro Text", $sans;
 		}
 
 		.sidebar__menu-link {
-			&.svg_all-sites {
-				margin: -2px 6px -2px -2px;
+			.sidebar__menu-icon {
+				&.dashicons-admin-site-alt3 {
+					margin-right: 10px;
+				}
+				&.svg_all-sites,
+				&.sidebar_svg-reader {
+					margin-left: -2px;
+				}
 			}
 		}
 	}
@@ -401,6 +407,7 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__body {
 			padding-top: 0;
+			overflow-y: hidden;
 		}
 	}
 }
@@ -421,17 +428,20 @@ $brand-text: "SF Pro Text", $sans;
 				background-position: left;
 				width: 24px;
 				margin-left: 6px;
+
+				.rtl & {
+					background-position: right;
+					margin-right: 6px;
+				}
 			}
 		}
 
 		.sidebar__body {
-			.sidebar__menu-link-text {
-				display: none;
-			}
-			.sidebar__menu-icon {
-				margin-left: 4px;
-				&.svg_all-sites {
-					margin-left: 2px;
+			.sidebar__menu-item-parent .sidebar__menu-link {
+				margin: 0 auto;
+
+				> *:not(:first-child) {
+					display: none;
 				}
 			}
 		}

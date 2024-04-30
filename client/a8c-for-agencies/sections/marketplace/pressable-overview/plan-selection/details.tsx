@@ -1,14 +1,15 @@
+import { Button } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
-import { Button } from '@wordpress/components';
-import { Icon, check, external } from '@wordpress/icons';
+import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useCallback } from 'react';
+import { useCallback } from 'react';
 import { getProductPricingInfo } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import SimpleList from '../../common/simple-list';
 import getPressablePlan from '../lib/get-pressable-plan';
 import getPressableShortName from '../lib/get-pressable-short-name';
 
@@ -16,23 +17,6 @@ type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	onSelectPlan: () => void;
 };
-
-function IncludedList( { items }: { items: ReactNode[] } ) {
-	return (
-		<ul className="pressable-overview-plan-selection__details-card-included-list">
-			{ items.map( ( item, index ) => (
-				<li key={ `included-item-${ index }` }>
-					<Icon
-						className="pressable-overview-plan-selection__details-card-included-list-icon"
-						icon={ check }
-						size={ 24 }
-					/>
-					{ item }
-				</li>
-			) ) }
-		</ul>
-	);
-}
 
 export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Props ) {
 	const translate = useTranslate();
@@ -80,15 +64,22 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 					) }
 				</div>
 
-				<IncludedList
+				<SimpleList
 					items={ [
-						translate( '{{b}}%(count)s{{/b}} WordPress installs', {
-							args: {
-								count: info?.install ?? customString,
-							},
-							components: { b: <b /> },
-							comment: '%(count)s is the number of WordPress installs.',
-						} ),
+						info?.install
+							? translate(
+									'{{b}}%(count)d{{/b}} WordPress install',
+									'{{b}}%(count)d{{/b}} WordPress installs',
+									{
+										args: {
+											count: info.install,
+										},
+										count: info.install,
+										components: { b: <b /> },
+										comment: '%(count)s is the number of WordPress installs.',
+									}
+							  )
+							: translate( 'Custom WordPress installs' ),
 						translate( '{{b}}%(count)s{{/b}} visits per month', {
 							args: {
 								count: info ? formatNumber( info.visits ) : customString,
@@ -110,7 +101,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 					<Button
 						className="pressable-overview-plan-selection__details-card-cta-button"
 						onClick={ onSelectPlan }
-						variant="primary"
+						primary
 					>
 						{ translate( 'Select %(planName)s plan', {
 							args: {
@@ -127,7 +118,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 						onClick={ onChatWithUs }
 						href={ PRESSABLE_CONTACT_LINK }
 						target="_blank"
-						variant="primary"
+						primary
 					>
 						{ translate( 'Chat with us' ) } <Icon icon={ external } size={ 16 } />
 					</Button>
@@ -139,7 +130,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 					{ translate( 'All plans include:' ) }{ ' ' }
 				</h3>
 
-				<IncludedList
+				<SimpleList
 					items={ [
 						translate( '24/7 WordPress hosting support' ),
 						translate( 'WP Cloud platform' ),

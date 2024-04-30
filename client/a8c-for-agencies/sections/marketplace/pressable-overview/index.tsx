@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -20,11 +20,12 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import HostingOverview from '../common/hosting-overview';
 import useShoppingCart from '../hooks/use-shopping-cart';
-import { getHostingLogo } from '../lib/hosting';
 import ShoppingCart, { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
 import PressableOverviewFeatures from './footer';
 import PressableOverviewPlanSelection from './plan-selection';
+
 import './style.scss';
 
 export default function PressableOverview() {
@@ -93,20 +94,11 @@ export default function PressableOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<section className="pressable-overview__banner">
-					<div className="pressable-overview__banner-logo">
-						{ getHostingLogo( 'pressable-hosting' ) }
-					</div>
-
-					<h1 className="pressable-overview__banner-title">
-						{ translate( 'Managed WordPress Hosting' ) }
-					</h1>
-
-					<h2 className="pressable-overview__banner-subtitle">
-						{ translate( 'Scalable plans to help you grow your business.' ) }
-					</h2>
-				</section>
-
+				<HostingOverview
+					slug="pressable-hosting"
+					title={ translate( 'Managed WordPress Hosting' ) }
+					subtitle={ translate( 'Scalable plans to help you grow your business.' ) }
+				/>
 				<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 
 				<section className="pressable-overview__banner">
@@ -127,7 +119,7 @@ export default function PressableOverview() {
 						href={ PRESSABLE_LINK }
 						onClick={ onclickMoreInfo }
 						target="_blank"
-						variant="primary"
+						primary
 					>
 						{ translate( 'Learn more about Pressable' ) } <Icon icon={ external } size={ 18 } />
 					</Button>

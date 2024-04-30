@@ -60,12 +60,12 @@
 		&.completed.enabled > a:focus,
 		&.pending > a:focus {
 			.checklist-item__text {
-				color: var(--color-jetpack);
+				color: var(--color-primary);
 			}
 
 			.checklist-item__chevron,
 			.checklist-item__checkmark {
-				fill: var(--color-jetpack);
+				fill: var(--color-primary);
 			}
 		}
 	}
@@ -74,4 +74,5 @@
 
 .card:has(.next-steps) {
 	padding: 16px 24px;
+	border-radius: 4px;
 }

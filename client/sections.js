@@ -21,6 +21,11 @@ const sections = [
 		group: 'sites-dashboard',
 	},
 	{
+		name: 'switch-site',
+		paths: [ '/switch-site' ],
+		module: 'calypso/switch-site',
+	},
+	{
 		name: 'account',
 		paths: [ '/me/account' ],
 		module: 'calypso/me/account',
@@ -208,6 +213,12 @@ const sections = [
 		name: 'subscribers',
 		paths: [ '/subscribers' ],
 		module: 'calypso/my-sites/subscribers',
+		group: 'sites',
+	},
+	{
+		name: 'hosting-overview',
+		paths: [ '/hosting' ],
+		module: 'calypso/hosting-overview',
 		group: 'sites',
 	},
 	{
@@ -537,7 +548,7 @@ const sections = [
 	{
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
-		module: 'calypso/my-sites/hosting',
+		module: 'calypso/hosting-overview',
 		group: 'sites',
 	},
 	{
@@ -689,13 +700,13 @@ const sections = [
 	{
 		name: 'site-monitoring',
 		paths: [ '/site-monitoring', '/site-logs' ],
-		module: 'calypso/my-sites/site-monitoring',
+		module: 'calypso/site-monitoring',
 		group: 'sites',
 	},
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
-		module: 'calypso/my-sites/github-deployments',
+		module: 'calypso/github-deployments',
 		group: 'sites',
 	},
 	{
@@ -710,7 +721,6 @@ const sections = [
 		paths: [ '/landing' ],
 		module: 'calypso/a8c-for-agencies/sections/landing',
 		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'a8c-for-agencies-auth',
@@ -724,21 +734,18 @@ const sections = [
 		paths: [ '/overview' ],
 		module: 'calypso/a8c-for-agencies/sections/overview',
 		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'a8c-for-agencies-sites',
 		paths: [ '/sites', 'sites/favorite' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
 		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'a8c-for-agencies-plugins',
 		paths: [ '/plugins' ],
 		module: 'calypso/a8c-for-agencies/sections/plugins',
 		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'a8c-for-agencies-marketplace',
@@ -754,7 +761,6 @@ const sections = [
 		],
 		module: 'calypso/a8c-for-agencies/sections/marketplace',
 		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'a8c-for-agencies-purchases',
@@ -768,13 +774,19 @@ const sections = [
 		],
 		module: 'calypso/a8c-for-agencies/sections/purchases',
 		group: 'a8c-for-agencies',
-		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-referrals',
+		paths: [ '/referrals', '/referrals/bank-details' ],
+		module: 'calypso/a8c-for-agencies/sections/referrals',
+		group: 'a8c-for-agencies',
 	},
 	{
 		name: 'a8c-for-agencies-signup',
-		paths: [ '/signup' ],
+		paths: [ '/signup', '/signup/finish', '/signup/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/signup',
 		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
 	},
 ];
 

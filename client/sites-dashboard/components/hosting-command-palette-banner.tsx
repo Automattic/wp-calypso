@@ -18,6 +18,7 @@ import DismissibleCard from 'calypso/blocks/dismissible-card';
 const HostingCommandPaletteBannerRoot = styled.div( {
 	'&:not(:empty)': {
 		marginBottom: 25,
+		marginTop: 25,
 	},
 	'.hosting-command-palette-banner': {
 		background: 'linear-gradient(270deg, #E9EFF5 12.03%, rgba(233, 239, 245, 0) 40.39%)',
@@ -157,7 +158,7 @@ const AnimatedCommand = () => {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 	const commands = [
 		{ icon: domainsIcon, label: __( 'Register new domain' ) },
-		{ icon: <Gridicon icon="reader" />, label: __( 'Open reader' ) },
+		{ icon: <Gridicon icon="reader" />, label: __( 'Open Reader' ) },
 		{ icon: plusIcon, label: __( 'Add new post' ) },
 		{ icon: wordpressIcon, label: __( 'View my sites' ) },
 		{ icon: settingsIcon, label: __( 'Open hosting configuration' ) },

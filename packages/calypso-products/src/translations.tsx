@@ -88,7 +88,7 @@ import {
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
-export const getJetpackProductsShortNames = (): Record< string, TranslateResult > => {
+export const getJetpackProductsShortNames = (): Record< string, React.ReactElement | string > => {
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
 			<>
@@ -175,8 +175,61 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 	};
 };
 
-export const getJetpackProductsDisplayNames = (): Record< string, TranslateResult > => {
-	const vaultPressBackupName = getJetpackProductsShortNames()[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ];
+export const getJetpackProductsFullNames = (): Record< string, React.ReactElement | string > => {
+	const jetpackFullNames = getJetpackProductsShortNames();
+
+	jetpackFullNames[ PRODUCT_JETPACK_BACKUP_DAILY ] = (
+		<>
+			Jetpack VaultPress Backup <span>Daily</span>
+		</>
+	);
+
+	jetpackFullNames[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ] = (
+		<>
+			Jetpack VaultPress Backup <span>Daily</span>
+		</>
+	);
+
+	jetpackFullNames[ PRODUCT_JETPACK_BACKUP_REALTIME ] = (
+		<>
+			Jetpack VaultPress Backup <span style={ { whiteSpace: 'nowrap' } }>Real-time</span>
+		</>
+	);
+
+	jetpackFullNames[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ] = (
+		<>
+			Jetpack VaultPress Backup <span style={ { whiteSpace: 'nowrap' } }>Real-time</span>
+		</>
+	);
+
+	jetpackFullNames[ PRODUCT_JETPACK_SCAN_REALTIME ] = (
+		<>
+			Jetpack Scan <span style={ { whiteSpace: 'nowrap' } }>Real-time</span>
+		</>
+	);
+
+	jetpackFullNames[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ] = (
+		<>
+			Jetpack Scan <span style={ { whiteSpace: 'nowrap' } }>Real-time</span>
+		</>
+	);
+
+	Object.entries( jetpackFullNames ).forEach( ( [ key, shortName ] ) => {
+		if ( typeof shortName === 'string' && ! shortName.includes( 'Akismet' ) ) {
+			jetpackFullNames[ key ] = `Jetpack ${ shortName }`;
+		}
+	} );
+
+	return jetpackFullNames;
+};
+
+export const getJetpackProductsDisplayNames = (
+	type: 'short' | 'full' = 'short'
+): Record< string, TranslateResult > => {
+	const vaultPressBackupName =
+		type === 'short'
+			? getJetpackProductsShortNames()[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]
+			: getJetpackProductsFullNames()[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ];
 	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 		comment:
 			'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
@@ -227,8 +280,11 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		args: { storageAmount: text5tb, pluginName: vaultPressBackupName },
 	} );
 
+	const jetpackProductNames =
+		type === 'short' ? getJetpackProductsShortNames() : getJetpackProductsFullNames();
+
 	return {
-		...getJetpackProductsShortNames(),
+		...jetpackProductNames,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: backupAddon10gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: backupAddon100gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: backupAddon1tb,
@@ -1055,6 +1111,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Access to upcoming advanced features' ),
 		translate( 'Priority support' ),
 		translate( 'Commercial use' ),
+		translate( 'UTM tracking' ),
 	];
 	const aiAssistantIncludesInfo = [
 		translate( '100 monthly requests (upgradeable)' ),
@@ -1303,6 +1360,10 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 			'Find who is creating the most popular content on your team with our author metrics'
 		),
 		translate( 'View weekly and yearly trends with 7-day Highlights and Year in Review' ),
+		translate( 'UTM tracking' ),
+		translate( 'Traffic spike forgiveness' ),
+		translate( 'Overage forgiveness' ),
+		translate( 'Commercial use' ),
 	];
 
 	const aiAssistantBenefits = [

@@ -1,8 +1,12 @@
 export interface AgencyDetailsPayload {
+	email?: string | null;
+	firstName: string;
+	lastName: string;
 	agencyName: string;
 	agencyUrl: string;
 	managedSites?: string;
 	servicesOffered: string[];
+	productsOffered: string[];
 	city: string;
 	line1: string;
 	line2: string;

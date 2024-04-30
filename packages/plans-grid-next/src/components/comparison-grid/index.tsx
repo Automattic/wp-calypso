@@ -29,7 +29,6 @@ import { plansGridMediumLarge } from '../../css-mixins';
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
-import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
@@ -351,7 +350,6 @@ type ComparisonGridHeaderProps = {
 	isFooter?: boolean;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
 	showRefundPeriod?: boolean;
@@ -383,7 +381,6 @@ const ComparisonGridHeaderCell = ( {
 	displayedGridPlans,
 	currentSitePlanSlug,
 	isLaunchPage,
-	onUpgradeClick,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
 	showRefundPeriod,
@@ -477,7 +474,6 @@ const ComparisonGridHeaderCell = ( {
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
-				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
 				isStuck={ false }
@@ -504,7 +500,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			isFooter,
 			onPlanChange,
 			currentSitePlanSlug,
-			onUpgradeClick,
 			planActionOverrides,
 			selectedPlan,
 			isHiddenInMobile,
@@ -550,7 +545,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						onPlanChange={ onPlanChange }
 						displayedGridPlans={ displayedGridPlans }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						onUpgradeClick={ onUpgradeClick }
 						isLaunchPage={ isLaunchPage }
 						planActionOverrides={ planActionOverrides }
 						selectedPlan={ selectedPlan }
@@ -978,7 +972,6 @@ const ComparisonGrid = ( {
 	isInSignup,
 	isLaunchPage,
 	currentSitePlanSlug,
-	onUpgradeClick,
 	planActionOverrides,
 	selectedPlan,
 	selectedFeature,
@@ -990,7 +983,7 @@ const ComparisonGrid = ( {
 	planUpgradeCreditsApplicable,
 	gridSize,
 }: ComparisonGridProps ) => {
-	const { gridPlans, selectedSiteId } = usePlansGridContext();
+	const { gridPlans, gridPlansIndex } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -1014,28 +1007,44 @@ const ComparisonGrid = ( {
 	}, [ gridPlans, currentSitePlanSlug, gridSize ] );
 
 	useEffect( () => {
-		let newVisiblePlans = displayedGridPlans.map( ( { planSlug } ) => planSlug );
-		let visibleLength = newVisiblePlans.length;
+		setVisiblePlans( ( prev ) => {
+			let visibleLength = displayedGridPlans.length;
+			switch ( gridSize ) {
+				case 'large':
+					visibleLength = 4;
+					break;
+				case 'medium':
+					visibleLength = 3;
+					break;
+				case 'smedium':
+				case 'small':
+					visibleLength = 2;
+					break;
+			}
 
-		switch ( gridSize ) {
-			case 'large':
-				visibleLength = 4;
-				break;
-			case 'medium':
-				visibleLength = 3;
-				break;
-			case 'smedium':
-			case 'small':
-				visibleLength = 2;
-				break;
-		}
+			// visible length changed, update with the current gridPlans
+			// - we don't care about previous order
+			if ( prev.length !== visibleLength ) {
+				return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
+			}
 
-		if ( newVisiblePlans.length !== visibleLength ) {
-			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
-		}
+			// prev state out of sync with current gridPlans (e.g. gridPlans updated to a different term)
+			// - we care about previous order
+			const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
+			if ( isPrevStale ) {
+				return prev.map( ( planSlug ) => {
+					const gridPlan = displayedGridPlans.find(
+						( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
+					);
 
-		setVisiblePlans( newVisiblePlans );
-	}, [ gridSize, displayedGridPlans, isInSignup ] );
+					return gridPlan?.planSlug ?? planSlug;
+				} );
+			}
+
+			// nothing to update
+			return prev;
+		} );
+	}, [ gridSize, displayedGridPlans, gridPlansIndex ] );
 
 	const visibleGridPlans = useMemo(
 		() =>
@@ -1101,12 +1110,6 @@ const ComparisonGrid = ( {
 	// 100px is the padding of the footer row
 	const [ bottomHeaderRef, isBottomHeaderInView ] = useInView( { rootMargin: '-100px' } );
 
-	const handleUpgradeClick = useUpgradeClickHandler( {
-		gridPlans,
-		onUpgradeClick,
-		selectedSiteId: selectedSiteId,
-	} );
-
 	/**
 	 * Search for "any" plan with a highlight label, not just the visible ones.
 	 * This will keep the grid static while user interacts (selects different plans to compare).
@@ -1134,7 +1137,6 @@ const ComparisonGrid = ( {
 							isLaunchPage={ isLaunchPage }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
-							onUpgradeClick={ handleUpgradeClick }
 							planActionOverrides={ planActionOverrides }
 							selectedPlan={ selectedPlan }
 							showRefundPeriod={ showRefundPeriod }
@@ -1167,7 +1169,6 @@ const ComparisonGrid = ( {
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					onUpgradeClick={ handleUpgradeClick }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }

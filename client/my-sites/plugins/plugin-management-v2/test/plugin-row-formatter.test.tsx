@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import React from 'react';
@@ -16,7 +17,10 @@ import { site, plugin, paidPlugin } from './utils/constants';
 
 const initialReduxState = {
 	siteConnection: { items: { [ site.ID ]: true } },
-	sites: { items: { [ site.ID ]: site } },
+	sites: {
+		items: { [ site.ID ]: site },
+		features: { [ site.ID ]: { data: { active: [ WPCOM_FEATURES_INSTALL_PLUGINS ] } } },
+	},
 	currentUser: {
 		capabilities: {},
 	},
@@ -39,9 +43,9 @@ const initialReduxState = {
 	},
 };
 
-const render = ( el ) =>
+const render = ( el, partialState ) =>
 	renderWithProvider( el, {
-		initialState: initialReduxState,
+		initialState: { ...initialReduxState, ...partialState },
 		reducers: { ui, plugins, documentHead, productsList, siteConnection, marketplace },
 		store: undefined,
 	} );
@@ -156,7 +160,12 @@ describe( '<PluginRowFormatter>', () => {
 
 	test( 'should render correctly and show install button', () => {
 		props.columnKey = 'install';
-		const { getAllByText } = render( <PluginRowFormatter { ...props } /> );
+		const { getAllByText } = render( <PluginRowFormatter { ...props } />, {
+			sites: {
+				items: { [ site.ID ]: { ...site, options: { ...site.options, is_wpcom_atomic: true } } },
+				features: initialReduxState.sites.features,
+			},
+		} );
 
 		const [ autoManagedSite ] = getAllByText( `Install` );
 		expect( autoManagedSite ).toBeInTheDocument();

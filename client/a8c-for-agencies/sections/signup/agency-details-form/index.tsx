@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon, FormLabel } from '@automattic/components';
+import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
@@ -7,6 +9,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MultiCheckbox, { ChangeList } from 'calypso/components/forms/multi-checkbox';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 import { AgencyDetailsPayload } from './types';
 import type { FormEventHandler } from 'react';
@@ -32,25 +36,14 @@ interface Props {
 	isLoading: boolean;
 	onSubmit: ( payload: AgencyDetailsPayload ) => void;
 	referer?: string | null;
-	initialValues?: {
-		agencyName?: string;
-		agencyUrl?: string;
-		managedSites?: string;
-		servicesOffered?: string[];
-		city?: string;
-		line1?: string;
-		line2?: string;
-		country?: string;
-		postalCode?: string;
-		state?: string;
-	};
+	initialValues?: AgencyDetailsPayload;
 	submitLabel: string;
 }
 
 export default function AgencyDetailsForm( {
 	includeTermsOfService = false,
 	isLoading,
-	initialValues = {},
+	initialValues,
 	onSubmit,
 	referer,
 	submitLabel,
@@ -58,20 +51,28 @@ export default function AgencyDetailsForm( {
 	const translate = useTranslate();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 	const showCountryFields = countryOptions.length > 0;
+	const userLoggedIn = useSelector( isUserLoggedIn );
+	const isA4ALoggedOutSignup = config.isEnabled( 'a4a-logged-out-signup' );
 
-	const [ countryValue, setCountryValue ] = useState( initialValues.country ?? '' );
-	const [ city, setCity ] = useState( initialValues.city ?? '' );
-	const [ line1, setLine1 ] = useState( initialValues.line1 ?? '' );
-	const [ line2, setLine2 ] = useState( initialValues.line2 ?? '' );
-	const [ postalCode, setPostalCode ] = useState( initialValues.postalCode ?? '' );
-	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
-	const [ agencyName, setAgencyName ] = useState( initialValues.agencyName ?? '' );
-	const [ agencyUrl, setAgencyUrl ] = useState( initialValues.agencyUrl ?? '' );
-	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-20' );
-	const [ servicesOffered, setServicesOffered ] = useState( initialValues.servicesOffered ?? [] );
+	const [ countryValue, setCountryValue ] = useState( initialValues?.country ?? '' );
+	const [ city, setCity ] = useState( initialValues?.city ?? '' );
+	const [ line1, setLine1 ] = useState( initialValues?.line1 ?? '' );
+	const [ line2, setLine2 ] = useState( initialValues?.line2 ?? '' );
+	const [ postalCode, setPostalCode ] = useState( initialValues?.postalCode ?? '' );
+	const [ addressState, setAddressState ] = useState( initialValues?.state ?? '' );
+	const [ agencyName, setAgencyName ] = useState( initialValues?.agencyName ?? '' );
+	const [ email, setEmail ] = useState( initialValues?.email ?? '' );
+	const [ firstName, setFirstName ] = useState( initialValues?.firstName ?? '' );
+	const [ lastName, setLastName ] = useState( initialValues?.lastName ?? '' );
+	const [ agencyUrl, setAgencyUrl ] = useState( initialValues?.agencyUrl ?? '' );
+	const [ managedSites, setManagedSites ] = useState( initialValues?.managedSites ?? '1-5' );
+	const [ servicesOffered, setServicesOffered ] = useState( initialValues?.servicesOffered ?? [] );
+	const [ productsOffered, setProductsOffered ] = useState( initialValues?.productsOffered ?? [] );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
+
+	const [ validationError, setValidationError ] = useState< { email?: string } | undefined >( {} );
 
 	useEffect( () => {
 		// Reset the value of state since our options have changed.
@@ -80,10 +81,14 @@ export default function AgencyDetailsForm( {
 
 	const payload: AgencyDetailsPayload = useMemo(
 		() => ( {
+			email,
+			firstName,
+			lastName,
 			agencyName,
 			agencyUrl,
 			managedSites,
 			servicesOffered,
+			productsOffered,
 			city,
 			line1,
 			line2,
@@ -94,10 +99,14 @@ export default function AgencyDetailsForm( {
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
 		[
+			email,
+			firstName,
+			lastName,
 			agencyName,
 			agencyUrl,
 			managedSites,
 			servicesOffered,
+			productsOffered,
 			city,
 			line1,
 			line2,
@@ -113,13 +122,32 @@ export default function AgencyDetailsForm( {
 		( e: React.SyntheticEvent ) => {
 			e.preventDefault();
 
+			setValidationError( undefined );
+
 			if ( ! showCountryFields || isLoading ) {
 				return;
 			}
 
+			if ( isA4ALoggedOutSignup && ! userLoggedIn ) {
+				if ( ! email || ! emailValidator.validate( email ) ) {
+					return setValidationError( {
+						email: translate( 'Please enter a valid email address.' ),
+					} );
+				}
+			}
+
 			onSubmit( payload );
 		},
-		[ showCountryFields, isLoading, onSubmit, payload ]
+		[
+			showCountryFields,
+			isLoading,
+			isA4ALoggedOutSignup,
+			userLoggedIn,
+			onSubmit,
+			payload,
+			email,
+			translate,
+		]
 	);
 
 	const getServicesOfferedOptions = () => {
@@ -129,6 +157,16 @@ export default function AgencyDetailsForm( {
 			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
 			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
 			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
+		];
+	};
+
+	const getProductsOfferedOptions = () => {
+		return [
+			{ value: 'WordPress.com', label: translate( 'WordPress.com' ) },
+			{ value: 'WooCommerce', label: translate( 'WooCommerce' ) },
+			{ value: 'Jetpack', label: translate( 'Jetpack' ) },
+			{ value: 'Pressable', label: translate( 'Pressable' ) },
+			{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
 		];
 	};
 
@@ -144,9 +182,59 @@ export default function AgencyDetailsForm( {
 		setServicesOffered( services.value );
 	};
 
+	const handleSetProductsOffered = ( products: ChangeList< string > ) => {
+		setProductsOffered( products.value );
+	};
+
 	return (
 		<div className="agency-details-form">
 			<form onSubmit={ handleSubmit }>
+				{ isA4ALoggedOutSignup && ! userLoggedIn && (
+					<FormFieldset>
+						<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
+						<FormTextInput
+							id="email"
+							name="email"
+							value={ email || '' }
+							isError={ !! validationError?.email }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								setEmail( event.target.value );
+								setValidationError( { email: undefined } );
+							} }
+						/>
+						{ validationError?.email && (
+							<div className="agency-details-form__footer-error" role="alert">
+								{ validationError.email }
+							</div>
+						) }
+					</FormFieldset>
+				) }
+				<div className="agency-details-form__fullname-container">
+					<FormFieldset>
+						<FormLabel htmlFor="firstName">{ translate( 'First name' ) }</FormLabel>
+						<FormTextInput
+							id="firstName"
+							name="firstName"
+							value={ firstName }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setFirstName( event.target.value )
+							}
+							disabled={ isLoading }
+						/>
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="lastName">{ translate( 'Last name' ) }</FormLabel>
+						<FormTextInput
+							id="lastName"
+							name="lastName"
+							value={ lastName }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setLastName( event.target.value )
+							}
+							disabled={ isLoading }
+						/>
+					</FormFieldset>
+				</div>
 				<FormFieldset>
 					<FormLabel htmlFor="agencyName">{ translate( 'Agency name' ) }</FormLabel>
 					<FormTextInput
@@ -181,9 +269,12 @@ export default function AgencyDetailsForm( {
 						value={ managedSites }
 						onChange={ handleSetManagedSites }
 					>
-						<option value="1-20">{ translate( '1-20' ) }</option>
-						<option value="21-100">{ translate( '21–100' ) }</option>
-						<option value="101+">{ translate( '101+' ) }</option>
+						<option value="1-5">{ translate( '1-5' ) }</option>
+						<option value="6-20">{ translate( '6-20' ) }</option>
+						<option value="21-50">{ translate( '21-50' ) }</option>
+						<option value="51-100">{ translate( '51-100' ) }</option>
+						<option value="101-500">{ translate( '101-500' ) }</option>
+						<option value="500+">{ translate( '500+' ) }</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -201,6 +292,20 @@ export default function AgencyDetailsForm( {
 						// // Using 'as any' to bypass TypeScript type checks due to a known and intentional type mismatch between
 						// the expected custom event type for `onChange` and the standard event types.
 						onChange={ handleSetServicesOffered as any }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="products_offered">
+						{ translate( 'What Automattic products do you currently offer your customers?' ) }
+					</FormLabel>
+					<MultiCheckbox
+						id="products_offered"
+						name="products_offered"
+						checked={ productsOffered }
+						options={ getProductsOfferedOptions() }
+						// // Using 'as any' to bypass TypeScript type checks due to a known and intentional type mismatch between
+						// the expected custom event type for `onChange` and the standard event types.
+						onChange={ handleSetProductsOffered as any }
 					/>
 				</FormFieldset>
 				<FormFieldset>
@@ -285,14 +390,14 @@ export default function AgencyDetailsForm( {
 										break: <br />,
 										link: (
 											<a
-												href="https://jetpack.com/platform-agreement/"
+												href="https://automattic.com/for/agencies/partnership-agreement"
 												target="_blank"
 												rel="noopener noreferrer"
 											></a>
 										),
 										icon: <Gridicon icon="external" size={ 18 } />,
 									},
-									args: { link_text: 'Terms of the Jetpack Agency Platform Agreement' },
+									args: { link_text: 'Terms of the Automattic for Agencies Partnership Agreement' },
 								}
 							) }
 						</p>

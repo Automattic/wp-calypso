@@ -7,6 +7,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class JetpackConnectDisclaimer extends PureComponent {
 	static propTypes = {
+		companyName: PropTypes.string,
 		siteName: PropTypes.string.isRequired,
 	};
 
@@ -15,7 +16,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 	};
 
 	render() {
-		const { siteName, translate } = this.props;
+		const { companyName = 'WordPress.com', siteName, translate } = this.props;
 
 		const detailsLink = (
 			<a
@@ -28,12 +29,13 @@ class JetpackConnectDisclaimer extends PureComponent {
 		);
 
 		const text = translate(
-			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
+			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between %(companyName)s and %(siteName)s.',
 			{
 				components: {
 					detailsLink,
 				},
 				args: {
+					companyName,
 					siteName,
 				},
 			}
