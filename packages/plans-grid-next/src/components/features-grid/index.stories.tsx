@@ -24,7 +24,7 @@ const RenderFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		<FeaturesGrid
 			{ ...props }
 			gridPlans={ gridPlans || [] }
-			featureGroupMap={ getPlanFeaturesGrouped() }
+			featureGroupMap={ props.renderCategorisedFeatures ? getPlanFeaturesGrouped() : undefined }
 		/>
 	);
 };
