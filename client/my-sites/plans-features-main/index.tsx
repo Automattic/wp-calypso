@@ -72,7 +72,7 @@ import useGenerateActionCallback from './hooks/use-action-callback';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
-import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
+import useExperimentForTrailMap, { TrailMapVariant } from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -381,6 +381,13 @@ const PlansFeaturesMain = ( {
 	const deemphasizeFreePlan = deemphasizeFreePlanFromProps || resolvedDeemphasizeFreePlan.result;
 
 	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
+	const isAnyTrailMapTreatment = trailMapExperiment.result !== TrailMapVariant.Control;
+	const isTrailMapCopy =
+		trailMapExperiment.result === TrailMapVariant.TreatmentCopy ||
+		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
+	const isTrailMapStructure =
+		trailMapExperiment.result === TrailMapVariant.TreatmentStructure ||
+		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
@@ -421,7 +428,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		includeAllFeatures: trailMapExperiment?.result,
+		includeAllFeatures: isTrailMapStructure,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -778,7 +785,7 @@ const PlansFeaturesMain = ( {
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
-					showPlanBenefits={ isInSignup && trailMapExperiment.result }
+					showPlanBenefits={ isInSignup && isAnyTrailMapTreatment }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -822,7 +829,7 @@ const PlansFeaturesMain = ( {
 										isInSignup={ isInSignup }
 										isLaunchPage={ isLaunchPage }
 										onStorageAddOnClick={ handleStorageAddOnClick }
-										paidDomainName={ trailMapExperiment.result ? undefined : paidDomainName }
+										paidDomainName={ isTrailMapCopy ? undefined : paidDomainName }
 										planActionOverrides={ planActionOverrides }
 										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }
@@ -834,9 +841,9 @@ const PlansFeaturesMain = ( {
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 										useActionCallback={ useActionCallback }
-										enableFeatureTooltips={ ! trailMapExperiment.result }
-										enableCategorisedFeatures={ trailMapExperiment.result }
-										featureGroupMap={ trailMapExperiment.result ? featureGroupMap : undefined }
+										enableFeatureTooltips={ ! isTrailMapCopy }
+										renderCategorisedFeatures={ isTrailMapStructure }
+										featureGroupMap={ isTrailMapStructure ? featureGroupMap : undefined }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -912,7 +919,7 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
-													enableFeatureTooltips={ ! trailMapExperiment.result }
+													enableFeatureTooltips={ ! isTrailMapCopy }
 													featureGroupMap={ featureGroupMap }
 												/>
 											) }
