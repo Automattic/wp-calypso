@@ -199,7 +199,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 				const previousPlanFeatures = {
 					wpcomFeatures: previousPlan !== null ? acc[ previousPlan ].wpcomFeatures : [],
-					jetpackFeatures: previousPlan !== null ? acc[ previousPlan ].jetpackFeatures : [],
 				};
 
 				previousPlan = planSlug;

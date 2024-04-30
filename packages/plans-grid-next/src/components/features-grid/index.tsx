@@ -2,8 +2,8 @@ import {
 	getPlanClass,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	WPComStorageAddOnSlug,
-	FeatureGroupSlug,
+	type WPComStorageAddOnSlug,
+	type FeatureGroupSlug,
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import { useMemo } from '@wordpress/element';
