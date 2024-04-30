@@ -1,12 +1,19 @@
 import { useTranslate } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
+import CreateSiteButton from './create-site-button';
 
 export type AvailablePlans = {
 	name: string;
 	available: number;
+	ids: number[];
 };
 
-export default function PlanField( { name, available }: AvailablePlans ) {
+type Props = AvailablePlans & {
+	provisioning?: boolean;
+	onCreateSite: ( id: number ) => void;
+};
+
+export default function PlanField( { name, available, ids, provisioning, onCreateSite }: Props ) {
 	const translate = useTranslate();
 
 	return (
@@ -27,6 +34,11 @@ export default function PlanField( { name, available }: AvailablePlans ) {
 					} ) }
 				</div>
 			</div>
+
+			<CreateSiteButton
+				provisioning={ provisioning }
+				onActivate={ () => onCreateSite( ids[ 0 ] ) }
+			/>
 		</div>
 	);
 }
