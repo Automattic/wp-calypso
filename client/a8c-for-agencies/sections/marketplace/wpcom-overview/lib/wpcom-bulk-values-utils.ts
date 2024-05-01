@@ -1,5 +1,4 @@
 import { Option } from '../wpcom-slider';
-import wpcomBulkOptions from './wpcom-bulk-options';
 
 type SliderOption = {
 	minAbsolute: number;
@@ -43,21 +42,4 @@ export const valueToSliderPos = ( value: number, options: SliderOption[] ) => {
 	const { minAbsolute, maxAbsolute, minValue, maxValue } = foundOption;
 	const normalizedValue = ( value - minValue ) / ( maxValue - minValue );
 	return Math.floor( minAbsolute + normalizedValue * ( maxAbsolute - minAbsolute ) );
-};
-
-export const countToOption = ( count: number ) => {
-	for ( let i = 1; i < wpcomBulkOptions.length; i++ ) {
-		if ( count < wpcomBulkOptions[ i ].value ) {
-			return {
-				value: count,
-				label: count.toString(),
-				discount: wpcomBulkOptions[ i - 1 ].discount,
-				sub: wpcomBulkOptions[ i - 1 ].sub,
-			};
-		}
-	}
-	if ( count >= 100 ) {
-		return wpcomBulkOptions[ wpcomBulkOptions.length - 1 ];
-	}
-	return wpcomBulkOptions[ 0 ];
 };

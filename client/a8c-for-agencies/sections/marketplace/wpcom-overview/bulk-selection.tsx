@@ -17,6 +17,23 @@ type Props = {
 	onSelectTier: ( value: TierProps ) => void;
 };
 
+const calculateTier = ( options: TierProps[], value: number ) => {
+	let tier = options[ 0 ];
+
+	for ( const option of options ) {
+		if ( Number( option.value ) > value ) {
+			break;
+		}
+
+		tier = option;
+	}
+
+	return {
+		...tier,
+		value,
+	};
+};
+
 export default function WPCOMBulkSelector( { selectedTier, onSelectTier }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -38,10 +55,8 @@ export default function WPCOMBulkSelector( { selectedTier, onSelectTier }: Props
 					count: option,
 				} )
 			);
-			const foundTier = options.find( ( { value } ) => value === option );
-			if ( foundTier ) {
-				onSelectTier( foundTier );
-			}
+
+			onSelectTier( calculateTier( options, option ) );
 		},
 		[ dispatch, onSelectTier, options ]
 	);
