@@ -73,9 +73,9 @@ const WrappedComparisonGrid = ( {
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				coupon={ coupon }
-				hideUnsupportedFeatures={ hideUnsupportedFeatures }
 				enableFeatureTooltips={ enableFeatureTooltips }
 				featureGroupMap={ featureGroupMap }
+				hideUnsupportedFeatures={ hideUnsupportedFeatures }
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }

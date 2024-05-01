@@ -621,6 +621,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			'popular-plan-parent-class': gridPlan.highlightLabel,
 			'has-feature': hasFeature,
 			'has-conditional-feature': hasConditionalFeature,
+			'hide-unsupported-feature':
+				hideUnsupportedFeatures && ! hasFeature && ! hasConditionalFeature,
 			'title-is-subtitle': 'live-chat-support' === featureSlug,
 			'is-left-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.leftOfHighlight,
 			'is-right-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.rightOfHighlight,
@@ -681,22 +683,16 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getIcon() as React.ReactNode }
 								</span>
 							) }
-
 							<Plans2023Tooltip
 								text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 								id={ `${ planSlug }-${ featureSlug }` }
 							>
-								{ hideUnsupportedFeatures && ! hasFeature && ! hasConditionalFeature ? (
-									<></>
-								) : (
-									<span className="plan-comparison-grid__plan-title">
-										{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
-									</span>
-								) }
+								<span className="plan-comparison-grid__plan-title">
+									{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
+								</span>
 							</Plans2023Tooltip>
-
 							{ feature?.getCompareTitle && (
 								<span className="plan-comparison-grid__plan-subtitle">
 									{ feature.getCompareTitle() }
