@@ -37,6 +37,11 @@
 	position: relative;
 	background: #FAFAFA; /* stylelint-disable color-hex-case */
 
+	@include breakpoint-deprecated( "<660px" ) {
+		background: none;
+		border-radius: 0;
+	}
+
 	@include breakpoint-deprecated( ">660px" ) {
 		border-bottom: 1px solid #e9e9ea;
 	}
