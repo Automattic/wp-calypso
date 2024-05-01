@@ -79,7 +79,7 @@ export default function A4AWPCOMSlider( {
 
 	const ratio = valueToSliderPos( minimum, mappedOptions ) / total;
 
-	const thumbSize = 14;
+	const thumbSize = -14;
 	const sliderWidth = rangeRef.current?.offsetWidth ?? 1;
 	const disabledAreaWidth =
 		minimum >= mappedOptions[ mappedOptions.length - 1 ].maxValue
