@@ -139,17 +139,23 @@ const MobileView = ( {
 					>
 						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
 						{ enableCategorisedFeatures ? (
-							featureGroups.map( ( featureGroupSlug ) => (
-								<PlanFeaturesList
-									key={ featureGroupSlug }
-									renderedGridPlans={ [ gridPlan ] }
-									selectedFeature={ selectedFeature }
-									paidDomainName={ paidDomainName }
-									hideUnavailableFeatures={ hideUnavailableFeatures }
-									generatedWPComSubdomain={ generatedWPComSubdomain }
-									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-									featureGroupSlug={ featureGroupSlug }
-								/>
+							featureGroups.map( ( featureGroupSlug, featureGroupIndex ) => (
+								<div
+									className={ classNames( 'plans-grid-next-features-grid__feature-group-row', {
+										'is-first-feature-group': featureGroupIndex === 0,
+									} ) }
+								>
+									<PlanFeaturesList
+										key={ featureGroupSlug }
+										renderedGridPlans={ [ gridPlan ] }
+										selectedFeature={ selectedFeature }
+										paidDomainName={ paidDomainName }
+										hideUnavailableFeatures={ hideUnavailableFeatures }
+										generatedWPComSubdomain={ generatedWPComSubdomain }
+										isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+										featureGroupSlug={ featureGroupSlug }
+									/>
+								</div>
 							) )
 						) : (
 							<>
