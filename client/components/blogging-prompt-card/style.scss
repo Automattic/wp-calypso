@@ -34,7 +34,7 @@
 		.blogging-prompt__prompt-navigation {
 			align-items: center;
 			display: flex;
-			gap: 10px;
+			gap: 20px;
 		}
 		.blogging-prompt__prompt-text {
 			flex: 1;
@@ -43,24 +43,12 @@
 			line-height: 26px;
 			text-wrap: pretty;
 		}
-		@include breakpoint-deprecated( "<660px" ) {
-			.blogging-prompt__prompt-text {
-				text-align: center;
-			}
-		}
 		button.navigation-link {
 			border-radius: 50%;
 			height: 44px;
 			margin: 0;
 			padding: 0;
 			width: 44px;
-
-			&:first-child {
-				margin-left: -36px;
-			}
-			&:last-child {
-				margin-right: -36px;
-			}
 		}
 	}
 	/* Blogging Prompt Replies & Answer Button ------------------------ */
@@ -126,10 +114,27 @@
 			font-size: $font-body-small;
 			gap: 6px;
 		}
-		@include breakpoint-deprecated( "<660px" ) {
-			.blogging-prompt__prompt-responses-users {
-				display: none;
+	}
+	/* Responsive styles */
+	@include breakpoint-deprecated( "<660px" ) {
+		.blogging-prompt__prompt-container {
+			.blogging-prompt__prompt-text {
+				text-align: center;
 			}
+			.blogging-prompt__prompt-navigation {
+				gap: 10px;
+			}
+			button.navigation-link {
+				&:first-child {
+					margin-left: -36px;
+				}
+				&:last-child {
+					margin-right: -36px;
+				}
+			}
+		}
+		.blogging-prompt__prompt-answers .blogging-prompt__prompt-responses-users {
+			display: none;
 		}
 	}
 	/* Blogging Prompt Menu ------------------------ */
