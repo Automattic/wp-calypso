@@ -11,9 +11,16 @@ import './style.scss';
 type Props = {
 	availablePlans: AvailablePlans[];
 	isLoading?: boolean;
+	provisioning?: boolean;
+	onCreateSite: ( id: number ) => void;
 };
 
-export default function NeedSetupTable( { availablePlans, isLoading }: Props ) {
+export default function NeedSetupTable( {
+	availablePlans,
+	isLoading,
+	provisioning,
+	onCreateSite,
+}: Props ) {
 	const translate = useTranslate();
 
 	const fields = [
@@ -30,7 +37,9 @@ export default function NeedSetupTable( { availablePlans, isLoading }: Props ) {
 					return <TextPlaceholder />;
 				}
 
-				return <PlanField { ...item } />;
+				return (
+					<PlanField { ...item } provisioning={ provisioning } onCreateSite={ onCreateSite } />
+				);
 			},
 			enableHiding: false,
 			enableSorting: false,

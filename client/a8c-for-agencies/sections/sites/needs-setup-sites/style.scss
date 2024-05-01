@@ -2,6 +2,8 @@
 	display: flex;
 	flex-direction: row;
 	gap: 12px;
+
+	align-items: center;
 }
 
 .plan-field__icon {
@@ -32,3 +34,26 @@
 	font-weight: 400;
 	color: var(--color-neutral-50);
 }
+
+.plan-field__button {
+	padding: 8px 16px;
+	text-decoration: underline;
+	font-size: rem(13px);
+	font-weight: 400;
+	cursor: pointer;
+}
+
+.plan-field__loader {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	align-items: center;
+	padding: 8px 16px;
+	font-size: rem(13px);
+	font-weight: 400;
+
+	.components-spinner {
+		margin: 0;
+	}
+}
+
