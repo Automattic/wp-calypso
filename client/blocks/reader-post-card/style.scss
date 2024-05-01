@@ -30,12 +30,12 @@
 
 .reader-post-card.card {
 	border-bottom: 5px solid var(--color-neutral-0);
-	border-radius: 0;
+	border-radius: 15px; /* stylelint-disable-line scales/radii */
 	box-shadow: none;
 	margin: 0;
 	margin-bottom: 16px;
-	padding: 16px 0 32px 0;
 	position: relative;
+	background: var(--studio-gray-0);
 
 	@include breakpoint-deprecated( ">660px" ) {
 		border-bottom: 1px solid #e9e9ea;
