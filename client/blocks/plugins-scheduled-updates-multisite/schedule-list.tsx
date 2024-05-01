@@ -5,7 +5,6 @@ import {
 	Notice,
 	Spinner,
 } from '@wordpress/components';
-import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState } from 'react';
 import { MultisitePluginUpdateManagerContext } from 'calypso/blocks/plugins-scheduled-updates-multisite/context';
@@ -15,6 +14,8 @@ import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ScheduleListFilter } from './schedule-list-filter';
 import { ScheduleListTable } from './schedule-list-table';
+
+import './styles.scss';
 
 type Props = {
 	onEditSchedule: ( id: string ) => void;
@@ -88,16 +89,17 @@ export const ScheduleList = ( props: Props ) => {
 
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">
-			<h1 className="wp-brand-font">List schedules</h1>
-			<Button
-				__next40pxDefaultSize
-				icon={ plus }
-				variant="primary"
-				onClick={ onCreateNewSchedule }
-				disabled={ false }
-			>
-				{ translate( 'Add new schedule' ) }
-			</Button>
+			<div className="plugins-update-manager-multisite-header">
+				<h1>{ translate( 'Update schedules' ) }</h1>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					onClick={ onCreateNewSchedule }
+					disabled={ false }
+				>
+					{ translate( 'New schedule' ) }
+				</Button>
+			</div>
 			{ errors.length ? (
 				<Notice status="warning" isDismissible={ true } onDismiss={ () => clearErrors() }>
 					{ translate(

@@ -1,11 +1,8 @@
 @import "~@automattic/color-studio/dist/color-variables";
 
-.plugins-update-manager-multisite {
-	h1 {
-		font-size: 2rem;
-		margin-bottom: 1rem;
-	}
+$brand-display: "SF Pro Display", sans-serif;
 
+.plugins-update-manager-multisite {
 	.components-notice {
 		margin-bottom: 1.25rem;
 		margin-top: 1.25rem;
@@ -102,6 +99,26 @@
 			.components-spinner {
 				display: none;
 			}
+		}
+	}
+	.plugins-update-manager-multisite-header {
+		align-items: center;
+		border-block-end: 1px solid var(--color-border-secondary);
+		display: flex;
+		font-family: $brand-display;
+		justify-content: space-between;
+		padding-bottom: 1.5rem;
+
+		h1 {
+			font-size: 1.5rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 1.2;
+		}
+
+		button {
+			font-size: rem(14px);
+			border-radius: 4px;
 		}
 	}
 }
