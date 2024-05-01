@@ -29,9 +29,9 @@ function useExperimentForTrailMap( { flowName }: Props ): DataResponse< VariantT
 	if ( config.isEnabled( 'onboarding/trail-map-feature-grid-copy' ) ) {
 		return { isLoading: false, result: TrailMapVariant.TreatmentCopy };
 	} else if ( config.isEnabled( 'onboarding/trail-map-feature-grid-structure' ) ) {
-		return { isLoading: false, result: TrailMapVariant.TreatmentCopy };
+		return { isLoading: false, result: TrailMapVariant.TreatmentStructure };
 	} else if ( config.isEnabled( 'onboarding/trail-map-feature-grid' ) ) {
-		return { isLoading: false, result: TrailMapVariant.TreatmentCopy };
+		return { isLoading: false, result: TrailMapVariant.TreatmentCopyAndStructure };
 	}
 
 	/**
