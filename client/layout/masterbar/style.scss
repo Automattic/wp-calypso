@@ -291,16 +291,25 @@ body.is-mobile-app-view {
 
 	.dashicons-before {
 		height: 20px;
+		color: var(--color-masterbar-icon);
 	}
 
 	&:hover {
 		@include breakpoint-deprecated( ">480px" ) {
 			background: var(--color-masterbar-item-hover-background);
-			color: var(--color-masterbar-text);
+			color: var(--color-masterbar-highlight);
 
 			.masterbar--is-checkout & {
 				background: var(--color-checkout-masterbar-item-hover-background);
 				color: var(--color-checkout-masterbar-text);
+			}
+
+			.masterbar__item-content {
+				color: var(--color-masterbar-highlight);
+			}
+
+			.dashicons-before {
+				color: var(--color-masterbar-highlight);
 			}
 		}
 	}
@@ -1042,6 +1051,16 @@ a.masterbar__quick-language-switcher {
 
 		@media only screen and ( min-width: 783px ) {
 			padding: 0 8px 0 4px;
+		}
+
+		svg {
+			fill: var(--color-masterbar-icon);
+		}
+
+		&:hover {
+			svg {
+				fill: var(--color-masterbar-highlight);
+			}
 		}
 	}
 
