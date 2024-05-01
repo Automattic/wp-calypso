@@ -29,10 +29,16 @@ import './style.scss';
 type Props = {
 	plan: APIProductFamilyProduct;
 	pressableOwnership?: boolean;
+	highestDiscountPercentage?: number;
 	className?: string;
 };
 
-export default function HostingCard( { plan, pressableOwnership, className }: Props ) {
+export default function HostingCard( {
+	plan,
+	pressableOwnership,
+	highestDiscountPercentage,
+	className,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	//FIXME: We want to unify and refactor this logic, once we decide
@@ -131,12 +137,21 @@ export default function HostingCard( { plan, pressableOwnership, className }: Pr
 				</div>
 
 				<div className="hosting-card__price">
-					<b className="hosting-card__price-value">
-						{ translate( 'Starting at %(priceStartingAt)s', {
-							args: { priceStartingAt },
-						} ) }
-					</b>
-					<div className="hosting-card__price-interval">{ priceIntervalDescription }</div>
+					<div>
+						<div className="hosting-card__price-value">
+							{ translate( 'Starting at %(priceStartingAt)s', {
+								args: { priceStartingAt },
+							} ) }
+						</div>
+						<div className="hosting-card__price-interval">{ priceIntervalDescription }</div>
+					</div>
+					{ highestDiscountPercentage ? (
+						<div className="hosting-card__price-discount">
+							{ translate( 'Volume savings up to %(highestDiscountPercentage)s%', {
+								args: { highestDiscountPercentage },
+							} ) }
+						</div>
+					) : null }
 				</div>
 
 				<p className="hosting-card__description">{ description }</p>
