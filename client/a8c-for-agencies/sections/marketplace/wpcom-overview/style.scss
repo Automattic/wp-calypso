@@ -23,3 +23,17 @@
 		display: none;
 	}
 }
+
+.bulk-selection {
+	text-align: center;
+}
+
+.bulk-selection__owned-plan {
+	display: inline-flex;
+	flex-direction: row;
+	gap: 16px;
+
+	background-color: var(--color-neutral-0);
+	padding: 8px 16px;
+	margin: 0 auto 32px;
+}
