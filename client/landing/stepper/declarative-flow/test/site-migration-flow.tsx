@@ -1,9 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
+import { when } from 'jest-when';
 import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
@@ -18,6 +20,19 @@ const originalLocation = window.location;
 jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
+jest.mock( '../../utils/path', () => {
+	return {
+		getLoginUrl: jest.fn(
+			() => '/start/account/user-social?variationName=site-migration&toStepper=true'
+		),
+	};
+} );
+
+jest.mock( '@automattic/calypso-config', () => {
+	const config = jest.requireActual( '@automattic/calypso-config' );
+	config.isEnabled = jest.fn();
+	return config;
+} );
 
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
@@ -178,8 +193,12 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects the user to the checkout page with the correct destination params', () => {
+		it( 'redirects the user to the checkout page with bundle transfer as destination when the feature toggle is off', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			when( isEnabled )
+				.calledWith( 'migration-flow/remove-processing-step' )
+				.mockReturnValue( false );
 
 			runUseStepNavigationSubmit( {
 				currentURL: `/setup/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com`,
@@ -194,6 +213,34 @@ describe( 'Site Migration Flow', () => {
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
 				destination: `/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
+				flowName: 'site-migration',
+				siteSlug: 'example.wordpress.com',
+				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+			} );
+		} );
+
+		it( 'redirects the user to the checkout page with the destination set to instruction page', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+			when( isEnabled )
+				.calledWith( 'migration-flow/remove-processing-step' )
+				.mockReturnValue( true );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com`,
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				dependencies: {
+					goToCheckout: true,
+					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+					sendIntentWhenCreatingTrial: true,
+				},
+				cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com`,
+			} );
+
+			expect( goToCheckout ).toHaveBeenCalledWith( {
+				destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 				flowName: 'site-migration',
 				siteSlug: 'example.wordpress.com',

@@ -228,19 +228,17 @@ const siteMigration: Flow = {
 					} );
 				}
 
+				// Remove it when the  'migration-flow/remove-processing-step' is enabled.
 				case STEPS.BUNDLE_TRANSFER.slug: {
-					if ( isEnabled( 'migration-flow/remove-processing-step' ) ) {
-						return navigate(
-							addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug )
-						);
-					}
 					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
 				}
 
+				// Remove it when the  'migration-flow/remove-processing-step' is enabled.
 				case STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug: {
 					return navigate( STEPS.PROCESSING.slug, { pluginInstall: true } );
 				}
 
+				// Remove it when the  'migration-flow/remove-processing-step' is enabled.
 				case STEPS.PROCESSING.slug: {
 					// Any process errors go to the error step.
 					if ( providedDependencies?.error ) {
@@ -294,12 +292,17 @@ const siteMigration: Flow = {
 					}
 
 					if ( providedDependencies?.goToCheckout ) {
+						const destinationStep = isEnabled( 'migration-flow/remove-processing-step' )
+							? STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug
+							: STEPS.BUNDLE_TRANSFER.slug;
+
 						const destination = addQueryArgs(
 							{
 								siteSlug,
 								from: fromQueryParam,
+								siteId,
 							},
-							`/setup/${ FLOW_NAME }/${ STEPS.BUNDLE_TRANSFER.slug }`
+							`/setup/${ FLOW_NAME }/${ destinationStep }`
 						);
 
 						urlQueryParams.delete( 'showModal' );
