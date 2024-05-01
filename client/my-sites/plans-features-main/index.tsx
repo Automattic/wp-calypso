@@ -14,6 +14,7 @@ import {
 	getWooExpressFeaturesGrouped,
 	getPlanFeaturesGrouped,
 	isWooExpressPlan,
+	setTrailMapExperiment,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -295,6 +296,19 @@ const PlansFeaturesMain = ( {
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
+	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
+	const isAnyTrailMapTreatment = trailMapExperiment.result !== TrailMapVariant.Control;
+	const isTrailMapCopy =
+		trailMapExperiment.result === TrailMapVariant.TreatmentCopy ||
+		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
+	const isTrailMapStructure =
+		trailMapExperiment.result === TrailMapVariant.TreatmentStructure ||
+		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
+
+	useEffect( () => {
+		setTrailMapExperiment( trailMapExperiment.result ?? TrailMapVariant.Control );
+	}, [ trailMapExperiment.isLoading, trailMapExperiment.result ] );
+
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
@@ -379,15 +393,6 @@ const PlansFeaturesMain = ( {
 	// For more details, please refer to peP6yB-23n-p2
 	const resolvedDeemphasizeFreePlan = useDeemphasizeFreePlan( flowName, paidDomainName );
 	const deemphasizeFreePlan = deemphasizeFreePlanFromProps || resolvedDeemphasizeFreePlan.result;
-
-	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
-	const isAnyTrailMapTreatment = trailMapExperiment.result !== TrailMapVariant.Control;
-	const isTrailMapCopy =
-		trailMapExperiment.result === TrailMapVariant.TreatmentCopy ||
-		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
-	const isTrailMapStructure =
-		trailMapExperiment.result === TrailMapVariant.TreatmentStructure ||
-		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
