@@ -26,9 +26,16 @@ export const getPlansListExperiment = ( experimentName: string ): string | undef
 export const setTrailMapExperiment = ( variation: string ): void => {
 	setExperiment( PLANS_LIST_NAMESPACE, 'wpcom_trail_map_feature_structure_experiment', variation );
 };
-export const getTrailMapExperiment = (): 'control' | 'treatment' => {
+type TrailMapVariantType =
+	| 'control'
+	| 'treatment-copy-and-structure'
+	| 'treatment-copy'
+	| 'treatment-structure';
+export const getTrailMapExperiment = () => {
 	return ( getExperiment( PLANS_LIST_NAMESPACE, 'wpcom_trail_map_feature_structure_experiment' ) ??
-		'control' ) as 'control' | 'treatment';
+		'control' ) as TrailMapVariantType;
 };
 
-export const isTrailMapVariant = (): boolean => getTrailMapExperiment() === 'treatment';
+export const isTrailMapVariant = (): boolean =>
+	getTrailMapExperiment() === 'treatment-copy-and-structure' ||
+	getTrailMapExperiment() === 'treatment-copy';
