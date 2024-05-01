@@ -59,11 +59,6 @@ export default function Checkout() {
 
 	const checkoutItems = siteId ? selectedProductsBySlug : sortedSelectedItems;
 
-	const checkoutPlansCount = useMemo(
-		() => checkoutItems.reduce( ( acc, item ) => acc + item.quantity, 0 ),
-		[ checkoutItems ]
-	);
-
 	const onCheckout = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_checkout_click' ) );
 
@@ -153,13 +148,7 @@ export default function Checkout() {
 								disabled={ ! checkoutItems.length || ! isReady }
 								busy={ ! isReady }
 							>
-								{ translate( 'Purchase %(count)d plan', 'Purchase %(count)d plans', {
-									context: 'button label',
-									count: checkoutPlansCount,
-									args: {
-										count: checkoutPlansCount,
-									},
-								} ) }
+								{ translate( 'Purchase' ) }
 							</Button>
 
 							{ siteId ? (
