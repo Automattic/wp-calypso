@@ -46,7 +46,6 @@
 	align-items: flex-start;
 	box-sizing: border-box;
 	column-gap: 10px;
-	margin-bottom: 24px;
 
 	> .formatted-header {
 		flex: 1;
@@ -97,6 +96,10 @@
 		align-items: center;
 		gap: 16px;
 	}
+}
+
+.following-stream-header .navigation-header__main {
+	margin-bottom: 24px;
 }
 
 #primary header.navigation-header header.formatted-header {
