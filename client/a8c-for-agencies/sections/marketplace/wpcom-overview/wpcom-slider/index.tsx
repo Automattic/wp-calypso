@@ -32,7 +32,7 @@ export default function A4AWPCOMSlider( {
 	sub,
 	minimum = 0,
 }: Props ) {
-	const total = 204;
+	const total = options.length * 10;
 	const mappedOptions = useMemo(
 		() => mapOptionsToSliderOptions( options, total ),
 		[ options, total ]
