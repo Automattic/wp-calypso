@@ -260,6 +260,7 @@
 			height: 16px;
 			padding-left: 0;
 			padding-right: 0;
+			color: var(--color-link);
 
 			@include break-medium {
 				height: 32px;
