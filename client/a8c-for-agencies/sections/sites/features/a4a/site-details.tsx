@@ -18,15 +18,15 @@ export default function SiteDetails( { site }: any ) {
 		initialTags ? initialTags.map( ( tag: SiteTagType ) => tag.label ) : []
 	);
 	const [ isLoading, setIsLoading ] = useState( false );
-	const { mutate } = useUpdateSiteTagsMutation();
+	const { mutate: mutateTags } = useUpdateSiteTagsMutation();
 	const queryClient = useQueryClient();
 
-	const onAddTags = ( siteTags: string[] ) => {
+	const onSetTags = ( siteTags: string[] ) => {
 		setIsLoading( true );
-		mutate(
+		mutateTags(
 			{
 				siteId,
-				tags: tags.concat( siteTags ),
+				tags: siteTags,
 			},
 			{
 				onSuccess: ( data ) => {
@@ -44,34 +44,13 @@ export default function SiteDetails( { site }: any ) {
 		);
 	};
 
-	const onRemoveTag = ( toRemove: string ) => {
-		setIsLoading( true );
-		mutate(
-			{
-				siteId,
-				tags: tags.filter( ( tag: string ) => tag !== toRemove ),
-			},
-			{
-				onSuccess: ( data ) => {
-					setTags( data.map( ( tag: SiteTagType ) => tag.label ) );
-					setIsLoading( false );
-				},
-				onError: ( error ) => {
-					setIsLoading( false );
-					dispatch( errorNotice( error.message ) );
-				},
-			}
-		);
-	};
-
 	return (
 		<div className="site-details">
 			<h3 className="site-details__section-header">{ translate( 'Tags' ) }</h3>
 			<AgencySiteTags
 				{ ...{
 					tags,
-					onAddTags,
-					onRemoveTag,
+					onSetTags,
 					isLoading,
 				} }
 			/>
