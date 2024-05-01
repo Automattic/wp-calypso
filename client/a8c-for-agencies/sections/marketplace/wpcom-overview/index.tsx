@@ -140,7 +140,7 @@ export default function WpcomOverview() {
 					<WPCOMPlanCard
 						plan={ creatorPlan }
 						quantity={ selectedTier.value as number }
-						discount={selectedTier.discount }
+						discount={ selectedTier.discount }
 						onSelect={ onAddToCart }
 					/>
 				) }
