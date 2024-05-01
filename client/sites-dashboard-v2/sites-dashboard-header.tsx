@@ -104,6 +104,7 @@ const DownloadIcon = styled( Icon )`
 const popoverHoverStyles = css`
 	&:hover,
 	&:focus {
+		background-color: #3858e9; !important;
 		fill: var( --color-text-inverted );
 	}
 `;
@@ -140,6 +141,7 @@ const SitesDashboardHeader = () => {
 					isMobile={ isMobile }
 				>
 					<PopoverMenuItem
+						className={ `${ popoverHoverStyles }` }
 						onClick={ () => {
 							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
 						} }
