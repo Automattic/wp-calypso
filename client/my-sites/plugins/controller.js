@@ -201,6 +201,10 @@ export function scheduledUpdatesMultisite( context, next ) {
 			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
 				onNavBack: goToScheduledUpdatesList,
 				context: 'list',
+				onEditSchedule: ( id ) => page.show( `/plugins/scheduled-updates/edit/${ id }` ),
+				onShowLogs: ( id, siteSlug ) =>
+					page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }` ),
+				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/` ),
 			} );
 			break;
 	}

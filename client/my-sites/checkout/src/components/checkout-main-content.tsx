@@ -224,22 +224,20 @@ const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
 
 /* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
 function CheckoutSidebarNudge( {
-	responseCart,
 	siteId,
 	formStatus,
 	changeSelection,
 	addItemToCart,
-	isCartPendingUpdate,
 	areThereDomainProductsInCart,
 }: {
-	responseCart: ResponseCart;
 	siteId: number | undefined;
 	formStatus: FormStatus;
 	changeSelection: OnChangeItemVariant;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
-	isCartPendingUpdate: boolean;
 	areThereDomainProductsInCart: boolean;
 } ) {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const isWcMobile = isWcMobileApp();
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
@@ -292,7 +290,6 @@ function CheckoutSidebarNudge( {
 				<SecondaryCartPromotions
 					responseCart={ responseCart }
 					addItemToCart={ addItemToCart }
-					isCartPendingUpdate={ isCartPendingUpdate }
 					isPurchaseRenewal={ isPurchaseRenewal }
 				/>
 			) }
@@ -563,12 +560,10 @@ export default function CheckoutMainContent( {
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
 								<CheckoutSidebarNudge
-									responseCart={ responseCart }
 									siteId={ siteId }
 									formStatus={ formStatus }
 									changeSelection={ changeSelection }
 									addItemToCart={ addItemToCart }
-									isCartPendingUpdate={ isCartPendingUpdate }
 									areThereDomainProductsInCart={ areThereDomainProductsInCart }
 								/>
 							</CheckoutSummaryBody>
@@ -730,7 +725,7 @@ export default function CheckoutMainContent( {
 							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
 						} }
 					/>
-					{ ! isAkismetCheckout() && ! shouldUseCheckoutV2 && (
+					{ ! shouldUseCheckoutV2 && (
 						<CouponFieldArea
 							isCouponFieldVisible={ isCouponFieldVisible }
 							setCouponFieldVisible={ setCouponFieldVisible }

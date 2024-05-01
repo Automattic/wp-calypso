@@ -1,7 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
@@ -83,7 +85,7 @@ describe( 'Migration Signup Flow', () => {
 			} );
 		} );
 
-		it( 'redirects the user to the site-migration-upgrade-plan step from the processing step', () => {
+		it( 'redirects the user to the site-migration-identify step from the processing step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
 
 			runUseStepNavigationSubmit( {
@@ -96,7 +98,25 @@ describe( 'Migration Signup Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com`,
+				path: `/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the site-migration-upgrade-plan step from the processing step when we have a from', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.PROCESSING.slug,
+				currentURL: `/setup/${ STEPS.PROCESSING.slug }?siteSlug=&from=https%3A%2F%2Fexample.com%2F`,
+				dependencies: {
+					siteSlug: 'example.wordpress.com',
+					siteId: 123,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample.com%2F`,
 				state: {
 					hideFreeMigrationTrialForNonVerifiedEmail: true,
 				},
@@ -111,16 +131,18 @@ describe( 'Migration Signup Flow', () => {
 				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 				dependencies: {
 					goToCheckout: true,
-					plan: 'plan',
+					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+					sendIntentWhenCreatingTrial: true,
 				},
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
 				destination: `/setup/migration-signup/${ STEPS.BUNDLE_TRANSFER.slug }?siteSlug=example.wordpress.com`,
+				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 				flowName: 'migration-signup',
 				siteSlug: 'example.wordpress.com',
-				plan: 'plan',
 				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				plan: PLAN_MIGRATION_TRIAL_MONTHLY,
 			} );
 		} );
 

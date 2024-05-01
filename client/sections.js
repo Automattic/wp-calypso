@@ -217,7 +217,7 @@ const sections = [
 	},
 	{
 		name: 'hosting-overview',
-		paths: [ '/hosting-overview' ],
+		paths: [ '/hosting' ],
 		module: 'calypso/hosting-overview',
 		group: 'sites',
 	},
@@ -737,7 +737,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-sites',
-		paths: [ '/sites', 'sites/favorite' ],
+		paths: [ '/sites', 'sites/need-setup' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
 		group: 'a8c-for-agencies',
 	},
@@ -783,7 +783,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-signup',
-		paths: [ '/signup' ],
+		paths: [ '/signup', '/signup/finish', '/signup/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/signup',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,

@@ -60,13 +60,20 @@ const PlanCard: FC = () => {
 								height="32px"
 							/>
 						) : (
-							<PlanPrice
-								className="hosting-overview__plan-price"
-								currencyCode={ planData?.currencyCode }
-								displayPerMonthNotation
-								isSmallestUnit
-								rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
-							/>
+							<div className="hosting-overview__plan-price-wrapper">
+								<PlanPrice
+									className="hosting-overview__plan-price"
+									currencyCode={ planData?.currencyCode }
+									isSmallestUnit
+									rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
+								/>
+								<span className="hosting-overview__plan-price-term">
+									{ translate( '/mo', {
+										comment:
+											'/mo is short for per month, referring to the monthly price of a site plan',
+									} ) }
+								</span>
+							</div>
 						) }
 						{ isLoading ? (
 							<LoadingPlaceholder
@@ -118,7 +125,7 @@ const PlanCard: FC = () => {
 						<Button
 							className="hosting-overview__link-button"
 							plain
-							href={ `/plans/${ site?.slug }` }
+							href={ `/add-ons/${ site?.slug }` }
 						>
 							{ translate( 'Need more storage?' ) }
 						</Button>

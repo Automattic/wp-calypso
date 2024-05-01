@@ -1,9 +1,10 @@
-import { SiteDetails } from '@automattic/data-stores';
 import { useQuery, UseQueryResult, type QueryObserverOptions } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
-import { getSite } from 'calypso/state/sites/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { SiteSlug } from 'calypso/types';
 
 type LastRunStatus =
@@ -23,9 +24,10 @@ export type ScheduleUpdates = {
 	args: string[];
 	last_run_status: LastRunStatus;
 	last_run_timestamp: number | null;
+	health_check_paths?: string[];
 };
 
-type MultisiteSiteDetails = SiteDetails & {
+export type MultisiteSiteDetails = SiteDetails & {
 	last_run_status: LastRunStatus;
 	last_run_timestamp: number | null;
 };
@@ -82,13 +84,24 @@ export const useMultisiteUpdateScheduleQuery = (
 	isEligibleForFeature: boolean,
 	queryOptions = {}
 ): UseQueryResult< MultisiteSchedulesUpdates[] > => {
-	const state = useSelector( ( state ) => state );
+	const moment = useLocalizedMoment();
 
+	const sites = useSelector( getSites );
 	const retrieveSite = useCallback(
 		( siteId: number ) => {
-			return getSite( state, siteId );
+			return sites.find( ( site ) => site?.ID === siteId );
 		},
-		[ state ]
+		[ sites ]
+	);
+
+	const generateId = useCallback(
+		( scheduleId: string, timestamp: number, schedule: 'weekly' | 'daily', interval: number ) => {
+			// get hh:mm from timestamp using moment
+			const tm = moment( timestamp * 1000 );
+			const time = tm.format( 'HH:mm' );
+			return `${ scheduleId }-${ schedule }-${ interval }-${ time }`;
+		},
+		[]
 	);
 
 	return useQuery< MultisiteSchedulesUpdatesResponse, Error, MultisiteSchedulesUpdates[] >( {
@@ -109,12 +122,11 @@ export const useMultisiteUpdateScheduleQuery = (
 					const { timestamp, schedule, args, interval, last_run_timestamp, last_run_status } =
 						data.sites[ site_id ][ scheduleId ];
 
+					const id = generateId( scheduleId, timestamp, schedule, interval );
+
 					const existingSchedule = result.find(
 						( item ) =>
-							item.schedule_id === scheduleId &&
-							item.timestamp === timestamp &&
-							item.schedule === schedule &&
-							item.interval === interval
+							generateId( item.schedule_id, item.timestamp, item.schedule, item.interval ) === id
 					);
 
 					const site = retrieveSite( parseInt( site_id, 10 ) ) as SiteDetails;
@@ -126,7 +138,7 @@ export const useMultisiteUpdateScheduleQuery = (
 						} );
 					} else {
 						result.push( {
-							id: `${ scheduleId }-${ schedule }-${ interval }-${ timestamp }`,
+							id,
 							schedule_id: scheduleId,
 							timestamp,
 							schedule,

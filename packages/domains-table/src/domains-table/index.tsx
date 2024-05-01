@@ -15,8 +15,9 @@ import { DomainsTableToolbar } from './domains-table-toolbar';
 import './style.scss';
 
 export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } ) {
+	const { className, hideCheckbox, footer, useMobileCards, ...allProps } = props;
+
 	const isMobile = useMobileBreakpoint();
-	const { footer, ...allProps } = props;
 
 	const state = useGenerateDomainsTableState( allProps );
 
@@ -31,15 +32,15 @@ export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } 
 
 	return (
 		<DomainsTableStateContext.Provider value={ state }>
-			<div className="domains-table">
+			<div className={ classnames( className, 'domains-table' ) }>
 				<DomainsTableBulkUpdateNotice />
 				{ showDomainsToolbar && <DomainsTableToolbar /> }
-				{ isMobile ? (
+				{ useMobileCards ?? isMobile ? (
 					<DomainsTableMobileCards />
 				) : (
 					<table
 						className={ classnames( `is-${ state.domainsTableColumns.length }-column`, {
-							'has-checkbox': state.canSelectAnyDomains,
+							'has-checkbox': state.canSelectAnyDomains && ! hideCheckbox,
 						} ) }
 					>
 						<DomainsTableHeader />

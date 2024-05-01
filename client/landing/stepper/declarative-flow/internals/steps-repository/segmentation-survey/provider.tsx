@@ -57,11 +57,18 @@ const SegmentationSurveyProvider = ( {
 		if ( currentQuestion ) {
 			onSubmitQuestion( currentQuestion );
 
-			recordTracksEvent( 'calypso_segmentation_survey_continue', {
-				survey_key: surveyKey,
-				question_key: currentQuestion.key,
-				answer_keys: answers?.[ currentQuestion.key ].join( ',' ) || '',
-			} );
+			if ( answers?.[ currentQuestion.key ] ) {
+				recordTracksEvent( 'calypso_segmentation_survey_continue', {
+					survey_key: surveyKey,
+					question_key: currentQuestion.key,
+					answer_keys: answers?.[ currentQuestion.key ].join( ',' ) || '',
+				} );
+			} else {
+				recordTracksEvent( 'calypso_segmentation_survey_skip', {
+					survey_key: surveyKey,
+					question_key: currentQuestion.key,
+				} );
+			}
 		}
 
 		nextPage();

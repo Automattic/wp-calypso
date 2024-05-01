@@ -12,7 +12,6 @@ node_modules/
 /packages/calypso-codemods/tests
 /packages/webpack-rtl-plugin/test/dist*/
 /packages/wp-babel-makepot/test/examples
-/packages/wpcom.js/webapp/tests/mocha.js
 /desktop/build/
 /desktop/client/
 /desktop/config/

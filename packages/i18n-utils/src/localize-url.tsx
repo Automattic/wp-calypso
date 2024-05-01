@@ -8,6 +8,7 @@ import {
 	localesWithPrivacyPolicy,
 	localesWithCookiePolicy,
 	localesToSubdomains,
+	localesWithLearn,
 	supportSiteLocales,
 	forumLocales,
 	magnificentNonEnLocales,
@@ -169,6 +170,9 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	},
 	'wordpress.com/start/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
+	'wordpress.com/learn/': ( url: URL, localeSlug: Locale ) => {
+		return suffixLocalizedUrlPath( localesWithLearn )( url, localeSlug );
 	},
 	'wordpress.com/plans/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		// if logged in, or url.pathname contains characters after `/plans/`, don't rewrite

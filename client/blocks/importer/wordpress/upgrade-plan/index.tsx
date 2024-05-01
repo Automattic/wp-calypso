@@ -1,18 +1,13 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
-import useAddHostingTrialMutation, {
-	HOSTING_INTENT_MIGRATE,
-} from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestSite } from 'calypso/state/sites/actions';
 import UpgradePlanDetails from './upgrade-plan-details';
 
 import './style.scss';
@@ -23,8 +18,7 @@ interface Props {
 	ctaText: string;
 	subTitleText?: string;
 	hideTitleAndSubTitle?: boolean;
-	sendIntentWhenCreatingTrial?: boolean;
-	onFreeTrialSelectionSuccess?: () => void;
+	onFreeTrialClick?: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onCtaClick: () => void;
 	onContentOnlyClick?: () => void;
@@ -33,7 +27,6 @@ interface Props {
 }
 
 export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
@@ -44,9 +37,8 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		ctaText,
 		subTitleText,
 		hideTitleAndSubTitle = false,
-		sendIntentWhenCreatingTrial = false,
-		onFreeTrialSelectionSuccess = () => {},
 		onCtaClick,
+		onFreeTrialClick: handleFreeTrialClick,
 		isBusy,
 		trackingEventsProps,
 		hideFreeMigrationTrialForNonVerifiedEmail = false,
@@ -58,38 +50,37 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		migrationTrialEligibility?.error_code === 'email-unverified';
 
 	const hideFreeMigrationTrial =
-		hideFreeMigrationTrialForNonVerifiedEmail &&
-		migrationTrialEligibility?.error_code === 'email-unverified';
-
-	const { addHostingTrial, isPending: isAddingTrial } = useAddHostingTrialMutation( {
-		onSuccess: () => {
-			onFreeTrialSelectionSuccess?.();
-			// After the trial is added, we need to request the site again to get the updated plan
-			site && dispatch( requestSite( site.ID ) );
-		},
-	} );
+		( hideFreeMigrationTrialForNonVerifiedEmail &&
+			migrationTrialEligibility?.error_code === 'email-unverified' ) ||
+		! isEnabled( 'plans/migration-trial' );
 
 	const onFreeTrialClick = () => {
 		if ( migrationTrialEligibility?.error_code === 'email-unverified' ) {
 			navigateToVerifyEmailStep();
-		} else if ( sendIntentWhenCreatingTrial ) {
-			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY, HOSTING_INTENT_MIGRATE );
 		} else {
-			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
+			handleFreeTrialClick?.();
 		}
 	};
 
 	useEffect( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', trackingEventsProps )
-		);
-	}, [] );
+		// Wait for the eligibility to return before triggering the Tracks event
+		if ( ! migrationTrialEligibility ) {
+			return;
+		}
+
+		const allEventProps = {
+			...trackingEventsProps,
+			migration_trial_hidden: hideFreeMigrationTrial ? 'true' : 'false',
+		};
+
+		recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', allEventProps );
+	}, [ migrationTrialEligibility, hideFreeMigrationTrial ] );
 
 	const renderCTAs = () => {
 		const cta = ctaText === '' ? translate( 'Continue' ) : ctaText;
 		const trialText = translate( 'Try 7 days for free' );
 
-		if ( ! isEnabled( 'plans/migration-trial' ) || hideFreeMigrationTrial ) {
+		if ( hideFreeMigrationTrial ) {
 			return (
 				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
 					{ cta }
@@ -100,15 +91,8 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		if ( isEligibleForTrialPlan ) {
 			return (
 				<>
-					<NextButton isBusy={ isAddingTrial } onClick={ onFreeTrialClick }>
-						{ trialText }
-					</NextButton>
-					<Button
-						busy={ isBusy }
-						disabled={ isAddingTrial }
-						transparent={ ! isAddingTrial }
-						onClick={ onCtaClick }
-					>
+					<NextButton onClick={ onFreeTrialClick }>{ trialText }</NextButton>
+					<Button busy={ isBusy } transparent onClick={ onCtaClick }>
 						{ cta }
 					</Button>
 				</>

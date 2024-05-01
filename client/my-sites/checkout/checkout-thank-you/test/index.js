@@ -20,7 +20,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
-jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tracker' );
 jest.mock( '../header', () =>
 	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )
@@ -93,36 +92,6 @@ describe( 'CheckoutThankYou', () => {
 			);
 			expect( screen.getByTestId( 'wordpress-logo' ) ).toBeVisible();
 		} );
-	} );
-
-	it( 'renders the failed purchases content if there are failed purchases', async () => {
-		const props = {
-			...defaultProps,
-			receiptId: 12,
-			selectedSite: {
-				ID: 12,
-			},
-			sitePlans: {
-				hasLoadedFromServer: true,
-			},
-			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [],
-					failedPurchases: [ { productSlug: PLAN_PREMIUM } ],
-				},
-			},
-			refreshSitePlans: ( selectedSite ) => selectedSite,
-			planSlug: PLAN_PREMIUM,
-		};
-
-		render(
-			<Provider store={ store }>
-				<CheckoutThankYou { ...props } />
-			</Provider>
-		);
-
-		expect( await screen.findByText( /These items could not be added/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the Jetpack plan content if the purchases include a Jetpack plan', async () => {

@@ -154,7 +154,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 							<JetpackLogo size={ 16 } /> <span>{ __( 'Stats' ) }</span>
 						</StatsThInner>
 					</StatsTh>
-					<th style={ { width: '24px' } }></th>
+					<th style={ { width: '36px' } }></th>
 				</Row>
 			</THead>
 			<tbody>

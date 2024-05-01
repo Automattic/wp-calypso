@@ -5,8 +5,12 @@ import { connect } from 'react-redux';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 
+/**
+ * @param {null|undefined|{plan?: {product_slug: string}}} selectedSite
+ * @returns {boolean}
+ */
 export const siteHasPaidPlan = ( selectedSite ) =>
-	selectedSite && selectedSite.plan && ! isFreePlan( selectedSite.plan.product_slug );
+	Boolean( selectedSite && selectedSite.plan && ! isFreePlan( selectedSite.plan.product_slug ) );
 
 export class SitePickerSubmit extends Component {
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!

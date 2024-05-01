@@ -52,10 +52,16 @@ function CategoryGalleryItem( { category, patternTypeFilter }: CategoryGalleryIt
 		};
 	}, [ category, renderedPattern?.html ] );
 
-	const patternCount =
-		patternTypeFilter === PatternTypeFilter.PAGES
-			? category.pagePatternCount
-			: category.regularPatternCount;
+	const patternCountText =
+		patternTypeFilter === PatternTypeFilter.REGULAR
+			? translate( '%(count)d pattern', '%(count)d patterns', {
+					count: category.regularPatternCount,
+					args: { count: category.regularPatternCount },
+			  } )
+			: translate( '%(count)d layout', '%(count)d layouts', {
+					count: category.pagePatternCount,
+					args: { count: category.pagePatternCount },
+			  } );
 
 	return (
 		<LocalizedLink
@@ -83,12 +89,7 @@ function CategoryGalleryItem( { category, patternTypeFilter }: CategoryGalleryIt
 			</div>
 
 			<div className="patterns-category-gallery__item-name">{ category.label }</div>
-			<div className="patterns-category-gallery__item-count">
-				{ translate( '%(count)d pattern', '%(count)d patterns', {
-					count: patternCount,
-					args: { count: patternCount },
-				} ) }
-			</div>
+			<div className="patterns-category-gallery__item-count">{ patternCountText }</div>
 		</LocalizedLink>
 	);
 }

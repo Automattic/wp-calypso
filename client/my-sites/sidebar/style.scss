@@ -194,6 +194,10 @@ $font-size: rem(14px);
 			height: 20px;
 		}
 
+		.gridicons-chevron-right {
+			color: var(--studio-gray-20);
+		}
+
 		.sidebar__expandable-content {
 			background: var(--color-sidebar-submenu-background);
 			padding: 7px 0 8px;
@@ -376,6 +380,7 @@ $font-size: rem(14px);
 
 	.global-sidebar .sidebar {
 		background-color: var(--color-sidebar-background);
+		padding-bottom: 0;
 
 		.sidebar__menu-link {
 			line-height: 15px;
@@ -395,7 +400,7 @@ $font-size: rem(14px);
 		.sidebar__menu.is-togglable .sidebar__heading {
 			padding: 12px 10px;
 			margin: 0 12px;
-			border-radius: 2px;
+			border-radius: 4px;
 		}
 
 		.sidebar__expandable-content .sidebar__menu-link {

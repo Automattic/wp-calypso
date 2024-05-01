@@ -80,6 +80,12 @@ const Column = styled.td< { tabletHidden?: boolean; deletedSite?: boolean } >`
 		${ ( props ) => props.deletedSite && 'width: 80%;' };
 	}
 
+	${ MEDIA_QUERIES.mediumOrSmaller } {
+		&:first-child {
+			padding-inline-start: 12px;
+		}
+	}
+
 	.stats-sparkline__bar {
 		fill: var( --studio-gray-60 );
 	}
@@ -393,7 +399,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					</>
 				) }
 			</StatsColumnStyled>
-			<Column style={ site.is_deleted ? { display: 'none' } : { width: '24px' } }>
+			<Column style={ site.is_deleted ? { display: 'none' } : { width: '36px' } }>
 				{ inView && <SitesEllipsisMenu site={ site } /> }
 			</Column>
 		</Row>

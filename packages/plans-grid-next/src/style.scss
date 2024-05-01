@@ -351,6 +351,17 @@ $mobile-card-max-width: 440px;
 	}
 }
 
+.plans-grid-next-features-grid__feature-group-title {
+	font-weight: 600;
+	color: var(--studio-gray-80);
+}
+
+.plans-grid-next-features-grid__feature-group-row {
+	&:not(.is-first-feature-group) > .plan-features-2023-grid__table-item {
+		padding-top: 32px;
+	}
+}
+
 .plan-features-2023-grid__item-info {
 	display: flex;
 	flex-direction: column;

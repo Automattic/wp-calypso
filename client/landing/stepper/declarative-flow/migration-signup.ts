@@ -1,8 +1,10 @@
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteData } from '../hooks/use-site-data';
@@ -221,8 +223,14 @@ const migrationSignup: Flow = {
 				}
 
 				case STEPS.PROCESSING.slug: {
-					// If we just created the site, go to the upgrade plan step.
+					// If we just created the site, either go to the upgrade plan step, or the site identification step.
 					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
+						if ( ! fromQueryParam ) {
+							return navigate(
+								addQueryArgs( { siteId, siteSlug }, STEPS.SITE_MIGRATION_IDENTIFY.slug )
+							);
+						}
+
 						return navigate(
 							addQueryArgs(
 								{ siteId, siteSlug, from: fromQueryParam },
@@ -257,10 +265,15 @@ const migrationSignup: Flow = {
 						);
 						goToCheckout( {
 							flowName: FLOW_NAME,
-							stepName: currentStep,
+							stepName: 'site-migration-upgrade-plan',
 							siteSlug: siteSlug,
 							destination: destination,
 							plan: providedDependencies.plan as string,
+							extraQueryParams:
+								providedDependencies?.sendIntentWhenCreatingTrial &&
+								providedDependencies?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
+									? { hosting_intent: HOSTING_INTENT_MIGRATE }
+									: {},
 						} );
 						return;
 					}

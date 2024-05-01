@@ -16,6 +16,7 @@ import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -69,10 +70,10 @@ const BackupsUpsellBody: FunctionComponent = () => {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const dispatch = useDispatch();
 
-	const onClick = useCallback(
-		() => dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) ),
-		[ dispatch ]
-	);
+	const onClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) );
+		recordLogRocketEvent( 'calypso_jetpack_backup_upsell_click' );
+	}, [ dispatch ] );
 
 	return (
 		<>

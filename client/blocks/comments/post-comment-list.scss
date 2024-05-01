@@ -64,6 +64,11 @@
 				display: inline;
 				background: transparent;
 			}
+
+			script,
+			br {
+				display: none;
+			}
 		}
 	}
 
