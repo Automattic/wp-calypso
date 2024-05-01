@@ -1683,10 +1683,7 @@ const FEATURES_LIST: FeatureList = {
 	/* START - New features Flexible and Pro plans introduced. */
 	[ FEATURE_UNLIMITED_USERS ]: {
 		getSlug: () => FEATURE_UNLIMITED_USERS,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Unlimited collaborators' )
-				: i18n.translate( 'Unlimited users' ),
+		getTitle: () => i18n.translate( 'Unlimited users' ),
 	},
 	[ FEATURE_UNLIMITED_POSTS_PAGES ]: {
 		getSlug: () => FEATURE_UNLIMITED_POSTS_PAGES,
@@ -1947,7 +1944,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_USERS ]: {
 		getSlug: () => FEATURE_USERS,
-		getTitle: () => i18n.translate( 'Unlimited users' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Unlimited collaborators' )
+				: i18n.translate( 'Unlimited users' ),
 		getCompareTitle: () => i18n.translate( 'Invite others to contribute to your site.' ),
 		getDescription: () =>
 			i18n.translate( 'Invite others to contribute to your site and assign access permissions.' ),
