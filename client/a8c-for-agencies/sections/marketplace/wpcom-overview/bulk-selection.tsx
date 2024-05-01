@@ -49,7 +49,7 @@ export default function WPCOMBulkSelector( { selectedTier, onSelectTier, ownedPl
 
 	return (
 		<div className="bulk-selection">
-			{ ownedPlans && (
+			{ !! ownedPlans && (
 				<div className="bulk-selection__owned-plan">
 					<Icon icon={ info } size={ 24 } />
 

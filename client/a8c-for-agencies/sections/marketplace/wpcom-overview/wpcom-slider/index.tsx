@@ -61,9 +61,9 @@ export default function A4AWPCOMSlider( {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onNumberInputChange = ( event: any ) => {
-		const value = Number.parseInt( event.target.value ) || 1;
+		const value = event.target.value;
 		// Our next value will be determine based on the minimum input.
-		const next = value < minimum ? minimum : value;
+		const next = isNaN( value ) || value < minimum ? minimum : value;
 		onChange?.( next );
 		setCurrentValue( value ); // We do not want to override the value with next here to avoid disrupting user input.
 		setCurrentSliderPos( valueToSliderPos( next, mappedOptions ) );
@@ -71,7 +71,7 @@ export default function A4AWPCOMSlider( {
 
 	const onNumberInputBlur = () => {
 		// When the mouse cursor goes out, we need to make sure the value is within the range.
-		const next = currentValue < minimum ? minimum : currentValue;
+		const next = isNaN( currentValue ) || currentValue < minimum ? minimum : currentValue;
 		onChange?.( next );
 		setCurrentValue( next );
 		setCurrentSliderPos( valueToSliderPos( next, mappedOptions ) );
