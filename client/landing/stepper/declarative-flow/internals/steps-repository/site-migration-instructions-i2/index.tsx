@@ -1,7 +1,7 @@
 import { StepContainer } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -38,8 +38,20 @@ const SiteMigrationInstructions: Step = function () {
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const { detailedStatus, migrationKey, completed: isSetupCompleted } = useSiteMigration( siteId );
 
-	const showFallback = isSetupCompleted && detailedStatus.migrationKey === 'error';
+	const hasErrorGetMigrationKey = detailedStatus.migrationKey === 'error';
+	const showFallback = isSetupCompleted && hasErrorGetMigrationKey;
 	const showCopyIntoNewSite = isSetupCompleted && migrationKey;
+
+	useEffect( () => {
+		if ( hasErrorGetMigrationKey ) {
+			recordTracksEvent(
+				'calypso_onboarding_site_migration_instructions_unable_to_get_migration_key',
+				{
+					from: fromUrl,
+				}
+			);
+		}
+	}, [ fromUrl, hasErrorGetMigrationKey ] );
 
 	const stepContent = (
 		<div className="site-migration-instructions__content">
