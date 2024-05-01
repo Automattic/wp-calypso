@@ -118,7 +118,7 @@ export interface APIProductFamily {
 	discounts?: {
 		tiers: {
 			quantity: number;
-			discount_percent: number;
+			discount: number;
 		}[];
 	};
 }
