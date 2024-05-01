@@ -89,7 +89,7 @@ export const ScheduleList = ( props: Props ) => {
 
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">
-			<div className="plugins-update-manager-multisite-header">
+			<div className="plugins-update-manager-multisite__header">
 				<h1>{ translate( 'Update schedules' ) }</h1>
 				<Button
 					__next40pxDefaultSize
