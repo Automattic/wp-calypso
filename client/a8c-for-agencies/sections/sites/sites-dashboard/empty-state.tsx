@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
-// import { Icon, external } from '@wordpress/icons';
+import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -18,8 +17,8 @@ export default function EmptyState() {
 
 	const title = translate( 'Sites' );
 
-	const pluginDownloadLink = 'https://wordpress.org/plugins/jetpack/'; // FIXME: Provide correct download link.
-	// const resourceLink = ''; // FIXME: Provide correct resource link.
+	const pluginDownloadLink = ''; // FIXME: Provide correct download link.
+	const connectSiteViaJetpackLink = 'https://wordpress.com/jetpack/connect?source=a8c-for-agencies';
 
 	return (
 		<Layout title={ title } wide withBorder sidebarNavigation={ <MobileSidebarNavigation /> }>
@@ -30,50 +29,64 @@ export default function EmptyState() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<div className="sites-dashboard__empty">
-					<A4ALogo className="sites-dashboard__empty-logo" size={ 64 } />
+				<div className="sites-dashboard-empty">
+					<h1 className="sites-dashboard-empty__heading">
+						{ translate( 'Connect your sites and simplify your work' ) }
+					</h1>
 
-					<p className="sites-dashboard__empty-message">
-						{ translate(
-							'Add all of your sites to your dashboard by installing the Automattic for Agencies connection plugin. Once connected within wp-admin, your sites will automatically sync here.'
-						) }
+					<p className="sites-dashboard-empty__subheading">
+						{ translate( "Manage all your sites's products from one place." ) }
 					</p>
+					<div className="sites-dashboard-empty__body">
+						<div className="sites-dashboard-empty__plugins-icon">
+							<Icon
+								className="sidebar__menu-icon"
+								style={ { fill: 'currentcolor' } }
+								icon={ plugins }
+								size={ 24 }
+							/>
+						</div>
+						<div className="sites-dashboard-empty__content">
+							<div className="sites-dashboard-empty__content-heading">
+								{ translate( 'Install the A4A plugin to manage your sites in the dashboard' ) }
+							</div>
+							<p className="sites-dashboard-empty__content-description">
+								{ translate(
+									"Use the A4A plugin to actively connect your clients' sites to Automattic for Agencies — it's lightweight and efficient, working seamlessly in the background."
+								) }
+							</p>
+							<p className="sites-dashboard-empty__content-description">
+								{ translate(
+									'Already have Jetpack installed? You can use it as a connection option as well.'
+								) }
+							</p>
 
-					<div className="sites-dashboard__empty-actions">
-						<Button
-							href={ pluginDownloadLink }
-							target="_blank"
-							primary
-							onClick={ () =>
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_sites_dashboard_download_a4a_plugin_click' )
-								)
-							}
-						>
-							{ translate( 'Connect sites with Jetpack (Temporary)' ) }
-						</Button>
-						{ /* TODO: replace this after A4A plugin and docs are ready */ }
-						{ /* <Button
-							href={ pluginDownloadLink }
-							target="_blank"
-							primary
-							onClick={ () =>
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_sites_dashboard_download_a4a_plugin_click' )
-								)
-							}
-						>
-							{ translate( 'Download A4A Plugin' ) }
-						</Button>
-						<Button
-							href={ resourceLink }
-							target="_blank"
-							onClick={ () =>
-								dispatch( recordTracksEvent( 'calypso_a4a_sites_dashboard_learn_more_click' ) )
-							}
-						>
-							{ translate( 'Learn more' ) } <Icon icon={ external } size={ 18 } />
-						</Button> */ }
+							<div className="sites-dashboard-empty__content-button">
+								<Button
+									href={ pluginDownloadLink }
+									target="_blank"
+									primary
+									onClick={ () =>
+										dispatch(
+											recordTracksEvent( 'calypso_a4a_sites_dashboard_download_a4a_plugin_click' )
+										)
+									}
+								>
+									{ translate( 'Download the A4A client plugin' ) }
+								</Button>
+								<Button
+									href={ connectSiteViaJetpackLink }
+									target="_blank"
+									onClick={ () =>
+										dispatch(
+											recordTracksEvent( 'calypso_a4a_sites_dashboard_connect_jetpack_click' )
+										)
+									}
+								>
+									{ translate( 'Connect a site via Jetpack' ) }
+								</Button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</LayoutBody>
