@@ -2,11 +2,16 @@
 
 .promote-post-i2 {
 
+	.promote-post-i2__outer-wrapper {
+		background-color: $studio-gray-0;
+		width: 100%;
+	}
+
 	.empty-promotion-list__container.promote-post-i2__setup-container {
 		display: flex;
 		flex-direction: column;
 		margin-top: 30px;
-		min-height: calc(100vh - 180px); // the size of the top bar
+		min-height: calc(100vh - 180px); // the size of the top bar and footer
 
 		.promote-post-i2__setup-icon {
 			margin: 95px 0 30px;
@@ -15,6 +20,7 @@
 		.promote-post-i2__active-steps {
 			align-self: center;
 			margin: 0;
+			padding-bottom: 95px;
 			text-align: justify;
 
 			li {
