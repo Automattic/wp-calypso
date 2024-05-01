@@ -1,18 +1,62 @@
 @import "@automattic/color-studio/dist/color-variables";
 
 .promote-post-i2 {
+
 	.empty-promotion-list__container.promote-post-i2__setup-container {
 		display: flex;
 		flex-direction: column;
-		margin-top: 40px;
+		margin-top: 30px;
+		min-height: calc(100vh - 180px); // the size of the top bar
+
+		.promote-post-i2__setup-icon {
+			margin: 95px 0 30px;
+		}
 
 		.promote-post-i2__active-steps {
 			align-self: center;
+			margin: 0;
 			text-align: justify;
 
 			li {
-				font-size: $font-body;
+				align-items: center;
+				background-color: $studio-white;
+				border-radius: 4px;
 				color: $studio-gray-50;
+				display: flex;
+				font-size: $font-body;
+				margin-bottom: 8px;
+				min-width: 520px;
+				padding: 16px;
+
+				span {
+					align-items: center;
+					border-radius: 100%;
+					color: $studio-white;
+					display: inline-flex;
+					height: 32px;
+					justify-content: center;
+					line-height: 1;
+					margin-right: 16px;
+					width: 32px;
+				}
+
+				&:nth-child(1) {
+					span {
+						background-color: #b99ad3;
+					}
+				}
+
+				&:nth-child(2) {
+					span {
+						background-color: #814bb0;
+					}
+				}
+
+				&:nth-child(3) {
+					span {
+						background-color: #492a63;
+					}
+				}
 			}
 		}
 	}

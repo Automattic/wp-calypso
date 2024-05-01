@@ -4,8 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import BlazePageViewTracker from 'calypso/my-sites/promote-post-i2/components/blaze-page-view-tracker';
 import MainWrapper from 'calypso/my-sites/promote-post-i2/components/main-wrapper';
-import PostsListBanner from 'calypso/my-sites/promote-post-i2/components/posts-list-banner';
-import WooBanner from 'calypso/my-sites/promote-post-i2/components/woo-banner';
+// import PostsListBanner from 'calypso/my-sites/promote-post-i2/components/posts-list-banner';
+// import WooBanner from 'calypso/my-sites/promote-post-i2/components/woo-banner';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
 import GenericHeader from '../../components/generic-header';
 import BlazeDisabled from './components/blaze-disabled';
@@ -46,7 +46,8 @@ export default function BlazeSetup( { setupInfo } ) {
 				/>
 			</div>
 
-			{ isWooBlaze ? <WooBanner /> : <PostsListBanner /> }
+			{ /* todo i think in setupages we never show the banner.. but not deleting as i am not sure */ }
+			{ /*{ isWooBlaze ? <WooBanner /> : <PostsListBanner /> }*/ }
 
 			<div className="promote-post-i2__aux-wrapper">
 				<div className="empty-promotion-list__container promote-post-i2__setup-container">
