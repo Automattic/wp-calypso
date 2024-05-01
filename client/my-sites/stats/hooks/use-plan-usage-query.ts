@@ -28,7 +28,7 @@ function selectPlanUsage( payload: PlanUsage ): PlanUsage {
 
 	return {
 		...payload,
-		billableMonthlyViews: Math.min( ...recent_usages, 0 ),
+		billableMonthlyViews: recent_usages.length > 0 ? Math.min( ...recent_usages ) : 0,
 	};
 }
 
