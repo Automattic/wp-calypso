@@ -102,6 +102,10 @@
 			padding-left: 0;
 			font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			color: var(--studio-gray-40);
+
+			&::placeholder {
+				color: var(--studio-gray-40);
+			}
 		}
 
 		// Search icon
