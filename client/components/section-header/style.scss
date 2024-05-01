@@ -1,10 +1,10 @@
 .section-header.card {
 	align-items: flex-start;
+	box-shadow: none;
 	display: flex;
 	flex-flow: row wrap;
 	line-height: 28px;
-	padding-top: 11px;
-	padding-bottom: 11px;
+	padding: 0;
 	position: relative;
 
 	&::after {
@@ -13,6 +13,12 @@
 
 	&.is-empty .section-header__label::after {
 		content: "\00a0";
+	}
+
+	.section-header__label-text {
+		font-size: 1.25rem;
+		font-weight: 500;
+		line-height: 26px;
 	}
 }
 
