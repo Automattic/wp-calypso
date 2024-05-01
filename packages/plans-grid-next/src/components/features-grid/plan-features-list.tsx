@@ -70,7 +70,7 @@ const PlanFeaturesList = ( {
 					return (
 						<PlanDivOrTdContainer
 							key={ `${ planSlug }-${ mapIndex }` }
-							isTableCell={ options?.isTableCell }
+							isTableCell
 							className="plan-features-2023-grid__table-item"
 						/>
 					);
