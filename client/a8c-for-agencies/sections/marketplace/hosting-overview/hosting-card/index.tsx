@@ -145,13 +145,13 @@ export default function HostingCard( {
 						</div>
 						<div className="hosting-card__price-interval">{ priceIntervalDescription }</div>
 					</div>
-					{ highestDiscountPercentage && (
+					{ highestDiscountPercentage ? (
 						<div className="hosting-card__price-discount">
 							{ translate( 'Volume savings up to %(highestDiscountPercentage)s%', {
 								args: { highestDiscountPercentage },
 							} ) }
 						</div>
-					) }
+					) : null }
 				</div>
 
 				<p className="hosting-card__description">{ description }</p>
