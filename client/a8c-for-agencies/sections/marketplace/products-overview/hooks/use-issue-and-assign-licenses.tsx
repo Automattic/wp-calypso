@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { getQueryArg } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import {
@@ -119,9 +119,10 @@ function useIssueAndAssignLicenses(
 			// then, redirect to somewhere more appropriate
 			const selectedSiteId = selectedSite?.ID;
 			if ( ! selectedSiteId ) {
-				const hasPurchaseWPCOMPlan = issuedLicenses.some(
+				const wpcomPlan = issuedLicenses.find(
 					( license ) => license.slug?.startsWith( 'wpcom-hosting' )
 				);
+				const hasPurchaseWPCOMPlan = !! wpcomPlan;
 
 				if ( ! hasPurchaseWPCOMPlan ) {
 					const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
@@ -129,7 +130,11 @@ function useIssueAndAssignLicenses(
 				}
 
 				page.redirect(
-					hasPurchaseWPCOMPlan ? `${ A4A_SITES_LINK_NEEDS_SETUP }?purchase` : A4A_LICENSES_LINK
+					hasPurchaseWPCOMPlan
+						? addQueryArgs( A4A_SITES_LINK_NEEDS_SETUP, {
+								wpcom_creator_purchased: wpcomPlan.slug,
+						  } )
+						: A4A_LICENSES_LINK
 				);
 				return;
 			}
