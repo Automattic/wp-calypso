@@ -115,6 +115,12 @@ export interface APIProductFamily {
 	name: string;
 	slug: string;
 	products: APIProductFamilyProduct[];
+	discounts?: {
+		tiers: {
+			quantity: number;
+			discount: number;
+		}[];
+	};
 }
 
 export interface APIError {

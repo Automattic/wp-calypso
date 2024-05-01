@@ -26,6 +26,7 @@ import {
 	A4A_MARKETPLACE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { Option } from 'calypso/a8c-for-agencies/components/slider';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -41,18 +42,22 @@ import WPCOMPlanCard from './wpcom-card';
 
 import './style.scss';
 
+type TierProps = Option & {
+	discount: number;
+};
+
 export default function WpcomOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { selectedCartItems, onRemoveCartItem, setSelectedCartItems } = useShoppingCart();
 
-	const [ selectedCount, setSelectedCount ] = useState( wpcomBulkOptions[ 0 ] );
+	const options = wpcomBulkOptions( [] );
 
-	const onSelectCount = ( count: number ) => {
-		setSelectedCount(
-			wpcomBulkOptions.find( ( option ) => option.value === count ) ?? wpcomBulkOptions[ 0 ]
-		);
+	const [ selectedTier, setSelectedTier ] = useState< TierProps >( options[ 0 ] );
+
+	const onSelectTier = ( tier: TierProps ) => {
+		setSelectedTier( tier );
 	};
 
 	const { wpcomPlans } = useProductAndPlans( {} );
@@ -129,13 +134,13 @@ export default function WpcomOverview() {
 						'When you build and host your sites with WordPress.com, everything’s integrated, secure, and scalable.'
 					) }
 				/>
-				<WPCOMBulkSelector selectedCount={ selectedCount } onSelectCount={ onSelectCount } />
+				<WPCOMBulkSelector selectedTier={ selectedTier } onSelectTier={ onSelectTier } />
 
 				{ creatorPlan && (
 					<WPCOMPlanCard
 						plan={ creatorPlan }
-						quantity={ selectedCount.value }
-						discount={ selectedCount.discount }
+						quantity={ selectedTier.value as number }
+						discount={ selectedTier.discount }
 						onSelect={ onAddToCart }
 					/>
 				) }
