@@ -58,7 +58,6 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_MONITORING,
 				__( 'Monitoring' ),
-				isAtomicSite,
 				! isJetpackNonAtomic,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
