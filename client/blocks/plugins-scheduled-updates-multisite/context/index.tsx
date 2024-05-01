@@ -12,19 +12,26 @@ export type MultisitePluginUpdateManagerErrors = {
 interface MultisitePluginUpdateManagerContextProps {
 	errors: MultisitePluginUpdateManagerErrors;
 	setErrors: Dispatch< SetStateAction< MultisitePluginUpdateManagerErrors > >;
+	searchTerm: string;
+	handleSearch: Dispatch< SetStateAction< string > >;
 }
 
 const MultisitePluginUpdateManagerContext =
 	createContext< MultisitePluginUpdateManagerContextProps >( {
 		errors: [],
 		setErrors: () => {},
+		searchTerm: '',
+		handleSearch: () => {},
 	} );
 
 const MultisitePluginUpdateManagerContextProvider = ( { children }: { children: ReactNode } ) => {
 	const [ errors, setErrors ] = useState< MultisitePluginUpdateManagerErrors >( [] );
+	const [ searchTerm, handleSearch ] = useState< string >( '' );
 
 	return (
-		<MultisitePluginUpdateManagerContext.Provider value={ { errors, setErrors } }>
+		<MultisitePluginUpdateManagerContext.Provider
+			value={ { errors, setErrors, searchTerm, handleSearch } }
+		>
 			{ children }
 		</MultisitePluginUpdateManagerContext.Provider>
 	);

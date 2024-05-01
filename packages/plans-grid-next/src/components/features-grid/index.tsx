@@ -75,11 +75,11 @@ const MobileView = ( {
 	showUpgradeableStorage,
 }: MobileViewProps ) => {
 	const translate = useTranslate();
-	const { renderCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
 	const featureGroups = useMemo(
 		() =>
-			renderCategorisedFeatures ? ( Object.keys( featureGroupMap ) as FeatureGroupSlug[] ) : [],
-		[ renderCategorisedFeatures, featureGroupMap ]
+			enableCategorisedFeatures ? ( Object.keys( featureGroupMap ) as FeatureGroupSlug[] ) : [],
+		[ enableCategorisedFeatures, featureGroupMap ]
 	);
 
 	return renderedGridPlans
@@ -138,7 +138,7 @@ const MobileView = ( {
 						}
 					>
 						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
-						{ renderCategorisedFeatures ? (
+						{ enableCategorisedFeatures ? (
 							featureGroups.map( ( featureGroupSlug ) => (
 								<PlanFeaturesList
 									key={ featureGroupSlug }

@@ -189,6 +189,7 @@ describe( 'Site Migration Flow', () => {
 					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
 					sendIntentWhenCreatingTrial: true,
 				},
+				cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com`,
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
@@ -197,6 +198,7 @@ describe( 'Site Migration Flow', () => {
 				flowName: 'site-migration',
 				siteSlug: 'example.wordpress.com',
 				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 				plan: PLAN_MIGRATION_TRIAL_MONTHLY,
 			} );
 		} );
@@ -230,7 +232,9 @@ describe( 'Site Migration Flow', () => {
 			await waitFor( () => {
 				expect( getFlowLocation() ).toEqual( {
 					path: `/${ STEPS.VERIFY_EMAIL.slug }`,
-					state: null,
+					state: {
+						pollForEmailVerification: false,
+					},
 				} );
 			} );
 		} );

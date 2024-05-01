@@ -94,7 +94,7 @@
 		align-items: center;
 		// Places search above filters
 		z-index: 1;
-		border-radius: 2px;
+		border-radius: 4px;
 		border: 1px solid var(--studio-gray-10);
 		background-color: var(--color-surface, $white);
 
@@ -112,7 +112,7 @@
 }
 
 .wpcom-site .is-group-sites.is-global-sidebar-collapsed,
-.wpcom-site .is-group-sites.is-global-sidebar-visible {
+.wpcom-site .is-group-sites.is-global-sidebar-visible:not(.is-section-domains) {
 	.layout__content {
 		@include break-medium {
 			padding: 16px 16px 16px calc(var(--sidebar-width-max));

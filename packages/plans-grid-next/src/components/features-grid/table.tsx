@@ -59,11 +59,11 @@ const Table = ( {
 	stickyRowOffset,
 }: TableProps ) => {
 	const translate = useTranslate();
-	const { renderCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
 	const featureGroups = useMemo(
 		() =>
-			renderCategorisedFeatures ? ( Object.keys( featureGroupMap ) as FeatureGroupSlug[] ) : [],
-		[ renderCategorisedFeatures, featureGroupMap ]
+			enableCategorisedFeatures ? ( Object.keys( featureGroupMap ) as FeatureGroupSlug[] ) : [],
+		[ enableCategorisedFeatures, featureGroupMap ]
 	);
 	// Do not render the spotlight plan if it exists
 	const gridPlansWithoutSpotlight = useMemo(
@@ -150,7 +150,7 @@ const Table = ( {
 						options={ { isTableCell: true } }
 					/>
 				</tr>
-				{ renderCategorisedFeatures ? (
+				{ enableCategorisedFeatures ? (
 					<>
 						<tr>
 							<PlanStorageOptions

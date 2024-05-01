@@ -286,7 +286,11 @@ const siteMigration: Flow = {
 								in_site_migration_flow: flowName,
 							} );
 						}
-						return navigate( STEPS.VERIFY_EMAIL.slug );
+
+						// We don't want the Verify Email step to poll for email verification since the new verification email will redirect them back into the flow.
+						return navigate( STEPS.VERIFY_EMAIL.slug, {
+							pollForEmailVerification: false,
+						} );
 					}
 
 					if ( providedDependencies?.goToCheckout ) {
@@ -297,12 +301,17 @@ const siteMigration: Flow = {
 							},
 							`/setup/${ FLOW_NAME }/${ STEPS.BUNDLE_TRANSFER.slug }`
 						);
+
+						urlQueryParams.delete( 'showModal' );
 						goToCheckout( {
 							flowName: FLOW_NAME,
-							stepName: 'site-migration-upgrade-plan',
+							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 							siteSlug: siteSlug,
 							destination: destination,
 							plan: providedDependencies.plan as string,
+							cancelDestination: `/setup/${ FLOW_NAME }/${
+								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+							}?${ urlQueryParams.toString() }`,
 							extraQueryParams:
 								providedDependencies?.sendIntentWhenCreatingTrial &&
 								providedDependencies?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
