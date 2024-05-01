@@ -7,6 +7,7 @@ import MainWrapper from 'calypso/my-sites/promote-post-i2/components/main-wrappe
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
 import GenericHeader from '../../components/generic-header';
 import BlazeDisabled from './components/blaze-disabled';
+import BlazePrivateSite from './components/blaze-private-site';
 
 const renderSetupComponent = ( setupInfo ) => {
 	// Compatibility with previous Jetpack's version
@@ -14,6 +15,9 @@ const renderSetupComponent = ( setupInfo ) => {
 
 	switch ( reason ) {
 		case 'blaze_disabled':
+			return <BlazeDisabled />;
+		case 'site_private_or_coming_soon':
+			return <BlazePrivateSite />;
 		default:
 			return <BlazeDisabled />;
 	}
