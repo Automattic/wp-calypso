@@ -28,7 +28,6 @@ import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt/docs/examp
 import LikeButtons from 'calypso/blocks/like-button/docs/example';
 import Login from 'calypso/blocks/login/docs/example';
 import PlanStorage from 'calypso/blocks/plan-storage/docs/example';
-import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card/docs/example';
 import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
 import PostLikes from 'calypso/blocks/post-likes/docs/example';
 import PostShare from 'calypso/blocks/post-share/docs/example';
@@ -154,7 +153,6 @@ export default class AppComponents extends Component {
 					<ReaderCombinedCard />
 					<PlanPrice />
 					<PostShare readmeFilePath="post-share" />
-					<PlanThankYouCard readmeFilePath="plan-thank-you-card" />
 					<DismissibleCard readmeFilePath="dismissible-card" />
 					<ReaderAvatar readmeFilePath="reader-avatar" />
 					<ReaderPostOptionsMenu readmeFilePath="reader-post-options-menu" />

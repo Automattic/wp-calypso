@@ -7,7 +7,6 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	getJetpackSearchCustomizeUrl,
@@ -23,7 +22,6 @@ class CheckoutThankYouHeader extends PureComponent {
 		primaryCta: PropTypes.func,
 		purchases: PropTypes.array,
 		recordTracksEvent: PropTypes.func.isRequired,
-		recordStartTransferClickInThankYou: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		_n: PropTypes.func.isRequired,
@@ -162,7 +160,6 @@ export default connect(
 		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
 	} ),
 	{
-		recordStartTransferClickInThankYou,
 		recordTracksEvent,
 	}
 )( localize( withI18n( CheckoutThankYouHeader ) ) );

@@ -222,95 +222,16 @@
 	}
 }
 
-.checkout-thank-you__verification-notice,
 .checkout-thank-you__verified-required {
 	width: 100%;
 	max-width: 500px;
 	text-align: left;
-	margin: 0 auto;
-}
-.checkout-thank-you__verified-required {
-	margin-top: 30px;
-}
-.checkout-thank-you__verification-notice-email {
-	word-break: break-word;
+	margin: 30px auto 0;
 }
 
 .checkout-thank-you .checkout-thank-you__gsuite-support-link {
 	color: inherit;
 	text-decoration: underline;
-}
-
-// Jetpack thank you styles
-.checkout-thank-you__jetpack-plugins {
-	margin: 0 auto;
-}
-
-.checkout-thank-you__jetpack .button.thank-you-card__button {
-	font-weight: inherit;
-}
-
-.checkout-thank-you__jetpack-error-card {
-	text-align: left;
-}
-
-.checkout-thank-you__jetpack-error-heading {
-	font-size: $font-title-small;
-	font-weight: 400;
-	line-height: 32px;
-	margin-top: 0;
-}
-
-.checkout-thank-you__jetpack-error-explanation {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
-	font-style: italic;
-	font-weight: 400;
-}
-
-.checkout-thank-you__jetpack-description-in-actions a {
-	color: inherit;
-	text-decoration: underline;
-}
-
-.checkout-thank-you__jetpack-action-buttons {
-	display: flex;
-}
-
-.checkout-thank-you__jetpack {
-	max-width: 500px;
-	margin: 0 auto;
-
-	&.is-errored .thank-you-card__description {
-		margin-bottom: 0;
-	}
-	.thank-you-card__action .button {
-		max-width: 45%;
-	}
-
-	.plan-thank-you-card {
-		&.is-personal-plan,
-		&.is-premium-plan,
-		&.is-business-plan {
-			.thank-you-card {
-				color: var(--color-text);
-				background-color: var(--color-surface);
-				box-shadow:
-					0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
-					0 1px 2px var(--color-neutral-0);
-			}
-		}
-	}
-
-	.thank-you-card__header {
-		color: var(--color-text);
-		background-color: var(--color-surface);
-		box-shadow: 0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5);
-	}
-
-	.thank-you-card__description {
-		width: 340px;
-	}
 }
 
 /* Gridicon Floaties */
