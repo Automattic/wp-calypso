@@ -12,6 +12,7 @@ import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { getCheapestPlan } from '../../lib/hosting';
 import ListingSection from '../../listing-section';
 import { getAllPressablePlans } from '../../pressable-overview/lib/get-pressable-plan';
+import wpcomBulkOptions from '../../wpcom-overview/lib/wpcom-bulk-options';
 import HostingCard from '../hosting-card';
 
 import './style.scss';
@@ -45,9 +46,23 @@ export default function HostingList( { selectedSite }: Props ) {
 		[ pressablePlans ]
 	);
 
+	const highestDiscountPressable = 70; // FIXME: compute this value based on the actual data
+
 	const cheapestWPCOMPlan = useMemo(
 		() => ( isWPCOMOptionEnabled && wpcomPlans.length ? getCheapestPlan( wpcomPlans ) : null ),
 		[ isWPCOMOptionEnabled, wpcomPlans ]
+	);
+
+	const highestDiscountWPCOM = useMemo(
+		() =>
+			wpcomBulkOptions.reduce(
+				( highestDiscountPercentage, option ) =>
+					option.discount * 100 > highestDiscountPercentage
+						? option.discount * 100
+						: highestDiscountPercentage,
+				0
+			),
+		[]
 	);
 
 	const vipPlan = useMemo(
@@ -95,10 +110,19 @@ export default function HostingList( { selectedSite }: Props ) {
 				) }
 				isTwoColumns
 			>
-				{ cheapestWPCOMPlan && <HostingCard plan={ cheapestWPCOMPlan } /> }
+				{ cheapestWPCOMPlan && (
+					<HostingCard
+						plan={ cheapestWPCOMPlan }
+						highestDiscountPercentage={ highestDiscountWPCOM }
+					/>
+				) }
 
 				{ cheapestPressablePlan && (
-					<HostingCard plan={ cheapestPressablePlan } pressableOwnership={ hasPressablePlan } />
+					<HostingCard
+						plan={ cheapestPressablePlan }
+						pressableOwnership={ hasPressablePlan }
+						highestDiscountPercentage={ highestDiscountPressable }
+					/>
 				) }
 
 				{ isWPCOMOptionEnabled && (
