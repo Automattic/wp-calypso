@@ -106,13 +106,18 @@
 
 		.components-input-control__input {
 			padding-left: 0;
-			font-size: $font-body;
+			font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			color: var(--studio-gray-40);
+
+			&::placeholder {
+				color: var(--studio-gray-40);
+			}
 		}
 
 		// Search icon
 		.components-input-control__suffix {
 			padding-inline-start: 11px;
-			color: var(--studio-gray-30);
+			color: var(--studio-black);
 		}
 	}
 }
