@@ -3,6 +3,11 @@
 $brand-display: "SF Pro Display", sans-serif;
 
 .plugins-update-manager-multisite {
+	h1 {
+		font-size: 2rem;
+		margin-bottom: 1rem;
+	}
+
 	.components-notice {
 		margin-bottom: 1.25rem;
 		margin-top: 1.25rem;
@@ -114,6 +119,7 @@ $brand-display: "SF Pro Display", sans-serif;
 			font-style: normal;
 			font-weight: 500;
 			line-height: 1.2;
+			margin-bottom: 0;
 		}
 
 		button {
