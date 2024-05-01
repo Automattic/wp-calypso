@@ -63,7 +63,7 @@ export default function ItemPreviewPaneHeader( {
 								size={ extraProps?.externalIconSize || ICON_SIZE }
 							/>
 						</Button>
-						{ itemData.adminUrl && (
+						{ ! extraProps?.usePrimaryAdminButton && itemData.adminUrl && (
 							<Button
 								variant="link"
 								className="item-preview__header-summary-link"
@@ -74,6 +74,15 @@ export default function ItemPreviewPaneHeader( {
 						) }
 					</div>
 				</div>
+				{ extraProps?.usePrimaryAdminButton && itemData.adminUrl && (
+					<Button
+						variant="primary"
+						className="item-preview__admin-button"
+						href={ `${ itemData.adminUrl }` }
+					>
+						{ translate( 'Go to WP Admin' ) }
+					</Button>
+				) }
 				<Button
 					onClick={ closeItemPreviewPane }
 					className="item-preview__close-preview"
