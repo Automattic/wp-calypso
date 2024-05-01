@@ -10,6 +10,7 @@
 }
 
 .a4a-slider__input {
+	position: relative;
 	flex-grow: 1;
 }
 
@@ -119,10 +120,20 @@
 	border: 1px solid var(--color-neutral-5);
 	border-radius: 4px;
 	min-height: 36px;
+	position: relative;
 }
 
 .a4a-slider__number-input::-webkit-inner-spin-button,
 .a4a-slider__number-input::-webkit-outer-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
+}
+
+.a4a-slider__input-disabled-area {
+	min-height: 6px;
+	width: 0;
+	background-color: var(--color-primary-0);
+	position: absolute;
+	top: 22px;
+	border-radius: 4px;
 }

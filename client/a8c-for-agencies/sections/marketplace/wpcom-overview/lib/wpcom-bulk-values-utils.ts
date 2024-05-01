@@ -44,3 +44,24 @@ export const valueToSliderPos = ( value: number, options: SliderOption[] ) => {
 	const normalizedValue = ( value - minValue ) / ( maxValue - minValue );
 	return Math.floor( minAbsolute + normalizedValue * ( maxAbsolute - minAbsolute ) );
 };
+
+export type DiscountTier = Option & {
+	discount: number;
+};
+
+export const calculateTier = ( options: DiscountTier[], value: number ) => {
+	let tier = options[ 0 ];
+
+	for ( const option of options ) {
+		if ( Number( option.value ) > value ) {
+			break;
+		}
+
+		tier = option;
+	}
+
+	return {
+		...tier,
+		value,
+	};
+};

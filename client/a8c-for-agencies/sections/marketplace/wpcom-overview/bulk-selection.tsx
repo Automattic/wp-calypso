@@ -1,44 +1,20 @@
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import { Option } from 'calypso/a8c-for-agencies/components/slider';
+import { useCallback, useEffect, useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import wpcomBulkOptions from './lib/wpcom-bulk-options';
+import { DiscountTier, calculateTier } from './lib/wpcom-bulk-values-utils';
 import A4AWPCOMSlider from './wpcom-slider';
 
-type TierProps = Option & {
-	discount: number;
-};
-
 type Props = {
-	selectedTier: TierProps;
-	onSelectTier: ( value: TierProps ) => void;
+	selectedTier: DiscountTier;
+	onSelectTier: ( value: DiscountTier ) => void;
 	ownedPlans: number;
-};
-
-const calculateTier = ( options: TierProps[], value: number ) => {
-	let tier = options[ 0 ];
-
-	for ( const option of options ) {
-		if ( Number( option.value ) > value ) {
-			break;
-		}
-
-		tier = option;
-	}
-
-	return {
-		...tier,
-		value,
-	};
 };
 
 export default function WPCOMBulkSelector( { selectedTier, onSelectTier, ownedPlans }: Props ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const { data } = useProductsQuery( false, true );
 
@@ -48,24 +24,28 @@ export default function WPCOMBulkSelector( { selectedTier, onSelectTier, ownedPl
 		  ) as unknown as APIProductFamily )
 		: undefined;
 
-	const options = wpcomBulkOptions( wpcomProducts?.discounts?.tiers );
+	const options = useMemo(
+		() => wpcomBulkOptions( wpcomProducts?.discounts?.tiers ),
+		[ wpcomProducts?.discounts?.tiers ]
+	);
 
 	const onSelectOption = useCallback(
 		( option: number ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_hosting_wpcom_select_count', {
-					count: option,
-				} )
-			);
-
 			onSelectTier( calculateTier( options, option ) );
 		},
-		[ dispatch, onSelectTier, options ]
+		[ onSelectTier, options ]
 	);
 
 	const selectedOption = options.findIndex(
 		( { value } ) => value === ( selectedTier ? selectedTier.value : null )
 	);
+
+	const minimumQuantity = ownedPlans + 1;
+
+	useEffect( () => {
+		onSelectTier( calculateTier( options, minimumQuantity ) );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ ownedPlans, options ] );
 
 	return (
 		<div className="bulk-selection">
@@ -98,6 +78,7 @@ export default function WPCOMBulkSelector( { selectedTier, onSelectTier, ownedPl
 				value={ selectedOption }
 				onChange={ onSelectOption }
 				options={ options }
+				minimum={ minimumQuantity }
 			/>
 		</div>
 	);

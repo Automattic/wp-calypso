@@ -26,7 +26,6 @@ import {
 	A4A_MARKETPLACE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { Option } from 'calypso/a8c-for-agencies/components/slider';
 import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -39,13 +38,10 @@ import { getWPCOMCreatorPlan } from '../lib/hosting';
 import ShoppingCart, { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
 import WPCOMBulkSelector from './bulk-selection';
 import wpcomBulkOptions from './lib/wpcom-bulk-options';
+import { DiscountTier } from './lib/wpcom-bulk-values-utils';
 import WPCOMPlanCard from './wpcom-card';
 
 import './style.scss';
-
-type TierProps = Option & {
-	discount: number;
-};
 
 export default function WpcomOverview() {
 	const translate = useTranslate();
@@ -57,9 +53,9 @@ export default function WpcomOverview() {
 
 	const options = wpcomBulkOptions( [] );
 
-	const [ selectedTier, setSelectedTier ] = useState< TierProps >( options[ 0 ] );
+	const [ selectedTier, setSelectedTier ] = useState< DiscountTier >( options[ 0 ] );
 
-	const onSelectTier = ( tier: TierProps ) => {
+	const onSelectTier = ( tier: DiscountTier ) => {
 		setSelectedTier( tier );
 	};
 
@@ -154,7 +150,7 @@ export default function WpcomOverview() {
 				{ creatorPlan && (
 					<WPCOMPlanCard
 						plan={ creatorPlan }
-						quantity={ selectedTier.value as number }
+						quantity={ ( selectedTier.value as number ) - ownedPlans } // We only calculate the difference between the selected tier and the owned plans
 						discount={ selectedTier.discount }
 						onSelect={ onAddToCart }
 					/>

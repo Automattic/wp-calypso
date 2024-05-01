@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
 	mapOptionsToSliderOptions,
 	sliderPosToValue,
@@ -20,6 +20,7 @@ type Props = {
 	value: number;
 	label?: string;
 	sub?: string;
+	minimum?: number;
 };
 
 export default function A4AWPCOMSlider( {
@@ -29,33 +30,61 @@ export default function A4AWPCOMSlider( {
 	value,
 	label,
 	sub,
+	minimum = 0,
 }: Props ) {
 	const total = 204;
 	const mappedOptions = useMemo(
 		() => mapOptionsToSliderOptions( options, total ),
 		[ options, total ]
 	);
-	const [ currentValue, setCurrentValue ] = useState( value || 1 );
+
+	const rangeRef = useRef< HTMLInputElement >( null );
+
+	const defaultValue = ( value || 1 ) < minimum ? minimum : value || 1;
+
+	const [ currentValue, setCurrentValue ] = useState( defaultValue );
 	const [ currentSliderPos, setCurrentSliderPos ] = useState(
-		valueToSliderPos( value, mappedOptions )
+		valueToSliderPos( defaultValue, mappedOptions )
 	);
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onSliderChange = ( event: any ) => {
-		const sliderPos = Number.parseInt( event.target.value );
+		const sliderPos = Number( event.target.value );
 		const selected = sliderPosToValue( sliderPos, mappedOptions );
-		onChange?.( selected );
-		setCurrentValue( selected );
-		setCurrentSliderPos( sliderPos );
+
+		const next = selected < minimum ? minimum : selected;
+
+		onChange?.( next );
+		setCurrentValue( next );
+		setCurrentSliderPos( selected < minimum ? valueToSliderPos( next, mappedOptions ) : sliderPos );
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onNumberInputChange = ( event: any ) => {
 		const value = Number.parseInt( event.target.value ) || 1;
-		onChange?.( value );
-		setCurrentValue( value );
-		setCurrentSliderPos( valueToSliderPos( value, mappedOptions ) );
+		// Our next value will be determine based on the minimum input.
+		const next = value < minimum ? minimum : value;
+		onChange?.( next );
+		setCurrentValue( value ); // We do not want to override the value with next here to avoid disrupting user input.
+		setCurrentSliderPos( valueToSliderPos( next, mappedOptions ) );
 	};
+
+	const onNumberInputBlur = () => {
+		// When the mouse cursor goes out, we need to make sure the value is within the range.
+		const next = currentValue < minimum ? minimum : currentValue;
+		onChange?.( next );
+		setCurrentValue( next );
+		setCurrentSliderPos( valueToSliderPos( next, mappedOptions ) );
+	};
+
+	const ratio = valueToSliderPos( minimum, mappedOptions ) / total;
+
+	const thumbSize = 14;
+	const sliderWidth = rangeRef.current?.offsetWidth ?? 1;
+	const disabledAreaWidth =
+		minimum >= mappedOptions[ mappedOptions.length - 1 ].maxValue
+			? `${ sliderWidth - thumbSize }px`
+			: `${ ratio * sliderWidth - thumbSize * ratio }px`;
 
 	return (
 		<div className={ classNames( 'a4a-slider', className ) }>
@@ -67,7 +96,15 @@ export default function A4AWPCOMSlider( {
 			) }
 
 			<div className="a4a-slider__input">
+				<div
+					className="a4a-slider__input-disabled-area"
+					style={ {
+						width: disabledAreaWidth,
+					} }
+				></div>
+
 				<input
+					ref={ rangeRef }
 					type="range"
 					min="0"
 					max={ total.toString() }
@@ -107,6 +144,7 @@ export default function A4AWPCOMSlider( {
 				className="a4a-slider__number-input"
 				value={ currentValue }
 				onChange={ onNumberInputChange }
+				onBlur={ onNumberInputBlur }
 			></input>
 		</div>
 	);
