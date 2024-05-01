@@ -2,17 +2,16 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
 	Button,
-	Notice,
 	Spinner,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState } from 'react';
 import { MultisitePluginUpdateManagerContext } from 'calypso/blocks/plugins-scheduled-updates-multisite/context';
-import { useErrors } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-errors';
 import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ScheduleListEmpty } from './schedule-list-empty';
+import { ScheduleErrors } from './schedule-errors';
 import { ScheduleListFilter } from './schedule-list-filter';
 import { ScheduleListTable } from './schedule-list-table';
 
@@ -37,8 +36,6 @@ export const ScheduleList = ( props: Props ) => {
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >();
 	const [ selectedSiteSlugs, setSelectedSiteSlugs ] = useState< string[] >( [] );
-
-	const { clearErrors, errors } = useErrors();
 
 	useEffect( () => {
 		const schedule = schedules?.find( ( schedule ) => schedule.schedule_id === selectedScheduleId );
@@ -104,22 +101,9 @@ export const ScheduleList = ( props: Props ) => {
 					</Button>
 				) }
 			</div>
-			{ errors.length ? (
-				<Notice status="warning" isDismissible={ true } onDismiss={ () => clearErrors() }>
-					{ translate(
-						'An error was encountered while creating the schedule.',
-						'Some errors were encountered while creating the schedule.',
-						{ count: errors.length }
-					) }
-					<ul>
-						{ errors.map( ( error, idx ) => (
-							<li key={ `${ error.siteSlug }.${ idx }` }>
-								<strong>{ error.site?.title }: </strong> { error.error }
-							</li>
-						) ) }
-					</ul>
-				</Notice>
-			) : null }
+
+			<ScheduleErrors />
+
 			{ schedules.length === 0 && isLoading && <Spinner /> }
 			{ isScheduleEmpty && <ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } /> }
 			{ isFetched && filteredSchedules.length > 0 && ScheduleListComponent ? (
