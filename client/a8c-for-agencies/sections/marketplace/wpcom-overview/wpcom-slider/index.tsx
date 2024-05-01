@@ -92,7 +92,10 @@ export default function A4AWPCOMSlider( {
 								} }
 							>
 								<div className="a4a-slider__marker-line"></div>
-								<div className="a4a-slider__marker-label">{ option.label }</div>
+								<div className="a4a-slider__marker-label">
+									{ option.label }
+									{ index === options.length - 1 && '+' }
+								</div>
 								{ option.sub && <div className="a4a-slider__marker-sub">{ option.sub }</div> }
 							</div>
 						);

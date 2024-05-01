@@ -37,8 +37,9 @@ export const valueToSliderPos = ( value: number, options: SliderOption[] ) => {
 		( option ) => value >= option.minValue && value <= option.maxValue
 	);
 	if ( ! foundOption ) {
-		return 1;
+		return value === 0 ? 1 : options[ options.length - 1 ].maxAbsolute;
 	}
+
 	const { minAbsolute, maxAbsolute, minValue, maxValue } = foundOption;
 	const normalizedValue = ( value - minValue ) / ( maxValue - minValue );
 	return Math.floor( minAbsolute + normalizedValue * ( maxAbsolute - minAbsolute ) );
