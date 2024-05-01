@@ -105,17 +105,17 @@ export function useStepNavigator(
 		const plan = extraArgs.plan ?? selectedPlan;
 		const slug = extraArgs.slug ?? siteSlug;
 		const path = buildCheckoutUrl( slug, plan );
-		let redirectTo = extraArgs.redirect_to ?? '';
+		let redirectTo = '';
 		let cancelTo = '';
 
 		switch ( importOption ) {
 			case WPImportOption.CONTENT_ONLY:
-				redirectTo = redirectTo === '' ? getWordpressImportContentOnlyUrl( extraArgs ) : redirectTo;
+				redirectTo = extraArgs.redirect_to ?? getWordpressImportContentOnlyUrl( extraArgs );
 				cancelTo = getWordpressImportContentOnlyUrl();
 				break;
 
 			case WPImportOption.EVERYTHING:
-				redirectTo = redirectTo === '' ? getWordpressImportEverythingUrl( extraArgs ) : redirectTo;
+				redirectTo = extraArgs.redirect_to ?? getWordpressImportEverythingUrl( extraArgs );
 				cancelTo = getWordpressImportEverythingUrl();
 				break;
 		}
