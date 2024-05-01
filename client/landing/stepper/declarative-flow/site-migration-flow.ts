@@ -1,5 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
+import { SiteExcerptData } from '@automattic/sites';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -26,7 +28,7 @@ const siteMigration: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
-		return [
+		const steps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.BUNDLE_TRANSFER,
@@ -39,6 +41,12 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
 			STEPS.ERROR,
 		];
+
+		if ( isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
+			steps.push( STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP );
+		}
+
+		return steps;
 	},
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
@@ -46,7 +54,7 @@ const siteMigration: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
-		const startUrl = useStartUrl( FLOW_NAME );
+		const startUrl = useStartUrl( this.variantSlug ?? FLOW_NAME );
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 		const { isOwner } = useIsSiteOwner();
@@ -71,7 +79,8 @@ const siteMigration: Flow = {
 			};
 		}
 
-		if ( ! siteSlug && ! siteId ) {
+		// enable navigation if coming through the hosted site migration flow
+		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
 			window.location.assign( '/start' );
 			result = {
 				state: AssertConditionState.FAILURE,
@@ -84,6 +93,12 @@ const siteMigration: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
+		const variantSlug = this.variantSlug;
+		const flowPath = variantSlug ?? flowName;
+		const siteCount =
+			useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] )
+				?.site_count ?? 0;
+
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
@@ -110,7 +125,7 @@ const siteMigration: Flow = {
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
+			recordSubmitStep( providedDependencies, intent, flowName, currentStep, variantSlug );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
 
@@ -130,11 +145,28 @@ const siteMigration: Flow = {
 									siteSlug,
 									from,
 									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-									backToFlow: `/${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 								},
 								'/setup/site-setup/importList'
 							)
 						);
+					}
+
+					if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) ) {
+						if ( ! siteSlugParam ) {
+							if ( siteCount > 0 ) {
+								return navigate( `sitePicker?from=${ encodeURIComponent( from ) }` );
+							}
+
+							if ( from ) {
+								return navigate( 'site-migration-upgrade-plan', {
+									siteId,
+									siteSlug,
+								} );
+								// return navigate( `createSite?from=${ encodeURIComponent( from ) }` );
+							}
+							return navigate( 'error' );
+						}
 					}
 
 					return navigate(
@@ -142,6 +174,41 @@ const siteMigration: Flow = {
 							{ from: from, siteSlug, siteId },
 							STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
 						)
+					);
+				}
+				case STEPS.PICK_SITE.slug: {
+					switch ( providedDependencies?.action ) {
+						case 'update-query': {
+							const newQueryParams =
+								( providedDependencies?.queryParams as { [ key: string ]: string } ) || {};
+
+							Object.keys( newQueryParams ).forEach( ( key ) => {
+								newQueryParams[ key ]
+									? urlQueryParams.set( key, newQueryParams[ key ] )
+									: urlQueryParams.delete( key );
+							} );
+
+							return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+						}
+						case 'select-site': {
+							const { ID: newSiteId, slug: newSiteSlug } =
+								providedDependencies.site as SiteExcerptData;
+							return navigate(
+								addQueryArgs(
+									{ siteId: newSiteId, siteSlug: newSiteSlug, from: fromQueryParam },
+									STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+								)
+							);
+						}
+						case 'create-site':
+							return navigate(
+								addQueryArgs( { from: fromQueryParam }, STEPS.SITE_CREATION_STEP.slug )
+							);
+					}
+				}
+				case STEPS.SITE_CREATION_STEP.slug: {
+					return navigate(
+						addQueryArgs( { from: fromQueryParam, siteSlug, siteId }, STEPS.PROCESSING.slug )
 					);
 				}
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
@@ -152,7 +219,7 @@ const siteMigration: Flow = {
 								{
 									siteSlug,
 									siteId,
-									backToFlow: `/${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
+									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
 								},
 								'/setup/site-setup/importList'
 							)
@@ -194,8 +261,17 @@ const siteMigration: Flow = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
+					if ( providedDependencies?.siteCreated ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, siteSlug, from: fromQueryParam },
+								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+							)
+						);
+					}
+
 					// If the plugin was installed successfully, go to the migration instructions.
-					if ( providedDependencies?.pluginInstall ) {
+					if ( providedDependencies?.pluginInstalled ) {
 						if ( siteSlug ) {
 							// Remove the in_site_migration_flow option at the end of the flow.
 							await saveSiteSettings( siteSlug, {
@@ -242,17 +318,17 @@ const siteMigration: Flow = {
 								siteSlug,
 								from: fromQueryParam,
 							},
-							`/setup/${ FLOW_NAME }/${ STEPS.BUNDLE_TRANSFER.slug }`
+							`/setup/${ flowPath }/${ STEPS.BUNDLE_TRANSFER.slug }`
 						);
 
 						urlQueryParams.delete( 'showModal' );
 						goToCheckout( {
-							flowName: FLOW_NAME,
+							flowName: flowPath,
 							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 							siteSlug: siteSlug,
 							destination: destination,
 							plan: providedDependencies.plan as string,
-							cancelDestination: `/setup/${ FLOW_NAME }/${
+							cancelDestination: `/setup/${ flowPath }/${
 								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
 							}?${ urlQueryParams.toString() }`,
 							extraQueryParams:

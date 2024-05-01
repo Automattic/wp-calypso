@@ -250,4 +250,9 @@ export const STEPS = {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
 	},
+
+	PICK_SITE: {
+		slug: 'sitePicker',
+		asyncComponent: () => import( './steps-repository/site-picker' ),
+	},
 };
