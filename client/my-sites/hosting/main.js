@@ -32,18 +32,12 @@ import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/sel
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
-import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnBusinessTrial, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
-import { TrialAcknowledgeModal } from '../plans/trials/trial-acknowledge/acknowlege-modal';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { WithOnclickTrialRequest } from '../plans/trials/trial-acknowledge/with-onclick-trial-request';
 import SiteAdminInterface from '../site-settings/site-admin-interface';
 import CacheCard from './cache-card';
@@ -273,13 +267,11 @@ const Hosting = ( props ) => {
 		hasSftpFeature,
 		hasStagingSitesFeature,
 		isJetpack,
-		isEligibleForHostingTrial,
 		fetchUpdatedData,
 		isSiteAtomic,
 		transferState,
 	} = props;
 
-	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(
 		transferState &&
 			! [
@@ -294,14 +286,6 @@ const Hosting = ( props ) => {
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showHostingActivationBanner = canSiteGoAtomic && ! hasTransfer;
-
-	const setOpenModal = ( isOpen ) => {
-		setIsTrialAcknowledgeModalOpen( isOpen );
-	};
-
-	const trialRequested = () => {
-		setHasTransferring( true );
-	};
 
 	const requestUpdatedSiteData = useCallback(
 		( isTransferring, wasTransferring, isTransferCompleted ) => {
@@ -418,7 +402,7 @@ const Hosting = ( props ) => {
 				title={ translate( 'Hosting Config' ) }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
-			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (
+			{ ! showHostingActivationBanner && (
 				<HostingActivateStatus
 					context="hosting"
 					onTick={ requestUpdatedSiteData }
@@ -436,9 +420,6 @@ const Hosting = ( props ) => {
 				/>
 			) }
 			{ getContent() }
-			{ isEligibleForHostingTrial && isTrialAcknowledgeModalOpen && (
-				<TrialAcknowledgeModal setOpenModal={ setOpenModal } trialRequested={ trialRequested } />
-			) }
 			<QueryReaderTeams />
 		</Main>
 	);
@@ -453,9 +434,6 @@ export default connect(
 		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
-		const site = getSelectedSite( state );
-		const isEligibleForHostingTrial =
-			isUserEligibleForFreeHostingTrial( state ) && site && site.plan?.is_free;
 		const isSiteAtomic = isSiteWpcomAtomic( state, siteId );
 
 		return {
@@ -471,7 +449,6 @@ export default connect(
 			siteId,
 			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 			hasStagingSitesFeature,
-			isEligibleForHostingTrial,
 			isSiteAtomic,
 		};
 	},
