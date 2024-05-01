@@ -5,6 +5,7 @@ import { useCallback, useMemo } from 'react';
 import {
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
+	A4A_SITES_LINK_NEEDS_SETUP,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { useDispatch } from 'calypso/state';
@@ -118,10 +119,18 @@ function useIssueAndAssignLicenses(
 			// then, redirect to somewhere more appropriate
 			const selectedSiteId = selectedSite?.ID;
 			if ( ! selectedSiteId ) {
-				const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
-				dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
+				const hasPurchaseWPCOMPlan = issuedLicenses.some(
+					( license ) => license.slug?.startsWith( 'wpcom-hosting' )
+				);
 
-				page.redirect( A4A_LICENSES_LINK );
+				if ( ! hasPurchaseWPCOMPlan ) {
+					const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
+					dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
+				}
+
+				page.redirect(
+					hasPurchaseWPCOMPlan ? `${ A4A_SITES_LINK_NEEDS_SETUP }?purchase` : A4A_LICENSES_LINK
+				);
 				return;
 			}
 
