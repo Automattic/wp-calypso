@@ -11,7 +11,7 @@ import {
 	external,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -27,6 +27,7 @@ import {
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Option } from 'calypso/a8c-for-agencies/components/slider';
+import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -52,6 +53,8 @@ export default function WpcomOverview() {
 
 	const { selectedCartItems, onRemoveCartItem, setSelectedCartItems } = useShoppingCart();
 
+	const { data: licenseCounts, isSuccess: isLicenseCountsReady } = useFetchLicenseCounts();
+
 	const options = wpcomBulkOptions( [] );
 
 	const [ selectedTier, setSelectedTier ] = useState< TierProps >( options[ 0 ] );
@@ -63,6 +66,13 @@ export default function WpcomOverview() {
 	const { wpcomPlans } = useProductAndPlans( {} );
 
 	const creatorPlan = getWPCOMCreatorPlan( wpcomPlans );
+
+	const ownedPlans = useMemo( () => {
+		if ( isLicenseCountsReady && creatorPlan ) {
+			const productStats = licenseCounts?.products?.[ creatorPlan.slug ];
+			return productStats?.not_revoked || 0;
+		}
+	}, [ creatorPlan, isLicenseCountsReady, licenseCounts?.products ] );
 
 	const onclickMoreInfo = useCallback( () => {
 		dispatch(
@@ -134,7 +144,12 @@ export default function WpcomOverview() {
 						'When you build and host your sites with WordPress.com, everything’s integrated, secure, and scalable.'
 					) }
 				/>
-				<WPCOMBulkSelector selectedTier={ selectedTier } onSelectTier={ onSelectTier } />
+
+				<WPCOMBulkSelector
+					selectedTier={ selectedTier }
+					onSelectTier={ onSelectTier }
+					ownedPlans={ ownedPlans }
+				/>
 
 				{ creatorPlan && (
 					<WPCOMPlanCard

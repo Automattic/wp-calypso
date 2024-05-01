@@ -1,3 +1,4 @@
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { Option } from 'calypso/a8c-for-agencies/components/slider';
@@ -15,6 +16,7 @@ type TierProps = Option & {
 type Props = {
 	selectedTier: TierProps;
 	onSelectTier: ( value: TierProps ) => void;
+	ownedPlans: number;
 };
 
 const calculateTier = ( options: TierProps[], value: number ) => {
@@ -34,7 +36,7 @@ const calculateTier = ( options: TierProps[], value: number ) => {
 	};
 };
 
-export default function WPCOMBulkSelector( { selectedTier, onSelectTier }: Props ) {
+export default function WPCOMBulkSelector( { selectedTier, onSelectTier, ownedPlans }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -67,6 +69,29 @@ export default function WPCOMBulkSelector( { selectedTier, onSelectTier }: Props
 
 	return (
 		<div className="bulk-selection">
+			{ ownedPlans && (
+				<div className="bulk-selection__owned-plan">
+					<Icon icon={ info } size={ 24 } />
+
+					<span>
+						{ translate(
+							'You own {{b}}%(count)s Creator plan{{/b}}',
+							'You own {{b}}%(count)s Creator plans{{/b}}',
+							{
+								args: {
+									count: ownedPlans,
+								},
+								components: {
+									b: <strong />,
+								},
+								count: ownedPlans,
+								comment: '%(count)s is the number of Creator plans owned by the user',
+							}
+						) }
+					</span>
+				</div>
+			) }
+
 			<A4AWPCOMSlider
 				label={ translate( 'Total sites' ) }
 				sub={ translate( 'Total discount' ) }
