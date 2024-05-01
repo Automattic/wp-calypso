@@ -110,7 +110,7 @@ const entrepreneurFlow: Flow = {
 						let redirectToWithSSO = `https://${ stagingUrl }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`;
 
 						// Temporarily redirect to Calypso My Home until Woo Express 8.9 is deployed.
-						redirectToWithSSO = `/home/${ stagingUrl }`;
+						redirectToWithSSO = `/home/${ stagingUrl }?flags=entrepreneur-my-home`;
 
 						return window.location.assign( redirectToWithSSO );
 					}
