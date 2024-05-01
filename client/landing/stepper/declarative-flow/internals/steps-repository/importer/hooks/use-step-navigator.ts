@@ -100,22 +100,22 @@ export function useStepNavigator(
 
 	function getCheckoutUrl(
 		importOption: WPImportOption,
-		extraArgs: { plan?: string; slug?: string } = {}
+		extraArgs: { plan?: string; slug?: string; redirect_to?: string } = {}
 	) {
 		const plan = extraArgs.plan ?? selectedPlan;
 		const slug = extraArgs.slug ?? siteSlug;
 		const path = buildCheckoutUrl( slug, plan );
-		let redirectTo = '';
+		let redirectTo = extraArgs.redirect_to ?? '';
 		let cancelTo = '';
 
 		switch ( importOption ) {
 			case WPImportOption.CONTENT_ONLY:
-				redirectTo = getWordpressImportContentOnlyUrl( extraArgs );
+				redirectTo = redirectTo === '' ? getWordpressImportContentOnlyUrl( extraArgs ) : redirectTo;
 				cancelTo = getWordpressImportContentOnlyUrl();
 				break;
 
 			case WPImportOption.EVERYTHING:
-				redirectTo = getWordpressImportEverythingUrl( extraArgs );
+				redirectTo = redirectTo === '' ? getWordpressImportEverythingUrl( extraArgs ) : redirectTo;
 				cancelTo = getWordpressImportEverythingUrl();
 				break;
 		}
