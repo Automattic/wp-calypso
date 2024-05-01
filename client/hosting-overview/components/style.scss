@@ -217,7 +217,7 @@ a.hosting-overview__link-button {
 }
 
 .hosting-overview__action {
-	border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
+	border-bottom: 1px solid var(--color-border-secondary);
 	padding: var(--grid-unit-15, 12px) 0;
 
 	svg {
@@ -266,7 +266,7 @@ a.hosting-overview__link-button {
 	padding: 0;
 
 	table {
-		border-top: 1px solid var(--gutenberg-gray-100, #f0f0f0);
+		border-top: 1px solid var(--color-border-secondary);
 		margin-top: 0;
 
 		th:not(.domains-table-checkbox-th):first-child,
