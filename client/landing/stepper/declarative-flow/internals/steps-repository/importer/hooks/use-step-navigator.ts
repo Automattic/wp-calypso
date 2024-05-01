@@ -100,7 +100,7 @@ export function useStepNavigator(
 
 	function getCheckoutUrl(
 		importOption: WPImportOption,
-		extraArgs: { plan?: string; slug?: string } = {}
+		extraArgs: { plan?: string; slug?: string; redirect_to?: string } = {}
 	) {
 		const plan = extraArgs.plan ?? selectedPlan;
 		const slug = extraArgs.slug ?? siteSlug;
@@ -110,12 +110,12 @@ export function useStepNavigator(
 
 		switch ( importOption ) {
 			case WPImportOption.CONTENT_ONLY:
-				redirectTo = getWordpressImportContentOnlyUrl( extraArgs );
+				redirectTo = extraArgs.redirect_to ?? getWordpressImportContentOnlyUrl( extraArgs );
 				cancelTo = getWordpressImportContentOnlyUrl();
 				break;
 
 			case WPImportOption.EVERYTHING:
-				redirectTo = getWordpressImportEverythingUrl( extraArgs );
+				redirectTo = extraArgs.redirect_to ?? getWordpressImportEverythingUrl( extraArgs );
 				cancelTo = getWordpressImportEverythingUrl();
 				break;
 		}
