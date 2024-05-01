@@ -63,7 +63,7 @@ export default function HostingList( { selectedSite }: Props ) {
 
 	const highestDiscountPressable = 70; // FIXME: compute this value based on the actual data
 
-	const creatorPlan = getWPCOMCreatorPlan( wpcomPlans );
+	const creatorPlan = isWPCOMOptionEnabled ? getWPCOMCreatorPlan( wpcomPlans ) : null;
 
 	const highestDiscountWPCOM = useMemo(
 		() =>
@@ -74,7 +74,7 @@ export default function HostingList( { selectedSite }: Props ) {
 						: highestDiscountPercentage,
 				0
 			),
-		[]
+		[ wpcomOptions ]
 	);
 
 	const vipPlan = useMemo(
