@@ -107,7 +107,6 @@ const DotcomPreviewPane = ( {
 			features={ features }
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
-				usePrimaryAdminButton: true,
 			} }
 		/>
 	);

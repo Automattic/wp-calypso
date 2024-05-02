@@ -8,12 +8,13 @@
 		}
 
 		.item-preview__close-preview,
+		.item-preview__close-preview-button,
 		.item-preview__admin-button {
 			align-self: flex-start;
 		}
 
-		.item-preview__admin-button {
-			margin-right: 20px;
+		.item-preview__close-preview-button {
+			margin-right: 15px;
 		}
 	}
 

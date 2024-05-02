@@ -42,5 +42,4 @@ export interface PreviewPaneProps {
 
 export interface ItemPreviewPaneHeaderExtraProps {
 	externalIconSize?: number;
-	usePrimaryAdminButton?: boolean;
 }

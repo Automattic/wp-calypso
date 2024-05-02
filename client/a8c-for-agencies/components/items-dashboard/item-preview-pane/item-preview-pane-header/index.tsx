@@ -63,34 +63,37 @@ export default function ItemPreviewPaneHeader( {
 								size={ extraProps?.externalIconSize || ICON_SIZE }
 							/>
 						</Button>
-						{ ! extraProps?.usePrimaryAdminButton && itemData.adminUrl && (
-							<Button
-								variant="link"
-								className="item-preview__header-summary-link"
-								href={ `${ itemData.adminUrl }` }
-							>
-								<span>{ translate( 'WP Admin' ) }</span>
-							</Button>
-						) }
 					</div>
 				</div>
-				{ extraProps?.usePrimaryAdminButton && itemData.adminUrl && (
+				{ itemData.adminUrl ? (
+					<>
+						<Button
+							onClick={ closeItemPreviewPane }
+							className="item-preview__close-preview-button"
+							aria-label={ translate( 'Close Preview' ) }
+							variant="secondary"
+							ref={ focusRef }
+						>
+							{ translate( 'close' ) }
+						</Button>
+						<Button
+							variant="primary"
+							className="item-preview__admin-button"
+							href={ `${ itemData.adminUrl }` }
+						>
+							{ translate( 'Go to WP Admin' ) }
+						</Button>
+					</>
+				) : (
 					<Button
-						variant="primary"
-						className="item-preview__admin-button"
-						href={ `${ itemData.adminUrl }` }
+						onClick={ closeItemPreviewPane }
+						className="item-preview__close-preview"
+						aria-label={ translate( 'Close Preview' ) }
+						ref={ focusRef }
 					>
-						{ translate( 'Go to WP Admin' ) }
+						<Gridicon icon="cross" size={ ICON_SIZE } />
 					</Button>
 				) }
-				<Button
-					onClick={ closeItemPreviewPane }
-					className="item-preview__close-preview"
-					aria-label={ translate( 'Close Preview' ) }
-					ref={ focusRef }
-				>
-					<Gridicon icon="cross" size={ ICON_SIZE } />
-				</Button>
 			</div>
 		</div>
 	);
