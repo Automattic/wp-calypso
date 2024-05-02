@@ -51,13 +51,13 @@ export const ProviderWrappedLayout = ( {
 	const userLoggedIn = isUserLoggedIn( state );
 
 	const [ isLoading, experimentAssignment ] = useExperiment(
-		'wpcom_plan_name_change_starter_to_beginner_v2'
+		'wpcom_plan_name_change_starter_to_beginner_v3'
 	);
 
 	useEffect( () => {
 		if ( ! isLoading ) {
 			setPlansListExperiment(
-				'wpcom_plan_name_change_starter_to_beginner_v2',
+				'wpcom_plan_name_change_starter_to_beginner_v3',
 				experimentAssignment?.variationName
 			);
 		}

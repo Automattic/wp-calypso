@@ -7,7 +7,7 @@ import { getPlansListExperiment } from './experiments';
  */
 
 export const getPlanPersonalTitle = () =>
-	getPlansListExperiment( 'wpcom_plan_name_change_starter_to_beginner_v2' ) === 'treatment'
+	getPlansListExperiment( 'wpcom_plan_name_change_starter_to_beginner_v3' ) === 'treatment'
 		? // translators: Beginner is a plan name
 		  i18n.translate( 'Beginner' )
 		: // translators: Starter is a plan name
