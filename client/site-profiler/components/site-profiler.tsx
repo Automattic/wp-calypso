@@ -13,6 +13,7 @@ import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
+import { BasicMetrics } from './basic-metrics';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
@@ -134,21 +135,7 @@ export default function SiteProfiler( props: Props ) {
 					) }
 					{ showBasicMetrics && (
 						<LayoutBlockSection>
-							<div className="basic-metrics">
-								<h3>{ translate( 'Basic Metrics' ) }</h3>
-								<ul className="basic-metric-details result-list">
-									{ Object.entries( basicMetrics ).map( ( [ key, value ] ) => {
-										return (
-											<li>
-												<div className="name">
-													<a href={ `https://web.dev/articles/${ key }` }>{ key }</a>
-												</div>
-												<div>{ value }</div>
-											</li>
-										);
-									} ) }
-								</ul>
-							</div>
+							<BasicMetrics basicMetrics={ basicMetrics } />
 						</LayoutBlockSection>
 					) }
 				</LayoutBlock>
