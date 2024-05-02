@@ -20,7 +20,7 @@ export default function PrivateSite() {
 					{ translate( 'Make sure your site is public' ) }
 				</h3>
 				<p className="empty-promotion-list__body">
-					{ translate( 'Go to your WordPress.com dashboard and follow stapes below.' ) }
+					{ translate( 'Go to your WordPress.com dashboard and follow steps below.' ) }
 				</p>
 
 				<ul className="promote-post-i2__active-steps">
