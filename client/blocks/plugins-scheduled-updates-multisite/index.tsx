@@ -1,4 +1,6 @@
+import { useTranslate } from 'i18n-calypso';
 import { MultisitePluginUpdateManagerContextProvider } from 'calypso/blocks/plugins-scheduled-updates-multisite/context';
+import DocumentHead from 'calypso/components/data/document-head';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleList } from './schedule-list';
 
@@ -19,8 +21,16 @@ export const PluginsScheduledUpdatesMultisite = ( {
 	onEditSchedule,
 	onShowLogs,
 }: Props ) => {
+	const translate = useTranslate();
+	const title = {
+		create: translate( 'New schedule' ),
+		edit: translate( 'Edit schedule' ),
+		list: translate( 'Update schedules' ),
+	}[ context ];
+
 	return (
 		<MultisitePluginUpdateManagerContextProvider>
+			<DocumentHead title={ title } />
 			{ ( () => {
 				switch ( context ) {
 					case 'create':
