@@ -2,14 +2,14 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import privateSiteGraphic from 'calypso/assets/images/blaze/site-private-graphic@3x.png';
 
-export default function BlazeDisconnected() {
+export default function DisconnectedSite() {
 	const translate = useTranslate();
 
 	return (
 		<>
 			<div className="promote-post-i2__inner-container">
 				<div className="promote-post-i2__setup-icon">
-					<img src={ privateSiteGraphic } alt="privete site graphic" />
+					<img src={ privateSiteGraphic } alt="" />
 				</div>
 				<h3 className="setup-pages__title wp-brand-font width-fix">
 					{ translate( 'Welcome to Blaze for WooCommerce' ) }
@@ -43,7 +43,7 @@ export default function BlazeDisconnected() {
 							<h4>{ translate( 'Connect your store' ) }</h4>
 							<p>
 								{ translate(
-									'To make Blaze for WooCommerce work with your  store we need to connect it with your WordPress.com account. Don’t worry, If you don’t have an one you will be able to create it.'
+									'To make Blaze for WooCommerce work with your store we need to connect it with your WordPress.com account. Don’t worry, If you don’t have an one you will be able to create it.'
 								) }
 							</p>
 							<Button variant="primary">{ translate( 'Connect now' ) }</Button>

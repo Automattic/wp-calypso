@@ -4,7 +4,7 @@ import privateSiteGraphic from 'calypso/assets/images/blaze/site-private-graphic
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-export default function BlazePrivateSite() {
+export default function PrivateSite() {
 	const selectedSiteData = useSelector( getSelectedSite );
 	const siteSlug = selectedSiteData?.slug;
 
@@ -14,7 +14,7 @@ export default function BlazePrivateSite() {
 		<>
 			<div className="promote-post-i2__inner-container">
 				<div className="promote-post-i2__setup-icon">
-					<img src={ privateSiteGraphic } alt="privete site graphic" />
+					<img src={ privateSiteGraphic } alt="" />
 				</div>
 				<h3 className="setup-pages__title wp-brand-font">
 					{ translate( 'Make sure your site is public' ) }
@@ -27,7 +27,7 @@ export default function BlazePrivateSite() {
 					<li>
 						<span>1</span>
 						<div>
-							{ translate( 'Navigate to {{a}}Settings{{/a}} → General or click here', {
+							{ translate( 'Navigate to Settings → General or click {{a}}here{{/a}}', {
 								components: {
 									a: (
 										<a
