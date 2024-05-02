@@ -1,11 +1,11 @@
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { getTotalInvoiceValue } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import ShoppingCartMenuItem from '../shopping-cart/shopping-cart-menu/item';
+import { useTotalInvoiceValue } from '../wpcom-overview/hooks/use-total-invoice-value';
 import type { ShoppingCartItem } from '../types';
 
 type Props = {
@@ -18,6 +18,9 @@ export default function PricingSummary( { items, onRemoveItem }: Props ) {
 	const dispatch = useDispatch();
 
 	const userProducts = useSelector( getProductsList );
+
+	const { getTotalInvoiceValue } = useTotalInvoiceValue();
+
 	const { discountedCost, actualCost } = getTotalInvoiceValue( userProducts, items );
 
 	const currency = items[ 0 ]?.currency ?? 'USD'; // FIXME: Fix if multiple currencies are supported
