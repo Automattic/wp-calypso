@@ -4,9 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, type FC } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteMigration } from 'calypso/landing/stepper/hooks/use-site-migration';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MaybeLink } from '../site-migration-instructions/maybe-link';
 import { ShowHideInput } from '../site-migration-instructions/show-hide-input';
@@ -36,7 +36,11 @@ const SiteMigrationInstructions: Step = function () {
 	const site = useSite();
 	const siteId = site?.ID;
 	const fromUrl = useQuery().get( 'from' ) || '';
-	const { detailedStatus, migrationKey, completed: isSetupCompleted } = useSiteMigration( siteId );
+	const {
+		detailedStatus,
+		migrationKey,
+		completed: isSetupCompleted,
+	} = usePrepareSiteForMigration( siteId );
 
 	const hasErrorGetMigrationKey = detailedStatus.migrationKey === 'error';
 	const showFallback = isSetupCompleted && hasErrorGetMigrationKey;

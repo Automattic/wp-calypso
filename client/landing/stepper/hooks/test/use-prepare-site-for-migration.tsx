@@ -19,7 +19,7 @@ const TRANSFER_COMPLETED = ( siteId: number ) => ( {
 	status: 'completed',
 } );
 
-describe( 'useSiteMigration', () => {
+describe( 'usePrepareSiteForMigration', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => nock.cleanAll() );
 

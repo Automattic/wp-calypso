@@ -27,9 +27,10 @@ const getMigrationKeyStatus = (
 };
 
 /**
- *  Hook to manage the site migration flow, including site transfer, plugin installation and migration key retrieval
+ *  Hook to manage the site to prepare a site for migration using Migrate Guru plugin.
+ *  This hook manages the site transfer, plugin installation and migration key fetching.
  */
-export const useSiteMigration = ( siteId?: number ) => {
+export const usePrepareSiteForMigration = ( siteId?: number ) => {
 	const siteTransferState = useSiteTransfer( siteId );
 	const pluginInstallationState = usePluginAutoInstallation( PLUGIN, siteId, {
 		enabled: Boolean( siteTransferState.completed ),
