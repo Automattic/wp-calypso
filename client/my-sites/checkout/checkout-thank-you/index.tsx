@@ -71,7 +71,7 @@ import TransferPending from './transfer-pending';
 import './style.scss';
 import {
 	getDomainPurchase,
-	isBulkDomainTransfer,
+	isOnlyDomainTransfers,
 	isDomainOnly,
 	isSearch,
 	isTitanWithoutMailboxes,
@@ -199,7 +199,7 @@ export class CheckoutThankYou extends Component<
 			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
-		if ( isBulkDomainTransfer( getPurchases( this.props ) ) ) {
+		if ( isOnlyDomainTransfers( getPurchases( this.props ) ) ) {
 			// We need to reset the store upon checkout completion, on the bulk domain transfer flow
 			// We do it dinamically to avoid loading unnecessary javascript if not necessary.
 			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
@@ -469,7 +469,6 @@ export class CheckoutThankYou extends Component<
 		let wasEcommercePlanPurchased = false;
 		let showHappinessSupport = ! this.props.isSimplified;
 		let wasTitanEmailOnlyProduct = false;
-		let wasBulkDomainTransfer = false;
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -485,7 +484,6 @@ export class CheckoutThankYou extends Component<
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
-			wasBulkDomainTransfer = isBulkDomainTransfer( purchases );
 		}
 
 		// Continue to show the TransferPending progress bar until both the Atomic transfer is complete
@@ -508,7 +506,7 @@ export class CheckoutThankYou extends Component<
 		);
 
 		let pageContent = null;
-		if ( wasBulkDomainTransfer ) {
+		if ( isOnlyDomainTransfers( purchases ) ) {
 			pageContent = (
 				<DomainBulkTransferThankYou
 					purchases={ purchases }
