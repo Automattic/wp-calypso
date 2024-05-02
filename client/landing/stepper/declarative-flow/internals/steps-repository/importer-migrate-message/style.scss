@@ -1,11 +1,14 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
-.import-hosted-site.migrate-message {
+.import-hosted-site,
+.site-migration,
+.import-focused.migrate-message {
 	.step-container__content {
 		margin: auto;
 		max-width: 720px;
 		padding: 24px;
+		width: auto;
 
 		h3 {
 			font-weight: 600;
