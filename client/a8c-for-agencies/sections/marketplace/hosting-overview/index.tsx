@@ -17,7 +17,8 @@ import HostingList from './hosting-list';
 export default function Hosting() {
 	const translate = useTranslate();
 
-	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
+	const { selectedCartItems, onRemoveCartItem, showCart, setShowCart, toggleCart } =
+		useShoppingCart();
 
 	return (
 		<Layout
@@ -33,6 +34,9 @@ export default function Hosting() {
 					<Actions>
 						<MobileSidebarNavigation />
 						<ShoppingCart
+							showCart={ showCart }
+							setShowCart={ setShowCart }
+							toggleCart={ toggleCart }
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {

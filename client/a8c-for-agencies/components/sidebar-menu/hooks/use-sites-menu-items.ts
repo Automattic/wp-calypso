@@ -21,8 +21,8 @@ const useSitesMenuItems = ( path: string ) => {
 	const { data } = useFetchPendingSites();
 	const totalAvailableSites =
 		data?.filter(
-			( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
-				features.wpcom_atomic.state === 'pending'
+			( { features }: { features: { wpcom_atomic: { state: string; license_key: string } } } ) =>
+				features.wpcom_atomic.state === 'pending' && !! features.wpcom_atomic.license_key
 		).length || 0;
 	const shouldAddNeedsSetup = isWPCOMPurchaseOptionEnabled && totalAvailableSites > 0;
 

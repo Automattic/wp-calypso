@@ -19,8 +19,8 @@ function mutationIssueLicense( {
 	}
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
-		path: '/jetpack-licensing/license',
-		body: { product, quantity, agency_id: agencyId },
+		path: '/jetpack-licensing/licenses',
+		body: { product, quantity, agency_id: agencyId, bundle: false },
 	} );
 }
 
