@@ -1,7 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/sections/manage/pricing/controller';
+import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/sections/manage/pricing/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import MoreInfoBox from '../../more-info-box';
 
