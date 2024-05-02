@@ -155,3 +155,10 @@ export function getCurrentUserLasagnaJwt( state ) {
  * @returns {boolean} Whether the current user is bootstrapped
  */
 export const isCurrentUserBootstrapped = createCurrentUserSelector( 'bootstrapped', false );
+
+/**
+ * Returns the meta object of the current user
+ *  @param {Object} state Global state tree
+ *  @returns {Object} The meta object of the current user
+ */
+export const getCurrentUserMeta = createCurrentUserSelector( 'meta', {} );
