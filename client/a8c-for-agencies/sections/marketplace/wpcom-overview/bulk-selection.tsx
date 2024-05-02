@@ -1,24 +1,20 @@
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
+import { useCallback, useEffect, useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import wpcomBulkOptions from './lib/wpcom-bulk-options';
-
-type TierProps = Option & {
-	discount: number;
-};
+import { DiscountTier, calculateTier } from './lib/wpcom-bulk-values-utils';
+import A4AWPCOMSlider from './wpcom-slider';
 
 type Props = {
-	selectedTier: TierProps;
-	onSelectTier: ( value: TierProps ) => void;
+	selectedTier: DiscountTier;
+	onSelectTier: ( value: DiscountTier ) => void;
+	ownedPlans: number;
 };
 
-export default function WPCOMBulkSelector( { selectedTier, onSelectTier }: Props ) {
+export default function WPCOMBulkSelector( { selectedTier, onSelectTier, ownedPlans }: Props ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const { data } = useProductsQuery( false, true );
 
@@ -28,35 +24,61 @@ export default function WPCOMBulkSelector( { selectedTier, onSelectTier }: Props
 		  ) as unknown as APIProductFamily )
 		: undefined;
 
-	const options = wpcomBulkOptions( wpcomProducts?.discounts?.tiers );
+	const options = useMemo(
+		() => wpcomBulkOptions( wpcomProducts?.discounts?.tiers ),
+		[ wpcomProducts?.discounts?.tiers ]
+	);
 
 	const onSelectOption = useCallback(
-		( option: Option ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_hosting_wpcom_select_count', {
-					count: option.value,
-				} )
-			);
-			const foundTier = options.find( ( { value } ) => value === option.value );
-			if ( foundTier ) {
-				onSelectTier( foundTier );
-			}
+		( option: number ) => {
+			onSelectTier( calculateTier( options, option ) );
 		},
-		[ dispatch, onSelectTier, options ]
+		[ onSelectTier, options ]
 	);
 
 	const selectedOption = options.findIndex(
 		( { value } ) => value === ( selectedTier ? selectedTier.value : null )
 	);
 
+	const minimumQuantity = ownedPlans + 1;
+
+	useEffect( () => {
+		onSelectTier( calculateTier( options, minimumQuantity ) );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ ownedPlans, options ] );
+
 	return (
 		<div className="bulk-selection">
-			<A4ASlider
+			{ !! ownedPlans && (
+				<div className="bulk-selection__owned-plan">
+					<Icon icon={ info } size={ 24 } />
+
+					<span>
+						{ translate(
+							'You own {{b}}%(count)s Creator plan{{/b}}',
+							'You own {{b}}%(count)s Creator plans{{/b}}',
+							{
+								args: {
+									count: ownedPlans,
+								},
+								components: {
+									b: <strong />,
+								},
+								count: ownedPlans,
+								comment: '%(count)s is the number of Creator plans owned by the user',
+							}
+						) }
+					</span>
+				</div>
+			) }
+
+			<A4AWPCOMSlider
 				label={ translate( 'Total sites' ) }
 				sub={ translate( 'Total discount' ) }
 				value={ selectedOption }
 				onChange={ onSelectOption }
 				options={ options }
+				minimum={ minimumQuantity }
 			/>
 		</div>
 	);

@@ -11,7 +11,7 @@ import {
 	external,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -24,9 +24,8 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
-	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { Option } from 'calypso/a8c-for-agencies/components/slider';
+import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -35,34 +34,47 @@ import HostingOverviewFeatures from '../common/hosting-overview-features';
 import useProductAndPlans from '../hooks/use-product-and-plans';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getWPCOMCreatorPlan } from '../lib/hosting';
-import ShoppingCart, { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
+import ShoppingCart from '../shopping-cart';
 import WPCOMBulkSelector from './bulk-selection';
 import wpcomBulkOptions from './lib/wpcom-bulk-options';
+import { DiscountTier } from './lib/wpcom-bulk-values-utils';
 import WPCOMPlanCard from './wpcom-card';
 
 import './style.scss';
-
-type TierProps = Option & {
-	discount: number;
-};
 
 export default function WpcomOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedCartItems, onRemoveCartItem, setSelectedCartItems } = useShoppingCart();
+	const {
+		selectedCartItems,
+		onRemoveCartItem,
+		setSelectedCartItems,
+		showCart,
+		setShowCart,
+		toggleCart,
+	} = useShoppingCart();
+
+	const { data: licenseCounts, isSuccess: isLicenseCountsReady } = useFetchLicenseCounts();
 
 	const options = wpcomBulkOptions( [] );
 
-	const [ selectedTier, setSelectedTier ] = useState< TierProps >( options[ 0 ] );
+	const [ selectedTier, setSelectedTier ] = useState< DiscountTier >( options[ 0 ] );
 
-	const onSelectTier = ( tier: TierProps ) => {
+	const onSelectTier = ( tier: DiscountTier ) => {
 		setSelectedTier( tier );
 	};
 
 	const { wpcomPlans } = useProductAndPlans( {} );
 
 	const creatorPlan = getWPCOMCreatorPlan( wpcomPlans );
+
+	const ownedPlans = useMemo( () => {
+		if ( isLicenseCountsReady && creatorPlan ) {
+			const productStats = licenseCounts?.products?.[ creatorPlan.slug ];
+			return productStats?.not_revoked || 0;
+		}
+	}, [ creatorPlan, isLicenseCountsReady, licenseCounts?.products ] );
 
 	const onclickMoreInfo = useCallback( () => {
 		dispatch(
@@ -79,10 +91,10 @@ export default function WpcomOverview() {
 				);
 
 				setSelectedCartItems( [ ...items, { ...plan, quantity } ] );
-				page( A4A_MARKETPLACE_PRODUCTS_LINK + CART_URL_HASH_FRAGMENT );
+				setShowCart( true );
 			}
 		},
-		[ selectedCartItems, setSelectedCartItems ]
+		[ selectedCartItems, setSelectedCartItems, setShowCart ]
 	);
 
 	const WPCOM_PRICING_PAGE_LINK = 'https://wordpress.com/pricing/';
@@ -116,6 +128,9 @@ export default function WpcomOverview() {
 
 					<Actions>
 						<ShoppingCart
+							showCart={ showCart }
+							setShowCart={ setShowCart }
+							toggleCart={ toggleCart }
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {
@@ -134,12 +149,17 @@ export default function WpcomOverview() {
 						'When you build and host your sites with WordPress.com, everything’s integrated, secure, and scalable.'
 					) }
 				/>
-				<WPCOMBulkSelector selectedTier={ selectedTier } onSelectTier={ onSelectTier } />
+
+				<WPCOMBulkSelector
+					selectedTier={ selectedTier }
+					onSelectTier={ onSelectTier }
+					ownedPlans={ ownedPlans }
+				/>
 
 				{ creatorPlan && (
 					<WPCOMPlanCard
 						plan={ creatorPlan }
-						quantity={ selectedTier.value as number }
+						quantity={ ( selectedTier.value as number ) - ownedPlans } // We only calculate the difference between the selected tier and the owned plans
 						discount={ selectedTier.discount }
 						onSelect={ onAddToCart }
 					/>
