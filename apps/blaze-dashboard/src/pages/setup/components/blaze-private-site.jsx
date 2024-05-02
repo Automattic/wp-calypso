@@ -1,10 +1,12 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import privateSiteGraphic from 'calypso/assets/images/blaze/site-private-graphic@3x.png';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+
 export default function BlazePrivateSite() {
 	const selectedSiteData = useSelector( getSelectedSite );
-	const adminUrl = selectedSiteData?.options?.admin_url;
+	const siteSlug = selectedSiteData?.slug;
 
 	const translate = useTranslate();
 
@@ -29,7 +31,7 @@ export default function BlazePrivateSite() {
 								components: {
 									a: (
 										<a
-											href={ `${ adminUrl }/admin.php?page=jetpack#/traffic` }
+											href={ `https://wordpress.com/settings/general/${ siteSlug }#site-privacy-settings` }
 											target="_blank"
 											rel="noreferrer"
 										/>
@@ -52,7 +54,7 @@ export default function BlazePrivateSite() {
 						components: {
 							a: (
 								<a
-									href={ `${ adminUrl }/admin.php?page=jetpack#/traffic` }
+									href={ localizeUrl( 'https://wordpress.com/support/privacy-settings/' ) }
 									target="_blank"
 									rel="noreferrer"
 								/>

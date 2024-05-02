@@ -30,6 +30,7 @@
 		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-router": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
 		"calypso": "workspace:^",
 		"classnames": "^2.3.2",
