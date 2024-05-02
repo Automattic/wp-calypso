@@ -14,8 +14,8 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
+	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_LINK,
-	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -50,7 +50,7 @@ export default function PressableOverview() {
 
 			setSelectedCartItems( [ ...items, { ...item, quantity: 1 } ] );
 
-			page( A4A_MARKETPLACE_PRODUCTS_LINK + CART_URL_HASH_FRAGMENT );
+			page( A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK + CART_URL_HASH_FRAGMENT );
 		},
 		[ selectedCartItems, setSelectedCartItems ]
 	);
