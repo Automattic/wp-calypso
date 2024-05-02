@@ -71,7 +71,6 @@ export default function ItemPreviewPaneHeader( {
 							onClick={ closeItemPreviewPane }
 							className="item-preview__close-preview-button"
 							variant="secondary"
-							ref={ focusRef }
 						>
 							{ translate( 'Close' ) }
 						</Button>
@@ -79,6 +78,7 @@ export default function ItemPreviewPaneHeader( {
 							variant="primary"
 							className="item-preview__admin-button"
 							href={ `${ itemData.adminUrl }` }
+							ref={ focusRef }
 						>
 							{ translate( 'Go to WP Admin' ) }
 						</Button>
