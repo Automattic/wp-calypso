@@ -1098,13 +1098,6 @@
 	box-sizing: border-box;
 	width: 100%;
 
-	@media only screen and ( min-width: 600px ) {
-		width: calc(100% - 48px);
-	}
-
-	@media only screen and ( min-width: 782px ) {
-		width: calc(100% - ( var(--sidebar-width-max) + 16px));
-	}
 	.components-input-control__container > div.components-input-control__backdrop {
 		border-color: var(--color-border-subtle);
 	}

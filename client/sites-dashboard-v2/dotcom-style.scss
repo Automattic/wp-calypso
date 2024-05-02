@@ -268,6 +268,19 @@
 	}
 }
 
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+	.a4a-layout-column__container {
+		.dataviews-wrapper {
+			position: relative;
+
+			.dataviews-pagination {
+				margin: 0;
+				position: relative;
+			}
+		}
+	}
+}
+
 // Use flexbox to structure of fly-out panel.
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
 	.a4a-layout-column__container {
@@ -310,16 +323,11 @@
 				flex: 1;
 				max-height: none;
 			}
-
-			.dataviews-pagination {
-				margin: 0;
-				position: relative;
-			}
 		}
 	}
 }
 
 .wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
 	// With masterbar
-	max-height: calc(100vh - 347px); /* 347px is the size of all the height above and below the dataviews-view-table-wrapper */
+	max-height: calc(100vh - 323px); /* 323px is the size of all the height above and below the dataviews-view-table-wrapper */
 }

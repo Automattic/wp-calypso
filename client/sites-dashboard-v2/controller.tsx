@@ -62,7 +62,8 @@ export function sitesDashboard( context: Context, next: () => void ) {
 				// Add border around everything
 				overflow: hidden;
 				min-height: 100vh;
-				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
+				padding: calc( var( --masterbar-height ) + 16px ) 16px 16px
+					calc( var( --sidebar-width-max ) );
 			}
 
 			.layout__secondary .global-sidebar {
@@ -71,7 +72,7 @@ export function sitesDashboard( context: Context, next: () => void ) {
 		}
 
 		body.is-group-sites-dashboard.rtl .layout__content {
-			padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;
+			padding: calc( var( --masterbar-height ) + 16px ) calc( var( --sidebar-width-max ) ) 16px 16px;
 		}
 
 		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
