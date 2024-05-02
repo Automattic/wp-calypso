@@ -45,27 +45,38 @@ export default function ReferralsOverview() {
 
 	const hasPayeeAccount = !! accountStatus?.status;
 
-	// Whether the banking details success notice has been manually dismissed by the user.
-	const [ successNoticeDismissed, setSuccessNoticeDismissed ] = useState( false );
-
-	// Whether the banking details success notice has been previously seen by the user.
+	// Whether the user has seen the success notice in a previous session.
 	const successNoticeSeen = useSelector( ( state ) =>
 		getPreference( state, 'a4a-referrals-bank-details-success-notice-seen' )
 	);
 
+	// Track whether the preference has just been saved to avoid hiding the notice on the first render.
+	const [ successNoticePreferenceSaved, setSuccessNoticePreferenceSaved ] = useState( false );
+
+	// Whether the user has manually dismissed the success notice.
+	const [ successNoticeDismissed, setSuccessNoticeDismissed ] = useState( successNoticeSeen );
+
 	// Show the banking details success notice if the user has submitted their banking details and the notice has not been dismissed.
 	const showBankingDetailsSuccessNotice = useMemo(
 		() =>
-			accountStatus?.statusType === 'success' && ! successNoticeSeen && ! successNoticeDismissed,
-		[ successNoticeSeen, accountStatus, successNoticeDismissed ]
+			accountStatus?.statusType === 'success' &&
+			! successNoticeDismissed &&
+			( ! successNoticeSeen || successNoticePreferenceSaved ),
+		[
+			accountStatus?.statusType,
+			successNoticeDismissed,
+			successNoticePreferenceSaved,
+			successNoticeSeen,
+		]
 	);
 
 	// Only display the success notice for submitted banking details once.
 	useEffect( () => {
-		if ( showBankingDetailsSuccessNotice ) {
+		if ( accountStatus?.statusType === 'success' && ! successNoticeSeen ) {
 			dispatch( savePreference( 'a4a-referrals-bank-details-success-notice-seen', true ) );
+			setSuccessNoticePreferenceSaved( true );
 		}
-	}, [ dispatch, showBankingDetailsSuccessNotice ] );
+	}, [ dispatch, successNoticeSeen, accountStatus ] );
 
 	return (
 		<Layout
