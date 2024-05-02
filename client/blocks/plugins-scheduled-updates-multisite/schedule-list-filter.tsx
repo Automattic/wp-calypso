@@ -4,8 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import { MultisitePluginUpdateManagerContext } from './context';
 
-import './styles.scss';
-
 const SearchSVG = (
 	<svg
 		className="plugins-update-manager-multisite-filter__search-icon"

@@ -1,5 +1,7 @@
 @import "~@automattic/color-studio/dist/color-variables";
 
+$brand-display: "SF Pro Display", sans-serif;
+
 .plugins-update-manager-multisite {
 	h1 {
 		font-size: 2rem;
@@ -102,6 +104,27 @@
 			.components-spinner {
 				display: none;
 			}
+		}
+	}
+	&__header {
+		align-items: center;
+		border-block-end: 1px solid var(--color-border-secondary);
+		display: flex;
+		font-family: $brand-display;
+		justify-content: space-between;
+		padding-bottom: 1.5rem;
+
+		h1 {
+			font-size: 1.5rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 1.2;
+			margin-bottom: 0;
+		}
+
+		button {
+			font-size: rem(14px);
+			border-radius: 4px;
 		}
 	}
 }

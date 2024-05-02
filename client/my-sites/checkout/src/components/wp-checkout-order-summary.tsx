@@ -35,8 +35,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
-	getSubtotalWithoutDiscounts,
-	filterAndGroupCostOverridesForDisplay,
 	getCreditsLineItemFromCart,
 	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
@@ -57,7 +55,7 @@ import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { CheckIcon } from './check-icon';
-import { CostOverridesList } from './cost-overrides-list';
+import { ProductsAndCostOverridesList } from './cost-overrides-list';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -180,31 +178,12 @@ function CheckoutSummaryPriceList() {
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
-	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
 
-	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
 	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	return (
 		<>
-			{ ! shouldUseCheckoutV2 && costOverridesList.length > 0 && (
-				<CheckoutFirstSubtotalLineItem key="checkout-summary-line-item-subtotal-one">
-					<span>{ translate( 'Subtotal before discounts' ) }</span>
-					<span>
-						{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
-					</span>
-				</CheckoutFirstSubtotalLineItem>
-			) }
-			{ ! shouldUseCheckoutV2 && costOverridesList.length > 0 && (
-				<CostOverridesList
-					costOverridesList={ costOverridesList }
-					currency={ responseCart.currency }
-					couponCode={ responseCart.coupon }
-				/>
-			) }
+			{ ! shouldUseCheckoutV2 && <ProductsAndCostOverridesList responseCart={ responseCart } /> }
 			<CheckoutSummaryAmountWrapper>
 				<CheckoutSubtotalSection>
 					<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
@@ -955,19 +934,6 @@ const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 20px 0;
 	margin-top: 20px;
-`;
-
-const CheckoutFirstSubtotalLineItem = styled.div`
-	display: flex;
-	flex-wrap: wrap;
-	font-size: 14px;
-	justify-content: space-between;
-	line-height: 20px;
-	margin-bottom: 16px;
-
-	.is-loading & {
-		animation: ${ pulse } 1.5s ease-in-out infinite;
-	}
 `;
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
