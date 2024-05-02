@@ -41,7 +41,7 @@ export async function handleHostingPanelRedirect( context, next ) {
 	const isJetpackNonAtomic = ! isAtomicSite && !! site?.jetpack;
 
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		if ( ! isJetpackNonAtomic ) {
+		if ( isJetpackNonAtomic ) {
 			context.page.replace( `/hosting/${ site?.slug }` );
 			return;
 		}
