@@ -61,7 +61,7 @@ export default function ReferralsOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
-				{ status === 'Pending' && ! successNoticeDismissed && (
+				{ accountStatus?.statusType === 'success' && ! successNoticeDismissed && (
 					<div className="referrals-overview__section-notice">
 						<NoticeBanner level="success" onClose={ () => setSuccessNoticeDismissed( true ) }>
 							{ translate(
