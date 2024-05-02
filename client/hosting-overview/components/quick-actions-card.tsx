@@ -12,6 +12,7 @@ import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url'
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getStatsUrl from 'calypso/state/selectors/get-stats-url';
 import getThemeInstallUrl from 'calypso/state/selectors/get-theme-install-url';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface ActionProps {
@@ -45,6 +46,7 @@ const QuickActionsCard: FC = () => {
 		themeInstallUrl: getThemeInstallUrl( state, site?.ID ) ?? '',
 		pluginInstallUrl: getPluginInstallUrl( state, site?.ID ) ?? '',
 		statsUrl: getStatsUrl( state, site?.ID ) ?? '',
+		siteAdminUrl: getSiteAdminUrl( state, site?.ID ) ?? '',
 	} ) );
 
 	return (
@@ -58,6 +60,11 @@ const QuickActionsCard: FC = () => {
 			</div>
 
 			<ul className="hosting-overview__actions-list">
+				<Action
+					icon={ <SidebarCustomIcon icon="dashicons-wordpress-alt hosting-overview__dashicon" /> }
+					href={ site ? site.options?.admin_url || `${ site.URL }/wp-admin` : '' }
+					text={ translate( 'WP Admin' ) }
+				/>
 				<Action
 					icon={
 						<SidebarCustomIcon icon="dashicons-admin-customizer hosting-overview__dashicon" />
@@ -82,11 +89,6 @@ const QuickActionsCard: FC = () => {
 					icon={ <SidebarCustomIcon icon="dashicons-chart-bar hosting-overview__dashicon" /> }
 					href={ statsUrl }
 					text={ translate( 'See Jetpack Stats' ) }
-				/>
-				<Action
-					icon={ <SidebarCustomIcon icon="dashicons-wordpress-alt hosting-overview__dashicon" /> }
-					href={ site ? site.options?.admin_url || `${ site.URL }/wp-admin` : '' }
-					text={ translate( 'WP Admin' ) }
 				/>
 			</ul>
 		</Card>
