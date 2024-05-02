@@ -116,7 +116,18 @@ export class CartCheckoutPage {
 	 * @throws If the expected cart item is not found in the timeout period.
 	 */
 	async validateCartItem( expectedCartItemName: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.cartItem( expectedCartItemName ) );
+		// HACK: Following is added to make E2E pass for the plan name change experiment.
+		// Check p1713787045401619-slack-C02DQP0FP. Revert after the experiment has ended.
+		// Refer pau2Xa-5KY-p2.
+		if ( expectedCartItemName.includes( 'Starter' ) ) {
+			await this.page.waitForSelector(
+				selectors.cartItem( expectedCartItemName ) +
+					',' +
+					selectors.cartItem( 'WordPress.com Beginner' )
+			);
+		} else {
+			await this.page.waitForSelector( selectors.cartItem( expectedCartItemName ) );
+		}
 	}
 
 	/**
