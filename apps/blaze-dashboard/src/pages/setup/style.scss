@@ -11,6 +11,16 @@
 		padding-bottom: 95px;
 		display: flex;
 		flex-direction: column;
+
+		.setup-pages__title {
+			font-weight: 400;
+			font-size: 2.75rem;
+			margin: 0 auto 20px;
+
+			&.width-fix {
+				max-width: 470px;
+			}
+		}
 	}
 
 	.promote-post-i2__footer-text {
@@ -36,13 +46,11 @@
 		.promote-post-i2__active-steps {
 			align-self: center;
 			margin: 0;
-			text-align: justify;
 
 			li {
 				align-items: center;
 				background-color: $studio-white;
 				border-radius: 4px;
-				color: $studio-gray-50;
 				display: flex;
 				font-size: $font-body;
 				margin-bottom: 8px;
@@ -50,6 +58,7 @@
 				width: 100%;
 				max-width: 520px;
 				box-sizing: border-box;
+				text-align: left;
 
 				span {
 					align-items: center;
@@ -81,7 +90,29 @@
 						background-color: #492a63;
 					}
 				}
+
+				h4 {
+					font-size: 1rem;
+					font-weight: 700;
+					margin: 5px 0 9px;
+				}
+				button {
+					margin-bottom: 1.5rem;
+				}
 			}
+
+			.promote-post-i2__step-icon-container {
+				align-items: center;
+				align-self: flex-start;
+				display: flex;
+				flex-direction: column;
+				height: 33px;
+				justify-content: center;
+				margin-right: 20px;
+				min-width: 32px;
+				width: 32px;
+			}
+
 		}
 	}
 }

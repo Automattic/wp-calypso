@@ -7,6 +7,7 @@ import MainWrapper from 'calypso/my-sites/promote-post-i2/components/main-wrappe
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
 import GenericHeader from '../../components/generic-header';
 import BlazeDisabled from './components/blaze-disabled';
+import BlazeDisconnected from './components/blaze-disconnected';
 import BlazePrivateSite from './components/blaze-private-site';
 
 const renderSetupComponent = ( setupInfo ) => {
@@ -18,6 +19,8 @@ const renderSetupComponent = ( setupInfo ) => {
 			return <BlazeDisabled />;
 		case 'site_private_or_coming_soon':
 			return <BlazePrivateSite />;
+		case 'disconnected':
+			return <BlazeDisconnected />;
 		default:
 			return <BlazeDisabled />;
 	}

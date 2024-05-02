@@ -53,7 +53,7 @@ export default function BlazeDisabled() {
 						/>
 					</svg>
 				</div>
-				<h3 className="empty-promotion-list__title wp-brand-font">
+				<h3 className="setup-pages__title wp-brand-font">
 					{ translate( 'Set up Blaze and start advertising' ) }
 				</h3>
 				<p className="empty-promotion-list__body">

@@ -16,7 +16,7 @@ export default function BlazePrivateSite() {
 				<div className="promote-post-i2__setup-icon">
 					<img src={ privateSiteGraphic } alt="privete site graphic" />
 				</div>
-				<h3 className="empty-promotion-list__title wp-brand-font">
+				<h3 className="setup-pages__title wp-brand-font">
 					{ translate( 'Make sure your site is public' ) }
 				</h3>
 				<p className="empty-promotion-list__body">
