@@ -82,6 +82,39 @@
 	table.dataviews-view-table .dataviews-view-table__row td {
 		border-bottom-color: var(--color-border-secondary);
 	}
+
+	table.dataviews-view-table th,
+	table.dataviews-view-table td {
+		white-space: nowrap; /* Optional: ensures text in cells does not wrap */
+	}
+
+	table.dataviews-view-table th:first-child,
+	table.dataviews-view-table td:first-child,
+	table.dataviews-view-table th:last-child,
+	table.dataviews-view-table td:last-child {
+		display: table-cell; /* ensures these cells are always shown */
+	}
+
+	@media (max-width: $break-wide) {
+		table.dataviews-view-table th:nth-child(5),
+		table.dataviews-view-table td:nth-child(5) {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-wide - 100px) {
+		table.dataviews-view-table th:nth-child(4),
+		table.dataviews-view-table td:nth-child(4) {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-xlarge) {
+		table.dataviews-view-table th:nth-child(3),
+		table.dataviews-view-table td:nth-child(3) {
+			display: none;
+		}
+	}
 }
 
 // Styles for actions (search, filters).
