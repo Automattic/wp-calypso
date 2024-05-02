@@ -1,7 +1,7 @@
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { plugins, payment, percent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -13,8 +13,10 @@ import { A4A_REFERRALS_BANK_DETAILS_LINK } from 'calypso/a8c-for-agencies/compon
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import StepSection from '../../common/step-section';
 import StepSectionItem from '../../common/step-section-item';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
@@ -29,8 +31,6 @@ export default function ReferralsOverview() {
 
 	const title = translate( 'Referrals' );
 
-	const [ successNoticeDismissed, setSuccessNoticeDismissed ] = useState( false );
-
 	const onAddBankDetailsClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );
 	}, [ dispatch ] );
@@ -44,6 +44,28 @@ export default function ReferralsOverview() {
 	const accountStatus = getAccountStatus( data, translate );
 
 	const hasPayeeAccount = !! accountStatus?.status;
+
+	// Whether the banking details success notice has been manually dismissed by the user.
+	const [ successNoticeDismissed, setSuccessNoticeDismissed ] = useState( false );
+
+	// Whether the banking details success notice has been previously seen by the user.
+	const successNoticeSeen = useSelector( ( state ) =>
+		getPreference( state, 'a4a-referrals-bank-details-success-notice-seen' )
+	);
+
+	// Show the banking details success notice if the user has submitted their banking details and the notice has not been dismissed.
+	const showBankingDetailsSuccessNotice = useMemo(
+		() =>
+			accountStatus?.statusType === 'success' && ! successNoticeSeen && ! successNoticeDismissed,
+		[ successNoticeSeen, accountStatus, successNoticeDismissed ]
+	);
+
+	// Only display the success notice for submitted banking details once.
+	useEffect( () => {
+		if ( showBankingDetailsSuccessNotice ) {
+			dispatch( savePreference( 'a4a-referrals-bank-details-success-notice-seen', true ) );
+		}
+	}, [ dispatch, showBankingDetailsSuccessNotice ] );
 
 	return (
 		<Layout
@@ -61,7 +83,7 @@ export default function ReferralsOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
-				{ accountStatus?.statusType === 'success' && ! successNoticeDismissed && (
+				{ showBankingDetailsSuccessNotice && (
 					<div className="referrals-overview__section-notice">
 						<NoticeBanner level="success" onClose={ () => setSuccessNoticeDismissed( true ) }>
 							{ translate(
