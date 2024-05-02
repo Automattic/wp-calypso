@@ -188,7 +188,9 @@ export const createSiteWithCart = async (
 			options: {
 				...newSiteParams.options,
 				has_segmentation_survey: hasSegmentationSurvey,
-				segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId,
+				...( hasSegmentationSurvey && segmentationSurveyAnswersAnonId
+					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
+					: {} ),
 			},
 		},
 	} );
