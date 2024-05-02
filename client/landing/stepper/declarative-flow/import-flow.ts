@@ -21,6 +21,7 @@ import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
 import ImportVerifyEmail from './internals/steps-repository/import-verify-email';
 import ImporterBlogger from './internals/steps-repository/importer-blogger';
 import ImporterMedium from './internals/steps-repository/importer-medium';
+import ImporterMigrateMessage from './internals/steps-repository/importer-migrate-message';
 import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
@@ -59,6 +60,7 @@ const importFlow: Flow = {
 			{ slug: 'sitePicker', component: SitePickerStep },
 			{ slug: 'error', component: MigrationError },
 			{ slug: 'verifyEmail', component: ImportVerifyEmail },
+			{ slug: 'migrateMessage', component: ImporterMigrateMessage },
 		];
 	},
 
