@@ -8,6 +8,10 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import {
+	A4A_DOWNLOAD_LINK_ON_GITHUB,
+	JETPACK_CONNECT_A4A_LINK,
+} from 'calypso/a8c-for-agencies/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -16,9 +20,6 @@ export default function EmptyState() {
 	const dispatch = useDispatch();
 
 	const title = translate( 'Sites' );
-
-	const pluginDownloadLink = ''; // FIXME: Provide correct download link.
-	const connectSiteViaJetpackLink = 'https://wordpress.com/jetpack/connect?source=a8c-for-agencies';
 
 	return (
 		<Layout title={ title } wide withBorder sidebarNavigation={ <MobileSidebarNavigation /> }>
@@ -63,7 +64,7 @@ export default function EmptyState() {
 
 							<div className="sites-dashboard-empty__content-button">
 								<Button
-									href={ pluginDownloadLink }
+									href={ A4A_DOWNLOAD_LINK_ON_GITHUB }
 									target="_blank"
 									primary
 									onClick={ () =>
@@ -75,7 +76,7 @@ export default function EmptyState() {
 									{ translate( 'Download the A4A client plugin' ) }
 								</Button>
 								<Button
-									href={ connectSiteViaJetpackLink }
+									href={ JETPACK_CONNECT_A4A_LINK }
 									target="_blank"
 									onClick={ () =>
 										dispatch(
