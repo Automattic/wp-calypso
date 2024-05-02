@@ -209,7 +209,13 @@ const SiteSettingPrivacyForm = ( {
 									recordEvent( 'Clicked Site Visibility Radio Button' );
 								} }
 							/>
-							<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
+							<span>
+								{ translate( 'Discourage search engines from indexing %(siteName)s', {
+									args: {
+										siteName: siteSlug || '',
+									},
+								} ) }
+							</span>
 							<FormSettingExplanation>
 								{ translate(
 									'This option does not block access to your site — it is up to search engines to honor your request.'
@@ -239,15 +245,18 @@ const SiteSettingPrivacyForm = ( {
 									onClick={ () => recordEvent( 'Clicked Partnership Radio Button' ) }
 								/>
 								<span>
-									{ translate( 'Prevent third-party sharing for %(siteName)s', {
-										args: {
-											siteName: siteSlug || '',
-										},
-									} ) }
+									{ translate(
+										'Disallow sharing of %(siteName)s with third-party content partners',
+										{
+											args: {
+												siteName: siteSlug || '',
+											},
+										}
+									) }
 								</span>
 								<FormSettingExplanation>
 									{ translate(
-										'This option will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. {{a}}Learn more{{/a}}.',
+										'This option removes %(siteName)s from our content sharing program that provides content to our network of third-party content partners, including those that use the content to train generative AI or other AI models. {{a}}Learn more{{/a}}.',
 										{
 											components: {
 												a: (
@@ -259,6 +268,9 @@ const SiteSettingPrivacyForm = ( {
 														showSupportModal={ false }
 													/>
 												),
+											},
+											args: {
+												siteName: siteSlug || '',
 											},
 										}
 									) }
