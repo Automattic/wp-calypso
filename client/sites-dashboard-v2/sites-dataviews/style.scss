@@ -30,6 +30,10 @@
 }
 
 .preview-hidden {
+	.sites-dataviews__site-name {
+		width: 180px;
+	}
+
 	@media (min-width: 2040px) {
 		.sites-dataviews__site-name {
 			width: 250px;
