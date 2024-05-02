@@ -9,6 +9,7 @@ import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getStatsUrl from 'calypso/state/selectors/get-stats-url';
 import getThemeInstallUrl from 'calypso/state/selectors/get-theme-install-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -33,15 +34,18 @@ const Action: FC< ActionProps > = ( { icon, href, text } ) => {
 };
 
 const QuickActionsCard: FC = () => {
+	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const site = useSelector( getSelectedSite );
+	const siteEditorUrl = useSelector( ( state: object ) =>
+		site?.ID ? getSiteEditorUrl( state, site.ID ) : ''
+	);
 	const { editorUrl, themeInstallUrl, pluginInstallUrl, statsUrl } = useSelector( ( state ) => ( {
 		editorUrl: site?.ID ? getEditorUrl( state, site.ID ) : '#',
 		themeInstallUrl: getThemeInstallUrl( state, site?.ID ) ?? '',
 		pluginInstallUrl: getPluginInstallUrl( state, site?.ID ) ?? '',
 		statsUrl: getStatsUrl( state, site?.ID ) ?? '',
 	} ) );
-	const translate = useTranslate();
 
 	return (
 		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__quick-actions' ) }>
@@ -54,6 +58,13 @@ const QuickActionsCard: FC = () => {
 			</div>
 
 			<ul className="hosting-overview__actions-list">
+				<Action
+					icon={
+						<SidebarCustomIcon icon="dashicons-admin-customizer hosting-overview__dashicon" />
+					}
+					href={ siteEditorUrl }
+					text={ translate( 'Edit site' ) }
+				/>
 				<Action icon={ <WriteIcon /> } href={ editorUrl } text={ translate( 'Write post' ) } />
 				<Action
 					icon={
@@ -71,6 +82,11 @@ const QuickActionsCard: FC = () => {
 					icon={ <SidebarCustomIcon icon="dashicons-chart-bar hosting-overview__dashicon" /> }
 					href={ statsUrl }
 					text={ translate( 'See Jetpack Stats' ) }
+				/>
+				<Action
+					icon={ <SidebarCustomIcon icon="dashicons-wordpress-alt hosting-overview__dashicon" /> }
+					href={ site ? site.options?.admin_url || `${ site.URL }/wp-admin` : '' }
+					text={ translate( 'WP Admin' ) }
 				/>
 			</ul>
 		</Card>
