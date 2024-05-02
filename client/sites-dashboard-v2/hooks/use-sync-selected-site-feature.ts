@@ -55,7 +55,7 @@ export function useSyncSelectedSiteFeature( {
 		window.setTimeout(
 			syncUrl,
 			// Delay the update while the left sidebar is animating.
-			shouldAnimate ? 500 : 0
+			shouldAnimate ? 300 : 0
 		);
 	}, [ dataViewsState.selectedItem?.slug, selectedSiteFeature ] );
 
