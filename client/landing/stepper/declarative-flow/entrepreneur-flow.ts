@@ -143,16 +143,18 @@ const entrepreneurFlow: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
 		useEffect( () => {
-			if ( isLoggedIn ) {
-				// Proactively remove the anonymous user ID from localStorage if the user is logged in.
-				anonIdCache.clear();
-				return;
-			}
+			// if ( isLoggedIn ) {
+			// 	// Proactively remove the anonymous user ID from localStorage if the user is logged in.
+			// 	anonIdCache.clear();
+			// 	return;
+			// }
 
 			// We need to store the anonymous user ID in localStorage because
 			// we need to pass it to the server on site creation, i.e. after the user signs up or logs in.
 			const anonymousUserId = getTracksAnonymousUserId();
-			anonIdCache.store( anonymousUserId );
+			if ( anonymousUserId ) {
+				anonIdCache.store( anonymousUserId );
+			}
 		}, [ isLoggedIn ] );
 	},
 };
