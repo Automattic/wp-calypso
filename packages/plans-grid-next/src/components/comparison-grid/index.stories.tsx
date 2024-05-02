@@ -1,4 +1,8 @@
-import { getFeaturesList, getPlanFeaturesGrouped } from '@automattic/calypso-products';
+import {
+	getFeaturesList,
+	getPlanFeaturesGrouped,
+	setTrailMapExperiment,
+} from '@automattic/calypso-products';
 import { Meta, StoryObj } from '@storybook/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ComparisonGrid, ComparisonGridExternalProps, useGridPlansForComparisonGrid } from '../..';
@@ -28,15 +32,26 @@ const RenderComparisonGrid = ( props: ComparisonGridExternalProps ) => {
 	);
 };
 
-const meta: Meta< typeof ComparisonGrid > = {
+const meta: Meta<
+	ComparisonGridExternalProps & {
+		trailMapVariant:
+			| 'control'
+			| 'treatment-copy'
+			| 'treatment-structure'
+			| 'treatment-copy-and-structure';
+	}
+> = {
 	title: 'ComparisonGrid',
 	component: RenderComparisonGrid,
 	decorators: [
-		( Story ) => (
-			<QueryClientProvider client={ queryClient }>
-				<Story />
-			</QueryClientProvider>
-		),
+		( Story, storyContext ) => {
+			setTrailMapExperiment( storyContext.args.trailMapVariant );
+			return (
+				<QueryClientProvider client={ queryClient }>
+					<Story />
+				</QueryClientProvider>
+			);
+		},
 	],
 	parameters: {
 		viewport: {
@@ -47,7 +62,15 @@ const meta: Meta< typeof ComparisonGrid > = {
 
 export default meta;
 
-type Story = StoryObj< typeof ComparisonGrid >;
+type Story = StoryObj<
+	ComparisonGridExternalProps & {
+		trailMapVariant:
+			| 'control'
+			| 'treatment-copy'
+			| 'treatment-structure'
+			| 'treatment-copy-and-structure';
+	}
+>;
 
 export const StartFlow: Story = {
 	args: {
@@ -69,6 +92,35 @@ StartFlow.storyName = '/start';
 export const HideUnsupportedFeaturesOnMobile: Story = {
 	args: {
 		...StartFlow.args,
+		hideUnsupportedFeatures: true,
+	},
+};
+
+export const TrailMapControl: Story = {
+	args: {
+		...StartFlow.args,
+		trailMapVariant: 'control',
+	},
+};
+
+export const TrailMapStructure: Story = {
+	args: {
+		...TrailMapControl.args,
+		trailMapVariant: 'treatment-structure',
+		hideUnsupportedFeatures: true,
+	},
+};
+
+export const TrailMapCopy: Story = {
+	args: {
+		...TrailMapControl.args,
+		trailMapVariant: 'treatment-copy',
+	},
+};
+export const TrailMapCopyAndStructure: Story = {
+	args: {
+		...TrailMapControl.args,
+		trailMapVariant: 'treatment-copy-and-structure',
 		hideUnsupportedFeatures: true,
 	},
 };
