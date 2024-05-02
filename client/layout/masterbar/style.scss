@@ -294,22 +294,30 @@ body.is-mobile-app-view {
 		color: var(--color-masterbar-icon);
 	}
 
+	// The hover colors are supposed to be the same as those in wp-admin.
 	&:hover {
 		@include breakpoint-deprecated( ">480px" ) {
 			background: var(--color-masterbar-item-hover-background);
 			color: var(--color-masterbar-highlight);
-
 			.masterbar--is-checkout & {
 				background: var(--color-checkout-masterbar-item-hover-background);
 				color: var(--color-checkout-masterbar-text);
 			}
-
 			.masterbar__item-content {
 				color: var(--color-masterbar-highlight);
 			}
-
 			.dashicons-before {
 				color: var(--color-masterbar-highlight);
+			}
+		}
+	}
+	// Reader icon is only available on Default interface sites, so we apply the Calypso color for consistency.
+	// https://github.com/Automattic/wp-calypso/pull/90136#issuecomment-2089512298
+	&.masterbar__reader:hover {
+		@include breakpoint-deprecated( ">480px" ) {
+			color: var(--color-masterbar-text);
+			.masterbar__item-content {
+				color: var(--color-masterbar-text);
 			}
 		}
 	}
