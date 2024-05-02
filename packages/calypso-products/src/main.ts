@@ -1,21 +1,4 @@
 import {
-	FEATURE_GROUP_DEVELOPER_TOOLS,
-	FEATURE_GROUP_ECOMMERCE,
-	FEATURE_GROUP_ESSENTIAL_FEATURES,
-	FEATURE_GROUP_HIGH_AVAILABILITY,
-	FEATURE_GROUP_MANAGED_WP_HOSTING,
-	FEATURE_GROUP_MARKETING_EMAIL,
-	FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS,
-	FEATURE_GROUP_PAYMENTS,
-	FEATURE_GROUP_PERFORMANCE_BOOSTERS,
-	FEATURE_GROUP_PRODUCTS,
-	FEATURE_GROUP_SECURITY_AND_SAFETY,
-	FEATURE_GROUP_SHIPPING,
-	FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS,
-	FEATURE_GROUP_SUPPORT,
-	FEATURE_GROUP_THEMES_AND_CUSTOMIZATION,
-	FEATURE_GROUP_WEBSITE_BUILDING,
-	FEATURE_GROUP_YOUR_STORE,
 	FEATURE_JETPACK_SEARCH,
 	FEATURE_JETPACK_SEARCH_MONTHLY,
 	GROUP_JETPACK,
@@ -61,7 +44,10 @@ import {
 	TYPE_STARTER,
 	WOO_EXPRESS_PLANS,
 } from './constants';
-import { featureGroups } from './feature-group-plan-map';
+import {
+	resolvePlansGridFeatureGroups,
+	resolveWooExpressFeaturesGrouped,
+} from './feature-group-plan-map';
 import { FEATURES_LIST } from './features-list';
 import { PLANS_LIST } from './plans-list';
 import {
@@ -71,7 +57,6 @@ import {
 	isEnterprise,
 	isJetpackBusiness,
 	isPro,
-	isTrailMapCopyVariant,
 	isVipPlan,
 } from '.';
 import type {
@@ -93,38 +78,11 @@ export function getPlans(): Record< string, Plan > {
 }
 
 export function getPlanFeaturesGrouped(): Partial< FeatureGroupMap > {
-	if ( isTrailMapCopyVariant() ) {
-		return {
-			[ FEATURE_GROUP_WEBSITE_BUILDING ]: featureGroups[ FEATURE_GROUP_WEBSITE_BUILDING ],
-			[ FEATURE_GROUP_MANAGED_WP_HOSTING ]: featureGroups[ FEATURE_GROUP_MANAGED_WP_HOSTING ],
-			[ FEATURE_GROUP_ECOMMERCE ]: featureGroups[ FEATURE_GROUP_ECOMMERCE ],
-			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
-		};
-	}
-
-	return {
-		[ FEATURE_GROUP_ESSENTIAL_FEATURES ]: featureGroups[ FEATURE_GROUP_ESSENTIAL_FEATURES ],
-		[ FEATURE_GROUP_PERFORMANCE_BOOSTERS ]: featureGroups[ FEATURE_GROUP_PERFORMANCE_BOOSTERS ],
-		[ FEATURE_GROUP_HIGH_AVAILABILITY ]: featureGroups[ FEATURE_GROUP_HIGH_AVAILABILITY ],
-		[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
-		[ FEATURE_GROUP_SECURITY_AND_SAFETY ]: featureGroups[ FEATURE_GROUP_SECURITY_AND_SAFETY ],
-		[ FEATURE_GROUP_THEMES_AND_CUSTOMIZATION ]:
-			featureGroups[ FEATURE_GROUP_THEMES_AND_CUSTOMIZATION ],
-		[ FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS ]:
-			featureGroups[ FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS ],
-		[ FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS ]:
-			featureGroups[ FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS ],
-	};
+	return resolvePlansGridFeatureGroups();
 }
 
 export function getWooExpressFeaturesGrouped(): Partial< FeatureGroupMap > {
-	return {
-		[ FEATURE_GROUP_YOUR_STORE ]: featureGroups[ FEATURE_GROUP_YOUR_STORE ],
-		[ FEATURE_GROUP_PRODUCTS ]: featureGroups[ FEATURE_GROUP_PRODUCTS ],
-		[ FEATURE_GROUP_PAYMENTS ]: featureGroups[ FEATURE_GROUP_PAYMENTS ],
-		[ FEATURE_GROUP_MARKETING_EMAIL ]: featureGroups[ FEATURE_GROUP_MARKETING_EMAIL ],
-		[ FEATURE_GROUP_SHIPPING ]: featureGroups[ FEATURE_GROUP_SHIPPING ],
-	};
+	return resolveWooExpressFeaturesGrouped();
 }
 
 export function getPlansSlugs(): string[] {
