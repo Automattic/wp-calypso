@@ -29,7 +29,7 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 			? translate( '%(productName)s x %(quantity)s', {
 					args: { productName: productDisplayName, quantity: item.quantity },
 			  } )
-			: item.name;
+			: productDisplayName;
 
 	return (
 		<li className="shopping-cart__menu-list-item">
