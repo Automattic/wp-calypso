@@ -59,7 +59,7 @@ export default function ReferralsOverview() {
 
 			<LayoutBody>
 				<div className="referrals-overview__section-heading">
-					{ translate( 'Receive up to 30% revenue share on Automattic product referrals.' ) }
+					{ translate( 'Receive up to 50% revenue share on Automattic product referrals.' ) }
 				</div>
 				<div className="referrals-overview__section-container">
 					{ isFetching ? (
