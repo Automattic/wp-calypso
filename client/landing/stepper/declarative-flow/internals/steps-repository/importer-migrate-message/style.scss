@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
+
 .import-hosted-site.migrate-message {
 	.step-container__content {
 		margin: auto;
@@ -26,10 +29,16 @@
 				background: #e9eff5;
 			}
 
-			margin-bottom: 8px;
 			display: flex;
 			align-items: center;
-			gap: 8px;
+			margin-bottom: 16px;
+			gap: 16px;
+
+			@include break-small {
+				margin-bottom: 14px;
+				gap: 12px;
+			}
+
 		}
 
 		svg {

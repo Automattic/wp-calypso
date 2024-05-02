@@ -48,7 +48,7 @@ const ImporterMigrateMessage: Step = () => {
 									'You are all set! Our Happiness Engineers will be reaching out to you shortly at %(email)s to help you migrate %(webSite)s to WordPress.com.'
 								),
 								{
-									email: user.email,
+									email: user?.email,
 									webSite: siteSlug,
 								}
 							) }
