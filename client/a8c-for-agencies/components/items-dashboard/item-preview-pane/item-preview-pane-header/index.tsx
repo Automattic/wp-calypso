@@ -74,7 +74,7 @@ export default function ItemPreviewPaneHeader( {
 							variant="secondary"
 							ref={ focusRef }
 						>
-							{ translate( 'close' ) }
+							{ translate( 'Close' ) }
 						</Button>
 						<Button
 							variant="primary"
