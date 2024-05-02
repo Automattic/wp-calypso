@@ -12,7 +12,7 @@ import * as mockGridPlans from '../../storybook-mocks/grid-plans';
 const queryClient = new QueryClient();
 
 const RenderFeaturesGrid = (
-	props: FeaturesGridExternalProps & { includeAllFeatures: boolean }
+	props: FeaturesGridExternalProps & { includePreviousPlanFeatures: boolean }
 ) => {
 	const useGridPlans = () => props.gridPlans;
 
@@ -21,7 +21,7 @@ const RenderFeaturesGrid = (
 			allFeaturesList: getFeaturesList(),
 			useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
 			storageAddOns: [],
-			includeAllFeatures: props.includeAllFeatures,
+			includePreviousPlanFeatures: props.includePreviousPlanFeatures,
 			intent: props.intent,
 		},
 		useGridPlans
@@ -38,7 +38,7 @@ const RenderFeaturesGrid = (
 
 const meta: Meta<
 	FeaturesGridExternalProps & {
-		includeAllFeatures: boolean;
+		includePreviousPlanFeatures: boolean;
 		trailMapVariant:
 			| 'control'
 			| 'treatment-copy'
@@ -69,7 +69,7 @@ export default meta;
 
 type Story = StoryObj<
 	FeaturesGridExternalProps & {
-		includeAllFeatures: boolean;
+		includePreviousPlanFeatures: boolean;
 		trailMapVariant:
 			| 'control'
 			| 'treatment-copy'
@@ -119,7 +119,7 @@ export const TrailMapStructure: Story = {
 		...TrailMapControl.args,
 		trailMapVariant: 'treatment-structure',
 		enableCategorisedFeatures: true,
-		includeAllFeatures: true,
+		includePreviousPlanFeatures: true,
 	},
 };
 

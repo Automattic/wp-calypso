@@ -433,7 +433,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		includeAllFeatures: trailMapExperiment.result === 'treatment-structure',
+		includePreviousPlanFeatures: trailMapExperiment.result === 'treatment-structure',
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.

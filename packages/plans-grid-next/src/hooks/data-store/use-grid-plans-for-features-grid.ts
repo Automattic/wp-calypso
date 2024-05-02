@@ -23,7 +23,7 @@ const useGridPlansForFeaturesGrid = (
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		includeAllFeatures,
+		includePreviousPlanFeatures,
 	}: UseGridPlansParams,
 	useGridPlansData: UseGridPlansType = useGridPlans
 ): GridPlan[] | null => {
@@ -54,7 +54,7 @@ const useGridPlansForFeaturesGrid = (
 		isInSignup,
 		selectedFeature,
 		showLegacyStorageFeature,
-		includeAllFeatures,
+		includePreviousPlanFeatures,
 	} );
 
 	return useMemo( () => {
