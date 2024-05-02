@@ -76,7 +76,7 @@ const OverviewBodyHosting = () => {
 		],
 		// translators: Button navigating to A4A Marketplace
 		buttonTitle: translate( 'Explore WordPress.com' ),
-		expanded: false,
+		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'hosting', 'wordpress.com' );
 			page( A4A_MARKETPLACE_HOSTING_WPCOM_LINK );
