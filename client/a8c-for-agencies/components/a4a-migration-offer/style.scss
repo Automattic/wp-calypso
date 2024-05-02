@@ -8,6 +8,10 @@
 		padding: 16px;
 		margin-block-end: 16px;
 		border: 1px solid var(--studio-automattic-blue-5);
+
+		p {
+			max-width: 70%;
+		}
 	}
 
 	.foldable-card__content {
