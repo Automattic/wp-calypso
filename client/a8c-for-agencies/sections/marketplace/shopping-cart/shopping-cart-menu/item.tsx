@@ -20,18 +20,22 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 
 	const { getProductPricingInfo } = useGetProductPricingInfo();
 	const { actualCost, discountedCost } = getProductPricingInfo( userProducts, item, item.quantity );
+	// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
+	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
+	const productDisplayName =
+		item.name === 'WordPress.com Creator' ? 'WordPress.com Site' : item.name;
+	const itemDisplayName =
+		item.quantity > 1
+			? translate( '%(productName)s x %(quantity)s', {
+					args: { productName: productDisplayName, quantity: item.quantity },
+			  } )
+			: item.name;
 
 	return (
 		<li className="shopping-cart__menu-list-item">
 			<Icon className="shopping-cart__menu-list-item-icon" icon={ check } />
 			<div className="shopping-cart__menu-list-item-details">
-				<div className="shopping-cart__menu-list-item-title">
-					{ item.quantity > 1
-						? translate( '%(productName)s x %(quantity)s', {
-								args: { productName: item.name, quantity: item.quantity },
-						  } )
-						: item.name }
-				</div>
+				<div className="shopping-cart__menu-list-item-title">{ itemDisplayName }</div>
 				<div className="shopping-cart__menu-list-item-price">
 					<span className="shopping-cart__menu-list-item-price-discounted">
 						{ formatCurrency( discountedCost, item.currency ) }
