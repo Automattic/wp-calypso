@@ -54,8 +54,6 @@ const OverviewBodyHosting = () => {
 		},
 	};
 
-	// TODO: Add WordPress.com offering once it's available in the A4A Marketplace
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const wpcom: OfferingItemProps = {
 		//translators: Title for the action card
 		title: translate( 'WordPress.com' ),
@@ -78,7 +76,7 @@ const OverviewBodyHosting = () => {
 		],
 		// translators: Button navigating to A4A Marketplace
 		buttonTitle: translate( 'Explore WordPress.com' ),
-		expanded: false,
+		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'hosting', 'wordpress.com' );
 			page( A4A_MARKETPLACE_HOSTING_WPCOM_LINK );
@@ -91,7 +89,7 @@ const OverviewBodyHosting = () => {
 			description={ translate(
 				'Choose the hosting that suits your needs from our best-in-class offerings.'
 			) }
-			items={ [ pressable ] }
+			items={ [ pressable, wpcom ] }
 		/>
 	);
 };
