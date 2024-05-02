@@ -1,11 +1,9 @@
-//import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ExternalLinkWithTracking } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-//import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
-import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/sections/manage/pricing/controller';
+import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/sections/manage/pricing/constants';
 import CloudCart from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar/cloud-cart';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { preventWidows } from 'calypso/lib/formatting';
