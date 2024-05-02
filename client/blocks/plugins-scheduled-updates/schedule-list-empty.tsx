@@ -20,7 +20,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 				{ ( () => {
 					if ( ! siteHasEligiblePlugins && canCreateSchedules ) {
 						return translate(
-							'To set up schedules to update your plugins, first you need to install plugins that are not managed by the plugin provider.'
+							'All installed plugins are provided by WordPress.com and automatically updated for you. Add a plugin from the WordPress.com Marketplace to create a schedule!'
 						);
 					} else if ( ! canCreateSchedules ) {
 						return translate( 'This site is unable to schedule auto-updates for plugins.' );
