@@ -71,7 +71,7 @@ import {
 	isEnterprise,
 	isJetpackBusiness,
 	isPro,
-	isTrailMapStructureVariant,
+	isTrailMapCopyVariant,
 	isVipPlan,
 } from '.';
 import type {
@@ -93,7 +93,7 @@ export function getPlans(): Record< string, Plan > {
 }
 
 export function getPlanFeaturesGrouped(): Partial< FeatureGroupMap > {
-	if ( isTrailMapStructureVariant() ) {
+	if ( isTrailMapCopyVariant() ) {
 		return {
 			[ FEATURE_GROUP_WEBSITE_BUILDING ]: featureGroups[ FEATURE_GROUP_WEBSITE_BUILDING ],
 			[ FEATURE_GROUP_MANAGED_WP_HOSTING ]: featureGroups[ FEATURE_GROUP_MANAGED_WP_HOSTING ],
