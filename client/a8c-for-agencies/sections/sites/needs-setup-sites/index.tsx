@@ -12,6 +12,7 @@ import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import SitesHeaderActions from '../sites-header-actions';
 import { AvailablePlans } from './plan-field';
+import PurchaseConfirmationMessage from './purchase-confirmation-message';
 import NeedSetupTable from './table';
 
 export default function NeedSetup() {
@@ -25,8 +26,8 @@ export default function NeedSetup() {
 
 	const availableSites =
 		pendingSites?.filter(
-			( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
-				features.wpcom_atomic.state === 'pending'
+			( { features }: { features: { wpcom_atomic: { state: string; license_key: string } } } ) =>
+				features.wpcom_atomic.state === 'pending' && !! features.wpcom_atomic.license_key
 		) ?? [];
 
 	const availablePlans: AvailablePlans[] = availableSites.length
@@ -42,8 +43,8 @@ export default function NeedSetup() {
 	const isProvisioning =
 		isCreatingSite ||
 		pendingSites?.find(
-			( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
-				features.wpcom_atomic.state === 'provisioning'
+			( { features }: { features: { wpcom_atomic: { state: string; license_key: string } } } ) =>
+				features.wpcom_atomic.state === 'provisioning' && !! features.wpcom_atomic.license_key
 		);
 
 	const onCreateSite = useCallback(
@@ -65,6 +66,9 @@ export default function NeedSetup() {
 		<Layout className="sites-dashboard sites-dashboard__layout preview-hidden" wide title={ title }>
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop>
+					<div className="sites-overview__banner">
+						<PurchaseConfirmationMessage />
+					</div>
 					<LayoutHeader>
 						<Title>{ translate( 'Sites' ) }</Title>
 						<Actions>

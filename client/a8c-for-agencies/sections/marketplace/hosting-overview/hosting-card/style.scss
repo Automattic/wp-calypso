@@ -29,6 +29,12 @@
 	}
 }
 
+.hosting-card__price {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
 .hosting-card__price-value {
 	display: block;
 	font-size: 1.5rem;
@@ -42,6 +48,12 @@
 	line-height: 1.1;
 	font-weight: 400;
 	color: var(--studio-gray-60, #50575e);
+}
+
+.hosting-card__price-discount {
+	color: var(--color-green-40, #00a32a);
+	font-size: 0.875rem;
+	line-height: 1.75;
 }
 
 .hosting-card__description {
