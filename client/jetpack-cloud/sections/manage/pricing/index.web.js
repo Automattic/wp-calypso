@@ -10,7 +10,8 @@ export default function () {
 	page(
 		`/${ lang }/manage/pricing`,
 		setLocaleMiddleware(),
-		controller.jetpackManagePricingContext,
+		//controller.jetpackManagePricingContext,
+		controller.redirectToJetpackComA4aLanding,
 		makeLayout,
 		clientRender
 	);
