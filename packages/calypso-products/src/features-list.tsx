@@ -2217,7 +2217,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
 		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
-		getTitle: () => i18n.translate( 'Back in stock emails' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Back-in-stock notifications' )
+				: i18n.translate( 'Back in stock emails' ),
 		getDescription: () =>
 			i18n.translate( 'Notify customers when an out-of-stock item is back in stock.' ),
 	},
@@ -2913,17 +2916,22 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_1_WEBSITE,
 		getTitle: () => i18n.translate( '1 website' ),
 	},
+	[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ]: {
+		getSlug: () => FEATURE_DYNAMIC_PRODUCT_UPSELLS,
+		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
+	},
 	/* END: Trail Map New Features */
 };
 
 FEATURES_LIST[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ] = {
 	...FEATURES_LIST[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ],
 	getSubFeatureSlugs: () => [
-		FEATURE_UNLIMITED_PRODUCTS,
-		FEATURE_MIN_MAX_ORDER_QUANTITY,
-		FEATURE_BULK_DISCOUNTS,
-		FEATURE_INVENTORY,
-		FEATURE_DYNAMIC_PRODUCT_UPSELLS,
+		FEATURES_LIST[ FEATURE_UNLIMITED_PRODUCTS ],
+		FEATURES_LIST[ FEATURE_MIN_MAX_ORDER_QUANTITY ],
+		FEATURES_LIST[ FEATURE_BULK_DISCOUNTS ],
+		FEATURES_LIST[ FEATURE_INVENTORY ],
+		FEATURES_LIST[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ],
+		FEATURES_LIST[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ],
 	],
 };
 
