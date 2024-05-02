@@ -44,8 +44,13 @@
 		}
 	}
 
-	@media (max-width: $break-large) {
-		height: calc(100vh - 32px);
+	height: calc(100vh - var(--masterbar-height));
+	@media ( min-width: 601px ) {
+		height: calc(100vh - var(--masterbar-height) - 48px);
+	}
+
+	@media ( min-width: 782px ) {
+		height: calc(100vh - var(--masterbar-height) - 32px);
 	}
 }
 
@@ -149,9 +154,11 @@
 		}
 	}
 	.is-global-sidebar-collapsed {
-		@media ( min-width: 660px ) {
+		@media ( min-width: 661px ) {
 			.global-sidebar {
 				.sidebar__body {
+					padding-top: 24px;
+
 					.sidebar__menu-link {
 						width: fit-content;
 
@@ -328,6 +335,10 @@
 }
 
 .wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
-	// With masterbar
-	max-height: calc(100vh - 323px); /* 323px is the size of all the height above and below the dataviews-view-table-wrapper */
+	max-height: calc(100vh - 276px); /* 276px is the size of all the height above and below the dataviews-view-table-wrapper */
+
+	// With 48px padding.
+	@media ( min-width: 601px ) {
+		max-height: calc(100vh - 324px); /* 324px is the size of all the height above and below the dataviews-view-table-wrapper */
+	}
 }

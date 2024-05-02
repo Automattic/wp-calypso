@@ -1110,3 +1110,8 @@
 	}
 }
 
+.layout__content {
+	@include breakpoint-deprecated( "<960px" ) {
+		padding: 71px 24px 24px calc(var(--sidebar-width-min) + 1px);
+	}
+}
