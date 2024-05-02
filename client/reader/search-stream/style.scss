@@ -8,6 +8,9 @@
 		margin: 0 auto;
 		padding: 16px 0 16px 0;
 	}
+	@include breakpoint-deprecated( "<660px" ) {
+		padding: 0 16px; // Intentionally padding, not margin
+	}
 }
 
 // .has-header-section only applies for logged out views
@@ -64,6 +67,9 @@
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 
+	@include breakpoint-deprecated( "<660px" ) {
+		width: calc(100% - 32px);
+	}
 	@include breakpoint-deprecated( ">660px" ) {
 		padding-top: 30px;
 	}

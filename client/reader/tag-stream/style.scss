@@ -15,6 +15,10 @@
 	.navigation-header {
 		margin: 0 auto;
 		padding: 0 0 16px 0;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			padding: 0 16px 16px;
+		}
 	}
 }
 
@@ -61,9 +65,8 @@
 	justify-content: space-between;
 	align-items: flex-start;
 
-	@include break-small {
-		padding-top: 20px;
-		padding-bottom: 20px;
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px;
 	}
 }
 
@@ -91,6 +94,10 @@
 
 	.button.header-cake__back {
 		padding: 0;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 16px;
 	}
 }
 
