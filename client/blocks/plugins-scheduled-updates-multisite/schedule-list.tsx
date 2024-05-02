@@ -12,6 +12,7 @@ import { useErrors } from 'calypso/blocks/plugins-scheduled-updates-multisite/ho
 import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleListFilter } from './schedule-list-filter';
 import { ScheduleListTable } from './schedule-list-table';
 
@@ -86,19 +87,22 @@ export const ScheduleList = ( props: Props ) => {
 
 	const isLoading = isLoadingSchedules;
 	const ScheduleListComponent = isMobile ? null : ScheduleListTable;
+	const isScheduleEmpty = schedules.length === 0 && isFetched;
 
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">
 			<div className="plugins-update-manager-multisite__header">
 				<h1>{ translate( 'Update schedules' ) }</h1>
-				<Button
-					__next40pxDefaultSize
-					variant="primary"
-					onClick={ onCreateNewSchedule }
-					disabled={ false }
-				>
-					{ translate( 'New schedule' ) }
-				</Button>
+				{ ! isScheduleEmpty && (
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						onClick={ onCreateNewSchedule }
+						disabled={ false }
+					>
+						{ translate( 'New schedule' ) }
+					</Button>
+				) }
 			</div>
 			{ errors.length ? (
 				<Notice status="warning" isDismissible={ true } onDismiss={ () => clearErrors() }>
@@ -117,7 +121,8 @@ export const ScheduleList = ( props: Props ) => {
 				</Notice>
 			) : null }
 			{ schedules.length === 0 && isLoading && <Spinner /> }
-			{ isFetched && filteredSchedules && ScheduleListComponent ? (
+			{ isScheduleEmpty && <ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } /> }
+			{ isFetched && filteredSchedules.length > 0 && ScheduleListComponent ? (
 				<>
 					<ScheduleListFilter />
 					<ScheduleListComponent
