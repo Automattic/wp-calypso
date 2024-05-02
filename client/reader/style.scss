@@ -17,7 +17,7 @@
 .is-reader-page .search-stream__with-sites.main {
 	margin: 0 auto;
 	@include breakpoint-deprecated( "<660px" ) {
-		margin: 16px;
+		margin: 16px 0;
 	}
 }
 
@@ -95,6 +95,7 @@
 .is-reader-page .is-site-stream .reader-feed-header.has-back-button .reader-feed-header__follow {
 
 	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px;
 		right: 0;
 	}
 
@@ -362,6 +363,12 @@
 
 .is-reader-page .search-stream__single-column-results .empty-content {
 	margin-top: 0;
+}
+
+.search-stream__single-column-results .reader-tag-sidebar-recommended-sites {
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-top: 36px;
+	}
 }
 
 .layout.has-header-section.is-section-reader {

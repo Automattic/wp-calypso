@@ -173,11 +173,7 @@ class SearchStream extends React.Component {
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
-				<div
-					className="search-stream__fixed-area"
-					style={ { width: this.props.width } }
-					ref={ this.handleFixedAreaMounted }
-				>
+				<div className="search-stream__fixed-area" ref={ this.handleFixedAreaMounted }>
 					<NavigationHeader
 						title={ translate( 'Search' ) }
 						subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
