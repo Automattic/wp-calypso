@@ -338,6 +338,7 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+				<div id="jp-admin-notices"></div>
 				<StatsNotices
 					siteId={ siteId }
 					isOdysseyStats={ isOdysseyStats }
