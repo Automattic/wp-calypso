@@ -70,7 +70,6 @@ export default function ItemPreviewPaneHeader( {
 						<Button
 							onClick={ closeItemPreviewPane }
 							className="item-preview__close-preview-button"
-							aria-label={ translate( 'Close Preview' ) }
 							variant="secondary"
 							ref={ focusRef }
 						>
