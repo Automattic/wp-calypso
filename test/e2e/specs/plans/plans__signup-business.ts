@@ -20,9 +20,7 @@ import { apiDeleteSite, getNewPlanName } from '../shared';
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle(
-		'Plans: Create a WordPress.com Creator/Business site as exising user'
-	),
+	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com/Business site as exising user' ),
 	function () {
 		const planName = 'Business';
 		const newPlanName = getNewPlanName( planName );
