@@ -154,7 +154,7 @@ const SiteMigrationInstructions: Step = function () {
 			</ol>
 			<p
 				className={ classNames( 'fade-in', {
-					active: showFallback,
+					active: isSetupCompleted,
 				} ) }
 			>
 				{ translate(
