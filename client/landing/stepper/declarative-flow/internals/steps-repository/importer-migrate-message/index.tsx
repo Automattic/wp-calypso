@@ -29,6 +29,7 @@ const ImporterMigrateMessage: Step = () => {
 			locale,
 			blog_url: siteSlug,
 		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	return (
