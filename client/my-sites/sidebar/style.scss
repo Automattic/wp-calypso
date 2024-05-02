@@ -610,6 +610,25 @@ $font-size: rem(14px);
 				}
 			}
 		}
+		.sidebar .sidebar__menu--selected .sidebar__heading {
+			color: var(--color-navredesign-sidebar-menu-selected-text);
+			background-color: var(--color-sidebar-menu-selected-background);
+		}
+		.sidebar .sidebar__expandable-content {
+			.selected .sidebar__menu-link {
+				background-color: revert;
+				color: var(--color-navredesign-sidebar-submenu-selected-text);
+				font-weight: 600;
+			}
+			.sidebar__menu-link {
+				color: var(--color-navredesign-sidebar-submenu-text);
+				&:hover,
+				&:focus {
+					background-color: revert;
+					color: var(--color-navredesign-sidebar-submenu-hover-text);
+				}
+			}
+		}
 	}
 
 	&.is-classic-bright,
