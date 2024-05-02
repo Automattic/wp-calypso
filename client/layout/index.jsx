@@ -235,6 +235,12 @@ class Layout extends Component {
 
 		if ( typeof document !== 'undefined' ) {
 			const classList = document.querySelector( 'body' ).classList;
+
+			if ( this.props.isGlobalSidebarVisible && nextColorScheme !== 'modern' ) {
+				// We only want to apply the `modern` color scheme when the global sidebar is visible
+				nextColorScheme = 'modern';
+			}
+
 			classList.remove( `is-${ prevColorScheme }` );
 			classList.add( `is-${ nextColorScheme }` );
 

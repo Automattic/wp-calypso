@@ -6,14 +6,6 @@
 // Add new Dotcom specific styles to this file.
 .wpcom-site .layout__primary .main {
 	padding-bottom: 0;
-	--color-accent: #3858e9;
-	--color-accent-40: #3858e9;
-	--color-accent-60: #3858e9;
-	--color-link: #3858e9;
-	--color-primary: #3858e9;
-	--color-primary-50: #3858e9;
-	--color-primary-60: #3858e9;
-	--wp-admin-theme-color: #3858e9;
 }
 
 .wpcom-site .a4a-layout-with-columns__container {
@@ -119,12 +111,6 @@
 
 			&::placeholder {
 				color: var(--studio-gray-40);
-			}
-
-			&:focus {
-				.components-input-control__backdrop {
-					border-color: var(--color-link);
-				}
 			}
 		}
 
