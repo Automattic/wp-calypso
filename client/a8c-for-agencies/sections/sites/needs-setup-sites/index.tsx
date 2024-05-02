@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -8,6 +9,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import SitesHeaderActions from '../sites-header-actions';
@@ -53,8 +55,8 @@ export default function NeedSetup() {
 				{ id },
 				{
 					onSuccess: () => {
-						// refetch pending sites
 						refetchPendingSites();
+						page( A4A_SITES_LINK );
 					},
 				}
 			);
