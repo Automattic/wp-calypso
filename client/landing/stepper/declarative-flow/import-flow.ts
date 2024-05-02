@@ -2,11 +2,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect } from 'react';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
+import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -30,7 +32,12 @@ import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SitePickerStep from './internals/steps-repository/site-picker';
 import TrialAcknowledge from './internals/steps-repository/trial-acknowledge';
-import { Flow, ProvidedDependencies } from './internals/types';
+import {
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+	AssertConditionResult,
+} from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -62,6 +69,19 @@ const importFlow: Flow = {
 			{ slug: 'verifyEmail', component: ImportVerifyEmail },
 			{ slug: 'migrateMessage', component: ImporterMigrateMessage },
 		];
+	},
+
+	useAssertConditions(): AssertConditionResult {
+		const { isOwner, isFetching } = useIsSiteOwner();
+		const result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		useEffect( () => {
+			if ( isOwner === false && ! isFetching ) {
+				window.location.assign( `/setup/${ this.name }/import` );
+			}
+		}, [ isOwner, isFetching ] );
+
+		return result;
 	},
 
 	useStepNavigation( _currentStep, navigate ) {

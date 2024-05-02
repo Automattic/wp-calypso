@@ -7,6 +7,7 @@ import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import CreateSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/create-site';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
+import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
@@ -21,7 +22,12 @@ import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SitePickerStep from './internals/steps-repository/site-picker';
 import TrialAcknowledge from './internals/steps-repository/trial-acknowledge';
-import { Flow, ProvidedDependencies } from './internals/types';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -51,6 +57,19 @@ const importHostedSiteFlow: Flow = {
 			{ slug: 'error', component: MigrationError },
 			{ slug: 'migrateMessage', component: ImporterMigrateMessage },
 		];
+	},
+
+	useAssertConditions(): AssertConditionResult {
+		const { isOwner, isFetching } = useIsSiteOwner();
+		const result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		useEffect( () => {
+			if ( isOwner === false && ! isFetching ) {
+				window.location.assign( `/setup/${ this.name }/import` );
+			}
+		}, [ isOwner, isFetching ] );
+
+		return result;
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
