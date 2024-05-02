@@ -223,7 +223,10 @@ class Layout extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.colorScheme !== this.props.colorScheme ) {
+		if (
+			prevProps.colorScheme !== this.props.colorScheme ||
+			( this.props.isGlobalSidebarVisible && this.props.colorScheme !== 'modern' )
+		) {
 			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
 		}
 	}
