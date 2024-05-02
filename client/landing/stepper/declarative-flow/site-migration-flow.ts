@@ -40,6 +40,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
 			STEPS.ERROR,
+			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
@@ -294,12 +295,18 @@ const siteMigration: Flow = {
 					}
 
 					if ( providedDependencies?.goToCheckout ) {
+						const redirectAfterCheckout = providedDependencies?.userAcceptedDeal
+							? STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+							: STEPS.BUNDLE_TRANSFER.slug;
+
 						const destination = addQueryArgs(
 							{
 								siteSlug,
-								from: fromQueryParam,
+								// don't use from query param if the user takes the migration deal.
+								// This is to avoid the user being redirected to the wrong page after checkout.
+								...( ! providedDependencies?.userAcceptedDeal ? { from: fromQueryParam } : {} ),
 							},
-							`/setup/${ FLOW_NAME }/${ STEPS.BUNDLE_TRANSFER.slug }`
+							`/setup/${ FLOW_NAME }/${ redirectAfterCheckout }`
 						);
 
 						urlQueryParams.delete( 'showModal' );
