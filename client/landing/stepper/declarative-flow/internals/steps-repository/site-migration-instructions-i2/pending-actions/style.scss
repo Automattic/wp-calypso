@@ -1,11 +1,11 @@
 .pending-actions {
 	.fade-in {
-		opacity: 0;
+		color: var(--studio-gray-40);
 		transition: opacity 0.3s ease-in-out;
 	}
 
 	.fade-in.active {
-		opacity: 1;
+		color: var(--studio-gray-80);
 	}
 
 	ul.pending-actions__list {
