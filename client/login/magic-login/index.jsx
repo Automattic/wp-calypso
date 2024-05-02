@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { addLocaleToPath, localizeUrl } from '@automattic/i18n-utils';
+import { WPCC } from '@automattic/urls';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -17,6 +18,7 @@ import {
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import {
@@ -460,8 +462,35 @@ class MagicLogin extends Component {
 		);
 	}
 
+	renderStudioLoginTos = () => {
+		const options = {
+			components: {
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				privacyLink: (
+					<a
+						href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		};
+		const tosText = this.props.translate(
+			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			options
+		);
+
+		return <p className="studio-magic-login__tos">{ tosText }</p>;
+	};
+
 	render() {
-		const { oauth2Client, showCheckYourEmail } = this.props;
+		const { oauth2Client, showCheckYourEmail, query, isStudioApp, translate } = this.props;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			return (
@@ -477,6 +506,25 @@ class MagicLogin extends Component {
 			);
 		}
 
+		const isStudioAppSignUp = isStudioApp && query?.redirect_to;
+
+		const studioAppProps = {
+			headerText: translate( 'Sign up for Studio with a WordPress.com account' ),
+			tosComponent: this.renderStudioLoginTos(),
+			subHeaderText: translate(
+				'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
+				{
+					components: {
+						a: <a href={ localizeUrl( WPCC ) } target="_blank" rel="noopener noreferrer" />,
+					},
+					comment:
+						'Text displayed on the Signup page to users willing to sign up for an app via WordPress.com',
+				}
+			),
+			customFormLabel: translate( 'Your email address' ),
+			submitButtonLabel: translate( 'Send activation link' ),
+		};
+
 		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
 		// flag is enabled, some steps will display a different UI
 		const requestLoginEmailFormProps = {
@@ -484,6 +532,7 @@ class MagicLogin extends Component {
 			...( this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' )
 				? { isJetpackMagicLinkSignUpEnabled: true }
 				: {} ),
+			...( isStudioAppSignUp && studioAppProps ),
 			createAccountForNewUser: true,
 		};
 
@@ -518,6 +567,7 @@ const mapState = ( state ) => ( {
 		getInitialQueryArguments( state ).email_address,
 	localeSuggestions: getLocaleSuggestions( state ),
 	isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+	isStudioApp: isStudioAppOAuth2Client( getCurrentOAuth2Client( state ) ),
 } );
 
 const mapDispatch = {
