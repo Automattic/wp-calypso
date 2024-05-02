@@ -5,11 +5,12 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
+import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';
-import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getStatsUrl from 'calypso/state/selectors/get-stats-url';
 import getThemeInstallUrl from 'calypso/state/selectors/get-theme-install-url';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
@@ -38,6 +39,7 @@ const QuickActionsCard: FC = () => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const site = useSelector( getSelectedSite );
+	const { data: activeThemeData } = useActiveThemeQuery( site?.ID || -1, !! site );
 	const { editorUrl, themeInstallUrl, pluginInstallUrl, statsUrl, siteAdminUrl, siteEditorUrl } =
 		useSelector( ( state ) => ( {
 			editorUrl: site?.ID ? getEditorUrl( state, site.ID ) : '#',
@@ -45,7 +47,15 @@ const QuickActionsCard: FC = () => {
 			pluginInstallUrl: getPluginInstallUrl( state, site?.ID ) ?? '',
 			statsUrl: getStatsUrl( state, site?.ID ) ?? '',
 			siteAdminUrl: getSiteAdminUrl( state, site?.ID ) ?? '',
-			siteEditorUrl: site?.ID ? getSiteEditorUrl( state as object, site.ID ) : '',
+			siteEditorUrl:
+				site?.ID && activeThemeData
+					? getCustomizeUrl(
+							state as object,
+							activeThemeData[ 0 ]?.stylesheet,
+							site?.ID,
+							activeThemeData[ 0 ]?.is_block_theme
+					  )
+					: '',
 		} ) );
 
 	return (
