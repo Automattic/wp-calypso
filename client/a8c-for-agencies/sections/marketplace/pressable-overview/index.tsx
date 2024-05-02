@@ -32,7 +32,14 @@ export default function PressableOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedCartItems, setSelectedCartItems, onRemoveCartItem } = useShoppingCart();
+	const {
+		selectedCartItems,
+		setSelectedCartItems,
+		onRemoveCartItem,
+		showCart,
+		setShowCart,
+		toggleCart,
+	} = useShoppingCart();
 
 	const onAddToCart = useCallback(
 		( item: APIProductFamilyProduct ) => {
@@ -83,6 +90,9 @@ export default function PressableOverview() {
 					<Actions>
 						<MobileSidebarNavigation />
 						<ShoppingCart
+							showCart={ showCart }
+							setShowCart={ setShowCart }
+							toggleCart={ toggleCart }
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {

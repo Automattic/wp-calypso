@@ -24,7 +24,6 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
-	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
 import { useDispatch } from 'calypso/state';
@@ -35,7 +34,7 @@ import HostingOverviewFeatures from '../common/hosting-overview-features';
 import useProductAndPlans from '../hooks/use-product-and-plans';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getWPCOMCreatorPlan } from '../lib/hosting';
-import ShoppingCart, { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
+import ShoppingCart from '../shopping-cart';
 import WPCOMBulkSelector from './bulk-selection';
 import wpcomBulkOptions from './lib/wpcom-bulk-options';
 import { DiscountTier } from './lib/wpcom-bulk-values-utils';
@@ -47,7 +46,14 @@ export default function WpcomOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedCartItems, onRemoveCartItem, setSelectedCartItems } = useShoppingCart();
+	const {
+		selectedCartItems,
+		onRemoveCartItem,
+		setSelectedCartItems,
+		showCart,
+		setShowCart,
+		toggleCart,
+	} = useShoppingCart();
 
 	const { data: licenseCounts, isSuccess: isLicenseCountsReady } = useFetchLicenseCounts();
 
@@ -85,10 +91,10 @@ export default function WpcomOverview() {
 				);
 
 				setSelectedCartItems( [ ...items, { ...plan, quantity } ] );
-				page( A4A_MARKETPLACE_PRODUCTS_LINK + CART_URL_HASH_FRAGMENT );
+				setShowCart( true );
 			}
 		},
-		[ selectedCartItems, setSelectedCartItems ]
+		[ selectedCartItems, setSelectedCartItems, setShowCart ]
 	);
 
 	const WPCOM_PRICING_PAGE_LINK = 'https://wordpress.com/pricing/';
@@ -122,6 +128,9 @@ export default function WpcomOverview() {
 
 					<Actions>
 						<ShoppingCart
+							showCart={ showCart }
+							setShowCart={ setShowCart }
+							toggleCart={ toggleCart }
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {
