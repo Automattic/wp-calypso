@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -74,7 +75,11 @@ export default function SiteProfiler( props: Props ) {
 		isFetching: isFetchingBasicMetrics,
 	} = useUrlBasicMetricsQuery( url );
 
-	const showBasicMetrics = basicMetrics && ! isFetchingBasicMetrics && ! errorBasicMetrics;
+	const showBasicMetrics =
+		basicMetrics &&
+		! isFetchingBasicMetrics &&
+		! errorBasicMetrics &&
+		isEnabled( 'site-profiler/metrics' );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
