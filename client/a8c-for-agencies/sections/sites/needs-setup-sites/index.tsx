@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -8,6 +9,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import SitesHeaderActions from '../sites-header-actions';
@@ -26,8 +28,8 @@ export default function NeedSetup() {
 
 	const availableSites =
 		pendingSites?.filter(
-			( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
-				features.wpcom_atomic.state === 'pending'
+			( { features }: { features: { wpcom_atomic: { state: string; license_key: string } } } ) =>
+				features.wpcom_atomic.state === 'pending' && !! features.wpcom_atomic.license_key
 		) ?? [];
 
 	const availablePlans: AvailablePlans[] = availableSites.length
@@ -43,8 +45,8 @@ export default function NeedSetup() {
 	const isProvisioning =
 		isCreatingSite ||
 		pendingSites?.find(
-			( { features }: { features: { wpcom_atomic: { state: string } } } ) =>
-				features.wpcom_atomic.state === 'provisioning'
+			( { features }: { features: { wpcom_atomic: { state: string; license_key: string } } } ) =>
+				features.wpcom_atomic.state === 'provisioning' && !! features.wpcom_atomic.license_key
 		);
 
 	const onCreateSite = useCallback(
@@ -53,8 +55,8 @@ export default function NeedSetup() {
 				{ id },
 				{
 					onSuccess: () => {
-						// refetch pending sites
 						refetchPendingSites();
+						page( A4A_SITES_LINK );
 					},
 				}
 			);

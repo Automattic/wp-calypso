@@ -1,4 +1,5 @@
 import i18n from 'i18n-calypso';
+import { getPlansListExperiment } from './experiments';
 
 /**
  * Extracted functions to avoid Calypso apps from depending on the PLANS_LIST object.
@@ -6,8 +7,11 @@ import i18n from 'i18n-calypso';
  */
 
 export const getPlanPersonalTitle = () =>
-	// translators: Starter is a plan name
-	i18n.translate( 'Starter' );
+	getPlansListExperiment( 'wpcom_plan_name_change_starter_to_beginner_v2' ) === 'treatment'
+		? // translators: Beginner is a plan name
+		  i18n.translate( 'Beginner' )
+		: // translators: Starter is a plan name
+		  i18n.translate( 'Starter' );
 
 export const getPlanPremiumTitle = () =>
 	// translators: Explorer is a plan name

@@ -1,12 +1,31 @@
 import { getQueryArg } from '@wordpress/url';
 import { useCallback, useEffect, useState } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
 import type { ShoppingCartItem } from '../types';
 
 const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
 
 export default function useShoppingCart() {
 	const [ selectedCartItems, setSelectedCartItems ] = useState< ShoppingCartItem[] >( [] );
+
+	const [ showCart, setShowCart ] = useState( window.location.hash === CART_URL_HASH_FRAGMENT );
+
+	const toggleCart = () => {
+		setShowCart( ( prevState ) => {
+			const nextState = ! prevState;
+
+			const hashFragment = nextState ? CART_URL_HASH_FRAGMENT : '';
+
+			window.history.replaceState(
+				null,
+				'',
+				window.location.pathname + window.location.search + hashFragment
+			);
+
+			return nextState;
+		} );
+	};
 
 	const { data } = useProductsQuery();
 
@@ -81,5 +100,8 @@ export default function useShoppingCart() {
 		setSelectedCartItems: setAndCacheSelectedItems,
 		onRemoveCartItem,
 		onClearCart,
+		showCart,
+		setShowCart,
+		toggleCart,
 	};
 }

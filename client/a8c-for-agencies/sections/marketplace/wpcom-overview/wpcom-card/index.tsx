@@ -49,8 +49,8 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect }: P
 							</>
 						) }
 						<div className="wpcom-plan-card__price-interval">
-							{ plan.price_interval === 'day' && translate( 'USD per plan per day' ) }
-							{ plan.price_interval === 'month' && translate( 'USD per plan per month' ) }
+							{ plan.price_interval === 'day' && translate( 'USD per site per day' ) }
+							{ plan.price_interval === 'month' && translate( 'USD per site per month' ) }
 						</div>
 					</div>
 				</div>
