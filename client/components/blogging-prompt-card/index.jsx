@@ -101,7 +101,11 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 
 	return (
 		<div className="blogging-prompt">
-			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
+			<Card
+				className={ classnames( 'blogging-prompt__card', {
+					'customer-home__card': viewContext === 'home',
+				} ) }
+			>
 				<PromptsNavigation
 					siteId={ siteId }
 					prompts={ prompts }
