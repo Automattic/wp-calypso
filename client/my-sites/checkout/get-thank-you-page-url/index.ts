@@ -694,7 +694,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		! hasDIFMProduct( cart ) &&
 		( hasBloggerPlan( cart ) ||
 			hasPersonalPlan( cart ) ||
-			hasPremiumPlan( cart ) ||
+			// hasPremiumPlan( cart ) || // The old promote business plan upsell page
 			hasBusinessPlan( cart ) )
 	) {
 		// A user just purchased one of the qualifying plans

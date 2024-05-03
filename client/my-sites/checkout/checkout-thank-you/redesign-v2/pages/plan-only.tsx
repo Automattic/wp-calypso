@@ -1,34 +1,63 @@
-import { isP2Plus, isWpComEcommercePlan } from '@automattic/calypso-products';
+import {
+	isMonthly,
+	isPersonal,
+	isPremium,
+	isP2Plus,
+	isWpComEcommercePlan,
+	PLAN_BUSINESS,
+	getPlan,
+	findFirstSimilarPlanKey,
+} from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
 import { connect } from 'react-redux';
+import formatCurrency from 'calypso/../packages/format-currency/src';
+import upsellBusinessPlanImage from 'calypso/assets/images/thank-you-upsell/upsellBusinessPlanImage.jpg';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import {
+	getSitePlanRawPrice,
+	getPlanDiscountedRawPrice,
+} from 'calypso/state/sites/plans/selectors';
 import { getSiteOptions, getSiteUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { IAppState } from 'calypso/state/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 const RESEND_ERROR = 'RESEND_ERROR';
 const RESEND_NOT_SENT = 'RESEND_NOT_SENT';
 const RESEND_PENDING = 'RESEND_PENDING';
 const RESEND_SUCCESS = 'RESEND_SUCCESS';
 
-interface PlanOnlyThankYouProps {
+interface PlanOnlyProps {
 	primaryPurchase: ReceiptPurchase;
 	isEmailVerified: boolean;
+	transferComplete?: boolean;
+}
+
+interface PlanOnlyThankYouProps extends PlanOnlyProps {
+	promotePlanData?: {
+		planName: TranslateResult;
+		pathSlug: string;
+		refundPeriodDays: number;
+		fullPrice: string;
+		discountPrice: string;
+	};
 	errorNotice: ( text: string, noticeOptions?: object ) => void;
 	removeNotice: ( noticeId: string ) => void;
 	successNotice: ( text: string, noticeOptions?: object ) => void;
-	transferComplete?: boolean;
 }
 
 const isMonthsOld = ( months: number, rawDate?: string ) => {
@@ -47,6 +76,7 @@ const PlanOnlyThankYou = ( {
 	removeNotice,
 	successNotice,
 	transferComplete,
+	promotePlanData,
 }: PlanOnlyThankYouProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -194,6 +224,39 @@ const PlanOnlyThankYou = ( {
 		},
 	} );
 
+	let upsellProps;
+	if ( promotePlanData ) {
+		upsellProps = {
+			title: translate( 'Advanced tools' ),
+			description: (
+				<>
+					{ translate(
+						'Get the %(planName)s plan for access to WordPress plugins, STFP setup, database credentials, and more, propelling your site to new heights. Upgrade risk-free with our %(refundPeriodDays)s-day money-back guarantee, and pay only the difference ({{s}}%(fullPrice)s{{/s}} %(discountPrice)s).',
+						{
+							comment: 'Upsell for WP Business plan on checkout thank you page',
+							args: promotePlanData,
+							components: { s: <s /> },
+						}
+					) }
+				</>
+			),
+			image: upsellBusinessPlanImage,
+			actions: (
+				<>
+					<Button
+						onClick={ () => {
+							recordTracksEvent( 'calypso_plan_only_thank_you_upgrade_business_click' );
+
+							page( `/checkout/${ promotePlanData.pathSlug }/${ siteSlug }` );
+						} }
+					>
+						{ translate( 'Upgrade' ) }
+					</Button>
+				</>
+			),
+		};
+	}
+
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId as number ) );
 
 	return (
@@ -217,13 +280,68 @@ const PlanOnlyThankYou = ( {
 					/>
 				}
 				footerDetails={ footerDetails }
+				upsellProps={ upsellProps }
 			/>
 		</>
 	);
 };
 
-export default connect( null, {
-	errorNotice,
-	removeNotice,
-	successNotice,
-} )( PlanOnlyThankYou );
+function getBusinessPlanSlugToUpgrade( currentPlanSlug: string ) {
+	const currentPlan = getPlan( currentPlanSlug );
+	const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
+
+	// It's just for TS, since .find() can return undefined
+	if ( ! planKey ) {
+		return;
+	}
+
+	return getPlan( planKey );
+}
+
+export default connect(
+	( state: IAppState, props: PlanOnlyProps ) => {
+		let promotePlanData;
+		if ( isPersonal( props.primaryPurchase ) || isPremium( props.primaryPurchase ) ) {
+			const promotePlan = getBusinessPlanSlugToUpgrade( props.primaryPurchase.productSlug );
+			const promotePlanSlug = promotePlan?.getStoreSlug() || '';
+
+			const pathSlug = promotePlan?.getPathSlug?.();
+			const selectedSiteId = getSelectedSiteId( state ) || 0;
+			const currencyCode = getCurrentUserCurrencyCode( state );
+
+			const businessPrice = getSitePlanRawPrice( state, selectedSiteId, promotePlanSlug, {
+				returnMonthly: false,
+			} );
+			const businessDiscountPrice = getPlanDiscountedRawPrice(
+				state,
+				selectedSiteId,
+				promotePlanSlug,
+				{
+					returnMonthly: false,
+				}
+			);
+
+			// The condition is just for TS fix
+			if ( businessPrice && businessDiscountPrice && currencyCode && promotePlan && pathSlug ) {
+				promotePlanData = {
+					planName: promotePlan.getTitle(),
+					pathSlug: pathSlug,
+					refundPeriodDays: isMonthly( promotePlanSlug ) ? 7 : 14,
+					fullPrice: formatCurrency( businessPrice, currencyCode, { stripZeros: true } ),
+					discountPrice: formatCurrency( businessDiscountPrice, currencyCode, {
+						stripZeros: true,
+					} ),
+				};
+			}
+		}
+
+		return {
+			promotePlanData,
+		};
+	},
+	{
+		errorNotice,
+		removeNotice,
+		successNotice,
+	}
+)( PlanOnlyThankYou );
