@@ -45,6 +45,7 @@ export default function useHostingDescription( slug: string ): {
 					translate( 'Great for developers with client-managed sites.' ),
 					translate( '24/7 Expert Support' ),
 					translate( '50 GB Storage' ),
+					translate( 'Unmetered Visits' ),
 					translate( 'Self-service sales' ),
 					translate( 'Studio (local dev)' ),
 				];
