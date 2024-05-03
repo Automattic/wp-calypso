@@ -76,7 +76,7 @@ export default function BlazeDisabled() {
 					<li>
 						<span>1</span>
 						<div>
-							{ translate( 'Open {{a}}settings{{/a}} page and find “Traffic” section', {
+							{ translate( "Navigate to your site's {{a}}Traffic settings{{/a}}.", {
 								components: {
 									a: (
 										<a
@@ -91,11 +91,11 @@ export default function BlazeDisabled() {
 					</li>
 					<li>
 						<span>2</span>
-						<div>{ translate( 'Locate Blaze option and toggle it to active' ) }</div>
+						<div>{ translate( 'Set Blaze as active.' ) }</div>
 					</li>
 					<li>
 						<span>3</span>
-						<div>{ translate( 'Come back to this page and refresh it' ) }</div>
+						<div>{ translate( 'Refresh this page.' ) }</div>
 					</li>
 				</ul>
 			</div>

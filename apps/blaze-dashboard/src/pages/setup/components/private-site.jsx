@@ -50,12 +50,11 @@ export default function PrivateSite() {
 				<p className="empty-promotion-list__body">
 					{ translate( 'Go to your WordPress.com dashboard and follow the steps below.' ) }
 				</p>
-
 				<ul className="promote-post-i2__active-steps">
 					<li>
 						<span>1</span>
 						<div>
-							{ translate( 'Navigate to Settings → General or click {{a}}here{{/a}}', {
+							{ translate( "Navigate to your site's {{a}}Privacy settings{{/a}}.", {
 								components: {
 									a: (
 										<a
@@ -70,11 +69,11 @@ export default function PrivateSite() {
 					</li>
 					<li>
 						<span>2</span>
-						<div>{ translate( 'Locate “Launch site” or “Privacy” section' ) }</div>
+						<div>{ translate( 'Set your site as Public.' ) }</div>
 					</li>
 					<li>
 						<span>3</span>
-						<div>{ translate( 'Click "Launch" button or switch site to "Public"' ) }</div>
+						<div>{ translate( 'Refresh this page.' ) }</div>
 					</li>
 				</ul>
 				<p className="promote-post-i2__footer-text">
