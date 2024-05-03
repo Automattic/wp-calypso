@@ -395,6 +395,12 @@ $mobile-card-max-width: 440px;
 			text-decoration: line-through;
 		}
 	}
+
+	.plan-features-2023-grid__item-sub-feature-list {
+		& > li {
+			margin-top: 8px;
+		}
+	}
 }
 
 .plan-features-2023-grid__multiple-actions-container {
