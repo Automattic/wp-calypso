@@ -24,12 +24,10 @@ const MigrationOfferBody = () => {
 	const description = translate(
 		'Migrate your clients sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2024. You’ll also receive an additional $100 for each migrated site—up to $3,000 until July 31, 2024.'
 	);
-	const note = translate( 'Must have 3 or more sites to be eligible.' );
 
 	return (
 		<>
 			<p className="a4a-migration-offer__description">{ description }</p>
-			<p className="a4a-migration-offer__note">{ note }</p>
 			<Button
 				className="a4a-migration-offer__chat-button"
 				href="mailto:partnerships@automattic.com"
