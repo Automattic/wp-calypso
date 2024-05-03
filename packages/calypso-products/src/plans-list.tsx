@@ -619,10 +619,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonFeatureOverride: () =>
 		isTrailMapCopyVariant()
 			? [
-					FEATURE_WP_SUBDOMAIN_SIGNUP,
 					FEATURE_USERS,
-					FEATURE_FREE_WORDPRESS_THEMES,
-					FEATURE_LIMITED_STATS,
 					FEATURE_AD_SUPPORTED_EXPERIENCE,
 					FEATURE_1_WEBSITE,
 					FEATURE_UNLIMITED_TRAFFIC,
