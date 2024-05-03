@@ -398,6 +398,11 @@
 			}
 		}
 	}
+
+	// Prevent the content pushed out via translateX(100%) creating a scrollbar
+	&.focus-sidebar .layout__content .layout__primary {
+		overflow-x: hidden;
+	}
 }
 
 .wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
