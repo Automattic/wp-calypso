@@ -22,6 +22,12 @@
 	}
 }
 
+.products-overview {
+	.a4a-layout__top-wrapper {
+		padding-block-end: 0 !important;
+	}
+}
+
 .products-overview .assign-license-step-progress {
 	margin-block-start: 16px;
 	margin-block-end: 32px;
