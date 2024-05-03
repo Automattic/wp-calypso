@@ -9,9 +9,14 @@ import './stats-module-utm-overlay.scss';
 type StatsModuleUTMOverlayProps = {
 	siteId: number;
 	className?: string;
+	overlay?: React.ReactNode;
 };
 
-const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId, className } ) => {
+const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( {
+	siteId,
+	className,
+	overlay,
+} ) => {
 	const fakeData = [
 		{
 			label: 'google / cpc',
@@ -56,11 +61,13 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId
 				label: 'View all',
 			} }
 			overlay={
-				<StatsCardUpsellJetpack
-					className="stats-module__upsell"
-					siteId={ siteId }
-					statType={ STATS_FEATURE_UTM_STATS }
-				/>
+				overlay ?? (
+					<StatsCardUpsellJetpack
+						className="stats-module__upsell"
+						siteId={ siteId }
+						statType={ STATS_FEATURE_UTM_STATS }
+					/>
+				)
 			}
 		></StatsListCard>
 	);

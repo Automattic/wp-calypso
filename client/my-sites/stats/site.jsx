@@ -49,13 +49,16 @@ import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import PromoCards from './promo-cards';
+import StatsCardUpgradeJepackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleDevices from './stats-module-devices';
+import StatsModuleUpgradeOverlay from './stats-module-devices/stats-module-upgrade-overlay';
 import StatsModuleEmails from './stats-module-emails';
 import StatsModuleUTM from './stats-module-utm';
+import StatsModuleUTMOverlay from './stats-module-utm/stats-module-utm-overlay';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -213,7 +216,7 @@ class StatsSite extends Component {
 			supportsEmailStats,
 			supportsUTMStatsFeature,
 			supportsDevicesStatsFeature,
-			supportsLatestJetpackStatsFeatures,
+			isOldJetpack,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -435,7 +438,7 @@ class StatsSite extends Component {
 						/>
 
 						{ /* If UTM if supported display the module or update Jetpack plugin card */ }
-						{ supportsUTMStats && supportsLatestJetpackStatsFeatures && (
+						{ supportsUTMStats && ! isOldJetpack && (
 							<StatsModuleUTM
 								siteId={ siteId }
 								period={ this.props.period }
@@ -448,16 +451,22 @@ class StatsSite extends Component {
 							/>
 						) }
 
-						{ supportsUTMStats && ! supportsLatestJetpackStatsFeatures && (
-							<div
+						{ supportsUTMStats && isOldJetpack && (
+							<StatsModuleUTMOverlay
+								siteId={ siteId }
 								className={ classNames(
 									'stats__flexible-grid-item--60',
 									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
-							>
-								update!
-							</div>
+								overlay={
+									<StatsCardUpgradeJepackVersion
+										className="stats-module__upsell stats-module__upgrade"
+										siteId={ siteId }
+										statType="utm"
+									/>
+								}
+							/>
 						) }
 
 						{ /* If UTM card or update card is not visible, shift "Clicks" and reduct to 1/2 for easier stacking */ }
@@ -533,11 +542,11 @@ class StatsSite extends Component {
 								{
 									// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
 									'stats__flexible-grid-item--one-third--two-spaces':
-										isJetpack && ! this.isModuleHidden( 'videos' ),
+										! isJetpack && ! this.isModuleHidden( 'videos' ),
 								},
 								{
 									// 1/2 for all other cases to stack with Devices or empty space
-									'stats__flexible-grid-item--half': ! isJetpack || this.isModuleHidden( 'videos' ),
+									'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
 								},
 								'stats__flexible-grid-item--full--medium'
 							) }
@@ -587,7 +596,7 @@ class StatsSite extends Component {
 								/>
 							)
 						}
-						{ supportsDevicesStats && (
+						{ supportsDevicesStats && ! isOldJetpack && (
 							<StatsModuleDevices
 								siteId={ siteId }
 								period={ this.props.period }
@@ -596,6 +605,22 @@ class StatsSite extends Component {
 									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--xlarge'
 								) }
+							/>
+						) }
+						{ ! supportsDevicesStats && isOldJetpack && (
+							<StatsModuleUpgradeOverlay
+								className={ classNames(
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--xlarge'
+								) }
+								siteId={ siteId }
+								overlay={
+									<StatsCardUpgradeJepackVersion
+										className="stats-module__upsell stats-module__upgrade"
+										siteId={ siteId }
+										statType="devices"
+									/>
+								}
 							/>
 						) }
 					</div>
@@ -747,7 +772,7 @@ export default connect(
 			supportsEmailStats,
 			supportsUTMStats,
 			supportsDevicesStats,
-			supportsLatestJetpackStatsFeatures,
+			isOldJetpack,
 		} = getEnvStatsFeatureSupportChecks( state, siteId );
 
 		return {
@@ -768,7 +793,7 @@ export default connect(
 			supportsPlanUsage,
 			supportsUTMStatsFeature: supportsUTMStats,
 			supportsDevicesStatsFeature: supportsDevicesStats,
-			supportsLatestJetpackStatsFeatures,
+			isOldJetpack,
 		};
 	},
 	{
