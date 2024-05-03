@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
-import type { UrlBasicMetricsQueryResponse } from 'calypso/data/site-profiler/types';
+import type { BasicMetrics } from 'calypso/data/site-profiler/types';
 
-export function BasicMetrics( { basicMetrics }: { basicMetrics: UrlBasicMetricsQueryResponse } ) {
+export function BasicMetrics( { basicMetrics }: { basicMetrics: BasicMetrics } ) {
 	return (
 		<div className="basic-metrics">
 			<h3>{ translate( 'Basic Metrics' ) }</h3>

@@ -77,6 +77,7 @@ export default function SiteProfiler( props: Props ) {
 
 	const showBasicMetrics =
 		basicMetrics &&
+		basicMetrics.basic &&
 		! isFetchingBasicMetrics &&
 		! errorBasicMetrics &&
 		isEnabled( 'site-profiler/metrics' );
@@ -140,7 +141,7 @@ export default function SiteProfiler( props: Props ) {
 					) }
 					{ showBasicMetrics && (
 						<LayoutBlockSection>
-							<BasicMetrics basicMetrics={ basicMetrics } />
+							<BasicMetrics basicMetrics={ basicMetrics.basic } />
 						</LayoutBlockSection>
 					) }
 				</LayoutBlock>
