@@ -23,7 +23,7 @@ export default function useHostingDescription( slug: string ): {
 			case 'pressable-hosting':
 				name = translate( 'Pressable' );
 				description = translate(
-					'Best for developers and agencies who need advanced hosting controls and management tools.'
+					'Best for premier agencies and developers who need significant control and build sites that require scaling.'
 				);
 				features = [
 					translate( 'Optimized for high-traffic WooCommerce stores {{img/}}', {
@@ -31,28 +31,22 @@ export default function useHostingDescription( slug: string ): {
 							img: <WooCommerceLogo size={ 32 } />,
 						},
 					} ),
+					translate( '24/7 Expert Support with expanded support options' ),
+					translate( '20GB-1TB Storage' ),
 					translate( '100% uptime SLA' ),
-					translate( 'Great for teams with granular permission needs' ),
-					translate( 'Tooling to help you manage sites at scale with one-click config options' ),
-					translate( 'White-label tools for agencies' ),
-					translate(
-						'Partner sales concierge to assist with custom plans and complex purchasing requirements'
-					),
-					translate( 'Multiple support channels: Email, web chat, and Slack.' ),
-					translate( 'Decoupled (headless) support' ),
+					translate( 'Custom pricing and packaging are available' ),
+					translate( 'Agency tools to manage sites at scale' ),
 				];
 				break;
 			case 'wpcom-hosting':
 				name = translate( 'WordPress.com' );
-				description = translate(
-					'Best for those who want optimized, hassle-free WordPress hosting.'
-				);
+				description = translate( 'Best for those who want a hassle-free WordPress experience.' );
 				features = [
-					translate( 'Great for developers with client-managed sites' ),
-					translate( 'Unlimited visits' ),
-					translate( '50GB storage' ),
+					translate( 'Great for developers with client-managed sites.' ),
+					translate( '24/7 Expert Support' ),
+					translate( '50 GB Storage' ),
 					translate( 'Self-service sales' ),
-					translate( 'Local development environment, Studio' ),
+					translate( 'Studio (local dev)' ),
 				];
 				break;
 			case 'vip':
