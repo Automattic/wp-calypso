@@ -174,7 +174,7 @@ const SiteMigrationInstructions: Step = function () {
 			<StepContainer
 				stepName="site-migration-instructions"
 				shouldHideNavButtons={ false }
-				className="is-step-site-migration-instructions"
+				className="is-step-site-migration-instructions site-migration-instructions-i2"
 				hideSkip={ true }
 				hideBack={ true }
 				formattedHeader={
