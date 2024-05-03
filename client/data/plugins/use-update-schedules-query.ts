@@ -156,6 +156,14 @@ export const useMultisiteUpdateScheduleQuery = (
 				}
 			}
 
+			// sort by schedule (daily/weekly) then timestamp
+			result.sort( ( a, b ) => {
+				if ( a.schedule === b.schedule ) {
+					return a.timestamp - b.timestamp;
+				}
+				return a.schedule.localeCompare( b.schedule );
+			} );
+
 			return result;
 		},
 		refetchOnWindowFocus: false,
