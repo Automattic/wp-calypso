@@ -192,7 +192,7 @@ export function scheduledUpdatesMultisite( context, next ) {
 		case 'edit':
 			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
 				onNavBack: goToScheduledUpdatesList,
-				scheduleId: context.params.scheduleId,
+				id: context.params.id,
 				context: 'edit',
 			} );
 			break;

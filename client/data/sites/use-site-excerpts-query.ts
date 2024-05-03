@@ -44,20 +44,7 @@ export const useSiteExcerptsQuery = (
 		],
 		queryFn: () => fetchSites( site_visibility, fetchFilter ),
 		select: ( data ) => {
-			let sites = data?.sites.map( computeFields( data?.sites ) ) || [];
-
-			if ( site_visibility === 'deleted' ) {
-				// If we got the site data from Redux store (see `initialData` below),
-				// then we can't rely on the `site_visibility` parameter to know
-				// whether the site is deleted or not. We use the `site_owner` field
-				// to infer the `is_deleted` status.
-				sites = sites.filter( ( site ) => site.site_owner === undefined );
-
-				sites.forEach( ( site ) => {
-					site.is_deleted = true;
-				} );
-			}
-
+			const sites = data?.sites.map( computeFields( data?.sites ) ) || [];
 			return sitesFilterFn ? sites.filter( sitesFilterFn ) : sites;
 		},
 		initialData: () => {

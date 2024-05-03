@@ -81,7 +81,11 @@ export function getHostingLogo( slug: string ) {
  * @returns boolean True if Pressable hosting product, false if not
  */
 export function isPressableHostingProduct( keyOrSlug: string ) {
-	return keyOrSlug.startsWith( 'pressable-hosting' ) || keyOrSlug.startsWith( 'jetpack-pressable' );
+	return (
+		keyOrSlug.startsWith( 'pressable-wp' ) ||
+		keyOrSlug.startsWith( 'pressable-hosting' ) ||
+		keyOrSlug.startsWith( 'jetpack-pressable' )
+	);
 }
 
 /**

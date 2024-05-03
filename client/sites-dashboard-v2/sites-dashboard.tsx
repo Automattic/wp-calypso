@@ -84,18 +84,10 @@ const SitesDashboardV2 = ( {
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 
-	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
-
-	const { data: deletedSites = [] } = useSiteExcerptsQuery(
-		[],
-		( site ) => ! site.options?.is_domain_only,
-		'deleted'
-	);
-
-	const allSites = liveSites.concat( deletedSites );
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();

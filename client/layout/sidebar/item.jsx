@@ -15,6 +15,7 @@ export default function SidebarItem( props ) {
 	const classes = classnames( props.className, props.tipTarget, {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
+		tooltip: !! props.tooltip,
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
@@ -45,7 +46,12 @@ export default function SidebarItem( props ) {
 	const linkProps = showAsExternal ? { target: '_blank', rel: 'noreferrer' } : {};
 
 	return (
-		<li className={ classes } data-tip-target={ props.tipTarget } data-post-type={ props.postType }>
+		<li
+			className={ classes }
+			data-tip-target={ props.tipTarget }
+			data-tooltip={ props.tooltip }
+			data-post-type={ props.postType }
+		>
 			<a
 				className="sidebar__menu-link"
 				onClick={ handleNavigate }
@@ -92,6 +98,7 @@ export default function SidebarItem( props ) {
 
 SidebarItem.propTypes = {
 	label: TranslatableString.isRequired,
+	tooltip: TranslatableString,
 	className: PropTypes.string,
 	link: PropTypes.string.isRequired,
 	onNavigate: PropTypes.func,

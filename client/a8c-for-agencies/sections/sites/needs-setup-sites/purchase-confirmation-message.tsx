@@ -52,8 +52,7 @@ export default function PurchaseConfirmationMessage() {
 			onClose={ () => setSuccessNotification( false ) }
 		>
 			{ translate(
-				'Set up your sites as you need them, in the “Needs setup” tab within the sites dashboard. Once set up, you can access each site under the “All” tab.' +
-					' Any add-ons you’ve purchased will be set up when you create your corresponding WordPress.com %(name)s site.',
+				'Set up your sites as you need them, in the “Needs setup” tab within the sites dashboard. Once set up, you can access each site under the “All” tab.',
 				{
 					args: {
 						name,

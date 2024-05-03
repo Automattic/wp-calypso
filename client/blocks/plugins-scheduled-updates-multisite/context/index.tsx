@@ -6,6 +6,7 @@ import type { Dispatch, SetStateAction } from 'react';
 export type MultisitePluginUpdateManagerErrors = {
 	siteSlug: SiteSlug;
 	error: string;
+	operation: 'create' | 'update' | 'delete';
 	site?: SiteDetails | null;
 }[];
 
