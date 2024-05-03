@@ -184,18 +184,21 @@
 
 // Styles collapsed site list.
 .wpcom-site {
+	.layout__content {
+		transition: all 220ms ease-out;
+	}
 	.layout__secondary {
-		transition: all 0.2s ease-in-out;
+		transition: all 220ms ease-out;
 
+		.sidebar__header,
+		.sidebar__body,
 		.sidebar__footer {
-			transition: all 0.2s ease-in-out;
-			flex-wrap: wrap;
-			.sidebar__footer-profile img {
-				max-width: none;
+			transition: all 220ms ease-out;
+			> * {
+				transition: all 220ms ease-out;
 			}
 		}
 		.sidebar__header {
-			transition: all 0.2s ease-in-out;
 			flex-wrap: wrap;
 			span.dotcom {
 				background-position: left;
@@ -203,54 +206,70 @@
 			.gap,
 			button.sidebar__item-search,
 			a.sidebar__item-notifications {
-				transition: all 0.2s ease-in-out;
 				justify-content: flex-start;
 				flex-basis: 0%;
 			}
 			.sidebar__menu-link {
-				transition: all 0.2s ease-in-out;
+				transition: all 220ms ease-out;
+				min-width: 40px;
+				margin: 0 12px;
+			}
+		}
+		.sidebar__footer {
+			flex-wrap: wrap;
+			.sidebar__footer-profile img {
+				max-width: none;
 			}
 		}
 	}
 	.is-global-sidebar-collapsed {
 		@media ( min-width: 661px ) {
-			.global-sidebar {
-				.sidebar__footer {
-					transition: all 0.2s ease-in-out;
-					flex-direction: row !important;
-					.sidebar__item-help {
-						padding-inline: 0;
-					}
-				}
-				.sidebar__header {
-					transition: all 0.2s ease-in-out;
-					flex-direction: row !important;
-					padding-inline: 19px;
-					.gap {
-						flex-basis: 10%;
-					}
-					button.sidebar__item-search,
-					a.sidebar__item-notifications {
-						transition: all 0.2s ease-in-out;
-						flex-basis: 100%;
-					}
-				}
-				.sidebar__body {
-					padding-top: 24px;
-					.sidebar__menu-link-text {
-						transition: all 100ms ease-in-out;
-						transition-delay: 100ms;
-						opacity: 0;
-						display: block !important;
-						width: 0;
-					}
-					.sidebar__menu-link {
-						transition: all 0.2s ease-in-out;
-						width: fit-content;
-						min-width: calc(100% - 20px);
+			.layout__secondary {
+				transition: all 220ms ease-out;
 
-						> :first-child {
-							margin-right: 0;
+				.global-sidebar {
+					.sidebar__header,
+					.sidebar__body,
+					.sidebar__footer {
+						transition: all 220ms ease-out;
+						> * {
+							transition: all 220ms ease-out;
+						}
+					}
+					.sidebar__header {
+						flex-direction: row !important;
+						padding-inline: 19px;
+						.gap {
+							flex-basis: 100%;
+						}
+						button.sidebar__item-search,
+						a.sidebar__item-notifications {
+							flex-basis: 100%;
+						}
+					}
+					.sidebar__body {
+						padding-top: 24px;
+						.sidebar__menu-link-text {
+							transition: all 100ms ease-out;
+							transition-delay: 120ms;
+							opacity: 0;
+							display: block !important;
+							width: 0;
+						}
+						.sidebar__menu-link {
+							width: fit-content;
+							min-width: calc(100% - 20px);
+
+							> :first-child {
+								transition: all 220ms ease-out;
+								margin-right: 0;
+							}
+						}
+					}
+					.sidebar__footer {
+						flex-direction: row !important;
+						.sidebar__item-help {
+							padding-inline: 0;
 						}
 					}
 				}
