@@ -167,6 +167,11 @@ $brand-display: "SF Pro Display", sans-serif;
 			}
 		}
 
+		&__name-label {
+			// Compensate for the big icon
+			margin-bottom: 0.75rem - rem(10px);
+		}
+
 		&__last-update-label {
 			label {
 				display: inline-flex;
@@ -205,13 +210,6 @@ $brand-display: "SF Pro Display", sans-serif;
 				}
 			}
 		}
-
-		&__actions {
-			position: absolute;
-			top: 0;
-			right: -10px;
-		}
-
 
 	}
 

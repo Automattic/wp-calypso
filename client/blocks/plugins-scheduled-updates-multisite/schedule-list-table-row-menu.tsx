@@ -20,8 +20,7 @@ export const ScheduleListTableRowMenu = ( {
 	onEditClick,
 	onRemoveClick,
 	onLogsClick,
-	className,
-}: Props & { site?: MultisiteSiteDetails; className?: string } ) => {
+}: Props & { site?: MultisiteSiteDetails } ) => {
 	const translate = useTranslate();
 
 	const items = [
@@ -45,7 +44,6 @@ export const ScheduleListTableRowMenu = ( {
 
 	return (
 		<DropdownMenu
-			className={ className }
 			popoverProps={ { position: 'bottom left' } }
 			controls={ items }
 			icon={ ellipsis }

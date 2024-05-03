@@ -34,15 +34,7 @@ export const ScheduleListCard = ( props: Props ) => {
 
 	return (
 		<div className="plugins-update-manager-multisite-card">
-			<ScheduleListTableRowMenu
-				schedule={ schedule }
-				onEditClick={ onEditClick }
-				onRemoveClick={ onRemoveClick }
-				onLogsClick={ onLogsClick }
-				className="plugins-update-manager-multisite-card__actions"
-			/>
-
-			<div className="plugins-update-manager-multisite-card__label">
+			<div className="plugins-update-manager-multisite-card__label  plugins-update-manager-multisite-card__name-label">
 				<strong id="name">
 					<Button
 						className="schedule-name"
@@ -52,6 +44,12 @@ export const ScheduleListCard = ( props: Props ) => {
 						{ prepareScheduleName( schedule as unknown as ScheduleUpdates ) }
 					</Button>
 				</strong>
+				<ScheduleListTableRowMenu
+					schedule={ schedule }
+					onEditClick={ onEditClick }
+					onRemoveClick={ onRemoveClick }
+					onLogsClick={ onLogsClick }
+				/>
 			</div>
 
 			<div className="plugins-update-manager-multisite-card__label">
