@@ -12,6 +12,7 @@ import {
 	DOTCOM_PHP_LOGS,
 	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
+	DOTCOM_DEVELOPER_TOOLS_PROMO,
 } from './constants';
 
 type Props = {
@@ -38,7 +39,6 @@ const DotcomPreviewPane = ( {
 	const { __ } = useI18n();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
-	const isJetpackNonAtomic = ! isAtomicSite && !! site.jetpack;
 
 	// Dotcom tabs: Overview, Monitoring, GitHub Deployments, Hosting Config
 	const features = useMemo(
@@ -52,9 +52,17 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
+				DOTCOM_DEVELOPER_TOOLS_PROMO,
+				__( 'Dev Tools' ),
+				! isAtomicSite,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				selectedSiteFeaturePreview
+			),
+			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
 				__( 'Hosting Config' ),
-				! isJetpackNonAtomic,
+				isAtomicSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -86,7 +94,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
 				__( 'GitHub Deployments' ),
-				! isJetpackNonAtomic,
+				isAtomicSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
