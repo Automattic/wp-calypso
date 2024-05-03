@@ -45,9 +45,6 @@
 	}
 
 	height: calc(100vh - var(--masterbar-height));
-	@media ( min-width: 601px ) {
-		height: calc(100vh - var(--masterbar-height) - 48px);
-	}
 
 	@media ( min-width: 782px ) {
 		height: calc(100vh - var(--masterbar-height) - 32px);
@@ -173,6 +170,8 @@
 .wpcom-site .is-group-sites.is-global-sidebar-collapsed,
 .wpcom-site .is-group-sites.is-global-sidebar-visible:not(.is-section-domains) {
 	.layout__content {
+		min-height: 100vh;
+
 		@include break-medium {
 			padding: 16px 16px 16px calc(var(--sidebar-width-max));
 		}
@@ -376,6 +375,33 @@
 				max-height: none;
 			}
 		}
+	}
+}
+
+// Override styles from my-sites/sidebar
+.wpcom-site div.is-group-sites:not(.has-no-masterbar),
+.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) {
+	&.focus-content .layout__content,
+	&.focus-sidebar .layout__content {
+		padding-bottom: 0;
+		padding-top: var(--masterbar-height);
+
+		@include break-small {
+			padding-top: calc(var(--masterbar-height) + 24px);
+		}
+
+		.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+			height: calc(100vh - var(--masterbar-height));
+
+			@include break-small {
+				height: calc(100vh - var(--masterbar-height) - 48px);
+			}
+		}
+	}
+
+	// Prevent the content pushed out via translateX(100%) creating a scrollbar
+	&.focus-sidebar .layout__content .layout__primary {
+		overflow-x: hidden;
 	}
 }
 
