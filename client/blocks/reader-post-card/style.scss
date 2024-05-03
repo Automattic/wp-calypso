@@ -156,10 +156,6 @@
 		.reader-post-card__post {
 			display: inherit;
 			margin: 0;
-
-			@include breakpoint-deprecated( "<660px" ) {
-				margin: 0 16px;
-			}
 		}
 
 		.reader-post-card__post-heading {
@@ -259,7 +255,7 @@
 			}
 
 			@include breakpoint-deprecated( "<660px" ) {
-				margin: 24px 16px 0 16px;
+				margin: 24px 0 0;
 			}
 		}
 	}
@@ -300,7 +296,6 @@
 
 		@include breakpoint-deprecated( "<660px" ) {
 			margin: 20px 0 0 16px;
-			width: calc(100% - 32px);
 		}
 	}
 }
@@ -371,10 +366,6 @@
 .reader-post-card__byline {
 	display: flex;
 	font-size: $font-body-small;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0 16px;
-	}
 }
 
 .reader-post-card__author::after {
@@ -548,7 +539,7 @@
 
 @include breakpoint-deprecated( "<660px" ) {
 	.reader-post-card__post {
-		margin: 0 16px;
+		margin: 0;
 	}
 }
 

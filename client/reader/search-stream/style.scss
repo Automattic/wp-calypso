@@ -361,6 +361,11 @@
 
 .search-stream__single-column-results .reader-infinite-stream__row-wrapper {
 	margin-top: 20px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 20px 16px 0;
+		width: calc(100% - 32px) !important;
+	}
 }
 
 .search-stream__single-column-results .reader-subscription-list-item__options {

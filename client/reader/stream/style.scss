@@ -741,10 +741,6 @@
 			font-size: $font-body-small;
 			line-height: 20px;
 		}
-
-		@include breakpoint-deprecated( "<660px" ) {
-			margin: 16px;
-		}
 	}
 	.sidebar-streams__following-load-more {
 		color: var(--color-neutral-100);
@@ -866,6 +862,14 @@
 
 	.reader-feed-header__seen-button {
 		margin-bottom: 24px;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 24px 16px 0;
+
+		h2 {
+			margin: 16px 0;
+		}
 	}
 }
 
