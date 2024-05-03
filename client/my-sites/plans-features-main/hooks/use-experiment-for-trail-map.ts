@@ -14,6 +14,8 @@ interface Params {
 }
 
 function useExperimentForTrailMap( { flowName }: Params ): {
+	isLoading: boolean;
+	variant: VariantType;
 	isTrailMapAny: boolean;
 	isTrailMapCopy: boolean;
 	isTrailMapStructure: boolean;
@@ -26,11 +28,11 @@ function useExperimentForTrailMap( { flowName }: Params ): {
 	let variant = ( assignment?.variationName ?? 'control' ) as VariantType;
 
 	if ( config.isEnabled( 'onboarding/trail-map-feature-grid-copy' ) ) {
-		variant = 'treatment-copy';
+		variant = 'treatment_copy';
 	} else if ( config.isEnabled( 'onboarding/trail-map-feature-grid-structure' ) ) {
-		variant = 'treatment-structure';
+		variant = 'treatment_structure';
 	} else if ( config.isEnabled( 'onboarding/trail-map-feature-grid' ) ) {
-		variant = 'treatment-copy-and-structure';
+		variant = 'treatment_copy_and_structure';
 	}
 
 	useEffect( () => {
@@ -38,6 +40,8 @@ function useExperimentForTrailMap( { flowName }: Params ): {
 	}, [ isLoading, variant ] );
 
 	return {
+		isLoading,
+		variant,
 		isTrailMapAny: isTrailMapAnyVariant( variant ),
 		isTrailMapCopy: isTrailMapCopyVariant( variant ),
 		isTrailMapStructure: isTrailMapStructureVariant( variant ),

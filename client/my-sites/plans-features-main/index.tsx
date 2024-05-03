@@ -295,7 +295,13 @@ const PlansFeaturesMain = ( {
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
-	const { isTrailMapAny, isTrailMapCopy, isTrailMapStructure } = useExperimentForTrailMap( {
+	const {
+		isLoading: isTrailMapExperimentLoading,
+		variant: trailMapExperimentVariant,
+		isTrailMapAny,
+		isTrailMapCopy,
+		isTrailMapStructure,
+	} = useExperimentForTrailMap( {
 		flowName,
 	} );
 
@@ -423,7 +429,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		includePreviousPlanFeatures: trailMapExperiment.result === 'treatment-structure',
+		includePreviousPlanFeatures: trailMapExperimentVariant === 'treatment_structure',
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -689,7 +695,11 @@ const PlansFeaturesMain = ( {
 		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
 	);
 	const isLoadingGridPlans = Boolean(
-		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid || isExperimentLoading
+		! intent ||
+			! gridPlansForFeaturesGrid ||
+			! gridPlansForComparisonGrid ||
+			isExperimentLoading ||
+			isTrailMapExperimentLoading
 	);
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
