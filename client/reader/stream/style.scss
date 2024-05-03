@@ -961,6 +961,10 @@
 		margin: 0;
 	}
 
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px;
+	}
+
 	.blogging-prompt__menu {
 		display: none;
 	}
