@@ -38,8 +38,9 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const tourContainerRef = useRef( null );
 	const isMobile = useMobileBreakpoint();
 	const lastStepIndex = config.steps.length - 1;
+	const referenceElements = config.steps[ currentStepIndex ].referenceElements;
 	const referenceElementSelector =
-		config.steps[ currentStepIndex ].referenceElements?.[ isMobile ? 'mobile' : 'desktop' ] || null;
+		referenceElements?.[ isMobile ? 'mobile' : 'desktop' ] || referenceElements?.desktop;
 	const referenceElement = referenceElementSelector
 		? document.querySelector< HTMLElement >( referenceElementSelector )
 		: null;
