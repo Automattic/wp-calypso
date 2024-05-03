@@ -105,17 +105,25 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 		restoreSite( site.ID );
 	};
 
+	const renderDeletedContent = () => {
+		if ( isRestoring ) {
+			return <Spinner />;
+			// `is_wpcom_staging_site` is false for deleted staging
+			// sites so need to check the slub
+		} else if ( ! site.slug.startsWith( 'staging-' ) ) {
+			return (
+				<RestoreButton borderless onClick={ handleRestoreSite }>
+					{ __( 'Restore' ) }
+				</RestoreButton>
+			);
+		}
+	};
+
 	if ( site.is_deleted ) {
 		return (
 			<DeletedStatus>
 				<span>{ __( 'Deleted' ) }</span>
-				{ isRestoring ? (
-					<Spinner />
-				) : (
-					<RestoreButton borderless onClick={ handleRestoreSite }>
-						{ __( 'Restore' ) }
-					</RestoreButton>
-				) }
+				{ renderDeletedContent() }
 			</DeletedStatus>
 		);
 	}
