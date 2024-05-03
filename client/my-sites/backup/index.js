@@ -10,12 +10,12 @@ import {
 	backupContents,
 	backupGranularRestore,
 	backups,
+	showJetpackIsDisconnected,
 	queryJetpackConnection,
 	showNotAuthorizedForNonAdmins,
 	showUpsellIfNoBackup,
-	showUnavailableForMultisites,
-	showJetpackIsDisconnected,
 	showUnavailableForVaultPressSites,
+	showUnavailableForMultisites,
 } from 'calypso/my-sites/backup/controller';
 import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-backup-upsell';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
