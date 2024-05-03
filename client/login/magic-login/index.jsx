@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { addLocaleToPath, localizeUrl } from '@automattic/i18n-utils';
-import { WPCC } from '@automattic/urls';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -509,17 +508,10 @@ class MagicLogin extends Component {
 		const isStudioAppSignUp = isStudioApp && query?.redirect_to;
 
 		const studioAppProps = {
-			headerText: translate( 'Sign up for Studio with a WordPress.com account' ),
+			headerText: translate( 'Sign up for WordPress.com' ),
 			tosComponent: this.renderStudioLoginTos(),
 			subHeaderText: translate(
-				'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
-				{
-					components: {
-						a: <a href={ localizeUrl( WPCC ) } target="_blank" rel="noopener noreferrer" />,
-					},
-					comment:
-						'Text displayed on the Signup page to users willing to sign up for an app via WordPress.com',
-				}
+				'Connecting a WordPress.com account unlocks additional Studio features like demo sites.'
 			),
 			customFormLabel: translate( 'Your email address' ),
 			submitButtonLabel: translate( 'Send activation link' ),
