@@ -12,8 +12,8 @@ import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-nav
 
 type SegmentationSurveyProps = {
 	surveyKey: string;
-	onBack?: () => void; // This is a function that navigates to the previous step
-	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void; // This is a function that navigates to the next question/step
+	onBack?: () => void;
+	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void;
 };
 
 /**
