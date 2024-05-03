@@ -37,6 +37,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 	const {
 		id,
 		className,
+		style,
 		children,
 		navigationItems = [],
 		mobileItem,
@@ -54,6 +55,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 				'navigation-header',
 				screenOptionsTab && children ? 'navigation-header__screen-options-tab' : ''
 			) }
+			style={ style }
 			ref={ ref }
 		>
 			<Container>
