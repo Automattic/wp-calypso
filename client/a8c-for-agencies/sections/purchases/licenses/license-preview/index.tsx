@@ -134,6 +134,10 @@ export default function LicensePreview( {
 		</Badge>
 	);
 
+	// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
+	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
+	const productTitle = product === 'WordPress.com Creator' ? 'WordPress.com Site' : product;
+
 	return (
 		<div
 			className={ classnames( {
@@ -150,7 +154,7 @@ export default function LicensePreview( {
 				} ) }
 			>
 				<div>
-					<span className="license-preview__product">{ product }</span>
+					<span className="license-preview__product">{ productTitle }</span>
 				</div>
 
 				<div>
