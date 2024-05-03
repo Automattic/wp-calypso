@@ -975,7 +975,10 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
 		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Live chat and email support' )
+				: i18n.translate( 'Email & live chat support' ),
 		getDescription: () =>
 			i18n.translate( 'Live chat support to help you get started with your site.' ),
 	},
@@ -1154,7 +1157,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
 		getSlug: () => FEATURE_SITE_BACKUPS_AND_RESTORE,
-		getTitle: () => i18n.translate( 'Automated site backups and one-click restore' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Real time full-site backup/restore' )
+				: i18n.translate( 'Automated site backups and one-click restore' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
@@ -1862,7 +1868,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		getTitle: () =>
 			isTrailMapCopyVariant()
-				? i18n.translate( 'Accept payments (%(commission)d% fee)(+ standard processing fee)', {
+				? i18n.translate( 'Accept payments (%(commission)d%% fee)(+ standard processing fee)', {
 						args: { commission: 0 },
 				  } )
 				: i18n.translate( '%(commission)d%% transaction fee for payments', {
@@ -2137,7 +2143,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'SFTP/SSH, WP-CLI' )
+				: i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
@@ -2893,7 +2902,8 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS ]: {
 		getSlug: () => FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
-		getTitle: () => i18n.translate( 'Pre-installed plugins for security and performance' ),
+		getTitle: () =>
+			i18n.translate( 'Pre-installed plugins for security and performance ($239/year value)' ),
 	},
 	[ FEATURE_WEB_SERVER_SETTINGS ]: {
 		getSlug: () => FEATURE_WEB_SERVER_SETTINGS,
