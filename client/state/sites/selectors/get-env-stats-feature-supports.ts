@@ -45,12 +45,11 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.16.0-alpha',
 			isOdysseyStats
 		),
-		supportsUTMStats:
-			// TODO: Remove the flag check once UTM stats are released.
-			config.isEnabled( 'stats/utm-module' ) &&
-			// UTM stats are only available for Jetpack sites for now.
-			isSiteJetpackNotAtomic &&
-			version_greater_than_or_equal( statsAdminVersion, '0.17.0-alpha', isOdysseyStats ),
+		supportsUTMStats: version_greater_than_or_equal(
+			statsAdminVersion,
+			'0.17.0-alpha',
+			isOdysseyStats
+		),
 		supportsDevicesStats:
 			config.isEnabled( 'stats/devices' ) &&
 			isSiteJetpackNotAtomic &&
