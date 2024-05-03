@@ -38,6 +38,10 @@ export const getTrailMapExperiment = () => {
 		'control' ) as TrailMapVariantType;
 };
 
-export const isTrailMapVariant = (): boolean =>
+export const isTrailMapCopyVariant = (): boolean =>
 	getTrailMapExperiment() === 'treatment-copy-and-structure' ||
 	getTrailMapExperiment() === 'treatment-copy';
+
+export const isTrailMapStructureVariant = (): boolean =>
+	getTrailMapExperiment() === 'treatment-copy-and-structure' ||
+	getTrailMapExperiment() === 'treatment-structure';

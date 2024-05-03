@@ -877,7 +877,7 @@ const FeatureGroup = ( {
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
 		firstSetOfFeatures,
 	] );
-	const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
+	const features = featureGroup.getFeatures();
 	const featureObjects = filterUnusedFeaturesObject(
 		visibleGridPlans,
 		getPlanFeaturesObject( allFeaturesList, features )

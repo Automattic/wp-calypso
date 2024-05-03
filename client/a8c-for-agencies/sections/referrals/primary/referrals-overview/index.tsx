@@ -2,6 +2,7 @@ import NoticeBanner from '@automattic/components/src/notice-banner';
 import { plugins, payment, percent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -163,6 +164,7 @@ export default function ReferralsOverview() {
 								heading={ translate( 'Earn commissions from your referrals' ) }
 								stepCount={ 2 }
 							>
+								<MigrationOffer />
 								<StepSectionItem
 									icon={ payment }
 									heading={ translate( 'Encourage your clients to purchase Automattic products' ) }
