@@ -706,10 +706,10 @@ export class EditorPage {
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
 
 		// Determine whether the post/page is yet to be published or the post/page
-		// is merely being updated.
+		// is merely being saved/updated.
 		// If not yet published, a second click on the EditorPublishPanelComponent
 		// is added to the array of actions.
-		if ( publishButtonText.toLowerCase() !== 'save' ) {
+		if ( ! [ 'save', 'update' ].includes( publishButtonText.toLowerCase() ) ) {
 			actionsArray.push( this.editorPublishPanelComponent.publish() );
 		}
 
@@ -772,7 +772,10 @@ export class EditorPage {
 		await this.editorToolbarComponent.switchToDraft();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		// Saves the draft
-		await this.editorToolbarComponent.clickPublish();
+		Promise.race( [
+			this.editorToolbarComponent.clickPublish(),
+			editorParent.getByRole( 'button' ).getByText( 'OK' ).click(),
+		] );
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
 		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
 	}
