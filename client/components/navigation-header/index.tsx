@@ -31,6 +31,7 @@ interface Props {
 	subtitle?: string | ReactNode;
 	screenReader?: string | ReactNode;
 	screenOptionsTab?: string;
+	style?: object;
 }
 
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
