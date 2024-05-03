@@ -14,7 +14,6 @@ import {
 	getWooExpressFeaturesGrouped,
 	getPlanFeaturesGrouped,
 	isWooExpressPlan,
-	setTrailMapExperiment,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -73,7 +72,7 @@ import useGenerateActionCallback from './hooks/use-action-callback';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
-import useExperimentForTrailMap, { TrailMapVariant } from './hooks/use-experiment-for-trail-map';
+import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -296,18 +295,9 @@ const PlansFeaturesMain = ( {
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
-	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
-	const isAnyTrailMapTreatment = trailMapExperiment.result !== TrailMapVariant.Control;
-	const isTrailMapCopy =
-		trailMapExperiment.result === TrailMapVariant.TreatmentCopy ||
-		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
-	const isTrailMapStructure =
-		trailMapExperiment.result === TrailMapVariant.TreatmentStructure ||
-		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
-
-	useEffect( () => {
-		setTrailMapExperiment( trailMapExperiment.result ?? TrailMapVariant.Control );
-	}, [ trailMapExperiment.isLoading, trailMapExperiment.result ] );
+	const { isTrailMapAny, isTrailMapCopy, isTrailMapStructure } = useExperimentForTrailMap( {
+		flowName,
+	} );
 
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
@@ -790,7 +780,7 @@ const PlansFeaturesMain = ( {
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
-					showPlanBenefits={ isInSignup && isAnyTrailMapTreatment }
+					showPlanBenefits={ isInSignup && isTrailMapAny }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (

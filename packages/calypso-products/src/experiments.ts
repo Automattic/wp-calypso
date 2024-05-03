@@ -23,7 +23,7 @@ export const getPlansListExperiment = ( experimentName: string ): string | undef
 	return getExperiment( PLANS_LIST_NAMESPACE, experimentName );
 };
 
-type TrailMapVariantType =
+export type TrailMapVariantType =
 	| 'control'
 	| 'treatment-copy-and-structure'
 	| 'treatment-copy'
@@ -38,10 +38,14 @@ export const getTrailMapExperiment = () => {
 		'control' ) as TrailMapVariantType;
 };
 
-export const isTrailMapCopyVariant = (): boolean =>
-	getTrailMapExperiment() === 'treatment-copy-and-structure' ||
-	getTrailMapExperiment() === 'treatment-copy';
+export const isTrailMapControlVariant = ( variant = getTrailMapExperiment() ): boolean =>
+	variant === 'control';
 
-export const isTrailMapStructureVariant = (): boolean =>
-	getTrailMapExperiment() === 'treatment-copy-and-structure' ||
-	getTrailMapExperiment() === 'treatment-structure';
+export const isTrailMapCopyVariant = ( variant = getTrailMapExperiment() ): boolean =>
+	variant === 'treatment-copy-and-structure' || variant === 'treatment-copy';
+
+export const isTrailMapStructureVariant = ( variant = getTrailMapExperiment() ): boolean =>
+	variant === 'treatment-copy-and-structure' || variant === 'treatment-structure';
+
+export const isTrailMapAnyVariant = ( variant = getTrailMapExperiment() ): boolean =>
+	variant !== 'control';
