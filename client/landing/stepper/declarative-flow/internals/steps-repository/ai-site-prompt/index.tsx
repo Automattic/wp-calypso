@@ -1,18 +1,23 @@
+import { Onboard } from '@automattic/data-stores';
 import { StepContainer, NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { TextareaControl } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { FormEvent } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSiteData } from '../../../../hooks/use-site-data';
 import useAIAssembler from '../pattern-assembler/hooks/use-ai-assembler';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
+
+const SiteIntent = Onboard.SiteIntent;
 
 const ActionSection = styled.div`
 	display: flex;
@@ -42,13 +47,61 @@ const AISitePrompt: Step = function ( props ) {
 		[]
 	);
 
-	const [ callAIAssembler, setPrompt, prompt, loading ] = useAIAssembler();
+	const [ callAIAssembler, setPrompt, prompt, loading ] = useAIAssembler(); // eslint-disable-line @typescript-eslint/no-unused-vars
+
+	const { siteSlug, siteId } = useSiteData();
+	// const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } = useDispatch( SITE_STORE );
+
+	const exitFlow = ( selectedSiteId: string, selectedSiteSlug: string ) => {
+		// console.log( selectedSiteId, selectedSiteSlug );
+		if ( ! selectedSiteId || ! selectedSiteSlug ) {
+			return;
+		}
+
+		const pendingActions = [
+			resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
+		];
+
+		// TODO: Query if we are indeed missing home page before creating new one.
+		// Create the homepage.
+		pendingActions.push(
+			wpcomRequest( {
+				path: '/sites/' + selectedSiteId + '/pages',
+				method: 'POST',
+				apiNamespace: 'wp/v2',
+				body: {
+					title: 'Home',
+					status: 'publish',
+				},
+			} )
+		);
+
+		// Set the assembler theme
+		pendingActions.push(
+			setDesignOnSite( selectedSiteSlug, {
+				theme: 'assembler',
+			} )
+		);
+
+		Promise.all( pendingActions ).then( ( results ) => {
+			// URL is in the results from the first promise.
+			const siteURL = results[ 0 ].URL;
+			const homePagePostId = results[ 1 ].id;
+			// This will redirect and we will never resolve.
+			setStaticHomepageOnSite( selectedSiteId, homePagePostId ).then( () =>
+				window.location.assign(
+					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&postType=page&postId=${ homePagePostId }`
+				)
+			);
+			return Promise.resolve();
+		} );
+	};
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		callAIAssembler()
-			?.then( () => submit?.( { aiSitePrompt: prompt } ) )
-			?.catch( () => goNext?.() );
+		setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+		exitFlow( siteId.toString(), siteSlug );
 	};
 
 	function getContent() {

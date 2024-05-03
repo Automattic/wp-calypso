@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	getAssemblerDesign,
 	themesIllustrationImage,
@@ -71,6 +72,15 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="pattern-assembler"
 								onSelect={ handleSubmit }
 							/>
+							{ config.isEnabled( 'calypso/ai-assembler' ) && (
+								<DesignChoice
+									title={ translate( 'Use AI' ) }
+									description={ translate( 'Try our AI site builder.' ) }
+									imageSrc={ themesIllustrationImage }
+									destination="aiSitePrompt"
+									onSelect={ handleSubmit }
+								/>
+							) }
 						</div>
 					</>
 				}

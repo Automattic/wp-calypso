@@ -1,4 +1,9 @@
 export const STEPS = {
+	AI_SITE_PROMPT: {
+		slug: 'aiSitePrompt',
+		asyncComponent: () => import( './steps-repository/ai-site-prompt' ),
+	},
+
 	BLOGGER_STARTING_POINT: {
 		slug: 'bloggerStartingPoint',
 		asyncComponent: () => import( './steps-repository/blogger-starting-point' ),
