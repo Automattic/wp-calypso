@@ -741,6 +741,10 @@
 			font-size: $font-body-small;
 			line-height: 20px;
 		}
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin: 16px;
+		}
 	}
 	.sidebar-streams__following-load-more {
 		color: var(--color-neutral-100);
