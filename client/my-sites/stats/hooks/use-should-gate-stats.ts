@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
+import getHasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -92,6 +93,11 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
  */
 export const useShouldGateStats = ( statType: string ) => {
 	const siteId = useSelector( getSelectedSiteId );
+	const hasLoadedSiteFeatures = useSelector( ( state ) =>
+		getHasLoadedSiteFeatures( state, siteId )
+	);
 	const isGatedStats = useSelector( ( state ) => shouldGateStats( state, siteId, statType ) );
-	return { isGatedStats };
+
+	// Avoid flickering by returning false until site features have loaded.
+	return { isGatedStats: ! hasLoadedSiteFeatures || isGatedStats };
 };
