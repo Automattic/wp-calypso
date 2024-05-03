@@ -168,7 +168,7 @@
 }
 
 .wpcom-site .is-group-sites.is-global-sidebar-collapsed,
-.wpcom-site .is-group-sites.is-global-sidebar-visible:not(.is-section-domains) {
+.wpcom-site .is-group-sites.is-global-sidebar-visible:has(.sites-dashboard.sites-dashboard__layout) {
 	.layout__content {
 		min-height: 100vh;
 
