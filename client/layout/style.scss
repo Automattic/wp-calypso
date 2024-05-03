@@ -416,5 +416,9 @@ body.is-mobile-app-view {
 			font-weight: 500;
 			line-height: 26px;
 		}
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin: 0 16px;
+		}
 	}
 }
