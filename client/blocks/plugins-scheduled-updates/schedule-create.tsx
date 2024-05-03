@@ -14,8 +14,6 @@ import { arrowLeft, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { Banner } from 'calypso/components/banner';
-import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
-import { MAX_SCHEDULES } from './config';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useCreateMonitor } from './hooks/use-create-monitor';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
@@ -35,10 +33,6 @@ export const ScheduleCreate = ( props: Props ) => {
 	const { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading } =
 		useSiteHasEligiblePlugins();
 	const { onNavBack } = props;
-	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
-		siteSlug,
-		isEligibleForFeature
-	);
 	const { canCreateSchedules, errors: eligibilityCheckErrors } = useCanCreateSchedules(
 		siteSlug,
 		isEligibleForFeature
@@ -48,12 +42,6 @@ export const ScheduleCreate = ( props: Props ) => {
 	} );
 	const isBusy = pendingMutations.length > 0;
 	const [ syncError, setSyncError ] = useState( '' );
-
-	useEffect( () => {
-		if ( isFetched && MAX_SCHEDULES && schedules.length >= MAX_SCHEDULES ) {
-			onNavBack && onNavBack();
-		}
-	}, [ isFetched ] );
 
 	// Redirect back to list when no eligible plugins are installed
 	useEffect( () => {
