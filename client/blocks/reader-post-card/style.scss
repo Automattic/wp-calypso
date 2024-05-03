@@ -85,7 +85,7 @@
 			.reader-post-card__post-details {
 				flex: 0 auto; // IE11 Photo card actions hidden
 				margin: 0;
-				padding-top: 8px;
+				padding-top: 24px;
 			}
 
 			.reader-post-card__title {
@@ -311,8 +311,7 @@
 	position: relative;
 	top: 0;
 	height: 300px;
-	margin-right: 0;
-	margin-bottom: 0;
+	margin: 24px 0 0;
 	max-width: 100%;
 
 	&:hover {
