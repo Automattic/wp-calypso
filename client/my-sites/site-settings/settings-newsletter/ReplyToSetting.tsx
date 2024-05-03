@@ -1,7 +1,10 @@
 import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
+import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 
 type ReplyToSettingProps = {
 	value?: string;
@@ -13,9 +16,14 @@ export const ReplyToSetting = ( {
 	value = 'no-reply',
 	disabled,
 	updateFields,
-	isWPcomSite,
 }: ReplyToSettingProps ) => {
 	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = selectedSite?.ID;
+	const isWPcomSite = useSelector( ( state ) => {
+		return ! isJetpackSiteSelector( state, siteId );
+	} );
+
 	return (
 		<FormFieldset>
 			<FormLabel className="increase-margin-bottom-fix">

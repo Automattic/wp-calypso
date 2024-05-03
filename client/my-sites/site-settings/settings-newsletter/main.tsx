@@ -133,10 +133,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		return ! isJetpackSite;
 	} );
 
-	const isWPcomSite = useSelector( ( state ) => {
-		return ! isJetpackSiteSelector( state, siteId );
-	} );
-
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
 	const savedSubscriptionOptions = settings?.subscription_options;
 
@@ -213,7 +209,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					updateFields={ updateFields }
 					value={ jetpack_subscriptions_reply_to }
-					isWPcomSite={ isWPcomSite }
 				/>
 			</Card>
 
