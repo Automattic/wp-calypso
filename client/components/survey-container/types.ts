@@ -20,6 +20,7 @@ export type Question = {
 	subHeaderText?: string;
 	type: QuestionType;
 	options: Option[];
+	required: boolean;
 };
 
 export type Answers = Record< string, string[] >;

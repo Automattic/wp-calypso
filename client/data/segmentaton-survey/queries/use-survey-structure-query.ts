@@ -11,6 +11,7 @@ type SurveyStructureResponse = {
 	key: string;
 	sub_header_text: string;
 	type: string;
+	required?: boolean;
 	options: {
 		label: string;
 		value: string;
@@ -32,6 +33,7 @@ const mapSurveyStructureResponse = ( response: SurveyStructureResponse ): Questi
 			} ),
 			subHeaderText: question.sub_header_text,
 			type: QuestionType[ question.type.toUpperCase() as keyof typeof QuestionType ],
+			required: !! question.required,
 		};
 	} );
 
