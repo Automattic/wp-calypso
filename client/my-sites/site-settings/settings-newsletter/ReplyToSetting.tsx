@@ -6,8 +6,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 type ReplyToSettingProps = {
 	value?: string;
 	disabled?: boolean;
-	updateFields?: ( fields: { [ key: string ]: unknown } ) => void;
-	isWPcomSite?: boolean;
+	updateFields: ( fields: { [ key: string ]: unknown } ) => void;
 };
 
 export const ReplyToSetting = ( {
@@ -29,7 +28,7 @@ export const ReplyToSetting = ( {
 				<FormRadio
 					value="no-reply"
 					checked={ value === 'no-reply' || value === '' }
-					onChange={ () => updateFields?.( { jetpack_subscriptions_reply_to: 'no-reply' } ) }
+					onChange={ () => updateFields( { jetpack_subscriptions_reply_to: 'no-reply' } ) }
 					disabled={ disabled }
 					label={ translate( 'Replies are not allowed' ) }
 				/>
@@ -40,7 +39,7 @@ export const ReplyToSetting = ( {
 						<FormRadio
 							checked={ value === 'comment' }
 							value="comment"
-							onChange={ () => updateFields?.( { jetpack_subscriptions_reply_to: 'comment' } ) }
+							onChange={ () => updateFields( { jetpack_subscriptions_reply_to: 'comment' } ) }
 							disabled={ disabled }
 							label={ translate( 'Replies will be a public comment on the post' ) }
 						/>
@@ -51,7 +50,7 @@ export const ReplyToSetting = ( {
 				<FormRadio
 					checked={ value === 'author' }
 					value="author"
-					onChange={ () => updateFields?.( { jetpack_subscriptions_reply_to: 'author' } ) }
+					onChange={ () => updateFields( { jetpack_subscriptions_reply_to: 'author' } ) }
 					disabled={ disabled }
 					label={ translate( "Replies will be sent to the post author's email" ) }
 				/>
