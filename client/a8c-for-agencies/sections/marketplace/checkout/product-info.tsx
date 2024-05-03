@@ -62,6 +62,22 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 	if ( ! productDescription ) {
 		return null;
 	}
+	const countInfo =
+		product.family_slug === 'wpcom-hosting'
+			? translate( '%(numLicenses)d site', '%(numLicenses)d sites', {
+					context: 'button label',
+					count: product.quantity,
+					args: {
+						numLicenses: product.quantity,
+					},
+			  } )
+			: translate( '%(numLicenses)d plan', '%(numLicenses)d plans', {
+					context: 'button label',
+					count: product.quantity,
+					args: {
+						numLicenses: product.quantity,
+					},
+			  } );
 
 	return (
 		<div className="product-info">
@@ -73,15 +89,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 					<label htmlFor={ productTitle } className="product-info__label">
 						{ productTitle }
 					</label>
-					<span className="product-info__count">
-						{ translate( '%(numLicenses)d plan', '%(numLicenses)d plans', {
-							context: 'button label',
-							count: product.quantity,
-							args: {
-								numLicenses: product.quantity,
-							},
-						} ) }
-					</span>
+					<span className="product-info__count">{ countInfo }</span>
 				</div>
 				<p className="product-info__description">{ productDescription }</p>
 			</div>
