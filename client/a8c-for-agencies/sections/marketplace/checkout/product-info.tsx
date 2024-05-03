@@ -1,5 +1,6 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { useTranslate } from 'i18n-calypso';
+import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/hooks/use-license-lightbox-data';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
@@ -36,6 +37,24 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 				count: presablePlan.install,
 				comment:
 					'The `install`, `visits` & `storage` are the count of WordPress installs, visits per month, and storage per month in the plan description.',
+			}
+		);
+	}
+
+	if ( product.family_slug === 'wpcom-hosting' ) {
+		productIcon = wpcomIcon;
+		// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
+		//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
+		productTitle = product.name === 'WordPress.com Creator' ? 'WordPress.com Site' : product.name;
+		productDescription = translate(
+			'Plan with %(install)d managed WordPress install, with 50GB of storage each.',
+			'Plan with %(install)d managed WordPress installs, with 50GB of storage each.',
+			{
+				args: {
+					install: product.quantity,
+				},
+				count: product.quantity,
+				comment: 'The `install` are the count of WordPress installs.',
 			}
 		);
 	}

@@ -1,8 +1,13 @@
 import { useCallback } from 'react';
-import { QuestionSelectionType } from './question-step';
+import { QuestionSelectionComponentProps } from './question-step';
 import SurveyRadioOption from './survey-radio-option';
 
-const SurveyRadioControl = ( { onChange, question, value }: QuestionSelectionType ) => {
+const SurveyRadioControl = ( {
+	onChange,
+	question,
+	value,
+	disabled,
+}: QuestionSelectionComponentProps ) => {
 	const handleChange = useCallback(
 		( questionKey: string, newValue: string[] ) => {
 			if ( ! value.includes( newValue[ 0 ] ) ) {
@@ -21,6 +26,7 @@ const SurveyRadioControl = ( { onChange, question, value }: QuestionSelectionTyp
 					option={ option }
 					onChange={ handleChange }
 					value={ value }
+					disabled={ disabled }
 				/>
 			) ) }
 		</div>

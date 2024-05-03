@@ -70,6 +70,10 @@ export function sitesDashboard( context: Context, next: () => void ) {
 			}
 		}
 
+		body.is-group-sites-dashboard.rtl .layout__content {
+			padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;
+		}
+
 		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
 			height: calc( 100vh - 32px );
 			padding-bottom: 0;

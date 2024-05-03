@@ -27,7 +27,14 @@ import './style.scss';
 export default function ProductsOverview( { siteId, suggestedProduct }: AssignLicenseProps ) {
 	const translate = useTranslate();
 
-	const { selectedCartItems, setSelectedCartItems, onRemoveCartItem } = useShoppingCart();
+	const {
+		selectedCartItems,
+		setSelectedCartItems,
+		onRemoveCartItem,
+		showCart,
+		setShowCart,
+		toggleCart,
+	} = useShoppingCart();
 
 	const { isLoading } = useProductsQuery();
 
@@ -73,6 +80,9 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 						<MobileSidebarNavigation />
 
 						<ShoppingCart
+							showCart={ showCart }
+							setShowCart={ setShowCart }
+							toggleCart={ toggleCart }
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {

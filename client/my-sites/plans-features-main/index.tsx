@@ -11,6 +11,10 @@ import {
 	UrlFriendlyTermType,
 	isValidFeatureKey,
 	getFeaturesList,
+	getWooExpressFeaturesGrouped,
+	getPlanFeaturesGrouped,
+	isWooExpressPlan,
+	setTrailMapExperiment,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -45,7 +49,6 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -65,11 +68,12 @@ import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/s
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
+import PlansPageSubheader from './components/plans-page-subheader';
 import useGenerateActionCallback from './hooks/use-action-callback';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
-import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
+import useExperimentForTrailMap, { TrailMapVariant } from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -85,23 +89,6 @@ import type {
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
-
-const FreePlanSubHeader = styled.p`
-	margin: -32px 0 40px 0;
-	color: var( --studio-gray-60 );
-	font-size: 1rem;
-	text-align: center;
-	button.is-borderless {
-		font-weight: 500;
-		color: var( --studio-gray-90 );
-		text-decoration: underline;
-		font-size: 16px;
-		padding: 0;
-	}
-	@media ( max-width: 960px ) {
-		margin-top: -16px;
-	}
-`;
 
 const PlanComparisonHeader = styled.h1`
 	.plans .step-container .step-container__content &&,
@@ -192,25 +179,6 @@ export interface PlansFeaturesMainProps {
 	 */
 	deemphasizeFreePlan?: boolean;
 }
-
-const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
-	const translate = useTranslate();
-	const headerText = translate( 'Upgrade your plan to access this feature and more' );
-	const subHeaderText = (
-		<Button className="plans-features-main__view-all-plans is-link" href={ `/plans/${ siteSlug }` }>
-			{ translate( 'View all plans' ) }
-		</Button>
-	);
-
-	return (
-		<FormattedHeader
-			headerText={ headerText }
-			subHeaderText={ subHeaderText }
-			compactOnMobile
-			isSecondary
-		/>
-	);
-};
 
 const PlansFeaturesMain = ( {
 	paidDomainName,
@@ -327,6 +295,19 @@ const PlansFeaturesMain = ( {
 		intervalType,
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
+
+	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
+	const isAnyTrailMapTreatment = trailMapExperiment.result !== TrailMapVariant.Control;
+	const isTrailMapCopy =
+		trailMapExperiment.result === TrailMapVariant.TreatmentCopy ||
+		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
+	const isTrailMapStructure =
+		trailMapExperiment.result === TrailMapVariant.TreatmentStructure ||
+		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
+
+	useEffect( () => {
+		setTrailMapExperiment( trailMapExperiment.result ?? TrailMapVariant.Control );
+	}, [ trailMapExperiment.isLoading, trailMapExperiment.result ] );
 
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
@@ -452,6 +433,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		includeAllFeatures: isTrailMapStructure,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -737,7 +719,17 @@ const PlansFeaturesMain = ( {
 
 	const onFreePlanCTAClick = useActionCallback( { planSlug: PLAN_FREE } );
 
-	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
+	// Check to see if we have at least one Woo Express plan we're comparing.
+	const hasWooExpressFeatures = useMemo( () => {
+		return gridPlansForComparisonGrid?.some(
+			( { planSlug, isVisible } ) => isVisible && isWooExpressPlan( planSlug )
+		);
+	}, [ gridPlansForComparisonGrid ] );
+
+	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
+	const featureGroupMap = hasWooExpressFeatures
+		? getWooExpressFeaturesGrouped()
+		: getPlanFeaturesGrouped();
 
 	return (
 		<>
@@ -793,19 +785,13 @@ const PlansFeaturesMain = ( {
 							} ) }
 					/>
 				) }
-				{ deemphasizeFreePlan && (
-					<FreePlanSubHeader>
-						{ translate(
-							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
-							{
-								components: {
-									link: <Button onClick={ onFreePlanCTAClick } borderless />,
-								},
-							}
-						) }
-					</FreePlanSubHeader>
-				) }
-				{ isDisplayingPlansNeededForFeature && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
+				<PlansPageSubheader
+					siteSlug={ siteSlug }
+					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+					deemphasizeFreePlan={ deemphasizeFreePlan }
+					onFreePlanCTAClick={ onFreePlanCTAClick }
+					showPlanBenefits={ isInSignup && isAnyTrailMapTreatment }
+				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
 					<>
@@ -848,7 +834,7 @@ const PlansFeaturesMain = ( {
 										isInSignup={ isInSignup }
 										isLaunchPage={ isLaunchPage }
 										onStorageAddOnClick={ handleStorageAddOnClick }
-										paidDomainName={ trailMapExperiment.result ? undefined : paidDomainName }
+										paidDomainName={ isTrailMapCopy ? undefined : paidDomainName }
 										planActionOverrides={ planActionOverrides }
 										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }
@@ -860,6 +846,9 @@ const PlansFeaturesMain = ( {
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 										useActionCallback={ useActionCallback }
+										enableFeatureTooltips={ ! isTrailMapCopy }
+										enableCategorisedFeatures={ isTrailMapStructure }
+										featureGroupMap={ isTrailMapStructure ? featureGroupMap : undefined }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -935,6 +924,8 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
+													enableFeatureTooltips={ ! isTrailMapCopy }
+													featureGroupMap={ featureGroupMap }
 												/>
 											) }
 											<ComparisonGridToggle

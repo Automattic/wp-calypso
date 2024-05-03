@@ -149,6 +149,7 @@ $brand-text: "SF Pro Text", $sans;
 				.sidebar__menu-link {
 					margin: 0;
 					color: var(--color-sidebar-submenu-text);
+					border-radius: 0;
 				}
 
 				.reader-sidebar-tags__text-input {
@@ -179,10 +180,17 @@ $brand-text: "SF Pro Text", $sans;
 			.sidebar__menu-icon {
 				&.dashicons-admin-site-alt3 {
 					margin-right: 10px;
+					margin-left: 1px;
+
+					.is-global-sidebar-collapsed & {
+						margin-left: 2px;
+					}
 				}
 				&.svg_all-sites,
 				&.sidebar_svg-reader {
-					margin-left: -2px;
+					.is-global-sidebar-visible:not(.is-global-sidebar-collapsed) & {
+						margin-left: -2px;
+					}
 				}
 			}
 		}
@@ -412,31 +420,38 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-.is-global-sidebar-collapsed {
-	.global-sidebar {
-		.sidebar__header,
-		.sidebar__footer {
-			flex-direction: column;
+@media ( min-width: 660px ) {
+	.is-global-sidebar-collapsed {
+		.global-sidebar {
+			.sidebar__header,
+			.sidebar__footer {
+				flex-direction: column;
 
-			.sidebar__footer-profile {
-				padding: 0;
+				.sidebar__footer-profile {
+					padding: 0;
+				}
 			}
-		}
 
-		.sidebar__header {
-			span.dotcom {
-				background-position: left;
-				width: 24px;
-				margin-left: 6px;
+			.sidebar__header {
+				span.dotcom {
+					background-position: left;
+					width: 24px;
+					margin-left: 6px;
+
+					.rtl & {
+						background-position: right;
+						margin-right: 6px;
+					}
+				}
 			}
-		}
 
-		.sidebar__body {
-			.sidebar__menu-item-parent .sidebar__menu-link {
-				margin: 0 auto;
+			.sidebar__body {
+				.sidebar__menu-item-parent .sidebar__menu-link {
+					margin: 0 auto;
 
-				> *:not(:first-child) {
-					display: none;
+					> *:not(:first-child) {
+						display: none;
+					}
 				}
 			}
 		}

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
@@ -36,6 +37,7 @@ import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import getRequest from 'calypso/state/selectors/get-request';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
@@ -43,7 +45,11 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
-import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
+import {
+	isSiteOnWooExpressEcommerceTrial,
+	isSiteOnWooExpress,
+	isRequestingSitePlans as isFetchingSitePlans,
+} from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
@@ -51,7 +57,11 @@ import {
 	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedPurchase,
+} from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
 import './style.scss';
@@ -66,6 +76,7 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
+	isSiteWooExpress,
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
@@ -102,6 +113,10 @@ const Home = ( {
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
 
+	const isRequestingSitePlans = useSelector( isFetchingSitePlans );
+	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
+	const purchase = useSelector( getSelectedPurchase );
+
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
 			setCelebrateLaunchModalIsOpen( true );
@@ -137,12 +152,20 @@ const Home = ( {
 		);
 	}
 
-	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
-	// while doing the redirection.
+	// While fetching all the data, show placeholder.
+	// After fetching all the data:
+	//  - For eCommerce & eCommerce trial, don't show placeholder.
+	//  - For Woo Express Trial, Essential & Performance, show placeholder while redirecting to WooCommerce Home (search for `wc-admin` under customer-home/controller.jsx).
 	if (
 		isSiteWooExpressEcommerceTrial &&
 		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
-		( fetchingJetpackModules || ssoModuleActive )
+		( fetchingJetpackModules || ssoModuleActive ) &&
+		( config.isEnabled( 'entrepreneur-my-home' )
+			? isRequestingSitePlans ||
+			  isRequestingSitePurchases ||
+			  isSiteWooExpress ||
+			  purchase?.isWooExpressTrial
+			: true )
 	) {
 		return <WooCommerceHomePlaceholder />;
 	}
@@ -309,6 +332,7 @@ const mapStateToProps = ( state ) => {
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
+		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 		isSiteWooExpressEcommerceTrial: isSiteOnWooExpressEcommerceTrial( state, siteId ),
 		ssoModuleActive: !! isJetpackModuleActive( state, siteId, 'sso' ),
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),

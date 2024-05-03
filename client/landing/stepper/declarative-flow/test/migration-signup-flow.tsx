@@ -1,7 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
@@ -129,16 +131,18 @@ describe( 'Migration Signup Flow', () => {
 				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 				dependencies: {
 					goToCheckout: true,
-					plan: 'plan',
+					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+					sendIntentWhenCreatingTrial: true,
 				},
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
 				destination: `/setup/migration-signup/${ STEPS.BUNDLE_TRANSFER.slug }?siteSlug=example.wordpress.com`,
+				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 				flowName: 'migration-signup',
 				siteSlug: 'example.wordpress.com',
-				plan: 'plan',
 				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				plan: PLAN_MIGRATION_TRIAL_MONTHLY,
 			} );
 		} );
 

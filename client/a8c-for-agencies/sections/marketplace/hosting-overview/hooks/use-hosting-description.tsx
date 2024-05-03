@@ -55,6 +55,12 @@ export default function useHostingDescription( slug: string ): {
 					translate( 'Local development environment, Studio' ),
 				];
 				break;
+			case 'vip':
+				name = translate( 'VIP' );
+				description = translate(
+					'Deliver unmatched performance with the highest security standards on our enterprise content platform.'
+				);
+				features = [];
 		}
 
 		return {

@@ -24,6 +24,7 @@ interface RenderFlowParams {
 	dependencies?: ProvidedDependencies;
 	currentURL?: string;
 	method: 'submit' | 'goBack' | null;
+	cancelDestination?: string;
 }
 /** Utility to render a flow for testing purposes */
 export const renderFlow = ( flow: Flow ) => {

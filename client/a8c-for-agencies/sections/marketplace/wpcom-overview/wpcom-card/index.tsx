@@ -11,9 +11,10 @@ type Props = {
 	plan: APIProductFamilyProduct;
 	quantity: number;
 	discount: number;
+	onSelect: ( plan: APIProductFamilyProduct, quantity: number ) => void;
 };
 
-export default function WPCOMPlanCard( { plan, quantity, discount }: Props ) {
+export default function WPCOMPlanCard( { plan, quantity, discount, onSelect }: Props ) {
 	const translate = useTranslate();
 
 	const originalPrice = Number( plan.amount ) * quantity;
@@ -40,7 +41,7 @@ export default function WPCOMPlanCard( { plan, quantity, discount }: Props ) {
 								<span className="wpcom-plan-card__price-discount">
 									{ translate( 'You save %(discount)s%', {
 										args: {
-											discount: discount * 100,
+											discount: Math.floor( discount * 100 ),
 										},
 										comment: '%(discount)s is the discount percentage.',
 									} ) }
@@ -48,13 +49,13 @@ export default function WPCOMPlanCard( { plan, quantity, discount }: Props ) {
 							</>
 						) }
 						<div className="wpcom-plan-card__price-interval">
-							{ plan.price_interval === 'day' && translate( 'USD per plan per day' ) }
-							{ plan.price_interval === 'month' && translate( 'USD per plan per month' ) }
+							{ plan.price_interval === 'day' && translate( 'USD per site per day' ) }
+							{ plan.price_interval === 'month' && translate( 'USD per site per month' ) }
 						</div>
 					</div>
 				</div>
 
-				<Button primary>
+				<Button primary onClick={ () => onSelect( plan, quantity ) }>
 					{ quantity > 1
 						? translate( 'Add %(quantity)s %(planName)s sites to cart', {
 								args: {
