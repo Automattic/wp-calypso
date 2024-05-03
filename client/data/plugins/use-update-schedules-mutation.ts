@@ -250,16 +250,12 @@ export function useBatchDeleteUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 							} );
 							return { siteSlug, response };
 						} catch ( error ) {
-							throw { siteSlug, error };
+							return { siteSlug, error };
 						}
 					} )
 				);
 
-			// check if any of the requests failed
-			const failedRequests = results.filter( ( result ) => result.error );
-			if ( failedRequests.length ) {
-				throw failedRequests;
-			}
+			return results;
 		},
 		onSettled: () => {
 			queryClient.removeQueries( { queryKey: [ 'multisite-schedules-update' ] } );

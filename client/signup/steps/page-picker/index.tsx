@@ -380,12 +380,14 @@ function OneClickPurchaseModal( {
 	selectedPages,
 	isStoreFlow,
 	flowName,
+	coupon,
 }: {
 	onClose: () => void;
 	siteSlug: SiteSlug;
 	selectedPages: string[];
 	isStoreFlow: boolean;
 	flowName: string;
+	coupon?: string;
 } ) {
 	const translate = useTranslate();
 	const signupDependencies = useSelector( getSignupDependencyStore );
@@ -414,6 +416,7 @@ function OneClickPurchaseModal( {
 				<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
 					<PurchaseModal
 						productToAdd={ product }
+						coupon={ coupon }
 						onClose={ onClose }
 						showFeatureList={ false }
 						siteSlug={ siteSlug }
@@ -428,7 +431,12 @@ function DIFMPagePicker( props: StepProps ) {
 	const {
 		stepName,
 		goToNextStep,
-		signupDependencies: { siteId: siteIdFromDependencies, siteSlug, newOrExistingSiteChoice },
+		signupDependencies: {
+			siteId: siteIdFromDependencies,
+			siteSlug,
+			newOrExistingSiteChoice,
+			coupon,
+		},
 		flowName,
 	} = props;
 	const translate = useTranslate();
@@ -576,6 +584,7 @@ function DIFMPagePicker( props: StepProps ) {
 							selectedPages={ selectedPages }
 							isStoreFlow={ isStoreFlow }
 							flowName={ flowName }
+							coupon={ coupon }
 						/>
 					) }
 					<PageSelector

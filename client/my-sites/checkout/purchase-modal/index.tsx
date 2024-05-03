@@ -37,6 +37,7 @@ type PurchaseModalProps = {
 	onClose: () => void;
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
+	coupon?: string;
 	showFeatureList: boolean;
 } & (
 	| {
@@ -112,6 +113,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		onPurchaseSuccess = null,
 		disabledThankYouPage,
 		productToAdd,
+		coupon,
 		siteSlug,
 		showFeatureList,
 	} = props;
@@ -132,7 +134,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const { razorpayConfiguration } = useRazorpay();
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
-	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate } =
+	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate, applyCoupon } =
 		useShoppingCart( cartKey );
 	const selectedSite = useSelector( getSelectedSite );
 	const paymentMethodsState = useStoredPaymentMethods( {
@@ -204,7 +206,9 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				city: wrapValueInManagedValue( storedCard.tax_location?.city ),
 				postalCode: wrapValueInManagedValue( storedCard.tax_location?.postal_code ),
 			};
+
 			setRequestSent( true );
+
 			updateCartContactDetailsForCheckout(
 				countries ?? [],
 				responseCart,
@@ -213,6 +217,9 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				vatDetails
 			);
 			replaceProductsInCart( [ productToAdd ] );
+			if ( coupon ) {
+				applyCoupon( coupon );
+			}
 		}
 	}, [
 		replaceProductsInCart,
@@ -225,6 +232,8 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		requestSent,
 		setRequestSent,
 		responseCart,
+		applyCoupon,
+		coupon,
 	] );
 
 	const handleOnClose = () => {

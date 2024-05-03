@@ -509,3 +509,4 @@ export const FEATURE_LIMITED_STATS = 'limited_stats';
 export const FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT = 'local_development_environment';
 export const FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS = 'pre_installed_security_perf_plugins';
 export const FEATURE_WEB_SERVER_SETTINGS = 'web_server_settings';
+export const FEATURE_1_WEBSITE = '1_website';

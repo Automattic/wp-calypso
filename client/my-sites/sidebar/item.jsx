@@ -26,6 +26,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	url,
 	className = '',
 	shouldOpenExternalLinksInCurrentTab,
+	showTooltip = false,
 	forceExternalLink = false,
 	forceShowExternalIcon = false,
 	forceChevronIcon = false,
@@ -47,6 +48,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			badge={ badge }
 			count={ count }
 			label={ title }
+			tooltip={ showTooltip && title }
 			link={ url }
 			onNavigate={ onNavigate }
 			selected={ selected }
@@ -72,6 +74,7 @@ MySitesSidebarUnifiedItem.propTypes = {
 	sectionId: PropTypes.string,
 	slug: PropTypes.string,
 	title: PropTypes.string,
+	showTooltip: PropTypes.bool,
 	url: PropTypes.string,
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
 	forceExternalLink: PropTypes.bool,

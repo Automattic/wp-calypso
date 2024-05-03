@@ -55,8 +55,8 @@ export default function WPCOMBulkSelector( { selectedTier, onSelectTier, ownedPl
 
 					<span>
 						{ translate(
-							'You own {{b}}%(count)s Creator plan{{/b}}',
-							'You own {{b}}%(count)s Creator plans{{/b}}',
+							'You own {{b}}%(count)s plan{{/b}}',
+							'You own {{b}}%(count)s plans{{/b}}',
 							{
 								args: {
 									count: ownedPlans,
@@ -65,7 +65,7 @@ export default function WPCOMBulkSelector( { selectedTier, onSelectTier, ownedPl
 									b: <strong />,
 								},
 								count: ownedPlans,
-								comment: '%(count)s is the number of Creator plans owned by the user',
+								comment: '%(count)s is the number of WordPress.com plans owned by the user',
 							}
 						) }
 					</span>

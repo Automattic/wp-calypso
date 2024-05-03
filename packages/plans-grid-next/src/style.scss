@@ -962,6 +962,13 @@ $mobile-card-max-width: 440px;
 			.plan-comparison-grid__plan-subtitle {
 				text-decoration: line-through;
 			}
+
+			&.hide-unsupported-feature {
+				.plan-comparison-grid__plan-title,
+				.plan-comparison-grid__plan-subtitle {
+					display: none;
+				}
+			}
 		}
 
 		@include plans-grid-medium-large {

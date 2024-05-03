@@ -407,4 +407,14 @@ body.is-mobile-app-view {
 	.layout__content {
 		background: var(--studio-white);
 	}
+	.section-header.card {
+		box-shadow: none;
+		padding: 0;
+
+		.section-header__label-text {
+			font-size: 1.25rem;
+			font-weight: 500;
+			line-height: 26px;
+		}
+	}
 }

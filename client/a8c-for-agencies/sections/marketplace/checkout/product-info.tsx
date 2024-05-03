@@ -43,7 +43,9 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 
 	if ( product.family_slug === 'wpcom-hosting' ) {
 		productIcon = wpcomIcon;
-		productTitle = product.name;
+		// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
+		//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
+		productTitle = product.name === 'WordPress.com Creator' ? 'WordPress.com Site' : product.name;
 		productDescription = translate(
 			'Plan with %(install)d managed WordPress install, with 50GB of storage each.',
 			'Plan with %(install)d managed WordPress installs, with 50GB of storage each.',

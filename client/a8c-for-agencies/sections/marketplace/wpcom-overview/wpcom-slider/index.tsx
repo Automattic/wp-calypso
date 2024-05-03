@@ -32,7 +32,7 @@ export default function A4AWPCOMSlider( {
 	sub,
 	minimum = 0,
 }: Props ) {
-	const total = options.length * 10;
+	const total = ( options.length + 1 ) * 20;
 	const mappedOptions = useMemo(
 		() => mapOptionsToSliderOptions( options, total ),
 		[ options, total ]
@@ -79,7 +79,7 @@ export default function A4AWPCOMSlider( {
 
 	const ratio = valueToSliderPos( minimum, mappedOptions ) / total;
 
-	const thumbSize = -14;
+	const thumbSize = 14;
 	const sliderWidth = rangeRef.current?.offsetWidth ?? 1;
 	const disabledAreaWidth =
 		minimum >= mappedOptions[ mappedOptions.length - 1 ].maxValue
