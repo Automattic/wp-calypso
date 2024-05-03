@@ -12,12 +12,13 @@ interface VisualStateIndicatorProps {
 
 const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 	let icon: string | JSX.Element;
+
 	switch ( state ) {
 		case 'pending':
 			icon = <Spinner />;
 			break;
 		case 'success':
-			icon = <Icon icon={ check } width={ 20 } />;
+			icon = <Icon icon={ check } width={ 30 } />;
 			break;
 		case 'error':
 			icon = '❌';
