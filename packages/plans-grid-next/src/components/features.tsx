@@ -150,9 +150,9 @@ const PlanFeatures2023GridFeatures: React.FC< {
 													domainName: paidDomainName,
 													planSlug,
 												} ) }
-												{ currentFeature?.getSubFeatureSlugs?.()?.length ? (
+												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
 													<ul className="plan-features-2023-grid__item-sub-feature-list">
-														{ currentFeature.getSubFeatureSlugs().map( ( subFeature ) => (
+														{ currentFeature.getSubFeatureObjects().map( ( subFeature ) => (
 															<li>{ subFeature?.getTitle() }</li>
 														) ) }
 													</ul>
