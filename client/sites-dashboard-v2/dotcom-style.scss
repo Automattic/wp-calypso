@@ -188,6 +188,9 @@
 		transition: all 0.2s ease-in-out;
 
 		.sidebar__header {
+			span.dotcom {
+				background-position: left;
+			}
 			span.dotcom,
 			button.sidebar__item-search,
 			a.sidebar__item-notifications {
@@ -198,11 +201,23 @@
 	.is-global-sidebar-collapsed {
 		@media ( min-width: 661px ) {
 			.global-sidebar {
+				.sidebar__header,
+				.sidebar__footer {
+					max-width: 30px;
+					min-width: calc(100% - 50px);
+				}
 				.sidebar__body {
 					padding-top: 24px;
-
+					.sidebar__menu-link-text {
+						transition: all 100ms ease-in-out;
+						transition-delay: 100ms;
+						opacity: 0;
+						display: block !important;
+						width: 0;
+					}
 					.sidebar__menu-link {
 						width: fit-content;
+						min-width: calc(100% - 50px);
 
 						> :first-child {
 							margin-right: 0;
