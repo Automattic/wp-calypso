@@ -1,4 +1,5 @@
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import { isWooCommerceProduct } from './woocommerce-product-slug-mapping';
 import type { SelectedLicenseProp } from '../types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
@@ -34,11 +35,15 @@ export const getProductPricingInfo = (
 		// If a yearly product is found, find the monthly version of the product
 		const monthlyProduct =
 			yearlyProduct &&
-			Object.values( userProducts ).find(
-				( p ) =>
-					p.billing_product_slug === yearlyProduct.billing_product_slug &&
+			Object.values( userProducts ).find( ( p ) => {
+				return (
+					( p.billing_product_slug === yearlyProduct.billing_product_slug ||
+						// Check if the product is a WooCommerce product
+						isWooCommerceProduct( p.billing_product_slug, yearlyProduct.billing_product_slug ) ) &&
 					p.product_term === 'month'
-			);
+				);
+			} );
+
 		// If a monthly product is found, calculate the actual cost and discount percentage
 		if ( monthlyProduct ) {
 			const monthlyProductBundleCost = parseFloat( product.amount ) * quantity;

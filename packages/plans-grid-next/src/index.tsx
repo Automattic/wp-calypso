@@ -36,6 +36,9 @@ const WrappedComparisonGrid = ( {
 	stickyRowOffset,
 	coupon,
 	className,
+	hideUnsupportedFeatures,
+	enableFeatureTooltips,
+	featureGroupMap,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -70,6 +73,9 @@ const WrappedComparisonGrid = ( {
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				coupon={ coupon }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				featureGroupMap={ featureGroupMap }
+				hideUnsupportedFeatures={ hideUnsupportedFeatures }
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }
@@ -102,6 +108,9 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		coupon,
 		isInAdmin,
 		className,
+		enableFeatureTooltips,
+		enableCategorisedFeatures,
+		featureGroupMap = {},
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -131,6 +140,9 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				useActionCallback={ useActionCallback }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				enableCategorisedFeatures={ enableCategorisedFeatures }
+				featureGroupMap={ featureGroupMap }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>

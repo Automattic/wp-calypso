@@ -138,10 +138,8 @@ export class Notifications extends Component {
 
 		switch ( event.data.action ) {
 			case 'openPanel':
-				// checktoggle closes panel with no parameters
-				this.props.checkToggle();
-				// ... and toggles when the 2nd parameter is true
-				this.props.checkToggle( null, true );
+				// Ensure panel is opened.
+				this.props.checkToggle( null, true, true );
 				return refreshNotes();
 
 			case 'trackClick':

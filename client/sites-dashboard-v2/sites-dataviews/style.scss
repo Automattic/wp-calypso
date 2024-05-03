@@ -16,7 +16,6 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	width: 180px;
 	font-weight: 500;
 	font-size: rem(14px);
 }
@@ -31,6 +30,10 @@
 }
 
 .preview-hidden {
+	.sites-dataviews__site-name {
+		width: 180px;
+	}
+
 	@media (min-width: 2040px) {
 		.sites-dataviews__site-name {
 			width: 250px;
@@ -59,11 +62,7 @@
 }
 
 .sites-dashboard__layout:not(.preview-hidden) {
-
 	.dataviews-pagination {
-		line-height: 1;
-		width: 368px;
-
 		.components-base-control {
 			width: unset !important;
 			margin-right: 0 !important;
@@ -76,5 +75,7 @@
 }
 
 .main.sites-dashboard.sites-dashboard__layout:has(.dataviews-pagination) {
-	height: calc(100vh - 70px);
+	.dataviews-view-table {
+		margin: 0;
+	}
 }

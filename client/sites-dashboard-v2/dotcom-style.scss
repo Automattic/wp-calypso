@@ -12,20 +12,113 @@
 	background: var(--color-sidebar-background);
 }
 
+.wpcom-site .main.a4a-layout.sites-dashboard {
+	.a4a-layout__top-wrapper,
+	.a4a-layout__body {
+		> * {
+			padding-inline: 8px;
+
+			@include breakpoint-deprecated( ">660px" ) {
+				padding-inline: 8px;
+			}
+
+			@include breakpoint-deprecated( ">960px" ) {
+				padding-inline: 64px;
+			}
+		}
+	}
+
+	.a4a-layout__header-main {
+		display: block;
+	}
+
+	.a4a-layout__header-title {
+		display: block;
+	}
+
+	.item-preview__content {
+		.hosting-overview,
+		.site-monitoring-overview {
+			overflow-y: initial;
+			max-height: initial;
+		}
+	}
+
+	height: calc(100vh - var(--masterbar-height));
+	@media ( min-width: 601px ) {
+		height: calc(100vh - var(--masterbar-height) - 48px);
+	}
+
+	@media ( min-width: 782px ) {
+		height: calc(100vh - var(--masterbar-height) - 32px);
+	}
+}
+
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
 	background: var(--studio-white);
 
 	.a4a-layout__top-wrapper {
-		border-block-end: 0;
+		border-block-end: none;
 
 		@include break-medium {
-			border-block-end: 1px solid var(--studio-gray-0);
+			border-block-end: 1px solid var(--color-border-secondary);
 			margin-bottom: 24px;
 		}
 	}
 
 	.dataviews-filters__view-actions {
 		border-bottom: 0;
+		align-items: center;
+	}
+
+	.a4a-layout__header {
+		flex-wrap: nowrap;
+	}
+
+	table.dataviews-view-table thead .dataviews-view-table__row th {
+		border-bottom-color: var(--color-border-secondary);
+
+		span,
+		.dataviews-view-table-header-button {
+			color: inherit;
+		}
+	}
+
+	table.dataviews-view-table .dataviews-view-table__row td {
+		border-bottom-color: var(--color-border-secondary);
+	}
+
+	table.dataviews-view-table th,
+	table.dataviews-view-table td {
+		white-space: nowrap; /* Optional: ensures text in cells does not wrap */
+	}
+
+	table.dataviews-view-table th:first-child,
+	table.dataviews-view-table td:first-child,
+	table.dataviews-view-table th:last-child,
+	table.dataviews-view-table td:last-child {
+		display: table-cell; /* ensures these cells are always shown */
+	}
+
+	@media (max-width: $break-wide) {
+		table.dataviews-view-table th:nth-child(5),
+		table.dataviews-view-table td:nth-child(5) {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-wide - 100px) {
+		table.dataviews-view-table th:nth-child(4),
+		table.dataviews-view-table td:nth-child(4) {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-xlarge) {
+		table.dataviews-view-table th:nth-child(3),
+		table.dataviews-view-table td:nth-child(3) {
+			display: none;
+		}
 	}
 }
 
@@ -33,7 +126,7 @@
 .dataviews-filters__view-actions {
 	.components-search-control {
 		@include break-large {
-			min-width: 390px;
+			min-width: 337px;
 		}
 	}
 
@@ -45,25 +138,81 @@
 		align-items: center;
 		// Places search above filters
 		z-index: 1;
-		border-radius: 2px;
-		border: 1px solid var(--studio-gray-10);
+		border-radius: 4px;
+		border: 1px solid var(--color-border-subtle);
 		background-color: var(--color-surface, $white);
 
 		.components-input-control__input {
 			padding-left: 0;
-			font-size: $font-body;
+			font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			color: var(--studio-gray-40);
+
+			&::placeholder {
+				color: var(--studio-gray-40);
+			}
 		}
 
 		// Search icon
 		.components-input-control__suffix {
 			padding-inline-start: 11px;
-			color: var(--studio-gray-30);
+			color: var(--studio-black);
 		}
+	}
+}
+
+// Style the sortable table headers.
+.wpcom-site .dataviews-view-table .components-button.is-tertiary {
+	&:active:not(:disabled),
+	&:hover:not(:disabled) {
+		box-shadow: none;
+		background-color: inherit;
+		color: var(--color-accent) !important;
+	}
+}
+
+.wpcom-site .is-group-sites.is-global-sidebar-collapsed,
+.wpcom-site .is-group-sites.is-global-sidebar-visible:not(.is-section-domains) {
+	.layout__content {
+		@include break-medium {
+			padding: 16px 16px 16px calc(var(--sidebar-width-max));
+		}
+	}
+
+	.layout__secondary .global-sidebar {
+		border: none;
 	}
 }
 
 // Styles collapsed site list.
 .wpcom-site {
+	.layout__secondary {
+		transition: all 0.2s ease-in-out;
+
+		.sidebar__header {
+			span.dotcom,
+			button.sidebar__item-search,
+			a.sidebar__item-notifications {
+				transition: all 0.2s ease-in-out;
+			}
+		}
+	}
+	.is-global-sidebar-collapsed {
+		@media ( min-width: 661px ) {
+			.global-sidebar {
+				.sidebar__body {
+					padding-top: 24px;
+
+					.sidebar__menu-link {
+						width: fit-content;
+
+						> :first-child {
+							margin-right: 0;
+						}
+					}
+				}
+			}
+		}
+	}
 	.sites-dashboard.preview-hidden {
 		.dataviews-filters__view-actions {
 			// Sort action icon
@@ -88,8 +237,18 @@
 			margin-right: 0;
 		}
 
-		.sites-site-thumbnail {
+		.sites-site-thumbnail,
+		.sites-manage-all-domains-button {
 			display: none;
+		}
+
+		.a4a-layout__viewport {
+			width: 360px;
+			justify-content: space-between;
+		}
+
+		.a4a-layout__viewport > div:first-child {
+			width: 100%;
 		}
 
 		.list-tile__leading {
@@ -146,6 +305,31 @@
 				}
 			}
 		}
+
+		.item-preview__header-content .item-preview__close-preview {
+			height: 16px;
+			padding-left: 0;
+			padding-right: 0;
+			color: var(--color-link);
+
+			@include break-medium {
+				height: 32px;
+			}
+		}
+	}
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+	.a4a-layout-column__container {
+		.dataviews-wrapper {
+			position: relative;
+
+			.dataviews-pagination {
+				margin: 0;
+				position: relative;
+				width: 100%;
+			}
+		}
 	}
 }
 
@@ -183,15 +367,23 @@
 			display: flex;
 			height: 100%;
 
+			> * {
+				flex-grow: 1;
+			}
+
 			.dataviews-view-list {
 				flex: 1;
 				max-height: none;
 			}
-
-			.dataviews-pagination {
-				margin: 0;
-				position: relative;
-			}
 		}
+	}
+}
+
+.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
+	max-height: calc(100vh - 276px); /* 276px is the size of all the height above and below the dataviews-view-table-wrapper */
+
+	// With 48px padding.
+	@media ( min-width: 601px ) {
+		max-height: calc(100vh - 324px); /* 324px is the size of all the height above and below the dataviews-view-table-wrapper */
 	}
 }

@@ -43,11 +43,12 @@ export function ScheduleFormPlugins( props: Props ) {
 	const [ fieldTouched, setFieldTouched ] = useState( false );
 
 	const removeUnlistedSelectedPlugins = useCallback( () => {
-		setSelectedPlugins(
-			selectedPlugins.filter( ( plugin ) => plugins.find( ( p ) => p.plugin === plugin ) )
-		);
-	}, [ plugins, selectedPlugins ] );
-
+		if ( isPluginsFetched ) {
+			setSelectedPlugins(
+				selectedPlugins.filter( ( plugin ) => plugins.find( ( p ) => p.plugin === plugin ) )
+			);
+		}
+	}, [ plugins, isPluginsFetched ] );
 	const onPluginSelectionChange = useCallback(
 		( plugin: CorePlugin, isChecked: boolean ) => {
 			if ( isChecked ) {
@@ -82,7 +83,7 @@ export function ScheduleFormPlugins( props: Props ) {
 
 	useEffect( () => onTouch?.( fieldTouched ), [ fieldTouched ] );
 	useEffect( () => onChange?.( selectedPlugins ), [ selectedPlugins ] );
-	useEffect( () => removeUnlistedSelectedPlugins(), [ plugins ] );
+	useEffect( () => removeUnlistedSelectedPlugins(), [ plugins, isPluginsFetched ] );
 
 	return (
 		<div className="form-field form-field--plugins">

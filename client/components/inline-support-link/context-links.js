@@ -272,6 +272,11 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/site-verification-services/',
 		post_id: 5022,
 	},
+	'staging-to-production-sync': {
+		link: 'https://developer.wordpress.com/docs/developer-tools/staging-sites/#staging-to-production',
+		post_id: 99381,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
 	stats: {
 		link: 'https://wordpress.com/support/stats/',
 		post_id: 4454,

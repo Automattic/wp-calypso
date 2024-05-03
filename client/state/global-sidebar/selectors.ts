@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -26,11 +27,7 @@ export const getShouldShowGlobalSiteSidebar = (
 	sectionGroup: string,
 	sectionName: string
 ) => {
-	return (
-		isGlobalSiteViewEnabled( state, siteId ) &&
-		sectionGroup === 'sites' &&
-		shouldShowGlobalSiteViewSection( siteId, sectionName )
-	);
+	return sectionGroup === 'sites' && shouldShowGlobalSiteViewSection( siteId, sectionName );
 };
 
 export const getShouldShowGlobalSidebar = (
@@ -57,7 +54,10 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
 	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
 
-	return isEnabled( 'layout/dotcom-nav-redesign-v2' ) && ( siteSelected || siteLoaded );
+	return (
+		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
+		( siteSelected || siteLoaded || isWithinBreakpoint( '<782px' ) )
+	);
 };
 
 export const getShouldShowUnifiedSiteSidebar = (

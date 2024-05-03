@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
+import { usePlansGridContext } from '../grid-context';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject, DataResponse } from '../types';
@@ -71,6 +72,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
+	const { enableFeatureTooltips } = usePlansGridContext();
 
 	return (
 		<>
@@ -91,7 +93,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const isHighlightedFeature = selectedFeature
 					? currentFeature.getSlug() === selectedFeature
 					: currentFeature?.isHighlighted ||
-					  currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN ||
+					  ( currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && paidDomainName ) ||
 					  ! currentFeature.availableForCurrentPlan;
 
 				const divClasses = classNames( '', getPlanClass( planSlug ), {
@@ -113,10 +115,14 @@ const PlanFeatures2023GridFeatures: React.FC< {
 								<span className={ itemTitleClasses }>
 									{ isFreePlanAndCustomDomainFeature ? (
 										<Plans2023Tooltip
-											text={ translate( '%s is not included', {
-												args: [ paidDomainName as string ],
-												comment: '%s is a domain name.',
-											} ) }
+											text={
+												enableFeatureTooltips
+													? translate( '%s is not included', {
+															args: [ paidDomainName as string ],
+															comment: '%s is a domain name.',
+													  } )
+													: undefined
+											}
 											activeTooltipId={ activeTooltipId }
 											setActiveTooltipId={ setActiveTooltipId }
 											id={ key }
@@ -130,12 +136,19 @@ const PlanFeatures2023GridFeatures: React.FC< {
 										</Plans2023Tooltip>
 									) : (
 										<Plans2023Tooltip
-											text={ currentFeature.getDescription?.( { planSlug } ) }
+											text={
+												enableFeatureTooltips
+													? currentFeature.getDescription?.( { planSlug } )
+													: undefined
+											}
 											activeTooltipId={ activeTooltipId }
 											setActiveTooltipId={ setActiveTooltipId }
 											id={ key }
 										>
-											{ currentFeature.getTitle( { domainName: paidDomainName, planSlug } ) }
+											{ currentFeature.getTitle( {
+												domainName: paidDomainName,
+												planSlug,
+											} ) }
 										</Plans2023Tooltip>
 									) }
 								</span>

@@ -1,30 +1,35 @@
-import { getFeaturesList } from '@automattic/calypso-products';
-import { Meta } from '@storybook/react';
+import { getFeaturesList, getPlanFeaturesGrouped } from '@automattic/calypso-products';
+import { Meta, StoryObj } from '@storybook/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { ComparisonGrid, useGridPlansForComparisonGrid } from '../..';
+import { ComparisonGrid, ComparisonGridExternalProps, useGridPlansForComparisonGrid } from '../..';
 import { defaultArgs } from '../../storybook-mocks';
+import * as mockGridPlans from '../../storybook-mocks/grid-plans';
 
 const queryClient = new QueryClient();
 
-const RenderComparisonGrid = ( props: any ) => {
-	const useGridPlans = () => defaultArgs.gridPlans;
+const RenderComparisonGrid = ( props: ComparisonGridExternalProps ) => {
+	const useGridPlans = () => props.gridPlans;
 
-	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid(
+	const gridPlans = useGridPlansForComparisonGrid(
 		{
 			allFeaturesList: getFeaturesList(),
-			selectedFeature: props.selectedFeature,
-			showLegacyStorageFeature: props.showLegacyStorageFeature,
 			useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
 			storageAddOns: [],
 		},
 		useGridPlans
 	);
 
-	return <ComparisonGrid { ...props } gridPlans={ gridPlansForComparisonGrid } />;
+	return (
+		<ComparisonGrid
+			{ ...props }
+			gridPlans={ gridPlans || [] }
+			featureGroupMap={ getPlanFeaturesGrouped() }
+		/>
+	);
 };
 
-export default {
-	title: 'plans-grid-next',
+const meta: Meta< typeof ComparisonGrid > = {
+	title: 'ComparisonGrid',
 	component: RenderComparisonGrid,
 	decorators: [
 		( Story ) => (
@@ -38,12 +43,32 @@ export default {
 			defaultViewport: 'LARGE',
 		},
 	},
-} as Meta;
-
-const storyDefaults = {
-	args: { ...defaultArgs, showLegacyStorageFeature: true, selectedFeature: 'storage' },
 };
 
-export const ComparisonGridTest = {
-	...storyDefaults,
+export default meta;
+
+type Story = StoryObj< typeof ComparisonGrid >;
+
+export const StartFlow: Story = {
+	args: {
+		...defaultArgs,
+		intent: 'plans-default-wpcom',
+		gridPlans: [
+			mockGridPlans.free,
+			mockGridPlans.personal,
+			mockGridPlans.value,
+			mockGridPlans.business,
+			mockGridPlans.ecommerce,
+			mockGridPlans.enterprise,
+		],
+	},
+};
+
+StartFlow.storyName = '/start';
+
+export const HideUnsupportedFeaturesOnMobile: Story = {
+	args: {
+		...StartFlow.args,
+		hideUnsupportedFeatures: true,
+	},
 };

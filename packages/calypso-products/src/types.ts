@@ -32,6 +32,10 @@ import {
 	type WPCOM_OTHER_PRODUCTS,
 	FEATURE_50GB_STORAGE_ADD_ON,
 	FEATURE_100GB_STORAGE_ADD_ON,
+	FEATURE_GROUP_WEBSITE_BUILDING,
+	FEATURE_GROUP_MANAGED_WP_HOSTING,
+	FEATURE_GROUP_ECOMMERCE,
+	FEATURE_GROUP_SUPPORT,
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
@@ -54,6 +58,7 @@ export type FeatureObject = {
 	getFeatureGroup?: () => string;
 	getQuantity?: () => number; // storage add-ons are a quantity based product. this determines checkout price
 	getUnitProductSlug?: () => string; // used for storage add-ons to determine the checkout item
+	getSubFeatureSlugs?: () => Array< string >;
 };
 
 export type FeatureList = {
@@ -225,6 +230,10 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS
 	| typeof FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS
 	| typeof FEATURE_GROUP_YOUR_STORE
+	| typeof FEATURE_GROUP_WEBSITE_BUILDING
+	| typeof FEATURE_GROUP_MANAGED_WP_HOSTING
+	| typeof FEATURE_GROUP_ECOMMERCE
+	| typeof FEATURE_GROUP_SUPPORT
 	| typeof FEATURE_GROUP_PRODUCTS
 	| typeof FEATURE_GROUP_PAYMENTS
 	| typeof FEATURE_GROUP_MARKETING_EMAIL
@@ -237,7 +246,7 @@ export interface FeatureFootnotes {
 export type FeatureGroup = {
 	slug: FeatureGroupSlug;
 	getTitle: () => string;
-	get2023PricingGridSignupWpcomFeatures: () => Feature[];
+	getFeatures: () => Feature[];
 	/**
 	 * This optionally returns an object containing footnotes and the features that should display the footnote.
 	 *

@@ -10,8 +10,10 @@ import type { SiteExcerptData, SiteExcerptNetworkData } from '@automattic/sites'
 
 export const USE_SITE_EXCERPTS_QUERY_KEY = 'sites-dashboard-sites-data';
 
+export type SiteVisibility = 'all' | 'deleted';
+
 const fetchSites = (
-	site_visibility = 'all',
+	site_visibility: SiteVisibility = 'all',
 	siteFilter = config< string[] >( 'site_filter' )
 ): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	return wpcom.me().sites( {
@@ -28,7 +30,7 @@ const fetchSites = (
 export const useSiteExcerptsQuery = (
 	fetchFilter?: string[],
 	sitesFilterFn?: ( site: SiteExcerptData ) => boolean,
-	site_visibility = 'all'
+	site_visibility: SiteVisibility = 'all'
 ) => {
 	const store = useStore();
 
@@ -43,13 +45,6 @@ export const useSiteExcerptsQuery = (
 		queryFn: () => fetchSites( site_visibility, fetchFilter ),
 		select: ( data ) => {
 			const sites = data?.sites.map( computeFields( data?.sites ) ) || [];
-
-			if ( site_visibility === 'deleted' ) {
-				sites.forEach( ( site ) => {
-					site.is_deleted = true;
-				} );
-			}
-
 			return sitesFilterFn ? sites.filter( sitesFilterFn ) : sites;
 		},
 		initialData: () => {

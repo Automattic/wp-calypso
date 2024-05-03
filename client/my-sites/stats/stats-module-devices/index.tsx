@@ -23,7 +23,6 @@ const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( 
 	period,
 	postId,
 	query,
-	// summary,
 	className,
 } ) => {
 	const { devices: devicesStrings } = statsStrings();

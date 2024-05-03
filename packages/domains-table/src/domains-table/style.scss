@@ -48,7 +48,7 @@
 			display: block;
 			content: "";
 			height: 1px;
-			background: #f0f0f0;
+			background: var(--color-border-secondary);
 			grid-column: 1 / -1;
 		}
 	}
@@ -261,7 +261,7 @@
 	flex-direction: column;
 	gap: 12px;
 	padding: 16px 0;
-	border-bottom: 1px solid #f0f0f0;
+	border-bottom: 1px solid var(--color-border-secondary);
 
 	&-header {
 		display: flex;
@@ -310,7 +310,7 @@
 		flex-direction: column;
 		gap: 16px;
 		padding: 16px 0;
-		border-bottom: 1px solid #f0f0f0;
+		border-bottom: 1px solid var(--color-border-secondary);
 
 		> div {
 			display: flex;
