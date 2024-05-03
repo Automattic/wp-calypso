@@ -188,6 +188,7 @@
 		transition: all 0.2s ease-in-out;
 
 		.sidebar__footer {
+			transition: all 0.2s ease-in-out;
 			flex-wrap: wrap;
 			.sidebar__footer-profile img {
 				max-width: none;
@@ -206,18 +207,23 @@
 				justify-content: flex-start;
 				flex-basis: 0%;
 			}
+			.sidebar__menu-link {
+				transition: all 0.2s ease-in-out;
+			}
 		}
 	}
 	.is-global-sidebar-collapsed {
 		@media ( min-width: 661px ) {
 			.global-sidebar {
 				.sidebar__footer {
+					transition: all 0.2s ease-in-out;
 					flex-direction: row !important;
 					.sidebar__item-help {
 						padding-inline: 0;
 					}
 				}
 				.sidebar__header {
+					transition: all 0.2s ease-in-out;
 					flex-direction: row !important;
 					padding-inline: 19px;
 					.gap {
@@ -239,6 +245,7 @@
 						width: 0;
 					}
 					.sidebar__menu-link {
+						transition: all 0.2s ease-in-out;
 						width: fit-content;
 						min-width: calc(100% - 20px);
 
