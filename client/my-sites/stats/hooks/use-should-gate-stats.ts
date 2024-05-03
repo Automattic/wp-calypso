@@ -21,6 +21,7 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_QUARTER,
 	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
+	STATS_FEATURE_UTM_STATS,
 } from '../constants';
 
 const paidStats = [
@@ -28,6 +29,7 @@ const paidStats = [
 	STAT_TYPE_CLICKS,
 	STAT_TYPE_REFERRERS,
 	STAT_TYPE_TOP_AUTHORS,
+	STATS_FEATURE_UTM_STATS,
 ];
 
 const granularControlForPaidStats = [
