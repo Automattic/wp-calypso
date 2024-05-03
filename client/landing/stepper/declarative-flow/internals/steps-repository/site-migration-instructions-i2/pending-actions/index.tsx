@@ -26,10 +26,10 @@ const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 			icon = '';
 			break;
 	}
+
 	return (
 		<span className="pending-actions__action">
-			{ state === 'pending' && <em>{ text }</em> }
-			{ state !== 'pending' && text }
+			{ text }
 			<span className="pending-actions__action--icon">{ icon }</span>
 		</span>
 	);
