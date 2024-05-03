@@ -12,6 +12,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
 import MediaSettingsWriting from './media-settings-writing';
+import { PostByVoiceSetting } from './post-by-voice';
 import PressThis from './press-this';
 import PublishingTools from './publishing-tools';
 import ThemeEnhancements from './theme-enhancements';
@@ -134,6 +135,14 @@ class SiteSettingsFormWriting extends Component {
 						<SettingsSectionHeader title={ translate( 'Publishing Tools' ) } />
 						<PressThis />
 					</div>
+				) }
+
+				{ config.isEnabled( 'settings/post-by-voice' ) && ! isAtomic && ! siteIsJetpack && (
+					<PostByVoiceSetting
+						isRequestingSettings={ isRequestingSettings }
+						isSavingSettings={ isSavingSettings }
+						onSubmitForm={ handleSubmitForm }
+					/>
 				) }
 			</form>
 		);
