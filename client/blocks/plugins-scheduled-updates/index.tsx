@@ -52,7 +52,9 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 
 	const hideCreateButton =
-		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
+		! isEligibleForFeature ||
+		( MAX_SCHEDULES && schedules.length === MAX_SCHEDULES ) ||
+		schedules.length === 0;
 
 	const { siteHasEligiblePlugins } = useSiteHasEligiblePlugins( siteSlug );
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );

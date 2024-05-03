@@ -50,7 +50,7 @@ export const ScheduleCreate = ( props: Props ) => {
 	const [ syncError, setSyncError ] = useState( '' );
 
 	useEffect( () => {
-		if ( isFetched && schedules.length >= MAX_SCHEDULES ) {
+		if ( isFetched && MAX_SCHEDULES && schedules.length >= MAX_SCHEDULES ) {
 			onNavBack && onNavBack();
 		}
 	}, [ isFetched ] );
