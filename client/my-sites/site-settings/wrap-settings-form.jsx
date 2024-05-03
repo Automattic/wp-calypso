@@ -243,17 +243,19 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				this.props;
 			this.props.removeNotice( 'site-settings-save' );
 			debug( 'submitForm', { fields, settingsFields } );
+			const siteFields = pick( fields, settingsFields.site );
+			const modifiedFields = pick( siteFields, dirtyFields );
 
-			if ( siteIsJetpack && Object.keys( jetpackFieldsToUpdate ).length > 0 ) {
-				this.props.saveJetpackSettings( siteId, jetpackFieldsToUpdate );
+			const modifiedJetpackFields = pick( jetpackFieldsToUpdate, dirtyFields );
+			const jetpackOnlyModifiedFields = omit( modifiedJetpackFields, keys( modifiedFields ) );
+
+			if ( siteIsJetpack && Object.keys( jetpackOnlyModifiedFields ).length > 0 ) {
+				this.props.saveJetpackSettings( siteId, jetpackOnlyModifiedFields );
 			}
 
 			if ( typeof fields?.p2_preapproved_domains !== 'undefined' ) {
 				return this.props.saveP2SiteSettings( siteId, fields );
 			}
-
-			const siteFields = pick( fields, settingsFields.site );
-			const modifiedFields = pick( siteFields, dirtyFields );
 
 			this.props.saveSiteSettings( siteId, modifiedFields );
 
