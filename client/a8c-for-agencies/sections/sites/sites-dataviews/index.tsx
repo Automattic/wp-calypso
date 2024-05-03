@@ -44,7 +44,7 @@ const SitesDataViews = ( {
 				type: DATAVIEWS_LIST,
 			} ) );
 		},
-		[ setDataViewsState, dataViewsState ]
+		[ setDataViewsState ]
 	);
 
 	const renderField = useCallback(
