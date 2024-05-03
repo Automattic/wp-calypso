@@ -69,7 +69,7 @@ export const ScheduleLogs = ( props: Props ) => {
 	}, [ siteAdminUrl ] );
 
 	if ( isPending ) {
-		return null;
+		return <Spinner />;
 	}
 	// If the schedule is not found, navigate back to the list
 	else if ( isFetched && ! schedule ) {

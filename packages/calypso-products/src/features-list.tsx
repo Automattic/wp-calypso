@@ -975,7 +975,10 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
 		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Live chat and email support' )
+				: i18n.translate( 'Email & live chat support' ),
 		getDescription: () =>
 			i18n.translate( 'Live chat support to help you get started with your site.' ),
 	},
@@ -1154,7 +1157,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
 		getSlug: () => FEATURE_SITE_BACKUPS_AND_RESTORE,
-		getTitle: () => i18n.translate( 'Automated site backups and one-click restore' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Real time full-site backup/restore' )
+				: i18n.translate( 'Automated site backups and one-click restore' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
@@ -1862,7 +1868,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		getTitle: () =>
 			isTrailMapCopyVariant()
-				? i18n.translate( 'Accept payments (%(commission)d% fee)(+ standard processing fee)', {
+				? i18n.translate( 'Accept payments (%(commission)d%% fee)(+ standard processing fee)', {
 						args: { commission: 0 },
 				  } )
 				: i18n.translate( '%(commission)d%% transaction fee for payments', {
@@ -2137,7 +2143,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'SFTP/SSH, WP-CLI' )
+				: i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
@@ -2208,7 +2217,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
 		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
-		getTitle: () => i18n.translate( 'Back in stock emails' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Back-in-stock notifications' )
+				: i18n.translate( 'Back in stock emails' ),
 		getDescription: () =>
 			i18n.translate( 'Notify customers when an out-of-stock item is back in stock.' ),
 	},
@@ -2893,7 +2905,8 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS ]: {
 		getSlug: () => FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
-		getTitle: () => i18n.translate( 'Pre-installed plugins for security and performance' ),
+		getTitle: () =>
+			i18n.translate( 'Pre-installed plugins for security and performance ($239/year value)' ),
 	},
 	[ FEATURE_WEB_SERVER_SETTINGS ]: {
 		getSlug: () => FEATURE_WEB_SERVER_SETTINGS,
@@ -2903,17 +2916,22 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_1_WEBSITE,
 		getTitle: () => i18n.translate( '1 website' ),
 	},
+	[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ]: {
+		getSlug: () => FEATURE_DYNAMIC_PRODUCT_UPSELLS,
+		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
+	},
 	/* END: Trail Map New Features */
 };
 
 FEATURES_LIST[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ] = {
 	...FEATURES_LIST[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ],
-	getSubFeatureSlugs: () => [
-		FEATURE_UNLIMITED_PRODUCTS,
-		FEATURE_MIN_MAX_ORDER_QUANTITY,
-		FEATURE_BULK_DISCOUNTS,
-		FEATURE_INVENTORY,
-		FEATURE_DYNAMIC_PRODUCT_UPSELLS,
+	getSubFeatureObjects: () => [
+		FEATURES_LIST[ FEATURE_UNLIMITED_PRODUCTS ],
+		FEATURES_LIST[ FEATURE_MIN_MAX_ORDER_QUANTITY ],
+		FEATURES_LIST[ FEATURE_BULK_DISCOUNTS ],
+		FEATURES_LIST[ FEATURE_INVENTORY ],
+		FEATURES_LIST[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ],
+		FEATURES_LIST[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ],
 	],
 };
 

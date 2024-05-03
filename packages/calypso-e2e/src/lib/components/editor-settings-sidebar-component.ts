@@ -368,8 +368,8 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async enterUrlSlug( slug: string ) {
 		const editorParent = await this.editor.parent();
-		await editorParent.getByRole( 'button', { name: /Change URL:/ } ).click();
-		await editorParent.getByLabel( 'Permalink' ).fill( slug );
+		await editorParent.getByRole( 'button', { name: /Change link:/ } ).click();
+		await editorParent.getByLabel( 'Link', { exact: true } ).fill( slug );
 		await editorParent.getByRole( 'button', { name: 'Close', exact: true } ).click();
 	}
 }
