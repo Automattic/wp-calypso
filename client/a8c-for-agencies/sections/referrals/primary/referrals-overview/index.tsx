@@ -1,6 +1,7 @@
 import { plugins, payment, percent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -10,6 +11,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_REFERRALS_BANK_DETAILS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -29,6 +31,10 @@ export default function ReferralsOverview() {
 
 	const onAddBankDetailsClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );
+	}, [ dispatch ] );
+
+	const onDownloadA4APluginClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_referrals_download_a4a_plugin_button_click' ) );
 	}, [ dispatch ] );
 
 	const { data, isFetching } = useGetTipaltiPayee();
@@ -54,7 +60,7 @@ export default function ReferralsOverview() {
 
 			<LayoutBody>
 				<div className="referrals-overview__section-heading">
-					{ translate( 'Receive up to 30% revenue share on Automattic product referrals.' ) }
+					{ translate( 'Receive up to 50% revenue share on Automattic product referrals.' ) }
 				</div>
 				<div className="referrals-overview__section-container">
 					{ isFetching ? (
@@ -104,6 +110,8 @@ export default function ReferralsOverview() {
 									buttonProps={ {
 										children: translate( 'Download plugin to verify my referrals' ),
 										compact: true,
+										href: A4A_DOWNLOAD_LINK_ON_GITHUB,
+										onClick: onDownloadA4APluginClick,
 									} }
 								/>
 							</StepSection>
@@ -111,6 +119,7 @@ export default function ReferralsOverview() {
 								heading={ translate( 'Earn commissions from your referrals' ) }
 								stepCount={ 2 }
 							>
+								<MigrationOffer />
 								<StepSectionItem
 									icon={ payment }
 									heading={ translate( 'Encourage your clients to purchase Automattic products' ) }

@@ -3,17 +3,17 @@ import { Card } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import FilterSearch from 'calypso/a8c-for-agencies/components/filter-search';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
 import { useDispatch } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import SimpleList from '../../common/simple-list';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { getCheapestPlan, getWPCOMCreatorPlan } from '../../lib/hosting';
 import ListingSection from '../../listing-section';
-import { getAllPressablePlans } from '../../pressable-overview/lib/get-pressable-plan';
 import wpcomBulkOptions from '../../wpcom-overview/lib/wpcom-bulk-options';
 import HostingCard from '../hosting-card';
 
@@ -26,6 +26,7 @@ interface Props {
 export default function HostingList( { selectedSite }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const activeAgency = useSelector( getActiveAgency );
 
 	const { data } = useProductsQuery( false, true );
 
@@ -37,15 +38,12 @@ export default function HostingList( { selectedSite }: Props ) {
 
 	const wpcomOptions = wpcomBulkOptions( wpcomProducts?.discounts?.tiers );
 
-	// limiting time to 2 minutes to avoid multiple requests
-	const { data: licenseCounts, isFetching: isFetchingCounts } = useFetchLicenseCounts( 120000 );
-	const hasPressablePlan = useMemo(
-		() =>
-			getAllPressablePlans().some(
-				( key ) => licenseCounts?.products?.[ key ]?.[ 'not_revoked' ] > 0
-			),
-		[ licenseCounts ]
-	);
+	const hasPressablePlan = useMemo( () => {
+		// Agencies can have pressable through A4A Licenses or via Pressable itself
+		return (
+			!! activeAgency?.third_party?.pressable && activeAgency?.third_party?.pressable?.pressable_id
+		);
+	}, [ activeAgency ] );
 
 	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
 
@@ -101,7 +99,7 @@ export default function HostingList( { selectedSite }: Props ) {
 		[ dispatch ]
 	);
 
-	if ( isLoadingProducts || isFetchingCounts ) {
+	if ( isLoadingProducts ) {
 		return (
 			<div className="hosting-list">
 				<div className="hosting-list__placeholder" />
@@ -129,7 +127,7 @@ export default function HostingList( { selectedSite }: Props ) {
 				{ cheapestPressablePlan && (
 					<HostingCard
 						plan={ cheapestPressablePlan }
-						pressableOwnership={ hasPressablePlan }
+						pressableOwnership={ !! hasPressablePlan }
 						highestDiscountPercentage={ highestDiscountPressable }
 					/>
 				) }

@@ -36,6 +36,7 @@ const WrappedComparisonGrid = ( {
 	stickyRowOffset,
 	coupon,
 	className,
+	hideUnsupportedFeatures,
 	enableFeatureTooltips,
 	featureGroupMap,
 	...otherProps
@@ -74,6 +75,7 @@ const WrappedComparisonGrid = ( {
 				coupon={ coupon }
 				enableFeatureTooltips={ enableFeatureTooltips }
 				featureGroupMap={ featureGroupMap }
+				hideUnsupportedFeatures={ hideUnsupportedFeatures }
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }

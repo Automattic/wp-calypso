@@ -1,4 +1,4 @@
-import { getFeaturesList } from '@automattic/calypso-products';
+import { getFeaturesList, getPlanFeaturesGrouped } from '@automattic/calypso-products';
 import { Meta, StoryObj } from '@storybook/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ComparisonGrid, ComparisonGridExternalProps, useGridPlansForComparisonGrid } from '../..';
@@ -19,7 +19,13 @@ const RenderComparisonGrid = ( props: ComparisonGridExternalProps ) => {
 		useGridPlans
 	);
 
-	return <ComparisonGrid { ...props } gridPlans={ gridPlans || [] } />;
+	return (
+		<ComparisonGrid
+			{ ...props }
+			gridPlans={ gridPlans || [] }
+			featureGroupMap={ getPlanFeaturesGrouped() }
+		/>
+	);
 };
 
 const meta: Meta< typeof ComparisonGrid > = {
@@ -59,3 +65,10 @@ export const StartFlow: Story = {
 };
 
 StartFlow.storyName = '/start';
+
+export const HideUnsupportedFeaturesOnMobile: Story = {
+	args: {
+		...StartFlow.args,
+		hideUnsupportedFeatures: true,
+	},
+};

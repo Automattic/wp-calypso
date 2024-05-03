@@ -1,4 +1,8 @@
-import { getFeaturesList, getPlanFeaturesGrouped } from '@automattic/calypso-products';
+import {
+	getFeaturesList,
+	getPlanFeaturesGrouped,
+	setTrailMapExperiment,
+} from '@automattic/calypso-products';
 import { Meta, StoryObj } from '@storybook/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { FeaturesGrid, FeaturesGridExternalProps, useGridPlansForFeaturesGrid } from '../..';
@@ -7,7 +11,9 @@ import * as mockGridPlans from '../../storybook-mocks/grid-plans';
 
 const queryClient = new QueryClient();
 
-const RenderFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
+const RenderFeaturesGrid = (
+	props: FeaturesGridExternalProps & { includePreviousPlanFeatures: boolean }
+) => {
 	const useGridPlans = () => props.gridPlans;
 
 	const gridPlans = useGridPlansForFeaturesGrid(
@@ -15,7 +21,8 @@ const RenderFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 			allFeaturesList: getFeaturesList(),
 			useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
 			storageAddOns: [],
-			includeAllFeatures: props.enableCategorisedFeatures,
+			includePreviousPlanFeatures: props.includePreviousPlanFeatures,
+			intent: props.intent,
 		},
 		useGridPlans
 	);
@@ -29,15 +36,27 @@ const RenderFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 	);
 };
 
-const meta: Meta< typeof FeaturesGrid > = {
+const meta: Meta<
+	FeaturesGridExternalProps & {
+		includePreviousPlanFeatures: boolean;
+		trailMapVariant:
+			| 'control'
+			| 'treatment-copy'
+			| 'treatment-structure'
+			| 'treatment-copy-and-structure';
+	}
+> = {
 	title: 'FeaturesGrid',
 	component: RenderFeaturesGrid,
 	decorators: [
-		( Story ) => (
-			<QueryClientProvider client={ queryClient }>
-				<Story />
-			</QueryClientProvider>
-		),
+		( Story, storyContext ) => {
+			setTrailMapExperiment( storyContext.args.trailMapVariant );
+			return (
+				<QueryClientProvider client={ queryClient }>
+					<Story />
+				</QueryClientProvider>
+			);
+		},
 	],
 	parameters: {
 		viewport: {
@@ -48,7 +67,16 @@ const meta: Meta< typeof FeaturesGrid > = {
 
 export default meta;
 
-type Story = StoryObj< typeof FeaturesGrid >;
+type Story = StoryObj<
+	FeaturesGridExternalProps & {
+		includePreviousPlanFeatures: boolean;
+		trailMapVariant:
+			| 'control'
+			| 'treatment-copy'
+			| 'treatment-structure'
+			| 'treatment-copy-and-structure';
+	}
+>;
 
 export const PlansFlow: Story = {
 	args: {
@@ -78,10 +106,33 @@ export const NewsletterFlow: Story = {
 
 NewsletterFlow.storyName = '/setup/newsletter';
 
-export const CategorisedFeatures: Story = {
+export const TrailMapControl: Story = {
 	args: {
 		...PlansFlow.args,
+		trailMapVariant: 'control',
 		gridPlanForSpotlight: undefined,
+	},
+};
+
+export const TrailMapStructure: Story = {
+	args: {
+		...TrailMapControl.args,
+		trailMapVariant: 'treatment-structure',
+		enableCategorisedFeatures: true,
+		includePreviousPlanFeatures: true,
+	},
+};
+
+export const TrailMapCopy: Story = {
+	args: {
+		...TrailMapControl.args,
+		trailMapVariant: 'treatment-copy',
+	},
+};
+export const TrailMapCopyAndStructure: Story = {
+	args: {
+		...TrailMapControl.args,
+		trailMapVariant: 'treatment-copy-and-structure',
 		enableCategorisedFeatures: true,
 	},
 };

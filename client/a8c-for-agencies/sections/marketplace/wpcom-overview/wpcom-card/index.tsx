@@ -41,7 +41,7 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect }: P
 								<span className="wpcom-plan-card__price-discount">
 									{ translate( 'You save %(discount)s%', {
 										args: {
-											discount: discount * 100,
+											discount: Math.floor( discount * 100 ),
 										},
 										comment: '%(discount)s is the discount percentage.',
 									} ) }

@@ -6,6 +6,10 @@
 		max-width: 968px; // Max width of dual column reader stream.
 	}
 
+	.navigation-header__main {
+		margin-bottom: 24px;
+	}
+
 	@media (max-width: 660px) {
 		.navigation-header__main {
 			min-height: auto;

@@ -23,7 +23,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
-	includeAllFeatures,
+	includePreviousPlanFeatures,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -32,7 +32,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
-	includeAllFeatures?: boolean;
+	includePreviousPlanFeatures?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -48,7 +48,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
-	includeAllFeatures,
+	includePreviousPlanFeatures,
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
@@ -202,7 +202,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 				previousPlan = planSlug;
 
-				if ( includeAllFeatures ) {
+				if ( includePreviousPlanFeatures ) {
 					// Add the previous plan features only if it is not present in the current plan features.
 					previousPlanFeatures.wpcomFeatures.forEach( ( feature ) => {
 						if (
@@ -234,7 +234,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		intent,
 		highlightedFeatures,
 		selectedFeature,
-		includeAllFeatures,
+		includePreviousPlanFeatures,
 		showLegacyStorageFeature,
 		allFeaturesList,
 		hasRedeemedDomainCredit,

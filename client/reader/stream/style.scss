@@ -939,15 +939,10 @@
 }
 
 .reader-stream__blogging-prompt {
-	padding: 12px 15px 4px 0;
 	clear: both;
 	display: flex;
 	flex-direction: column;
 	margin: 6px 0 0 0;
-
-	@include breakpoint-deprecated(">660px") {
-		padding: 0;
-	}
 
 	@include breakpoint-deprecated( ">960px" ) {
 		margin: 0;

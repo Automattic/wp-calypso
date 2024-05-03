@@ -127,4 +127,17 @@ $brand-display: "SF Pro Display", sans-serif;
 			border-radius: 4px;
 		}
 	}
+
+	.empty-state {
+		max-width: 50%;
+		text-align: left;
+		padding: 0;
+
+		p {
+			color: var(--studio-gray-100);
+			margin: 1.5rem auto;
+			font-size: rem(18px);
+			line-height: 1.625;
+		}
+	}
 }
