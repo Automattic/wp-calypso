@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+Add missing dependencies - @automattic/calypso-config
+
 ## 1.2.0
 
 Add support for preserving trailing slash variation in `localizeUrl`
