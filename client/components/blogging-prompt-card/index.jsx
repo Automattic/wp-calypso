@@ -1,5 +1,4 @@
 import { Card, Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -75,6 +74,8 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 		);
 	};
 
+	const isHome = viewContext === 'home' ? 'customer-home__card' : '';
+
 	const renderMenu = () => {
 		if ( ! showMenu ) {
 			return;
@@ -101,7 +102,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 
 	return (
 		<div className="blogging-prompt">
-			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
+			<Card className={ `blogging-prompt__card ${ isHome }` }>
 				<PromptsNavigation
 					siteId={ siteId }
 					prompts={ prompts }
