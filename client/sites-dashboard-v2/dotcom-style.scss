@@ -155,6 +155,16 @@
 	}
 }
 
+// Style the sortable table headers.
+.wpcom-site .dataviews-view-table .components-button.is-tertiary {
+	&:active:not(:disabled),
+	&:hover:not(:disabled) {
+		box-shadow: none;
+		background-color: inherit;
+		color: var(--color-accent) !important;
+	}
+}
+
 .wpcom-site .is-group-sites.is-global-sidebar-collapsed,
 .wpcom-site .is-group-sites.is-global-sidebar-visible:not(.is-section-domains) {
 	.layout__content {
