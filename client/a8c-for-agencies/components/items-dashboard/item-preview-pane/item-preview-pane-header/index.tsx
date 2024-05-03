@@ -5,6 +5,8 @@ import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
+import { useSelector } from 'calypso/state';
+import { getSiteOption, getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import SiteFavicon from '../../site-favicon';
 import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
 
@@ -29,6 +31,21 @@ export default function ItemPreviewPaneHeader( {
 	const size = isLargerThan960px ? 64 : 50;
 
 	const focusRef = useRef< HTMLInputElement >( null );
+
+	const { adminLabel, adminUrl } = useSelector( ( state ) => {
+		const wpcomAdminInterface = getSiteOption( state, itemData.blogId, 'wpcom_admin_interface' );
+		if ( wpcomAdminInterface === 'wp-admin' ) {
+			return {
+				adminLabel: translate( 'Go to WP Admin' ),
+				adminUrl: itemData.adminUrl,
+			};
+		}
+
+		return {
+			adminLabel: translate( 'Go to Dashboard' ),
+			adminUrl: getSiteHomeUrl( state, itemData.blogId ),
+		};
+	} );
 
 	// Use useEffect to set the focus when the component mounts
 	useEffect( () => {
@@ -77,10 +94,10 @@ export default function ItemPreviewPaneHeader( {
 						<Button
 							variant="primary"
 							className="item-preview__admin-button"
-							href={ `${ itemData.adminUrl }` }
+							href={ `${ adminUrl }` }
 							ref={ focusRef }
 						>
-							{ translate( 'Go to WP Admin' ) }
+							{ adminLabel }
 						</Button>
 					</>
 				) : (
