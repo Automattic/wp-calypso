@@ -171,7 +171,7 @@
 }
 
 .wpcom-site .is-group-sites.is-global-sidebar-collapsed,
-.wpcom-site .is-group-sites.is-global-sidebar-visible:not(.is-section-domains) {
+.wpcom-site .is-group-sites.is-global-sidebar-visible:has(.sites-dashboard.sites-dashboard__layout) {
 	.layout__content {
 		@include break-medium {
 			padding: 16px 16px 16px calc(var(--sidebar-width-max));
