@@ -709,7 +709,7 @@ export class EditorPage {
 		// is merely being updated.
 		// If not yet published, a second click on the EditorPublishPanelComponent
 		// is added to the array of actions.
-		if ( publishButtonText.toLowerCase() !== 'update' ) {
+		if ( publishButtonText.toLowerCase() !== 'save' ) {
 			actionsArray.push( this.editorPublishPanelComponent.publish() );
 		}
 
@@ -769,10 +769,10 @@ export class EditorPage {
 	 */
 	async unpublish(): Promise< void > {
 		const editorParent = await this.editor.parent();
-
 		await this.editorToolbarComponent.switchToDraft();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-		await editorParent.getByRole( 'button' ).getByText( 'OK' ).click();
+		// Saves the draft
+		await this.editorToolbarComponent.clickPublish();
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
 		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
 	}
