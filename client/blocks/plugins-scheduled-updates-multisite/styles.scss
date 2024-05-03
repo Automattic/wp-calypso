@@ -1,8 +1,13 @@
 @import "~@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
 
 $brand-display: "SF Pro Display", sans-serif;
 
 .plugins-update-manager-multisite {
+	@media screen and (max-width: $break-small) {
+		margin: 1rem;
+	}
+
 	h1 {
 		font-size: 2rem;
 		margin-bottom: 1rem;
