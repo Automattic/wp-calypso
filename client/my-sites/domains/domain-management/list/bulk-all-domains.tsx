@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
 import { Global, css } from '@emotion/react';
@@ -40,10 +39,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const { domains, isLoading } = useDomainsTable( fetchAllDomains );
 	const translate = useTranslate();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
-	let sitesDashboardGlobalStyles;
-
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		sitesDashboardGlobalStyles = css`
+	const sitesDashboardGlobalStyles = css`
 			html {
 				overflow-y: auto;
 			}
@@ -189,7 +185,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 			}
 		`;
-	}
 	const item = {
 		label: translate( 'All Domains' ),
 		subtitle: translate(
