@@ -5,13 +5,14 @@ import React from 'react';
 const ConnectButton = () => {
 	const translate = useTranslate();
 
-	const isJetpackConnected = config.isEnabled( 'is_jetpack_connected' );
+	const showConnect = config( 'need_setup' ) === 'disconnected';
+	const connectUrl = window?.configData?.connect_url;
 
 	const handleConnect = () => {
-		window.location.href = window.configData.connect_url;
+		window.location.href = connectUrl;
 	};
 
-	return ! isJetpackConnected ? (
+	return showConnect ? (
 		<button className="woo-blaze__connect-button" onClick={ handleConnect }>
 			{ translate( 'Connect now' ) }
 		</button>
