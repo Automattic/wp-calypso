@@ -51,11 +51,13 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	sectionGroup: string,
 	sectionName: string
 ) => {
-	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
+	const isSitesDashboard = sectionGroup === 'sites-dashboard';
+	const siteSelected = !! siteId;
 	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
 
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
+		isSitesDashboard &&
 		( siteSelected || siteLoaded || isWithinBreakpoint( '<782px' ) )
 	);
 };
