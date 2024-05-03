@@ -35,7 +35,7 @@ export default function NeedSetup() {
 	const availablePlans: AvailablePlans[] = availableSites.length
 		? [
 				{
-					name: translate( 'WordPress.com Creator' ),
+					name: translate( 'WordPress.com' ),
 					available: availableSites.length as number,
 					ids: availableSites.map( ( { id }: { id: number } ) => id ),
 				},

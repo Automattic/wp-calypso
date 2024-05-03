@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
 import Offering from 'calypso/a8c-for-agencies/components/offering';
 import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/types';
 import {
@@ -83,12 +84,15 @@ const OverviewBodyHosting = () => {
 		},
 	};
 
+	const migrationOffer = <MigrationOffer foldable />;
+
 	return (
 		<Offering
 			title={ translate( 'Hosting' ) }
 			description={ translate(
 				'Choose the hosting that suits your needs from our best-in-class offerings.'
 			) }
+			children={ migrationOffer }
 			items={ [ pressable, wpcom ] }
 		/>
 	);
