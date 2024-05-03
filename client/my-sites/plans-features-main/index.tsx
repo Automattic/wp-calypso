@@ -926,6 +926,7 @@ const PlansFeaturesMain = ( {
 													}
 													enableFeatureTooltips={ ! isTrailMapCopy }
 													featureGroupMap={ featureGroupMap }
+													hideUnsupportedFeatures={ isTrailMapStructure }
 												/>
 											) }
 											<ComparisonGridToggle
