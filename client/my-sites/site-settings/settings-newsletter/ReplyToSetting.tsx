@@ -31,7 +31,7 @@ export const ReplyToSetting = ( {
 					checked={ value === 'no-reply' || value === '' }
 					onChange={ () => updateFields?.( { jetpack_subscriptions_reply_to: 'no-reply' } ) }
 					disabled={ disabled }
-					label={ translate( 'Replies are not allowed.' ) }
+					label={ translate( 'Replies are not allowed' ) }
 				/>
 			</FormLabel>
 			{ isWPcomSite && (
@@ -42,7 +42,7 @@ export const ReplyToSetting = ( {
 							value="comment"
 							onChange={ () => updateFields?.( { jetpack_subscriptions_reply_to: 'comment' } ) }
 							disabled={ disabled }
-							label={ translate( 'Replies will be a public comment on the post.' ) }
+							label={ translate( 'Replies will be a public comment on the post' ) }
 						/>
 					</FormLabel>
 				</>
@@ -53,7 +53,7 @@ export const ReplyToSetting = ( {
 					value="author"
 					onChange={ () => updateFields?.( { jetpack_subscriptions_reply_to: 'author' } ) }
 					disabled={ disabled }
-					label={ translate( "Replies will be sent to the post author's email." ) }
+					label={ translate( "Replies will be sent to the post author's email" ) }
 				/>
 			</FormLabel>
 		</FormFieldset>
