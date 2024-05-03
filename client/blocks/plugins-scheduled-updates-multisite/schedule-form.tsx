@@ -240,7 +240,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 					deleteUpdateSchedulePending
 				}
 			>
-				{ scheduleForEdit ? translate( 'Edit' ) : translate( 'Create' ) }
+				{ scheduleForEdit ? translate( 'Save' ) : translate( 'Create' ) }
 			</Button>
 		</form>
 	);
