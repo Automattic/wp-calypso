@@ -34,7 +34,7 @@ const SurveyContainer = ( {
 	return (
 		<QuestionStep
 			question={ currentQuestion }
-			value={ answers[ currentQuestion.key ] || [] }
+			value={ answers[ currentQuestion.key ] }
 			onChange={ onChange }
 			onBack={ onBack }
 			onContinue={ onContinue }

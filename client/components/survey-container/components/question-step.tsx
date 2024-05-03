@@ -16,7 +16,7 @@ const questionTypeComponentMap = {
 
 export type QuestionSelectionComponentProps = {
 	question: Question;
-	value: string[];
+	value?: string[];
 	onChange: ( questionKey: string, value: string[] ) => void;
 	disabled?: boolean;
 };
@@ -30,7 +30,7 @@ type QuestionStepType = {
 
 const QuestionStep = ( {
 	question,
-	value,
+	value = [],
 	onChange,
 	onBack,
 	onContinue,
@@ -45,6 +45,7 @@ const QuestionStep = ( {
 		<StepContainer
 			className={ classNames( 'question-step', { disabled } ) }
 			hideBack={ hideBack }
+			hideSkip={ question.required }
 			goBack={ onBack }
 			goNext={ onSkip }
 			formattedHeader={
@@ -67,7 +68,7 @@ const QuestionStep = ( {
 						className="question-step__continue-button"
 						onClick={ onContinue }
 						variant="primary"
-						disabled={ disabled }
+						disabled={ disabled || ( question.required && value.length === 0 ) }
 					>
 						{ translate( 'Continue' ) }
 					</Button>
