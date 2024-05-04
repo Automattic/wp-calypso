@@ -581,11 +581,20 @@ export class EditorPage {
 		] );
 
 		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
-		await this.editorSettingsSidebarComponent.openVisibilityOptions();
-		await this.editorSettingsSidebarComponent.selectVisibility( visibility, {
-			password: password,
-		} );
-		await this.editorSettingsSidebarComponent.closeVisibilityOptions();
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.openPostStatusOptions(),
+			// this.editorSettingsSidebarComponent.openVisibilityOptions(),
+		] );
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.selectPostStatus( visibility, {
+				password: password,
+			} ),
+			// this.editorSettingsSidebarComponent.openVisibilityOptions(),
+		] );
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.closePostStatusOptions(),
+			// this.editorSettingsSidebarComponent.closeVisibilityOptions()
+		] );
 	}
 
 	/**

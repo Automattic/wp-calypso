@@ -4,17 +4,23 @@ import { EditorComponent } from './editor-component';
 import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } from './types';
 
 const panel = '[aria-label="Editor settings"]';
+const postStatusSelector = '.editor-change-status__content [aria-label="Status &amp; visibility"]';
 
 const selectors = {
 	section: ( name: string ) =>
 		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
 	showRevisionButton: '.editor-post-last-revision__panel', // Revision is a link, not a panel.
 
+	postStatusButton: '.editor-post-status-trigger',
+	postStatusPopover: postStatusSelector,
+	postStatusPopoverCloseButton: `${ postStatusSelector } button[aria-label="Close"]`,
+
 	// Status & Visibility
 	visibilityButton: '.edit-post-post-visibility__toggle',
 	visibilityPopover: 'fieldset.editor-post-visibility__dialog-fieldset',
 	visibilityOption: ( option: ArticlePrivacyOptions ) => `input[value="${ option.toLowerCase() }"]`,
 	postPasswordInput: '.editor-post-visibility__password-input',
+	postStatusPasswordInput: '.editor-change-status__password-input input[type="text"]',
 
 	// Schedule
 	scheduleButton: `button.editor-post-schedule__dialog-toggle`,
@@ -176,6 +182,29 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
+	 * Opens the Post Visibility popover.
+	 *
+	 * If the popover is already toggled open, this method will pass.
+	 *
+	 * @throws {Error} If popover failed to open.
+	 */
+	async openPostStatusOptions(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const statusPopover = editorParent.locator( `${ selectors.postStatusPopover }` );
+
+		if ( await statusPopover.isVisible() ) {
+			return;
+		}
+
+		await this.page.waitForTimeout( 30000 );
+
+		const buttonLocator = editorParent.locator( selectors.postStatusButton );
+		await buttonLocator.click();
+
+		await statusPopover.waitFor();
+	}
+
+	/**
 	 * Closes the Post Visibility popover.
 	 *
 	 * If the popover is already closed, this method will pass.
@@ -195,6 +224,25 @@ export class EditorSettingsSidebarComponent {
 			`${ selectors.visibilityButton }[aria-expanded="false"]`
 		);
 		await closedLocator.waitFor();
+	}
+
+	/**
+	 * Closes the Post Status popover.
+	 *
+	 * If the popover is already closed, this method will pass.
+	 *
+	 * @throws {Error} If popover failed to be closed.
+	 */
+	async closePostStatusOptions(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const statusPopoverCloseButton = editorParent.locator( selectors.postStatusPopoverCloseButton );
+
+		if ( ! ( await statusPopoverCloseButton.isVisible() ) ) {
+			return;
+		}
+
+		await statusPopoverCloseButton.click();
+		await statusPopoverCloseButton.waitFor( { state: 'hidden' } );
 	}
 
 	/**
@@ -233,13 +281,39 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
+	 * Sets the post status to the provided status setting.
+	 *
+	 * @param {ArticlePrivacyOptions} status Desired post visibility setting.
+	 * @param param1 Object parameter.
+	 * @param {string} param1.password Optional password for the post. Ignore if the `status` parameter is `Private`.
+	 */
+	async selectPostStatus(
+		status: ArticlePrivacyOptions,
+		{ password }: { password?: string } = {}
+	): Promise< void > {
+		const editorParent = await this.editor.parent();
+		await editorParent.getByRole( 'radio', { name: status } ).click();
+
+		// For Password-protected posts, the password field needs to be filled.
+		if ( status !== 'Private' ) {
+			if ( ! password ) {
+				throw new Error( 'Post password is undefined.' );
+			}
+			await this.setPostPassword( password );
+		}
+	}
+
+	/**
 	 * Sets the article password, for password-protected articles.
 	 *
 	 * @param {string} password Password to be used.
 	 */
 	private async setPostPassword( password: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const inputLocator = editorParent.locator( selectors.postPasswordInput );
+		const inputLocator = await Promise.race( [
+			editorParent.locator( selectors.postStatusPasswordInput ),
+			editorParent.locator( selectors.postPasswordInput ),
+		] );
 		await inputLocator.fill( password );
 	}
 
