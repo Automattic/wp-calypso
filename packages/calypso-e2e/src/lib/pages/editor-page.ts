@@ -772,7 +772,7 @@ export class EditorPage {
 		await this.editorToolbarComponent.switchToDraft();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		// Saves the draft
-		Promise.race( [
+		await Promise.race( [
 			this.editorToolbarComponent.clickPublish(),
 			editorParent.getByRole( 'button' ).getByText( 'OK' ).click(),
 		] );
