@@ -263,6 +263,10 @@
 		padding: 16px 0 32px;
 		border-bottom: 1px solid #e9e9ea;
 
+		@include breakpoint-deprecated( "<660px" ) {
+			padding: 16px 16px 32px;
+		}
+
 		+ .reader-post-card {
 			margin-top: 16px;
 		}
@@ -631,6 +635,10 @@
 				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 			}
 
+			@include breakpoint-deprecated( "<660px" ) {
+				margin: 0 16px;
+			}
+
 			@include break-medium {
 				.app-promo__qr-code {
 					margin: -20px 0 0;
@@ -855,6 +863,14 @@
 	.reader-feed-header__seen-button {
 		margin-bottom: 24px;
 	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 24px 16px 0;
+
+		h2 {
+			margin: 16px 0;
+		}
+	}
 }
 
 // Posts and Sites tabbed headers
@@ -877,6 +893,11 @@
 	margin-bottom: 0;
 	margin-top: 60px;
 	padding-bottom: 0;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px;
+		width: calc(100% - 32px);
+	}
 
 	@include breakpoint-deprecated( ">480px" ) {
 		height: 58px;
@@ -946,6 +967,10 @@
 
 	@include breakpoint-deprecated( ">960px" ) {
 		margin: 0;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px;
 	}
 
 	.blogging-prompt__menu {
