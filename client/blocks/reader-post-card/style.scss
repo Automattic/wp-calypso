@@ -295,7 +295,7 @@
 		padding-top: 0;
 
 		@include breakpoint-deprecated( "<660px" ) {
-			margin: 20px 0 0 16px;
+			margin: 20px 0 0;
 		}
 	}
 }
