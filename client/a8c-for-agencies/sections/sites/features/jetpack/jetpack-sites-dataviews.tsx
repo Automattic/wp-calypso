@@ -51,7 +51,7 @@ export const JetpackSitesDataViews = ( {
 				type: DATAVIEWS_LIST,
 			} ) );
 		},
-		[ setDataViewsState, dataViewsState ]
+		[ setDataViewsState ]
 	);
 
 	const renderField = useCallback(
