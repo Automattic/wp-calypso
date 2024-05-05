@@ -160,6 +160,11 @@ export interface MonitorNode {
 	error?: boolean;
 	settings?: MonitorSettings;
 }
+export interface ErrorNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes;
+	value: string;
+}
 export interface SiteData {
 	site: SiteNode;
 	stats: StatsNode;
@@ -168,7 +173,7 @@ export interface SiteData {
 	scan: ScanNode;
 	plugin: PluginNode;
 	monitor: MonitorNode;
-	error: boolean;
+	error: ErrorNode;
 	isFavorite?: boolean;
 	isSelected?: boolean;
 	onSelect?: () => void;
