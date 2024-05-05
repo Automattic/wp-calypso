@@ -2,7 +2,15 @@ import { TranslateResult } from 'i18n-calypso';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 // All types based on which the data is populated on the agency dashboard table rows
-export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
+export type AllowedTypes =
+	| 'site'
+	| 'stats'
+	| 'boost'
+	| 'backup'
+	| 'scan'
+	| 'monitor'
+	| 'plugin'
+	| 'error';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
