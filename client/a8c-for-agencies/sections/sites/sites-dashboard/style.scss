@@ -399,6 +399,45 @@
 		}
 	}
 
+	td:has(.sites-dataview__site-error-span) {
+		border-bottom: 0;
+	}
+
+	td:has(.sites-dataview__site-error) {
+		padding: 0 0 16px 0;
+		height: 40px;
+	}
+
+	td:first-child:has(.sites-dataview__site-error) {
+		padding: 0 0 16px 64px;
+
+		.sites-dataview__site-error {
+			padding-left: 10px;
+			border-radius: 4px 0 0 4px;
+		}
+	}
+
+	td:last-child:has(.sites-dataview__site-error) {
+		padding: 0 64px 16px 0;
+
+		.sites-dataview__site-error {
+			border-radius: 0 4px 4px 0;
+		}
+	}
+
+	.dataviews-view-table__cell-content-wrapper:has(.sites-dataview__site-error) {
+		height: 100%;
+	}
+
+	.sites-dataview__site-error {
+		color: #691c1c;
+		background-color: #facfd2;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
 	.sites-overview__content-wrapper {
 		max-width: none;
 	}
