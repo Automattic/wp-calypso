@@ -168,7 +168,7 @@ export interface SiteData {
 	scan: ScanNode;
 	plugin: PluginNode;
 	monitor: MonitorNode;
-	error?: boolean;
+	error: boolean;
 	isFavorite?: boolean;
 	isSelected?: boolean;
 	onSelect?: () => void;
