@@ -142,6 +142,11 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE: SiteData[] = [
 			type: 'plugin',
 			updates: 0,
 		},
+		error: {
+			value: '',
+			status: 'failed',
+			type: 'error',
+		},
 		isFavorite: false,
 	},
 ];
