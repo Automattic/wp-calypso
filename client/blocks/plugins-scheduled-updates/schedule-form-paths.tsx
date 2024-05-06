@@ -93,7 +93,7 @@ export function ScheduleFormPaths( props: Props ) {
 	useEffect( handleAsyncValidationError, [ handleAsyncValidationError ] );
 	useEffect( () => {
 		setNewPathSubmitted( false );
-		onTouch?.( true );
+		onTouch?.( false );
 	}, [ newPath ] );
 	useEffect(
 		() => onChange?.( { paths, hasUnsubmittedPath: newPath.length > 0 } ),

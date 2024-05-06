@@ -192,7 +192,7 @@ export const ScheduleForm = ( props: Props ) => {
 				error={ validationErrors?.paths }
 				showError={ fieldTouched?.paths }
 				onTouch={ ( touched ) => {
-					setFieldTouched( { ...fieldTouched, plugins: touched } );
+					setFieldTouched( { ...fieldTouched, paths: touched } );
 				} }
 			/>
 		</form>
