@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	getAssemblerDesign,
 	themesIllustrationImage,
@@ -10,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
 import DesignChoice from './design-choice';
@@ -28,6 +28,8 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
+
+	const isBigSkyEligible = useIsBigSkyEligible();
 
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
@@ -72,7 +74,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="pattern-assembler"
 								onSelect={ handleSubmit }
 							/>
-							{ config.isEnabled( 'calypso/ai-assembler' ) && (
+							{ isBigSkyEligible && (
 								<DesignChoice
 									title={ translate( 'Use AI' ) }
 									description={ translate( 'Try our AI site builder.' ) }
