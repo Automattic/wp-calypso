@@ -16,8 +16,8 @@ import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleFormFrequency } from './schedule-form-frequency';
 import { ScheduleFormPaths } from './schedule-form-paths';
 import { ScheduleFormPlugins } from './schedule-form-plugins';
-import { validatePlugins, validateTimeSlot } from './schedule-form.helper';
-import type { SyncSuccessParams } from './types';
+import { validatePaths, validatePlugins, validateTimeSlot } from './schedule-form.helper';
+import type { PathsOnChangeEvent, SyncSuccessParams } from './types';
 
 import './schedule-form.scss';
 
@@ -49,6 +49,8 @@ export const ScheduleForm = ( props: Props ) => {
 		scheduleForEdit?.health_check_paths || []
 	);
 
+	const [ hasUnsubmittedPath, setHasUnsubmittedPath ] = useState( false );
+
 	const scheduledTimeSlots = schedules.map( ( schedule ) => ( {
 		timestamp: schedule.timestamp,
 		frequency: schedule.schedule,
@@ -57,6 +59,7 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {
 		plugins: validatePlugins( selectedPlugins, scheduledPlugins ),
 		timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
+		paths: validatePaths( hasUnsubmittedPath ),
 	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
@@ -85,6 +88,7 @@ export const ScheduleForm = ( props: Props ) => {
 		setFieldTouched( {
 			plugins: true,
 			timestamp: true,
+			paths: true,
 		} );
 
 		const params = {
@@ -125,6 +129,21 @@ export const ScheduleForm = ( props: Props ) => {
 			} ),
 		[ timestamp ]
 	);
+
+	// Paths validation
+	useEffect(
+		() =>
+			setValidationErrors( {
+				...validationErrors,
+				paths: validatePaths( hasUnsubmittedPath ),
+			} ),
+		[ hasUnsubmittedPath ]
+	);
+
+	const onPathChange = ( data: PathsOnChangeEvent ) => {
+		setHealthCheckPaths( data.paths );
+		setHasUnsubmittedPath( data.hasUnsubmittedPath );
+	};
 
 	return (
 		<form
@@ -169,7 +188,12 @@ export const ScheduleForm = ( props: Props ) => {
 			<ScheduleFormPaths
 				paths={ healthCheckPaths }
 				borderWrapper={ false }
-				onChange={ setHealthCheckPaths }
+				onChange={ onPathChange }
+				error={ validationErrors?.paths }
+				showError={ fieldTouched?.paths }
+				onTouch={ ( touched ) => {
+					setFieldTouched( { ...fieldTouched, paths: touched } );
+				} }
 			/>
 		</form>
 	);
