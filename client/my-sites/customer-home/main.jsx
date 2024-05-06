@@ -177,7 +177,7 @@ const Home = ( {
 			</Button>
 			{ config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && (
 				<Button primary href={ `/hosting/${ site.slug }` }>
-					{ translate( 'Go to Hosting Overview' ) }
+					{ translate( 'Hosting Overview' ) }
 				</Button>
 			) }
 		</>
