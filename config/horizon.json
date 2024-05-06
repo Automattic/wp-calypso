@@ -38,6 +38,7 @@
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
 		"cookie-banner": true,
+		"fediverse/on-connections-page": true,
 		"google-my-business": false,
 		"help": true,
 		"home/layout-dev": true,

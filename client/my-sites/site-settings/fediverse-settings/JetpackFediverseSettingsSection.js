@@ -6,7 +6,11 @@ import QueryPlugins from 'calypso/components/data/query-plugins';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { getSiteDomain, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
-export const JetpackFediverseSettingsSection = ( { siteId } ) => {
+function Wrapper( { children, needsCard } ) {
+	return needsCard ? <Card ClassName="site-settings__card">{ children }</Card> : children;
+}
+
+export const JetpackFediverseSettingsSection = ( { siteId, needsBorders } ) => {
 	const translate = useTranslate();
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const plugin = useSelector( ( state ) => getPluginOnSite( state, siteId, 'activitypub' ) );
@@ -18,7 +22,7 @@ export const JetpackFediverseSettingsSection = ( { siteId } ) => {
 	return (
 		<>
 			<QueryPlugins siteId={ siteId } />
-			<Card className="site-settings__card">
+			<Wrapper needsCard={ needsBorders }>
 				<p>
 					{ translate(
 						'Broadcast your blog into the fediverse! Attract followers, deliver updates, and receive comments from a diverse user base of ActivityPub-compliant platforms.'
@@ -42,7 +46,7 @@ export const JetpackFediverseSettingsSection = ( { siteId } ) => {
 						</Button>
 					) }
 				</p>
-			</Card>
+			</Wrapper>
 		</>
 	);
 };
