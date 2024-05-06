@@ -13,12 +13,17 @@ interface APIError {
 	message: string;
 }
 
+interface TicketRequest {
+	locale: string;
+	blog_url: string;
+}
+
 export const useSubmitMigrationTicket = <
 	TData = migrationTicketAPIResponse | APIError,
 	TError = APIError,
 	TContext = unknown,
 >(
-	options: UseMutationOptions< TData, TError, { locale: string; blog_url: string }, TContext > = {}
+	options: UseMutationOptions< TData, TError, TicketRequest, TContext > = {}
 ) => {
 	const { mutate, ...rest } = useMutation( {
 		mutationFn: ( { locale, blog_url } ) =>
@@ -35,10 +40,7 @@ export const useSubmitMigrationTicket = <
 		...options,
 	} );
 
-	const sendTicket = useCallback(
-		( { locale, blog_url } ) => mutate( { locale, blog_url } ),
-		[ mutate ]
-	);
+	const sendTicket = useCallback( ( request: TicketRequest ) => mutate( request ), [ mutate ] );
 
 	return {
 		sendTicket,
