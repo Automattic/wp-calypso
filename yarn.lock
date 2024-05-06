@@ -149,6 +149,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
+    "@wordpress/data": "npm:^9.26.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.7.0"
     autoprefixer: "npm:^10.2.5"
     calypso: "workspace:^"
