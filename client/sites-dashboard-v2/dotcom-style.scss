@@ -320,12 +320,12 @@
 		}
 	}
 	.item-preview__content {
-		max-width: 1400px;
 
 		> * {
 			padding: 0;
 			overflow-y: initial;
 			max-height: initial;
+			max-width: 1400px;
 		}
 
 		@media (max-width: $break-large) {
