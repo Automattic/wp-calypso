@@ -48,11 +48,7 @@ export default function DisconnectedSite() {
 									"You'll need to connect your WordPress.com account to integrate Blaze for WooCommerce with your store. Don’t have an account? Not to worry - we’ll help you create one!"
 								) }
 							</p>
-							<Button
-								className="is-primary"
-								href={ connectUrl }
-								target="_self"
-							>
+							<Button className="is-primary" href={ connectUrl } target="_self">
 								{ translate( 'Connect now' ) }
 							</Button>
 						</div>

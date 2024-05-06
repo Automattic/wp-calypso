@@ -209,9 +209,12 @@ export class AuthFormHeader extends Component {
 				case 'logged-in-success':
 				case 'auth-in-progress':
 					return translate( 'Connecting your store' );
-				default: {
-					const titleOverrideFlows = [ 'woodna:woocommerce-payments', 'woodna:woo-blaze' ];
-					if ( titleOverrideFlows.includes( wooDnaConfig.getFlowName() ) ) {
+				default:
+					if ( wooDnaConfig.getFlowName() === 'woodna:woocommerce-payments' ) {
+						return translate(
+							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooPayments'
+						);
+					} else if ( wooDnaConfig.getFlowName() === 'woodna:woo-blaze' ) {
 						const pluginName = wooDnaConfig.getServiceName();
 						/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
 						return translate(
@@ -224,7 +227,6 @@ export class AuthFormHeader extends Component {
 						);
 					}
 					return translate( 'Approve your connection' );
-				}
 			}
 		}
 
