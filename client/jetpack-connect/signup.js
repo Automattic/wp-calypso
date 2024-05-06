@@ -393,10 +393,18 @@ export class JetpackSignup extends Component {
 					</LoggedOutFormLinkItem>
 				);
 			} else {
-				header = wooDna.getServiceName();
-				if ( wooDna.getFlowName() === 'woodna:woocommerce-payments' ) {
+				const pluginName = wooDna.getServiceName();
+				header = pluginName;
+				const titleOverrideFlows = [ 'woodna:woocommerce-payments', 'woodna:woo-blaze' ];
+				if ( titleOverrideFlows.includes( wooDna.getFlowName() ) ) {
+					/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
 					subHeader = translate(
-						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooPayments'
+						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by %(pluginName)s',
+						{
+							args: {
+								pluginName,
+							},
+						}
 					);
 				} else {
 					subHeader = translate( 'Enter your email address to get started' );
