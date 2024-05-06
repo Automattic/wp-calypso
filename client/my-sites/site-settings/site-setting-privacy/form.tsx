@@ -256,7 +256,7 @@ const SiteSettingPrivacyForm = ( {
 								</span>
 								<FormSettingExplanation>
 									{ translate(
-										'This option removes %(siteName)s from our content sharing program that provides content to our network of third-party content partners, including those that use the content to train generative AI or other AI models. {{a}}Learn more{{/a}}.',
+										'This option removes %(siteName)s on a going-forward basis from our content-sharing program with third-party partners, including those that use the content to train generative AI or other AI models. {{a}}Learn more{{/a}}.',
 										{
 											components: {
 												a: (
