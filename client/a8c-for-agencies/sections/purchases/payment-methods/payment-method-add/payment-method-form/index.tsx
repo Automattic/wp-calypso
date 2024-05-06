@@ -84,7 +84,7 @@ function PaymentMethodForm() {
 		stripe,
 	} );
 
-	const { refetch: refetchStoredCards } = useStoredCards( undefined, { staleTime: Infinity } );
+	const { refetch: refetchStoredCards } = useStoredCards( undefined, true );
 
 	const paymentMethods = useMemo(
 		() => [ stripeMethod ].filter( isValueTruthy ),

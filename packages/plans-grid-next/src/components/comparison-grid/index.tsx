@@ -577,7 +577,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	setActiveTooltipId,
 	onStorageAddOnClick,
 } ) => {
-	const { gridPlansIndex, enableFeatureTooltips } = usePlansGridContext();
+	const { gridPlansIndex, enableFeatureTooltips, hideUnsupportedFeatures } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
@@ -621,6 +621,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			'popular-plan-parent-class': gridPlan.highlightLabel,
 			'has-feature': hasFeature,
 			'has-conditional-feature': hasConditionalFeature,
+			'hide-unsupported-feature':
+				hideUnsupportedFeatures && ! hasFeature && ! hasConditionalFeature,
 			'title-is-subtitle': 'live-chat-support' === featureSlug,
 			'is-left-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.leftOfHighlight,
 			'is-right-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.rightOfHighlight,

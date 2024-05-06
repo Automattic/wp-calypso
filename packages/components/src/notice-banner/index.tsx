@@ -9,7 +9,7 @@ type NoticeBannerProps = {
 	level: 'error' | 'warning' | 'info' | 'success';
 
 	/** The title of the NoticeBanner */
-	title: string;
+	title?: string;
 
 	/** A list of action elements to show across the bottom */
 	actions?: React.ReactNode[];
@@ -67,7 +67,7 @@ const NoticeBanner: React.FC< NoticeBannerProps > = ( {
 			</div>
 
 			<div className="notice-banner__main-content">
-				<div className="notice-banner__title">{ title }</div>
+				{ title ? <div className="notice-banner__title">{ title }</div> : null }
 				{ children }
 
 				{ actions && actions.length > 0 && (

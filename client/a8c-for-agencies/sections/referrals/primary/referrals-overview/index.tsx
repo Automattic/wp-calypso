@@ -1,6 +1,7 @@
+import NoticeBanner from '@automattic/components/src/notice-banner';
 import { plugins, payment, percent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -13,8 +14,10 @@ import { A4A_REFERRALS_BANK_DETAILS_LINK } from 'calypso/a8c-for-agencies/compon
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import StepSection from '../../common/step-section';
 import StepSectionItem from '../../common/step-section-item';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
@@ -43,6 +46,39 @@ export default function ReferralsOverview() {
 
 	const hasPayeeAccount = !! accountStatus?.status;
 
+	// Whether the user has seen the success notice in a previous session.
+	const successNoticeSeen = useSelector( ( state ) =>
+		getPreference( state, 'a4a-referrals-bank-details-success-notice-seen' )
+	);
+
+	// Track whether the preference has just been saved to avoid hiding the notice on the first render.
+	const [ successNoticePreferenceSaved, setSuccessNoticePreferenceSaved ] = useState( false );
+
+	// Whether the user has manually dismissed the success notice.
+	const [ successNoticeDismissed, setSuccessNoticeDismissed ] = useState( successNoticeSeen );
+
+	// Show the banking details success notice if the user has submitted their banking details and the notice has not been dismissed.
+	const showBankingDetailsSuccessNotice = useMemo(
+		() =>
+			accountStatus?.statusType === 'success' &&
+			! successNoticeDismissed &&
+			( ! successNoticeSeen || successNoticePreferenceSaved ),
+		[
+			accountStatus?.statusType,
+			successNoticeDismissed,
+			successNoticePreferenceSaved,
+			successNoticeSeen,
+		]
+	);
+
+	// Only display the success notice for submitted banking details once.
+	useEffect( () => {
+		if ( accountStatus?.statusType === 'success' && ! successNoticeSeen ) {
+			dispatch( savePreference( 'a4a-referrals-bank-details-success-notice-seen', true ) );
+			setSuccessNoticePreferenceSaved( true );
+		}
+	}, [ dispatch, successNoticeSeen, accountStatus ] );
+
 	return (
 		<Layout
 			className="referrals-layout"
@@ -59,6 +95,15 @@ export default function ReferralsOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
+				{ showBankingDetailsSuccessNotice && (
+					<div className="referrals-overview__section-notice">
+						<NoticeBanner level="success" onClose={ () => setSuccessNoticeDismissed( true ) }>
+							{ translate(
+								'Thanks for entering your bank and tax information. Our team will confirm and review your submission.'
+							) }
+						</NoticeBanner>
+					</div>
+				) }
 				<div className="referrals-overview__section-heading">
 					{ translate( 'Receive up to 50% revenue share on Automattic product referrals.' ) }
 				</div>
