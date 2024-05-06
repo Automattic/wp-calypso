@@ -1,9 +1,11 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import privateSiteGraphic from 'calypso/assets/images/blaze/site-private-graphic@3x.png';
 
 export default function DisconnectedSite() {
 	const translate = useTranslate();
+	const connectUrl = config( 'connect_url' );
 
 	return (
 		<>
@@ -46,7 +48,9 @@ export default function DisconnectedSite() {
 									"You'll need to connect your WordPress.com account to integrate Blaze for WooCommerce with your store. Don’t have an account? Not to worry - we’ll help you create one!"
 								) }
 							</p>
-							<Button className="is-primary">{ translate( 'Connect now' ) }</Button>
+							<Button className="is-primary" href={ connectUrl } target="_self">
+								{ translate( 'Connect now' ) }
+							</Button>
 						</div>
 					</li>
 				</ul>
