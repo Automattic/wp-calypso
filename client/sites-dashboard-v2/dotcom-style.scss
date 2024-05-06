@@ -36,16 +36,6 @@
 		display: block;
 	}
 
-	.item-preview__content {
-		max-width: 1400px;
-
-		> div {
-			padding: 0;
-			overflow-y: initial;
-			max-height: initial;
-		}
-	}
-
 	height: calc(100vh - var(--masterbar-height));
 
 	@media ( min-width: 782px ) {
@@ -282,10 +272,14 @@
 }
 
 // Styles for site preview pane.
-.wpcom-site .site-preview-pane {
+.wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
 	.section-nav-tabs__list {
 		box-sizing: border-box;
 		overflow-x: auto;
+
+		@media (max-width: $break-large) {
+			padding: 0 8px;
+		}
 	}
 	.item-preview__header {
 		.site-favicon .site-icon {
@@ -294,6 +288,13 @@
 		.item-preview__header-title {
 			font-family: Recoleta, sans-serif;
 		}
+
+		.item-preview__header-content {
+			@media (max-width: $break-large) {
+				padding: 0;
+			}
+		}
+
 		.item-preview__header-content .item-preview__header-title-summary .item-preview__header-summary {
 			display: flex;
 			flex-wrap: wrap;
@@ -316,6 +317,19 @@
 			@include break-medium {
 				height: 32px;
 			}
+		}
+	}
+	.item-preview__content {
+		max-width: 1400px;
+
+		> * {
+			padding: 0;
+			overflow-y: initial;
+			max-height: initial;
+		}
+
+		@media (max-width: $break-large) {
+			padding: 24px 24px 8px;
 		}
 	}
 }
