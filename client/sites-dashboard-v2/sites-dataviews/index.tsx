@@ -63,7 +63,7 @@ const DotcomSitesDataViews = ( {
 
 	useEffect( () => {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
-		const handleRowClick = ( event: MouseEvent ) => {
+		const handleRowClick = ( event: Event ) => {
 			const target = event.target as HTMLElement;
 			const row = target.closest( '.dataviews-view-table__row' );
 			if ( row ) {
@@ -77,10 +77,15 @@ const DotcomSitesDataViews = ( {
 			}
 		};
 
-		document.addEventListener( 'click', handleRowClick );
+		const rowsContainer = document.querySelector( '.dataviews-view-table' );
+		if ( rowsContainer ) {
+			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
+		}
 
 		return () => {
-			document.removeEventListener( 'click', handleRowClick );
+			if ( rowsContainer ) {
+				rowsContainer.removeEventListener( 'click', handleRowClick as EventListener );
+			}
 		};
 	}, [] );
 
