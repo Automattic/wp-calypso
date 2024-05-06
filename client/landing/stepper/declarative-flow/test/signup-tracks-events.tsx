@@ -197,14 +197,9 @@ describe( 'Stepper signup flows', () => {
 					currentURL,
 				} );
 
-				const alternateLoggedOutDestination = getAlternateLoggedOutDestination( flowKey );
-				if ( alternateLoggedOutDestination ) {
-					expect( window.location.assign ).toHaveBeenCalledWith( alternateLoggedOutDestination );
-					return;
-				}
-
-				expect( window.location.assign ).toHaveBeenCalledWith(
-					expect.toMatchPathAndSearchParams(
+				let loginDestination = getAlternateLoggedOutDestination( flowKey );
+				if ( ! loginDestination ) {
+					loginDestination = expect.toMatchPathAndSearchParams(
 						FLOWS_WITH_ALTERNATE_USER_PATH[ flowKey ] ?? expectedLoginPath,
 						{
 							variationName: flowPath,
@@ -216,8 +211,10 @@ describe( 'Stepper signup flows', () => {
 							ref: 'logged-out-homepage',
 							*/
 						}
-					)
-				);
+					);
+				}
+
+				expect( window.location.assign ).toHaveBeenCalledWith( loginDestination );
 			} );
 
 			it( 'redirects the user to the login page with the correct locale when they are not logged in', () => {
@@ -247,14 +244,10 @@ describe( 'Stepper signup flows', () => {
 					currentURL,
 				} );
 
-				const alternateLoggedOutDestination = getAlternateLoggedOutDestination( flowKey, 'fr' );
-				if ( alternateLoggedOutDestination ) {
-					expect( window.location.assign ).toHaveBeenCalledWith( alternateLoggedOutDestination );
-					return;
-				}
+				let loginDestination = getAlternateLoggedOutDestination( flowKey, 'fr' );
 
-				expect( window.location.assign ).toHaveBeenCalledWith(
-					expect.toMatchPathAndSearchParams(
+				if ( ! loginDestination ) {
+					loginDestination = expect.toMatchPathAndSearchParams(
 						( FLOWS_WITH_ALTERNATE_USER_PATH[ flowKey ] ?? expectedLoginPath ) + '/fr',
 						{
 							variationName: flowPath,
@@ -272,8 +265,10 @@ describe( 'Stepper signup flows', () => {
 							ref: 'logged-out-homepage',
 							*/
 						}
-					)
-				);
+					);
+				}
+
+				expect( window.location.assign ).toHaveBeenCalledWith( loginDestination );
 			} );
 
 			// This test is not working yet for logged-in or logged-out users.
