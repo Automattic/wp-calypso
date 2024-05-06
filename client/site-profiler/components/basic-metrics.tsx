@@ -9,7 +9,7 @@ export function BasicMetrics( { basicMetrics }: { basicMetrics: BasicMetrics } )
 			<ul className="basic-metric-details result-list">
 				{ Object.entries( basicMetrics ).map( ( [ key, value ] ) => {
 					return (
-						<li>
+						<li key={ key }>
 							<div className="name">
 								<a href={ `https://web.dev/articles/${ key }` }>{ key }</a>
 							</div>
