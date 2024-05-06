@@ -44,11 +44,6 @@ export function useSyncSelectedSiteFeature( {
 
 		if ( page.current !== newUrl ) {
 			page.show( newUrl );
-
-			const featurePreviewContentElement = document.querySelector( '.item-preview__content' );
-			if ( featurePreviewContentElement ) {
-				featurePreviewContentElement.scrollTop = 0;
-			}
 		}
 	};
 
