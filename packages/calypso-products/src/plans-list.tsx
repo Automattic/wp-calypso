@@ -1832,7 +1832,11 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			: [],
 	get2023PlanComparisonConditionalFeatures: () =>
 		isTrailMapCopyVariant()
-			? [ FEATURE_PREMIUM_THEMES, FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]
+			? [
+					FEATURE_PREMIUM_THEMES,
+					FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+					FEATURE_COMMISSION_FEE_WOO_FEATURES,
+			  ]
 			: [
 					FEATURE_PREMIUM_THEMES,
 					FEATURE_PREMIUM_STORE_THEMES,

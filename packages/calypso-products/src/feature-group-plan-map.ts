@@ -351,6 +351,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		getTitle: () => i18n.translate( 'eCommerce' ),
 		getFeatures: () => [
 			FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+			FEATURE_COMMISSION_FEE_WOO_FEATURES,
 			FEATURE_PAYMENT_TRANSACTION_FEES_10,
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
