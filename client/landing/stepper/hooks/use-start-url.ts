@@ -1,13 +1,8 @@
-import { useLocale } from '@automattic/i18n-utils';
-import { getLocaleFromPathname, getLocaleFromQueryParam } from 'calypso/boot/locale';
-import { getLoginUrl } from '../utils/path';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { useLoginUrl } from '../utils/path';
 
 export const useStartUrl = ( flowName: string ) => {
-	const useLocaleSlug = useLocale();
-	// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-	const queryLocaleSlug = getLocaleFromQueryParam();
-	const pathLocaleSlug = getLocaleFromPathname();
-	const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+	const locale = useFlowLocale();
 
 	const currentQueryParams = new URLSearchParams( window.location.search );
 	const aff = currentQueryParams.get( 'aff' );
@@ -40,9 +35,8 @@ export const useStartUrl = ( flowName: string ) => {
 		queryString = `${ queryString }&${ queryParams.toString() }`;
 	}
 
-	const logInUrl = getLoginUrl( {
+	const logInUrl = useLoginUrl( {
 		variationName: flowName,
-		locale,
 	} );
 
 	return `${ logInUrl }&${ queryString }`;
