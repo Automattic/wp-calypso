@@ -713,7 +713,7 @@ export class EditorPage {
 		const requiresSecondClick =
 			! [ 'save', 'update' ].includes( publishButtonText.toLowerCase() ) ||
 			( publishButtonText.toLowerCase() === 'save' &&
-				postStatusButtonText.toLowerCase() === 'scheduled' );
+				postStatusButtonText?.toLowerCase() === 'scheduled' );
 
 		if ( requiresSecondClick ) {
 			actionsArray.push( this.editorPublishPanelComponent.publish() );

@@ -269,9 +269,13 @@ export class EditorToolbarComponent {
 	 *
 	 * @returns {Promise<string>} String found on the button.
 	 */
-	async getPostStatusButtonText(): Promise< string > {
+	async getPostStatusButtonText(): Promise< string | null > {
 		const editorParent = await this.editor.parent();
 		const postStatusButtonLocator = editorParent.locator( selectors.postStatusButton );
+
+		if ( ! ( await postStatusButtonLocator.isVisible() ) ) {
+			return null;
+		}
 
 		return await postStatusButtonLocator.innerText();
 	}
