@@ -44,7 +44,7 @@ export default function StoredCreditCard( {
 	// Fetch the stored cards from the cache if they are available.
 	const {
 		data: { allStoredCards },
-	} = useStoredCards( paging, { staleTime: Infinity } );
+	} = useStoredCards( paging, true );
 
 	const { isDeleteDialogVisible, setIsDeleteDialogVisible, handleDelete, isDeleteInProgress } =
 		useDeleteCard( creditCard, allStoredCards );

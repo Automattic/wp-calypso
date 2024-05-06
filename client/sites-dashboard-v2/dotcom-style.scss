@@ -44,8 +44,10 @@
 		}
 	}
 
-	@media (max-width: $break-large) {
-		height: calc(100vh - 32px);
+	height: calc(100vh - var(--masterbar-height));
+
+	@media ( min-width: 782px ) {
+		height: calc(100vh - var(--masterbar-height) - 32px);
 	}
 }
 
@@ -81,6 +83,39 @@
 
 	table.dataviews-view-table .dataviews-view-table__row td {
 		border-bottom-color: var(--color-border-secondary);
+	}
+
+	table.dataviews-view-table th,
+	table.dataviews-view-table td {
+		white-space: nowrap; /* Optional: ensures text in cells does not wrap */
+	}
+
+	table.dataviews-view-table th:first-child,
+	table.dataviews-view-table td:first-child,
+	table.dataviews-view-table th:last-child,
+	table.dataviews-view-table td:last-child {
+		display: table-cell; /* ensures these cells are always shown */
+	}
+
+	@media (max-width: $break-wide) {
+		table.dataviews-view-table th:nth-child(5),
+		table.dataviews-view-table td:nth-child(5) {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-wide - 100px) {
+		table.dataviews-view-table th:nth-child(4),
+		table.dataviews-view-table td:nth-child(4) {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-xlarge) {
+		table.dataviews-view-table th:nth-child(3),
+		table.dataviews-view-table td:nth-child(3) {
+			display: none;
+		}
 	}
 }
 
@@ -122,9 +157,21 @@
 	}
 }
 
+// Style the sortable table headers.
+.wpcom-site .dataviews-view-table .components-button.is-tertiary {
+	&:active:not(:disabled),
+	&:hover:not(:disabled) {
+		box-shadow: none;
+		background-color: inherit;
+		color: var(--color-accent) !important;
+	}
+}
+
 .wpcom-site .is-group-sites.is-global-sidebar-collapsed,
-.wpcom-site .is-group-sites.is-global-sidebar-visible:not(.is-section-domains) {
+.wpcom-site .is-group-sites.is-global-sidebar-visible:has(.sites-dashboard.sites-dashboard__layout) {
 	.layout__content {
+		min-height: 100vh;
+
 		@include break-medium {
 			padding: 16px 16px 16px calc(var(--sidebar-width-max));
 		}
@@ -149,9 +196,11 @@
 		}
 	}
 	.is-global-sidebar-collapsed {
-		@media ( min-width: 660px ) {
+		@media ( min-width: 661px ) {
 			.global-sidebar {
 				.sidebar__body {
+					padding-top: 24px;
+
 					.sidebar__menu-link {
 						width: fit-content;
 
@@ -260,9 +309,24 @@
 			height: 16px;
 			padding-left: 0;
 			padding-right: 0;
+			color: var(--color-link);
 
 			@include break-medium {
 				height: 32px;
+			}
+		}
+	}
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+	.a4a-layout-column__container {
+		.dataviews-wrapper {
+			position: relative;
+
+			.dataviews-pagination {
+				margin: 0;
+				position: relative;
+				width: 100%;
 			}
 		}
 	}
@@ -310,16 +374,42 @@
 				flex: 1;
 				max-height: none;
 			}
-
-			.dataviews-pagination {
-				margin: 0;
-				position: relative;
-			}
 		}
 	}
 }
 
+// Override styles from my-sites/sidebar
+.wpcom-site div.is-group-sites:not(.has-no-masterbar),
+.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) {
+	&.focus-content .layout__content,
+	&.focus-sidebar .layout__content {
+		padding-bottom: 0;
+		padding-top: var(--masterbar-height);
+
+		@include break-small {
+			padding-top: calc(var(--masterbar-height) + 24px);
+		}
+
+		.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+			height: calc(100vh - var(--masterbar-height));
+
+			@include break-small {
+				height: calc(100vh - var(--masterbar-height) - 48px);
+			}
+		}
+	}
+
+	// Prevent the content pushed out via translateX(100%) creating a scrollbar
+	&.focus-sidebar .layout__content .layout__primary {
+		overflow-x: hidden;
+	}
+}
+
 .wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
-	// With masterbar
-	max-height: calc(100vh - 347px); /* 347px is the size of all the height above and below the dataviews-view-table-wrapper */
+	max-height: calc(100vh - 276px); /* 276px is the size of all the height above and below the dataviews-view-table-wrapper */
+
+	// With 48px padding.
+	@media ( min-width: 601px ) {
+		max-height: calc(100vh - 324px); /* 324px is the size of all the height above and below the dataviews-view-table-wrapper */
+	}
 }

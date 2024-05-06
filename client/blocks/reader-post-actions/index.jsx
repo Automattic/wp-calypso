@@ -22,13 +22,9 @@ const ReaderPostActions = ( props ) => {
 	const showReblog = shouldShowReblog( post, hasSites );
 	const showComments = shouldShowComments( post );
 	const showLikes = shouldShowLikes( post );
-	const numberOfActions = [ showShare, showReblog, showComments, showLikes ].filter(
-		( item ) => item
-	).length;
 
 	const listClassnames = classnames( className, {
 		'reader-post-actions': true,
-		'space-items-apart': numberOfActions > 2,
 	} );
 
 	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */

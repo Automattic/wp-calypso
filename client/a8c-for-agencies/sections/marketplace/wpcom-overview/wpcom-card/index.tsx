@@ -41,7 +41,7 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect }: P
 								<span className="wpcom-plan-card__price-discount">
 									{ translate( 'You save %(discount)s%', {
 										args: {
-											discount: discount * 100,
+											discount: Math.floor( discount * 100 ),
 										},
 										comment: '%(discount)s is the discount percentage.',
 									} ) }
@@ -49,8 +49,8 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect }: P
 							</>
 						) }
 						<div className="wpcom-plan-card__price-interval">
-							{ plan.price_interval === 'day' && translate( 'USD per site per day' ) }
-							{ plan.price_interval === 'month' && translate( 'USD per site per month' ) }
+							{ plan.price_interval === 'day' && translate( 'USD per day' ) }
+							{ plan.price_interval === 'month' && translate( 'USD per month' ) }
 						</div>
 					</div>
 				</div>

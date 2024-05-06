@@ -11,7 +11,6 @@ import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedule
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { MAX_SCHEDULES } from './config';
 import { PluginUpdateManagerContextProvider } from './context';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
@@ -51,8 +50,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 	const { isEligibleForFeature, isSitePlansLoaded } = useIsEligibleForFeature();
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 
-	const hideCreateButton =
-		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
+	const hideCreateButton = ! isEligibleForFeature || schedules.length === 0;
 
 	const { siteHasEligiblePlugins } = useSiteHasEligiblePlugins( siteSlug );
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );

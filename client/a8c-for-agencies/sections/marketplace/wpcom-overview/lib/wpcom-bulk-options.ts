@@ -16,7 +16,7 @@ const wpcomBulkOptions = (
 	return discountOptions.map( ( option ) => ( {
 		value: option.quantity || 1,
 		label: option.quantity ? `${ option.quantity }` : '1',
-		sub: option.discount_percent ? `${ option.discount_percent * 100 }%` : '',
+		sub: option.discount_percent ? `${ Math.floor( option.discount_percent * 100 ) }%` : '',
 		discount: option.discount_percent ? option.discount_percent : 0,
 	} ) );
 };

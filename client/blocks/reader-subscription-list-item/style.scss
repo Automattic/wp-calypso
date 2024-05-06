@@ -45,10 +45,6 @@
 	flex-direction: row;
 	font-size: $font-body-small;
 	padding: 15px 0;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0 15px;
-	}
 }
 
 .reader-subscription-list-item__site-url,
