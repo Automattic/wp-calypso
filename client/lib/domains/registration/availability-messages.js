@@ -55,12 +55,21 @@ function getAvailabilityNotice(
 			);
 			break;
 		case domainAvailability.REGISTERED_SAME_SITE:
-			message = translate( '{{strong}}%(domain)s{{/strong}} is already registered on this site.', {
-				args: { domain },
-				components: {
-					strong: <strong />,
-				},
-			} );
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already registered on this site. Are you trying to {{a}}make this the primary address for your site?{{/a}}',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: (
+							<button
+								className="action-button set-as-primary"
+								onClick={ () => console.log( 'Make primary' ) }
+							/>
+						),
+					},
+				}
+			);
 			break;
 		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
 			if ( site ) {
