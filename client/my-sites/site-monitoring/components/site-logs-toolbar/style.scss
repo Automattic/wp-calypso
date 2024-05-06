@@ -34,7 +34,15 @@
 			align-items: center;
 			gap: 16px;
 		}
+
+		input[type="datetime-local"] {
+			cursor: default;
+			&::-webkit-calendar-picker-indicator {
+				cursor: pointer;
+			}
+		}
 	}
+
 	.site-logs-toolbar__filter {
 		display: none;
 		float: right;
