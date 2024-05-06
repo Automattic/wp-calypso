@@ -603,7 +603,7 @@ class StatsSite extends Component {
 								query={ query }
 								className={ classNames(
 									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--xlarge'
+									'stats__flexible-grid-item--full--large'
 								) }
 							/>
 						) }
@@ -611,7 +611,7 @@ class StatsSite extends Component {
 							<StatsModuleUpgradeOverlay
 								className={ classNames(
 									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--xlarge'
+									'stats__flexible-grid-item--full--large'
 								) }
 								siteId={ siteId }
 								overlay={
