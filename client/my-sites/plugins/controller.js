@@ -116,7 +116,14 @@ export function plugins( context, next ) {
 export function scheduledUpdates( context, next ) {
 	const siteSlug = context?.params?.site_slug;
 	const scheduleId = context?.params?.schedule_id;
-	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/${ siteSlug }` );
+	const goToScheduledUpdatesList = () => {
+		// check if window.location query has multisite
+		if ( window?.location.search.includes( 'multisite' ) ) {
+			page.show( `/plugins/scheduled-updates` );
+		} else {
+			page.show( `/plugins/scheduled-updates/${ siteSlug }` );
+		}
+	};
 
 	if ( ! siteSlug ) {
 		sites( context, next );
@@ -203,7 +210,7 @@ export function scheduledUpdatesMultisite( context, next ) {
 				context: 'list',
 				onEditSchedule: ( id ) => page.show( `/plugins/scheduled-updates/edit/${ id }` ),
 				onShowLogs: ( id, siteSlug ) =>
-					page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }` ),
+					page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }?multisite` ),
 				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/` ),
 			} );
 			break;

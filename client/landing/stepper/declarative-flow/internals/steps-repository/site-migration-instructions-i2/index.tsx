@@ -1,13 +1,12 @@
 import { StepContainer } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MaybeLink } from '../site-migration-instructions/maybe-link';
 import { ShowHideInput } from '../site-migration-instructions/show-hide-input';
@@ -30,16 +29,6 @@ const getPluginInstallationPage = ( fromUrl: string ) => {
 const getMigrateGuruPageURL = ( siteURL: string ) =>
 	removeDuplicatedSlashes( `${ siteURL }/wp-admin/admin.php?page=migrateguru` );
 
-const Loading = () => {
-	return (
-		<div className="loading">
-			<div className="loading__content">
-				<LoadingEllipsis />
-			</div>
-		</div>
-	);
-};
-
 const DoNotTranslateIt: FC< { value: string } > = ( { value } ) => <>{ value }</>;
 
 const SiteMigrationInstructions: Step = function () {
@@ -47,37 +36,18 @@ const SiteMigrationInstructions: Step = function () {
 	const site = useSite();
 	const siteId = site?.ID;
 	const fromUrl = useQuery().get( 'from' ) || '';
-
 	const {
-		data: { migrationKey } = {},
-		isSuccess,
-		isError,
-		isFetching,
-		isFetched,
-	} = useSiteMigrationKey( siteId );
+		detailedStatus,
+		migrationKey,
+		completed: isSetupCompleted,
+	} = usePrepareSiteForMigration( siteId );
 
-	const [ isWaitingForSite, setIsWaitingForSite ] = useState( true );
-	const [ isWaitingForPlugins, setIsWaitingForPlugins ] = useState( true );
-	const isSiteSetupComplete = ! isWaitingForSite && ! isWaitingForPlugins;
+	const hasErrorGetMigrationKey = detailedStatus.migrationKey === 'error';
+	const showFallback = isSetupCompleted && hasErrorGetMigrationKey;
+	const showCopyIntoNewSite = isSetupCompleted && migrationKey;
 
 	useEffect( () => {
-		const timer = setTimeout( () => {
-			setIsWaitingForSite( false );
-			setIsWaitingForPlugins( true );
-		}, 2000 );
-
-		return () => clearTimeout( timer );
-	}, [] );
-	useEffect( () => {
-		const timer = setTimeout( () => {
-			setIsWaitingForPlugins( false );
-		}, 4000 );
-
-		return () => clearTimeout( timer );
-	}, [] );
-
-	useEffect( () => {
-		if ( isError && fromUrl ) {
+		if ( hasErrorGetMigrationKey ) {
 			recordTracksEvent(
 				'calypso_onboarding_site_migration_instructions_unable_to_get_migration_key',
 				{
@@ -85,7 +55,7 @@ const SiteMigrationInstructions: Step = function () {
 				}
 			);
 		}
-	}, [ fromUrl, isError ] );
+	}, [ fromUrl, hasErrorGetMigrationKey ] );
 
 	const stepContent = (
 		<div className="site-migration-instructions__content">
@@ -136,16 +106,13 @@ const SiteMigrationInstructions: Step = function () {
 					) }
 				</li>
 				<li>
-					<PendingActions
-						isWaitingForSite={ isWaitingForSite }
-						isWaitingForPlugins={ isWaitingForPlugins }
-					/>
+					<PendingActions status={ detailedStatus } />
 				</li>
 
-				{ isSuccess && migrationKey && (
+				{ showCopyIntoNewSite && (
 					<li
 						className={ classNames( 'fade-in', {
-							active: isSiteSetupComplete,
+							active: showCopyIntoNewSite,
 						} ) }
 					>
 						{ translate(
@@ -159,13 +126,13 @@ const SiteMigrationInstructions: Step = function () {
 								},
 							}
 						) }
-						<ShowHideInput value={ migrationKey } className="site-migration-instructions__key" />
+						<ShowHideInput value={ migrationKey! } className="site-migration-instructions__key" />
 					</li>
 				) }
-				{ isError && (
+				{ showFallback && (
 					<li
 						className={ classNames( 'fade-in', {
-							active: isSiteSetupComplete,
+							active: showFallback,
 						} ) }
 					>
 						{ translate(
@@ -191,7 +158,7 @@ const SiteMigrationInstructions: Step = function () {
 			</ol>
 			<p
 				className={ classNames( 'fade-in', {
-					active: isSiteSetupComplete,
+					active: showFallback,
 				} ) }
 			>
 				{ translate(
@@ -200,10 +167,6 @@ const SiteMigrationInstructions: Step = function () {
 			</p>
 		</div>
 	);
-
-	if ( isFetching || ! isFetched ) {
-		return <Loading />;
-	}
 
 	return (
 		<>

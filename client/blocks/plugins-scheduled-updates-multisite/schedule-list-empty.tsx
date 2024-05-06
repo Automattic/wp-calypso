@@ -18,7 +18,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 				) }
 			</Text>
 			<Button __next40pxDefaultSize icon={ plus } variant="primary" onClick={ onCreateNewSchedule }>
-				{ translate( 'Setup a new schedule' ) }
+				{ translate( 'Add new schedule' ) }
 			</Button>
 		</div>
 	);
