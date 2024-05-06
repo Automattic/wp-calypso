@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ConnectButton from '../../../components/connect-button';
 
 export default function BlazeDisabled() {
 	const selectedSiteData = useSelector( getSelectedSite );
