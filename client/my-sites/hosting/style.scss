@@ -1,15 +1,12 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
-.preview-pane__content {
-	.hosting {
-		margin: 0;
-		padding: 0;
-		overflow-y: auto;
-		max-height: calc(100vh - 300px);
-	}
-}
-
 .hosting {
+	max-width: 1040px;
+
+	.is-global-sidebar-visible & {
+		max-width: 100%;
+	}
+
 	/* Rely on the standard spacing for the underlying elements. */
 	.feature-example {
 		margin-top: 0;

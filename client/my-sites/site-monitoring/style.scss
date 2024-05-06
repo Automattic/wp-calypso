@@ -6,7 +6,7 @@
 
 $section-max-width: 1224px;
 
-.is-section-site-monitoring.theme-default {
+.is-section-site-monitoring.theme-default:not(:has(.is-global-sidebar-visible)) {
 	background-color: var(--studio-white);
 	.focus-content:not(.has-no-sidebar) .layout__content {
 		@media screen and ( max-width: 782px ) {

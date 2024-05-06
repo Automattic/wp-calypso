@@ -37,8 +37,10 @@
 	}
 
 	.item-preview__content {
-		.hosting-overview,
-		.site-monitoring-overview {
+		max-width: 1400px;
+
+		> div {
+			padding: 0;
 			overflow-y: initial;
 			max-height: initial;
 		}
