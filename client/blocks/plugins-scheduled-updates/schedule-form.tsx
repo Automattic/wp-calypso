@@ -92,8 +92,11 @@ export const ScheduleForm = ( props: Props ) => {
 			schedule: {
 				timestamp,
 				interval: frequency,
+				// Temporary: this field is left here for backward compatibility.
+				// Will be removed after https://github.com/Automattic/jetpack/pull/37223 is landed.
 				health_check_paths: healthCheckPaths,
 			},
+			health_check_paths: healthCheckPaths,
 		};
 
 		if ( formValid ) {
