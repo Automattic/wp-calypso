@@ -85,7 +85,7 @@ export default function SiteProfiler( props: Props ) {
 		isEnabled( 'site-profiler/metrics' );
 
 	// TODO: Remove this debug statement once we have a better error handling mechanism
-	if ( errorBasicMetrics ) {
+	if ( isEnabled( 'site-profiler/metrics' ) && errorBasicMetrics ) {
 		debug(
 			`Error fetching basic metrics for domain ${ domain }: ${ errorBasicMetrics.message }`,
 			errorBasicMetrics
