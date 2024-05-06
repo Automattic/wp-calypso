@@ -54,11 +54,7 @@ export default function SitesDashboard() {
 
 	const agencyId = useSelector( getActiveAgencyId );
 
-	const createdSiteQuery = getQueryArg( window.location.href, 'created_site' );
-
-	const [ recentlyCreatedSite, setRecentlyCreatedSite ] = useState< number | null >(
-		createdSiteQuery ? Number( createdSiteQuery ) : null
-	);
+	const recentlyCreatedSite = getQueryArg( window.location.href, 'created_site' ) ?? null;
 
 	const {
 		dataViewsState,
@@ -228,10 +224,7 @@ export default function SitesDashboard() {
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
 						{ recentlyCreatedSite && (
-							<ProvisioningSiteNotification
-								siteId={ recentlyCreatedSite }
-								onClose={ () => setRecentlyCreatedSite( null ) }
-							/>
+							<ProvisioningSiteNotification siteId={ Number( recentlyCreatedSite ) } />
 						) }
 
 						<LayoutHeader>
