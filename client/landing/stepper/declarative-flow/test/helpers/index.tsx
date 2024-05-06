@@ -1,11 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { MemoryRouter, useNavigate, useLocation } from 'react-router';
 import themeReducer from 'calypso/state/themes/reducer';
-import { renderWithProvider } from '../../../../../test-helpers/testing-library';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { FlowRenderer } from '../../internals';
 import type { Flow, ProvidedDependencies } from '../../internals/types';
 
 export const getFlowLocation = () => {
@@ -20,7 +21,7 @@ export const getAssertionConditionResult = () => {
 };
 
 interface RenderFlowParams {
-	currentStep: string;
+	currentStep?: string;
 	dependencies?: ProvidedDependencies;
 	currentURL?: string;
 	method: 'submit' | 'goBack' | null;
@@ -32,8 +33,12 @@ export const renderFlow = ( flow: Flow ) => {
 		const navigate = useNavigate();
 		const location = useLocation();
 		const fakeNavigate = ( pathname, state ) => navigate( pathname, { state } );
-		const { submit, goBack } = flow.useStepNavigation( currentStep, fakeNavigate );
+		const flowSteps = flow.useSteps();
+		const effectiveStep = currentStep ?? flowSteps[ 0 ].slug;
+		const { submit, goBack } = flow.useStepNavigation( effectiveStep, fakeNavigate );
 		const assertionConditionResult = flow.useAssertConditions?.() || {};
+
+		flow.useSideEffect?.( effectiveStep, fakeNavigate );
 
 		useEffect( () => {
 			switch ( method ) {
@@ -99,5 +104,32 @@ export const renderFlow = ( flow: Flow ) => {
 		runUseStepNavigationSubmit,
 		runUseStepNavigationGoBack,
 		runUseAssertionCondition,
+	};
+};
+
+export const renderFlowRoot = ( flow: Flow ) => {
+	const render = ( { currentURL = '/some-path?siteSlug=example.wordpress.com' } ) => {
+		renderWithProvider(
+			<MemoryRouter initialEntries={ [ currentURL ] }>
+				<FlowRenderer flow={ flow } />
+			</MemoryRouter>,
+			{
+				initialState: { themes: { queries: [] }, currentUser: { id: 'some-id' } },
+				reducers: {
+					themes: themeReducer,
+				},
+			}
+		);
+	};
+
+	const renderWithAct = ( { currentURL = '/some-path?siteSlug=example.wordpress.com' } ) => {
+		act( () => {
+			render( { currentURL } );
+		} );
+	};
+
+	return {
+		render,
+		renderWithAct,
 	};
 };

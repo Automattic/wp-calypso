@@ -4,7 +4,12 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
+import { useLoginUrl } from 'calypso/landing/stepper/utils/path';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
@@ -13,10 +18,6 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSiteIdParam } from '../hooks/use-site-id-param';
-import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
@@ -66,12 +67,16 @@ const newsletter: Flow = {
 			},
 		];
 	},
-	useSideEffect() {
+	useSideEffect( currentStep ) {
 		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
 			setHidePlansFeatureComparison( true );
 			clearSignupDestinationCookie();
 		}, [] );
+
+		useEffect( () => {
+			triggerGuidesForStep( currentStep );
+		}, [ currentStep ] );
 	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
@@ -86,10 +91,14 @@ const newsletter: Flow = {
 		const isLoadingIntroScreen =
 			! isComingFromMarketingPage && ( 'intro' === _currentStep || undefined === _currentStep );
 
+		const locale = useFlowLocale();
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/newsletterSetup`,
+			redirectTo:
+				`/setup/${ flowName }/newsletterSetup` +
+				( locale && locale !== 'en' ? `?locale=${ locale }` : '' ),
 			pageTitle: translate( 'Newsletter' ),
+			locale,
 		} );
 
 		const completeSubscribersTask = async () => {
@@ -104,8 +113,6 @@ const newsletter: Flow = {
 		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
 			window.location.assign( logInUrl );
 		}
-
-		triggerGuidesForStep( flowName, _currentStep );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );

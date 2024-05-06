@@ -10,7 +10,7 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
-import { getLoginUrl } from '../utils/path';
+import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
@@ -59,9 +59,15 @@ const migrationSignup: Flow = {
 		const vendorId = queryParams.get( 'vid' );
 		const ref = queryParams.get( 'ref' );
 
+		const redirectTo =
+			`/setup/${ FLOW_NAME }` + ( locale && locale !== 'en' ? `?locale=${ locale }` : '' );
+		const loginUrl = useLoginUrl( {
+			variationName: flowName,
+			locale,
+			redirectTo,
+		} );
+
 		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
 			const queryParams = new URLSearchParams();
 
 			if ( vendorId ) {
@@ -76,27 +82,11 @@ const migrationSignup: Flow = {
 				queryParams.set( 'ref', ref );
 			}
 
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				`/setup/${ FLOW_NAME }` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-
-			let queryString = `redirect_to=${ redirectTarget }`;
-
 			if ( queryParams.toString() ) {
-				queryString = `${ queryString }&${ queryParams.toString() }`;
+				return `${ loginUrl }&${ queryParams.toString() }`;
 			}
 
-			const logInUrl = getLoginUrl( {
-				variationName: flowName,
-				locale,
-			} );
-
-			return `${ logInUrl }&${ queryString }`;
+			return loginUrl;
 		};
 
 		useEffect( () => {

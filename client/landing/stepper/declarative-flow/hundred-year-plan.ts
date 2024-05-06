@@ -4,6 +4,7 @@ import { HUNDRED_YEAR_PLAN_FLOW, addProductsToCart } from '@automattic/onboardin
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -13,7 +14,12 @@ import { SiteId, SiteSlug } from 'calypso/types';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import type { ProvidedDependencies, Flow } from './internals/types';
+import {
+	type AssertConditionResult,
+	AssertConditionState,
+	type ProvidedDependencies,
+	type Flow,
+} from './internals/types';
 
 const HundredYearPlanFlow: Flow = {
 	name: HUNDRED_YEAR_PLAN_FLOW,
@@ -85,22 +91,7 @@ const HundredYearPlanFlow: Flow = {
 	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
 		const { setPlanCartItem, setPendingAction } = useDispatch( ONBOARD_STORE );
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/setup`,
-			pageTitle: ( getPlan( PLAN_100_YEARS )?.getTitle() || '' ) as string,
-		} );
-
-		// Send non-logged-in users to account screen.
-		if ( ! userIsLoggedIn ) {
-			window.location.assign( logInUrl );
-		}
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
@@ -160,6 +151,38 @@ const HundredYearPlanFlow: Flow = {
 		}
 
 		return { submit };
+	},
+
+	useAssertConditions() {
+		const flowName = this.name;
+
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+
+		const locale = useFlowLocale();
+
+		const logInUrl = useLoginUrl( {
+			variationName: flowName,
+			redirectTo: `/setup/${ flowName }/setup${ locale ? `?locale=${ locale }` : '' }`,
+			pageTitle: ( getPlan( PLAN_100_YEARS )?.getTitle() || '' ) as string,
+			locale,
+		} );
+
+		// Send non-logged-in users to log in or create an account.
+		if ( ! userIsLoggedIn ) {
+			window.location.assign( logInUrl );
+
+			result = {
+				state: AssertConditionState.FAILURE,
+				message: `${ flowName } requires a logged in user`,
+			};
+		}
+
+		return result;
 	},
 };
 

@@ -12,11 +12,11 @@ import {
 	type ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { useSiteData } from '../hooks/use-site-data';
 import { useLoginUrl } from '../utils/path';
 
 const startWriting: Flow = {
@@ -237,7 +237,7 @@ const startWriting: Flow = {
 
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
-			redirectTo: `/setup/${ flowName }`,
+			redirectTo: `/setup/${ flowName }${ locale ? `?locale=${ locale }` : '' }`,
 			pageTitle: translate( 'Start writing' ),
 			locale,
 		} );

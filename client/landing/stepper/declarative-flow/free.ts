@@ -5,6 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useLocation } from 'react-router';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -190,6 +191,8 @@ const free: Flow = {
 		const flags = queryParams.get( 'flags' );
 		const siteSlug = queryParams.get( 'siteSlug' );
 
+		const location = useLocation();
+
 		const getStartUrl = () => {
 			let hasFlowParams = false;
 			const flowParams = new URLSearchParams();
@@ -205,8 +208,7 @@ const free: Flow = {
 			}
 
 			const redirectTarget =
-				window?.location?.pathname +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
+				location?.pathname + ( hasFlowParams ? '?' + flowParams.toString() : '' );
 
 			const logInUrl = getLoginUrl( {
 				variationName: flowName,
@@ -230,8 +232,8 @@ const free: Flow = {
 		}, [] );
 
 		if ( ! userIsLoggedIn ) {
-			const logInUrl = getStartUrl();
-			window.location.assign( logInUrl );
+			//const logInUrl = getStartUrl();
+			//window.location.assign( logInUrl );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'free-flow requires a logged in user',

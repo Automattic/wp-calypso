@@ -3,6 +3,7 @@ import { REBLOGGING_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	setSignupCompleteSlug,
@@ -98,10 +99,15 @@ const reblogging: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		const locale = useFlowLocale();
+
 		const logInUrl = useLoginUrl( {
 			variationName: this.name,
 			redirectTo: window.location.href.replace( window.location.origin, '' ),
+			locale,
 		} );
 
 		if ( ! userIsLoggedIn ) {

@@ -9,14 +9,14 @@ import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding'
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSite } from '../hooks/use-site';
-import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import getQuantityFromStorageType from '../utils/get-quantity-from-storage-slug';
 import { getLoginUrl } from '../utils/path';
@@ -131,8 +131,7 @@ const ecommerceFlow: Flow = {
 			}
 
 			const redirectTarget =
-				`/setup/ecommerce/storeProfiler` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
+				`/setup/ecommerce/storeProfiler` + ( hasFlowParams ? '?' + flowParams.toString() : '' );
 			const logInUrl = getLoginUrl( {
 				variationName: flowName,
 				redirectTo: redirectTarget,
