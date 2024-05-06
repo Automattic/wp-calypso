@@ -620,14 +620,12 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		isTrailMapCopyVariant()
 			? [
 					FEATURE_USERS,
-					FEATURE_AD_SUPPORTED_EXPERIENCE,
 					FEATURE_1_WEBSITE,
 					FEATURE_UNLIMITED_TRAFFIC,
 					FEATURE_BANDWIDTH,
 					FEATURE_FREE_SSL_CERTIFICATE,
 					FEATURE_CDN,
 					FEATURE_POST_EDITS_HISTORY,
-					FEATURE_PAYMENT_TRANSACTION_FEES_10,
 					FEATURE_HELP_CENTER_SUPPORT,
 			  ]
 			: [
@@ -886,12 +884,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	},
 	get2023PlanComparisonFeatureOverride: () =>
 		isTrailMapCopyVariant()
-			? [
-					FEATURE_CUSTOM_DOMAIN,
-					FEATURE_20_PREMIUM_THEMES,
-					FEATURE_PAYMENT_TRANSACTION_FEES_8,
-					FEATURE_EMAIL_SUPPORT,
-			  ]
+			? [ FEATURE_AD_FREE_EXPERIENCE, FEATURE_CUSTOM_DOMAIN, FEATURE_EMAIL_SUPPORT ]
 			: [
 					FEATURE_CUSTOM_DOMAIN,
 					FEATURE_AD_FREE_EXPERIENCE,
@@ -1137,13 +1130,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	},
 	get2023PlanComparisonFeatureOverride: () =>
 		isTrailMapCopyVariant()
-			? [
-					FEATURE_CUSTOM_DOMAIN,
-					FEATURE_PAYMENT_TRANSACTION_FEES_0,
-					FEATURE_STORE_DESIGN,
-					FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
-			  ]
-			: [], //todo
+			? [ FEATURE_CUSTOM_DOMAIN, FEATURE_STORE_DESIGN, FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ]
+			: [],
 	getCheckoutFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
@@ -1554,11 +1542,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		isTrailMapCopyVariant()
 			? [
 					FEATURE_CUSTOM_DOMAIN,
-					FEATURE_48_PREMIUM_THEMES,
 					FEATURE_REAL_TIME_STATS,
 					FEATURE_STYLE_CUSTOMIZATION,
 					FEATURE_VIDEOPRESS_JP,
-					FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			  ]
 			: [],
 	getCheckoutFeatures: () => [
@@ -1817,7 +1803,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 					FEATURE_DEV_TOOLS,
 					FEATURE_DATABASE_ACCESS,
 					FEATURE_WEB_SERVER_SETTINGS,
-					FEATURE_PAYMENT_TRANSACTION_FEES_2,
 					FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			  ]
 			: [],
@@ -1847,7 +1832,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			: [],
 	get2023PlanComparisonConditionalFeatures: () =>
 		isTrailMapCopyVariant()
-			? []
+			? [ FEATURE_PREMIUM_THEMES, FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]
 			: [
 					FEATURE_PREMIUM_THEMES,
 					FEATURE_PREMIUM_STORE_THEMES,
