@@ -5,6 +5,10 @@
 	box-shadow: none;
 
 	&.non-foldable {
+		display: flex;
+		flex-direction: row;
+		gap: 16px;
+
 		padding: 16px;
 		margin-block-end: 16px;
 		border: 1px solid var(--studio-automattic-blue-5);
@@ -12,6 +16,10 @@
 		p {
 			max-width: 70%;
 		}
+	}
+
+	.a4a-migration-offer__aside {
+		min-width: 24px;
 	}
 
 	.foldable-card__content {
