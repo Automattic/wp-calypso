@@ -197,9 +197,15 @@ describe( 'Stepper signup flows', () => {
 					currentURL,
 				} );
 
-				let loginDestination = getAlternateLoggedOutDestination( flowKey );
-				if ( ! loginDestination ) {
-					loginDestination = expect.toMatchPathAndSearchParams(
+				const alternateLoggedOutDestination = getAlternateLoggedOutDestination( flowKey );
+				if ( alternateLoggedOutDestination ) {
+					// eslint-disable-next-line jest/no-conditional-expect
+					expect( window.location.assign ).toHaveBeenCalledWith( alternateLoggedOutDestination );
+					return;
+				}
+
+				expect( window.location.assign ).toHaveBeenCalledWith(
+					expect.toMatchPathAndSearchParams(
 						FLOWS_WITH_ALTERNATE_USER_PATH[ flowKey ] ?? expectedLoginPath,
 						{
 							variationName: flowPath,
@@ -211,10 +217,8 @@ describe( 'Stepper signup flows', () => {
 							ref: 'logged-out-homepage',
 							*/
 						}
-					);
-				}
-
-				expect( window.location.assign ).toHaveBeenCalledWith( loginDestination );
+					)
+				);
 			} );
 
 			it( 'redirects the user to the login page with the correct locale when they are not logged in', () => {
@@ -244,10 +248,15 @@ describe( 'Stepper signup flows', () => {
 					currentURL,
 				} );
 
-				let loginDestination = getAlternateLoggedOutDestination( flowKey, 'fr' );
+				const alternateLoggedOutDestination = getAlternateLoggedOutDestination( flowKey, 'fr' );
+				if ( alternateLoggedOutDestination ) {
+					// eslint-disable-next-line jest/no-conditional-expect
+					expect( window.location.assign ).toHaveBeenCalledWith( alternateLoggedOutDestination );
+					return;
+				}
 
-				if ( ! loginDestination ) {
-					loginDestination = expect.toMatchPathAndSearchParams(
+				expect( window.location.assign ).toHaveBeenCalledWith(
+					expect.toMatchPathAndSearchParams(
 						( FLOWS_WITH_ALTERNATE_USER_PATH[ flowKey ] ?? expectedLoginPath ) + '/fr',
 						{
 							variationName: flowPath,
@@ -265,10 +274,8 @@ describe( 'Stepper signup flows', () => {
 							ref: 'logged-out-homepage',
 							*/
 						}
-					);
-				}
-
-				expect( window.location.assign ).toHaveBeenCalledWith( loginDestination );
+					)
+				);
 			} );
 
 			// This test is not working yet for logged-in or logged-out users.
