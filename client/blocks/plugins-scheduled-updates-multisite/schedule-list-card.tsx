@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useDateTimeFormat } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-date-time-format';
 import { usePrepareMultisitePluginsTooltipInfo } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-prepare-plugins-tooltip-info';
 import { usePrepareScheduleName } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-prepare-schedule-name';
-import { usePrepareSitesTooltipInfo } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-prepare-sites-tooltip-info';
 import { ScheduleListLastRunStatus } from 'calypso/blocks/plugins-scheduled-updates-multisite/schedule-list-last-run-status';
 import { ScheduleListTableRowMenu } from 'calypso/blocks/plugins-scheduled-updates-multisite/schedule-list-table-row-menu';
 import { SiteSlug } from 'calypso/types';
@@ -23,12 +22,11 @@ type Props = {
 
 export const ScheduleListCard = ( props: Props ) => {
 	const { schedule, onEditClick, onRemoveClick, onLogsClick } = props;
-
-	const { prepareSitesTooltipInfo } = usePrepareSitesTooltipInfo();
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat();
-	const { preparePluginsTooltipInfo, countInstalledPlugins } =
-		usePrepareMultisitePluginsTooltipInfo( schedule.sites.map( ( site ) => site.ID ) );
+	const { preparePluginsTooltipInfo } = usePrepareMultisitePluginsTooltipInfo(
+		schedule.sites.map( ( site ) => site.ID )
+	);
 	const translate = useTranslate();
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
@@ -43,6 +41,16 @@ export const ScheduleListCard = ( props: Props ) => {
 					>
 						{ prepareScheduleName( schedule as unknown as ScheduleUpdates ) }
 					</Button>
+					<span id="plugins">
+						<Tooltip
+							text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
+							position="middle right"
+							delay={ 0 }
+							hideOnClick={ false }
+						>
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+						</Tooltip>
+					</span>
 				</strong>
 				<ScheduleListTableRowMenu
 					schedule={ schedule }
@@ -50,21 +58,6 @@ export const ScheduleListCard = ( props: Props ) => {
 					onRemoveClick={ onRemoveClick }
 					onLogsClick={ onLogsClick }
 				/>
-			</div>
-
-			<div className="plugins-update-manager-multisite-card__label">
-				<label htmlFor="sites">{ translate( 'Sites' ) }</label>
-				<strong id="sites">
-					{ schedule.sites.length }{ ' ' }
-					<Tooltip
-						text={ prepareSitesTooltipInfo( schedule.sites ) as unknown as string }
-						position="middle right"
-						delay={ 0 }
-						hideOnClick={ false }
-					>
-						<Icon className="icon-info" icon={ info } size={ 16 } />
-					</Tooltip>
-				</strong>
 			</div>
 
 			<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
@@ -104,33 +97,6 @@ export const ScheduleListCard = ( props: Props ) => {
 			<div className="plugins-update-manager-multisite-card__label">
 				<label htmlFor="next-update">{ translate( 'Next update' ) }</label>
 				<span id="next-update">{ prepareDateTime( schedule.timestamp ) }</span>
-			</div>
-
-			<div className="plugins-update-manager-multisite-card__label">
-				<label htmlFor="frequency">{ translate( 'Frequency' ) }</label>
-				<span id="frequency">
-					{
-						{
-							daily: translate( 'Daily' ),
-							weekly: translate( 'Weekly' ),
-						}[ schedule.schedule ]
-					}
-				</span>
-			</div>
-
-			<div className="plugins-update-manager-multisite-card__label">
-				<label htmlFor="plugins">{ translate( 'Plugins' ) }</label>
-				<span id="plugins">
-					{ countInstalledPlugins( schedule.args ) }
-					<Tooltip
-						text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
-						position="middle right"
-						delay={ 0 }
-						hideOnClick={ false }
-					>
-						<Icon className="icon-info" icon={ info } size={ 16 } />
-					</Tooltip>
-				</span>
 			</div>
 		</div>
 	);
