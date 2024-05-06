@@ -28,6 +28,7 @@ import type {
 	EditorSidebarTab,
 	ArticlePrivacyOptions,
 	ArticlePublishSchedule,
+	ArticleStatusOptions,
 } from '../components/types';
 
 const selectors = {
@@ -583,17 +584,14 @@ export class EditorPage {
 		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
 		await Promise.race( [
 			this.editorSettingsSidebarComponent.openPostStatusOptions(),
-			// this.editorSettingsSidebarComponent.openVisibilityOptions(),
+			this.editorSettingsSidebarComponent.openVisibilityOptions(),
 		] );
-		await Promise.race( [
-			this.editorSettingsSidebarComponent.selectPostStatus( visibility, {
-				password: password,
-			} ),
-			// this.editorSettingsSidebarComponent.openVisibilityOptions(),
-		] );
+		await this.editorSettingsSidebarComponent.selectVisibility( visibility, {
+			password: password,
+		} );
 		await Promise.race( [
 			this.editorSettingsSidebarComponent.closePostStatusOptions(),
-			// this.editorSettingsSidebarComponent.closeVisibilityOptions()
+			this.editorSettingsSidebarComponent.closeVisibilityOptions(),
 		] );
 	}
 

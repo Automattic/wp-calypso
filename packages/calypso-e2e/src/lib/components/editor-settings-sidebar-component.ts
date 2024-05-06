@@ -1,26 +1,33 @@
 import { Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
-import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } from './types';
+import type {
+	ArticlePublishSchedule,
+	EditorSidebarTab,
+	ArticlePrivacyOptions,
+	ArticleStatusOptions,
+} from './types';
 
 const panel = '[aria-label="Editor settings"]';
-const postStatusSelector = '.editor-change-status__content [aria-label="Status &amp; visibility"]';
+const postStatus = '.editor-change-status__content[aria-label="Status & visibility"]';
+const postPasswordPanel = `${ postStatus } .editor-change-status__password-fieldset`;
 
 const selectors = {
 	section: ( name: string ) =>
 		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
 	showRevisionButton: '.editor-post-last-revision__panel', // Revision is a link, not a panel.
 
-	postStatusButton: '.editor-post-status-trigger',
-	postStatusPopover: postStatusSelector,
-	postStatusPopoverCloseButton: `${ postStatusSelector } button[aria-label="Close"]`,
+	statusButton: '.editor-post-status-trigger',
+	statusPopoverPanel: postStatus,
+	statusPopoverCloseButton: `${ postStatus } button[aria-label="Close"]`,
+	statusPasswordActivator: `${ postPasswordPanel } input[type="checkbox"]`,
+	statusPasswordInput: `${ postPasswordPanel } input[type="text"]`,
 
 	// Status & Visibility
 	visibilityButton: '.edit-post-post-visibility__toggle',
 	visibilityPopover: 'fieldset.editor-post-visibility__dialog-fieldset',
 	visibilityOption: ( option: ArticlePrivacyOptions ) => `input[value="${ option.toLowerCase() }"]`,
 	postPasswordInput: '.editor-post-visibility__password-input',
-	postStatusPasswordInput: '.editor-change-status__password-input input[type="text"]',
 
 	// Schedule
 	scheduleButton: `button.editor-post-schedule__dialog-toggle`,
@@ -190,16 +197,16 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async openPostStatusOptions(): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const statusPopover = editorParent.locator( `${ selectors.postStatusPopover }` );
+		const statusPopover = editorParent.locator( selectors.statusPopoverPanel );
 
 		if ( await statusPopover.isVisible() ) {
 			return;
 		}
 
-		await this.page.waitForTimeout( 30000 );
-
-		const buttonLocator = editorParent.locator( selectors.postStatusButton );
+		const buttonLocator = editorParent.locator( selectors.statusButton );
 		await buttonLocator.click();
+
+		// await this.page.waitForTimeout( 20000 );
 
 		await statusPopover.waitFor();
 	}
@@ -235,12 +242,7 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async closePostStatusOptions(): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const statusPopoverCloseButton = editorParent.locator( selectors.postStatusPopoverCloseButton );
-
-		if ( ! ( await statusPopoverCloseButton.isVisible() ) ) {
-			return;
-		}
-
+		const statusPopoverCloseButton = editorParent.locator( selectors.statusPopoverCloseButton );
 		await statusPopoverCloseButton.click();
 		await statusPopoverCloseButton.waitFor( { state: 'hidden' } );
 	}
@@ -271,36 +273,27 @@ export class EditorSettingsSidebarComponent {
 			await dialogConfirmLocator.click();
 		}
 
-		// For Password-protected posts, the password field needs to be filled.
-		if ( visibility === 'Password' ) {
-			if ( ! password ) {
-				throw new Error( 'Post password is undefined.' );
-			}
-			await this.setPostPassword( password );
-		}
-	}
+		const statusOption = [ 'draft', 'future', 'private', 'publish' ];
 
-	/**
-	 * Sets the post status to the provided status setting.
-	 *
-	 * @param {ArticlePrivacyOptions} status Desired post visibility setting.
-	 * @param param1 Object parameter.
-	 * @param {string} param1.password Optional password for the post. Ignore if the `status` parameter is `Private`.
-	 */
-	async selectPostStatus(
-		status: ArticlePrivacyOptions,
-		{ password }: { password?: string } = {}
-	): Promise< void > {
-		const editorParent = await this.editor.parent();
-		await editorParent.getByRole( 'radio', { name: status } ).click();
+		if ( ! [ ...statusOption, 'Password' ].includes( visibility ) ) {
+			return;
+		}
 
 		// For Password-protected posts, the password field needs to be filled.
-		if ( status !== 'Private' ) {
-			if ( ! password ) {
-				throw new Error( 'Post password is undefined.' );
-			}
-			await this.setPostPassword( password );
+		if ( ! password && visibility === 'Password' ) {
+			throw new Error( 'Post password is undefined.' );
 		}
+
+		if ( ! password ) {
+			return;
+		}
+
+		if ( statusOption.includes( visibility ) ) {
+			const statusPasswordActivator = editorParent.locator( selectors.statusPasswordActivator );
+			statusPasswordActivator.click();
+		}
+
+		await this.setPostPassword( password );
 	}
 
 	/**
@@ -310,11 +303,14 @@ export class EditorSettingsSidebarComponent {
 	 */
 	private async setPostPassword( password: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const inputLocator = await Promise.race( [
-			editorParent.locator( selectors.postStatusPasswordInput ),
-			editorParent.locator( selectors.postPasswordInput ),
+
+		const statusPasswordInput = editorParent.locator( selectors.statusPasswordInput );
+		const postPasswordInput = editorParent.locator( selectors.postPasswordInput );
+
+		await Promise.race( [
+			statusPasswordInput.fill( password ),
+			postPasswordInput.fill( password ),
 		] );
-		await inputLocator.fill( password );
 	}
 
 	/* Schedule */

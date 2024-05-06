@@ -18,6 +18,7 @@ export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
  * Post/Page privacy options.
  */
 export type ArticlePrivacyOptions = 'Public' | 'Private' | 'Password';
+export type ArticleStatusOptions = 'draft' | 'pending' | 'private' | 'publish' | 'future';
 
 /**
  * Schedule format for specifying a pubilshed date (future/past).
