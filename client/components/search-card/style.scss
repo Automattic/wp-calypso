@@ -9,4 +9,8 @@
 .stream__right-column .search-card.card {
 	max-width: 270px;
 	margin-left: 0;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		max-width: unset;
+	}
 }
