@@ -44,6 +44,7 @@ import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
 import ProvisioningSiteNotification from './provisioning-site-notification';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
+import useRefetchOnFocus from './use-refetch-on-focus';
 
 import './style.scss';
 import './sites-dataviews-style.scss';
@@ -51,7 +52,6 @@ import './sites-dataviews-style.scss';
 export default function SitesDashboard() {
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const dispatch = useDispatch();
-
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const recentlyCreatedSite = getQueryArg( window.location.href, 'created_site' ) ?? null;
@@ -101,6 +101,8 @@ export default function SitesDashboard() {
 		perPage: dataViewsState.perPage,
 		agencyId,
 	} );
+
+	useRefetchOnFocus( refetch );
 
 	const noActiveSite = useNoActiveSite();
 
