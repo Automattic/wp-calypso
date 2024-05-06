@@ -72,6 +72,16 @@
 		flex-wrap: nowrap;
 	}
 
+	.dataviews-wrapper {
+		thead tr.dataviews-view-table__row:hover {
+			background: var(--studio-white);
+		}
+
+		tr.dataviews-view-table__row:hover {
+			background-color: #f7faff;
+		}
+	}
+
 	table.dataviews-view-table thead .dataviews-view-table__row th {
 		border-bottom-color: var(--color-border-secondary);
 
@@ -336,7 +346,8 @@
 				border-bottom: 1px solid #f1f1f1 !important;
 			}
 
-			li.is-selected {
+			li.is-selected,
+			li:hover {
 				background-color: #f7faff;
 			}
 		}
