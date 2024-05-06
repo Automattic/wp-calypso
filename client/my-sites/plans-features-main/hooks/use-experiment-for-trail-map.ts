@@ -11,9 +11,11 @@ import { useExperiment } from 'calypso/lib/explat';
 
 interface Params {
 	flowName?: string | null;
+	isInSignup: boolean;
+	intent?: string;
 }
 
-function useExperimentForTrailMap( { flowName }: Params ): {
+function useExperimentForTrailMap( { flowName, isInSignup, intent }: Params ): {
 	isLoading: boolean;
 	variant: VariantType;
 	isTrailMapAny: boolean;
@@ -22,7 +24,9 @@ function useExperimentForTrailMap( { flowName }: Params ): {
 } {
 	const [ isLoading, assignment ] = useExperiment(
 		'calypso_signup_onboarding_plans_trail_map_feature_grid',
-		{ isEligible: flowName === 'onboarding' }
+		{
+			isEligible: flowName === 'onboarding' || ( ! isInSignup && intent === 'plans-default-wpcom' ),
+		}
 	);
 
 	let variant = ( assignment?.variationName ?? 'control' ) as VariantType;

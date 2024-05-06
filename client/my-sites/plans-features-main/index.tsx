@@ -295,16 +295,6 @@ const PlansFeaturesMain = ( {
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
-	const {
-		isLoading: isTrailMapExperimentLoading,
-		variant: trailMapExperimentVariant,
-		isTrailMapAny,
-		isTrailMapCopy,
-		isTrailMapStructure,
-	} = useExperimentForTrailMap( {
-		flowName,
-	} );
-
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
@@ -338,6 +328,18 @@ const PlansFeaturesMain = ( {
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
+
+	const {
+		isLoading: isTrailMapExperimentLoading,
+		variant: trailMapExperimentVariant,
+		isTrailMapAny,
+		isTrailMapCopy,
+		isTrailMapStructure,
+	} = useExperimentForTrailMap( {
+		flowName,
+		isInSignup,
+		intent,
+	} );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
