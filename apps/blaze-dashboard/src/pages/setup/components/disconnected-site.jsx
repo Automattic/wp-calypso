@@ -43,7 +43,7 @@ export default function DisconnectedSite() {
 							<h4>{ translate( 'Connect your store' ) }</h4>
 							<p>
 								{ translate(
-									'To make Blaze for WooCommerce work with your store we need to connect it with your WordPress.com account. Don’t worry, if you don’t have one you will be able to create it.'
+									"You'll need to connect your WordPress.com account to integrate Blaze for WooCommerce with your store. Don’t have an account? Not to worry - we’ll help you create one!"
 								) }
 							</p>
 							<Button className="is-primary">{ translate( 'Connect now' ) }</Button>
