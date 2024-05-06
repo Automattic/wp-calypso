@@ -1,5 +1,5 @@
 export function redirect( to: string ) {
-	window.location.href = to;
+	window.location.assign( to );
 }
 
 // Update query params without refresh/rerender
