@@ -3,12 +3,11 @@ import { useEffect, useRef, ReactNode } from 'react';
 import './style.scss';
 
 type Props = {
-	featureId: string;
 	children?: ReactNode;
 	className?: string;
 };
 
-export default function ItemPreviewPaneContent( { featureId, children }: Props ) {
+export default function ItemPreviewPaneContent( { children }: Props ) {
 	const ref = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
@@ -17,7 +16,7 @@ export default function ItemPreviewPaneContent( { featureId, children }: Props )
 				ref.current.scrollTop = 0;
 			}
 		}, 0 );
-	}, [ featureId ] );
+	}, [ children ] );
 
 	return (
 		<div className="item-preview__content" ref={ ref }>

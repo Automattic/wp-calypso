@@ -99,9 +99,7 @@ export default function ItemPreviewPane( {
 					context={ navRef }
 				/>
 			) }
-			<ItemPreviewPaneContent featureId={ selectedFeature.id }>
-				{ selectedFeature.preview }
-			</ItemPreviewPaneContent>
+			<ItemPreviewPaneContent>{ selectedFeature.preview }</ItemPreviewPaneContent>
 		</div>
 	);
 }
