@@ -114,6 +114,10 @@ $brand-display: "SF Pro Display", sans-serif;
 		justify-content: space-between;
 		padding-bottom: 1.5rem;
 
+		&.no-border {
+			border-block-end: none;
+		}
+
 		h1 {
 			font-size: 1.5rem;
 			font-style: normal;
