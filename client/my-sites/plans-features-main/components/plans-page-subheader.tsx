@@ -77,7 +77,7 @@ const PlanBenefitHeader = () => {
 
 	return (
 		<HeaderContainer>
-			<PrefixSection>{ translate( 'All plans includes:' ) }</PrefixSection>
+			<PrefixSection>{ translate( 'All plans include:' ) }</PrefixSection>
 			<FeatureSection>
 				{ translate(
 					'{{Checkmark}}{{/Checkmark}}Website Building{{Checkmark}}{{/Checkmark}}Hosting{{Checkmark}}{{/Checkmark}}eCommerce',
