@@ -1,0 +1,108 @@
+import { FoldableCard } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import Layout from 'calypso/a8c-for-agencies/components/layout';
+import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
+import LayoutHeader, {
+	LayoutHeaderBreadcrumb as Breadcrumb,
+} from 'calypso/a8c-for-agencies/components/layout/header';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_REFERRALS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import WooCommerceLogo from 'calypso/components/woocommerce-logo';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import StepSection from '../../common/step-section';
+
+import './style.scss';
+
+export default function CommissionOverview() {
+	const translate = useTranslate();
+
+	const title = translate( 'Referrals - Commission details and terms' );
+
+	return (
+		<Layout
+			className="commission-overview"
+			title={ title }
+			wide
+			sidebarNavigation={ <MobileSidebarNavigation /> }
+		>
+			<PageViewTracker title={ title } path="/referrals/" />
+
+			<LayoutTop>
+				<LayoutHeader>
+					<Breadcrumb
+						items={ [
+							{ label: translate( 'Referrals' ), href: A4A_REFERRALS_LINK },
+							{ label: translate( 'Commission details and terms' ) },
+						] }
+					/>
+				</LayoutHeader>
+			</LayoutTop>
+
+			<LayoutBody>
+				<StepSection heading={ translate( 'How much can I earn?' ) }>
+					<FoldableCard
+						header={
+							<div className="commission-overview__heading">
+								<img src={ pressableIcon } alt="Pressable" />
+								<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
+								{ translate( 'Hosting revenue share (WordPress.com and Pressable)' ) }
+							</div>
+						}
+						expanded
+						clickableHeader
+						summary={ false }
+					>
+						{ translate(
+							'Get a 20% revenue share when you refer your clients to WordPress.com and Pressable until June 30th, 2025 (and renewals on those subscriptions).'
+						) }
+					</FoldableCard>
+
+					<FoldableCard
+						header={
+							<div className="commission-overview__heading">
+								<JetpackLogo className="jetpack-logo" size={ 24 } />
+								<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
+								{ translate( 'Jetpack products and Woo-owned extensions' ) }
+							</div>
+						}
+						expanded
+						clickableHeader
+						summary={ false }
+					>
+						{ translate(
+							'Get a 50% revenue share on Jetpack products and Woo-owned extensions until June 30th, 2025 (and renewals on those subscriptions).'
+						) }
+					</FoldableCard>
+				</StepSection>
+
+				<StepSection heading={ translate( 'Eligibility requirements and terms of use?' ) }>
+					<FoldableCard
+						header={ translate( 'Active referrals' ) }
+						expanded
+						clickableHeader
+						summary={ false }
+					>
+						{ translate(
+							'To continue earning a revenue share on all of the above, you must refer at least one new client to a WordPress.com or Pressable plan each year, starting from the date that you joined the Automattic for Agencies program.'
+						) }
+					</FoldableCard>
+
+					<FoldableCard
+						header={ translate( 'Automattic Affiliate Program' ) }
+						expanded
+						clickableHeader
+						summary={ false }
+					>
+						{ translate(
+							'If you are also a member of the Automattic Affiliate Program, you will not be paid out again on any transactions that you have already received commission on.'
+						) }
+					</FoldableCard>
+				</StepSection>
+			</LayoutBody>
+		</Layout>
+	);
+}
