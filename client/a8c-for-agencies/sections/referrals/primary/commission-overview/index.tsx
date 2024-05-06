@@ -14,6 +14,7 @@ import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import StepSection from '../../common/step-section';
+import ReferralsFooter from '../footer';
 
 import './style.scss';
 
@@ -43,65 +44,69 @@ export default function CommissionOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<StepSection heading={ translate( 'How much can I earn?' ) }>
-					<FoldableCard
-						header={
-							<div className="commission-overview__heading">
-								<img src={ pressableIcon } alt="Pressable" />
-								<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
-								{ translate( 'Hosting revenue share (WordPress.com and Pressable)' ) }
-							</div>
-						}
-						expanded
-						clickableHeader
-						summary={ false }
-					>
-						{ translate(
-							'Get a 20% revenue share when you refer your clients to WordPress.com and Pressable until June 30th, 2025 (and renewals on those subscriptions).'
-						) }
-					</FoldableCard>
+				<div className="commission-overview__section-container">
+					<StepSection heading={ translate( 'How much can I earn?' ) }>
+						<FoldableCard
+							header={
+								<div className="commission-overview__heading">
+									<img src={ pressableIcon } alt="Pressable" />
+									<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
+									{ translate( 'Hosting revenue share (WordPress.com and Pressable)' ) }
+								</div>
+							}
+							expanded
+							clickableHeader
+							summary={ false }
+						>
+							{ translate(
+								'Get a 20% revenue share when you refer your clients to WordPress.com and Pressable until June 30th, 2025 (and renewals on those subscriptions).'
+							) }
+						</FoldableCard>
 
-					<FoldableCard
-						header={
-							<div className="commission-overview__heading">
-								<JetpackLogo className="jetpack-logo" size={ 24 } />
-								<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
-								{ translate( 'Jetpack products and Woo-owned extensions' ) }
-							</div>
-						}
-						expanded
-						clickableHeader
-						summary={ false }
-					>
-						{ translate(
-							'Get a 50% revenue share on Jetpack products and Woo-owned extensions until June 30th, 2025 (and renewals on those subscriptions).'
-						) }
-					</FoldableCard>
-				</StepSection>
+						<FoldableCard
+							header={
+								<div className="commission-overview__heading">
+									<JetpackLogo className="jetpack-logo" size={ 24 } />
+									<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
+									{ translate( 'Jetpack products and Woo-owned extensions' ) }
+								</div>
+							}
+							expanded
+							clickableHeader
+							summary={ false }
+						>
+							{ translate(
+								'Get a 50% revenue share on Jetpack products and Woo-owned extensions until June 30th, 2025 (and renewals on those subscriptions).'
+							) }
+						</FoldableCard>
+					</StepSection>
 
-				<StepSection heading={ translate( 'Eligibility requirements and terms of use?' ) }>
-					<FoldableCard
-						header={ translate( 'Active referrals' ) }
-						expanded
-						clickableHeader
-						summary={ false }
-					>
-						{ translate(
-							'To continue earning a revenue share on all of the above, you must refer at least one new client to a WordPress.com or Pressable plan each year, starting from the date that you joined the Automattic for Agencies program.'
-						) }
-					</FoldableCard>
+					<StepSection heading={ translate( 'Eligibility requirements and terms of use?' ) }>
+						<FoldableCard
+							header={ translate( 'Active referrals' ) }
+							expanded
+							clickableHeader
+							summary={ false }
+						>
+							{ translate(
+								'To continue earning a revenue share on all of the above, you must refer at least one new client to a WordPress.com or Pressable plan each year, starting from the date that you joined the Automattic for Agencies program.'
+							) }
+						</FoldableCard>
 
-					<FoldableCard
-						header={ translate( 'Automattic Affiliate Program' ) }
-						expanded
-						clickableHeader
-						summary={ false }
-					>
-						{ translate(
-							'If you are also a member of the Automattic Affiliate Program, you will not be paid out again on any transactions that you have already received commission on.'
-						) }
-					</FoldableCard>
-				</StepSection>
+						<FoldableCard
+							header={ translate( 'Automattic Affiliate Program' ) }
+							expanded
+							clickableHeader
+							summary={ false }
+						>
+							{ translate(
+								'If you are also a member of the Automattic Affiliate Program, you will not be paid out again on any transactions that you have already received commission on.'
+							) }
+						</FoldableCard>
+					</StepSection>
+				</div>
+
+				<ReferralsFooter />
 			</LayoutBody>
 		</Layout>
 	);

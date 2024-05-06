@@ -26,6 +26,7 @@ import StepSectionItem from '../../common/step-section-item';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';
+import ReferralsFooter from '../footer';
 
 import './style.scss';
 
@@ -178,6 +179,8 @@ export default function ReferralsOverview() {
 						</>
 					) }
 				</div>
+
+				{ ! isFetching && <ReferralsFooter /> }
 			</LayoutBody>
 		</Layout>
 	);

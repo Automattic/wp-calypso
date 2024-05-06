@@ -1,7 +1,10 @@
 
 .commission-overview {
-	.step-section {
-		margin-block: 32px 64px;
+	.commission-overview__section-container {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		margin-block: 32px 0;
 	}
 
 	.commission-overview__heading {
