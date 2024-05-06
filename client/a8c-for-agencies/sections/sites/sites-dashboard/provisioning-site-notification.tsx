@@ -17,6 +17,11 @@ export default function ProvisioningSiteNotification( { siteId, onClose }: Props
 			level={ isReady ? 'success' : 'warning' }
 			hideCloseButton={ ! isReady }
 			onClose={ onClose }
+			title={
+				isReady
+					? translate( 'Congratulation on your new WordPress.com site!' )
+					: translate( 'Setting up your new WordPress.com site' )
+			}
 		>
 			{ isReady
 				? translate( 'Your {{a}}%(siteURL)s{{/a}} is now ready.', {
