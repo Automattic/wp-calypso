@@ -326,6 +326,10 @@
 			overflow-y: initial;
 			max-height: initial;
 			max-width: 1400px;
+
+			main {
+				max-width: 100%;
+			}
 		}
 
 		@media (max-width: $break-large) {

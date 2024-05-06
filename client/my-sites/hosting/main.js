@@ -308,7 +308,7 @@ const Hosting = ( props ) => {
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 	return (
-		<Main className="hosting">
+		<Main wideLayout className="hosting">
 			{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
 			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
 			<DocumentHead title={ translate( 'Hosting' ) } />
