@@ -36,7 +36,7 @@
 		}
 
 		input[type="datetime-local"] {
-			cursor: default;
+			cursor: text;
 			&::-webkit-calendar-picker-indicator {
 				cursor: pointer;
 			}
