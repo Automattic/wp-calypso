@@ -1,4 +1,5 @@
 import {
+	TrailMapVariantType,
 	getFeaturesList,
 	getPlanFeaturesGrouped,
 	setTrailMapExperiment,
@@ -39,11 +40,7 @@ const RenderFeaturesGrid = (
 const meta: Meta<
 	FeaturesGridExternalProps & {
 		includePreviousPlanFeatures: boolean;
-		trailMapVariant:
-			| 'control'
-			| 'treatment-copy'
-			| 'treatment-structure'
-			| 'treatment-copy-and-structure';
+		trailMapVariant: TrailMapVariantType;
 	}
 > = {
 	title: 'FeaturesGrid',
@@ -70,11 +67,7 @@ export default meta;
 type Story = StoryObj<
 	FeaturesGridExternalProps & {
 		includePreviousPlanFeatures: boolean;
-		trailMapVariant:
-			| 'control'
-			| 'treatment-copy'
-			| 'treatment-structure'
-			| 'treatment-copy-and-structure';
+		trailMapVariant: TrailMapVariantType;
 	}
 >;
 
@@ -117,7 +110,7 @@ export const TrailMapControl: Story = {
 export const TrailMapStructure: Story = {
 	args: {
 		...TrailMapControl.args,
-		trailMapVariant: 'treatment-structure',
+		trailMapVariant: 'treatment_structure',
 		enableCategorisedFeatures: true,
 		includePreviousPlanFeatures: true,
 	},
@@ -126,13 +119,13 @@ export const TrailMapStructure: Story = {
 export const TrailMapCopy: Story = {
 	args: {
 		...TrailMapControl.args,
-		trailMapVariant: 'treatment-copy',
+		trailMapVariant: 'treatment_copy',
 	},
 };
 export const TrailMapCopyAndStructure: Story = {
 	args: {
 		...TrailMapControl.args,
-		trailMapVariant: 'treatment-copy-and-structure',
+		trailMapVariant: 'treatment_copy_and_structure',
 		enableCategorisedFeatures: true,
 	},
 };

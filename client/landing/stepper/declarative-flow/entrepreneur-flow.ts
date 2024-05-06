@@ -1,5 +1,10 @@
+import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
+import { anonIdCache } from 'calypso/data/segmentaton-survey';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
@@ -132,6 +137,19 @@ const entrepreneurFlow: Flow = {
 		}
 
 		return { submit };
+	},
+
+	useSideEffect() {
+		const isLoggedIn = useSelector( isUserLoggedIn );
+
+		useEffect( () => {
+			// We need to store the anonymous user ID in localStorage because
+			// we need to pass it to the server on site creation, i.e. after the user signs up or logs in.
+			const anonymousUserId = getTracksAnonymousUserId();
+			if ( anonymousUserId ) {
+				anonIdCache.store( anonymousUserId );
+			}
+		}, [ isLoggedIn ] );
 	},
 };
 

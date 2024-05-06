@@ -32,7 +32,7 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 	const {
 		data: { allStoredCards },
 		isFetching,
-	} = useStoredCards( paging, { staleTime: Infinity } );
+	} = useStoredCards( paging, true );
 
 	return (
 		<Dialog
