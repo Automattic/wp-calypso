@@ -12,12 +12,13 @@ interface VisualStateIndicatorProps {
 
 const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 	let icon: string | JSX.Element;
+
 	switch ( state ) {
 		case 'pending':
 			icon = <Spinner />;
 			break;
 		case 'success':
-			icon = <Icon icon={ check } width={ 20 } />;
+			icon = <Icon icon={ check } width={ 30 } />;
 			break;
 		case 'error':
 			icon = '❌';
@@ -26,11 +27,13 @@ const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 			icon = '';
 			break;
 	}
+
 	return (
-		<span className="pending-actions__action">
-			{ state === 'pending' && <em>{ text }</em> }
-			{ state !== 'pending' && text }
-			<span className="pending-actions__action--icon">{ icon }</span>
+		<span
+			className={ classNames( 'pending-actions__action', `pending-actions__action--${ state }` ) }
+		>
+			{ text }
+			<span className="pending-actions__action-icon">{ icon }</span>
 		</span>
 	);
 };
@@ -50,39 +53,25 @@ export const PendingActions: FC< Props > = ( { status }: Props ) => {
 
 	return (
 		<div className="pending-actions">
-			<span>
+			<span className="pending-actions__loading">
 				{ translate( 'Wait until we finish setting up your site to continue' ) }
 				{ allIdle && <Spinner /> }
 			</span>
 			<ul className="pending-actions__list">
-				{ ! [ 'idle' ].includes( siteTransfer! ) && (
-					<li
-						className={ classNames( 'fade-in', {
-							active: siteTransfer !== 'idle',
-						} ) }
-					>
-						<VisualStateIndicator
-							state={ siteTransfer! }
-							text={ translate( 'Creating your site' ) }
-						/>
-					</li>
-				) }
-				<li
-					className={ classNames( 'fade-in', {
-						active: pluginInstallation !== 'idle',
-					} ) }
-				>
+				<li>
+					<VisualStateIndicator
+						state={ siteTransfer! }
+						text={ translate( 'Provisioning your new site' ) }
+					/>
+				</li>
+				<li>
 					<VisualStateIndicator
 						state={ pluginInstallation! }
 						text={ translate( 'Installing the required plugins' ) }
 					/>
 				</li>
 				{ migrationKey !== 'error' && (
-					<li
-						className={ classNames( 'fade-in', {
-							active: migrationKey !== 'idle',
-						} ) }
-					>
+					<li>
 						<VisualStateIndicator
 							state={ migrationKey! }
 							text={ translate( 'Getting the migration key' ) }
