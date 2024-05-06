@@ -18,6 +18,7 @@ import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { BasicMetrics } from './basic-metrics';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
+import { GetReportForm } from './get-report-form';
 import HeadingInformation from './heading-information';
 import HostingInformation from './hosting-information';
 import HostingIntro from './hosting-intro';
@@ -92,6 +93,12 @@ export default function SiteProfiler( props: Props ) {
 		);
 	}
 
+	let showGetReportForm = false;
+
+	if ( isEnabled( 'site-profiler/metrics' ) ) {
+		showGetReportForm = true;
+	}
+
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
@@ -157,6 +164,11 @@ export default function SiteProfiler( props: Props ) {
 				</LayoutBlock>
 			) }
 
+			{ showGetReportForm && (
+				<LayoutBlock>
+					<GetReportForm />
+				</LayoutBlock>
+			) }
 			<LayoutBlock
 				className="hosting-intro-block globe-bg"
 				isMonoBg={ showResultScreen && conversionAction && conversionAction !== 'register-domain' }

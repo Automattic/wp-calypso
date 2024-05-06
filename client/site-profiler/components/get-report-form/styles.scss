@@ -1,0 +1,58 @@
+.get-report-form__container {
+	box-sizing: border-box;
+	padding: 3.25rem 0;
+	height: 320px;
+	border: 1px solid #cbcbcb;
+	background-color: #f8f8f8;
+	display: flex;
+	justify-content: space-between;
+	gap: 20px;
+}
+.get-report-form__title {
+	color: #000;
+	width: 300px;
+	height: 100%;
+}
+
+.get-report-form__body {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.get-report-form__header {
+	display: flex;
+	gap: 10px;
+	justify-content: space-between;
+
+	.description {
+		color: #3c4043;
+	}
+}
+
+.get-report-form__form {
+	display: flex;
+	gap: 20px;
+}
+
+.get-report-form__footer {
+	display: flex;
+	gap: 20px;
+	.terms-checkbox {
+		font-size: 0.75rem;
+		line-height: 1.5;
+	}
+	.submit-button {
+		background-color: var(--color-accent);
+		color: #fff;
+		border-radius: 4px;
+		font-weight: 500;
+		font-size: 1rem;
+		padding: 1.5rem;
+		text-decoration: none;
+		min-width: 191px;
+		svg {
+			margin-left: 1rem;
+		}
+	}
+}
