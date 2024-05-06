@@ -180,6 +180,10 @@ $brand-display: "SF Pro Display", sans-serif;
 		&__last-update-label {
 			align-items: flex-start;
 
+			.components-button {
+				font-size: 0.875rem;
+			}
+
 			label {
 				display: inline-flex;
 				align-items: center;
