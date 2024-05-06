@@ -494,6 +494,15 @@
 			.components-button:focus:not(:disabled) {
 				box-shadow: 0 0 0 2px var(--color-primary-light);
 			}
+
+			thead tr.dataviews-view-table__row:hover {
+				background: var(--studio-white);
+			}
+
+			tr.dataviews-view-table__row:hover,
+			ul.dataviews-view-list li:hover {
+				background-color: #f7faff;
+			}
 		}
 
 		.a4a-layout__top-wrapper,
