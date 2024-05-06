@@ -60,7 +60,7 @@ const ImporterMigrateMessage: Step = () => {
 						<span className="icon">
 							<Icon icon={ shield } />
 						</span>
-						{ __( `We'll explain you how to securely share your site credentials with us.` ) }
+						{ __( `We'll explain how to securely share your site credentials with us.` ) }
 					</div>
 					<div className="feature">
 						<span className="icon">
