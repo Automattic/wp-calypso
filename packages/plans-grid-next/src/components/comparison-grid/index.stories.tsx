@@ -1,4 +1,5 @@
 import {
+	type TrailMapVariantType,
 	getFeaturesList,
 	getPlanFeaturesGrouped,
 	setTrailMapExperiment,
@@ -34,11 +35,7 @@ const RenderComparisonGrid = ( props: ComparisonGridExternalProps ) => {
 
 const meta: Meta<
 	ComparisonGridExternalProps & {
-		trailMapVariant:
-			| 'control'
-			| 'treatment-copy'
-			| 'treatment-structure'
-			| 'treatment-copy-and-structure';
+		trailMapVariant: TrailMapVariantType;
 	}
 > = {
 	title: 'ComparisonGrid',
@@ -64,11 +61,7 @@ export default meta;
 
 type Story = StoryObj<
 	ComparisonGridExternalProps & {
-		trailMapVariant:
-			| 'control'
-			| 'treatment-copy'
-			| 'treatment-structure'
-			| 'treatment-copy-and-structure';
+		trailMapVariant: TrailMapVariantType;
 	}
 >;
 
@@ -106,7 +99,7 @@ export const TrailMapControl: Story = {
 export const TrailMapStructure: Story = {
 	args: {
 		...TrailMapControl.args,
-		trailMapVariant: 'treatment-structure',
+		trailMapVariant: 'treatment_structure',
 		hideUnsupportedFeatures: true,
 	},
 };
@@ -114,13 +107,13 @@ export const TrailMapStructure: Story = {
 export const TrailMapCopy: Story = {
 	args: {
 		...TrailMapControl.args,
-		trailMapVariant: 'treatment-copy',
+		trailMapVariant: 'treatment_copy',
 	},
 };
 export const TrailMapCopyAndStructure: Story = {
 	args: {
 		...TrailMapControl.args,
-		trailMapVariant: 'treatment-copy-and-structure',
+		trailMapVariant: 'treatment_copy_and_structure',
 		hideUnsupportedFeatures: true,
 	},
 };
