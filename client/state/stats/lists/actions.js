@@ -45,7 +45,6 @@ const wpcomV1Endpoints = {
 	statsFileDownloads: 'stats/file-downloads',
 	statsAds: 'wordads/stats',
 	statsEmailsSummary: 'stats/emails/summary',
-	statsEmailsSummaryByOpens: 'stats/emails/summary',
 };
 
 const wpcomV2Endpoints = {
@@ -96,13 +95,6 @@ export function requestSiteStats( siteId, statType, query ) {
 						quantity: query.quantity ?? 10,
 						sort_field: query.sort_field ?? 'post_id',
 						sort_order: query.sort_order ?? 'desc',
-					};
-				case 'statsEmailsSummaryByOpens':
-					return {
-						period: PERIOD_ALL_TIME,
-						quantity: query.quantity ?? 10,
-						sort_field: 'opens',
-						sort_order: 'desc',
 					};
 				default:
 					return query;
