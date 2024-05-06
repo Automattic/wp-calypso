@@ -76,6 +76,13 @@
 }
 
 .stats-module-devices__tabs {
+	// Align items by resetting the margin set from the segmented-controls mixin.
+	&.segmented-control {
+		@media ( max-width: 660px ) {
+			margin-top: 0;
+		}
+	}
+
 	.segmented-control__item {
 		min-width: 80px;
 
