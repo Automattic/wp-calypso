@@ -1,6 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 import { UseMutationOptions } from '@tanstack/react-query/build/modern';
-import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 
 interface migrationTicketAPIResponse {
@@ -40,10 +39,8 @@ export const useSubmitMigrationTicket = <
 		...options,
 	} );
 
-	const sendTicket = useCallback( ( request: TicketRequest ) => mutate( request ), [ mutate ] );
-
 	return {
-		sendTicket,
+		sendTicket: mutate,
 		...rest,
 	};
 };

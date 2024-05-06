@@ -38,7 +38,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 
-	const goToMigrationAssistanceCheckout = ( userAcceptedDeal: boolean ) => {
+	const goToMigrationAssistanceCheckout = ( userAcceptedDeal = false ) => {
 		navigation?.submit?.( {
 			goToCheckout: true,
 			plan: plan.getPathSlug ? plan.getPathSlug() : '',
