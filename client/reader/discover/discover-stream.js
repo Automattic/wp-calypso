@@ -68,8 +68,9 @@ const DiscoverStream = ( props ) => {
 
 				div.layout.is-global-sidebar-visible {
 					.main {
-						padding-top: 24px;
-						padding-inline: 64px;
+						@media only screen and ( min-width: 660px ) {
+							padding: 24px;
+						}
 						border-block-end: 1px solid var( --studio-gray-0 );
 					}
 					.layout__primary > div {
@@ -112,9 +113,17 @@ const DiscoverStream = ( props ) => {
 						border-radius: 8px;
 						height: calc( 100vh - 32px );
 					}
-					header.navigation-header {
-						padding-inline: 16px;
-						padding-bottom: 0;
+				}
+
+				.is-discover-stream {
+					header.navigation-header.discover-stream-header {
+						padding: 0;
+					}
+					@media only screen and ( max-width: 660px ) {
+						.discover-stream-navigation {
+							margin-left: 0;
+							margin-right: 0;
+						}
 					}
 				}
 			}

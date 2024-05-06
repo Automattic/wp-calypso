@@ -55,8 +55,9 @@ function FollowingStream( { ...props } ) {
 
 				div.layout.is-global-sidebar-visible {
 					.main {
-						padding-top: 24px;
-						padding-inline: 64px;
+						@media only screen and ( min-width: 660px ) {
+							padding: 24px;
+						}
 						border-block-end: 1px solid var( --studio-gray-0 );
 					}
 					.layout__primary > div {
