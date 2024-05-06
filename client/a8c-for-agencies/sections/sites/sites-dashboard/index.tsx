@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
+import { getQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
@@ -41,6 +42,7 @@ import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
 import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
+import ProvisioningSiteNotification from './provisioning-site-notification';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 
 import './style.scss';
@@ -51,6 +53,12 @@ export default function SitesDashboard() {
 	const dispatch = useDispatch();
 
 	const agencyId = useSelector( getActiveAgencyId );
+
+	const createdSiteQuery = getQueryArg( window.location.href, 'created_site' );
+
+	const [ recentlyCreatedSite, setRecentlyCreatedSite ] = useState< number | null >(
+		createdSiteQuery ? Number( createdSiteQuery ) : null
+	);
 
 	const {
 		dataViewsState,
@@ -219,6 +227,13 @@ export default function SitesDashboard() {
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
+						{ recentlyCreatedSite && (
+							<ProvisioningSiteNotification
+								siteId={ recentlyCreatedSite }
+								onClose={ () => setRecentlyCreatedSite( null ) }
+							/>
+						) }
+
 						<LayoutHeader>
 							<Title>{ translate( 'Sites' ) }</Title>
 							<Actions>
