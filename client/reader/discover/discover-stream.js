@@ -68,8 +68,11 @@ const DiscoverStream = ( props ) => {
 
 				div.layout.is-global-sidebar-visible {
 					.main {
-						@media only screen and ( min-width: 660px ) {
+						@media only screen and ( min-width: 600px ) and ( max-width: 960px ) {
 							padding: 24px;
+						}
+						@media only screen and ( max-width: 660px ) {
+							padding-top: 0;
 						}
 						border-block-end: 1px solid var( --studio-gray-0 );
 					}
@@ -87,7 +90,8 @@ const DiscoverStream = ( props ) => {
 					}
 					.layout__primary > div > div {
 						height: 100%;
-						overflow: auto;
+						overflow-y: auto;
+						overflow-x: hidden;
 					}
 				}
 

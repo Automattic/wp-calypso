@@ -170,6 +170,7 @@
 
 			@include breakpoint-deprecated( "<660px" ) {
 				flex-direction: column-reverse;
+				gap: 12px;
 			}
 
 			&.reader-post-card__no-excerpt {
