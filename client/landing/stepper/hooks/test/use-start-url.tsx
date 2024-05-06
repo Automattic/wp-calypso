@@ -10,7 +10,7 @@ jest.mock( 'calypso/boot/locale', () => ( {
 } ) );
 
 jest.mock( '../../utils/path', () => ( {
-	getLoginUrl: jest.fn().mockReturnValue( 'https://example.com/login' ),
+	getLoginUrl: jest.fn().mockReturnValue( '/start/account?variationName=site-migration' ),
 } ) );
 
 describe( 'useStartUrl', () => {
@@ -30,7 +30,7 @@ describe( 'useStartUrl', () => {
 		const { result } = renderHook( () => useStartUrl( 'test-flow' ) );
 
 		expect( result.current ).toBe(
-			'https://example.com/login&redirect_to=/setup/test-flow%3Flocale%3Dfr&vid=456&aff=123'
+			'/start/account?variationName=site-migration&redirect_to=/setup/test-flow%3Flocale%3Dfr&vid=456&aff=123'
 		);
 	} );
 
