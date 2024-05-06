@@ -178,6 +178,8 @@ $brand-display: "SF Pro Display", sans-serif;
 		}
 
 		&__last-update-label {
+			align-items: flex-start;
+
 			label {
 				display: inline-flex;
 				align-items: center;

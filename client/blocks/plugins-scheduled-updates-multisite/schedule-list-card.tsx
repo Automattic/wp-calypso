@@ -62,14 +62,14 @@ export const ScheduleListCard = ( props: Props ) => {
 
 			<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
 				<label htmlFor="last-update">
-					{ translate( 'Last update' ) }
-					<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) } size="small">
+					<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) }>
+						{ translate( 'Last update' ) }
 						<Icon icon={ isExpanded ? chevronUp : chevronDown } />
 					</Button>
 				</label>
-				<button onClick={ () => setIsExpanded( ! isExpanded ) }>
+				<div>
 					<ScheduleListLastRunStatus schedule={ schedule } />
-				</button>
+				</div>
 			</div>
 
 			{ isExpanded && (
