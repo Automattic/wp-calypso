@@ -41,8 +41,8 @@ import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
@@ -350,12 +350,7 @@ export default withCurrentRoute(
 				noMasterbarForSection ||
 				noMasterbarForRoute;
 
-			const isWCCOM = isWooOAuth2Client( oauth2Client ) && wccomFrom !== null;
-			const wooPasswordless = getWooPasswordless( state );
-			const isWooPasswordless =
-				!! wooPasswordless &&
-				// Enable woo-passwordless feature for WCCOM only.
-				isWCCOM;
+			const wooPasswordless = getIsWooPasswordless( state );
 
 			return {
 				isJetpackLogin,
@@ -377,7 +372,8 @@ export default withCurrentRoute(
 				isPartnerSignup,
 				isPartnerSignupStart,
 				isWooCoreProfilerFlow,
-				isWooPasswordless,
+				// Enable woo-passwordless feature for WCCOM only
+				isWooPasswordless: !! wooPasswordless,
 			};
 		},
 		{ clearLastActionRequiresLogin }
