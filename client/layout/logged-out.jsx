@@ -350,8 +350,6 @@ export default withCurrentRoute(
 				noMasterbarForSection ||
 				noMasterbarForRoute;
 
-			const wooPasswordless = getIsWooPasswordless( state );
-
 			return {
 				isJetpackLogin,
 				isWhiteLogin,
@@ -372,8 +370,7 @@ export default withCurrentRoute(
 				isPartnerSignup,
 				isPartnerSignupStart,
 				isWooCoreProfilerFlow,
-				// Enable woo-passwordless feature for WCCOM only
-				isWooPasswordless: !! wooPasswordless,
+				isWooPasswordless: getIsWooPasswordless( state ),
 			};
 		},
 		{ clearLastActionRequiresLogin }
