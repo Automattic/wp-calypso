@@ -39,7 +39,15 @@ export const PluginsScheduledUpdatesMultisite = ( {
 		<MultisitePluginUpdateManagerContextProvider>
 			<Layout title={ title } wide>
 				{ context === 'create' || context === 'edit' ? (
-					<LayoutColumn className="schedules-list">List of schedules</LayoutColumn>
+					<LayoutColumn className="schedules-list">
+						<ScheduleList
+							compact={ true }
+							previewMode="card"
+							onCreateNewSchedule={ onCreateNewSchedule }
+							onEditSchedule={ onEditSchedule }
+							onShowLogs={ onShowLogs }
+						/>
+					</LayoutColumn>
 				) : null }
 				<LayoutColumn wide>
 					{ ( () => {
