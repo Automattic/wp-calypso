@@ -38,7 +38,6 @@ export const PluginsScheduledUpdatesMultisite = ( {
 				switch ( context ) {
 					case 'create':
 						return <ScheduleCreate onNavBack={ onNavBack } />;
-
 					case 'edit':
 						return <ScheduleEdit id={ id! } onNavBack={ onNavBack } />;
 					case 'list':
