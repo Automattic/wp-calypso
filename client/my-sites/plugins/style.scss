@@ -44,6 +44,16 @@
 	}
 }
 
+body.is-section-plugins {
+	background: var(--studio-gray-0);
+
+	.schedules-list {
+		width: 400px;
+		flex: unset;
+		transition: all 0.2s;
+	}
+}
+
 body.is-section-plugins.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);
 }
