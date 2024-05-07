@@ -28,7 +28,13 @@ const ImporterWordpress: Step = function ( props ) {
 		<>
 			{ showMigrationModal && (
 				<MigrationAssistanceModal
-					onConfirm={ () => stepNavigator?.goToCheckoutPage?.( WPImportOption.EVERYTHING ) }
+					onConfirm={ () => {
+						stepNavigator?.goToCheckoutPage?.( WPImportOption.EVERYTHING, {
+							redirect_to: `/setup/${ encodeURIComponent(
+								props.flow
+							) }/migrateMessage?siteSlug=${ encodeURIComponent( siteSlug || '' ) }`,
+						} );
+					} }
 					migrateFrom={ migrateFrom }
 					navigateBack={ props.navigation.goBack }
 				/>
