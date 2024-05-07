@@ -98,7 +98,6 @@ const SitesDashboardV2 = ( {
 		page,
 		perPage,
 		search: search ?? '',
-		hiddenFields: [ 'magic' ],
 		filters:
 			status === 'all'
 				? []
