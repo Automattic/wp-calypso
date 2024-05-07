@@ -167,6 +167,21 @@ const DotcomSitesDataViews = ( {
 				enableHiding: false,
 				enableSorting: false,
 			},
+			// Dummy fields to allow people to sort by them on mobile.
+			{
+				id: 'dummy-site',
+				header: <span>{ __( 'Site' ) }</span>,
+				render: () => null,
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: 'dummy-last-publish',
+				header: <span>{ __( 'Last Publish' ) }</span>,
+				render: () => null,
+				enableHiding: false,
+				enableSorting: true,
+			},
 		],
 		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState ]
 	);

@@ -6,6 +6,7 @@ import {
 	ascendingSortIcon,
 	descendingSortIcon,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/icons';
+import { addDummyDataViewPrefix, removeDummyDataViewPrefix } from './utils';
 import type { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
 import 'calypso/a8c-for-agencies/sections/sites/site-sort/style.scss';
@@ -32,12 +33,12 @@ export const SiteSort = ( {
 }: SiteSortProps ) => {
 	const { field, direction } = dataViewsState.sort;
 
-	const isDefault = field !== columnKey || ! field || ! direction;
+	const isDefault = removeDummyDataViewPrefix( field ) !== columnKey || ! field || ! direction;
 
 	const setSort = () => {
 		const updatedSort = { ...dataViewsState.sort };
 		if ( isDefault ) {
-			updatedSort.field = columnKey;
+			updatedSort.field = addDummyDataViewPrefix( columnKey );
 			updatedSort.direction = SORT_DIRECTION_ASC;
 		} else if ( direction === SORT_DIRECTION_ASC ) {
 			updatedSort.direction = SORT_DIRECTION_DESC;
