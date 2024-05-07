@@ -116,7 +116,7 @@ export default function HostingList( { selectedSite }: Props ) {
 			<ListingSection
 				title={ translate( 'Hosting' ) }
 				description={ translate(
-					'Mix and match powerful security, performance, and growth tools for your sites.'
+					'Choose the hosting that suits your needs from our best-in-class offerings.'
 				) }
 				isTwoColumns
 			>
