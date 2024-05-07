@@ -16,6 +16,10 @@ const selectors = {
 
 	// Preview
 	previewButton: `${ panel } :text("View"):visible, [aria-label="View"]:visible`,
+
+	// Post status
+	postStatusButton: `button.editor-post-status-trigger`,
+
 	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
 		`button[role="menuitem"] span:text("${ target }")`,
 	previewPane: `.edit-post-visual-editor`,
@@ -265,7 +269,7 @@ export class EditorToolbarComponent {
 	 *
 	 * This is applicable for the following scenarios:
 	 * 	- publish of a new article (Publish)
-	 * 	- update an existing article (Update)
+	 * 	- update/save an existing article (Update)
 	 * 	- schedule a post (Schedule)
 	 */
 	async clickPublish(): Promise< void > {
@@ -282,6 +286,11 @@ export class EditorToolbarComponent {
 		const editorParent = await this.editor.parent();
 
 		await Promise.race( [
+			( async () => {
+				// Works with Gutenberg >=v18.2.0
+				await editorParent.locator( selectors.postStatusButton ).click();
+				await editorParent.getByRole( 'radio', { name: 'Draft' } ).click();
+			} )(),
 			( async () => {
 				// Works with Gutenberg >=v15.8.0
 				await this.openSettings( 'Settings' );

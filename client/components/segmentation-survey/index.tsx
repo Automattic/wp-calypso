@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import SurveyContainer from 'calypso/components/survey-container';
 import { Question } from 'calypso/components/survey-container/types';
@@ -12,11 +12,19 @@ import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-nav
 
 type SegmentationSurveyProps = {
 	surveyKey: string;
-	onBack?: () => void; // This is a function that navigates to the previous step
-	onComplete?: () => void; // This is a function that navigates to the next step
+	onBack?: () => void;
+	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void;
 };
 
-const SegmentationSurvey = ( { surveyKey, onBack, onComplete }: SegmentationSurveyProps ) => {
+/**
+ * A component that renders a segmentation survey.
+ * @param {SegmentationSurveyProps} props
+ * @param {string} props.surveyKey - The key of the survey to render.
+ * @param {() => void} [props.onBack] - A function that navigates to the previous step.
+ * @param {(questionKey: string, answerKeys: string[], isLastQuestion?: boolean) => void} [props.onNext] - A function that navigates to the next question/step.
+ * @returns {React.ReactComponentElement}
+ */
+const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyProps ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
 	const { mutateAsync, isPending } = useSaveAnswersMutation( { surveyKey } );
 	const { answers, setAnswers, clearAnswers } = useCachedAnswers( surveyKey );
@@ -37,10 +45,13 @@ const SegmentationSurvey = ( { surveyKey, onBack, onComplete }: SegmentationSurv
 					answerKeys,
 				} );
 
+				const isLastQuestion = questions?.[ questions.length - 1 ].key === currentQuestion.key;
+
 				if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
 					clearAnswers();
-					onComplete?.();
 				}
+
+				onNext?.( currentQuestion.key, answerKeys, isLastQuestion );
 			} catch ( e ) {
 				const error = e as Error;
 
@@ -52,7 +63,7 @@ const SegmentationSurvey = ( { surveyKey, onBack, onComplete }: SegmentationSurv
 				} );
 			}
 		},
-		[ clearAnswers, mutateAsync, onComplete, questions, surveyKey ]
+		[ clearAnswers, mutateAsync, onNext, questions, surveyKey ]
 	);
 
 	const onContinue = useCallback(

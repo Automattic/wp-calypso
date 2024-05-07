@@ -175,6 +175,11 @@ const Home = ( {
 			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 				{ isGlobalSiteViewEnabled ? translate( 'View site' ) : translate( 'Visit site' ) }
 			</Button>
+			{ config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && (
+				<Button primary href={ `/hosting/${ site.slug }` }>
+					{ translate( 'Hosting Overview' ) }
+				</Button>
+			) }
 		</>
 	);
 	const header = (

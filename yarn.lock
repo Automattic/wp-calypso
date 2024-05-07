@@ -142,11 +142,14 @@ __metadata:
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
+    "@wordpress/data": "npm:^9.26.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.7.0"
     autoprefixer: "npm:^10.2.5"
     calypso: "workspace:^"
@@ -1074,6 +1077,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/i18n-utils@workspace:packages/i18n-utils"
   dependencies:
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/languages": "workspace:^"
@@ -1572,6 +1576,8 @@ __metadata:
     "@wordpress/warning": "npm:^2.56.0"
     classnames: "npm:^2.3.2"
     i18n-calypso: "workspace:^"
+    msw: "npm:^2.2.14"
+    msw-storybook-addon: "npm:^2.0.0"
     react-intersection-observer: "npm:^9.4.3"
     react-transition-group: "npm:^4.3.0"
     resize-observer-polyfill: "npm:^1.5.1"
@@ -4540,6 +4546,51 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@inquirer/confirm@npm:^3.0.0":
+  version: 3.1.6
+  resolution: "@inquirer/confirm@npm:3.1.6"
+  dependencies:
+    "@inquirer/core": "npm:^8.1.0"
+    "@inquirer/type": "npm:^1.3.1"
+  checksum: 2d13daf4587d1073935edb6c24cec00f738b3c5401bdd8047b50a2bf7410bbc84ded78ff934a2266cbd022d52b0aa8611821bda198d1e54fafca4c0ed25be38a
+  languageName: node
+  linkType: hard
+
+"@inquirer/core@npm:^8.1.0":
+  version: 8.1.0
+  resolution: "@inquirer/core@npm:8.1.0"
+  dependencies:
+    "@inquirer/figures": "npm:^1.0.1"
+    "@inquirer/type": "npm:^1.3.1"
+    "@types/mute-stream": "npm:^0.0.4"
+    "@types/node": "npm:^20.12.7"
+    "@types/wrap-ansi": "npm:^3.0.0"
+    ansi-escapes: "npm:^4.3.2"
+    chalk: "npm:^4.1.2"
+    cli-spinners: "npm:^2.9.2"
+    cli-width: "npm:^4.1.0"
+    mute-stream: "npm:^1.0.0"
+    signal-exit: "npm:^4.1.0"
+    strip-ansi: "npm:^6.0.1"
+    wrap-ansi: "npm:^6.2.0"
+  checksum: 5746830c672f24505d7554fe43f05f97823fdf1c84aaeab1808dc09911e748f6b1887902794d95239655c0ed5f6029c2b3c018ab7c2785427ae95a4e92faa4d7
+  languageName: node
+  linkType: hard
+
+"@inquirer/figures@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@inquirer/figures@npm:1.0.1"
+  checksum: a1e9d3852e0d33c416eb39d7ee0e898971681a0a5a0d2fad5ebbb63047dd7e8b7bd32872cf2ef09578ce632bd9cc339f7e851dbd4640a9af11224481bf811e14
+  languageName: node
+  linkType: hard
+
+"@inquirer/type@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "@inquirer/type@npm:1.3.1"
+  checksum: 7dbf7ca10f758f2b6dbc7b7302ce01e79596747692468805c340afa0bf608adecbe33cd3c3b2b806bb3987cadf233b52ead7652b479a052455bc06855849f97f
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -4913,9 +4964,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mswjs/interceptors@npm:^0.25.16":
-  version: 0.25.16
-  resolution: "@mswjs/interceptors@npm:0.25.16"
+"@mswjs/interceptors@npm:^0.26.14":
+  version: 0.26.15
+  resolution: "@mswjs/interceptors@npm:0.26.15"
   dependencies:
     "@open-draft/deferred-promise": "npm:^2.2.0"
     "@open-draft/logger": "npm:^0.3.0"
@@ -4923,7 +4974,7 @@ __metadata:
     is-node-process: "npm:^1.2.0"
     outvariant: "npm:^1.2.1"
     strict-event-emitter: "npm:^0.5.1"
-  checksum: 396a22d08537f927e6305589521be242d5940d07672b98539bf818e6c65766137f0fb8cf322cf44dafa429fa796488efa565ce7c577e6e62b1482f6ea3e78ab7
+  checksum: 378c4b14adf020aa7b23816aae364fcea00becfaba30665e9a35d4726c581df0762342625cc2b6e3e84b6a1e87b3c263f96946a60fe16b78db7c19e698e4a4f3
   languageName: node
   linkType: hard
 
@@ -8005,6 +8056,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/mute-stream@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "@types/mute-stream@npm:0.0.4"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 944730fd7b398c5078de3c3d4d0afeec8584283bc694da1803fdfca14149ea385e18b1b774326f1601baf53898ce6d121a952c51eb62d188ef6fcc41f725c0dc
+  languageName: node
+  linkType: hard
+
 "@types/node-fetch@npm:^2.6.1, @types/node-fetch@npm:^2.6.4":
   version: 2.6.6
   resolution: "@types/node-fetch@npm:2.6.6"
@@ -8024,12 +8084,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.8.6":
-  version: 20.8.7
-  resolution: "@types/node@npm:20.8.7"
+"@types/node@npm:*, @types/node@npm:^20.12.7, @types/node@npm:^20.8.6":
+  version: 20.12.7
+  resolution: "@types/node@npm:20.12.7"
   dependencies:
-    undici-types: "npm:~5.25.1"
-  checksum: e82b87e7f3f4c12acc5803db21f9144d5e87c20841db9ae98746958e038064700ab04294d08a3714a3df8bd710a974998e2e423443a5d031840cbba17fa126a7
+    undici-types: "npm:~5.26.4"
+  checksum: dce80d63a3b91892b321af823d624995c61e39c6a223cc0ac481a44d337640cc46931d33efb3beeed75f5c85c3bda1d97cef4c5cd4ec333caf5dee59cff6eca0
   languageName: node
   linkType: hard
 
@@ -8494,6 +8554,13 @@ __metadata:
   version: 2.3.6
   resolution: "@types/wordpress__shortcode@npm:2.3.6"
   checksum: b237672636d842b72adca08ddec121c8b72853637bcd7f4b00320dbe0fd6a5f263fe9c31ced16922072afd04dfab4821f5eb7a0a653922e0dddbb89b5ad8b8b3
+  languageName: node
+  linkType: hard
+
+"@types/wrap-ansi@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@types/wrap-ansi@npm:3.0.0"
+  checksum: 8d8f53363f360f38135301a06b596c295433ad01debd082078c33c6ed98b05a5c8fe8853a88265432126096084f4a135ec1564e3daad631b83296905509f90b3
   languageName: node
   linkType: hard
 
@@ -10623,12 +10690,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-escapes@npm:^4.2.1":
-  version: 4.3.0
-  resolution: "ansi-escapes@npm:4.3.0"
+"ansi-escapes@npm:^4.2.1, ansi-escapes@npm:^4.3.2":
+  version: 4.3.2
+  resolution: "ansi-escapes@npm:4.3.2"
   dependencies:
-    type-fest: "npm:^0.8.1"
-  checksum: 2e9dc01e75bc1254abf54d65978dae9627c4729164657b7db673bdd7658f94414af7045cda7cb446607b36894882e2279c946cc57609a234121a968a1d1ae4e3
+    type-fest: "npm:^0.21.3"
+  checksum: da917be01871525a3dfcf925ae2977bc59e8c513d4423368645634bf5d4ceba5401574eb705c1e92b79f7292af5a656f78c5725a4b0e1cec97c4b413705c1d50
   languageName: node
   linkType: hard
 
@@ -12820,7 +12887,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.3.1, chokidar@npm:^3.4.0, chokidar@npm:^3.4.2, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3":
+"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.3.1, chokidar@npm:^3.4.0, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3":
   version: 3.6.0
   resolution: "chokidar@npm:3.6.0"
   dependencies:
@@ -12986,10 +13053,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-spinners@npm:^2.2.0, cli-spinners@npm:^2.5.0, cli-spinners@npm:^2.6.1":
-  version: 2.7.0
-  resolution: "cli-spinners@npm:2.7.0"
-  checksum: 5c781ace5c8f304ae4d138837f19cf88f03a97de3c3e388f9d1d6434146f06f6ce2a161d6237b3bb86448a05fbcbb20084f3fea96077e42a655b273e39c6f08d
+"cli-spinners@npm:^2.2.0, cli-spinners@npm:^2.5.0, cli-spinners@npm:^2.6.1, cli-spinners@npm:^2.9.2":
+  version: 2.9.2
+  resolution: "cli-spinners@npm:2.9.2"
+  checksum: 907a1c227ddf0d7a101e7ab8b300affc742ead4b4ebe920a5bf1bc6d45dce2958fcd195eb28fa25275062fe6fa9b109b93b63bc8033396ed3bcb50297008b3a3
   languageName: node
   linkType: hard
 
@@ -13020,6 +13087,13 @@ __metadata:
   version: 3.0.0
   resolution: "cli-width@npm:3.0.0"
   checksum: 125a62810e59a2564268c80fdff56c23159a7690c003e34aeb2e68497dccff26911998ff49c33916fcfdf71e824322cc3953e3f7b48b27267c7a062c81348a9a
+  languageName: node
+  linkType: hard
+
+"cli-width@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "cli-width@npm:4.1.0"
+  checksum: 1fbd56413578f6117abcaf858903ba1f4ad78370a4032f916745fa2c7e390183a9d9029cf837df320b0fdce8137668e522f60a30a5f3d6529ff3872d265a955f
   languageName: node
   linkType: hard
 
@@ -19587,7 +19661,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inquirer@npm:^8.2.0, inquirer@npm:^8.2.2, inquirer@npm:^8.2.3":
+"inquirer@npm:^8.2.2, inquirer@npm:^8.2.3":
   version: 8.2.6
   resolution: "inquirer@npm:8.2.6"
   dependencies:
@@ -23872,22 +23946,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.1.7":
-  version: 2.1.7
-  resolution: "msw@npm:2.1.7"
+"msw-storybook-addon@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "msw-storybook-addon@npm:2.0.0"
+  dependencies:
+    is-node-process: "npm:^1.0.1"
+  peerDependencies:
+    msw: ^2.0.0
+  checksum: c13bc802e4e3fa961874800f3ea07a42e863bd499dab197ef989331403880c2ab1ae41b3da86ba75dc7a3e990464ead357831ea2bde2a87cc542f5323c4cdbce
+  languageName: node
+  linkType: hard
+
+"msw@npm:^2.1.7, msw@npm:^2.2.14":
+  version: 2.2.14
+  resolution: "msw@npm:2.2.14"
   dependencies:
     "@bundled-es-modules/cookie": "npm:^2.0.0"
     "@bundled-es-modules/statuses": "npm:^1.0.1"
+    "@inquirer/confirm": "npm:^3.0.0"
     "@mswjs/cookies": "npm:^1.1.0"
-    "@mswjs/interceptors": "npm:^0.25.16"
+    "@mswjs/interceptors": "npm:^0.26.14"
     "@open-draft/until": "npm:^2.1.0"
     "@types/cookie": "npm:^0.6.0"
     "@types/statuses": "npm:^2.0.4"
     chalk: "npm:^4.1.2"
-    chokidar: "npm:^3.4.2"
     graphql: "npm:^16.8.1"
     headers-polyfill: "npm:^4.0.2"
-    inquirer: "npm:^8.2.0"
     is-node-process: "npm:^1.2.0"
     outvariant: "npm:^1.4.2"
     path-to-regexp: "npm:^6.2.0"
@@ -23895,13 +23979,13 @@ __metadata:
     type-fest: "npm:^4.9.0"
     yargs: "npm:^17.7.2"
   peerDependencies:
-    typescript: ">= 4.7.x <= 5.3.x"
+    typescript: ">= 4.7.x"
   peerDependenciesMeta:
     typescript:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 30ac23edbcc9f681c4814e1825ccc60232b752112132da920ff23b278deea87a1b4776084e4818f6318f8964ffcfb883df93fe1bfd43a122d63be7fe0f355561
+  checksum: 3a5864aadb01d076835f53459a411fb0a303fe48469c0e3d9de9b9eb9a87b3257096d6441d21986c0ae388d9417e0ed232fa74db66e39bcf8cd5ddfccfeb5993
   languageName: node
   linkType: hard
 
@@ -23933,6 +24017,13 @@ __metadata:
   version: 0.0.8
   resolution: "mute-stream@npm:0.0.8"
   checksum: 18d06d92e5d6d45e2b63c0e1b8f25376af71748ac36f53c059baa8b76ffac31c5ab225480494e7d35d30215ecdb18fed26ec23cafcd2f7733f2f14406bcd19e2
+  languageName: node
+  linkType: hard
+
+"mute-stream@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "mute-stream@npm:1.0.0"
+  checksum: dce2a9ccda171ec979a3b4f869a102b1343dee35e920146776780de182f16eae459644d187e38d59a3d37adf85685e1c17c38cf7bfda7e39a9880f7a1d10a74c
   languageName: node
   linkType: hard
 
@@ -29383,7 +29474,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"signal-exit@npm:^4.0.1":
+"signal-exit@npm:^4.0.1, signal-exit@npm:^4.1.0":
   version: 4.1.0
   resolution: "signal-exit@npm:4.1.0"
   checksum: 41602dce540e46d599edba9d9860193398d135f7ff72cab629db5171516cfae628d21e7bfccde1bbfdf11c48726bc2a6d1a8fb8701125852fbfda7cf19c6aa83
@@ -31450,6 +31541,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"type-fest@npm:^0.21.3":
+  version: 0.21.3
+  resolution: "type-fest@npm:0.21.3"
+  checksum: 902bd57bfa30d51d4779b641c2bc403cdf1371fb9c91d3c058b0133694fcfdb817aef07a47f40faf79039eecbaa39ee9d3c532deff244f3a19ce68cea71a61e8
+  languageName: node
+  linkType: hard
+
 "type-fest@npm:^0.6.0":
   version: 0.6.0
   resolution: "type-fest@npm:0.6.0"
@@ -31687,13 +31785,6 @@ __metadata:
   version: 0.1.2
   resolution: "unc-path-regex@npm:0.1.2"
   checksum: bf9c781c4e2f38e6613ea17a51072e4b416840fbe6eeb244597ce9b028fac2fb6cfd3dde1f14111b02c245e665dc461aab8168ecc30b14364d02caa37f812996
-  languageName: node
-  linkType: hard
-
-"undici-types@npm:~5.25.1":
-  version: 5.25.3
-  resolution: "undici-types@npm:5.25.3"
-  checksum: 60a47c6db451c00d27186d86a41fbd9677fa1f6d1a5350bff342c3985bd79fc3f5a638ebf56bbce21df46c701a687db43b3fbd588e1726e58047cea14d182fef
   languageName: node
   linkType: hard
 

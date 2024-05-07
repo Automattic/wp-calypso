@@ -4,6 +4,15 @@
 	text-align: left;
 }
 
+.plugins-update-manager-header {
+	.navigation-header__main {
+		@media screen and (max-width: $break-small) {
+			flex-wrap: wrap;
+			row-gap: 10px;
+		}
+	}
+}
+
 .plugins-update-manager {
 	@media screen and (max-width: $break-small) {
 		margin: 0 1rem;
