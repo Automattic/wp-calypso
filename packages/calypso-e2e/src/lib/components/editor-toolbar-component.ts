@@ -265,6 +265,22 @@ export class EditorToolbarComponent {
 	}
 
 	/**
+	 * Returns the text present for the post status button.
+	 *
+	 * @returns {Promise<string>} String found on the button.
+	 */
+	async getPostStatusButtonText(): Promise< string | null > {
+		const editorParent = await this.editor.parent();
+		const postStatusButtonLocator = editorParent.locator( selectors.postStatusButton );
+
+		if ( ! ( await postStatusButtonLocator.isVisible() ) ) {
+			return null;
+		}
+
+		return await postStatusButtonLocator.innerText();
+	}
+
+	/**
 	 * Clicks on the primary button to publish the article.
 	 *
 	 * This is applicable for the following scenarios:

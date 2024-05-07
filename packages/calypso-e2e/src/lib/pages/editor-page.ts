@@ -700,6 +700,7 @@ export class EditorPage {
 		timeout,
 	}: { visit?: boolean; timeout?: number } = {} ): Promise< URL > {
 		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
+		const postStatusButtonText = await this.editorToolbarComponent.getPostStatusButtonText();
 		const actionsArray = [];
 
 		// Every publish action requires at least one click on the EditorToolbarComponent.
@@ -709,7 +710,12 @@ export class EditorPage {
 		// is merely being saved/updated.
 		// If not yet published, a second click on the EditorPublishPanelComponent
 		// is added to the array of actions.
-		if ( ! [ 'save', 'update' ].includes( publishButtonText.toLowerCase() ) ) {
+		const requiresSecondClick =
+			! [ 'save', 'update' ].includes( publishButtonText.toLowerCase() ) ||
+			( publishButtonText.toLowerCase() === 'save' &&
+				postStatusButtonText?.toLowerCase() === 'scheduled' );
+
+		if ( requiresSecondClick ) {
 			actionsArray.push( this.editorPublishPanelComponent.publish() );
 		}
 
