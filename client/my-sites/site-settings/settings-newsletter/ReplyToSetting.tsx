@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 
@@ -29,9 +30,6 @@ export const ReplyToSetting = ( {
 			<FormLabel className="increase-margin-bottom-fix">
 				{ translate( 'Reply-to settings' ) }
 			</FormLabel>
-			<p>
-				{ translate( 'Choose who receives emails when subscribers reply to your newsletter.' ) }
-			</p>
 			<FormLabel>
 				<FormRadio
 					value="no-reply"
@@ -63,6 +61,9 @@ export const ReplyToSetting = ( {
 					label={ translate( "Replies will be sent to the post author's email" ) }
 				/>
 			</FormLabel>
+			<FormSettingExplanation>
+				{ translate( 'Choose who receives emails when subscribers reply to your newsletter.' ) }
+			</FormSettingExplanation>
 		</FormFieldset>
 	);
 };
