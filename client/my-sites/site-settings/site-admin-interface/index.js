@@ -150,23 +150,21 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
 								} ) }
 							</p>
 						) : (
-							<>
-								<p>
-									{ translate(
-										'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}.',
-										{
-											components: {
-												supportLink: (
-													<InlineSupportLink
-														supportContext="admin-interface-style"
-														showIcon={ false }
-													/>
-												),
-											},
-										}
-									) }
-								</p>
-							</>
+							<p>
+								{ translate(
+									'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}.',
+									{
+										components: {
+											supportLink: (
+												<InlineSupportLink
+													supportContext="admin-interface-style"
+													showIcon={ false }
+												/>
+											),
+										},
+									}
+								) }
+							</p>
 						) }
 					</>
 				) }
