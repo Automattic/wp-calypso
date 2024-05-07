@@ -16,6 +16,7 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
@@ -237,7 +238,7 @@ const LayoutLoggedOut = ( {
 			{ isJetpackCloud() && (
 				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 			) }
-			{ config.isEnabled( 'a8c-for-agencies' ) && (
+			{ isA8CForAgencies() && (
 				<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
 			) }
 			<div id="content" className="layout__content">
