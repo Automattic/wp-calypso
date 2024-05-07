@@ -94,7 +94,6 @@ function cleanUp() {
 		console.log( `Cleaning up...` );
 	}
 	fs.rmSync( stringsPath, { recursive: true, force: true } );
-	fs.unlinkSync( chunksMapPattern );
 	fs.unlinkSync( stringsFilePath );
 }
 
@@ -256,9 +255,8 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 		console.error( `${ stringsFilePath } is missing` );
 	}
 
-	if ( verbose ) {
-		console.log( 'Building language completed.' );
-	}
+	console.info( '✅ Language build completed.' );
+
 	if ( verbose ) {
 		console.log(
 			`Skipped due to failed translation downloads: ${ unsuccessfullyDownloadedLanguages
@@ -274,7 +272,6 @@ async function run() {
 	const downloadedLanguages = await downloadLanguages( languageRevisions );
 	buildLanguages( downloadedLanguages, languageRevisions );
 	cleanUp();
-	console.info( '✅ Language build completed.' );
 }
 
 run();
