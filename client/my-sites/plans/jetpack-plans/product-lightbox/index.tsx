@@ -5,7 +5,6 @@ import {
 } from '@automattic/calypso-products';
 import { Button, SelectDropdown } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
@@ -48,7 +47,6 @@ const ProductLightbox: React.FC< Props > = ( {
 	const listPrices = useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 
 	const onChangeOption = useCallback(
 		( productSlug: string ) => {
@@ -115,56 +113,12 @@ const ProductLightbox: React.FC< Props > = ( {
 		);
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	// This will be used for other products with tieres (e.g. Jetpack Stats) later on
-	const getTierUnitName = useCallback(
-		( productSlug: string ) => {
-			if ( isJetpackAISlug( productSlug ) ) {
-				return translate( 'requests' );
-			}
-
-			return translate( 'requests' );
-		},
-		[ translate ]
-	);
-
-	// This will be used for other products with tieres (e.g. Jetpack Stats) later on
-	const getSupportRedirectURL = useCallback( ( productSlug: string ) => {
-		const redirectBase = 'https://jetpack.com/redirect/?source=';
-		if ( isJetpackAISlug( productSlug ) ) {
-			return `${ redirectBase }jetpack-ai-tiers-more-requests-contact`;
-		}
-
-		return '#';
-	}, [] );
-
 	const tierOptions = useMemo( () => {
 		if ( ! isJetpackAISlug( product.productSlug ) ) {
 			return [];
 		}
 
 		const tiers = listPrices.priceTierList || [];
-		const largestTierValue = tiers?.slice( -1 )[ 0 ]?.maximum_units;
-
-		const customTier = {
-			value: 'support',
-			label: translate( '> %(largestTierValue)s %(unit)s /mo {{a}}Contact Us{{/a}}', {
-				args: {
-					largestTierValue: largestTierValue ?? 0,
-					unit: getTierUnitName( product.productSlug ),
-				},
-				comment:
-					'largestTierValue is the number of requests in the largest tier. unit is the unit name for the type of limit, e.g. requests.',
-				components: {
-					a: (
-						<a
-							href={ getSupportRedirectURL( product.productSlug ) }
-							className="product-lightbox__variants-dropdown-link"
-						/>
-					),
-				},
-			} ),
-			disabled: true,
-		};
 
 		return [
 			...tiers.map( ( tier ) => {
@@ -175,15 +129,8 @@ const ProductLightbox: React.FC< Props > = ( {
 					label: PRODUCT_TIER_OPTIONS[ id ].toString(),
 				};
 			} ),
-			customTier,
 		];
-	}, [
-		listPrices.priceTierList,
-		product.productSlug,
-		getTierUnitName,
-		translate,
-		getSupportRedirectURL,
-	] );
+	}, [ listPrices.priceTierList, product.productSlug ] );
 
 	const variantOptions = useMemo( () => {
 		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
