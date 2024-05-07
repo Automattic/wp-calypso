@@ -227,17 +227,15 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 				i18n.translate(
 					'Error saving. ' +
 						'Please ensure that the WordPress installation path has write permissions. ' +
-						'{{LearnMore /}}.',
+						'{{a}}Learn more{{/a}}.',
 					{
 						components: {
-							LearnMore: (
+							a: (
 								<a
 									href="https://jetpack.com/support/backup/ssh-sftp-and-ftp-credentials/#file-access-permission"
 									target="blank"
 									rel="noreferrer"
-								>
-									Learn more
-								</a>
+								/>
 							),
 						},
 					}
