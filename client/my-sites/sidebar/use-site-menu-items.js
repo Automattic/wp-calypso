@@ -154,7 +154,7 @@ const useSiteMenuItems = () => {
 
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 		return result.map( ( menu ) => {
-			if ( Array.isArray( menu.children ) ) {
+			if ( menu.slug === 'wpcom-hosting-menu' && Array.isArray( menu.children ) ) {
 				return {
 					...menu,
 					children: menu.children.filter(
