@@ -107,7 +107,7 @@ export const ScheduleList = ( props: Props ) => {
 
 			{ schedules.length === 0 && isLoading && <Spinner /> }
 			{ isScheduleEmpty && <ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } /> }
-			{ isFetched && filteredSchedules.length > 0 && ScheduleListComponent ? (
+			{ ! isScheduleEmpty && ScheduleListComponent ? (
 				<>
 					<ScheduleListFilter />
 					<ScheduleListComponent
