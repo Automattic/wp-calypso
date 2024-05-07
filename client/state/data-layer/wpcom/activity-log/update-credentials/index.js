@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { ExternalLink } from '@automattic/components';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
@@ -222,6 +223,24 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			);
 			break;
 
+		case 'helper_upload_failed':
+			dispatchFailure(
+				i18n.translate(
+					'Error saving. ' +
+						'Please ensure that the WordPress installation path has the necessary write permissions. ' +
+						'{{LearnMore /}}.',
+					{
+						components: {
+							LearnMore: (
+								<ExternalLink href="https://jetpack.com/support/backup/ssh-sftp-and-ftp-credentials/#file-access-permission">
+									Learn more
+								</ExternalLink>
+							),
+						},
+					}
+				)
+			);
+			break;
 		default:
 			dispatchFailure(
 				i18n.translate( 'Error saving. Please check your credentials and try again.' )
