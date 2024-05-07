@@ -1,3 +1,5 @@
+import { SiteDetails } from '@automattic/data-stores';
+import { SiteExcerptData } from '@automattic/sites';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -51,7 +53,11 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 
 	const translate = useTranslate();
 
-	const { data: sites } = useSiteExcerptsQuery( [ 'atomic' ] );
+	const siteFilter = ( site: SiteExcerptData ): boolean => {
+		return ( site as SiteDetails ).capabilities?.update_plugins;
+	};
+
+	const { data: sites } = useSiteExcerptsQuery( [ 'atomic', 'capabilities' ], siteFilter );
 	const {
 		data: plugins,
 		isInitialLoading: isPluginsFetching,
