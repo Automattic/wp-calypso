@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
@@ -237,9 +236,7 @@ const importHostedSiteFlow: Flow = {
 						return navigate( `sitePicker?${ urlQueryParams.toString() }` );
 					}
 
-					if ( isEnabled( 'migration_assistance_modal' ) ) {
-						urlQueryParams.set( 'showModal', 'true' );
-					}
+					urlQueryParams.set( 'showModal', 'true' );
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker':

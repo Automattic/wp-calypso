@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -321,12 +320,8 @@ const importFlow: Flow = {
 						return navigate( `import?siteSlug=${ siteSlugParam }` );
 					}
 
-					if ( isEnabled( 'migration_assistance_modal' ) ) {
-						urlQueryParams.set( 'showModal', 'true' );
-						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
-					}
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
-
+					urlQueryParams.set( 'showModal', 'true' );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':

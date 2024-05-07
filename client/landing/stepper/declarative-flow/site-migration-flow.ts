@@ -299,9 +299,7 @@ const siteMigration: Flow = {
 							`${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }`
 						);
 					}
-					if ( isEnabled( 'migration_assistance_modal' ) ) {
-						urlQueryParams.set( 'showModal', 'true' );
-					}
+					urlQueryParams.set( 'showModal', 'true' );
 
 					return navigate( `site-migration-upgrade-plan?${ urlQueryParams.toString() }` );
 				}
