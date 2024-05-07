@@ -25,6 +25,8 @@ const selectors = {
 	setupHeader: 'h1:text("Themes")',
 	startBuildingHeader: ( text: string ) => `h1.onboarding-title:text("${ text }")`,
 
+	importModal: 'div.import__confirm-modal',
+
 	// Buttons
 	checkUrlButton: 'form.capture__input-wrapper button.action-buttons__next',
 	startBuildingButton: 'div.import__onboarding-page button.action-buttons__next',
@@ -64,6 +66,13 @@ export class StartImportFlow {
 		await this.page.locator(
 			`${ selectors.startImportButton }, ${ selectors.startImportGoalButton }`
 		);
+	}
+
+	/**
+	 * Validates that we show migration modal.
+	 */
+	async validateImportModal(): Promise< void > {
+		await this.page.locator( `${ selectors.importModal }` );
 	}
 
 	/**

@@ -129,10 +129,10 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 			await startImportFlow.validateURLCapturePage();
 		} );
 
-		// Back one page
-		it( 'Back to Setup page', async () => {
+		// Back one page shows migration modal
+		it( 'Back shows migration modal', async () => {
 			await startImportFlow.goBackOneScreen();
-			await startImportFlow.validateSetupPage();
+			await startImportFlow.validateImportModal();
 		} );
 	} );
 
