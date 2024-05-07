@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { ExternalLink } from '@automattic/components';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
@@ -232,9 +231,13 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 					{
 						components: {
 							LearnMore: (
-								<ExternalLink href="https://jetpack.com/support/backup/ssh-sftp-and-ftp-credentials/#file-access-permission">
+								<a
+									href="https://jetpack.com/support/backup/ssh-sftp-and-ftp-credentials/#file-access-permission"
+									target="blank"
+									rel="noreferrer"
+								>
 									Learn more
-								</ExternalLink>
+								</a>
 							),
 						},
 					}
