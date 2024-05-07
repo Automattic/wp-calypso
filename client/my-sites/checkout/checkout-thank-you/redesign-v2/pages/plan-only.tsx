@@ -48,12 +48,13 @@ interface PlanOnlyProps {
 }
 
 interface PlanOnlyThankYouProps extends PlanOnlyProps {
-	promotePlanData?: {
+	upsellPlanData?: {
 		planName: TranslateResult;
 		pathSlug: string;
 		refundPeriodDays: number;
 		fullPrice: string;
 		discountPrice: string;
+		trackEvent: string;
 	};
 	errorNotice: ( text: string, noticeOptions?: object ) => void;
 	removeNotice: ( noticeId: string ) => void;
@@ -69,6 +70,18 @@ const isMonthsOld = ( months: number, rawDate?: string ) => {
 	return moment().diff( parsedDate, 'months' ) > months;
 };
 
+const getBusinessPlanToUpgrade = ( currentPlanSlug: string ) => {
+	const currentPlan = getPlan( currentPlanSlug );
+	const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
+
+	// It's just for TS, since .find() can return undefined
+	if ( ! planKey ) {
+		return;
+	}
+
+	return getPlan( planKey );
+};
+
 const PlanOnlyThankYou = ( {
 	primaryPurchase,
 	isEmailVerified,
@@ -76,7 +89,7 @@ const PlanOnlyThankYou = ( {
 	removeNotice,
 	successNotice,
 	transferComplete,
-	promotePlanData,
+	upsellPlanData,
 }: PlanOnlyThankYouProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -225,16 +238,18 @@ const PlanOnlyThankYou = ( {
 	} );
 
 	let upsellProps;
-	if ( promotePlanData ) {
+	if ( upsellPlanData ) {
 		upsellProps = {
-			title: translate( 'Advanced tools' ),
+			title: translate( 'Advanced tools', {
+				comment: 'Upsell title for higher plan on checkout thank you page',
+			} ),
 			description: (
 				<>
 					{ translate(
-						'Get the %(planName)s plan for access to WordPress plugins, STFP setup, database credentials, and more, propelling your site to new heights. Upgrade risk-free with our %(refundPeriodDays)s-day money-back guarantee, and pay only the difference ({{s}}%(fullPrice)s{{/s}} %(discountPrice)s).',
+						'Get the %(planName)s plan for access to WordPress plugins, SFTP setup, database credentials, and more, propelling your site to new heights. Upgrade risk-free with our %(refundPeriodDays)s-day money-back guarantee, and pay only the difference ({{s}}%(fullPrice)s{{/s}} %(discountPrice)s).',
 						{
 							comment: 'Upsell for WP Business plan on checkout thank you page',
-							args: promotePlanData,
+							args: upsellPlanData,
 							components: { s: <s /> },
 						}
 					) }
@@ -245,12 +260,14 @@ const PlanOnlyThankYou = ( {
 				<>
 					<Button
 						onClick={ () => {
-							recordTracksEvent( 'calypso_plan_only_thank_you_upgrade_business_click' );
+							recordTracksEvent( upsellPlanData.trackEvent );
 
-							page( `/checkout/${ promotePlanData.pathSlug }/${ siteSlug }` );
+							page( `/checkout/${ upsellPlanData.pathSlug }/${ siteSlug }` );
 						} }
 					>
-						{ translate( 'Upgrade' ) }
+						{ translate( 'Upgrade', {
+							comment: 'Upsell button for higher plan on checkout thank you page',
+						} ) }
 					</Button>
 				</>
 			),
@@ -286,23 +303,11 @@ const PlanOnlyThankYou = ( {
 	);
 };
 
-function getBusinessPlanSlugToUpgrade( currentPlanSlug: string ) {
-	const currentPlan = getPlan( currentPlanSlug );
-	const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
-
-	// It's just for TS, since .find() can return undefined
-	if ( ! planKey ) {
-		return;
-	}
-
-	return getPlan( planKey );
-}
-
 export default connect(
 	( state: IAppState, props: PlanOnlyProps ) => {
-		let promotePlanData;
+		let upsellPlanData;
 		if ( isPersonal( props.primaryPurchase ) || isPremium( props.primaryPurchase ) ) {
-			const promotePlan = getBusinessPlanSlugToUpgrade( props.primaryPurchase.productSlug );
+			const promotePlan = getBusinessPlanToUpgrade( props.primaryPurchase.productSlug );
 			const promotePlanSlug = promotePlan?.getStoreSlug() || '';
 
 			const pathSlug = promotePlan?.getPathSlug?.();
@@ -323,7 +328,7 @@ export default connect(
 
 			// The condition is just for TS fix
 			if ( businessPrice && businessDiscountPrice && currencyCode && promotePlan && pathSlug ) {
-				promotePlanData = {
+				upsellPlanData = {
 					planName: promotePlan.getTitle(),
 					pathSlug: pathSlug,
 					refundPeriodDays: isMonthly( promotePlanSlug ) ? 7 : 14,
@@ -331,13 +336,12 @@ export default connect(
 					discountPrice: formatCurrency( businessDiscountPrice, currencyCode, {
 						stripZeros: true,
 					} ),
+					trackEvent: 'calypso_thank_you_plan_only_upgrade_to_business_click',
 				};
 			}
 		}
 
-		return {
-			promotePlanData,
-		};
+		return { upsellPlanData };
 	},
 	{
 		errorNotice,

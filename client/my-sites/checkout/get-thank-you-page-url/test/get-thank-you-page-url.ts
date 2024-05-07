@@ -1005,27 +1005,24 @@ describe( 'getThankYouPageUrl', () => {
 		PLAN_PREMIUM,
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_PREMIUM_3_YEARS,
-	] )(
-		'does not redirect to business upgrade nudge if product_slug is %s (previously it was, and now we render standard thanks you page with upsell banner)',
-		( productSlug ) => {
-			const cart = {
-				...getMockCart(),
-				products: [
-					{
-						...getEmptyResponseCartProduct(),
-						product_slug: productSlug,
-					},
-				],
-			};
-			const url = getThankYouPageUrl( {
-				...defaultArgs,
-				siteSlug: 'foo.bar',
-				cart,
-				receiptId: samplePurchaseId,
-			} );
-			expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
-		}
-	);
+	] )( 'does not redirect to business upgrade nudge if product_slug is %s', ( productSlug ) => {
+		const cart = {
+			...getMockCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: productSlug,
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: samplePurchaseId,
+		} );
+		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
+	} );
 
 	it( 'redirects to the thank you page if jetpack is not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
 		const cart = {

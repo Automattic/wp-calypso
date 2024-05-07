@@ -693,8 +693,8 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		! hasJetpackPlan( cart ) &&
 		! hasDIFMProduct( cart ) &&
 		( hasBloggerPlan( cart ) ||
-			hasPersonalPlan( cart ) || // if you are the person who is cleaning up hasPremiumPlan( cart ) case - consider removing this too. My rough assumption - it wasn't even used before
-			// hasPremiumPlan( cart ) || // The old promote business plan upsell page
+			hasPersonalPlan( cart ) ||
+			// hasPremiumPlan( cart ) || // The old business plan upsell page
 			hasBusinessPlan( cart ) )
 	) {
 		// A user just purchased one of the qualifying plans
