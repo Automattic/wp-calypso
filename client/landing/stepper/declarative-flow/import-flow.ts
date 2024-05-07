@@ -316,10 +316,7 @@ const importFlow: Flow = {
 						return navigate( `importList?siteSlug=${ siteSlugParam }` );
 					} else if ( isMigrateFromWp && fromParam ) {
 						return navigate( `sitePicker?from=${ fromParam }` );
-					} else if (
-						urlQueryParams.has( 'showModal' ) ||
-						! isEnabled( 'migration_assistance_modal' )
-					) {
+					} else if ( urlQueryParams.has( 'showModal' ) ) {
 						urlQueryParams.delete( 'showModal' );
 						return navigate( `import?siteSlug=${ siteSlugParam }` );
 					}

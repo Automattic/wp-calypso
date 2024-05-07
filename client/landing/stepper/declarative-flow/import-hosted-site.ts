@@ -230,7 +230,7 @@ const importHostedSiteFlow: Flow = {
 					return window.location.assign( '/sites?hosting-flow=true' );
 
 				case 'importerWordpress':
-					if ( urlQueryParams.has( 'showModal' ) || ! isEnabled( 'migration_assistance_modal' ) ) {
+					if ( urlQueryParams.has( 'showModal' ) ) {
 						// remove the siteSlug in case they want to change the destination site
 						urlQueryParams.delete( 'siteSlug' );
 						urlQueryParams.delete( 'showModal' );
