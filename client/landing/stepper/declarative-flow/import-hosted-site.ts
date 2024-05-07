@@ -7,7 +7,7 @@ import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import CreateSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/create-site';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
-import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
+import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
@@ -60,14 +60,14 @@ const importHostedSiteFlow: Flow = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const { isOwner, isFetching } = useIsSiteOwner();
+		const { isAdmin, isFetching } = useIsSiteAdmin();
 		const result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		useEffect( () => {
-			if ( isOwner === false && ! isFetching ) {
+			if ( isAdmin === false && ! isFetching ) {
 				window.location.assign( `/setup/${ this.name }/import` );
 			}
-		}, [ isOwner, isFetching ] );
+		}, [ isAdmin, isFetching ] );
 
 		return result;
 	},
