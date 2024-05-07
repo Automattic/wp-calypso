@@ -1,10 +1,13 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { MultisitePluginUpdateManagerContextProvider } from 'calypso/blocks/plugins-scheduled-updates-multisite/context';
-import DocumentHead from 'calypso/components/data/document-head';
+import Layout from 'calypso/a8c-for-agencies/components/layout';
+import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
+import { MultisitePluginUpdateManagerContextProvider } from './context';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
 import { ScheduleList } from './schedule-list';
 
+import 'calypso/sites-dashboard-v2/dotcom-style.scss';
 import './styles.scss';
 
 type Props = {
@@ -24,6 +27,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 	onEditSchedule,
 	onShowLogs,
 }: Props ) => {
+	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
 	const title = {
 		create: translate( 'New schedule' ),
@@ -33,24 +37,31 @@ export const PluginsScheduledUpdatesMultisite = ( {
 
 	return (
 		<MultisitePluginUpdateManagerContextProvider>
-			<DocumentHead title={ title } />
-			{ ( () => {
-				switch ( context ) {
-					case 'create':
-						return <ScheduleCreate onNavBack={ onNavBack } />;
-					case 'edit':
-						return <ScheduleEdit id={ id! } onNavBack={ onNavBack } />;
-					case 'list':
-					default:
-						return (
-							<ScheduleList
-								onCreateNewSchedule={ onCreateNewSchedule }
-								onEditSchedule={ onEditSchedule }
-								onShowLogs={ onShowLogs }
-							/>
-						);
-				}
-			} )() }
+			<Layout title={ title } wide>
+				{ context === 'create' || context === 'edit' ? (
+					<LayoutColumn className="schedules-list">List of schedules</LayoutColumn>
+				) : null }
+				<LayoutColumn wide>
+					{ ( () => {
+						switch ( context ) {
+							case 'create':
+								return <ScheduleCreate onNavBack={ onNavBack } />;
+							case 'edit':
+								return <ScheduleEdit id={ id! } onNavBack={ onNavBack } />;
+							case 'list':
+							default:
+								return (
+									<ScheduleList
+										previewMode={ isMobile ? 'card' : 'table' }
+										onCreateNewSchedule={ onCreateNewSchedule }
+										onEditSchedule={ onEditSchedule }
+										onShowLogs={ onShowLogs }
+									/>
+								);
+						}
+					} )() }
+				</LayoutColumn>
+			</Layout>
 		</MultisitePluginUpdateManagerContextProvider>
 	);
 };
