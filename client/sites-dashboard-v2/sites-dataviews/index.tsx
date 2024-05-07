@@ -15,6 +15,7 @@ import { SiteInfo } from './interfaces';
 import { SiteSort } from './sites-site-sort';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
+import { addDummyDataViewPrefix } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
 import type {
 	DataViewsColumn,
@@ -174,18 +175,25 @@ const DotcomSitesDataViews = ( {
 			},
 			// Dummy fields to allow people to sort by them on mobile.
 			{
-				id: 'dummy-site',
+				id: addDummyDataViewPrefix( 'site' ),
 				header: <span>{ __( 'Site' ) }</span>,
 				render: () => null,
 				enableHiding: false,
 				enableSorting,
 			},
 			{
-				id: 'dummy-last-publish',
+				id: addDummyDataViewPrefix( 'last-publish' ),
 				header: <span>{ __( 'Last Publish' ) }</span>,
 				render: () => null,
 				enableHiding: false,
 				enableSorting,
+			},
+			{
+				id: addDummyDataViewPrefix( 'last-interacted' ),
+				header: __( 'Last Interacted' ),
+				render: () => null,
+				enableHiding: false,
+				enableSorting: true,
 			},
 		],
 		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, enableSorting ]

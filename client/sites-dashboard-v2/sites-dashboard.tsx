@@ -64,8 +64,8 @@ const siteSortingKeys = [
 	// Put the dummy data view at the beginning for searching the sort key.
 	{ dataView: addDummyDataViewPrefix( 'site' ), sortKey: 'alphabetically' },
 	{ dataView: addDummyDataViewPrefix( 'last-publish' ), sortKey: 'updatedAt' },
+	{ dataView: addDummyDataViewPrefix( 'last-interacted' ), sortKey: 'lastInteractedWith' },
 	{ dataView: 'site', sortKey: 'alphabetically' },
-	{ dataView: 'magic', sortKey: 'lastInteractedWith' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 ];
 
@@ -105,7 +105,11 @@ const SitesDashboardV2 = ( {
 		page,
 		perPage,
 		search: search ?? '',
-		hiddenFields: [ addDummyDataViewPrefix( 'site' ), addDummyDataViewPrefix( 'last-publish' ) ],
+		hiddenFields: [
+			addDummyDataViewPrefix( 'site' ),
+			addDummyDataViewPrefix( 'last-publish' ),
+			addDummyDataViewPrefix( 'last-interacted' ),
+		],
 		filters:
 			status === 'all'
 				? []
