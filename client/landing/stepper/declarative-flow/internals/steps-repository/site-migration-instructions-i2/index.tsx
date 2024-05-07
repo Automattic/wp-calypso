@@ -59,7 +59,7 @@ const SiteMigrationInstructions: Step = function () {
 
 	useEffect( () => {
 		if ( isSetupCompleted ) {
-			recordTracksEvent( 'calypso_onboarding_site_migration_instructions_preparation_complete' );
+			recordTracksEvent( 'calypso_site_migration_instructions_preparation_complete' );
 		}
 	}, [ isSetupCompleted ] );
 
