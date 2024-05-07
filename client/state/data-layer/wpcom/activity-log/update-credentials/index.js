@@ -226,7 +226,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			dispatchFailure(
 				i18n.translate(
 					'Error saving. ' +
-						'Please ensure that the WordPress installation path has the necessary write permissions. ' +
+						'Please ensure that the WordPress installation path has write permissions. ' +
 						'{{LearnMore /}}.',
 					{
 						components: {
