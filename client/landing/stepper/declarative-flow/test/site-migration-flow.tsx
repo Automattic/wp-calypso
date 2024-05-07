@@ -182,7 +182,6 @@ describe( 'Site Migration Flow', () => {
 				},
 			} );
 
-			// Explicitly delegate all calls
 			expect( getFlowLocation() ).toEqual( {
 				path: `/${ STEPS.PROCESSING.slug }`,
 				state: {
@@ -205,7 +204,6 @@ describe( 'Site Migration Flow', () => {
 				},
 			} );
 
-			// Explicitly delegate all calls
 			expect( getFlowLocation() ).toEqual( {
 				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }?siteSlug=example.wordpress.com`,
 				state: null,
