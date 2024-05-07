@@ -408,6 +408,23 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
+			name: 'domain-for-gravatar',
+			steps: [
+				'domain-only',
+				// 'site-or-domain',
+				// 'site-picker',
+				// 'plans-site-selected',
+				// userSocialStep,
+				'user',
+			],
+			destination: getDomainSignupFlowDestination, // TODO: Redirect to Gravatar
+			description: 'Test domain signup flow for Gravatar',
+			disallowResume: true,
+			lastModified: '2024-05-07',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
 			name: 'site-selected',
 			steps: [ 'plans-site-selected-legacy' ],
 			destination: getSignupDestination,
