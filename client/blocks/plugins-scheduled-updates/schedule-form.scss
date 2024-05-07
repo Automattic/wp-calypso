@@ -113,6 +113,26 @@
 			box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 		}
 
+		&__sites {
+			> div {
+				.components-checkbox-control {
+					display: inline-block;
+					vertical-align: top;
+				}
+
+				label {
+					display: inline-block;
+					vertical-align: top;
+					margin-top: -4px;
+
+					.site-slug {
+						color: var(--studio-gray-50);
+					}
+				}
+			}
+
+		}
+
 	}
 
 	.form-field {
