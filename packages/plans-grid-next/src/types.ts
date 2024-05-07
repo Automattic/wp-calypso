@@ -118,6 +118,7 @@ export interface CommonGridProps {
 	planUpgradeCreditsApplicable?: number | null;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
 	gridSize?: string;
+	canUserUpgradePlans: boolean;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
@@ -155,6 +156,7 @@ export type GridContextProps = {
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	useActionCallback: UseActionCallback;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
+	canUserUpgradePlans?: boolean;
 	children: React.ReactNode;
 	coupon?: string;
 	enableFeatureTooltips?: boolean;

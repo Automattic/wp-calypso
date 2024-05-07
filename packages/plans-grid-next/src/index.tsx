@@ -105,6 +105,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		useActionCallback,
 		recordTracksEvent,
 		allFeaturesList,
+		canUserUpgradePlans,
 		coupon,
 		isInAdmin,
 		className,
@@ -135,6 +136,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				intent={ intent }
 				siteId={ siteId }
 				gridPlans={ gridPlans }
+				canUserUpgradePlans={ canUserUpgradePlans }
 				coupon={ coupon }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 				useActionCallback={ useActionCallback }
