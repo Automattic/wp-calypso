@@ -365,15 +365,16 @@ const PlansFeaturesMain = ( {
 	};
 
 	const useAction = useGenerateAction( {
-		domainFromHomeUpsellFlow,
 		canUserManageCurrentPlan,
-		currentPlan,
-		eligibleForFreeHostingTrial,
 		cartHandler: onUpgradeClick,
+		currentPlan,
+		domainFromHomeUpsellFlow,
+		eligibleForFreeHostingTrial,
 		flowName,
 		intent,
-		isInSignup,
 		intentFromProps,
+		isInSignup,
+		isLaunchPage,
 		showModalAndExit,
 		sitePlanSlug,
 		siteSlug,

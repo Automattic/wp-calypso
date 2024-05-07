@@ -1,80 +1,111 @@
 import { type PlanSlug, isFreePlan, isBusinessPlan } from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
+import { AddOns, Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import useGenerateActionCallback from './use-generate-action-callback';
-import type {
-	PlanActionOverrides,
-	PlansIntent,
-	// UseActionCallback,
-} from '@automattic/plans-grid-next';
+import type { PlanActionOverrides, PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useGenerateAction( {
 	canUserManageCurrentPlan,
+	cartHandler,
 	currentPlan,
 	domainFromHomeUpsellFlow,
 	eligibleForFreeHostingTrial,
-	cartHandler,
 	flowName,
-	isInSignup,
 	intent,
 	intentFromProps,
+	isInSignup,
+	isLaunchPage,
 	showModalAndExit,
 	sitePlanSlug,
 	siteSlug,
 	withDiscount,
 }: {
 	canUserManageCurrentPlan: boolean | null;
+	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	currentPlan: Plans.SitePlan | undefined;
 	domainFromHomeUpsellFlow: string | null;
 	eligibleForFreeHostingTrial: boolean;
-	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	flowName?: string | null;
-	isInSignup: boolean;
 	intent?: PlansIntent | null;
 	intentFromProps?: PlansIntent | null;
+	isInSignup: boolean;
+	isLaunchPage: boolean | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	withDiscount?: string;
 } ) {
-	// const useActionCallback = useGenerateActionCallback( {
-	// 	currentPlan,
-	// 	eligibleForFreeHostingTrial,
-	// 	cartHandler,
-	// 	flowName,
-	// 	intent,
-	// 	showModalAndExit,
-	// 	sitePlanSlug,
-	// 	siteSlug,
-	// 	withDiscount,
-	// } );
+	const getActionCallback = useGenerateActionCallback( {
+		currentPlan,
+		eligibleForFreeHostingTrial,
+		cartHandler,
+		flowName,
+		intent,
+		showModalAndExit,
+		sitePlanSlug,
+		siteSlug,
+		withDiscount,
+	} );
 
 	const translate = useTranslate();
 
 	return ( {
+		cartItemForPlan,
 		isFreeTrialAction,
 		isLargeCurrency,
 		isStuck,
 		planSlug,
 		planTitle,
 		priceString,
+		selectedStorageAddOn,
 	}: {
+		cartItemForPlan?: MinimalRequestCartProduct | null;
 		isFreeTrialAction?: boolean;
 		isLargeCurrency?: boolean;
 		isStuck?: boolean;
 		planSlug: PlanSlug;
 		planTitle?: string;
 		priceString?: string;
+		selectedStorageAddOn?: AddOns.AddOnMeta | null;
 	} ) => {
-		// const actionCallback = useActionCallback( { planSlug } )
 		let actions: PlanActionOverrides = {
 			currentPlan: {},
 			loggedInFreePlan: {},
 			trialAlreadyUsed: {},
 		};
 
-		/* 1. Onboarding actions */
+		/* 1. Launch Page actions */
+		if ( isLaunchPage ) {
+			let text = translate( 'Select %(plan)s', {
+				args: {
+					plan: planTitle,
+				},
+				context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
+				comment:
+					'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+			} );
+
+			if ( isFreePlan( planSlug ) ) {
+				text = translate( 'Keep this plan', {
+					comment:
+						'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+				} );
+			} else if ( isStuck && ! isLargeCurrency ) {
+				text = translate( 'Select %(plan)s – %(priceString)s', {
+					args: {
+						plan: planTitle,
+						priceString: priceString ?? '',
+					},
+					comment:
+						'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Select Premium - $10',
+				} );
+			}
+
+			return { text };
+		}
+
+		/* 2. Onboarding actions */
 		if ( isInSignup ) {
 			let text = translate( 'Get %(plan)s', {
 				args: {
@@ -120,6 +151,7 @@ function useGenerateAction( {
 			}
 
 			return {
+				callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
 				postButtonText,
 				// TODO: Revisit status
 				status: 'enabled',
@@ -127,7 +159,7 @@ function useGenerateAction( {
 			};
 		}
 
-		/* 2. Current plan actions */
+		/* 3. Current plan actions */
 		if ( sitePlanSlug && intentFromProps !== 'plans-p2' ) {
 			if ( isFreePlan( sitePlanSlug ) ) {
 				actions = {

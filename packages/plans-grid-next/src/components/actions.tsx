@@ -13,7 +13,6 @@ import {
 	isP2FreePlan,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	isBusinessPlan,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -62,44 +61,25 @@ const DummyDisabledButton = styled.div`
 
 const SignupFlowPlanFeatureActionButton = ( {
 	planSlug,
-	planTitle,
-	priceString,
 	isStuck,
-	isLargeCurrency,
 	hasFreeTrialPlan,
 	onCtaClick,
 	onFreeTrialCtaClick,
+	text,
+	freeTrialText,
+	postButtonText,
+	status,
 }: {
 	planSlug: PlanSlug;
-	planTitle: TranslateResult;
-	priceString: string | null;
 	isStuck: boolean;
-	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
 	onCtaClick: () => void;
 	onFreeTrialCtaClick: () => void;
+	text: string;
+	freeTrialText?: string;
+	postButtonText: string | null;
+	status: string;
 } ) => {
-	const {
-		helpers: { useAction },
-	} = usePlansGridContext();
-
-	const { postButtonText, status, text } = useAction( {
-		isLargeCurrency,
-		isStuck,
-		planSlug,
-		planTitle,
-		priceString,
-	} );
-
-	const { text: freeTrialText } = useAction( {
-		isFreeTrialAction: hasFreeTrialPlan,
-		isLargeCurrency,
-		isStuck,
-		planSlug,
-		planTitle,
-		priceString,
-	} );
-
 	const busy = isFreePlan( planSlug ) && status === 'blocked';
 
 	if ( hasFreeTrialPlan ) {
@@ -133,49 +113,16 @@ const SignupFlowPlanFeatureActionButton = ( {
 
 const LaunchPagePlanFeatureActionButton = ( {
 	planSlug,
-	planTitle,
-	priceString,
-	isStuck,
-	isLargeCurrency,
 	onCtaClick,
+	text,
 }: {
 	planSlug: PlanSlug;
-	planTitle: TranslateResult;
-	priceString: string | null;
-	isStuck: boolean;
-	isLargeCurrency: boolean;
 	onCtaClick: () => void;
+	text: string;
 } ) => {
-	const translate = useTranslate();
-
-	let buttonText = translate( 'Select %(plan)s', {
-		args: {
-			plan: planTitle,
-		},
-		context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
-		comment:
-			'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-	} );
-
-	if ( isFreePlan( planSlug ) ) {
-		buttonText = translate( 'Keep this plan', {
-			comment:
-				'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-		} );
-	} else if ( isStuck && ! isLargeCurrency ) {
-		buttonText = translate( 'Select %(plan)s – %(priceString)s', {
-			args: {
-				plan: planTitle,
-				priceString: priceString ?? '',
-			},
-			comment:
-				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Select Premium - $10',
-		} );
-	}
-
 	return (
 		<PlanButton planSlug={ planSlug } onClick={ onCtaClick }>
-			{ buttonText }
+			{ text }
 		</PlanButton>
 	);
 };
@@ -421,7 +368,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const {
 		gridPlansIndex,
 		siteId,
-		helpers: { useActionCallback },
+		helpers: { useActionCallback, useAction },
 	} = usePlansGridContext();
 	const {
 		planTitle,
@@ -441,16 +388,43 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		storageAddOnsForPlan,
 	} );
 
-	const onCtaClick = useActionCallback( {
+	const priceString = formatCurrency(
+		( discountedPrice.monthly || originalPrice.monthly ) ?? 0,
+		currencyCode || 'USD',
+		{
+			stripZeros: true,
+			isSmallestUnit: true,
+		}
+	);
+
+	const { callback, text, postButtonText, status } = useAction( {
+		// TODO: Double check that we need to do this boolean coercion
+		isLargeCurrency: !! isLargeCurrency,
+		isStuck,
 		planSlug,
+		planTitle,
+		priceString,
 		cartItemForPlan,
 		selectedStorageAddOn,
 	} );
 
-	// TODO: Unsure about using free plan as a fallback. We should revisit.
-	const onFreeTrialCtaClick = useActionCallback( {
+	const { callback: freeTrialCallback, text: freeTrialText } = useAction( {
+		// TODO: Double check that we need to do this boolean coercion
+		isFreeTrialAction: true,
+		isLargeCurrency: !! isLargeCurrency,
+		isStuck,
+		// TODO: Unsure about using free plan as a fallback. We should revisit.
 		planSlug: freeTrialPlanSlug ?? PLAN_FREE,
+		planTitle,
+		priceString,
 		cartItemForPlan: { product_slug: freeTrialPlanSlug ?? PLAN_FREE },
+		selectedStorageAddOn,
+	} );
+
+	const onCtaClick = useActionCallback( {
+		planSlug,
+		cartItemForPlan,
+		selectedStorageAddOn,
 	} );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -461,24 +435,12 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		);
 	}
 
-	const priceString = formatCurrency(
-		( discountedPrice.monthly || originalPrice.monthly ) ?? 0,
-		currencyCode || 'USD',
-		{
-			stripZeros: true,
-			isSmallestUnit: true,
-		}
-	);
-
 	if ( isLaunchPage ) {
 		return (
 			<LaunchPagePlanFeatureActionButton
 				planSlug={ planSlug }
-				planTitle={ planTitle }
-				priceString={ priceString }
-				isStuck={ isStuck }
-				isLargeCurrency={ !! isLargeCurrency }
-				onCtaClick={ onCtaClick }
+				onCtaClick={ callback }
+				text={ text }
 			/>
 		);
 	}
@@ -486,13 +448,14 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		return (
 			<SignupFlowPlanFeatureActionButton
 				planSlug={ planSlug }
-				planTitle={ planTitle }
-				priceString={ priceString }
 				isStuck={ isStuck }
-				isLargeCurrency={ !! isLargeCurrency }
+				postButtonText={ postButtonText }
+				status={ status }
 				hasFreeTrialPlan={ !! freeTrialPlanSlug }
-				onCtaClick={ onCtaClick }
-				onFreeTrialCtaClick={ onFreeTrialCtaClick }
+				onCtaClick={ callback }
+				onFreeTrialCtaClick={ freeTrialCallback }
+				text={ text }
+				freeTrialText={ freeTrialText }
 			/>
 		);
 	}
