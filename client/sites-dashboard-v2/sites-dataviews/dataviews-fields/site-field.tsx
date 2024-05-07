@@ -62,7 +62,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	}
 
 	const title = __( 'View Site Details' );
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) );
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ?? '' );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
