@@ -489,7 +489,7 @@ class MagicLogin extends Component {
 	};
 
 	render() {
-		const { oauth2Client, showCheckYourEmail, query, isStudioApp, translate } = this.props;
+		const { oauth2Client, showCheckYourEmail, query, translate } = this.props;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			return (
@@ -505,17 +505,29 @@ class MagicLogin extends Component {
 			);
 		}
 
-		const isStudioAppSignUp = isStudioApp && query?.redirect_to;
+		// "query?.redirect_to" is used to determine if Studio app users are creating a new account (vs. logging in)
+		if ( isStudioAppOAuth2Client( oauth2Client ) && query?.redirect_to ) {
+			return (
+				<Main className="magic-login magic-login__request-link is-white-login">
+					{ this.renderLocaleSuggestions() }
 
-		const studioAppProps = {
-			headerText: translate( 'Sign up for WordPress.com' ),
-			tosComponent: this.renderStudioLoginTos(),
-			subHeaderText: translate(
-				'Connecting a WordPress.com account unlocks additional Studio features like demo sites.'
-			),
-			customFormLabel: translate( 'Your email address' ),
-			submitButtonLabel: translate( 'Send activation link' ),
-		};
+					<GlobalNotices id="notices" />
+
+					<RequestLoginEmailForm
+						headerText={ translate( 'Sign up for WordPress.com' ) }
+						tosComponent={ this.renderStudioLoginTos() }
+						subHeaderText={ translate(
+							'Connecting a WordPress.com account unlocks additional Studio features like demo sites.'
+						) }
+						customFormLabel={ translate( 'Your email address' ) }
+						submitButtonLabel={ translate( 'Send activation link' ) }
+						createAccountForNewUser={ true }
+					/>
+
+					{ this.renderLinks() }
+				</Main>
+			);
+		}
 
 		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
 		// flag is enabled, some steps will display a different UI
@@ -524,7 +536,6 @@ class MagicLogin extends Component {
 			...( this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' )
 				? { isJetpackMagicLinkSignUpEnabled: true }
 				: {} ),
-			...( isStudioAppSignUp && studioAppProps ),
 			createAccountForNewUser: true,
 		};
 
@@ -559,7 +570,6 @@ const mapState = ( state ) => ( {
 		getInitialQueryArguments( state ).email_address,
 	localeSuggestions: getLocaleSuggestions( state ),
 	isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
-	isStudioApp: isStudioAppOAuth2Client( getCurrentOAuth2Client( state ) ),
 } );
 
 const mapDispatch = {
