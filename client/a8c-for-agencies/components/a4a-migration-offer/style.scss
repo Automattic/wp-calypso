@@ -48,10 +48,11 @@
 	}
 
 	.a4a-migration-offer__description {
-		font-size: 1rem;
 		color: var(--studio-gray-80);
+		font-size: 1rem;
 		font-weight: 400;
-		line-height: 32px;
+		line-height: 1.65;
+		margin-block-start: 16px;
 	}
 
 	.a4a-migration-offer__note {
