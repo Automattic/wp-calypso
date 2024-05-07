@@ -136,7 +136,22 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
 						<CardHeading id="admin-interface-style" size={ 20 }>
 							{ translate( 'Admin interface style' ) }
 						</CardHeading>
-						{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) ? (
+						<p>
+							{ translate(
+								'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}.',
+								{
+									components: {
+										supportLink: (
+											<InlineSupportLink
+												supportContext="admin-interface-style"
+												showIcon={ false }
+											/>
+										),
+									},
+								}
+							) }
+						</p>
+						{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) && (
 							<p className="form-setting-explanation">
 								{ translate( 'This setting has now moved to {{a}}Settings → General{{/a}}.', {
 									components: {
@@ -148,22 +163,6 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
 										),
 									},
 								} ) }
-							</p>
-						) : (
-							<p>
-								{ translate(
-									'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}.',
-									{
-										components: {
-											supportLink: (
-												<InlineSupportLink
-													supportContext="admin-interface-style"
-													showIcon={ false }
-												/>
-											),
-										},
-									}
-								) }
 							</p>
 						) }
 					</>
