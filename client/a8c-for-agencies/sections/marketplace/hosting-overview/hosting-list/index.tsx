@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -82,6 +82,20 @@ export default function HostingList( { selectedSite }: Props ) {
 		[ translate ]
 	);
 
+	// Track the tallest price section across hosting cards, to keep them aligned with each other.
+	const [ minHostingCardPriceHeight, setMinHostingCardPriceHeight ] = useState( 0 );
+	const hostingCardPriceHeightProps = {
+		minPriceHeight: minHostingCardPriceHeight,
+		setPriceHeight: ( height: number ): void => {
+			setMinHostingCardPriceHeight( ( currentHeight ) => {
+				if ( height > currentHeight ) {
+					return height;
+				}
+				return currentHeight;
+			} );
+		},
+	};
+
 	if ( isLoadingProducts ) {
 		return (
 			<div className="hosting-list">
@@ -100,7 +114,11 @@ export default function HostingList( { selectedSite }: Props ) {
 				isTwoColumns
 			>
 				{ creatorPlan && (
-					<HostingCard plan={ creatorPlan } highestDiscountPercentage={ highestDiscountWPCOM } />
+					<HostingCard
+						plan={ creatorPlan }
+						highestDiscountPercentage={ highestDiscountWPCOM }
+						{ ...hostingCardPriceHeightProps }
+					/>
 				) }
 
 				{ cheapestPressablePlan && (
@@ -108,11 +126,16 @@ export default function HostingList( { selectedSite }: Props ) {
 						plan={ cheapestPressablePlan }
 						pressableOwnership={ !! hasPressablePlan }
 						highestDiscountPercentage={ highestDiscountPressable }
+						{ ...hostingCardPriceHeightProps }
 					/>
 				) }
 
 				{ isWPCOMOptionEnabled && (
-					<HostingCard plan={ vipPlan } className="hosting-list__vip-card" />
+					<HostingCard
+						plan={ vipPlan }
+						className="hosting-list__vip-card"
+						{ ...hostingCardPriceHeightProps }
+					/>
 				) }
 			</ListingSection>
 			{ isWPCOMOptionEnabled && (
