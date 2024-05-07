@@ -77,8 +77,12 @@
 			background: var(--studio-white);
 		}
 
-		tr.dataviews-view-table__row:hover {
-			background-color: #f7faff;
+		tr.dataviews-view-table__row {
+			cursor: pointer;
+
+			&:hover {
+				background-color: #f7faff;
+			}
 		}
 	}
 
@@ -344,6 +348,7 @@
 
 			li {
 				border-bottom: 1px solid #f1f1f1 !important;
+				cursor: pointer;
 			}
 
 			li.is-selected,

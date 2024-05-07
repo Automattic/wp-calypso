@@ -25,10 +25,12 @@ type Props = {
 };
 
 const SiteListTile = styled( ListTile )`
+	gap: 0;
 	margin-inline-end: 0;
 	width: 295px;
 
 	.preview-hidden & {
+		gap: 12px;
 		max-width: 500px;
 		width: 100%;
 	}

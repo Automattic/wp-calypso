@@ -19,7 +19,7 @@
 	text-align: left;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	padding-left: 20px;
+	padding: 0 8px;
 	white-space: nowrap;
 	font-weight: 500;
 	font-size: rem(14px);
@@ -28,8 +28,11 @@
 .sites-dataviews__site-url,
 .sites-dataviews__site-wp-admin-url {
 	color: var(--color-neutral-70);
-	font-size: rem(12px);
+	font-size: rem(14px);
 	font-weight: 400;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .sites-dataviews__site-wp-admin-url {
@@ -80,12 +83,12 @@
 }
 
 .sites-dashboard__layout:not(.preview-hidden) {
-	.sites-dataviews__site-wp-admin-url {
-		display: none;
-	}
+	.sites-dataviews__site-name {
+		padding: 0;
 
-	.sites-dataviews__site button {
-		cursor: default;
+		.sites-dataviews__site-wp-admin-url {
+			display: none;
+		}
 	}
 
 	.dataviews-pagination {
