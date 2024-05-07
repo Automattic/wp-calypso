@@ -70,11 +70,17 @@ export default function LicenseDetailsActions( {
 
 	return (
 		<div className="license-details__actions">
-			{ hasDownloads && licenseType === LicenseType.Partner && (
-				<Button compact { ...( status === 'pending' ? { busy: true } : {} ) } onClick={ download }>
-					{ translate( 'Download' ) }
-				</Button>
-			) }
+			{ hasDownloads &&
+				licenseState === LicenseState.Attached &&
+				licenseType === LicenseType.Partner && (
+					<Button
+						compact
+						{ ...( status === 'pending' ? { busy: true } : {} ) }
+						onClick={ download }
+					>
+						{ translate( 'Download' ) }
+					</Button>
+				) }
 
 			{ ! isPressableLicense && licenseState === LicenseState.Attached && siteUrl && (
 				<Button compact href={ siteUrl } target="_blank" rel="noopener noreferrer">
