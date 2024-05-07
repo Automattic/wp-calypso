@@ -5,7 +5,7 @@
  * - Pulls full translations from `https://widgets.wp.com/languages/calypso`
  * - Merges all referenced strings together
  * - Picks only the necessary translations from the full translations files
- * - Creates the target language files in `dist/languages` for Odyssey
+ * - Creates the target language files in outputPath (defaults to `dist/languages`).
  */
 
 const fs = require( 'fs' );
