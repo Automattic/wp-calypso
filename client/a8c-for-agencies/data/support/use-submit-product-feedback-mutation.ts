@@ -1,5 +1,5 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
-import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import type {
 	APIError,
 	SubmitProductFeedbackParams,
@@ -12,7 +12,7 @@ interface APIResponse {
 function mutationSubmitProductFeedback(
 	params: SubmitProductFeedbackParams
 ): Promise< APIResponse > {
-	return wpcomJpl.req.post( {
+	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/agency/user-feedback',
 		body: params,
