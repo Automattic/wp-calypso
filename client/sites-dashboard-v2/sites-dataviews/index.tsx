@@ -1,3 +1,4 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -50,6 +51,10 @@ const DotcomSitesDataViews = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
+
+	// Display the `Sort By` option only when the fields are hidden on smaller viewport.
+	const isSmallScreen = useBreakpoint( '<1180px' );
+	const enableSorting = isSmallScreen || dataViewsState.type === 'list';
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
@@ -173,17 +178,17 @@ const DotcomSitesDataViews = ( {
 				header: <span>{ __( 'Site' ) }</span>,
 				render: () => null,
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting,
 			},
 			{
 				id: 'dummy-last-publish',
 				header: <span>{ __( 'Last Publish' ) }</span>,
 				render: () => null,
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting,
 			},
 		],
-		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState ]
+		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, enableSorting ]
 	);
 
 	// Create the itemData packet state
