@@ -83,7 +83,7 @@ export default function DomainInformation( props: Props ) {
 					<li>
 						<div className="name">{ translate( 'Registrar' ) }</div>
 						<div>
-							{ whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
+							{ normalizeWhoisURL( whois.registrar_url ).toLowerCase().includes( 'automattic' ) && (
 								<VerifiedProvider
 									hostingProvider={ hostingProvider }
 									urlData={ urlData }
@@ -91,7 +91,9 @@ export default function DomainInformation( props: Props ) {
 								/>
 							) }
 							{ whois.registrar_url &&
-								! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
+								! normalizeWhoisURL( whois.registrar_url )
+									.toLowerCase()
+									.includes( 'automattic' ) && (
 									<a
 										href={ normalizeWhoisURL( whois.registrar_url ) }
 										target="_blank"
