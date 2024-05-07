@@ -4,12 +4,12 @@ import { useMemo } from 'react';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import {
 	A4A_MARKETPLACE_LINK,
-	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_LICENSES_LINK,
 	A4A_OVERVIEW_LINK,
 	A4A_PURCHASES_LINK,
 	A4A_REFERRALS_LINK,
 	A4A_SITES_LINK,
+	A4A_MARKETPLACE_HOSTING_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -51,7 +51,7 @@ const useMainMenuItems = ( path: string ) => {
 			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,
-				link: A4A_MARKETPLACE_PRODUCTS_LINK,
+				link: A4A_MARKETPLACE_HOSTING_LINK,
 				title: translate( 'Marketplace' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Marketplace',
