@@ -19,6 +19,7 @@ import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import { usePaymentMethod } from '../lib/payment-methods';
 import { SubscriptionManager } from '../lib/subscription-manager';
+import { useAllPaymentMethods } from '../public-api';
 import { CheckoutStepGroupActions, FormStatus } from '../types';
 import Button from './button';
 import CheckoutErrorBoundary from './checkout-error-boundary';
@@ -926,7 +927,29 @@ function CheckoutStepHeader( {
 	editButtonAriaLabel?: string;
 } ) {
 	const { __ } = useI18n();
+
+	const paymentMethods = useAllPaymentMethods();
+	const paymentMethodStepIsActive = id === 'payment-method-step';
 	const shouldShowEditButton = !! onEdit;
+
+	const renderHeaderEditButton = () => {
+		if ( paymentMethodStepIsActive && paymentMethods.length <= 1 ) {
+			return null;
+		}
+
+		if ( shouldShowEditButton ) {
+			return (
+				<HeaderEditButton
+					className="checkout-step__edit-button"
+					buttonType="text-button"
+					onClick={ onEdit }
+					aria-label={ editButtonAriaLabel || __( 'Edit this step' ) }
+				>
+					{ editButtonText || __( 'Edit' ) }
+				</HeaderEditButton>
+			);
+		}
+	};
 
 	return (
 		<StepHeader
@@ -944,16 +967,7 @@ function CheckoutStepHeader( {
 			>
 				{ title }
 			</StepTitle>
-			{ shouldShowEditButton && (
-				<HeaderEditButton
-					className="checkout-step__edit-button"
-					buttonType="text-button"
-					onClick={ onEdit }
-					aria-label={ editButtonAriaLabel || __( 'Edit this step' ) }
-				>
-					{ editButtonText || __( 'Edit' ) }
-				</HeaderEditButton>
-			) }
+			{ renderHeaderEditButton() }
 		</StepHeader>
 	);
 }
