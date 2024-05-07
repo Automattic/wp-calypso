@@ -76,7 +76,7 @@ export default function DomainInformation( props: Props ) {
 				{ filteredWhois.domain_name && (
 					<li>
 						<div className="name">{ translate( 'Domain name' ) }</div>
-						<div>{ whois.domain_name }</div>
+						<div>{ normalizeWhoisField( whois.domain_name ) }</div>
 					</li>
 				) }
 				{ filteredWhois.registrar && (
@@ -99,7 +99,7 @@ export default function DomainInformation( props: Props ) {
 										target="_blank"
 										rel="noopener noreferrer"
 									>
-										{ whois.registrar }
+										{ normalizeWhoisField( whois.registrar ) }
 									</a>
 								) }
 							{ ! whois.registrar_url && <span>{ normalizeWhoisField( whois.registrar ) }</span> }
