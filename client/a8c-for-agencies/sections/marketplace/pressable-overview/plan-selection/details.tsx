@@ -4,12 +4,12 @@ import formatCurrency from '@automattic/format-currency';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { getProductPricingInfo } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import SimpleList from '../../common/simple-list';
+import { useGetProductPricingInfo } from '../../wpcom-overview/hooks/use-total-invoice-value';
 import getPressablePlan from '../lib/get-pressable-plan';
 import getPressableShortName from '../lib/get-pressable-short-name';
 
@@ -27,6 +27,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 	const customString = translate( 'Custom' );
 
 	const userProducts = useSelector( getProductsList );
+	const { getProductPricingInfo } = useGetProductPricingInfo();
 
 	const { discountedCost } = selectedPlan
 		? getProductPricingInfo( userProducts, selectedPlan, 1 )

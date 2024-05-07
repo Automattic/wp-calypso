@@ -11,6 +11,7 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ActionsField from './dataviews-fields/actions-field';
 import SiteField from './dataviews-fields/site-field';
 import { SiteInfo } from './interfaces';
+import { SiteSort } from './sites-site-sort';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -61,18 +62,55 @@ const DotcomSitesDataViews = ( {
 		[ setDataViewsState ]
 	);
 
+	useEffect( () => {
+		// If the user clicks on a row, open the site preview pane by triggering the site button click.
+		const handleRowClick = ( event: Event ) => {
+			const target = event.target as HTMLElement;
+			const row = target.closest( '.dataviews-view-table__row' );
+			if ( row ) {
+				const isButtonOrLink = target.closest( 'button, a' );
+				if ( ! isButtonOrLink ) {
+					const button = row.querySelector( '.sites-dataviews__site' ) as HTMLButtonElement;
+					if ( button ) {
+						button.click();
+					}
+				}
+			}
+		};
+
+		const rowsContainer = document.querySelector( '.dataviews-view-table' );
+		if ( rowsContainer ) {
+			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
+		}
+
+		return () => {
+			if ( rowsContainer ) {
+				rowsContainer.removeEventListener( 'click', handleRowClick as EventListener );
+			}
+		};
+	}, [] );
+
 	// Generate DataViews table field-columns
 	const fields = useMemo< DataViewsColumn[] >(
 		() => [
 			{
 				id: 'site',
-				header: <span>{ __( 'Site' ) }</span>,
+				header: (
+					<SiteSort
+						isSortable={ true }
+						columnKey="site"
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+					>
+						<span>{ __( 'Site' ) }</span>
+					</SiteSort>
+				),
 				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
 				render: ( { item }: { item: SiteInfo } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'plan',
@@ -128,7 +166,7 @@ const DotcomSitesDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ __, openSitePreviewPane, userId ]
+		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState ]
 	);
 
 	// Create the itemData packet state

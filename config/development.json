@@ -203,7 +203,7 @@
 		"signup/social": true,
 		"signup/social-first": true,
 		"site-indicator": true,
-		"site-profiler": true,
+		"site-profiler/metrics": true,
 		"ssr/prefetch-timebox": false,
 		"stats/checkout-flows-v2": true,
 		"stats/date-control": true,

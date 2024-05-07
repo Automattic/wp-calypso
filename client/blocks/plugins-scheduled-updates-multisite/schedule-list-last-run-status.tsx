@@ -25,7 +25,7 @@ export function ScheduleListLastRunStatus( { schedule, site, onLogsClick }: Prop
 					<Button
 						className="schedule-last-run"
 						variant="link"
-						onClick={ () => onLogsClick && onLogsClick( schedule.id, site?.slug ) }
+						onClick={ () => onLogsClick && onLogsClick( schedule.schedule_id, site?.slug ) }
 					>
 						{ site.last_run_status === 'in-progress'
 							? translate( 'In progress' )

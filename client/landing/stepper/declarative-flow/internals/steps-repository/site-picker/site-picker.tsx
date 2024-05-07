@@ -42,7 +42,7 @@ const SitePicker = function SitePicker( props: Props ) {
 	const { sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		SITE_PICKER_FILTER_CONFIG,
-		( site ) => ! site.is_wpcom_staging_site
+		( site ) => ! site.is_wpcom_staging_site && ! site.is_deleted
 	);
 
 	return (

@@ -26,7 +26,6 @@ import {
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	isNewsletterOrLinkInBioFlow,
 	isAnyHostingFlow,
@@ -41,7 +40,6 @@ import {
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { hasTranslation } from '@wordpress/i18n';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
@@ -459,7 +457,6 @@ export function CheckoutSummaryFeaturesList( props: {
 	const hasSingleProduct = responseCart.products.length === 1;
 
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 
 	const hasNoAdsAddOn = responseCart.products.some( ( product ) => isNoAds( product ) );
 
@@ -468,13 +465,10 @@ export function CheckoutSummaryFeaturesList( props: {
 	);
 
 	const hasFreeMigrationAssistance = getAcceptedAssistedFreeMigration();
-	const hasFreeMigrationAssistanceTranslation =
-		( isEnglishLocale || hasTranslation( 'Assisted free site migration' ) ) ??
-		translate( 'Assisted free site migration' );
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
-			{ hasFreeMigrationAssistance && hasFreeMigrationAssistanceTranslation && (
+			{ hasFreeMigrationAssistance && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-support-free-migration-assistance" />
 					{ translate( 'Assisted free site migration' ) }

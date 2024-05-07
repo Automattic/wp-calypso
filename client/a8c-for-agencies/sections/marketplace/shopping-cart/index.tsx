@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { Badge, Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useState } from 'react';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
@@ -18,32 +17,22 @@ type Props = {
 	onCheckout: () => void;
 	onRemoveItem: ( item: ShoppingCartItem ) => void;
 	items: ShoppingCartItem[];
+	showCart: boolean;
+	setShowCart: ( state: boolean ) => void;
+	toggleCart: () => void;
 };
 
 export const CART_URL_HASH_FRAGMENT = '#cart';
 
-export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props ) {
-	const [ showShoppingCart, setShowShoppingCart ] = useState(
-		window.location.hash === CART_URL_HASH_FRAGMENT
-	);
-
+export default function ShoppingCart( {
+	onCheckout,
+	onRemoveItem,
+	items,
+	showCart,
+	setShowCart,
+	toggleCart,
+}: Props ) {
 	const { paymentMethodRequired } = usePaymentMethod();
-
-	const toggleShoppingCart = () => {
-		setShowShoppingCart( ( prevState ) => {
-			const nextState = ! prevState;
-
-			const hashFragment = nextState ? CART_URL_HASH_FRAGMENT : '';
-
-			window.history.replaceState(
-				null,
-				'',
-				window.location.pathname + window.location.search + hashFragment
-			);
-
-			return nextState;
-		} );
-	};
 
 	const handleOnCheckout = () => {
 		if ( paymentMethodRequired ) {
@@ -55,7 +44,7 @@ export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props
 
 	return (
 		<div className="shopping-cart">
-			<Button className="shopping-cart__button" onClick={ toggleShoppingCart } borderless>
+			<Button className="shopping-cart__button" onClick={ toggleCart } borderless>
 				<Icon className="shopping-cart__button-icon" icon={ <ShoppingCartIcon /> } />
 
 				<Badge
@@ -68,10 +57,10 @@ export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props
 				</Badge>
 			</Button>
 
-			{ showShoppingCart && (
+			{ showCart && (
 				<ShoppingCartMenu
 					onClose={ () => {
-						setShowShoppingCart( false );
+						setShowCart( false );
 						window.history.replaceState(
 							null,
 							'',

@@ -168,6 +168,7 @@ export type GridContextProps = {
 	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `enableCategorisedFeatures` is set).
 	 */
 	featureGroupMap: Partial< FeatureGroupMap >;
+	hideUnsupportedFeatures?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

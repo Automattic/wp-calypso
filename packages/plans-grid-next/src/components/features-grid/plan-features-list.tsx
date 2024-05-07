@@ -60,8 +60,7 @@ const PlanFeaturesList = ( {
 	return plansWithFeatures.map(
 		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
 			const filteredWpcomFeatures = wpcomFeatures.filter(
-				( feature ) =>
-					featureGroup?.get2023PricingGridSignupWpcomFeatures().includes( feature.getSlug() )
+				( feature ) => featureGroup?.getFeatures().includes( feature.getSlug() )
 			);
 
 			if ( featureGroup && ! filteredWpcomFeatures.length ) {

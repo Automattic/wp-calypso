@@ -402,9 +402,24 @@ body.is-mobile-app-view {
 
 // Ensure reader streams have the neutral background.
 .layout.is-section-reader {
-	background: var(--studio-white);
+	background: var(--studio-white); // TODO: Remove after nav-redesign-v2 for reader is done.
 	min-height: 100vh;
 	.layout__content {
-		background: var(--studio-white);
+		background: var(--studio-white); // TODO: Remove after nav-redesign-v2 for reader is done.
+	}
+	.section-header.card {
+		box-shadow: none;
+		margin-bottom: 24px;
+		padding: 0;
+
+		.section-header__label-text {
+			font-size: 1.25rem;
+			font-weight: 500;
+			line-height: 26px;
+		}
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin: 0 16px;
+		}
 	}
 }

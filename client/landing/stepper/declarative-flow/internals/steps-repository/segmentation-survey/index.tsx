@@ -1,84 +1,54 @@
-import config from '@automattic/calypso-config';
-import { useCallback } from 'react';
-import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import SurveyContainer from 'calypso/components/survey-container';
-import { useSurveyContext } from 'calypso/components/survey-container/context';
-import { Question } from 'calypso/components/survey-container/types';
-import {
-	useCachedAnswers,
-	useSaveAnswersMutation,
-	useSurveyStructureQuery,
-} from 'calypso/data/segmentaton-survey';
-import SegmentationSurveyProvider from './provider';
-import type { Step } from '../../types';
+import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import { useCachedAnswers } from 'calypso/data/segmentaton-survey';
+import type { ProvidedDependencies, Step } from '../../types';
 import './style.scss';
 
 const SURVEY_KEY = 'entrepreneur-trial';
 
-const SegmentationSurveyDocumentHead = () => {
-	const { currentQuestion } = useSurveyContext();
+type NavigationDecision = {
+	proceedWithNavigation: boolean;
+	providedDependencies: ProvidedDependencies;
+};
 
-	if ( ! currentQuestion ) {
-		return null;
-	}
-
-	return <DocumentHead title={ currentQuestion.headerText } />;
+const shouldNavigate = (
+	questionKey: string,
+	answerKeys: string[],
+	isLastQuestion?: boolean
+): NavigationDecision => {
+	return {
+		proceedWithNavigation: !! isLastQuestion,
+		providedDependencies: {},
+	};
 };
 
 const SegmentationSurveyStep: Step = ( { navigation } ) => {
-	const { data: questions } = useSurveyStructureQuery( { surveyKey: SURVEY_KEY } );
-	const { mutate, isPending } = useSaveAnswersMutation( { surveyKey: SURVEY_KEY } );
-	const { answers, setAnswers, clearAnswers } = useCachedAnswers( SURVEY_KEY );
+	const { clearAnswers } = useCachedAnswers( SURVEY_KEY );
 
-	const onChangeAnswer = useCallback(
-		( questionKey: string, value: string[] ) => {
-			const newAnswers = { ...answers, [ questionKey ]: value };
-			setAnswers( newAnswers );
-		},
-		[ answers, setAnswers ]
-	);
+	const handleNext = ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => {
+		const { proceedWithNavigation, providedDependencies } = shouldNavigate(
+			questionKey,
+			answerKeys,
+			isLastQuestion
+		);
 
-	const onSubmitQuestion = useCallback(
-		( currentQuestion: Question ) => {
-			if ( isPending ) {
-				return;
+		if ( proceedWithNavigation ) {
+			// For custom navigation, we need to clear the answers before the last question
+			if ( ! isLastQuestion ) {
+				clearAnswers();
 			}
 
-			mutate(
-				{
-					questionKey: currentQuestion.key,
-					answerKeys: answers[ currentQuestion.key ] || [],
-				},
-				{
-					onSuccess: () => {
-						if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
-							clearAnswers();
-						}
-					},
-				}
-			);
-		},
-		[ answers, clearAnswers, isPending, mutate, questions ]
-	);
-
-	if ( ! config.isEnabled( 'ecommerce-segmentation-survey' ) ) {
-		return null;
-	}
+			navigation.submit?.( providedDependencies );
+		}
+	};
 
 	return (
 		<Main className="segmentation-survey-step">
-			<SegmentationSurveyProvider
-				navigation={ navigation }
-				onSubmitQuestion={ onSubmitQuestion }
+			<SegmentationSurvey
 				surveyKey={ SURVEY_KEY }
-				questions={ questions }
-				answers={ answers }
-			>
-				<SegmentationSurveyDocumentHead />
-
-				<SurveyContainer answers={ answers } onChange={ onChangeAnswer } />
-			</SegmentationSurveyProvider>
+				onBack={ navigation.goBack }
+				onNext={ handleNext }
+			/>
 		</Main>
 	);
 };

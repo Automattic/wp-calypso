@@ -1,11 +1,30 @@
 import { useMemo } from '@wordpress/element';
 import useGridPlans from './use-grid-plans';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
-import type { UseGridPlansParams, UseGridPlansType } from './types';
+import type { UseGridPlansParams } from './types';
 import type { GridPlan } from '../../types';
 
-const useGridPlansForFeaturesGrid = (
-	{
+const useGridPlansForFeaturesGrid = ( {
+	allFeaturesList,
+	coupon,
+	eligibleForFreeHostingTrial,
+	hasRedeemedDomainCredit,
+	hiddenPlans,
+	includePreviousPlanFeatures,
+	intent,
+	isDisplayingPlansNeededForFeature,
+	isInSignup,
+	isSubdomainNotGenerated,
+	selectedFeature,
+	selectedPlan,
+	showLegacyStorageFeature,
+	siteId,
+	storageAddOns,
+	term,
+	useCheckPlanAvailabilityForPurchase,
+	useFreeTrialPlanSlugs,
+}: UseGridPlansParams ): GridPlan[] | null => {
+	const gridPlans = useGridPlans( {
 		allFeaturesList,
 		coupon,
 		eligibleForFreeHostingTrial,
@@ -13,33 +32,11 @@ const useGridPlansForFeaturesGrid = (
 		hiddenPlans,
 		intent,
 		isDisplayingPlansNeededForFeature,
-		isInSignup,
 		isSubdomainNotGenerated,
 		selectedFeature,
 		selectedPlan,
 		showLegacyStorageFeature,
 		siteId,
-		storageAddOns,
-		term,
-		useCheckPlanAvailabilityForPurchase,
-		useFreeTrialPlanSlugs,
-		includeAllFeatures,
-	}: UseGridPlansParams,
-	useGridPlansData: UseGridPlansType = useGridPlans
-): GridPlan[] | null => {
-	const gridPlans = useGridPlansData( {
-		allFeaturesList,
-		coupon,
-		eligibleForFreeHostingTrial,
-		hasRedeemedDomainCredit,
-		hiddenPlans,
-		intent,
-		isDisplayingPlansNeededForFeature,
-		isSubdomainNotGenerated,
-		selectedFeature,
-		selectedPlan,
-		siteId,
-		showLegacyStorageFeature,
 		storageAddOns,
 		term,
 		useCheckPlanAvailabilityForPurchase,
@@ -47,14 +44,14 @@ const useGridPlansForFeaturesGrid = (
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
-		gridPlans: gridPlans || [],
 		allFeaturesList,
+		gridPlans: gridPlans || [],
 		hasRedeemedDomainCredit,
+		includePreviousPlanFeatures,
 		intent,
 		isInSignup,
 		selectedFeature,
 		showLegacyStorageFeature,
-		includeAllFeatures,
 	} );
 
 	return useMemo( () => {

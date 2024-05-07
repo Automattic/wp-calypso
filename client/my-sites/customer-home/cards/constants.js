@@ -51,6 +51,7 @@ export const TASK_STAGING = 'home-task-staging';
 export const TASK_FIVERR = 'home-task-fiverr';
 export const TASK_DOMAIN_UPSELL = 'home-task-domain-upsell';
 export const TASK_GOOGLE_DOMAIN_OWNERS = 'home-task-google-domain-owners';
+export const LAUNCHPAD_ENTREPRENEUR_SITE_SETUP = 'home-launchpad-entrepreneur-site-setup';
 export const LAUNCHPAD_INTENT_BUILD = 'home-launchpad-intent-build';
 export const LAUNCHPAD_INTENT_HOSTING = 'home-launchpad-intent-hosting';
 export const LAUNCHPAD_INTENT_WRITE = 'home-launchpad-intent-write';
