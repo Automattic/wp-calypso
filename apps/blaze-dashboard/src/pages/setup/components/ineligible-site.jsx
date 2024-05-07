@@ -1,12 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'calypso/state';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-export default function PrivateSite() {
-	const selectedSiteData = useSelector( getSelectedSite );
-	const siteSlug = selectedSiteData?.slug;
-
+export default function IneligibleSite() {
 	const translate = useTranslate();
 
 	return (
@@ -45,49 +40,23 @@ export default function PrivateSite() {
 					</svg>
 				</div>
 				<h3 className="setup-pages__title wp-brand-font">
-					{ translate( 'Make sure your site is public' ) }
+					{ translate( 'Your store is not eligible to Advertise with Blaze' ) }
 				</h3>
 				<p className="setup-pages__body">
-					{ translate( 'Go to your WordPress.com dashboard and follow the steps below.' ) }
-				</p>
-				<ul className="promote-post-i2__active-steps">
-					<li>
-						<span>1</span>
-						<div>
-							{ translate( "Navigate to your site's {{a}}Privacy settings{{/a}}.", {
-								components: {
-									a: (
-										<a
-											href={ `https://wordpress.com/settings/general/${ siteSlug }#site-privacy-settings` }
-											target="_blank"
-											rel="noreferrer"
-										/>
-									),
-								},
-							} ) }
-						</div>
-					</li>
-					<li>
-						<span>2</span>
-						<div>{ translate( 'Set your site as Public.' ) }</div>
-					</li>
-					<li>
-						<span>3</span>
-						<div>{ translate( 'Refresh this page.' ) }</div>
-					</li>
-				</ul>
-				<p className="promote-post-i2__footer-text">
-					{ translate( 'Read more on how to launch your site {{a}}here{{/a}}. ', {
-						components: {
-							a: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/support/privacy-settings/' ) }
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
-						},
-					} ) }
+					{ translate(
+						"Unfortunately, your store doesn't qualify for advertising using Blaze. If you have any questions or need assistance, please contact our {{a}}support team{{/a}}.",
+						{
+							components: {
+								a: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
+							},
+						}
+					) }
 				</p>
 			</div>
 		</>

@@ -16,7 +16,7 @@ export default function DisconnectedSite() {
 				<h3 className="setup-pages__title wp-brand-font width-fix">
 					{ translate( 'Welcome to Blaze for WooCommerce' ) }
 				</h3>
-				<p className="empty-promotion-list__body">
+				<p className="setup-pages__body">
 					{ translate( 'One-click advertising for your store and products.' ) }
 				</p>
 
