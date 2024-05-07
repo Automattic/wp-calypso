@@ -13,11 +13,6 @@ import 'calypso/a8c-for-agencies/sections/sites/site-sort/style.scss';
 const SORT_DIRECTION_ASC = 'asc';
 const SORT_DIRECTION_DESC = 'desc';
 
-// Mapping the columns to the site data keys
-const SITE_COLUMN_KEY_MAP: { [ key: string ]: string } = {
-	site: 'site',
-};
-
 interface SiteSortProps {
 	columnKey: string;
 	isLargeScreen?: boolean;
@@ -37,12 +32,12 @@ export const SiteSort = ( {
 }: SiteSortProps ) => {
 	const { field, direction } = dataViewsState.sort;
 
-	const isDefault = field !== SITE_COLUMN_KEY_MAP?.[ columnKey ] || ! field || ! direction;
+	const isDefault = field !== columnKey || ! field || ! direction;
 
 	const setSort = () => {
 		const updatedSort = { ...dataViewsState.sort };
 		if ( isDefault ) {
-			updatedSort.field = SITE_COLUMN_KEY_MAP?.[ columnKey ];
+			updatedSort.field = columnKey;
 			updatedSort.direction = SORT_DIRECTION_ASC;
 		} else if ( direction === SORT_DIRECTION_ASC ) {
 			updatedSort.direction = SORT_DIRECTION_DESC;

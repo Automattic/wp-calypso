@@ -133,11 +133,20 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'last-publish',
-				header: <span>{ __( 'Last Publish' ) }</span>,
+				header: (
+					<SiteSort
+						isSortable={ true }
+						columnKey="last-publish"
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+					>
+						<span>{ __( 'Last Publish' ) }</span>
+					</SiteSort>
+				),
 				render: ( { item }: { item: SiteInfo } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'stats',
@@ -157,13 +166,6 @@ const DotcomSitesDataViews = ( {
 				render: ( { item }: { item: SiteInfo } ) => <ActionsField site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
-			},
-			{
-				id: 'magic',
-				header: __( 'Magic' ),
-				render: () => <></>,
-				enableHiding: false,
-				enableSorting: true,
 			},
 		],
 		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState ]
