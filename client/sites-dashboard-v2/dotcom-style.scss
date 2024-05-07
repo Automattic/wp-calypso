@@ -36,6 +36,13 @@
 		display: block;
 	}
 
+	.a4a-layout__header-subtitle {
+		font-size: 0.875rem;
+		margin: 4px 0 0 0;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+	}
+
 	height: calc(100vh - var(--masterbar-height));
 
 	@media ( min-width: 782px ) {
