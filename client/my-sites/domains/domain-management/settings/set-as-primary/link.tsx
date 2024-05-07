@@ -93,9 +93,9 @@ const SetAsPrimaryLink = ( {
 		);
 		try {
 			await dispatch( setPrimaryDomain( selectedSite.ID, domain.name ) );
+			onSuccess?.();
 			await refetch();
 			dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
-			onSuccess?.();
 		} catch ( error ) {
 			dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
 		}
