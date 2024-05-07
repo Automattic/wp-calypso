@@ -5,8 +5,20 @@
 .referrals-overview__section-heading {
 	margin-block-start: 24px;
 	font-size: rem(24px);
-	margin-block-end: 48px;
+	margin-block-end: 8px;
 	font-weight: 600;
+}
+.referrals-overview__section-subtitle {
+	font-size: rem(14px);
+	font-weight: 400;
+	margin-block-end: 48px;
+	color: var(--color-neutral-50);
+
+	a,
+	a:visited {
+		color: var(--color-neutral-100);
+		text-decoration: underline;
+	}
 }
 
 .referrals-overview__section-container {

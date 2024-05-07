@@ -18,6 +18,7 @@ export const A4A_MARKETPLACE_ASSIGN_LICENSE_LINK = `${ A4A_MARKETPLACE_LINK }/as
 export const A4A_PURCHASES_LINK = '/purchases';
 export const A4A_REFERRALS_LINK = '/referrals';
 export const A4A_REFERRALS_BANK_DETAILS_LINK = '/referrals/bank-details';
+export const A4A_REFERRALS_COMMISSIONS_LINK = '/referrals/commissions';
 export const A4A_LICENSES_LINK = `${ A4A_PURCHASES_LINK }/licenses`;
 export const A4A_UNASSIGNED_LICENSES_LINK = `${ A4A_LICENSES_LINK }/unassigned`;
 export const A4A_BILLING_LINK = `${ A4A_PURCHASES_LINK }/billing`;
