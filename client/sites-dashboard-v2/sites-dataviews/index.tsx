@@ -70,7 +70,9 @@ const DotcomSitesDataViews = ( {
 			if ( row ) {
 				const isButtonOrLink = target.closest( 'button, a' );
 				if ( ! isButtonOrLink ) {
-					const button = row.querySelector( '.sites-dataviews__site' ) as HTMLButtonElement;
+					const button = row.querySelector(
+						'.sites-dataviews__preview-trigger'
+					) as HTMLButtonElement;
 					if ( button ) {
 						button.click();
 					}

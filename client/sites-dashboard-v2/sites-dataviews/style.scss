@@ -4,29 +4,47 @@
 .sites-dataviews__site {
 	display: flex;
 	flex-direction: row;
+	padding-bottom: 8px;
+	padding-top: 8px;
 
 	.button {
+		margin: 0;
 		padding: 0;
 	}
 }
 
 .sites-dataviews__site-name {
+	align-self: center;
 	display: inline-block;
 	text-align: left;
 	text-overflow: ellipsis;
 	overflow: hidden;
+	padding-left: 20px;
 	white-space: nowrap;
 	font-weight: 500;
 	font-size: rem(14px);
 }
 
-.sites-dataviews__site-url {
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
+.sites-dataviews__site-url,
+.sites-dataviews__site-wp-admin-url {
+	color: var(--color-neutral-70);
 	font-size: rem(12px);
-	color: var(--color-neutral-60);
 	font-weight: 400;
+}
+
+.sites-dataviews__site-wp-admin-url {
+	&:focus {
+		border-radius: 2px;
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	&:visited {
+		color: var(--color-neutral-70);
+	}
 }
 
 .preview-hidden {
@@ -62,6 +80,14 @@
 }
 
 .sites-dashboard__layout:not(.preview-hidden) {
+	.sites-dataviews__site-wp-admin-url {
+		display: none;
+	}
+
+	.sites-dataviews__site button {
+		cursor: default;
+	}
+
 	.dataviews-pagination {
 		.components-base-control {
 			width: unset !important;
