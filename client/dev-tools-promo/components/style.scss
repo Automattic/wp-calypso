@@ -42,10 +42,12 @@
 	box-shadow: none;
 	margin: 0;
 	padding: 24px;
+	display: flex;
+	flex-direction: column;
 
 	> .card-heading {
 		font-size: rem(16px);
-		font-weight: bold;
+		font-weight: 500;
 		margin-bottom: 6px;
 	}
 
@@ -53,6 +55,7 @@
 		font-size: rem(14px);
 		margin-bottom: 20px;
 		color: var(--color-text-subtle);
+		flex-grow: 1;
 	}
 
 	> a {

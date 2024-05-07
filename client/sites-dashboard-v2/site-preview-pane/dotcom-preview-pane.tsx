@@ -5,6 +5,7 @@ import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+import DevToolsIcon from 'calypso/dev-tools-promo/components/dev-tools-icon';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -53,7 +54,9 @@ const DotcomPreviewPane = ( {
 			),
 			createFeaturePreview(
 				DOTCOM_DEVELOPER_TOOLS_PROMO,
-				__( 'Dev Tools' ),
+				<span>
+					{ __( 'Dev Tools' ) } <DevToolsIcon />
+				</span>,
 				! isAtomicSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
