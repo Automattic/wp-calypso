@@ -16,7 +16,6 @@ import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link
 import { displaySiteUrl, isStagingSite, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
@@ -49,12 +48,27 @@ const ListTileTitle = styled.div`
 	align-items: center;
 `;
 
+const ListTileSubtitle = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	font-size: 14px;
+	color: var( --studio-gray-60 ) !important;
+	svg {
+		flex-shrink: 0;
+	}
+
+	&:not( :last-child ) {
+		margin-block-end: 2px;
+	}
+`;
+
 const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const { __ } = useI18n();
-
-	// Todo: This hook is used by the SiteItemThumbnail component below, in a prop showPlaceholder={ ! inView }.
-	// It does not work as expected. Fix it.
-	// const { inView } = useInView( { triggerOnce: true } );
+	// todo: This hook is used by the SiteItemThumbnail component below, in a prop showPlaceholder={ ! inView }. It does not work as expected. Fix it.
+	//const { inView } = useInView( { triggerOnce: true } );
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -62,7 +76,6 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	}
 
 	const title = __( 'View Site Details' );
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ?? '' );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
@@ -74,7 +87,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	};
 
 	return (
-		<div className="sites-dataviews__site">
+		<Button className="sites-dataviews__site" onClick={ onSiteClick } borderless={ true }>
 			<SiteListTile
 				contentClassName={ classnames(
 					'sites-dataviews__site-name',
@@ -84,25 +97,23 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 					`
 				) }
 				leading={
-					<Button className="sites-dataviews__preview-trigger" onClick={ onSiteClick } borderless>
-						<ListTileLeading title={ title }>
-							<SiteItemThumbnail
-								className="sites-site-thumbnail"
-								displayMode="list"
-								showPlaceholder={ false }
-								site={ site }
-							/>
-							<SiteFavicon
-								className="sites-site-favicon"
-								blogId={ site.ID }
-								isDotcomSite={ site.is_wpcom_atomic }
-							/>
-						</ListTileLeading>
-					</Button>
+					<ListTileLeading title={ title }>
+						<SiteItemThumbnail
+							className="sites-site-thumbnail"
+							displayMode="list"
+							showPlaceholder={ false }
+							site={ site }
+						/>
+						<SiteFavicon
+							className="sites-site-favicon"
+							blogId={ site.ID }
+							isDotcomSite={ site.is_wpcom_atomic }
+						/>
+					</ListTileLeading>
 				}
 				title={
 					<ListTileTitle>
-						<SiteName as="div" title={ title }>
+						<SiteName title={ title }>
 							<Truncated>{ site.title }</Truncated>
 						</SiteName>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
@@ -119,17 +130,14 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						</>
 					) : (
 						<>
-							<div className="sites-dataviews__site-url">
+							<ListTileSubtitle className="sites-dataviews__site-url">
 								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-							</div>
-							<a className="sites-dataviews__site-wp-admin-url" href={ siteAdminUrl }>
-								<Truncated>{ __( 'WP Admin' ) }</Truncated>
-							</a>
+							</ListTileSubtitle>
 						</>
 					)
 				}
 			/>
-		</div>
+		</Button>
 	);
 };
 
