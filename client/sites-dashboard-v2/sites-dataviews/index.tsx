@@ -11,6 +11,7 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ActionsField from './dataviews-fields/actions-field';
 import SiteField from './dataviews-fields/site-field';
 import { SiteInfo } from './interfaces';
+import { SiteSort } from './sites-site-sort';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -94,13 +95,22 @@ const DotcomSitesDataViews = ( {
 		() => [
 			{
 				id: 'site',
-				header: <span>{ __( 'Site' ) }</span>,
+				header: (
+					<SiteSort
+						isSortable={ true }
+						columnKey="site"
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+					>
+						<span>{ __( 'Site' ) }</span>
+					</SiteSort>
+				),
 				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
 				render: ( { item }: { item: SiteInfo } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'plan',
@@ -156,7 +166,7 @@ const DotcomSitesDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ __, openSitePreviewPane, userId ]
+		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState ]
 	);
 
 	// Create the itemData packet state
