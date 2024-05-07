@@ -1,4 +1,3 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
 	Button,
@@ -19,19 +18,19 @@ import { ScheduleListTable } from './schedule-list-table';
 import './styles.scss';
 
 type Props = {
+	previewMode: 'table' | 'card';
 	onEditSchedule: ( id: string ) => void;
 	onShowLogs: ( id: string, siteSlug: string ) => void;
 	onCreateNewSchedule: () => void;
 };
 
 export const ScheduleList = ( props: Props ) => {
-	const { onEditSchedule, onShowLogs, onCreateNewSchedule } = props;
+	const { previewMode, onEditSchedule, onShowLogs, onCreateNewSchedule } = props;
 	const {
 		data: schedules = [],
 		isLoading: isLoadingSchedules,
 		isFetched,
 	} = useMultisiteUpdateScheduleQuery( true );
-	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
 	const { searchTerm } = useContext( MultisitePluginUpdateManagerContext );
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
@@ -84,7 +83,7 @@ export const ScheduleList = ( props: Props ) => {
 		.filter( ( schedule ) => schedule.sites.length > 0 );
 
 	const isLoading = isLoadingSchedules;
-	const ScheduleListComponent = isMobile ? ScheduleListCards : ScheduleListTable;
+	const ScheduleListComponent = previewMode === 'table' ? ScheduleListTable : ScheduleListCards;
 	const isScheduleEmpty = schedules.length === 0 && isFetched;
 
 	return (
