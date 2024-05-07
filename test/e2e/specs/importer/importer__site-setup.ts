@@ -123,16 +123,16 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 			await startImportFlow.validateUpgradePlanPage();
 		} );
 
-		// Back one page
-		it( 'Back to URL capture page', async () => {
-			await startImportFlow.goBackOneScreen();
-			await startImportFlow.validateURLCapturePage();
-		} );
-
 		// Back one page shows migration modal
 		it( 'Back shows migration modal', async () => {
-			await startImportFlow.goBackOneScreen();
+			await startImportFlow.clickBack();
 			await startImportFlow.validateImportModal();
+		} );
+
+		// Click cancel of migration modal navigates back
+		it( 'Back to URL capture page', async () => {
+			await startImportFlow.clickMigrationModalCancel();
+			await startImportFlow.validateURLCapturePage();
 		} );
 	} );
 
