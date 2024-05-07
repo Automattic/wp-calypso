@@ -40,6 +40,10 @@
 		.action-button {
 			color: var(--color-link);
 			cursor: pointer;
+
+			&.set-as-primary {
+				display: contents;
+			}
 		}
 	}
 

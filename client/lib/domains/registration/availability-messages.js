@@ -1,5 +1,6 @@
 /* eslint-disable no-case-declarations */
 
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	CALYPSO_CONTACT,
@@ -11,11 +12,13 @@ import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
+import SetAsPrimaryLink from 'calypso/my-sites/domains/domain-management/settings/set-as-primary/link';
 import {
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,
 	domainMapping,
 	domainTransferIn,
+	domainManagementList,
 } from 'calypso/my-sites/domains/paths';
 
 function getAvailabilityNotice(
@@ -56,15 +59,19 @@ function getAvailabilityNotice(
 			break;
 		case domainAvailability.REGISTERED_SAME_SITE:
 			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already registered on this site. Are you trying to {{a}}make this the primary address for your site?{{/a}}',
+				'{{strong}}%(domain)s{{/strong}} is already registered on this site. {{a}}Are you trying to make this the primary address for your site?{{/a}}',
 				{
 					args: { domain },
 					components: {
 						strong: <strong />,
 						a: (
-							<button
-								className="action-button set-as-primary"
-								onClick={ () => console.log( 'Make primary' ) }
+							<SetAsPrimaryLink
+								domainName={ domain }
+								siteIdOrSlug={ site }
+								additionalProperties={ {
+									clickOrigin: 'use-a-domain-i-own',
+								} }
+								onSuccess={ () => page( domainManagementList( domain ) ) }
 							/>
 						),
 					},
