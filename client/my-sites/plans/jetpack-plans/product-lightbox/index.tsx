@@ -65,10 +65,6 @@ const ProductLightbox: React.FC< Props > = ( {
 
 	const onDropdownTierSelect = useCallback(
 		( { value: slug }: { value: string } ) => {
-			if ( slug === 'support' ) {
-				return;
-			}
-
 			onChangeProduct( slugToSelectorProduct( slug ) );
 			const { slug: productSlug, quantity } = getProductPartsFromAlias( slug );
 
