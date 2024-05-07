@@ -307,31 +307,31 @@ export default connect(
 	( state: IAppState, props: PlanOnlyProps ) => {
 		let upsellPlanData;
 		if ( isPersonal( props.primaryPurchase ) || isPremium( props.primaryPurchase ) ) {
-			const promotePlan = getBusinessPlanToUpgrade( props.primaryPurchase.productSlug );
-			const promotePlanSlug = promotePlan?.getStoreSlug() || '';
+			const businessPlan = getBusinessPlanToUpgrade( props.primaryPurchase.productSlug );
+			const businessPlanSlug = businessPlan?.getStoreSlug() || '';
 
-			const pathSlug = promotePlan?.getPathSlug?.();
+			const pathSlug = businessPlan?.getPathSlug?.();
 			const selectedSiteId = getSelectedSiteId( state ) || 0;
 			const currencyCode = getCurrentUserCurrencyCode( state );
 
-			const businessPrice = getSitePlanRawPrice( state, selectedSiteId, promotePlanSlug, {
+			const businessPrice = getSitePlanRawPrice( state, selectedSiteId, businessPlanSlug, {
 				returnMonthly: false,
 			} );
 			const businessDiscountPrice = getPlanDiscountedRawPrice(
 				state,
 				selectedSiteId,
-				promotePlanSlug,
+				businessPlanSlug,
 				{
 					returnMonthly: false,
 				}
 			);
 
 			// The condition is just for TS fix
-			if ( businessPrice && businessDiscountPrice && currencyCode && promotePlan && pathSlug ) {
+			if ( businessPrice && businessDiscountPrice && currencyCode && businessPlan && pathSlug ) {
 				upsellPlanData = {
-					planName: promotePlan.getTitle(),
+					planName: businessPlan.getTitle(),
 					pathSlug: pathSlug,
-					refundPeriodDays: isMonthly( promotePlanSlug ) ? 7 : 14,
+					refundPeriodDays: isMonthly( businessPlanSlug ) ? 7 : 14,
 					fullPrice: formatCurrency( businessPrice, currencyCode, { stripZeros: true } ),
 					discountPrice: formatCurrency( businessDiscountPrice, currencyCode, {
 						stripZeros: true,
