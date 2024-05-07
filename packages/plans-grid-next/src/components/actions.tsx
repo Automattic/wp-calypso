@@ -413,7 +413,9 @@ const LoggedInPlansFeatureActionButton = ( {
 			</Plans2023Tooltip>
 		) : (
 			<Plans2023Tooltip
-				text={ translate( 'Please contact support to change your plan.' ) }
+				text={ translate(
+					'The current plan was purchased by a different account. To change plans, please switch to that account or contact the account owner.'
+				) }
 				setActiveTooltipId={ setActiveTooltipId }
 				activeTooltipId={ activeTooltipId }
 				showOnMobile={ false }
@@ -422,7 +424,9 @@ const LoggedInPlansFeatureActionButton = ( {
 				<DummyDisabledButton>{ translate( 'Change', { context: 'verb' } ) }</DummyDisabledButton>
 				{ isMobile() && (
 					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
-						{ translate( 'Please contact support to change your plan.' ) }
+						{ translate(
+							'The current plan was purchased by a different account. To change plans, please switch to that account or contact the account owner.'
+						) }
 					</div>
 				) }
 			</Plans2023Tooltip>
