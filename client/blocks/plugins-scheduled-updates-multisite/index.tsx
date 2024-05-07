@@ -38,7 +38,10 @@ export const PluginsScheduledUpdatesMultisite = ( {
 				switch ( context ) {
 					case 'create':
 						return <ScheduleCreate onNavBack={ onNavBack } />;
+					case 'edit':
+						return <ScheduleEdit id={ id! } onNavBack={ onNavBack } />;
 					case 'list':
+					default:
 						return (
 							<ScheduleList
 								onCreateNewSchedule={ onCreateNewSchedule }
@@ -46,10 +49,6 @@ export const PluginsScheduledUpdatesMultisite = ( {
 								onShowLogs={ onShowLogs }
 							/>
 						);
-					case 'edit':
-						return <ScheduleEdit id={ id! } onNavBack={ onNavBack } />;
-					default:
-						return <p>TODO</p>;
 				}
 			} )() }
 		</MultisitePluginUpdateManagerContextProvider>
