@@ -61,13 +61,14 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 
 	useEffect( () => {
 		if ( isSuccess ) {
+			onNavBack?.();
 			dispatch( successNotice( translate( 'Your notification settings have been saved.' ) ) );
 		} else if ( isError ) {
 			dispatch(
 				errorNotice( translate( 'Failed to save notification settings. Please try again.' ) )
 			);
 		}
-	}, [ isSuccess, isError ] );
+	}, [ isSuccess, isError, onNavBack ] );
 
 	const handleCheckboxChange = ( field: keyof typeof formValues ) => ( checked: boolean ) => {
 		setFormValues( ( prevValues ) => ( {

@@ -5,7 +5,10 @@ import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
-import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
+import {
+	isPressableHostingProduct,
+	isWPCOMHostingProduct,
+} from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import FormattedDate from 'calypso/components/formatted-date';
 import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
@@ -62,6 +65,7 @@ export default function LicensePreview( {
 
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const isWPCOMLicense = isWPCOMHostingProduct( licenseKey );
 	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const { filter } = useContext( LicensesOverviewContext );
@@ -248,7 +252,7 @@ export default function LicensePreview( {
 							bundleSize={ quantity }
 						/>
 					) }
-					{ isSiteAtomic ? (
+					{ isWPCOMLicense && isSiteAtomic ? (
 						<LicenseActions
 							siteUrl={ siteUrl }
 							licenseKey={ licenseKey }

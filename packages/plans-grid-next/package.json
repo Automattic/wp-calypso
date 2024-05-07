@@ -32,7 +32,7 @@
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook": "sb dev"
+		"storybook": "yarn msw init && sb dev"
 	},
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
@@ -74,8 +74,13 @@
 		"@testing-library/jest-dom": "^6.4.2",
 		"@testing-library/react": "^14.3.1",
 		"@testing-library/user-event": "^14.5.2",
+		"msw": "^2.2.14",
+		"msw-storybook-addon": "^2.0.0",
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
 		"webpack": "^5.91.0"
+	},
+	"msw": {
+		"workerDirectory": "static"
 	}
 }

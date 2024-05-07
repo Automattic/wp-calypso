@@ -61,6 +61,34 @@ const DotcomSitesDataViews = ( {
 		[ setDataViewsState ]
 	);
 
+	useEffect( () => {
+		// If the user clicks on a row, open the site preview pane by triggering the site button click.
+		const handleRowClick = ( event: Event ) => {
+			const target = event.target as HTMLElement;
+			const row = target.closest( '.dataviews-view-table__row' );
+			if ( row ) {
+				const isButtonOrLink = target.closest( 'button, a' );
+				if ( ! isButtonOrLink ) {
+					const button = row.querySelector( '.sites-dataviews__site' ) as HTMLButtonElement;
+					if ( button ) {
+						button.click();
+					}
+				}
+			}
+		};
+
+		const rowsContainer = document.querySelector( '.dataviews-view-table' );
+		if ( rowsContainer ) {
+			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
+		}
+
+		return () => {
+			if ( rowsContainer ) {
+				rowsContainer.removeEventListener( 'click', handleRowClick as EventListener );
+			}
+		};
+	}, [] );
+
 	// Generate DataViews table field-columns
 	const fields = useMemo< DataViewsColumn[] >(
 		() => [

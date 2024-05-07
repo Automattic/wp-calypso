@@ -210,6 +210,14 @@
 	}
 
 	.form-field--paths {
+		.paths,
+		.new-path {
+			.components-button {
+				min-width: rem(100px);
+				justify-content: center;
+			}
+		}
+
 		.paths {
 			.components-input-control__backdrop {
 				border-color: var(--studio-gray-0);

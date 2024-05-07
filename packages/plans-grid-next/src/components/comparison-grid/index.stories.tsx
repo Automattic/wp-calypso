@@ -1,74 +1,121 @@
-import { getFeaturesList, getPlanFeaturesGrouped } from '@automattic/calypso-products';
+import {
+	TrailMapVariantType,
+	getFeaturesList,
+	getPlanFeaturesGrouped,
+	setTrailMapExperiment,
+} from '@automattic/calypso-products';
 import { Meta, StoryObj } from '@storybook/react';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ComparisonGrid, ComparisonGridExternalProps, useGridPlansForComparisonGrid } from '../..';
-import { defaultArgs } from '../../storybook-mocks';
-import * as mockGridPlans from '../../storybook-mocks/grid-plans';
 
-const queryClient = new QueryClient();
+const ComponentWrapper = (
+	props: ComparisonGridExternalProps & {
+		trailMapVariant: TrailMapVariantType;
+	}
+) => {
+	const gridPlans = useGridPlansForComparisonGrid( {
+		eligibleForFreeHostingTrial: true,
+		hasRedeemedDomainCredit: undefined,
+		hiddenPlans: undefined,
+		isDisplayingPlansNeededForFeature: false,
+		isInSignup: false,
+		isSubdomainNotGenerated: false,
+		selectedFeature: undefined,
+		selectedPlan: undefined,
+		showLegacyStorageFeature: false,
+		storageAddOns: [],
+		term: 'TERM_ANNUALLY',
+		useFreeTrialPlanSlugs: undefined,
 
-const RenderComparisonGrid = ( props: ComparisonGridExternalProps ) => {
-	const useGridPlans = () => props.gridPlans;
-
-	const gridPlans = useGridPlansForComparisonGrid(
-		{
-			allFeaturesList: getFeaturesList(),
-			useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
-			storageAddOns: [],
-		},
-		useGridPlans
-	);
+		// Mirror values from props
+		siteId: props.siteId,
+		intent: props.intent,
+		coupon: props.coupon,
+		allFeaturesList: props.allFeaturesList,
+		useCheckPlanAvailabilityForPurchase: props.useCheckPlanAvailabilityForPurchase,
+	} );
 
 	return (
-		<ComparisonGrid
-			{ ...props }
-			gridPlans={ gridPlans || [] }
-			featureGroupMap={ getPlanFeaturesGrouped() }
-		/>
+		gridPlans && (
+			<ComparisonGrid
+				{ ...props }
+				gridPlans={ gridPlans }
+				featureGroupMap={ getPlanFeaturesGrouped() }
+			/>
+		)
 	);
 };
 
-const meta: Meta< typeof ComparisonGrid > = {
-	title: 'ComparisonGrid',
-	component: RenderComparisonGrid,
-	decorators: [
-		( Story ) => (
-			<QueryClientProvider client={ queryClient }>
-				<Story />
-			</QueryClientProvider>
-		),
-	],
-	parameters: {
-		viewport: {
-			defaultViewport: 'LARGE',
-		},
-	},
+const defaultProps: Omit< ComparisonGridExternalProps, 'gridPlans' > = {
+	allFeaturesList: getFeaturesList(),
+	coupon: undefined,
+	currentSitePlanSlug: undefined,
+	featureGroupMap: getPlanFeaturesGrouped(),
+	hideUnavailableFeatures: false,
+	intervalType: 'yearly',
+	isInAdmin: false,
+	isInSignup: true,
+	isLaunchPage: false,
+	onStorageAddOnClick: () => {},
+	planActionOverrides: undefined,
+	planUpgradeCreditsApplicable: undefined,
+	recordTracksEvent: () => {},
+	showRefundPeriod: false,
+	showUpgradeableStorage: true,
+	siteId: undefined,
+	stickyRowOffset: 0,
+	useCheckPlanAvailabilityForPurchase: () => ( {} ),
+	useActionCallback: () => () => {},
 };
 
-export default meta;
+type Story = StoryObj< typeof ComponentWrapper >;
 
-type Story = StoryObj< typeof ComparisonGrid >;
-
-export const StartFlow: Story = {
+export const Start: Story = {
+	name: '/start',
 	args: {
-		...defaultArgs,
+		...defaultProps,
 		intent: 'plans-default-wpcom',
-		gridPlans: [
-			mockGridPlans.free,
-			mockGridPlans.personal,
-			mockGridPlans.value,
-			mockGridPlans.business,
-			mockGridPlans.ecommerce,
-			mockGridPlans.enterprise,
-		],
 	},
 };
 
-StartFlow.storyName = '/start';
-
-export const HideUnsupportedFeaturesOnMobile: Story = {
+export const TrailMapControl: Story = {
 	args: {
-		...StartFlow.args,
+		...Start.args,
+		trailMapVariant: 'control',
+	},
+};
+
+export const TrailMapStructure: Story = {
+	args: {
+		...TrailMapControl.args,
+		trailMapVariant: 'treatment_structure',
 		hideUnsupportedFeatures: true,
 	},
 };
+
+export const TrailMapCopy: Story = {
+	args: {
+		...TrailMapControl.args,
+		trailMapVariant: 'treatment_copy',
+	},
+};
+
+export const TrailMapCopyAndStructure: Story = {
+	args: {
+		...TrailMapControl.args,
+		trailMapVariant: 'treatment_copy_and_structure',
+		hideUnsupportedFeatures: true,
+	},
+};
+
+const meta: Meta< typeof ComponentWrapper > = {
+	title: 'ComparisonGrid',
+	component: ComponentWrapper,
+	decorators: [
+		( Story, storyContext ) => {
+			setTrailMapExperiment( storyContext.args.trailMapVariant );
+			return <Story />;
+		},
+	],
+};
+
+export default meta;
