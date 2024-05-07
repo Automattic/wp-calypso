@@ -1,23 +1,24 @@
 .get-report-form__container {
 	box-sizing: border-box;
 	padding: 3.25rem 0;
-	height: 320px;
 	border: 1px solid #cbcbcb;
 	background-color: #f8f8f8;
 	display: flex;
 	justify-content: space-between;
-	gap: 20px;
+	flex-wrap: wrap;
 }
 .get-report-form__title {
 	color: #000;
-	width: 300px;
-	height: 100%;
+	flex-basis: 170px;
 }
 
 .get-report-form__body {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	flex-basis: 500px;
+	gap: 20px;
+	flex-grow: 1;
 }
 
 .get-report-form__header {
@@ -33,6 +34,7 @@
 .get-report-form__form {
 	display: flex;
 	gap: 20px;
+	flex-wrap: wrap;
 }
 
 .get-report-form__footer {
