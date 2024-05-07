@@ -1,5 +1,3 @@
-import { SiteDetails } from '@automattic/data-stores';
-import { SiteExcerptData } from '@automattic/sites';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -17,6 +15,8 @@ import { ScheduleFormPlugins } from '../plugins-scheduled-updates/schedule-form-
 import { validateSites, validatePlugins } from '../plugins-scheduled-updates/schedule-form.helper';
 import { useErrors } from './hooks/use-errors';
 import { ScheduleFormSites } from './schedule-form-sites';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
 	scheduleForEdit?: MultisiteSchedulesUpdates;
