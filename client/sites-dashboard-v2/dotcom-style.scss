@@ -78,8 +78,12 @@
 		}
 	}
 
+	table.dataviews-view-table {
+		--color-border-dataviews-view-table: #f1f1f1;
+	}
+
 	table.dataviews-view-table thead .dataviews-view-table__row th {
-		border-bottom-color: var(--color-border-secondary);
+		border-bottom-color: var(--color-border-dataviews-view-table);
 
 		span,
 		.dataviews-view-table-header-button {
@@ -88,7 +92,7 @@
 	}
 
 	table.dataviews-view-table .dataviews-view-table__row td {
-		border-bottom-color: var(--color-border-secondary);
+		border-bottom-color: var(--color-border-dataviews-view-table);
 	}
 
 	table.dataviews-view-table th,
