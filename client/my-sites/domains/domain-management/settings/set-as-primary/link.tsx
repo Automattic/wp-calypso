@@ -1,5 +1,6 @@
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
+import { useState } from '@wordpress/element';
 import { type } from 'calypso/lib/domains/constants';
 import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
 import { isRecentlyRegisteredAndDoesNotPointToWpcom } from 'calypso/lib/domains/utils/is-recently-registered-and-does-not-point-to-wpcom';
@@ -58,6 +59,7 @@ const SetAsPrimaryLink = ( {
 	const { refetch } = useSiteDomainsQuery( selectedSite?.ID, {
 		queryFn: () => fetchSiteDomains( selectedSite?.ID ),
 	} );
+	const [ isSettingPrimaryDomain, setIsSettingPrimaryDomain ] = useState( false );
 
 	if ( ! selectedSite ) {
 		return null;
@@ -78,6 +80,10 @@ const SetAsPrimaryLink = ( {
 	}
 
 	const handleSetPrimaryDomainClick = async () => {
+		if ( isSettingPrimaryDomain ) {
+			return;
+		}
+		setIsSettingPrimaryDomain( true );
 		dispatch(
 			recordGoogleEvent(
 				'Domain Management',
@@ -98,6 +104,8 @@ const SetAsPrimaryLink = ( {
 			dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
 		} catch ( error ) {
 			dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
+		} finally {
+			setIsSettingPrimaryDomain( false );
 		}
 	};
 
@@ -112,7 +120,7 @@ const SetAsPrimaryLink = ( {
 		<button
 			className="action-button set-as-primary"
 			onClick={ handleSetPrimaryDomainClick }
-			disabled={ shouldDisableSetAsPrimaryButton }
+			disabled={ shouldDisableSetAsPrimaryButton || isSettingPrimaryDomain }
 		>
 			{ children }
 		</button>
