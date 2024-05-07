@@ -1,15 +1,16 @@
 import { Gridicon } from '@automattic/components';
+import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { BackButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useState, useRef, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/connect-domain-steps';
 import {
-	stepSlug,
 	domainLockStatusType,
+	stepSlug,
 	useMyDomainInputMode as inputMode,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import {
@@ -24,9 +25,12 @@ import {
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getWpcomRegistrationStatus } from 'calypso/lib/domains/get-wpcom-registration-status';
 import wpcom from 'calypso/lib/wp';
+import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
+import { isUpdatingPrimaryDomain } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
 import DomainTransferOrConnect from './transfer-or-connect';
+
 import './style.scss';
 
 function UseMyDomain( props ) {
@@ -41,6 +45,7 @@ function UseMyDomain( props ) {
 		initialMode,
 		onNextStep,
 		onSkip,
+		updatingPrimaryDomain,
 	} = props;
 
 	const { __ } = useI18n();
@@ -64,6 +69,11 @@ function UseMyDomain( props ) {
 		stepSlug.TRANSFER_START
 	);
 	const initialValidation = useRef( null );
+	const { isFetchingSiteDomains } = useSiteDomainsQuery( selectedSite?.ID, {
+		queryFn: () => fetchSiteDomains( selectedSite?.ID ),
+	} );
+
+	const isBusy = isFetchingAvailability || isFetchingSiteDomains || updatingPrimaryDomain;
 
 	const baseClassName = 'use-my-domain';
 
@@ -285,7 +295,7 @@ function UseMyDomain( props ) {
 			<UseMyDomainInput
 				baseClassName={ baseClassName }
 				domainName={ domainName }
-				isBusy={ isFetchingAvailability }
+				isBusy={ isBusy }
 				isSignupStep={ isSignupStep }
 				onChange={ onDomainNameChange }
 				onClear={ onClearInput }
@@ -436,6 +446,7 @@ UseMyDomain.propTypes = {
 	onSkip: PropTypes.func,
 };
 
-export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(
-	UseMyDomain
-);
+export default connect( ( state ) => ( {
+	selectedSite: getSelectedSite( state ),
+	updatingPrimaryDomain: isUpdatingPrimaryDomain( state, getSelectedSite( state )?.ID ),
+} ) )( UseMyDomain );
