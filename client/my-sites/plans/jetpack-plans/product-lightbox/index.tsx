@@ -96,6 +96,7 @@ const ProductLightbox: React.FC< Props > = ( {
 			recordTracksEvent( 'calypso_product_lightbox_checkout_click', {
 				site_id: siteId,
 				product_slug: product.productSlug,
+				quantity: product.quantity,
 			} )
 		);
 	}, [ dispatch, getOnClickPurchase, product, siteId ] );
