@@ -14,8 +14,6 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 } from './constants';
 
-import './style.scss';
-
 type Props = {
 	site: SiteExcerptData;
 	selectedSiteFeature: string;
