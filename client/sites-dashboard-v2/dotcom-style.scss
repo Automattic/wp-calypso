@@ -322,7 +322,9 @@
 	.item-preview__content {
 		> * {
 			margin: 0;
-			padding: 0;
+			padding-top: 0;
+			padding-left: 0;
+			padding-right: 0;
 			overflow-y: initial;
 			max-height: initial;
 			max-width: 1400px;
@@ -333,7 +335,9 @@
 		}
 
 		@media (max-width: $break-large) {
-			padding: 24px 24px 8px;
+			padding-top: 24px;
+			padding-left: 24px;
+			padding-right: 24px;
 		}
 	}
 }
