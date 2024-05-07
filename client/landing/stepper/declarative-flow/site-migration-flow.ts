@@ -123,6 +123,8 @@ const siteMigration: Flow = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-migration requires a logged in user',
 			};
+
+			return result;
 		}
 
 		if ( ! siteSlug && ! siteId ) {
