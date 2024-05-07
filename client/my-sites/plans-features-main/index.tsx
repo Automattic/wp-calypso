@@ -14,7 +14,6 @@ import {
 	getWooExpressFeaturesGrouped,
 	getPlanFeaturesGrouped,
 	isWooExpressPlan,
-	setTrailMapExperiment,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -73,7 +72,7 @@ import useGenerateActionCallback from './hooks/use-action-callback';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
-import useExperimentForTrailMap, { TrailMapVariant } from './hooks/use-experiment-for-trail-map';
+import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -296,19 +295,6 @@ const PlansFeaturesMain = ( {
 		...( selectedPlan ? { defaultValue: getPlan( selectedPlan )?.term } : {} ),
 	} );
 
-	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
-	const isAnyTrailMapTreatment = trailMapExperiment.result !== TrailMapVariant.Control;
-	const isTrailMapCopy =
-		trailMapExperiment.result === TrailMapVariant.TreatmentCopy ||
-		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
-	const isTrailMapStructure =
-		trailMapExperiment.result === TrailMapVariant.TreatmentStructure ||
-		trailMapExperiment.result === TrailMapVariant.TreatmentCopyAndStructure;
-
-	useEffect( () => {
-		setTrailMapExperiment( trailMapExperiment.result ?? TrailMapVariant.Control );
-	}, [ trailMapExperiment.isLoading, trailMapExperiment.result ] );
-
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
@@ -342,6 +328,18 @@ const PlansFeaturesMain = ( {
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
+
+	const {
+		isLoading: isTrailMapExperimentLoading,
+		variant: trailMapExperimentVariant,
+		isTrailMapAny,
+		isTrailMapCopy,
+		isTrailMapStructure,
+	} = useExperimentForTrailMap( {
+		flowName,
+		isInSignup,
+		intent,
+	} );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -433,7 +431,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		includeAllFeatures: isTrailMapStructure,
+		includePreviousPlanFeatures: trailMapExperimentVariant === 'treatment_structure',
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -699,7 +697,11 @@ const PlansFeaturesMain = ( {
 		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
 	);
 	const isLoadingGridPlans = Boolean(
-		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid || isExperimentLoading
+		! intent ||
+			! gridPlansForFeaturesGrid ||
+			! gridPlansForComparisonGrid ||
+			isExperimentLoading ||
+			isTrailMapExperimentLoading
 	);
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
@@ -790,7 +792,7 @@ const PlansFeaturesMain = ( {
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
-					showPlanBenefits={ isInSignup && isAnyTrailMapTreatment }
+					showPlanBenefits={ isInSignup && isTrailMapAny }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -926,6 +928,7 @@ const PlansFeaturesMain = ( {
 													}
 													enableFeatureTooltips={ ! isTrailMapCopy }
 													featureGroupMap={ featureGroupMap }
+													hideUnsupportedFeatures={ isTrailMapStructure }
 												/>
 											) }
 											<ComparisonGridToggle

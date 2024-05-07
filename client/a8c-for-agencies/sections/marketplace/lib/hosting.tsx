@@ -81,14 +81,18 @@ export function getHostingLogo( slug: string ) {
  * @returns boolean True if Pressable hosting product, false if not
  */
 export function isPressableHostingProduct( keyOrSlug: string ) {
-	return keyOrSlug.startsWith( 'pressable-hosting' ) || keyOrSlug.startsWith( 'jetpack-pressable' );
+	return (
+		keyOrSlug.startsWith( 'pressable-wp' ) ||
+		keyOrSlug.startsWith( 'pressable-hosting' ) ||
+		keyOrSlug.startsWith( 'jetpack-pressable' )
+	);
 }
 
 /**
  * Determine if current slug is a WPCOM hosting product.
- * @param {string} slug - Product slug
+ * @param {string} keyOrSlug - Product slug
  * @returns {boolean} - True if WPCOM hosting product, false if not
  */
-export function isWPCOMHostingProduct( slug: string ) {
-	return slug.startsWith( 'wpcom-hosting' );
+export function isWPCOMHostingProduct( keyOrSlug: string ) {
+	return keyOrSlug.startsWith( 'wpcom-hosting' );
 }

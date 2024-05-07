@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -35,7 +36,7 @@ export default function NeedSetup() {
 	const availablePlans: AvailablePlans[] = availableSites.length
 		? [
 				{
-					name: translate( 'WordPress.com Creator' ),
+					name: translate( 'WordPress.com' ),
 					available: availableSites.length as number,
 					ids: availableSites.map( ( { id }: { id: number } ) => id ),
 				},
@@ -56,7 +57,7 @@ export default function NeedSetup() {
 				{
 					onSuccess: () => {
 						refetchPendingSites();
-						page( A4A_SITES_LINK );
+						page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
 					},
 				}
 			);

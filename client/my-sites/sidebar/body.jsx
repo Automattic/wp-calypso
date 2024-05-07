@@ -16,7 +16,12 @@ import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
-export const MySitesSidebarUnifiedBody = ( { path, children, onMenuItemClick } ) => {
+export const MySitesSidebarUnifiedBody = ( {
+	isGlobalSidebarCollapsed,
+	path,
+	children,
+	onMenuItemClick,
+} ) => {
 	const menuItems = useSiteMenuItems();
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const site = useSelector( getSelectedSite );
@@ -71,6 +76,7 @@ export const MySitesSidebarUnifiedBody = ( { path, children, onMenuItemClick } )
 							key={ item.slug }
 							selected={ isSelected }
 							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+							showTooltip={ !! isGlobalSidebarCollapsed }
 							trackClickEvent={ onMenuItemClick }
 							{ ...item }
 						/>

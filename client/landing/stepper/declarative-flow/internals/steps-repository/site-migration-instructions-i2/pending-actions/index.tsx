@@ -6,18 +6,19 @@ import { FC } from 'react';
 import './style.scss';
 
 interface VisualStateIndicatorProps {
-	state: 'pending' | 'success' | 'error';
+	state: 'idle' | 'pending' | 'success' | 'error';
 	text: string;
 }
 
 const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 	let icon: string | JSX.Element;
+
 	switch ( state ) {
 		case 'pending':
 			icon = <Spinner />;
 			break;
 		case 'success':
-			icon = <Icon icon={ check } width={ 20 } />;
+			icon = <Icon icon={ check } width={ 30 } />;
 			break;
 		case 'error':
 			icon = '❌';
@@ -26,41 +27,57 @@ const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 			icon = '';
 			break;
 	}
+
 	return (
-		<span className="pending-actions__action">
-			{ state === 'pending' && <i>{ text }</i> }
-			{ state !== 'pending' && text }
-			<span className="pending-actions__action--icon">{ icon }</span>
+		<span
+			className={ classNames( 'pending-actions__action', `pending-actions__action--${ state }` ) }
+		>
+			{ text }
+			<span className="pending-actions__action-icon">{ icon }</span>
 		</span>
 	);
 };
 
+type Status = 'idle' | 'pending' | 'success' | 'error';
 interface Props {
-	isWaitingForSite: boolean;
-	isWaitingForPlugins: boolean;
+	status?: {
+		siteTransfer: Status;
+		pluginInstallation: Status;
+		migrationKey: Status;
+	};
 }
 
-export const PendingActions: FC< Props > = ( { isWaitingForSite, isWaitingForPlugins }: Props ) => {
+export const PendingActions: FC< Props > = ( { status }: Props ) => {
+	const { siteTransfer, pluginInstallation, migrationKey } = status || {};
+	const allIdle = [ siteTransfer, pluginInstallation, migrationKey ].every( ( s ) => s === 'idle' );
+
 	return (
 		<div className="pending-actions">
-			{ translate( 'Wait until we finish setting up your site to continue' ) }
+			<span className="pending-actions__loading">
+				{ translate( 'Wait until we finish setting up your site to continue' ) }
+				{ allIdle && <Spinner /> }
+			</span>
 			<ul className="pending-actions__list">
 				<li>
 					<VisualStateIndicator
-						state={ isWaitingForSite ? 'pending' : 'success' }
-						text={ translate( 'Creating your site' ) }
+						state={ siteTransfer! }
+						text={ translate( 'Provisioning your new site' ) }
 					/>
 				</li>
-				<li
-					className={ classNames( 'fade-in', {
-						active: ! isWaitingForSite,
-					} ) }
-				>
+				<li>
 					<VisualStateIndicator
-						state={ isWaitingForPlugins ? 'pending' : 'success' }
+						state={ pluginInstallation! }
 						text={ translate( 'Installing the required plugins' ) }
 					/>
 				</li>
+				{ migrationKey !== 'error' && (
+					<li>
+						<VisualStateIndicator
+							state={ migrationKey! }
+							text={ translate( 'Getting the migration key' ) }
+						/>
+					</li>
+				) }
 			</ul>
 		</div>
 	);

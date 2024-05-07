@@ -15,14 +15,13 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
-	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingOverview from '../common/hosting-overview';
 import useShoppingCart from '../hooks/use-shopping-cart';
-import ShoppingCart, { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
+import ShoppingCart from '../shopping-cart';
 import PressableOverviewFeatures from './footer';
 import PressableOverviewPlanSelection from './plan-selection';
 
@@ -49,10 +48,9 @@ export default function PressableOverview() {
 			);
 
 			setSelectedCartItems( [ ...items, { ...item, quantity: 1 } ] );
-
-			page( A4A_MARKETPLACE_PRODUCTS_LINK + CART_URL_HASH_FRAGMENT );
+			setShowCart( true );
 		},
-		[ selectedCartItems, setSelectedCartItems ]
+		[ selectedCartItems, setSelectedCartItems, setShowCart ]
 	);
 
 	const PRESSABLE_LINK = 'https://pressable.com/';

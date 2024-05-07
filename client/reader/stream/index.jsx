@@ -49,7 +49,9 @@ import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import './style.scss';
 
-export const WIDE_DISPLAY_CUTOFF = 900;
+// minimal size for the two-column layout to show without cut off
+// 64 is padding, 8 is margin
+export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 const noop = () => {};

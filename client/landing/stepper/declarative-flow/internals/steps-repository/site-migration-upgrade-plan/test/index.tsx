@@ -74,6 +74,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
 			plan: 'business',
+			userAcceptedDeal: false,
 		} );
 	} );
 
@@ -87,6 +88,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
 			plan: 'business-monthly',
+			userAcceptedDeal: false,
 		} );
 	} );
 
@@ -100,6 +102,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
 			plan: 'business',
+			userAcceptedDeal: false,
 		} );
 	} );
 

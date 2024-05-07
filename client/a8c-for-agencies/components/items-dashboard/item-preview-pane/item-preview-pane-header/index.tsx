@@ -5,6 +5,8 @@ import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
+import { useSelector } from 'calypso/state';
+import { getSiteOption, getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import SiteFavicon from '../../site-favicon';
 import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
 
@@ -29,6 +31,21 @@ export default function ItemPreviewPaneHeader( {
 	const size = isLargerThan960px ? 64 : 50;
 
 	const focusRef = useRef< HTMLInputElement >( null );
+
+	const { adminLabel, adminUrl } = useSelector( ( state ) => {
+		const wpcomAdminInterface = getSiteOption( state, itemData.blogId, 'wpcom_admin_interface' );
+		if ( wpcomAdminInterface === 'wp-admin' ) {
+			return {
+				adminLabel: translate( 'WP admin' ),
+				adminUrl: itemData.adminUrl,
+			};
+		}
+
+		return {
+			adminLabel: translate( 'My home' ),
+			adminUrl: getSiteHomeUrl( state, itemData.blogId ),
+		};
+	} );
 
 	// Use useEffect to set the focus when the component mounts
 	useEffect( () => {
@@ -63,25 +80,36 @@ export default function ItemPreviewPaneHeader( {
 								size={ extraProps?.externalIconSize || ICON_SIZE }
 							/>
 						</Button>
-						{ itemData.adminUrl && (
-							<Button
-								variant="link"
-								className="item-preview__header-summary-link"
-								href={ `${ itemData.adminUrl }` }
-							>
-								<span>{ translate( 'WP Admin' ) }</span>
-							</Button>
-						) }
 					</div>
 				</div>
-				<Button
-					onClick={ closeItemPreviewPane }
-					className="item-preview__close-preview"
-					aria-label={ translate( 'Close Preview' ) }
-					ref={ focusRef }
-				>
-					<Gridicon icon="cross" size={ ICON_SIZE } />
-				</Button>
+				{ itemData.adminUrl ? (
+					<>
+						<Button
+							onClick={ closeItemPreviewPane }
+							className="item-preview__close-preview-button"
+							variant="secondary"
+						>
+							{ translate( 'Close' ) }
+						</Button>
+						<Button
+							variant="primary"
+							className="item-preview__admin-button"
+							href={ `${ adminUrl }` }
+							ref={ focusRef }
+						>
+							{ adminLabel }
+						</Button>
+					</>
+				) : (
+					<Button
+						onClick={ closeItemPreviewPane }
+						className="item-preview__close-preview"
+						aria-label={ translate( 'Close Preview' ) }
+						ref={ focusRef }
+					>
+						<Gridicon icon="cross" size={ ICON_SIZE } />
+					</Button>
+				) }
 			</div>
 		</div>
 	);

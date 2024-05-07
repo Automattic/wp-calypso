@@ -28,7 +28,7 @@
 	"oauth_client_id": 95932,
 	"features": {
 		"a8c-for-agencies": true,
-		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": false,
+		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
 		"oauth": true,
 		"a4a-logged-out-signup": true
 	},

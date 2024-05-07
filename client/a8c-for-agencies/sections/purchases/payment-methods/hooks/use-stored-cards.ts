@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -15,11 +15,21 @@ export const getFetchStoredCardsKey = ( agencyId?: number, paging?: Paging ) => 
 	agencyId,
 ];
 
-export default function useStoredCards( paging?: Paging, options?: { staleTime: number } ) {
+export default function useStoredCards( paging?: Paging, useStaleData = false ) {
 	const agencyId = useSelector( getActiveAgencyId );
 
+	const queryClient = useQueryClient();
+	const data = queryClient.getQueryData( getFetchStoredCardsKey( agencyId, paging ) );
+
+	let staleTime = 0;
+
+	// If we have data and we want to use stale data, set the stale time to Infinity to prevent refetching.
+	if ( useStaleData && data ) {
+		staleTime = Infinity;
+	}
+
 	return useQuery( {
-		...options,
+		staleTime,
 		queryKey: getFetchStoredCardsKey( agencyId, paging ),
 		queryFn: () =>
 			wpcom.req.get(

@@ -4,6 +4,7 @@ import {
 	FEATURE_READER,
 	FEATURE_STATS,
 	FEATURE_SUPPORT,
+	LAUNCHPAD_ENTREPRENEUR_SITE_SETUP,
 	LAUNCHPAD_INTENT_BUILD,
 	LAUNCHPAD_INTENT_FREE_NEWSLETTER,
 	LAUNCHPAD_INTENT_HOSTING,
@@ -49,6 +50,7 @@ import DomainUpsellFeature from 'calypso/my-sites/customer-home/cards/features/d
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import ReaderCard from 'calypso/my-sites/customer-home/cards/features/reader';
 import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
+import LaunchpadEntrepreneurSiteSetup from 'calypso/my-sites/customer-home/cards/launchpad/entrepreneur-site-setup';
 import LaunchpadIntentBuild from 'calypso/my-sites/customer-home/cards/launchpad/intent-build';
 import LaunchpadIntentHosting from 'calypso/my-sites/customer-home/cards/launchpad/intent-hosting';
 import {
@@ -132,6 +134,7 @@ const CARD_COMPONENTS: CardComponentMap = {
 	[ FEATURE_READER ]: ReaderCard,
 	[ FEATURE_SUPPORT ]: HelpSearch,
 	[ FEATURE_STATS ]: Stats,
+	[ LAUNCHPAD_ENTREPRENEUR_SITE_SETUP ]: LaunchpadEntrepreneurSiteSetup,
 	[ LAUNCHPAD_INTENT_BUILD ]: LaunchpadIntentBuild,
 	[ LAUNCHPAD_INTENT_FREE_NEWSLETTER ]: LaunchpadIntentFreeNewsletter,
 	[ LAUNCHPAD_INTENT_HOSTING ]: LaunchpadIntentHosting,

@@ -26,6 +26,7 @@ interface PlansGridContext {
 	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `enableCategorisedFeatures` is set).
 	 */
 	featureGroupMap: Partial< FeatureGroupMap >;
+	hideUnsupportedFeatures?: boolean;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -43,6 +44,7 @@ const PlansGridContextProvider = ( {
 	enableFeatureTooltips,
 	enableCategorisedFeatures,
 	featureGroupMap,
+	hideUnsupportedFeatures,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -65,6 +67,7 @@ const PlansGridContextProvider = ( {
 				enableFeatureTooltips,
 				enableCategorisedFeatures,
 				featureGroupMap,
+				hideUnsupportedFeatures,
 			} }
 		>
 			{ children }
