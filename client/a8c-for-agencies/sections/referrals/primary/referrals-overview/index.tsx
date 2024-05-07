@@ -109,9 +109,8 @@ export default function ReferralsOverview() {
 					</div>
 				) }
 				<div className="referrals-overview__section-heading">
-					{ translate(
-						'Recommend our products. Earn up to a 50% commission. No promo codes required.'
-					) }
+					{ translate( 'Recommend our products. Earn up to a 50% commission.' ) } <br />
+					{ translate( ' No promo codes required.' ) }
 				</div>
 
 				<div className="referrals-overview__section-subtitle">
