@@ -5,7 +5,7 @@ import './style.scss';
 export default function ReferralsFooter() {
 	const translate = useTranslate();
 
-	const tosLink = ''; // FIXME: Add the correct link to the Terms of Service.
+	const tosLink = 'https://automattic.com/for-agencies/platform-agreement/';
 
 	return (
 		<div className="referrals-footer">
