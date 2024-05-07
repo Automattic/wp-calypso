@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
@@ -54,22 +55,33 @@ class SidebarNotifications extends Component {
 		}
 	}
 
-	checkToggleNotes = ( event, forceToggle ) => {
-		const target = event ? event.target : false;
+	// This toggle gets called both on the calypso and panel sides. Throttle it to prevent calls on
+	// both sides from conflicting and cancelling each other out.
+	checkToggleNotes = throttle(
+		( event, forceToggle, forceOpen = false ) => {
+			const target = event ? event.target : false;
 
-		// Ignore clicks or other events which occur inside of the notification panel.
-		if (
-			target &&
-			( this.notificationLink.current.contains( target ) ||
-				this.notificationPanel.current.contains( target ) )
-		) {
-			return;
-		}
+			// Ignore clicks or other events which occur inside of the notification panel.
+			if (
+				target &&
+				( this.notificationLink.current.contains( target ) ||
+					this.notificationPanel.current.contains( target ) )
+			) {
+				return;
+			}
 
-		if ( this.props.isNotificationsOpen || forceToggle === true ) {
-			this.toggleNotesFrame( event );
-		}
-	};
+			// Prevent toggling closed if we are opting to open.
+			if ( forceOpen && this.props.isNotificationsOpen ) {
+				return;
+			}
+
+			if ( this.props.isNotificationsOpen || forceToggle === true || forceOpen === true ) {
+				this.toggleNotesFrame( event );
+			}
+		},
+		100,
+		{ leading: true, trailing: false }
+	);
 
 	toggleNotesFrame = ( event ) => {
 		if ( event ) {

@@ -6,6 +6,16 @@
 		.item-preview__header-title-summary {
 			word-wrap: anywhere;
 		}
+
+		.item-preview__close-preview,
+		.item-preview__close-preview-button,
+		.item-preview__admin-button {
+			align-self: flex-start;
+		}
+
+		.item-preview__close-preview-button {
+			margin-right: 15px;
+		}
 	}
 
 	@media ( min-width: $break-large ) {
@@ -46,6 +56,7 @@
 
 						&:focus {
 							box-shadow: none;
+							outline: thin dotted;
 						}
 					}
 				}

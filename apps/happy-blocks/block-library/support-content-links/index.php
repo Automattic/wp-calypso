@@ -11,7 +11,7 @@
 <div class="support-content-links">
 	<p>
 		<?php esc_html_e( 'Questions?', 'happy-blocks' ); ?>
-		<a href="<?php echo esc_url( 'https://wordpress.com/help/contact/' ); ?>" target="_blank" rel="noreferrer noopener">
+		<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/help/contact/' ) ); ?>" target="_blank" rel="noreferrer noopener">
 			<?php esc_html_e( 'Contact our Happiness Engineers.', 'happy-blocks' ); ?>
 		</a>
 	</p>

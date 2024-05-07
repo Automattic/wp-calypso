@@ -5,9 +5,15 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
+import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';
+import getStatsUrl from 'calypso/state/selectors/get-stats-url';
+import getThemeInstallUrl from 'calypso/state/selectors/get-theme-install-url';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface ActionProps {
@@ -30,10 +36,27 @@ const Action: FC< ActionProps > = ( { icon, href, text } ) => {
 };
 
 const QuickActionsCard: FC = () => {
+	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const site = useSelector( getSelectedSite );
-	const editorUrl = useSelector( ( state ) => ( site?.ID ? getEditorUrl( state, site.ID ) : '#' ) );
-	const translate = useTranslate();
+	const { data: activeThemeData } = useActiveThemeQuery( site?.ID || -1, !! site );
+	const { editorUrl, themeInstallUrl, pluginInstallUrl, statsUrl, siteAdminUrl, siteEditorUrl } =
+		useSelector( ( state ) => ( {
+			editorUrl: site?.ID ? getEditorUrl( state, site.ID ) : '#',
+			themeInstallUrl: getThemeInstallUrl( state, site?.ID ) ?? '',
+			pluginInstallUrl: getPluginInstallUrl( state, site?.ID ) ?? '',
+			statsUrl: getStatsUrl( state, site?.ID ) ?? '',
+			siteAdminUrl: getSiteAdminUrl( state, site?.ID ) ?? '',
+			siteEditorUrl:
+				site?.ID && activeThemeData
+					? getCustomizeUrl(
+							state as object,
+							activeThemeData[ 0 ]?.stylesheet,
+							site?.ID,
+							activeThemeData[ 0 ]?.is_block_theme
+					  )
+					: '',
+		} ) );
 
 	return (
 		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__quick-actions' ) }>
@@ -46,22 +69,34 @@ const QuickActionsCard: FC = () => {
 			</div>
 
 			<ul className="hosting-overview__actions-list">
+				<Action
+					icon={ <SidebarCustomIcon icon="dashicons-wordpress-alt hosting-overview__dashicon" /> }
+					href={ siteAdminUrl }
+					text={ translate( 'WP Admin' ) }
+				/>
+				<Action
+					icon={
+						<SidebarCustomIcon icon="dashicons-admin-customizer hosting-overview__dashicon" />
+					}
+					href={ siteEditorUrl }
+					text={ translate( 'Edit site' ) }
+				/>
 				<Action icon={ <WriteIcon /> } href={ editorUrl } text={ translate( 'Write post' ) } />
 				<Action
 					icon={
 						<SidebarCustomIcon icon="dashicons-admin-appearance hosting-overview__dashicon" />
 					}
-					href={ `/themes/${ site?.slug }` }
+					href={ themeInstallUrl }
 					text={ translate( 'Change theme' ) }
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins hosting-overview__dashicon" /> }
-					href={ `/plugins/${ site?.slug }` }
+					href={ pluginInstallUrl }
 					text={ translate( 'Install plugins' ) }
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-chart-bar hosting-overview__dashicon" /> }
-					href={ `/stats/${ site?.slug }` }
+					href={ statsUrl }
 					text={ translate( 'See Jetpack Stats' ) }
 				/>
 			</ul>

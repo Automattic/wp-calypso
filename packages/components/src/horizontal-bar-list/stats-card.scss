@@ -72,6 +72,8 @@
 		justify-content: space-between;
 		align-items: center;
 		flex-wrap: wrap;
+		// Add padding to wrapped elements in narrow viewports.
+		row-gap: 16px;
 	}
 
 	.stats-card-header__additional {

@@ -3,9 +3,9 @@ import { formatCurrency } from '@automattic/format-currency';
 import { Popover } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { getTotalInvoiceValue } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { useTotalInvoiceValue } from '../../wpcom-overview/hooks/use-total-invoice-value';
 import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
 
@@ -22,6 +22,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 	const translate = useTranslate();
 
 	const userProducts = useSelector( getProductsList );
+	const { getTotalInvoiceValue } = useTotalInvoiceValue();
 	const { discountedCost } = getTotalInvoiceValue( userProducts, items );
 
 	return (

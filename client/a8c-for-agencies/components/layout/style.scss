@@ -13,6 +13,7 @@ html,
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	overflow: hidden;
 	height: calc(100vh - 32px);
+	padding-block-end: 0;
 
 	header.current-section {
 		margin: 0;
@@ -124,7 +125,7 @@ html,
 
 	@include breakpoint-deprecated( "<1280px" ) {
 		flex-wrap: wrap;
-		row-gap: 16px;
+		gap: 16px;
 
 		> * + * {
 			margin-inline-start: 0;

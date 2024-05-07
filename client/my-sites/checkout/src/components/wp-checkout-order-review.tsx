@@ -8,7 +8,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
-import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { hasDIFMProduct, hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
@@ -233,7 +232,7 @@ export default function WPCheckoutOrderReview( {
 					/>
 				</WPOrderReviewSection>
 
-				{ ! isAkismetCheckout() && shouldUseCheckoutV2 && (
+				{ shouldUseCheckoutV2 && (
 					<CouponFieldArea
 						isCouponFieldVisible={ isCouponFieldVisible }
 						setCouponFieldVisible={ setCouponFieldVisible }

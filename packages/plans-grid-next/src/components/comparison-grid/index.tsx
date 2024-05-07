@@ -2,8 +2,6 @@ import {
 	getPlanClass,
 	isWooExpressPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
-	getPlanFeaturesGrouped,
-	getWooExpressFeaturesGrouped,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
@@ -579,7 +577,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	setActiveTooltipId,
 	onStorageAddOnClick,
 } ) => {
-	const { gridPlansIndex } = usePlansGridContext();
+	const { gridPlansIndex, enableFeatureTooltips, hideUnsupportedFeatures } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
@@ -623,6 +621,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			'popular-plan-parent-class': gridPlan.highlightLabel,
 			'has-feature': hasFeature,
 			'has-conditional-feature': hasConditionalFeature,
+			'hide-unsupported-feature':
+				hideUnsupportedFeatures && ! hasFeature && ! hasConditionalFeature,
 			'title-is-subtitle': 'live-chat-support' === featureSlug,
 			'is-left-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.leftOfHighlight,
 			'is-right-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.rightOfHighlight,
@@ -658,7 +658,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							{ planPaymentTransactionFees ? (
 								<>
 									<Plans2023Tooltip
-										text={ feature?.getDescription?.() }
+										text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 										setActiveTooltipId={ setActiveTooltipId }
 										activeTooltipId={ activeTooltipId }
 										id={ `${ planSlug }-${ featureSlug }` }
@@ -684,7 +684,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 								</span>
 							) }
 							<Plans2023Tooltip
-								text={ feature?.getDescription?.() }
+								text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 								id={ `${ planSlug }-${ featureSlug }` }
@@ -759,6 +759,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const hasWooExpressPlans = visibleGridPlans.some( ( { planSlug } ) =>
 		isWooExpressPlan( planSlug )
 	);
+	const { enableFeatureTooltips } = usePlansGridContext();
 
 	return (
 		<Row
@@ -773,7 +774,11 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 			>
 				{ isStorageFeature ? (
 					<Plans2023Tooltip
-						text={ translate( 'Space to store your photos, media, and more.' ) }
+						text={
+							enableFeatureTooltips
+								? translate( 'Space to store your photos, media, and more.' )
+								: undefined
+						}
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 						id={ tooltipId }
@@ -785,9 +790,13 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						{ feature && (
 							<>
 								<Plans2023Tooltip
-									text={ feature.getDescription?.( {
-										planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
-									} ) }
+									text={
+										enableFeatureTooltips
+											? feature.getDescription?.( {
+													planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
+											  } )
+											: undefined
+									}
 									setActiveTooltipId={ setActiveTooltipId }
 									activeTooltipId={ activeTooltipId }
 									id={ tooltipId }
@@ -870,7 +879,7 @@ const FeatureGroup = ( {
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
 		firstSetOfFeatures,
 	] );
-	const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
+	const features = featureGroup.getFeatures();
 	const featureObjects = filterUnusedFeaturesObject(
 		visibleGridPlans,
 		getPlanFeaturesObject( allFeaturesList, features )
@@ -983,23 +992,8 @@ const ComparisonGrid = ( {
 	planUpgradeCreditsApplicable,
 	gridSize,
 }: ComparisonGridProps ) => {
-	const { gridPlans, gridPlansIndex } = usePlansGridContext();
+	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
-
-	// Check to see if we have at least one Woo Express plan we're comparing.
-	const hasWooExpressFeatures = useMemo( () => {
-		const wooExpressPlans = gridPlans.filter(
-			( { planSlug, isVisible } ) => isVisible && isWooExpressPlan( planSlug )
-		);
-
-		return wooExpressPlans.length > 0;
-	}, [ gridPlans ] );
-
-	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
-	const featureGroupMap = hasWooExpressFeatures
-		? getWooExpressFeaturesGrouped()
-		: getPlanFeaturesGrouped();
-
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
 	const displayedGridPlans = useMemo( () => {

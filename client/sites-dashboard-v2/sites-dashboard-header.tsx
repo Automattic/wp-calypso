@@ -13,21 +13,9 @@ import { useSitesDashboardImportSiteUrl } from 'calypso/sites-dashboard/hooks/us
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 
 const MAX_PAGE_WIDTH = '1224px';
-const pagePadding = {
-	[ MEDIA_QUERIES.mediumOrSmaller ]: {
-		paddingInlineStart: '16px',
-		paddingInlineEnd: '16px',
-	},
-};
 
 const PageHeader = styled.div( {
-	...pagePadding,
-
 	backgroundColor: 'var( --studio-white )',
-
-	[ MEDIA_QUERIES.mediumOrSmaller ]: {
-		padding: '16px',
-	},
 } );
 
 const HeaderControls = styled.div( {
@@ -77,10 +65,18 @@ const AddNewSiteSplitButton = styled( SplitButton )< { isMobile: boolean } >`
 	.split-button__main {
 		border-radius: 4px 0 0 4px;
 		-webkit-font-smoothing: antialiased;
+
+		.rtl & {
+			border-radius: 0 4px 4px 0;
+		}
 	}
 
 	.split-button__toggle {
 		border-radius: ${ ( { isMobile } ) => ( isMobile ? '4px' : '0 4px 4px 0' ) };
+
+		.rtl & {
+			border-radius: ${ ( { isMobile } ) => ( isMobile ? '4px' : '4px 0 0 4px' ) };
+		}
 	}
 
 	.sites-dashboard__layout:not( .preview-hidden ) & {
@@ -98,6 +94,11 @@ const AddNewSiteSplitButton = styled( SplitButton )< { isMobile: boolean } >`
 const DownloadIcon = styled( Icon )`
 	margin-right: 8px;
 	vertical-align: bottom;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
 `;
 
 const popoverHoverStyles = css`

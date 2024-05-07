@@ -725,7 +725,7 @@ export default function CheckoutMainContent( {
 							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
 						} }
 					/>
-					{ ! isAkismetCheckout() && ! shouldUseCheckoutV2 && (
+					{ ! shouldUseCheckoutV2 && (
 						<CouponFieldArea
 							isCouponFieldVisible={ isCouponFieldVisible }
 							setCouponFieldVisible={ setCouponFieldVisible }

@@ -5,16 +5,6 @@ import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
-import HostingOverview from 'calypso/hosting-overview/components/hosting-overview';
-import { GitHubDeploymentCreation } from 'calypso/my-sites/github-deployments/deployment-creation';
-import { GitHubDeploymentManagement } from 'calypso/my-sites/github-deployments/deployment-management';
-import { DeploymentRunsLogs } from 'calypso/my-sites/github-deployments/deployment-run-logs';
-import { GitHubDeployments } from 'calypso/my-sites/github-deployments/deployments';
-import HostingActivate from 'calypso/my-sites/hosting/hosting-activate';
-import Hosting from 'calypso/my-sites/hosting/main';
-import SiteMonitoringPhpLogs from 'calypso/site-monitoring/components/php-logs';
-import SiteMonitoringServerLogs from 'calypso/site-monitoring/components/server-logs';
-import SiteMonitoringOverview from 'calypso/site-monitoring/components/site-monitoring-overview';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -22,34 +12,29 @@ import {
 	DOTCOM_PHP_LOGS,
 	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
-	DOTCOM_HOSTING_CONFIG_ACTIVATE,
-	DOTCOM_GITHUB_DEPLOYMENTS_CREATE,
-	DOTCOM_GITHUB_DEPLOYMENTS_MANAGE,
-	DOTCOM_GITHUB_DEPLOYMENTS_LOGS,
 } from './constants';
 
 import './style.scss';
 
 type Props = {
 	site: SiteExcerptData;
-	selectedSiteParams: any;
 	selectedSiteFeature: string;
-	selectedSiteSubfeature: string;
 	setSelectedSiteFeature: ( feature: string ) => void;
+	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
 };
 
 const DotcomPreviewPane = ( {
 	site,
-	selectedSiteParams,
 	selectedSiteFeature,
-	selectedSiteSubfeature,
 	setSelectedSiteFeature,
+	selectedSiteFeaturePreview,
 	closeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
 
-	const isDotcomSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
+	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
+	const isJetpackNonAtomic = ! isAtomicSite && !! site.jetpack;
 
 	// Dotcom tabs: Overview, Monitoring, GitHub Deployments, Hosting Config
 	const features = useMemo(
@@ -60,71 +45,50 @@ const DotcomPreviewPane = ( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<HostingOverview />
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
 				__( 'Hosting Config' ),
-				true,
+				! isJetpackNonAtomic,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				selectedSiteSubfeature === DOTCOM_HOSTING_CONFIG_ACTIVATE ? (
-					<HostingActivate />
-				) : (
-					<Hosting />
-				)
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_MONITORING,
 				__( 'Monitoring' ),
-				isDotcomSite,
+				isAtomicSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<SiteMonitoringOverview />
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_PHP_LOGS,
 				__( 'PHP Logs' ),
-				isDotcomSite,
+				isAtomicSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<SiteMonitoringPhpLogs />
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_SERVER_LOGS,
 				__( 'Server Logs' ),
-				isDotcomSite,
+				isAtomicSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<SiteMonitoringServerLogs />
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
 				__( 'GitHub Deployments' ),
-				true,
+				! isJetpackNonAtomic,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				( function () {
-					if ( selectedSiteSubfeature === DOTCOM_GITHUB_DEPLOYMENTS_CREATE ) {
-						return <GitHubDeploymentCreation />;
-					} else if ( selectedSiteSubfeature === DOTCOM_GITHUB_DEPLOYMENTS_MANAGE ) {
-						const { deploymentId } = selectedSiteParams;
-						return <GitHubDeploymentManagement codeDeploymentId={ deploymentId } />;
-					} else if ( selectedSiteSubfeature === DOTCOM_GITHUB_DEPLOYMENTS_LOGS ) {
-						const { deploymentId } = selectedSiteParams;
-						return <DeploymentRunsLogs codeDeploymentId={ deploymentId } />;
-					}
-					return <GitHubDeployments />;
-				} )()
+				selectedSiteFeaturePreview
 			),
 		],
-		[
-			selectedSiteParams,
-			selectedSiteFeature,
-			selectedSiteSubfeature,
-			setSelectedSiteFeature,
-			site,
-		]
+		[ selectedSiteFeature, setSelectedSiteFeature, selectedSiteFeaturePreview, site ]
 	);
 
 	const itemData: ItemData = {

@@ -53,6 +53,7 @@ import {
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
+	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -551,8 +552,12 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderAdminInterface() {
-		const { site } = this.props;
-		if ( ! isEnabled( 'layout/wpcom-admin-interface' ) ) {
+		const { site, isSimple } = this.props;
+		if (
+			! isEnabled( 'layout/wpcom-admin-interface' ) &&
+			( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) ||
+				( isEnabled( 'layout/dotcom-nav-redesign-v2' ) && isSimple ) )
+		) {
 			return null;
 		}
 
@@ -695,6 +700,7 @@ const connectComponent = connect( ( state ) => {
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
+		isSimple: isSimpleSite( state, siteId ),
 	};
 } );
 

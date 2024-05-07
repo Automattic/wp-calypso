@@ -56,6 +56,16 @@ describe( 'SitePicker', () => {
 						product_slug: 'free_plan',
 					},
 				},
+				3: {
+					// should not be shown
+					ID: 3,
+					name: 'A deleted site',
+					URL: 'deleted.wordpress.com',
+					is_deleted: true,
+					plan: {
+						product_slug: 'free_plan',
+					},
+				},
 			},
 			domains: {
 				items: {

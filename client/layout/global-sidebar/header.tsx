@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -8,8 +9,14 @@ import SidebarNotifications from './menu-items/notifications';
 import { SidebarSearch } from './menu-items/search';
 
 export const GlobalSidebarHeader = () => {
+	const hasEnTranslation = useHasEnTranslation();
 	const translate = useTranslate();
+
+	const isMac = window?.navigator.userAgent && window.navigator.userAgent.indexOf( 'Mac' ) > -1;
+	const searchShortcut = isMac ? '⌘ + K' : 'Ctrl + K';
+
 	const sectionName = useSelector( getSectionName );
+
 	return (
 		<div className="sidebar__header">
 			<SkipNavigation
@@ -30,7 +37,11 @@ export const GlobalSidebarHeader = () => {
 			) }
 			<span className="gap"></span>
 			<SidebarSearch
-				tooltip={ translate( 'Jump to…' ) }
+				tooltip={
+					hasEnTranslation( 'Search (%(shortcut)s)' )
+						? translate( 'Search (%(shortcut)s)', { args: { shortcut: searchShortcut } } )
+						: translate( 'Jump to…' )
+				}
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.SEARCH_CLICK ) }
 			/>
 			<SidebarNotifications

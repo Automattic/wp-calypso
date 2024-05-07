@@ -2,6 +2,7 @@ export const A4A_LANDING_LINK = '/landing';
 export const A4A_OVERVIEW_LINK = '/overview';
 export const A4A_SITES_LINK = '/sites';
 export const A4A_SITES_LINK_NEEDS_ATTENTION = '/sites?issue_types=all_issues';
+export const A4A_SITES_LINK_NEEDS_SETUP = '/sites/need-setup';
 export const A4A_SITES_LINK_FAVORITE = '/sites?is_favorite';
 export const A4A_SITES_LINK_WALKTHROUGH_TOUR = `${ A4A_SITES_LINK }?tour=sites-walkthrough`;
 export const A4A_SITES_LINK_ADD_NEW_SITE_TOUR = '/sites?tour=add-new-site';
@@ -25,3 +26,4 @@ export const A4A_PAYMENT_METHODS_LINK = `${ A4A_PURCHASES_LINK }/payment-methods
 export const A4A_PAYMENT_METHODS_ADD_LINK = `${ A4A_PURCHASES_LINK }/payment-methods/add`;
 export const A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }/download-products`;
 export const A4A_SIGNUP_LINK = '/signup';
+export const A4A_SIGNUP_FINISH_LINK = '/signup/finish';

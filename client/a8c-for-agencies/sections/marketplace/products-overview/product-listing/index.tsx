@@ -313,7 +313,6 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) } // FIXME: Add proper description for A4A
-					isTwoColumns
 				>
 					{ getProductCards( plans ) }
 				</ListingSection>

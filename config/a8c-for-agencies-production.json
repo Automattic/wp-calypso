@@ -28,7 +28,9 @@
 	"oauth_client_id": 95932,
 	"features": {
 		"a8c-for-agencies": true,
-		"oauth": true
+		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
+		"oauth": true,
+		"a4a-logged-out-signup": true
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -40,7 +42,8 @@
 		"a8c-for-agencies-sites": true,
 		"a8c-for-agencies-marketplace": true,
 		"a8c-for-agencies-purchases": true,
-		"a8c-for-agencies-signup": true
+		"a8c-for-agencies-signup": true,
+		"a8c-for-agencies-referrals": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

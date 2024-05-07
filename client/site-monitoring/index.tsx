@@ -3,7 +3,7 @@ import page, { type Callback } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible, siteMetrics } from 'calypso/my-sites/site-monitoring/controller';
-import globalSiteLayout from 'calypso/sites-dashboard-v2/global-site-layout';
+import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
 import {
 	DOTCOM_MONITORING,
 	DOTCOM_PHP_LOGS,
@@ -23,8 +23,9 @@ export default function () {
 			'/site-monitoring/:site',
 			siteSelection,
 			redirectHomeIfIneligible,
+			navigation,
 			siteMonitoringOverview,
-			globalSiteLayout( DOTCOM_MONITORING ),
+			siteDashboard( DOTCOM_MONITORING ),
 			makeLayout,
 			clientRender
 		);
@@ -32,8 +33,9 @@ export default function () {
 			'/site-monitoring/:site/php',
 			siteSelection,
 			redirectHomeIfIneligible,
+			navigation,
 			siteMonitoringPhpLogs,
-			globalSiteLayout( DOTCOM_PHP_LOGS ),
+			siteDashboard( DOTCOM_PHP_LOGS ),
 			makeLayout,
 			clientRender
 		);
@@ -41,8 +43,9 @@ export default function () {
 			'/site-monitoring/:site/web',
 			siteSelection,
 			redirectHomeIfIneligible,
+			navigation,
 			siteMonitoringServerLogs,
-			globalSiteLayout( DOTCOM_SERVER_LOGS ),
+			siteDashboard( DOTCOM_SERVER_LOGS ),
 			makeLayout,
 			clientRender
 		);
