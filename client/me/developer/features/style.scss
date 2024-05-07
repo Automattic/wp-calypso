@@ -1,6 +1,13 @@
 @import "@wordpress/base-styles/breakpoints.scss";
+@import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
+
+.developer-features-sub-title {
+	margin-bottom: 16px;
+	font-weight: 500;
+	color: $studio-gray-60;
+}
 
 .developer-features-list {
 	display: grid;
@@ -8,6 +15,10 @@
 	grid-gap: 24px;
 	padding-bottom: 24px;
 	font-family: $font-sf-pro-text;
+
+	&--latest {
+		grid-template-columns: repeat(2, 1fr);
+	}
 
 	.developer-features-list__item {
 		display: flex;
@@ -37,10 +48,6 @@
 		.developer-features-list__item-learn-more {
 			padding-top: 8px;
 			margin-top: auto;
-		}
-
-		&--full {
-			grid-column: 1/4;
 		}
 	}
 
