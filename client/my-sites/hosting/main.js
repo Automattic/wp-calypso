@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	FEATURE_SFTP_DATABASE,
@@ -92,6 +91,7 @@ const MainCards = ( {
 	isWpcomStagingSite,
 	isBusinessTrial,
 	siteId,
+	siteSlug,
 } ) => {
 	const mainCards = [
 		{
@@ -140,12 +140,11 @@ const MainCards = ( {
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
 			type: 'basic',
 		},
-		siteId &&
-			! isEnabled( 'layout/dotcom-nav-redesign-v2' ) && {
-				feature: 'wp-admin',
-				content: <SiteAdminInterface siteId={ siteId } isHosting />,
-				type: 'basic',
-			},
+		siteId && {
+			feature: 'wp-admin',
+			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
+			type: 'basic',
+		},
 	].filter( ( card ) => card !== null );
 
 	const availableTypes = [
@@ -289,6 +288,7 @@ const Hosting = ( props ) => {
 								isWpcomStagingSite={ isWpcomStagingSite }
 								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
 								siteId={ siteId }
+								siteSlug={ siteSlug }
 							/>
 						</Column>
 						<Column type="sidebar">
