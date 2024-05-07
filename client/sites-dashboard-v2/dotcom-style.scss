@@ -72,6 +72,10 @@
 		tr.dataviews-view-table__row:hover {
 			background-color: #f7faff;
 		}
+
+		tbody tr.dataviews-view-table__row {
+			cursor: pointer;
+		}
 	}
 
 	table.dataviews-view-table thead .dataviews-view-table__row th {
