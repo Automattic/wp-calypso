@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## 1.2.1
 
 Add missing dependencies - @automattic/calypso-config
 
