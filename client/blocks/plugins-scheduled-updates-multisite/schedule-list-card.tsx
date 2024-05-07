@@ -14,6 +14,7 @@ import type {
 } from 'calypso/data/plugins/use-update-schedules-query';
 
 type Props = {
+	compact?: boolean;
 	schedule: MultisiteSchedulesUpdates;
 	onEditClick: ( id: string ) => void;
 	onRemoveClick: ( id: string ) => void;
@@ -21,7 +22,7 @@ type Props = {
 };
 
 export const ScheduleListCard = ( props: Props ) => {
-	const { schedule, onEditClick, onRemoveClick, onLogsClick } = props;
+	const { compact, schedule, onEditClick, onRemoveClick, onLogsClick } = props;
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat();
 	const { preparePluginsTooltipInfo } = usePrepareMultisitePluginsTooltipInfo(
@@ -60,17 +61,19 @@ export const ScheduleListCard = ( props: Props ) => {
 				/>
 			</div>
 
-			<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
-				<label htmlFor="last-update">
-					<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) }>
-						{ translate( 'Last update' ) }
-						<Icon icon={ isExpanded ? chevronUp : chevronDown } />
-					</Button>
-				</label>
-				<div>
-					<ScheduleListLastRunStatus schedule={ schedule } />
+			{ ! compact && (
+				<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
+					<label htmlFor="last-update">
+						<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) }>
+							{ translate( 'Last update' ) }
+							<Icon icon={ isExpanded ? chevronUp : chevronDown } />
+						</Button>
+					</label>
+					<div>
+						<ScheduleListLastRunStatus schedule={ schedule } />
+					</div>
 				</div>
-			</div>
+			) }
 
 			{ isExpanded && (
 				<div className="plugins-update-manager-multisite-card__sites">
@@ -94,10 +97,12 @@ export const ScheduleListCard = ( props: Props ) => {
 				</div>
 			) }
 
-			<div className="plugins-update-manager-multisite-card__label">
-				<label htmlFor="next-update">{ translate( 'Next update' ) }</label>
-				<span id="next-update">{ prepareDateTime( schedule.timestamp ) }</span>
-			</div>
+			{ ! compact && (
+				<div className="plugins-update-manager-multisite-card__label">
+					<label htmlFor="next-update">{ translate( 'Next update' ) }</label>
+					<span id="next-update">{ prepareDateTime( schedule.timestamp ) }</span>
+				</div>
+			) }
 		</div>
 	);
 };

@@ -18,6 +18,7 @@ import { ScheduleListTable } from './schedule-list-table';
 import './styles.scss';
 
 type Props = {
+	compact?: boolean;
 	previewMode: 'table' | 'card';
 	onEditSchedule: ( id: string ) => void;
 	onShowLogs: ( id: string, siteSlug: string ) => void;
@@ -25,7 +26,7 @@ type Props = {
 };
 
 export const ScheduleList = ( props: Props ) => {
-	const { previewMode, onEditSchedule, onShowLogs, onCreateNewSchedule } = props;
+	const { compact, previewMode, onEditSchedule, onShowLogs, onCreateNewSchedule } = props;
 	const {
 		data: schedules = [],
 		isLoading: isLoadingSchedules,
@@ -92,8 +93,9 @@ export const ScheduleList = ( props: Props ) => {
 				<h1>{ translate( 'Update schedules' ) }</h1>
 				{ ! isScheduleEmpty && (
 					<Button
-						__next40pxDefaultSize
-						variant="primary"
+						__next40pxDefaultSize={ ! compact }
+						isSmall={ compact }
+						variant={ compact ? 'secondary' : 'primary' }
 						onClick={ onCreateNewSchedule }
 						disabled={ false }
 					>
@@ -108,8 +110,9 @@ export const ScheduleList = ( props: Props ) => {
 			{ isScheduleEmpty && <ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } /> }
 			{ ! isScheduleEmpty && ScheduleListComponent ? (
 				<>
-					<ScheduleListFilter />
+					<ScheduleListFilter compact={ compact } />
 					<ScheduleListComponent
+						compact={ compact }
 						schedules={ filteredSchedules }
 						onRemoveClick={ openRemoveDialog }
 						onEditClick={ onEditSchedule }
