@@ -113,13 +113,8 @@ const DotcomSitesDataViews = ( {
 				id: 'status',
 				header: __( 'Status' ),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
-				type: 'enumeration',
-				elements: siteStatusGroups,
-				filterBy: {
-					operators: [ 'in' ],
-				},
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'last-publish',
