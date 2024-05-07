@@ -4,7 +4,6 @@ import type { FeatureList, FeatureGroupMap } from '@automattic/calypso-products'
 import type { Plans } from '@automattic/data-stores';
 
 interface PlansGridContext {
-	actions: { useActionCallback: UseActionCallback };
 	intent?: PlansIntent;
 	siteId?: number | null;
 	gridPlans: GridPlan[];
@@ -13,6 +12,8 @@ interface PlansGridContext {
 	helpers: {
 		useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 		useActionCallback: UseActionCallback;
+		// TODO: Fix this type
+		useAction: any;
 		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
 	};
 	coupon?: string;
@@ -33,10 +34,10 @@ interface PlansGridContext {
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
 
 const PlansGridContextProvider = ( {
-	actions,
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
+	useAction,
 	useActionCallback,
 	recordTracksEvent,
 	allFeaturesList,
@@ -59,13 +60,17 @@ const PlansGridContextProvider = ( {
 	return (
 		<PlansGridContext.Provider
 			value={ {
-				actions,
 				intent,
 				siteId,
 				gridPlans,
 				gridPlansIndex,
 				allFeaturesList,
-				helpers: { useCheckPlanAvailabilityForPurchase, useActionCallback, recordTracksEvent },
+				helpers: {
+					useCheckPlanAvailabilityForPurchase,
+					useAction,
+					useActionCallback,
+					recordTracksEvent,
+				},
 				coupon,
 				enableFeatureTooltips,
 				enableCategorisedFeatures,

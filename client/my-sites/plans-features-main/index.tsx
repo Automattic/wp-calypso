@@ -68,11 +68,12 @@ import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
-import useActions from './hooks/use-actions';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
 import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
+import useGenerateAction from './hooks/use-generate-action';
+import useGenerateActionCallback from './hooks/use-generate-action-callback';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -363,7 +364,7 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
-	const actions = useActions( {
+	const useAction = useGenerateAction( {
 		domainFromHomeUpsellFlow,
 		canUserManageCurrentPlan,
 		currentPlan,
@@ -373,6 +374,18 @@ const PlansFeaturesMain = ( {
 		intent,
 		isInSignup,
 		intentFromProps,
+		showModalAndExit,
+		sitePlanSlug,
+		siteSlug,
+		withDiscount,
+	} );
+
+	const useActionCallback = useGenerateActionCallback( {
+		currentPlan,
+		eligibleForFreeHostingTrial,
+		cartHandler: onUpgradeClick,
+		flowName,
+		intent,
 		showModalAndExit,
 		sitePlanSlug,
 		siteSlug,
@@ -663,7 +676,9 @@ const PlansFeaturesMain = ( {
 		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
 	);
 
-	const onFreePlanCTAClick = actions.useActionCallback( { planSlug: PLAN_FREE } );
+	const onFreePlanCTAClick = useActionCallback( {
+		planSlug: PLAN_FREE,
+	} );
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
 	const hasWooExpressFeatures = useMemo( () => {
@@ -765,7 +780,6 @@ const PlansFeaturesMain = ( {
 							<div className="plans-wrapper">
 								{ gridPlansForFeaturesGrid && (
 									<FeaturesGrid
-										actions={ actions }
 										allFeaturesList={ getFeaturesList() }
 										className="plans-features-main__features-grid"
 										coupon={ coupon }
@@ -791,7 +805,8 @@ const PlansFeaturesMain = ( {
 										siteId={ siteId }
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-										actions={ actions }
+										useAction={ useAction }
+										useActionCallback={ useActionCallback }
 										enableFeatureTooltips={ ! isTrailMapCopy }
 										enableCategorisedFeatures={ isTrailMapStructure }
 										featureGroupMap={ isTrailMapStructure ? featureGroupMap : undefined }
@@ -840,7 +855,6 @@ const PlansFeaturesMain = ( {
 												) }
 											{ gridPlansForComparisonGrid && gridPlansForPlanTypeSelector && (
 												<ComparisonGrid
-													actions={ actions }
 													allFeaturesList={ getFeaturesList() }
 													className="plans-features-main__comparison-grid"
 													coupon={ coupon }
@@ -866,6 +880,8 @@ const PlansFeaturesMain = ( {
 													siteId={ siteId }
 													stickyRowOffset={ comparisonGridStickyRowOffset }
 													showRefundPeriod={ isAnyHostingFlow( flowName ) }
+													useAction={ useAction }
+													useActionCallback={ useActionCallback }
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}

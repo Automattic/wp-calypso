@@ -148,12 +148,13 @@ export type UseActionCallback = ( {
 }: UseActionCallbackParams ) => () => void;
 
 export type GridContextProps = {
-	actions: { useActionCallback: UseActionCallback };
 	gridPlans: GridPlan[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	siteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	// TODO: Fix this type
+	useAction: () => void;
 	useActionCallback: UseActionCallback;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;

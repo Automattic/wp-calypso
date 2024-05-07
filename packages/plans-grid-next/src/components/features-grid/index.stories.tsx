@@ -87,6 +87,8 @@ const defaultProps: Omit< FeaturesGridExternalProps, 'gridPlans' > = {
 	stickyRowOffset: 0,
 	useCheckPlanAvailabilityForPurchase: () => ( {} ),
 	useActionCallback: () => () => {},
+	// TODO: Fix default prop
+	useAction: () => {},
 };
 
 type Story = StoryObj< typeof ComponentWrapper >;
