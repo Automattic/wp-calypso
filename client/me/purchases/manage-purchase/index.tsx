@@ -1158,10 +1158,10 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isJetpackAISlug( purchase.productSlug ) && purchase.purchaseRenewalQuantity ) {
-			return translate( '%(productName)s (%(quantity)d requests per month)', {
+			return translate( '%(productName)s (%(quantity)s requests per month)', {
 				args: {
 					productName: getDisplayName( purchase ),
-					quantity: purchase.purchaseRenewalQuantity,
+					quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
 				},
 			} );
 		}

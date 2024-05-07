@@ -2,6 +2,8 @@ import {
 	isDomainTransfer,
 	isConciergeSession,
 	isAkismetFreeProduct,
+	isJetpackAISlug,
+	isJetpackStatsPaidProductSlug,
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
@@ -14,7 +16,7 @@ import { CALYPSO_CONTACT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate, numberFormat } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -540,6 +542,37 @@ class PurchaseItem extends Component {
 		return <SiteIcon site={ site } size={ 36 } />;
 	};
 
+	getProductDisplayName() {
+		const { purchase, translate } = this.props;
+
+		if ( ! purchase ) {
+			return '';
+		}
+
+		if ( isJetpackAISlug( purchase.productSlug ) && purchase.purchaseRenewalQuantity ) {
+			return translate( '%(productName)s (%(quantity)s requests per month)', {
+				args: {
+					productName: getDisplayName( purchase ),
+					quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
+				},
+			} );
+		}
+
+		if (
+			isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
+			purchase.purchaseRenewalQuantity
+		) {
+			return translate( '%(productName)s (%(quantity)s views per month)', {
+				args: {
+					productName: getDisplayName( purchase ),
+					quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
+				},
+			} );
+		}
+
+		return getDisplayName( purchase );
+	}
+
 	renderPurchaseItemContent = () => {
 		const { purchase, showSite, isBackupMethodAvailable } = this.props;
 
@@ -551,7 +584,7 @@ class PurchaseItem extends Component {
 
 				<div className="purchase-item__information purchases-layout__information">
 					<div className="purchase-item__title">
-						{ getDisplayName( purchase ) }
+						{ this.getProductDisplayName( purchase ) }
 						&nbsp;
 						<OwnerInfo purchase={ purchase } />
 					</div>
