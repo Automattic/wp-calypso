@@ -39,7 +39,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 		<MultisitePluginUpdateManagerContextProvider>
 			<Layout title={ title } wide>
 				{ context === 'create' || context === 'edit' ? (
-					<LayoutColumn className="schedules-list">
+					<LayoutColumn className="scheduled-updates-list-compact">
 						<ScheduleList
 							compact={ true }
 							previewMode="card"
@@ -49,7 +49,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 						/>
 					</LayoutColumn>
 				) : null }
-				<LayoutColumn wide>
+				<LayoutColumn className={ `scheduled-updates-${ context }` } wide>
 					{ ( () => {
 						switch ( context ) {
 							case 'create':

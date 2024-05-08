@@ -47,10 +47,19 @@
 body.is-section-plugins {
 	background: var(--studio-gray-0);
 
-	.schedules-list {
+	.a4a-layout-column {
+		overflow: scroll;
+	}
+
+	.a4a-layout-column.scheduled-updates-list-compact {
 		width: 400px;
 		flex: unset;
 		transition: all 0.2s;
+	}
+
+	.a4a-layout-column.scheduled-updates-edit,
+	.a4a-layout-column.scheduled-updates-create {
+		padding: 3rem;
 	}
 }
 
