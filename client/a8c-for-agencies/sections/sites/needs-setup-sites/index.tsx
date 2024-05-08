@@ -13,6 +13,7 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SitesHeaderActions from '../sites-header-actions';
 import { AvailablePlans } from './plan-field';
 import PurchaseConfirmationMessage from './purchase-confirmation-message';
@@ -67,6 +68,8 @@ export default function NeedSetup() {
 
 	return (
 		<Layout className="sites-dashboard sites-dashboard__layout preview-hidden" wide title={ title }>
+			<PageViewTracker title="Sites > Needs Setup" path="/sites/need-setup" />
+
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop>
 					<div className="sites-overview__banner">

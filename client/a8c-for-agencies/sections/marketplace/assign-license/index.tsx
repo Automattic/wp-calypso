@@ -23,6 +23,7 @@ import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
 import areLicenseKeysAssignableToMultisite from 'calypso/jetpack-cloud/sections/partner-portal/lib/are-license-keys-assignable-to-multisite';
 import isWooCommerceProduct from 'calypso/jetpack-cloud/sections/partner-portal/lib/is-woocommerce-product';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -164,6 +165,8 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
+			<PageViewTracker title="Marketplace > Assign License" path="/marketplace/assign-license" />
+
 			<LayoutTop>
 				<AssignLicenseStepProgress
 					currentStep="assignLicense"

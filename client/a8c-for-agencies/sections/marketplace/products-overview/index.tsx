@@ -13,6 +13,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import { ShoppingCartContext } from '../context';
@@ -73,6 +74,8 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 			withBorder
 		>
 			<LayoutTop>
+				<PageViewTracker title="Marketplace > Products" path="/marketplace/products" />
+
 				<LayoutHeader showStickyContent={ showStickyContent }>
 					<Title>{ translate( 'Marketplace' ) } </Title>
 

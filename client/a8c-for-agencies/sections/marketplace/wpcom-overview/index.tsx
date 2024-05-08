@@ -26,6 +26,7 @@ import {
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -108,6 +109,11 @@ export default function WpcomOverview() {
 			compact
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
+			<PageViewTracker
+				title="Marketplace > Hosting > WordPress.com"
+				path="/marketplace/hosting/wpcom"
+			/>
+
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb

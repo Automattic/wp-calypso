@@ -30,7 +30,10 @@ export default function CommissionOverview() {
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<PageViewTracker title={ title } path="/referrals/" />
+			<PageViewTracker
+				title="Referrals > Commission details and terms"
+				path="/referrals/commissions"
+			/>
 
 			<LayoutTop>
 				<LayoutHeader>

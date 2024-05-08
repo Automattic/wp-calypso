@@ -24,7 +24,7 @@ export default function ReferralsBankDetails() {
 
 	return (
 		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
-			<PageViewTracker title="Add bank details" path="/referrals/bank-details" />
+			<PageViewTracker title="Referrals > Add bank details" path="/referrals/bank-details" />
 
 			<LayoutTop>
 				<LayoutHeader>
