@@ -6,10 +6,13 @@ export const useUrlBasicMetricsQuery = ( url: string | null ) => {
 	return useQuery( {
 		queryKey: [ 'url-', url ],
 		queryFn: (): Promise< UrlBasicMetricsQueryResponse > =>
-			wp.req.get( {
-				path: '/site-profiler/metrics/basic?url=' + encodeURIComponent( url ?? '' ),
-				apiNamespace: 'wpcom/v2',
-			} ),
+			wp.req.get(
+				{
+					path: '/site-profiler/metrics/basic',
+					apiNamespace: 'wpcom/v2',
+				},
+				{ url }
+			),
 		meta: {
 			persist: false,
 		},
