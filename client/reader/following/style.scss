@@ -20,6 +20,14 @@
 
 .following.main  .section-nav {
 	margin-top: 0;
+
+	.section-nav-tabs__list {
+		.section-nav-tab__link {
+			&:hover {
+				background-color: transparent;
+			}
+		}
+	}
 }
 
 .following .search {
