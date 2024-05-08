@@ -35,7 +35,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 	return (
 		<>
 			<tr>
-				<td>
+				<td className="expand">
 					<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) }>
 						<Icon icon={ isExpanded ? chevronDown : chevronRight } />
 					</Button>
