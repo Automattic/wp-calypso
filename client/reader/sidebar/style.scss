@@ -145,6 +145,9 @@ body.is-section-reader {
 	.is-discover-stream {
 		header.navigation-header.discover-stream-header {
 			padding: 0;
+			@media only screen and (max-width: 600px) {
+				padding: 0 24px;
+			}
 		}
 		@media only screen and (max-width: 660px) {
 			.discover-stream-navigation {
