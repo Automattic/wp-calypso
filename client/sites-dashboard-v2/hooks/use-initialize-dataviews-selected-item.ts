@@ -18,7 +18,7 @@ export function useInitializeDataViewsSelectedItem( {
 		if ( initialized.current || ! selectedSite ) {
 			return;
 		}
-		for ( const site of document.querySelectorAll( 'button.sites-dataviews__site' ) ) {
+		for ( const site of document.querySelectorAll( '.sites-dataviews__site' ) ) {
 			const slug = site.querySelector( '.sites-dataviews__site-url span' );
 			if ( selectedSite.slug === slug?.innerHTML ) {
 				( site as HTMLElement ).click?.();
