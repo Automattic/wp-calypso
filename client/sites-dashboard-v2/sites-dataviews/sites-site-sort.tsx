@@ -43,7 +43,8 @@ export const SiteSort = ( {
 		} else if ( direction === SORT_DIRECTION_ASC ) {
 			updatedSort.direction = SORT_DIRECTION_DESC;
 		} else if ( direction === SORT_DIRECTION_DESC ) {
-			updatedSort.direction = SORT_DIRECTION_ASC;
+			updatedSort.field = '';
+			updatedSort.direction = '';
 		}
 
 		setDataViewsState( ( sitesViewState ) => ( {
