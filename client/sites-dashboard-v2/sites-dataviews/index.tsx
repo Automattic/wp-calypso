@@ -145,7 +145,7 @@ const DotcomSitesDataViews = ( {
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
 					>
-						<span>{ __( 'Last Publish' ) }</span>
+						<span>{ __( 'Last Published' ) }</span>
 					</SiteSort>
 				),
 				render: ( { item }: { item: SiteInfo } ) =>
@@ -182,7 +182,7 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: addDummyDataViewPrefix( 'last-publish' ),
-				header: <span>{ __( 'Last Publish' ) }</span>,
+				header: <span>{ __( 'Last Published' ) }</span>,
 				render: () => null,
 				enableHiding: false,
 				enableSorting,
