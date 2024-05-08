@@ -105,6 +105,7 @@ const SitesDashboardV2 = ( {
 			addDummyDataViewPrefix( 'site' ),
 			addDummyDataViewPrefix( 'last-publish' ),
 			addDummyDataViewPrefix( 'last-interacted' ),
+			addDummyDataViewPrefix( 'status' ),
 		],
 		filters:
 			status === 'all'
@@ -155,7 +156,9 @@ const SitesDashboardV2 = ( {
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
-		const statusFilter = dataViewsState.filters.find( ( filter ) => filter.field === 'status' );
+		const statusFilter = dataViewsState.filters.find(
+			( filter ) => filter.field === addDummyDataViewPrefix( 'status' )
+		);
 		const statusNumber = statusFilter?.value || 1;
 		return ( siteStatusGroups.find( ( status ) => status.value === statusNumber )?.slug ||
 			'all' ) as GroupableSiteLaunchStatuses;

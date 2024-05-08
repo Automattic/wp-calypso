@@ -133,11 +133,6 @@ const DotcomSitesDataViews = ( {
 				id: 'status',
 				header: __( 'Status' ),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
-				type: 'enumeration',
-				elements: siteStatusGroups,
-				filterBy: {
-					operators: [ 'in' ],
-				},
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -198,6 +193,18 @@ const DotcomSitesDataViews = ( {
 				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
+			},
+			{
+				id: addDummyDataViewPrefix( 'status' ),
+				header: __( 'Status' ),
+				render: () => null,
+				type: 'enumeration',
+				elements: siteStatusGroups,
+				filterBy: {
+					operators: [ 'in' ],
+				},
+				enableHiding: false,
+				enableSorting: false,
 			},
 		],
 		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, enableSorting ]
