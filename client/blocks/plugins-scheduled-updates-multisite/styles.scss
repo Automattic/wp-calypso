@@ -76,11 +76,17 @@ $brand-display: "SF Pro Display", sans-serif;
 			}
 
 			&.expand {
+				min-width: 2rem;
+				text-align: center;
 				line-height: 1;
 
 				button {
 					margin-top: rem(2px);
 				}
+			}
+
+			&.menu {
+				text-align: center;
 			}
 		}
 
