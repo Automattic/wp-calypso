@@ -69,8 +69,12 @@
 			background: var(--studio-white);
 		}
 
-		tr.dataviews-view-table__row:hover {
-			background-color: #f7faff;
+		tr.dataviews-view-table__row {
+			cursor: pointer;
+
+			&:hover {
+				background-color: #f7faff;
+			}
 		}
 
 		tbody tr.dataviews-view-table__row {
@@ -258,7 +262,6 @@
 						}
 					}
 					.sidebar__body {
-						padding-top: 24px;
 						.sidebar__menu-link-text {
 							transition: all 100ms ease-out;
 							transition-delay: 120ms;
@@ -278,9 +281,9 @@
 					}
 					.sidebar__footer {
 						flex-direction: row !important;
-						.sidebar__item-help {
-							padding-inline: 0;
-						}
+						padding: 16px;
+						align-items: center;
+						justify-content: center;
 					}
 				}
 			}
@@ -344,6 +347,7 @@
 
 			li {
 				border-bottom: 1px solid #f1f1f1 !important;
+				cursor: pointer;
 			}
 
 			li.is-selected,
