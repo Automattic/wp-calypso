@@ -8,14 +8,14 @@
 	.a4a-offering-card__title {
 		font-weight: 500;
 		font-size: 1rem;
-		line-height: 24px;
+		line-height: 1.5;
 		color: var(--color-neutral-100);
 	}
 
 	.a4a-offering-card__description {
 		font-weight: 400;
-		font-size: 0.875rem;
-		line-height: 20px;
+		font-size: rem(14px);
+		line-height: 1.25;
 		color: var(--color-neutral-60);
 		margin-block-end: 16px;
 	}
@@ -31,7 +31,7 @@
 				color: var(--color-neutral-100);
 				font-weight: 500;
 				font-size: rem(16px);
-				line-height: 20px;
+				line-height: 1.25;
 				margin-inline-start: 10px;
 			}
 		}
@@ -40,7 +40,7 @@
 			color: var(--color-neutral-60);
 			font-weight: 400;
 			font-size: rem(14px);
-			line-height: 20px;
+			line-height: 1.25;
 		}
 
 		.foldable-card__header {
