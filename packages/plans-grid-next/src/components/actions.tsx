@@ -366,10 +366,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const {
 		gridPlansIndex,
 		siteId,
-		helpers: {
-			// useActionCallback,
-			useAction,
-		},
+		helpers: { useAction },
 	} = usePlansGridContext();
 	const {
 		planTitle,
@@ -422,12 +419,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		cartItemForPlan: { product_slug: freeTrialPlanSlug ?? PLAN_FREE },
 		selectedStorageAddOn,
 	} );
-
-	// const onCtaClick = useActionCallback( {
-	// 	planSlug,
-	// 	cartItemForPlan,
-	// 	selectedStorageAddOn,
-	// } );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (

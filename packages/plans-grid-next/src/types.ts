@@ -155,7 +155,6 @@ export type GridContextProps = {
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	// TODO: Fix this type
 	useAction: () => void;
-	// useActionCallback: UseActionCallback;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;

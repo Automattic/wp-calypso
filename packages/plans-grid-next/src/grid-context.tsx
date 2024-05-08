@@ -11,7 +11,6 @@ interface PlansGridContext {
 	allFeaturesList: FeatureList;
 	helpers: {
 		useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
-		// useActionCallback: UseActionCallback;
 		// TODO: Fix this type
 		useAction: any;
 		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
@@ -38,7 +37,6 @@ const PlansGridContextProvider = ( {
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
 	useAction,
-	// useActionCallback,
 	recordTracksEvent,
 	allFeaturesList,
 	siteId,
@@ -68,7 +66,6 @@ const PlansGridContextProvider = ( {
 				helpers: {
 					useCheckPlanAvailabilityForPurchase,
 					useAction,
-					// useActionCallback,
 					recordTracksEvent,
 				},
 				coupon,
