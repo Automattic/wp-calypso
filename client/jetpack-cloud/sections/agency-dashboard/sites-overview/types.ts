@@ -107,6 +107,7 @@ export interface Site {
 	latest_scan_has_threats_found: boolean;
 	active_paid_subscription_slugs: Array< string >;
 	site_color?: string;
+	enabled_plugin_slugs?: Array< string >;
 }
 export interface SiteNode {
 	value: Site;
@@ -337,6 +338,8 @@ export interface ToggleActivaateMonitorAPIResponse {
 export interface ToggleActivateMonitorArgs {
 	siteId: number;
 	params: { monitor_active: boolean };
+	hasJetpackPluginInstalled: boolean;
+	agencyId?: number;
 }
 
 export interface Backup {
