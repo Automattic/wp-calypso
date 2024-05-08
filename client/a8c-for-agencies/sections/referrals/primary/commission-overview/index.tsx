@@ -49,6 +49,23 @@ export default function CommissionOverview() {
 						<FoldableCard
 							header={
 								<div className="commission-overview__heading">
+									<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
+									{ translate( 'Woo Payments revenue share' ) }
+								</div>
+							}
+							expanded
+							clickableHeader
+							summary={ false }
+						>
+							{ translate(
+								'You will receive a revenue share of 5 basis points (0.05%) on new WooPayments gross merchandise value (“GMV”) on client sites through June 30, 2025.' +
+									' For example, if your client’s store generates $1M in GMV per year, your revenue share for that year would be $500.'
+							) }
+						</FoldableCard>
+
+						<FoldableCard
+							header={
+								<div className="commission-overview__heading">
 									<img src={ pressableIcon } alt="Pressable" />
 									<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
 									{ translate( 'Hosting revenue share (WordPress.com and Pressable)' ) }
