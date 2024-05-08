@@ -65,6 +65,10 @@
 	}
 
 	.dataviews-wrapper {
+		thead tr.dataviews-view-table__row {
+			cursor: default;
+		}
+
 		thead tr.dataviews-view-table__row:hover {
 			background: var(--studio-white);
 		}
