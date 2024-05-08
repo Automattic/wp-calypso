@@ -198,15 +198,14 @@ describe( 'Site Migration Flow', () => {
 			);
 
 			runUseStepNavigationSubmit( {
-				currentStep: STEPS.BUNDLE_TRANSFER.slug,
-				dependencies: {
-					destination: 'migrate',
-				},
+				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }?siteSlug=example.wordpress.com`,
-				state: null,
+				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`,
+				state: {
+					siteSlug: 'example.wordpress.com',
+				},
 			} );
 		} );
 

@@ -183,11 +183,6 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.BUNDLE_TRANSFER.slug: {
-					if ( isEnabled( 'migration-flow/remove-processing-step' ) ) {
-						return navigate(
-							addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug )
-						);
-					}
 					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
 				}
 
