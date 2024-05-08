@@ -32,9 +32,8 @@ export const GlobalSidebarFooter: FC< {
 				tooltip={ translate( 'Profile' ) }
 				tooltipPlacement="top"
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.PROFILE_CLICK ) }
-			>
-				<Gravatar user={ user } size={ 20 } />
-			</SidebarMenuItem>
+				icon={ <Gravatar user={ user } size={ 20 } /> }
+			/>
 			<AsyncLoad
 				require="./menu-items/help-center/help-center"
 				tooltip={ translate( 'Help' ) }

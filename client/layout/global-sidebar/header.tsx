@@ -26,9 +26,8 @@ export const GlobalSidebarHeader = () => {
 					tooltip={ translate( 'View all sites' ) }
 					tooltipPlacement="bottom"
 					onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.ALLSITES_CLICK ) }
-				>
-					<span className="dotcom"></span>
-				</SidebarMenuItem>
+					icon={ <span className="dotcom"></span> }
+				/>
 			) }
 		</div>
 	);

@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import React, { useRef, forwardRef, Fragment } from 'react';
 import { useSelector } from 'react-redux';
@@ -19,7 +18,6 @@ const SidebarMenuItem = forwardRef(
 			isActive,
 			preloadSection,
 			hasUnseen,
-			children,
 			alwaysShowContent,
 			disabled,
 		},
@@ -46,12 +44,7 @@ const SidebarMenuItem = forwardRef(
 		};
 
 		const renderChildren = () => {
-			return (
-				<Fragment>
-					{ icon && ( typeof icon !== 'string' ? icon : <Gridicon icon={ icon } size={ 24 } /> ) }
-					{ children && <>{ children }</> }
-				</Fragment>
-			);
+			return <Fragment>{ icon && <>{ icon }</> }</Fragment>;
 		};
 
 		const itemClasses = classNames( 'sidebar__item', className, {
