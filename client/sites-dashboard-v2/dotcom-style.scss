@@ -36,14 +36,6 @@
 		display: block;
 	}
 
-	.item-preview__content {
-		.hosting-overview,
-		.site-monitoring-overview {
-			overflow-y: initial;
-			max-height: initial;
-		}
-	}
-
 	height: calc(100vh - var(--masterbar-height));
 
 	@media ( min-width: 782px ) {
@@ -80,10 +72,18 @@
 		tr.dataviews-view-table__row:hover {
 			background-color: #f7faff;
 		}
+
+		tbody tr.dataviews-view-table__row {
+			cursor: pointer;
+		}
+	}
+
+	table.dataviews-view-table {
+		--color-border-dataviews-view-table: #f1f1f1;
 	}
 
 	table.dataviews-view-table thead .dataviews-view-table__row th {
-		border-bottom-color: var(--color-border-secondary);
+		border-bottom-color: var(--color-border-dataviews-view-table);
 
 		span,
 		.dataviews-view-table-header-button {
@@ -92,7 +92,7 @@
 	}
 
 	table.dataviews-view-table .dataviews-view-table__row td {
-		border-bottom-color: var(--color-border-secondary);
+		border-bottom-color: var(--color-border-dataviews-view-table);
 	}
 
 	table.dataviews-view-table th,
@@ -355,10 +355,14 @@
 }
 
 // Styles for site preview pane.
-.wpcom-site .site-preview-pane {
+.wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
 	.section-nav-tabs__list {
 		box-sizing: border-box;
 		overflow-x: auto;
+
+		@media (max-width: $break-large) {
+			padding: 0 8px;
+		}
 	}
 	.item-preview__header {
 		.site-favicon .site-icon {
@@ -367,6 +371,13 @@
 		.item-preview__header-title {
 			font-family: Recoleta, sans-serif;
 		}
+
+		.item-preview__header-content {
+			@media (max-width: $break-large) {
+				padding: 0;
+			}
+		}
+
 		.item-preview__header-content .item-preview__header-title-summary .item-preview__header-summary {
 			display: flex;
 			flex-wrap: wrap;
@@ -389,6 +400,27 @@
 			@include break-medium {
 				height: 32px;
 			}
+		}
+	}
+	.item-preview__content {
+		> * {
+			margin: 0;
+			padding-top: 0;
+			padding-left: 0;
+			padding-right: 0;
+			overflow-y: initial;
+			max-height: initial;
+			max-width: 1400px;
+
+			main {
+				max-width: 100%;
+			}
+		}
+
+		@media (max-width: $break-large) {
+			padding-top: 24px;
+			padding-left: 24px;
+			padding-right: 24px;
 		}
 	}
 }

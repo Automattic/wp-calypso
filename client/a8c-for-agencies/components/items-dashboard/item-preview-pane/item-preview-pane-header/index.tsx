@@ -36,13 +36,13 @@ export default function ItemPreviewPaneHeader( {
 		const wpcomAdminInterface = getSiteOption( state, itemData.blogId, 'wpcom_admin_interface' );
 		if ( wpcomAdminInterface === 'wp-admin' ) {
 			return {
-				adminLabel: translate( 'WP admin' ),
+				adminLabel: translate( 'WP Admin' ),
 				adminUrl: itemData.adminUrl,
 			};
 		}
 
 		return {
-			adminLabel: translate( 'My home' ),
+			adminLabel: translate( 'My Home' ),
 			adminUrl: getSiteHomeUrl( state, itemData.blogId ),
 		};
 	} );

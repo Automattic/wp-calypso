@@ -1,9 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
-import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -11,9 +9,9 @@ import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
+import { useStartUrl } from '../hooks/use-start-url';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
-import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
@@ -40,6 +38,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
 			STEPS.ERROR,
+			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
@@ -48,68 +47,17 @@ const siteMigration: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+		const startUrl = useStartUrl( FLOW_NAME );
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 		const { isOwner } = useIsSiteOwner();
 
-		const flowName = this.name;
-
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
-
-		const queryParams = new URLSearchParams( window.location.search );
-		const aff = queryParams.get( 'aff' );
-		const vendorId = queryParams.get( 'vid' );
-
-		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
-			const queryParams = new URLSearchParams();
-
-			if ( vendorId ) {
-				queryParams.set( 'vid', vendorId );
-			}
-
-			if ( aff ) {
-				queryParams.set( 'aff', aff );
-			}
-
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				`/setup/${ FLOW_NAME }` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-
-			let queryString = `redirect_to=${ redirectTarget }`;
-
-			if ( queryParams.toString() ) {
-				queryString = `${ queryString }&${ queryParams.toString() }`;
-			}
-
-			const logInUrl = getLoginUrl( {
-				variationName: flowName,
-				locale,
-			} );
-
-			return `${ logInUrl }&${ queryString }`;
-		};
-
 		useEffect( () => {
 			if ( ! userIsLoggedIn ) {
-				const logInUrl = getStartUrl();
+				const logInUrl = startUrl;
 				window.location.assign( logInUrl );
 			}
-		}, [] );
+		}, [ startUrl, userIsLoggedIn ] );
 
 		useEffect( () => {
 			if ( isOwner === false ) {
@@ -122,6 +70,8 @@ const siteMigration: Flow = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-migration requires a logged in user',
 			};
+
+			return result;
 		}
 
 		if ( ! siteSlug && ! siteId ) {
@@ -294,12 +244,18 @@ const siteMigration: Flow = {
 					}
 
 					if ( providedDependencies?.goToCheckout ) {
+						const redirectAfterCheckout = providedDependencies?.userAcceptedDeal
+							? STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+							: STEPS.BUNDLE_TRANSFER.slug;
+
 						const destination = addQueryArgs(
 							{
 								siteSlug,
-								from: fromQueryParam,
+								// don't use from query param if the user takes the migration deal.
+								// This is to avoid the user being redirected to the wrong page after checkout.
+								...( ! providedDependencies?.userAcceptedDeal ? { from: fromQueryParam } : {} ),
 							},
-							`/setup/${ FLOW_NAME }/${ STEPS.BUNDLE_TRANSFER.slug }`
+							`/setup/${ FLOW_NAME }/${ redirectAfterCheckout }`
 						);
 
 						urlQueryParams.delete( 'showModal' );

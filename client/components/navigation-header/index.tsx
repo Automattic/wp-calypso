@@ -9,7 +9,6 @@ import './style.scss';
 
 const Container = styled.div`
 	.main.is-wide-layout & {
-		max-width: 1040px;
 		margin: auto;
 	}
 

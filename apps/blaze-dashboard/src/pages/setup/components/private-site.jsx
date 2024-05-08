@@ -47,7 +47,7 @@ export default function PrivateSite() {
 				<h3 className="setup-pages__title wp-brand-font">
 					{ translate( 'Make sure your site is public' ) }
 				</h3>
-				<p className="empty-promotion-list__body">
+				<p className="setup-pages__body">
 					{ translate( 'Go to your WordPress.com dashboard and follow the steps below.' ) }
 				</p>
 				<ul className="promote-post-i2__active-steps">

@@ -21,7 +21,7 @@ export default function ProvisioningSiteNotification( { siteId }: Props ) {
 				onClose={ () => setShowBanner( false ) }
 				title={
 					isReady
-						? translate( 'Congratulation on your new WordPress.com site!' )
+						? translate( 'Congratulations on your new WordPress.com site!' )
 						: translate( 'Setting up your new WordPress.com site' )
 				}
 			>
