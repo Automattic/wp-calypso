@@ -18,6 +18,9 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 	const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
 		treatAtomicAsJetpackSite: false,
 	} );
+	const isSiteJetpackOrAtomic = isJetpackSite( state, siteId, {
+		treatAtomicAsJetpackSite: true,
+	} );
 
 	return {
 		supportsHighlightsSettings: version_greater_than_or_equal(
@@ -45,11 +48,10 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.16.0-alpha',
 			isOdysseyStats
 		),
-		supportsUTMStats: version_greater_than_or_equal(
-			statsAdminVersion,
-			'0.17.0-alpha',
-			isOdysseyStats
-		),
+		supportsUTMStats:
+			// UTM stats are only supported for Jetpack and Atomic sites on Calypso.
+			isSiteJetpackOrAtomic &&
+			version_greater_than_or_equal( statsAdminVersion, '0.17.0-alpha', isOdysseyStats ),
 		supportsDevicesStats:
 			config.isEnabled( 'stats/devices' ) &&
 			isSiteJetpackNotAtomic &&
