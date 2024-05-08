@@ -245,6 +245,8 @@ export const JETPACK_AI_PRODUCTS = < const >[
 	PRODUCT_JETPACK_AI_YEARLY,
 ];
 
+// Aliases are for products with quantity slugs in checkout (ex. jetpack-ai-yearly:-q-100)
+// These are here to help with handling product quantity in situations where infrastructure is not aware of it
 export const JETPACK_AI_ALIASES = < const >[
 	PRODUCT_JETPACK_AI_BI_YEARLY_100,
 	PRODUCT_JETPACK_AI_BI_YEARLY_200,
