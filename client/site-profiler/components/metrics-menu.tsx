@@ -22,6 +22,11 @@ interface MetricsMenuProps {
 	basicMetricsRef?: React.RefObject< HTMLObjectElement >;
 }
 
+interface MenuItem {
+	id: MetricsMenuTabs;
+	label: string;
+}
+
 enum MetricsMenuTabs {
 	basic = 'basic',
 }
@@ -33,6 +38,13 @@ export const MetricsMenu: React.FC< MetricsMenuProps > = ( props: MetricsMenuPro
 	const references = {
 		[ MetricsMenuTabs.basic ]: basicMetricsRef,
 	};
+
+	const menuItems: MenuItem[] = [
+		{
+			id: MetricsMenuTabs.basic,
+			label: translate( 'Performance Metrics' ),
+		},
+	];
 
 	const [ selectedTab, setSelectedTab ] = useState< MetricsMenuTabs | undefined >();
 	const basicMetricsVisible = useIsMenuSectionVisible( basicMetricsRef );
@@ -55,12 +67,15 @@ export const MetricsMenu: React.FC< MetricsMenuProps > = ( props: MetricsMenuPro
 		<StickyPanel>
 			<SectionNavbar className="metrics-menu-navbar">
 				<NavTabs>
-					<NavItem
-						onClick={ () => onMenuItemClick( MetricsMenuTabs.basic ) }
-						selected={ selectedTab === MetricsMenuTabs.basic }
-					>
-						{ translate( 'Basic Performance Metrics' ) }
-					</NavItem>
+					{ menuItems.map( ( item ) => (
+						<NavItem
+							onClick={ () => onMenuItemClick( item.id ) }
+							selected={ selectedTab === item.id }
+							key={ item.id }
+						>
+							{ item.label }
+						</NavItem>
+					) ) }
 				</NavTabs>
 				<FullReportButton primary>
 					{ translate( "Get full site report - It's free" ) }
