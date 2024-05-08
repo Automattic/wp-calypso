@@ -54,16 +54,16 @@ type OdieStorageKey = 'chat_id' | 'last_chat_id';
 
 ```tsx
 import {
-	getOdieStorage,
-	setOdieStorage,
-	clearOdieStorage,
+	useGetOdieStorage,
+	useSetOdieStorage,
+	useClearOdieStorage,
 	useOdieStorage,
 } from '@automattic/odie-client';
 
 // Usage examples
-setOdieStorage( 'chat_id', 'new_chat_id' );
-const chatId = getOdieStorage( 'chat_id' );
-clearOdieStorage( 'chat_id' );
+useSetOdieStorage( 'chat_id', 'new_chat_id' );
+const chatId = useGetOdieStorage( 'chat_id' );
+useClearOdieStorage( 'chat_id' );
 const chatId = useOdieStorage( 'chat_id' ); // Listen for changes
 ```
 

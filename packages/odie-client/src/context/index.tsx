@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
 	broadcastChatClearance,
-	clearOdieStorage,
+	useClearOdieStorage,
 	useOdieBroadcastWithCallbacks,
 	useOdieStorage,
 } from '../data';
@@ -116,6 +116,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const existingChatIdString = useOdieStorage( 'chat_id' );
+
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
 	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId );
 
@@ -142,15 +143,17 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		[ botNameSlug, chat?.chat_id, logger, loggerEventNamePrefix ]
 	);
 
+	const clearOdieStorage = useClearOdieStorage( 'chat_id' );
+
 	const clearChat = useCallback( () => {
-		clearOdieStorage( 'chat_id' );
+		clearOdieStorage( '' );
 		setChat( {
 			chat_id: null,
 			messages: [ getOdieInitialMessage( botNameSlug ) ],
 		} );
 		trackEvent( 'chat_cleared', {} );
 		broadcastChatClearance( odieClientId );
-	}, [ botNameSlug, trackEvent ] );
+	}, [ botNameSlug, trackEvent, clearOdieStorage ] );
 
 	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
 		setChat( ( prevChat ) => {
