@@ -209,6 +209,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 					onTouch={ ( touched ) => setFieldTouched( { ...fieldTouched, plugins: touched } ) }
 					error={ validationErrors?.plugins }
 					showError={ fieldTouched?.plugins }
+					selectedSites={ selectedSites }
 				/>
 
 				<Text>{ translate( 'Step 3' ) }</Text>

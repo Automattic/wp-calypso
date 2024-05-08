@@ -22,6 +22,7 @@ interface Props {
 	onTouch?: ( touched: boolean ) => void;
 	onChange?: ( value: string[] ) => void;
 	borderWrapper?: boolean;
+	selectedSites?: number[] | null;
 }
 export function ScheduleFormPlugins( props: Props ) {
 	const {
@@ -33,6 +34,7 @@ export function ScheduleFormPlugins( props: Props ) {
 		onChange,
 		onTouch,
 		borderWrapper = true,
+		selectedSites = null,
 	} = props;
 	const translate = useTranslate();
 	const plugins = useMemo( () => props.plugins || [], [ props.plugins ] );
@@ -147,10 +149,13 @@ export function ScheduleFormPlugins( props: Props ) {
 						</div>
 					</>
 				) }
-				{ ! pluginsAvailable && (
+				{ ! pluginsAvailable && selectedSites && selectedSites.length === 0 && (
 					<p className="placeholder-info">
 						{ translate( 'Please select a site to view available plugins.' ) }
 					</p>
+				) }
+				{ ! pluginsAvailable && selectedSites && selectedSites.length > 0 && (
+					<p className="placeholder-info">{ translate( 'No plugins to update.' ) }</p>
 				) }
 			</div>
 			{ ( () => {
