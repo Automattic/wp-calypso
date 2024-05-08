@@ -28,6 +28,10 @@
 		}
 	}
 
+	.a4a-layout__header {
+		align-items: initial;
+	}
+
 	.a4a-layout__header-main {
 		display: block;
 	}
@@ -41,6 +45,10 @@
 		margin: 4px 0 0 0;
 		line-height: 20px;
 		letter-spacing: -0.15px;
+	}
+
+	.a4a-layout__header-actions a {
+		font-weight: normal;
 	}
 
 	height: calc(100vh - var(--masterbar-height));
