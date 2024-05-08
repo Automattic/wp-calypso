@@ -54,11 +54,11 @@ export const UpgradePlanHostingDetails = () => {
 				)
 		);
 		upgradePlanHostingDetailsList[ 1 ].description = translate(
-			'%(wordpressLCP)s of sites on WordPress.com are at least %(percentageDifference)s faster than yours.',
+			'%(wordpressLcpPercentage)s of sites on WordPress.com are at least %(sitePercentageDifference)s faster than yours.',
 			{
 				args: {
-					wordpressLCP: `${ wordpressLCP }%`,
-					percentageDifference: `${ percentageDifference }%`,
+					wordpressLcpPercentage: `${ wordpressLCP }%`,
+					sitePercentageDifference: `${ percentageDifference }%`,
 				},
 			}
 		);
