@@ -109,6 +109,7 @@ export interface OtherSupportAvailability {
 	is_user_eligible_for_upwork: boolean;
 	is_user_eligible_for_tickets: boolean;
 	is_user_eligible_for_chat: boolean;
+	is_user_eligible_for_email: boolean;
 }
 
 export interface SupportActivity {

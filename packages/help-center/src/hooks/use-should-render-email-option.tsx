@@ -5,6 +5,6 @@ export function useShouldRenderEmailOption() {
 
 	return {
 		isLoading: isFetching,
-		render: supportAvailability?.is_user_eligible_for_tickets ?? false,
+		render: supportAvailability?.is_user_eligible_for_email ?? false,
 	};
 }
