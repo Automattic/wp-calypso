@@ -105,7 +105,7 @@ const DotcomPreviewPane = ( {
 	};
 
 	useEffect( () => {
-		const handleKeydown = ( e: Event ) => {
+		const handleKeydown = ( e: KeyboardEvent ) => {
 			if ( e.key !== 'Escape' ) {
 				return;
 			}

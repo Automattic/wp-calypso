@@ -74,7 +74,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	const nodeRef = useRef( null );
 
 	useEffect( () => {
-		const handleKeydown = ( e: Event ) => {
+		const handleKeydown = ( e: KeyboardEvent ) => {
 			if ( e.key === 'Escape' ) {
 				onDismiss();
 			}
