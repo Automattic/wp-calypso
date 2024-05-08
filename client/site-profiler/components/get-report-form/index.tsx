@@ -13,13 +13,22 @@ type Errors = {
 	termsAccepted?: string;
 };
 
-export function GetReportForm( { url, onClose }: { url: string; onClose: () => void } ) {
+export function GetReportForm( {
+	url,
+	token,
+	onClose,
+}: {
+	url?: string;
+	token?: string;
+	onClose: () => void;
+} ) {
 	const [ name, setName ] = useState( '' );
 	const [ email, setEmail ] = useState( '' );
 	const [ isTermsChecked, setIsTermsChecked ] = useState( false );
 	const [ errors, setErrors ] = useState< Errors | null >( null );
 	const [ responseError, setResponseError ] = useState< string | null >( null );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const [ responseSuccess, setResponseSuccess ] = useState( false );
 
 	const handleSubmit = async ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
@@ -44,6 +53,7 @@ export function GetReportForm( { url, onClose }: { url: string; onClose: () => v
 					name: formData.get( 'name' ),
 					email: formData.get( 'email' ),
 					url,
+					hash: token,
 				}
 			);
 		} catch ( error ) {
@@ -52,8 +62,8 @@ export function GetReportForm( { url, onClose }: { url: string; onClose: () => v
 		} finally {
 			setIsSubmitting( false );
 		}
-		if ( response.status !== 200 ) {
-			setResponseError( response.body.message );
+		if ( response.success ) {
+			setResponseSuccess( true );
 		}
 	};
 
@@ -156,7 +166,7 @@ export function GetReportForm( { url, onClose }: { url: string; onClose: () => v
 								className="get-report-form__form-name"
 								label={ translate( 'Name' ) }
 								value={ name }
-								isError={ errors?.name }
+								isError={ !! errors?.name }
 								onChange={ handleNameChange }
 							/>
 
@@ -169,7 +179,7 @@ export function GetReportForm( { url, onClose }: { url: string; onClose: () => v
 								className="get-report-form__form-email"
 								label={ translate( 'Email' ) }
 								value={ email }
-								isError={ errors?.email }
+								isError={ !! errors?.email }
 								onChange={ handleEmailChange }
 							/>
 							{ errors?.email && (
@@ -192,12 +202,23 @@ export function GetReportForm( { url, onClose }: { url: string; onClose: () => v
 								<FormInputValidation isError={ !! errors } text={ errors.termsAccepted } />
 							) }
 						</FormFieldset>
-						<Button type="submit" className="submit-button" busy={ isSubmitting }>
+						<Button
+							type="submit"
+							className="submit-button"
+							busy={ isSubmitting }
+							disabled={ responseSuccess }
+						>
 							{ translate( 'Get my report' ) }
 							<Gridicon icon="product-downloadable" />
 						</Button>
 					</div>
 					{ responseError && <FormInputValidation isError={ true } text={ responseError } /> }
+					{ responseSuccess && (
+						<FormInputValidation
+							isError={ false }
+							text="Success! Email with the report link will be sent shortly"
+						/>
+					) }
 				</form>
 			</div>
 		</div>
