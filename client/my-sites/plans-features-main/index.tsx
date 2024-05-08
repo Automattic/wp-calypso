@@ -828,7 +828,8 @@ const PlansFeaturesMain = ( {
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector &&
 												showPlansComparisonGrid &&
-												gridPlansForPlanTypeSelector && (
+												gridPlansForPlanTypeSelector &&
+												! isMobile && (
 													<PlanTypeSelector
 														{ ...planTypeSelectorProps }
 														plans={ gridPlansForPlanTypeSelector }
