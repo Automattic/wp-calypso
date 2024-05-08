@@ -139,6 +139,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	currentSitePlanSlug,
 	buttonText,
 	storageOptions,
+	text,
 }: {
 	availableForPurchase?: boolean;
 	priceString: string | null;
@@ -151,16 +152,11 @@ const LoggedInPlansFeatureActionButton = ( {
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
 	storageOptions?: StorageOption[];
+	text: string;
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const {
-		helpers: { useAction },
-		gridPlansIndex,
-		siteId,
-	} = usePlansGridContext();
-
-	const action = useAction( { planSlug } );
+	const { gridPlansIndex, siteId } = usePlansGridContext();
 
 	const selectedStorageOptionForPlan = useSelect(
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
@@ -191,10 +187,11 @@ const LoggedInPlansFeatureActionButton = ( {
 		isFreePlan( planSlug ) ||
 		( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected )
 	) {
-		if ( action?.loggedInFreePlan ) {
+		// TODO: Revisit this
+		if ( text ) {
 			return (
 				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-					{ action.loggedInFreePlan.text }
+					{ text }
 				</PlanButton>
 			);
 		}
@@ -221,8 +218,9 @@ const LoggedInPlansFeatureActionButton = ( {
 					{ translate( 'Upgrade' ) }
 				</PlanButton>
 			);
-		} else if ( action?.currentPlan ) {
-			const { text } = action.currentPlan;
+			// TODO: Revisit this conditional
+		} else if ( text ) {
+			// const { text } = action.currentPlan;
 			return (
 				<PlanButton
 					planSlug={ planSlug }
@@ -477,6 +475,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			isMonthlyPlan={ isMonthlyPlan }
 			planTitle={ planTitle }
 			storageOptions={ storageOptions }
+			text={ text }
 		/>
 	);
 };

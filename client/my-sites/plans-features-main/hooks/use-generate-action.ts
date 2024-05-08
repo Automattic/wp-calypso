@@ -2,7 +2,7 @@ import { type PlanSlug, isFreePlan, isBusinessPlan } from '@automattic/calypso-p
 import { AddOns, Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import useGenerateActionCallback from './use-generate-action-callback';
-import type { PlanActionOverrides, PlansIntent } from '@automattic/plans-grid-next';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useGenerateAction( {
@@ -51,6 +51,7 @@ function useGenerateAction( {
 	const translate = useTranslate();
 
 	return ( {
+		availableForPurchase,
 		cartItemForPlan,
 		isFreeTrialAction,
 		isLargeCurrency,
@@ -60,6 +61,7 @@ function useGenerateAction( {
 		priceString,
 		selectedStorageAddOn,
 	}: {
+		availableForPurchase?: boolean;
 		cartItemForPlan?: MinimalRequestCartProduct | null;
 		isFreeTrialAction?: boolean;
 		isLargeCurrency?: boolean;
@@ -69,12 +71,6 @@ function useGenerateAction( {
 		priceString?: string;
 		selectedStorageAddOn?: AddOns.AddOnMeta | null;
 	} ) => {
-		let actions: PlanActionOverrides = {
-			currentPlan: {},
-			loggedInFreePlan: {},
-			trialAlreadyUsed: {},
-		};
-
 		/* 1. Launch Page actions */
 		if ( isLaunchPage ) {
 			let text = translate( 'Select %(plan)s', {
@@ -159,32 +155,47 @@ function useGenerateAction( {
 			};
 		}
 
-		/* 3. Current plan actions */
-		if ( sitePlanSlug && intentFromProps !== 'plans-p2' ) {
-			if ( isFreePlan( sitePlanSlug ) ) {
-				actions = {
-					loggedInFreePlan: {
-						status: 'enabled',
-						text: translate( 'Manage add-ons', { context: 'verb' } ),
-					},
-				};
+		/* 3. Logged In Plans actions */
+		let text = translate( 'Upgrade', { context: 'verb' } );
+		let status = null;
 
-				if ( domainFromHomeUpsellFlow ) {
-					actions.loggedInFreePlan = {
-						...actions.loggedInFreePlan,
-						text: translate( 'Keep my plan', { context: 'verb' } ),
-					};
-				}
-			} else {
-				actions = {
-					currentPlan: {
-						text: canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ),
-					},
-				};
+		if ( sitePlanSlug === planSlug && intentFromProps !== 'plans-p2' ) {
+			// Spotlight plan actions
+			text = canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' );
+
+			if ( isFreePlan( planSlug ) ) {
+				text = translate( 'Manage add-ons', { context: 'verb' } );
+				status = 'enabled';
+			} else if ( domainFromHomeUpsellFlow ) {
+				text = translate( 'Keep my plan', { context: 'verb' } );
 			}
+		} else if ( isStuck && ! isLargeCurrency ) {
+			text = translate( 'Upgrade – %(priceString)s', {
+				context: 'verb',
+				args: { priceString: priceString ?? '' },
+				comment: '%(priceString)s is the full price including the currency. Eg: Get Upgrade - $10',
+			} );
+		} else if ( isStuck && isLargeCurrency ) {
+			text = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
+				args: {
+					plan: planTitle,
+					priceString: priceString ?? '',
+				},
+				comment:
+					'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+				components: {
+					// span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
+				},
+			} );
+		} else if ( ! availableForPurchase ) {
+			text = translate( 'Downgrade', { context: 'verb' } );
 		}
 
-		return actions;
+		return {
+			callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
+			status,
+			text,
+		};
 	};
 }
 
