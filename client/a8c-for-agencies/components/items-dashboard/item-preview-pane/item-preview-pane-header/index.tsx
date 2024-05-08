@@ -12,7 +12,8 @@ import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
 
 import './style.scss';
 
-const ICON_SIZE = 24;
+const ICON_SIZE_SMALL = 16;
+const ICON_SIZE_REGULAR = 24;
 
 interface Props {
 	closeItemPreviewPane?: () => void;
@@ -77,7 +78,7 @@ export default function ItemPreviewPaneHeader( {
 							<Icon
 								className="sidebar-v2__external-icon"
 								icon={ external }
-								size={ extraProps?.externalIconSize || ICON_SIZE }
+								size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
 							/>
 						</Button>
 					</div>
@@ -107,7 +108,7 @@ export default function ItemPreviewPaneHeader( {
 						aria-label={ translate( 'Close Preview' ) }
 						ref={ focusRef }
 					>
-						<Gridicon icon="cross" size={ ICON_SIZE } />
+						<Gridicon icon="cross" size={ ICON_SIZE_REGULAR } />
 					</Button>
 				) }
 			</div>
