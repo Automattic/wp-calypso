@@ -159,14 +159,19 @@ function useGenerateAction( {
 		let text = translate( 'Upgrade', { context: 'verb' } );
 		let status = null;
 
-		if ( sitePlanSlug === planSlug && intentFromProps !== 'plans-p2' ) {
+		if ( isFreePlan( planSlug ) ) {
+			text = translate( 'Contact support', { context: 'verb' } );
+
+			// TODO: Consider DRYing this up
+			if ( sitePlanSlug === planSlug && intentFromProps !== 'plans-p2' ) {
+				text = translate( 'Manage add-ons', { context: 'verb' } );
+				status = 'enabled';
+			}
+		} else if ( sitePlanSlug === planSlug && intentFromProps !== 'plans-p2' ) {
 			// Spotlight plan actions
 			text = canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' );
 
-			if ( isFreePlan( planSlug ) ) {
-				text = translate( 'Manage add-ons', { context: 'verb' } );
-				status = 'enabled';
-			} else if ( domainFromHomeUpsellFlow ) {
+			if ( domainFromHomeUpsellFlow ) {
 				text = translate( 'Keep my plan', { context: 'verb' } );
 			}
 		} else if ( isStuck && ! isLargeCurrency ) {

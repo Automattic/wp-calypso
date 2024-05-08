@@ -20,7 +20,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
 import useSelectedStorageAddOn from '../hooks/data-store/use-selected-storage-add-on';
@@ -129,11 +129,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 
 const LoggedInPlansFeatureActionButton = ( {
 	availableForPurchase,
-	priceString,
-	isStuck,
-	isLargeCurrency,
 	isMonthlyPlan,
-	planTitle,
 	onCtaClick,
 	planSlug,
 	currentSitePlanSlug,
@@ -142,11 +138,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	text,
 }: {
 	availableForPurchase?: boolean;
-	priceString: string | null;
-	isStuck: boolean;
-	isLargeCurrency: boolean;
 	isMonthlyPlan?: boolean;
-	planTitle: TranslateResult;
 	onCtaClick: () => void;
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
@@ -187,22 +179,18 @@ const LoggedInPlansFeatureActionButton = ( {
 		isFreePlan( planSlug ) ||
 		( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected )
 	) {
-		// TODO: Revisit this
-		if ( text ) {
-			return (
-				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-					{ text }
-				</PlanButton>
-			);
-		}
-
 		if ( isP2FreePlan( planSlug ) && current ) {
 			return null;
 		}
 
 		return (
-			<PlanButton planSlug={ planSlug } current={ current } disabled>
-				{ translate( 'Contact support', { context: 'verb' } ) }
+			<PlanButton
+				planSlug={ planSlug }
+				onClick={ onCtaClick }
+				current={ current }
+				disabled={ ! current }
+			>
+				{ text }
 			</PlanButton>
 		);
 	}
@@ -218,9 +206,7 @@ const LoggedInPlansFeatureActionButton = ( {
 					{ translate( 'Upgrade' ) }
 				</PlanButton>
 			);
-			// TODO: Revisit this conditional
 		} else if ( text ) {
-			// const { text } = action.currentPlan;
 			return (
 				<PlanButton
 					planSlug={ planSlug }
@@ -298,26 +284,8 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( buttonText ) {
 		buttonTextFallback = buttonText;
-	} else if ( isStuck && ! isLargeCurrency ) {
-		buttonTextFallback = translate( 'Upgrade – %(priceString)s', {
-			context: 'verb',
-			args: { priceString: priceString ?? '' },
-			comment: '%(priceString)s is the full price including the currency. Eg: Get Upgrade - $10',
-		} );
-	} else if ( isStuck && isLargeCurrency ) {
-		buttonTextFallback = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
-			args: {
-				plan: planTitle,
-				priceString: priceString ?? '',
-			},
-			comment:
-				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
-			components: {
-				span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
-			},
-		} );
 	} else {
-		buttonTextFallback = translate( 'Upgrade', { context: 'verb' } );
+		buttonTextFallback = text;
 	}
 
 	if ( availableForPurchase ) {
@@ -337,7 +305,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				showOnMobile={ false }
 				id="downgrade"
 			>
-				<DummyDisabledButton>{ translate( 'Downgrade', { context: 'verb' } ) }</DummyDisabledButton>
+				<DummyDisabledButton>{ text }</DummyDisabledButton>
 				{ isMobile() && (
 					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
 						{ translate( 'Please contact support to downgrade your plan.' ) }
@@ -460,11 +428,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			onCtaClick={ callback }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
-			priceString={ priceString }
-			isStuck={ isStuck }
-			isLargeCurrency={ !! isLargeCurrency }
 			isMonthlyPlan={ isMonthlyPlan }
-			planTitle={ planTitle }
 			storageOptions={ storageOptions }
 			text={ text }
 		/>
