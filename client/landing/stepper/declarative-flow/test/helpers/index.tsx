@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { act, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { MemoryRouter, useNavigate, useLocation } from 'react-router';
 import themeReducer from 'calypso/state/themes/reducer';
@@ -12,12 +12,25 @@ import type { Flow, ProvidedDependencies } from '../../internals/types';
 export const getFlowLocation = () => {
 	return {
 		path: screen.getByTestId( 'pathname' ).textContent,
+		search: screen.getByTestId( 'search' ).textContent,
 		state: JSON.parse( screen.getByTestId( 'state' ).textContent || '{}' ),
 	};
 };
 
 export const getAssertionConditionResult = () => {
 	return JSON.parse( screen.getByTestId( 'assertionConditionResult' ).textContent || '{}' );
+};
+
+const DebugLocation = () => {
+	const location = useLocation();
+
+	return (
+		<>
+			<p data-testid="pathname">{ `${ location.pathname }${ location.search }` }</p>
+			<p data-testid="search">{ location.search }</p>
+			<p data-testid="state">{ JSON.stringify( location.state ) }</p>
+		</>
+	);
 };
 
 interface RenderFlowParams {
@@ -31,7 +44,6 @@ interface RenderFlowParams {
 export const renderFlow = ( flow: Flow ) => {
 	const FakeStepRender = ( { currentStep, dependencies, method } ) => {
 		const navigate = useNavigate();
-		const location = useLocation();
 		const fakeNavigate = ( pathname, state ) => navigate( pathname, { state } );
 		const flowSteps = flow.useSteps();
 		const effectiveStep = currentStep ?? flowSteps[ 0 ].slug;
@@ -53,9 +65,7 @@ export const renderFlow = ( flow: Flow ) => {
 
 		return (
 			<>
-				<p data-testid="pathname">{ `${ location.pathname }${ location.search }` }</p>
-				<p data-testid="search">{ location.search }</p>
-				<p data-testid="state">{ JSON.stringify( location.state ) }</p>
+				<DebugLocation />
 				{ assertionConditionResult && (
 					<p data-testid="assertionConditionResult">
 						{ JSON.stringify( assertionConditionResult ) }
@@ -107,12 +117,49 @@ export const renderFlow = ( flow: Flow ) => {
 	};
 };
 
+type FlowWrapperProps = {
+	currentURL: string;
+	flow: Flow;
+	preferredStepIndex?: number;
+};
+
+const FlowWrapper = ( { currentURL, flow, preferredStepIndex }: FlowWrapperProps ) => {
+	let resolvedURL = currentURL;
+
+	if ( preferredStepIndex ) {
+		const steps = flow.useSteps();
+
+		const targetStep = steps[ preferredStepIndex ] ?? steps[ preferredStepIndex - 1 ];
+		if ( targetStep ) {
+			const url = new URL( currentURL, 'https://example.com' );
+			resolvedURL = `${ url.pathname }/${ targetStep.slug }${ url.search }`;
+		}
+	}
+
+	return (
+		<MemoryRouter basename="setup" initialEntries={ [ resolvedURL ] }>
+			<FlowRenderer flow={ flow } />
+			<DebugLocation />
+		</MemoryRouter>
+	);
+};
+
+type RenderRootProps = {
+	currentURL: string;
+	preferredStepIndex?: number;
+};
+
 export const renderFlowRoot = ( flow: Flow ) => {
-	const render = ( { currentURL = '/some-path?siteSlug=example.wordpress.com' } ) => {
+	const render = ( {
+		currentURL = '/some-path?siteSlug=example.wordpress.com',
+		preferredStepIndex,
+	}: RenderRootProps ) => {
 		renderWithProvider(
-			<MemoryRouter initialEntries={ [ currentURL ] }>
-				<FlowRenderer flow={ flow } />
-			</MemoryRouter>,
+			<FlowWrapper
+				currentURL={ currentURL }
+				flow={ flow }
+				preferredStepIndex={ preferredStepIndex }
+			/>,
 			{
 				initialState: { themes: { queries: [] }, currentUser: { id: 'some-id' } },
 				reducers: {
@@ -122,14 +169,7 @@ export const renderFlowRoot = ( flow: Flow ) => {
 		);
 	};
 
-	const renderWithAct = ( { currentURL = '/some-path?siteSlug=example.wordpress.com' } ) => {
-		act( () => {
-			render( { currentURL } );
-		} );
-	};
-
 	return {
 		render,
-		renderWithAct,
 	};
 };
