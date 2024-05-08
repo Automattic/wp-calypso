@@ -106,6 +106,11 @@ $brand-text: "SF Pro Text", $sans;
 			svg {
 				fill: var(--color-sidebar-gridicon-fill);
 			}
+			&:hover {
+				svg {
+					fill: var(--color-sidebar-gridicon-hover-fill);
+				}
+			}
 		}
 
 		.sidebar__skip-navigation {
@@ -276,7 +281,7 @@ $brand-text: "SF Pro Text", $sans;
 				color: var(--color-sidebar-menu-hover-text);
 				text-decoration: none;
 
-				svg {
+				svg path {
 					fill: var(--color-sidebar-menu-hover-text);
 				}
 			}
@@ -298,10 +303,18 @@ $brand-text: "SF Pro Text", $sans;
 			path {
 				stroke: var(--color-sidebar-gridicon-fill);
 			}
+			&:hover {
+				path {
+					stroke: var(--color-sidebar-gridicon-hover-fill);
+				}
+			}
 		}
 		&.has-unread .sidebar__menu-icon.sidebar_svg-notifications path {
 			fill: var(--color-sidebar-gridicon-fill);
 			stroke: unset;
+			&:hover {
+				fill: var(--color-sidebar-gridicon-hover-fill);
+			}
 		}
 	}
 
