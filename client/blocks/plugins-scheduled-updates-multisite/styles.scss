@@ -102,6 +102,17 @@ $brand-display: "SF Pro Display", sans-serif;
 			border: 1px solid $studio-gray-10;
 			border-radius: 2px;
 
+			&.is-compact {
+				.plugins-update-manager-multisite-filter__search-icon {
+					width: 0.875rem;
+					margin: 0 0.5rem;
+				}
+
+				input {
+					font-size: 0.875rem;
+				}
+			}
+
 			.plugins-update-manager-multisite-filter__search-icon {
 				margin-left: 1rem;
 				margin-right: 0.875rem;
