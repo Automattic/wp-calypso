@@ -51,6 +51,14 @@
 		font-weight: normal;
 	}
 
+	.sites-manage-all-domains-button {
+		border-color: var(--color-neutral-10);
+	}
+
+	.sites-manage-all-domains-button:hover {
+		border-color: var(--color-neutral-20);
+	}
+
 	height: calc(100vh - var(--masterbar-height));
 
 	@media ( min-width: 782px ) {
