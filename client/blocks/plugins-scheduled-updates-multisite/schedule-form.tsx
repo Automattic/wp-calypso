@@ -57,7 +57,9 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 		return ( site as SiteDetails ).capabilities?.update_plugins;
 	};
 
-	const { data: sites } = useSiteExcerptsQuery( [ 'atomic', 'capabilities' ], siteFilter );
+	const { data: sites } = useSiteExcerptsQuery( [ 'atomic' ], siteFilter, 'all', [
+		'capabilities',
+	] );
 	const {
 		data: plugins,
 		isInitialLoading: isPluginsFetching,
