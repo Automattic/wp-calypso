@@ -1,11 +1,13 @@
 .get-report-form__container {
 	box-sizing: border-box;
-	padding: 3.25rem 0;
+	margin: 0 -3rem;
+	padding: 3rem 3rem;
 	border: 1px solid #cbcbcb;
 	background-color: #f8f8f8;
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
+	gap: 20px;
 }
 .get-report-form__title {
 	color: #000;
