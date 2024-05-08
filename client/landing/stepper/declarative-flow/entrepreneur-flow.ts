@@ -1,7 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { anonIdCache } from 'calypso/data/segmentaton-survey';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -46,6 +46,7 @@ const entrepreneurFlow: Flow = {
 		);
 
 		const locale = useFlowLocale();
+		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
 
 		const getEntrepreneurLoginUrl = () => {
 			let hasFlowParams = false;
@@ -75,6 +76,8 @@ const entrepreneurFlow: Flow = {
 
 			switch ( currentStep ) {
 				case SEGMENTATION_SURVEY_SLUG: {
+					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
+
 					if ( userIsLoggedIn ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
@@ -108,6 +111,10 @@ const entrepreneurFlow: Flow = {
 							'.wordpress.com',
 							'.wpcomstaging.com'
 						);
+
+						if ( isMigrationFlow ) {
+							return window.location.replace( `/setup/migration-signup?siteSlug=${ stagingUrl }` );
+						}
 
 						const redirectTo = encodeURIComponent(
 							`https://${ stagingUrl }/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign-with-ai&ref=entrepreneur-signup`
