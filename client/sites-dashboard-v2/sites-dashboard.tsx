@@ -40,11 +40,7 @@ import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/const
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
-import {
-	getSitesPagination,
-	addDummyDataViewPrefix,
-	removeDummyDataViewPrefix,
-} from './sites-dataviews/utils';
+import { getSitesPagination, addDummyDataViewPrefix } from './sites-dataviews/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -205,9 +201,9 @@ const SitesDashboardV2 = ( {
 	// Update site sorting preference on change
 	useEffect( () => {
 		if ( dataViewsState.sort.field ) {
-			const field = removeDummyDataViewPrefix( dataViewsState.sort.field );
 			onSitesSortingChange( {
-				sortKey: siteSortingKeys.find( ( key ) => key.dataView === field )?.sortKey as SitesSortKey,
+				sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
+					?.sortKey as SitesSortKey,
 				sortOrder: dataViewsState.sort.direction || 'asc',
 			} );
 		}
