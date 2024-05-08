@@ -15,6 +15,7 @@ const FullReportButton = styled( Button )`
 `;
 
 const SectionNavbar = styled( SectionNav )`
+	margin-top: 10px;
 	margin-bottom: 32px;
 `;
 
