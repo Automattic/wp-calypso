@@ -57,6 +57,12 @@ const SiteMigrationInstructions: Step = function () {
 		}
 	}, [ fromUrl, hasErrorGetMigrationKey ] );
 
+	useEffect( () => {
+		if ( isSetupCompleted ) {
+			recordTracksEvent( 'calypso_site_migration_instructions_preparation_complete' );
+		}
+	}, [ isSetupCompleted ] );
+
 	const stepContent = (
 		<div className="site-migration-instructions__content">
 			<ol className="site-migration-instructions__list">
@@ -158,7 +164,7 @@ const SiteMigrationInstructions: Step = function () {
 			</ol>
 			<p
 				className={ classNames( 'fade-in', {
-					active: showFallback,
+					active: showFallback || showCopyIntoNewSite,
 				} ) }
 			>
 				{ translate(
@@ -174,7 +180,7 @@ const SiteMigrationInstructions: Step = function () {
 			<StepContainer
 				stepName="site-migration-instructions"
 				shouldHideNavButtons={ false }
-				className="is-step-site-migration-instructions"
+				className="is-step-site-migration-instructions site-migration-instructions-i2"
 				hideSkip={ true }
 				hideBack={ true }
 				formattedHeader={

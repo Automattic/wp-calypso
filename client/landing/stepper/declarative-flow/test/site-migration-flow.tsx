@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
@@ -14,6 +15,7 @@ import siteMigrationFlow from '../site-migration-flow';
 import { getAssertionConditionResult, getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
+const originalIsEnabled = config.isEnabled;
 
 jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
@@ -41,6 +43,16 @@ describe( 'Site Migration Flow', () => {
 		const testSettingsEndpoint = '/rest/v1.4/sites/example.wordpress.com/settings';
 		nock( apiBaseUrl ).get( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( testSettingsEndpoint ).reply( 200, {} );
+		jest
+			.spyOn( config, 'isEnabled' )
+			.mockImplementation( ( key ) =>
+				key === 'migration-flow/remove-processing-step' ? false : originalIsEnabled( key )
+			);
+	} );
+
+	afterEach( () => {
+		// Restore the original implementation after each test
+		jest.restoreAllMocks();
 	} );
 
 	describe( 'useAssertConditions', () => {
@@ -160,7 +172,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'migrate redirects from the import-from page to bundleTransfer step', () => {
+		it( 'migrate redirects from the import-from page to bundleTransfer step if new instructions not enabled', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -175,6 +187,26 @@ describe( 'Site Migration Flow', () => {
 				state: {
 					bundleProcessing: true,
 				},
+			} );
+		} );
+
+		it( 'migrate redirects from the import-from page to new instructions if flag enabled', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			( config.isEnabled as jest.Mock ).mockImplementation( ( key: string ) =>
+				key === 'migration-flow/remove-processing-step' ? true : originalIsEnabled( key )
+			);
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.BUNDLE_TRANSFER.slug,
+				dependencies: {
+					destination: 'migrate',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }?siteSlug=example.wordpress.com`,
+				state: null,
 			} );
 		} );
 

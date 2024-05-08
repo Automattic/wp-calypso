@@ -6,7 +6,7 @@
 
 $section-max-width: 1224px;
 
-.is-section-site-monitoring.theme-default {
+.is-section-site-monitoring.theme-default:not(:has(.is-global-sidebar-visible)) {
 	background-color: var(--studio-white);
 	.focus-content:not(.has-no-sidebar) .layout__content {
 		@media screen and ( max-width: 782px ) {
@@ -15,7 +15,7 @@ $section-max-width: 1224px;
 	}
 }
 
-.is-section-site-monitoring {
+div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	// this overrides the default .layout__content that adds unwanted padding
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {

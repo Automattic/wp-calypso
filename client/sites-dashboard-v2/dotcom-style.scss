@@ -36,14 +36,6 @@
 		display: block;
 	}
 
-	.item-preview__content {
-		.hosting-overview,
-		.site-monitoring-overview {
-			overflow-y: initial;
-			max-height: initial;
-		}
-	}
-
 	height: calc(100vh - var(--masterbar-height));
 
 	@media ( min-width: 782px ) {
@@ -72,8 +64,26 @@
 		flex-wrap: nowrap;
 	}
 
+	.dataviews-wrapper {
+		thead tr.dataviews-view-table__row:hover {
+			background: var(--studio-white);
+		}
+
+		tr.dataviews-view-table__row:hover {
+			background-color: #f7faff;
+		}
+
+		tbody tr.dataviews-view-table__row {
+			cursor: pointer;
+		}
+	}
+
+	table.dataviews-view-table {
+		--color-border-dataviews-view-table: #f1f1f1;
+	}
+
 	table.dataviews-view-table thead .dataviews-view-table__row th {
-		border-bottom-color: var(--color-border-secondary);
+		border-bottom-color: var(--color-border-dataviews-view-table);
 
 		span,
 		.dataviews-view-table-header-button {
@@ -82,7 +92,7 @@
 	}
 
 	table.dataviews-view-table .dataviews-view-table__row td {
-		border-bottom-color: var(--color-border-secondary);
+		border-bottom-color: var(--color-border-dataviews-view-table);
 	}
 
 	table.dataviews-view-table th,
@@ -184,28 +194,92 @@
 
 // Styles collapsed site list.
 .wpcom-site {
+	.layout__content {
+		transition: all 220ms ease-out;
+	}
 	.layout__secondary {
-		transition: all 0.2s ease-in-out;
+		transition: all 220ms ease-out;
 
+		.sidebar__header,
+		.sidebar__body,
+		.sidebar__footer {
+			transition: all 220ms ease-out;
+			> * {
+				transition: all 220ms ease-out;
+			}
+		}
 		.sidebar__header {
-			span.dotcom,
+			flex-wrap: wrap;
+			span.dotcom {
+				background-position: left;
+			}
+			.gap,
 			button.sidebar__item-search,
 			a.sidebar__item-notifications {
-				transition: all 0.2s ease-in-out;
+				justify-content: flex-start;
+				flex-basis: 0%;
+			}
+			.sidebar__menu-link {
+				transition: all 220ms ease-out;
+				min-width: 40px;
+				margin: 0 12px;
+			}
+		}
+		.sidebar__footer {
+			flex-wrap: wrap;
+			.sidebar__footer-profile img {
+				max-width: none;
 			}
 		}
 	}
 	.is-global-sidebar-collapsed {
 		@media ( min-width: 661px ) {
-			.global-sidebar {
-				.sidebar__body {
-					padding-top: 24px;
+			.layout__secondary {
+				transition: all 220ms ease-out;
 
-					.sidebar__menu-link {
-						width: fit-content;
+				.global-sidebar {
+					.sidebar__header,
+					.sidebar__body,
+					.sidebar__footer {
+						transition: all 220ms ease-out;
+						> * {
+							transition: all 220ms ease-out;
+						}
+					}
+					.sidebar__header {
+						flex-direction: row !important;
+						padding-inline: 19px;
+						.gap {
+							flex-basis: 100%;
+						}
+						button.sidebar__item-search,
+						a.sidebar__item-notifications {
+							flex-basis: 100%;
+						}
+					}
+					.sidebar__body {
+						padding-top: 24px;
+						.sidebar__menu-link-text {
+							transition: all 100ms ease-out;
+							transition-delay: 120ms;
+							opacity: 0;
+							display: block !important;
+							width: 0;
+						}
+						.sidebar__menu-link {
+							width: fit-content;
+							min-width: calc(100% - 30px);
 
-						> :first-child {
-							margin-right: 0;
+							> :first-child {
+								transition: all 220ms ease-out;
+								margin-right: 0;
+							}
+						}
+					}
+					.sidebar__footer {
+						flex-direction: row !important;
+						.sidebar__item-help {
+							padding-inline: 0;
 						}
 					}
 				}
@@ -272,7 +346,8 @@
 				border-bottom: 1px solid #f1f1f1 !important;
 			}
 
-			li.is-selected {
+			li.is-selected,
+			li:hover {
 				background-color: #f7faff;
 			}
 		}
@@ -280,10 +355,14 @@
 }
 
 // Styles for site preview pane.
-.wpcom-site .site-preview-pane {
+.wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
 	.section-nav-tabs__list {
 		box-sizing: border-box;
 		overflow-x: auto;
+
+		@media (max-width: $break-large) {
+			padding: 0 8px;
+		}
 	}
 	.item-preview__header {
 		.site-favicon .site-icon {
@@ -292,6 +371,13 @@
 		.item-preview__header-title {
 			font-family: Recoleta, sans-serif;
 		}
+
+		.item-preview__header-content {
+			@media (max-width: $break-large) {
+				padding: 0;
+			}
+		}
+
 		.item-preview__header-content .item-preview__header-title-summary .item-preview__header-summary {
 			display: flex;
 			flex-wrap: wrap;
@@ -314,6 +400,27 @@
 			@include break-medium {
 				height: 32px;
 			}
+		}
+	}
+	.item-preview__content {
+		> * {
+			margin: 0;
+			padding-top: 0;
+			padding-left: 0;
+			padding-right: 0;
+			overflow-y: initial;
+			max-height: initial;
+			max-width: 1400px;
+
+			main {
+				max-width: 100%;
+			}
+		}
+
+		@media (max-width: $break-large) {
+			padding-top: 24px;
+			padding-left: 24px;
+			padding-right: 24px;
 		}
 	}
 }

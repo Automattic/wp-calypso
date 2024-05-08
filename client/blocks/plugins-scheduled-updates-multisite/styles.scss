@@ -1,8 +1,13 @@
 @import "~@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
 
 $brand-display: "SF Pro Display", sans-serif;
 
 .plugins-update-manager-multisite {
+	@media screen and (max-width: $break-small) {
+		margin: 1rem;
+	}
+
 	h1 {
 		font-size: 2rem;
 		margin-bottom: 1rem;
@@ -114,6 +119,10 @@ $brand-display: "SF Pro Display", sans-serif;
 		justify-content: space-between;
 		padding-bottom: 1.5rem;
 
+		&.no-border {
+			border-block-end: none;
+		}
+
 		h1 {
 			font-size: 1.5rem;
 			font-style: normal;
@@ -138,6 +147,93 @@ $brand-display: "SF Pro Display", sans-serif;
 			margin: 1.5rem auto;
 			font-size: rem(18px);
 			line-height: 1.625;
+		}
+	}
+
+
+	.plugins-update-manager-multisite-card {
+		margin-bottom: 1rem;
+		border-bottom: solid 1px var(--studio-gray-5);
+
+		&__label {
+			font-size: 0.875rem;
+			margin-bottom: 0.75rem;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+
+			label {
+				display: block;
+				color: var(--studio-gray-40);
+			}
+
+			strong {
+				font-weight: 500;
+			}
+
+			.badge-component {
+				margin-inline-start: 0.5rem;
+			}
+		}
+
+		&__name-label {
+			// Compensate for the big icon
+			margin-bottom: 0.75rem - rem(10px);
+		}
+
+		&__last-update-label {
+			align-items: flex-start;
+
+			.components-button {
+				font-size: 0.875rem;
+			}
+
+			label {
+				display: inline-flex;
+				align-items: center;
+			}
+
+			> div {
+				display: flex;
+				flex-direction: row-reverse;
+				align-items: center;
+
+				.badge-component {
+					margin-inline-end: 0;
+					padding: 0 9px;
+
+					svg {
+						top: 3px;
+						width: 18px;
+						height: 18px;
+					}
+				}
+			}
+		}
+
+		&__sites {
+			margin: 1rem -1rem;
+			background-color: $studio-gray-0;
+
+
+			&-site {
+				border-bottom: solid 1px var(--studio-gray-5);
+				padding-top: 1rem;
+
+				> div {
+					padding: 0 1rem 1rem 1rem;
+				}
+			}
+		}
+
+	}
+
+	.components-card__footer {
+		display: flex;
+		align-items: baseline;
+
+		.validation-msg {
+			width: 100%;
 		}
 	}
 }

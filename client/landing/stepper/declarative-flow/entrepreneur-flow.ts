@@ -14,6 +14,8 @@ import { ProcessingResult } from './internals/steps-repository/processing-step/c
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
+const SEGMENTATION_SURVEY_SLUG = 'start';
+
 const entrepreneurFlow: Flow = {
 	name: ENTREPRENEUR_FLOW,
 
@@ -23,7 +25,7 @@ const entrepreneurFlow: Flow = {
 		return [
 			// Replacing the `segmentation-survey` slug with `start` as having the
 			// word `survey` in the address bar might discourage users from continuing.
-			{ ...STEPS.SEGMENTATION_SURVEY, ...{ slug: 'start' } },
+			{ ...STEPS.SEGMENTATION_SURVEY, ...{ slug: SEGMENTATION_SURVEY_SLUG } },
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.WAIT_FOR_ATOMIC,
@@ -72,9 +74,9 @@ const entrepreneurFlow: Flow = {
 			recordSubmitStep( providedDependencies, '' /* intent */, flowName, currentStep );
 
 			switch ( currentStep ) {
-				case 'start': {
+				case SEGMENTATION_SURVEY_SLUG: {
 					if ( userIsLoggedIn ) {
-						return navigate( 'create-site' );
+						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
 
 					// Redirect user to the sign-in/sign-up page before site creation.
@@ -82,23 +84,23 @@ const entrepreneurFlow: Flow = {
 					return window.location.replace( entrepreneurLoginUrl );
 				}
 
-				case 'create-site': {
-					return navigate( 'processing', {
+				case STEPS.SITE_CREATION_STEP.slug: {
+					return navigate( STEPS.PROCESSING.slug, {
 						currentStep,
 					} );
 				}
 
-				case 'processing': {
+				case STEPS.PROCESSING.slug: {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
-						return navigate( 'error' );
+						return navigate( STEPS.ERROR.slug );
 					}
 
 					const { siteId, siteSlug } = providedDependencies;
 
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+						return navigate( STEPS.WAIT_FOR_PLUGIN_INSTALL.slug, { siteId, siteSlug } );
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
@@ -120,17 +122,17 @@ const entrepreneurFlow: Flow = {
 						return window.location.assign( redirectToWithSSO );
 					}
 
-					return navigate( 'waitForAtomic', { siteId, siteSlug } );
+					return navigate( STEPS.WAIT_FOR_ATOMIC.slug, { siteId, siteSlug } );
 				}
 
-				case 'waitForAtomic': {
-					return navigate( 'processing', {
+				case STEPS.WAIT_FOR_ATOMIC.slug: {
+					return navigate( STEPS.PROCESSING.slug, {
 						currentStep,
 					} );
 				}
 
-				case 'waitForPluginInstall': {
-					return navigate( 'processing' );
+				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
+					return navigate( STEPS.PROCESSING.slug );
 				}
 			}
 			return providedDependencies;

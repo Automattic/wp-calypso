@@ -91,6 +91,7 @@ const MainCards = ( {
 	isWpcomStagingSite,
 	isBusinessTrial,
 	siteId,
+	siteSlug,
 } ) => {
 	const mainCards = [
 		{
@@ -141,7 +142,7 @@ const MainCards = ( {
 		},
 		siteId && {
 			feature: 'wp-admin',
-			content: <SiteAdminInterface siteId={ siteId } isHosting />,
+			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
 			type: 'basic',
 		},
 	].filter( ( card ) => card !== null );
@@ -287,6 +288,7 @@ const Hosting = ( props ) => {
 								isWpcomStagingSite={ isWpcomStagingSite }
 								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
 								siteId={ siteId }
+								siteSlug={ siteSlug }
 							/>
 						</Column>
 						<Column type="sidebar">

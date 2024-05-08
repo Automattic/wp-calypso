@@ -10,8 +10,9 @@ import { MultisitePluginUpdateManagerContext } from 'calypso/blocks/plugins-sche
 import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleErrors } from './schedule-errors';
+import { ScheduleListCards } from './schedule-list-cards';
+import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleListFilter } from './schedule-list-filter';
 import { ScheduleListTable } from './schedule-list-table';
 
@@ -83,7 +84,7 @@ export const ScheduleList = ( props: Props ) => {
 		.filter( ( schedule ) => schedule.sites.length > 0 );
 
 	const isLoading = isLoadingSchedules;
-	const ScheduleListComponent = isMobile ? null : ScheduleListTable;
+	const ScheduleListComponent = isMobile ? ScheduleListCards : ScheduleListTable;
 	const isScheduleEmpty = schedules.length === 0 && isFetched;
 
 	return (
@@ -106,7 +107,7 @@ export const ScheduleList = ( props: Props ) => {
 
 			{ schedules.length === 0 && isLoading && <Spinner /> }
 			{ isScheduleEmpty && <ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } /> }
-			{ isFetched && filteredSchedules.length > 0 && ScheduleListComponent ? (
+			{ ! isScheduleEmpty && ScheduleListComponent ? (
 				<>
 					<ScheduleListFilter />
 					<ScheduleListComponent
