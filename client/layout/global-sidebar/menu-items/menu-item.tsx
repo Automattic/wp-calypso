@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import { getShouldShowGlobalSiteSidebar } from 'calypso/state/global-sidebar/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { ReactNode, LegacyRef } from 'react';
 
 interface Props {
 	url?: string;
@@ -11,7 +12,7 @@ interface Props {
 	onClick: () => void;
 	tooltip: string;
 	tooltipPlacement: 'bottom' | 'top' | 'right';
-	icon?: React.ReactNode;
+	icon?: ReactNode;
 	className: string;
 	isActive?: boolean;
 	preloadSection?: () => void;
@@ -41,13 +42,15 @@ const SidebarMenuItem = forwardRef< HTMLButtonElement | HTMLAnchorElement, Props
 		const preloadedRef = useRef( false );
 
 		const selectedSiteId = useSelector( getSelectedSiteId );
-		const { currentSection } = useCurrentRoute();
+		const { currentSection } = useCurrentRoute() as {
+			currentSection: false | { group?: string; name?: string };
+		};
 		const isSidebarCollapsed = useSelector( ( state ) => {
 			return getShouldShowGlobalSiteSidebar(
 				state,
 				selectedSiteId,
-				currentSection?.group,
-				currentSection?.name
+				currentSection !== false ? currentSection?.group ?? '' : '',
+				currentSection !== false ? currentSection?.name ?? '' : ''
 			);
 		} );
 
@@ -80,11 +83,11 @@ const SidebarMenuItem = forwardRef< HTMLButtonElement | HTMLAnchorElement, Props
 		};
 
 		return url ? (
-			<a { ...attributes } href={ url } ref={ ref }>
+			<a { ...attributes } href={ url } ref={ ref as LegacyRef< HTMLAnchorElement > }>
 				{ renderChildren() }
 			</a>
 		) : (
-			<button { ...attributes } ref={ ref }>
+			<button { ...attributes } ref={ ref as LegacyRef< HTMLButtonElement > }>
 				{ renderChildren() }
 			</button>
 		);
