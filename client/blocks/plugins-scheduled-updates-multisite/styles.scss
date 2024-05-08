@@ -8,6 +8,13 @@ $brand-display: "SF Pro Display", sans-serif;
 		margin: 1rem;
 	}
 
+	&.plugins-update-manager-multisite-edit,
+	&.plugins-update-manager-multisite-create {
+		h1 {
+			font-size: 2rem !important;
+		}
+	}
+
 	h1 {
 		font-size: 2rem;
 		margin-bottom: 1rem;
