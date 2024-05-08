@@ -30,6 +30,9 @@
 
 	.a4a-layout__header {
 		align-items: initial;
+		@media ( max-width: 660px ) {
+			align-items: center;
+		}
 	}
 
 	.a4a-layout__header-main {
@@ -45,14 +48,21 @@
 		margin: 4px 0 0 0;
 		line-height: 20px;
 		letter-spacing: -0.15px;
+		white-space: nowrap;
 	}
 
-	.a4a-layout__header-actions a {
-		font-weight: normal;
+	.a4a-layout__header-actions {
+		a {
+			font-weight: normal;
+		}
 	}
 
 	.sites-manage-all-domains-button {
 		border-color: var(--color-neutral-10);
+
+		@media (max-width: 959px) {
+			margin-inline-end: 8px !important;
+		}
 	}
 
 	.sites-manage-all-domains-button:hover {
@@ -335,6 +345,10 @@
 		.sites-site-favicon {
 			display: flex;
 			margin-right: 0;
+		}
+
+		.a4a-layout__header {
+			align-items: center !important;
 		}
 
 		.sites-site-thumbnail,
