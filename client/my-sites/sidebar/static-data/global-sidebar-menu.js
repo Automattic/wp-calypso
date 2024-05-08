@@ -22,14 +22,6 @@ export default function globalSidebarMenu() {
 			type: 'menu-item',
 			url: '/domains/manage',
 		},
-		{
-			icon: 'dashicons-admin-plugins',
-			slug: 'plugins',
-			title: translate( 'Plugins' ),
-			navigationLabel: translate( 'Update schedules' ),
-			type: 'menu-item',
-			url: '/plugins/scheduled-updates',
-		},
 		{ type: 'separator' },
 		{
 			icon: (
