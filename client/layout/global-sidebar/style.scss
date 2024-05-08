@@ -413,7 +413,7 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__body {
 			padding-top: 0;
-			overflow-y: visible;
+			overflow-y: hidden;
 		}
 	}
 }
@@ -440,6 +440,7 @@ $brand-text: "SF Pro Text", $sans;
 			}
 
 			.sidebar__body {
+				overflow-y: visible;
 				.sidebar__menu-item-parent .sidebar__menu-link {
 					margin: 0 auto;
 
