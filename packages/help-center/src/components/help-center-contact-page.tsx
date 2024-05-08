@@ -105,11 +105,11 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	}, [ isLoading, renderChat.state, renderEmail.render ] );
 
 	const liveChatHeaderText = useMemo( () => {
-		if ( isEnglishLocale || ! hasTranslation( 'Live chat (English)' ) ) {
-			return __( 'Live chat', __i18n_text_domain__ );
+		if ( isEnglishLocale || ! hasTranslation( 'Contact WordPress.com Support (English)' ) ) {
+			return __( 'Contact WordPress.com Support', __i18n_text_domain__ );
 		}
 
-		return __( 'Live chat (English)', __i18n_text_domain__ );
+		return __( 'Contact WordPress.com Support (English)', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	const emailHeaderText = useMemo( () => {
