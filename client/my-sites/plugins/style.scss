@@ -55,6 +55,28 @@ body.is-section-plugins {
 		width: 400px;
 		flex: unset;
 		transition: all 0.2s;
+
+		.plugins-update-manager-multisite__header {
+			padding: 1rem 1.125rem;
+		}
+
+		.plugins-update-manager-multisite-filter {
+			margin: 0;
+			padding: 1rem 1.5rem;
+		}
+
+		.plugins-update-manager-multisite-card {
+			margin: 0;
+			padding: 0.5rem 1.5rem;
+		}
+	}
+
+	.a4a-layout-column.scheduled-updates-list {
+		.plugins-update-manager-multisite__header,
+		.plugins-update-manager-multisite-filter {
+			margin: 0;
+			padding: 1.5rem 4rem;
+		}
 	}
 
 	.a4a-layout-column.scheduled-updates-edit,
