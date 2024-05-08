@@ -58,13 +58,23 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
+			padding-left: 30px;
+		}
+		.dataviews-view-table tr th:last-child,
+		.dataviews-view-table tr td:last-child {
+			padding-right: 30px;
+			width: 20px;
+			white-space: nowrap;
+		}
+	}
+	@media (min-width: $break-huge) {
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
 			padding-left: 64px;
 		}
 		.dataviews-view-table tr th:last-child,
 		.dataviews-view-table tr td:last-child {
 			padding-right: 64px;
-			width: 20px;
-			white-space: nowrap;
 		}
 	}
 
@@ -136,7 +146,7 @@
 		}
 		.dataviews-view-table tr td:last-child {
 			padding: 0;
-			padding-inline-end: 8px;
+			padding-inline-end: 16px;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
@@ -154,7 +164,7 @@
 			padding-bottom: 8px;
 
 			& > :first-child {
-				margin-inline-start: 8px;
+				margin-inline-start: 16px;
 			}
 
 			.components-input-control {
@@ -216,7 +226,7 @@
 			}
 
 			th[data-field-id="actions"] {
-				padding-inline-end: 12px;
+				padding-inline-end: 16px;
 				text-align: end;
 			}
 		}
@@ -562,6 +572,20 @@
 				.sites-overview {
 					padding: 0;
 
+					.dataviews-filters__view-actions {
+						& > :first-child {
+							margin-inline-start: 30px;
+						}
+
+						& > :last-child {
+							margin-inline-end: 30px;
+						}
+					}
+				}
+			}
+
+			@media only screen and (min-width: $break-huge) {
+				.sites-overview {
 					.dataviews-filters__view-actions {
 						& > :first-child {
 							margin-inline-start: 64px;

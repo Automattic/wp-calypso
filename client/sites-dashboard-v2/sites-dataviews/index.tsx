@@ -110,6 +110,7 @@ const DotcomSitesDataViews = ( {
 						<span>{ __( 'Site' ) }</span>
 					</SiteSort>
 				),
+				width: '45%',
 				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
 				render: ( { item }: { item: SiteInfo } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
@@ -130,6 +131,7 @@ const DotcomSitesDataViews = ( {
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
+				width: '116px',
 			},
 			{
 				id: 'last-publish',
@@ -166,6 +168,7 @@ const DotcomSitesDataViews = ( {
 				render: ( { item }: { item: SiteInfo } ) => <ActionsField site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
+				width: '48px',
 			},
 			// Dummy fields to allow people to sort by them on mobile.
 			{
