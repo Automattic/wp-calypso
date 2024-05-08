@@ -23,12 +23,14 @@
 	}
 
 	.foldable-card__content {
+		padding-block-start: 0;
 		border: none;
 	}
 
 	&.foldable-card.is-expanded .foldable-card__content {
+		padding-block: 0 16px;
+		padding-inline: 24px;
 		border: none;
-		padding-block-start: 8px;
 	}
 
 	.a4a-migration-offer__title {

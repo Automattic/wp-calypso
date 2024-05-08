@@ -39,15 +39,18 @@
 			color: var(--color-neutral-60);
 			font-weight: 400;
 			font-size: 0.875rem;
+		.foldable-card__header {
+			padding-inline: 24px;
 		}
 
 		.foldable-card__content {
-			border: none;
 			padding-block-start: 0;
-		}
-		.foldable-card.is-expanded .foldable-card__content {
 			border: none;
-			padding: 0;
+		}
+		&.foldable-card.is-expanded .foldable-card__content {
+			padding-block: 0 16px;
+			padding-inline: 24px;
+			border: none;
 		}
 
 		.a4a-offering-item__button {
@@ -59,7 +62,7 @@
 		display: grid;
 		gap: 16px;
 
-		margin: 8px 0 16px 0;
+		margin: 8px 0 24px 0;
 		padding: 0;
 
 		list-style-type: none;
