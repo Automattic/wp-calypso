@@ -166,7 +166,7 @@ export default function SiteProfiler( props: Props ) {
 
 			{ showGetReportForm && (
 				<LayoutBlock>
-					<GetReportForm />
+					<GetReportForm url={ url } />
 				</LayoutBlock>
 			) }
 			<LayoutBlock

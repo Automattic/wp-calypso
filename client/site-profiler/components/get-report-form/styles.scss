@@ -3,7 +3,7 @@
 	margin: 0 -3rem;
 	padding: 3rem 3rem;
 	border: 1px solid #cbcbcb;
-	background-color: #f8f8f8;
+	// background-color: #f8f8f8;
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
@@ -18,7 +18,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	flex-basis: 500px;
+	flex-basis: 620px;
 	gap: 20px;
 	flex-grow: 1;
 }
@@ -35,11 +35,43 @@
 
 .get-report-form__form {
 	display: flex;
-	gap: 20px;
+	gap: 25px;
 	flex-wrap: wrap;
+
+	&-email.form-text-input {
+		flex-basis: 300px;
+	}
 }
 
-.get-report-form__footer {
+
+.get-report-form__form-body {
+	display: flex;
+	gap: 20px;
+	flex-wrap: wrap;
+	flex-grow: 1;
+
+	& fieldset {
+		flex-basis: 300px;
+		margin-bottom: 0;
+	}
+}
+
+input[type="text"].form-text-input.get-report-form__form {
+	&-name,
+	&-email {
+		border-top: none;
+		border-left: none;
+		border-right: none;
+
+		&:focus,
+		&:hover,
+		&:focus:hover {
+			box-shadow: none;
+		}
+	}
+}
+
+.get-report-form__form-footer {
 	display: flex;
 	gap: 20px;
 	.terms-checkbox {
