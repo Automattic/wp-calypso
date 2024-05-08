@@ -113,7 +113,7 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 
 				<p className="user-feedback-modal-form__instruction">
 					{ translate(
-						'Your product feedback is extremely valuable to us. Our goal is to help you do your work better and more efficiently - all feedback is sent to our product team and helps inform our development roadmap.'
+						'Your feedback is extremely valuable to us. All feedback is set to our product and program teams, and helps to inform how we evolve our offering.'
 					) }
 				</p>
 
