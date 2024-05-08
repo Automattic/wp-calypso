@@ -1,3 +1,4 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -14,6 +15,7 @@ import { SiteInfo } from './interfaces';
 import { SiteSort } from './sites-site-sort';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
+import { addDummyDataViewPrefix } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
 import type {
 	DataViewsColumn,
@@ -50,6 +52,10 @@ const DotcomSitesDataViews = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
+
+	// Display the `Sort By` option only when the fields are hidden on smaller viewport.
+	const isSmallScreen = useBreakpoint( '<1180px' );
+	const enableSorting = isSmallScreen || dataViewsState.type === 'list';
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
@@ -133,11 +139,20 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'last-publish',
-				header: <span>{ __( 'Last Publish' ) }</span>,
+				header: (
+					<SiteSort
+						isSortable={ true }
+						columnKey="last-publish"
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+					>
+						<span>{ __( 'Last Publish' ) }</span>
+					</SiteSort>
+				),
 				render: ( { item }: { item: SiteInfo } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'stats',
@@ -158,15 +173,30 @@ const DotcomSitesDataViews = ( {
 				enableHiding: false,
 				enableSorting: false,
 			},
+			// Dummy fields to allow people to sort by them on mobile.
 			{
-				id: 'magic',
-				header: __( 'Magic' ),
-				render: () => <></>,
+				id: addDummyDataViewPrefix( 'site' ),
+				header: <span>{ __( 'Site' ) }</span>,
+				render: () => null,
+				enableHiding: false,
+				enableSorting,
+			},
+			{
+				id: addDummyDataViewPrefix( 'last-publish' ),
+				header: <span>{ __( 'Last Publish' ) }</span>,
+				render: () => null,
+				enableHiding: false,
+				enableSorting,
+			},
+			{
+				id: addDummyDataViewPrefix( 'last-interacted' ),
+				header: __( 'Last Interacted' ),
+				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
 			},
 		],
-		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState ]
+		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, enableSorting ]
 	);
 
 	// Create the itemData packet state
