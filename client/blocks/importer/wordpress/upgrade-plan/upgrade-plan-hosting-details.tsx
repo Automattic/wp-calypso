@@ -14,6 +14,7 @@ import {
 	upgradePlanSiteMetricsLcpThreshold,
 } from './constants';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
+import wordpressCwvtechReportJson from './wordpress-cwvtech-report.json';
 
 export const UpgradePlanHostingDetails = () => {
 	const translate = useTranslate();
@@ -44,6 +45,7 @@ export const UpgradePlanHostingDetails = () => {
 		siteMetricData?.basic?.lcp && siteMetricData?.basic?.lcp > upgradePlanSiteMetricsLcpThreshold;
 
 	if ( showUpdatedSpeedMetrics ) {
+		const wordpressLCP = Math.round( 100 * wordpressCwvtechReportJson?.goodLCP );
 		const percentageDifference = Math.round(
 			100 *
 				Math.abs(
@@ -52,9 +54,10 @@ export const UpgradePlanHostingDetails = () => {
 				)
 		);
 		upgradePlanHostingDetailsList[ 1 ].description = translate(
-			'83% of sites on WordPress.com are at least %(percentageDifference)s faster than yours.',
+			'%(wordpressLCP)s of sites on WordPress.com are at least %(percentageDifference)s faster than yours.',
 			{
 				args: {
+					wordpressLCP: `${ wordpressLCP }%`,
 					percentageDifference: `${ percentageDifference }%`,
 				},
 			}
