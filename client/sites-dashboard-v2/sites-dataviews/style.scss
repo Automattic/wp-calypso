@@ -83,6 +83,10 @@
 }
 
 .sites-dashboard__layout:not(.preview-hidden) {
+	.sites-dataviews__preview-trigger {
+		flex-shrink: 0;
+	}
+
 	.sites-dataviews__site-name {
 		padding: 0;
 
