@@ -1,13 +1,13 @@
 {
-	"name": "@automattic/sites",
+	"name": "@automattic/site-picker",
 	"version": "1.0.0",
-	"description": "Automattic Sites utilities.",
+	"description": "Automattic Site Picker.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.ts",
+	"calypso:src": "src/index.tsx",
 	"types": "dist/types/index.d.ts",
 	"sideEffects": [
 		"*.css",
@@ -16,26 +16,29 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/sites"
+		"directory": "packages/site-picker"
 	},
 	"publishConfig": {
 		"access": "public"
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
-		"@automattic/data-stores": "workspace:^",
-		"@automattic/search": "workspace:^"
+		"@automattic/tour-kit": "workspace:^",
+		"@wordpress/dom": "^3.57.0",
+		"@wordpress/i18n": "^4.57.0",
+		"@wordpress/icons": "^9.48.0",
+		"classnames": "^2.3.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.7.0",
+		"@wordpress/data": "^10.2.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redux": "^4.2.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.4.5",
-		"@testing-library/react": "^15.0.7",
+		"@testing-library/jest-dom": "^6.4.2",
+		"@testing-library/react": "^14.3.1",
 		"typescript": "^5.3.3"
 	},
 	"scripts": {
