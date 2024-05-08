@@ -17,7 +17,7 @@ const NOTIFICATION_DURATION = 3000;
 const DEFAULT_CHECK_INTERVAL = 5;
 
 export default function useToggleActivateMonitor(
-	sites: Array< { blog_id: number; url: string } >
+	sites: Array< Site >
 ): ( isEnabled: boolean ) => void {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -104,7 +104,11 @@ export default function useToggleActivateMonitor(
 			sites.forEach( ( site ) =>
 				requests.push( {
 					site,
-					mutation: toggleActivateMonitoring.mutateAsync( { siteId: site.blog_id, params } ),
+					mutation: toggleActivateMonitoring.mutateAsync( {
+						siteId: site.blog_id,
+						params,
+						hasJetpackPluginInstalled: site?.enabled_plugin_slugs?.includes( 'jetpack' ) ?? false,
+					} ),
 				} )
 			);
 			const promises = await Promise.allSettled(
