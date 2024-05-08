@@ -158,7 +158,11 @@ $brand-display: "SF Pro Display", sans-serif;
 
 	.plugins-update-manager-multisite-card {
 		margin-bottom: 1rem;
-		border-bottom: solid 1px var(--studio-gray-5);
+		border-bottom: solid 1px var(--studio-gray-0);
+
+		&:first-child {
+			border-top: solid 1px var(--studio-gray-0);
+		}
 
 		&__label {
 			font-size: 0.875rem;
