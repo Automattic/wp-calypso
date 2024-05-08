@@ -56,6 +56,11 @@
 		.foldable-card__action {
 			right: 8px;
 		}
+
+		.foldable-card__expand .gridicon {
+			fill: var(--color-neutral-100);
+		}
+
 		.a4a-offering-item__button {
 			font-weight: 500;
 		}
