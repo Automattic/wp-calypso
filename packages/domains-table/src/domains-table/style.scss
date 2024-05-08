@@ -21,7 +21,14 @@
 		--row-gap: 20px;
 
 		display: grid;
-		gap: var(--row-gap) 16px;
+
+		th,
+		td {
+			padding: var(--row-gap) 8px;
+			&:first-child {
+				padding-inline-start: 0;
+			}
+		}
 
 		// Note: The checkbox does not count for column counting purposes
 
@@ -88,6 +95,12 @@
 
 	.domains-table__primary-domain-label {
 		margin-bottom: 4px;
+	}
+
+	.domains-table__row {
+		&:has(a.domains-table__domain-name) {
+			cursor: pointer;
+		}
 	}
 
 	.domains-table-row__status-cell {
