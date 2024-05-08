@@ -23,7 +23,7 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 	const isProductWithTierList = isJetpackAISlug( product.productSlug );
 
 	const tierOptions = useMemo( () => {
-		if ( ! isJetpackAISlug( product.productSlug ) ) {
+		if ( ! isProductWithTierList ) {
 			return [];
 		}
 
@@ -37,7 +37,7 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 				label: PRODUCT_TIER_OPTIONS[ id ].toString(),
 			};
 		} );
-	}, [ listPrices.priceTierList, product.productSlug ] );
+	}, [ listPrices.priceTierList, product.productSlug, isProductWithTierList ] );
 
 	const onDropdownTierSelect = useCallback(
 		( { value: slug }: { value: string } ) => {

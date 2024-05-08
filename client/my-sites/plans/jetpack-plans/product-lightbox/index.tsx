@@ -13,11 +13,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
 import { PricingBreakdown } from '../product-store/pricing-breakdown';
 import { ProductStoreBaseProps } from '../product-store/types';
-import { Duration, SelectorProduct } from '../types';
 import PaymentPlan from './payment-plan';
 import './style.scss';
 import ProductSelect from './product-select';
 import QuantityDropdown from './quantity-dropdown';
+import type { Duration, SelectorProduct } from '../types';
 
 type Props = ProductStoreBaseProps & {
 	product: SelectorProduct;
