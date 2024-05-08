@@ -2,6 +2,8 @@ import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import * as controller from './controller';
 
+import './dotcom-nav-redesign-v2.scss';
+
 export default function () {
 	page( '/me', controller.sidebar, controller.profile, makeLayout, clientRender );
 
