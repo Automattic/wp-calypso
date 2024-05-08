@@ -12,7 +12,6 @@ import type { Flow, ProvidedDependencies } from '../../internals/types';
 export const getFlowLocation = () => {
 	return {
 		path: screen.getByTestId( 'pathname' ).textContent,
-		search: screen.getByTestId( 'search' ).textContent,
 		state: JSON.parse( screen.getByTestId( 'state' ).textContent || '{}' ),
 	};
 };
