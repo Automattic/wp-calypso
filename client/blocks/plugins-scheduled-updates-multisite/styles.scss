@@ -182,6 +182,10 @@ $brand-display: "SF Pro Display", sans-serif;
 			border-top: solid 1px var(--studio-gray-0);
 		}
 
+		&.selected {
+			background: #f7faff;
+		}
+
 		&__label {
 			font-size: 0.875rem;
 			margin-bottom: 0.75rem;
