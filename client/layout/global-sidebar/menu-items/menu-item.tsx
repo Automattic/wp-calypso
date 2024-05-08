@@ -5,7 +5,22 @@ import { useCurrentRoute } from 'calypso/components/route';
 import { getShouldShowGlobalSiteSidebar } from 'calypso/state/global-sidebar/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const SidebarMenuItem = forwardRef(
+interface Props {
+	url?: string;
+	tipTarget?: string;
+	onClick: () => void;
+	tooltip: string;
+	tooltipPlacement: 'bottom' | 'top' | 'right';
+	icon?: React.ReactNode;
+	className: string;
+	isActive?: boolean;
+	preloadSection?: () => void;
+	hasUnseen?: boolean;
+	alwaysShowContent?: boolean;
+	disabled?: boolean;
+}
+
+const SidebarMenuItem = forwardRef< HTMLButtonElement | HTMLAnchorElement, Props >(
 	(
 		{
 			url,
