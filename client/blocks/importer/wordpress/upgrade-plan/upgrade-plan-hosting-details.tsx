@@ -45,9 +45,11 @@ export const UpgradePlanHostingDetails = () => {
 
 	if ( showUpdatedSpeedMetrics ) {
 		const percentageDifference = Math.round(
-			( ( siteMetricData?.basic?.lcp - upgradePlanSiteMetricsLcpThreshold ) /
-				upgradePlanSiteMetricsLcpThreshold ) *
-				100
+			100 *
+				Math.abs(
+					( siteMetricData?.basic?.lcp - upgradePlanSiteMetricsLcpThreshold ) /
+						( ( siteMetricData?.basic?.lcp + upgradePlanSiteMetricsLcpThreshold ) / 2 )
+				)
 		);
 		upgradePlanHostingDetailsList[ 1 ].description = translate(
 			'83% of sites on WordPress.com are at least %(percentageDifference)s faster than yours.',
