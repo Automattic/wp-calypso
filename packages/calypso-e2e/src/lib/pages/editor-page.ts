@@ -700,7 +700,7 @@ export class EditorPage {
 		timeout,
 	}: { visit?: boolean; timeout?: number } = {} ): Promise< URL > {
 		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
-		const postStatusButtonText = await this.editorToolbarComponent.getPostStatusButtonText();
+		const isSchedule = await this.editorToolbarComponent.isScheduledPostStatus();
 		const actionsArray = [];
 
 		// Every publish action requires at least one click on the EditorToolbarComponent.
@@ -712,13 +712,12 @@ export class EditorPage {
 		// is added to the array of actions.
 		const requiresSecondClick =
 			! [ 'save', 'update' ].includes( publishButtonText.toLowerCase() ) ||
-			( publishButtonText.toLowerCase() === 'save' &&
-				postStatusButtonText?.toLowerCase() === 'scheduled' );
+			( publishButtonText.toLowerCase() === 'save' && isSchedule );
 
 		if ( requiresSecondClick ) {
 			actionsArray.push( this.editorPublishPanelComponent.publish() );
 		}
-
+		console.log( [ publishButtonText, isSchedule, actionsArray ] );
 		// Resolve the promises.
 		const [ response ] = await Promise.all( [
 			// First URL matches Atomic requests while the second matches Simple requests.

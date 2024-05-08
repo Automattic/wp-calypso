@@ -19,6 +19,7 @@ const selectors = {
 
 	// Post status
 	postStatusButton: `button.editor-post-status-trigger`,
+	publishTimeButton: `button.editor-post-schedule__dialog-toggle`,
 
 	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
 		`button[role="menuitem"] span:text("${ target }")`,
@@ -265,19 +266,34 @@ export class EditorToolbarComponent {
 	}
 
 	/**
-	 * Returns the text present for the post status button.
+	 * Returns whether the current post is a schedule by checking button states
+	 * on the page
 	 *
 	 * @returns {Promise<string>} String found on the button.
 	 */
-	async getPostStatusButtonText(): Promise< string | null > {
+	async isScheduledPostStatus(): Promise< boolean > {
 		const editorParent = await this.editor.parent();
-		const postStatusButtonLocator = editorParent.locator( selectors.postStatusButton );
 
-		if ( ! ( await postStatusButtonLocator.isVisible() ) ) {
-			return null;
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await this.openSettings( 'Settings' );
+			await editorParent.getByRole( 'tab', { name: 'Post' } ).click();
+
+			const publishTimeText = await editorParent.locator( selectors.publishTimeButton ).innerText();
+			const isSchedule = publishTimeText.toLowerCase() !== 'immediately';
+
+			await editorParent.getByRole( 'button', { name: 'Close Settings' } ).click();
+
+			return isSchedule;
 		}
 
-		return await postStatusButtonLocator.innerText();
+		const postStatusButtonLocator = editorParent.locator( selectors.postStatusButton );
+		if ( ! ( await postStatusButtonLocator.isVisible() ) ) {
+			return false;
+		}
+
+		const statusText = await postStatusButtonLocator.innerText();
+
+		return statusText.toLowerCase() === 'scheduled';
 	}
 
 	/**
