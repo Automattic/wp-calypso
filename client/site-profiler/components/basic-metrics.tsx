@@ -2,14 +2,13 @@ import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef } from 'react';
 import { BASIC_METRICS_UNITS } from 'calypso/data/site-profiler/metrics-dictionaries';
+import { calculateMetricsSectionScrollOffset } from 'calypso/site-profiler/utils/calculate-metrics-section-scroll-offset';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { BasicMetrics as BasicMetricsType } from 'calypso/data/site-profiler/types';
 
 const Container = styled.div`
-	scroll-margin-top: calc(
-		64px + ${ ( props: { isLoggedIn: boolean } ) => ( props.isLoggedIn ? '32px' : '0px' ) }
-	); // add the topbar height when the user is logged in
+	scroll-margin-top: ${ calculateMetricsSectionScrollOffset }px;
 `;
 
 export const BasicMetrics = forwardRef(

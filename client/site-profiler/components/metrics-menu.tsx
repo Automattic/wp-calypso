@@ -53,7 +53,7 @@ export const MetricsMenu: React.FC< MetricsMenuProps > = ( props: MetricsMenuPro
 
 	return (
 		<StickyPanel>
-			<SectionNavbar>
+			<SectionNavbar className="metrics-menu-navbar">
 				<NavTabs>
 					<NavItem
 						onClick={ () => onMenuItemClick( MetricsMenuTabs.basic ) }
