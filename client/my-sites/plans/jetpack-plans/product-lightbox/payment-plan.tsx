@@ -35,7 +35,16 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching, priceTierList } =
 		useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
 
-	const currentTier = quantity && priceTierList.find( ( tier ) => tier.maximum_units === quantity );
+	const currentTier =
+		quantity &&
+		priceTierList.find( ( tier ) => {
+			if ( tier.maximum_units ) {
+				return quantity >= tier.minimum_units && quantity <= tier.maximum_units;
+			}
+
+			return quantity >= tier.minimum_units;
+		} );
+
 	const currentTierPrice = currentTier && currentTier.minimum_price / 100 / 12;
 	const currentPrice = isNumber( discountedPrice ) ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
