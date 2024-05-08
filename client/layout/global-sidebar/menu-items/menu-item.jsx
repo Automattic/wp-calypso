@@ -1,6 +1,10 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import React, { useRef, forwardRef, Fragment } from 'react';
+import { useSelector } from 'react-redux';
+import { useCurrentRoute } from 'calypso/components/route';
+import { getShouldShowGlobalSiteSidebar } from 'calypso/state/global-sidebar/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const SidebarMenuItem = forwardRef(
 	(
@@ -9,7 +13,7 @@ const SidebarMenuItem = forwardRef(
 			tipTarget,
 			onClick,
 			tooltip,
-			tooltipPlacement,
+			tooltipPlacement = 'bottom',
 			icon,
 			className,
 			isActive,
@@ -23,6 +27,17 @@ const SidebarMenuItem = forwardRef(
 	) => {
 		const preloadedRef = useRef( false );
 
+		const selectedSiteId = useSelector( getSelectedSiteId );
+		const { currentSection } = useCurrentRoute();
+		const isSidebarCollapsed = useSelector( ( state ) => {
+			return getShouldShowGlobalSiteSidebar(
+				state,
+				selectedSiteId,
+				currentSection?.group,
+				currentSection?.name
+			);
+		} );
+
 		const preload = () => {
 			if ( ! preloadedRef.current && preloadSection ) {
 				preloadedRef.current = true;
@@ -34,7 +49,7 @@ const SidebarMenuItem = forwardRef(
 			return (
 				<Fragment>
 					{ icon && ( typeof icon !== 'string' ? icon : <Gridicon icon={ icon } size={ 24 } /> ) }
-					{ children && <span className="sidebar__item-content">{ children }</span> }
+					{ children && <>{ children }</> }
 				</Fragment>
 			);
 		};
@@ -43,7 +58,7 @@ const SidebarMenuItem = forwardRef(
 			'is-active': isActive,
 			'has-unseen': hasUnseen,
 			'sidebar__item--always-show-content': alwaysShowContent,
-			[ `tooltip tooltip-${ tooltipPlacement || 'bottom' }` ]: tooltip,
+			[ `tooltip tooltip-${ isSidebarCollapsed ? 'right' : tooltipPlacement }` ]: tooltip,
 		} );
 
 		const attributes = {
