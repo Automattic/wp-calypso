@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Children, ReactNode } from 'react';
 import LayoutNavigation from './nav';
 
@@ -15,7 +15,7 @@ export default function LayoutTop( { children, withNavigation }: Props ) {
 
 	return (
 		<div
-			className={ classNames( 'a4a-layout__top-wrapper', {
+			className={ clsx( 'a4a-layout__top-wrapper', {
 				'has-navigation': withNavigation || !! navigation,
 			} ) }
 		>

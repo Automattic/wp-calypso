@@ -2,7 +2,7 @@ import { isAkismetProduct } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import QueryProducts from 'calypso/components/data/query-products-list';
@@ -181,7 +181,7 @@ function ThankYouAPIKeyClipboard() {
 				{ __( 'Your Akismet API Key is:', 'akismet-thank-you' ) }
 			</p>
 			<div
-				className={ classNames(
+				className={ clsx(
 					'akismet-checkout-thank-you__key-clipboard',
 					isLoading ? 'loading' : ''
 				) }

@@ -1,6 +1,6 @@
 import { Button, CompactCard } from '@automattic/components';
 import { useSendInvites } from '@automattic/data-stores';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import React from 'react';
@@ -181,7 +181,7 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 
 	const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
-	const classes = classNames( 'people-list-item', {
+	const classes = clsx( 'people-list-item', {
 		'is-invite': isInvite,
 		'is-invite-details': type === 'invite-details',
 	} );

@@ -1,6 +1,6 @@
 import { SegmentedControl } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { intervals } from './constants';
@@ -18,7 +18,7 @@ const Intervals = ( props ) => {
 		onChange,
 		icon,
 	} = props;
-	const classes = classnames( 'stats-navigation__intervals', className, {
+	const classes = clsx( 'stats-navigation__intervals', className, {
 		'is-standalone': standalone,
 	} );
 

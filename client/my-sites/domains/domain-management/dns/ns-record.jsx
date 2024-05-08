@@ -1,5 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -22,7 +22,7 @@ class NsRecord extends Component {
 	render() {
 		const { fieldValues, isValid, onChange, selectedDomain, selectedDomainName, show, translate } =
 			this.props;
-		const classes = classnames( { 'is-hidden': ! show } );
+		const classes = clsx( { 'is-hidden': ! show } );
 		const isNameValid = isValid( 'name' );
 		const isDataValid = isValid( 'data' );
 		const isTTLValid = isValid( 'ttl' );

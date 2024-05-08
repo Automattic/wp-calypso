@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -17,7 +17,7 @@ const StatModuleVideoDetails = ( props ) => {
 	const { data, query, requesting, siteId, translate } = props;
 	const isLoading = requesting && ! data;
 
-	const classes = classNames( 'stats-module', 'is-expanded', 'summary', {
+	const classes = clsx( 'stats-module', 'is-expanded', 'summary', {
 		'is-loading': isLoading,
 		'has-no-data': ! data,
 	} );

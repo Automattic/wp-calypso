@@ -1,5 +1,5 @@
 import { Gridicon, Tooltip } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -24,7 +24,7 @@ export default class extends PureComponent {
 
 	render() {
 		const { value, status, isBorderless, tooltip, displayTransform } = this.props;
-		const tokenClasses = classNames( 'token-field__token', {
+		const tokenClasses = clsx( 'token-field__token', {
 			'is-error': 'error' === status,
 			'is-success': 'success' === status,
 			'is-validating': 'validating' === status,

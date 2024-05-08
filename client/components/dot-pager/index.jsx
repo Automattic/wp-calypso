@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
 import { Children, useState, useEffect } from 'react';
@@ -30,7 +30,7 @@ const Controls = ( {
 				<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
 					<button
 						key={ page.toString() }
-						className={ classnames( 'dot-pager__control-choose-page', {
+						className={ clsx( 'dot-pager__control-choose-page', {
 							'dot-pager__control-current': page === currentPage,
 						} ) }
 						disabled={ page === currentPage }
@@ -152,7 +152,7 @@ export const DotPager = ( {
 	};
 
 	return (
-		<div className={ classnames( 'dot-pager', className ) } { ...props }>
+		<div className={ clsx( 'dot-pager', className ) } { ...props }>
 			<Controls
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }

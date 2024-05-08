@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Spinner } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -17,7 +17,7 @@ class CustomizerLoadingPanel extends Component {
 	};
 
 	render() {
-		const noticeClassNames = classnames( 'customizer-loading-panel__notice', {
+		const noticeClassNames = clsx( 'customizer-loading-panel__notice', {
 			'is-iframe-loaded': this.props.isLoaded,
 		} );
 

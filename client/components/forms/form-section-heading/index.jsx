@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 /**
@@ -10,7 +10,7 @@ import './style.scss';
  * @returns {import('react').ReactElement} React component
  */
 const FormSectionHeading = ( { className, children, ...otherProps } ) => (
-	<h3 { ...otherProps } className={ classnames( className, 'form-section-heading' ) }>
+	<h3 { ...otherProps } className={ clsx( className, 'form-section-heading' ) }>
 		{ children }
 	</h3>
 );

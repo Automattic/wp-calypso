@@ -1,5 +1,5 @@
 import { Button, FormLabel } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
@@ -280,7 +280,7 @@ export default function VerifyContactForm( {
 		components: {
 			button: (
 				<Button
-					className={ classNames( 'configure-contact__resend-code-button', {
+					className={ clsx( 'configure-contact__resend-code-button', {
 						'is-loading': isResendingVerificationCode,
 					} ) }
 					borderless

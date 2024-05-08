@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -10,7 +10,7 @@ export default function Header() {
 
 	return (
 		<>
-			<div className={ classNames( 'header' ) }>
+			<div className={ clsx( 'header' ) }>
 				<FormattedHeader
 					className="header__main-title"
 					headerText={ preventWidows( title ) }

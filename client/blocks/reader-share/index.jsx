@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
@@ -93,7 +93,7 @@ class ReaderShare extends Component {
 	};
 
 	render() {
-		const buttonClasses = classnames( {
+		const buttonClasses = clsx( {
 			'reader-share__button': true,
 			'ignore-click': true,
 			'is-active': this.state.showingMenu,

@@ -1,5 +1,5 @@
 import { useBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
@@ -34,7 +34,7 @@ const CompactPost = ( {
 	return (
 		<div className="reader-post-card__post">
 			<div
-				className={ classNames( 'reader-post-card__post-content', {
+				className={ clsx( 'reader-post-card__post-content', {
 					'reader-post-card__no-excerpt': ! hasExcerpt,
 				} ) }
 			>

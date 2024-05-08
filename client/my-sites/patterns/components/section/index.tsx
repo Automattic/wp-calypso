@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
@@ -20,7 +20,7 @@ export const PatternsSection = ( {
 }: PatternsSectionProps ) => {
 	return (
 		<section
-			className={ classNames( 'patterns-section', {
+			className={ clsx( 'patterns-section', {
 				'patterns-section--dark': theme === 'dark',
 				'patterns-section--full-width-body': bodyFullWidth,
 			} ) }

@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
@@ -242,7 +242,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 				/>
 			) }
 			<div
-				className={ classNames( 'eligibility-warnings__hold-list', {
+				className={ clsx( 'eligibility-warnings__hold-list', {
 					'eligibility-warnings__hold-list-dim': hasValidBlockingHold,
 				} ) }
 				data-testid="HoldList-Card"

@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
@@ -21,7 +21,7 @@ const VideoPressIframe = ( {
 }: Props ) => {
 	return (
 		<iframe
-			className={ classnames(
+			className={ clsx(
 				{
 					'maintain-aspect-ratio': maintainAspectRatio,
 					'full-width': fullWidth,

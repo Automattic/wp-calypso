@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback, useMemo, FC } from 'react';
@@ -162,7 +162,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 						</Button>
 
 						<span
-							className={ classNames( 'backup-date-picker__display-date', {
+							className={ clsx( 'backup-date-picker__display-date', {
 								disabled: ! canGoToPreviousDate,
 							} ) }
 						>
@@ -183,7 +183,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 					>
 						<div className="backup-date-picker__next-date-link">
 							<span
-								className={ classNames( 'backup-date-picker__display-date', {
+								className={ clsx( 'backup-date-picker__display-date', {
 									disabled: ! canGoToNextDate,
 								} ) }
 							>

@@ -1,5 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import FormattedDate from 'calypso/components/formatted-date';
@@ -46,7 +46,7 @@ export default function LicenseDetails( {
 
 	return (
 		<Card
-			className={ classNames( 'license-details', {
+			className={ clsx( 'license-details', {
 				'license-details--child-license': isChildLicense,
 			} ) }
 		>

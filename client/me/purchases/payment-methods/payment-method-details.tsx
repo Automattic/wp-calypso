@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -64,7 +64,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 
 				{ isExpired && (
 					<span
-						className={ classnames( 'payment-method-details__expiration-notice', {
+						className={ clsx( 'payment-method-details__expiration-notice', {
 							'is-expired': isExpired,
 						} ) }
 					>

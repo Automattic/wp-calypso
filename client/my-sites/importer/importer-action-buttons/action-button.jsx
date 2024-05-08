@@ -1,13 +1,10 @@
 import { Button } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 import './action-button.scss';
 
 const ImporterActionButton = ( { className, ...props } ) => (
-	<Button
-		className={ classnames( 'importer-action-buttons__action-button', className ) }
-		{ ...props }
-	/>
+	<Button className={ clsx( 'importer-action-buttons__action-button', className ) } { ...props } />
 );
 
 ImporterActionButton.displayName = 'ImporterActionButton';

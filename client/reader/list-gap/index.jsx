@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -28,7 +28,7 @@ class Gap extends Component {
 	};
 
 	render() {
-		const classes = classnames( {
+		const classes = clsx( {
 			'reader-list-gap': true,
 			'is-filling': this.state.isFilling,
 			'is-selected': this.props.selected,

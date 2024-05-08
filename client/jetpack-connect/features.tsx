@@ -1,5 +1,5 @@
 import { Icon, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 export const JetpackFeatures = ( {
 	className,
@@ -11,7 +11,7 @@ export const JetpackFeatures = ( {
 	col2Features: string[];
 } ) => {
 	return (
-		<div className={ classNames( 'jetpack-connect__features_wrapper', className ) }>
+		<div className={ clsx( 'jetpack-connect__features_wrapper', className ) }>
 			<ul className="jetpack-connect__features">
 				{ col1Features.map( ( feature, index ) => (
 					<li key={ index }>

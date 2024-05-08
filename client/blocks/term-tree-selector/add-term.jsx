@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -42,7 +42,7 @@ class TermSelectorAddTerm extends Component {
 	render() {
 		const { siteId, labels, onSuccess, postType, terms, taxonomy } = this.props;
 		const totalTerms = terms ? terms.length : 0;
-		const classes = classNames( 'term-tree-selector__add-term', {
+		const classes = clsx( 'term-tree-selector__add-term', {
 			'is-compact': totalTerms < 8,
 		} );
 

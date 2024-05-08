@@ -14,7 +14,7 @@ import {
 } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { Icon, external } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -129,7 +129,7 @@ export default function HostingCard( {
 	}, [ name, onExploreClick, onVipDemoClick, plan.family_slug, pressableOwnership, translate ] );
 
 	return (
-		<div className={ classNames( 'hosting-card', className ) }>
+		<div className={ clsx( 'hosting-card', className ) }>
 			<div className="hosting-card__section">
 				<div className="hosting-card__header">
 					{ getHostingLogo( plan.family_slug ) }

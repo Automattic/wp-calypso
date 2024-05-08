@@ -1,7 +1,7 @@
 import { JETPACK_SOCIAL_ADVANCED_PRODUCTS } from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { isNumber } from 'lodash';
 import { useCallback } from 'react';
@@ -39,7 +39,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	const currentPrice = isNumber( discountedPrice ) ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
-	const labelClass = classNames(
+	const labelClass = clsx(
 		'product-lightbox__variants-grey-label',
 		isFetching && 'is-placeholder'
 	);
@@ -81,7 +81,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 					{ ! showPlansOneBelowTheOther && <p>{ translate( 'Payment plan:' ) }</p> }
 
 					<div
-						className={ classNames(
+						className={ clsx(
 							'product-lightbox__variants-plan-card',
 							! isActive && 'product-lightbox__variants-plan-card inactive'
 						) }
@@ -91,7 +91,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 								<PlanPrice rawPrice={ currentPrice } currencyCode={ currencyCode } />
 							</span>
 							<div
-								className={ classNames( 'product-lightbox__variants-timeframe', {
+								className={ clsx( 'product-lightbox__variants-timeframe', {
 									'is-compact': isCompact,
 								} ) }
 							>

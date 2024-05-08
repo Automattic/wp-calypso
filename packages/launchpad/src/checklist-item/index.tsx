@@ -1,6 +1,6 @@
 import { Badge, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate, useRtl } from 'i18n-calypso';
 import type { Task } from '../types';
 import type { FC, Key } from 'react';
@@ -41,7 +41,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 	const onClickHandler = onClick || actionDispatch;
 	return (
 		<li
-			className={ classnames( 'checklist-item__task', {
+			className={ clsx( 'checklist-item__task', {
 				completed: completed,
 				pending: ! completed,
 				enabled: ! disabled,

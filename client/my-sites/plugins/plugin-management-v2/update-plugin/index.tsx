@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import ConfirmModal from 'calypso/components/confirm-modal';
@@ -141,5 +141,5 @@ export default function UpdatePlugin( {
 		);
 	}
 
-	return content ? <div className={ classNames( className ) }>{ content }</div> : null;
+	return content ? <div className={ clsx( className ) }>{ content }</div> : null;
 }

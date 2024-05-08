@@ -1,5 +1,5 @@
 import { isMobile } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -83,7 +83,7 @@ class MasterbarItemNew extends Component {
 	}
 
 	render() {
-		const classes = classNames( this.props.className, {
+		const classes = clsx( this.props.className, {
 			'has-drafts': this.props.draftCount > 0,
 		} );
 

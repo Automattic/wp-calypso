@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
@@ -498,7 +498,7 @@ export class FullPostView extends Component {
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
-			<ReaderMain className={ classNames( classes ) }>
+			<ReaderMain className={ clsx( classes ) }>
 				{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 				{ ! post || post._state === 'pending' ? (
 					<DocumentHead title={ translate( 'Loading' ) } />

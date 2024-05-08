@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 
 import './style.scss';
@@ -21,10 +21,7 @@ export default function ListingSection( {
 	isTwoColumns,
 }: Props ) {
 	return (
-		<div
-			id={ id }
-			className={ classNames( 'listing-section', { 'is-two-columns': isTwoColumns } ) }
-		>
+		<div id={ id } className={ clsx( 'listing-section', { 'is-two-columns': isTwoColumns } ) }>
 			<h2 className="listing-section-title">
 				{ icon }
 				<span>{ title }</span>

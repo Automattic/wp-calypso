@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { trim, escapeRegExp } from 'lodash';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
@@ -131,7 +131,7 @@ const ReaderExcerpt = ( { post, hasExcerpt, showExcerpt, setHasExcerpt } ) => {
 	return (
 		<AutoDirection>
 			<div
-				className={ classNames( 'reader-excerpt__content reader-excerpt', {
+				className={ clsx( 'reader-excerpt__content reader-excerpt', {
 					'reader-excerpt__daily-prompt': isDailyPrompt,
 				} ) }
 				dangerouslySetInnerHTML={ { __html: excerpt } } // eslint-disable-line react/no-danger

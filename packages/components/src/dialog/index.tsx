@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useCallback } from 'react';
 import Modal from 'react-modal';
 import Gridicon from '../gridicon';
@@ -9,8 +9,8 @@ import type { PropsWithChildren } from 'react';
 import './style.scss';
 
 type Props = {
-	additionalClassNames?: Parameters< typeof classnames >[ 0 ];
-	additionalOverlayClassNames?: Parameters< typeof classnames >[ 0 ];
+	additionalClassNames?: Parameters< typeof clsx >[ 0 ];
+	additionalOverlayClassNames?: Parameters< typeof clsx >[ 0 ];
 	baseClassName?: string;
 	buttons?: ( React.ReactElement | BaseButton )[];
 	className?: string;
@@ -59,14 +59,14 @@ const Dialog = ( {
 	);
 
 	// Previous implementation used a `<Card />`, styling still relies on the 'card' class being present
-	const dialogClassName = classnames( baseClassName, 'card', additionalClassNames );
+	const dialogClassName = clsx( baseClassName, 'card', additionalClassNames );
 
-	const backdropClassName = classnames( baseClassName + '__backdrop', additionalOverlayClassNames, {
+	const backdropClassName = clsx( baseClassName + '__backdrop', additionalOverlayClassNames, {
 		'is-full-screen': isFullScreen,
 		'is-hidden': ! isBackdropVisible,
 	} );
 
-	const contentClassName = classnames( baseClassName + '__content', className );
+	const contentClassName = clsx( baseClassName + '__content', className );
 
 	return (
 		<Modal

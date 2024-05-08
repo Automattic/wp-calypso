@@ -1,5 +1,5 @@
 import { Modal } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 
 import './style.scss';
@@ -26,7 +26,7 @@ export default function DashboardModal( {
 			shouldCloseOnClickOutside={ shouldCloseOnClickOutside }
 			onRequestClose={ onClose }
 			title={ title }
-			className={ classNames( 'dashboard-modal', className ) }
+			className={ clsx( 'dashboard-modal', className ) }
 		>
 			<div className="dashboard-modal__sub-title">{ subtitle }</div>
 			{ children }

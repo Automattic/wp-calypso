@@ -1,5 +1,5 @@
 import { useMemo } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import { DataResponse, GridPlan, PlanActionOverrides } from '../../types';
@@ -79,7 +79,7 @@ const Table = ( {
 	const hasHighlightedPlan = gridPlansWithoutSpotlight.some(
 		( { highlightLabel } ) => !! highlightLabel
 	);
-	const tableClasses = classNames(
+	const tableClasses = clsx(
 		'plan-features-2023-grid__table',
 		`has-${ gridPlansWithoutSpotlight.length }-cols`,
 		{
@@ -163,7 +163,7 @@ const Table = ( {
 						</tr>
 						{ featureGroups.map( ( featureGroupSlug, featureGroupIndex ) => (
 							<tr
-								className={ classNames( 'plans-grid-next-features-grid__feature-group-row', {
+								className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
 									'is-first-feature-group': featureGroupIndex === 0,
 								} ) }
 								key={ featureGroupSlug }

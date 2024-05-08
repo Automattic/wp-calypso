@@ -2,7 +2,7 @@
  * As we need to load gridicons from CDN in Jetpack, the <use> statement fails with a CORS error, so we have to load
  * the sprite separately and only return the reference here.
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import {
 	iconsThatNeedOffset,
 	iconsThatNeedOffsetX,
@@ -29,7 +29,7 @@ const Gridicon = React.memo(
 		// This means we don't need to perform any checks on the icon name.
 		const iconName = `gridicons-${ icon }`;
 
-		const iconClass = classnames( 'gridicon', iconName, className, {
+		const iconClass = clsx( 'gridicon', iconName, className, {
 			'needs-offset': isModulo18 && iconsThatNeedOffset.includes( iconName ),
 			'needs-offset-x': isModulo18 && iconsThatNeedOffsetX.includes( iconName ),
 			'needs-offset-y': isModulo18 && iconsThatNeedOffsetY.includes( iconName ),

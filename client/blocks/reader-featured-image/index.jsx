@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
@@ -170,7 +170,7 @@ const ReaderFeaturedImage = ( {
 		);
 	}
 
-	const classNames = classnames( className, 'reader-featured-image' );
+	const classNames = clsx( className, 'reader-featured-image' );
 
 	return (
 		<a className={ classNames } href={ href } style={ featuredImageStyle } onClick={ onClick }>

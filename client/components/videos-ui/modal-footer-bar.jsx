@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -41,7 +41,7 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 	return (
 		<div className="videos-ui__footer-bar">
 			<div
-				className={ classNames( 'videos-ui__bar videos-ui__modal-footer-bar', {
+				className={ clsx( 'videos-ui__bar videos-ui__modal-footer-bar', {
 					'videos-ui__course-completed': isCourseComplete,
 				} ) }
 			>

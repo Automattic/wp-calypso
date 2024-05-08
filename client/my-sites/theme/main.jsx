@@ -22,7 +22,7 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import photon from 'photon';
 import PropTypes from 'prop-types';
@@ -1458,7 +1458,7 @@ class ThemeSheet extends Component {
 			onClick = launchPricing;
 		}
 
-		const upsellNudgeClasses = classNames( 'theme__page-upsell-banner', {
+		const upsellNudgeClasses = clsx( 'theme__page-upsell-banner', {
 			'theme__page-upsell-disabled': this.state.disabledButton,
 		} );
 
@@ -1555,10 +1555,10 @@ class ThemeSheet extends Component {
 
 		const isRemoved = this.isRemoved();
 
-		const className = classNames( 'theme__sheet', {
+		const className = clsx( 'theme__sheet', {
 			'is-with-upsell-banner': hasUpsellBanner,
 		} );
-		const columnsClassName = classNames( 'theme__sheet-columns', {
+		const columnsClassName = clsx( 'theme__sheet-columns', {
 			'is-removed': isRemoved,
 		} );
 

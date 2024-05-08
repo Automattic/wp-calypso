@@ -1,5 +1,5 @@
 import { formattedNumber } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
@@ -35,7 +35,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	const translate = useTranslate();
 
 	const isOverLimit = limit && usage >= limit;
-	const progressClassNames = classNames( 'plan-usage-progress', {
+	const progressClassNames = clsx( 'plan-usage-progress', {
 		'is-over-limit': isOverLimit,
 	} );
 	const progressWidthInPercentage = limit ? ( usage / limit ) * 100 : 0;

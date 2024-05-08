@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { StorageUsageLevelName } from 'calypso/state/rewind/storage/types';
@@ -38,7 +38,7 @@ const ActionButton: React.FC< OwnProps > = ( {
 
 	return (
 		<Button
-			className={ classnames( className, 'usage-warning__action-button', {
+			className={ clsx( className, 'usage-warning__action-button', {
 				'has-clickable-action': hasClickableAction,
 			} ) }
 			href={ href }

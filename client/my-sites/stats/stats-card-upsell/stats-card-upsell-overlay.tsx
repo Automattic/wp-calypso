@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { ReactNode } from 'react';
 
@@ -21,7 +21,7 @@ const StatsCardUpsell: React.FC< Props > = ( {
 	const translate = useTranslate();
 
 	return (
-		<div className={ classNames( 'stats-card-upsell', className ) }>
+		<div className={ clsx( 'stats-card-upsell', className ) }>
 			<div className="stats-card-upsell__content">
 				<div className="stats-card-upsell__lock">
 					<Gridicon icon="lock" />

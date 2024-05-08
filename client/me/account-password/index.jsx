@@ -1,6 +1,6 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { generatePassword } from '@automattic/generate-password';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, isEmpty } from 'lodash';
 import { Component } from 'react';
@@ -126,7 +126,7 @@ class AccountPassword extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const passwordInputClasses = classNames( {
+		const passwordInputClasses = clsx( {
 			'account-password__password-field': true,
 			'is-error': this.state.validation?.test_results.failed.length,
 		} );

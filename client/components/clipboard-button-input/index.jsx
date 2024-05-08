@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
@@ -29,7 +29,7 @@ function ClipboardButtonInput( { value = '', className, disabled, hideHttp, disp
 	};
 
 	return (
-		<span className={ classnames( 'clipboard-button-input', className ) }>
+		<span className={ clsx( 'clipboard-button-input', className ) }>
 			<FormTextInput
 				{ ...rest }
 				disabled={ disabled }

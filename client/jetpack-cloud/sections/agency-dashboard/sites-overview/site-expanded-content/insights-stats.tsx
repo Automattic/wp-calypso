@@ -1,6 +1,6 @@
 import { Button, ShortenedNumber } from '@automattic/components';
 import { Icon, arrowUp, arrowDown, external } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ExpandedCard from './expanded-card';
 import type { SiteStats } from '../types';
@@ -37,7 +37,7 @@ export default function InsightsStats( { stats, siteUrlWithScheme, trackEvent }:
 		const trendIcon = getTrendIcon( trend );
 		return (
 			<span
-				className={ classNames( 'site-expanded-content__card-content-score', {
+				className={ clsx( 'site-expanded-content__card-content-score', {
 					'is-up': trend === 'up',
 					'is-down': trend === 'down',
 				} ) }

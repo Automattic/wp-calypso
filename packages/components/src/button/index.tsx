@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { forwardRef } from 'react';
 import type {
 	Ref,
@@ -72,8 +72,8 @@ const Button: ForwardRefRenderFunction<
 	ButtonProps | AnchorProps
 > = ( props, ref ) => {
 	const classes = props.plain
-		? classnames( 'button-plain', props.className )
-		: classnames( 'button', props.className, {
+		? clsx( 'button-plain', props.className )
+		: clsx( 'button', props.className, {
 				'is-compact': props.compact,
 				'is-primary': props.primary,
 				'is-scary': props.scary,

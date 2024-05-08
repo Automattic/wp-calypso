@@ -52,7 +52,7 @@
 		"@wordpress/i18n": "^4.57.0",
 		"@wordpress/icons": "^9.48.0",
 		"@wordpress/url": "^3.58.0",
-		"classnames": "^2.3.2",
+		"clsx": "^2.1.1",
 		"cmdk": "^0.2.0",
 		"utility-types": "^3.10.0"
 	},

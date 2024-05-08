@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { Icon, chevronDown } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight as compose } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -132,7 +132,7 @@ export class DateRangeSelector extends Component {
 		const to = this.getToDate();
 		const now = new Date();
 
-		const buttonClass = classnames( 'filterbar__selection', {
+		const buttonClass = clsx( 'filterbar__selection', {
 			'is-selected': from,
 			'is-active': isVisible && ! from,
 		} );

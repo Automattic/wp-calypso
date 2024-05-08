@@ -1,6 +1,6 @@
 import { getPlanClass, type PlanSlug } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import './style.scss';
 
 // TODO:
@@ -31,7 +31,7 @@ const PlanButton = ( {
 	isStuck?: boolean;
 	isLargeCurrency?: boolean;
 } ) => {
-	const className = classNames(
+	const className = clsx(
 		classes,
 		'plan-features-2023-grid__actions-button',
 		planSlug ? getPlanClass( planSlug ) : 'is-default',

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 type Props = {
 	className?: string;
@@ -6,5 +6,5 @@ type Props = {
 };
 
 export const SidebarV2Footer = ( { className, children }: Props ) => {
-	return <div className={ classNames( 'sidebar-v2__footer', className ) }>{ children }</div>;
+	return <div className={ clsx( 'sidebar-v2__footer', className ) }>{ children }</div>;
 };

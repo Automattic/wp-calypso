@@ -2,7 +2,7 @@ import { WordPressWordmark } from '@automattic/components';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import AkismetLogo from 'calypso/components/akismet-logo';
@@ -85,7 +85,7 @@ const CheckoutMasterbar = ( {
 
 	return (
 		<Masterbar
-			className={ classnames( 'masterbar--is-checkout', {
+			className={ clsx( 'masterbar--is-checkout', {
 				'masterbar--is-jetpack': checkoutType === 'jetpack',
 				'masterbar--is-akismet': checkoutType === 'akismet',
 			} ) }

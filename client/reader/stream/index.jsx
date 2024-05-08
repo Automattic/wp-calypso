@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { findLast, times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -509,7 +509,7 @@ class ReaderStream extends Component {
 
 		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
 		// to be updated before we can remove it.
-		let baseClassnames = classnames( 'following', this.props.className );
+		let baseClassnames = clsx( 'following', this.props.className );
 
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
@@ -550,7 +550,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
-				baseClassnames = classnames( 'reader-two-column', baseClassnames );
+				baseClassnames = clsx( 'reader-two-column', baseClassnames );
 			} else {
 				body = (
 					<>

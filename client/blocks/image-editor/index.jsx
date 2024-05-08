@@ -1,5 +1,5 @@
 import path from 'path';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -239,7 +239,7 @@ class ImageEditor extends Component {
 
 		const { noticeText } = this.state;
 
-		const classes = classNames( 'image-editor', className );
+		const classes = clsx( 'image-editor', className );
 
 		return (
 			<div className={ classes }>

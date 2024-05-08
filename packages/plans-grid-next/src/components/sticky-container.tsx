@@ -1,6 +1,6 @@
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRef, type ElementType, useState, useLayoutEffect, ReactNode } from 'react';
 
 type Props = {
@@ -133,7 +133,7 @@ export function StickyContainer( props: Props ) {
 				ref={ stickyRef }
 				stickyOffset={ stickyOffset }
 				disabled={ disabled }
-				className={ classNames( { [ stickyClass ]: isStuckFinalState } ) }
+				className={ clsx( { [ stickyClass ]: isStuckFinalState } ) }
 				zIndex={ zIndex }
 			>
 				{ children( isStuckFinalState ) }

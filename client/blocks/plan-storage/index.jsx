@@ -12,7 +12,7 @@ import {
 } from '@automattic/calypso-products';
 import { Tooltip } from '@automattic/components';
 import { Site } from '@automattic/data-stores';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { ComponentType, FC, PropsWithChildren, ReactNode, useRef, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
@@ -136,7 +136,7 @@ export function PlanStorage( {
 		return (
 			<>
 				<a
-					className={ classNames( className, 'plan-storage' ) }
+					className={ clsx( className, 'plan-storage' ) }
 					href={ `/plans/${ siteSlug }` }
 					ref={ tooltipAnchorRef }
 					onMouseOver={ showTooltip }
@@ -157,7 +157,7 @@ export function PlanStorage( {
 		return (
 			<>
 				<div
-					className={ classNames( className, 'plan-storage plan-storage__shared_quota' ) }
+					className={ clsx( className, 'plan-storage plan-storage__shared_quota' ) }
 					ref={ tooltipAnchorRef }
 					onMouseOver={ showTooltip }
 					onMouseLeave={ hideTooltip }
@@ -173,7 +173,7 @@ export function PlanStorage( {
 		);
 	}
 
-	return <div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>;
+	return <div className={ clsx( className, 'plan-storage' ) }>{ planStorageComponents }</div>;
 }
 
 PlanStorage.propTypes = {

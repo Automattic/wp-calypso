@@ -1,5 +1,5 @@
 import { CompactCard, Count } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
@@ -285,7 +285,7 @@ class PluginItem extends Component {
 			pluginActions = this.renderActions();
 		}
 
-		const pluginItemClasses = classNames( 'plugin-item', 'plugin-item-' + plugin.slug );
+		const pluginItemClasses = clsx( 'plugin-item', 'plugin-item-' + plugin.slug );
 
 		return (
 			<CompactCard className={ pluginItemClasses }>

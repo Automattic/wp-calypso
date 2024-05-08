@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ProgressBar, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -24,7 +24,7 @@ class ImportingPane extends ImportingPaneBase {
 			urlData,
 		} = this.props;
 		const { customData } = importerStatus;
-		const progressClasses = classNames( 'importing-pane__progress', {
+		const progressClasses = clsx( 'importing-pane__progress', {
 			'is-complete': this.isFinished(),
 		} );
 

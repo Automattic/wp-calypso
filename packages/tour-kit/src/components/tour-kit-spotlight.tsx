@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { usePopper } from 'react-popper';
 import { LiveResizeConfiguration, liveResizeModifier } from '../utils/live-resize-modifier';
 import Overlay from './tour-kit-overlay';
@@ -109,7 +109,7 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( {
 			<SpotlightInteractivity { ...interactivity } />
 			<Overlay visible={ ! clipRepositionProps } />
 			<div
-				className={ classnames( 'tour-kit-spotlight', {
+				className={ clsx( 'tour-kit-spotlight', {
 					'is-visible': !! clipRepositionProps,
 				} ) }
 				ref={ sePopperElement }

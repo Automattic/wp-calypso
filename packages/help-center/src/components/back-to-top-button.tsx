@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { useCallback, useRef } from '@wordpress/element';
 import { Icon, arrowUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import type { FC } from 'react';
 import './back-to-top-button.scss';
 
@@ -28,7 +28,7 @@ export const BackToTopButton: FC = () => {
 			ref={ ( element: HTMLButtonElement ) => {
 				elementRef.current = element?.parentElement ?? null;
 			} }
-			className={ classnames( 'back-to-top-button__help-center', {
+			className={ clsx( 'back-to-top-button__help-center', {
 				'is-visible': isButtonVisible,
 			} ) }
 			onClick={ scrollToTop }

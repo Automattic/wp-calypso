@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
@@ -63,14 +63,14 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 				<div className="space-needed__value">{ spaceNeededText }</div>
 			</div>
 			<div
-				className={ classnames( 'retention-option__upgrade-required', {
+				className={ clsx( 'retention-option__upgrade-required', {
 					'is-visible': upgradeRequired,
 				} ) }
 			>
 				{ translate( 'Upgrade required' ) }
 			</div>
 			<div
-				className={ classnames( 'retention-option__current-plan', {
+				className={ clsx( 'retention-option__current-plan', {
 					'is-visible': isCurrentPlan,
 				} ) }
 			>

@@ -1,5 +1,5 @@
 import { Icon, search } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import { useDispatch } from 'calypso/state';
@@ -28,7 +28,7 @@ export const SidebarSearch = ( { tooltip, onClick } ) => {
 		<>
 			<SidebarMenuItem
 				onClick={ showCommandPalette }
-				className={ classnames( 'sidebar__item-search', {
+				className={ clsx( 'sidebar__item-search', {
 					'is-active': false,
 				} ) }
 				tooltip={ tooltip }

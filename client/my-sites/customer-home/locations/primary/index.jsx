@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { createElement, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
@@ -35,7 +35,7 @@ const Primary = ( { cards, trackCard } ) => {
 
 	return (
 		<DotPager
-			className={ classnames( 'primary__customer-home-location-content', {
+			className={ clsx( 'primary__customer-home-location-content', {
 				'primary__is-urgent': isUrgent,
 			} ) }
 			showControlLabels="true"

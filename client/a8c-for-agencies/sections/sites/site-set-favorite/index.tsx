@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { Icon, starFilled, starEmpty } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState } from 'react';
 import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
@@ -184,7 +184,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 			compact
 			disabled={ isPending }
 			onClick={ handleFavoriteChange }
-			className={ classNames(
+			className={ clsx(
 				'site-set-favorite__favorite-icon',
 				'disable-card-expand',
 				isFavorite && 'site-set-favorite__favorite-icon-active'

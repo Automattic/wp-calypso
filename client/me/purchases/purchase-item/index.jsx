@@ -13,7 +13,7 @@ import formatCurrency from '@automattic/format-currency';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -579,7 +579,7 @@ class PurchaseItem extends Component {
 			isJetpack,
 		} = this.props;
 
-		const classes = classNames( 'purchase-item', {
+		const classes = clsx( 'purchase-item', {
 			'purchase-item--disconnected': isDisconnectedSite,
 		} );
 

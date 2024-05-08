@@ -10,7 +10,7 @@ import {
 	getCouponLineItemFromCart,
 } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-terms';
@@ -53,7 +53,7 @@ function LineItemIntroductoryOffer( { product }: { product: ResponseCartProduct 
 
 	return (
 		<span
-			className={ classNames( 'purchase-modal__product-offer', {
+			className={ clsx( 'purchase-modal__product-offer', {
 				'is-not-applicable': ! introductoryOffer.enabled,
 				'is-discounted': introductoryOffer.enabled,
 			} ) }

@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useRef, useState, FunctionComponent, PropsWithChildren } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import PopoverMenu from 'calypso/components/popover-menu';
@@ -28,10 +28,10 @@ export const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
 		setMenuVisible( false );
 	};
 
-	const classes = classnames( 'ellipsis-menu', {
+	const classes = clsx( 'ellipsis-menu', {
 		'is-menu-visible': isMenuVisible,
 	} );
-	const popoverClasses = classnames( 'ellipsis-menu__menu', 'popover', popoverClassName );
+	const popoverClasses = clsx( 'ellipsis-menu__menu', 'popover', popoverClassName );
 
 	return (
 		<span className={ classes }>

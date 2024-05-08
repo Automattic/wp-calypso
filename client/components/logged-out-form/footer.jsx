@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -15,7 +15,7 @@ class LoggedOutFormFooter extends Component {
 	render() {
 		return (
 			<Card
-				className={ classnames( 'logged-out-form__footer', this.props.className, {
+				className={ clsx( 'logged-out-form__footer', this.props.className, {
 					'is-blended': this.props.isBlended,
 				} ) }
 			>

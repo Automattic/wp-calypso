@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
@@ -9,7 +9,7 @@ export const ManageAllDomainsCTA = ( { shouldDisplaySeparator = true } ) => {
 
 	return (
 		<div
-			className={ classNames( 'domain-management__all-domains-section', {
+			className={ clsx( 'domain-management__all-domains-section', {
 				separator: shouldDisplaySeparator,
 			} ) }
 		>

@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -169,7 +169,7 @@ export class CommentActions extends Component {
 				{ this.hasAction( 'approve' ) && (
 					<Button
 						borderless
-						className={ classNames( 'comment__action comment__action-approve', {
+						className={ clsx( 'comment__action comment__action-approve', {
 							'is-approved': commentIsApproved,
 						} ) }
 						onClick={ this.toggleApproved }
@@ -223,7 +223,7 @@ export class CommentActions extends Component {
 				{ this.hasAction( 'like' ) && (
 					<Button
 						borderless
-						className={ classNames( 'comment__action comment__action-like', {
+						className={ clsx( 'comment__action comment__action-like', {
 							'is-liked': commentIsLiked,
 						} ) }
 						onClick={ this.toggleLike }

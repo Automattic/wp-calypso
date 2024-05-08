@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import './masterbar-cart-count.scss';
 
 type MasterbarCartCountProps = {
@@ -6,7 +6,7 @@ type MasterbarCartCountProps = {
 };
 
 export function MasterBarCartCount( { cartCount }: MasterbarCartCountProps ) {
-	const classes = classNames( 'masterbar-cart-count', {
+	const classes = clsx( 'masterbar-cart-count', {
 		'masterbar-cart-count__hidden': cartCount <= 0,
 	} );
 	return <span className={ classes }>{ cartCount }</span>;

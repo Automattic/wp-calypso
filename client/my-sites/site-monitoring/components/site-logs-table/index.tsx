@@ -1,6 +1,6 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { memo, useMemo } from 'react';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
@@ -65,7 +65,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	}
 
 	return (
-		<table className={ classnames( 'site-logs-table', { 'is-loading': isLoading } ) }>
+		<table className={ clsx( 'site-logs-table', { 'is-loading': isLoading } ) }>
 			<thead>
 				<tr>
 					{ columns.map( ( column ) => (

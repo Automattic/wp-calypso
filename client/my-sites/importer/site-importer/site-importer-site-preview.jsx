@@ -1,5 +1,5 @@
 import { Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -76,7 +76,7 @@ class SiteImporterSitePreview extends Component {
 		const isLoading = this.props.isLoading || this.state.loadingPreviewImage;
 		const isError = this.state.sitePreviewFailed;
 
-		const containerClass = classNames( 'site-importer__site-preview-overlay-container', {
+		const containerClass = clsx( 'site-importer__site-preview-overlay-container', {
 			isLoading,
 		} );
 

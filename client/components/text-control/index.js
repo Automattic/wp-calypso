@@ -1,5 +1,5 @@
 import { FormLabel } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 
@@ -56,7 +56,7 @@ class MurielTextControl extends Component {
 		const isEmpty = ! value;
 		const isActive = isFocused && ! disabled;
 
-		const classes = classNames(
+		const classes = clsx(
 			'woocommerce-muriel-text-control',
 			className,
 			this.getStatusClassName( disabled, isEmpty ),

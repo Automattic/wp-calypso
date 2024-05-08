@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
@@ -63,7 +63,7 @@ class DomainSuggestion extends Component {
 	render() {
 		const { children, extraClasses, isAdded, isFeatured, showStrikedOutPrice, isReskinned } =
 			this.props;
-		const classes = classNames(
+		const classes = clsx(
 			'domain-suggestion',
 			'card',
 			'is-compact',
@@ -74,7 +74,7 @@ class DomainSuggestion extends Component {
 			extraClasses
 		);
 
-		const contentClassName = classNames( 'domain-suggestion__content', {
+		const contentClassName = clsx( 'domain-suggestion__content', {
 			'domain-suggestion__content-domain': showStrikedOutPrice && ! isFeatured,
 		} );
 

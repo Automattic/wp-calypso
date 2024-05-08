@@ -1,5 +1,5 @@
 import { Popover } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SiteSelector from 'calypso/components/site-selector';
@@ -49,7 +49,7 @@ class SitesPopover extends Component {
 	}
 
 	render() {
-		const classes = classnames(
+		const classes = clsx(
 			this.props.className,
 			'popover sites-popover',
 			this.props.header && 'has-header'

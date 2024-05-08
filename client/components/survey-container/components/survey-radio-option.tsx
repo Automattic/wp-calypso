@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useCallback } from 'react';
 import { Question, Option } from '../types';
 
@@ -34,7 +34,7 @@ const SurveyRadioOption = ( {
 
 	return (
 		<div
-			className={ classNames( 'question-options__option-control', {
+			className={ clsx( 'question-options__option-control', {
 				checked: isSelected,
 				disabled,
 			} ) }

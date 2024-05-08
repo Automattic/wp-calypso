@@ -4,7 +4,7 @@ import {
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
 import { Icon, help } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import SidebarMenuItem from '../menu-item';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -25,7 +25,7 @@ const SidebarHelpCenter = ( { tooltip, tooltipPlacement, onClick } ) => {
 		<>
 			<SidebarMenuItem
 				onClick={ handleToggleHelpCenter }
-				className={ classnames( 'sidebar__item-help', {
+				className={ clsx( 'sidebar__item-help', {
 					'is-active': helpCenterVisible,
 				} ) }
 				tooltip={ tooltip }

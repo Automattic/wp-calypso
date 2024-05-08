@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import formatNumberCompact from './format-number-compact';
@@ -12,7 +12,7 @@ export const Count = ( { count, compact, numberFormat, forwardRef, primary, ...r
 	return (
 		<span
 			ref={ forwardRef }
-			className={ classnames( 'count', { 'is-primary': primary } ) }
+			className={ clsx( 'count', { 'is-primary': primary } ) }
 			{ ...inheritProps }
 		>
 			{ compact ? formatNumberCompact( count ) || numberFormat( count ) : numberFormat( count ) }

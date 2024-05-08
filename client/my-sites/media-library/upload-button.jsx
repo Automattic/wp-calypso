@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -74,7 +74,7 @@ class MediaLibraryUploadButton extends Component {
 	};
 
 	render() {
-		const classes = classNames( 'media-library__upload-button', 'button', this.props.className, {
+		const classes = clsx( 'media-library__upload-button', 'button', this.props.className, {
 			'is-primary': this.props.sectionName === 'media',
 		} );
 

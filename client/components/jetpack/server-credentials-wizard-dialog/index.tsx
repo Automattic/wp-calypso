@@ -1,5 +1,5 @@
 import { Dialog, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
@@ -48,12 +48,12 @@ const ServerCredentialsWizardDialog = ( {
 
 	return (
 		<Dialog
-			additionalClassNames={ classnames( 'server-credentials-wizard-dialog', baseDialogClassName ) }
+			additionalClassNames={ clsx( 'server-credentials-wizard-dialog', baseDialogClassName ) }
 			isVisible={ showDialog }
 			buttons={ showServerCredentialsForm ? undefined : buttons }
 			onClose={ onCloseDialog }
 		>
-			<h1 className={ classnames( 'server-credentials-wizard-dialog__header', titleClassName ) }>
+			<h1 className={ clsx( 'server-credentials-wizard-dialog__header', titleClassName ) }>
 				{ title }
 			</h1>
 			{ showServerCredentialsForm && (

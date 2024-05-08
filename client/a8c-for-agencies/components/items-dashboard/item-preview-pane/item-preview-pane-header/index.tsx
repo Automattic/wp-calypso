@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'calypso/state';
@@ -55,7 +55,7 @@ export default function ItemPreviewPaneHeader( {
 	}, [] );
 
 	return (
-		<div className={ classNames( 'item-preview__header', className ) }>
+		<div className={ clsx( 'item-preview__header', className ) }>
 			<div className="item-preview__header-content">
 				<SiteFavicon
 					blogId={ itemData.blogId }

@@ -5,7 +5,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { Icon, plus, search } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
@@ -132,7 +132,7 @@ class AddDomainButton extends Component {
 
 	render() {
 		const { specificSiteActions, ellipsisButton, borderless } = this.props;
-		const classes = classNames( 'options-domain-button', ellipsisButton && 'ellipsis' );
+		const classes = clsx( 'options-domain-button', ellipsisButton && 'ellipsis' );
 
 		if ( ellipsisButton ) {
 			return (

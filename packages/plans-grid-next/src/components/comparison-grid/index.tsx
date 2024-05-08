@@ -11,7 +11,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
 import { Icon, chevronRightSmall } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import {
 	useState,
@@ -394,7 +394,7 @@ const ComparisonGridHeaderCell = ( {
 		return null;
 	}
 
-	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planSlug ), {
+	const headerClasses = clsx( 'plan-comparison-grid__header-cell', getPlanClass( planSlug ), {
 		'popular-plan-parent-class': gridPlan.highlightLabel,
 		'is-last-in-row': isLastInRow,
 		'plan-is-footer': isFooter,
@@ -404,7 +404,7 @@ const ComparisonGridHeaderCell = ( {
 		'is-current-plan': gridPlan.current,
 		'is-stuck': isStuck,
 	} );
-	const popularBadgeClasses = classNames( {
+	const popularBadgeClasses = clsx( {
 		'is-current-plan': gridPlan.current,
 		'popular-badge-is-stuck': isStuck,
 	} );
@@ -419,10 +419,7 @@ const ComparisonGridHeaderCell = ( {
 			/>
 			<PlanSelector>
 				<h4
-					className={ classNames(
-						'plan-comparison-grid__title',
-						showPlanSelect && 'is-select-trigger'
-					) }
+					className={ clsx( 'plan-comparison-grid__title', showPlanSelect && 'is-select-trigger' ) }
 				>
 					<span className="plan-comparison-grid__title-label">{ gridPlan.planTitle }</span>
 					{ showPlanSelect && (
@@ -613,7 +610,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		storageOptions,
 	} );
 
-	const cellClasses = classNames(
+	const cellClasses = clsx(
 		'plan-comparison-grid__feature-group-row-cell',
 		'plan-comparison-grid__plan',
 		getPlanClass( planSlug ),
@@ -750,7 +747,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	onStorageAddOnClick,
 } ) => {
 	const translate = useTranslate();
-	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
+	const rowClasses = clsx( 'plan-comparison-grid__feature-group-row', {
 		'is-storage-feature': isStorageFeature,
 	} );
 	const featureSlug = feature?.getSlug() ?? '';
@@ -1110,7 +1107,7 @@ const ComparisonGrid = ( {
 	 * Some padding is applied in the stylesheet to cover the badges/labels.
 	 */
 	const hasHighlightedPlan = gridPlans.some( ( { highlightLabel } ) => !! highlightLabel );
-	const classes = classNames( 'plans-grid-next-comparison-grid', {
+	const classes = clsx( 'plans-grid-next-comparison-grid', {
 		'has-highlighted-plan': hasHighlightedPlan,
 	} );
 

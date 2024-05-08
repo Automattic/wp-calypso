@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
@@ -93,7 +93,7 @@ class LikeButton extends PureComponent {
 			omitBy(
 				{
 					href,
-					className: classNames( containerClasses ),
+					className: clsx( containerClasses ),
 					onClick: ! isLink ? this.toggleLiked : null,
 					onMouseEnter,
 					onMouseLeave,

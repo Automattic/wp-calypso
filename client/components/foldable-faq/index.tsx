@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react';
 import type { FC, ReactNode } from 'react';
 
@@ -90,7 +90,7 @@ const FoldableFAQ: FC< FAQProps > = ( {
 	}, [ id, buttonId, isExpanded, onToggle, checkHash ] );
 
 	return (
-		<div className={ classNames( 'foldable-faq', className, { 'is-expanded': isExpanded } ) }>
+		<div className={ clsx( 'foldable-faq', className, { 'is-expanded': isExpanded } ) }>
 			<button
 				id={ buttonId }
 				className="foldable-faq__question"

@@ -4,7 +4,7 @@ import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -350,7 +350,7 @@ export default function SitesOverview() {
 								</span>
 							}
 							selectedCount={ selectedTab.count }
-							className={ classNames(
+							className={ clsx(
 								isMobile && highlightTab && isFavoritesTab && 'sites-overview__highlight-tab'
 							) }
 						>

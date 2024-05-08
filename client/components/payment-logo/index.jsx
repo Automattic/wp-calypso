@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import i18n from 'i18n-calypso';
 import { keys } from 'lodash';
 import PropTypes from 'prop-types';
@@ -64,7 +64,7 @@ class PaymentLogo extends Component {
 	render() {
 		const { altText, className, isCompact, type, disabled } = this.props;
 
-		const classes = classNames(
+		const classes = clsx(
 			'payment-logo',
 			`is-${ type }`,
 			{ 'is-compact': isCompact },

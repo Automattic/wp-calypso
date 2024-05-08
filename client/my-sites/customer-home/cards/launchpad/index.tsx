@@ -5,7 +5,7 @@ import {
 	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -46,7 +46,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 
 	const hasChecklist = checklist !== undefined && checklist !== null;
 	const launchpadTitle = hasChecklist ? title ?? translate( 'Next steps for your site' ) : ' ';
-	const headerClasses = classNames( 'customer-home-launchpad__header', {
+	const headerClasses = clsx( 'customer-home-launchpad__header', {
 		'is-placeholder': ! hasChecklist,
 	} );
 

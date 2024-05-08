@@ -6,7 +6,7 @@ import { Icon, Modal, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useState, useEffect, useCallback } from 'react';
 /**
@@ -274,7 +274,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 					title={ __( 'Jetpack AI Logo Generator', 'jetpack' ) }
 				>
 					<div
-						className={ classNames( 'jetpack-ai-logo-generator-modal__body', {
+						className={ clsx( 'jetpack-ai-logo-generator-modal__body', {
 							'notice-modal':
 								needsFeature || needsMoreRequests || featureFetchError || firstLogoPromptFetchError,
 						} ) }

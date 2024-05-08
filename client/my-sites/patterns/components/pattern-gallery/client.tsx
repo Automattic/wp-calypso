@@ -1,6 +1,6 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -156,7 +156,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 				siteId={ RENDERER_SITE_ID }
 			>
 				<MasonryGallery
-					className={ classNames( 'pattern-gallery', {
+					className={ clsx( 'pattern-gallery', {
 						'pattern-gallery--grid': isGridView,
 						'pattern-gallery--pages': isPageLayouts,
 					} ) }
@@ -165,7 +165,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 				>
 					{ displayPlaceholder && (
 						<PatternPreviewPlaceholder
-							className={ classNames( {
+							className={ clsx( {
 								'pattern-preview--grid': isGridView,
 								'pattern-preview--list': ! isGridView,
 							} ) }
@@ -177,7 +177,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 						<PatternPreview
 							canCopy={ isLoggedIn || pattern.can_be_copied_without_account }
 							category={ category }
-							className={ classNames( {
+							className={ clsx( {
 								'pattern-preview--grid': isGridView,
 								'pattern-preview--list': ! isGridView,
 							} ) }

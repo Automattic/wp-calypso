@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import ReaderAddIcon from 'calypso/reader/components/icons/add-icon';
@@ -16,7 +16,7 @@ const ReaderSidebarListsListItemCreateLink = ( props ) => {
 	};
 
 	const relativePath = '/read/list/new';
-	const classes = classNames( 'sidebar__menu-item--create-reader-list-link', {
+	const classes = clsx( 'sidebar__menu-item--create-reader-list-link', {
 		selected: ReaderSidebarHelper.pathStartsWithOneOf( [ relativePath ], props.path ),
 	} );
 

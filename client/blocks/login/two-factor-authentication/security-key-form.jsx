@@ -1,5 +1,5 @@
 import { Card, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -49,7 +49,7 @@ class SecurityKeyForm extends Component {
 
 		return (
 			<form
-				className={ classNames( 'two-factor-authentication__verification-code-form-wrapper', {
+				className={ clsx( 'two-factor-authentication__verification-code-form-wrapper', {
 					isWoo: isWoo,
 				} ) }
 				onSubmit={ ( event ) => {

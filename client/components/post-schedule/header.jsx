@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -47,7 +47,7 @@ class PostScheduleHeader extends Component {
 	};
 
 	render() {
-		const headerClasses = classNames( 'post-schedule__header', {
+		const headerClasses = clsx( 'post-schedule__header', {
 			'is-input-chrono-displayed': this.props.inputChronoDisplayed,
 		} );
 

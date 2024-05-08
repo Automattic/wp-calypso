@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { memo } from 'react';
 import type { PropsWithChildren } from 'react';
 
@@ -13,7 +13,7 @@ function InvoicesListRow( { header, children }: Props ) {
 	return (
 		<Card
 			compact
-			className={ classnames( 'invoices-list-row', {
+			className={ clsx( 'invoices-list-row', {
 				'invoices-list-row__header': header,
 			} ) }
 		>

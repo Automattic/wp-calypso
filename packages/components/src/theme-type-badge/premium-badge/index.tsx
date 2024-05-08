@@ -1,5 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Gridicon from '../../gridicon';
 import Popover from '../../popover';
@@ -94,7 +94,7 @@ const PremiumBadge = ( {
 
 	return (
 		<div
-			className={ classNames( 'premium-badge', className, {
+			className={ clsx( 'premium-badge', className, {
 				'premium-badge__compact-animation': shouldCompactWithAnimation,
 				'premium-badge--compact': shouldCompactWithAnimation && ! isHovered && mayRenderAsCompact,
 				'premium-badge--is-clickable': isClickable,
@@ -125,7 +125,7 @@ const PremiumBadge = ( {
 			</span>
 			{ ! shouldHideTooltip && (
 				<Popover
-					className={ classNames( 'premium-badge__popover', tooltipClassName ) }
+					className={ clsx( 'premium-badge__popover', tooltipClassName ) }
 					context={ divRef.current }
 					isVisible={ isPopoverVisible }
 					position={ tooltipPosition }
@@ -136,7 +136,7 @@ const PremiumBadge = ( {
 			) }
 			{ displayLabelAsTooltip && (
 				<Popover
-					className={ classNames( 'premium-badge__popover', tooltipClassName ) }
+					className={ clsx( 'premium-badge__popover', tooltipClassName ) }
 					context={ divRef.current }
 					isVisible={ isPopoverVisible }
 					position="bottom"

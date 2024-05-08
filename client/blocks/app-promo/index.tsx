@@ -1,5 +1,5 @@
 import { Card, Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import wpToJpImageRtl from 'calypso/assets/images/jetpack/wp-to-jp-rtl.svg';
 import wpToJpImage from 'calypso/assets/images/jetpack/wp-to-jp.svg';
@@ -41,7 +41,7 @@ export const AppPromo = ( {
 	const showBadge = showIosBadge || showAndroidBadge;
 
 	return (
-		<Card className={ classNames( 'app-promo', className ) }>
+		<Card className={ clsx( 'app-promo', className ) }>
 			<img
 				className="app-promo__icon"
 				src={ isRtl ? wpToJpImageRtl : wpToJpImage }

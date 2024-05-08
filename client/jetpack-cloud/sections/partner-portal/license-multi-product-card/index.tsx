@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -146,7 +146,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 	return (
 		<>
 			<div
-				className={ classNames( 'license-product-card', 'license-product-card--with-variant', {
+				className={ clsx( 'license-product-card', 'license-product-card--with-variant', {
 					selected: isSelected,
 					disabled: isDisabled,
 				} ) }

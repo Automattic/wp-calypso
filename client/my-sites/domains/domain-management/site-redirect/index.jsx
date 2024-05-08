@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { CompactCard as Card, FormLabel } from '@automattic/components';
 import { SITE_REDIRECT } from '@automattic/urls';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -105,7 +105,7 @@ class SiteRedirect extends Component {
 		const { isUpdating, notice } = location;
 		const isFetching = location.isFetching;
 
-		const classes = classNames( 'site-redirect-card', { fetching: isFetching } );
+		const classes = clsx( 'site-redirect-card', { fetching: isFetching } );
 
 		return (
 			<div>

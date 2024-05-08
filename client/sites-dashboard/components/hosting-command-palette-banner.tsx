@@ -10,7 +10,7 @@ import {
 	wordpress as wordpressIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
@@ -193,7 +193,7 @@ const AnimatedCommand = () => {
 
 				return (
 					<CommandBox
-						className={ classNames( {
+						className={ clsx( {
 							'command-box__fadeIn': currentCommandIndex === index,
 							'command-box__fadeOut': prevIndex === index,
 						} ) }

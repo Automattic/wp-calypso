@@ -1,5 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -220,7 +220,7 @@ class WordAdsEarnings extends Component {
 		const { numberFormat, translate } = this.props;
 		const rows = [];
 		const infoIcon = this.getInfoToggle( type ) ? 'info' : 'info-outline';
-		const classes = classNames( 'earnings_history', {
+		const classes = clsx( 'earnings_history', {
 			'is-showing-info': this.getInfoToggle( type ),
 		} );
 

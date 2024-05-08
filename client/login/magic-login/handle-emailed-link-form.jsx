@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -264,7 +264,7 @@ class HandleEmailedLinkForm extends Component {
 		if ( isGravPoweredClient ) {
 			return (
 				<div
-					className={ classNames( 'grav-powered-magic-link', {
+					className={ clsx( 'grav-powered-magic-link', {
 						'grav-powered-magic-link--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
@@ -287,7 +287,7 @@ class HandleEmailedLinkForm extends Component {
 			! isFetching && (
 				<EmptyContent
 					action={ action }
-					className={ classNames( 'magic-login__handle-link', {
+					className={ clsx( 'magic-login__handle-link', {
 						'magic-login__is-fetching-auth': isFetching,
 					} ) }
 					illustration={ illustration }

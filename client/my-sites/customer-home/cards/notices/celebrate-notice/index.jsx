@@ -1,6 +1,6 @@
 import { Button, Spinner } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import fireworksIllustration from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
@@ -55,7 +55,7 @@ const CelebrateNotice = ( {
 	};
 
 	return (
-		<div className={ classnames( 'celebrate-notice', 'task', { 'is-loading': isLoading } ) }>
+		<div className={ clsx( 'celebrate-notice', 'task', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
 			<div className="celebrate-notice__text task__text">
 				<h2 className="celebrate-notice__title task__title">{ title }</h2>

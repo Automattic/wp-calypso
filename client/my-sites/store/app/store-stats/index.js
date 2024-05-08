@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -51,7 +51,7 @@ class StoreStats extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ store.path }/{{ interval }}${ slugPath }`;
 
-		const statsWrapperClass = classNames( 'stats-content', {
+		const statsWrapperClass = clsx( 'stats-content', {
 			'is-period-year': unit === 'year',
 		} );
 

@@ -11,7 +11,7 @@ import {
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -213,7 +213,7 @@ export default function PaymentMethodSelector( {
 			theme={ theme }
 		>
 			<Card
-				className={ classNames( 'payment-method-selector__content', {
+				className={ clsx( 'payment-method-selector__content', {
 					'is-jetpack-cloud': isJetpackCloud(),
 				} ) }
 			>

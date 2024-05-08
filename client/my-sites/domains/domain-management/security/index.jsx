@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { CompactCard, MaterialIcon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ECOMMERCE, FORMS } from '@automattic/urls';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -68,7 +68,7 @@ class Security extends Component {
 				break;
 		}
 
-		const statusClassNames = classNames( 'security__status', sslStatus );
+		const statusClassNames = clsx( 'security__status', sslStatus );
 
 		return (
 			<span className={ statusClassNames }>

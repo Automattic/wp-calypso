@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { PAST_SEVEN_DAYS, PAST_THIRTY_DAYS } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
@@ -294,11 +294,11 @@ class StatsSite extends Component {
 			this.state.activeTab ? this.state.activeTab.attr : 'views'
 		}`;
 
-		const wrapperClass = classNames( 'stats-content', {
+		const wrapperClass = clsx( 'stats-content', {
 			'is-period-year': period === 'year',
 		} );
 
-		const moduleListClasses = classNames(
+		const moduleListClasses = clsx(
 			'is-events',
 			'stats__module-list',
 			'stats__module-list--traffic',
@@ -405,7 +405,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsTopPosts"
 							showSummaryLink
-							className={ classNames(
+							className={ clsx(
 								'stats__flexible-grid-item--60',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
@@ -418,7 +418,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsReferrers"
 							showSummaryLink
-							className={ classNames(
+							className={ clsx(
 								'stats__flexible-grid-item--40--once-space',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
@@ -430,7 +430,7 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							query={ query }
 							summary={ false }
-							className={ classNames( 'stats__flexible-grid-item--full' ) }
+							className={ clsx( 'stats__flexible-grid-item--full' ) }
 						/>
 
 						{ supportsUTMStats && (
@@ -439,7 +439,7 @@ class StatsSite extends Component {
 									siteId={ siteId }
 									period={ this.props.period }
 									query={ query }
-									className={ classNames(
+									className={ clsx(
 										'stats__flexible-grid-item--60',
 										'stats__flexible-grid-item--full--large',
 										'stats__flexible-grid-item--full--medium'
@@ -452,7 +452,7 @@ class StatsSite extends Component {
 									query={ query }
 									statType="statsClicks"
 									showSummaryLink
-									className={ classNames(
+									className={ clsx(
 										'stats__flexible-grid-item--40--once-space',
 										'stats__flexible-grid-item--full--large',
 										'stats__flexible-grid-item--full--medium'
@@ -462,7 +462,7 @@ class StatsSite extends Component {
 									<StatsModuleEmails
 										period={ this.props.period }
 										query={ query }
-										className={ classNames(
+										className={ clsx(
 											{
 												'stats__flexible-grid-item--half': ! this.isModuleHidden( 'authors' ),
 												'stats__flexible-grid-item--full': this.isModuleHidden( 'authors' ),
@@ -482,7 +482,7 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsTopAuthors"
-								className={ classNames(
+								className={ clsx(
 									{
 										'stats__author-views': ! supportsUTMStats,
 										'stats__flexible-grid-item--one-third--two-spaces': ! supportsUTMStats,
@@ -505,7 +505,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsSearchTerms"
 							showSummaryLink
-							className={ classNames(
+							className={ clsx(
 								{
 									'stats__flexible-grid-item--one-third--two-spaces':
 										! this.isModuleHidden( 'authors' ) && ! supportsUTMStats,
@@ -530,7 +530,7 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsClicks"
 								showSummaryLink
-								className={ classNames(
+								className={ clsx(
 									{
 										'stats__flexible-grid-item--one-third--two-spaces':
 											! this.isModuleHidden( 'authors' ),
@@ -549,7 +549,7 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsVideoPlays"
 								showSummaryLink
-								className={ classNames(
+								className={ clsx(
 									{
 										'stats__flexible-grid-item--half': ! supportsUTMStats,
 									},
@@ -565,7 +565,7 @@ class StatsSite extends Component {
 							<StatsModuleEmails
 								period={ this.props.period }
 								query={ query }
-								className={ classNames(
+								className={ clsx(
 									{
 										'stats__flexible-grid-item--half': ! this.isModuleHidden( 'videos' ),
 										'stats__flexible-grid-item--full': this.isModuleHidden( 'videos' ),
@@ -588,7 +588,7 @@ class StatsSite extends Component {
 									statType="statsFileDownloads"
 									showSummaryLink
 									useShortLabel={ true }
-									className={ classNames(
+									className={ clsx(
 										{
 											'stats__flexible-grid-item--half': ! supportsUTMStats,
 											'stats__flexible-grid-item--full--large': ! supportsUTMStats,
@@ -607,7 +607,7 @@ class StatsSite extends Component {
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
-								className={ classNames(
+								className={ clsx(
 									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--xlarge'
 								) }

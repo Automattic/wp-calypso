@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -64,7 +64,7 @@ class MediaModalSecondaryActions extends Component {
 				{ this.getButtons().map( ( button ) => (
 					<Button
 						key={ button.key }
-						className={ classNames( 'editor-media-modal__secondary-action', button.className ) }
+						className={ clsx( 'editor-media-modal__secondary-action', button.className ) }
 						data-e2e-button={ button.key }
 						compact
 						disabled={ button.disabled }

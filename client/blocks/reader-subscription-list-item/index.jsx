@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty, get } from 'lodash';
 import { useState } from 'react';
@@ -111,7 +111,7 @@ function ReaderSubscriptionListItem( {
 	};
 
 	return (
-		<div className={ classnames( 'reader-subscription-list-item', className ) }>
+		<div className={ clsx( 'reader-subscription-list-item', className ) }>
 			<div className="reader-subscription-list-item__avatar">
 				<ReaderAvatar
 					siteIcon={ siteIcon }

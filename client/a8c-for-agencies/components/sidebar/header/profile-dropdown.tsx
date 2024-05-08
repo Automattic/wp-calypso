@@ -1,6 +1,6 @@
 import { Button, Gravatar } from '@automattic/components';
 import { Icon, chevronDown, external } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
@@ -80,10 +80,7 @@ const ProfileDropdown = ( { compact, dropdownPosition = 'down' }: ProfileDropdow
 	return (
 		<nav
 			ref={ dropdownRef }
-			className={ classNames(
-				'a4a-sidebar__profile-dropdown',
-				`is-align-menu-${ dropdownPosition }`
-			) }
+			className={ clsx( 'a4a-sidebar__profile-dropdown', `is-align-menu-${ dropdownPosition }` ) }
 			aria-label={
 				translate( 'User menu', {
 					comment: 'Label used to differentiate navigation landmarks in screen readers',

@@ -7,7 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import { useMemo } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import BillingTimeframes from './billing-timeframes';
@@ -91,7 +91,7 @@ const MobileView = ( {
 			return acc.concat( gridPlan );
 		}, [] as GridPlan[] )
 		.map( ( gridPlan, index ) => {
-			const planCardClasses = classNames(
+			const planCardClasses = clsx(
 				'plans-grid-next-features-grid__mobile-plan-card',
 				getPlanClass( gridPlan.planSlug )
 			);
@@ -141,7 +141,7 @@ const MobileView = ( {
 						{ enableCategorisedFeatures ? (
 							featureGroups.map( ( featureGroupSlug, featureGroupIndex ) => (
 								<div
-									className={ classNames( 'plans-grid-next-features-grid__feature-group-row', {
+									className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
 										'is-first-feature-group': featureGroupIndex === 0,
 									} ) }
 								>

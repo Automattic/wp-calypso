@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -40,7 +40,7 @@ class StatsTabsTab extends Component {
 		const { className, compact, children, icon, href, label, loading, selected, tabClick, value } =
 			this.props;
 
-		const tabClass = classNames( 'stats-tab', className, {
+		const tabClass = clsx( 'stats-tab', className, {
 			'is-selected': selected,
 			'is-loading': loading,
 			'is-low': ! value,

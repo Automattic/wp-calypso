@@ -38,7 +38,7 @@
 		"@wordpress/html-entities": "^3.57.0",
 		"@wordpress/icons": "^9.48.0",
 		"@wordpress/react-i18n": "^3.55.0",
-		"classnames": "^2.3.2",
+		"clsx": "^2.1.1",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {

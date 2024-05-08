@@ -1,5 +1,5 @@
 import { Button, Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent, ReactNode, Fragment } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -38,7 +38,7 @@ const JetpackSearchContent: FunctionComponent< Props > = ( {
 				<div className="jetpack-search__content">
 					<div className="jetpack-search__logo">{ iconComponent }</div>
 					<h2
-						className={ classNames( 'jetpack-search__header', {
+						className={ clsx( 'jetpack-search__header', {
 							'wp-brand-font': ! isJetpackCloud(),
 						} ) }
 					>

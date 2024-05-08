@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -85,7 +85,7 @@ export default function PaymentMethodList() {
 
 				{ showPagination && (
 					<Pagination
-						className={ classnames( 'payment-method-list__pagination', {
+						className={ clsx( 'payment-method-list__pagination', {
 							'payment-method-list__pagination--has-prev': page > 1,
 							'payment-method-list__pagination--has-next': isFetching || hasMore,
 						} ) }

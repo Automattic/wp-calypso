@@ -1,7 +1,7 @@
 import { TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -70,7 +70,7 @@ class EmailSignupTitanCard extends Component {
 			skipButtonTitle,
 		} = this.props;
 		const domainItem = signupDependencies.domainItem?.meta;
-		const classes = classNames( 'email-suggestion', extraClasses );
+		const classes = clsx( 'email-suggestion', extraClasses );
 
 		const wrapDivActionContainer = ( contentElement ) =>
 			isReskinned ? (

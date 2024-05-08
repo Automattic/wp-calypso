@@ -6,7 +6,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import { Spinner } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get, debounce } from 'lodash';
@@ -505,7 +505,7 @@ export class LoginForm extends Component {
 						) }
 
 						<div
-							className={ classNames( 'login__form-password', {
+							className={ clsx( 'login__form-password', {
 								'is-hidden': this.isUsernameOrEmailView(),
 							} ) }
 						>
@@ -807,7 +807,7 @@ export class LoginForm extends Component {
 
 		return (
 			<form
-				className={ classNames( {
+				className={ clsx( {
 					'is-social-first': isSocialFirst,
 					'is-woo-passwordless': isWooPasswordless,
 				} ) }
@@ -850,7 +850,7 @@ export class LoginForm extends Component {
 							autoCorrect="off"
 							spellCheck="false"
 							autoComplete="username"
-							className={ classNames( {
+							className={ clsx( {
 								'is-error': requestError && requestError.field === 'usernameOrEmail',
 							} ) }
 							onChange={ this.onChangeUsernameOrEmailField }
@@ -945,7 +945,7 @@ export class LoginForm extends Component {
 						) }
 
 						<div
-							className={ classNames( 'login__form-password', {
+							className={ clsx( 'login__form-password', {
 								'is-hidden': isPasswordHidden,
 							} ) }
 							aria-hidden={ isPasswordHidden }
@@ -959,7 +959,7 @@ export class LoginForm extends Component {
 							<FormPasswordInput
 								autoCapitalize="off"
 								autoComplete="current-password"
-								className={ classNames( {
+								className={ clsx( {
 									'is-error': requestError && requestError.field === 'password',
 								} ) }
 								onChange={ this.onChangeField }
@@ -990,7 +990,7 @@ export class LoginForm extends Component {
 					</div>
 
 					{ ! hideSignupLink && isOauthLogin && (
-						<div className={ classNames( 'login__form-signup-link' ) }>
+						<div className={ clsx( 'login__form-signup-link' ) }>
 							{ this.props.translate(
 								'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
 								{

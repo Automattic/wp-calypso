@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import QueryJetpackPartnerPortalStoredCards from 'calypso/components/data/query-jetpack-partner-portal-stored-cards';
@@ -142,7 +142,7 @@ export default function PaymentMethodListV2() {
 				{ getBody() }
 				{ hasCards && showPagination && (
 					<Pagination
-						className={ classNames( 'payment-method-list-v2__pagination', {
+						className={ clsx( 'payment-method-list-v2__pagination', {
 							'payment-method-list-v2__pagination--has-prev': page > 1,
 							'payment-method-list-v2__pagination--has-next': isFetching || hasMore,
 						} ) }

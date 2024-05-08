@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
@@ -131,7 +131,7 @@ class SidebarNotifications extends Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'sidebar-notifications', {
+		const classes = clsx( this.props.className, 'sidebar-notifications', {
 			'is-active':
 				this.props.isNotificationsOpen || window.location.pathname === '/read/notifications',
 			'has-unread': this.state.newNote,

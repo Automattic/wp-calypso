@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { debounce, get, last, map, throttle } from 'lodash';
 import PropTypes from 'prop-types';
@@ -150,7 +150,7 @@ class EditorDiffViewer extends PureComponent {
 
 	render() {
 		const { diff, diffView } = this.props;
-		const classes = classNames( 'editor-diff-viewer', {
+		const classes = clsx( 'editor-diff-viewer', {
 			'is-loading':
 				! diff.hasOwnProperty( 'post_content' ) && ! diff.hasOwnProperty( 'post_title' ),
 			'is-split': diffView === 'split',

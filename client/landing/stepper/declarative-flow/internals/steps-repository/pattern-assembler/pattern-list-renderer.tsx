@@ -1,6 +1,6 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { Tooltip, __unstableCompositeItem as CompositeItem } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useCallback, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT, PLACEHOLDER_HEIGHT } from './constants';
@@ -112,7 +112,7 @@ const PatternListRenderer = ( {
 				<PatternListItem
 					key={ `${ index }-${ pattern.ID }` }
 					pattern={ pattern }
-					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
+					className={ clsx( 'pattern-list-renderer__pattern-list-item', {
 						[ activeClassName ]:
 							pattern.ID === selectedPattern?.ID ||
 							selectedPatterns?.find( ( { ID } ) => ID === pattern.ID ),

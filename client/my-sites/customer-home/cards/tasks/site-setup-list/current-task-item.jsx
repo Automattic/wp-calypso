@@ -1,5 +1,5 @@
 import { Badge, Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 
 const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout } ) => {
@@ -35,7 +35,7 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 					{ currentTask.customFirstButton }
 					{ currentTask.actionText && (
 						<Button
-							className={ classnames( 'site-setup-list__task-action', 'task__action', {
+							className={ clsx( 'site-setup-list__task-action', 'task__action', {
 								'is-link': currentTask.actionIsLink,
 								'is-jetpack-branded': currentTask.jetpackBranding,
 							} ) }

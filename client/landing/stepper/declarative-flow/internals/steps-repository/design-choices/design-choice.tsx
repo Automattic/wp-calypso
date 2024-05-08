@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { preventWidows } from 'calypso/lib/formatting';
 import './design-choice.scss';
 
@@ -20,7 +20,7 @@ const DesignChoice = ( {
 	onSelect,
 }: Props ) => (
 	<button
-		className={ classnames( 'design-choice', className ) }
+		className={ clsx( 'design-choice', className ) }
 		aria-label={ title }
 		onClick={ () => onSelect( destination ) }
 	>

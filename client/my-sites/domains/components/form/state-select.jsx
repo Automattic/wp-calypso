@@ -1,5 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -48,7 +48,7 @@ class StateSelect extends PureComponent {
 	}
 
 	render() {
-		const classes = classNames( this.props.additionalClasses, 'state' );
+		const classes = clsx( this.props.additionalClasses, 'state' );
 		const {
 			countryCode,
 			countryStates,

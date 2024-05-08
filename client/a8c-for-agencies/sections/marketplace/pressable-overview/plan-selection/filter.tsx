@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
@@ -72,10 +72,7 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 		filterType === FILTER_TYPE_INSTALL
 			? 'a4a-pressable-filter-wrapper-install'
 			: 'a4a-pressable-filter-wrapper-visits';
-	const wrapperClass = classNames(
-		additionalWrapperClass,
-		'pressable-overview-plan-selection__filter'
-	);
+	const wrapperClass = clsx( additionalWrapperClass, 'pressable-overview-plan-selection__filter' );
 
 	return (
 		<section className={ wrapperClass }>
@@ -85,7 +82,7 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 				</p>
 				<div className="pressable-overview-plan-selection__filter-buttons">
 					<Button
-						className={ classNames( 'pressable-overview-plan-selection__filter-button', {
+						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
 							'is-selected': filterType === FILTER_TYPE_INSTALL,
 						} ) }
 						onClick={ onSelectInstallFilterType }
@@ -94,7 +91,7 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 					</Button>
 
 					<Button
-						className={ classNames( 'pressable-overview-plan-selection__filter-button', {
+						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
 							'is-selected': filterType === FILTER_TYPE_VISITS,
 						} ) }
 						onClick={ onSelectVisitFilterType }

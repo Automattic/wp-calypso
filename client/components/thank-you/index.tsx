@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from '@automattic/urls';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import type {
 	ThankYouNextStepProps,
@@ -220,8 +220,8 @@ export const ThankYou = ( props: ThankYouProps ) => {
 	) );
 
 	return (
-		<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
-			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
+		<ThankYouContainer className={ clsx( 'thank-you__container', containerClassName ) }>
+			<ThankYouHeader className={ clsx( 'thank-you__container-header', headerClassName ) }>
 				{ thankYouImage && <img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } /> }
 				{ thankYouTitle && (
 					<ThankYouTitleContainer>

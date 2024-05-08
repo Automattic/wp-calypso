@@ -3,7 +3,7 @@ import { FEATURE_REPUBLICIZE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, includes, map, concat } from 'lodash';
 import PropTypes from 'prop-types';
@@ -558,7 +558,7 @@ class PostShare extends Component {
 			return null;
 		}
 
-		const classes = classNames( 'post-share__wrapper', {
+		const classes = clsx( 'post-share__wrapper', {
 			'is-placeholder': ! hasFetchedConnections || isRequestingSitePlans,
 			'has-connections': this.hasConnections(),
 			'has-republicize-scheduling-feature': hasRepublicizeFeature,

@@ -1,5 +1,5 @@
 import { PaymentLogo } from '@automattic/wpcom-checkout';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -78,7 +78,7 @@ export default function StoredCreditCard( {
 	return (
 		<>
 			<div
-				className={ classNames( 'stored-credit-card__card', {
+				className={ clsx( 'stored-credit-card__card', {
 					'is-loading': isLoading,
 				} ) }
 			>
@@ -117,7 +117,7 @@ export default function StoredCreditCard( {
 					</span>
 				</div>
 				<div
-					className={ classNames(
+					className={ clsx(
 						'stored-credit-card__payment-logo',
 						`stored-credit-card__payment-logo-${ cardBrand }`
 					) }

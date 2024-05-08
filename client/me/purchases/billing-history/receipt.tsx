@@ -9,7 +9,7 @@ import {
 	getIntroductoryOfferIntervalDisplay,
 	isUserVisibleCostOverride,
 } from '@automattic/wpcom-checkout';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { Component, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
@@ -686,7 +686,7 @@ function ReceiptLabels( { hideDetailsLabelOnPrint }: { hideDetailsLabelOnPrint?:
 		<div>
 			<FormLabel
 				htmlFor="billing-history__billing-details-textarea"
-				className={ classNames( { 'receipt__no-print': hideDetailsLabelOnPrint } ) }
+				className={ clsx( { 'receipt__no-print': hideDetailsLabelOnPrint } ) }
 			>
 				{ translate( 'Billing Details' ) }
 			</FormLabel>

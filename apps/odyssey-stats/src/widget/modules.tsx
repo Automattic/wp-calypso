@@ -1,6 +1,6 @@
 import { ShortenedNumber, Button } from '@automattic/components';
 import { protect, akismet } from '@automattic/components/src/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, FunctionComponent } from 'react';
 import wpcom from 'calypso/lib/wp';
@@ -54,7 +54,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 	};
 	return (
 		<div
-			className={ classNames( 'stats-widget-module stats-widget-card', className ) }
+			className={ clsx( 'stats-widget-module stats-widget-card', className ) }
 			aria-label={ title }
 		>
 			<div className="stats-widget-module__icon">{ icon }</div>

@@ -10,7 +10,7 @@ import {
 	PlanSlug,
 } from '@automattic/calypso-products';
 import { CloudLogo, VIPLogo, WooLogo } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
@@ -35,11 +35,8 @@ const PlanLogo: React.FunctionComponent< {
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		renderedGridPlans,
 	} );
-	const headerClasses = classNames(
-		'plan-features-2023-grid__header-logo',
-		getPlanClass( planSlug )
-	);
-	const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
+	const headerClasses = clsx( 'plan-features-2023-grid__header-logo', getPlanClass( planSlug ) );
+	const tableItemClasses = clsx( 'plan-features-2023-grid__table-item', {
 		'popular-plan-parent-class': gridPlansIndex[ planSlug ]?.highlightLabel,
 		'is-left-of-highlight':
 			highlightAdjacencyMatrix[ planSlug as keyof typeof highlightAdjacencyMatrix ]
@@ -54,7 +51,7 @@ const PlanLogo: React.FunctionComponent< {
 		'is-first-in-row': planIndex === 0,
 		'is-last-in-row': planIndex === renderedGridPlans.length - 1,
 	} );
-	const popularBadgeClasses = classNames( {
+	const popularBadgeClasses = clsx( {
 		'with-plan-logo': ! (
 			isFreePlan( planSlug ) ||
 			isPersonalPlan( planSlug ) ||

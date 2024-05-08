@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -48,7 +48,7 @@ class StatsTabs extends Component {
 
 		return (
 			<ul
-				className={ classNames(
+				className={ clsx(
 					'stats-tabs',
 					{ 'is-enabled': !! data },
 					{ 'is-borderless': borderless }

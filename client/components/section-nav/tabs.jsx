@@ -1,6 +1,6 @@
 import { SelectDropdown } from '@automattic/components';
 import { getWindowInnerWidth } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
@@ -68,7 +68,7 @@ class NavTabs extends Component {
 			return child && cloneElement( child, { ref: this.storeTabRefs( index ) } );
 		} );
 
-		const tabsClassName = classNames( 'section-nav-tabs', {
+		const tabsClassName = clsx( 'section-nav-tabs', {
 			'is-dropdown': this.state.isDropdown,
 			'has-siblings': this.props.hasSiblingControls,
 		} );
@@ -78,7 +78,7 @@ class NavTabs extends Component {
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div
-				className={ classNames( {
+				className={ clsx( {
 					'section-nav-group': true,
 					'has-horizontal-scroll':
 						this.props.hasHorizontalScroll && innerWidth > MOBILE_PANEL_THRESHOLD,

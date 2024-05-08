@@ -1,5 +1,5 @@
 import { Card, SimplifiedSegmentedControl } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -33,7 +33,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 		setChartOption( option?.value || 'total' );
 	};
 
-	const tableWrapperClass = classNames( 'stats__table-wrapper', {
+	const tableWrapperClass = clsx( 'stats__table-wrapper', {
 		'is-loading': ! viewData,
 	} );
 

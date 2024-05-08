@@ -1,5 +1,5 @@
 import { Spinner } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
 
@@ -31,7 +31,7 @@ export const SiteMonitoringPieChart = ( {
 	}
 
 	return (
-		<div className={ classnames( classes ) }>
+		<div className={ clsx( classes ) }>
 			<header className="site-monitoring__chart-header">
 				<h2 className="site-monitoring__chart-title">{ title }</h2>
 				{ subtitle && <p className="site-monitoring__chart-subtitle">{ subtitle }</p> }

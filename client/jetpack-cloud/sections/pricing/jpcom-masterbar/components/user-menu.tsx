@@ -1,5 +1,5 @@
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import Gravatar from 'calypso/components/gravatar';
@@ -101,7 +101,7 @@ const UserMenu: FC = () => {
 	return (
 		<ul className="header__actions-list">
 			<li
-				className={ classNames( 'header__user-menu user-menu ', {
+				className={ clsx( 'header__user-menu user-menu ', {
 					'is-logged-in': isLoggedIn,
 				} ) }
 			>

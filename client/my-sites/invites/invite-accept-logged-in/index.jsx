@@ -1,5 +1,5 @@
 import { Card, Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -146,7 +146,7 @@ class InviteAcceptLoggedIn extends Component {
 
 	render() {
 		return (
-			<div className={ classNames( 'invite-accept-logged-in', this.props.className ) }>
+			<div className={ clsx( 'invite-accept-logged-in', this.props.className ) }>
 				{ this.props.forceMatchingEmail ? this.renderMatchEmailError() : this.renderAccept() }
 			</div>
 		);

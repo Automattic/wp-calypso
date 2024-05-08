@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Children, ReactNode, useLayoutEffect, useState } from 'react';
 import Breadcrumb, { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
@@ -18,7 +18,7 @@ export function LayoutHeaderSubtitle( { children }: Props ) {
 }
 
 export function LayoutHeaderActions( { children, className }: Props ) {
-	const wrapperClass = classNames( className, 'a4a-layout__header-actions' );
+	const wrapperClass = clsx( className, 'a4a-layout__header-actions' );
 	return <div className={ wrapperClass }>{ children }</div>;
 }
 
@@ -54,7 +54,7 @@ export default function LayoutHeader( { showStickyContent, children, className }
 	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
 
 	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
-	const wrapperClass = classNames( className, 'a4a-layout__viewport' );
+	const wrapperClass = clsx( className, 'a4a-layout__viewport' );
 
 	const [ minHeaderHeight, setMinHeaderHeight ] = useState( 0 );
 
@@ -87,12 +87,12 @@ export default function LayoutHeader( { showStickyContent, children, className }
 			style={ showStickyContent ? { minHeight: `${ minHeaderHeight }px` } : {} }
 		>
 			<div
-				className={ classNames( {
+				className={ clsx( {
 					'a4a-layout__sticky-header': showStickyContent && hasCrossed,
 				} ) }
 			>
 				<div
-					className={ classNames( 'a4a-layout__header', {
+					className={ clsx( 'a4a-layout__header', {
 						'has-actions': !! headerActions,
 					} ) }
 				>

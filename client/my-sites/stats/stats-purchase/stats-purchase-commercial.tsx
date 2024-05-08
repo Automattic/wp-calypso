@@ -1,7 +1,7 @@
 import { Button as CalypsoButton } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -41,7 +41,7 @@ const CommercialPurchase = ( {
 	return (
 		<div>
 			<div
-				className={ classNames(
+				className={ clsx(
 					`${ COMPONENT_CLASS_NAME }__notice`,
 					`${ COMPONENT_CLASS_NAME }__notice--green`
 				) }

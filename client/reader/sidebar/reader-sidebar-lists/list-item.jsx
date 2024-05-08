@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -58,7 +58,7 @@ export class ReaderSidebarListsListItem extends Component {
 			this.props.path
 		);
 
-		const classes = classNames( 'sidebar__menu-item--reader-list', {
+		const classes = clsx( 'sidebar__menu-item--reader-list', {
 			selected: isCurrentList || isCurrentListManage,
 		} );
 

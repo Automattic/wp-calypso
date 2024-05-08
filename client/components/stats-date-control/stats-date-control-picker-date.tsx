@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Icon, lock } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import DateInput from './stats-date-control-date-input';
 import { DateControlPickerDateProps } from './types';
@@ -20,7 +20,7 @@ const DateControlPickerDate = ( {
 
 	return (
 		<div
-			className={ classNames( BASE_CLASS_NAME, {
+			className={ clsx( BASE_CLASS_NAME, {
 				[ `${ BASE_CLASS_NAME }__hasoverlay` ]: !! overlay,
 			} ) }
 		>

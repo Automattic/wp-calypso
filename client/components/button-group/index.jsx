@@ -1,10 +1,10 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { memo } from 'react';
 
 import './style.scss';
 
 const ButtonGroup = ( { busy = false, children, className = '', primary = false } ) => {
-	const buttonGroupClasses = classNames( 'button-group', className, {
+	const buttonGroupClasses = clsx( 'button-group', className, {
 		'is-busy': busy,
 		'is-primary': primary,
 	} );

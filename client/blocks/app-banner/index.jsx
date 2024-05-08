@@ -1,7 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import { compose } from '@wordpress/compose';
 import { getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -165,9 +165,9 @@ export class AppBanner extends Component {
 		const { title, copy, icon } = getAppBannerData( translate, currentSection, isRtl );
 
 		return (
-			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
+			<div className={ clsx( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
 				<Card
-					className={ classNames( 'app-banner', 'is-compact', currentSection ) }
+					className={ clsx( 'app-banner', 'is-compact', currentSection ) }
 					ref={ this.preventNotificationsClose }
 				>
 					<TrackComponentView

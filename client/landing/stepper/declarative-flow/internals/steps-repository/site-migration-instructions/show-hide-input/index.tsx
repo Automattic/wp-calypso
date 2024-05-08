@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { ClipboardButton } from '@wordpress/components';
 import { Icon, seen, unseen } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useState, useMemo, useRef, useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -47,7 +47,7 @@ export const ShowHideInput: FC< Props > = ( { value, className } ) => {
 
 	return (
 		<div
-			className={ classNames( 'show-hide-input', className, {
+			className={ clsx( 'show-hide-input', className, {
 				'show-hide-input--hidden': hide,
 			} ) }
 		>

@@ -1,5 +1,5 @@
 import { ScreenReaderText, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { findIndex } from 'lodash';
 import PropTypes from 'prop-types';
@@ -264,7 +264,7 @@ class SortableList extends Component {
 				const isDraggable = this.props.allowDrag && ! hasTouch();
 				let events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ];
 				let style = { order: this.getAdjustedElementIndex( index ) };
-				const classes = classNames( {
+				const classes = clsx( {
 					'sortable-list__item': true,
 					'is-active': isActive,
 					'is-draggable': isDraggable,
@@ -347,7 +347,7 @@ class SortableList extends Component {
 	};
 
 	render() {
-		const classes = classNames( {
+		const classes = clsx( {
 			'sortable-list': true,
 			'is-horizontal': 'horizontal' === this.props.direction,
 			'is-vertical': 'vertical' === this.props.direction,

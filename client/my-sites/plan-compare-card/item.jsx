@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -15,7 +15,7 @@ export default class PlanCompareCardItem extends Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'plan-compare-card-item', {
+		const classes = clsx( this.props.className, 'plan-compare-card-item', {
 			'is-highlight': this.props.highlight,
 			'is-unavailable': this.props.unavailable,
 		} );

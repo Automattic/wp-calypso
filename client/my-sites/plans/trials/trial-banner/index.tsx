@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
@@ -55,7 +55,7 @@ const TrialBanner = ( props: TrialBannerProps ) => {
 	);
 
 	return (
-		<Card className={ classNames( 'trial-banner', { 'entrepreneur-trial': isEntrepreneurTrial } ) }>
+		<Card className={ clsx( 'trial-banner', { 'entrepreneur-trial': isEntrepreneurTrial } ) }>
 			<div className="trial-banner__content">
 				<p className="trial-banner__title">{ translate( 'You’re in a free trial' ) }</p>
 				<p className="trial-banner__subtitle">{ bannerSubtitle }</p>

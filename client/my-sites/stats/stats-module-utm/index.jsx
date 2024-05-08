@@ -1,5 +1,5 @@
 import { StatsCard } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -32,7 +32,7 @@ const StatsModuleUTMWrapper = ( { siteId, period, postId, query, summary, classN
 			{ isFetching && (
 				<StatsCard
 					title="UTM"
-					className={ classNames( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
+					className={ clsx( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
 					isNew
 				>
 					<StatsModulePlaceholder isLoading />
@@ -44,7 +44,7 @@ const StatsModuleUTMWrapper = ( { siteId, period, postId, query, summary, classN
 			{ ! isFetching && isAdvancedFeatureEnabled && (
 				<StatsModuleUTM
 					path="utm"
-					className={ classNames( className, 'stats-module-utm' ) }
+					className={ clsx( className, 'stats-module-utm' ) }
 					moduleStrings={ moduleStrings.utm }
 					period={ period }
 					query={ query }

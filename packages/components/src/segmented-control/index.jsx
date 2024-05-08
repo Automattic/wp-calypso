@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SegmentedControlItem from './item';
@@ -24,7 +24,7 @@ export default class SegmentedControl extends Component {
 
 		return (
 			<ul
-				className={ classNames( 'segmented-control', segmentedClasses, this.props.className ) }
+				className={ clsx( 'segmented-control', segmentedClasses, this.props.className ) }
 				style={ this.props.style }
 				role="radiogroup"
 			>

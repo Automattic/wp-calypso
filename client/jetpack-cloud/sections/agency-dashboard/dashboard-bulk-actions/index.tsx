@@ -1,5 +1,5 @@
 import { Button, Gridicon, SelectDropdown } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { createRef, useContext } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
@@ -126,7 +126,7 @@ export default function DashboardBulkActions( {
 		<>
 			<div
 				ref={ actionBarRef }
-				className={ classNames( 'dashboard-bulk-actions', {
+				className={ clsx( 'dashboard-bulk-actions', {
 					'dashboard-bulk-actions__is-action-bar-visible': actionBarVisible,
 				} ) }
 			>

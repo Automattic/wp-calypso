@@ -1,5 +1,5 @@
 import { getCurrencyObject } from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { Component, createElement } from 'react';
 import { Badge } from '../';
@@ -25,7 +25,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 			isLargeCurrency,
 		} = this.props;
 
-		const classes = classNames( 'plan-price', className, {
+		const classes = clsx( 'plan-price', className, {
 			'is-original': original,
 			'is-discounted': discounted,
 			'is-large-currency': isLargeCurrency,

@@ -1,7 +1,7 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { isEnabled } from '@automattic/calypso-config';
 import { __unstableCompositeItem as CompositeItem } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
@@ -150,7 +150,7 @@ const PatternPagePreview = ( {
 
 	return (
 		<div
-			className={ classnames( 'pattern-assembler__preview', {
+			className={ clsx( 'pattern-assembler__preview', {
 				'pattern-assembler__preview--fullscreen': isFullscreen,
 				'pattern-assembler__preview--fullscreen-enter': isFullscreenEnter,
 				'pattern-assembler__preview--fullscreen-leave': isFullscreenLeave,

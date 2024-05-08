@@ -1,5 +1,5 @@
 import { CompactCard, MaterialIcon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import SectionHeader from 'calypso/components/section-header';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
@@ -38,7 +38,7 @@ const EmailListActiveWarning = ( { domain }: EmailListActiveWarningProps ) => {
 	}
 
 	return (
-		<div className={ classnames( 'email-list-active__warning', statusClass ) }>
+		<div className={ clsx( 'email-list-active__warning', statusClass ) }>
 			<MaterialIcon icon={ icon } />
 
 			<span>{ text }</span>

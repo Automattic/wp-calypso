@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -150,7 +150,7 @@ class StatsModule extends Component {
 
 		const displaySummaryLink = data && ! this.props.hideSummaryLink;
 		const isAllTime = this.isAllTimeList();
-		const footerClass = classNames( 'stats-module__footer-actions', {
+		const footerClass = clsx( 'stats-module__footer-actions', {
 			'stats-module__footer-actions--summary': summary,
 		} );
 
@@ -160,7 +160,7 @@ class StatsModule extends Component {
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				<StatsListCard
-					className={ classNames( className, 'stats-module__card', path ) }
+					className={ clsx( className, 'stats-module__card', path ) }
 					moduleType={ path }
 					data={ data }
 					useShortLabel={ useShortLabel }

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import EditorMediaModalDetailPreviewMediaFile from './detail-preview-media-file';
@@ -17,7 +17,7 @@ export default class extends Component {
 		return (
 			<EditorMediaModalDetailPreviewMediaFile
 				component="audio"
-				className={ classNames( className, 'is-audio' ) }
+				className={ clsx( className, 'is-audio' ) }
 				{ ...props }
 			/>
 		);

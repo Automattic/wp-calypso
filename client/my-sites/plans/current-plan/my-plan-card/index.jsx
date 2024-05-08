@@ -1,5 +1,5 @@
 import { Card, ProductIcon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import './style.scss';
@@ -14,11 +14,11 @@ const MyPlanCard = ( {
 	title,
 	headerChildren,
 } ) => {
-	const cardClassNames = classNames( 'my-plan-card', {
+	const cardClassNames = clsx( 'my-plan-card', {
 		'is-placeholder': isPlaceholder,
 		'has-action-only': action && ! details && ! isPlaceholder,
 	} );
-	const detailsClassNames = classNames( 'my-plan-card__details', { 'is-error': isError } );
+	const detailsClassNames = clsx( 'my-plan-card__details', { 'is-error': isError } );
 
 	return (
 		<Card className={ cardClassNames } compact data-e2e-product-slug={ product }>

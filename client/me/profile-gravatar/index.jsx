@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
 import Animate from 'calypso/components/animate';
 import Gravatar from 'calypso/components/gravatar';
@@ -19,7 +19,7 @@ export default function ProfileGravatar( { user, inSidebar } ) {
 	}
 
 	return (
-		<div className={ classNames( 'profile-gravatar', { 'is-in-sidebar': inSidebar } ) }>
+		<div className={ clsx( 'profile-gravatar', { 'is-in-sidebar': inSidebar } ) }>
 			<div role="presentation" onClick={ recordGravatarMisclick }>
 				<Animate type="appear">
 					<Gravatar user={ user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />

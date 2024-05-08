@@ -1,5 +1,5 @@
 import { Count, Gridicon, FormLabel } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -45,7 +45,7 @@ export class BulkSelect extends Component {
 	render() {
 		const { translate, ariaLabel = translate( 'Select All' ), disabled = false } = this.props;
 		const isChecked = this.hasAllElementsSelected();
-		const inputClasses = classNames( 'bulk-select__box', {
+		const inputClasses = clsx( 'bulk-select__box', {
 			// TODO: We might be able to remove this class in favor of the :checked pseudoselector.
 			'is-checked': isChecked,
 		} );

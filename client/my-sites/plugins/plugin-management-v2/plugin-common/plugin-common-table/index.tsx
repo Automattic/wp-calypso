@@ -1,5 +1,5 @@
 import { Icon, plugins } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import PluginCommonAction from '../plugin-common-actions';
 import type { Columns, RowFormatterArgs } from '../../types';
@@ -27,7 +27,7 @@ export default function PluginCommonTable( {
 	className,
 }: Props ) {
 	return (
-		<table className={ classNames( 'plugin-common-table__table', className ) }>
+		<table className={ clsx( 'plugin-common-table__table', className ) }>
 			<thead>
 				<tr>
 					{ columns
@@ -67,7 +67,7 @@ export default function PluginCommonTable( {
 									}
 									return (
 										<td
-											className={ classNames(
+											className={ clsx(
 												column.smallColumn && 'plugin-common-table__small-column'
 											) }
 											key={ `table-data-${ column.key }-${ id }` }
@@ -80,7 +80,7 @@ export default function PluginCommonTable( {
 									);
 								} ) }
 								{ renderActions && (
-									<td className={ classNames( 'plugin-common-table__actions' ) }>
+									<td className={ clsx( 'plugin-common-table__actions' ) }>
 										<PluginCommonAction item={ item } renderActions={ renderActions } />
 									</td>
 								) }

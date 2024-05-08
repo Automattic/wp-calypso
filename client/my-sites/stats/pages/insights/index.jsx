@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -26,7 +26,7 @@ const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 	const moduleStrings = statsStrings();
 
-	const statsModuleListClass = classNames(
+	const statsModuleListClass = clsx(
 		'stats__module-list--insights',
 		'stats__module--unified',
 		'stats__module-list',
@@ -66,7 +66,7 @@ const StatsInsights = ( props ) => {
 						moduleStrings={ moduleStrings.tags }
 						statType="statsTags"
 						hideSummaryLink
-						className={ classNames(
+						className={ clsx(
 							{
 								'stats__flexible-grid-item--half': isJetpack,
 								'stats__flexible-grid-item--full--large': isJetpack,
@@ -78,7 +78,7 @@ const StatsInsights = ( props ) => {
 					/>
 					<Comments
 						path="comments"
-						className={ classNames(
+						className={ clsx(
 							'stats__flexible-grid-item--half',
 							'stats__flexible-grid-item--full--large'
 						) }
@@ -88,7 +88,7 @@ const StatsInsights = ( props ) => {
 					{ ! isJetpack && (
 						<StatShares
 							siteId={ siteId }
-							className={ classNames(
+							className={ clsx(
 								'stats__flexible-grid-item--half',
 								'stats__flexible-grid-item--full--large'
 							) }

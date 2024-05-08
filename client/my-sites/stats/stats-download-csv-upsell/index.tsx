@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
@@ -23,7 +23,7 @@ const StatsDownloadCsvUpsell: React.FC< Props > = ( { className, siteId, borderl
 	return (
 		<>
 			<Button
-				className={ classNames( className, 'stats-download-csv-upsell', 'stats-download-csv' ) }
+				className={ clsx( className, 'stats-download-csv-upsell', 'stats-download-csv' ) }
 				compact
 				borderless={ borderless }
 				onClick={ onClick }

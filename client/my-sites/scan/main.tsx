@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, ProgressBar, Gridicon, Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -341,7 +341,7 @@ class ScanPage extends Component< Props > {
 
 		return (
 			<Main
-				className={ classNames( mainClass, {
+				className={ clsx( mainClass, {
 					is_jetpackcom: isJetpackPlatform,
 				} ) }
 			>

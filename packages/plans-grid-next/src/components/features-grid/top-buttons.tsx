@@ -4,7 +4,7 @@ import {
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
 } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { GridPlan, PlanActionOverrides } from '../../types';
 import PlanFeatures2023GridActions from '../actions';
@@ -34,7 +34,7 @@ const TopButtons = ( {
 
 	return renderedGridPlans.map(
 		( { planSlug, availableForPurchase, isMonthlyPlan, features: { storageOptions } } ) => {
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
+			const classes = clsx( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 			// Leaving it `undefined` makes it use the default label
 			let buttonText;

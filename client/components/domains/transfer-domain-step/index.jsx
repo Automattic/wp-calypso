@@ -4,7 +4,7 @@ import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -220,7 +220,7 @@ class TransferDomainStep extends Component {
 
 		return (
 			<div
-				className={ classnames( 'transfer-domain-step__price', {
+				className={ clsx( 'transfer-domain-step__price', {
 					'is-free-with-plan': isFreewithPlan || domainsWithPlansOnlyButNoPlan,
 					'is-sale-price':
 						domainProductSalePrice && ! ( isFreewithPlan || domainsWithPlansOnlyButNoPlan ),

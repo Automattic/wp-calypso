@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import i18n from 'i18n-calypso';
 
 import './style.scss';
@@ -6,7 +6,7 @@ import './style.scss';
 export default function ExampleDomainBrowser( { className } ) {
 	const domainTextXAxisValue = i18n.isRtl() ? '245' : '99';
 	return (
-		<div className={ classNames( 'example-domain-browser', className ) }>
+		<div className={ clsx( 'example-domain-browser', className ) }>
 			<svg width="295" height="102" viewBox="0 0 295 102" xmlns="http://www.w3.org/2000/svg">
 				<title>Example Browser</title>
 				<g fill="none" fillRule="evenodd">

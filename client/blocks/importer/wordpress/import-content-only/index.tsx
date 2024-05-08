@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useCallback } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -144,7 +144,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<div
-			className={ classnames( 'import__import-content-only', {
+			className={ clsx( 'import__import-content-only', {
 				'import__error-message': renderState === 'error',
 			} ) }
 		>

@@ -1,6 +1,6 @@
 import { SimplifiedSegmentedControl } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -168,7 +168,7 @@ class StatsComments extends Component {
 					toggleControl={
 						<SimplifiedSegmentedControl options={ selectOptions } onSelect={ this.changeFilter } />
 					}
-					className={ classNames( 'stats__modernised-comments', className ) }
+					className={ clsx( 'stats__modernised-comments', className ) }
 					showLeftIcon
 				/>
 			</>

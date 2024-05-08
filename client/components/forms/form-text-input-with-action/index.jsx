@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useState, useCallback } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -73,7 +73,7 @@ function FormTextInputWithAction( {
 
 	return (
 		<div
-			className={ classNames( 'form-text-input-with-action', className, {
+			className={ clsx( 'form-text-input-with-action', className, {
 				'is-focused': focused,
 				'is-disabled': disabled,
 				'is-error': isError,

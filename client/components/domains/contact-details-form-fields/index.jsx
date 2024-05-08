@@ -4,7 +4,7 @@ import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
 } from '@automattic/wpcom-checkout';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import PropTypes from 'prop-types';
@@ -472,15 +472,12 @@ export class ContactDetailsFormFields extends Component {
 
 		return (
 			<div
-				className={ classNames(
-					'contact-details-form-fields__field',
-					'email-text-input-with-checkbox'
-				) }
+				className={ clsx( 'contact-details-form-fields__field', 'email-text-input-with-checkbox' ) }
 			>
 				<Input label={ this.props.translate( 'Email' ) } { ...emailInputFieldProps } />
 				{ ! this.props.updateWpcomEmailCheckboxHidden && (
 					<FormLabel
-						className={ classNames( 'email-text-input-with-checkbox__checkbox-label', {
+						className={ clsx( 'email-text-input-with-checkbox__checkbox-label', {
 							'is-disabled': this.props.updateWpcomEmailCheckboxDisabled,
 						} ) }
 					>

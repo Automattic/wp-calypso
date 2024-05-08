@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from '@wordpress/element';
 import { Icon, globe, link as linkIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -204,7 +204,7 @@ const SharingModalInner: React.FC = () => {
 					<hr />
 					<h2>{ __( 'Get more traffic to your post by sharing:', 'full-site-editing' ) }</h2>
 					<Button
-						className={ classnames(
+						className={ clsx(
 							'wpcom-block-editor-post-published-sharing-modal__sharing-button',
 							'share-facebook'
 						) }
@@ -213,7 +213,7 @@ const SharingModalInner: React.FC = () => {
 						<InlineSocialLogo icon="facebook" size={ 18 } />
 					</Button>
 					<Button
-						className={ classnames(
+						className={ clsx(
 							'wpcom-block-editor-post-published-sharing-modal__sharing-button',
 							'share-twitter'
 						) }
@@ -222,7 +222,7 @@ const SharingModalInner: React.FC = () => {
 						<InlineSocialLogo icon="twitter-alt" size={ 18 } />
 					</Button>
 					<Button
-						className={ classnames(
+						className={ clsx(
 							'wpcom-block-editor-post-published-sharing-modal__sharing-button',
 							'share-linkedin'
 						) }
@@ -231,7 +231,7 @@ const SharingModalInner: React.FC = () => {
 						<InlineSocialLogo icon="linkedin" size={ 18 } />
 					</Button>
 					<Button
-						className={ classnames(
+						className={ clsx(
 							'wpcom-block-editor-post-published-sharing-modal__sharing-button',
 							'share-tumblr'
 						) }
@@ -240,7 +240,7 @@ const SharingModalInner: React.FC = () => {
 						<InlineSocialLogo icon="tumblr-alt" size={ 18 } />
 					</Button>
 					<Button
-						className={ classnames(
+						className={ clsx(
 							'wpcom-block-editor-post-published-sharing-modal__sharing-button',
 							'share-pinterest'
 						) }

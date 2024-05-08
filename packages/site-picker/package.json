@@ -27,7 +27,7 @@
 		"@wordpress/dom": "^3.57.0",
 		"@wordpress/i18n": "^4.57.0",
 		"@wordpress/icons": "^9.48.0",
-		"classnames": "^2.3.2"
+		"clsx": "^2.1.1"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.27.0",

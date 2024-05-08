@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import ThreatHistoryList from 'calypso/components/jetpack/threat-history-list';
@@ -23,7 +23,7 @@ export default function ScanHistoryPage( { filter }: Props ) {
 
 	return (
 		<Main
-			className={ classNames( 'scan history', {
+			className={ clsx( 'scan history', {
 				is_jetpackcom: isJetpackPlatform,
 			} ) }
 		>

@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useRtl } from 'i18n-calypso';
 import { Children, useState, useLayoutEffect, useRef, useCallback } from 'react';
 
@@ -306,7 +306,7 @@ export const Swipeable = ( {
 				{ ...otherProps }
 			>
 				<div
-					className={ classnames( 'swipeable__pages', containerClassName ) }
+					className={ clsx( 'swipeable__pages', containerClassName ) }
 					style={ {
 						transform: `translate3d(${ offset }px, 0px, 0px)`,
 						...pagesStyle,
@@ -316,7 +316,7 @@ export const Swipeable = ( {
 					{ Children.map( children, ( child, index ) => (
 						<div
 							style={ { width: `${ containerWidth }px` } } // Setting the page width is important for iOS browser.
-							className={ classnames( 'swipeable__page', pageClassName, {
+							className={ clsx( 'swipeable__page', pageClassName, {
 								'is-current': index === currentPage,
 								'is-prev': index < currentPage,
 								'is-next': index > currentPage,

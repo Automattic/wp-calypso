@@ -1,5 +1,5 @@
 import { Count, Badge, Gridicon, MaterialIcon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
 	const showAsExternal = ( isExternalLink && ! props.forceInternalLink ) || props.forceExternalLink;
-	const classes = classnames( props.className, props.tipTarget, {
+	const classes = clsx( props.className, props.tipTarget, {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
 		tooltip: !! props.tooltip,

@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
@@ -124,7 +124,7 @@ const Verification: FunctionComponent< Props > = ( {
 					}[ step.state ] ?? [ 'verification__step-unknown', 'notice' ];
 
 					return (
-						<li key={ step.label } className={ classNames( 'verification__step-item', className ) }>
+						<li key={ step.label } className={ clsx( 'verification__step-item', className ) }>
 							<Gridicon icon={ icon } />
 							{ stepLabels.has( step.label ) ? stepLabels.get( step.label ) : step.label }
 						</li>

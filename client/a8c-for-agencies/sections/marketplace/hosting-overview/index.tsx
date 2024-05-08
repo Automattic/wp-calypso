@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -22,7 +22,7 @@ export default function Hosting() {
 
 	return (
 		<Layout
-			className={ classNames( 'hosting-overview' ) }
+			className={ clsx( 'hosting-overview' ) }
 			title={ translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React, { ReactNode } from 'react';
 import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
@@ -50,7 +50,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 	return (
 		<header
 			id={ id }
-			className={ classnames(
+			className={ clsx(
 				className,
 				'navigation-header',
 				screenOptionsTab && children ? 'navigation-header__screen-options-tab' : ''

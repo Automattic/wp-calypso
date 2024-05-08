@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { isOutsideCalypso } from 'calypso/lib/url';
 
@@ -16,7 +16,7 @@ const PurchaseButton = ( {
 } ) => {
 	return (
 		<Button
-			className={ classNames( 'purchase-detail__button', className ) }
+			className={ clsx( 'purchase-detail__button', className ) }
 			disabled={ disabled }
 			href={ localizeUrl( href ) }
 			onClick={ onClick }

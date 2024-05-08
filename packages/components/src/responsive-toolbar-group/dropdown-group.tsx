@@ -8,7 +8,7 @@ import {
 	Popover,
 } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -35,7 +35,7 @@ export default function DropdownGroup( {
 	onClick?: ( index: number ) => void;
 	initialActiveIndex?: number;
 } ) {
-	const classes = classnames( 'responsive-toolbar-group__dropdown', className );
+	const classes = clsx( 'responsive-toolbar-group__dropdown', className );
 
 	const containerRef = useRef< HTMLDivElement >( null );
 	const [ calculatedOnce, setCalculatedOnce ] = useState< boolean >( false );
@@ -96,7 +96,7 @@ export default function DropdownGroup( {
 					<Dropdown
 						renderToggle={ ( { onToggle } ) => (
 							<ToolbarButton
-								className={ classnames(
+								className={ clsx(
 									'responsive-toolbar-group__more-item',
 									'responsive-toolbar-group__button-item'
 								) }
@@ -121,7 +121,7 @@ export default function DropdownGroup( {
 												onClick( parseInt( index ) );
 												onClose();
 											} }
-											className={ classnames(
+											className={ clsx(
 												'responsive-toolbar-group__menu-item',
 												activeIndex === parseInt( index ) ? 'is-selected' : ''
 											) }
@@ -221,7 +221,7 @@ export default function DropdownGroup( {
 				{ maybeRenderMore( true ) }
 			</ToolbarGroup>
 			<ToolbarGroup
-				className={ classnames(
+				className={ clsx(
 					'responsive-toolbar-group__grouped-list',
 					calculatedOnce ? 'is-visible' : ''
 				) }

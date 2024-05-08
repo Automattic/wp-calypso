@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -87,7 +87,7 @@ class PostPhoto extends Component {
 			featuredImageStyle.width = newWidth;
 		}
 
-		const classes = classnames( {
+		const classes = clsx( {
 			'reader-post-card__photo': true,
 			'is-expanded': this.props.isExpanded,
 		} );

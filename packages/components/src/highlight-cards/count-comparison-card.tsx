@@ -1,5 +1,5 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import { Card, ShortenedNumber, formattedNumber } from '../';
 import Popover from '../popover';
@@ -50,7 +50,7 @@ export function TrendComparison( { count, previousCount }: TrendComparisonProps 
 
 	return (
 		<span
-			className={ classNames( 'highlight-card-difference', {
+			className={ clsx( 'highlight-card-difference', {
 				'highlight-card-difference--positive': difference < 0,
 				'highlight-card-difference--negative': difference > 0,
 			} ) }
@@ -87,7 +87,7 @@ export default function CountComparisonCard( {
 			{ icon && <div className="highlight-card-icon">{ icon }</div> }
 			{ heading && <div className="highlight-card-heading">{ heading }</div> }
 			<div
-				className={ classNames( 'highlight-card-count', {
+				className={ clsx( 'highlight-card-count', {
 					'is-pointer': showValueTooltip,
 				} ) }
 				onMouseEnter={ () => setTooltipVisible( true ) }

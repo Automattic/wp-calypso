@@ -1,7 +1,7 @@
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -78,7 +78,7 @@ const TrialCurrentPlan = () => {
 
 				{ ! displayAllIncluded && (
 					<Button
-						className={ classnames( 'trial-current-plan__included-view-all', {
+						className={ clsx( 'trial-current-plan__included-view-all', {
 							'is-ecommerce': isEcommerceTrial,
 						} ) }
 						onClick={ viewAllIncludedFeatures }

@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -113,7 +113,7 @@ const SiteSettingPrivacyForm = ( {
 								<SiteSettingPrivacyNotice selectedSite={ selectedSite } siteSlug={ siteSlug } />
 							) }
 							<FormLabel
-								className={ classnames( 'site-settings__visibility-label is-coming-soon', {
+								className={ clsx( 'site-settings__visibility-label is-coming-soon', {
 									'is-coming-soon-disabled': isComingSoonDisabled,
 								} ) }
 							>

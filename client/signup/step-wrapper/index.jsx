@@ -1,5 +1,5 @@
 import { ActionButtons } from '@automattic/onboarding';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -99,7 +99,7 @@ class StepWrapper extends Component {
 					flowName={ flowName }
 					stepName={ stepName }
 					labelText={ skipLabelText }
-					cssClass={ classNames( 'step-wrapper__navigation-link', 'has-underline', {
+					cssClass={ clsx( 'step-wrapper__navigation-link', 'has-underline', {
 						'has-skip-heading': skipHeadingText,
 					} ) }
 					borderless={ borderless }
@@ -200,7 +200,7 @@ class StepWrapper extends Component {
 			this.renderSkip( { borderless: true, forwardIcon: null } );
 		const nextButton = ! hideNext && this.renderNext();
 		const hasNavigation = backButton || skipButton || nextButton || customizedActionButtons;
-		const classes = classNames( 'step-wrapper', this.props.className, {
+		const classes = clsx( 'step-wrapper', this.props.className, {
 			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
 			'is-extra-wide-layout': isExtraWideLayout,

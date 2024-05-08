@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
@@ -421,7 +421,7 @@ class PostComment extends PureComponent {
 		const isHighlighted =
 			shouldHighlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000;
 
-		const postCommentClassnames = classnames( 'comments__comment', {
+		const postCommentClassnames = clsx( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
 			'is-highlighted': isHighlighted,
 		} );

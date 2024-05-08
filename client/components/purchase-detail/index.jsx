@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -83,7 +83,7 @@ export default class PurchaseDetail extends PureComponent {
 
 	render() {
 		const { id, requiredText, title, description, icon } = this.props;
-		const classes = classNames( 'purchase-detail', {
+		const classes = clsx( 'purchase-detail', {
 			'custom-icon': icon && typeof icon !== 'string',
 			'is-placeholder': this.props.isPlaceholder,
 		} );

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar, {
@@ -55,7 +55,7 @@ const A4ASidebar = ( {
 	const dispatch = useDispatch();
 
 	return (
-		<Sidebar className={ classNames( 'a4a-sidebar', className ) }>
+		<Sidebar className={ clsx( 'a4a-sidebar', className ) }>
 			<SidebarHeader withProfileDropdown={ ! withUserProfileFooter } />
 
 			<SidebarMain>

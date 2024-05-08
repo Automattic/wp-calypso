@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import MailIcon from 'calypso/components/social-icons/mail';
@@ -69,7 +69,7 @@ const LoginButtons = ( {
 
 		return (
 			<Button
-				className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+				className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
 				href={ magicLoginPageLinkWithEmail }
 				onClick={ handleMagicLoginClick }
 				data-e2e-link="magic-login-link"
@@ -106,7 +106,7 @@ const LoginButtons = ( {
 
 		return (
 			<Button
-				className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+				className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
 				href={ loginUrl }
 				onClick={ handleMagicLoginClick }
 				data-e2e-link="magic-login-link"

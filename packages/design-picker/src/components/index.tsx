@@ -5,7 +5,7 @@ import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf, hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { noop } from 'lodash';
 import { useMemo } from 'react';
 import {
@@ -151,7 +151,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				</span>
 			) }
 			<span
-				className={ classnames(
+				className={ clsx(
 					'design-picker__image-frame',
 					'design-picker__image-frame-landscape',
 					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
@@ -353,7 +353,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 	return (
 		<div
-			className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className, {
+			className={ clsx( 'design-picker', `design-picker--theme-${ theme }`, className, {
 				'design-picker--has-categories': hasCategories,
 			} ) }
 		>

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -25,7 +25,7 @@ export const SocialItem = ( props ) => {
 	const { isSelected, onClick, service, translate } = props;
 
 	const { icon, label } = get( services( translate ), service );
-	const classes = classNames( 'vertical-menu__social-item', 'vertical-menu__items', {
+	const classes = clsx( 'vertical-menu__social-item', 'vertical-menu__items', {
 		'is-selected': isSelected,
 	} );
 

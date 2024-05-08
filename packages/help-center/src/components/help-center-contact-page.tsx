@@ -10,7 +10,7 @@ import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
@@ -198,11 +198,11 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					enabled={ renderChat.render }
 				/>
 
-				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
+				<div className={ clsx( 'help-center-contact-page__boxes' ) }>
 					{ ! renderEmail.render && (
 						<Link to={ forumUrl } onClick={ contactOptionsEventMap[ 'forum' ] }>
 							<div
-								className={ classnames( 'help-center-contact-page__box', 'forum' ) }
+								className={ clsx( 'help-center-contact-page__box', 'forum' ) }
 								role="button"
 								tabIndex={ 0 }
 							>
@@ -219,14 +219,14 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 						</Link>
 					) }
 					{ renderChat.render && (
-						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
+						<div className={ clsx( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
 							<ConditionalLink
 								active={ renderChat.state === 'AVAILABLE' }
 								to={ chatUrl }
 								onClick={ contactOptionsEventMap[ 'chat' ] }
 							>
 								<div
-									className={ classnames( 'help-center-contact-page__box', 'chat', {
+									className={ clsx( 'help-center-contact-page__box', 'chat', {
 										'is-disabled': renderChat.state !== 'AVAILABLE',
 									} ) }
 									role="button"
@@ -251,7 +251,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					{ renderEmail.render && (
 						<Link to={ emailUrl } onClick={ contactOptionsEventMap[ 'email' ] }>
 							<div
-								className={ classnames( 'help-center-contact-page__box', 'email' ) }
+								className={ clsx( 'help-center-contact-page__box', 'email' ) }
 								role="button"
 								tabIndex={ 0 }
 							>

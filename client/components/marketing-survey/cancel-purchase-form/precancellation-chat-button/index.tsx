@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import { MaterialIcon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import ChatButton from 'calypso/components/chat-button';
 import { hasIncludedDomain } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
@@ -55,7 +55,7 @@ const PrecancellationChatButton: FC< Props > = ( {
 			chatIntent="PRECANCELLATION"
 			initialMessage={ initialMessage }
 			siteUrl={ siteUrl }
-			className={ classNames( 'precancellation-chat-button__main-button', className ) }
+			className={ clsx( 'precancellation-chat-button__main-button', className ) }
 			onClick={ handleClick }
 		>
 			{ icon && <MaterialIcon icon={ icon } /> }

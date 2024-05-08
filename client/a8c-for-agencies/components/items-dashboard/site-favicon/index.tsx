@@ -1,5 +1,5 @@
 import { WordPressLogo } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import SiteIcon from 'calypso/blocks/site-icon';
 
 import './style.scss';
@@ -28,7 +28,7 @@ const SiteFavicon = ( {
 	);
 
 	return (
-		<div className={ classNames( 'site-favicon', className ) }>
+		<div className={ clsx( 'site-favicon', className ) }>
 			<SiteIcon siteId={ blogId } size={ size } defaultIcon={ defaultFavicon } />
 		</div>
 	);

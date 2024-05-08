@@ -13,7 +13,7 @@ import {
 	getPlan,
 	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useState } from 'react';
 import { connect } from 'react-redux';
@@ -178,7 +178,7 @@ export const UpsellNudge = ( {
 		}
 	}
 
-	const classes = classnames(
+	const classes = clsx(
 		'upsell-nudge',
 		className,
 		{ 'is-upgrade-blogger': plan && isBloggerPlan( plan ) },

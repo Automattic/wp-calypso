@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { forwardRef } from 'react';
 import withUserMentions from 'calypso/blocks/user-mentions/index';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -22,7 +22,7 @@ const AutoresizingFormTextarea = (
 	},
 	forwardedRef
 ) => {
-	const classes = classnames( 'expanding-area', { focused: hasFocus } );
+	const classes = clsx( 'expanding-area', { focused: hasFocus } );
 
 	return (
 		<div className={ classes }>

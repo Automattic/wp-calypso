@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -83,7 +83,7 @@ class PostLikes extends PureComponent {
 		// Prevent loading for postId `0`
 		const isLoading = !! postId && ! likes;
 
-		const classes = classnames( 'post-likes', {
+		const classes = clsx( 'post-likes', {
 			'has-display-names': showDisplayNames,
 			'no-likes': ! likeCount,
 		} );

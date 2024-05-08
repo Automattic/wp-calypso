@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { throttle, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -167,7 +167,7 @@ class StatsGeochart extends Component {
 	render() {
 		const { siteId, statType, query, data, kind } = this.props;
 		const isLoading = ! data || ! this.state.visualizationsLoaded;
-		const classes = classNames( 'stats-geochart', {
+		const classes = clsx( 'stats-geochart', {
 			'is-loading': isLoading,
 			'has-no-data': data && ! data.length,
 		} );
@@ -179,10 +179,7 @@ class StatsGeochart extends Component {
 				) }
 
 				<div ref={ this.chartRef } className={ classes } />
-				<StatsModulePlaceholder
-					className={ classNames( classes, 'is-block' ) }
-					isLoading={ isLoading }
-				/>
+				<StatsModulePlaceholder className={ clsx( classes, 'is-block' ) } isLoading={ isLoading } />
 			</>
 		);
 	}

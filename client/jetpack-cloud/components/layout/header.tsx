@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Children, ReactNode, useLayoutEffect, useState } from 'react';
 import Breadcrumb, { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
@@ -84,12 +84,12 @@ export default function LayoutHeader( { showStickyContent, children }: Props ) {
 			style={ showStickyContent ? { minHeight: `${ minHeaderHeight }px` } : {} }
 		>
 			<div
-				className={ classNames( {
+				className={ clsx( {
 					'jetpack-cloud-layout__sticky-header': showStickyContent && hasCrossed,
 				} ) }
 			>
 				<div
-					className={ classNames( 'jetpack-cloud-layout__header', {
+					className={ clsx( 'jetpack-cloud-layout__header', {
 						'has-actions': !! headerActions,
 					} ) }
 				>

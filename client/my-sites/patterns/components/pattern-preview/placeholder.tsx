@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, copy } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
@@ -29,7 +29,7 @@ export function PatternPreviewPlaceholder( { className, title }: PatternPreviewP
 
 	return (
 		<div
-			className={ classNames( 'pattern-preview is-loading', className, {
+			className={ clsx( 'pattern-preview is-loading', className, {
 				'is-server': typeof window !== 'undefined',
 			} ) }
 		>

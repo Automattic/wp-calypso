@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
@@ -11,7 +11,7 @@ const LOGO_COLOR_PRIMARY = '#029CD7';
 const LOGO_COLOR_SECONDARY = '#021A23';
 
 const A4APlusWpComLogo = ( { size = 32, className }: A4APlusWpComLogoProps ) => {
-	const classes = classNames( className );
+	const classes = clsx( className );
 
 	return (
 		<svg className={ classes } width="190" height={ size } viewBox="0 0 190 64">

@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
@@ -23,7 +23,7 @@ const ReaderPostActions = ( props ) => {
 	const showComments = shouldShowComments( post );
 	const showLikes = shouldShowLikes( post );
 
-	const listClassnames = classnames( className, {
+	const listClassnames = clsx( className, {
 		'reader-post-actions': true,
 	} );
 

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
@@ -133,7 +133,7 @@ class FoldableCard extends Component {
 			<span className="foldable-card__summary-expanded">{ this.props.expandedSummary } </span>
 		) : null;
 		const headerClickAction = this.props.clickableHeader ? this.getClickAction() : null;
-		const headerClasses = classNames( 'foldable-card__header', {
+		const headerClasses = clsx( 'foldable-card__header', {
 			'is-clickable': !! this.props.clickableHeader,
 			'has-border': !! this.props.summary,
 		} );
@@ -159,7 +159,7 @@ class FoldableCard extends Component {
 
 	render() {
 		const Container = this.props.compact ? CompactCard : Card;
-		const itemSiteClasses = classNames( 'foldable-card', this.props.className, {
+		const itemSiteClasses = clsx( 'foldable-card', this.props.className, {
 			'is-disabled': !! this.props.disabled,
 			'is-expanded': !! this.state.expanded,
 			'has-expanded-summary': !! this.props.expandedSummary,

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -37,7 +37,7 @@ export const Note = React.forwardRef( ( props, ref ) => {
 		}
 	}
 
-	const classes = classNames( 'wpnc__note', `wpnc__${ note.type }`, {
+	const classes = clsx( 'wpnc__note', `wpnc__${ note.type }`, {
 		'comment-reply': hasCommentReply,
 		read: isRead,
 		unread: ! isRead,

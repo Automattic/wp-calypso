@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Icon, lineSolid } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Fragment, useContext } from 'react';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -67,7 +67,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	return (
 		<Fragment>
 			<tr
-				className={ classNames( 'site-table__table-row', {
+				className={ clsx( 'site-table__table-row', {
 					'site-table__table-row-disabled': shouldDisableLicenseSelection,
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
 					'site-table__table-row-site-error': hasSiteConnectionError,
@@ -94,7 +94,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 					if ( isUrlOnly && ! [ 'site', 'monitor' ].includes( column.key ) ) {
 						return (
 							<td
-								className={ classNames( column.className, {
+								className={ clsx( column.className, {
 									'site-table__td-is-url-only': isUrlOnly,
 								} ) }
 								key={ `table-data-${ row.type }-${ blogId }` }
@@ -108,7 +108,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 					if ( row.type ) {
 						return (
 							<td
-								className={ classNames( column.className, {
+								className={ clsx( column.className, {
 									'site-table__td-without-border-bottom': isExpanded,
 									'site-table__td-critical': isCritical,
 								} ) }
@@ -128,7 +128,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 				{ /* Show error content when there is a site error */ }
 				{ hasSiteConnectionError && (
 					<td
-						className={ classNames( 'site-table__error padding-0', {
+						className={ clsx( 'site-table__error padding-0', {
 							'site-table__td-without-border-bottom': isExpanded,
 						} ) }
 						// If there is an error, we need to span the whole row because we don't show any column.
@@ -138,7 +138,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 					</td>
 				) }
 				<td
-					className={ classNames( 'site-table__actions site-table__actions-button', {
+					className={ clsx( 'site-table__actions site-table__actions-button', {
 						'site-table__td-without-border-bottom': isExpanded,
 					} ) }
 				>

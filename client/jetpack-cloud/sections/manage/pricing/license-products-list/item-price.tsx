@@ -1,5 +1,5 @@
 import { TERM_MONTHLY } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
@@ -54,7 +54,7 @@ export const ItemPrice = ( { item, bundleSize }: ItemPriceProps ) => {
 	const title = getProductShortTitle( item, false );
 
 	return (
-		<div className={ classNames( 'item-price', { 'is-compact': isCompact } ) } ref={ containerRef }>
+		<div className={ clsx( 'item-price', { 'is-compact': isCompact } ) } ref={ containerRef }>
 			<DisplayPrice
 				isFree={ false }
 				isOwned={ false }

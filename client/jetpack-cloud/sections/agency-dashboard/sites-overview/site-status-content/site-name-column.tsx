@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useContext } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -57,7 +57,7 @@ export default function SiteNameColumn( {
 	} else if ( siteIssuesCount ) {
 		errorContent = (
 			<span
-				className={ classNames(
+				className={ clsx(
 					'sites-overview__status-count',
 					isHighSeverityError ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
 				) }

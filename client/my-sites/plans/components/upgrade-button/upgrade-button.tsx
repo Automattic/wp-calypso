@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
@@ -16,7 +16,7 @@ const UpgradeButton = ( { goToCheckoutWithPlan, isEntrepreneurTrial }: UpgradeBu
 
 	return (
 		<Button
-			className={ classNames( 'plans-upgrade-button__button', {
+			className={ clsx( 'plans-upgrade-button__button', {
 				[ 'blue' ]: isEntrepreneurTrial,
 			} ) }
 			primary

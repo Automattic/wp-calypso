@@ -1,5 +1,5 @@
 import { FormLabel } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -41,7 +41,7 @@ const ProductCardOptions = ( {
 				{ options.map( ( option ) => (
 					<FormLabel
 						key={ `product-option-${ option.slug }` }
-						className={ classnames( 'product-card__option', {
+						className={ clsx( 'product-card__option', {
 							'is-selected': option.slug === selectedSlug,
 						} ) }
 					>

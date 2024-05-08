@@ -14,7 +14,7 @@ import { Card, CompactCard, Button, FormLabel, Gridicon } from '@automattic/comp
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -581,12 +581,12 @@ export class SiteSettingsFormGeneral extends Component {
 			isUnlaunchedSite: propsisUnlaunchedSite,
 			isClassicView,
 		} = this.props;
-		const classes = classNames( 'site-settings__general-settings', {
+		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
 
 		return (
-			<div className={ classNames( classes ) }>
+			<div className={ clsx( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
 				{ ! isClassicView && (

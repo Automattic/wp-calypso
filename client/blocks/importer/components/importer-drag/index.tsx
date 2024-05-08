@@ -1,5 +1,5 @@
 import { SubTitle, Title } from '@automattic/onboarding';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -46,7 +46,7 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 	const isEnabled = appStates.DISABLED !== importerState;
 
 	return (
-		<div className={ classnames( 'importer-drag', `importer-drag-${ importerData?.engine }` ) }>
+		<div className={ clsx( 'importer-drag', `importer-drag-${ importerData?.engine }` ) }>
 			<div className="import__heading import__heading-center">
 				<Title>{ importerData?.title }</Title>
 				<SubTitle>{ importerData?.description }</SubTitle>

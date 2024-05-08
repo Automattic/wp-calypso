@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 
 type DropdownOptionProps = {
@@ -36,7 +36,7 @@ const DropdownOption = ( { children, className, title }: DropdownOptionProps ) =
 	}
 
 	return (
-		<Container className={ classnames( className ) }>
+		<Container className={ clsx( className ) }>
 			<span className="title">{ title }</span>
 			{ children }
 		</Container>

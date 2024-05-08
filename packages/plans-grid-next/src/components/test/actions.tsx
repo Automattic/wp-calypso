@@ -4,7 +4,6 @@
 /**
  * Default mock implementations
  */
-jest.mock( 'classnames', () => jest.fn() );
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 	combineReducers: jest.fn(),

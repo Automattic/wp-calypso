@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -30,7 +30,7 @@ export default class FormVerificationCodeInput extends Component {
 	render() {
 		const { className, isError, isValid, method, ...otherProps } = this.props;
 
-		const classes = classNames( 'form-verification-code-input', className, {
+		const classes = clsx( 'form-verification-code-input', className, {
 			'is-error': isError,
 			'is-valid': isValid,
 		} );

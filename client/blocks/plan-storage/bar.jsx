@@ -1,6 +1,6 @@
 import { planHasFeature, FEATURE_UNLIMITED_STORAGE } from '@automattic/calypso-products';
 import { ProgressBar } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import filesize from 'filesize';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -35,7 +35,7 @@ export class PlanStorageBar extends Component {
 			100
 		);
 
-		const classes = classNames( className, 'plan-storage__bar', {
+		const classes = clsx( className, 'plan-storage__bar', {
 			'is-alert': percent > ALERT_PERCENT,
 			'is-warn': percent > WARN_PERCENT && percent <= ALERT_PERCENT,
 		} );

@@ -4,7 +4,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button, Card, FormLabel } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { pick, flowRight } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -180,7 +180,7 @@ class PodcastingDetails extends Component {
 
 		const error = this.renderSettingsError();
 
-		const classes = classNames( 'podcasting-details__wrapper', {
+		const classes = clsx( 'podcasting-details__wrapper', {
 			'is-disabled': ! error && ! isPodcastingEnabled,
 		} );
 

@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useRef, forwardRef, Fragment } from 'react';
 
 const SidebarMenuItem = forwardRef(
@@ -39,7 +39,7 @@ const SidebarMenuItem = forwardRef(
 			);
 		};
 
-		const itemClasses = classNames( 'sidebar__item', className, {
+		const itemClasses = clsx( 'sidebar__item', className, {
 			'is-active': isActive,
 			'has-unseen': hasUnseen,
 			'sidebar__item--always-show-content': alwaysShowContent,

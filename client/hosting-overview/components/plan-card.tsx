@@ -2,7 +2,7 @@ import { PlanSlug } from '@automattic/calypso-products';
 import { Button, Card, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
@@ -37,7 +37,7 @@ const PlanCard: FC = () => {
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
 			<Card
-				className={ classNames( 'hosting-overview__card', 'hosting-overview__plan', {
+				className={ clsx( 'hosting-overview__card', 'hosting-overview__plan', {
 					'hosting-overview__plan--is-free': ! isPaidPlan,
 				} ) }
 			>
@@ -45,7 +45,7 @@ const PlanCard: FC = () => {
 					<h3 className="hosting-overview__plan-card-title">{ planName }</h3>
 
 					<Button
-						className={ classNames(
+						className={ clsx(
 							'hosting-overview__link-button',
 							'hosting-overview__mobile-hidden-link-button'
 						) }

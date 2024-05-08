@@ -1,9 +1,9 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 const ImporterActionButtonContainer = ( { justifyContentCenter = false, children } ) =>
 	children ? (
 		<div
-			className={ classnames( 'importer-action-buttons__container', {
+			className={ clsx( 'importer-action-buttons__container', {
 				'is-justify-content-center': justifyContentCenter,
 			} ) }
 		>

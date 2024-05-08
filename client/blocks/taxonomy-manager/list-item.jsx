@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Count, Dialog, Gridicon, Tooltip } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -122,7 +122,7 @@ class TaxonomyManagerListItem extends Component {
 			this.props;
 		const name = this.getName();
 		const hasPosts = get( term, 'post_count', 0 ) > 0;
-		const className = classNames( 'taxonomy-manager__item', {
+		const className = clsx( 'taxonomy-manager__item', {
 			'is-default': isDefault,
 		} );
 		const deleteDialogButtons = [

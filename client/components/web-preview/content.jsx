@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugModule from 'debug';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -361,7 +361,7 @@ export default class WebPreviewContent extends Component {
 		} = this.props;
 		const isLoaded = this.state.loaded && ( ! autoHeight || this.state.viewport !== null );
 
-		const className = classNames( this.props.className, 'web-preview__inner', {
+		const className = clsx( this.props.className, 'web-preview__inner', {
 			'is-touch': hasTouch(),
 			'is-with-sidebar': this.props.hasSidebar,
 			'is-visible': this.props.showPreview,
@@ -413,7 +413,7 @@ export default class WebPreviewContent extends Component {
 					) }
 					{ 'seo' !== this.state.device && (
 						<div
-							className={ classNames( 'web-preview__frame-wrapper', {
+							className={ clsx( 'web-preview__frame-wrapper', {
 								'is-resizable': ! this.props.isModalWindow,
 							} ) }
 						>

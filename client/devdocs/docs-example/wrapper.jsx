@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import DocsExampleError from 'calypso/devdocs/docs-example/error';
@@ -35,7 +35,7 @@ class DocsExampleWrapper extends Component {
 
 		return (
 			<div
-				className={ classNames( 'docs-example__wrapper', {
+				className={ clsx( 'docs-example__wrapper', {
 					'docs-example__wrapper-unique': unique,
 				} ) }
 			>

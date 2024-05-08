@@ -1,5 +1,5 @@
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import QRCode from 'qrcode.react';
 import './style.scss';
@@ -157,7 +157,7 @@ export default function AppPromoCard( { className, isWoo, clickHandler }: AppPro
 	};
 
 	return (
-		<div className={ classNames( 'app-promo-card', className ?? null ) }>
+		<div className={ clsx( 'app-promo-card', className ?? null ) }>
 			<div className="app-promo-card__lhs">
 				<div className="app-promo-card__icons">
 					{ isWoo && (

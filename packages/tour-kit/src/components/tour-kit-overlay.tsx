@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 interface Props {
 	visible: boolean;
@@ -10,7 +10,7 @@ interface Props {
 const TourKitOverlay: React.FunctionComponent< Props > = ( { visible } ) => {
 	return (
 		<div
-			className={ classnames( 'tour-kit-overlay', {
+			className={ clsx( 'tour-kit-overlay', {
 				'is-visible': visible,
 			} ) }
 		/>

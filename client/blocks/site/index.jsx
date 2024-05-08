@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Icon, chevronDown, layout } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -217,7 +217,7 @@ class Site extends Component {
 		}
 
 		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
-		const siteClass = classnames( {
+		const siteClass = clsx( {
 			site: true,
 			'is-jetpack': site.jetpack,
 			'is-primary': site.primary,

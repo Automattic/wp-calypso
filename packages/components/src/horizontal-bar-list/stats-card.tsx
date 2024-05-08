@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import BadgeNew from './sideElements/badge-new';
 import type { StatsCardProps } from './types';
@@ -45,7 +45,7 @@ const StatsCard = ( {
 
 	// On one line shows card title and value column header
 	const simpleHeaderNode = (
-		<div className={ classNames( `${ BASE_CLASS_NAME }-header`, headerClassName ) }>
+		<div className={ clsx( `${ BASE_CLASS_NAME }-header`, headerClassName ) }>
 			{ titleNode }
 			{ ! isEmpty && <div>{ metricLabel ?? translate( 'Views' ) }</div> }
 		</div>
@@ -83,7 +83,7 @@ const StatsCard = ( {
 
 	return (
 		<div
-			className={ classNames( className, BASE_CLASS_NAME, {
+			className={ clsx( className, BASE_CLASS_NAME, {
 				[ `${ BASE_CLASS_NAME }__hasoverlay` ]: !! overlay,
 			} ) }
 		>
@@ -92,7 +92,7 @@ const StatsCard = ( {
 				<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
 					{ splitHeader ? splitHeaderNode : simpleHeaderNode }
 					<div
-						className={ classNames( `${ BASE_CLASS_NAME }--body`, {
+						className={ clsx( `${ BASE_CLASS_NAME }--body`, {
 							[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,
 						} ) }
 					>

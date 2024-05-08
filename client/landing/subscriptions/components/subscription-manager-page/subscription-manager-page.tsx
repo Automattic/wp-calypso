@@ -2,7 +2,7 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { addQueryArgs } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -40,7 +40,7 @@ const SubscriptionManagementPage = () => {
 	return (
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Subscriptions }>
 			<UniversalNavbarHeader
-				className={ classNames( 'subscription-manager-header', {
+				className={ clsx( 'subscription-manager-header', {
 					'is-logged-in': isLoggedIn,
 				} ) }
 				variant="minimal"

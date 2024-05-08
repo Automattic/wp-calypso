@@ -2,7 +2,7 @@
 import './styles.scss';
 import { getDesignPreviewUrl } from '@automattic/design-picker';
 import { MShotsImage, MShotsOptions } from '@automattic/onboarding';
-import cx from 'classnames';
+import clsx from 'clsx';
 
 type Props = {
 	className?: string;
@@ -13,7 +13,7 @@ type Props = {
 
 export function Item( { style, design, className, options }: Props ) {
 	return (
-		<div style={ style } className={ cx( 'design-carousel__item', className ) }>
+		<div style={ style } className={ clsx( 'design-carousel__item', className ) }>
 			<MShotsImage
 				url={ getDesignPreviewUrl( design, {
 					use_screenshot_overrides: true,

@@ -1,6 +1,6 @@
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { CompactCard, ScreenReaderText, MaterialIcon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -72,7 +72,7 @@ class DomainSearchResults extends Component {
 			translate,
 			isDomainOnly,
 		} = this.props;
-		const availabilityElementClasses = classNames( {
+		const availabilityElementClasses = clsx( {
 			'domain-search-results__domain-is-available': availableDomain,
 			'domain-search-results__domain-not-available': ! availableDomain,
 		} );

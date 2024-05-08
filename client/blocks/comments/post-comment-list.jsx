@@ -1,5 +1,5 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, size, delay, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
@@ -657,7 +657,7 @@ class PostCommentList extends Component {
 
 		return (
 			<div
-				className={ classnames( 'comments__comment-list', {
+				className={ clsx( 'comments__comment-list', {
 					'has-double-actions': showManageCommentsButton && showConversationFollowButton,
 					'is-inline': expandableView,
 					'is-collapsed': isCollapsedInline,

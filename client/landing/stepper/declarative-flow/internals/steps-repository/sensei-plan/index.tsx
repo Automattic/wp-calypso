@@ -5,7 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import formatCurrency from 'calypso/../packages/format-currency/src';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
@@ -113,7 +113,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 					<div className="plan-item-wrapper">
 						<div
-							className={ classnames( 'plan-item plan-item--sensei', {
+							className={ clsx( 'plan-item plan-item--sensei', {
 								'plan-item--is-loading': isLoadingPlans,
 							} ) }
 						>

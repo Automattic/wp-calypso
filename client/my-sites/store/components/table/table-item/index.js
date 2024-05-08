@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 function getScope( isHeader, isRowHeader ) {
@@ -21,7 +21,7 @@ const TableItem = ( {
 	...props
 } ) => {
 	const isHeading = isHeader || isRowHeader;
-	const classes = classNames(
+	const classes = clsx(
 		{
 			'table-heading': isHeader,
 			'table-item': ! isHeader,

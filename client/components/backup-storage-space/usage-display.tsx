@@ -1,5 +1,5 @@
 import { Gridicon, ProgressBar } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
@@ -77,7 +77,7 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 
 	return (
 		<div
-			className={ classnames( 'backup-storage-space__progress-bar-container', {
+			className={ clsx( 'backup-storage-space__progress-bar-container', {
 				'is-loading': loading,
 			} ) }
 		>
@@ -96,7 +96,7 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 			</div>
 			<div className="backup-storage-space__progress-usage-container">
 				<div
-					className={ classnames( 'backup-storage-space__progress-storage-usage-text', {
+					className={ clsx( 'backup-storage-space__progress-storage-usage-text', {
 						'is-storage-full': StorageUsageLevels.Full === usageLevel,
 					} ) }
 				>

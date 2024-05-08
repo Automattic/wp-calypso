@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Layout from 'calypso/jetpack-cloud/components/layout';
@@ -168,7 +168,7 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 	return (
 		<>
 			<Layout
-				className={ classNames( 'issue-license-v2', { 'without-bundle': ! showBundle } ) }
+				className={ clsx( 'issue-license-v2', { 'without-bundle': ! showBundle } ) }
 				title={ translate( 'Issue a new License' ) }
 				wide
 				withBorder

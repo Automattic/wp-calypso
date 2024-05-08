@@ -1,5 +1,5 @@
 import { FoldableCard } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { PureComponent, ReactNode } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import type { TranslateResult } from 'i18n-calypso';
@@ -48,7 +48,7 @@ class LogItem extends PureComponent< Props > {
 		return (
 			<FoldableCard
 				header={ this.renderHeader() }
-				className={ classnames( 'log-item', className ) }
+				className={ clsx( 'log-item', className ) }
 				highlight={ highlight }
 				expandedSummary={ expandedSummary }
 				summary={ summary }

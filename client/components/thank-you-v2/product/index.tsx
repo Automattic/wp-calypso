@@ -1,5 +1,5 @@
 import { Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 
@@ -31,7 +31,7 @@ export default function ThankYouProduct( {
 	}, [ isLoading ] );
 
 	return (
-		<li className={ classNames( 'thank-you__product', { 'is-free': isFree } ) }>
+		<li className={ clsx( 'thank-you__product', { 'is-free': isFree } ) }>
 			{ icon && (
 				<img
 					className="thank-you__product-icon"

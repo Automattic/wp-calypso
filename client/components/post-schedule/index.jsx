@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -198,7 +198,7 @@ export default class PostSchedule extends Component {
 	render() {
 		const handleEventsTooltip = ! this.props.events || ! this.props.events.length;
 
-		const className = classNames( 'post-schedule', {
+		const className = clsx( 'post-schedule', {
 			'is-future-date': this.state.isFutureDate,
 		} );
 

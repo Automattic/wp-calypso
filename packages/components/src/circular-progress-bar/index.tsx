@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import './style.scss';
 
 const CircularProgressBar = ( {
@@ -27,7 +27,7 @@ const CircularProgressBar = ( {
 	return (
 		<div
 			role="progressbar"
-			className={ classnames( 'circular__progress-bar', {
+			className={ clsx( 'circular__progress-bar', {
 				'desktop-scaling': enableDesktopScaling,
 			} ) }
 			style={ { width: SIZE, height: SIZE } }

@@ -1,7 +1,7 @@
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useEffect, FormEvent, useRef, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
@@ -170,7 +170,7 @@ function InviteForm( props: Props ) {
 	return (
 		<form
 			autoComplete="off"
-			className={ classNames( 'team-invite-form', { 'team-invite-form-valid': readyForSubmit } ) }
+			className={ clsx( 'team-invite-form', { 'team-invite-form-valid': readyForSubmit } ) }
 			onSubmit={ onFormSubmit }
 		>
 			<RoleSelect

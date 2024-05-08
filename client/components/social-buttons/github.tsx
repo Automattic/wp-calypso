@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import {
 	cloneElement,
@@ -152,7 +152,7 @@ const GitHubLoginButton = ( {
 	let customButton = null;
 	if ( children ) {
 		const childProps = {
-			className: classNames( { disabled: isDisabled } ),
+			className: clsx( { disabled: isDisabled } ),
 			...eventHandlers,
 		};
 
@@ -165,7 +165,7 @@ const GitHubLoginButton = ( {
 				customButton
 			) : (
 				<button
-					className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+					className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
 					{ ...eventHandlers }
 				>
 					<GitHubIcon isDisabled={ isDisabled } />

@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { ExternalLink } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -77,7 +77,7 @@ const ChatMessage = (
 		event.stopPropagation();
 	};
 
-	const messageClasses = classnames(
+	const messageClasses = clsx(
 		'odie-chatbox-message',
 		isUser ? 'odie-chatbox-message-user' : 'odie-chatbox-message-wapuu'
 	);
@@ -139,7 +139,7 @@ const ChatMessage = (
 		return <div ref={ ref } />;
 	}
 
-	const wapuuAvatarClasses = classnames( 'odie-chatbox-message-avatar', {
+	const wapuuAvatarClasses = clsx( 'odie-chatbox-message-avatar', {
 		'odie-chatbox-message-avatar-wapuu-liked': message.liked,
 	} );
 
@@ -216,12 +216,9 @@ const ChatMessage = (
 		}, 1200 );
 	};
 
-	const odieChatBoxMessageSourcesContainerClass = classnames(
-		'odie-chatbox-message-sources-container',
-		{
-			'odie-chatbox-message-sources-container-fullscreen': isFullscreen,
-		}
-	);
+	const odieChatBoxMessageSourcesContainerClass = clsx( 'odie-chatbox-message-sources-container', {
+		'odie-chatbox-message-sources-container-fullscreen': isFullscreen,
+	} );
 
 	const messageContent = (
 		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ fullscreenRef }>

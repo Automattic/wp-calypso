@@ -1,6 +1,6 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useState } from 'react';
 import { useSelector } from 'calypso/state';
@@ -49,11 +49,11 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 				borderless
 				className={
 					siteError
-						? classNames(
+						? clsx(
 								'sites-overview__boost-score sites-overview__disabled',
 								getBoostRatingClass( overallScore )
 						  )
-						: classNames( 'sites-overview__boost-score', getBoostRatingClass( overallScore ) )
+						: clsx( 'sites-overview__boost-score', getBoostRatingClass( overallScore ) )
 				}
 				href={ siteError ? '' : noBoostHrefOption }
 				target="_blank"
@@ -75,11 +75,11 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 				borderless
 				className={
 					siteError
-						? classNames(
+						? clsx(
 								'sites-overview__boost-score sites-overview__disabled',
 								getBoostRatingClass( overallScore )
 						  )
-						: classNames( 'sites-overview__boost-score', getBoostRatingClass( overallScore ) )
+						: clsx( 'sites-overview__boost-score', getBoostRatingClass( overallScore ) )
 				}
 				href={ siteError ? '' : jetpackBoostHref }
 				target="_blank"

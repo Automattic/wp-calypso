@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Debug from 'debug';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -239,11 +239,11 @@ class InviteAccept extends Component {
 		const { invite } = this.state;
 		const { user } = this.props;
 
-		const containerClasses = classNames( 'invite-accept', {
+		const containerClasses = clsx( 'invite-accept', {
 			'is-p2-invite': !! invite?.site?.is_wpforteams_site,
 		} );
 
-		const formClasses = classNames( 'invite-accept__form', {
+		const formClasses = clsx( 'invite-accept__form', {
 			'is-error': !! this.isInvalidInvite(),
 		} );
 

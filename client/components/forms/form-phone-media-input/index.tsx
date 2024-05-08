@@ -1,5 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PhoneInput from 'calypso/components/phone-input';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PhoneInputValue } from 'calypso/components/phone-input';
@@ -37,7 +37,7 @@ const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {
 	children,
 } ) => {
 	return (
-		<div className={ classnames( additionalClasses, 'phone' ) }>
+		<div className={ clsx( additionalClasses, 'phone' ) }>
 			<div>
 				<FormLabel htmlFor={ name }>{ label }</FormLabel>
 				<PhoneInput

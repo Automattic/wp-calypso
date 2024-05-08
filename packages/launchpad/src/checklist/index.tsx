@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Children, cloneElement, type FC, type ReactElement, type ComponentProps } from 'react';
 import ChecklistItem, { Placeholder as ChecklistItemPlaceholder } from '../checklist-item';
 import './style.scss';
@@ -15,7 +15,7 @@ const Checklist: FC< Props > = ( { children, makeLastTaskPrimaryAction } ) => {
 
 	return (
 		<ul
-			className={ classNames( 'checklist__tasks', {
+			className={ clsx( 'checklist__tasks', {
 				'checklist__has-primary-action': makeLastTaskPrimaryAction,
 			} ) }
 			aria-label="Launchpad Checklist"

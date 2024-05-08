@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import lottie from 'lottie-web/build/player/lottie_light';
 import { useEffect, useRef } from 'react';
 
@@ -28,7 +28,7 @@ const AnimatedIcon = ( { icon, className } ) => {
 		return () => animation.destroy();
 	}, [ icon ] );
 
-	return <div ref={ iconEl } className={ classNames( 'animated-icon', className ) }></div>;
+	return <div ref={ iconEl } className={ clsx( 'animated-icon', className ) }></div>;
 };
 
 export default AnimatedIcon;

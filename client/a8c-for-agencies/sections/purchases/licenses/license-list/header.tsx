@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, useCallback, useContext } from 'react';
 import { internalToPublicLicenseSortField } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
@@ -63,12 +63,12 @@ function SortButton( {
 	}, [ dispatch, sortField, currentSortField, currentSortDirection ] );
 
 	return (
-		<h2 className={ classnames( { 'is-selected': sortField === currentSortField } ) }>
+		<h2 className={ clsx( { 'is-selected': sortField === currentSortField } ) }>
 			<button onClick={ sort }>
 				{ children }
 				<Gridicon
 					icon="dropdown"
-					className={ classnames( 'license-list-item__sort-indicator', {
+					className={ clsx( 'license-list-item__sort-indicator', {
 						[ `is-sort-${ currentSortDirection }` ]: true,
 					} ) }
 				/>

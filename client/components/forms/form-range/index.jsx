@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -44,7 +44,7 @@ export default class extends Component {
 	};
 
 	render() {
-		const classes = classnames( this.props.className, 'form-range' );
+		const classes = clsx( this.props.className, 'form-range' );
 
 		return (
 			<input

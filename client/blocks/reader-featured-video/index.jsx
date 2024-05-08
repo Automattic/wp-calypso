@@ -1,5 +1,5 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
@@ -113,7 +113,7 @@ class ReaderFeaturedVideo extends Component {
 			hasExcerpt,
 		} = this.props;
 
-		const classNames = classnames( className, 'reader-featured-video', {
+		const classNames = clsx( className, 'reader-featured-video', {
 			'is-pocketcasts': videoEmbed.type === 'pocketcasts',
 		} );
 

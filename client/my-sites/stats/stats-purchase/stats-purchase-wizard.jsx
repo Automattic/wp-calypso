@@ -1,6 +1,6 @@
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
@@ -30,7 +30,7 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 	return (
 		<>
 			<div
-				className={ classNames( `${ COMPONENT_CLASS_NAME }__card-title-indicator`, {
+				className={ clsx( `${ COMPONENT_CLASS_NAME }__card-title-indicator`, {
 					active: active,
 				} ) }
 			>
@@ -156,7 +156,7 @@ const ProductCard = ( {
 								initialOpen
 								onToggle={ ( shouldOpen ) => toggleFirstStep( shouldOpen ) }
 								opened={ wizardStep === SCREEN_TYPE_SELECTION }
-								className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title`, {
+								className={ clsx( `${ COMPONENT_CLASS_NAME }__card-panel-title`, {
 									[ `${ COMPONENT_CLASS_NAME }__card-panel--type-selected` ]: !! siteType,
 								} ) }
 							>
@@ -207,7 +207,7 @@ const ProductCard = ( {
 								<PanelBody
 									title={ secondStepTitleNode }
 									opened={ wizardStep === SCREEN_PURCHASE }
-									className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title` ) }
+									className={ clsx( `${ COMPONENT_CLASS_NAME }__card-panel-title` ) }
 								>
 									<PanelRow>
 										{ siteType === TYPE_PERSONAL ? (

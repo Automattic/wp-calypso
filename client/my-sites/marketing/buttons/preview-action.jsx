@@ -1,11 +1,11 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { omit, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 
 const SharingButtonsPreviewAction = ( props ) => {
 	const { active, position, icon, children } = props;
-	const classes = classNames( 'sharing-buttons-preview-action', {
+	const classes = clsx( 'sharing-buttons-preview-action', {
 		'is-active': active,
 		'is-top': startsWith( position, 'top' ),
 		'is-right': position.endsWith( '-right' ),

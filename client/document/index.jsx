@@ -1,7 +1,7 @@
 import path from 'path';
 import config from '@automattic/calypso-config';
 import { isLocaleRtl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EnvironmentBadge, {
@@ -123,7 +123,7 @@ class Document extends Component {
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
+				className={ clsx( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
 			>
 				<Head
 					title={ headTitle }
@@ -141,7 +141,7 @@ class Document extends Component {
 					{ chunkCssLinks( chunkFiles, isRTL ) }
 				</Head>
 				<body
-					className={ classNames( {
+					className={ clsx( {
 						rtl: isRTL,
 						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
 						[ 'theme-' + theme ]: theme,
@@ -164,7 +164,7 @@ class Document extends Component {
 					) : (
 						<div id="wpcom" className="wpcom-site">
 							<div
-								className={ classNames( 'layout', {
+								className={ clsx( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
 									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,

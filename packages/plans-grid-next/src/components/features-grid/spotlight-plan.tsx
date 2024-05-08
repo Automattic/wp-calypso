@@ -1,5 +1,5 @@
 import { WPComStorageAddOnSlug, getPlanClass, isFreePlan } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { GridPlan, PlanActionOverrides } from '../../types';
 import BillingTimeframes from './billing-timeframes';
 import PlanHeaders from './plan-headers';
@@ -39,7 +39,7 @@ const SpotlightPlan = ( {
 		return null;
 	}
 
-	const spotlightPlanClasses = classNames(
+	const spotlightPlanClasses = clsx(
 		'plan-features-2023-grid__plan-spotlight',
 		getPlanClass( gridPlanForSpotlight.planSlug )
 	);

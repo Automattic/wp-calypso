@@ -1,7 +1,7 @@
 import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ToggleControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
@@ -30,7 +30,7 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) 
 
 	return toggleChecked ? (
 		<div
-			className={ classNames( 'plans-filter-bar__discount-message', {
+			className={ clsx( 'plans-filter-bar__discount-message', {
 				toggleChecked,
 			} ) }
 		>
@@ -83,13 +83,13 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 		<>
 			<div className="plans-filter-bar__viewport-sentinel" { ...outerDivProps }></div>
 			<div
-				className={ classNames( 'plans-filter-bar', {
+				className={ clsx( 'plans-filter-bar', {
 					sticky: hasCrossed,
 				} ) }
 			>
 				<div className="plans-filter-bar__duration-toggle-wrapper">
 					<div
-						className={ classNames( 'plans-filter-bar__duration-toggle', {
+						className={ clsx( 'plans-filter-bar__duration-toggle', {
 							checked: durationChecked,
 						} ) }
 					>

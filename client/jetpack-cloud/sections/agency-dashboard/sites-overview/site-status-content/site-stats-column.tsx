@@ -1,6 +1,6 @@
 import { ShortenedNumber } from '@automattic/components';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { SiteStats } from '../types';
 
 type Props = {
@@ -23,7 +23,7 @@ export default function SiteStatsColumn( { stats }: Props ) {
 	const trendIcon = getTrendIcon( viewsTrend );
 	return (
 		<span
-			className={ classNames(
+			className={ clsx(
 				'sites-overview__stats-trend',
 				`sites-overview__stats-trend__${ viewsTrend }`
 			) }

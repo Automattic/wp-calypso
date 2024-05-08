@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { ProductCardFeaturesItem } from './types';
 
@@ -10,7 +10,7 @@ const JetpackProductCardFeaturesItem: React.FC< Props > = ( {
 	item: { text, isHighlighted, isDifferentiator },
 } ) => (
 	<li
-		className={ classnames( 'jetpack-product-card__features-item', {
+		className={ clsx( 'jetpack-product-card__features-item', {
 			'is-highlighted': isHighlighted,
 			'is-differentiator': isDifferentiator,
 		} ) }

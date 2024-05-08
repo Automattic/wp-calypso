@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
@@ -16,7 +16,7 @@ const Taxonomies = ( { translate, labels, postType, taxonomy } ) => {
 	const taxonomyName = labels.name?.toLowerCase();
 
 	return (
-		<Main wideLayout className={ classnames( 'taxonomies', taxonomy ) }>
+		<Main wideLayout className={ clsx( 'taxonomies', taxonomy ) }>
 			<DocumentHead
 				title={ translate( 'Manage %(taxonomy)s', { args: { taxonomy: labels.name } } ) }
 			/>

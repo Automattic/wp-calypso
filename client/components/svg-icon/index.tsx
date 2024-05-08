@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 import { Assign } from 'utility-types';
 
@@ -14,7 +14,7 @@ type AllProps = Assign< React.SVGProps< SVGSVGElement >, Props >;
 const SVGIcon = React.forwardRef< SVGSVGElement, AllProps >( ( props: AllProps, ref ) => {
 	const { size = 24, name = 'a8c-logo', onClick, classes, icon, ...otherProps } = props;
 	const iconName = `svg-icon-${ name }`;
-	const iconClass = classnames( 'svg-icon', iconName, classes );
+	const iconClass = clsx( 'svg-icon', iconName, classes );
 
 	return (
 		<svg

@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useState } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { PropsWithChildren } from 'react';
 import CloseIcon from './icons/close-icon';
 
@@ -32,7 +32,7 @@ const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 	const [ showModal, setShowModal ] = useState( false );
 	const { title, text, buttonText, modal, secondaryButtonText, secondaryText } = introContent;
 
-	const modalClasses = classNames( 'intro__more-modal', {
+	const modalClasses = clsx( 'intro__more-modal', {
 		show: showModal,
 	} );
 

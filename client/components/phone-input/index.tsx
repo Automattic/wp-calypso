@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
@@ -93,7 +93,7 @@ const PhoneInput: FC< PhoneInputProps > = ( {
 	);
 
 	return (
-		<div className={ classnames( className, 'phone-input' ) }>
+		<div className={ clsx( className, 'phone-input' ) }>
 			<FormTextInput
 				placeholder={ translate( 'Phone' ) }
 				onChange={ handleInput }
@@ -104,7 +104,7 @@ const PhoneInput: FC< PhoneInputProps > = ( {
 				inputRef={ numberInputRef }
 				type="tel"
 				disabled={ disabled }
-				className={ classnames( 'phone-input__number-input', {
+				className={ clsx( 'phone-input__number-input', {
 					'is-error': isError,
 				} ) }
 			/>

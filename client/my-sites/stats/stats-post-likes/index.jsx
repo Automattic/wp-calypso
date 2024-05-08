@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
@@ -20,7 +20,7 @@ export const StatsPostLikes = ( props ) => {
 	};
 
 	return (
-		<Card className={ classNames( 'stats-module', 'stats-post-likes', classes ) }>
+		<Card className={ clsx( 'stats-module', 'stats-post-likes', classes ) }>
 			<QueryPostLikes siteId={ siteId } postId={ postId } />
 			<StatsModulePlaceholder isLoading={ isLoading } />
 			<div className="stats-post-likes__content">

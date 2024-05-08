@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 
@@ -23,7 +23,7 @@ export const JetpackWelcomePage: React.FC< JetpackWelcomePageProps > = ( {
 	title,
 } ) => {
 	return (
-		<Main wideLayout className={ classnames( 'jetpack-welcome-page', mainClassName ) }>
+		<Main wideLayout className={ clsx( 'jetpack-welcome-page', mainClassName ) }>
 			{ pageViewTracker }
 			<Card className="jetpack-welcome-page__card">
 				<div className="jetpack-welcome-page__card--main">

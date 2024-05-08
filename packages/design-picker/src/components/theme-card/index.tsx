@@ -1,5 +1,5 @@
 import { Card, Popover } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { forwardRef, useMemo, useRef, useState } from 'react';
 import StyleVariationBadges from '../style-variation-badges';
@@ -59,17 +59,17 @@ const ThemeCard = forwardRef(
 		const [ isShowTooltip, setIsShowTooltip ] = useState( false );
 
 		const isActionable = imageClickUrl || onImageClick;
-		const themeClasses = classnames( 'theme-card', {
+		const themeClasses = clsx( 'theme-card', {
 			'theme-card--is-active': isActive,
 			'theme-card--is-actionable': isActionable,
 		} );
-		const themeInfoClasses = classnames( 'theme-card__info', {
+		const themeInfoClasses = clsx( 'theme-card__info', {
 			'theme-card__info--has-style-variations': styleVariations.length > 0,
 		} );
 
 		return (
 			<Card
-				className={ classnames( themeClasses, className ) }
+				className={ clsx( themeClasses, className ) }
 				onClick={ onClick }
 				data-e2e-theme={ e2eName }
 			>

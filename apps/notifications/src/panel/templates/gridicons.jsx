@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -15,7 +15,7 @@ export default class extends Component {
 		const { onClick, size = 24 } = this.props;
 		const icon = `gridicons-${ this.props.icon }`;
 		const sharedProps = {
-			className: classNames( 'gridicon', icon ),
+			className: clsx( 'gridicon', icon ),
 			height: size,
 			width: size,
 			onClick,

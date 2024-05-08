@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -57,7 +57,7 @@ class SharingButtonsLabelEditor extends Component {
 	};
 
 	render() {
-		const classes = classNames(
+		const classes = clsx(
 			'sharing-buttons-preview__panel',
 			'is-top',
 			'sharing-buttons-label-editor',

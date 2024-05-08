@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement, useEffect, useMemo } from 'react';
 import PluginOverviewTour from 'calypso/jetpack-cloud/sections/onboarding-tours/plugin-overview-tour';
@@ -141,7 +141,7 @@ export default function PluginManagementV2( {
 	return (
 		<>
 			<div
-				className={ classNames( 'plugin-management-v2__main-content-container', {
+				className={ clsx( 'plugin-management-v2__main-content-container', {
 					'is-bulk-management-active': isBulkManagementActive,
 				} ) }
 			>
@@ -149,7 +149,7 @@ export default function PluginManagementV2( {
 					items={ plugins }
 					columns={ columns }
 					isLoading={ isLoading }
-					className={ classNames( {
+					className={ clsx( {
 						'has-bulk-management-active': isBulkManagementActive,
 					} ) }
 					selectedSite={ selectedSite }

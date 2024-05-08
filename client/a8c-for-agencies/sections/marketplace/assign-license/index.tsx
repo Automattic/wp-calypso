@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -159,7 +159,7 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 
 	return (
 		<Layout
-			className={ classNames( 'assign-license' ) }
+			className={ clsx( 'assign-license' ) }
 			title={ title }
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }

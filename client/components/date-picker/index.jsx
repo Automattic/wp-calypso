@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { merge, map, filter, get, debounce } from 'lodash';
 import PropTypes from 'prop-types';
@@ -221,7 +221,7 @@ class DatePicker extends PureComponent {
 		const numMonths = this.props.numberOfMonths || 1;
 		const rangeSelected = modifiers.start && modifiers.end;
 
-		const rootClassNames = classNames( {
+		const rootClassNames = clsx( {
 			'date-picker': true,
 			'date-picker--no-range-selected': ! rangeSelected,
 			'date-picker--range-selected': rangeSelected,

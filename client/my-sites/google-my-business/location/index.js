@@ -1,5 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import './style.scss';
 
 function GoogleMyBusinessLocationPlaceholder( { isCompact } ) {
-	const classes = classNames( 'gmb-location', 'is-loading', { 'is-compact': isCompact } );
+	const classes = clsx( 'gmb-location', 'is-loading', { 'is-compact': isCompact } );
 
 	return (
 		<Card className={ classes }>
@@ -29,7 +29,7 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 
 	const isLocationVerified = get( location, 'meta.state.isVerified', false );
 
-	const classes = classNames( 'gmb-location', { 'is-compact': isCompact } );
+	const classes = clsx( 'gmb-location', { 'is-compact': isCompact } );
 
 	return (
 		<Card className={ classes }>

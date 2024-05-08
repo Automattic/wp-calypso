@@ -1,7 +1,7 @@
 import { FoldableCard, Spinner } from '@automattic/components';
 import { Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import { WorkFlowStates } from './use-check-workflow-query';
 
@@ -23,7 +23,7 @@ export const WorkflowValidation = ( {
 			<Icon
 				size={ 20 }
 				icon={ status === 'success' ? check : closeSmall }
-				className={ classNames( 'custom-icons', status ) }
+				className={ clsx( 'custom-icons', status ) }
 			/>
 		);
 	};

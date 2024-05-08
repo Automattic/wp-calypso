@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function LayoutBody( { children, className }: Props ) {
-	const wrapperClass = classNames( className, 'a4a-layout__body' );
+	const wrapperClass = clsx( className, 'a4a-layout__body' );
 
 	return (
 		<div className={ wrapperClass }>

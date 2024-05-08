@@ -1,5 +1,5 @@
 import { Button, Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
@@ -18,7 +18,7 @@ const FeatureIncludedCard = ( props: Props ) => {
 
 	return (
 		<Card
-			className={ classNames( 'feature-included-card__card', {
+			className={ clsx( 'feature-included-card__card', {
 				[ 'reduced-padding' ]: reducedPadding,
 			} ) }
 		>
@@ -27,7 +27,7 @@ const FeatureIncludedCard = ( props: Props ) => {
 			) }
 			<div className="feature-included-card__content">
 				<p
-					className={ classNames( 'feature-included-card__title', {
+					className={ clsx( 'feature-included-card__title', {
 						[ 'reduced-padding' ]: reducedPadding,
 					} ) }
 				>

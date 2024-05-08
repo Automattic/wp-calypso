@@ -10,7 +10,7 @@ import {
 	PanelBody,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import moment from 'moment';
 
 import './editor.scss';
@@ -18,7 +18,7 @@ const name = 'a8c/task';
 
 const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } ) => {
 	const { assignedTo, content, placeholder, status, dueDate, startDate } = attributes;
-	const todoClass = classnames( 'wp-block-todo', className, { 'is-checked': status === 'done' } );
+	const todoClass = clsx( 'wp-block-todo', className, { 'is-checked': status === 'done' } );
 
 	const options = [
 		{

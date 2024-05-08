@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -11,7 +11,7 @@ export default class extends Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'is-document' );
+		const classes = clsx( this.props.className, 'is-document' );
 
 		return (
 			<div className={ classes }>

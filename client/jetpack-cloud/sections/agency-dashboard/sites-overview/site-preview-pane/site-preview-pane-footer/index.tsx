@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import './style.scss';
 
 type Props = {
@@ -10,7 +10,7 @@ export default function SitePreviewPaneFooter( { children, className }: Props ) 
 	return (
 		children && (
 			<>
-				<div className={ classNames( 'site-preview__footer', className ) }>{ children }</div>
+				<div className={ clsx( 'site-preview__footer', className ) }>{ children }</div>
 			</>
 		)
 	);

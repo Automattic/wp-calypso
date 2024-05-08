@@ -1,5 +1,5 @@
 import { Card, Button, Dialog, ScreenReaderText, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -759,7 +759,7 @@ class PushNotificationSettings extends Component {
 					/>
 					{ this.props.translate( 'Browser notifications' ) }
 					<small
-						className={ classNames(
+						className={ clsx(
 							'notification-settings-push-notification-settings__settings-state',
 							stateClass
 						) }
@@ -775,7 +775,7 @@ class PushNotificationSettings extends Component {
 				</p>
 
 				<Button
-					className={ classNames(
+					className={ clsx(
 						'notification-settings-push-notification-settings__settings-button',
 						buttonClass
 					) }

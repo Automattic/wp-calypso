@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import FeaturesItem from './features-item';
@@ -33,7 +33,7 @@ const JetpackProductCardFeatures: React.FC< Props > = ( {
 	}, [ collapseFeaturesOnMobile, isExpanded, focusOnList ] );
 
 	return (
-		<section className={ classnames( className, 'jetpack-product-card__features' ) }>
+		<section className={ clsx( className, 'jetpack-product-card__features' ) }>
 			{ collapseFeaturesOnMobile && (
 				<button
 					className="jetpack-product-card__features-button"
@@ -47,7 +47,7 @@ const JetpackProductCardFeatures: React.FC< Props > = ( {
 			) }
 			<ul
 				id={ listId }
-				className={ classnames( className, 'jetpack-product-card__features-list', {
+				className={ clsx( className, 'jetpack-product-card__features-list', {
 					'is-collapsed': ! isExpanded,
 				} ) }
 				tabIndex={ -1 }

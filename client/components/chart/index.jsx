@@ -1,5 +1,5 @@
 import { Tooltip } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useCallback, useMemo, useEffect } from 'react';
@@ -171,7 +171,7 @@ function Chart( {
 	}
 
 	return (
-		<div ref={ resizeRef } className={ classNames( 'chart', { 'is-placeholder': isPlaceholder } ) }>
+		<div ref={ resizeRef } className={ clsx( 'chart', { 'is-placeholder': isPlaceholder } ) }>
 			<div className="chart__y-axis-markers">
 				<div className="chart__y-axis-marker is-hundred" />
 				<div className="chart__y-axis-marker is-fifty" />

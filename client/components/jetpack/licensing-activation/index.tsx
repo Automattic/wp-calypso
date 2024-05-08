@@ -1,5 +1,5 @@
 import { Card, ProgressBar } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FC } from 'react';
 import footerCardAltBackground from 'calypso/assets/images/jetpack/jp-licensing-checkout-footer-alt-bg.svg';
@@ -49,7 +49,7 @@ const LicensingActivation: FC< Props > = ( {
 	return (
 		<Main
 			fullWidthLayout
-			className={ classnames( 'licensing-activation', className, { 'is-alt-layout': altLayout } ) }
+			className={ clsx( 'licensing-activation', className, { 'is-alt-layout': altLayout } ) }
 		>
 			<Card className="licensing-activation__card">
 				<div className="licensing-activation__card-main">
@@ -62,9 +62,7 @@ const LicensingActivation: FC< Props > = ( {
 							/>
 						) }
 					</div>
-					<h1
-						className={ classnames( 'licensing-activation__title', { 'is-loading': isLoading } ) }
-					>
+					<h1 className={ clsx( 'licensing-activation__title', { 'is-loading': isLoading } ) }>
 						{ preventWidows( title ) }
 					</h1>
 					{ children }

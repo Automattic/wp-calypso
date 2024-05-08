@@ -5,7 +5,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useEffect, useState, useMemo } from 'react';
 import { MAX_SELECTABLE_PLUGINS } from './config';
@@ -103,7 +103,7 @@ export function ScheduleFormPlugins( props: Props ) {
 				</Text>
 			) }
 
-			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
+			<div className={ clsx( { 'form-control-container': borderWrapper } ) }>
 				{ pluginsAvailable && (
 					<>
 						<SearchControl
@@ -135,7 +135,7 @@ export function ScheduleFormPlugins( props: Props ) {
 												label={ plugin.name }
 												checked={ selectedPlugins.includes( plugin.plugin ) }
 												disabled={ isPluginSelectionDisabled( plugin ) }
-												className={ classnames( {
+												className={ clsx( {
 													disabled: isPluginSelectionDisabled( plugin ),
 												} ) }
 												onChange={ ( isChecked ) => {

@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -15,7 +15,7 @@ export default class LoggedOutFormLinks extends Component {
 		return (
 			<div
 				{ ...omit( this.props, 'classNames' ) }
-				className={ classnames( 'logged-out-form__links', this.props.className ) }
+				className={ clsx( 'logged-out-form__links', this.props.className ) }
 			>
 				{ this.props.children }
 			</div>

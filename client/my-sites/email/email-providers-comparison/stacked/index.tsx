@@ -5,7 +5,7 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import { useEffect, useState } from 'react';
@@ -232,7 +232,7 @@ const EmailProvidersStackedComparison = ( {
 
 	return (
 		<Main
-			className={ classnames( {
+			className={ clsx( {
 				'email-providers-stacked-comparison__main--domain-upsell': isDomainInCart,
 			} ) }
 			wideLayout

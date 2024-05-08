@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { GridPlan } from '../../types';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import BillingTimeframe from '../shared/billing-timeframe';
@@ -17,7 +17,7 @@ const BillingTimeframes = ( {
 	showRefundPeriod,
 }: BillingTimeframesProps ) => {
 	return renderedGridPlans.map( ( { planSlug } ) => {
-		const classes = classNames(
+		const classes = clsx(
 			'plan-features-2023-grid__table-item',
 			'plan-features-2023-grid__header-billing-info'
 		);

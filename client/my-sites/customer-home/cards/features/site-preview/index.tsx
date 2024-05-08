@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -19,7 +19,7 @@ interface ThumbnailWrapperProps {
 	children?: ReactNode;
 }
 const ThumbnailWrapper = ( { showEditSite, editSiteURL, children }: ThumbnailWrapperProps ) => {
-	const classes = classnames( 'home-site-preview__thumbnail-wrapper', {
+	const classes = clsx( 'home-site-preview__thumbnail-wrapper', {
 		'home-site-preview__remove-pointer': ! showEditSite,
 	} );
 
