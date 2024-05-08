@@ -69,6 +69,10 @@ body.is-section-plugins {
 			margin: 0;
 			padding: 0.5rem 1.5rem;
 		}
+
+		@include breakpoint-deprecated( "<960px" ) {
+			display: none;
+		}
 	}
 
 	.a4a-layout-column.scheduled-updates-list {
@@ -76,12 +80,24 @@ body.is-section-plugins {
 		.plugins-update-manager-multisite-filter {
 			margin: 0;
 			padding: 1.5rem 4rem;
+
+			@include breakpoint-deprecated( "<960px" ) {
+				padding: 1rem;
+			}
+
+			@include breakpoint-deprecated( "<600px" ) {
+				padding: 1rem 0;
+			}
 		}
 	}
 
 	.a4a-layout-column.scheduled-updates-edit,
 	.a4a-layout-column.scheduled-updates-create {
 		padding: 3rem;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			padding: 0.5rem;
+		}
 	}
 }
 
