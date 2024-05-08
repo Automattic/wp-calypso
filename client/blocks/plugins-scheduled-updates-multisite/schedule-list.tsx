@@ -20,13 +20,21 @@ import './styles.scss';
 type Props = {
 	compact?: boolean;
 	previewMode: 'table' | 'card';
+	selectedScheduleId?: string;
 	onEditSchedule: ( id: string ) => void;
 	onShowLogs: ( id: string, siteSlug: string ) => void;
 	onCreateNewSchedule: () => void;
 };
 
 export const ScheduleList = ( props: Props ) => {
-	const { compact, previewMode, onEditSchedule, onShowLogs, onCreateNewSchedule } = props;
+	const {
+		compact,
+		previewMode,
+		selectedScheduleId: initSelectedScheduleId,
+		onEditSchedule,
+		onShowLogs,
+		onCreateNewSchedule,
+	} = props;
 	const {
 		data: schedules = [],
 		isLoading: isLoadingSchedules,
@@ -35,13 +43,16 @@ export const ScheduleList = ( props: Props ) => {
 	const translate = useTranslate();
 	const { searchTerm } = useContext( MultisitePluginUpdateManagerContext );
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
-	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >();
+	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >(
+		initSelectedScheduleId
+	);
 	const [ selectedSiteSlugs, setSelectedSiteSlugs ] = useState< string[] >( [] );
 
 	useEffect( () => {
 		const schedule = schedules?.find( ( schedule ) => schedule.schedule_id === selectedScheduleId );
 		setSelectedSiteSlugs( schedule?.sites?.map( ( site ) => site.slug ) || [] );
 	}, [ selectedScheduleId ] );
+	useEffect( () => setSelectedScheduleId( initSelectedScheduleId ), [ initSelectedScheduleId ] );
 
 	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugs );
 
@@ -114,6 +125,7 @@ export const ScheduleList = ( props: Props ) => {
 					<ScheduleListComponent
 						compact={ compact }
 						schedules={ filteredSchedules }
+						selectedScheduleId={ selectedScheduleId }
 						onRemoveClick={ openRemoveDialog }
 						onEditClick={ onEditSchedule }
 						onLogsClick={ onShowLogs }

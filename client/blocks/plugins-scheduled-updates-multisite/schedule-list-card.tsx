@@ -1,5 +1,6 @@
 import { Button, Tooltip } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon, info } from '@wordpress/icons';
+import clsx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDateTimeFormat } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-date-time-format';
@@ -14,6 +15,7 @@ import type {
 } from 'calypso/data/plugins/use-update-schedules-query';
 
 type Props = {
+	className?: string;
 	compact?: boolean;
 	schedule: MultisiteSchedulesUpdates;
 	onEditClick: ( id: string ) => void;
@@ -22,7 +24,7 @@ type Props = {
 };
 
 export const ScheduleListCard = ( props: Props ) => {
-	const { compact, schedule, onEditClick, onRemoveClick, onLogsClick } = props;
+	const { className, compact, schedule, onEditClick, onRemoveClick, onLogsClick } = props;
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat();
 	const { preparePluginsTooltipInfo } = usePrepareMultisitePluginsTooltipInfo(
@@ -32,7 +34,7 @@ export const ScheduleListCard = ( props: Props ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	return (
-		<div className="plugins-update-manager-multisite-card">
+		<div className={ clsx( 'plugins-update-manager-multisite-card', className ) }>
 			<div className="plugins-update-manager-multisite-card__label  plugins-update-manager-multisite-card__name-label">
 				<strong id="name">
 					<Button

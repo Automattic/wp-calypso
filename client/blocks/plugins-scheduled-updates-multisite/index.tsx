@@ -2,6 +2,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
+import { useLoadScheduleFromId } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-load-schedule-from-id';
 import { MultisitePluginUpdateManagerContextProvider } from './context';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
@@ -27,6 +28,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 	onEditSchedule,
 	onShowLogs,
 }: Props ) => {
+	const { schedule: selectedSchedule } = useLoadScheduleFromId( id! );
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
 	const title = {
@@ -43,6 +45,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 						<ScheduleList
 							compact={ true }
 							previewMode="card"
+							selectedScheduleId={ selectedSchedule?.schedule_id }
 							onCreateNewSchedule={ onCreateNewSchedule }
 							onEditSchedule={ onEditSchedule }
 							onShowLogs={ onShowLogs }
