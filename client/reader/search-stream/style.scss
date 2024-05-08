@@ -8,9 +8,6 @@
 		margin: 0 auto;
 		padding: 16px 0 16px 0;
 	}
-	@include breakpoint-deprecated( "<660px" ) {
-		padding: 0 16px; // Intentionally padding, not margin
-	}
 }
 
 // .has-header-section only applies for logged out views
@@ -69,11 +66,11 @@
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 
-	@media only screen and (max-width: 600px) {
-		width: calc(100% - 80px);
-	}
+	// @media only screen and (max-width: 600px) {
+	// 	width: calc(100% - 80px);
+	// }
 	@media only screen and (min-width: 601px) and (max-width: 781px) {
-		margin-top: calc(var(--masterbar-height) + 32px);
+		margin-top: calc(var(--masterbar-height) + 25px);
 	}
 	@media only screen and (min-width: 601px) and (max-width: 660px) {
 		width: calc(100% - 128px);
