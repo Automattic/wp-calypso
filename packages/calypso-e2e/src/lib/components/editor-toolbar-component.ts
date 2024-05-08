@@ -267,7 +267,7 @@ export class EditorToolbarComponent {
 
 	/**
 	 * Returns whether the current post is a schedule by checking button states
-	 * on the page
+	 * on the post
 	 *
 	 * @returns {Promise<string>} String found on the button.
 	 */
