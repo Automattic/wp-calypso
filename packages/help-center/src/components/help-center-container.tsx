@@ -75,7 +75,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 
 	const shouldCloseOnEscapeRef = useRef( false );
 
-	shouldCloseOnEscapeRef.current = show && ! hidden && ! isMinimized;
+	shouldCloseOnEscapeRef.current = !! show && ! hidden && ! isMinimized;
 
 	useEffect( () => {
 		const handleKeydown = ( e: KeyboardEvent ) => {
