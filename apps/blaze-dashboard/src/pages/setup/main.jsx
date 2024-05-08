@@ -8,6 +8,7 @@ import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/ut
 import GenericHeader from '../../components/generic-header';
 import BlazeDisabled from './components/blaze-disabled';
 import DisconnectedSite from './components/disconnected-site';
+import IneligibleSite from './components/ineligible-site';
 import PrivateSite from './components/private-site';
 
 const renderSetupComponent = ( setupInfo ) => {
@@ -21,6 +22,8 @@ const renderSetupComponent = ( setupInfo ) => {
 			return <PrivateSite />;
 		case 'disconnected':
 			return <DisconnectedSite />;
+		case 'site_ineligible':
+			return <IneligibleSite />;
 		default:
 			return <BlazeDisabled />;
 	}

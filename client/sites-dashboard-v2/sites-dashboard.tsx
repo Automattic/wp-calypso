@@ -40,7 +40,7 @@ import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/const
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
-import { getSitesPagination } from './sites-dataviews/utils';
+import { getSitesPagination, addDummyDataViewPrefix } from './sites-dataviews/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -57,8 +57,11 @@ interface SitesDashboardProps {
 }
 
 const siteSortingKeys = [
+	// Put the dummy data view at the beginning for searching the sort key.
+	{ dataView: addDummyDataViewPrefix( 'site' ), sortKey: 'alphabetically' },
+	{ dataView: addDummyDataViewPrefix( 'last-publish' ), sortKey: 'updatedAt' },
+	{ dataView: addDummyDataViewPrefix( 'last-interacted' ), sortKey: 'lastInteractedWith' },
 	{ dataView: 'site', sortKey: 'alphabetically' },
-	{ dataView: 'magic', sortKey: 'lastInteractedWith' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 ];
 
@@ -98,7 +101,11 @@ const SitesDashboardV2 = ( {
 		page,
 		perPage,
 		search: search ?? '',
-		hiddenFields: [ 'magic' ],
+		hiddenFields: [
+			addDummyDataViewPrefix( 'site' ),
+			addDummyDataViewPrefix( 'last-publish' ),
+			addDummyDataViewPrefix( 'last-interacted' ),
+		],
 		filters:
 			status === 'all'
 				? []

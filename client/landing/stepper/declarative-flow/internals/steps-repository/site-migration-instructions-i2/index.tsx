@@ -57,6 +57,12 @@ const SiteMigrationInstructions: Step = function () {
 		}
 	}, [ fromUrl, hasErrorGetMigrationKey ] );
 
+	useEffect( () => {
+		if ( isSetupCompleted ) {
+			recordTracksEvent( 'calypso_site_migration_instructions_preparation_complete' );
+		}
+	}, [ isSetupCompleted ] );
+
 	const stepContent = (
 		<div className="site-migration-instructions__content">
 			<ol className="site-migration-instructions__list">
