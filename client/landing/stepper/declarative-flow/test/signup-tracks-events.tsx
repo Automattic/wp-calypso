@@ -252,7 +252,9 @@ describe( 'Stepper signup flows', () => {
 						FLOWS_WITH_ALTERNATE_USER_PATH[ flowKey ] ?? expectedLoginPath,
 						{
 							variationName: flowPath,
-							redirect_to: expect.stringContaining( `/setup/${ flowPath }` + flowSubPath ),
+							redirect_to: expect.stringMatching(
+								new RegExp( `^/setup/${ flowPath }${ flowSubPath }` )
+							),
 							toStepper: 'true',
 						}
 					)
