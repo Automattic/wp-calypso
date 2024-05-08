@@ -73,9 +73,13 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
 	const nodeRef = useRef( null );
 
+	const shouldCloseOnEscapeRef = useRef( false );
+
+	shouldCloseOnEscapeRef.current = show && ! hidden && ! isMinimized;
+
 	useEffect( () => {
 		const handleKeydown = ( e: KeyboardEvent ) => {
-			if ( e.key === 'Escape' ) {
+			if ( e.key === 'Escape' && shouldCloseOnEscapeRef.current ) {
 				onDismiss();
 			}
 		};
@@ -84,7 +88,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		return () => {
 			document.removeEventListener( 'keydown', handleKeydown );
 		};
-	}, [ onDismiss ] );
+	}, [ shouldCloseOnEscapeRef, onDismiss ] );
 
 	if ( ! show || hidden ) {
 		return null;
