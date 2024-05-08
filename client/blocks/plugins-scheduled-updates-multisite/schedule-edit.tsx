@@ -37,7 +37,7 @@ export const ScheduleEdit = ( { id, onNavBack }: Props ) => {
 				</Button>
 			</div>
 			{ schedule && scheduleLoaded ? (
-				<ScheduleForm onNavBack={ onNavBack } scheduleForEdit={ schedule } />
+				<ScheduleForm key={ id } onNavBack={ onNavBack } scheduleForEdit={ schedule } />
 			) : (
 				<Spinner />
 			) }
