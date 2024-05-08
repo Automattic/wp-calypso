@@ -25,6 +25,8 @@
 
 .is-reader-page .main.search-stream {
 	max-width: 905px;
+	margin: 0 auto;
+	padding-inline: 24px;
 }
 
 .search-stream__intro {
@@ -67,11 +69,17 @@
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 
-	@include breakpoint-deprecated( "<660px" ) {
-		width: calc(100% - 32px);
+	@media only screen and (max-width: 600px) {
+		width: calc(100% - 80px);
 	}
-	@include breakpoint-deprecated( ">660px" ) {
-		padding-top: 30px;
+	@media only screen and (min-width: 601px) and (max-width: 781px) {
+		margin-top: calc(var(--masterbar-height) + 32px);
+	}
+	@media only screen and (min-width: 601px) and (max-width: 660px) {
+		width: calc(100% - 128px);
+	}
+	@media only screen and (min-width: 782px) {
+		margin-top: 16px;
 	}
 }
 
