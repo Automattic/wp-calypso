@@ -73,7 +73,7 @@ import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
 import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateAction from './hooks/use-generate-action';
-import useGenerateActionCallback from './hooks/use-generate-action-callback';
+// import useGenerateActionCallback from './hooks/use-generate-action-callback';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -381,17 +381,17 @@ const PlansFeaturesMain = ( {
 		withDiscount,
 	} );
 
-	const useActionCallback = useGenerateActionCallback( {
-		currentPlan,
-		eligibleForFreeHostingTrial,
-		cartHandler: onUpgradeClick,
-		flowName,
-		intent,
-		showModalAndExit,
-		sitePlanSlug,
-		siteSlug,
-		withDiscount,
-	} );
+	// const useActionCallback = useGenerateActionCallback( {
+	// 	currentPlan,
+	// 	eligibleForFreeHostingTrial,
+	// 	cartHandler: onUpgradeClick,
+	// 	flowName,
+	// 	intent,
+	// 	showModalAndExit,
+	// 	sitePlanSlug,
+	// 	siteSlug,
+	// 	withDiscount,
+	// } );
 
 	const hiddenPlans = {
 		hideFreePlan,
@@ -807,7 +807,7 @@ const PlansFeaturesMain = ( {
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 										useAction={ useAction }
-										useActionCallback={ useActionCallback }
+										// useActionCallback={ useActionCallback }
 										enableFeatureTooltips={ ! isTrailMapCopy }
 										enableCategorisedFeatures={ isTrailMapStructure }
 										featureGroupMap={ isTrailMapStructure ? featureGroupMap : undefined }
@@ -882,7 +882,7 @@ const PlansFeaturesMain = ( {
 													stickyRowOffset={ comparisonGridStickyRowOffset }
 													showRefundPeriod={ isAnyHostingFlow( flowName ) }
 													useAction={ useAction }
-													useActionCallback={ useActionCallback }
+													// useActionCallback={ useActionCallback }
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}

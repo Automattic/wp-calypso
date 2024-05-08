@@ -368,7 +368,10 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const {
 		gridPlansIndex,
 		siteId,
-		helpers: { useActionCallback, useAction },
+		helpers: {
+			// useActionCallback,
+			useAction,
+		},
 	} = usePlansGridContext();
 	const {
 		planTitle,
@@ -399,6 +402,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	const { callback, text, postButtonText, status } = useAction( {
 		// TODO: Double check that we need to do this boolean coercion
+		availableForPurchase,
 		isLargeCurrency: !! isLargeCurrency,
 		isStuck,
 		planSlug,
@@ -421,15 +425,15 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		selectedStorageAddOn,
 	} );
 
-	const onCtaClick = useActionCallback( {
-		planSlug,
-		cartItemForPlan,
-		selectedStorageAddOn,
-	} );
+	// const onCtaClick = useActionCallback( {
+	// 	planSlug,
+	// 	cartItemForPlan,
+	// 	selectedStorageAddOn,
+	// } );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ onCtaClick }>
+			<PlanButton planSlug={ planSlug } onClick={ callback }>
 				{ translate( 'Learn more' ) }
 			</PlanButton>
 		);
@@ -464,7 +468,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		<LoggedInPlansFeatureActionButton
 			planSlug={ planSlug }
 			availableForPurchase={ availableForPurchase }
-			onCtaClick={ onCtaClick }
+			onCtaClick={ callback }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
 			priceString={ priceString }
