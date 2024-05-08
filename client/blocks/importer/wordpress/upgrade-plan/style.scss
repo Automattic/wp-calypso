@@ -20,6 +20,19 @@ $business-plan-color: #7f54b3;
 			flex-direction: row;
 		}
 
+		&.display-dynamic-details {
+			.import__upgrade-plan-features-container {
+				@include break-medium {
+					height: 420px;
+				}
+			}
+			.import__upgrade-plan-hosting-details-card-container {
+				@include break-medium {
+					height: 397px;
+				}
+			}
+		}
+
 		&.feature-list-expanded {
 			.import__upgrade-plan-features-container {
 				@include break-medium {
@@ -69,7 +82,7 @@ $business-plan-color: #7f54b3;
 			.import__upgrade-plan-hosting-details {
 				@include break-medium {
 					height: initial;
-					margin-top: 33px;
+					margin-top: 0.75rem;
 				}
 			}
 
@@ -378,6 +391,8 @@ $business-plan-color: #7f54b3;
 				}
 
 				.import__upgrade-plan-hosting-details-list-icon {
+					display: flex;
+					flex: 0 0 24px;
 					border-radius: 4px;
 					background-color: var(--studio-purple-0);
 					padding: 4px;
@@ -419,6 +434,7 @@ $business-plan-color: #7f54b3;
 				.import__upgrade-plan-hosting-details-testimonials {
 					height: 37px;
 					text-align: center;
+					margin-bottom: 4px;
 
 					.import__upgrade-plan-hosting-details-tooltip-hover-area-container {
 						height: 36px;

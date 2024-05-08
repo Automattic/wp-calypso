@@ -6,8 +6,13 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
+import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
-import { useUpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from './constants';
+import {
+	useUpgradePlanHostingDetailsList,
+	UpgradePlanHostingTestimonials,
+	upgradePlanSiteMetricsLcpThreshold,
+} from './constants';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
 
 export const UpgradePlanHostingDetails = () => {
@@ -34,6 +39,25 @@ export const UpgradePlanHostingDetails = () => {
 		hostingProviderData?.hosting_provider,
 		urlData
 	);
+	const { data: siteMetricData } = useUrlBasicMetricsQuery( importSiteQueryParam );
+	const showUpdatedSpeedMetrics =
+		siteMetricData?.basic?.lcp && siteMetricData?.basic?.lcp > upgradePlanSiteMetricsLcpThreshold;
+
+	if ( showUpdatedSpeedMetrics ) {
+		const percentageDifference = Math.round(
+			( ( siteMetricData?.basic?.lcp - upgradePlanSiteMetricsLcpThreshold ) /
+				upgradePlanSiteMetricsLcpThreshold ) *
+				100
+		);
+		upgradePlanHostingDetailsList[ 1 ].description = translate(
+			'83% of sites on WordPress.com are at least %(percentageDifference)s faster than yours.',
+			{
+				args: {
+					percentageDifference: `${ percentageDifference }%`,
+				},
+			}
+		);
+	}
 
 	const shouldDisplayHostIdentificationMessage =
 		hostingProviderName &&

@@ -1,5 +1,6 @@
 import { shield, trendingUp, chartBar } from '@wordpress/icons';
 import { translate, useTranslate } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import customerImageAjitBohra from 'calypso/assets/images/migrations/customer-testimonials/ajit-bohra.jpg';
 import customerImageAntonyAgnel from 'calypso/assets/images/migrations/customer-testimonials/antony-agnel.jpg';
 import customerImageChrisCoyier from 'calypso/assets/images/migrations/customer-testimonials/chris-coyier.jpg';
@@ -59,5 +60,7 @@ export function useUpgradePlanHostingDetailsList() {
 			description: translate( '3% better uptime' ),
 			icon: chartBar,
 		},
-	];
+	] as Array< { title: string; description: string | ReactNode; icon: ReactNode } >;
 }
+
+export const upgradePlanSiteMetricsLcpThreshold = 2500;
