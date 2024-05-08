@@ -20,6 +20,7 @@ import {
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
 import { useQuery } from '../../hooks/use-query';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
@@ -31,8 +32,9 @@ import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import { StepRoute, StepperLoader } from './components';
 import { AssertConditionState, Flow, StepperStep, StepProps } from './types';
-import './global.scss';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
+
+import './global.scss';
 
 /**
  * This can be used when renaming a step. Simply add a map entry with the new step slug and the old step slug and Stepper will fire `calypso_signup_step_start` events for both slugs. This ensures that funnels with the old slug will still work.
@@ -160,17 +162,27 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	// Get any flow-specific event props to include in the
 	// `calypso_signup_start` Tracks event triggerd in the effect below.
-	const signupStartEventProps = flow.useSignupStartEventProps?.() ?? {};
+	const signupStartEventProps = useMemo( () => flow.useSignupStartEventProps?.() ?? {}, [ flow ] );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	useEffect( () => {
+		if ( flow.isSignupFlow && ! isLoggedIn ) {
+			return;
+		}
+
 		if ( flow.isSignupFlow && isFlowStart() ) {
 			recordSignupStart( flow.name, ref, signupStartEventProps );
 		}
-	}, [ flow, ref, isFlowStart ] );
+	}, [ flow, ref, isFlowStart, isLoggedIn, signupStartEventProps ] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
 		if ( ! currentStepRoute || ! hasRequestedSelectedSite ) {
+			return;
+		}
+
+		// We do not log stats if the user is not logged in and if this is a signup flow.
+		if ( flow.isSignupFlow && ! isLoggedIn ) {
 			return;
 		}
 
