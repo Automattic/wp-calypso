@@ -6,6 +6,7 @@ import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import CreateSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/create-site';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -285,10 +286,12 @@ const importHostedSiteFlow: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+		const locale = useFlowLocale();
 
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
-			redirectTo: `/setup/${ flowName }`,
+			redirectTo: `/setup/${ flowName }${ locale && locale !== 'en' ? `?locale=${ locale }` : '' }`,
+			locale,
 		} );
 
 		const urlQueryParams = useQuery();
@@ -297,6 +300,7 @@ const importHostedSiteFlow: Flow = {
 		useLayoutEffect( () => {
 			if ( ! userIsLoggedIn ) {
 				window.location.assign( logInUrl );
+				return;
 			}
 
 			if ( restoreFlowQueryParam === null ) {

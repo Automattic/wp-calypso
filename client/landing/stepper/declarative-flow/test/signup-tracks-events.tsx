@@ -99,15 +99,6 @@ const getAlternateLoggedOutDestination = ( flowKey: string, locale?: string ): s
 		string,
 		AlternateLoggedOutDestination
 	> = {
-		'import-hosted-site': {
-			path: '/start/hosting',
-			includeLocale: false,
-		},
-		'new-hosted-site': {
-			path: '/start/hosting',
-			includeLocale: false,
-			expectSearchParams: true,
-		},
 		wooexpress: {
 			path: '/log-in',
 			includeLocale: true,
