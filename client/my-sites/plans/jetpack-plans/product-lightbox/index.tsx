@@ -117,16 +117,14 @@ const ProductLightbox: React.FC< Props > = ( {
 
 		const tiers = listPrices.priceTierList || [];
 
-		return [
-			...tiers.map( ( tier ) => {
-				const id = `${ product.productSlug }:-q-${ tier.maximum_units }`;
+		return tiers.map( ( tier ) => {
+			const id = `${ product.productSlug }:-q-${ tier.maximum_units }`;
 
-				return {
-					value: id,
-					label: PRODUCT_TIER_OPTIONS[ id ].toString(),
-				};
-			} ),
-		];
+			return {
+				value: id,
+				label: PRODUCT_TIER_OPTIONS[ id ].toString(),
+			};
+		} );
 	}, [ listPrices.priceTierList, product.productSlug ] );
 
 	const variantOptions = useMemo( () => {
