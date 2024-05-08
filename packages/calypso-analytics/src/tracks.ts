@@ -155,7 +155,7 @@ export function initializeAnalytics(
 	const tracksLinkerId = getUrlParameter( '_tkl' );
 	if ( tracksLinkerId && tracksLinkerId !== getTracksAnonymousUserId() ) {
 		// Link tk_ai anonymous ids if _tkl parameter is present in URL and ids between pages are different (e.g. cross-domain)
-		signalUserFromAnotherProduct( 'anon', tracksLinkerId );
+		signalUserFromAnotherProduct( tracksLinkerId, 'anon' );
 	}
 
 	// Tracks blocked?
