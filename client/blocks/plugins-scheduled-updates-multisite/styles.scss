@@ -62,12 +62,18 @@ $brand-display: "SF Pro Display", sans-serif;
 
 			&.last-update {
 				min-width: 200px;
-
 			}
 
 			.badge-component {
 				line-height: 2;
+			}
 
+			&.expand {
+				line-height: 1;
+
+				button {
+					margin-top: rem(2px);
+				}
 			}
 		}
 
