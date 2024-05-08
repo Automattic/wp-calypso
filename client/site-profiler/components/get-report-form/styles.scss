@@ -46,7 +46,7 @@
 
 .get-report-form__form-body {
 	display: flex;
-	gap: 20px;
+	gap: 30px;
 	flex-wrap: wrap;
 	flex-grow: 1;
 
@@ -74,6 +74,10 @@ input[type="text"].form-text-input.get-report-form__form {
 .get-report-form__form-footer {
 	display: flex;
 	gap: 20px;
+	align-items: center;
+	& fieldset {
+		margin-bottom: 0;
+	}
 	.terms-checkbox {
 		font-size: 0.75rem;
 		line-height: 1.5;
@@ -84,9 +88,11 @@ input[type="text"].form-text-input.get-report-form__form {
 		border-radius: 4px;
 		font-weight: 500;
 		font-size: 1rem;
-		padding: 1.5rem;
+		padding: 1rem;
+		line-height: 1;
 		text-decoration: none;
 		min-width: 191px;
+		border: none;
 		svg {
 			margin-left: 1rem;
 		}

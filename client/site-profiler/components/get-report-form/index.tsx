@@ -1,5 +1,5 @@
-import { FormLabel, FormInputValidation, Gridicon } from '@automattic/components';
-import { CheckboxControl, Button } from '@wordpress/components';
+import { FormLabel, FormInputValidation, Gridicon, Button } from '@automattic/components';
+import { CheckboxControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -19,6 +19,7 @@ export function GetReportForm( { url, onClose }: { url: string; onClose: () => v
 	const [ isTermsChecked, setIsTermsChecked ] = useState( false );
 	const [ errors, setErrors ] = useState< Errors | null >( null );
 	const [ responseError, setResponseError ] = useState< string | null >( null );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const handleSubmit = async ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
@@ -30,6 +31,7 @@ export function GetReportForm( { url, onClose }: { url: string; onClose: () => v
 			return;
 		}
 		setErrors( null );
+		setIsSubmitting( true );
 
 		let response = null;
 		try {
@@ -47,6 +49,8 @@ export function GetReportForm( { url, onClose }: { url: string; onClose: () => v
 		} catch ( error ) {
 			setResponseError( error instanceof Error ? error.message : String( error ) );
 			return;
+		} finally {
+			setIsSubmitting( false );
 		}
 		if ( response.status !== 200 ) {
 			setResponseError( response.body.message );
@@ -188,7 +192,7 @@ export function GetReportForm( { url, onClose }: { url: string; onClose: () => v
 								<FormInputValidation isError={ !! errors } text={ errors.termsAccepted } />
 							) }
 						</FormFieldset>
-						<Button type="submit" className="submit-button">
+						<Button type="submit" className="submit-button" busy={ isSubmitting }>
 							{ translate( 'Get my report' ) }
 							<Gridicon icon="product-downloadable" />
 						</Button>
