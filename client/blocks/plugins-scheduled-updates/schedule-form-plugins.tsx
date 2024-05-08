@@ -166,7 +166,7 @@ export function ScheduleFormPlugins( props: Props ) {
 						<Text className="validation-msg">
 							<Icon className="icon-info" icon={ info } size={ 16 } />
 							{ translate(
-								'The current site selection does not have any plugins that can be scheduled for updates.'
+								'All installed plugins are provided by WordPress.com and automatically updated for you. Add a plugin from the WordPress.com Marketplace to create a schedule!'
 							) }
 						</Text>
 					);
