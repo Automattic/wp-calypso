@@ -22,6 +22,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
@@ -899,7 +900,7 @@ export default function pages() {
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );
 
-	if ( ! ( isJetpackCloud() || config.isEnabled( 'a8c-for-agencies' ) ) ) {
+	if ( ! ( isJetpackCloud() || isA8CForAgencies() ) ) {
 		wpcomPages( app );
 	}
 
