@@ -117,6 +117,10 @@ const siteMigration: Flow = {
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
 
+			const transferStepSlug = isEnabled( 'migration-flow/remove-processing-step' )
+				? STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug
+				: STEPS.BUNDLE_TRANSFER.slug;
+
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					const { from, platform, action } = providedDependencies as {
@@ -172,18 +176,13 @@ const siteMigration: Flow = {
 					}
 
 					// Continue with the migration flow.
-					return navigate( STEPS.BUNDLE_TRANSFER.slug, {
+					return navigate( transferStepSlug, {
 						siteId,
 						siteSlug,
 					} );
 				}
 
 				case STEPS.BUNDLE_TRANSFER.slug: {
-					if ( isEnabled( 'migration-flow/remove-processing-step' ) ) {
-						return navigate(
-							addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug )
-						);
-					}
 					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
 				}
 
@@ -222,7 +221,7 @@ const siteMigration: Flow = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					return navigate( STEPS.BUNDLE_TRANSFER.slug, {
+					return navigate( transferStepSlug, {
 						siteId,
 						siteSlug,
 					} );
@@ -246,7 +245,7 @@ const siteMigration: Flow = {
 					if ( providedDependencies?.goToCheckout ) {
 						const redirectAfterCheckout = providedDependencies?.userAcceptedDeal
 							? STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-							: STEPS.BUNDLE_TRANSFER.slug;
+							: transferStepSlug;
 
 						const destination = addQueryArgs(
 							{
