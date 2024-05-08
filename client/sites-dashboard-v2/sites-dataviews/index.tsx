@@ -72,11 +72,15 @@ const DotcomSitesDataViews = ( {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
 		const handleRowClick = ( event: Event ) => {
 			const target = event.target as HTMLElement;
-			const row = target.closest( '.dataviews-view-table__row' );
+			const row = target.closest(
+				'.dataviews-view-table__row, li:has(.dataviews-view-list__item)'
+			);
 			if ( row ) {
 				const isButtonOrLink = target.closest( 'button, a' );
 				if ( ! isButtonOrLink ) {
-					const button = row.querySelector( '.sites-dataviews__site' ) as HTMLButtonElement;
+					const button = row.querySelector(
+						'.sites-dataviews__preview-trigger'
+					) as HTMLButtonElement;
 					if ( button ) {
 						button.click();
 					}
@@ -84,7 +88,7 @@ const DotcomSitesDataViews = ( {
 			}
 		};
 
-		const rowsContainer = document.querySelector( '.dataviews-view-table' );
+		const rowsContainer = document.querySelector( '.dataviews-view-table, .dataviews-view-list' );
 		if ( rowsContainer ) {
 			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
 		}
