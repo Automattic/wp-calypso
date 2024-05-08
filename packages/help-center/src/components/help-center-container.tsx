@@ -6,7 +6,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-import { useState, useRef, FC } from 'react';
+import { useState, useRef, useEffect, useCallback, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 import { MemoryRouter } from 'react-router-dom';
 /**
@@ -50,10 +50,10 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		'is-minimized': isMinimized,
 	} );
 
-	const onDismiss = () => {
+	const onDismiss = useCallback( () => {
 		setIsVisible( false );
 		recordTracksEvent( `calypso_inlinehelp_close` );
-	};
+	}, [ setIsVisible, recordTracksEvent ] );
 
 	const toggleVisible = () => {
 		if ( ! isVisible ) {
@@ -72,6 +72,19 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	// This is a workaround for an issue with Draggable in StrictMode
 	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
 	const nodeRef = useRef( null );
+
+	useEffect( () => {
+		const handleKeydown = ( e: Event ) => {
+			if ( e.key === 'Escape' ) {
+				onDismiss();
+			}
+		};
+
+		document.addEventListener( 'keydown', handleKeydown );
+		return () => {
+			document.removeEventListener( 'keydown', handleKeydown );
+		};
+	}, [ onDismiss ] );
 
 	if ( ! show || hidden ) {
 		return null;
