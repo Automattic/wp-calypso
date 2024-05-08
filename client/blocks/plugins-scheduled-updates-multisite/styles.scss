@@ -61,6 +61,10 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		th {
 			font-weight: 500;
+
+			&.expand {
+				width: 4rem;
+			}
 		}
 
 		td {
@@ -76,7 +80,6 @@ $brand-display: "SF Pro Display", sans-serif;
 			}
 
 			&.expand {
-				min-width: 2rem;
 				text-align: center;
 				line-height: 1;
 
