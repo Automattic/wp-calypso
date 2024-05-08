@@ -1,4 +1,5 @@
 import { Context, type Callback } from '@automattic/calypso-router';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SitesSidebar from '../../components/sidebar-menu/sites';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
@@ -48,6 +49,16 @@ function configureSitesContext( context: Context ) {
 			sort={ sort }
 			{ ...( context.featurePreview ? { featurePreview: context.featurePreview } : {} ) }
 		>
+			<PageViewTracker
+				title="Sites"
+				path="/sites/:category/:siteUrl/:feature"
+				properties={ {
+					category: context.params.category,
+					siteUrl: context.params.siteUrl,
+					feature: context.params.feature,
+				} }
+			/>
+
 			<SitesDashboard />
 		</SitesDashboardProvider>
 	);
