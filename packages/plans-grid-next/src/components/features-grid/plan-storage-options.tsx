@@ -42,12 +42,6 @@ const PlanStorageOptions = ( {
 				return null;
 			}
 
-			const shouldRenderStorageTitle =
-				storageOptions.length > 0 &&
-				( storageOptions.length === 1 ||
-					intervalType !== 'yearly' ||
-					! showUpgradeableStorage ||
-					! availableForPurchase );
 			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
 				intervalType,
 				showUpgradeableStorage,
@@ -56,7 +50,6 @@ const PlanStorageOptions = ( {
 			const storageJSX =
 				canUpgradeStorageForPlan && availableForPurchase ? (
 					<StorageAddOnDropdown
-						label={ translate( 'Storage' ) }
 						planSlug={ planSlug }
 						onStorageAddOnClick={ onStorageAddOnClick }
 						storageOptions={ storageOptions }
@@ -79,9 +72,9 @@ const PlanStorageOptions = ( {
 					className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
 					isTableCell={ options?.isTableCell }
 				>
-					{ shouldRenderStorageTitle ? (
-						<div className="plan-features-2023-grid__storage-title">{ translate( 'Storage' ) }</div>
-					) : null }
+					<h2 className="plan-features-2023-grid__storage-title plans-grid-next-features-grid__feature-group-title">
+						{ translate( 'Storage' ) }
+					</h2>
 					{ storageJSX }
 				</PlanDivOrTdContainer>
 			);
