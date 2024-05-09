@@ -1,4 +1,9 @@
-import { type PlanSlug, isFreePlan, isBusinessPlan } from '@automattic/calypso-products';
+import {
+	type PlanSlug,
+	isFreePlan,
+	isBusinessPlan,
+	isWpcomEnterpriseGridPlan,
+} from '@automattic/calypso-products';
 import { AddOns, Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import useGenerateActionCallback from './use-generate-action-callback';
@@ -71,7 +76,13 @@ function useGenerateAction( {
 		priceString?: string;
 		selectedStorageAddOn?: AddOns.AddOnMeta | null;
 	} ) => {
-		/* 1. Launch Page actions */
+		/* 1. Enterprise Plan actions */
+		if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+			const text = translate( 'Learn more' );
+			return { text };
+		}
+
+		/* 2. Launch Page actions */
 		if ( isLaunchPage ) {
 			let text = translate( 'Select %(plan)s', {
 				args: {

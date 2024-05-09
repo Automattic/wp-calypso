@@ -83,22 +83,18 @@ const SignupFlowPlanFeatureActionButton = ( {
 	// TODO: Is status ever 'blocked'? We should do some thorough investigation at some point.
 	const busy = isFreePlan( planSlug ) && status === 'blocked';
 
-	if ( hasFreeTrialPlan ) {
-		return (
-			<div className="plan-features-2023-grid__multiple-actions-container">
-				<PlanButton planSlug={ planSlug } onClick={ () => onFreeTrialCtaClick() } busy={ busy }>
-					{ freeTrialText }
+	return hasFreeTrialPlan ? (
+		<div className="plan-features-2023-grid__multiple-actions-container">
+			<PlanButton planSlug={ planSlug } onClick={ () => onFreeTrialCtaClick() } busy={ busy }>
+				{ freeTrialText }
+			</PlanButton>
+			{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
+				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } borderless>
+					{ text }
 				</PlanButton>
-				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-					<PlanButton planSlug={ planSlug } onClick={ onCtaClick } borderless>
-						{ text }
-					</PlanButton>
-				) }
-			</div>
-		);
-	}
-
-	return (
+			) }
+		</div>
+	) : (
 		<>
 			<PlanButton planSlug={ planSlug } onClick={ onCtaClick } busy={ busy }>
 				{ text }
@@ -336,7 +332,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	storageOptions,
 	visibleGridPlans,
 } ) => {
-	const translate = useTranslate();
 	const {
 		gridPlansIndex,
 		siteId,
@@ -394,15 +389,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		selectedStorageAddOn,
 	} );
 
-	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-		return (
-			<PlanButton planSlug={ planSlug } onClick={ callback }>
-				{ translate( 'Learn more' ) }
-			</PlanButton>
-		);
-	}
-
-	if ( isLaunchPage ) {
+	if ( isLaunchPage || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
 			<LaunchPagePlanFeatureActionButton
 				planSlug={ planSlug }
@@ -411,6 +398,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			/>
 		);
 	}
+
 	if ( isInSignup ) {
 		return (
 			<SignupFlowPlanFeatureActionButton
