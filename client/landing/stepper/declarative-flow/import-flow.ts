@@ -202,24 +202,23 @@ const importFlow: Flow = {
 
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
-					const siteSlug = providedDependencies?.siteSlug || siteSlugParam;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
 					}
 
-					if ( siteSlug ) {
+					if ( providedDependencies?.siteSlug ) {
 						if ( fromParam ) {
-							urlQueryParams.set( 'siteSlug', siteSlug );
+							const selectedSiteSlug = providedDependencies?.siteSlug as string;
+							urlQueryParams.set( 'siteSlug', selectedSiteSlug );
 							urlQueryParams.set( 'from', fromParam );
 							urlQueryParams.set( 'option', 'everything' );
-							urlQueryParams.delete( 'showModal' );
-							return exitFlow(
-								`/setup/${ IMPORT_FOCUSED_FLOW }/importerWordpress?${ urlQueryParams.toString() }`
-							);
+
+							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 						}
-						return exitFlow( `/setup/${ IMPORT_FOCUSED_FLOW }/import?siteSlug=${ siteSlug }` );
+						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` );
 					}
+
 					// End of Pattern Assembler flow
 					if ( isAssemblerDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
