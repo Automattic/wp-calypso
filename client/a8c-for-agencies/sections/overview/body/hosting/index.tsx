@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
 import Offering from 'calypso/a8c-for-agencies/components/offering';
 import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/types';
 import {
@@ -54,8 +55,6 @@ const OverviewBodyHosting = () => {
 		},
 	};
 
-	// TODO: Add WordPress.com offering once it's available in the A4A Marketplace
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const wpcom: OfferingItemProps = {
 		//translators: Title for the action card
 		title: translate( 'WordPress.com' ),
@@ -78,12 +77,14 @@ const OverviewBodyHosting = () => {
 		],
 		// translators: Button navigating to A4A Marketplace
 		buttonTitle: translate( 'Explore WordPress.com' ),
-		expanded: false,
+		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'hosting', 'wordpress.com' );
 			page( A4A_MARKETPLACE_HOSTING_WPCOM_LINK );
 		},
 	};
+
+	const migrationOffer = <MigrationOffer foldable />;
 
 	return (
 		<Offering
@@ -91,7 +92,8 @@ const OverviewBodyHosting = () => {
 			description={ translate(
 				'Choose the hosting that suits your needs from our best-in-class offerings.'
 			) }
-			items={ [ pressable ] }
+			children={ migrationOffer }
+			items={ [ pressable, wpcom ] }
 		/>
 	);
 };

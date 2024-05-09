@@ -10,7 +10,6 @@ import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-every
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -32,6 +31,7 @@ interface PreMigrationProps {
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	navigateToVerifyEmailStep: () => void;
 	onContentOnlyClick: () => void;
+	onFreeTrialClick: () => void;
 }
 
 export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = (
@@ -47,6 +47,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		startImport,
 		navigateToVerifyEmailStep,
 		onContentOnlyClick,
+		onFreeTrialClick,
 	} = props;
 
 	const translate = useTranslate();
@@ -94,12 +95,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const isRequestingTargetSitePlans = useSelector( ( state ) =>
 		isRequestingSitePlans( state, targetSite.ID )
 	);
-
-	const { isPending: isAddingTrial } = useAddHostingTrialMutation( {
-		onSuccess: () => {
-			setQueryTargetSitePlanStatus( 'fetching' );
-		},
-	} );
 
 	const {
 		hasCredentials,
@@ -162,7 +157,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	useEffect( () => {
 		if (
 			! isInitFetchingDone &&
-			( isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched' )
+			( isFetchingMigrationData || queryTargetSitePlanStatus === 'fetched' )
 		) {
 			setRenderState( 'loading' );
 		} else if ( requiresPluginUpdate ) {
@@ -237,9 +232,8 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					<UpgradePlan
 						site={ targetSite }
 						navigateToVerifyEmailStep={ navigateToVerifyEmailStep }
-						isBusy={
-							isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
-						}
+						isBusy={ isFetchingMigrationData || queryTargetSitePlanStatus === 'fetched' }
+						onFreeTrialClick={ onFreeTrialClick }
 						ctaText={ translate( 'Upgrade and migrate' ) }
 						onCtaClick={ onUpgradeAndMigrateClick }
 						onContentOnlyClick={ onContentOnlyClick }

@@ -1,5 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -13,37 +14,39 @@ const questionTypeComponentMap = {
 	[ QuestionType.MULTIPLE_CHOICE ]: SurveyCheckboxControl,
 };
 
-export type QuestionSelectionType = {
+export type QuestionSelectionComponentProps = {
 	question: Question;
 	value: string[];
 	onChange: ( questionKey: string, value: string[] ) => void;
+	disabled?: boolean;
 };
 
 type QuestionStepType = {
-	hideBack: boolean;
-	previousPage: () => void;
-	nextPage: () => void;
-	skip: () => void;
-} & QuestionSelectionType;
+	onBack: () => void;
+	onContinue: () => void;
+	onSkip: () => void;
+	hideBack?: boolean;
+} & QuestionSelectionComponentProps;
 
 const QuestionStep = ( {
-	hideBack,
-	previousPage,
-	nextPage,
-	skip,
 	question,
 	value,
 	onChange,
+	onBack,
+	onContinue,
+	onSkip,
+	disabled,
+	hideBack,
 }: QuestionStepType ) => {
 	const translate = useTranslate();
 	const SelectionComponent = questionTypeComponentMap[ question.type ];
 
 	return (
 		<StepContainer
-			className="question-step"
+			className={ classNames( 'question-step', { disabled } ) }
 			hideBack={ hideBack }
-			goBack={ previousPage }
-			goNext={ skip }
+			goBack={ onBack }
+			goNext={ onSkip }
 			formattedHeader={
 				<FormattedHeader
 					align="left"
@@ -54,8 +57,18 @@ const QuestionStep = ( {
 			stepName={ question.key }
 			stepContent={
 				<div className="question-step__content">
-					<SelectionComponent question={ question } value={ value } onChange={ onChange } />
-					<Button className="question-step__continue-button" onClick={ nextPage } variant="primary">
+					<SelectionComponent
+						question={ question }
+						value={ value }
+						onChange={ onChange }
+						disabled={ disabled }
+					/>
+					<Button
+						className="question-step__continue-button"
+						onClick={ onContinue }
+						variant="primary"
+						disabled={ disabled }
+					>
 						{ translate( 'Continue' ) }
 					</Button>
 				</div>

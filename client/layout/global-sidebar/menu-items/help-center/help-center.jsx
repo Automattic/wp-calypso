@@ -9,7 +9,7 @@ import SidebarMenuItem from '../menu-item';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SidebarHelpCenter = ( { tooltip, tooltipPlacement, onClick } ) => {
+const SidebarHelpCenter = ( { tooltip, onClick } ) => {
 	const helpCenterVisible = useDateStoreSelect(
 		( select ) => select( HELP_CENTER_STORE ).isHelpCenterShown(),
 		[]
@@ -29,7 +29,7 @@ const SidebarHelpCenter = ( { tooltip, tooltipPlacement, onClick } ) => {
 					'is-active': helpCenterVisible,
 				} ) }
 				tooltip={ tooltip }
-				tooltipPlacement={ tooltipPlacement }
+				tooltipPlacement="top"
 				icon={ <Icon icon={ help } size={ 28 } /> }
 			/>
 		</>

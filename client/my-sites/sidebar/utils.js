@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const pathIncludes = ( currentPath, term, position ) =>
@@ -75,7 +75,7 @@ export const itemLinkMatches = ( path, currentPath ) => {
 
 	// All URLs in the A4A Purchases start with 'purchases' or 'marketplace' will need to compare at the second position.
 	if (
-		isEnabled( 'a8c-for-agencies' ) &&
+		isA8CForAgencies() &&
 		( pathIncludes( currentPath, 'purchases', 1 ) || pathIncludes( currentPath, 'marketplace', 1 ) )
 	) {
 		return fragmentIsEqual( path, currentPath, 2 );

@@ -1,5 +1,7 @@
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/sections/overview/sidebar/contact-support';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
@@ -10,6 +12,7 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { A4A_OVERVIEW_LINK } from '../sidebar-menu/lib/constants';
 import SidebarHeader from './header';
 import ProfileDropdown from './header/profile-dropdown';
 
@@ -87,14 +90,14 @@ const A4ASidebar = ( {
 				<ul>
 					{ withGetHelpLink && (
 						<SidebarNavigatorMenuItem
-							isExternalLink
 							title={ translate( 'Get help', {
 								comment: 'A4A sidebar navigation item',
 							} ) }
-							link="https://agencies.automattic.com/support"
+							link=""
 							path=""
 							icon={ <JetpackIcons icon="help" /> }
 							onClickMenuItem={ () => {
+								page( A4A_OVERVIEW_LINK + CONTACT_URL_HASH_FRAGMENT );
 								dispatch(
 									recordTracksEvent( 'calypso_a4a_sidebar_menu_click', {
 										menu_item: 'A4A / Support',

@@ -129,6 +129,8 @@ export class FullPostView extends Component {
 		this.stopResize =
 			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
 
+		document.querySelector( 'body' ).classList.add( 'is-reader-full-post' );
+
 		document.addEventListener( 'keydown', this.handleKeydown, true );
 	}
 	componentDidUpdate( prevProps ) {
@@ -168,7 +170,7 @@ export class FullPostView extends Component {
 		// Remove WPiFrameResize listener.
 		this.stopResize?.();
 		this.props.enableAppBanner(); // reset the app banner
-
+		document.querySelector( 'body' ).classList.remove( 'is-reader-full-post' );
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
 	}
 

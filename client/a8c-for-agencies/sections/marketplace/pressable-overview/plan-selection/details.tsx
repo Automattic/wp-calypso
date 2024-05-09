@@ -1,14 +1,15 @@
 import { Button } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
-import { Icon, check, external } from '@wordpress/icons';
+import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useCallback } from 'react';
-import { getProductPricingInfo } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import SimpleList from '../../common/simple-list';
+import { useGetProductPricingInfo } from '../../wpcom-overview/hooks/use-total-invoice-value';
 import getPressablePlan from '../lib/get-pressable-plan';
 import getPressableShortName from '../lib/get-pressable-short-name';
 
@@ -16,23 +17,6 @@ type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	onSelectPlan: () => void;
 };
-
-function IncludedList( { items }: { items: ReactNode[] } ) {
-	return (
-		<ul className="pressable-overview-plan-selection__details-card-included-list">
-			{ items.map( ( item, index ) => (
-				<li key={ `included-item-${ index }` }>
-					<Icon
-						className="pressable-overview-plan-selection__details-card-included-list-icon"
-						icon={ check }
-						size={ 24 }
-					/>
-					{ item }
-				</li>
-			) ) }
-		</ul>
-	);
-}
 
 export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Props ) {
 	const translate = useTranslate();
@@ -43,6 +27,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 	const customString = translate( 'Custom' );
 
 	const userProducts = useSelector( getProductsList );
+	const { getProductPricingInfo } = useGetProductPricingInfo();
 
 	const { discountedCost } = selectedPlan
 		? getProductPricingInfo( userProducts, selectedPlan, 1 )
@@ -80,7 +65,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 					) }
 				</div>
 
-				<IncludedList
+				<SimpleList
 					items={ [
 						info?.install
 							? translate(
@@ -146,7 +131,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 					{ translate( 'All plans include:' ) }{ ' ' }
 				</h3>
 
-				<IncludedList
+				<SimpleList
 					items={ [
 						translate( '24/7 WordPress hosting support' ),
 						translate( 'WP Cloud platform' ),

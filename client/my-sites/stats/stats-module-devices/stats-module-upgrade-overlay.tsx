@@ -67,7 +67,7 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 					statType={ STATS_TYPE_DEVICE_STATS }
 				/>
 			}
-		></StatsListCard>
+		/>
 	);
 };
 

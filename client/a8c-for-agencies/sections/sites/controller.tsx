@@ -6,6 +6,7 @@ import {
 	DEFAULT_SORT_DIRECTION,
 	DEFAULT_SORT_FIELD,
 } from './constants';
+import NeedSetup from './needs-setup-sites';
 import SitesDashboard from './sites-dashboard';
 import { SitesDashboardProvider } from './sites-dashboard-provider';
 import type { DashboardSortInterface } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
@@ -56,5 +57,12 @@ function configureSitesContext( context: Context ) {
 
 export const sitesContext: Callback = ( context: Context, next ) => {
 	configureSitesContext( context );
+	next();
+};
+
+export const needsSetupContext: Callback = ( context: Context, next ) => {
+	context.secondary = <SitesSidebar path={ context.path } />;
+	context.primary = <NeedSetup />;
+
 	next();
 };

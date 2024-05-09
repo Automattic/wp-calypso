@@ -33,13 +33,14 @@ import {
 	useShowSiteTransferredNotice,
 } from 'calypso/sites-dashboard/components/sites-dashboard';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { useInitializeDataViewsSelectedItem } from './hooks/use-initialize-dataviews-selected-item';
 import { useSyncSelectedSite } from './hooks/use-sync-selected-site';
 import { useSyncSelectedSiteFeature } from './hooks/use-sync-selected-site-feature';
 import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
-import { getSitesPagination } from './sites-dataviews/utils';
+import { getSitesPagination, addDummyDataViewPrefix } from './sites-dataviews/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -56,8 +57,11 @@ interface SitesDashboardProps {
 }
 
 const siteSortingKeys = [
+	// Put the dummy data view at the beginning for searching the sort key.
+	{ dataView: addDummyDataViewPrefix( 'site' ), sortKey: 'alphabetically' },
+	{ dataView: addDummyDataViewPrefix( 'last-publish' ), sortKey: 'updatedAt' },
+	{ dataView: addDummyDataViewPrefix( 'last-interacted' ), sortKey: 'lastInteractedWith' },
 	{ dataView: 'site', sortKey: 'alphabetically' },
-	{ dataView: 'magic', sortKey: 'lastInteractedWith' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 ];
 
@@ -83,18 +87,10 @@ const SitesDashboardV2 = ( {
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 
-	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
-
-	const { data: deletedSites = [] } = useSiteExcerptsQuery(
-		[],
-		( site ) => ! site.options?.is_domain_only,
-		'deleted'
-	);
-
-	const allSites = liveSites.concat( deletedSites );
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
@@ -105,7 +101,12 @@ const SitesDashboardV2 = ( {
 		page,
 		perPage,
 		search: search ?? '',
-		hiddenFields: [ 'magic' ],
+		hiddenFields: [
+			addDummyDataViewPrefix( 'site' ),
+			addDummyDataViewPrefix( 'last-publish' ),
+			addDummyDataViewPrefix( 'last-interacted' ),
+			addDummyDataViewPrefix( 'status' ),
+		],
 		filters:
 			status === 'all'
 				? []
@@ -128,7 +129,7 @@ const SitesDashboardV2 = ( {
 		initialSiteFeature,
 		dataViewsState,
 		featureToRouteMap: FEATURE_TO_ROUTE_MAP,
-		queryParamKeys: [ 'page', 'per-page', 'status' ],
+		queryParamKeys: [ 'page', 'per-page', 'status', 'search' ],
 	} );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
@@ -155,7 +156,9 @@ const SitesDashboardV2 = ( {
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
-		const statusFilter = dataViewsState.filters.find( ( filter ) => filter.field === 'status' );
+		const statusFilter = dataViewsState.filters.find(
+			( filter ) => filter.field === addDummyDataViewPrefix( 'status' )
+		);
 		const statusNumber = statusFilter?.value || 1;
 		return ( siteStatusGroups.find( ( status ) => status.value === statusNumber )?.slug ||
 			'all' ) as GroupableSiteLaunchStatuses;
@@ -167,33 +170,36 @@ const SitesDashboardV2 = ( {
 		showHidden: true,
 	} );
 
-	// Filter sites list by search query.
-	const filteredSites = useSitesListFiltering( currentStatusGroup, {
-		search: dataViewsState.search,
-	} );
-
 	// Perform sorting actions
-	const sortedSites = useSitesListSorting( filteredSites, {
+	const sortedSites = useSitesListSorting( currentStatusGroup, {
 		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
 			?.sortKey as SitesSortKey,
 		sortOrder: dataViewsState.sort.direction || undefined,
 	} );
 
-	const paginatedSites = sortedSites.slice(
+	// Filter sites list by search query.
+	const filteredSites = useSitesListFiltering( sortedSites, {
+		search: dataViewsState.search,
+	} );
+
+	const paginatedSites = filteredSites.slice(
 		( dataViewsState.page - 1 ) * dataViewsState.perPage,
 		dataViewsState.page * dataViewsState.perPage
 	);
+
+	useInitializeDataViewsSelectedItem( { selectedSite, paginatedSites } );
 
 	// Update URL with view control params on change.
 	useEffect( () => {
 		const queryParams = {
 			search: dataViewsState.search?.trim(),
 			status: statusSlug === DEFAULT_STATUS_GROUP ? undefined : statusSlug,
+			page: dataViewsState.page > 1 ? dataViewsState.page : undefined,
 			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
 		window.setTimeout( () => handleQueryParamChange( queryParams ) );
-	}, [ dataViewsState.search, dataViewsState.perPage, statusSlug ] );
+	}, [ dataViewsState.search, dataViewsState.page, dataViewsState.perPage, statusSlug ] );
 
 	// Update site sorting preference on change
 	useEffect( () => {

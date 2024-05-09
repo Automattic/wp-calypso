@@ -8,6 +8,7 @@
 		flex-direction: row;
 		align-items: top;
 		justify-content: space-between;
+		flex-wrap: wrap;
 	}
 
 	.components-toggle-control {
@@ -33,7 +34,15 @@
 			align-items: center;
 			gap: 16px;
 		}
+
+		input[type="datetime-local"] {
+			cursor: text;
+			&::-webkit-calendar-picker-indicator {
+				cursor: pointer;
+			}
+		}
 	}
+
 	.site-logs-toolbar__filter {
 		display: none;
 		float: right;
