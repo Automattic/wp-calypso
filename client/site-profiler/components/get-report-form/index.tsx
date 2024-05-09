@@ -80,7 +80,7 @@ export function GetReportForm( {
 			return translate( 'Email is required' );
 		}
 		if ( fullValidation && ! emailValidator.validate( email ) ) {
-			return translate( 'Please enter a valid email address.' );
+			return translate( 'Please enter a valid email address' );
 		}
 		return null;
 	};
