@@ -255,6 +255,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		getPlanClass( planSlug ) === getPlanClass( currentSitePlanSlug ) &&
 		! isTrialPlan
 	) {
+		// all of these can be done in `useAction` hook. It's basically just the `text` that's different.
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
 			return (
 				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
