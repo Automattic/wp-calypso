@@ -4,8 +4,15 @@
 $brand-display: "SF Pro Display", sans-serif;
 
 .plugins-update-manager-multisite {
-	@media screen and (max-width: $break-small) {
+	@media screen and (max-width: 660px) {
 		margin: 1rem;
+	}
+
+	&.plugins-update-manager-multisite-edit,
+	&.plugins-update-manager-multisite-create {
+		h1 {
+			font-size: 2rem !important;
+		}
 	}
 
 	h1 {
@@ -54,6 +61,10 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		th {
 			font-weight: 500;
+
+			&.expand {
+				width: 4rem;
+			}
 		}
 
 		td {
@@ -69,11 +80,16 @@ $brand-display: "SF Pro Display", sans-serif;
 			}
 
 			&.expand {
+				text-align: center;
 				line-height: 1;
 
 				button {
 					margin-top: rem(2px);
 				}
+			}
+
+			&.menu {
+				text-align: center;
 			}
 		}
 
@@ -97,11 +113,21 @@ $brand-display: "SF Pro Display", sans-serif;
 			flex: 1;
 
 			max-width: 30rem;
-			height: 3rem;
 			box-sizing: border-box;
 
 			border: 1px solid $studio-gray-10;
 			border-radius: 2px;
+
+			&.is-compact {
+				.plugins-update-manager-multisite-filter__search-icon {
+					width: 0.875rem;
+					margin: 0 0.5rem;
+				}
+
+				input {
+					font-size: 0.875rem;
+				}
+			}
 
 			.plugins-update-manager-multisite-filter__search-icon {
 				margin-left: 1rem;
@@ -148,6 +174,10 @@ $brand-display: "SF Pro Display", sans-serif;
 		text-align: left;
 		padding: 0;
 
+		@media screen and (max-width: $break-large) {
+			max-width: 100%;
+		}
+
 		p {
 			color: var(--studio-gray-100);
 			margin: 1.5rem auto;
@@ -159,7 +189,19 @@ $brand-display: "SF Pro Display", sans-serif;
 
 	.plugins-update-manager-multisite-card {
 		margin-bottom: 1rem;
-		border-bottom: solid 1px var(--studio-gray-5);
+		border-bottom: solid 1px var(--studio-gray-0);
+
+		&:first-child {
+			border-top: solid 1px var(--studio-gray-0);
+		}
+
+		&.is-selected {
+			background: #f7faff;
+		}
+
+		&__new {
+			line-height: 2;
+		}
 
 		&__label {
 			font-size: 0.875rem;
