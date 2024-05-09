@@ -1,4 +1,4 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	__experimentalText as Text,
 	__experimentalConfirmDialog as ConfirmDialog,
@@ -37,7 +37,7 @@ interface Props {
 export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const isMobile = useMobileBreakpoint();
+	const isSmallScreen = useBreakpoint( '<660px' );
 	const { isEligibleForFeature, loading: isEligibleForFeatureLoading } = useIsEligibleForFeature();
 	const { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading } =
 		useSiteHasEligiblePlugins();
@@ -143,7 +143,7 @@ export const ScheduleList = ( props: Props ) => {
 						schedules.length > 0 &&
 						canCreateSchedules && (
 							<>
-								{ isMobile ? (
+								{ isSmallScreen ? (
 									<ScheduleListCards
 										onRemoveClick={ openRemoveDialog }
 										onEditClick={ onEditSchedule }

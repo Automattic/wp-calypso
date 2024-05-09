@@ -1,4 +1,4 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
@@ -29,7 +29,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 	onShowLogs,
 }: Props ) => {
 	const { schedule: selectedSchedule } = useLoadScheduleFromId( id! );
-	const isMobile = useMobileBreakpoint();
+	const isSmallScreen = useBreakpoint( '<660px' );
 	const translate = useTranslate();
 	const title = {
 		create: translate( 'New schedule' ),
@@ -64,7 +64,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 							default:
 								return (
 									<ScheduleList
-										previewMode={ isMobile ? 'card' : 'table' }
+										previewMode={ isSmallScreen ? 'card' : 'table' }
 										onCreateNewSchedule={ onCreateNewSchedule }
 										onEditSchedule={ onEditSchedule }
 										onShowLogs={ onShowLogs }
