@@ -7,7 +7,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
-import { useUpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from './constants';
+import { UpgradePlanHostingTestimonials } from './constants';
+import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
 
 export const UpgradePlanHostingDetails = () => {
