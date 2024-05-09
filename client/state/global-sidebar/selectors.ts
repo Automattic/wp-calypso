@@ -56,8 +56,8 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
 	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
 	const pluginsScheduledUpdatesEditMode =
-		state.route.path?.current?.includes( 'scheduled-updates/edit' ) ||
-		state.route.path?.current?.includes( 'scheduled-updates/create' );
+		state.route.path?.current?.endsWith( 'scheduled-updates/edit' ) ||
+		state.route.path?.current?.endsWith( 'scheduled-updates/create' );
 
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
