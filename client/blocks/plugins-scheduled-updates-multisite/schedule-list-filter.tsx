@@ -29,14 +29,19 @@ const SearchSVG = (
 		/>
 	</svg>
 );
+interface Props {
+	compact?: boolean;
+}
 
-export const ScheduleListFilter = () => {
+export const ScheduleListFilter = ( props: Props ) => {
 	const translate = useTranslate();
+	const { compact } = props;
 	const { searchTerm, handleSearch } = useContext( MultisitePluginUpdateManagerContext );
 
 	return (
 		<div className="plugins-update-manager-multisite-filter">
 			<SearchInput
+				compact={ compact }
 				placeholder={ translate( 'Search by site' ) }
 				searchIcon={ <Icon icon={ SearchSVG } size={ 18 } /> }
 				onSearch={ handleSearch }

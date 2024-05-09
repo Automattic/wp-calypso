@@ -182,7 +182,8 @@
 }
 
 .wpcom-site .is-group-sites.is-global-sidebar-collapsed,
-.wpcom-site .is-group-sites.is-global-sidebar-visible:has(.sites-dashboard.sites-dashboard__layout) {
+.wpcom-site .is-group-sites.is-global-sidebar-visible:has(.sites-dashboard.sites-dashboard__layout),
+.wpcom-site .is-group-sites.is-global-sidebar-visible.is-section-plugins {
 	.layout__content {
 		min-height: 100vh;
 
@@ -498,7 +499,8 @@
 
 // Override styles from my-sites/sidebar
 .wpcom-site div.is-group-sites:not(.has-no-masterbar),
-.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) {
+.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar),
+.wpcom-site div.is-section-plugins:not(.has-no-masterbar) {
 	&.focus-content .layout__content,
 	&.focus-sidebar .layout__content {
 		padding-bottom: 0;
@@ -523,7 +525,8 @@
 	}
 }
 
-.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
+.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper,
+.wpcom-site div.is-section-plugins:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
 	max-height: calc(100vh - 276px); /* 276px is the size of all the height above and below the dataviews-view-table-wrapper */
 
 	// With 48px padding.

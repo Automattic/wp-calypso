@@ -52,14 +52,21 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	sectionGroup: string,
 	sectionName: string
 ) => {
-	const isAllowedRegion = sectionGroup === 'sites-dashboard' || sectionGroup === 'sites';
+	const isAllowedRegion =
+		sectionGroup === 'sites-dashboard' || sectionGroup === 'sites' || sectionName === 'plugins';
 	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
 	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
+	const pluginsScheduledUpdatesEditMode =
+		state.route.path?.current?.includes( 'scheduled-updates/edit' ) ||
+		state.route.path?.current?.includes( 'scheduled-updates/create' );
 
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
 		isAllowedRegion &&
-		( siteSelected || siteLoaded || isWithinBreakpoint( '<782px' ) )
+		( siteSelected ||
+			siteLoaded ||
+			( ! siteId && pluginsScheduledUpdatesEditMode ) ||
+			isWithinBreakpoint( '<782px' ) )
 	);
 };
 
