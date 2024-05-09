@@ -1,6 +1,6 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -48,7 +48,7 @@ function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
 
 		// Return the new step with string values.
 		return {
-			lhValue: formatNumber( tier.views ),
+			lhValue: formatNumber( tier.views, getLocaleSlug() ?? 'en' ),
 			rhValue: price,
 			originalPrice: tier.price,
 			upgradePrice: tierUpgradePricePerMonth

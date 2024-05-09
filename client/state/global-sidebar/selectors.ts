@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -10,9 +11,10 @@ const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [
 	'hosting-overview',
 	'github-deployments',
 	'site-monitoring',
+	'dev-tools-promo',
 ];
 
-function shouldShowGlobalSiteViewSection( siteId: number, sectionName: string ) {
+function shouldShowGlobalSiteViewSection( siteId: number | null, sectionName: string ) {
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
 		!! siteId &&
@@ -22,7 +24,7 @@ function shouldShowGlobalSiteViewSection( siteId: number, sectionName: string ) 
 
 export const getShouldShowGlobalSiteSidebar = (
 	state: AppState,
-	siteId: number,
+	siteId: number | null,
 	sectionGroup: string,
 	sectionName: string
 ) => {
@@ -50,10 +52,22 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	sectionGroup: string,
 	sectionName: string
 ) => {
+	const isAllowedRegion =
+		sectionGroup === 'sites-dashboard' || sectionGroup === 'sites' || sectionName === 'plugins';
 	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
 	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
+	const pluginsScheduledUpdatesEditMode =
+		state.route.path?.current?.includes( 'scheduled-updates/edit' ) ||
+		state.route.path?.current?.includes( 'scheduled-updates/create' );
 
-	return isEnabled( 'layout/dotcom-nav-redesign-v2' ) && ( siteSelected || siteLoaded );
+	return (
+		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
+		isAllowedRegion &&
+		( siteSelected ||
+			siteLoaded ||
+			( ! siteId && pluginsScheduledUpdatesEditMode ) ||
+			isWithinBreakpoint( '<782px' ) )
+	);
 };
 
 export const getShouldShowUnifiedSiteSidebar = (

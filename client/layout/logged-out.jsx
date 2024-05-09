@@ -16,6 +16,7 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
@@ -41,8 +42,8 @@ import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
@@ -237,7 +238,7 @@ const LayoutLoggedOut = ( {
 			{ isJetpackCloud() && (
 				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 			) }
-			{ config.isEnabled( 'a8c-for-agencies' ) && (
+			{ isA8CForAgencies() && (
 				<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
 			) }
 			<div id="content" className="layout__content">
@@ -350,13 +351,6 @@ export default withCurrentRoute(
 				noMasterbarForSection ||
 				noMasterbarForRoute;
 
-			const isWCCOM = isWooOAuth2Client( oauth2Client ) && wccomFrom !== null;
-			const wooPasswordless = getWooPasswordless( state );
-			const isWooPasswordless =
-				!! wooPasswordless &&
-				// Enable woo-passwordless feature for WCCOM only.
-				isWCCOM;
-
 			return {
 				isJetpackLogin,
 				isWhiteLogin,
@@ -377,7 +371,7 @@ export default withCurrentRoute(
 				isPartnerSignup,
 				isPartnerSignupStart,
 				isWooCoreProfilerFlow,
-				isWooPasswordless,
+				isWooPasswordless: getIsWooPasswordless( state ),
 			};
 		},
 		{ clearLastActionRequiresLogin }

@@ -7,6 +7,7 @@ import {
 	getItemIntroductoryOfferDisplay,
 	LineItemSublabelAndPrice,
 	LineItemType,
+	getCouponLineItemFromCart,
 } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
@@ -161,11 +162,13 @@ function PaymentMethodStep( {
 
 function OrderReview( {
 	creditsLineItem,
+	couponLineItem,
 	shouldDisplayTax,
 	tax,
 	total,
 }: {
 	creditsLineItem?: LineItemType | null;
+	couponLineItem?: LineItemType | null;
 	shouldDisplayTax: boolean;
 	tax: string;
 	total: string;
@@ -177,6 +180,11 @@ function OrderReview( {
 			{ creditsLineItem && <dt className="purchase-modal__credits">{ creditsLineItem.label }</dt> }
 			{ creditsLineItem && (
 				<dd className="purchase-modal__credits">{ creditsLineItem.formattedAmount }</dd>
+			) }
+
+			{ couponLineItem && <dt className="purchase-modal__coupon">{ couponLineItem.label }</dt> }
+			{ couponLineItem && (
+				<dd className="purchase-modal__coupon">{ couponLineItem.formattedAmount }</dd>
 			) }
 
 			{ shouldDisplayTax && <dt className="purchase-modal__tax">{ translate( 'Taxes' ) }</dt> }
@@ -239,6 +247,7 @@ export default function PurchaseModalContent( {
 } ) {
 	const translate = useTranslate();
 	const creditsLineItem = getCreditsLineItemFromCart( cart );
+	const couponLineItem = getCouponLineItemFromCart( cart );
 	const firstCard = cards.length > 0 ? cards[ 0 ] : undefined;
 
 	return (
@@ -259,6 +268,7 @@ export default function PurchaseModalContent( {
 				<CheckoutTerms cart={ cart } />
 				<OrderReview
 					creditsLineItem={ cart.sub_total_integer > 0 ? creditsLineItem : null }
+					couponLineItem={ couponLineItem }
 					shouldDisplayTax={ cart.tax.display_taxes }
 					total={ formatCurrency( cart.total_cost_integer, cart.currency, {
 						isSmallestUnit: true,

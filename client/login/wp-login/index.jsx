@@ -42,7 +42,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginButtons from './login-buttons';
@@ -636,7 +636,7 @@ export default connect(
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
 			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ),
-			isWooPasswordless: getWooPasswordless( state ),
+			isWooPasswordless: getIsWooPasswordless( state ),
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),

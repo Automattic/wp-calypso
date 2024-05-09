@@ -18,7 +18,7 @@ const Card1 = () => {
 			</p>
 			<p>
 				{ translate(
-					'This is only just the beginning. Soon, we’ll add referral commissions, partner directory listings across our brands, bonus incentives, and much more.'
+					'This is only just the beginning. Soon, we’ll add partner directory listings across our brands, multiple user support, WooPayments commissions, and much more.'
 				) }
 			</p>
 		</>

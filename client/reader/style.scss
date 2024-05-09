@@ -17,7 +17,7 @@
 .is-reader-page .search-stream__with-sites.main {
 	margin: 0 auto;
 	@include breakpoint-deprecated( "<660px" ) {
-		margin: 16px;
+		margin: 16px 0;
 	}
 }
 
@@ -362,6 +362,12 @@
 
 .is-reader-page .search-stream__single-column-results .empty-content {
 	margin-top: 0;
+}
+
+.search-stream__single-column-results .reader-tag-sidebar-recommended-sites {
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 36px 16px 0;
+	}
 }
 
 .layout.has-header-section.is-section-reader {

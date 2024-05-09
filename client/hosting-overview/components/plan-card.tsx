@@ -15,6 +15,7 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const PlanCard: FC = () => {
+	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
@@ -29,14 +30,17 @@ const PlanCard: FC = () => {
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
-	const translate = useTranslate();
 
 	const isLoading = ! pricing || ! planData;
 
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
-			<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__plan' ) }>
+			<Card
+				className={ classNames( 'hosting-overview__card', 'hosting-overview__plan', {
+					'hosting-overview__plan--is-free': ! isPaidPlan,
+				} ) }
+			>
 				<div className="hosting-overview__plan-card-header">
 					<h3 className="hosting-overview__plan-card-title">{ planName }</h3>
 
@@ -125,7 +129,7 @@ const PlanCard: FC = () => {
 						<Button
 							className="hosting-overview__link-button"
 							plain
-							href={ `/plans/${ site?.slug }` }
+							href={ `/add-ons/${ site?.slug }` }
 						>
 							{ translate( 'Need more storage?' ) }
 						</Button>

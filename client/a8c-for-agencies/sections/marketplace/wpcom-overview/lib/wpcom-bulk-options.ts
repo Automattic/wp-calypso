@@ -1,39 +1,24 @@
-// FIXME we should fetch the discount bracket from a proper source when ready.
-const wpcomBulkOptions = [
-	{
-		value: 1,
-		label: '1',
-	},
-	{
-		value: 3,
-		label: '3',
-		sub: '4%',
-	},
-	{
-		value: 5,
-		label: '5',
-		sub: '8%',
-	},
-	{
-		value: 10,
-		label: '10',
-		sub: '20%',
-	},
-	{
-		value: 20,
-		label: '20',
-		sub: '40%',
-	},
-	{
-		value: 50,
-		label: '50',
-		sub: '70%',
-	},
-	{
-		value: 100,
-		label: '100',
-		sub: '80%',
-	},
-];
+const wpcomBulkOptions = (
+	discountOptions?: {
+		quantity: number;
+		discount_percent: number;
+	}[]
+) => {
+	if ( ! discountOptions || discountOptions.length === 0 ) {
+		return [
+			{
+				value: 1,
+				label: '1',
+				discount: 0,
+			},
+		];
+	}
+	return discountOptions.map( ( option ) => ( {
+		value: option.quantity || 1,
+		label: option.quantity ? `${ option.quantity }` : '1',
+		sub: option.discount_percent ? `${ Math.floor( option.discount_percent * 100 ) }%` : '',
+		discount: option.discount_percent ? option.discount_percent : 0,
+	} ) );
+};
 
 export default wpcomBulkOptions;

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
@@ -8,11 +9,9 @@ import { withCurrentRoute } from 'calypso/components/route';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarMenuItem from 'calypso/layout/global-sidebar/menu-items/menu-item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getShouldShowGlobalSiteSidebar } from 'calypso/state/global-sidebar/selectors';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { BellIcon } from './icon';
 
 import './style.scss';
@@ -27,7 +26,6 @@ class SidebarNotifications extends Component {
 		isNotificationsOpen: PropTypes.bool,
 		hasUnseenNotifications: PropTypes.bool,
 		tooltip: TranslatableString,
-		shouldShowGlobalSiteSidebar: PropTypes.bool,
 	};
 
 	notificationLink = createRef();
@@ -54,22 +52,33 @@ class SidebarNotifications extends Component {
 		}
 	}
 
-	checkToggleNotes = ( event, forceToggle ) => {
-		const target = event ? event.target : false;
+	// This toggle gets called both on the calypso and panel sides. Throttle it to prevent calls on
+	// both sides from conflicting and cancelling each other out.
+	checkToggleNotes = throttle(
+		( event, forceToggle, forceOpen = false ) => {
+			const target = event ? event.target : false;
 
-		// Ignore clicks or other events which occur inside of the notification panel.
-		if (
-			target &&
-			( this.notificationLink.current.contains( target ) ||
-				this.notificationPanel.current.contains( target ) )
-		) {
-			return;
-		}
+			// Ignore clicks or other events which occur inside of the notification panel.
+			if (
+				target &&
+				( this.notificationLink.current.contains( target ) ||
+					this.notificationPanel.current.contains( target ) )
+			) {
+				return;
+			}
 
-		if ( this.props.isNotificationsOpen || forceToggle === true ) {
-			this.toggleNotesFrame( event );
-		}
-	};
+			// Prevent toggling closed if we are opting to open.
+			if ( forceOpen && this.props.isNotificationsOpen ) {
+				return;
+			}
+
+			if ( this.props.isNotificationsOpen || forceToggle === true || forceOpen === true ) {
+				this.toggleNotesFrame( event );
+			}
+		},
+		100,
+		{ leading: true, trailing: false }
+	);
 
 	toggleNotesFrame = ( event ) => {
 		if ( event ) {
@@ -134,10 +143,10 @@ class SidebarNotifications extends Component {
 					onClick={ this.handleClick }
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
+					tooltipPlacement="top"
 					className={ classes }
 					ref={ this.notificationLink }
 					key={ this.state.animationState }
-					tooltipPlacement={ this.props.shouldShowGlobalSiteSidebar ? 'bottom-left' : 'bottom' }
 				/>
 				<div className="sidebar-notifications__panel" ref={ this.notificationPanel }>
 					<AsyncLoad
@@ -154,20 +163,10 @@ class SidebarNotifications extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { currentSection } ) => {
-	const sectionGroup = currentSection?.group ?? null;
-	const sectionName = currentSection?.name ?? null;
-	const siteId = getSelectedSiteId( state );
-	const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
-		state,
-		siteId,
-		sectionGroup,
-		sectionName
-	);
+const mapStateToProps = ( state ) => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
 		hasUnseenNotifications: hasUnseenNotifications( state ),
-		shouldShowGlobalSiteSidebar,
 	};
 };
 const mapDispatchToProps = {

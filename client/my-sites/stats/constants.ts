@@ -40,7 +40,7 @@ export const STAT_TYPE_VISITS = 'statsVisits';
 export const STAT_TYPE_TAGS_LIST = 'tagsList';
 export const STAT_TYPE_USERS_LIST = 'usersList';
 export const STAT_TYPE_WPCOM_PLUGINS_LIST = 'wpcomPluginsList';
-export const STATS_TYPE_DEVICE_STATS = 'statsDeviceStats';
+export const STATS_TYPE_DEVICE_STATS = 'stats_devices_module';
 
 // stats feature are for more granular control, string value is based on component name
 export const STATS_FEATURE_DATE_CONTROL = 'StatsDateControl';

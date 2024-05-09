@@ -48,6 +48,7 @@ $blueberry-focus-color: #abc0f5;
 		flex-direction: column;
 		align-items: start;
 		gap: 44px;
+		padding-bottom: 40px;
 	}
 
 	&__continue-button.components-button.is-primary {
@@ -74,6 +75,11 @@ $blueberry-focus-color: #abc0f5;
 
 			&.checked {
 				border-color: $blueberry-color;
+			}
+
+			&.disabled {
+				opacity: 0.5;
+				pointer-events: none;
 			}
 
 			// Radio styles
@@ -156,5 +162,13 @@ $blueberry-focus-color: #abc0f5;
 
 	.step-container__header {
 		margin-top: 96px;
+	}
+
+	&.disabled {
+		.step-container__navigation button,
+		.step-container__skip-wrapper button {
+			opacity: 0.5;
+			pointer-events: none;
+		}
 	}
 }

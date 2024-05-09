@@ -81,3 +81,16 @@ export interface HostingProviderQueryResponse {
 	domain: string;
 	hosting_provider: HostingProvider;
 }
+
+export type BasicMetrics = {
+	cls: number;
+	fid: number;
+	lcp: number;
+	fcp: number;
+	ttfb: number;
+	inp: number;
+};
+export interface UrlBasicMetricsQueryResponse {
+	basic: BasicMetrics;
+	advanced: Record< string, string >;
+}

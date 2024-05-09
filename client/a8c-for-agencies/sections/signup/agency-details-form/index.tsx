@@ -36,29 +36,14 @@ interface Props {
 	isLoading: boolean;
 	onSubmit: ( payload: AgencyDetailsPayload ) => void;
 	referer?: string | null;
-	initialValues?: {
-		email?: string;
-		firstName?: string;
-		lastName?: string;
-		agencyName?: string;
-		agencyUrl?: string;
-		managedSites?: string;
-		servicesOffered?: string[];
-		productsOffered?: string[];
-		city?: string;
-		line1?: string;
-		line2?: string;
-		country?: string;
-		postalCode?: string;
-		state?: string;
-	};
+	initialValues?: AgencyDetailsPayload;
 	submitLabel: string;
 }
 
 export default function AgencyDetailsForm( {
 	includeTermsOfService = false,
 	isLoading,
-	initialValues = {},
+	initialValues,
 	onSubmit,
 	referer,
 	submitLabel,
@@ -69,20 +54,20 @@ export default function AgencyDetailsForm( {
 	const userLoggedIn = useSelector( isUserLoggedIn );
 	const isA4ALoggedOutSignup = config.isEnabled( 'a4a-logged-out-signup' );
 
-	const [ countryValue, setCountryValue ] = useState( initialValues.country ?? '' );
-	const [ city, setCity ] = useState( initialValues.city ?? '' );
-	const [ line1, setLine1 ] = useState( initialValues.line1 ?? '' );
-	const [ line2, setLine2 ] = useState( initialValues.line2 ?? '' );
-	const [ postalCode, setPostalCode ] = useState( initialValues.postalCode ?? '' );
-	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
-	const [ agencyName, setAgencyName ] = useState( initialValues.agencyName ?? '' );
-	const [ email, setEmail ] = useState( initialValues.email ?? '' );
-	const [ firstName, setFirstName ] = useState( initialValues.firstName ?? '' );
-	const [ lastName, setLastName ] = useState( initialValues.lastName ?? '' );
-	const [ agencyUrl, setAgencyUrl ] = useState( initialValues.agencyUrl ?? '' );
-	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-5' );
-	const [ servicesOffered, setServicesOffered ] = useState( initialValues.servicesOffered ?? [] );
-	const [ productsOffered, setProductsOffered ] = useState( initialValues.productsOffered ?? [] );
+	const [ countryValue, setCountryValue ] = useState( initialValues?.country ?? '' );
+	const [ city, setCity ] = useState( initialValues?.city ?? '' );
+	const [ line1, setLine1 ] = useState( initialValues?.line1 ?? '' );
+	const [ line2, setLine2 ] = useState( initialValues?.line2 ?? '' );
+	const [ postalCode, setPostalCode ] = useState( initialValues?.postalCode ?? '' );
+	const [ addressState, setAddressState ] = useState( initialValues?.state ?? '' );
+	const [ agencyName, setAgencyName ] = useState( initialValues?.agencyName ?? '' );
+	const [ email, setEmail ] = useState( initialValues?.email ?? '' );
+	const [ firstName, setFirstName ] = useState( initialValues?.firstName ?? '' );
+	const [ lastName, setLastName ] = useState( initialValues?.lastName ?? '' );
+	const [ agencyUrl, setAgencyUrl ] = useState( initialValues?.agencyUrl ?? '' );
+	const [ managedSites, setManagedSites ] = useState( initialValues?.managedSites ?? '1-5' );
+	const [ servicesOffered, setServicesOffered ] = useState( initialValues?.servicesOffered ?? [] );
+	const [ productsOffered, setProductsOffered ] = useState( initialValues?.productsOffered ?? [] );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
