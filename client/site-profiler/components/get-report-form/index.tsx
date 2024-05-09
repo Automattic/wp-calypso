@@ -223,7 +223,7 @@ export function GetReportForm( {
 					{ responseSuccess && (
 						<FormInputValidation
 							isError={ false }
-							text="Success! Email with the report link will be sent shortly"
+							text="Success! An email with the report link will be sent shortly"
 						/>
 					) }
 				</form>
