@@ -2,13 +2,15 @@ import classNames from 'classnames';
 import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
+import { createPortal } from 'react-dom';
 import { connect } from 'react-redux';
 import store from 'store';
+import DismissibleCard from 'calypso/blocks/dismissible-card';
 import AsyncLoad from 'calypso/components/async-load';
-import { withCurrentRoute } from 'calypso/components/route';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarMenuItem from 'calypso/layout/global-sidebar/menu-items/menu-item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
@@ -26,6 +28,9 @@ class SidebarNotifications extends Component {
 		isNotificationsOpen: PropTypes.bool,
 		hasUnseenNotifications: PropTypes.bool,
 		tooltip: TranslatableString,
+		translate: PropTypes.func,
+		isSidebarCollapsed: PropTypes.bool,
+		currentUserId: PropTypes.number,
 	};
 
 	notificationLink = createRef();
@@ -135,8 +140,26 @@ class SidebarNotifications extends Component {
 			'is-initial-load': this.state.animationState === -1,
 		} );
 
+		const shouldShowNotificationsPointer =
+			Date.now() < Date.parse( '23 May 2024' ) && // Show pointer for 2 weeks.
+			this.props.currentUserId < 250450000; // Show pointer to users registered before 08-May-2024 (when we moved the notifications to the footer).
+
 		return (
 			<>
+				{ shouldShowNotificationsPointer &&
+					createPortal(
+						<DismissibleCard
+							className="sidebar-notifications-pointer"
+							preferenceName="nav-redesign-notifications-footer-pointer"
+						>
+							<span>
+								{ this.props.translate(
+									'Looking for your notifications? They have been moved here.'
+								) }
+							</span>
+						</DismissibleCard>,
+						document.querySelector( '.layout' )
+					) }
 				<SidebarMenuItem
 					url="/notifications"
 					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
@@ -167,6 +190,7 @@ const mapStateToProps = ( state ) => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
 		hasUnseenNotifications: hasUnseenNotifications( state ),
+		currentUserId: getCurrentUserId( state ),
 	};
 };
 const mapDispatchToProps = {
@@ -174,6 +198,4 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 };
 
-export default withCurrentRoute(
-	connect( mapStateToProps, mapDispatchToProps )( SidebarNotifications )
-);
+export default connect( mapStateToProps, mapDispatchToProps )( SidebarNotifications );
