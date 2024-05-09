@@ -942,7 +942,7 @@ export class RenderDomainsStep extends Component {
 		return (
 			<div className="domains__domain-side-content-container">
 				{ showMigrationExplainer && (
-					<div className="domains__domain-side-content">
+					<div className="domains__domain-side-content domains__domain-site-migration">
 						<ReskinSideExplainer type="site-migration" onClick={ this.handleSiteMigrationClick } />
 					</div>
 				) }
