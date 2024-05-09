@@ -49,7 +49,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						{ prepareScheduleName( schedule as unknown as ScheduleUpdates ) }
 					</Button>
 				</td>
-				<td>
+				<td className="sites">
 					{ schedule.sites.length }{ ' ' }
 					<Tooltip
 						text={ prepareSitesTooltipInfo( schedule.sites ) as unknown as string }
