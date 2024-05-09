@@ -196,6 +196,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	}
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
+		// TODO: this block can be another "exception" that stays
 		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
 			return (
 				<PlanButton
@@ -207,6 +208,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				</PlanButton>
 			);
 		} else if ( text ) {
+			// TODO: this can be removed and done in the final single-render call. there's nothing special about it outside of "disabled" status
 			return (
 				<PlanButton
 					planSlug={ planSlug }
@@ -219,6 +221,7 @@ const LoggedInPlansFeatureActionButton = ( {
 			);
 		}
 		return (
+			// TODO: this looks like a matter of passing the right text/props from `useAction`
 			<PlanButton planSlug={ planSlug } current={ current } disabled>
 				{ translate( 'Active Plan' ) }
 			</PlanButton>
@@ -231,6 +234,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		currentSitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
 
 	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
+	// TODO: this can be the conditioning done in `useAction` to pass the right text/props through. So we'd remove this block.
 	if (
 		availableForPurchase &&
 		currentSitePlanSlug &&
@@ -255,7 +259,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		getPlanClass( planSlug ) === getPlanClass( currentSitePlanSlug ) &&
 		! isTrialPlan
 	) {
-		// all of these can be done in `useAction` hook. It's basically just the `text` that's different.
+		// TODO: all of these can be done in `useAction` hook. It's basically just the `text` that's different.
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
 			return (
 				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
