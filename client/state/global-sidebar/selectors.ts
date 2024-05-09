@@ -11,6 +11,7 @@ const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [
 	'hosting-overview',
 	'github-deployments',
 	'site-monitoring',
+	'dev-tools-promo',
 ];
 
 function shouldShowGlobalSiteViewSection( siteId: number | null, sectionName: string ) {
