@@ -77,6 +77,14 @@ export class EditorPublishPanelComponent {
 	async publish(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const publishButtonLocator = editorParent.locator( selectors.publishButton );
+
+		// Check if the button is able to be triggered before proceeding
+		if (
+			! ( ( await publishButtonLocator.isVisible() ) || ( await publishButtonLocator.isEnabled() ) )
+		) {
+			return;
+		}
+
 		await publishButtonLocator.click();
 	}
 
