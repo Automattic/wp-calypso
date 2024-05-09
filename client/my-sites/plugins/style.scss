@@ -90,7 +90,7 @@ body.is-section-plugins {
 				padding: 1rem;
 			}
 
-			@include breakpoint-deprecated( "<600px" ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				padding: 1rem 0;
 			}
 
