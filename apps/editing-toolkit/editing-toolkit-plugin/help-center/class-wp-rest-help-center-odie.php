@@ -99,18 +99,20 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/chat/get-last-chat-id',
+			$this->rest_base . '/history/last-chat-id',
 			// Get last chat ID.
 			array(
-				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_last_chat_id' ),
-				'permission_callback' => array( $this, 'permission_callback' ),
-			),
-			// Set last chat ID.
-			array(
-				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => array( $this, 'set_last_chat_id' ),
-				'permission_callback' => array( $this, 'permission_callback' ),
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_last_chat_id' ),
+					'permission_callback' => array( $this, 'permission_callback' ),
+				),
+				// Set last chat ID.
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'set_last_chat_id' ),
+					'permission_callback' => array( $this, 'permission_callback' ),
+				),
 			)
 		);
 
@@ -204,8 +206,8 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 
 		$projected_response = array(
 			'calypso_preferences' => array(
-				'chat_id'      => $response->chat_id,
-				'last_chat_id' => $response->last_chat_id,
+				'odie_chat_id'      => $response->odie_chat_id,
+				'odie_last_chat_id' => $response->odie_last_chat_id,
 			),
 		);
 
@@ -220,24 +222,26 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function set_last_chat_id( \WP_REST_Request $request ) {
-		$chat_id      = $request->get_param( 'chat_id' );
-		$last_chat_id = $request->get_param( 'chat_id' );
+		$chat_id      = $request->get_param( 'odie_chat_id' );
+		$last_chat_id = $request->get_param( 'odie_last_chat_id' );
 
-		$body = array();
+		$body = array(
+			'calypso_preferences' => array(),
+		);
 
 		if ( isset( $chat_id ) ) {
-			$body['chat_id'] = $chat_id;
+			$body['calypso_preferences']['odie_chat_id'] = $chat_id;
 		}
 
 		if ( isset( $last_chat_id ) ) {
-			$body['last_chat_id'] = $last_chat_id;
+			$body['calypso_preferences']['odie_last_chat_id'] = $last_chat_id;
 		}
 
 		// Forward the request body to the support chat endpoint.
 		$body = Client::wpcom_json_api_request_as_user(
 			'/me/preferences',
 			2,
-			array( 'method' => 'GET' ),
+			array( 'method' => 'POST' ),
 			$body
 		);
 
@@ -249,8 +253,8 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 
 		$projected_response = array(
 			'calypso_preferences' => array(
-				'chat_id'      => $response->chat_id,
-				'last_chat_id' => $response->last_chat_id,
+				'odie_chat_id'      => $response->odie_chat_id,
+				'odie_last_chat_id' => $response->odie_last_chat_id,
 			),
 		);
 

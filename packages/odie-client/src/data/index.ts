@@ -25,7 +25,7 @@ export const useGetOdieStorage = ( key: OdieStorageKey ) => {
 			}
 			return apiFetch< { calypso_preferences: Record< string, string > } >( {
 				global: true,
-				path: `/help-center/odie/chat/get-last-chat-id`,
+				path: `/help-center/odie/history/last-chat-id`,
 			} as APIFetchOptions ).then( ( res ) => res.calypso_preferences[ storageKey ] );
 		},
 	} );
@@ -48,7 +48,7 @@ export const useSetOdieStorage = ( key: OdieStorageKey ) => {
 			}
 			return apiFetch< { calypso_preferences: Record< string, string > } >( {
 				global: true,
-				path: `/help-center/odie/chat/get-last-chat-id`,
+				path: `/help-center/odie/history/last-chat-id`,
 				method: 'POST',
 				body: JSON.stringify( { [ storageKey ]: value } ),
 			} as APIFetchOptions );
