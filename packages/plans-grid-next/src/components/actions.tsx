@@ -1,12 +1,7 @@
 import {
-	getPlanClass,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_P2_FREE,
-	TERM_BIENNIALLY,
-	TERM_TRIENNIALLY,
-	planMatches,
-	TERM_ANNUALLY,
 	type PlanSlug,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	type StorageOption,
@@ -113,7 +108,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	onCtaClick,
 	planSlug,
 	currentSitePlanSlug,
-	buttonText,
 	storageOptions,
 	text,
 }: {
@@ -122,7 +116,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	onCtaClick: () => void;
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
-	buttonText?: string;
 	storageOptions?: StorageOption[];
 	text: string;
 } ) => {
@@ -214,69 +207,25 @@ const LoggedInPlansFeatureActionButton = ( {
 		currentSitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
 
 	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
-	// TODO: this can be the conditioning done in `useAction` to pass the right text/props through. So we'd remove this block.
-	if (
+	// TODO: Consider the structure of this condition. Should we move it out of this component?
+	const shouldDisableButton =
 		availableForPurchase &&
 		currentSitePlanSlug &&
 		! current &&
 		! isTrialPlan &&
 		currentPlanBillingPeriod &&
 		billingPeriod &&
-		currentPlanBillingPeriod > billingPeriod
-	) {
-		return (
-			<PlanButton planSlug={ planSlug } disabled={ true } current={ current }>
-				{ translate( 'Contact support', { context: 'verb' } ) }
-			</PlanButton>
-		);
-	}
-
-	// If the current plan matches on a lower-term, then show an "Upgrade to..." button.
-	if (
-		availableForPurchase &&
-		currentSitePlanSlug &&
-		! current &&
-		getPlanClass( planSlug ) === getPlanClass( currentSitePlanSlug ) &&
-		! isTrialPlan
-	) {
-		// TODO: all of these can be done in `useAction` hook. It's basically just the `text` that's different.
-		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
-			return (
-				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-					{ buttonText || translate( 'Upgrade to Triennial' ) }
-				</PlanButton>
-			);
-		}
-
-		if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
-			return (
-				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-					{ buttonText || translate( 'Upgrade to Biennial' ) }
-				</PlanButton>
-			);
-		}
-
-		if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
-			return (
-				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-					{ buttonText || translate( 'Upgrade to Yearly' ) }
-				</PlanButton>
-			);
-		}
-	}
-
-	let buttonTextFallback;
-
-	if ( buttonText ) {
-		buttonTextFallback = buttonText;
-	} else {
-		buttonTextFallback = text;
-	}
+		currentPlanBillingPeriod > billingPeriod;
 
 	if ( availableForPurchase ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-				{ buttonTextFallback }
+			<PlanButton
+				planSlug={ planSlug }
+				disabled={ !! shouldDisableButton }
+				onClick={ onCtaClick }
+				current={ current }
+			>
+				{ text }
 			</PlanButton>
 		);
 	}
@@ -308,7 +257,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	currentSitePlanSlug,
 	isInSignup,
 	planSlug,
-	buttonText,
 	isStuck,
 	isMonthlyPlan,
 	storageOptions,
@@ -321,11 +269,14 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	} = usePlansGridContext();
 	const {
 		planTitle,
-		pricing: { currencyCode, originalPrice, discountedPrice },
+		pricing: { billingPeriod, currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
 		cartItemForPlan,
 		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
+	const currentPlanBillingPeriod = currentSitePlanSlug
+		? gridPlansIndex[ currentSitePlanSlug ]?.pricing.billingPeriod
+		: null;
 	const { prices } = usePlanPricingInfoFromGridPlans( {
 		gridPlans: visibleGridPlans,
 	} );
@@ -349,17 +300,20 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const { callback, text, postButtonText, status } = useAction( {
 		// TODO: Double check that we need to do this boolean coercion
 		availableForPurchase,
+		billingPeriod,
 		isLargeCurrency: !! isLargeCurrency,
 		isStuck,
 		planSlug,
 		planTitle,
 		priceString,
 		cartItemForPlan,
+		currentPlanBillingPeriod,
 		selectedStorageAddOn,
 	} );
 
 	const { callback: freeTrialCallback, text: freeTrialText } = useAction( {
 		// TODO: Double check that we need to do this boolean coercion
+		billingPeriod,
 		isFreeTrialAction: true,
 		isLargeCurrency: !! isLargeCurrency,
 		isStuck,
@@ -368,6 +322,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		planTitle,
 		priceString,
 		cartItemForPlan: { product_slug: freeTrialPlanSlug ?? PLAN_FREE },
+		currentPlanBillingPeriod,
 		selectedStorageAddOn,
 	} );
 
@@ -394,7 +349,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			availableForPurchase={ availableForPurchase }
 			onCtaClick={ callback }
 			currentSitePlanSlug={ currentSitePlanSlug }
-			buttonText={ buttonText }
 			isMonthlyPlan={ isMonthlyPlan }
 			storageOptions={ storageOptions }
 			text={ text }

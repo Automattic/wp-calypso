@@ -3,8 +3,20 @@ import {
 	isFreePlan,
 	isBusinessPlan,
 	isWpcomEnterpriseGridPlan,
+	getPlanClass,
+	planMatches,
+	TERM_TRIENNIALLY,
+	TERM_BIENNIALLY,
+	TERM_ANNUALLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	isWooExpressMediumPlan,
+	isWooExpressSmallPlan,
+	isBusinessTrial,
+	getPlan,
 } from '@automattic/calypso-products';
-import { AddOns, Plans } from '@automattic/data-stores';
+import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import useGenerateActionCallback from './use-generate-action-callback';
 import type { PlansIntent } from '@automattic/plans-grid-next';
@@ -57,7 +69,9 @@ function useGenerateAction( {
 
 	return ( {
 		availableForPurchase,
+		billingPeriod,
 		cartItemForPlan,
+		currentPlanBillingPeriod,
 		isFreeTrialAction,
 		isLargeCurrency,
 		isStuck,
@@ -67,7 +81,9 @@ function useGenerateAction( {
 		selectedStorageAddOn,
 	}: {
 		availableForPurchase?: boolean;
+		billingPeriod?: PlanPricing[ 'billPeriod' ];
 		cartItemForPlan?: MinimalRequestCartProduct | null;
+		currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
 		isFreeTrialAction?: boolean;
 		isLargeCurrency?: boolean;
 		isStuck?: boolean;
@@ -175,6 +191,30 @@ function useGenerateAction( {
 		/* 3. Logged In Plans actions */
 		let text = translate( 'Upgrade', { context: 'verb' } );
 		let status = null;
+		const current = sitePlanSlug === planSlug;
+		const isTrialPlan =
+			sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
+			sitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
+			sitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
+
+		// TODO: Revisit WooExpress overrides and how to better structure this logic
+		let textOverride;
+
+		if ( isWooExpressMediumPlan( planSlug ) && ! isWooExpressMediumPlan( sitePlanSlug || '' ) ) {
+			textOverride = translate( 'Get Performance', { textOnly: true } );
+		} else if (
+			isWooExpressSmallPlan( planSlug ) &&
+			! isWooExpressSmallPlan( sitePlanSlug || '' )
+		) {
+			textOverride = translate( 'Get Essential', { textOnly: true } );
+		} else if ( isBusinessTrial( sitePlanSlug || '' ) ) {
+			textOverride = translate( 'Get %(plan)s', {
+				textOnly: true,
+				args: {
+					plan: getPlan( planSlug )?.getTitle() || '',
+				},
+			} );
+		}
 
 		if ( isFreePlan( planSlug ) ) {
 			text = translate( 'Contact support', { context: 'verb' } );
@@ -184,11 +224,42 @@ function useGenerateAction( {
 				text = translate( 'Manage add-ons', { context: 'verb' } );
 				status = 'enabled';
 			}
-		} else if ( sitePlanSlug === planSlug && intentFromProps !== 'plans-p2' ) {
-			// Spotlight plan actions
-			text = canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' );
+		} else if (
+			availableForPurchase &&
+			sitePlanSlug &&
+			! current &&
+			! isTrialPlan &&
+			currentPlanBillingPeriod &&
+			billingPeriod &&
+			currentPlanBillingPeriod > billingPeriod
+		) {
+			text = translate( 'Contact support', { context: 'verb' } );
+		} else if (
+			availableForPurchase &&
+			sitePlanSlug &&
+			! current &&
+			getPlanClass( planSlug ) === getPlanClass( sitePlanSlug ) &&
+			! isTrialPlan
+		) {
+			// If the current plan matches on a lower-term, then show an "Upgrade to..." button.
+			if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
+				text = textOverride || translate( 'Upgrade to Triennial' );
+			}
 
-			if ( domainFromHomeUpsellFlow ) {
+			if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
+				text = textOverride || translate( 'Upgrade to Biennial' );
+			}
+
+			if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
+				text = textOverride || translate( 'Upgrade to Yearly' );
+			}
+		} else if ( sitePlanSlug === planSlug && intentFromProps !== 'plans-p2' ) {
+			// All other actions for a current plan
+			text = translate( 'View plan' );
+
+			if ( canUserManageCurrentPlan ) {
+				text = translate( 'Manage plan' );
+			} else if ( domainFromHomeUpsellFlow ) {
 				text = translate( 'Keep my plan', { context: 'verb' } );
 			}
 		} else if ( isStuck && ! isLargeCurrency ) {
