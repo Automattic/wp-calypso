@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -203,6 +202,7 @@ const importFlow: Flow = {
 
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
+
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
 					}
@@ -218,6 +218,7 @@ const importFlow: Flow = {
 						}
 						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` );
 					}
+
 					// End of Pattern Assembler flow
 					if ( isAssemblerDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
@@ -316,20 +317,13 @@ const importFlow: Flow = {
 						return navigate( `importList?siteSlug=${ siteSlugParam }` );
 					} else if ( isMigrateFromWp && fromParam ) {
 						return navigate( `sitePicker?from=${ fromParam }` );
-					} else if (
-						urlQueryParams.has( 'showModal' ) ||
-						! isEnabled( 'migration_assistance_modal' )
-					) {
+					} else if ( urlQueryParams.has( 'showModal' ) ) {
 						urlQueryParams.delete( 'showModal' );
 						return navigate( `import?siteSlug=${ siteSlugParam }` );
 					}
 
-					if ( isEnabled( 'migration_assistance_modal' ) ) {
-						urlQueryParams.set( 'showModal', 'true' );
-						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
-					}
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
-
+					urlQueryParams.set( 'showModal', 'true' );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':

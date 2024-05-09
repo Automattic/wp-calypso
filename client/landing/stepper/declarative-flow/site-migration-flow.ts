@@ -293,15 +293,13 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					if ( urlQueryParams.has( 'showModal' ) || ! isEnabled( 'migration_assistance_modal' ) ) {
+					if ( urlQueryParams.has( 'showModal' ) ) {
 						urlQueryParams.delete( 'showModal' );
 						return navigate(
 							`${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }`
 						);
 					}
-					if ( isEnabled( 'migration_assistance_modal' ) ) {
-						urlQueryParams.set( 'showModal', 'true' );
-					}
+					urlQueryParams.set( 'showModal', 'true' );
 
 					return navigate( `site-migration-upgrade-plan?${ urlQueryParams.toString() }` );
 				}
