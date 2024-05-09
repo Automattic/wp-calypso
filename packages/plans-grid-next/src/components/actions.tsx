@@ -149,23 +149,12 @@ const LoggedInPlansFeatureActionButton = ( {
 	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
 
 	if (
-		isFreePlan( planSlug ) ||
-		( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected )
+		( isFreePlan( planSlug ) ||
+			( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
+		isP2FreePlan( planSlug ) &&
+		current
 	) {
-		if ( isP2FreePlan( planSlug ) && current ) {
-			return null;
-		}
-
-		return (
-			<PlanButton
-				planSlug={ planSlug }
-				onClick={ onCtaClick }
-				current={ current }
-				disabled={ ! current }
-			>
-				{ text }
-			</PlanButton>
-		);
+		return null;
 	}
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {

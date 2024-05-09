@@ -63,7 +63,6 @@ const defaultProps: Omit< ComparisonGridExternalProps, 'gridPlans' > = {
 	siteId: undefined,
 	stickyRowOffset: 0,
 	useCheckPlanAvailabilityForPurchase: () => ( {} ),
-	// useActionCallback: () => () => {},
 	// TODO: Fix default prop
 	useAction: () => {},
 };
