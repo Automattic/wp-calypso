@@ -5,7 +5,7 @@
 FROM node:20.8.1-bullseye-slim as cache
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-ARG node_memory=6144
+ARG node_memory=4096
 ARG commit_sha="(unknown)"
 WORKDIR /calypso
 ENV NPM_CONFIG_CACHE=/calypso/.cache
