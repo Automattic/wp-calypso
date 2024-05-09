@@ -8,6 +8,8 @@ import customerImageEmmaLucasCopley from 'calypso/assets/images/migrations/custo
 import { UseGetUpgradePlanSiteMetrics } from './hooks/use-get-upgrade-plan-site-metrics';
 import wordpressCwvtechReportJson from './wordpress-cwvtech-report.json';
 
+// Threshold for a website that has a "good" Largest Contentful Paint (LCP) score according to Core Web Vital metrics
+// A "good" LCP score is considered to be 2.5 seconds or less
 export const upgradePlanSiteMetricsLcpThreshold = 2500;
 
 export const UpgradePlanHostingTestimonials = [
