@@ -5,6 +5,10 @@ import customerImageAjitBohra from 'calypso/assets/images/migrations/customer-te
 import customerImageAntonyAgnel from 'calypso/assets/images/migrations/customer-testimonials/antony-agnel.jpg';
 import customerImageChrisCoyier from 'calypso/assets/images/migrations/customer-testimonials/chris-coyier.jpg';
 import customerImageEmmaLucasCopley from 'calypso/assets/images/migrations/customer-testimonials/emma-lucas-copley.jpg';
+import { UseGetUpgradePlanSiteMetrics } from './hooks/use-get-upgrade-plan-site-metrics';
+import wordpressCwvtechReportJson from './wordpress-cwvtech-report.json';
+
+export const upgradePlanSiteMetricsLcpThreshold = 2500;
 
 export const UpgradePlanHostingTestimonials = [
 	{
@@ -41,26 +45,56 @@ export const UpgradePlanHostingTestimonials = [
 	},
 ];
 
+export const defaultHostingDetails = [
+	{
+		title: translate( 'Reduced error rate' ),
+		description: translate( '16% fewer errors' ),
+		icon: shield,
+	},
+	{
+		title: translate( 'Increased speed' ),
+		description: translate( '30% faster' ),
+		icon: trendingUp,
+	},
+	{
+		title: translate( 'Higher availability' ),
+		description: translate( '3% better uptime' ),
+		icon: chartBar,
+	},
+] as Array< { title: string; description: string | ReactNode; icon: JSX.Element } >;
+
 export function useUpgradePlanHostingDetailsList() {
 	const translate = useTranslate();
+	const { siteMetricData, showUpdatedSpeedMetrics } = UseGetUpgradePlanSiteMetrics();
+	const hostingDetails = [ ...defaultHostingDetails ];
 
-	return [
-		{
-			title: translate( 'Reduced error rate' ),
-			description: translate( '16% fewer errors' ),
-			icon: shield,
-		},
-		{
-			title: translate( 'Increased speed' ),
-			description: translate( '30% faster' ),
+	if ( showUpdatedSpeedMetrics ) {
+		const wordpressLCP = Math.round( 100 * wordpressCwvtechReportJson?.goodLCP );
+		const percentageDifference =
+			siteMetricData?.basic?.lcp &&
+			Math.round(
+				100 *
+					Math.abs(
+						( siteMetricData?.basic?.lcp - upgradePlanSiteMetricsLcpThreshold ) /
+							( ( siteMetricData?.basic?.lcp + upgradePlanSiteMetricsLcpThreshold ) / 2 )
+					)
+			);
+		const updatedHostingSpeedDetails = {
+			title: translate( 'Higher speed' ),
+			description: translate(
+				'%(wordpressLcpPercentage)s of sites on WordPress.com are at least %(sitePercentageDifference)s faster than yours.',
+				{
+					args: {
+						wordpressLcpPercentage: `${ wordpressLCP }%`,
+						sitePercentageDifference: `${ percentageDifference }%`,
+					},
+				}
+			),
 			icon: trendingUp,
-		},
-		{
-			title: translate( 'Higher availability' ),
-			description: translate( '3% better uptime' ),
-			icon: chartBar,
-		},
-	] as Array< { title: string; description: string | ReactNode; icon: ReactNode } >;
-}
+		};
+		hostingDetails.splice( 1, 1 );
+		hostingDetails.unshift( updatedHostingSpeedDetails );
+	}
 
-export const upgradePlanSiteMetricsLcpThreshold = 2500;
+	return hostingDetails;
+}

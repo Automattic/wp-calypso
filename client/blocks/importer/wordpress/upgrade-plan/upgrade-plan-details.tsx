@@ -4,17 +4,15 @@ import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import { useI18n } from '@wordpress/react-i18n';
-import { getQueryArg } from '@wordpress/url';
 import classnames from 'classnames';
 import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
-import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { upgradePlanSiteMetricsLcpThreshold } from './constants';
+import { UseGetUpgradePlanSiteMetrics } from './hooks/use-get-upgrade-plan-site-metrics';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
@@ -39,11 +37,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planId as number, true ) );
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
-
-	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
-	const { data: siteMetricData } = useUrlBasicMetricsQuery( importSiteQueryParam );
-	const showUpdatedSpeedMetrics =
-		siteMetricData?.basic?.lcp && siteMetricData?.basic?.lcp > upgradePlanSiteMetricsLcpThreshold;
+	const { showUpdatedSpeedMetrics } = UseGetUpgradePlanSiteMetrics();
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_migration_plan_display' );

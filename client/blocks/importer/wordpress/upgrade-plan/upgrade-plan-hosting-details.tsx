@@ -6,15 +6,9 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
-import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
-import {
-	useUpgradePlanHostingDetailsList,
-	UpgradePlanHostingTestimonials,
-	upgradePlanSiteMetricsLcpThreshold,
-} from './constants';
+import { useUpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from './constants';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
-import wordpressCwvtechReportJson from './wordpress-cwvtech-report.json';
 
 export const UpgradePlanHostingDetails = () => {
 	const translate = useTranslate();
@@ -40,29 +34,6 @@ export const UpgradePlanHostingDetails = () => {
 		hostingProviderData?.hosting_provider,
 		urlData
 	);
-	const { data: siteMetricData } = useUrlBasicMetricsQuery( importSiteQueryParam );
-	const showUpdatedSpeedMetrics =
-		siteMetricData?.basic?.lcp && siteMetricData?.basic?.lcp > upgradePlanSiteMetricsLcpThreshold;
-
-	if ( showUpdatedSpeedMetrics ) {
-		const wordpressLCP = Math.round( 100 * wordpressCwvtechReportJson?.goodLCP );
-		const percentageDifference = Math.round(
-			100 *
-				Math.abs(
-					( siteMetricData?.basic?.lcp - upgradePlanSiteMetricsLcpThreshold ) /
-						( ( siteMetricData?.basic?.lcp + upgradePlanSiteMetricsLcpThreshold ) / 2 )
-				)
-		);
-		upgradePlanHostingDetailsList[ 1 ].description = translate(
-			'%(wordpressLcpPercentage)s of sites on WordPress.com are at least %(sitePercentageDifference)s faster than yours.',
-			{
-				args: {
-					wordpressLcpPercentage: `${ wordpressLCP }%`,
-					sitePercentageDifference: `${ percentageDifference }%`,
-				},
-			}
-		);
-	}
 
 	const shouldDisplayHostIdentificationMessage =
 		hostingProviderName &&
