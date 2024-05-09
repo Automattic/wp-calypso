@@ -144,6 +144,10 @@
 		display: table-cell; /* ensures these cells are always shown */
 	}
 
+	.sites-overview__content {
+		margin-top: 35px;
+	}
+
 	@media (max-width: $break-wide) {
 		table.dataviews-view-table th:nth-child(5),
 		table.dataviews-view-table td:nth-child(5) {
@@ -517,6 +521,7 @@
 			margin-top: 0;
 			overflow: hidden;
 			padding-bottom: 0 !important;
+
 		}
 
 		.dataviews-wrapper {
