@@ -107,7 +107,7 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const link = validSiteIntent
 		? getLaunchpadUrl( site.slug, validSiteIntent )
 		: getDashboardUrl( site.slug );
-	const text = validSiteIntent ? __( 'Launch guide' ) : __( 'Launch checklist' );
+	const text = validSiteIntent ? __( 'Launch guide' ) : __( 'Checklist' );
 
 	return (
 		<SiteLaunchNagLink
