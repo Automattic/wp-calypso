@@ -2,7 +2,7 @@ import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
-import { DOTCOM_OVERVIEW } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+import { DOTCOM_DEVELOPER_TOOLS_PROMO } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { devToolsPromo } from './controller';
 
@@ -23,7 +23,7 @@ export default function () {
 		navigation,
 		redirectForNonSimpleSite,
 		devToolsPromo,
-		siteDashboard( DOTCOM_OVERVIEW ),
+		siteDashboard( DOTCOM_DEVELOPER_TOOLS_PROMO ),
 		makeLayout,
 		clientRender
 	);
