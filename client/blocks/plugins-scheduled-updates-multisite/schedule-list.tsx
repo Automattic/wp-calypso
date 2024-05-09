@@ -10,6 +10,7 @@ import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-u
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ScheduleErrors } from './schedule-errors';
+import { ScheduleListCardNew } from './schedule-list-card-new';
 import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleListFilter } from './schedule-list-filter';
@@ -120,7 +121,10 @@ export const ScheduleList = ( props: Props ) => {
 			<ScheduleErrors />
 
 			{ schedules.length === 0 && isLoading && <Spinner /> }
-			{ isScheduleEmpty && <ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } /> }
+			{ isScheduleEmpty && ! compact && (
+				<ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } />
+			) }
+			{ isScheduleEmpty && compact && <ScheduleListCardNew className="is-selected" /> }
 			{ ! isScheduleEmpty && ScheduleListComponent ? (
 				<>
 					<ScheduleListFilter compact={ compact } />

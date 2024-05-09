@@ -174,6 +174,10 @@ $brand-display: "SF Pro Display", sans-serif;
 		text-align: left;
 		padding: 0;
 
+		@media screen and (max-width: $break-large) {
+			max-width: 100%;
+		}
+
 		p {
 			color: var(--studio-gray-100);
 			margin: 1.5rem auto;
@@ -193,6 +197,10 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		&.is-selected {
 			background: #f7faff;
+		}
+
+		&__new {
+			line-height: 2;
 		}
 
 		&__label {
