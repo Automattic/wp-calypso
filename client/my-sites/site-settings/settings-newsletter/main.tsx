@@ -24,14 +24,7 @@ import { NewsletterCategoriesSection } from './newsletter-categories-section';
 
 const defaultNewsletterCategoryIds: number[] = [];
 
-export type SubscriptionOptions = {
-	invitation: string;
-	comment_follow: string;
-	welcome: string;
-};
-
 type Fields = {
-	subscription_options?: SubscriptionOptions;
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_newsletter_categories?: number[];
 	wpcom_newsletter_categories_enabled?: boolean;
@@ -48,7 +41,6 @@ const getFormSettings = ( settings?: Fields ) => {
 	}
 
 	const {
-		subscription_options,
 		wpcom_featured_image_in_email,
 		wpcom_newsletter_categories,
 		wpcom_newsletter_categories_enabled,
@@ -60,7 +52,6 @@ const getFormSettings = ( settings?: Fields ) => {
 	} = settings;
 
 	return {
-		...( subscription_options && { subscription_options } ),
 		wpcom_featured_image_in_email: !! wpcom_featured_image_in_email,
 		wpcom_newsletter_categories: wpcom_newsletter_categories || [],
 		wpcom_newsletter_categories_enabled: !! wpcom_newsletter_categories_enabled,
@@ -80,7 +71,6 @@ type NewsletterSettingsFormProps = {
 	handleSubmitForm: () => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
-	settings: { subscription_options?: SubscriptionOptions };
 	updateFields: ( fields: Fields ) => void;
 };
 
@@ -90,7 +80,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	handleToggle,
 	isRequestingSettings,
 	isSavingSettings,
-	settings,
 	updateFields,
 }: NewsletterSettingsFormProps ) => {
 	const translate = useTranslate();
@@ -99,7 +88,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	const {
 		wpcom_featured_image_in_email,
 		wpcom_subscription_emails_use_excerpt,
-		subscription_options,
 		sm_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
@@ -129,16 +117,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	} );
 
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
-	const savedSubscriptionOptions = settings?.subscription_options;
-
-	// Update subscription_options form fields when savedSubscriptionOptions changes.
-	// This makes sure the form fields hold the current value after saving.
-	useEffect( () => {
-		updateFields( { subscription_options: savedSubscriptionOptions } );
-
-		// If the URL has a hash, scroll to it.
-		scrollToAnchor( { offset: 15 } );
-	}, [ savedSubscriptionOptions, updateFields ] );
 
 	return (
 		<form onSubmit={ handleSubmitForm }>
@@ -216,7 +194,84 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				handleToggle={ handleToggle }
 				updateFields={ updateFields }
 			/>
+		</form>
+	);
+} );
 
+export type SubscriptionOptions = {
+	invitation: string;
+	comment_follow: string;
+	welcome: string;
+};
+
+type EmailsTextFields = {
+	subscription_options?: SubscriptionOptions;
+};
+
+const getEmailsTextFormSettings = ( settings?: EmailsTextFields ) => {
+	if ( ! settings ) {
+		return {};
+	}
+
+	const { subscription_options } = settings;
+
+	return {
+		...( subscription_options && { subscription_options } ),
+	};
+};
+
+type EmailsTextSettingFormProps = {
+	fields: Fields;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
+	handleSubmitForm: () => void;
+	isRequestingSettings: boolean;
+	isSavingSettings: boolean;
+	settings: { subscription_options?: SubscriptionOptions };
+	updateFields: ( fields: Fields ) => void;
+};
+
+const EmailsTextSettingForm = wrapSettingsForm( getEmailsTextFormSettings )( ( {
+	fields,
+	handleSubmitForm,
+	isRequestingSettings,
+	isSavingSettings,
+	settings,
+	updateFields,
+}: EmailsTextSettingFormProps ) => {
+	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+
+	const { subscription_options } = fields;
+
+	const isSubscriptionModuleInactive = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
+
+		const isJetpackSite = isJetpackSiteSelector( state, siteId, {
+			treatAtomicAsJetpackSite: false,
+		} );
+
+		return (
+			Boolean( isJetpackSite ) && isJetpackModuleActive( state, siteId, 'subscriptions' ) === false
+		);
+	} );
+
+	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
+	const savedSubscriptionOptions = settings?.subscription_options;
+
+	// Update subscription_options form fields when savedSubscriptionOptions changes.
+	// This makes sure the form fields hold the current value after saving.
+	useEffect( () => {
+		updateFields( { subscription_options: savedSubscriptionOptions } );
+
+		// If the URL has a hash, scroll to it.
+		scrollToAnchor( { offset: 15 } );
+	}, [ savedSubscriptionOptions, updateFields ] );
+
+	return (
+		<form onSubmit={ handleSubmitForm }>
+			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				disabled={ disabled }
@@ -246,6 +301,7 @@ const NewsletterSettings = () => {
 			<NavigationHeader navigationItems={ [] } title={ translate( 'Newsletter Settings' ) } />
 			<SubscriptionsModuleBanner />
 			<NewsletterSettingsForm />
+			<EmailsTextSettingForm />
 		</Main>
 	);
 };
