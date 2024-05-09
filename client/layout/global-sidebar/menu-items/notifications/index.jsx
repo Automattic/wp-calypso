@@ -29,7 +29,6 @@ class SidebarNotifications extends Component {
 		hasUnseenNotifications: PropTypes.bool,
 		tooltip: TranslatableString,
 		translate: PropTypes.func,
-		isSidebarCollapsed: PropTypes.bool,
 		currentUserId: PropTypes.number,
 	};
 
