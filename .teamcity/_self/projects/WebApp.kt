@@ -135,7 +135,7 @@ object BuildDockerImage : BuildType({
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
 			--build-arg workers=32
-			--build-arg node_memory=8192
+			--build-arg node_memory=16384
 			--build-arg use_cache=true
 			--build-arg base_image=%base_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
@@ -481,7 +481,7 @@ object RunAllUnitTests : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 15
+		executionTimeoutMin = 8
 	}
 	features {
 		feature {
@@ -865,13 +865,13 @@ object PreReleaseE2ETests : BuildType({
 				set +o errexit
 
 				# Run suite.
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release
 
 				# Restore exit on error.
 				set -o errexit
 
 				# Retry failed tests only.
-				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
+				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
