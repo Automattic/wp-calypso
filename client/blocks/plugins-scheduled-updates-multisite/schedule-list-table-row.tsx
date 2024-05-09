@@ -84,7 +84,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						<Icon className="icon-info" icon={ info } size={ 16 } />
 					</Tooltip>
 				</td>
-				<td style={ { textAlign: 'end' } }>
+				<td className="menu">
 					<ScheduleListTableRowMenu { ...props } />
 				</td>
 			</tr>
@@ -108,7 +108,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						<td></td>
 
 						<td></td>
-						<td style={ { textAlign: 'end' } }>
+						<td className="menu">
 							<ScheduleListTableRowMenu { ...props } site={ site } />
 						</td>
 					</tr>

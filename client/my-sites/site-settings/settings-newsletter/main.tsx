@@ -19,6 +19,7 @@ import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
 import { SubscribeModalOnCommentSetting } from './SubscribeModalOnCommentSetting';
 import { SubscribeModalSetting } from './SubscribeModalSetting';
 import { SubscribePostEndSetting } from './SubscribePostEndSetting';
+import { SubscriberLoginNavigationSetting } from './SubscriberLoginNavigationSetting';
 import { NewsletterCategoriesSection } from './newsletter-categories-section';
 
 const defaultNewsletterCategoryIds: number[] = [];
@@ -37,6 +38,7 @@ type Fields = {
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	sm_enabled?: boolean;
 	jetpack_subscriptions_subscribe_post_end_enabled?: boolean;
+	jetpack_subscriptions_login_navigation_enabled?: boolean;
 	jetpack_verbum_subscription_modal?: boolean;
 };
 
@@ -53,6 +55,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_subscription_emails_use_excerpt,
 		sm_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
 	} = settings;
 
@@ -65,6 +68,8 @@ const getFormSettings = ( settings?: Fields ) => {
 		sm_enabled: !! sm_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled:
 			!! jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_login_navigation_enabled:
+			!! jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal: !! jetpack_verbum_subscription_modal,
 	};
 };
@@ -97,6 +102,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		subscription_options,
 		sm_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
 	} = fields;
 
@@ -164,6 +170,11 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 						value={ jetpack_verbum_subscription_modal }
 					/>
 				) }
+				<SubscriberLoginNavigationSetting
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ jetpack_subscriptions_login_navigation_enabled }
+				/>
 			</Card>
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
