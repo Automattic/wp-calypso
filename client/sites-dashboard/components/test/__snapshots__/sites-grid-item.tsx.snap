@@ -36,7 +36,7 @@ exports[`<SitesGridItem> Custom render 1`] = `
       className="css-1xtz7v6-primaryContainer"
     >
       <a
-        className="css-6u0p2y-SiteName esmj6c50"
+        className="css-jjnk6s-SiteName esmj6c50"
         fontSize={16}
         href="/home/test_slug"
         title="Visit Dashboard"
@@ -106,7 +106,7 @@ exports[`<SitesGridItem> Custom render 2 1`] = `
       className="css-1xtz7v6-primaryContainer"
     >
       <a
-        className="css-6u0p2y-SiteName esmj6c50"
+        className="css-jjnk6s-SiteName esmj6c50"
         fontSize={16}
       >
         The example site
@@ -178,7 +178,7 @@ exports[`<SitesGridItem> Default render 1`] = `
       className="css-1xtz7v6-primaryContainer"
     >
       <a
-        className="css-6u0p2y-SiteName esmj6c50"
+        className="css-jjnk6s-SiteName esmj6c50"
         fontSize={16}
         href="/home/test_slug"
         title="Visit Dashboard"

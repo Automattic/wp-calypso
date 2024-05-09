@@ -1,9 +1,9 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -33,7 +33,7 @@ export default function PricingSummary( {
 		.map( ( license ) => license.quantity )
 		.reduce( ( a, b ) => a + b, 0 );
 
-	const isA4A = config.isEnabled( 'a8c-for-agencies' );
+	const isA4A = isA8CForAgencies();
 
 	const handleCTAClick = useCallback( () => {
 		if ( ! isFormReady ) {

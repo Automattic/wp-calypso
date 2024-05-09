@@ -15,6 +15,8 @@ import { ScheduleFormPlugins } from '../plugins-scheduled-updates/schedule-form-
 import { validateSites, validatePlugins } from '../plugins-scheduled-updates/schedule-form.helper';
 import { useErrors } from './hooks/use-errors';
 import { ScheduleFormSites } from './schedule-form-sites';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
 	scheduleForEdit?: MultisiteSchedulesUpdates;
@@ -51,7 +53,13 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 
 	const translate = useTranslate();
 
-	const { data: sites } = useSiteExcerptsQuery( [ 'atomic' ] );
+	const siteFilter = ( site: SiteExcerptData ): boolean => {
+		return ( site as SiteDetails ).capabilities?.update_plugins;
+	};
+
+	const { data: sites } = useSiteExcerptsQuery( [ 'atomic' ], siteFilter, 'all', [
+		'capabilities',
+	] );
 	const {
 		data: plugins,
 		isInitialLoading: isPluginsFetching,
@@ -209,6 +217,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 					onTouch={ ( touched ) => setFieldTouched( { ...fieldTouched, plugins: touched } ) }
 					error={ validationErrors?.plugins }
 					showError={ fieldTouched?.plugins }
+					selectedSites={ selectedSites }
 				/>
 
 				<Text>{ translate( 'Step 3' ) }</Text>

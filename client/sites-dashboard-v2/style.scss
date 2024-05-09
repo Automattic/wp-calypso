@@ -257,6 +257,7 @@
 		&.sites-dashboard__layout {
 			.dataviews-view-table-wrapper {
 				overflow-y: auto;
+				min-height: calc(100vh - 277px); /* Set min-height to prevent the table from shrinking when there are few rows. */
 				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
 			}
 

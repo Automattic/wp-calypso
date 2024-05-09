@@ -11,6 +11,7 @@ import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin'
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
+import { useLoginUrl } from '../utils/path';
 import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
@@ -282,17 +283,23 @@ const importHostedSiteFlow: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 	useSideEffect( currentStep ) {
+		const flowName = this.name;
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+
+		const logInUrl = useLoginUrl( {
+			variationName: flowName,
+			redirectTo: `/setup/${ flowName }`,
+		} );
 
 		const urlQueryParams = useQuery();
 		const restoreFlowQueryParam = urlQueryParams.get( 'restore-progress' );
 
 		useLayoutEffect( () => {
 			if ( ! userIsLoggedIn ) {
-				window.location.assign( '/start/hosting' );
+				window.location.assign( logInUrl );
 			}
 
 			if ( restoreFlowQueryParam === null ) {

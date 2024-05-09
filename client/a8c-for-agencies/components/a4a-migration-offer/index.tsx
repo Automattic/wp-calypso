@@ -1,9 +1,10 @@
+import page from '@automattic/calypso-router';
 import { Button, FoldableCard } from '@automattic/components';
 import { Icon, reusableBlock, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { A4A_OVERVIEW_LINK } from '../sidebar-menu/lib/constants';
 
 import './style.scss';
-
 type Props = {
 	foldable?: boolean;
 };
@@ -30,7 +31,9 @@ const MigrationOfferBody = () => {
 			<p className="a4a-migration-offer__description">{ description }</p>
 			<Button
 				className="a4a-migration-offer__chat-button"
-				href="mailto:partnerships@automattic.com"
+				onClick={ () => {
+					page( `${ A4A_OVERVIEW_LINK }#contact-support-migration-offer` );
+				} }
 				primary
 			>
 				{ translate( 'Chat with us' ) }
