@@ -21,7 +21,6 @@ export interface UseGridPlansParams {
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs?: UseFreeTrialPlanSlugs;
-	includePreviousPlanFeatures?: boolean; // if true, each plan would contain the full feature list. if false, the previous plan features are excluded.
 }
 
 export type UseGridPlansType = (
