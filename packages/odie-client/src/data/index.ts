@@ -23,10 +23,10 @@ export const useGetOdieStorage = ( key: OdieStorageKey ) => {
 					apiNamespace: 'wpcom/v2',
 				} ).then( ( response ) => response[ storageKey ] );
 			}
-			return apiFetch< { calypso_preferences: Record< string, string > } >( {
+			return apiFetch< Record< string, string > >( {
 				global: true,
 				path: `/help-center/odie/history/last-chat-id`,
-			} as APIFetchOptions ).then( ( res ) => res.calypso_preferences[ storageKey ] );
+			} as APIFetchOptions ).then( ( res ) => res[ storageKey ] );
 		},
 	} );
 	return data;
@@ -36,7 +36,7 @@ export const useSetOdieStorage = ( key: OdieStorageKey ) => {
 	const storageKey = buildOdieStorageKey( key );
 	const client = useQueryClient();
 	const mutation = useMutation( {
-		mutationFn: ( value: string ) => {
+		mutationFn: ( value: string | null ) => {
 			if ( canAccessWpcomApis() ) {
 				return wpcomRequest< { calypso_preferences: Record< string, string > } >( {
 					path: '/me/preferences',
@@ -50,7 +50,7 @@ export const useSetOdieStorage = ( key: OdieStorageKey ) => {
 				global: true,
 				path: `/help-center/odie/history/last-chat-id`,
 				method: 'POST',
-				body: JSON.stringify( { [ storageKey ]: value } ),
+				data: { [ storageKey ]: value },
 			} as APIFetchOptions );
 		},
 		onSuccess: ( response ) => {
@@ -61,14 +61,6 @@ export const useSetOdieStorage = ( key: OdieStorageKey ) => {
 	} );
 
 	return mutation.mutate;
-};
-
-export const useClearOdieStorage = ( key: OdieStorageKey ) => {
-	return useSetOdieStorage( key );
-};
-
-export const useOdieStorage = ( key: OdieStorageKey ) => {
-	return useGetOdieStorage( key );
 };
 
 export const broadcastOdieMessage = ( message: Message, origin: string ) => {

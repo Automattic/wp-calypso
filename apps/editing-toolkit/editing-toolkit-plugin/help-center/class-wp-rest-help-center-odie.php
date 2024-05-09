@@ -205,10 +205,8 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
 		$projected_response = array(
-			'calypso_preferences' => array(
-				'odie_chat_id'      => $response->odie_chat_id,
-				'odie_last_chat_id' => $response->odie_last_chat_id,
-			),
+			'odie_chat_id'      => $response->odie_chat_id,
+			'odie_last_chat_id' => $response->odie_last_chat_id,
 		);
 
 		return rest_ensure_response( $projected_response );
@@ -222,19 +220,19 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function set_last_chat_id( \WP_REST_Request $request ) {
-		$chat_id      = $request->get_param( 'odie_chat_id' );
-		$last_chat_id = $request->get_param( 'odie_last_chat_id' );
+		$chat_id      = $request['odie_chat_id'];
+		$last_chat_id = $request['odie_last_chat_id'];
 
-		$body = array(
+		$data = array(
 			'calypso_preferences' => array(),
 		);
 
-		if ( isset( $chat_id ) ) {
-			$body['calypso_preferences']['odie_chat_id'] = $chat_id;
+		if ( $request->has_param( 'odie_chat_id' ) ) {
+			$data['calypso_preferences']['odie_chat_id'] = $chat_id;
 		}
 
-		if ( isset( $last_chat_id ) ) {
-			$body['calypso_preferences']['odie_last_chat_id'] = $last_chat_id;
+		if ( $request->has_param( 'odie_last_chat_id' ) ) {
+			$data['calypso_preferences']['odie_last_chat_id'] = $last_chat_id;
 		}
 
 		// Forward the request body to the support chat endpoint.
@@ -242,7 +240,7 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 			'/me/preferences',
 			2,
 			array( 'method' => 'POST' ),
-			$body
+			$data
 		);
 
 		if ( is_wp_error( $body ) ) {
@@ -253,8 +251,8 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 
 		$projected_response = array(
 			'calypso_preferences' => array(
-				'odie_chat_id'      => $response->odie_chat_id,
-				'odie_last_chat_id' => $response->odie_last_chat_id,
+				'odie_chat_id'      => $response->calypso_preferences->odie_chat_id,
+				'odie_last_chat_id' => $response->calypso_preferences->odie_last_chat_id,
 			),
 		);
 

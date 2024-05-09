@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import OdieAssistantProvider, { useClearOdieStorage } from '@automattic/odie-client';
+import OdieAssistantProvider, { useSetOdieStorage } from '@automattic/odie-client';
 import { CardBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
@@ -79,7 +79,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		[]
 	);
 
-	const clearOdieStorage = useClearOdieStorage( 'chat_id' );
+	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
@@ -94,7 +94,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 				<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 				<Route
 					path="/contact-form"
-					element={ <HelpCenterContactForm onSubmit={ () => clearOdieStorage( '' ) } /> }
+					element={ <HelpCenterContactForm onSubmit={ () => setOdieStorage( null ) } /> }
 				/>
 				<Route path="/success" element={ <SuccessScreen /> } />
 				<Route
