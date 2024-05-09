@@ -13,7 +13,7 @@ const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [
 	'site-monitoring',
 ];
 
-function shouldShowGlobalSiteViewSection( siteId: number, sectionName: string ) {
+function shouldShowGlobalSiteViewSection( siteId: number | null, sectionName: string ) {
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
 		!! siteId &&
@@ -23,7 +23,7 @@ function shouldShowGlobalSiteViewSection( siteId: number, sectionName: string ) 
 
 export const getShouldShowGlobalSiteSidebar = (
 	state: AppState,
-	siteId: number,
+	siteId: number | null,
 	sectionGroup: string,
 	sectionName: string
 ) => {

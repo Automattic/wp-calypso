@@ -19,6 +19,7 @@ type PaymentPlanProps = {
 	product: SelectorProduct;
 	showPlansOneBelowTheOther?: boolean;
 	isActive?: boolean;
+	quantity?: number | null;
 };
 const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	isMultiSiteIncompatible,
@@ -26,16 +27,25 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	product,
 	showPlansOneBelowTheOther = false,
 	isActive = true,
+	quantity = null,
 } ) => {
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
 
-	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching } = useItemPrice(
-		siteId,
-		product,
-		product?.monthlyProductSlug || ''
-	);
+	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching, priceTierList } =
+		useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
 
+	const currentTier =
+		quantity &&
+		priceTierList.find( ( tier ) => {
+			if ( tier.maximum_units ) {
+				return quantity >= tier.minimum_units && quantity <= tier.maximum_units;
+			}
+
+			return quantity >= tier.minimum_units;
+		} );
+
+	const currentTierPrice = currentTier && currentTier.minimum_price / 100 / 12;
 	const currentPrice = isNumber( discountedPrice ) ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
@@ -88,7 +98,10 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 					>
 						<div className={ labelClass } ref={ containerRef }>
 							<span className="product-lightbox__variants-plan-card-price">
-								<PlanPrice rawPrice={ currentPrice } currencyCode={ currencyCode } />
+								<PlanPrice
+									rawPrice={ currentTier ? currentTierPrice : currentPrice }
+									currencyCode={ currencyCode }
+								/>
 							</span>
 							<div
 								className={ classNames( 'product-lightbox__variants-timeframe', {

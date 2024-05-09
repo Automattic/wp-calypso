@@ -1,4 +1,3 @@
-import { useBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -53,10 +52,6 @@ const DotcomSitesDataViews = ( {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
 
-	// Display the `Sort By` option only when the fields are hidden on smaller viewport.
-	const isSmallScreen = useBreakpoint( '<1180px' );
-	const enableSorting = isSmallScreen || dataViewsState.type === 'list';
-
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
 			setDataViewsState( ( prevState: DataViewsState ) => ( {
@@ -72,11 +67,15 @@ const DotcomSitesDataViews = ( {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
 		const handleRowClick = ( event: Event ) => {
 			const target = event.target as HTMLElement;
-			const row = target.closest( '.dataviews-view-table__row' );
+			const row = target.closest(
+				'.dataviews-view-table__row, li:has(.dataviews-view-list__item)'
+			);
 			if ( row ) {
 				const isButtonOrLink = target.closest( 'button, a' );
 				if ( ! isButtonOrLink ) {
-					const button = row.querySelector( '.sites-dataviews__site' ) as HTMLButtonElement;
+					const button = row.querySelector(
+						'.sites-dataviews__preview-trigger'
+					) as HTMLButtonElement;
 					if ( button ) {
 						button.click();
 					}
@@ -84,7 +83,7 @@ const DotcomSitesDataViews = ( {
 			}
 		};
 
-		const rowsContainer = document.querySelector( '.dataviews-view-table' );
+		const rowsContainer = document.querySelector( '.dataviews-view-table, .dataviews-view-list' );
 		if ( rowsContainer ) {
 			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
 		}
@@ -129,11 +128,6 @@ const DotcomSitesDataViews = ( {
 				id: 'status',
 				header: __( 'Status' ),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
-				type: 'enumeration',
-				elements: siteStatusGroups,
-				filterBy: {
-					operators: [ 'in' ],
-				},
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -146,7 +140,7 @@ const DotcomSitesDataViews = ( {
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
 					>
-						<span>{ __( 'Last Publish' ) }</span>
+						<span>{ __( 'Last Published' ) }</span>
 					</SiteSort>
 				),
 				render: ( { item }: { item: SiteInfo } ) =>
@@ -179,14 +173,14 @@ const DotcomSitesDataViews = ( {
 				header: <span>{ __( 'Site' ) }</span>,
 				render: () => null,
 				enableHiding: false,
-				enableSorting,
+				enableSorting: true,
 			},
 			{
 				id: addDummyDataViewPrefix( 'last-publish' ),
-				header: <span>{ __( 'Last Publish' ) }</span>,
+				header: <span>{ __( 'Last Published' ) }</span>,
 				render: () => null,
 				enableHiding: false,
-				enableSorting,
+				enableSorting: true,
 			},
 			{
 				id: addDummyDataViewPrefix( 'last-interacted' ),
@@ -195,8 +189,20 @@ const DotcomSitesDataViews = ( {
 				enableHiding: false,
 				enableSorting: true,
 			},
+			{
+				id: addDummyDataViewPrefix( 'status' ),
+				header: __( 'Status' ),
+				render: () => null,
+				type: 'enumeration',
+				elements: siteStatusGroups,
+				filterBy: {
+					operators: [ 'in' ],
+				},
+				enableHiding: false,
+				enableSorting: false,
+			},
 		],
-		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, enableSorting ]
+		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState ]
 	);
 
 	// Create the itemData packet state
