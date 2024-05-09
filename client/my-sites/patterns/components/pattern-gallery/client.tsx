@@ -15,6 +15,7 @@ import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-p
 import { PatternTypeFilter, type PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { usePatternsContext } from '../../context';
 
 import './style.scss';
 
@@ -113,15 +114,20 @@ const PATTERNS_PER_PAGE_COUNT = 9;
 
 export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	const {
-		category,
 		displayPlaceholder = false,
 		getPatternPermalink,
 		isGridView = false,
 		patterns = [],
-		patternTypeFilter,
-		searchTerm,
 	} = props;
 
+	const {
+		category,
+		patternTypeFilter: patternTypeFilterFromContext,
+		searchTerm,
+	} = usePatternsContext();
+	// For search results, we want a non-masonry display and also some specific
+	// tracks data, so we always treat search results as  "regular" patterns
+	const patternTypeFilter = searchTerm ? PatternTypeFilter.REGULAR : patternTypeFilterFromContext;
 	const translate = useTranslate();
 	const [ currentPage, setCurrentPage ] = useState( () => {
 		if ( /#pattern-/.test( window.location.hash ) ) {
@@ -172,7 +178,6 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 							title=""
 						/>
 					) }
-
 					{ patternsToDisplay.map( ( pattern ) => (
 						<PatternPreview
 							canCopy={ isLoggedIn || pattern.can_be_copied_without_account }
@@ -190,7 +195,6 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 							viewportWidth={ isGridView ? GRID_VIEW_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }
-
 					{ shouldDisplayPaginationButton && (
 						<div className="pattern-gallery__pagination-button-wrapper">
 							<Button

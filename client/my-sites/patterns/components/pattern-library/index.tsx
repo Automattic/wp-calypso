@@ -326,8 +326,6 @@ export const PatternLibrary = ( {
 							isGridView={ isGridView }
 							key={ `pattern-gallery-${ patternGalleryKey }` }
 							patterns={ patterns }
-							patternTypeFilter={ searchTerm ? PatternTypeFilter.REGULAR : patternTypeFilter }
-							searchTerm={ searchTerm }
 						/>
 
 						{ searchTerm && ! patterns.length && category && (
