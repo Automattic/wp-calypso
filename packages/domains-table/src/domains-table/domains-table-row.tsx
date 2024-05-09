@@ -17,6 +17,7 @@ import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
 import { DomainsTableStatusCTA } from './domains-table-status-cta';
+import type { MouseEvent } from 'react';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
@@ -92,7 +93,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		<tr
 			key={ domain.domain }
 			className="domains-table__row"
-			onClick={ domainManagementLink && handleSelect }
+			onClick={ domainManagementLink ? handleSelect : undefined }
 		>
 			{ canSelectAnyDomains && (
 				<td className="domains-table-checkbox-td" onClick={ ( e: MouseEvent ) => e.stopPropagation() }>
