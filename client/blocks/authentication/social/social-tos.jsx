@@ -2,7 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 
 const toSLinks = {
 	components: {
@@ -47,5 +47,5 @@ function SocialAuthToS( props ) {
 
 export default connect( ( state ) => ( {
 	oauth2Client: getCurrentOAuth2Client( state ),
-	isWooPasswordless: !! getWooPasswordless( state ),
+	isWooPasswordless: getIsWooPasswordless( state ),
 } ) )( localize( SocialAuthToS ) );

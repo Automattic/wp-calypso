@@ -10,7 +10,15 @@ export default function () {
 	page(
 		`/${ lang }/manage/pricing`,
 		setLocaleMiddleware(),
-		controller.jetpackManagePricingContext,
+		/**
+		 * For now we are disabling the Jetpack Manage pricing page (i.e.- commenting out
+		 * `controller.jetpackManagePricingContext`) and instead redirecting to the
+		 * Jetpack.com For Agencies landing page (https://jetpack.com/for-agencies/).
+		 *
+		 * See also: https://wp.me/pbNhbs-axp-p2
+		 */
+		// controller.jetpackManagePricingContext,
+		controller.redirectToJetpackComA4aLanding,
 		makeLayout,
 		clientRender
 	);

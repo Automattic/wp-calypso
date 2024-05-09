@@ -148,13 +148,7 @@ export default function Checkout() {
 								disabled={ ! checkoutItems.length || ! isReady }
 								busy={ ! isReady }
 							>
-								{ translate( 'Purchase %(count)d plan', 'Purchase %(count)d plans', {
-									context: 'button label',
-									count: checkoutItems.length,
-									args: {
-										count: checkoutItems.length,
-									},
-								} ) }
+								{ translate( 'Purchase' ) }
 							</Button>
 
 							{ siteId ? (

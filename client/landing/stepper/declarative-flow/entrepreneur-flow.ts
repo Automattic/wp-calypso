@@ -1,5 +1,10 @@
+import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect, useState } from 'react';
+import { anonIdCache } from 'calypso/data/segmentaton-survey';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
@@ -8,6 +13,8 @@ import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
+
+const SEGMENTATION_SURVEY_SLUG = 'start';
 
 const entrepreneurFlow: Flow = {
 	name: ENTREPRENEUR_FLOW,
@@ -18,7 +25,7 @@ const entrepreneurFlow: Flow = {
 		return [
 			// Replacing the `segmentation-survey` slug with `start` as having the
 			// word `survey` in the address bar might discourage users from continuing.
-			{ ...STEPS.SEGMENTATION_SURVEY, ...{ slug: 'start' } },
+			{ ...STEPS.SEGMENTATION_SURVEY, ...{ slug: SEGMENTATION_SURVEY_SLUG } },
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.WAIT_FOR_ATOMIC,
@@ -39,6 +46,7 @@ const entrepreneurFlow: Flow = {
 		);
 
 		const locale = useFlowLocale();
+		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
 
 		const getEntrepreneurLoginUrl = () => {
 			let hasFlowParams = false;
@@ -67,9 +75,11 @@ const entrepreneurFlow: Flow = {
 			recordSubmitStep( providedDependencies, '' /* intent */, flowName, currentStep );
 
 			switch ( currentStep ) {
-				case 'start': {
+				case SEGMENTATION_SURVEY_SLUG: {
+					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
+
 					if ( userIsLoggedIn ) {
-						return navigate( 'create-site' );
+						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
 
 					// Redirect user to the sign-in/sign-up page before site creation.
@@ -77,23 +87,23 @@ const entrepreneurFlow: Flow = {
 					return window.location.replace( entrepreneurLoginUrl );
 				}
 
-				case 'create-site': {
-					return navigate( 'processing', {
+				case STEPS.SITE_CREATION_STEP.slug: {
+					return navigate( STEPS.PROCESSING.slug, {
 						currentStep,
 					} );
 				}
 
-				case 'processing': {
+				case STEPS.PROCESSING.slug: {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
-						return navigate( 'error' );
+						return navigate( STEPS.ERROR.slug );
 					}
 
 					const { siteId, siteSlug } = providedDependencies;
 
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+						return navigate( STEPS.WAIT_FOR_PLUGIN_INSTALL.slug, { siteId, siteSlug } );
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
@@ -102,33 +112,53 @@ const entrepreneurFlow: Flow = {
 							'.wpcomstaging.com'
 						);
 
+						if ( isMigrationFlow ) {
+							return window.location.replace( `/setup/migration-signup?siteSlug=${ stagingUrl }` );
+						}
+
 						const redirectTo = encodeURIComponent(
 							`https://${ stagingUrl }/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign-with-ai&ref=entrepreneur-signup`
 						);
 
 						// Redirect users to the login page with the 'action=jetpack-sso' parameter to initiate Jetpack SSO login and redirect them to Woo CYS's Design With AI after. This URL, however, is just symbolic because somewhere within Jetpack SSO or some plugin is stripping off the `redirect_to` param. The actual work that is doing the redirection is in wpcomsh/1801.
-						const redirectToWithSSO = `https://${ stagingUrl }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`;
+						let redirectToWithSSO = `https://${ stagingUrl }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`;
+
+						// Temporarily redirect to Calypso My Home until Woo Express 8.9 is deployed.
+						redirectToWithSSO = `/home/${ stagingUrl }?ref=entrepreneur-signup&flags=entrepreneur-my-home`;
 
 						return window.location.assign( redirectToWithSSO );
 					}
 
-					return navigate( 'waitForAtomic', { siteId, siteSlug } );
+					return navigate( STEPS.WAIT_FOR_ATOMIC.slug, { siteId, siteSlug } );
 				}
 
-				case 'waitForAtomic': {
-					return navigate( 'processing', {
+				case STEPS.WAIT_FOR_ATOMIC.slug: {
+					return navigate( STEPS.PROCESSING.slug, {
 						currentStep,
 					} );
 				}
 
-				case 'waitForPluginInstall': {
-					return navigate( 'processing' );
+				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
+					return navigate( STEPS.PROCESSING.slug );
 				}
 			}
 			return providedDependencies;
 		}
 
 		return { submit };
+	},
+
+	useSideEffect() {
+		const isLoggedIn = useSelector( isUserLoggedIn );
+
+		useEffect( () => {
+			// We need to store the anonymous user ID in localStorage because
+			// we need to pass it to the server on site creation, i.e. after the user signs up or logs in.
+			const anonymousUserId = getTracksAnonymousUserId();
+			if ( anonymousUserId ) {
+				anonIdCache.store( anonymousUserId );
+			}
+		}, [ isLoggedIn ] );
 	},
 };
 

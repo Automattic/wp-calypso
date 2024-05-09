@@ -737,7 +737,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-sites',
-		paths: [ '/sites', 'sites/favorite' ],
+		paths: [ '/sites', 'sites/need-setup' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
 		group: 'a8c-for-agencies',
 	},
@@ -777,13 +777,13 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-referrals',
-		paths: [ '/referrals', '/referrals/bank-details' ],
+		paths: [ '/referrals', '/referrals/bank-details', '/referrals/commissions' ],
 		module: 'calypso/a8c-for-agencies/sections/referrals',
 		group: 'a8c-for-agencies',
 	},
 	{
 		name: 'a8c-for-agencies-signup',
-		paths: [ '/signup' ],
+		paths: [ '/signup', '/signup/finish', '/signup/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/signup',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,

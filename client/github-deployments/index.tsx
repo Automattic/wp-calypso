@@ -1,15 +1,15 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { redirectHomeIfIneligible } from 'calypso/my-sites/github-deployments/controller';
-import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
-import { DOTCOM_GITHUB_DEPLOYMENTS } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
 import {
+	redirectHomeIfIneligible,
 	deploymentCreation,
 	deploymentManagement,
 	deploymentRunLogs,
 	deploymentsList,
-} from './controller';
+} from 'calypso/my-sites/github-deployments/controller';
+import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
+import { DOTCOM_GITHUB_DEPLOYMENTS } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
 
 export default function () {
 	page( '/github-deployments', siteSelection, sites, makeLayout, clientRender );

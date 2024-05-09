@@ -102,6 +102,7 @@ export interface CheckoutMainProps {
 	 */
 	fromSiteSlug?: string;
 	adminUrl?: string;
+	hostingIntent?: string | undefined;
 }
 
 export default function CheckoutMain( {
@@ -131,6 +132,7 @@ export default function CheckoutMain( {
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
+	hostingIntent,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -207,6 +209,7 @@ export default function CheckoutMain( {
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
 		isGiftPurchase,
+		hostingIntent,
 	} );
 
 	const cartKey = useCartKey();

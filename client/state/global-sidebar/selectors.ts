@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -12,7 +13,7 @@ const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [
 	'site-monitoring',
 ];
 
-function shouldShowGlobalSiteViewSection( siteId: number, sectionName: string ) {
+function shouldShowGlobalSiteViewSection( siteId: number | null, sectionName: string ) {
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
 		!! siteId &&
@@ -22,7 +23,7 @@ function shouldShowGlobalSiteViewSection( siteId: number, sectionName: string ) 
 
 export const getShouldShowGlobalSiteSidebar = (
 	state: AppState,
-	siteId: number,
+	siteId: number | null,
 	sectionGroup: string,
 	sectionName: string
 ) => {
@@ -50,10 +51,15 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	sectionGroup: string,
 	sectionName: string
 ) => {
+	const isAllowedRegion = sectionGroup === 'sites-dashboard' || sectionGroup === 'sites';
 	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
 	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
 
-	return isEnabled( 'layout/dotcom-nav-redesign-v2' ) && ( siteSelected || siteLoaded );
+	return (
+		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
+		isAllowedRegion &&
+		( siteSelected || siteLoaded || isWithinBreakpoint( '<782px' ) )
+	);
 };
 
 export const getShouldShowUnifiedSiteSidebar = (

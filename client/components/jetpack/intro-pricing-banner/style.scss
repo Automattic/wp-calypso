@@ -91,6 +91,12 @@
 
 }
 
+.external-link {
+	.gridicons-external.intro-pricing-banner__external-link-icon {
+		color: var(--studio-gray-50);
+	}
+}
+
 
 // target Calypso pricing filter bar, not jetpack cloud
 .is-group-sites.is-section-plans .intro-pricing-banner.is-sticky {

@@ -262,7 +262,7 @@ const DeleteButton = styled( Button )< { theme?: Theme; shouldUseCheckoutV2?: bo
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
-function LineItemPrice( {
+export function LineItemPrice( {
 	actualAmount,
 	crossedOutAmount,
 	shouldUseCheckoutV2,

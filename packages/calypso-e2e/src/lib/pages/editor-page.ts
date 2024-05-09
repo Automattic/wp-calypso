@@ -700,16 +700,22 @@ export class EditorPage {
 		timeout,
 	}: { visit?: boolean; timeout?: number } = {} ): Promise< URL > {
 		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
+		const postStatusButtonText = await this.editorToolbarComponent.getPostStatusButtonText();
 		const actionsArray = [];
 
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
 
 		// Determine whether the post/page is yet to be published or the post/page
-		// is merely being updated.
+		// is merely being saved/updated.
 		// If not yet published, a second click on the EditorPublishPanelComponent
 		// is added to the array of actions.
-		if ( publishButtonText.toLowerCase() !== 'update' ) {
+		const requiresSecondClick =
+			! [ 'save', 'update' ].includes( publishButtonText.toLowerCase() ) ||
+			( publishButtonText.toLowerCase() === 'save' &&
+				postStatusButtonText?.toLowerCase() === 'scheduled' );
+
+		if ( requiresSecondClick ) {
 			actionsArray.push( this.editorPublishPanelComponent.publish() );
 		}
 
@@ -769,10 +775,13 @@ export class EditorPage {
 	 */
 	async unpublish(): Promise< void > {
 		const editorParent = await this.editor.parent();
-
 		await this.editorToolbarComponent.switchToDraft();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-		await editorParent.getByRole( 'button' ).getByText( 'OK' ).click();
+		// Saves the draft
+		await Promise.race( [
+			this.editorToolbarComponent.clickPublish(),
+			editorParent.getByRole( 'button' ).getByText( 'OK' ).click(),
+		] );
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
 		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
 	}

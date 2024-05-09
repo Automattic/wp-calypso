@@ -222,6 +222,26 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			);
 			break;
 
+		case 'helper_upload_failed':
+			dispatchFailure(
+				i18n.translate(
+					'Error saving. ' +
+						'Please ensure that the WordPress installation path has write permissions. ' +
+						'{{a}}Learn more{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://jetpack.com/support/backup/ssh-sftp-and-ftp-credentials/#file-access-permission"
+									target="blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				)
+			);
+			break;
 		default:
 			dispatchFailure(
 				i18n.translate( 'Error saving. Please check your credentials and try again.' )

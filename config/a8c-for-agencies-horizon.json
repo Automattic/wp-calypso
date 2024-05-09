@@ -26,9 +26,10 @@
 	],
 	"features": {
 		"a8c-for-agencies": true,
-		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": false,
+		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
 		"oauth": false,
-		"a4a/site-details-pane": true
+		"a4a/site-details-pane": true,
+		"a4a-logged-out-signup": true
 	},
 	"enable_all_sections": false,
 	"sections": {
