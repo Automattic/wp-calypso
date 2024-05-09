@@ -6,6 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
 import { canBulkUpdate } from '../utils/can-bulk-update';
+import { domainManagementLink as getDomainManagementLink } from '../utils/paths';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableExpiresRenewsOnCell } from './domains-table-expires-renews-cell';
 import { DomainsTablePlaceholder } from './domains-table-placeholder';
@@ -33,7 +34,12 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		showBulkActions,
 		isLoadingSiteDomainsDetails,
 		isAllSitesView,
+		isManageableDomain,
 	} = useDomainRow( domain );
+
+	const domainManagementLink = isManageableDomain
+		? getDomainManagementLink( domain, siteSlug, isAllSitesView )
+		: '';
 
 	return (
 		<div className="domains-table-mobile-card" ref={ ref }>
@@ -104,6 +110,9 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 					</div>
 				) }
 			</div>
+			{ domainManagementLink && (
+				<a className="domains-table__domain-link" href={ domainManagementLink } />
+			) }
 		</div>
 	);
 };
