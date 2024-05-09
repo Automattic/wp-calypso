@@ -13,7 +13,7 @@ describe( 'RetentionConfirmationDialog', () => {
 	test( 'should show proper message when retention is 2 days and submitted', () => {
 		render(
 			<RetentionConfirmationDialog
-				confirmationDialogVisible={ true }
+				confirmationDialogVisible
 				retentionSelected={ 2 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.SUBMITTED }
 				onClose={ jest.fn() }
@@ -32,7 +32,7 @@ describe( 'RetentionConfirmationDialog', () => {
 	test( 'should show proper message when retention is 7 days and submitted', () => {
 		render(
 			<RetentionConfirmationDialog
-				confirmationDialogVisible={ true }
+				confirmationDialogVisible
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.SUBMITTED }
 				onClose={ jest.fn() }
@@ -51,7 +51,7 @@ describe( 'RetentionConfirmationDialog', () => {
 	test( 'should show spinner in confirm button when retention update is pending', () => {
 		render(
 			<RetentionConfirmationDialog
-				confirmationDialogVisible={ true }
+				confirmationDialogVisible
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.PENDING }
 				onClose={ jest.fn() }
@@ -71,7 +71,7 @@ describe( 'RetentionConfirmationDialog', () => {
 		const confirmationCallback = jest.fn();
 		render(
 			<RetentionConfirmationDialog
-				confirmationDialogVisible={ true }
+				confirmationDialogVisible
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED }
 				onClose={ jest.fn() }
@@ -91,7 +91,7 @@ describe( 'RetentionConfirmationDialog', () => {
 		const cancelCallback = jest.fn();
 		render(
 			<RetentionConfirmationDialog
-				confirmationDialogVisible={ true }
+				confirmationDialogVisible
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED }
 				onClose={ cancelCallback }

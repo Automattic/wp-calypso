@@ -199,11 +199,11 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			actionText={ translate( 'Get this domain' ) }
 			actionOnClick={ getCtaClickHandler }
 			actionBusy={ ctaIsBusy }
-			hasSecondaryAction={ true }
+			hasSecondaryAction
 			secondaryActionText={ translate( 'Find other domains' ) }
 			secondaryActionUrl={ searchLink }
 			illustration={ domainUpsellMobileIllustration }
-			illustrationAlwaysShow={ true }
+			illustrationAlwaysShow
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
 	);

@@ -157,7 +157,7 @@ class StatsSummary extends Component {
 								plan={ PLAN_PREMIUM }
 								tracksImpressionName="calypso_upgrade_nudge_impression"
 								tracksClickName="calypso_upgrade_nudge_cta_click"
-								showIcon={ true }
+								showIcon
 							/>
 						</div>
 					</Fragment>

@@ -232,7 +232,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						onClose={ () => setShowLightbox( false ) }
 						nonManageProductSlug={ nonManageProductSlug }
 						nonManageProductPrice={ nonManageProductPrice }
-						partnerCanIssueLicense={ true }
+						partnerCanIssueLicense
 						siteId={ siteId }
 					/>
 				) }
@@ -285,7 +285,7 @@ export const UpsellProductCardPlaceholder: React.FC = () => {
 
 			<div className="upsell-product-card__price-container">
 				<DisplayPrice
-					pricesAreFetching={ true }
+					pricesAreFetching
 					billingTerm={ TERM_ANNUALLY }
 					productName="Placeholder product"
 				/>

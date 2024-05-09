@@ -85,7 +85,7 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 		<>
 			{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<DocumentHead title={ titleCase( title ) } />
 
 				<EmailHeader />

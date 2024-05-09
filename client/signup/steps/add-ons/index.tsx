@@ -79,7 +79,7 @@ const AddOns = ( {
 				} }
 				useAddOnAvailabilityStatus={ getAddOnSelectedStatus }
 				addOns={ addOns }
-				highlightFeatured={ true }
+				highlightFeatured
 			/>
 		</AddOnsContainer>
 	);

@@ -34,7 +34,7 @@ export function SiteSwitch( { redirectTo }: { redirectTo: string } ) {
 			<CommandPalette
 				currentRoute="/switch-site"
 				currentSiteId={ null }
-				isOpenGlobal={ true }
+				isOpenGlobal
 				onBack={ () => window.history.back() }
 				navigate={ navigate }
 				selectedCommand={ siteSwitchCommand }

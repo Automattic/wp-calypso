@@ -15,7 +15,7 @@ function RelativeTime( props: RelativeTimeProps ) {
 		<div className="relative-time-tooltip__container">
 			<div className="relative-time-tooltip__short-date">{ getShortDateString( date ) }</div>
 			{ showTooltip && (
-				<InfoPopover position="bottom" className="relative-time-tooltip" showOnHover={ true }>
+				<InfoPopover position="bottom" className="relative-time-tooltip" showOnHover>
 					<div key="title" className="relative-time-tooltip__title">
 						{ tooltipTitle }
 					</div>

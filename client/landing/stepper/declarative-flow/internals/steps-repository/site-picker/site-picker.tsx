@@ -79,14 +79,14 @@ const SitePicker = function SitePicker( props: Props ) {
 								onSitesSortingChange={ onSitesSortingChange }
 								statuses={ statuses }
 								selectedStatus={ selectedStatus }
-								hasSitesSortingPreferenceLoaded={ true }
+								hasSitesSortingPreferenceLoaded
 							/>
 							{ paginatedSites.length > 0 || isLoading ? (
 								<>
 									<SitesGrid
 										isLoading={ isLoading }
 										sites={ paginatedSites }
-										siteSelectorMode={ true }
+										siteSelectorMode
 										onSiteSelectBtnClick={ onSelectSite }
 									/>
 									{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (

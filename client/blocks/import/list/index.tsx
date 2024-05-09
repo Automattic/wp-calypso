@@ -63,7 +63,7 @@ export default function ListStep( props: Props ) {
 		<>
 			{ onNavBack && (
 				<div className="import__navigation">
-					<Button onClick={ onNavBack } borderless={ true } type="button">
+					<Button onClick={ onNavBack } borderless type="button">
 						<Gridicon icon="chevron-left" size={ 18 } />
 						Back
 					</Button>

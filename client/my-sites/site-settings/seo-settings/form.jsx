@@ -322,7 +322,7 @@ export class SiteSettingsFormSEO extends Component {
 							'Get tools to optimize your site for improved search engine results.'
 						) }
 						event="calypso_seo_settings_upgrade_nudge"
-						showIcon={ true }
+						showIcon
 					/>
 				) }
 				<form
@@ -406,7 +406,7 @@ export class SiteSettingsFormSEO extends Component {
 									/>
 									{ hasHtmlTagError && (
 										<FormInputValidation
-											isError={ true }
+											isError
 											text={ translate( 'HTML tags are not allowed.' ) }
 										/>
 									) }

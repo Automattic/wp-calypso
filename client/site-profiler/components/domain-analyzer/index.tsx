@@ -56,7 +56,7 @@ export default function DomainAnalyzer( props: Props ) {
 							type="text"
 							name="domain"
 							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus={ true }
+							autoFocus
 							autoComplete="off"
 							defaultValue={ domain }
 							placeholder={ translate( 'Enter a site URL' ) }

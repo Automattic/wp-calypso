@@ -138,7 +138,7 @@ const StepContainer: React.FC< Props > = ( {
 					cssClass={ classNames( 'step-container__navigation-link', 'has-underline', {
 						'has-skip-heading': skipHeadingText,
 					} ) }
-					borderless={ true }
+					borderless
 					recordClick={ () => recordClick( 'forward' ) }
 				/>
 			</div>

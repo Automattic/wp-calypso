@@ -101,11 +101,11 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 				stepName="site-migration-identify"
 				flowName="site-migration"
 				className="import__onboarding-page"
-				hideSkip={ true }
-				hideFormattedHeader={ true }
+				hideSkip
+				hideFormattedHeader
 				goBack={ navigation.goBack }
 				goNext={ navigation?.submit }
-				isFullLayout={ true }
+				isFullLayout
 				stepContent={
 					<Analyzer
 						onComplete={ ( { platform, url } ) =>

@@ -395,7 +395,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<DocumentHead title={ translate( 'Add New Mailboxes' ) } />
 
 				<EmailHeader />

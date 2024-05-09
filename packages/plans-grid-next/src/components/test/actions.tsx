@@ -273,7 +273,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					<PlanFeatures2023GridActions
 						{ ...defaultProps }
 						planSlug={ PLAN_BUSINESS_3_YEARS }
-						isStuck={ true }
+						isStuck
 					/>
 				);
 				const upgradeButton = screen.getByRole( 'button', { name: 'Upgrade – $20' } );
@@ -302,7 +302,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					<PlanFeatures2023GridActions
 						{ ...defaultProps }
 						planActionOverrides={ planActionOverrides }
-						isInSignup={ true }
+						isInSignup
 						planSlug={ PLAN_BUSINESS }
 						isStuck={ false }
 					/>

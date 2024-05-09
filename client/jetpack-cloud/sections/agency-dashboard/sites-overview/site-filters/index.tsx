@@ -23,7 +23,7 @@ export default function SiteFilters( {
 			selectorTypes={ { issueType: true } }
 			filter={ filter }
 			isLoading={ isLoading }
-			isVisible={ true }
+			isVisible
 			selectActionType={ selectIssueTypes }
 			resetFilters={ resetIssueTypes }
 		/>

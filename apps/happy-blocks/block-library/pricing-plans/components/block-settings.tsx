@@ -93,7 +93,7 @@ const BlockSettings: FunctionComponent<
 			<PanelBody
 				className="hb-pricing-plans-embed__settings"
 				title={ __( 'Basic', 'happy-blocks' ) }
-				initialOpen={ true }
+				initialOpen
 			>
 				<PanelRow>
 					{ planOptions.map( ( option ) => (

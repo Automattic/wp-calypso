@@ -36,8 +36,8 @@ const NewsletterGoals: Step = ( { navigation } ) => {
 	return (
 		<StepContainer
 			stepName="newsletter-type"
-			isWideLayout={ true }
-			hideBack={ true }
+			isWideLayout
+			hideBack
 			flowName="newsletter"
 			formattedHeader={
 				<FormattedHeader

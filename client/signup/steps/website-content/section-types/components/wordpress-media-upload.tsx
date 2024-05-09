@@ -273,7 +273,7 @@ export function WordpressMediaUpload( {
 			);
 		case UPLOAD_STATES.IN_PROGRESS:
 			return (
-				<FileSelectThumbnailContainer key={ mediaIndex } disabled={ true }>
+				<FileSelectThumbnailContainer key={ mediaIndex } disabled>
 					<Spinner />
 				</FileSelectThumbnailContainer>
 			);

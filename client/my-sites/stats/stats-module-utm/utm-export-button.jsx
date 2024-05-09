@@ -60,7 +60,7 @@ function UTMExportButton( { data, fileName } ) {
 			compact
 			onClick={ initiateDownload }
 			disabled={ shouldDisableExport }
-			borderless={ true }
+			borderless
 		>
 			<Gridicon icon="cloud-download" /> { buttonLabel }
 		</Button>

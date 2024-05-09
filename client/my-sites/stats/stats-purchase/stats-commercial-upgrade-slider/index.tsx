@@ -159,7 +159,7 @@ function StatsCommercialUpgradeSlider( {
 			popupInfoString={ perUnitFeeMessaging }
 			steps={ steps }
 			onSliderChange={ handleSliderChanged }
-			marks={ true }
+			marks
 		/>
 	);
 }

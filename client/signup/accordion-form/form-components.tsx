@@ -238,7 +238,7 @@ export function CheckboxField( props: {
 					{ props.label }
 				</>
 			</ClickableLabel>
-			<InfoPopover showOnHover={ true } position="top">
+			<InfoPopover showOnHover position="top">
 				{ props.helpText }
 			</InfoPopover>
 		</FlexFormFieldset>

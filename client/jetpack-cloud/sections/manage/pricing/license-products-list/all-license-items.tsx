@@ -41,7 +41,7 @@ export const AllLicenseItems = ( {
 								<SimpleLicenseMultiItemCard
 									variants={ item }
 									bundleSize={ supportedBundleSize }
-									ctaAsPrimary={ true }
+									ctaAsPrimary
 									isCtaDisabled={ false }
 									isCtaExternal={ false }
 								/>
@@ -49,7 +49,7 @@ export const AllLicenseItems = ( {
 								<SimpleLicenseItemCard
 									item={ item }
 									bundleSize={ supportedBundleSize }
-									ctaAsPrimary={ true }
+									ctaAsPrimary
 									isCtaDisabled={ false }
 									isCtaExternal={ false }
 								/>

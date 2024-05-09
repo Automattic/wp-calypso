@@ -155,7 +155,7 @@ export default function PluginRowFormatter( {
 								id={ item.slug }
 								onClick={ item.onClick }
 								checked={ item.isSelected }
-								readOnly={ true }
+								readOnly
 							/>
 						) }
 						{ item.icon ? (

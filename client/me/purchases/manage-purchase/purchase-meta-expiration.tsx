@@ -84,7 +84,7 @@ function PurchaseMetaExpiration( {
 				siteSlug={ site && ! isCancellableSitelessPurchase ? site.slug : '' }
 				purchase={ purchase }
 				toggleSource="manage-purchase"
-				showLink={ true }
+				showLink
 				getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 			/>
 		) : (

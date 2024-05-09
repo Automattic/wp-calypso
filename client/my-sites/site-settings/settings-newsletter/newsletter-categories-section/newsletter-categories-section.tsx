@@ -46,8 +46,8 @@ const NewsletterCategoriesSection = ( {
 			>
 				<TermTreeSelector
 					taxonomy="category"
-					addTerm={ true }
-					multiple={ true }
+					addTerm
+					multiple
 					selected={ newsletterCategoryIds }
 					onChange={ (
 						category: { ID: number },

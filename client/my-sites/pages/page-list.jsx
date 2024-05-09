@@ -325,7 +325,7 @@ class Pages extends Component {
 					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
 					multisite={ false }
-					hierarchical={ true }
+					hierarchical
 					hierarchyLevel={ page.indentLevel || 0 }
 					showPublishedStatus={ showPublishedStatus }
 				/>

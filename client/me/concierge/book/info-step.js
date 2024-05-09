@@ -202,7 +202,7 @@ class InfoStep extends Component {
 
 					<FormButton
 						disabled={ ! this.canSubmitForm() }
-						isPrimary={ true }
+						isPrimary
 						type="button"
 						onClick={ onComplete }
 					>

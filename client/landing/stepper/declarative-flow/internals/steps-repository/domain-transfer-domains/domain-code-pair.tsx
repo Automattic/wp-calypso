@@ -289,14 +289,14 @@ export function DomainCodePair( {
 								className="is-checking-domain"
 								text={ message }
 								isError={ false }
-								isMuted={ true }
+								isMuted
 							/>
 						) }
 						{ ! shouldReportError && ! loading && (
 							<FormInputValidation
 								isError={ false }
 								text=""
-								isMuted={ true }
+								isMuted
 								children={ domainCount > 1 && domainActions() }
 							/>
 						) }
@@ -333,13 +333,13 @@ export function DomainCodePair( {
 						className="is-checking-domain"
 						text={ message }
 						isError={ false }
-						isMuted={ true }
+						isMuted
 					/>
 				) }
 				{ ! shouldReportError && ! loading && (
 					<FormInputValidation
 						isError={ false }
-						isMuted={ true }
+						isMuted
 						text=""
 						children={ domainCount > 1 && domainActions() }
 					/>

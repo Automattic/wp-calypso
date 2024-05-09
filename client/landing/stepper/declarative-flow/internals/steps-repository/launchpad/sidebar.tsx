@@ -280,7 +280,7 @@ const Sidebar = ( {
 						checklistSlug={ checklistSlug }
 						taskFilter={ () => enhancedTasks || [] }
 						launchpadContext="onboarding"
-						makeLastTaskPrimaryAction={ true }
+						makeLastTaskPrimaryAction
 					/>
 					{ showPlansModal && site?.ID && (
 						<RecurringPaymentsPlanAddEditModal

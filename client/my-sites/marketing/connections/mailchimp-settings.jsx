@@ -96,7 +96,7 @@ const MailchimpSettings = ( {
 					) }
 					showDismiss={ false }
 				>
-					<NoticeAction href="https://login.mailchimp.com" external={ true } />
+					<NoticeAction href="https://login.mailchimp.com" external />
 				</Notice>
 			) }
 			{ mailchimpLists && mailchimpLists.length > 0 && mailchimpListId === 0 && (

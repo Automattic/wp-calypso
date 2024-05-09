@@ -322,7 +322,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		currentPlanBillingPeriod > billingPeriod
 	) {
 		return (
-			<PlanButton planSlug={ planSlug } disabled={ true } current={ current }>
+			<PlanButton planSlug={ planSlug } disabled current={ current }>
 				{ translate( 'Contact support', { context: 'verb' } ) }
 			</PlanButton>
 		);

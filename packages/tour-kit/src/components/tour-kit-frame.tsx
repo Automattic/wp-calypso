@@ -236,7 +236,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				isMinimized={ isMinimized }
 			/>
 			<div className={ classes } ref={ tourContainerRef }>
-				{ showOverlay() && <Overlay visible={ true } /> }
+				{ showOverlay() && <Overlay visible /> }
 				{ showSpotlight() && (
 					<Spotlight
 						referenceElement={ referenceElement }

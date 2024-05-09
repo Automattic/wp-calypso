@@ -169,7 +169,7 @@ export class PostTypeFilter extends Component {
 									? `${ searchPagesPlaceholder }…`
 									: this.props.translate( 'Search…' )
 							}
-							delaySearch={ true }
+							delaySearch
 						/>
 					) }
 				</SectionNav>

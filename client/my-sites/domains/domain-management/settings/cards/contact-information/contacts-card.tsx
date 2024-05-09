@@ -168,7 +168,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 				showDismiss={ false }
 				status="is-warning"
 			>
-				<NoticeAction external={ true } href={ props.registeredViaTrusteeUrl }>
+				<NoticeAction external href={ props.registeredViaTrusteeUrl }>
 					{ translate( 'More info' ) }
 				</NoticeAction>
 			</Notice>

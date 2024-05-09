@@ -86,7 +86,7 @@ const AISitePrompt: Step = function ( props ) {
 					skipButtonAlign="top"
 					hideBack
 					goNext={ goNext }
-					isHorizontalLayout={ true }
+					isHorizontalLayout
 					formattedHeader={
 						<FormattedHeader
 							id="site-prompt-header"

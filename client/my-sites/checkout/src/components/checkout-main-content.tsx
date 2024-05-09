@@ -584,7 +584,7 @@ export default function CheckoutMainContent( {
 							className="wp-checkout__review-order-step"
 							stepId="review-order-step"
 							isStepActive={ false }
-							isStepComplete={ true }
+							isStepComplete
 							titleContent={ <OrderReviewTitle /> }
 							completeStepContent={
 								<WPCheckoutOrderReview

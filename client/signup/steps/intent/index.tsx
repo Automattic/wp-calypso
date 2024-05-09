@@ -96,7 +96,7 @@ export default function IntentStep( props: Props ) {
 			}
 			align="left"
 			hideSkip
-			isHorizontalLayout={ true }
+			isHorizontalLayout
 			siteId={ siteId }
 			{ ...props }
 		/>

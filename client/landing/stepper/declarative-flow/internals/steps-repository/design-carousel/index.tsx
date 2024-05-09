@@ -107,7 +107,7 @@ const DesignCarousel: Step = function DesignCarousel( { navigation, flow } ) {
 			goBack={ goBack }
 			goNext={ goNext }
 			shouldHideNavButtons
-			isFullLayout={ true }
+			isFullLayout
 			stepContent={
 				<AsyncLoad
 					require="@automattic/design-carousel"

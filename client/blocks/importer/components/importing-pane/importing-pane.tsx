@@ -85,7 +85,7 @@ class ImportingPane extends ImportingPaneBase {
 				) }
 				{ ( this.isImporting() || this.isProcessing() ) &&
 					( percentComplete >= 0 ? (
-						<ProgressBar compact={ true } className={ progressClasses } value={ percentComplete } />
+						<ProgressBar compact className={ progressClasses } value={ percentComplete } />
 					) : (
 						<div>
 							<Spinner className="importing-pane__spinner" />

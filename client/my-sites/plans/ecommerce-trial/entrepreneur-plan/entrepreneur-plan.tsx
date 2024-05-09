@@ -154,7 +154,7 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 						{ translate( "What's included in your free trial" ) }
 					</h2>
 					<div className="entrepreneur-trial-plan__included-wrapper">
-						<EcommerceTrialIncluded displayAll={ true } />
+						<EcommerceTrialIncluded displayAll />
 					</div>
 				</>
 			) }

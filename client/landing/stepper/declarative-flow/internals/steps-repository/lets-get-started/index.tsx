@@ -12,7 +12,7 @@ const LetsGetStarted: Step = function LetsGetStarted( { navigation } ) {
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
-			isWideLayout={ true }
+			isWideLayout
 			isLargeSkipLayout={ false }
 			stepContent={ <h1>Let's get started step</h1> }
 			recordTracksEvent={ recordTracksEvent }

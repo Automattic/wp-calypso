@@ -11,7 +11,7 @@ export default class ValidationFieldset extends Component {
 	renderValidationNotice() {
 		const validationElement = this.props.errorMessages && (
 			<FormInputValidation
-				isError={ true }
+				isError
 				isValid={ false }
 				text={ values( this.props.errorMessages )[ 0 ] }
 			/>

@@ -41,7 +41,7 @@ const RecurringPaymentsPlanDeleteModal = ( {
 	// Cancel the subscription for existing subscribers
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			className="memberships__delete-plan-modal"
 			buttons={ [
 				{

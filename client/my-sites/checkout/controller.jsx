@@ -111,7 +111,7 @@ function sitelessCheckout( context, next, extraProps ) {
 				isComingFromUpsell={ !! context.query.upgrade }
 				redirectTo={ context.query.redirect_to }
 				isLoggedOutCart={ isLoggedOut }
-				isNoSiteCart={ true }
+				isNoSiteCart
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
 				{ ...extraProps }
 			/>

@@ -14,7 +14,7 @@ const CelebrateSiteSetupComplete = () => {
 			noticeId={ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE }
 			title={ translate( 'Site setup complete!' ) }
 			illustration={ checklistIllustration }
-			showSkip={ true }
+			showSkip
 			skipText={ translate( 'Dismiss' ) }
 		/>
 	);

@@ -228,7 +228,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 					</NextButton>
 					<div>
 						<Button
-							borderless={ true }
+							borderless
 							className="action-buttons__borderless"
 							onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
 								e.preventDefault();

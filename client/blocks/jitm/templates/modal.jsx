@@ -81,7 +81,7 @@ export default function ModalTemplate( {
 									{ description }
 									<Button
 										href={ CTA.link }
-										isPrimary={ true }
+										isPrimary
 										onClick={ () => {
 											onClick();
 											setDismissed( isDismissed.concat( [ featureClass ] ) );

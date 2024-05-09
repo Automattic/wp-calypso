@@ -85,7 +85,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				paginationInfo={ data.pagination }
 				fields={ data.fields }
 				view={ data.dataViewsState }
-				search={ true }
+				search
 				searchLabel={ data.searchLabel ?? translate( 'Search' ) }
 				getItemId={
 					data.getItemId ??

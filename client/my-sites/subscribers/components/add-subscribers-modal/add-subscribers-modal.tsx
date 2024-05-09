@@ -99,7 +99,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 			<AddSubscriberForm
 				siteId={ site.ID }
 				hasSubscriberLimit={ hasSubscriberLimit }
-				submitBtnAlwaysEnable={ true }
+				submitBtnAlwaysEnable
 				onImportStarted={ onImportStarted }
 				onImportFinished={ onImportFinished }
 				showTitle={ false }

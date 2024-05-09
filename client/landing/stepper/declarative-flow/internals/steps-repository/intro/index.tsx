@@ -187,7 +187,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			stepName="intro"
 			goBack={ goBack }
 			isHorizontalLayout={ false }
-			isWideLayout={ true }
+			isWideLayout
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep introContent={ introContent } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }

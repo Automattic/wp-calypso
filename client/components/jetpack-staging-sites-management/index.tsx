@@ -72,7 +72,7 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 		<>
 			<QueryBackupStagingSite siteId={ siteId } />
 			<div className="jetpack-staging-sites-management">
-				<Card compact={ true } className="setting-title">
+				<Card compact className="setting-title">
 					<h3>{ translate( 'Set up as staging site' ) }</h3>
 					<div className="staging-icon">{ stagingIcon }</div>
 				</Card>

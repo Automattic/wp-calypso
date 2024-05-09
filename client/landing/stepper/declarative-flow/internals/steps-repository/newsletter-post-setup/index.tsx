@@ -72,8 +72,8 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	return (
 		<StepContainer
 			stepName="newsletter-setup"
-			isWideLayout={ true }
-			hideBack={ true }
+			isWideLayout
+			hideBack
 			flowName="newsletter"
 			formattedHeader={
 				<FormattedHeader

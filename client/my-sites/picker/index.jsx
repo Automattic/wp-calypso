@@ -104,15 +104,15 @@ class SitePicker extends Component {
 					showHiddenSites={ this.props.showHiddenSites }
 					showManageSitesButton={ this.props.showManageSitesButton }
 					isPlaceholder={ ! this.state.isRendered }
-					indicator={ true }
-					showAddNewSite={ true }
-					showAllSites={ true }
+					indicator
+					showAddNewSite
+					showAllSites
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }
 					/* eslint-disable-next-line jsx-a11y/no-autofocus */
 					autoFocus={ this.state.isAutoFocused }
 					onClose={ this.onClose }
-					groups={ true }
+					groups
 					filter={ this.filterSites }
 				/>
 			</div>

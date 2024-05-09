@@ -161,7 +161,7 @@ function PageCell( { pageId, popular, required, selectedPages, context, onClick 
 				<div>{ title }</div>
 				{ popular ? <PageCellBadge>{ translate( 'Popular' ) }</PageCellBadge> : null }
 				{ required ? <PageCellBadge>{ translate( 'Required' ) }</PageCellBadge> : null }
-				<InfoPopover showOnHover={ true } position={ isMobile() ? 'left' : 'top left' }>
+				<InfoPopover showOnHover position={ isMobile() ? 'left' : 'top left' }>
 					{ description }
 				</InfoPopover>
 			</CellLabelContainer>
@@ -596,7 +596,7 @@ function DIFMPagePicker( props: StepProps ) {
 			}
 			hideSkip
 			align="left"
-			isHorizontalLayout={ true }
+			isHorizontalLayout
 			isWideLayout={ false }
 			headerButton={
 				<StyledButton

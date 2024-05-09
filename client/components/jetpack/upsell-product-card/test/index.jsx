@@ -196,7 +196,7 @@ describe( 'SingleSiteUpsellLightbox', () => {
 						onClose={ mockOnClose }
 						nonManageProductSlug="jetpack_scan"
 						nonManageProductPrice={ null }
-						partnerCanIssueLicense={ true }
+						partnerCanIssueLicense
 						siteId={ 2916284 }
 					/>
 				</QueryClientProvider>

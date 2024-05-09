@@ -95,7 +95,7 @@ describe( 'SftpCard', () => {
 		it( 'should not display spinner if disabled', () => {
 			render(
 				<Provider store={ store }>
-					<SftpCard { ...props } disabled={ true } />
+					<SftpCard { ...props } disabled />
 				</Provider>
 			);
 

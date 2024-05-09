@@ -52,12 +52,12 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowT
 				) }
 			</div>
 			<ReaderPostOptionsMenu
-				showFollow={ true }
-				showConversationFollow={ true }
-				showVisitPost={ true }
+				showFollow
+				showConversationFollow
+				showVisitPost
 				showEditPost={ false }
-				showReportSite={ true }
-				showReportPost={ true }
+				showReportSite
+				showReportPost
 				openSuggestedFollows={ onFollowToggle }
 				followSource={ followSource }
 				post={ post }

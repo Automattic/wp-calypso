@@ -8,7 +8,7 @@ describe( '<BadgeContainer /> integration', () => {
 	} );
 
 	it( 'should render the premium badge', async () => {
-		render( <BadgeContainer badgeType="premium" isPremiumThemeAvailable={ true } /> );
+		render( <BadgeContainer badgeType="premium" isPremiumThemeAvailable /> );
 
 		const premiumBadge = await screen.findByText( 'Premium' );
 

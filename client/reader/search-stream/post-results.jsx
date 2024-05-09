@@ -40,7 +40,7 @@ class PostResults extends Component {
 				{ ...this.props }
 				listName={ translate( 'Search' ) }
 				emptyContent={ emptyContent }
-				showFollowInHeader={ true }
+				showFollowInHeader
 				placeholderFactory={ this.placeholderFactory }
 				transformStreamItems={ transformStreamItems }
 				isMain={ false }

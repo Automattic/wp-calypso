@@ -414,7 +414,7 @@ function Placeholder( { variant } ) {
 		<li className={ classnames( 'plugins-browser-item is-placeholder', variant ) }>
 			<span className="plugins-browser-item__link">
 				<div className="plugins-browser-item__info">
-					<PluginIcon isPlaceholder={ true } />
+					<PluginIcon isPlaceholder />
 					<div className="plugins-browser-item__title">…</div>
 					<div className="plugins-browser-item__author">…</div>
 					<div className="plugins-browser-item__description">…</div>

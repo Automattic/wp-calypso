@@ -61,7 +61,7 @@ export default function UnassignLicenseDialog( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			buttons={ buttons }
 			additionalClassNames="unassign-license-dialog"
 			onClose={ close }

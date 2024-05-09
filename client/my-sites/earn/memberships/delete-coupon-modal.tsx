@@ -33,7 +33,7 @@ const RecurringPaymentsCouponDeleteModal = ( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			className="memberships__delete-plan-modal"
 			buttons={ [
 				{

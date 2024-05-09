@@ -237,7 +237,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ) {
 	return (
 		<StepWrapper
 			flowName="woocommerce-install"
-			hideSkip={ true }
+			hideSkip
 			headerText={ __( 'Tell us a bit about your business' ) }
 			fallbackHeaderText={ __( 'Tell us a bit about your business' ) }
 			subHeaderText={ __( 'We will guide you to get started based on your responses.' ) }

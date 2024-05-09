@@ -289,7 +289,7 @@ class FormFields extends PureComponent {
 					<br />
 					<ToggleControl checked={ false } disabled />
 					<br />
-					<ToggleControl checked={ true } disabled />
+					<ToggleControl checked disabled />
 					<br />
 
 					<FormButtonsBar>
@@ -358,7 +358,7 @@ class FormFields extends PureComponent {
 						/>
 						<br />
 						<FormRadiosBarExample
-							isThumbnail={ true }
+							isThumbnail
 							checked={ this.state.checkedRadio }
 							onChange={ this.handleRadioChange }
 						/>

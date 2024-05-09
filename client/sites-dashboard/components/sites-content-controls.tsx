@@ -154,7 +154,7 @@ export const SitesContentControls = ( {
 				onSearch={ handleSearch }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
-				disableAutocorrect={ true }
+				disableAutocorrect
 				defaultValue={ initialSearch }
 				ref={ searchRef }
 			/>

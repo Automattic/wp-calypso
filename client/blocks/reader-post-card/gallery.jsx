@@ -53,7 +53,7 @@ function PostGallery( { post, children } ) {
 				<ReaderExcerpt post={ post } />
 			</div>
 			<div onClick={ handleClick } role="presentation">
-				<DotPager isClickEnabled={ true }>{ listItems }</DotPager>
+				<DotPager isClickEnabled>{ listItems }</DotPager>
 			</div>
 			<div className="reader-post-card__post-details">{ children }</div>
 		</div>

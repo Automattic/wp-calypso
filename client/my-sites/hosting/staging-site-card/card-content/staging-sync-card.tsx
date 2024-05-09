@@ -224,7 +224,7 @@ const StagingToProductionSync = ( {
 				<ConfirmationModal
 					disabled={ disabled || isSyncButtonDisabled }
 					isConfirmationDisabled={ typedSiteName !== siteSlug }
-					isPrimary={ true }
+					isPrimary
 					onConfirm={ onConfirm }
 					modalTitle={ translate( 'You’re about to update your production site' ) }
 					extraModalContent={
@@ -282,7 +282,7 @@ const ProductionToStagingSync = ( {
 		<ConfirmationModalContainer>
 			<ConfirmationModal
 				disabled={ disabled || isSyncButtonDisabled }
-				isPrimary={ true }
+				isPrimary
 				onConfirm={ onConfirm }
 				modalTitle={ translate( 'You are about to update your staging site' ) }
 				modalMessage={ translate(

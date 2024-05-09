@@ -601,7 +601,7 @@ export class SharingService extends Component {
 									a: (
 										<ExternalLink
 											target="_blank"
-											icon={ true }
+											icon
 											iconSize={ 14 }
 											href={ localizeUrl(
 												this.props.isJetpack

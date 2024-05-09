@@ -181,8 +181,8 @@ const SiteMigrationInstructions: Step = function () {
 				stepName="site-migration-instructions"
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-instructions site-migration-instructions-i2"
-				hideSkip={ true }
-				hideBack={ true }
+				hideSkip
+				hideBack
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"

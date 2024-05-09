@@ -76,9 +76,9 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 			additionalClassNames="reader-join-conversation-dialog"
 			isVisible={ isVisible }
 			onClose={ onCloseClick }
-			showCloseIcon={ true }
+			showCloseIcon
 			label={ translate( 'Join the conversation' ) }
-			shouldCloseOnEsc={ true }
+			shouldCloseOnEsc
 		>
 			<div className="reader-join-conversation-dialog__content">
 				<WordPressLogo size={ 32 } />

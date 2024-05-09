@@ -16,7 +16,7 @@ describe( 'SortedGrid', () => {
 				context={ false }
 				items={ [] }
 				itemsPerRow={ 6 }
-				lastPage={ true }
+				lastPage
 				fetchingNextPage={ false }
 				guessedItemHeight={ 64 }
 				fetchNextPage={ nullfunc }

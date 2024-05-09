@@ -154,7 +154,7 @@ class SidebarNotifications extends Component {
 						isShowing={ this.props.isNotificationsOpen }
 						checkToggle={ this.checkToggleNotes }
 						setIndicator={ this.setNotesIndicator }
-						isGlobalSidebarVisible={ true }
+						isGlobalSidebarVisible
 						placeholder={ null }
 					/>
 				</div>

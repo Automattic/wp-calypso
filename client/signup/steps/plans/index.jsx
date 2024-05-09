@@ -132,7 +132,7 @@ export class PlansStep extends Component {
 					signupFlowUserName={ username }
 					siteId={ selectedSite?.ID }
 					isCustomDomainAllowedOnFreePlan={ this.props.isCustomDomainAllowedOnFreePlan }
-					isInSignup={ true }
+					isInSignup
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
 					displayedIntervals={ this.props.displayedIntervals }
@@ -252,7 +252,7 @@ export class PlansStep extends Component {
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
 					isWideLayout={ false }
-					isExtraWideLayout={ true }
+					isExtraWideLayout
 					stepContent={ this.plansFeaturesList() }
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }

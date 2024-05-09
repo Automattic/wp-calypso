@@ -328,7 +328,7 @@ class TransferDomainPrecheck extends Component {
 		const { translate, domain } = this.props;
 
 		return (
-			<Card compact={ true } className="transfer-domain-step__title">
+			<Card compact className="transfer-domain-step__title">
 				<FormattedHeader
 					headerText={ translate( "Let's get {{strong}}%(domain)s{{/strong}} ready to transfer.", {
 						args: { domain },
@@ -370,7 +370,7 @@ class TransferDomainPrecheck extends Component {
 							) }
 						</p>
 					</div>
-					<Button disabled={ disableButton } onClick={ this.onClick } primary={ true }>
+					<Button disabled={ disableButton } onClick={ this.onClick } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 				</Card>

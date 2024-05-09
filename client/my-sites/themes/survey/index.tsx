@@ -77,8 +77,8 @@ const Survey = ( { survey, condition, title = null }: SurveyProps ) => {
 				setIsDismissed( true );
 				isGloballyDismissed = true;
 			} }
-			dismissWithoutSavingPreference={ true }
-			dismissTemporary={ true }
+			dismissWithoutSavingPreference
+			dismissTemporary
 			disableHref
 			showIcon={ false }
 			showLinkIcon={ false }

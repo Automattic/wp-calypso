@@ -15,7 +15,7 @@ const TransferNoticeWrapper = ( {
 }: TransferNoticeWrapperProps ) => {
 	return (
 		<div className={ className }>
-			{ isTransferring && <SitesTransferNotice isTransferring={ true } /> }
+			{ isTransferring && <SitesTransferNotice isTransferring /> }
 			{ ! isTransferring && ( isErrored || isTransferCompleted ) && (
 				<SitesTransferNotice isTransferring={ false } hasError={ isErrored } />
 			) }

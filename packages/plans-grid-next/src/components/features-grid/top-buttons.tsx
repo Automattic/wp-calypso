@@ -73,7 +73,7 @@ const TopButtons = ( {
 						currentSitePlanSlug={ currentSitePlanSlug }
 						buttonText={ buttonText }
 						planActionOverrides={ planActionOverrides }
-						showMonthlyPrice={ true }
+						showMonthlyPrice
 						isStuck={ options?.isStuck || false }
 						storageOptions={ storageOptions }
 						visibleGridPlans={ renderedGridPlans }

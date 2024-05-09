@@ -83,7 +83,7 @@ function PurchaseModal( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			baseClassName="purchase-modal dialog"
 			className={ classNames( {
 				'has-feature-list': showFeatureList,

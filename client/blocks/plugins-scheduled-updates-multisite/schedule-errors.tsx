@@ -31,7 +31,7 @@ export const ScheduleErrors = () => {
 	};
 
 	return (
-		<Notice status="warning" isDismissible={ true } onDismiss={ () => clearErrors() }>
+		<Notice status="warning" isDismissible onDismiss={ () => clearErrors() }>
 			{ renderErrorList(
 				createErrors,
 				translate(

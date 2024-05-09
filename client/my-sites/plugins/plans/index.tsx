@@ -132,7 +132,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
 					} ) as string
 				}
-				buttonPrimary={ true }
+				buttonPrimary
 				buttonOnClick={ () => {
 					alert( 'Connect code after merging PR 68087' );
 				} }

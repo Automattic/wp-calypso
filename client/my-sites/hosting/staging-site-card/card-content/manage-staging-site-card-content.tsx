@@ -110,7 +110,7 @@ export const ManageStagingSiteCardContent = ( {
 					disabled={ isButtonDisabled }
 					onConfirm={ onDeleteClick }
 					isBusy={ isBusy }
-					isScary={ true }
+					isScary
 					modalTitle={ translate( 'Confirm staging site deletion' ) }
 					modalMessage={ translate(
 						'Are you sure you want to delete the staging site? This action cannot be undone.'

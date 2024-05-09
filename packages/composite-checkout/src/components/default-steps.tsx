@@ -8,6 +8,6 @@ export function getDefaultPaymentMethodStep(): CheckoutStepProps {
 		className: 'checkout__payment-method-step',
 		titleContent: <CheckoutPaymentMethodsTitle />,
 		activeStepContent: <CheckoutPaymentMethods isComplete={ false } />,
-		completeStepContent: <CheckoutPaymentMethods summary isComplete={ true } />,
+		completeStepContent: <CheckoutPaymentMethods summary isComplete />,
 	};
 }

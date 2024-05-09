@@ -76,7 +76,7 @@ const Cloudflare = () => {
 							} ) }
 							feature={ WPCOM_FEATURES_CDN }
 							event="calypso_settings_cloudflare_cdn_upsell_nudge_click"
-							showIcon={ true }
+							showIcon
 							forceDisplay
 						/>
 					) }
@@ -117,7 +117,7 @@ const Cloudflare = () => {
 							) }
 							feature={ WPCOM_FEATURES_CLOUDFLARE_CDN }
 							event="calypso_settings_cloudflare_cdn_upsell_nudge_click"
-							showIcon={ true }
+							showIcon
 							forceDisplay
 						/>
 					) }

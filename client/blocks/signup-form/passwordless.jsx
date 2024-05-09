@@ -224,7 +224,7 @@ class PasswordlessSignupForm extends Component {
 					components: {
 						emailSuggestion: (
 							<Button
-								plain={ true }
+								plain
 								className="signup-form__domain-suggestion-confirmation"
 								onClick={ () => {
 									this.handleAcceptDomainSuggestion( newEmail, newDomain, oldDomain );

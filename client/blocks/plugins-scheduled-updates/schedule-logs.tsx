@@ -91,7 +91,7 @@ export const ScheduleLogs = ( props: Props ) => {
 					{ translate( 'Logs' ) } - { prepareScheduleName( schedule as ScheduleUpdates ) }
 				</Text>
 				<div className="ch-placeholder">
-					<Text isBlock={ true } align="end" lineHeight={ 2.5 }>
+					<Text isBlock align="end" lineHeight={ 2.5 }>
 						{ translate( '%(pluginsNumber)d plugin', '%(pluginsNumber)d plugins', {
 							count: schedule?.args?.length || 0,
 							args: {
@@ -140,7 +140,7 @@ export const ScheduleLogs = ( props: Props ) => {
 									? translate( 'Try manual update' )
 									: undefined
 							}
-							actionIsPrimary={ true }
+							actionIsPrimary
 							onActionClick={ goToPluginsPage }
 						/>
 					) ) }

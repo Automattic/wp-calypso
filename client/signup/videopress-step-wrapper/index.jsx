@@ -35,7 +35,7 @@ function VideoPressStepWrapper( {
 				</div>
 				<StepWrapper
 					hideFormattedHeader
-					shouldHideNavButtons={ true }
+					shouldHideNavButtons
 					flowName={ flowName }
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }

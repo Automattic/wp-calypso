@@ -163,7 +163,7 @@ export class MediaLibraryFilterBar extends Component {
 				onSearch={ onSearch }
 				initialValue={ search }
 				placeholder={ this.getSearchPlaceholderText() }
-				delaySearch={ true }
+				delaySearch
 			/>
 		);
 	}
@@ -199,7 +199,7 @@ export class MediaLibraryFilterBar extends Component {
 
 				<SectionNav
 					selectedText={ this.getFilterLabel( this.props.filter ) }
-					hasSearch={ true }
+					hasSearch
 					allowDropdown={ ! this.props.source }
 				>
 					{ this.renderTabItems() }

@@ -179,7 +179,7 @@ export class LoginLinks extends Component {
 		return (
 			<ExternalLink
 				key="help-link"
-				icon={ true }
+				icon
 				onClick={ this.recordHelpLinkClick }
 				target="_blank"
 				href={ localizeUrl( 'https://wordpress.com/support/security/two-step-authentication/' ) }

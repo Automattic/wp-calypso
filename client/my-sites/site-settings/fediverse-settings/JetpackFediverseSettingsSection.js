@@ -37,7 +37,7 @@ export const JetpackFediverseSettingsSection = ( { siteId } ) => {
 							</p>
 						</>
 					) : (
-						<Button primary={ true } onClick={ () => page( `/plugins/activitypub/${ domain }` ) }>
+						<Button primary onClick={ () => page( `/plugins/activitypub/${ domain }` ) }>
 							{ translate( 'Install ActivityPub' ) }
 						</Button>
 					) }

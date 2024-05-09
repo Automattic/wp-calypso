@@ -588,7 +588,7 @@ const Settings = ( {
 						domain.name,
 						useMyDomainInputMode.transferDomain
 					) }
-					primary={ true }
+					primary
 				>
 					{ translate( 'Transfer' ) }
 				</Button>
@@ -620,7 +620,7 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				expanded={ true }
+				expanded
 				title={ translate( 'Contact verification', { textOnly: true } ) }
 				subtitle={ translate( 'Additional contact verification required for your domain', {
 					textOnly: true,

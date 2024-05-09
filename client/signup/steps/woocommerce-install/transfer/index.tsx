@@ -73,9 +73,9 @@ export default function Transfer( props: WooCommerceInstallProps ) {
 			flowName="woocommerce-install"
 			hideBack={ ! hasFailed }
 			backUrl={ `/woocommerce-installation/${ domain }` }
-			hideNext={ true }
-			hideSkip={ true }
-			hideFormattedHeader={ true }
+			hideNext
+			hideSkip
+			hideFormattedHeader
 			isWideLayout={ props.isReskinned }
 			stepContent={
 				<>

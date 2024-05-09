@@ -119,7 +119,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 
 						<KeyringConnectButton
 							serviceId="google_my_business"
-							forceReconnect={ true }
+							forceReconnect
 							onClick={ this.trackUseAnotherGoogleAccountClick }
 							onConnect={ this.handleConnect }
 						>

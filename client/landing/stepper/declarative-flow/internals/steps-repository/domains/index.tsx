@@ -303,10 +303,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	return (
 		<Container
 			stepName="domains"
-			isWideLayout={ true }
+			isWideLayout
 			hideBack={ shouldHideBackButton() }
 			backLabelText={ getBackLabelText() }
-			hideSkip={ true }
+			hideSkip
 			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }

@@ -27,7 +27,7 @@ class LikedStream extends Component {
 					{ ...this.props }
 					listName={ title }
 					emptyContent={ emptyContent }
-					showFollowInHeader={ true }
+					showFollowInHeader
 				>
 					<DocumentHead title={ documentTitle } />
 				</Stream>

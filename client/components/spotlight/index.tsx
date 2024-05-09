@@ -85,7 +85,7 @@ const Spotlight: React.FunctionComponent< SpotlightProps > = ( props: SpotlightP
 		return (
 			<SpotlightContainer className="spotlight">
 				<SpotlightContent>
-					<PluginIcon isPlaceholder={ true } css={ placeholderImg } />
+					<PluginIcon isPlaceholder css={ placeholderImg } />
 					<SpotlightTextContainer>
 						<SpotlightTitle css={ placeholderText }>...</SpotlightTitle>
 						<SpotlightTagline css={ placeholderText }>...</SpotlightTagline>

@@ -48,7 +48,7 @@ const reschedule = ( context, next ) => {
 			skeleton={ RescheduleSkeleton }
 			siteSlug={ context.params.siteSlug }
 			steps={ [ RescheduleCalendarStep, RescheduleConfirmationStep ] }
-			rescheduling={ true }
+			rescheduling
 		/>
 	);
 	next();

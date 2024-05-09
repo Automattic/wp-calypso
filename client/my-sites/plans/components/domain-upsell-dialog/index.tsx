@@ -52,7 +52,7 @@ const DomainUpsellDialog: React.FunctionComponent< {
 			isVisible={ isVisible }
 			buttons={ buttons }
 			onClose={ onCloseDialog }
-			shouldCloseOnEsc={ true }
+			shouldCloseOnEsc
 		>
 			<header className="domain-upsell-dialog__modal-header">
 				<button onClick={ onCloseDialog }>

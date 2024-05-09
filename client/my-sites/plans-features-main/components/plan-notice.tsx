@@ -95,11 +95,11 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 			return (
 				<Notice
 					className="plan-features-main__notice"
-					showDismiss={ true }
+					showDismiss
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-success"
-					isReskinned={ true }
+					isReskinned
 				>
 					{ translate(
 						'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
@@ -111,11 +111,11 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 			return (
 				<Notice
 					className="plan-features-main__notice"
-					showDismiss={ true }
+					showDismiss
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-success"
-					isReskinned={ true }
+					isReskinned
 				>
 					{ activeDiscount.plansPageNoticeTextTitle && (
 						<strong>
@@ -130,11 +130,11 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 			return planUpgradeCreditsApplicable ? (
 				<Notice
 					className="plan-features-main__notice"
-					showDismiss={ true }
+					showDismiss
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-success"
-					isReskinned={ true }
+					isReskinned
 				>
 					{ translate(
 						'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!',
@@ -165,7 +165,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				<Notice
 					className="plan-features-main__notice"
 					showDismiss={ false }
-					isReskinned={ true }
+					isReskinned
 					icon="info-outline"
 					status="is-error"
 					text={ translate(
@@ -181,7 +181,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				<Notice
 					className="plan-features-main__notice"
 					showDismiss={ false }
-					isReskinned={ true }
+					isReskinned
 					icon="info-outline"
 					status="is-error"
 					text={ translate(

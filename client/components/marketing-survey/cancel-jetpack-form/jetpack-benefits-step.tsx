@@ -171,7 +171,7 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 					</React.Fragment>
 				}
 				align="center"
-				isSecondary={ true }
+				isSecondary
 			/>
 
 			{ hasBenefitsToShow( productSlug ) && (

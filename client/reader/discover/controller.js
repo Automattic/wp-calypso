@@ -61,9 +61,9 @@ const exported = {
 						mcKey
 					) }
 					onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-					suppressSiteNameLink={ true }
-					isDiscoverStream={ true }
-					useCompactCards={ true }
+					suppressSiteNameLink
+					isDiscoverStream
+					useCompactCards
 					showBack={ false }
 					className="is-discover-stream"
 					selectedTab={ selectedTab }

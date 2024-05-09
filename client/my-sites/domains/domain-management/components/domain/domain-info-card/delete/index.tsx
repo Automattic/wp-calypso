@@ -52,8 +52,8 @@ const DomainDeleteInfoCard = ( {
 
 	const removePurchaseRenderedComponent = (
 		<RemovePurchase
-			hasLoadedSites={ true }
-			hasLoadedUserPurchasesFromServer={ true }
+			hasLoadedSites
+			hasLoadedUserPurchasesFromServer
 			site={ selectedSite }
 			purchase={ purchase }
 			className={ removePurchaseClassName }

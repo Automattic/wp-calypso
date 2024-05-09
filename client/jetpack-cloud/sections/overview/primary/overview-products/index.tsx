@@ -63,7 +63,7 @@ export default function OverviewProducts() {
 				<Button
 					href="/partner-portal/issue-license"
 					className="overview-products__cta"
-					primary={ true }
+					primary
 					onClick={ onViewAllClick }
 				>
 					{ translate( 'View All' ) }

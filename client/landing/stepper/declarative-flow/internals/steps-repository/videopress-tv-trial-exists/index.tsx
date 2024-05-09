@@ -26,8 +26,8 @@ const VideoPressTvTrialExists: Step = function VideoPressTvTrialExists( { data }
 	return (
 		<StepContainer
 			stepName="trial-exists"
-			isWideLayout={ true }
-			hideBack={ true }
+			isWideLayout
+			hideBack
 			flowName="videopress-tv"
 			formattedHeader={
 				<FormattedHeader

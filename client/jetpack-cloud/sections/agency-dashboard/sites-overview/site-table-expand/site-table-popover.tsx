@@ -34,12 +34,7 @@ const SiteTablePopover = (
 	);
 
 	return (
-		<Popover
-			id="site-table-expand-popover"
-			isVisible={ true }
-			position="bottom"
-			context={ ref.current }
-		>
+		<Popover id="site-table-expand-popover" isVisible position="bottom" context={ ref.current }>
 			{ content }
 		</Popover>
 	);

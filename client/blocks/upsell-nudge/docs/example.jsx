@@ -7,7 +7,7 @@ const UpsellNudgeExample = () => (
 			href="#"
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a regular nudge with an icon."
-			showIcon={ true }
+			showIcon
 		/>
 		<UpsellNudge
 			description="Domain registration is free for a year with purchase of a Premium or Business plan."
@@ -15,7 +15,7 @@ const UpsellNudgeExample = () => (
 			href="#"
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a regular nudge with a description."
-			showIcon={ true }
+			showIcon
 		/>
 		<UpsellNudge
 			description="Domain registration is free for a year with purchase of a Premium or Business plan."
@@ -23,7 +23,7 @@ const UpsellNudgeExample = () => (
 			href="#"
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a regular nudge with a description."
-			showIcon={ true }
+			showIcon
 		/>
 		<UpsellNudge
 			description="Domain registration is free for a year with purchase of a Premium or Business plan."
@@ -32,7 +32,7 @@ const UpsellNudgeExample = () => (
 			href="#"
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a dismissible nudge with a description and the horizontal layout."
-			showIcon={ true }
+			showIcon
 			horizontal
 		/>
 		<UpsellNudge
@@ -47,7 +47,7 @@ const UpsellNudgeExample = () => (
 			] }
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a dismissible nudge with a description, prices, and a list of features."
-			showIcon={ true }
+			showIcon
 			price={ [ 50, 48 ] }
 		/>
 		<UpsellNudge

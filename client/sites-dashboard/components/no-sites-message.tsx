@@ -107,7 +107,7 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 					}
 				) }
 				illustration={ false }
-				hideAction={ true }
+				hideAction
 			/>
 		);
 	}

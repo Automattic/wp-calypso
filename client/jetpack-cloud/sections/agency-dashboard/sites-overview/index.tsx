@@ -346,7 +346,7 @@ export default function SitesOverview() {
 							selectedText={
 								<span>
 									{ selectedTab.label }
-									<Count count={ selectedTab.count } compact={ true } />
+									<Count count={ selectedTab.count } compact />
 								</span>
 							}
 							selectedCount={ selectedTab.count }
@@ -356,7 +356,7 @@ export default function SitesOverview() {
 						>
 							<NavTabs selectedText={ selectedTab.label } selectedCount={ selectedTab.count }>
 								{ navItems.map( ( props ) => (
-									<NavItem { ...props } compactCount={ true } />
+									<NavItem { ...props } compactCount />
 								) ) }
 							</NavTabs>
 						</SectionNav>

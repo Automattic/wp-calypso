@@ -110,7 +110,7 @@ function SubscribersTeam( props: Props ) {
 										title="People > Team Members / Invites"
 									/>
 
-									<TeamInvites singleInviteView={ true } />
+									<TeamInvites singleInviteView />
 									<TeamMembers
 										search={ search }
 										usersQuery={ usersQuery }

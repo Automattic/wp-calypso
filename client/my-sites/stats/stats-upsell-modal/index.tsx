@@ -66,11 +66,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	};
 
 	return (
-		<Modal
-			className="stats-upsell-modal"
-			onRequestClose={ closeModal }
-			__experimentalHideHeader={ true }
-		>
+		<Modal className="stats-upsell-modal" onRequestClose={ closeModal } __experimentalHideHeader>
 			<TrackComponentView
 				eventName={ `${ eventPrefix }_stats_upsell_modal_view` }
 				eventProperties={ {

@@ -44,7 +44,7 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 			<Progress>
 				<div className="import__heading import__heading-center">
 					<Title>{ title }...</Title>
-					<ProgressBar compact={ true } value={ progressValue } />
+					<ProgressBar compact value={ progressValue } />
 					<SubTitle>
 						{ __( 'Feel free to close this window. We’ll email you when your new site is ready.' ) }
 					</SubTitle>

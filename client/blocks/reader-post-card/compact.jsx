@@ -55,7 +55,7 @@ const CompactPost = ( {
 								site={ site }
 								teams={ teams }
 								post={ post }
-								showFollow={ true }
+								showFollow
 								openSuggestedFollows={ openSuggestedFollows }
 							/>
 						) }
@@ -74,7 +74,7 @@ const CompactPost = ( {
 								site={ site }
 								teams={ teams }
 								post={ post }
-								showFollow={ true }
+								showFollow
 								openSuggestedFollows={ openSuggestedFollows }
 							/>
 						) }
@@ -84,7 +84,7 @@ const CompactPost = ( {
 							postUrl={ post.URL }
 							onVideoThumbnailClick={ onVideoThumbnailClick }
 							isVideoExpanded={ isExpanded }
-							isCompactPost={ true }
+							isCompactPost
 							hasExcerpt={ hasExcerpt }
 						/>
 					</div>

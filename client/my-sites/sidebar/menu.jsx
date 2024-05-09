@@ -109,7 +109,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
 				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
 				count={ count }
-				hideExpandableIcon={ true }
+				hideExpandableIcon
 				inlineText={ props.inlineText }
 				href={ link }
 				{ ...props }
@@ -126,7 +126,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 							{ ...item }
 							selected={ isSelected }
 							trackClickEvent={ trackClickEvent }
-							isSubItem={ true }
+							isSubItem
 							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
 							forceShowExternalIcon={ shouldForceShowExternalIcon( item ) }
 						/>

@@ -53,7 +53,7 @@ describe( '<SitesGridItem>', () => {
 					site={ makeTestSite( { title: 'The example site' } ) as SiteExcerptData }
 					showLaunchNag={ false }
 					showBadgeSection={ false }
-					showThumbnailLink={ true }
+					showThumbnailLink
 					showSiteRenewLink={ false }
 				/>
 			)

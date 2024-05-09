@@ -255,7 +255,7 @@ class TransferDomainStep extends Component {
 					<div className="transfer-domain-step__add-domain" role="group">
 						<FormTextInput
 							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus={ true }
+							autoFocus
 							value={ searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
@@ -426,7 +426,7 @@ class TransferDomainStep extends Component {
 								},
 							} )
 						}
-						showIcon={ true }
+						showIcon
 						event="domains_transfer_plan_required"
 					/>
 					{ content }

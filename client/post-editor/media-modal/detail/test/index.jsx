@@ -71,7 +71,7 @@ describe( 'EditorMediaModalDetailItem', () => {
 			<DetailItem
 				item={ DUMMY_VIDEO_MEDIA }
 				isVideoPressEnabled={ isVideoPressEnabled }
-				isSitePrivate={ true }
+				isSitePrivate
 				{ ...SHARED_PROPS }
 			/>
 		);
@@ -90,9 +90,7 @@ describe( 'EditorMediaModalDetailItem', () => {
 	} );
 
 	test( 'should not display edit button for an image on a private site', () => {
-		renderWithRedux(
-			<DetailItem item={ DUMMY_IMAGE_MEDIA } isSitePrivate={ true } { ...SHARED_PROPS } />
-		);
+		renderWithRedux( <DetailItem item={ DUMMY_IMAGE_MEDIA } isSitePrivate { ...SHARED_PROPS } /> );
 
 		expect( screen.queryByRole( 'button', { name: /edit/i } ) ).not.toBeInTheDocument();
 	} );

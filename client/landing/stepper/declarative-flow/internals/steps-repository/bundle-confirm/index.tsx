@@ -318,7 +318,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 			stepName="bundle-confirm"
 			goBack={ goBack }
 			hideSkip
-			isHorizontalLayout={ true }
+			isHorizontalLayout
 			formattedHeader={
 				<FormattedHeader
 					id="bundle-confirm-title-header"

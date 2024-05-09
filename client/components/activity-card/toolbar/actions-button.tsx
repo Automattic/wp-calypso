@@ -133,7 +133,7 @@ const MultisiteActionsButton: React.FC< MultisiteOwnProps > = ( { siteSlug, rewi
 	return (
 		<Button
 			compact
-			isPrimary={ true }
+			isPrimary
 			href={ backupDownloadPath( siteSlug, rewindId ) }
 			className="toolbar__download-button--multisite"
 		>

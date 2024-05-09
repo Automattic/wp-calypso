@@ -17,7 +17,7 @@ const Container = ( props ) => {
 			<Popover
 				className="theme-card__tooltip"
 				context={ currentRef }
-				isVisible={ true }
+				isVisible
 				showDelay={ 0 }
 				{ ...props }
 			>

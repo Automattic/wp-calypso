@@ -285,7 +285,7 @@ function UseMyDomain( props ) {
 				baseClassName="connect-domain-step"
 				domain={ domainName }
 				initialPageSlug={ ownershipVerificationFlowPageSlug }
-				isOwnershipVerificationFlow={ true }
+				isOwnershipVerificationFlow
 				onConnect={ onConnect }
 				onSetPage={ setOwnershipVerificationFlowPageSlug }
 				stepsDefinition={ connectADomainOwnershipVerificationStepsDefinition }

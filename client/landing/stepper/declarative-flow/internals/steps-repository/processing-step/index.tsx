@@ -148,8 +148,8 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		<>
 			<DocumentHead title={ __( 'Processing' ) } />
 			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
+				shouldHideNavButtons
+				hideFormattedHeader
 				stepName="processing-step"
 				stepContent={
 					<>

@@ -186,7 +186,7 @@ export default function RevokeLicenseDialog( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			buttons={ buttons }
 			additionalClassNames="revoke-license-dialog"
 			onClose={ close }

@@ -79,7 +79,7 @@ const GoogleAnalyticsSimpleForm = ( {
 				event="google_analytics_settings"
 				feature={ FEATURE_GOOGLE_ANALYTICS }
 				plan={ plan }
-				showIcon={ true }
+				showIcon
 				title={ nudgeTitle }
 			/>
 		);
@@ -142,7 +142,7 @@ const GoogleAnalyticsSimpleForm = ( {
 								/>
 								{ ! isCodeValid && (
 									<FormTextValidation
-										isError={ true }
+										isError
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }

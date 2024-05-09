@@ -27,7 +27,7 @@ class SecurityCheckupAccountRecoveryPhone extends Component {
 		} = this.props;
 
 		if ( accountRecoveryPhoneActionInProgress ) {
-			return <SecurityCheckupNavigationItem isPlaceholder={ true } />;
+			return <SecurityCheckupNavigationItem isPlaceholder />;
 		}
 
 		let icon;

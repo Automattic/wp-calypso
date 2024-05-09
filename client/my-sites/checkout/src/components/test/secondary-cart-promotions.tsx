@@ -100,7 +100,7 @@ describe( 'SecondaryCartPromotions', () => {
 						<SecondaryCartPromotions
 							responseCart={ responseCartWithRenewal }
 							addItemToCart={ jest.fn() }
-							isPurchaseRenewal={ true }
+							isPurchaseRenewal
 						/>
 					</TestWrapper>
 				);
@@ -115,7 +115,7 @@ describe( 'SecondaryCartPromotions', () => {
 						<SecondaryCartPromotions
 							responseCart={ responseCartWithRenewal }
 							addItemToCart={ mockAddItemToCart }
-							isPurchaseRenewal={ true }
+							isPurchaseRenewal
 						/>
 					</TestWrapper>
 				);

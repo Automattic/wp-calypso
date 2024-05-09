@@ -65,8 +65,8 @@ export default function CheckoutPaymentMethods( {
 						label={ paymentMethod.label }
 						activeContent={ paymentMethod.activeContent }
 						inactiveContent={ paymentMethod.inactiveContent }
-						checked={ true }
-						summary={ true }
+						checked
+						summary
 						ariaLabel={ paymentMethod.getAriaLabel( __ as ( text: string ) => string ) }
 					/>
 				</CheckoutErrorBoundary>

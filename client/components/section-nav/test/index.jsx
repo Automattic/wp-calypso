@@ -96,7 +96,7 @@ describe( 'section-nav', () => {
 			Object.defineProperty( window, 'innerWidth', { value: 400 } );
 
 			render(
-				<NavTabs label="Status" hasHorizontalScroll={ true }>
+				<NavTabs label="Status" hasHorizontalScroll>
 					<NavItem path="/demo" selected>
 						Demo
 					</NavItem>
@@ -112,7 +112,7 @@ describe( 'section-nav', () => {
 
 			render(
 				<SectionNav selectedText="Test">
-					<NavTabs label="Status" hasHorizontalScroll={ true }>
+					<NavTabs label="Status" hasHorizontalScroll>
 						<NavItem path="/demo" selected>
 							Demo
 						</NavItem>

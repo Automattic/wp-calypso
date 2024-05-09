@@ -177,10 +177,7 @@ export class RegistrantExtraInfoCaForm extends PureComponent<
 							} ) }
 						</span>
 						{ ciraAgreementAccepted || (
-							<FormInputValidation
-								text={ this.getCiraAgreementAcceptedErrorMessage() }
-								isError={ true }
-							/>
+							<FormInputValidation text={ this.getCiraAgreementAcceptedErrorMessage() } isError />
 						) }
 					</FormLabel>
 				</FormFieldset>

@@ -68,7 +68,7 @@ describe( '<DesignPicker /> integration', () => {
 				designs={ designs }
 				onSelect={ jest.fn() }
 				recommendedCategorySlug={ null }
-				previewOnly={ true }
+				previewOnly
 				hasDesignOptionHeader={ false }
 				onPreview={ () => true }
 			/>

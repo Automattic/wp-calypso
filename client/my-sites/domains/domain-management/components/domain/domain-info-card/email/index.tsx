@@ -45,7 +45,7 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 				args: { domainName: domain.name },
 			} ) }
 			ctaText={ translate( 'Add professional email' ) }
-			isPrimary={ true }
+			isPrimary
 			buttonDisabled={ domain.isMoveToNewSitePending }
 		/>
 	) : (

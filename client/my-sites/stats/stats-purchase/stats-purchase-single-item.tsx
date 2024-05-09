@@ -253,7 +253,7 @@ const StatsPersonalPurchase = ( {
 				adminUrl={ adminUrl }
 				redirectUri={ redirectUri }
 				from={ from }
-				isStandalone={ true }
+				isStandalone
 			/>
 		</>
 	);

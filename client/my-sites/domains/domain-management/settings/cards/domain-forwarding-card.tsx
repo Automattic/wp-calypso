@@ -490,7 +490,7 @@ export default function DomainForwardingCard( {
 				</div>
 				{ ! isValidUrl && (
 					<div className="domain-forwarding-card__error-field">
-						<FormInputValidation isError={ true } text={ errorMessage } />
+						<FormInputValidation isError text={ errorMessage } />
 					</div>
 				) }
 				<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
@@ -605,7 +605,7 @@ export default function DomainForwardingCard( {
 		<>
 			{ renderNotice() }
 			{ renderNoticeForPrimaryDomain() }
-			{ forceReloadDns && <QueryDomainDns domain={ domain.name } forceReload={ true } /> }
+			{ forceReloadDns && <QueryDomainDns domain={ domain.name } forceReload /> }
 			<form
 				onSubmit={ ( e ) => {
 					e.preventDefault();

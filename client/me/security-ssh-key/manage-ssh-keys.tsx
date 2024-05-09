@@ -59,7 +59,7 @@ const SSHKey = ( {
 				</SSHKeyCard.Date>
 			</SSHKeyCard.Details>
 			<SSHKeyCard.Button
-				primary={ true }
+				primary
 				scary={ false }
 				disabled={ areButtonsDisabled }
 				onClick={ handleUpdateClick }

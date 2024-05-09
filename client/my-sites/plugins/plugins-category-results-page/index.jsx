@@ -30,7 +30,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 
 	return (
 		<>
-			<UpgradeNudge siteSlug={ siteSlug } paidPlugins={ true } />
+			<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
 			<PluginsBrowserList
 				title={ categoryName }
 				subtitle={ categoryDescription }

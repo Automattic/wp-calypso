@@ -75,7 +75,7 @@ describe( '<PagePatternModal>', () => {
 		const insertPattern = jest.fn();
 		render(
 			<PagePatternModal
-				isOpen={ true }
+				isOpen
 				patterns={ patterns }
 				insertPattern={ insertPattern }
 				savePatternChoice={ noop }
@@ -98,7 +98,7 @@ describe( '<PagePatternModal>', () => {
 		const insertPattern = jest.fn();
 		render(
 			<PagePatternModal
-				isOpen={ true }
+				isOpen
 				patterns={ patterns }
 				insertPattern={ insertPattern }
 				savePatternChoice={ noop }
@@ -121,7 +121,7 @@ describe( '<PagePatternModal>', () => {
 		const insertPattern = jest.fn();
 		render(
 			<PagePatternModal
-				isOpen={ true }
+				isOpen
 				patterns={ patterns }
 				insertPattern={ insertPattern }
 				savePatternChoice={ noop }

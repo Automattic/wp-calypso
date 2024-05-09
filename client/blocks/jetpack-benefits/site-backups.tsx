@@ -74,7 +74,7 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 					headline={ translate( 'Site Backups' ) }
 					description={ translate( 'Loading backup data' ) }
 					stat={ translate( 'Placeholder' ) }
-					placeholder={ true }
+					placeholder
 				/>
 			</React.Fragment>
 		);

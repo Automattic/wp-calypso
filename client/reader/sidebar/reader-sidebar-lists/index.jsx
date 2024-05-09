@@ -27,7 +27,7 @@ export class ReaderSidebarLists extends Component {
 					title={ translate( 'Lists' ) }
 					onClick={ onClick }
 					customIcon={ <ReaderListIcon /> }
-					disableFlyout={ true }
+					disableFlyout
 					className={ path.startsWith( '/read/list' ) && 'sidebar__menu--selected' }
 				>
 					<li>

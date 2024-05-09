@@ -70,11 +70,11 @@ export const ImportWrapper: Step = function ( props ) {
 				className="import__onboarding-page"
 				hideSkip={ shouldHideSkipBtn() }
 				hideBack={ shouldHideBackBtn }
-				hideFormattedHeader={ true }
+				hideFormattedHeader
 				goBack={ navigation.goBack }
 				goNext={ getGoNext() }
 				skipLabelText={ getSkipLabelText() }
-				isFullLayout={ true }
+				isFullLayout
 				stepContent={ children as ReactElement }
 				recordTracksEvent={ recordTracksEvent }
 			/>

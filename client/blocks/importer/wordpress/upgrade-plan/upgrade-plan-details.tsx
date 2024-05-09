@@ -52,14 +52,14 @@ export const UpgradePlanDetails = ( props: Props ) => {
 			<div className={ classnames( 'import__upgrade-plan-period-switcher' ) }>
 				<ButtonGroup>
 					<Button
-						borderless={ true }
+						borderless
 						className={ classnames( { selected: selectedPlan === PLAN_BUSINESS_MONTHLY } ) }
 						onClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
 					>
 						{ __( 'Pay monthly' ) }
 					</Button>
 					<Button
-						borderless={ true }
+						borderless
 						className={ classnames( { selected: selectedPlan === PLAN_BUSINESS } ) }
 						onClick={ () => setSelectedPlan( PLAN_BUSINESS ) }
 					>

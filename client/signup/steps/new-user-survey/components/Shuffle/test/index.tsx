@@ -71,7 +71,7 @@ function MockComponent( { children, childOrderOverride, isShuffleActive }: MockC
 describe( 'Shuffle Component', () => {
 	test( 'Given an order of ids renders according to the given order', () => {
 		const { getByTestId } = render(
-			<MockComponent childOrderOverride={ [ '5', '4', '3', '2', '1' ] } isShuffleActive={ true } />
+			<MockComponent childOrderOverride={ [ '5', '4', '3', '2', '1' ] } isShuffleActive />
 		);
 		expect( getByTestId( '1' ) ).toHaveTextContent( 'Child 5' );
 		expect( getByTestId( '2' ) ).toHaveTextContent( 'Child 4' );
@@ -81,7 +81,7 @@ describe( 'Shuffle Component', () => {
 	} );
 
 	test( 'Given no order renders a random order accurately', () => {
-		const { getByTestId } = render( <MockComponent isShuffleActive={ true } /> );
+		const { getByTestId } = render( <MockComponent isShuffleActive /> );
 		const debugPrint = getByTestId( DEBUG_PRINT_DIV_ID );
 		const finalOrder = debugPrint.textContent?.split( ',' ) ?? [];
 

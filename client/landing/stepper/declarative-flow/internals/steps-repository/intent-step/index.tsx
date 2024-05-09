@@ -42,7 +42,7 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 			goNext={ goNext }
 			skipLabelText={ translate( 'Skip to dashboard' ) }
 			skipButtonAlign="top"
-			isHorizontalLayout={ true }
+			isHorizontalLayout
 			formattedHeader={
 				<FormattedHeader
 					id="intent-header"

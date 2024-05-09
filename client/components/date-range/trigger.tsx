@@ -58,7 +58,7 @@ const DateRangeTrigger: FunctionComponent< Props > = ( {
 				ref={ buttonRef }
 				onClick={ onTriggerClick }
 				compact={ isCompact }
-				aria-haspopup={ true }
+				aria-haspopup
 				aria-label={ translate( 'Select date range' ) }
 			>
 				<Gridicon className="date-range__trigger-btn-icon" icon="calendar" aria-hidden="true" />

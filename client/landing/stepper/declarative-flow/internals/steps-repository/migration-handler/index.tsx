@@ -92,9 +92,9 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 		<>
 			<DocumentHead title={ getCurrentMessage() } />
 			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
-				isWideLayout={ true }
+				shouldHideNavButtons
+				hideFormattedHeader
+				isWideLayout
 				stepName="migration-handler"
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={ renderContent() }

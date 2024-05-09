@@ -116,7 +116,7 @@ const IntroPricingBanner: React.FC = () => {
 							// won't worry about localizing the link for now. Although we may want to localize it
 							// in the future when/if the page gets translated & posted to other languages/locales.
 							href={ JETPACK_COM_A4A_LANDING_PAGE }
-							icon={ true }
+							icon
 							iconClassName="intro-pricing-banner__external-link-icon"
 							iconSize={ 15 }
 						>

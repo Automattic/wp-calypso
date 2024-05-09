@@ -516,7 +516,7 @@ class RegisterDomainStep extends Component {
 						<Notice
 							status="is-error"
 							text={ replaceDomainFailedMessage }
-							showDismiss={ true }
+							showDismiss
 							onDismissClick={ dismissReplaceDomainFailed }
 						/>
 					) }

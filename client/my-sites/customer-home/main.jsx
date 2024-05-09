@@ -261,7 +261,7 @@ const Home = ( {
 					}
 				) }
 				icon="cross-circle"
-				showDismiss={ true }
+				showDismiss
 				onDismissClick={ () => {
 					setDismissedEmailDnsDiagnostics( true );
 					setDomainNotice( primaryDomain.name, 'email-dns-records-diagnostics', 'ignored', () => {

@@ -167,7 +167,7 @@ export const SimpleLicenseItemCard = ( {
 					quantity={ bundleSize }
 					ctaLabel={ translate( 'Select license' ) }
 					isCTAExternalLink={ false }
-					isCTAPrimary={ true }
+					isCTAPrimary
 					isDisabled={ false }
 					onActivate={ onSelectProduct }
 					onClose={ onHideLightbox }

@@ -420,7 +420,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			onClose={ onClose }
 			buttons={ [
 				{
@@ -571,7 +571,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				<ProductsSelector
 					onSelectedPlanIdsChange={ ( list ) => setEditedPlanIdsAllowList( list ) }
 					initialSelectedList={ editedPlanIdsAllowList }
-					allowMultiple={ true }
+					allowMultiple
 				/>
 				<FormFieldset className="memberships__dialog-sections-usage-limit">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Usage limit (optional)' ) }</FormLabel>

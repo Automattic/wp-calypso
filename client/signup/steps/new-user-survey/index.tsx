@@ -172,7 +172,7 @@ function SurveyForm( props: Props ) {
 			<StyledCard currentViewport={ currentViewport }>
 				<CardContent>
 					<FormFieldset>
-						<CardHeading tagName="h5" isBold={ true } size={ 18 }>
+						<CardHeading tagName="h5" isBold size={ 18 }>
 							{ currentViewport === 'mobile'
 								? translate( 'What are your top goals?' )
 								: translate(
@@ -231,7 +231,7 @@ function SurveyForm( props: Props ) {
 						</OptionsContainer>
 					</FormFieldset>
 					<FormFieldset>
-						<CardHeading tagName="h5" isBold={ true } size={ 18 }>
+						<CardHeading tagName="h5" isBold size={ 18 }>
 							{ translate( 'What best describes you?' ) }
 						</CardHeading>
 						<OptionsContainer>
@@ -335,7 +335,7 @@ export default function NewUserSurvey( props: Props ) {
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			isWideLayout={ false }
-			isExtraWideLayout={ true }
+			isExtraWideLayout
 			hideSkip={ false }
 			skipButtonAlign="top"
 			goToNextStep={ handleSkip }

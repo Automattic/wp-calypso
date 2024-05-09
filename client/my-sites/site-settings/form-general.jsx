@@ -659,7 +659,7 @@ export class SiteSettingsFormGeneral extends Component {
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
-								showIcon={ true }
+								showIcon
 								event="settings_remove_footer"
 								tracksImpressionName="calypso_upgrade_nudge_impression"
 								tracksClickName="calypso_upgrade_nudge_cta_click"

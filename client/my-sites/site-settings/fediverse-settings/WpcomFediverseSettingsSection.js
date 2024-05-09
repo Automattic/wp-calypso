@@ -79,12 +79,7 @@ const DomainPendingWarning = ( { siteId, domains } ) => {
 		  );
 
 	return (
-		<Notice
-			status="is-warning"
-			translate={ translate }
-			isCompact={ true }
-			className="is-full-width"
-		>
+		<Notice status="is-warning" translate={ translate } isCompact className="is-full-width">
 			{ message }
 		</Notice>
 	);
@@ -218,7 +213,7 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 					onChange={ ( value ) => setEnabled( value ) }
 				/>
 				{ isPrivate && (
-					<Notice status="is-warning" translate={ translate } isCompact={ true }>
+					<Notice status="is-warning" translate={ translate } isCompact>
 						{ translate(
 							'You cannot enter the fediverse until your site is publicly launched. {{link}}Review Privacy settings{{/link}}.',
 							{

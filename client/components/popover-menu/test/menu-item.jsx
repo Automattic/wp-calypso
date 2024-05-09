@@ -21,7 +21,7 @@ describe( 'PopoverMenuItem', () => {
 	} );
 
 	test( 'should be an ExternalLink if the isExternalLink prop is true and the href prop is set', () => {
-		const { container } = render( <PopoverMenuItem isExternalLink={ true } href="xyz" /> );
+		const { container } = render( <PopoverMenuItem isExternalLink href="xyz" /> );
 		expect( container.firstChild.tagName ).toEqual( 'A' );
 		expect( container.firstChild.getAttribute( 'target' ) ).toEqual( '_blank' );
 	} );

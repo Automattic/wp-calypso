@@ -24,7 +24,7 @@ export default function NoticeTemplate( { id, CTA, tracks, ...props } ) {
 			showIcon={ !! props.icon }
 			description={ props.description }
 			href={ CTA.link }
-			disableHref={ true }
+			disableHref
 			callToAction={ CTA.message }
 			onClick={ props.onClick }
 			onDismissClick={ props.onDismiss }

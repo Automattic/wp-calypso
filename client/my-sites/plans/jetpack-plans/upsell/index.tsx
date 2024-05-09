@@ -184,7 +184,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 
 					<div className="jetpack-upsell__card">
 						<div className="jetpack-upsell__card-header">
-							<Gridicon icon="star" size={ 18 } aria-hidden={ true } />
+							<Gridicon icon="star" size={ 18 } aria-hidden />
 							{ translate( 'Best value' ) }
 						</div>
 						<div className="jetpack-upsell__card-body">
@@ -204,7 +204,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 													<Gridicon
 														icon={ isProductSelected ? 'checkmark' : 'plus' }
 														size={ 18 }
-														aria-hidden={ true }
+														aria-hidden
 													/>
 												</span>
 												<span className="jetpack-upsell__features-product">

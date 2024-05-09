@@ -10,7 +10,7 @@ export const SecurityCheckupSSHKey = () => {
 	const { __ } = useI18n();
 
 	if ( isLoading ) {
-		return <SecurityCheckupNavigationItem isPlaceholder={ true } />;
+		return <SecurityCheckupNavigationItem isPlaceholder />;
 	}
 
 	return (

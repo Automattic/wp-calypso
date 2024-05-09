@@ -899,7 +899,7 @@ class Login extends Component {
 							userEmail={ userEmail }
 							handleUsernameChange={ handleUsernameChange }
 							signupUrl={ signupUrl }
-							showSocialLoginFormOnly={ true }
+							showSocialLoginFormOnly
 							sendMagicLoginLink={ this.sendMagicLoginLink }
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 						/>
