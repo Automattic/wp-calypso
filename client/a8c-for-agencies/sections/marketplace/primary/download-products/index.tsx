@@ -7,7 +7,6 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AssignLicenseStepProgress from '../../assign-license-step-progress';
 import DownloadProductsForm from '../../download-products-form';
 
@@ -27,11 +26,6 @@ export default function DownloadProducts() {
 
 	return (
 		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
-			<PageViewTracker
-				title="Marketplace > Download Products"
-				path="/marketplace/download-products"
-			/>
-
 			<LayoutTop>
 				<AssignLicenseStepProgress currentStep="downloadProducts" showDownloadStep />
 

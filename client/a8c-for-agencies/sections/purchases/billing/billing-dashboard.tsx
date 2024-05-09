@@ -9,7 +9,6 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import BillingDetails from './billing-details';
@@ -31,8 +30,6 @@ export default function BillingDashboard() {
 
 	return (
 		<Layout className="billing-dashboard" title={ title } wide>
-			<PageViewTracker title="Purchases > Billing" path="/purchases/billing" />
-
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title } </Title>

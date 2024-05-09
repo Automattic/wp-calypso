@@ -51,7 +51,7 @@ function configureSitesContext( context: Context ) {
 		>
 			<PageViewTracker
 				title="Sites"
-				path="/sites/:category/:siteUrl/:feature"
+				path={ context.path }
 				properties={ {
 					category: context.params.category,
 					siteUrl: context.params.siteUrl,
@@ -73,7 +73,12 @@ export const sitesContext: Callback = ( context: Context, next ) => {
 
 export const needsSetupContext: Callback = ( context: Context, next ) => {
 	context.secondary = <SitesSidebar path={ context.path } />;
-	context.primary = <NeedSetup />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Sites > Needs Setup" path={ context.path } />
+			<NeedSetup />
+		</>
+	);
 
 	next();
 };

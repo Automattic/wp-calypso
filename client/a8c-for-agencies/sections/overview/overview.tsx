@@ -8,7 +8,6 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import OverviewBody from './body';
 import OverviewHeaderActions from './header-actions';
 import OverviewSidebar from './sidebar';
@@ -21,8 +20,6 @@ export default function Overview() {
 
 	return (
 		<Layout title={ title } wide>
-			<PageViewTracker title="Overview" path="/overview" />
-
 			<LayoutTop>
 				<LayoutHeader className="a4a-overview-header">
 					<Title>{ title }</Title>

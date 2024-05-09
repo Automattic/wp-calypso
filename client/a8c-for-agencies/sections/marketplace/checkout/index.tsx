@@ -14,7 +14,6 @@ import {
 	A4A_MARKETPLACE_LINK,
 	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -106,8 +105,6 @@ export default function Checkout() {
 			compact
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<PageViewTracker title="Marketplace > Checkout" path="/marketplace/checkout" />
-
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb

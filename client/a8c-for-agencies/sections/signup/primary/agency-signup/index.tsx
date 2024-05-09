@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import { A4A_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
 import {
 	getActiveAgency,
@@ -36,8 +35,6 @@ export default function AgencySignup() {
 
 	return (
 		<>
-			<PageViewTracker title="A4A Signup" path="/signup" />
-
 			{ showSignupIntro && <SignupIntro wpAdminUrl={ wpAdminUrl } /> }
 			<SignupForm />
 		</>
