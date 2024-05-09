@@ -24,7 +24,6 @@ type TableProps = {
 	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
@@ -47,7 +46,6 @@ const Table = ( {
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
@@ -138,7 +136,6 @@ const Table = ( {
 							renderedGridPlans={ gridPlansWithoutSpotlight }
 							options={ { isTableCell: true, isStuck } }
 							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							planActionOverrides={ planActionOverrides }
 						/>

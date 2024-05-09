@@ -781,7 +781,6 @@ const PlansFeaturesMain = ( {
 										isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 										isInAdmin={ ! isInSignup }
 										isInSignup={ isInSignup }
-										isLaunchPage={ isLaunchPage }
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										paidDomainName={ isTrailMapCopy ? undefined : paidDomainName }
 										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
@@ -852,7 +851,6 @@ const PlansFeaturesMain = ( {
 													intervalType={ intervalType }
 													isInAdmin={ ! isInSignup }
 													isInSignup={ isInSignup }
-													isLaunchPage={ isLaunchPage }
 													onStorageAddOnClick={ handleStorageAddOnClick }
 													planTypeSelectorProps={
 														! hidePlanSelector

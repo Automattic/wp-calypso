@@ -100,7 +100,6 @@ export interface CommonGridProps {
 	siteId?: number | null;
 	isInSignup: boolean;
 	isInAdmin: boolean;
-	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	intervalType: string;

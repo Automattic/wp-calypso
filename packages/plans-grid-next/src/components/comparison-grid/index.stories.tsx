@@ -54,7 +54,6 @@ const defaultProps: Omit< ComparisonGridExternalProps, 'gridPlans' > = {
 	intervalType: 'yearly',
 	isInAdmin: false,
 	isInSignup: true,
-	isLaunchPage: false,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
 	planUpgradeCreditsApplicable: undefined,

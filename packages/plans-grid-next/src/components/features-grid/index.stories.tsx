@@ -75,7 +75,6 @@ const defaultProps: Omit< FeaturesGridExternalProps, 'gridPlans' > = {
 	isCustomDomainAllowedOnFreePlan: false,
 	isInAdmin: false,
 	isInSignup: true,
-	isLaunchPage: false,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
 	planUpgradeCreditsApplicable: undefined,

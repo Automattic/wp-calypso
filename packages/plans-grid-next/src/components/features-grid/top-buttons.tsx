@@ -13,7 +13,6 @@ import PlanDivOrTdContainer from '../plan-div-td-container';
 type TopButtonsProps = {
 	currentSitePlanSlug?: string | null;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	planActionOverrides?: PlanActionOverrides;
 	renderedGridPlans: GridPlan[];
 	options?: {
@@ -25,7 +24,6 @@ type TopButtonsProps = {
 const TopButtons = ( {
 	currentSitePlanSlug,
 	isInSignup,
-	isLaunchPage,
 	options,
 	planActionOverrides,
 	renderedGridPlans,
@@ -67,7 +65,6 @@ const TopButtons = ( {
 					<PlanFeatures2023GridActions
 						availableForPurchase={ availableForPurchase }
 						isInSignup={ isInSignup }
-						isLaunchPage={ isLaunchPage }
 						isMonthlyPlan={ isMonthlyPlan }
 						planSlug={ planSlug }
 						currentSitePlanSlug={ currentSitePlanSlug }

@@ -27,7 +27,6 @@ const WrappedComparisonGrid = ( {
 	allFeaturesList,
 	intervalType,
 	isInSignup,
-	isLaunchPage,
 	currentSitePlanSlug,
 	selectedPlan,
 	selectedFeature,
@@ -80,7 +79,6 @@ const WrappedComparisonGrid = ( {
 				<ComparisonGrid
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }

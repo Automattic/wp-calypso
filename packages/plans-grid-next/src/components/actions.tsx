@@ -36,7 +36,6 @@ type PlanFeaturesActionsButtonProps = {
 	currentSitePlanSlug?: string | null;
 	isPopular?: boolean;
 	isInSignup?: boolean;
-	isLaunchPage?: boolean | null;
 	isMonthlyPlan?: boolean;
 	planSlug: PlanSlug;
 	buttonText?: string;
@@ -308,7 +307,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	availableForPurchase = true,
 	currentSitePlanSlug,
 	isInSignup,
-	isLaunchPage,
 	planSlug,
 	buttonText,
 	isStuck,
@@ -373,7 +371,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		selectedStorageAddOn,
 	} );
 
-	if ( isInSignup || isLaunchPage || isWpcomEnterpriseGridPlan( planSlug ) ) {
+	if ( isInSignup || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
 			<PlanFeatureActionButton
 				planSlug={ planSlug }
