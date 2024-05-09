@@ -235,7 +235,6 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 			$data['calypso_preferences']['odie_last_chat_id'] = $last_chat_id;
 		}
 
-		// Forward the request body to the support chat endpoint.
 		$body = Client::wpcom_json_api_request_as_user(
 			'/me/preferences',
 			2,
