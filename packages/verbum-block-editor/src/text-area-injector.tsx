@@ -21,7 +21,7 @@ export const attachGutenberg = (
 	const editor = document.createElement( 'div' );
 	editor.className = 'verbum-editor-wrapper';
 
-	setLocale( 'es' ).then( () => {
+	setLocale( document.documentElement.lang ).then( () => {
 		// Insert after the textarea, and hide it
 		textarea.after( editor );
 		textarea.style.display = 'none';
