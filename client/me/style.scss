@@ -15,6 +15,7 @@ body.is-section-me {
 		// Add border around everything
 		overflow: hidden;
 		min-height: 100vh;
+		padding-bottom: 0;
 		@media only screen and (min-width: 782px) {
 			padding: 16px 16px 16px calc(var(--sidebar-width-max)) !important;
 		}
