@@ -11,6 +11,7 @@ import DismissibleCard from 'calypso/blocks/dismissible-card';
 import AsyncLoad from 'calypso/components/async-load';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarMenuItem from 'calypso/layout/global-sidebar/menu-items/menu-item';
+import { isE2ETest } from 'calypso/lib/e2e';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -150,7 +151,9 @@ class SidebarNotifications extends Component {
 			this.props.currentUserId < 250450000 &&
 			// Show pointer only if translated.
 			( englishLocales.includes( this.props.locale ) ||
-				hasTranslation( 'Looking for your notifications? They have been moved here.' ) );
+				hasTranslation( 'Looking for your notifications? They have been moved here.' ) ) &&
+			// Hide pointer on E2E tests so it doesn't hide menu items that are expected to be visible.
+			! isE2ETest();
 
 		return (
 			<>
