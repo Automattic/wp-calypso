@@ -9,15 +9,25 @@
 	font-weight: 600;
 }
 .referrals-overview__section-subtitle {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 	font-size: rem(14px);
 	font-weight: 400;
 	margin-block-end: 48px;
 	color: var(--color-neutral-50);
+}
 
+
+.referrals-overview__step-section-woo-payments {
 	a,
 	a:visited {
 		color: var(--color-neutral-100);
 		text-decoration: underline;
+	}
+
+	.step-section-item__icon {
+		opacity: 1;
 	}
 }
 
