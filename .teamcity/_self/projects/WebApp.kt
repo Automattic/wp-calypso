@@ -865,13 +865,13 @@ object PreReleaseE2ETests : BuildType({
 				set +o errexit
 
 				# Run suite.
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release
 
 				# Restore exit on error.
 				set -o errexit
 
 				# Retry failed tests only.
-				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
+				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}

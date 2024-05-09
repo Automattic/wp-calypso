@@ -63,7 +63,7 @@ const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=4 --workerIdl
 const testServer = withUnitTestInfo( 'test-server --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
 const testBuildTools = withUnitTestInfo( 'test-build-tools --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
 // Includes ETK and Odyssey Stats, migrated here from their individual builds.
-const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1' );
+const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
 
 const testWorkspaces = {
 	name: 'yarn',
