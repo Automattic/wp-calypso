@@ -29,7 +29,7 @@
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/verbum-block-editor",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"prepare": "yarn build",
-		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/block-editor.min.js' --dir './dist/strings' --output './dist/vbe-strings.pot' && node bin/build-languages.js"
+		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/block-editor.min.js' --dir './dist/strings' --output './dist/vbe-strings.pot' && build-app-languages --stringsFilePath='./dist/vbe-strings.pot'"
 	},
 	"dependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
