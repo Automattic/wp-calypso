@@ -181,17 +181,14 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 					{ patternsToDisplay.map( ( pattern ) => (
 						<PatternPreview
 							canCopy={ isLoggedIn || pattern.can_be_copied_without_account }
-							category={ category }
 							className={ classNames( {
 								'pattern-preview--grid': isGridView,
 								'pattern-preview--list': ! isGridView,
 							} ) }
 							getPatternPermalink={ getPatternPermalink }
-							isGridView={ isGridView }
 							isResizable={ ! isGridView }
 							key={ pattern.ID }
 							pattern={ pattern }
-							patternTypeFilter={ patternTypeFilter }
 							viewportWidth={ isGridView ? GRID_VIEW_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }
