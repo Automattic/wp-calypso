@@ -286,11 +286,16 @@ $brand-text: "SF Pro Text", $sans;
 		.sidebar__footer-language-switcher,
 		.sidebar__footer-link,
 		.sidebar__item-help,
-		.sidebar__item-notifications,
 		.sidebar__item-search {
-			&:hover {
+			&:hover,
+			&.is-active {
 				background-color: var(--color-sidebar-menu-hover-background);
 				border-radius: 4px;
+			}
+			&.is-active {
+				svg path {
+					fill: var(--color-sidebar-gridicon-hover-fill);
+				}
 			}
 		}
 	}
@@ -301,7 +306,16 @@ $brand-text: "SF Pro Text", $sans;
 			path {
 				stroke: var(--color-sidebar-gridicon-fill);
 			}
-			&:hover {
+		}
+		&:hover {
+			.sidebar__menu-icon.sidebar_svg-notifications {
+				fill: var(--color-sidebar-menu-hover-background);
+			}
+		}
+		&.is-active {
+			background-color: var(--color-sidebar-menu-hover-background);
+			.sidebar__menu-icon.sidebar_svg-notifications {
+				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					stroke: var(--color-sidebar-gridicon-hover-fill);
 				}
@@ -310,9 +324,6 @@ $brand-text: "SF Pro Text", $sans;
 		&.has-unread .sidebar__menu-icon.sidebar_svg-notifications path {
 			fill: var(--color-sidebar-gridicon-fill);
 			stroke: unset;
-			&:hover {
-				fill: var(--color-sidebar-gridicon-hover-fill);
-			}
 		}
 	}
 
