@@ -346,10 +346,6 @@ export default function CheckoutMainContent( {
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
 	);
 
-	// Only show the site preview for WPCOM domains that have a site connected to the site id
-	const shouldShowSitePreview =
-		showSitePreview && selectedSiteData && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
-
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
 	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
@@ -541,13 +537,20 @@ export default function CheckoutMainContent( {
 								className="checkout__summary-body"
 								shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 							>
-								{ shouldShowSitePreview && (
-									<div className="checkout-site-preview">
-										<SitePreviewWrapper>
-											<SitePreview showEditSite={ false } showSiteDetails={ false } />
-										</SitePreviewWrapper>
-									</div>
-								) }
+								{ /*
+								 * Only show the site preview for WPCOM domains that have a site connected to the site id
+								 * */ }
+								{ showSitePreview &&
+									selectedSiteData &&
+									wpcomDomain &&
+									! isSignupCheckout &&
+									! isDIFMInCart && (
+										<div className="checkout-site-preview">
+											<SitePreviewWrapper>
+												<SitePreview showEditSite={ false } showSiteDetails={ false } />
+											</SitePreviewWrapper>
+										</div>
+									) }
 
 								<WPCheckoutOrderSummary
 									siteId={ siteId }
