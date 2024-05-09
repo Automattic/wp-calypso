@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
+import { useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
@@ -21,6 +22,7 @@ import DomainInformation from './domain-information';
 import HeadingInformation from './heading-information';
 import HostingInformation from './hosting-information';
 import HostingIntro from './hosting-intro';
+import { MetricsMenu } from './metrics-menu';
 import './styles.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
@@ -32,6 +34,8 @@ interface Props {
 
 export default function SiteProfiler( props: Props ) {
 	const { routerDomain } = props;
+	const basicMetricsRef = useRef( null );
+
 	const {
 		domain,
 		category: domainCategory,
@@ -151,7 +155,8 @@ export default function SiteProfiler( props: Props ) {
 					) }
 					{ showBasicMetrics && (
 						<LayoutBlockSection>
-							<BasicMetrics basicMetrics={ basicMetrics.basic } />
+							<MetricsMenu basicMetricsRef={ basicMetricsRef } />
+							<BasicMetrics ref={ basicMetricsRef } basicMetrics={ basicMetrics.basic } />
 						</LayoutBlockSection>
 					) }
 				</LayoutBlock>
