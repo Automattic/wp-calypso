@@ -113,7 +113,9 @@ const entrepreneurFlow: Flow = {
 						);
 
 						if ( isMigrationFlow ) {
-							return window.location.replace( `/setup/migration-signup?siteSlug=${ stagingUrl }` );
+							return window.location.replace(
+								`/setup/migration-signup?siteSlug=${ stagingUrl }&ref=entrepreneur-signup`
+							);
 						}
 
 						const redirectTo = encodeURIComponent(
