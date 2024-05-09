@@ -5,11 +5,32 @@ import { upgradePlanSiteMetricsLcpThreshold } from '../constants';
 export const UseGetUpgradePlanSiteMetrics = () => {
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	const { data: siteMetricData } = useUrlBasicMetricsQuery( importSiteQueryParam );
-	const showUpdatedSpeedMetrics =
-		siteMetricData?.basic?.lcp && siteMetricData?.basic?.lcp > upgradePlanSiteMetricsLcpThreshold;
+	let showUpdatedSpeedMetrics = false;
+	let lcpPercentageDifference = 0;
+
+	if (
+		siteMetricData?.basic?.lcp &&
+		siteMetricData?.basic?.lcp > upgradePlanSiteMetricsLcpThreshold
+	) {
+		lcpPercentageDifference =
+			( siteMetricData?.basic?.lcp &&
+				Math.round(
+					100 *
+						Math.abs(
+							( siteMetricData?.basic?.lcp - upgradePlanSiteMetricsLcpThreshold ) /
+								( ( siteMetricData?.basic?.lcp + upgradePlanSiteMetricsLcpThreshold ) / 2 )
+						)
+				) ) ||
+			0;
+
+		if ( lcpPercentageDifference > 0 ) {
+			showUpdatedSpeedMetrics = true;
+		}
+	}
 
 	return {
 		showUpdatedSpeedMetrics,
 		siteMetricData,
+		lcpPercentageDifference,
 	};
 };
