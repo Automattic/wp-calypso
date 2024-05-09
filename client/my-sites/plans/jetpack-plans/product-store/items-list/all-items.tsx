@@ -2,6 +2,7 @@ import {
 	isJetpackAISlug,
 	isJetpackPlanSlug,
 	isJetpackSocialSlug,
+	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
@@ -101,7 +102,9 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					);
 
 					const isMultiPlanSelectProduct =
-						isJetpackSocialSlug( item.productSlug ) || isJetpackAISlug( item.productSlug );
+						isJetpackSocialSlug( item.productSlug ) ||
+						isJetpackAISlug( item.productSlug ) ||
+						isJetpackStatsPaidProductSlug( item.productSlug );
 
 					// Go to the checkout page for all products when they click on the 'GET' CTA,
 					// except for Jetpack Social when it isn't owned or included in an active plan,

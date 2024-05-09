@@ -51,7 +51,7 @@ const ProductSelect: FC< ProductSelectProps > = ( { product, siteId, onChangePro
 			<div className="product-lightbox__variants-options">
 				<MultipleChoiceQuestion
 					name="product-variants"
-					question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
+					question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] as string }
 					answers={ variantOptions }
 					selectedAnswerId={ product?.productSlug }
 					onAnswerChange={ onChangeOption }

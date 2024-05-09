@@ -1,4 +1,4 @@
-import { isJetpackAISlug } from '@automattic/calypso-products';
+import { isJetpackAISlug, isJetpackStatsSlug } from '@automattic/calypso-products';
 import { SelectDropdown } from '@automattic/components';
 import { useMemo, useCallback, type FC } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -20,7 +20,8 @@ interface QuantityDropdownProps {
 const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onChangeProduct } ) => {
 	const dispatch = useDispatch();
 	const listPrices = useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
-	const isProductWithTierList = isJetpackAISlug( product.productSlug );
+	const isProductWithTierList =
+		isJetpackAISlug( product.productSlug ) || isJetpackStatsSlug( product.productSlug );
 
 	const tierOptions = useMemo( () => {
 		if ( ! isProductWithTierList ) {
@@ -30,6 +31,10 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 		const tiers = listPrices.priceTierList || [];
 
 		return tiers.map( ( tier ) => {
+			if ( ! tier.maximum_units ) {
+				return;
+			}
+
 			const id = `${ product.productSlug }:-q-${ tier.maximum_units }`;
 
 			return {
@@ -67,7 +72,7 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 					className="product-lightbox__tiers-dropdown"
 					options={ tierOptions }
 					onSelect={ onDropdownTierSelect }
-					initialSelected={ tierOptions[ 0 ].value }
+					initialSelected={ tierOptions[ 0 ]?.value }
 				/>
 			</FormFieldset>
 		</div>
