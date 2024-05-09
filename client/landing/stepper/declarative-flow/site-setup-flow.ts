@@ -5,6 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
@@ -116,6 +117,7 @@ const siteSetupFlow: Flow = {
 		);
 
 		const { site, siteSlug, siteId } = useSiteData();
+		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
@@ -538,10 +540,12 @@ const siteSetupFlow: Flow = {
 						return navigate( `import?siteSlug=${ siteSlug }` );
 					}
 
-					urlQueryParams.set( 'showModal', 'true' );
+					if ( ! isSitePlanCompatible ) {
+						urlQueryParams.set( 'showModal', 'true' );
+						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					}
 
-					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
-
+					return navigate( `import?siteSlug=${ siteSlug }` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':
