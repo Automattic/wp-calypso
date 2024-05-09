@@ -63,7 +63,7 @@ project {
 		param("env.NODE_OPTIONS", "--max-old-space-size=8192")
 		text("JEST_E2E_WORKERS", "50%", label = "Jest max workers", description = "Number or percent of cores to use when running E2E tests.", allowEmpty = true)
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
-		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
+		text("env.CHILD_CONCURRENCY", "8", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
 		text("docker_image", "registry.a8c.com/calypso/base:latest", label = "Docker image", description = "Default Docker image used to run builds", allowEmpty = true)
 		text("docker_image_e2e", "registry.a8c.com/calypso/ci-e2e:latest", label = "Docker e2e image", description = "Docker image used to run e2e tests", allowEmpty = true)
 		text("docker_image_ci_e2e_gb_core_on_dotcom", "registry.a8c.com/calypso/ci-e2e-gb-core-on-dotcom:latest", label = "Docker GB core on dotcom image", description = "Docker image used to run GB core E2E tests on dotcom", allowEmpty = true)
