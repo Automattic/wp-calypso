@@ -40,8 +40,8 @@ const DotcomPreviewPane = ( {
 	const { __ } = useI18n();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
+	const isSimpleSite = ! site.jetpack;
 
-	// Dotcom tabs: Overview, Monitoring, GitHub Deployments, Hosting Config
 	const features = useMemo(
 		() => [
 			createFeaturePreview(
@@ -57,7 +57,7 @@ const DotcomPreviewPane = ( {
 				<span>
 					{ __( 'Dev Tools' ) } <DevToolsIcon />
 				</span>,
-				! isAtomicSite,
+				isSimpleSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
