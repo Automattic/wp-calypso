@@ -79,7 +79,7 @@
 	],
 	ignoreDeps: [
 		'electron-builder',
-		// We're intentionally locking to v1.0.0, see https://github.com/Automattic/wp-calypso/pull/89739
+		// We're intentionally locking to v1.1.0, see https://github.com/Automattic/wp-calypso/pull/89739
 		// @TODO: Remove once DataViews become more stable - it will be updated manually until then.
 		'@wordpress/dataviews',
 	],
