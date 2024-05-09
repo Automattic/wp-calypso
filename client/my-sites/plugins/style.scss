@@ -73,6 +73,11 @@ body.is-section-plugins {
 		@include breakpoint-deprecated( "<960px" ) {
 			display: none;
 		}
+
+		.empty-state {
+			max-width: 100%;
+			padding: 0 1rem;
+		}
 	}
 
 	.a4a-layout-column.scheduled-updates-list {
@@ -91,6 +96,14 @@ body.is-section-plugins {
 
 			@include breakpoint-deprecated( "<480px" ) {
 				padding: 1rem 0;
+			}
+		}
+
+		.empty-state {
+			padding: 0 4rem;
+
+			@include breakpoint-deprecated( "<960px" ) {
+				padding: 0 1rem;
 			}
 		}
 	}
