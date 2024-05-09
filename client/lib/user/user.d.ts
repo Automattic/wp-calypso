@@ -9,11 +9,6 @@ export type UserMetaData = {
 	};
 	marketing_price_group: boolean;
 	plans_reorder_abtest_variation: string;
-	trail_map_features_grid_assignment:
-		| 'control'
-		| 'treatment_copy'
-		| 'treatment_structure'
-		| 'treatment_copy_and_structure';
 };
 
 export type UserData = { ID: number } & Partial< OptionalUserData >;
