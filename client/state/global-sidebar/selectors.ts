@@ -64,7 +64,7 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		isAllowedRegion &&
 		( siteSelected ||
 			siteLoaded ||
-			( ! siteSelected && pluginsScheduledUpdatesEditMode ) ||
+			( ! siteId && pluginsScheduledUpdatesEditMode ) ||
 			isWithinBreakpoint( '<782px' ) )
 	);
 };
