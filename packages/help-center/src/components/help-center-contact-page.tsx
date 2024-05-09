@@ -94,6 +94,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		recordTracksEvent( 'calypso_helpcenter_contact_options_impression', {
 			force_site_id: true,
 			location: 'help-center',
+			chat_available: ! renderEmail.render,
 			email_available: renderEmail.render,
 		} );
 	}, [ isLoading, renderEmail.render ] );
