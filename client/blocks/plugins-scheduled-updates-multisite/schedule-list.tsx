@@ -20,6 +20,7 @@ import './styles.scss';
 type Props = {
 	compact?: boolean;
 	previewMode: 'table' | 'card';
+	showNewScheduleBtn?: boolean;
 	selectedScheduleId?: string;
 	onEditSchedule: ( id: string ) => void;
 	onShowLogs: ( id: string, siteSlug: string ) => void;
@@ -30,6 +31,7 @@ export const ScheduleList = ( props: Props ) => {
 	const {
 		compact,
 		previewMode,
+		showNewScheduleBtn = true,
 		selectedScheduleId: initSelectedScheduleId,
 		onEditSchedule,
 		onShowLogs,
@@ -102,7 +104,7 @@ export const ScheduleList = ( props: Props ) => {
 		<div className="plugins-update-manager plugins-update-manager-multisite">
 			<div className="plugins-update-manager-multisite__header">
 				<h1>{ translate( 'Update schedules' ) }</h1>
-				{ ! isScheduleEmpty && (
+				{ showNewScheduleBtn && ! isScheduleEmpty && (
 					<Button
 						__next40pxDefaultSize={ ! compact }
 						isSmall={ compact }
