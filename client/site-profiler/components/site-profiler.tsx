@@ -96,7 +96,7 @@ export default function SiteProfiler( props: Props ) {
 	let showGetReportForm = false;
 
 	if ( isEnabled( 'site-profiler/metrics' ) ) {
-		showGetReportForm = showResultScreen && !! url;
+		showGetReportForm = !! showBasicMetrics && !! url;
 	}
 
 	const updateDomainRouteParam = ( value: string ) => {

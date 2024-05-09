@@ -1,5 +1,6 @@
 import { FormLabel, FormInputValidation, Gridicon, Button } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
+import emailValidator from 'email-validator';
 import { translate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -68,23 +69,29 @@ export function GetReportForm( {
 	};
 
 	const validateName = ( name: string ) => {
-		if ( name ) {
-			return null;
+		if ( ! name ) {
+			return translate( 'Name is required' );
 		}
-		return 'Name is required';
+		return null;
 	};
-	const validateEmail = ( email: string ) => {
-		if ( email ) {
-			return null;
+
+	const validateEmail = ( email: string, fullValidation = false ) => {
+		if ( ! email ) {
+			return translate( 'Email is required' );
 		}
-		return 'Email is required';
+		if ( fullValidation && ! emailValidator.validate( email ) ) {
+			return translate( 'Please enter a valid email address.' );
+		}
+		return null;
 	};
+
 	const validateTerms = ( terms: boolean ) => {
-		if ( terms ) {
-			return null;
+		if ( ! terms ) {
+			return translate( 'Terms must be accepted' );
 		}
-		return 'Terms must be accepted';
+		return null;
 	};
+
 	function validateForm( formData: FormData ) {
 		let errors = {};
 		let hasErrors = false;
@@ -94,7 +101,7 @@ export function GetReportForm( {
 			errors = { ...errors, name: error };
 			hasErrors = true;
 		}
-		error = validateEmail( formData.get( 'email' ) as string );
+		error = validateEmail( formData.get( 'email' ) as string, true );
 		if ( error ) {
 			errors = { ...errors, email: error };
 			hasErrors = true;
