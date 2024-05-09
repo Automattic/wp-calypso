@@ -53,18 +53,6 @@ const granularControlForPaidStats = [
  * const isGatedStats = shouldGateStats( state, siteId, STAT_TYPE_SEARCH_TERMS );
  */
 export const shouldGateStats = ( state: object, siteId: number | null, statType: string ) => {
-	const isPaidStatsEnabled = isEnabled( 'stats/paid-wpcom-v2' );
-	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
-
-	// check feature flags
-	if ( ! isPaidStatsEnabled ) {
-		return false;
-	}
-	if ( isOdysseyStats ) {
-		// don't gate stats if using Odyssey stats
-		return false;
-	}
-
 	if ( ! siteId ) {
 		return true;
 	}
@@ -92,10 +80,13 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
  * Check if a statType is gated wpcom paid stats.
  */
 export const useShouldGateStats = ( statType: string ) => {
+	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
-	const hasLoadedSiteFeatures = useSelector( ( state ) =>
-		getHasLoadedSiteFeatures( state, siteId )
-	);
+
+	// The features are loaded from the Jetpack site object,
+	// so we set the loaded flag to true by default for Odyssey Stats.
+	const hasLoadedSiteFeatures =
+		useSelector( ( state ) => getHasLoadedSiteFeatures( state, siteId ) ) || isOdysseyStats;
 	const isGatedStats = useSelector( ( state ) => shouldGateStats( state, siteId, statType ) );
 
 	// Avoid flickering by returning false until site features have loaded.

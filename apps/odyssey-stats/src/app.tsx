@@ -44,6 +44,12 @@ async function AppBoot() {
 			...initialState.currentUser,
 			user: { ...initialState.currentUser.user, localeSlug },
 		},
+		sites: {
+			...initialState.sites,
+			features: {
+				...initialState.sites.features,
+			},
+		},
 	};
 
 	const queryClient = new QueryClient();
