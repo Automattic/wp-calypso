@@ -336,7 +336,7 @@ export class RenderDomainsStep extends Component {
 				section: this.getAnalyticsSection(),
 				flow: this.props.flowName,
 				step: this.props.stepName,
-				migration: migrateSite,
+				is_migration: migrateSite,
 			},
 			this.isDependencyShouldHideFreePlanProvided()
 				? { should_hide_free_plan: shouldHideFreePlan }
