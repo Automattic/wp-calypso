@@ -79,9 +79,13 @@ export class EditorPublishPanelComponent {
 		const publishButtonLocator = editorParent.locator( selectors.publishButton );
 
 		// Check if the button is able to be triggered before proceeding
-		if (
-			! ( ( await publishButtonLocator.isVisible() ) || ( await publishButtonLocator.isEnabled() ) )
-		) {
+		try {
+			await publishButtonLocator.waitFor( { state: 'attached' } );
+		} catch {
+			return;
+		}
+
+		if ( ! ( await publishButtonLocator.count() ) ) {
 			return;
 		}
 
