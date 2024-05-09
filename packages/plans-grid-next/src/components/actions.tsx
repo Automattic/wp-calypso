@@ -80,6 +80,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	postButtonText: string | null;
 	status: string;
 } ) => {
+	// TODO: Is status ever 'blocked'? We should do some thorough investigation at some point.
 	const busy = isFreePlan( planSlug ) && status === 'blocked';
 
 	if ( hasFreeTrialPlan ) {
