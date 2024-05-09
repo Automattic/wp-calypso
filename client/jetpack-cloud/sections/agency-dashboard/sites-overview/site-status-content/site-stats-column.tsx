@@ -12,7 +12,7 @@ import { type Site } from '../../sites-overview/types';
 import { SiteStats } from '../types';
 
 type Props = {
-	site: Site;
+	site?: Site;
 	stats: SiteStats;
 };
 
