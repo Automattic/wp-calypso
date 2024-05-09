@@ -403,6 +403,10 @@ body.is-mobile-app-view {
 // Ensure reader streams have the neutral background.
 .layout.is-section-reader {
 	min-height: 100vh;
+
+	&.has-header-section {
+		background: var(--studio-white);
+	}
 	.section-header.card {
 		box-shadow: none;
 		margin-bottom: 24px;
