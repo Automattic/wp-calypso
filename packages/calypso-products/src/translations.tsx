@@ -1,5 +1,7 @@
 import { translate, useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
+// Function is not a hook, should be fine to use here
+// eslint-disable-next-line no-restricted-imports
 import {
 	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
@@ -1248,75 +1250,111 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			translate( '{{span}}100 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_100 ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			translate( '{{span}}100 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_200 ]: [
-			translate( '200 monthly requests (upgradeable)' ),
+			translate( '{{span}}200 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_500 ]: [
-			translate( '500 monthly requests (upgradeable)' ),
+			translate( '{{span}}500 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_750 ]: [
-			translate( '750 monthly requests (upgradeable)' ),
+			translate( '{{span}}750 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_1000 ]: [
-			translate( '1000 monthly requests (upgradeable)' ),
+			translate( '{{span}}1000 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			translate( '{{span}}100 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_100 ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			translate( '{{span}}100 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_200 ]: [
-			translate( '200 monthly requests (upgradeable)' ),
+			translate( '{{span}}200 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_500 ]: [
-			translate( '500 monthly requests (upgradeable)' ),
+			translate( '{{span}}500 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_750 ]: [
-			translate( '750 monthly requests (upgradeable)' ),
+			translate( '{{span}}750 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_1000 ]: [
-			translate( '1000 monthly requests (upgradeable)' ),
+			translate( '{{span}}1000 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			translate( '{{span}}100 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_100 ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			translate( '{{span}}100 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_200 ]: [
-			translate( '200 monthly requests (upgradeable)' ),
+			translate( '{{span}}200 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_500 ]: [
-			translate( '500 monthly requests (upgradeable)' ),
+			translate( '{{span}}500 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_750 ]: [
-			translate( '750 monthly requests (upgradeable)' ),
+			translate( '{{span}}750 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_1000 ]: [
-			translate( '1000 monthly requests (upgradeable)' ),
+			translate( '{{span}}1000 monthly requests (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupIncludesInfoT0,
@@ -1357,75 +1395,111 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: [
-			translate( '10,000 site views (upgradeable)' ),
+			translate( '{{span}}10K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_10K ]: [
-			translate( '10K site views (upgradeable)' ),
+			translate( '{{span}}10K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_100K ]: [
-			translate( '100K site views (upgradeable)' ),
+			translate( '{{span}}100K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_250K ]: [
-			translate( '250K site views (upgradeable)' ),
+			translate( '{{span}}250K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_500K ]: [
-			translate( '500K site views (upgradeable)' ),
+			translate( '{{span}}500K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_1M ]: [
-			translate( '1M site views (upgradeable)' ),
+			translate( '{{span}}1M site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: [
-			translate( '10K site views (upgradeable)' ),
+			translate( '{{span}}10K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY_10K ]: [
-			translate( '10K site views (upgradeable)' ),
+			translate( '{{span}}10K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY_100K ]: [
-			translate( '100K site views (upgradeable)' ),
+			translate( '{{span}}100K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY_250K ]: [
-			translate( '250K site views (upgradeable)' ),
+			translate( '{{span}}250K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY_500K ]: [
-			translate( '500K site views (upgradeable)' ),
+			translate( '{{span}}500K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY_1M ]: [
-			translate( '1M site views (upgradeable)' ),
+			translate( '{{span}}1M site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: [
-			translate( '10K site views (upgradeable)' ),
+			translate( '{{span}}10K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY_10K ]: [
-			translate( '10K site views (upgradeable)' ),
+			translate( '{{span}}10K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY_100K ]: [
-			translate( '100K site views (upgradeable)' ),
+			translate( '{{span}}100K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY_250K ]: [
-			translate( '250K site views (upgradeable)' ),
+			translate( '{{span}}250K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY_500K ]: [
-			translate( '500K site views (upgradeable)' ),
+			translate( '{{span}}500K site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY_1M ]: [
-			translate( '1M site views (upgradeable)' ),
+			translate( '{{span}}1M site views (upgradeable){{/span}}', {
+				components: { span: <span className="highlight-on-render" /> },
+			} ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorIncludesInfo,
