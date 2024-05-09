@@ -1,3 +1,5 @@
+import { englishLocales } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
@@ -11,6 +13,7 @@ import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarMenuItem from 'calypso/layout/global-sidebar/menu-items/menu-item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
@@ -30,6 +33,7 @@ class SidebarNotifications extends Component {
 		tooltip: TranslatableString,
 		translate: PropTypes.func,
 		currentUserId: PropTypes.number,
+		locale: PropTypes.string,
 	};
 
 	notificationLink = createRef();
@@ -140,8 +144,13 @@ class SidebarNotifications extends Component {
 		} );
 
 		const shouldShowNotificationsPointer =
-			Date.now() < Date.parse( '23 May 2024' ) && // Show pointer for 2 weeks.
-			this.props.currentUserId < 250450000; // Show pointer to users registered before 08-May-2024 (when we moved the notifications to the footer).
+			// Show pointer for 2 weeks.
+			Date.now() < Date.parse( '23 May 2024' ) &&
+			// Show pointer to users registered before 08-May-2024 (when we moved the notifications to the footer).
+			this.props.currentUserId < 250450000 &&
+			// Show pointer only if translated.
+			( englishLocales.includes( this.props.locale ) ||
+				hasTranslation( 'Looking for your notifications? They have been moved here.' ) );
 
 		return (
 			<>
@@ -190,6 +199,7 @@ const mapStateToProps = ( state ) => {
 		isNotificationsOpen: isNotificationsOpen( state ),
 		hasUnseenNotifications: hasUnseenNotifications( state ),
 		currentUserId: getCurrentUserId( state ),
+		locale: getCurrentLocaleSlug( state ),
 	};
 };
 const mapDispatchToProps = {
