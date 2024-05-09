@@ -56,7 +56,7 @@ const tscCommands = [
 // runs by itself with 8 cores, and the other tasks run one by one with 4 other
 // cores. This leaves a final 4 cores free for tsc + any other tasks. This seems
 // to result in the fastest overall completion time.
-const testClient = withUnitTestInfo( 'test-client --maxWorkers=4' );
+const testClient = withUnitTestInfo( 'test-client --maxWorkers=6' );
 const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=2' );
 const testServer = withUnitTestInfo( 'test-server --maxWorkers=2' );
 const testBuildTools = withUnitTestInfo( 'test-build-tools --maxWorkers=2' );
