@@ -250,6 +250,7 @@ const siteMigration: Flow = {
 						const destination = addQueryArgs(
 							{
 								siteSlug,
+								siteId,
 								// don't use from query param if the user takes the migration deal.
 								// This is to avoid the user being redirected to the wrong page after checkout.
 								...( ! providedDependencies?.userAcceptedDeal ? { from: fromQueryParam } : {} ),
