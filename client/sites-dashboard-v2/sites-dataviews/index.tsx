@@ -193,10 +193,9 @@ const DotcomSitesDataViews = ( {
 				id: addDummyDataViewPrefix( 'status' ),
 				header: __( 'Status' ),
 				render: () => null,
-				type: 'enumeration',
 				elements: siteStatusGroups,
 				filterBy: {
-					operators: [ 'in' ],
+					operators: [ 'is' ],
 				},
 				enableHiding: false,
 				enableSorting: false,
