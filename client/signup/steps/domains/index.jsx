@@ -1,9 +1,11 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
+import { englishLocales } from '@automattic/i18n-utils';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { hasTranslation } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -932,11 +934,18 @@ export class RenderDomainsStep extends Component {
 
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
 
+		// Ensure we don't show the migration explainer to non-English locales until all translations are complete.
+		const showMigrationExplainer =
+			englishLocales.includes( this.props.localeSlug || '' ) ||
+			hasTranslation( 'Migrating an existing site?' );
+
 		return (
 			<div className="domains__domain-side-content-container">
-				<div className="domains__domain-side-content">
-					<ReskinSideExplainer type="site-migration" onClick={ this.handleSiteMigrationClick } />
-				</div>
+				{ showMigrationExplainer && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer type="site-migration" onClick={ this.handleSiteMigrationClick } />
+					</div>
+				) }
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
 					<DomainsMiniCart
 						domainsInCart={ domainsInCart }
