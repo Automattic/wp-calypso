@@ -47,12 +47,19 @@
 
 					.item-preview__header-summary-link {
 						display: flex;
+						gap: 2px;
 						align-items: center;
-						font-size: rem(18px);
+						font-size: rem(16px);
 						font-weight: 400;
 						color: var(--color-accent-70);
-						line-height: 26px;
+						line-height: 1.5;
 						width: fit-content;
+						text-decoration: none;
+
+						&:hover {
+							color: var(--color-link-dark);
+							text-decoration: underline;
+						}
 
 						&:focus {
 							box-shadow: none;

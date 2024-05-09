@@ -2,31 +2,73 @@
  * Build a single language file for each language to `dist/languages` folder.
  *
  * The script,
- * - Depends on `CALYPSO_STRINGS` and `CHUNKS_MAP_PATTERN`
  * - Pulls full translations from `https://widgets.wp.com/languages/calypso`
  * - Merges all referenced strings together
  * - Picks only the necessary translations from the full translations files
- * - Creates the target language files in `dist/languages` for the command palette
- *
- * @todo this was copied from the blaze-dashboard app and lightly modified, it appears that
- * odyssey-stats does similar. It might be a good idea to share a common implementation.
+ * - Creates the target language files in outputPath (defaults to `dist/languages`).
  */
 
 const fs = require( 'fs' );
-const { writeFile } = require( 'fs' ).promises;
+const resolve = require( 'path' ).resolve;
 const languages = require( '@automattic/languages' );
 const parse = require( 'gettext-parser' ).po.parse;
 const _ = require( 'lodash' );
-const mkdirp = require( 'mkdirp' );
 const fetch = require( 'node-fetch' );
+const { hideBin } = require( 'yargs/helpers' );
+const yargs = require( 'yargs/yargs' );
 
-const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
-const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
-const TEMP_PATH = './dist/temp-languages';
-const CALYPSO_STRINGS = './dist/command-palette-strings.pot';
-const CHUNKS_MAP_PATTERN = './dist/chunks-map.json';
-const STRINGS_PATH = './dist/strings';
-const OUTPUT_PATH = './dist/languages';
+// Configure command-line options
+const argv = yargs( hideBin( process.argv ) )
+	.option( 'languagesBaseUrl', {
+		describe: 'Base URL for the languages endpoint',
+		type: 'string',
+		default: 'https://widgets.wp.com/languages/calypso',
+	} )
+	.option( 'languagesRevisionsFilename', {
+		describe: 'Filename for the language revisions JSON file',
+		type: 'string',
+		default: 'lang-revisions.json',
+	} )
+	.option( 'stringsFilePath', {
+		describe: 'Path to the Calypso strings POT file',
+		type: 'string',
+		requiresArg: true,
+	} )
+	.option( 'chunksMapPattern', {
+		describe: 'Path to the chunks map JSON file',
+		type: 'string',
+		default: './dist/chunks-map.json',
+	} )
+	.option( 'stringsPath', {
+		describe: 'Path to store string files',
+		type: 'string',
+		default: './dist/strings',
+	} )
+	.option( 'outputPath', {
+		describe: 'Output path for the built language files',
+		type: 'string',
+		default: './dist/languages',
+	} )
+	.option( 'verbose', {
+		describe: 'Enable verbose logging',
+		type: 'boolean',
+		default: false,
+	} )
+	.help()
+	.alias( 'help', 'h' ).argv;
+
+const {
+	languagesBaseUrl,
+	languagesRevisionsFilename,
+	stringsFilePath,
+	chunksMapPattern,
+	stringsPath,
+	outputPath,
+	verbose,
+} = argv;
+
+fs.mkdirSync( outputPath, { recursive: true } );
+
 const langSlugs = languages.default.map( ( { langSlug } ) => langSlug );
 
 const DECIMAL_POINT_KEY = 'number_format_decimals';
@@ -34,10 +76,6 @@ const DECIMAL_POINT_TRANSLATION = 'number_format_decimal_point';
 const THOUSANDS_SEPARATOR_KEY = 'number_format_thousands_sep';
 const THOUSANDS_SEPARATOR_TRANSLATION = 'number_format_thousands_sep';
 
-// Create languages directory
-function createLanguagesDir() {
-	return mkdirp.sync( TEMP_PATH ) && mkdirp.sync( OUTPUT_PATH );
-}
 // Get module reference
 function getModuleReference( ref ) {
 	// References need to be relative to the root of the project
@@ -52,28 +90,28 @@ function getModuleReference( ref ) {
 }
 
 function cleanUp() {
-	console.log( `Cleaning up...` );
-	fs.rmSync( TEMP_PATH, { recursive: true, force: true } );
-	fs.rmSync( STRINGS_PATH, { recursive: true, force: true } );
-	//fs.unlinkSync( CHUNKS_MAP_PATTERN );
-	fs.unlinkSync( CALYPSO_STRINGS );
+	if ( verbose ) {
+		console.log( `Cleaning up...` );
+	}
+	fs.rmSync( stringsPath, { recursive: true, force: true } );
+	fs.unlinkSync( stringsFilePath );
 }
 
 // Download languages revisions
 async function downloadLanguagesRevions() {
-	console.log( `Downloading ${ LANGUAGES_REVISIONS_FILENAME }...` );
-	const response = await fetch( `${ LANGUAGES_BASE_URL }/${ LANGUAGES_REVISIONS_FILENAME }` );
+	if ( verbose ) {
+		console.log( `Downloading ${ languagesRevisionsFilename }...` );
+	}
+	const response = await fetch( `${ languagesBaseUrl }/${ languagesRevisionsFilename }` );
 	if ( response.status !== 200 ) {
 		throw new Error( 'Failed to download language revisions file.' );
 	}
 
 	const json = await response.json();
-	await writeFile(
-		`${ TEMP_PATH }/${ LANGUAGES_REVISIONS_FILENAME }`,
-		JSON.stringify( json, null, 2 )
-	);
 
-	console.log( `Downloading ${ LANGUAGES_REVISIONS_FILENAME } completed.` );
+	if ( verbose ) {
+		console.log( `Downloading ${ languagesRevisionsFilename } completed.` );
+	}
 	return json;
 }
 
@@ -83,10 +121,11 @@ async function downloadLanguages( languageRevisions ) {
 		langSlugs.map( async ( langSlug ) => {
 			const filename = `${ langSlug }-v1.1.json`;
 
-			const output = `${ TEMP_PATH }/${ filename }`;
-			const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
+			const translationUrl = `${ languagesBaseUrl }/${ filename }`;
 
-			console.log( `Downloading ${ filename }...` );
+			if ( verbose ) {
+				console.log( `Downloading ${ filename }...` );
+			}
 
 			const response = await fetch( translationUrl );
 			if ( response.status !== 200 ) {
@@ -103,9 +142,9 @@ async function downloadLanguages( languageRevisions ) {
 			}
 
 			const json = await response.json();
-			await writeFile( output, JSON.stringify( json ) );
-
-			console.log( `Downloading ${ filename } complete.` );
+			if ( verbose ) {
+				console.log( `Downloading ${ filename } complete.` );
+			}
 
 			return { langSlug, languageTranslations: json };
 		} )
@@ -114,13 +153,15 @@ async function downloadLanguages( languageRevisions ) {
 
 // Split language translations
 function buildLanguages( downloadedLanguages, languageRevisions ) {
-	console.log( 'Building languages...' );
+	if ( verbose ) {
+		console.log( 'Building languages...' );
+	}
 
 	const successfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => ! failed );
 	const unsuccessfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => failed );
 
-	if ( fs.existsSync( CALYPSO_STRINGS ) ) {
-		const { translations } = parse( fs.readFileSync( CALYPSO_STRINGS ) );
+	if ( fs.existsSync( stringsFilePath ) ) {
+		const { translations } = parse( fs.readFileSync( stringsFilePath ) );
 		const translationsFlatten = _.reduce(
 			translations,
 			( result, contextTranslations, context ) => {
@@ -142,7 +183,7 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 		);
 
 		const translationsByRef = Object.keys( translationsFlatten ).reduce( ( acc, key ) => {
-			const originalRef = translationsFlatten[ key ].comments.reference;
+			const originalRef = translationsFlatten[ key ].comments?.reference;
 
 			if ( ! originalRef ) {
 				return acc;
@@ -160,8 +201,7 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 			return acc;
 		}, {} );
 
-		// CHUNKS_MAP_PATTERN is relative to the project root, while require is relative to current dir. Hence the `../`
-		const chunksMap = require( '../' + CHUNKS_MAP_PATTERN );
+		const chunksMap = require( resolve( process.cwd(), chunksMapPattern ) );
 
 		// Get only the strings that are relevant to the modules for the app
 		const allModulesReferences = Object.values( chunksMap ).flat();
@@ -193,34 +233,41 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 				languageTranslations[ THOUSANDS_SEPARATOR_TRANSLATION ];
 			cmdPaletteTranslations[ '' ] = languageTranslations[ '' ];
 
-			const output = `${ OUTPUT_PATH }/${ langSlug }-v1.1.json`;
-			console.log( `Writing ${ output }...` );
+			const output = resolve( process.cwd(), outputPath, `${ langSlug }-v1.1.json` );
+			if ( verbose ) {
+				console.log( `Writing ${ output }...` );
+			}
 			fs.writeFileSync( output, JSON.stringify( cmdPaletteTranslations ) );
 		} );
 
-		console.log( 'Updating language revisions...' );
+		if ( verbose ) {
+			console.log( 'Updating language revisions...' );
+		}
 
 		fs.writeFileSync(
-			`${ OUTPUT_PATH }/${ LANGUAGES_REVISIONS_FILENAME }`,
+			resolve( process.cwd(), `${ outputPath }/${ languagesRevisionsFilename }` ),
 			JSON.stringify( {
 				...languageRevisions,
 				hashes: languageRevisionsHashes,
 			} )
 		);
 	} else {
-		console.error( `${ CALYPSO_STRINGS } is missing` );
+		console.error( `${ stringsFilePath } is missing` );
 	}
 
-	console.log( 'Building language completed.' );
-	console.log(
-		`Skipped due to failed translation downloads: ${ unsuccessfullyDownloadedLanguages
-			.map( ( { langSlug } ) => langSlug )
-			.join( ', ' ) }.`
-	);
+	console.info( '✅ Language build completed.' );
+
+	if ( verbose ) {
+		console.log(
+			`Skipped due to failed translation downloads: ${ unsuccessfullyDownloadedLanguages
+				.map( ( { langSlug } ) => langSlug )
+				.join( ', ' ) }.`
+		);
+	}
 }
 
 async function run() {
-	createLanguagesDir();
+	console.info( 'ℹ️ Starting language build...' );
 	const languageRevisions = await downloadLanguagesRevions();
 	const downloadedLanguages = await downloadLanguages( languageRevisions );
 	buildLanguages( downloadedLanguages, languageRevisions );

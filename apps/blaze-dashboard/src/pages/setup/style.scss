@@ -21,6 +21,11 @@
 				max-width: 470px;
 			}
 		}
+
+		.setup-pages__body {
+			font-size: $font-body;
+			text-wrap: balance;
+		}
 	}
 
 	.promote-post-i2__footer-text {
@@ -47,6 +52,7 @@
 		.promote-post-i2__active-steps {
 			align-self: center;
 			margin: 0;
+			width: 100%;
 
 			li {
 				align-items: center;
@@ -55,11 +61,11 @@
 				box-sizing: border-box;
 				display: flex;
 				font-size: $font-body;
-				margin-bottom: 8px;
-				max-width: 100%;
+				margin: 0 auto 8px;
+				max-width: 520px;
 				padding: 16px;
 				text-align: left;
-				width: 520px;
+				width: 100%;
 
 				span {
 					align-items: center;

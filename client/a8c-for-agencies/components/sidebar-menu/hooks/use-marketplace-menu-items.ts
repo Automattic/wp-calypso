@@ -14,24 +14,24 @@ const useMarketplaceMenuItems = ( path: string ) => {
 		return [
 			createItem(
 				{
-					icon: plugins,
-					path: A4A_MARKETPLACE_LINK,
-					link: A4A_MARKETPLACE_PRODUCTS_LINK,
-					title: translate( 'Products' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Marketplace / Products',
-					},
-				},
-				path
-			),
-			createItem(
-				{
 					icon: tool,
 					path: A4A_MARKETPLACE_LINK,
 					link: A4A_MARKETPLACE_HOSTING_LINK,
 					title: translate( 'Hosting' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Marketplace / Hosting',
+					},
+				},
+				path
+			),
+			createItem(
+				{
+					icon: plugins,
+					path: A4A_MARKETPLACE_LINK,
+					link: A4A_MARKETPLACE_PRODUCTS_LINK,
+					title: translate( 'Products' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Marketplace / Products',
 					},
 				},
 				path

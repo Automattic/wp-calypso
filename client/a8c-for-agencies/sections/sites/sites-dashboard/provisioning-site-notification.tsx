@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -13,6 +14,8 @@ export default function ProvisioningSiteNotification( { siteId }: Props ) {
 
 	const translate = useTranslate();
 
+	const wpHomeUrl = `https://wordpress.com/home/${ site?.url?.replace( /(^\w+:|^)\/\//, '' ) }`;
+
 	return (
 		showBanner && (
 			<NoticeBanner
@@ -21,27 +24,30 @@ export default function ProvisioningSiteNotification( { siteId }: Props ) {
 				onClose={ () => setShowBanner( false ) }
 				title={
 					isReady
-						? translate( 'Congratulation on your new WordPress.com site!' )
+						? translate( 'Your WordPress.com site is ready!' )
 						: translate( 'Setting up your new WordPress.com site' )
+				}
+				actions={
+					isReady
+						? [
+								<Button href={ wpHomeUrl } target="_blank" rel="noreferrer">
+									{ translate( 'Set up your site' ) }
+								</Button>,
+						  ]
+						: undefined
 				}
 			>
 				{ isReady
-					? translate( 'Your {{a}}%(siteURL)s{{/a}} is now ready.', {
-							args: { siteURL: site?.url ?? '' },
-							components: {
-								a: (
-									<a
-										href={ `https://wordpress.com/home/${ site?.url?.replace(
-											/(^\w+:|^)\/\//,
-											''
-										) }` }
-										target="_blank"
-										rel="noreferrer"
-									/>
-								),
-							},
-							comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
-					  } )
+					? translate(
+							'{{a}}%(siteURL)s{{/a}} is now ready. Get started by configuring your new site. It may take a few minutes for it to show up in the site list below.',
+							{
+								args: { siteURL: site?.url ?? '' },
+								components: {
+									a: <a href={ wpHomeUrl } target="_blank" rel="noreferrer" />,
+								},
+								comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
+							}
+					  )
 					: translate(
 							"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
 					  ) }

@@ -455,6 +455,7 @@ export function resolvePlansGridFeatureGroups(): Partial< FeatureGroupMap > {
 		return {
 			[ FEATURE_GROUP_WEBSITE_BUILDING ]: featureGroups[ FEATURE_GROUP_WEBSITE_BUILDING ],
 			[ FEATURE_GROUP_MANAGED_WP_HOSTING ]: featureGroups[ FEATURE_GROUP_MANAGED_WP_HOSTING ],
+			[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
 			[ FEATURE_GROUP_ECOMMERCE ]: featureGroups[ FEATURE_GROUP_ECOMMERCE ],
 			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
 		};

@@ -85,7 +85,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						line-height: 1.2;
 					}
 					.domain-header__buttons .button {
-						border-color: var( --color-neutral-5 );
 						border-radius: 4px;
 						white-space: nowrap;
 						margin-left: 0;

@@ -7,7 +7,7 @@ import Gravatar from 'calypso/components/gravatar';
 import wpcom from 'calypso/lib/wp';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 
 import './continue-as-user.scss';
 
@@ -180,5 +180,5 @@ function ContinueAsUser( {
 export default connect( ( state ) => ( {
 	currentUser: getCurrentUser( state ),
 	redirectUrlFromQuery: get( getCurrentQueryArguments( state ), 'redirect_to', null ),
-	isWooPasswordless: !! getWooPasswordless( state ),
+	isWooPasswordless: getIsWooPasswordless( state ),
 } ) )( ContinueAsUser );

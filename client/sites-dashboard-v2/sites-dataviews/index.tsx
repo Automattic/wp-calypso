@@ -14,6 +14,7 @@ import { SiteInfo } from './interfaces';
 import { SiteSort } from './sites-site-sort';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
+import { addDummyDataViewPrefix } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
 import type {
 	DataViewsColumn,
@@ -66,11 +67,15 @@ const DotcomSitesDataViews = ( {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
 		const handleRowClick = ( event: Event ) => {
 			const target = event.target as HTMLElement;
-			const row = target.closest( '.dataviews-view-table__row' );
+			const row = target.closest(
+				'.dataviews-view-table__row, li:has(.dataviews-view-list__item)'
+			);
 			if ( row ) {
 				const isButtonOrLink = target.closest( 'button, a' );
 				if ( ! isButtonOrLink ) {
-					const button = row.querySelector( '.sites-dataviews__site' ) as HTMLButtonElement;
+					const button = row.querySelector(
+						'.sites-dataviews__preview-trigger'
+					) as HTMLButtonElement;
 					if ( button ) {
 						button.click();
 					}
@@ -78,7 +83,7 @@ const DotcomSitesDataViews = ( {
 			}
 		};
 
-		const rowsContainer = document.querySelector( '.dataviews-view-table' );
+		const rowsContainer = document.querySelector( '.dataviews-view-table, .dataviews-view-list' );
 		if ( rowsContainer ) {
 			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
 		}
@@ -123,21 +128,25 @@ const DotcomSitesDataViews = ( {
 				id: 'status',
 				header: __( 'Status' ),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
-				type: 'enumeration',
-				elements: siteStatusGroups,
-				filterBy: {
-					operators: [ 'in' ],
-				},
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'last-publish',
-				header: <span>{ __( 'Last Publish' ) }</span>,
+				header: (
+					<SiteSort
+						isSortable={ true }
+						columnKey="last-publish"
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+					>
+						<span>{ __( 'Last Published' ) }</span>
+					</SiteSort>
+				),
 				render: ( { item }: { item: SiteInfo } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'stats',
@@ -158,12 +167,39 @@ const DotcomSitesDataViews = ( {
 				enableHiding: false,
 				enableSorting: false,
 			},
+			// Dummy fields to allow people to sort by them on mobile.
 			{
-				id: 'magic',
-				header: __( 'Magic' ),
-				render: () => <></>,
+				id: addDummyDataViewPrefix( 'site' ),
+				header: <span>{ __( 'Site' ) }</span>,
+				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
+			},
+			{
+				id: addDummyDataViewPrefix( 'last-publish' ),
+				header: <span>{ __( 'Last Published' ) }</span>,
+				render: () => null,
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: addDummyDataViewPrefix( 'last-interacted' ),
+				header: __( 'Last Interacted' ),
+				render: () => null,
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: addDummyDataViewPrefix( 'status' ),
+				header: __( 'Status' ),
+				render: () => null,
+				type: 'enumeration',
+				elements: siteStatusGroups,
+				filterBy: {
+					operators: [ 'in' ],
+				},
+				enableHiding: false,
+				enableSorting: false,
 			},
 		],
 		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState ]
