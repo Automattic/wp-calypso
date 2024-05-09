@@ -79,7 +79,10 @@ function useGenerateAction( {
 		/* 1. Enterprise Plan actions */
 		if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 			const text = translate( 'Learn more' );
-			return { text };
+			return {
+				callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
+				text,
+			};
 		}
 
 		/* 2. Launch Page actions */
@@ -109,7 +112,10 @@ function useGenerateAction( {
 				} );
 			}
 
-			return { text };
+			return {
+				callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
+				text,
+			};
 		}
 
 		/* 2. Onboarding actions */

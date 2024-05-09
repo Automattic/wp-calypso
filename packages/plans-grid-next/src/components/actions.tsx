@@ -59,7 +59,7 @@ const DummyDisabledButton = styled.div`
 	text-align: center;
 `;
 
-const SignupFlowPlanFeatureActionButton = ( {
+const PlanFeatureActionButton = ( {
 	planSlug,
 	isStuck,
 	hasFreeTrialPlan,
@@ -105,22 +105,6 @@ const SignupFlowPlanFeatureActionButton = ( {
 				</span>
 			) }
 		</>
-	);
-};
-
-const LaunchPagePlanFeatureActionButton = ( {
-	planSlug,
-	onCtaClick,
-	text,
-}: {
-	planSlug: PlanSlug;
-	onCtaClick: () => void;
-	text: string;
-} ) => {
-	return (
-		<PlanButton planSlug={ planSlug } onClick={ onCtaClick }>
-			{ text }
-		</PlanButton>
 	);
 };
 
@@ -389,24 +373,15 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		selectedStorageAddOn,
 	} );
 
-	if ( isLaunchPage || isWpcomEnterpriseGridPlan( planSlug ) ) {
+	if ( isInSignup || isLaunchPage || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
-			<LaunchPagePlanFeatureActionButton
-				planSlug={ planSlug }
-				onCtaClick={ callback }
-				text={ text }
-			/>
-		);
-	}
-
-	if ( isInSignup ) {
-		return (
-			<SignupFlowPlanFeatureActionButton
+			<PlanFeatureActionButton
 				planSlug={ planSlug }
 				isStuck={ isStuck }
 				postButtonText={ postButtonText }
 				status={ status }
-				hasFreeTrialPlan={ !! freeTrialPlanSlug }
+				// TODO: Revisit free trial condition. Is there a better interface for this?
+				hasFreeTrialPlan={ isInSignup ? !! freeTrialPlanSlug : false }
 				onCtaClick={ callback }
 				onFreeTrialCtaClick={ freeTrialCallback }
 				text={ text }
