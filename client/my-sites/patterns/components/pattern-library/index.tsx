@@ -80,7 +80,7 @@ export const PatternLibrary = ( {
 	const navRef = useRef< HTMLDivElement >( null );
 
 	const { recordPatternsEvent } = useRecordPatternsEvent();
-	const { category, searchTerm, isGridView, patternTypeFilter, referrer, patternPermalinkId } =
+	const { category, searchTerm, isGridView, patternTypeFilter, patternPermalinkId } =
 		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
@@ -223,18 +223,12 @@ export const PatternLibrary = ( {
 		<>
 			{ isHomePage ? (
 				<PatternsPageViewTracker
-					searchTerm={ searchTerm }
-					referrer={ referrer }
 					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
 				/>
 			) : (
 				<PatternsPageViewTracker
-					category={ category }
 					patternPermalinkName={ patternPermalinkName }
-					patternTypeFilter={ patternTypeFilter }
 					view={ currentView }
-					searchTerm={ searchTerm }
-					referrer={ referrer }
 					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
 				/>
 			) }
