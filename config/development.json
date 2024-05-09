@@ -15,7 +15,6 @@
 	"boom_analytics_enabled": false,
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "development",
-	"google_analytics_key": "UA-10673494-15",
 	"hotjar_enabled": true,
 	"signup_url": "/start",
 	"login_url": "https://wordpress.com/wp-login.php",

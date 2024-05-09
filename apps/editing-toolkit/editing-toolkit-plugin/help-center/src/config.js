@@ -1,7 +1,6 @@
 window.configData = {
 	env_id: 'production',
 	i18n_default_locale_slug: 'en',
-	google_analytics_key: 'UA-10673494-15',
 	zendesk_support_chat_key: 'cec07bc9-4da6-4dd2-afa7-c7e01ae73584',
 	client_slug: 'browser',
 	twemoji_cdn_url: 'https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/',
