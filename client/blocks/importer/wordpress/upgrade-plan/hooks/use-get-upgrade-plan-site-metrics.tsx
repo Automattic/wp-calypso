@@ -2,7 +2,7 @@ import { getQueryArg } from '@wordpress/url';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { upgradePlanSiteMetricsLcpThreshold } from '../constants';
 
-export const UseGetUpgradePlanSiteMetrics = () => {
+export const useGetUpgradePlanSiteMetrics = () => {
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	const { data: siteMetricData } = useUrlBasicMetricsQuery( importSiteQueryParam );
 	let showUpdatedSpeedMetrics = false;
