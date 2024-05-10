@@ -154,6 +154,13 @@ const NewsletterSettingsForm = withSiteSettings(
 						value={ settings?.wpcom_subscription_emails_use_excerpt }
 					/>
 				</Card>
+				<Card className="site-settings__card">
+					<ReplyToSetting
+						disabled={ disabled }
+						updateFields={ updateSettings }
+						value={ settings?.jetpack_subscriptions_reply_to }
+					/>
+				</Card>
 				{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 				<SettingsSectionHeader
 					id="newsletter-categories-settings"
