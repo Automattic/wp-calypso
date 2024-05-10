@@ -44,6 +44,76 @@
 	}
 }
 
+body.is-section-plugins {
+	background: var(--studio-gray-0);
+
+	.a4a-layout-column {
+		overflow: scroll;
+	}
+
+	.a4a-layout-column.scheduled-updates-list-compact {
+		width: 400px;
+		flex: unset;
+		transition: all 0.2s;
+
+		.plugins-update-manager-multisite__header {
+			padding: 1rem 1.125rem;
+		}
+
+		.plugins-update-manager-multisite-filter {
+			margin: 0;
+			padding: 1rem 1.5rem;
+		}
+
+		.plugins-update-manager-multisite-card {
+			margin: 0;
+			padding: 0.5rem 1.5rem;
+		}
+
+		@include breakpoint-deprecated( "<960px" ) {
+			display: none;
+		}
+
+		.empty-state {
+			max-width: 100%;
+			padding: 0 1rem;
+		}
+	}
+
+	.a4a-layout-column.scheduled-updates-list {
+		.plugins-update-manager-multisite__header,
+		.plugins-update-manager-multisite-filter {
+			margin: 0;
+			padding: 1.5rem 4rem;
+
+			@include breakpoint-deprecated( "<960px" ) {
+				padding: 1rem;
+			}
+
+			@include breakpoint-deprecated( "<660px" ) {
+				padding: 1rem 0;
+			}
+		}
+
+		.empty-state {
+			padding: 0 4rem;
+
+			@include breakpoint-deprecated( "<960px" ) {
+				padding: 0 1rem;
+			}
+		}
+	}
+
+	.a4a-layout-column.scheduled-updates-edit,
+	.a4a-layout-column.scheduled-updates-create {
+		padding: 3rem;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			padding: 0.5rem;
+		}
+	}
+}
+
 body.is-section-plugins.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);
 }

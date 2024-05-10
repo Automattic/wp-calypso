@@ -19,6 +19,7 @@ class SectionNav extends Component {
 		className: PropTypes.string,
 		allowDropdown: PropTypes.bool,
 		variation: PropTypes.string,
+		children: PropTypes.node,
 	};
 
 	static defaultProps = {

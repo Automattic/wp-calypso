@@ -9,7 +9,6 @@ import {
 	makeLayoutMiddleware,
 } from 'calypso/controller/shared';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import signupController from 'calypso/signup/controller';
 import {
 	login,
 	magicLogin,
@@ -68,7 +67,6 @@ export default ( router ) => {
 			redirectLoggedIn,
 			setLocaleMiddleware(),
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-			signupController.redirectWooPasswordless,
 			magicLoginUse,
 			makeLoggedOutLayout
 		);
@@ -77,7 +75,6 @@ export default ( router ) => {
 			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }`, `/log-in/new/link/${ lang }` ],
 			setLocaleMiddleware(),
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-			signupController.redirectWooPasswordless,
 			magicLogin,
 			makeLoggedOutLayout
 		);
@@ -88,7 +85,6 @@ export default ( router ) => {
 		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		signupController.redirectWooPasswordless,
 		qrCodeLogin,
 		makeLoggedOutLayout
 	);
@@ -111,7 +107,6 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setHrefLangLinks,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		signupController.redirectWooPasswordless,
 		login,
 		setShouldServerSideRenderLogin,
 		makeLoggedOutLayout

@@ -9,7 +9,7 @@ export interface FeaturePreviewInterface {
 }
 
 export interface FeatureTabInterface {
-	label: string;
+	label: string | React.ReactNode;
 	countValue?: number;
 	countColor?: string;
 	selected?: boolean;

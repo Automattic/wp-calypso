@@ -133,6 +133,7 @@ export const Price = styled.span`
 
 export const Variant = styled.div< { shouldUseCheckoutV2: boolean } >`
 	display: flex;
+	align-items: center;
 	font-size: 14px;
 	font-weight: 400;
 	justify-content: space-between;

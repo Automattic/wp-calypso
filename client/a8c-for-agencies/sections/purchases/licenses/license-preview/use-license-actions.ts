@@ -70,6 +70,8 @@ export default function useLicenseActions(
 			},
 			{
 				name: translate( 'Revoke' ),
+				href: `https://wordpress.com/purchases/subscriptions/${ siteSlug }`,
+				isExternalLink: true,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_hosting_configuration_click' ),
 				type: 'revoke',
 				isEnabled:
