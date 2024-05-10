@@ -75,8 +75,11 @@ input[type="text"].form-text-input.get-report-form__form {
 	display: flex;
 	gap: 20px;
 	align-items: center;
+	flex-wrap: wrap;
+	justify-content: space-between;
 	& fieldset {
 		margin-bottom: 0;
+		flex-basis: 70%;
 	}
 	.terms-checkbox {
 		font-size: 0.75rem;
