@@ -69,7 +69,7 @@ const PlanFeatureActionButton = ( {
 	text: TranslateResult;
 	freeTrialText?: TranslateResult;
 	postButtonText?: TranslateResult;
-	status: string;
+	status?: 'disabled' | 'blocked' | 'enabled';
 } ) => {
 	// TODO: Is status ever 'blocked'? We should do some thorough investigation at some point.
 	const busy = isFreePlan( planSlug ) && status === 'blocked';
@@ -296,7 +296,6 @@ const PlanFeatures2023GridActions = ( {
 						isStuck={ isStuck }
 						postButtonText={ postButtonText }
 						status={ status }
-						// TODO: Revisit free trial condition. Is there a better interface for this?
 						hasFreeTrialPlan={ isInSignup ? !! freeTrialPlanSlug : false }
 						onCtaClick={ callback }
 						onFreeTrialCtaClick={ freeTrialCallback }

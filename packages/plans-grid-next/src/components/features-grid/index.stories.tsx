@@ -87,9 +87,9 @@ const defaultProps: Omit< FeaturesGridExternalProps, 'gridPlans' > = {
 	useCheckPlanAvailabilityForPurchase: () => ( {} ),
 	useAction: () => ( {
 		primary: {
-			text: '',
+			text: 'test',
 			callback: () => {},
-			status: '',
+			status: 'enabled',
 		},
 		postButtonText: '',
 	} ),

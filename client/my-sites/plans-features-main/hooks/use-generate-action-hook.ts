@@ -228,7 +228,7 @@ function useGenerateActionHook( {
 		 * 4. Logged-In (Admin) Plans actions
 		 */
 		let text = translate( 'Upgrade', { context: 'verb' } );
-		let status = null;
+		let status: 'enabled' | 'disabled' | 'blocked' | undefined;
 		const current = sitePlanSlug === planSlug;
 		const isTrialPlan =
 			sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
