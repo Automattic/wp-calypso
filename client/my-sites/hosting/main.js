@@ -84,15 +84,7 @@ const ShowEnabledFeatureCards = ( { availableTypes, cards, showDisabledCards = t
 	);
 };
 
-const MainCards = ( {
-	hasStagingSitesFeature,
-	isAdvancedHostingDisabled,
-	isBasicHostingDisabled,
-	isWpcomStagingSite,
-	isBusinessTrial,
-	siteId,
-	siteSlug,
-} ) => {
+const MainCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, isBusinessTrial } ) => {
 	const mainCards = [
 		{
 			feature: 'github-deployments',
@@ -108,6 +100,50 @@ const MainCards = ( {
 			feature: 'phpmyadmin',
 			content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
 			type: 'advanced',
+		},
+		{
+			feature: 'restore-plan-software',
+			content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'web-server-settings',
+			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+	];
+
+	const availableTypes = [
+		! isAdvancedHostingDisabled ? 'advanced' : null,
+		! isBasicHostingDisabled ? 'basic' : null,
+	].filter( ( type ) => type !== null );
+
+	return (
+		<ShowEnabledFeatureCards
+			cards={ mainCards }
+			availableTypes={ availableTypes }
+			showDisabledCards={ ! isBusinessTrial }
+		/>
+	);
+};
+
+const SidebarCards = ( {
+	hasStagingSitesFeature,
+	isAdvancedHostingDisabled,
+	isBasicHostingDisabled,
+	isWpcomStagingSite,
+	siteId,
+	siteSlug,
+} ) => {
+	const sidebarCards = [
+		{
+			feature: 'site-backup',
+			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'support',
+			content: <SupportCard />,
 		},
 		! isWpcomStagingSite && hasStagingSitesFeature
 			? {
@@ -126,16 +162,6 @@ const MainCards = ( {
 			  }
 			: null,
 		{
-			feature: 'web-server-settings',
-			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
-			type: 'advanced',
-		},
-		{
-			feature: 'restore-plan-software',
-			content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
-			type: 'basic',
-		},
-		{
 			feature: 'cache',
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
 			type: 'basic',
@@ -146,33 +172,6 @@ const MainCards = ( {
 			type: 'basic',
 		},
 	].filter( ( card ) => card !== null );
-
-	const availableTypes = [
-		! isAdvancedHostingDisabled ? 'advanced' : null,
-		! isBasicHostingDisabled ? 'basic' : null,
-	].filter( ( type ) => type !== null );
-
-	return (
-		<ShowEnabledFeatureCards
-			cards={ mainCards }
-			availableTypes={ availableTypes }
-			showDisabledCards={ ! isBusinessTrial }
-		/>
-	);
-};
-
-const SidebarCards = ( { isBasicHostingDisabled } ) => {
-	const sidebarCards = [
-		{
-			feature: 'site-backup',
-			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
-			type: 'basic',
-		},
-		{
-			feature: 'support',
-			content: <SupportCard />,
-		},
-	];
 
 	const availableTypes = isBasicHostingDisabled ? [] : [ 'basic' ];
 
@@ -280,19 +279,22 @@ const Hosting = ( props ) => {
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<WrapperComponent>
 					<Layout className="hosting__layout">
-						<Column type="main" className="hosting__main-layout-col">
+						<Column className="hosting__main-layout-col">
 							<MainCards
+								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
+								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
+								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
+							/>
+						</Column>
+						<Column>
+							<SidebarCards
 								hasStagingSitesFeature={ hasStagingSitesFeature }
 								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
 								isWpcomStagingSite={ isWpcomStagingSite }
-								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
 								siteId={ siteId }
 								siteSlug={ siteSlug }
 							/>
-						</Column>
-						<Column type="sidebar">
-							<SidebarCards isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic } />
 						</Column>
 					</Layout>
 				</WrapperComponent>

@@ -63,6 +63,9 @@
 	}
 
 	@include breakpoint-deprecated( ">1280px" ) {
+		.layout-wrapper {
+			gap: 16px;
+		}
 		&__main-layout-col {
 			.card:not(.github-deployments-card) {
 				padding-left: 72px;
@@ -75,6 +78,11 @@
 					left: 24px;
 				}
 			}
+		}
+		.hosting__layout .layout__column {
+			flex-basis: 45%;
+			box-sizing: border-box;
+			flex-grow: 1;
 		}
 	}
 
