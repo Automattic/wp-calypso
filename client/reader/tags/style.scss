@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.is-section-reader {
+	background: var(--studio-white); // TODO: Remove after nav-redesign-v2 for reader is done.
+}
+
 .layout.has-header-section.is-section-reader .layout__header-section-content {
 	box-sizing: border-box;
 	max-width: 1140px;

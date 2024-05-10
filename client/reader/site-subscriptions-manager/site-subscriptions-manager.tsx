@@ -12,29 +12,23 @@ const SiteSubscriptionsManager = () => {
 	const translate = useTranslate();
 
 	return (
-		<>
-			<div>
-				<div>
-					<SubscriptionsManagerWrapper
-						actionButton={ <AddSitesButton /> }
-						ellipsisMenuItems={
-							<VStack spacing={ 1 }>
-								<ReaderImportButton icon={ uploadCloud } iconSize={ 20 } />
-								<ReaderExportButton
-									icon={ downloadCloud }
-									iconSize={ 20 }
-									exportType={ READER_EXPORT_TYPE_SUBSCRIPTIONS }
-								/>
-							</VStack>
-						}
-						headerText={ translate( 'Manage subscribed sites' ) }
-						subHeaderText={ translate( 'Manage your site, RSS, and newsletter subscriptions.' ) }
-					>
-						<ReaderSiteSubscriptions />
-					</SubscriptionsManagerWrapper>
-				</div>
-			</div>
-		</>
+		<SubscriptionsManagerWrapper
+			actionButton={ <AddSitesButton /> }
+			ellipsisMenuItems={
+				<VStack spacing={ 1 }>
+					<ReaderImportButton icon={ uploadCloud } iconSize={ 20 } />
+					<ReaderExportButton
+						icon={ downloadCloud }
+						iconSize={ 20 }
+						exportType={ READER_EXPORT_TYPE_SUBSCRIPTIONS }
+					/>
+				</VStack>
+			}
+			headerText={ translate( 'Manage subscribed sites' ) }
+			subHeaderText={ translate( 'Manage your site, RSS, and newsletter subscriptions.' ) }
+		>
+			<ReaderSiteSubscriptions />
+		</SubscriptionsManagerWrapper>
 	);
 };
 

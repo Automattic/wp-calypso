@@ -44,12 +44,10 @@ export default class ReaderMain extends Component {
 	render() {
 		const { children, ...props } = this.props;
 		return (
-			<div>
-				<Main { ...props }>
-					<SyncReaderFollows key="syncReaderFollows" />
-					{ children }
-				</Main>
-			</div>
+			<Main { ...props }>
+				<SyncReaderFollows key="syncReaderFollows" />
+				{ children }
+			</Main>
 		);
 	}
 }
