@@ -14,7 +14,7 @@ const StatsModuleUTMWrapper = ( { siteId, period, postId, query, summary, classN
 
 	// Check if blog is internal.
 	const { isPending: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
-	// Check if the UTM stats module is supported by standalone Stats purchases.
+	// Check if the UTM stats module is valid by the standalone Stats commercial purchase.
 	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
 	// Check if the UTM stats module should be gated by WPCOM plans.
 	const { isGatedStats: isGatedUTMStats } = useShouldGateStats( STATS_FEATURE_UTM_STATS );
