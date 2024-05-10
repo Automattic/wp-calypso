@@ -120,8 +120,15 @@ export const useMultisiteUpdateScheduleQuery = (
 
 			for ( const site_id in data.sites ) {
 				for ( const scheduleId in data.sites[ site_id ] ) {
-					const { timestamp, schedule, args, interval, last_run_timestamp, last_run_status } =
-						data.sites[ site_id ][ scheduleId ];
+					const {
+						timestamp,
+						schedule,
+						args,
+						interval,
+						last_run_timestamp,
+						last_run_status,
+						active,
+					} = data.sites[ site_id ][ scheduleId ];
 
 					const id = generateId( scheduleId, timestamp, schedule, interval );
 
@@ -145,6 +152,7 @@ export const useMultisiteUpdateScheduleQuery = (
 							schedule,
 							args,
 							interval,
+							active,
 							sites: [
 								{
 									...site,
