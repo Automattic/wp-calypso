@@ -3,7 +3,7 @@ import { EmbedRequestParams, addApiMiddleware } from './api';
 import { Editor } from './editor';
 import { loadBlocksWithCustomizations } from './load-blocks';
 import { loadTextFormatting } from './load-text-formatting';
-import { setLocale } from './set-locale';
+
 /**
  * Add Gutenberg editor to the page.
  * @param textarea   Textarea element.
@@ -21,21 +21,19 @@ export const attachGutenberg = (
 	const editor = document.createElement( 'div' );
 	editor.className = 'verbum-editor-wrapper';
 
-	setLocale( document.documentElement.lang ).then( () => {
-		// Insert after the textarea, and hide it
-		textarea.after( editor );
-		textarea.style.display = 'none';
+	// Insert after the textarea, and hide it
+	textarea.after( editor );
+	textarea.style.display = 'none';
 
-		loadBlocksWithCustomizations();
-		loadTextFormatting();
-		addApiMiddleware( requestParamsGenerator );
+	loadBlocksWithCustomizations();
+	loadTextFormatting();
+	addApiMiddleware( requestParamsGenerator );
 
-		createRoot( editor ).render(
-			<Editor
-				initialContent={ textarea.value }
-				isRTL={ isRTL }
-				onChange={ ( content ) => setComment( content ) }
-			/>
-		);
-	} );
+	createRoot( editor ).render(
+		<Editor
+			initialContent={ textarea.value }
+			isRTL={ isRTL }
+			onChange={ ( content ) => setComment( content ) }
+		/>
+	);
 };
