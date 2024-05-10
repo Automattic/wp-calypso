@@ -51,7 +51,7 @@ export default function HeadingInformation( props: Props ) {
 	const onMigrateSite = () => {
 		recordCtaEvent( 'migrateSite' );
 		page(
-			`/setup/new-hosted-site-flow?ref=site-profiler&section=heading-information&from=${ domain }`
+			`/setup/new-hosted-site/plans?ref=site-profiler&section=heading-information&from=${ domain }`
 		);
 	};
 
