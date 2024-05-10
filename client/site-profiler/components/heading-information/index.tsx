@@ -50,7 +50,9 @@ export default function HeadingInformation( props: Props ) {
 
 	const onMigrateSite = () => {
 		recordCtaEvent( 'migrateSite' );
-		page( `/setup/import-hosted-site?from=${ domain }` );
+		page(
+			`/setup/new-hosted-site-flow?ref=site-profiler&section=heading-information&from=${ domain }`
+		);
 	};
 
 	const onLearnMoreHosting = () => {
@@ -152,7 +154,7 @@ export default function HeadingInformation( props: Props ) {
 						finalStatus === 'transfer-domain-hosting-wp' ||
 						finalStatus === 'transfer-google-domain-hosting-wp' ) && (
 						<Button className="button-action" onClick={ onMigrateSite }>
-							{ translate( 'Migrate site' ) }
+							{ translate( 'Get a free assisted website migration' ) }
 						</Button>
 					) }
 
