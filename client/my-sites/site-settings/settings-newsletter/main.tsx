@@ -6,13 +6,13 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import withSiteSettings from 'calypso/data/site-settings/with-site-settings';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import wrapSettingsForm from '../wrap-settings-form';
 import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
@@ -44,220 +44,165 @@ type Fields = {
 	jetpack_verbum_subscription_modal?: boolean;
 };
 
-const getFormSettings = ( settings?: Fields ) => {
-	if ( ! settings ) {
-		return {};
-	}
-
-	const {
-		subscription_options,
-		wpcom_featured_image_in_email,
-		wpcom_newsletter_categories,
-		wpcom_newsletter_categories_enabled,
-		wpcom_subscription_emails_use_excerpt,
-		jetpack_subscriptions_reply_to,
-		sm_enabled,
-		jetpack_subscriptions_subscribe_post_end_enabled,
-		jetpack_subscriptions_login_navigation_enabled,
-		jetpack_verbum_subscription_modal,
-	} = settings;
-
-	return {
-		...( subscription_options && { subscription_options } ),
-		wpcom_featured_image_in_email: !! wpcom_featured_image_in_email,
-		wpcom_newsletter_categories: wpcom_newsletter_categories || [],
-		wpcom_newsletter_categories_enabled: !! wpcom_newsletter_categories_enabled,
-		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
-		jetpack_subscriptions_reply_to: jetpack_subscriptions_reply_to || '',
-		sm_enabled: !! sm_enabled,
-		jetpack_subscriptions_subscribe_post_end_enabled:
-			!! jetpack_subscriptions_subscribe_post_end_enabled,
-		jetpack_subscriptions_login_navigation_enabled:
-			!! jetpack_subscriptions_login_navigation_enabled,
-		jetpack_verbum_subscription_modal: !! jetpack_verbum_subscription_modal,
-	};
-};
-
 type NewsletterSettingsFormProps = {
-	fields: Fields;
-	handleToggle: ( field: string ) => ( value: boolean ) => void;
-	handleSubmitForm: () => void;
-	isRequestingSettings: boolean;
+	siteId: number | null;
+	settings: Fields;
+	isLoadingSettings: boolean;
 	isSavingSettings: boolean;
-	settings: { subscription_options?: SubscriptionOptions };
-	updateFields: ( fields: Fields ) => void;
+	updateSettings: ( fields: Fields ) => void;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
+	handleSubmitForm: ( event: React.FormEvent ) => void;
 };
 
-const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
-	fields,
-	handleSubmitForm,
-	handleToggle,
-	isRequestingSettings,
-	isSavingSettings,
-	settings,
-	updateFields,
-}: NewsletterSettingsFormProps ) => {
-	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
+const NewsletterSettingsForm = withSiteSettings(
+	( {
+		siteId,
+		settings,
+		isLoadingSettings,
+		isSavingSettings,
+		updateSettings,
+		handleToggle,
+		handleSubmitForm,
+	}: NewsletterSettingsFormProps ) => {
+		const translate = useTranslate();
+		const isSubscriptionModuleInactive = useSelector( ( state ) => {
+			if ( ! siteId ) {
+				return null;
+			}
 
-	const {
-		wpcom_featured_image_in_email,
-		wpcom_subscription_emails_use_excerpt,
-		jetpack_subscriptions_reply_to,
-		subscription_options,
-		sm_enabled,
-		jetpack_subscriptions_subscribe_post_end_enabled,
-		jetpack_subscriptions_login_navigation_enabled,
-		jetpack_verbum_subscription_modal,
-	} = fields;
+			const isJetpackSite = isJetpackSiteSelector( state, siteId, {
+				treatAtomicAsJetpackSite: false,
+			} );
 
-	const isSubscriptionModuleInactive = useSelector( ( state ) => {
-		if ( ! siteId ) {
-			return null;
-		}
-
-		const isJetpackSite = isJetpackSiteSelector( state, siteId, {
-			treatAtomicAsJetpackSite: false,
+			return (
+				Boolean( isJetpackSite ) &&
+				isJetpackModuleActive( state, siteId, 'subscriptions' ) === false
+			);
 		} );
+
+		const shouldShowSubscriptionOnCommentModule = useSelector( ( state ) => {
+			const isJetpackSite = isJetpackSiteSelector( state, siteId, {
+				treatAtomicAsJetpackSite: false,
+			} );
+
+			return ! isJetpackSite;
+		} );
+
+		useEffect( () => {
+			// If the URL has a hash, scroll to it.
+			scrollToAnchor( { offset: 15 } );
+		}, [] );
+
+		const disabled = isSubscriptionModuleInactive || isLoadingSettings || isSavingSettings;
 
 		return (
-			Boolean( isJetpackSite ) && isJetpackModuleActive( state, siteId, 'subscriptions' ) === false
-		);
-	} );
-
-	const shouldShowSubscriptionOnCommentModule = useSelector( ( state ) => {
-		const isJetpackSite = isJetpackSiteSelector( state, siteId, {
-			treatAtomicAsJetpackSite: false,
-		} );
-
-		return ! isJetpackSite;
-	} );
-
-	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
-	const savedSubscriptionOptions = settings?.subscription_options;
-
-	// Update subscription_options form fields when savedSubscriptionOptions changes.
-	// This makes sure the form fields hold the current value after saving.
-	useEffect( () => {
-		updateFields( { subscription_options: savedSubscriptionOptions } );
-
-		// If the URL has a hash, scroll to it.
-		scrollToAnchor( { offset: 15 } );
-	}, [ savedSubscriptionOptions, updateFields ] );
-
-	return (
-		<form onSubmit={ handleSubmitForm }>
-			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
-			<SettingsSectionHeader
-				disabled={ disabled }
-				id="subscriptions"
-				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
-				showButton
-				title={ translate( 'Subscriptions' ) }
-			/>
-			<Card className="site-settings__card">
-				<SubscribePostEndSetting
+			<form onSubmit={ handleSubmitForm }>
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
+				{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+				<SettingsSectionHeader
 					disabled={ disabled }
-					handleToggle={ handleToggle }
-					value={ jetpack_subscriptions_subscribe_post_end_enabled }
+					id="subscriptions"
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Subscriptions' ) }
 				/>
-				<SubscribeModalSetting
-					disabled={ disabled }
-					handleToggle={ handleToggle }
-					value={ sm_enabled }
-				/>
-				{ shouldShowSubscriptionOnCommentModule && (
-					<SubscribeModalOnCommentSetting
+				<Card className="site-settings__card">
+					<SubscribePostEndSetting
 						disabled={ disabled }
 						handleToggle={ handleToggle }
-						value={ jetpack_verbum_subscription_modal }
+						value={ settings.jetpack_subscriptions_subscribe_post_end_enabled }
 					/>
-				) }
-				<SubscriberLoginNavigationSetting
+					<SubscribeModalSetting
+						disabled={ disabled }
+						handleToggle={ handleToggle }
+						value={ settings?.sm_enabled }
+					/>
+					{ shouldShowSubscriptionOnCommentModule && (
+						<SubscribeModalOnCommentSetting
+							disabled={ disabled }
+							handleToggle={ handleToggle }
+							value={ settings?.jetpack_verbum_subscription_modal }
+						/>
+					) }
+					<SubscriberLoginNavigationSetting
+						disabled={ disabled }
+						handleToggle={ handleToggle }
+						value={ settings?.jetpack_subscriptions_login_navigation_enabled }
+					/>
+				</Card>
+				{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+				<SettingsSectionHeader
 					disabled={ disabled }
+					id="email-settings"
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Email' ) }
+				/>
+				<Card className="site-settings__card">
+					<FeaturedImageEmailSetting
+						disabled={ disabled }
+						handleToggle={ handleToggle }
+						value={ settings?.wpcom_featured_image_in_email }
+					/>
+				</Card>
+				<Card className="site-settings__card">
+					<ExcerptSetting
+						disabled={ disabled }
+						updateFields={ updateSettings }
+						value={ settings?.wpcom_subscription_emails_use_excerpt }
+					/>
+				</Card>
+				{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+				<SettingsSectionHeader
+					id="newsletter-categories-settings"
+					title={ translate( 'Newsletter categories' ) }
+					showButton
+					onButtonClick={ handleSubmitForm }
+					disabled={ disabled }
+					isSaving={ isSavingSettings }
+				/>
+				<NewsletterCategoriesSection
+					disabled={ disabled }
+					newsletterCategoryIds={
+						settings?.wpcom_newsletter_categories || defaultNewsletterCategoryIds
+					}
+					newsletterCategoriesEnabled={ settings?.wpcom_newsletter_categories_enabled }
 					handleToggle={ handleToggle }
-					value={ jetpack_subscriptions_login_navigation_enabled }
+					updateFields={ updateSettings }
 				/>
-			</Card>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
-			<SettingsSectionHeader
-				disabled={ disabled }
-				id="email-settings"
-				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
-				showButton
-				title={ translate( 'Email' ) }
-			/>
-			<Card className="site-settings__card">
-				<FeaturedImageEmailSetting
-					disabled={ disabled }
-					handleToggle={ handleToggle }
-					value={ wpcom_featured_image_in_email }
-				/>
-			</Card>
-			<Card className="site-settings__card">
-				<ExcerptSetting
-					disabled={ disabled }
-					updateFields={ updateFields }
-					value={ wpcom_subscription_emails_use_excerpt }
-				/>
-			</Card>
-			<Card className="site-settings__card">
-				<ReplyToSetting
-					disabled={ disabled }
-					updateFields={ updateFields }
-					value={ jetpack_subscriptions_reply_to }
-				/>
-			</Card>
 
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
-			<SettingsSectionHeader
-				id="newsletter-categories-settings"
-				title={ translate( 'Newsletter categories' ) }
-				showButton
-				onButtonClick={ handleSubmitForm }
-				disabled={ disabled }
-				isSaving={ isSavingSettings }
-			/>
-			<NewsletterCategoriesSection
-				disabled={ disabled }
-				newsletterCategoryIds={ fields.wpcom_newsletter_categories || defaultNewsletterCategoryIds }
-				newsletterCategoriesEnabled={ fields.wpcom_newsletter_categories_enabled }
-				handleToggle={ handleToggle }
-				updateFields={ updateFields }
-			/>
-
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
-			<SettingsSectionHeader
-				disabled={ disabled }
-				id="messages"
-				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
-				showButton
-				title={ translate( 'Messages' ) }
-			/>
-			<Card className="site-settings__card">
-				<EmailsTextSetting
+				{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+				<SettingsSectionHeader
 					disabled={ disabled }
-					updateFields={ updateFields }
-					value={ subscription_options }
+					id="messages"
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Messages' ) }
 				/>
-			</Card>
-		</form>
-	);
-} );
+				<Card className="site-settings__card">
+					<EmailsTextSetting
+						disabled={ disabled }
+						updateFields={ updateSettings }
+						value={ settings?.subscription_options }
+					/>
+				</Card>
+			</form>
+		);
+	}
+);
 
 const NewsletterSettings = () => {
 	const translate = useTranslate();
-
+	const siteId = useSelector( getSelectedSiteId );
 	return (
 		<Main>
 			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
 			<NavigationHeader navigationItems={ [] } title={ translate( 'Newsletter Settings' ) } />
 			<SubscriptionsModuleBanner />
-			<NewsletterSettingsForm />
+			<NewsletterSettingsForm siteId={ siteId } />
 		</Main>
 	);
 };
