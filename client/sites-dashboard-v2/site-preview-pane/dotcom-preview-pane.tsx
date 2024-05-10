@@ -41,6 +41,7 @@ const DotcomPreviewPane = ( {
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack;
+	const isPlanExpired = !! site.plan?.expired;
 
 	const features = useMemo(
 		() => [
@@ -57,7 +58,7 @@ const DotcomPreviewPane = ( {
 				<span>
 					{ __( 'Dev Tools' ) } <DevToolsIcon />
 				</span>,
-				isSimpleSite,
+				isSimpleSite || isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -65,7 +66,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
 				__( 'Hosting Config' ),
-				isAtomicSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -73,7 +74,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_MONITORING,
 				__( 'Monitoring' ),
-				isAtomicSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -81,7 +82,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_PHP_LOGS,
 				__( 'PHP Logs' ),
-				isAtomicSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -89,7 +90,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_SERVER_LOGS,
 				__( 'Server Logs' ),
-				isAtomicSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -97,13 +98,21 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
 				__( 'GitHub Deployments' ),
-				isAtomicSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
 			),
 		],
-		[ selectedSiteFeature, setSelectedSiteFeature, selectedSiteFeaturePreview, site ]
+		[
+			__,
+			selectedSiteFeature,
+			setSelectedSiteFeature,
+			selectedSiteFeaturePreview,
+			isSimpleSite,
+			isPlanExpired,
+			isAtomicSite,
+		]
 	);
 
 	const itemData: ItemData = {
