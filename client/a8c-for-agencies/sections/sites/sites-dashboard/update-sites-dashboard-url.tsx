@@ -1,5 +1,4 @@
 import { DataViewsFilter } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
@@ -16,7 +15,7 @@ const buildQueryString = ( {
 	sort,
 	showOnlyFavorites,
 }: {
-	filters: Filter[];
+	filters: DataViewsFilter[];
 	search: string;
 	currentPage: number;
 	sort: DashboardSortInterface;
