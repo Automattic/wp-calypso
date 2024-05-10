@@ -13,6 +13,7 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';
 import getStatsUrl from 'calypso/state/selectors/get-stats-url';
 import getThemeInstallUrl from 'calypso/state/selectors/get-theme-install-url';
+import { getSiteHomeUrl, isSimpleSite } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -40,23 +41,33 @@ const QuickActionsCard: FC = () => {
 	const hasEnTranslation = useHasEnTranslation();
 	const site = useSelector( getSelectedSite );
 	const { data: activeThemeData } = useActiveThemeQuery( site?.ID || -1, !! site );
-	const { editorUrl, themeInstallUrl, pluginInstallUrl, statsUrl, siteAdminUrl, siteEditorUrl } =
-		useSelector( ( state ) => ( {
-			editorUrl: site?.ID ? getEditorUrl( state, site.ID ) : '#',
-			themeInstallUrl: getThemeInstallUrl( state, site?.ID ) ?? '',
-			pluginInstallUrl: getPluginInstallUrl( state, site?.ID ) ?? '',
-			statsUrl: getStatsUrl( state, site?.ID ) ?? '',
-			siteAdminUrl: getSiteAdminUrl( state, site?.ID ) ?? '',
-			siteEditorUrl:
-				site?.ID && activeThemeData
-					? getCustomizeUrl(
-							state as object,
-							activeThemeData[ 0 ]?.stylesheet,
-							site?.ID,
-							activeThemeData[ 0 ]?.is_block_theme
-					  )
-					: '',
-		} ) );
+	const {
+		editorUrl,
+		themeInstallUrl,
+		pluginInstallUrl,
+		statsUrl,
+		siteHomeUrl,
+		isSiteSimple,
+		siteAdminUrl,
+		siteEditorUrl,
+	} = useSelector( ( state ) => ( {
+		editorUrl: site?.ID ? getEditorUrl( state, site.ID ) : '#',
+		themeInstallUrl: getThemeInstallUrl( state, site?.ID ) ?? '',
+		pluginInstallUrl: getPluginInstallUrl( state, site?.ID ) ?? '',
+		statsUrl: getStatsUrl( state, site?.ID ) ?? '',
+		siteAdminUrl: getSiteAdminUrl( state, site?.ID ) ?? '',
+		siteHomeUrl: getSiteHomeUrl( state, site?.ID ) ?? '',
+		isSiteSimple: isSimpleSite( state, site?.ID ),
+		siteEditorUrl:
+			site?.ID && activeThemeData
+				? getCustomizeUrl(
+						state as object,
+						activeThemeData[ 0 ]?.stylesheet,
+						site?.ID,
+						activeThemeData[ 0 ]?.is_block_theme
+				  )
+				: '',
+	} ) );
 
 	return (
 		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__quick-actions' ) }>
@@ -71,8 +82,8 @@ const QuickActionsCard: FC = () => {
 			<ul className="hosting-overview__actions-list">
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-wordpress-alt hosting-overview__dashicon" /> }
-					href={ siteAdminUrl }
-					text={ translate( 'WP Admin' ) }
+					href={ isSiteSimple ? siteHomeUrl : siteAdminUrl }
+					text={ isSiteSimple ? translate( 'My Home' ) : translate( 'WP Admin' ) }
 				/>
 				<Action
 					icon={

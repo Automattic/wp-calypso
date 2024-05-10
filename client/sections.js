@@ -222,6 +222,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'dev-tools-promo',
+		paths: [ '/dev-tools-promo' ],
+		module: 'calypso/dev-tools-promo',
+		group: 'sites',
+	},
+	{
 		name: 'jetpack-connect',
 		paths: [ '/jetpack' ],
 		module: 'calypso/jetpack-connect',

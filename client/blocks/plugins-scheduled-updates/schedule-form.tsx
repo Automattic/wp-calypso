@@ -1,4 +1,4 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalText as Text } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -29,7 +29,7 @@ interface Props {
 export const ScheduleForm = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const isMobile = useMobileBreakpoint();
+	const isSmallScreen = useBreakpoint( '<660px' );
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
 
@@ -175,7 +175,7 @@ export const ScheduleForm = ( props: Props ) => {
 				selectedPlugins={ selectedPlugins }
 				isPluginsFetching={ isPluginsFetching }
 				isPluginsFetched={ isPluginsFetched }
-				borderWrapper={ ! isMobile }
+				borderWrapper={ ! isSmallScreen }
 				error={ validationErrors?.plugins }
 				showError={ fieldTouched?.plugins }
 				onChange={ setSelectedPlugins }

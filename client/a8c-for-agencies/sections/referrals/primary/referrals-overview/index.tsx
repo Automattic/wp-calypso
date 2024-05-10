@@ -1,3 +1,4 @@
+import { Button, WooLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -114,14 +115,21 @@ export default function ReferralsOverview() {
 				</div>
 
 				<div className="referrals-overview__section-subtitle">
-					{ translate(
-						'Earn commissions from client purchases across our products, including WooCommerce, Jetpack, and hosting services from Pressable or WordPress.com. {{a}}How much can I earn?{{/a}}',
-						{
-							components: {
-								a: <a href={ A4A_REFERRALS_COMMISSIONS_LINK } />,
-							},
-						}
-					) }
+					<div>
+						{ translate(
+							'Make money on each product your clients buy from Automattic. They can buy WooCommerce extensions, tools from Jetpack, and hosting services from Pressable or WordPress.com'
+						) }
+					</div>
+					<div>
+						{ translate(
+							'You can also make money when people buy things on your clients’ websites using WooPayments. {{a}}How much can I earn?{{/a}}',
+							{
+								components: {
+									a: <a href={ A4A_REFERRALS_COMMISSIONS_LINK } />,
+								},
+							}
+						) }
+					</div>
 				</div>
 
 				<div className="referrals-overview__section-container">
@@ -173,6 +181,28 @@ export default function ReferralsOverview() {
 										href: A4A_DOWNLOAD_LINK_ON_GITHUB,
 										onClick: onDownloadA4APluginClick,
 									} }
+								/>
+								<StepSectionItem
+									className="referrals-overview__step-section-woo-payments"
+									icon={ <WooLogo /> }
+									heading={ translate( 'Install WooPayments on your clients’ online stores' ) }
+									description={
+										<>
+											{ translate(
+												'Receive a revenue share of 5 basis points (0.05%) on new WooPayments gross merchandise value on clients’ sites.'
+											) }
+											<div>
+												<Button
+													borderless
+													href="https://woocommerce.com/payments/"
+													rel="noreferrer"
+													target="_blank"
+												>
+													{ translate( 'Learn about WooPayments' ) }
+												</Button>
+											</div>
+										</>
+									}
 								/>
 							</StepSection>
 						</>

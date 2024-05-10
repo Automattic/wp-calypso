@@ -12,7 +12,7 @@ import './style.scss';
 
 export const createFeaturePreview = (
 	id: string,
-	label: string,
+	label: string | React.ReactNode,
 	enabled: boolean,
 	selectedFeatureId: string | undefined,
 	setSelectedFeatureId: ( id: string ) => void,

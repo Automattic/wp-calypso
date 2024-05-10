@@ -699,25 +699,13 @@ export class EditorPage {
 		visit = false,
 		timeout,
 	}: { visit?: boolean; timeout?: number } = {} ): Promise< URL > {
-		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
-		const postStatusButtonText = await this.editorToolbarComponent.getPostStatusButtonText();
 		const actionsArray = [];
 
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
 
-		// Determine whether the post/page is yet to be published or the post/page
-		// is merely being saved/updated.
-		// If not yet published, a second click on the EditorPublishPanelComponent
-		// is added to the array of actions.
-		const requiresSecondClick =
-			! [ 'save', 'update' ].includes( publishButtonText.toLowerCase() ) ||
-			( publishButtonText.toLowerCase() === 'save' &&
-				postStatusButtonText?.toLowerCase() === 'scheduled' );
-
-		if ( requiresSecondClick ) {
-			actionsArray.push( this.editorPublishPanelComponent.publish() );
-		}
+		// Trigger a secondary/confirmation click if needed
+		actionsArray.push( this.editorPublishPanelComponent.publish() );
 
 		// Resolve the promises.
 		const [ response ] = await Promise.all( [
@@ -776,14 +764,27 @@ export class EditorPage {
 	async unpublish(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		await this.editorToolbarComponent.switchToDraft();
+
+		// For mobiles, we need to dismiss the settings panel before we can click on publish
+		await this.closeSettings();
+
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		// Saves the draft
-		await Promise.race( [
-			this.editorToolbarComponent.clickPublish(),
-			editorParent.getByRole( 'button' ).getByText( 'OK' ).click(),
-		] );
+		await Promise.race( [ this.editorToolbarComponent.clickPublish(), this.confirmUnpublish() ] );
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
 		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
+	}
+
+	/**
+	 * Confirms the unpublish action in some views
+	 */
+	async confirmUnpublish(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const okButtonLocator = editorParent.getByRole( 'button' ).getByText( 'OK' );
+
+		if ( await okButtonLocator.count() ) {
+			okButtonLocator.click();
+		}
 	}
 
 	/**
