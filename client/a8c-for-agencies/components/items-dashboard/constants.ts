@@ -7,13 +7,13 @@ export const DATAVIEWS_LIST = 'list';
 export const initialDataViewsState: DataViewsState = {
 	filters: [],
 	sort: {
-		field: '',
+		field: 'url',
 		direction: 'asc',
 	},
 	type: DATAVIEWS_TABLE,
 	perPage: 50,
 	page: 1,
 	search: '',
-	hiddenFields: [],
+	hiddenFields: [ 'status', 'site_tags' ],
 	layout: {},
 };

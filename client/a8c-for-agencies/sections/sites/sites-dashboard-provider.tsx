@@ -9,9 +9,8 @@ import {
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD, filtersMap } from './constants';
+import { filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
-import SiteTag from 'calypso/a8c-for-agencies/types/site-tag';
 
 interface Props {
 	showOnlyFavoritesInitialState?: boolean;

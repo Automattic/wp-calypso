@@ -24,7 +24,6 @@ import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/s
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { AllowedTypes, Site, SiteData } from '../../types';
-import SiteTag from 'calypso/a8c-for-agencies/types/site-tag';
 
 export const JetpackSitesDataViews = ( {
 	data,
