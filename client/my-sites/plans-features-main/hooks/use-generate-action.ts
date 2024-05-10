@@ -22,6 +22,7 @@ import { useSelector } from 'calypso/state';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
+import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
 import useGenerateActionCallback from './use-generate-action-callback';
@@ -37,8 +38,6 @@ function useGenerateAction( {
 	isInSignup,
 	isLaunchPage,
 	showModalAndExit,
-	sitePlanSlug, // TODO: remove from props. call from here.
-	siteSlug, // TODO: remove from props. call from here.
 	withDiscount,
 }: {
 	siteId?: number | null;
@@ -49,12 +48,15 @@ function useGenerateAction( {
 	isInSignup: boolean;
 	isLaunchPage: boolean | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
-	sitePlanSlug?: PlanSlug | null;
-	siteSlug?: string | null;
 	withDiscount?: string;
 } ) {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
+	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+	// TODO: confirm if `sitePlanSlug` is just the same as `currentPlan.slug`
+	const sitePlanSlug = useSelector( ( state: IAppState ) =>
+		siteId ? getSitePlanSlug( state, siteId ) : null
+	);
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
 		siteId
