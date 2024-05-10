@@ -106,12 +106,18 @@
 	.components-form-toggle {
 		.components-form-toggle__track {
 			border-color: var(--color-text) !important;
-			background-color: var(--color-text) !important;
 		}
 
-		.components-form-toggle__thumb {
-			background-color: #fff !important;
+		&.is-checked {
+			.components-form-toggle__track {
+				background-color: var(--color-text) !important;
+			}
+
+			.components-form-toggle__thumb {
+				background-color: #fff !important;
+			}
 		}
+
 	}
 
 	table {
