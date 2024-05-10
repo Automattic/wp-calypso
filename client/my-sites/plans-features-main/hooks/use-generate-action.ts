@@ -19,6 +19,7 @@ import {
 import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
+import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
@@ -29,7 +30,6 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 function useGenerateAction( {
 	siteId,
 	cartHandler,
-	domainFromHomeUpsellFlow, // TODO: remove from props. call from here.
 	eligibleForFreeHostingTrial, // TODO: remove from props. call from here.
 	flowName,
 	intent, // TODO: a single intent prop here should suffice.
@@ -43,7 +43,6 @@ function useGenerateAction( {
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
-	domainFromHomeUpsellFlow: string | null;
 	eligibleForFreeHostingTrial: boolean;
 	flowName?: string | null;
 	intent?: PlansIntent | null;
@@ -57,6 +56,13 @@ function useGenerateAction( {
 } ) {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
+	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
+	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
+		siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null
+	);
+
 	const getActionCallback = useGenerateActionCallback( {
 		currentPlan,
 		eligibleForFreeHostingTrial,
@@ -68,11 +74,6 @@ function useGenerateAction( {
 		siteSlug,
 		withDiscount,
 	} );
-	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
-		siteId
-			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-			: null
-	);
 
 	return ( {
 		availableForPurchase,

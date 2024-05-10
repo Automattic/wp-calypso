@@ -360,7 +360,6 @@ const PlansFeaturesMain = ( {
 	const useAction = useGenerateAction( {
 		siteId,
 		cartHandler: onUpgradeClick,
-		domainFromHomeUpsellFlow,
 		eligibleForFreeHostingTrial,
 		flowName,
 		intent,
