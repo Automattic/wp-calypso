@@ -110,10 +110,6 @@ export default function SiteProfiler( props: Props ) {
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
 
-	const handleCloseGetReportForm = () => {
-		setIsGetReportFormOpen( false );
-	};
-
 	return (
 		<>
 			{ ! showResultScreen && (
@@ -182,7 +178,7 @@ export default function SiteProfiler( props: Props ) {
 					<GetReportForm
 						url={ url }
 						token={ basicMetrics?.token }
-						onClose={ handleCloseGetReportForm }
+						onClose={ () => setIsGetReportFormOpen( false ) }
 					/>
 				</LayoutBlock>
 			) }

@@ -111,7 +111,7 @@ export function GetReportForm( {
 						) }
 					</span>
 					<span>
-						<Gridicon icon="chevron-down" onClick={ onClose } />
+						<Gridicon icon="cross" onClick={ onClose } />
 					</span>
 				</div>
 				<form className="get-report-form__form" onSubmit={ handleSubmit }>
