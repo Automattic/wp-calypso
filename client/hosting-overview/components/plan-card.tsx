@@ -1,4 +1,4 @@
-import { PlanSlug } from '@automattic/calypso-products';
+import { PlanSlug, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button, Card, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
@@ -32,12 +32,10 @@ const PlanCard: FC = () => {
 		useCheckPlanAvailabilityForPurchase,
 	} );
 
-	// Check for storage addons available for purchase
+	// Check for storage addons available for purchase.
 	const addOns = AddOns.useAddOns( { selectedSiteId: site?.ID } );
 	const storageAddons = addOns.filter(
-		( addOn ) =>
-			addOn?.productSlug === 'wordpress_com_1gb_space_addon_yearly' &&
-			! addOn?.exceedsSiteStorageLimits
+		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
 	);
 
 	const isLoading = ! pricing || ! planData;
