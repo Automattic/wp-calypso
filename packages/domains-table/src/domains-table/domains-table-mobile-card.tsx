@@ -43,6 +43,9 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 
 	return (
 		<div className="domains-table-mobile-card" ref={ ref }>
+			{ domainManagementLink && (
+				<a className="domains-table__domain-link" href={ domainManagementLink } />
+			) }
 			<div>
 				<div className="domains-table-mobile-card-header">
 					{ canBulkUpdate( domain ) && showBulkActions && (
@@ -110,9 +113,6 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 					</div>
 				) }
 			</div>
-			{ domainManagementLink && (
-				<a className="domains-table__domain-link" href={ domainManagementLink } />
-			) }
 		</div>
 	);
 };

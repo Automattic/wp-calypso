@@ -145,15 +145,6 @@
 	.domains-table-row__actions {
 		text-align: right;
 	}
-
-	.domains-table__domain-link {
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
-		z-index: 0;
-	}
 }
 
 .domains-table-row-loading-placeholder {
@@ -356,6 +347,22 @@
 		}
 	}
 
+	.domains-table__domain-link {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	}
+
+	// Prevent the following elements become unclickable due to the domain-link overlay.
+	&:has(.domains-table__domain-link) {
+		button,
+		input {
+			position: relative;
+			z-index: 0;
+		}
+	}
 }
 
 a.domains-table-add-email-button {
