@@ -256,6 +256,7 @@ function useGenerateActionHook( {
 
 		if ( isFreePlan( planSlug ) ) {
 			text = translate( 'Contact support', { context: 'verb' } );
+			status = 'disabled';
 
 			// TODO: Consider DRYing this up
 			if ( sitePlanSlug === planSlug && plansIntent !== 'plans-p2' ) {

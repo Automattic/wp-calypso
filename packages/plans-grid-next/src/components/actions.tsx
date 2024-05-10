@@ -1,9 +1,6 @@
 import {
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_P2_FREE,
 	type PlanSlug,
-	PLAN_HOSTING_TRIAL_MONTHLY,
 	type StorageOption,
 	isP2FreePlan,
 	isWpcomEnterpriseGridPlan,
@@ -227,7 +224,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		helpers: { useAction },
 	} = usePlansGridContext();
 	const {
-		current,
 		planTitle,
 		pricing: { billingPeriod, currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
@@ -256,22 +252,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			isSmallestUnit: true,
 		}
 	);
-
-	const isTrialPlan =
-		currentSitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
-		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
-		currentSitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
-
-	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
-	// TODO: Consider the structure of this condition. Should we move it out of this component?
-	const higherTermButLowerTierPlan =
-		availableForPurchase &&
-		currentSitePlanSlug &&
-		! current &&
-		! isTrialPlan &&
-		currentPlanBillingPeriod &&
-		billingPeriod &&
-		currentPlanBillingPeriod > billingPeriod;
 
 	const {
 		primary: { callback, text, status },
@@ -307,8 +287,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		selectedStorageAddOn,
 	} );
 
-	const shouldDisableButton = ! callback || higherTermButLowerTierPlan;
-
 	if ( isInSignup || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
 			<PlanFeatureActionButton
@@ -328,7 +306,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	return (
 		<LoggedInPlansFeatureActionButton
-			disabled={ !! shouldDisableButton }
+			disabled={ ! callback || 'disabled' === status }
 			planSlug={ planSlug }
 			availableForPurchase={ availableForPurchase }
 			onCtaClick={ callback }
