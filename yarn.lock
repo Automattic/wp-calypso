@@ -1932,7 +1932,6 @@ __metadata:
     "@wordpress/components": "npm:^27.5.0"
     "@wordpress/data": "npm:^9.27.0"
     "@wordpress/element": "npm:^5.34.0"
-    "@wordpress/env": "npm:^9.9.0"
     "@wordpress/eslint-plugin": "npm:^18.0.0"
     "@wordpress/format-library": "npm:^4.34.0"
     "@wordpress/i18n": "npm:^4.57.0"
@@ -1943,8 +1942,6 @@ __metadata:
     "@wordpress/rich-text": "npm:^6.34.0"
     "@wordpress/stylelint-config": "npm:^21.40.0"
     "@wordpress/url": "npm:^3.58.0"
-    gettext-parser: "npm:^6.0.0"
-    lodash: "npm:^4.17.21"
     node-fetch: "npm:^2.6.6"
     typescript: "npm:^5.3.3"
   peerDependencies:

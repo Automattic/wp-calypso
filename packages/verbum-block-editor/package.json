@@ -29,7 +29,7 @@
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/verbum-block-editor",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"prepare": "yarn build",
-		"translate": "cp ./dist/block-editor.min.js ./dist/block-editor.js && wp i18n make-pot ./dist ./dist/vbe-strings.pot --ignore-domain"
+		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/block-editor.min.js' --dir './dist/strings' --output './dist/vbe-strings.pot' && build-app-languages --stringsFilePath='./dist/vbe-strings.pot'"
 	},
 	"dependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
@@ -43,7 +43,6 @@
 		"@wordpress/components": "^27.5.0",
 		"@wordpress/data": "^9.27.0",
 		"@wordpress/element": "^5.34.0",
-		"@wordpress/env": "^9.9.0",
 		"@wordpress/format-library": "^4.34.0",
 		"@wordpress/i18n": "^4.57.0",
 		"@wordpress/icons": "^9.48.0",
@@ -63,8 +62,6 @@
 		"@typescript-eslint/parser": "^6.21.0",
 		"@wordpress/eslint-plugin": "^18.0.0",
 		"@wordpress/stylelint-config": "^21.40.0",
-		"gettext-parser": "^6.0.0",
-		"lodash": "^4.17.21",
 		"node-fetch": "^2.6.6",
 		"typescript": "^5.3.3"
 	},

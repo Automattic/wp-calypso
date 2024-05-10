@@ -1,5 +1,6 @@
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
 /* Arguments to this function replicate webpack's so this config can be used on the command line,
  * with individual options overridden by command line args.
@@ -39,6 +40,12 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			filename: '[name].min.js', // dynamic filename
 			library: 'verbumBlockEditor',
 		},
+		plugins: [
+			...webpackConfig.plugins,
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( __dirname, 'dist/chunks-map.json' ),
+			} ),
+		],
 	};
 }
 
