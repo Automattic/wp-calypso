@@ -10,7 +10,6 @@ import './style.scss';
 
 interface SiteFaviconProps {
 	blogId?: number;
-	isDotcomSite?: boolean;
 	color?: string;
 	size?: number;
 	className?: string;
@@ -20,7 +19,6 @@ interface SiteFaviconProps {
 const SiteFavicon = ( {
 	blogId,
 	color,
-	isDotcomSite = false,
 	size = 40,
 	className = '',
 	fallback = 'color',
@@ -30,16 +28,21 @@ const SiteFavicon = ( {
 	const site = useSelector( ( state ) => getSite( state, blogId ) );
 
 	let defaultFavicon;
-	if ( isDotcomSite || fallback === 'wordpress-logo' ) {
-		defaultFavicon = <WordPressLogo className="wpcom-favicon" size={ size * 0.8 } />;
-	} else if ( fallback === 'color' ) {
-		defaultFavicon = <div className="no-favicon" style={ { background: siteColor } } />;
-	} else if ( fallback === 'first-grapheme' ) {
-		defaultFavicon = (
-			<div role="img" aria-label={ __( 'Site Icon' ) }>
-				{ getFirstGrapheme( site?.title ?? '' ) }
-			</div>
-		);
+	switch ( fallback ) {
+		case 'wordpress-logo':
+			defaultFavicon = <WordPressLogo className="wpcom-favicon" size={ size * 0.8 } />;
+			break;
+		case 'first-grapheme':
+			defaultFavicon = (
+				<div role="img" aria-label={ __( 'Site Icon' ) }>
+					{ getFirstGrapheme( site?.title ?? '' ) }
+				</div>
+			);
+			break;
+		case 'color':
+		default:
+			defaultFavicon = <div className="no-favicon" style={ { background: siteColor } } />;
+			break;
 	}
 
 	return (
