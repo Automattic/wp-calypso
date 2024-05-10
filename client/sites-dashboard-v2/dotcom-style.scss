@@ -6,22 +6,6 @@
 // Add new Dotcom specific styles to this file.
 .wpcom-site .layout__primary .main {
 	padding-bottom: 0;
-
-	.navigation-header__main {
-		align-items: center !important;
-
-		.formatted-header__subtitle {
-			display: none; // Hide the subtitle on the main site list page.
-		}
-	}
-
-	.a4a-layout__header {
-		align-items: center !important;
-
-		.a4a-layout__header-subtitle {
-			display: none; // Hide the subtitle on the main site list page.
-		}
-	}
 }
 
 .wpcom-site .a4a-layout-with-columns__container {
@@ -45,10 +29,7 @@
 	}
 
 	.a4a-layout__header {
-		align-items: initial;
-		@media ( max-width: 660px ) {
-			align-items: center;
-		}
+		align-items: center;
 	}
 
 	.a4a-layout__header-main {
