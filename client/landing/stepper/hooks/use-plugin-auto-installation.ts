@@ -20,6 +20,8 @@ interface SiteMigrationStatus {
 }
 
 type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
+const DEFAULT_RETRY = process.env.NODE_ENV !== 'production' ? 1 : 10;
+const DEFAULT_RETRY_DELAY = process.env.NODE_ENV !== 'production' ? 300 : 2000;
 
 const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
 	wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
@@ -46,7 +48,8 @@ const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options
 		queryKey: [ 'onboarding-site-plugin-status', siteId, pluginSlug ],
 		queryFn: () => fetchPluginsForSite( siteId! ),
 		enabled: !! siteId && ( options?.enabled ?? true ),
-		retry: options?.retry ?? 10,
+		retry: options?.retry ?? DEFAULT_RETRY,
+		retryDelay: DEFAULT_RETRY_DELAY,
 		refetchOnWindowFocus: false,
 		select: ( data ) => {
 			return {
@@ -61,7 +64,7 @@ const usePluginInstallation = ( pluginSlug: string, siteId?: number, options?: O
 	return useMutation( {
 		mutationKey: [ 'onboarding-site-plugin-installation', siteId, pluginSlug ],
 		mutationFn: async () => installPlugin( siteId!, pluginSlug ),
-		retry: options?.retry ?? 10,
+		retry: options?.retry ?? DEFAULT_RETRY,
 	} );
 };
 
@@ -69,8 +72,8 @@ const usePluginActivation = ( pluginName: string, siteId?: number, options?: Opt
 	return useMutation( {
 		mutationKey: [ 'onboarding-site-plugin-activation', siteId, pluginName ],
 		mutationFn: async () => activatePlugin( siteId!, pluginName ),
-		retryDelay: 2000,
-		retry: options?.retry ?? 10,
+		retryDelay: DEFAULT_RETRY_DELAY,
+		retry: options?.retry ?? DEFAULT_RETRY,
 	} );
 };
 
