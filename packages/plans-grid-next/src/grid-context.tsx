@@ -14,6 +14,7 @@ interface PlansGridContext {
 		useActionCallback: UseActionCallback;
 		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
 	};
+	canUserUpgradePlans?: boolean;
 	coupon?: string;
 	enableFeatureTooltips?: boolean;
 	/**
@@ -39,6 +40,7 @@ const PlansGridContextProvider = ( {
 	recordTracksEvent,
 	allFeaturesList,
 	siteId,
+	canUserUpgradePlans,
 	children,
 	coupon,
 	enableFeatureTooltips,
@@ -63,6 +65,7 @@ const PlansGridContextProvider = ( {
 				gridPlansIndex,
 				allFeaturesList,
 				helpers: { useCheckPlanAvailabilityForPurchase, useActionCallback, recordTracksEvent },
+				canUserUpgradePlans,
 				coupon,
 				enableFeatureTooltips,
 				enableCategorisedFeatures,

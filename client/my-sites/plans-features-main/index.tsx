@@ -70,6 +70,7 @@ import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
 import useGenerateActionCallback from './hooks/use-action-callback';
+import useCanUserUpgradePlans from './hooks/use-can-user-upgrade-plans';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
@@ -251,6 +252,7 @@ const PlansFeaturesMain = ( {
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 			: null
 	);
+	const canUserUpgradePlans = useCanUserUpgradePlans();
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
 	const resolveModal = useModalResolutionCallback( {
@@ -830,6 +832,7 @@ const PlansFeaturesMain = ( {
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
 										className="plans-features-main__features-grid"
+										canUserUpgradePlans={ canUserUpgradePlans }
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }

@@ -225,7 +225,7 @@ const LoggedInPlansFeatureActionButton = ( {
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const { gridPlansIndex, siteId } = usePlansGridContext();
+	const { canUserUpgradePlans, gridPlansIndex, siteId } = usePlansGridContext();
 
 	const selectedStorageOptionForPlan = useSelect(
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
@@ -396,7 +396,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	}
 
 	if ( ! availableForPurchase ) {
-		return (
+		return canUserUpgradePlans ? (
 			<Plans2023Tooltip
 				text={ translate( 'Please contact support to downgrade your plan.' ) }
 				setActiveTooltipId={ setActiveTooltipId }
@@ -408,6 +408,25 @@ const LoggedInPlansFeatureActionButton = ( {
 				{ isMobile() && (
 					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
 						{ translate( 'Please contact support to downgrade your plan.' ) }
+					</div>
+				) }
+			</Plans2023Tooltip>
+		) : (
+			<Plans2023Tooltip
+				text={ translate(
+					'The current plan was purchased by a different account. To change plans, please switch to that account or contact the account owner.'
+				) }
+				setActiveTooltipId={ setActiveTooltipId }
+				activeTooltipId={ activeTooltipId }
+				showOnMobile={ false }
+				id="change"
+			>
+				<DummyDisabledButton>{ translate( 'Change', { context: 'verb' } ) }</DummyDisabledButton>
+				{ isMobile() && (
+					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
+						{ translate(
+							'The current plan was purchased by a different account. To change plans, please switch to that account or contact the account owner.'
+						) }
 					</div>
 				) }
 			</Plans2023Tooltip>
