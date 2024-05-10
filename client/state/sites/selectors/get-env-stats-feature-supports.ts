@@ -57,7 +57,8 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			isOdysseyStats
 		),
 		isOldJetpack:
-			isSiteJetpackNotAtomic &&
+			// We consider both Jetpack and Atomic sites since they could be hosted on Jetpack.
+			isSiteJetpackOrAtomic &&
 			! version_greater_than_or_equal( statsAdminVersion, '0.19.0-alpha', isOdysseyStats ),
 	};
 }
