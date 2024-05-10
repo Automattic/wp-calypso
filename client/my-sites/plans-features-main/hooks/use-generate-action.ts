@@ -262,24 +262,27 @@ function useGenerateAction( {
 			} else if ( domainFromHomeUpsellFlow ) {
 				text = translate( 'Keep my plan', { context: 'verb' } );
 			}
-		} else if ( isStuck && ! isLargeCurrency ) {
+		} else if ( isStuck && availableForPurchase ) {
+			// If the ctas are stickied, show the full price
 			text = translate( 'Upgrade – %(priceString)s', {
 				context: 'verb',
 				args: { priceString: priceString ?? '' },
 				comment: '%(priceString)s is the full price including the currency. Eg: Get Upgrade - $10',
 			} );
-		} else if ( isStuck && isLargeCurrency ) {
-			text = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
-				args: {
-					plan: planTitle,
-					priceString: priceString ?? '',
-				},
-				comment:
-					'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
-				components: {
-					// span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
-				},
-			} );
+
+			if ( isLargeCurrency ) {
+				text = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
+					args: {
+						plan: planTitle,
+						priceString: priceString ?? '',
+					},
+					comment:
+						'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+					components: {
+						// span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
+					},
+				} );
+			}
 		} else if ( ! availableForPurchase ) {
 			text = translate( 'Downgrade', { context: 'verb' } );
 		}

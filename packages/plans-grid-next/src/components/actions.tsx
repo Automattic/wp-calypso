@@ -10,7 +10,7 @@ import {
 	isFreePlan,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { PlanPricing, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
@@ -104,20 +104,23 @@ const PlanFeatureActionButton = ( {
 
 const LoggedInPlansFeatureActionButton = ( {
 	availableForPurchase,
+	disabled,
 	isMonthlyPlan,
 	onCtaClick,
 	planSlug,
-	currentSitePlanSlug,
 	storageOptions,
 	text,
 }: {
 	availableForPurchase?: boolean;
+	disabled: boolean;
 	isMonthlyPlan?: boolean;
 	onCtaClick: () => void;
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
 	storageOptions?: StorageOption[];
 	text: string;
+	billingPeriod?: PlanPricing[ 'billPeriod' ];
+	currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
@@ -127,14 +130,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
 		[ planSlug ]
 	);
-	const {
-		current,
-		storageAddOnsForPlan,
-		pricing: { billingPeriod },
-	} = gridPlansIndex[ planSlug ];
-	const currentPlanBillingPeriod = currentSitePlanSlug
-		? gridPlansIndex[ currentSitePlanSlug ]?.pricing.billingPeriod
-		: null;
+	const { current, storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
 	const defaultStorageOption = useDefaultStorageOption( {
 		storageOptions,
 		storageAddOnsForPlan,
@@ -182,41 +178,6 @@ const LoggedInPlansFeatureActionButton = ( {
 				</PlanButton>
 			);
 		}
-		return (
-			// TODO: this looks like a matter of passing the right text/props from `useAction`
-			<PlanButton planSlug={ planSlug } current={ current } disabled>
-				{ translate( 'Active Plan' ) }
-			</PlanButton>
-		);
-	}
-
-	const isTrialPlan =
-		currentSitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
-		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
-		currentSitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
-
-	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
-	// TODO: Consider the structure of this condition. Should we move it out of this component?
-	const shouldDisableButton =
-		availableForPurchase &&
-		currentSitePlanSlug &&
-		! current &&
-		! isTrialPlan &&
-		currentPlanBillingPeriod &&
-		billingPeriod &&
-		currentPlanBillingPeriod > billingPeriod;
-
-	if ( availableForPurchase ) {
-		return (
-			<PlanButton
-				planSlug={ planSlug }
-				disabled={ !! shouldDisableButton }
-				onClick={ onCtaClick }
-				current={ current }
-			>
-				{ text }
-			</PlanButton>
-		);
 	}
 
 	if ( ! availableForPurchase ) {
@@ -238,7 +199,16 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	return null;
+	return (
+		<PlanButton
+			planSlug={ planSlug }
+			disabled={ disabled }
+			onClick={ onCtaClick }
+			current={ current }
+		>
+			{ text }
+		</PlanButton>
+	);
 };
 
 const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( {
@@ -257,6 +227,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		helpers: { useAction },
 	} = usePlansGridContext();
 	const {
+		current,
 		planTitle,
 		pricing: { billingPeriod, currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
@@ -285,6 +256,22 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			isSmallestUnit: true,
 		}
 	);
+
+	const isTrialPlan =
+		currentSitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
+		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
+		currentSitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
+
+	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
+	// TODO: Consider the structure of this condition. Should we move it out of this component?
+	const higherTermButLowerTierPlan =
+		availableForPurchase &&
+		currentSitePlanSlug &&
+		! current &&
+		! isTrialPlan &&
+		currentPlanBillingPeriod &&
+		billingPeriod &&
+		currentPlanBillingPeriod > billingPeriod;
 
 	const { callback, text, postButtonText, status } = useAction( {
 		// TODO: Double check that we need to do this boolean coercion
@@ -315,6 +302,8 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		selectedStorageAddOn,
 	} );
 
+	const shouldDisableButton = ! callback || higherTermButLowerTierPlan;
+
 	if ( isInSignup || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
 			<PlanFeatureActionButton
@@ -334,6 +323,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	return (
 		<LoggedInPlansFeatureActionButton
+			disabled={ !! shouldDisableButton }
 			planSlug={ planSlug }
 			availableForPurchase={ availableForPurchase }
 			onCtaClick={ callback }
