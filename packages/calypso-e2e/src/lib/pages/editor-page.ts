@@ -700,6 +700,7 @@ export class EditorPage {
 		timeout,
 	}: { visit?: boolean; timeout?: number } = {} ): Promise< URL > {
 		const actionsArray = [];
+		await this.editorToolbarComponent.waitForPublishButton();
 
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
