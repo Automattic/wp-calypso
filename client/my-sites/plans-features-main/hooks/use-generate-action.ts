@@ -18,12 +18,16 @@ import {
 } from '@automattic/calypso-products';
 import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'calypso/state';
+import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
+import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
+import { IAppState } from 'calypso/state/types';
 import useGenerateActionCallback from './use-generate-action-callback';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useGenerateAction( {
-	canUserManageCurrentPlan, // TODO: remove from props. call from here.
+	siteId,
 	cartHandler,
 	currentPlan, // TODO: remove from props. call from here.
 	domainFromHomeUpsellFlow, // TODO: remove from props. call from here.
@@ -38,7 +42,7 @@ function useGenerateAction( {
 	siteSlug, // TODO: remove from props. call from here.
 	withDiscount,
 }: {
-	canUserManageCurrentPlan: boolean | null;
+	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	currentPlan: Plans.SitePlan | undefined;
 	domainFromHomeUpsellFlow: string | null;
@@ -53,6 +57,7 @@ function useGenerateAction( {
 	siteSlug?: string | null;
 	withDiscount?: string;
 } ) {
+	const translate = useTranslate();
 	const getActionCallback = useGenerateActionCallback( {
 		currentPlan,
 		eligibleForFreeHostingTrial,
@@ -64,8 +69,11 @@ function useGenerateAction( {
 		siteSlug,
 		withDiscount,
 	} );
-
-	const translate = useTranslate();
+	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
+		siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null
+	);
 
 	return ( {
 		availableForPurchase,
