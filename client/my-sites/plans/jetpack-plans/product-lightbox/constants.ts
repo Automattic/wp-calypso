@@ -9,6 +9,9 @@ import {
 	PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+	PRODUCT_JETPACK_STATS_MONTHLY,
+	PRODUCT_JETPACK_STATS_YEARLY,
+	PRODUCT_JETPACK_STATS_BI_YEARLY,
 	PRODUCT_JETPACK_AI_YEARLY,
 	PRODUCT_JETPACK_AI_YEARLY_100,
 	PRODUCT_JETPACK_AI_YEARLY_200,
@@ -323,4 +326,25 @@ export const PRODUCT_OPTIONS_HEADER: Record< string, TranslateResult > = {
 		args: { product: 'Stats' },
 		comment: '%(product)s is the name of the product',
 	} ),
+};
+
+export const PRODUCT_OPTIONS_HEADER_INFO_CONTENT: Record< string, TranslateResult > = {
+	[ PRODUCT_JETPACK_AI_BI_YEARLY ]: translate(
+		'Each interaction with the AI system counts as one request. Images may use multiple requests. You can upgrade at any time if you run out of requests.'
+	),
+	[ PRODUCT_JETPACK_AI_YEARLY ]: translate(
+		'Each interaction with the AI system counts as one request. Images may use multiple requests. You can upgrade at any time if you run out of requests.'
+	),
+	[ PRODUCT_JETPACK_AI_MONTHLY ]: translate(
+		'Each interaction with the AI system counts as one request. Images may use multiple requests. You can upgrade at any time if you run out of requests.'
+	),
+	[ PRODUCT_JETPACK_STATS_MONTHLY ]: translate(
+		'Upgrade your plan when your website gets more visitors! Our plans adjust to match your site’s growth.'
+	),
+	[ PRODUCT_JETPACK_STATS_YEARLY ]: translate(
+		'Upgrade your plan when your website gets more visitors! Our plans adjust to match your site’s growth.'
+	),
+	[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: translate(
+		'Upgrade your plan when your website gets more visitors! Our plans adjust to match your site’s growth.'
+	),
 };

@@ -4,6 +4,7 @@
 .product-lightbox__variants-options,
 .product-lightbox__variants-dropdown {
 	.form-legend {
+		display: flex;
 		font-weight: 600;
 		font-size: $font-body;
 		margin-bottom: 0.5rem;
@@ -58,6 +59,11 @@
 
 		box-shadow: none;
 	}
+}
+
+.info-popover.product-lightbox__variants-dropdown--popover {
+	height: 24px;
+	width: 24px;
 }
 
 .product-lightbox__variants-content {
@@ -249,4 +255,11 @@
 	clip: rect(0, 0, 0, 0) !important;
 	white-space: nowrap !important;
 	border: 0 !important;
+}
+
+// The lightbox z-index is 100200, consequences of updating the popover z-index
+// to higher than that are unclear, so we'll manually set it to 100200 here so we
+// can see the popover in the lightbox.
+.popover {
+	z-index: 100200;
 }
