@@ -74,6 +74,7 @@ export const ScheduleEdit = ( props: Props ) => {
 				variant={ canCreateSchedules ? 'primary' : 'secondary' }
 				isBusy={ isBusy }
 				disabled={ ! canCreateSchedules }
+				className="schedule-form-button"
 			>
 				{ translate( 'Save' ) }
 			</Button>

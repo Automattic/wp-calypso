@@ -84,6 +84,7 @@ export const ScheduleCreate = ( props: Props ) => {
 				variant={ canCreateSchedules ? 'primary' : 'secondary' }
 				disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
 				isBusy={ isBusy }
+				className="schedule-form-button"
 			>
 				{ translate( 'Create' ) }
 			</Button>

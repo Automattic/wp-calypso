@@ -112,7 +112,7 @@ export const ScheduleList = ( props: Props ) => {
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">
 			<div className="plugins-update-manager-multisite__header">
-				<h1>{ translate( 'Update schedules' ) }</h1>
+				<h1>{ translate( 'Scheduled Updates' ) }</h1>
 				{ showNewScheduleBtn && ! isScheduleEmpty && (
 					<Button
 						__next40pxDefaultSize={ ! compact }

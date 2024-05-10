@@ -140,7 +140,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 										onClick={ onCreateNewSchedule }
 										disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
 									>
-										{ translate( 'Add new schedule' ) }
+										{ translate( 'New Schedule' ) }
 									</Button>
 								) }
 							</>
