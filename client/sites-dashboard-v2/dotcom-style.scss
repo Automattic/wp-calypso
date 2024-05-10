@@ -29,10 +29,7 @@
 	}
 
 	.a4a-layout__header {
-		align-items: initial;
-		@media ( max-width: 660px ) {
-			align-items: center;
-		}
+		align-items: center;
 	}
 
 	.a4a-layout__header-main {

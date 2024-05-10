@@ -75,6 +75,10 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					.formatted-header {
 						max-height: 41px;
 					}
+					
+					.navigation-header__main {
+						align-items: center;
+					}
 
 					.formatted-header__title {
 						color: var( --studio-gray-80, #2c3338 );
@@ -138,7 +142,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				@media only screen and ( max-width: 600px ) {
 					.navigation-header__main {
 						justify-content: normal;
-						align-items: center;
 						.formatted-header {
 							flex: none;
 						}
@@ -185,15 +188,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			}
 		`;
 	const item = {
-		label: translate( 'All Domains' ),
-		subtitle: translate(
-			'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-			{
-				components: {
-					learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
-				},
-			}
-		),
+		label: translate( 'Domains' ),
 		helpBubble: translate(
 			'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 			{
