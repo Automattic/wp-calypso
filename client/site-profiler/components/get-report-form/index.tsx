@@ -1,11 +1,11 @@
 import { FormLabel, FormInputValidation, Gridicon, Button } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
-import emailValidator from 'email-validator';
 import { translate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import wp from 'calypso/lib/wp';
+import * as validators from './validators';
 import './styles.scss';
 
 type Errors = {
@@ -35,7 +35,7 @@ export function GetReportForm( {
 		e.preventDefault();
 
 		const formData = new FormData( e.currentTarget );
-		const errors = validateForm( formData );
+		const errors = validators.validateForm( formData );
 		if ( errors ) {
 			setErrors( errors );
 			return;
@@ -68,54 +68,8 @@ export function GetReportForm( {
 		}
 	};
 
-	const validateName = ( name: string ) => {
-		if ( ! name ) {
-			return translate( 'Name is required' );
-		}
-		return null;
-	};
-
-	const validateEmail = ( email: string, fullValidation = false ) => {
-		if ( ! email ) {
-			return translate( 'Email is required' );
-		}
-		if ( fullValidation && ! emailValidator.validate( email ) ) {
-			return translate( 'Please enter a valid email address' );
-		}
-		return null;
-	};
-
-	const validateTerms = ( terms: boolean ) => {
-		if ( ! terms ) {
-			return translate( 'Terms must be accepted' );
-		}
-		return null;
-	};
-
-	function validateForm( formData: FormData ) {
-		let errors = {};
-		let hasErrors = false;
-
-		let error = validateName( formData.get( 'name' ) as string );
-		if ( error ) {
-			errors = { ...errors, name: error };
-			hasErrors = true;
-		}
-		error = validateEmail( formData.get( 'email' ) as string, true );
-		if ( error ) {
-			errors = { ...errors, email: error };
-			hasErrors = true;
-		}
-		error = validateTerms( Boolean( formData.get( 'termsAccepted' ) ) );
-		if ( error ) {
-			errors = { ...errors, termsAccepted: error };
-			hasErrors = true;
-		}
-		return hasErrors ? errors : null;
-	}
-
 	const handleNameChange = ( e: FormEvent< HTMLInputElement > ) => {
-		const error = validateName( e.currentTarget.value );
+		const error = validators.validateName( e.currentTarget.value );
 		if ( error ) {
 			setErrors( { ...errors, name: error } );
 		} else {
@@ -125,7 +79,7 @@ export function GetReportForm( {
 	};
 
 	const handleEmailChange = ( e: FormEvent< HTMLInputElement > ) => {
-		const error = validateEmail( e.currentTarget.value );
+		const error = validators.validateEmail( e.currentTarget.value );
 		if ( error ) {
 			setErrors( { ...errors, email: error } );
 		} else {
@@ -135,7 +89,7 @@ export function GetReportForm( {
 	};
 
 	const handleTermsChange = ( e: boolean ) => {
-		const error = validateTerms( e );
+		const error = validators.validateTerms( e );
 		if ( error ) {
 			setErrors( { ...errors, termsAccepted: error } );
 		} else {
