@@ -77,9 +77,9 @@ function useGenerateActionHook( {
 
 	const useActionHook = ( {
 		availableForPurchase,
-		billingPeriod, // TODO: remove from props. call from here.
+		billingPeriod,
 		cartItemForPlan,
-		currentPlanBillingPeriod, // TODO: remove from props. call from here.
+		currentPlanBillingPeriod,
 		isFreeTrialAction,
 		isLargeCurrency,
 		isStuck,
