@@ -26,7 +26,7 @@ const loadLanguageFile = async ( languageFileName: string ) => {
 	}
 };
 
-export default async ( localeSlug: string ) => {
+export async function setLocale( localeSlug: string ) {
 	const languageCode = getLanguageCodeFromLocale( localeSlug );
 
 	// Load translation file if it's not English.
@@ -38,4 +38,4 @@ export default async ( localeSlug: string ) => {
 		// We don't have to wait for the language file to load before rendering the page, because i18n is using hooks to update translations.
 		return loadLanguageFile( languageFileName );
 	}
-};
+}
