@@ -64,8 +64,8 @@ const QuickActionsCard: FC = () => {
 		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__quick-actions' ) }>
 			<div className="hosting-overview__card-header">
 				<h3 className="hosting-overview__card-title">
-					{ hasEnTranslation( 'Dashboard links' )
-						? translate( 'Dashboard links' )
+					{ hasEnTranslation( 'Quick actions' )
+						? translate( 'Quick actions' )
 						: translate( 'WP Admin links' ) }
 				</h3>
 			</div>

@@ -18,6 +18,9 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 	const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
 		treatAtomicAsJetpackSite: false,
 	} );
+	const isSiteJetpackOrAtomic = isJetpackSite( state, siteId, {
+		treatAtomicAsJetpackSite: true,
+	} );
 
 	return {
 		supportsHighlightsSettings: version_greater_than_or_equal(
@@ -45,9 +48,8 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.16.0-alpha',
 			isOdysseyStats
 		),
-		supportsUTMStats:
-			// UTM stats are only available for Jetpack sites for now.
-			isSiteJetpackNotAtomic,
+		// UTM stats are only supported for Jetpack and Atomic sites.
+		supportsUTMStats: isSiteJetpackOrAtomic,
 		supportsDevicesStats: config.isEnabled( 'stats/devices' ) && isSiteJetpackNotAtomic,
 		supportsOnDemandCommercialClassification: version_greater_than_or_equal(
 			statsAdminVersion,
@@ -55,7 +57,8 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			isOdysseyStats
 		),
 		isOldJetpack:
-			isSiteJetpackNotAtomic &&
+			// We consider both Jetpack and Atomic sites since they could be hosted on Jetpack.
+			isSiteJetpackOrAtomic &&
 			! version_greater_than_or_equal( statsAdminVersion, '0.19.0-alpha', isOdysseyStats ),
 	};
 }
