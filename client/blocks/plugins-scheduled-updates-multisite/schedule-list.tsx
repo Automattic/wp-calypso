@@ -128,7 +128,6 @@ export const ScheduleList = ( props: Props ) => {
 
 			<ScheduleErrors />
 
-			{ schedules.length === 0 && isLoading && <Spinner /> }
 			{ isScheduleEmpty && ! compact && (
 				<ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } />
 			) }
@@ -146,6 +145,7 @@ export const ScheduleList = ( props: Props ) => {
 					/>
 				</>
 			) : null }
+			{ schedules.length === 0 && isLoading && <Spinner /> }
 			<ConfirmDialog
 				isOpen={ removeDialogOpen }
 				onConfirm={ onRemoveDialogConfirm }
