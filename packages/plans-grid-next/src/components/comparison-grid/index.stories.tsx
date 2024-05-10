@@ -63,8 +63,14 @@ const defaultProps: Omit< ComparisonGridExternalProps, 'gridPlans' > = {
 	siteId: undefined,
 	stickyRowOffset: 0,
 	useCheckPlanAvailabilityForPurchase: () => ( {} ),
-	// TODO: Fix default prop
-	useAction: () => {},
+	useAction: () => ( {
+		primary: {
+			text: '',
+			callback: () => {},
+			status: '',
+		},
+		postButtonText: '',
+	} ),
 };
 
 type Story = StoryObj< typeof ComponentWrapper >;
