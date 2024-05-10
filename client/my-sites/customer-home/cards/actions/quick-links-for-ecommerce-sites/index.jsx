@@ -17,7 +17,7 @@ import { trackAddDomainAction, trackManageAllDomainsAction } from '../quick-link
 import ActionBox from '../quick-links/action-box';
 import '../quick-links/style.scss';
 
-const QuickLinksForHostedSites = ( props ) => {
+const QuickLinksForEcommerceSites = ( props ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -191,4 +191,4 @@ export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( QuickLinksForHostedSites );
+)( QuickLinksForEcommerceSites );
