@@ -15,9 +15,8 @@ import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
 import { displaySiteUrl, isStagingSite, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
+import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { getSiteHomeUrl, isSimpleSite } from 'calypso/state/sites/selectors';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
@@ -65,9 +64,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	}
 
 	const title = __( 'View Site Details' );
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ?? '' );
-	const siteHomeUrl = useSelector( ( state ) => getSiteHomeUrl( state, site.ID ) ?? '' );
-	const isSimple = useSelector( ( state ) => isSimpleSite( state, site.ID ) );
+	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site.ID );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
@@ -127,11 +124,8 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 							<div className="sites-dataviews__site-url">
 								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 							</div>
-							<a
-								className="sites-dataviews__site-wp-admin-url"
-								href={ isSimple ? siteHomeUrl : siteAdminUrl }
-							>
-								<Truncated>{ isSimple ? __( 'My Home' ) : __( 'WP Admin' ) }</Truncated>
+							<a className="sites-dataviews__site-wp-admin-url" href={ adminUrl }>
+								<Truncated>{ adminLabel }</Truncated>
 							</a>
 						</>
 					)
