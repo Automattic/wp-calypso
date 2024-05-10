@@ -5,7 +5,7 @@ const SitesOverviewContext = createContext< SitesOverviewContextInterface >( {
 	currentPage: 1,
 	path: '',
 	search: '',
-	filter: { issueTypes: [], showOnlyFavorites: false },
+	filter: { issueTypes: [], siteTags: [], showOnlyFavorites: false },
 	isBulkManagementActive: false,
 	showSitesDashboardV2: false,
 	setIsBulkManagementActive: () => {

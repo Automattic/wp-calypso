@@ -2,6 +2,7 @@ import { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-over
 
 export const mockedSites: Site[] = [
 	{
+		a4a_site_tags: [],
 		url: 'elegantsuperbly.wpcomstaging.com',
 		url_with_scheme: 'https://elegantsuperbly.wpcomstaging.com',
 		blog_id: 230552437,
@@ -58,6 +59,7 @@ export const mockedSites: Site[] = [
 		multisite: false,
 	},
 	{
+		a4a_site_tags: [],
 		url: 'instantdelightfully.wpcomstaging.com',
 		url_with_scheme: 'https://instantdelightfully.wpcomstaging.com',
 		blog_id: 230520819,
@@ -114,6 +116,7 @@ export const mockedSites: Site[] = [
 		multisite: false,
 	},
 	{
+		a4a_site_tags: [],
 		url: 'jetpackcrm.com',
 		url_with_scheme: 'https://jetpackcrm.com',
 		blog_id: 177696842,
@@ -185,6 +188,7 @@ export const mockedSites: Site[] = [
 		multisite: false,
 	},
 	{
+		a4a_site_tags: [],
 		url: 'kb.jetpackcrm.com',
 		url_with_scheme: 'https://kb.jetpackcrm.com',
 		blog_id: 177445055,

@@ -141,7 +141,7 @@ export const SitesDashboardProvider = ( {
 		showOnlyFavoritesInitialState,
 		searchQuery,
 		sort,
-		issueTypes,
+		dataViewsFilters,
 		siteUrlInitialState,
 		setInitialSelectedSiteUrl,
 	] );

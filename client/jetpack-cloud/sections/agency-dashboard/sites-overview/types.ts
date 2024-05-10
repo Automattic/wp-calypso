@@ -237,7 +237,11 @@ export interface DashboardOverviewContextInterface {
 	path: string;
 	search: string;
 	currentPage: number;
-	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
+	filter: {
+		issueTypes: Array< AgencyDashboardFilterOption >;
+		siteTags: any[];
+		showOnlyFavorites: boolean;
+	};
 	sort: DashboardSortInterface;
 	showSitesDashboardV2: boolean;
 }
