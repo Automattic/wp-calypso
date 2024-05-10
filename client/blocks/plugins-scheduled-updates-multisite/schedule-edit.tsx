@@ -25,7 +25,7 @@ export const ScheduleEdit = ( { id, onNavBack }: Props ) => {
 	}, [ scheduleNotFound, onNavBack ] );
 
 	return (
-		<div className="plugins-update-manager plugins-update-manager-multisite">
+		<div className="plugins-update-manager plugins-update-manager-multisite plugins-update-manager-multisite-edit">
 			<div className="plugins-update-manager-multisite__header no-border">
 				<h1 className="wp-brand-font">
 					{ schedule && scheduleLoaded
@@ -37,7 +37,7 @@ export const ScheduleEdit = ( { id, onNavBack }: Props ) => {
 				</Button>
 			</div>
 			{ schedule && scheduleLoaded ? (
-				<ScheduleForm onNavBack={ onNavBack } scheduleForEdit={ schedule } />
+				<ScheduleForm key={ id } onNavBack={ onNavBack } scheduleForEdit={ schedule } />
 			) : (
 				<Spinner />
 			) }

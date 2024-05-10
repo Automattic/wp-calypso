@@ -14,7 +14,6 @@ import {
 
 const ComponentWrapper = (
 	props: FeaturesGridExternalProps & {
-		includePreviousPlanFeatures: boolean;
 		trailMapVariant: TrailMapVariantType;
 	}
 ) => {
@@ -32,7 +31,6 @@ const ComponentWrapper = (
 
 		// Mirror values from props
 		siteId: props.siteId,
-		includePreviousPlanFeatures: props.includePreviousPlanFeatures,
 		intent: props.intent,
 		coupon: props.coupon,
 		allFeaturesList: props.allFeaturesList,

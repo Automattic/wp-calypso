@@ -5,14 +5,14 @@ import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
-import { useSelector } from 'calypso/state';
-import { getSiteOption, getSiteHomeUrl } from 'calypso/state/sites/selectors';
+import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import SiteFavicon from '../../site-favicon';
 import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
 
 import './style.scss';
 
-const ICON_SIZE = 24;
+const ICON_SIZE_SMALL = 16;
+const ICON_SIZE_REGULAR = 24;
 
 interface Props {
 	closeItemPreviewPane?: () => void;
@@ -32,20 +32,7 @@ export default function ItemPreviewPaneHeader( {
 
 	const focusRef = useRef< HTMLInputElement >( null );
 
-	const { adminLabel, adminUrl } = useSelector( ( state ) => {
-		const wpcomAdminInterface = getSiteOption( state, itemData.blogId, 'wpcom_admin_interface' );
-		if ( wpcomAdminInterface === 'wp-admin' ) {
-			return {
-				adminLabel: translate( 'WP Admin' ),
-				adminUrl: itemData.adminUrl,
-			};
-		}
-
-		return {
-			adminLabel: translate( 'My Home' ),
-			adminUrl: getSiteHomeUrl( state, itemData.blogId ),
-		};
-	} );
+	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
 
 	// Use useEffect to set the focus when the component mounts
 	useEffect( () => {
@@ -77,7 +64,7 @@ export default function ItemPreviewPaneHeader( {
 							<Icon
 								className="sidebar-v2__external-icon"
 								icon={ external }
-								size={ extraProps?.externalIconSize || ICON_SIZE }
+								size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
 							/>
 						</Button>
 					</div>
@@ -107,7 +94,7 @@ export default function ItemPreviewPaneHeader( {
 						aria-label={ translate( 'Close Preview' ) }
 						ref={ focusRef }
 					>
-						<Gridicon icon="cross" size={ ICON_SIZE } />
+						<Gridicon icon="cross" size={ ICON_SIZE_REGULAR } />
 					</Button>
 				) }
 			</div>

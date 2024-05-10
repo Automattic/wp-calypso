@@ -12,7 +12,6 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import StepSection from '../../common/step-section';
 import ReferralsFooter from '../footer';
 
@@ -30,8 +29,6 @@ export default function CommissionOverview() {
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<PageViewTracker title={ title } path="/referrals/" />
-
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
@@ -46,6 +43,23 @@ export default function CommissionOverview() {
 			<LayoutBody>
 				<div className="commission-overview__section-container">
 					<StepSection heading={ translate( 'How much can I earn?' ) }>
+						<FoldableCard
+							header={
+								<div className="commission-overview__heading">
+									<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
+									{ translate( 'Woo Payments revenue share' ) }
+								</div>
+							}
+							expanded
+							clickableHeader
+							summary={ false }
+						>
+							{ translate(
+								'You will receive a revenue share of 5 basis points (0.05%) on new WooPayments gross merchandise value (“GMV”) on client sites through June 30, 2025.' +
+									' For example, if your client’s store generates $1M in GMV per year, your revenue share for that year would be $500.'
+							) }
+						</FoldableCard>
+
 						<FoldableCard
 							header={
 								<div className="commission-overview__heading">
