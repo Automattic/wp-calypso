@@ -154,6 +154,11 @@
 	.domains-table {
 		.components-base-control {
 			--checkbox-input-size: 16px;
+
+			.components-checkbox-control__input-container {
+				height: var(--checkbox-input-size);
+				width: var(--checkbox-input-size);
+			}
 		}
 		.domains-table__domain-name {
 			font-size: 0.875rem;
