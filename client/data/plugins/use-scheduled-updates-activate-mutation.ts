@@ -33,7 +33,7 @@ function updateMultisiteSchedule(
 	return multisiteSchedules;
 }
 
-export function useScheduledUpdatesActionMutation( queryOptions = {} ) {
+export function useScheduledUpdatesActivateMutation( queryOptions = {} ) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation( {

@@ -7,7 +7,7 @@ import { usePrepareMultisitePluginsTooltipInfo } from 'calypso/blocks/plugin-sch
 import { usePrepareScheduleName } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-prepare-schedule-name';
 import { usePrepareSitesTooltipInfo } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-prepare-sites-tooltip-info';
 import { ScheduleListLastRunStatus } from 'calypso/blocks/plugins-scheduled-updates-multisite/schedule-list-last-run-status';
-import { useScheduledUpdatesActionMutation } from 'calypso/data/plugins/use-scheduled-updates-action-mutation';
+import { useScheduledUpdatesActivateMutation } from 'calypso/data/plugins/use-scheduled-updates-activate-mutation';
 import { SiteSlug } from 'calypso/types';
 import { ScheduleListTableRowMenu } from './schedule-list-table-row-menu';
 import type {
@@ -32,7 +32,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 		usePrepareMultisitePluginsTooltipInfo( schedule.sites.map( ( site ) => site.ID ) );
 	const translate = useTranslate();
 	const [ isExpanded, setIsExpanded ] = useState( false );
-	const { activateSchedule } = useScheduledUpdatesActionMutation();
+	const { activateSchedule } = useScheduledUpdatesActivateMutation();
 
 	return (
 		<>
