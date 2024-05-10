@@ -117,9 +117,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 						context !== 'list' ? 'no-border' : null
 					) }
 				>
-					<h1 className={ classnames( context !== 'list' ? 'wp-brand-font' : null ) }>
-						{ navigationTitle }
-					</h1>
+					<h1>{ navigationTitle }</h1>
 					<div className="buttons">
 						{ context === 'list' && (
 							<>
