@@ -18,6 +18,11 @@ class LikedStream extends Component {
 	render() {
 		return (
 			<>
+				<NavigationHeader
+					title={ translate( 'Likes' ) }
+					subtitle={ translate( 'Rediscover content that you liked.' ) }
+					className="liked-stream-header"
+				/>
 				<Stream
 					{ ...this.props }
 					listName={ title }
@@ -25,11 +30,6 @@ class LikedStream extends Component {
 					showFollowInHeader={ true }
 				>
 					<DocumentHead title={ documentTitle } />
-					<NavigationHeader
-						title={ translate( 'Likes' ) }
-						subtitle={ translate( 'Rediscover content that you liked.' ) }
-						className="liked-stream-header"
-					/>
 				</Stream>
 			</>
 		);
