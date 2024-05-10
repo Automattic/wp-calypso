@@ -38,6 +38,7 @@
 	}
 
 	.list__header-column {
+		text-transform: uppercase;
 		display: flex;
 		align-items: center;
 		&.is-sortable {
