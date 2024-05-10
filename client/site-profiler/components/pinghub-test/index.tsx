@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 
-const testPath = '/wpcom/me/test';
+const testPath = '/wpcom/pub/test';
 
 export const PinghubTest = () => {
 	const [ connected, setConnected ] = useState( false );
