@@ -232,7 +232,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	} = gridPlansIndex[ planSlug ];
 	const currentPlanBillingPeriod = currentSitePlanSlug
 		? gridPlansIndex[ currentSitePlanSlug ]?.pricing.billingPeriod
-		: null;
+		: undefined;
 	const { prices } = usePlanPricingInfoFromGridPlans( {
 		gridPlans: visibleGridPlans,
 	} );
