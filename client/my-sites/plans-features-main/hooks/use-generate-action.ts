@@ -29,7 +29,6 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 function useGenerateAction( {
 	siteId,
 	cartHandler,
-	currentPlan, // TODO: remove from props. call from here.
 	domainFromHomeUpsellFlow, // TODO: remove from props. call from here.
 	eligibleForFreeHostingTrial, // TODO: remove from props. call from here.
 	flowName,
@@ -44,7 +43,6 @@ function useGenerateAction( {
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
-	currentPlan: Plans.SitePlan | undefined;
 	domainFromHomeUpsellFlow: string | null;
 	eligibleForFreeHostingTrial: boolean;
 	flowName?: string | null;
@@ -58,6 +56,7 @@ function useGenerateAction( {
 	withDiscount?: string;
 } ) {
 	const translate = useTranslate();
+	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const getActionCallback = useGenerateActionCallback( {
 		currentPlan,
 		eligibleForFreeHostingTrial,
