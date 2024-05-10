@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { setPlansListExperiment } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localStorageExperimentAssignmentKey } from '@automattic/explat-client/src/internal/experiment-assignment-store';
+import localStorage from '@automattic/explat-client/src/internal/local-storage';
 import {
 	getLanguage,
 	getLanguageSlugs,
@@ -61,11 +62,9 @@ export const ProviderWrappedLayout = ( {
 	}, [ isLoading, experimentAssignment?.variationName ] );
 
 	useEffect( () => {
-		if ( typeof localStorage !== 'undefined' ) {
-			// TODO: Implement a proper way to reset the experiment assignment
-			localStorage.removeItem( localStorageExperimentAssignmentKey( PLAN_NAME_EXPERIMENT ) );
-			loadExperimentAssignment( PLAN_NAME_EXPERIMENT );
-		}
+		// TODO: Implement a proper way to reset the experiment assignment
+		localStorage.removeItem( localStorageExperimentAssignmentKey( PLAN_NAME_EXPERIMENT ) );
+		loadExperimentAssignment( PLAN_NAME_EXPERIMENT );
 	}, [ userLoggedIn ] );
 
 	const layout = userLoggedIn ? (
