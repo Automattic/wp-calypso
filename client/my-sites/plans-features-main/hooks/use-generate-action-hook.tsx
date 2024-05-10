@@ -200,7 +200,7 @@ function useGenerateActionHook( {
 					comment:
 						'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
 					components: {
-						// span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
+						span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
 					},
 				} );
 			}
@@ -322,7 +322,7 @@ function useGenerateActionHook( {
 					comment:
 						'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
 					components: {
-						// span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
+						span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
 					},
 				} );
 			}
