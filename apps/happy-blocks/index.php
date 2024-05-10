@@ -134,7 +134,7 @@ function happyblocks_allow_footer_tags( $tags ) {
 	$tags['defs']   = array();
 
 	$tags['footer'] = array_merge(
-		$tags['footer'],
+		$tags['footer'] ?? array(),
 		array(
 			'data-locale' => array(),
 		)
