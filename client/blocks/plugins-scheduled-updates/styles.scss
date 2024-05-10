@@ -1,22 +1,11 @@
-@import "@wordpress/base-styles/breakpoints";
+@import "../plugin-scheduled-updates-common/styles";
+
 
 .tooltip--selected-plugins {
 	text-align: left;
 }
 
-.plugins-update-manager-header {
-	.navigation-header__main {
-		@media screen and (max-width: $break-small) {
-			flex-wrap: wrap;
-			row-gap: 10px;
-		}
-	}
-}
-
 .plugins-update-manager {
-	@media screen and (max-width: $break-small) {
-		margin: 0 1rem;
-	}
 
 	.ch-placeholder {
 		min-width: 60px;
@@ -104,20 +93,7 @@
 	}
 
 	table {
-		th,
 		td {
-			font-size: 0.875rem;
-			padding: 1rem 0;
-			color: var(--studio-gray-60);
-			border-bottom: solid 1px var(--studio-gray-0);
-		}
-
-		th {
-			font-weight: 500;
-		}
-
-		td {
-			padding: 0.5rem 0;
 			vertical-align: middle;
 
 			&.last-update {
@@ -166,13 +142,8 @@
 		}
 	}
 
-	.components-card__footer {
-		display: flex;
-		align-items: baseline;
-
-		.validation-msg {
-			width: 100%;
-		}
+	.validation-msg {
+		width: 100%;
 	}
 
 	.notification-settings__title {
