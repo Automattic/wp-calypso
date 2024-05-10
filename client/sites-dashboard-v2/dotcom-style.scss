@@ -171,7 +171,7 @@
 .dataviews-filters__view-actions {
 	.components-search-control {
 		@include break-large {
-			flex: 1;
+			min-width: 337px;
 		}
 	}
 
