@@ -38,6 +38,23 @@
 		padding-block-start: 24px;
 	}
 
+	.sites-dataviews__site {
+		.button {
+			flex-shrink: 0;
+			@include breakpoint-deprecated("<480px") {
+				width: 90px;
+			}
+		}
+		.sites-dataviews__site-name {
+			padding: 0;
+		}
+	}
+	th[data-field-id="actions"] {
+		padding-inline-end: 16px;
+		text-align: end;
+	}
+
+
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -142,7 +159,7 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
-			padding: 8px 24px 8px 16px;
+			padding: 8px 16px 8px 16px;
 		}
 		.dataviews-view-table tr td:last-child {
 			padding: 0;
@@ -225,10 +242,6 @@
 				display: none;
 			}
 
-			th[data-field-id="actions"] {
-				padding-inline-end: 16px;
-				text-align: end;
-			}
 		}
 	}
 
