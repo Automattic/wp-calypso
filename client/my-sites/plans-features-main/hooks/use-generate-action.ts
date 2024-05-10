@@ -23,19 +23,19 @@ import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useGenerateAction( {
-	canUserManageCurrentPlan,
+	canUserManageCurrentPlan, // TODO: remove from props. call from here.
 	cartHandler,
-	currentPlan,
-	domainFromHomeUpsellFlow,
-	eligibleForFreeHostingTrial,
+	currentPlan, // TODO: remove from props. call from here.
+	domainFromHomeUpsellFlow, // TODO: remove from props. call from here.
+	eligibleForFreeHostingTrial, // TODO: remove from props. call from here.
 	flowName,
-	intent,
-	intentFromProps,
+	intent, // TODO: a single intent prop here should suffice.
+	intentFromProps, // TODO: a single intent prop here should suffice.
 	isInSignup,
 	isLaunchPage,
 	showModalAndExit,
-	sitePlanSlug,
-	siteSlug,
+	sitePlanSlug, // TODO: remove from props. call from here.
+	siteSlug, // TODO: remove from props. call from here.
 	withDiscount,
 }: {
 	canUserManageCurrentPlan: boolean | null;
@@ -69,14 +69,14 @@ function useGenerateAction( {
 
 	return ( {
 		availableForPurchase,
-		billingPeriod,
+		billingPeriod, // TODO: remove from props. call from here.
 		cartItemForPlan,
-		currentPlanBillingPeriod,
+		currentPlanBillingPeriod, // TODO: remove from props. call from here.
 		isFreeTrialAction,
 		isLargeCurrency,
 		isStuck,
 		planSlug,
-		planTitle,
+		planTitle, // TODO: remove from props. call from here.
 		priceString,
 		selectedStorageAddOn,
 	}: {
@@ -92,7 +92,9 @@ function useGenerateAction( {
 		priceString?: string;
 		selectedStorageAddOn?: AddOns.AddOnMeta | null;
 	} ) => {
-		/* 1. Enterprise Plan actions */
+		/**
+		 * 1. Enterprise Plan actions
+		 */
 		if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 			const text = translate( 'Learn more' );
 			return {
@@ -101,7 +103,9 @@ function useGenerateAction( {
 			};
 		}
 
-		/* 2. Launch Page actions */
+		/**
+		 * 2. Launch Page actions
+		 */
 		if ( isLaunchPage ) {
 			let text = translate( 'Select %(plan)s', {
 				args: {
@@ -134,7 +138,9 @@ function useGenerateAction( {
 			};
 		}
 
-		/* 2. Onboarding actions */
+		/**
+		 * 3. Onboarding actions
+		 */
 		if ( isInSignup ) {
 			let text = translate( 'Get %(plan)s', {
 				args: {
@@ -148,6 +154,9 @@ function useGenerateAction( {
 			} else if ( isFreePlan( planSlug ) ) {
 				text = translate( 'Start with Free' );
 			} else if ( isStuck && ! isLargeCurrency ) {
+				/**
+				 * `isStuck` indicates the buttons are fixed/sticky in the grid, and we show the price alongside the plan name.
+				 */
 				text = translate( 'Get %(plan)s – %(priceString)s', {
 					args: {
 						plan: planTitle,
@@ -158,6 +167,9 @@ function useGenerateAction( {
 					// TODO: Revisit this type and why we have to force inference of string
 				} ) as string;
 			} else if ( isStuck && isLargeCurrency ) {
+				/**
+				 * `isStuck` indicates the buttons are fixed/sticky in the grid, and we show the price alongside the plan name.
+				 */
 				text = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
 					args: {
 						plan: planTitle,
@@ -188,7 +200,9 @@ function useGenerateAction( {
 			};
 		}
 
-		/* 3. Logged In Plans actions */
+		/**
+		 * 4. Logged-In (Admin) Plans actions
+		 */
 		let text = translate( 'Upgrade', { context: 'verb' } );
 		let status = null;
 		const current = sitePlanSlug === planSlug;
@@ -263,7 +277,9 @@ function useGenerateAction( {
 				text = translate( 'Keep my plan', { context: 'verb' } );
 			}
 		} else if ( isStuck && availableForPurchase ) {
-			// If the ctas are stickied, show the full price
+			/**
+			 * `isStuck` indicates the buttons are fixed/sticky in the grid, and we show the price.
+			 */
 			text = translate( 'Upgrade – %(priceString)s', {
 				context: 'verb',
 				args: { priceString: priceString ?? '' },
