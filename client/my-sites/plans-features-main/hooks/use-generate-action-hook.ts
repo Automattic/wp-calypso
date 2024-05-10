@@ -77,28 +77,35 @@ function useGenerateActionHook( {
 
 	const useActionHook = ( {
 		availableForPurchase,
-		billingPeriod,
 		cartItemForPlan,
-		currentPlanBillingPeriod,
 		isFreeTrialAction,
 		isLargeCurrency,
 		isStuck,
 		planSlug,
-		planTitle,
 		priceString,
 		selectedStorageAddOn,
+		billingPeriod,
+		currentPlanBillingPeriod,
+		planTitle,
 	}: {
 		availableForPurchase?: boolean;
-		billingPeriod?: PlanPricing[ 'billPeriod' ];
 		cartItemForPlan?: MinimalRequestCartProduct | null;
-		currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
 		isFreeTrialAction?: boolean;
 		isLargeCurrency?: boolean;
 		isStuck?: boolean;
 		planSlug: PlanSlug;
-		planTitle?: TranslateResult;
 		priceString?: string;
 		selectedStorageAddOn?: AddOns.AddOnMeta | null;
+		/**
+		 * We could derive `billingPeriod` directly from here (via `usePricingMetaForGridPlans`),
+		 * although it will be ambiguous since we can't know how it was called from consuming end (what props were passed in).
+		 */
+		billingPeriod?: PlanPricing[ 'billPeriod' ];
+		currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
+		/**
+		 * We can safely derive `planTitle` from one of the data-store or calypso-products hooks/selectors.
+		 */
+		planTitle?: TranslateResult;
 	} ): GridAction => {
 		/**
 		 * 1. Enterprise Plan actions
