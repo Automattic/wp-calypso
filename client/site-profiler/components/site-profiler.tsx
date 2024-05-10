@@ -174,13 +174,11 @@ export default function SiteProfiler( props: Props ) {
 			) }
 
 			{ showGetReportForm && (
-				<LayoutBlock>
-					<GetReportForm
-						url={ url }
-						token={ basicMetrics?.token }
-						onClose={ () => setIsGetReportFormOpen( false ) }
-					/>
-				</LayoutBlock>
+				<GetReportForm
+					url={ url }
+					token={ basicMetrics?.token }
+					onClose={ () => setIsGetReportFormOpen( false ) }
+				/>
 			) }
 			<LayoutBlock
 				className="hosting-intro-block globe-bg"
