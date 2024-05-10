@@ -14,6 +14,7 @@ import {
 	getWooExpressFeaturesGrouped,
 	getPlanFeaturesGrouped,
 	isWooExpressPlan,
+	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -40,7 +41,7 @@ import {
 } from '@wordpress/element';
 import { hasQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
-import { localize, useTranslate } from 'i18n-calypso';
+import { TranslateResult, localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
@@ -411,6 +412,13 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 	} );
 
+	let highlightLabelOverrides: { [ K in PlanSlug ]?: TranslateResult } | undefined;
+	if ( isTrailMapAny ) {
+		highlightLabelOverrides = {
+			[ PLAN_ECOMMERCE ]: translate( 'Best for eCommerce' ),
+		};
+	}
+
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGridRaw = useGridPlansForFeaturesGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -430,6 +438,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		highlightLabelOverrides,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
