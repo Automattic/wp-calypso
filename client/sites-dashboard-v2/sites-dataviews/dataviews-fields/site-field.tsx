@@ -16,7 +16,7 @@ import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link
 import { displaySiteUrl, isStagingSite, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { getSiteHomeUrl, isSimpleSite } from 'calypso/state/sites/selectors';
+import { getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -67,7 +67,9 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const title = __( 'View Site Details' );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ?? '' );
 	const siteHomeUrl = useSelector( ( state ) => getSiteHomeUrl( state, site.ID ) ?? '' );
-	const isSimple = useSelector( ( state ) => isSimpleSite( state, site.ID ) );
+	const isAdminInterfaceWPAdmin = useSelector(
+		( state ) => getSiteOption( state, site.ID, 'wpcom_admin_interface' ) === 'wp-admin'
+	);
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
@@ -129,9 +131,11 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 							</div>
 							<a
 								className="sites-dataviews__site-wp-admin-url"
-								href={ isSimple ? siteHomeUrl : siteAdminUrl }
+								href={ isAdminInterfaceWPAdmin ? siteAdminUrl : siteHomeUrl }
 							>
-								<Truncated>{ isSimple ? __( 'My Home' ) : __( 'WP Admin' ) }</Truncated>
+								<Truncated>
+									{ isAdminInterfaceWPAdmin ? __( 'WP Admin' ) : __( 'My Home' ) }
+								</Truncated>
 							</a>
 						</>
 					)
