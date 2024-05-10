@@ -19,6 +19,7 @@ interface Props {
 	plansAvailabilityForPurchase?: {
 		[ key: string ]: boolean;
 	};
+	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 }
 
 // TODO clk: move to plans data store
@@ -28,11 +29,19 @@ const useHighlightLabels = ( {
 	currentSitePlanSlug,
 	selectedPlan,
 	plansAvailabilityForPurchase,
+	highlightLabelOverrides,
 }: Props ) => {
 	const translate = useTranslate();
 
 	return planSlugs.reduce(
 		( acc, planSlug ) => {
+			if ( highlightLabelOverrides?.[ planSlug ] ) {
+				return {
+					...acc,
+					[ planSlug ]: highlightLabelOverrides[ planSlug ],
+				};
+			}
+
 			const isCurrentPlan = currentSitePlanSlug
 				? isSamePlan( currentSitePlanSlug, planSlug )
 				: false;

@@ -61,9 +61,11 @@ export const ProviderWrappedLayout = ( {
 	}, [ isLoading, experimentAssignment?.variationName ] );
 
 	useEffect( () => {
-		// TODO: Implement a proper way to reset the experiment assignment
-		localStorage.removeItem( localStorageExperimentAssignmentKey( PLAN_NAME_EXPERIMENT ) );
-		loadExperimentAssignment( PLAN_NAME_EXPERIMENT );
+		if ( typeof localStorage !== 'undefined' ) {
+			// TODO: Implement a proper way to reset the experiment assignment
+			localStorage.removeItem( localStorageExperimentAssignmentKey( PLAN_NAME_EXPERIMENT ) );
+			loadExperimentAssignment( PLAN_NAME_EXPERIMENT );
+		}
 	}, [ userLoggedIn ] );
 
 	const layout = userLoggedIn ? (

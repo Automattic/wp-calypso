@@ -36,11 +36,7 @@ const PlanCard: FC = () => {
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
-			<Card
-				className={ classNames( 'hosting-overview__card', 'hosting-overview__plan', {
-					'hosting-overview__plan--is-free': ! isPaidPlan,
-				} ) }
-			>
+			<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__plan' ) }>
 				<div className="hosting-overview__plan-card-header">
 					<h3 className="hosting-overview__plan-card-title">{ planName }</h3>
 
