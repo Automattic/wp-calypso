@@ -1,5 +1,4 @@
 import { DataViewsFilter } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
@@ -43,8 +42,6 @@ const buildQueryString = ( {
 
 	if ( filters && filters.length > 0 ) {
 		const selectedFilters = getSelectedFilters( filters );
-		console.log( filters );
-		console.log( selectedFilters );
 		urlQuery.set( 'issue_types', selectedFilters.status.join( ',' ) );
 		urlQuery.set( 'site_tags', selectedFilters.siteTags.join( ',' ) );
 	}

@@ -48,7 +48,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 						dataViewsState?.search,
 						dataViewsState?.page,
 						{
-							issueTypes: getSelectedFilters( dataViewsState?.filters ),
+							issueTypes: getSelectedFilters( dataViewsState?.filters ).status,
 							showOnlyFavorites: showOnlyFavorites || false,
 						},
 						dataViewsState.sort,

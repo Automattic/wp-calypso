@@ -1,6 +1,6 @@
 import { TranslateResult } from 'i18n-calypso';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import SiteTag from 'calypso/a8c-for-agencies/types/site-tag';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes =
