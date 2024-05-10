@@ -185,7 +185,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			}
 		`;
 	const item = {
-		label: translate( 'All Domains' ),
+		label: translate( 'Domains' ),
 		subtitle: translate(
 			'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 			{
