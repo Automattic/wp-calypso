@@ -173,7 +173,10 @@ const SidebarCards = ( {
 		},
 	].filter( ( card ) => card !== null );
 
-	const availableTypes = isBasicHostingDisabled ? [] : [ 'basic' ];
+	const availableTypes = [
+		! isAdvancedHostingDisabled ? 'advanced' : null,
+		! isBasicHostingDisabled ? 'basic' : null,
+	].filter( ( type ) => type !== null );
 
 	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
 };
