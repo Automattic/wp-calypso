@@ -24,6 +24,7 @@ import HeadingInformation from './heading-information';
 import HostingInformation from './hosting-information';
 import HostingIntro from './hosting-intro';
 import { MetricsMenu } from './metrics-menu';
+import { PinghubTest } from './pinghub-test';
 import './styles.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
@@ -124,6 +125,10 @@ export default function SiteProfiler( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
+
+			<LayoutBlock>
+				<PinghubTest />
+			</LayoutBlock>
 
 			{ showResultScreen && (
 				<LayoutBlock className="domain-result-block">
