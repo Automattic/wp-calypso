@@ -2,11 +2,11 @@ import { trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { defaultHostingDetails } from '../constants';
 import wordpressCwvtechReportJson from '../wordpress-cwvtech-report.json';
-import { UseGetUpgradePlanSiteMetrics } from './use-get-upgrade-plan-site-metrics';
+import { useGetUpgradePlanSiteMetrics } from './use-get-upgrade-plan-site-metrics';
 
 export const useUpgradePlanHostingDetailsList = () => {
 	const translate = useTranslate();
-	const { showUpdatedSpeedMetrics, lcpPercentageDifference } = UseGetUpgradePlanSiteMetrics();
+	const { showUpdatedSpeedMetrics, lcpPercentageDifference } = useGetUpgradePlanSiteMetrics();
 	const hostingDetails = [ ...defaultHostingDetails ];
 
 	if ( showUpdatedSpeedMetrics ) {
