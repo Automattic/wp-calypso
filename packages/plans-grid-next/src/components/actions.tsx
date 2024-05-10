@@ -208,16 +208,16 @@ const LoggedInPlansFeatureActionButton = ( {
 	);
 };
 
-const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( {
-	availableForPurchase = true,
-	currentSitePlanSlug,
-	isInSignup,
+const PlanFeatures2023GridActions = ( {
 	planSlug,
+	currentSitePlanSlug,
+	visibleGridPlans,
+	availableForPurchase,
 	isStuck,
+	isInSignup,
 	isMonthlyPlan,
 	storageOptions,
-	visibleGridPlans,
-} ) => {
+}: PlanFeaturesActionsButtonProps ) => {
 	const {
 		gridPlansIndex,
 		siteId,
@@ -287,42 +287,34 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		selectedStorageAddOn,
 	} );
 
-	if ( isInSignup || isWpcomEnterpriseGridPlan( planSlug ) ) {
-		return (
-			<PlanFeatureActionButton
-				planSlug={ planSlug }
-				isStuck={ isStuck }
-				postButtonText={ postButtonText }
-				status={ status }
-				// TODO: Revisit free trial condition. Is there a better interface for this?
-				hasFreeTrialPlan={ isInSignup ? !! freeTrialPlanSlug : false }
-				onCtaClick={ callback }
-				onFreeTrialCtaClick={ freeTrialCallback }
-				text={ text }
-				freeTrialText={ freeTrialText }
-			/>
-		);
-	}
-
-	return (
-		<LoggedInPlansFeatureActionButton
-			disabled={ ! callback || 'disabled' === status }
-			planSlug={ planSlug }
-			availableForPurchase={ availableForPurchase }
-			onCtaClick={ callback }
-			currentSitePlanSlug={ currentSitePlanSlug }
-			isMonthlyPlan={ isMonthlyPlan }
-			storageOptions={ storageOptions }
-			text={ text }
-		/>
-	);
-};
-
-const PlanFeatures2023GridActions = ( props: PlanFeaturesActionsButtonProps ) => {
 	return (
 		<div className="plan-features-2023-gridrison__actions">
 			<div className="plan-features-2023-gridrison__actions-buttons">
-				<PlanFeaturesActionsButton { ...props } />
+				{ isInSignup || isWpcomEnterpriseGridPlan( planSlug ) ? (
+					<PlanFeatureActionButton
+						planSlug={ planSlug }
+						isStuck={ isStuck }
+						postButtonText={ postButtonText }
+						status={ status }
+						// TODO: Revisit free trial condition. Is there a better interface for this?
+						hasFreeTrialPlan={ isInSignup ? !! freeTrialPlanSlug : false }
+						onCtaClick={ callback }
+						onFreeTrialCtaClick={ freeTrialCallback }
+						text={ text }
+						freeTrialText={ freeTrialText }
+					/>
+				) : (
+					<LoggedInPlansFeatureActionButton
+						disabled={ ! callback || 'disabled' === status }
+						planSlug={ planSlug }
+						availableForPurchase={ availableForPurchase }
+						onCtaClick={ callback }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						isMonthlyPlan={ isMonthlyPlan }
+						storageOptions={ storageOptions }
+						text={ text }
+					/>
+				) }
 			</div>
 		</div>
 	);
