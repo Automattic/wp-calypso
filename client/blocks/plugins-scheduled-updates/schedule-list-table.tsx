@@ -32,7 +32,7 @@ export const ScheduleListTable = ( props: Props ) => {
 	 * make sure to update the ScheduleListCards component as well
 	 */
 	return (
-		<table>
+		<table className="plugins-update-manager-table">
 			<thead>
 				<tr>
 					<th>{ translate( 'Name' ) }</th>
