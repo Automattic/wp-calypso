@@ -17,6 +17,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site' );
 } );
 
 const FROM_URL = 'some-source-site-url.example.com';
+const getSupportMessage = () => screen.findByRole( 'link', { name: /Please, contact support/i } );
 
 describe( 'SiteMigrationInstructions i2', () => {
 	const render = (
@@ -105,7 +106,7 @@ describe( 'SiteMigrationInstructions i2', () => {
 		expect( screen.getByDisplayValue( 'some-migration-key' ) ).toBeVisible();
 	} );
 
-	it( 'renders the fallback text when is not possible to get the migraiton key', async () => {
+	it( 'renders the fallback text when is not possible to get the migration key', async () => {
 		nock.cleanAll();
 
 		nock( 'https://public-api.wordpress.com:443' )
@@ -132,5 +133,23 @@ describe( 'SiteMigrationInstructions i2', () => {
 				timeout: 3000,
 			} )
 		).toBeVisible();
+	} );
+
+	it( 'renders the support message when there is an error', async () => {
+		nock.cleanAll();
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/123/atomic/transfers/latest` )
+			.once()
+			.reply( 200, { status: 'completed' } );
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.persist()
+			.get( `/rest/v1.2/sites/123/plugins?http_envelope=1` )
+			.reply( 500, new Error( 'Fail to get the plugin list' ) );
+
+		render();
+
+		expect( await getSupportMessage() ).toBeVisible();
 	} );
 } );

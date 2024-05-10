@@ -31,6 +31,23 @@ const getMigrateGuruPageURL = ( siteURL: string ) =>
 
 const DoNotTranslateIt: FC< { value: string } > = ( { value } ) => <>{ value }</>;
 
+const ContactSupportMessage = () => {
+	const translate = useTranslate();
+
+	return (
+		<p className="site-migration-instructions__contact">
+			{ translate(
+				'Sorry, we couldn’t finish setting up your site. {{link}}Please, contact support{{/link}}.',
+				{
+					components: {
+						link: <a href="https://wordpress.com/help/contact" target="_blank" rel="noreferrer" />,
+					},
+				}
+			) }
+		</p>
+	);
+};
+
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
 	const site = useSite();
@@ -40,11 +57,13 @@ const SiteMigrationInstructions: Step = function () {
 		detailedStatus,
 		migrationKey,
 		completed: isSetupCompleted,
+		error: setupError,
 	} = usePrepareSiteForMigration( siteId );
 
 	const hasErrorGetMigrationKey = detailedStatus.migrationKey === 'error';
-	const showFallback = isSetupCompleted && hasErrorGetMigrationKey;
 	const showCopyIntoNewSite = isSetupCompleted && migrationKey;
+	const showSupportMessage = setupError && ! hasErrorGetMigrationKey;
+	const showFallback = isSetupCompleted && hasErrorGetMigrationKey;
 
 	useEffect( () => {
 		if ( hasErrorGetMigrationKey ) {
@@ -162,15 +181,15 @@ const SiteMigrationInstructions: Step = function () {
 					</li>
 				) }
 			</ol>
-			<p
-				className={ classNames( 'fade-in', {
-					active: showFallback || showCopyIntoNewSite,
-				} ) }
-			>
-				{ translate(
-					'And you are done! When the migration finishes, Migrate Guru will send you an email.'
-				) }
-			</p>
+			{ showFallback ||
+				( showCopyIntoNewSite && (
+					<p className={ classNames( 'fade-in', { active: true } ) }>
+						{ translate(
+							'And you are done! When the migration finishes, Migrate Guru will send you an email.'
+						) }
+					</p>
+				) ) }
+			{ showSupportMessage && <ContactSupportMessage /> }
 		</div>
 	);
 
