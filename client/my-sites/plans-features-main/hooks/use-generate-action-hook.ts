@@ -272,6 +272,8 @@ function useGenerateActionHook( {
 			billingPeriod &&
 			currentPlanBillingPeriod > billingPeriod
 		) {
+			// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
+			// TODO: We should revisit this. The plan term selector never allows selection of lower term plans so is this condition ever met?
 			text = translate( 'Contact support', { context: 'verb' } );
 		} else if (
 			availableForPurchase &&
