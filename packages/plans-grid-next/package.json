@@ -32,7 +32,8 @@
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook": "yarn msw init && sb dev"
+		"storybook": "yarn msw init && sb dev",
+		"storybook:build": "yarn msw init && sb build -c ./.storybook"
 	},
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
