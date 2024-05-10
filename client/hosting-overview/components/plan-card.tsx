@@ -116,10 +116,10 @@ const PlanCard: FC = () => {
 						) : (
 							<div
 								className={ classNames( 'hosting-overview__plan-info', {
-									'is-expired': site.plan?.expired,
+									'is-expired': site?.plan?.expired,
 								} ) }
 							>
-								{ site.plan?.expired
+								{ site?.plan?.expired
 									? translate( 'Expired' )
 									: translate( 'Expires on %s.', {
 											args: moment( planData?.expiryDate ).format( 'LL' ),

@@ -41,7 +41,7 @@ const DotcomPreviewPane = ( {
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack;
-	const isPlanExpired = site.plan?.expired;
+	const isPlanExpired = !! site.plan?.expired;
 
 	const features = useMemo(
 		() => [
