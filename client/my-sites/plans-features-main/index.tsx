@@ -331,7 +331,6 @@ const PlansFeaturesMain = ( {
 
 	const {
 		isLoading: isTrailMapExperimentLoading,
-		variant: trailMapExperimentVariant,
 		isTrailMapAny,
 		isTrailMapCopy,
 		isTrailMapStructure,
@@ -431,7 +430,6 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		includePreviousPlanFeatures: trailMapExperimentVariant === 'treatment_structure',
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
