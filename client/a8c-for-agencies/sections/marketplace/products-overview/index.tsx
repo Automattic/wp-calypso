@@ -80,7 +80,7 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 			wide
 			withBorder
 		>
-			<LayoutTop>
+			<LayoutTop className="a4a-marketplace__products-top-wrapper">
 				<LayoutHeader showStickyContent={ showStickyContent }>
 					<Title>{ translate( 'Marketplace' ) } </Title>
 
@@ -109,7 +109,7 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>
+			<LayoutBody className="a4a-marketplace__products-body">
 				<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
 					<ProductListing
 						selectedSite={ selectedSite }

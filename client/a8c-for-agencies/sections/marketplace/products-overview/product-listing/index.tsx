@@ -296,55 +296,57 @@ export default function ProductListing( {
 					/>
 				</div>
 
-				{ wooExtensions.length > 0 && (
-					<ListingSection
-						id="woocommerce-extensions"
-						icon={ <WooLogo width={ 45 } height={ 28 } /> }
-						title={ translate( 'WooCommerce Extensions' ) }
-						description={ translate(
-							'You must have WooCommerce installed to utilize these paid extensions.'
-						) }
-					>
-						{ getProductCards( wooExtensions ) }
-					</ListingSection>
-				) }
+				<div className="product-listing__product-sections">
+					{ wooExtensions.length > 0 && (
+						<ListingSection
+							id="woocommerce-extensions"
+							icon={ <WooLogo width={ 45 } height={ 28 } /> }
+							title={ translate( 'WooCommerce Extensions' ) }
+							description={ translate(
+								'You must have WooCommerce installed to utilize these paid extensions.'
+							) }
+						>
+							{ getProductCards( wooExtensions ) }
+						</ListingSection>
+					) }
 
-				{ plans.length > 0 && (
-					<ListingSection
-						id="jetpack-plans"
-						icon={ <JetpackLogo size={ 26 } /> }
-						title={ translate( 'Jetpack Plans' ) }
-						description={ translate(
-							'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
-						) } // FIXME: Add proper description for A4A
-					>
-						{ getProductCards( plans ) }
-					</ListingSection>
-				) }
+					{ plans.length > 0 && (
+						<ListingSection
+							id="jetpack-plans"
+							icon={ <JetpackLogo size={ 26 } /> }
+							title={ translate( 'Jetpack Plans' ) }
+							description={ translate(
+								'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
+							) } // FIXME: Add proper description for A4A
+						>
+							{ getProductCards( plans ) }
+						</ListingSection>
+					) }
 
-				{ products.length > 0 && (
-					<ListingSection
-						icon={ <JetpackLogo size={ 26 } /> }
-						title={ translate( 'Jetpack Products' ) }
-						description={ translate(
-							'Mix and match powerful security, performance, and growth tools for your sites.'
-						) }
-					>
-						{ getProductCards( products ) }
-					</ListingSection>
-				) }
+					{ products.length > 0 && (
+						<ListingSection
+							icon={ <JetpackLogo size={ 26 } /> }
+							title={ translate( 'Jetpack Products' ) }
+							description={ translate(
+								'Mix and match powerful security, performance, and growth tools for your sites.'
+							) }
+						>
+							{ getProductCards( products ) }
+						</ListingSection>
+					) }
 
-				{ backupAddons.length > 0 && (
-					<ListingSection
-						icon={ <JetpackLogo size={ 26 } /> }
-						title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
-						description={ translate(
-							'Add additional storage to your current VaultPress Backup plans.'
-						) }
-					>
-						{ getProductCards( backupAddons ) }
-					</ListingSection>
-				) }
+					{ backupAddons.length > 0 && (
+						<ListingSection
+							icon={ <JetpackLogo size={ 26 } /> }
+							title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
+							description={ translate(
+								'Add additional storage to your current VaultPress Backup plans.'
+							) }
+						>
+							{ getProductCards( backupAddons ) }
+						</ListingSection>
+					) }
+				</div>
 			</div>
 		</>
 	);
