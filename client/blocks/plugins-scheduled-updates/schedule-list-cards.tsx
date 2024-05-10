@@ -1,6 +1,7 @@
-import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
+import { Button, DropdownMenu, FormToggle, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useScheduledUpdatesActionMutation } from 'calypso/data/plugins/use-scheduled-updates-action-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { Badge } from '../plugin-scheduled-updates-common/badge';
 import { useDateTimeFormat } from '../plugin-scheduled-updates-common/hooks/use-date-time-format';
@@ -25,6 +26,7 @@ export const ScheduleListCards = ( props: Props ) => {
 		usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat( siteSlug );
+	const { activateSchedule } = useScheduledUpdatesActionMutation( siteSlug );
 
 	return (
 		<div className="schedule-list--cards">
@@ -108,6 +110,16 @@ export const ScheduleListCards = ( props: Props ) => {
 							>
 								<Icon className="icon-info" icon={ info } size={ 16 } />
 							</Tooltip>
+						</span>
+					</div>
+
+					<div className="schedule-list--card-label">
+						<label htmlFor="active">{ translate( 'Active' ) }</label>
+						<span id="active">
+							<FormToggle
+								checked={ schedule.active }
+								onChange={ ( e ) => activateSchedule( schedule.id, { active: e.target.checked } ) }
+							/>
 						</span>
 					</div>
 				</div>
