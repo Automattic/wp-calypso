@@ -33,8 +33,7 @@ function useGenerateAction( {
 	siteId,
 	cartHandler,
 	flowName,
-	intent, // TODO: a single intent prop here should suffice.
-	intentFromProps, // TODO: a single intent prop here should suffice.
+	plansIntent,
 	isInSignup,
 	isLaunchPage,
 	showModalAndExit,
@@ -43,8 +42,7 @@ function useGenerateAction( {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	flowName?: string | null;
-	intent?: PlansIntent | null;
-	intentFromProps?: PlansIntent | null;
+	plansIntent?: PlansIntent | null;
 	isInSignup: boolean;
 	isLaunchPage: boolean | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
@@ -70,7 +68,7 @@ function useGenerateAction( {
 		eligibleForFreeHostingTrial,
 		cartHandler,
 		flowName,
-		intent,
+		intent: plansIntent,
 		showModalAndExit,
 		sitePlanSlug,
 		siteSlug,
@@ -196,7 +194,7 @@ function useGenerateAction( {
 			if (
 				isBusinessPlan( planSlug ) &&
 				! eligibleForFreeHostingTrial &&
-				intentFromProps === 'plans-new-hosted-site'
+				plansIntent === 'plans-new-hosted-site'
 			) {
 				postButtonText = translate( "You've already used your free trial! Thanks!" );
 			}
@@ -244,7 +242,7 @@ function useGenerateAction( {
 			text = translate( 'Contact support', { context: 'verb' } );
 
 			// TODO: Consider DRYing this up
-			if ( sitePlanSlug === planSlug && intentFromProps !== 'plans-p2' ) {
+			if ( sitePlanSlug === planSlug && plansIntent !== 'plans-p2' ) {
 				text = translate( 'Manage add-ons', { context: 'verb' } );
 				status = 'enabled';
 			}
@@ -277,7 +275,7 @@ function useGenerateAction( {
 			if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
 				text = textOverride || translate( 'Upgrade to Yearly' );
 			}
-		} else if ( sitePlanSlug === planSlug && intentFromProps !== 'plans-p2' ) {
+		} else if ( sitePlanSlug === planSlug && plansIntent !== 'plans-p2' ) {
 			// All other actions for a current plan
 			text = translate( 'View plan' );
 
