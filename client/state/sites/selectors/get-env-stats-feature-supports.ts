@@ -48,19 +48,17 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.16.0-alpha',
 			isOdysseyStats
 		),
-		supportsUTMStats:
-			// UTM stats are only supported for Jetpack and Atomic sites on Calypso.
-			isSiteJetpackOrAtomic &&
-			version_greater_than_or_equal( statsAdminVersion, '0.17.0-alpha', isOdysseyStats ),
-		supportsDevicesStats:
-			config.isEnabled( 'stats/devices' ) &&
-			isSiteJetpackNotAtomic &&
-			version_greater_than_or_equal( statsAdminVersion, '0.19.0-alpha', isOdysseyStats ),
+		// UTM stats are only supported for Jetpack and Atomic sites.
+		supportsUTMStats: isSiteJetpackOrAtomic,
+		supportsDevicesStats: config.isEnabled( 'stats/devices' ) && isSiteJetpackNotAtomic,
 		supportsOnDemandCommercialClassification: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.18.0-alpha',
 			isOdysseyStats
 		),
+		isOldJetpack:
+			isSiteJetpackNotAtomic &&
+			! version_greater_than_or_equal( statsAdminVersion, '0.19.0-alpha', isOdysseyStats ),
 	};
 }
 

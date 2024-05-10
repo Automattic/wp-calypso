@@ -11,6 +11,12 @@
 	}
 }
 
+.upsell-nudge__small-placeholder {
+	animation: pulse-light 800ms ease-in-out infinite;
+	background: var(--color-neutral-10);
+	color: transparent;
+}
+
 .upsell-nudge__placeholder-row {
 	height: 40px;
 	flex: 0 0 100%;

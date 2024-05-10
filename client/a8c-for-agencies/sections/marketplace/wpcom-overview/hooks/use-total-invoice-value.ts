@@ -5,6 +5,7 @@ import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/ho
 import { getWPCOMCreatorPlan } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-options';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-values-utils';
+import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/woocommerce-product-slug-mapping';
 import { SelectedLicenseProp } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/types';
 import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
@@ -33,11 +34,8 @@ export const useGetProductPricingInfo = () => {
 		product: SelectedLicenseProp | APIProductFamilyProduct,
 		quantity: number
 	) => {
-		const bundle = product?.supported_bundles?.find( ( bundle ) => bundle.quantity === quantity );
-		const bundleAmount = bundle && bundle.amount ? bundle.amount.replace( ',', '' ) : '';
-		const tier = calculateTier( options, quantity + ownedPlans );
-
 		if ( product.family_slug === 'wpcom-hosting' ) {
+			const tier = calculateTier( options, quantity + ownedPlans );
 			const actualCost = Number( product.amount ) * quantity;
 			return {
 				actualCost,
@@ -45,6 +43,9 @@ export const useGetProductPricingInfo = () => {
 				discountPercentage: tier.discount,
 			};
 		}
+
+		const bundle = product?.supported_bundles?.find( ( bundle ) => bundle.quantity === quantity );
+		const bundleAmount = bundle && bundle.amount ? bundle.amount.replace( ',', '' ) : '';
 
 		const productBundleCost = bundle
 			? parseFloat( bundleAmount )
@@ -69,11 +70,18 @@ export const useGetProductPricingInfo = () => {
 			// If a yearly product is found, find the monthly version of the product
 			const monthlyProduct =
 				yearlyProduct &&
-				Object.values( userProducts ).find(
-					( p ) =>
-						p.billing_product_slug === yearlyProduct.billing_product_slug &&
+				Object.values( userProducts ).find( ( p ) => {
+					return (
+						( p.billing_product_slug === yearlyProduct.billing_product_slug ||
+							// Check if the product is a WooCommerce product
+							isWooCommerceProduct(
+								p.billing_product_slug,
+								yearlyProduct.billing_product_slug
+							) ) &&
 						p.product_term === 'month'
-				);
+					);
+				} );
+
 			// If a monthly product is found, calculate the actual cost and discount percentage
 			if ( monthlyProduct ) {
 				const monthlyProductBundleCost = parseFloat( product.amount ) * quantity;

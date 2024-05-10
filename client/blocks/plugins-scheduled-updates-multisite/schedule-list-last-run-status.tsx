@@ -18,6 +18,10 @@ export function ScheduleListLastRunStatus( { schedule, site, onLogsClick }: Prop
 	const { prepareDateTime } = useDateTimeFormat();
 
 	if ( site ) {
+		if ( ! site.last_run_status ) {
+			return '-';
+		}
+
 		return (
 			<>
 				<Badge type={ site.last_run_status } />
@@ -48,7 +52,7 @@ export function ScheduleListLastRunStatus( { schedule, site, onLogsClick }: Prop
 	).length;
 
 	if ( ! hasRun ) {
-		return null;
+		return '-';
 	}
 
 	if ( isInProgress ) {

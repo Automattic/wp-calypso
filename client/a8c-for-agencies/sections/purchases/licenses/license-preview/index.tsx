@@ -5,6 +5,7 @@ import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
+import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
@@ -89,7 +90,9 @@ export default function LicensePreview( {
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
 	const assign = useCallback( () => {
-		const redirectUrl = addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
+		const redirectUrl = isWPCOMLicense
+			? A4A_SITES_LINK_NEEDS_SETUP
+			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
 		if ( paymentMethodRequired ) {
 			const noticeLinkHref = addQueryArgs(
 				{
@@ -113,7 +116,7 @@ export default function LicensePreview( {
 		}
 
 		page.redirect( redirectUrl );
-	}, [ paymentMethodRequired, translate, dispatch, licenseKey ] );
+	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, translate, dispatch ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -192,7 +195,7 @@ export default function LicensePreview( {
 											compact
 											onClick={ assign }
 										>
-											{ translate( 'Assign' ) }
+											{ isWPCOMLicense ? translate( 'Create site' ) : translate( 'Assign' ) }
 										</Button>
 									) }
 								</span>
