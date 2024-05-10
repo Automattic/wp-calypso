@@ -336,26 +336,25 @@
 			}
 		}
 
-		.sites-site-thumbnail {
-			display: flex;
-		}
-
 		.sites-site-favicon {
-			display: none;
+			margin-right: 0;
+
+			.is-blank {
+				font-size: xx-large !important;
+				text-transform: uppercase;
+				background-color: #f5f7f7;
+				border: 1px solid rgb(238, 238, 238);
+				border-radius: 4px;
+				box-sizing: border-box;
+			}
 		}
 	}
 
 	.sites-dashboard:not(.preview-hidden) {
-		.sites-site-favicon {
-			display: flex;
-			margin-right: 0;
-		}
-
 		.a4a-layout__header {
 			align-items: center !important;
 		}
 
-		.sites-site-thumbnail,
 		.sites-manage-all-domains-button,
 		.a4a-layout__header-subtitle {
 			display: none;

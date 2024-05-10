@@ -8,7 +8,6 @@ import * as React from 'react';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
-import { SiteItemThumbnail } from 'calypso/sites-dashboard/components/sites-site-item-thumbnail';
 import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
 import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
@@ -88,16 +87,11 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 				leading={
 					<Button className="sites-dataviews__preview-trigger" onClick={ onSiteClick } borderless>
 						<ListTileLeading title={ title }>
-							<SiteItemThumbnail
-								className="sites-site-thumbnail"
-								displayMode="list"
-								showPlaceholder={ false }
-								site={ site }
-							/>
 							<SiteFavicon
 								className="sites-site-favicon"
 								blogId={ site.ID }
-								isDotcomSite={ site.is_wpcom_atomic }
+								fallback="first-grapheme"
+								size={ 56 }
 							/>
 						</ListTileLeading>
 					</Button>
