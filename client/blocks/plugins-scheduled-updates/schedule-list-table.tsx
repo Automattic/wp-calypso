@@ -27,7 +27,7 @@ export const ScheduleListTable = ( props: Props ) => {
 		usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat( siteSlug );
-	const { activateSchedule } = useScheduledUpdatesActionMutation( siteSlug );
+	const { activateSchedule } = useScheduledUpdatesActionMutation();
 
 	/**
 	 * NOTE: If you update the table structure,
@@ -105,7 +105,9 @@ export const ScheduleListTable = ( props: Props ) => {
 						<td>
 							<FormToggle
 								checked={ schedule.active }
-								onChange={ ( e ) => activateSchedule( schedule.id, { active: e.target.checked } ) }
+								onChange={ ( e ) =>
+									activateSchedule( siteSlug, schedule.id, { active: e.target.checked } )
+								}
 							/>
 						</td>
 						<td style={ { textAlign: 'end' } }>
