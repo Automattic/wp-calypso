@@ -41,7 +41,7 @@ export type MultisiteSchedulesUpdates = Omit<
 	sites: MultisiteSiteDetails[];
 };
 
-type MultisiteSchedulesUpdatesResponse = {
+export type MultisiteSchedulesUpdatesResponse = {
 	sites: { [ site_id: string ]: { [ scheduleId: string ]: ScheduleUpdates } };
 };
 

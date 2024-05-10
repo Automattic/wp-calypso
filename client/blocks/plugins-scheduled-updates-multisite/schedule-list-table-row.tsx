@@ -1,4 +1,4 @@
-import { Button, Tooltip } from '@wordpress/components';
+import { Button, Tooltip, FormToggle } from '@wordpress/components';
 import { chevronDown, chevronRight, Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -7,6 +7,7 @@ import { usePrepareMultisitePluginsTooltipInfo } from 'calypso/blocks/plugin-sch
 import { usePrepareScheduleName } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-prepare-schedule-name';
 import { usePrepareSitesTooltipInfo } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-prepare-sites-tooltip-info';
 import { ScheduleListLastRunStatus } from 'calypso/blocks/plugins-scheduled-updates-multisite/schedule-list-last-run-status';
+import { useScheduledUpdatesActionMutation } from 'calypso/data/plugins/use-scheduled-updates-action-mutation';
 import { SiteSlug } from 'calypso/types';
 import { ScheduleListTableRowMenu } from './schedule-list-table-row-menu';
 import type {
@@ -31,6 +32,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 		usePrepareMultisitePluginsTooltipInfo( schedule.sites.map( ( site ) => site.ID ) );
 	const translate = useTranslate();
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const { activateSchedule } = useScheduledUpdatesActionMutation();
 
 	return (
 		<>
@@ -84,6 +86,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						<Icon className="icon-info" icon={ info } size={ 16 } />
 					</Tooltip>
 				</td>
+				<td className="active"></td>
 				<td className="menu">
 					<ScheduleListTableRowMenu { ...props } />
 				</td>
@@ -108,6 +111,14 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						<td></td>
 
 						<td></td>
+						<td className="active">
+							<FormToggle
+								checked={ schedule.active }
+								onChange={ ( e ) =>
+									activateSchedule( site.slug, schedule.schedule_id, { active: e.target.checked } )
+								}
+							/>
+						</td>
 						<td className="menu">
 							<ScheduleListTableRowMenu { ...props } site={ site } />
 						</td>

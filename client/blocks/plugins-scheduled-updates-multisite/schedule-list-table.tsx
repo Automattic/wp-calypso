@@ -26,6 +26,7 @@ export const ScheduleListTable = ( props: Props ) => {
 					<th>{ translate( 'Next update' ) }</th>
 					<th>{ translate( 'Frequency' ) }</th>
 					<th>{ translate( 'Plugins' ) }</th>
+					<th>{ translate( 'Active' ) }</th>
 					<th></th>
 				</tr>
 			</thead>
