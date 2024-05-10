@@ -29,7 +29,7 @@ import useGenerateActionCallback from './use-generate-action-callback';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-function useGenerateAction( {
+function useGenerateActionHook( {
 	siteId,
 	cartHandler,
 	flowName,
@@ -75,7 +75,7 @@ function useGenerateAction( {
 		withDiscount,
 	} );
 
-	return ( {
+	const useActionHook = ( {
 		availableForPurchase,
 		billingPeriod, // TODO: remove from props. call from here.
 		cartItemForPlan,
@@ -84,7 +84,7 @@ function useGenerateAction( {
 		isLargeCurrency,
 		isStuck,
 		planSlug,
-		planTitle, // TODO: remove from props. call from here.
+		planTitle,
 		priceString,
 		selectedStorageAddOn,
 	}: {
@@ -317,6 +317,8 @@ function useGenerateAction( {
 			text,
 		};
 	};
+
+	return useActionHook;
 }
 
-export default useGenerateAction;
+export default useGenerateActionHook;
