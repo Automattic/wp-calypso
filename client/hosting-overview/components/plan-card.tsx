@@ -1,5 +1,6 @@
-import { PlanSlug } from '@automattic/calypso-products';
+import { PlanSlug, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button, Card, PlanPrice, LoadingPlaceholder } from '@automattic/components';
+import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
@@ -30,6 +31,12 @@ const PlanCard: FC = () => {
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
+
+	// Check for storage addons available for purchase.
+	const addOns = AddOns.useAddOns( { selectedSiteId: site?.ID } );
+	const storageAddons = addOns.filter(
+		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
+	);
 
 	const isLoading = ! pricing || ! planData;
 
@@ -121,15 +128,17 @@ const PlanCard: FC = () => {
 					siteId={ site?.ID }
 					StorageBarComponent={ PlanStorageBar }
 				>
-					<div className="hosting-overview__plan-storage-footer">
-						<Button
-							className="hosting-overview__link-button"
-							plain
-							href={ `/add-ons/${ site?.slug }` }
-						>
-							{ translate( 'Need more storage?' ) }
-						</Button>
-					</div>
+					{ storageAddons.length > 0 && (
+						<div className="hosting-overview__plan-storage-footer">
+							<Button
+								className="hosting-overview__link-button"
+								plain
+								href={ `/add-ons/${ site?.slug }` }
+							>
+								{ translate( 'Need more storage?' ) }
+							</Button>
+						</div>
+					) }
 				</PlanStorage>
 			</Card>
 		</>
