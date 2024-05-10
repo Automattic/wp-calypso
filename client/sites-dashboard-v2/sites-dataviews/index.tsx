@@ -126,7 +126,7 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'status',
-				header: __( 'Status' ),
+				header: <span>{ __( 'Status' ) }</span>,
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
