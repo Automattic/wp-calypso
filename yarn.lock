@@ -1919,7 +1919,6 @@ __metadata:
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
     "@types/wordpress__block-editor": "npm:^11.5.8"
     "@types/wordpress__blocks": "npm:^12.5.13"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"
