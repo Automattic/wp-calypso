@@ -20,6 +20,7 @@ import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
@@ -30,7 +31,6 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 function useGenerateAction( {
 	siteId,
 	cartHandler,
-	eligibleForFreeHostingTrial, // TODO: remove from props. call from here.
 	flowName,
 	intent, // TODO: a single intent prop here should suffice.
 	intentFromProps, // TODO: a single intent prop here should suffice.
@@ -43,7 +43,6 @@ function useGenerateAction( {
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
-	eligibleForFreeHostingTrial: boolean;
 	flowName?: string | null;
 	intent?: PlansIntent | null;
 	intentFromProps?: PlansIntent | null;
@@ -62,6 +61,7 @@ function useGenerateAction( {
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 			: null
 	);
+	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	const getActionCallback = useGenerateActionCallback( {
 		currentPlan,
