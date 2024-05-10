@@ -18,7 +18,6 @@ import './style.scss';
 
 class SidebarNotifications extends Component {
 	static propTypes = {
-		isActive: PropTypes.bool,
 		className: PropTypes.string,
 		title: TranslatableString,
 		onClick: PropTypes.func,
@@ -129,8 +128,7 @@ class SidebarNotifications extends Component {
 
 	render() {
 		const classes = classNames( this.props.className, 'sidebar-notifications', {
-			'is-active':
-				this.props.isNotificationsOpen || window.location.pathname === '/read/notifications',
+			'is-active': this.props.isActive,
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,
 		} );
@@ -164,8 +162,10 @@ class SidebarNotifications extends Component {
 }
 
 const mapStateToProps = ( state ) => {
+	const isPanelOpen = isNotificationsOpen( state );
 	return {
-		isNotificationsOpen: isNotificationsOpen( state ),
+		isActive: isPanelOpen || window.location.pathname === '/read/notifications',
+		isNotificationsOpen: isPanelOpen,
 		hasUnseenNotifications: hasUnseenNotifications( state ),
 	};
 };

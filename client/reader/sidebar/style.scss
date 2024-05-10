@@ -299,10 +299,6 @@ body.is-section-reader:not(.is-reader-full-post) {
 					stroke: var(--color-sidebar-gridicon-hover-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-a8c g {
-				stroke: var(--color-sidebar-gridicon-hover-fill);
-				fill: var(--color-sidebar-gridicon-hover-fill);
-			}
 		}
 		/* Default styles */
 		.sidebar__menu-icon.sidebar_svg-add {
@@ -311,6 +307,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 			}
 		}
 		.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
+			fill: var(--color-sidebar-gridicon-fill);
 			g {
 				stroke: var(--color-sidebar-gridicon-fill);
 			}
@@ -357,22 +354,23 @@ body.is-section-reader:not(.is-reader-full-post) {
 		.sidebar__menu-link {
 			.sidebar__menu-icon.sidebar_svg-add {
 				g {
-					fill: var(--color-sidebar-gridicon-hover-fill);
+					fill: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
+				fill: var(--color-sidebar-gridicon-selected-fill);
 				g {
-					stroke: var(--color-sidebar-gridicon-hover-fill);
+					stroke: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-conversations {
-				fill: var(--color-sidebar-background);
+				fill: var(--color-sidebar-menu-hover-background);
 				g {
-					stroke: var(--color-sidebar-gridicon-hover-fill);
+					stroke: var(--color-sidebar-gridicon-selected-fill);
 				}
 				g g {
 					stroke: unset;
-					fill: var(--color-sidebar-gridicon-hover-fill);
+					fill: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-following,
@@ -380,13 +378,13 @@ body.is-section-reader:not(.is-reader-full-post) {
 			.sidebar__menu-icon.sidebar_svg-notifications {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
-					stroke: var(--color-sidebar-gridicon-hover-fill);
+					stroke: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-p2 {
-				fill: var(--color-sidebar-background);
+				fill: var(--color-sidebar-menu-hover-background);
 				path {
-					fill: var(--color-sidebar-gridicon-hover-fill);
+					fill: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-a8c,
@@ -395,13 +393,10 @@ body.is-section-reader:not(.is-reader-full-post) {
 			.sidebar__menu-icon.sidebar_svg-search,
 			.sidebar__menu-icon.sidebar_svg-tag,
 			.sidebar__menu-icon.sidebar_svg-discover {
-				fill: var(--color-sidebar-background);
+				fill: var(--color-sidebar-menu-hover-background);
 				g {
-					stroke: var(--color-sidebar-gridicon-hover-fill);
+					stroke: var(--color-sidebar-gridicon-selected-fill);
 				}
-			}
-			.sidebar__menu-icon.sidebar_svg:hover {
-				fill: var(--color-sidebar-gridicon-hover-fill);
 			}
 		}
 	}
