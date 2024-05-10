@@ -80,6 +80,7 @@ export default function SitesDashboard() {
 
 	const [ agencyDashboardFilter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
+		siteTags: [],
 		showOnlyFavorites: showOnlyFavorites || false,
 	} );
 
@@ -87,7 +88,8 @@ export default function SitesDashboard() {
 		const selectedFilters = getSelectedFilters( dataViewsState.filters );
 
 		setAgencyDashboardFilter( {
-			issueTypes: selectedFilters,
+			issueTypes: selectedFilters.status,
+			siteTags: selectedFilters.siteTags,
 			showOnlyFavorites: showOnlyFavorites || false,
 		} );
 	}, [ dataViewsState.filters, setAgencyDashboardFilter, showOnlyFavorites ] );
@@ -152,6 +154,7 @@ export default function SitesDashboard() {
 			sort: dataViewsState.sort,
 			showOnlyFavorites,
 		} );
+
 		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
 			page.show( updatedUrl );
 		}

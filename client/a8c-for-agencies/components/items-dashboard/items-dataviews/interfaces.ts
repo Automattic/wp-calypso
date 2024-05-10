@@ -17,7 +17,7 @@ export interface DataViewsColumn {
 	enableHiding?: boolean;
 	enableSorting?: boolean;
 	elements?: {
-		value: number;
+		value: number | string;
 		label: string;
 	}[];
 	filterBy?: {
@@ -26,7 +26,7 @@ export interface DataViewsColumn {
 	};
 	type?: string;
 	header: ReactNode;
-	getValue?: ( item: any ) => string | boolean | number | undefined;
+	getValue?: ( item: any ) => string | boolean | number | any[] | undefined;
 	render?: ( item: any ) => ReactNode | null;
 }
 
@@ -55,7 +55,7 @@ export interface DataViewsSort {
 export interface DataViewsFilter {
 	field: string;
 	operator: string;
-	value: number;
+	value: number | string | undefined;
 }
 
 export interface DataViewsState {

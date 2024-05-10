@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -11,6 +11,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD, filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
+import SiteTag from 'calypso/a8c-for-agencies/types/site-tag';
 
 interface Props {
 	showOnlyFavoritesInitialState?: boolean;
@@ -21,24 +22,46 @@ interface Props {
 	searchQuery: string;
 	children: ReactNode;
 	path: string;
-	issueTypes: string;
+	filters: {
+		status: string;
+		siteTags: string;
+	};
 	currentPage: number;
 	sort: DashboardSortInterface;
 	featurePreview?: ReactNode | null;
 }
 
-const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
-	const issueTypesArray = issueTypes?.split( ',' );
+const buildFilters = ( { status, siteTags }: { status: string; siteTags: string } ) => {
+	const statusArray = status?.split( ',' );
 
-	return (
-		issueTypesArray?.map( ( issueType ) => {
+	const statusFilter =
+		statusArray?.map( ( issueType ) => {
 			return {
 				field: 'status',
 				operator: 'in',
 				value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
 			};
-		} ) || []
-	);
+		} ) || [];
+
+	const siteTagsArray = siteTags?.split( ',' );
+	const siteTagsFilter =
+		siteTagsArray?.map( ( siteTag: string ) => {
+			return {
+				field: 'site_tags',
+				operator: 'in',
+				value:
+					[
+						{ value: 'game', label: 'Game' },
+						{ value: 'retro', label: 'Retro' },
+						{ value: 'some', label: 'Some' },
+						{ value: 'tags', label: 'Tags' },
+					].find( ( tagFilter ) => {
+						return tagFilter.value.toLowerCase() === siteTag?.toString().toLowerCase();
+					} )?.value || '',
+			};
+		} ) || [];
+
+	return [ ...statusFilter, ...siteTagsFilter ];
 };
 
 export const SitesDashboardProvider = ( {
@@ -50,7 +73,7 @@ export const SitesDashboardProvider = ( {
 	children,
 	path,
 	searchQuery,
-	issueTypes,
+	filters,
 	currentPage,
 	sort,
 	featurePreview,
@@ -81,16 +104,18 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
-	initialDataViewsState.sort.field = DEFAULT_SORT_FIELD;
-	initialDataViewsState.sort.direction = DEFAULT_SORT_DIRECTION;
-	initialDataViewsState.hiddenFields = [ 'status' ];
+	/* initialDataViewsState.sort.field = DEFAULT_SORT_FIELD; */
+	/* initialDataViewsState.sort.direction = DEFAULT_SORT_DIRECTION; */
+	// initialDataViewsState.hiddenFields = [ 'status', 'site_tags' ];
+
+	const dataViewsFilters = useMemo( () => buildFilters( filters ), [ filters ] );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
 		page: currentPage,
 		search: searchQuery,
 		sort,
-		filters: buildFilters( { issueTypes } ),
+		filters: dataViewsFilters,
 	} );
 
 	useEffect( () => {
@@ -105,7 +130,7 @@ export const SitesDashboardProvider = ( {
 			...( siteUrlInitialState
 				? {}
 				: {
-						filters: buildFilters( { issueTypes } ),
+						filters: dataViewsFilters,
 				  } ),
 			...( siteUrlInitialState ? {} : { search: searchQuery } ),
 			...( siteUrlInitialState ? {} : { sort } ),

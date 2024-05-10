@@ -1,5 +1,6 @@
 import { TranslateResult } from 'i18n-calypso';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import SiteTag from 'calypso/a8c-for-agencies/types/site-tag';
 
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes =
@@ -83,6 +84,7 @@ export interface BoostData {
 }
 
 export interface Site {
+	a4a_site_tags: SiteTag[];
 	sticker: string[];
 	blog_id: number;
 	blogname: string;
@@ -280,6 +282,7 @@ export interface AgencyDashboardFilterMap {
 
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption >;
+	siteTags: string[];
 	showOnlyFavorites: boolean;
 	isNotMultisite?: boolean;
 };

@@ -24,6 +24,7 @@ import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/s
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { AllowedTypes, Site, SiteData } from '../../types';
+import SiteTag from 'calypso/a8c-for-agencies/types/site-tag';
 
 export const JetpackSitesDataViews = ( {
 	data,
@@ -126,6 +127,26 @@ export const JetpackSitesDataViews = ( {
 					{ value: 5, label: translate( 'Site Disconnected' ) },
 					{ value: 6, label: translate( 'Site Down' ) },
 					{ value: 7, label: translate( 'Plugins Needing Updates' ) },
+				],
+				filterBy: {
+					operators: [ 'in' ],
+				},
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'site_tags',
+				header: translate( 'Site Tags' ),
+				getValue: ( { item }: { item: SiteInfo } ) => item.site.value.a4a_site_tags,
+				/* render: ( { item } ) =>
+                    item.site.value.a4a_site_tags.map( ( siteTag: SiteTag ) => siteTag.label ).join( ', ' ), */
+				render: () => null,
+				type: 'enumeration',
+				elements: [
+					{ value: 'game', label: 'Game' },
+					{ value: 'retro', label: 'Retro' },
+					{ value: 'some', label: 'Some' },
+					{ value: 'tags', label: 'Tags' },
 				],
 				filterBy: {
 					operators: [ 'in' ],
@@ -488,20 +509,22 @@ export const JetpackSitesDataViews = ( {
 
 	// Update the data packet
 	useEffect( () => {
-		setItemsData( ( prevState: ItemsDataViewsType< SiteData > ) => ( {
-			...prevState,
-			items: sites,
-			fields: fields,
-			//actions: actions,
-			pagination: {
-				totalItems: totalSites,
-				totalPages: totalPages,
-			},
-			setDataViewsState: setDataViewsState,
-			dataViewsState: dataViewsState,
-			selectedItem: dataViewsState.selectedItem,
-		} ) );
-	}, [ fields, dataViewsState, setDataViewsState, data ] ); // add actions when implemented
+		setItemsData( ( prevState: ItemsDataViewsType< SiteData > ) => {
+			return {
+				...prevState,
+				items: sites,
+				fields: fields,
+				//actions: actions,
+				pagination: {
+					totalItems: totalSites,
+					totalPages: totalPages,
+				},
+				setDataViewsState: setDataViewsState,
+				dataViewsState: dataViewsState,
+				selectedItem: dataViewsState.selectedItem,
+			};
+		} );
+	}, [ fields, dataViewsState, setDataViewsState ] ); // add actions when implemented
 
 	return <ItemsDataViews data={ itemsData } isLoading={ isLoading } className={ className } />;
 };

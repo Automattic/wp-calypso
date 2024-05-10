@@ -27,6 +27,7 @@ function configureSitesContext( context: Context ) {
 		sort_field,
 		sort_direction,
 		is_favorite,
+		site_tags,
 	} = context.query;
 
 	const sort: DashboardSortInterface = {
@@ -47,7 +48,7 @@ function configureSitesContext( context: Context ) {
 			path={ context.path }
 			searchQuery={ search }
 			currentPage={ currentPage }
-			issueTypes={ issue_types }
+			filters={ { status: issue_types, siteTags: site_tags } }
 			sort={ sort }
 			{ ...( context.featurePreview ? { featurePreview: context.featurePreview } : {} ) }
 		>

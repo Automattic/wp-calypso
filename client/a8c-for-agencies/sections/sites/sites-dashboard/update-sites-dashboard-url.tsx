@@ -16,7 +16,7 @@ const buildQueryString = ( {
 	sort,
 	showOnlyFavorites,
 }: {
-	filters: Filter[];
+	filters: DataViewsFilter[];
 	search: string;
 	currentPage: number;
 	sort: DashboardSortInterface;
@@ -43,7 +43,10 @@ const buildQueryString = ( {
 
 	if ( filters && filters.length > 0 ) {
 		const selectedFilters = getSelectedFilters( filters );
-		urlQuery.set( 'issue_types', selectedFilters.join( ',' ) );
+		console.log( filters );
+		console.log( selectedFilters );
+		urlQuery.set( 'issue_types', selectedFilters.status.join( ',' ) );
+		urlQuery.set( 'site_tags', selectedFilters.siteTags.join( ',' ) );
 	}
 
 	if ( showOnlyFavorites ) {
