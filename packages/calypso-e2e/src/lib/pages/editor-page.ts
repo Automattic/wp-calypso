@@ -764,14 +764,27 @@ export class EditorPage {
 	async unpublish(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		await this.editorToolbarComponent.switchToDraft();
+
+		// For mobiles, we need to dismiss the settings panel before we can click on publish
+		await this.closeSettings();
+
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		// Saves the draft
-		await Promise.race( [
-			this.editorToolbarComponent.clickPublish(),
-			editorParent.getByRole( 'button' ).getByText( 'OK' ).click(),
-		] );
+		await Promise.race( [ this.editorToolbarComponent.clickPublish(), this.confirmUnpublish() ] );
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
 		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
+	}
+
+	/**
+	 * Confirms the unpublish action in some views
+	 */
+	async confirmUnpublish(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const okButtonLocator = editorParent.getByRole( 'button' ).getByText( 'OK' );
+
+		if ( await okButtonLocator.count() ) {
+			okButtonLocator.click();
+		}
 	}
 
 	/**
