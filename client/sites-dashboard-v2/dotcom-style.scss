@@ -331,6 +331,12 @@
 				// Since we changed the original height of the search input, we need to adjust the position of this icon.
 				margin-top: 5px;
 			}
+
+			.components-button.is-compact.has-icon:not(.has-text) {
+				@media ( max-width: 961px ) {
+					margin-inline-end: 8px;
+				}
+			}
 		}
 
 		.sites-site-thumbnail {
