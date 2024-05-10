@@ -139,6 +139,9 @@ function useGenerateActionHook( {
 						'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
 				} );
 			} else if ( isStuck && ! isLargeCurrency ) {
+				/**
+				 * `isStuck` indicates the buttons are fixed/sticky in the grid, and we show the price alongside the plan name.
+				 */
 				text = translate( 'Select %(plan)s – %(priceString)s', {
 					args: {
 						plan: planTitle,
