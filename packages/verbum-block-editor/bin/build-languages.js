@@ -33,7 +33,6 @@ function downloadLanguages() {
 			}
 
 			const json = await response.json();
-			console.log( `Downloading ${ translationUrl } complete.` );
 
 			return { langSlug, languageTranslations: json };
 		} )
@@ -66,11 +65,11 @@ function buildLanguages( downloadedLanguages ) {
 		fs.writeFileSync( output, JSON.stringify( filteredTranslations ) );
 	} );
 
-	console.info( '✅ Language build completed.' );
+	console.info( 'VBE: Language build completed.' );
 }
 
 async function run() {
-	console.info( 'ℹ️ Starting language build...' );
+	console.info( 'VBE: Starting language build...' );
 	const downloadedLanguages = await downloadLanguages();
 	buildLanguages( downloadedLanguages.filter( Boolean ) );
 }
