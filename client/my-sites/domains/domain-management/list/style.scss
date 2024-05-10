@@ -150,4 +150,13 @@
 			box-shadow: none;
 		}
 	}
+
+	.domains-table {
+		.components-base-control {
+			--checkbox-input-size: 16px;
+		}
+		.domains-table__domain-name {
+			font-size: 0.875rem;
+		}
+	}
 }
