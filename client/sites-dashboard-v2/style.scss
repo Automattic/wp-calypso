@@ -38,10 +38,6 @@
 		padding-block-start: 24px;
 	}
 
-	.components-button.is-compact.is-tertiary:not(.dataviews-filters-button)[aria-disabled="true"] {
-		display: none;
-	}
-
 	@media (min-width: $break-large) {
 		background: inherit;
 
