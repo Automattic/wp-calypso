@@ -98,13 +98,8 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				}
 			}
 
-			.search-component.domains-table-filter__search.is-open.has-open-icon {
-				border-radius: 4px;
-				height: 44px;
-			}
-
 			.domains-table {
-				margin-top: 48px;
+				margin-top: 35px;
 				.domains-table-toolbar {
 					margin-inline: 64px;
 				}
@@ -119,6 +114,30 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					top: 0;
 					z-index: 2;
 				}
+			}
+
+			.search-component.domains-table-filter__search.is-open.has-open-icon {
+				border-radius: 2px;
+				height: 36px;
+				flex-direction: row-reverse;
+				padding-inline: 10px 8px;
+				font-size: 14px;
+				color: var(--studio-gray-40);
+				svg {
+					fill: var(--studio-gray-40);
+					color: var(--studio-gray-40);
+				}
+
+				input.search-component__input[type="search"] {
+					font-size: 14px;
+					height: 36px;
+
+					&::placeholder {
+						color: var(--studio-gray-40);
+					}
+				}
+				max-width: 245px;
+				transition: none;
 			}
 
 			@media only screen and ( min-width: 782px ) {
