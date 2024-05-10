@@ -6,18 +6,12 @@ const PendingSubscriptionsManager = () => {
 	const translate = useTranslate();
 
 	return (
-		<>
-			<div>
-				<div>
-					<SubscriptionsManagerWrapper
-						headerText={ translate( 'Manage pending subscriptions' ) }
-						subHeaderText={ translate( 'Manage your site, RSS, and newsletter subscriptions.' ) }
-					>
-						<Pending />
-					</SubscriptionsManagerWrapper>
-				</div>
-			</div>
-		</>
+		<SubscriptionsManagerWrapper
+			headerText={ translate( 'Manage pending subscriptions' ) }
+			subHeaderText={ translate( 'Manage your site, RSS, and newsletter subscriptions.' ) }
+		>
+			<Pending />
+		</SubscriptionsManagerWrapper>
 	);
 };
 
