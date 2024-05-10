@@ -6,7 +6,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import StickyPanel from 'calypso/components/sticky-panel';
-import { useIsMenuSectionVisible } from '../hooks/use-is-menu-section-visible';
+import { useIsMenuSectionVisible } from 'calypso/site-profiler/hooks/use-is-menu-section-visible';
 
 const FullReportButton = styled( Button )`
 	margin-right: 8px;
