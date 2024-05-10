@@ -71,7 +71,7 @@ import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availabi
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
 import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
-import useGenerateAction from './hooks/use-generate-action';
+import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -357,7 +357,7 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
-	const useAction = useGenerateAction( {
+	const useAction = useGenerateActionHook( {
 		siteId,
 		cartHandler: onUpgradeClick,
 		flowName,
