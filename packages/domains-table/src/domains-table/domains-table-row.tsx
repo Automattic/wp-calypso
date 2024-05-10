@@ -84,17 +84,16 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		<tr key={ domain.domain }>
 			{ canSelectAnyDomains && (
 				<td className="domains-table-checkbox-td">
-					{ canBulkUpdate( domain ) && (
-						<CheckboxControl
-							__nextHasNoMarginBottom
-							checked={ isSelected }
-							onChange={ () => handleSelectDomain( domain ) }
-							/* translators: Label for a checkbox control that selects a domain name.*/
-							aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
-								domain: domain.domain,
-							} ) }
-						/>
-					) }
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						checked={ isSelected }
+						onChange={ () => handleSelectDomain( domain ) }
+						/* translators: Label for a checkbox control that selects a domain name.*/
+						aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
+							domain: domain.domain,
+						} ) }
+						disabled={ ! canBulkUpdate( domain ) }
+					/>
 				</td>
 			) }
 

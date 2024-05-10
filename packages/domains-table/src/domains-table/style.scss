@@ -117,6 +117,12 @@
 		}
 	}
 
+	.domains-table-checkbox-td {
+		input[type="checkbox"][disabled] {
+			cursor: no-drop;
+		}
+	}
+
 	.domains-table-row__domain {
 		flex-direction: column;
 		align-items: flex-start;
