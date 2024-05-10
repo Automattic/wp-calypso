@@ -28,9 +28,14 @@ import './style.scss';
 interface ProductListingProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
+	setSelectedBundleSize: ( value: number ) => void;
 }
 
-export default function ProductListing( { selectedSite, suggestedProduct }: ProductListingProps ) {
+export default function ProductListing( {
+	selectedSite,
+	suggestedProduct,
+	setSelectedBundleSize,
+}: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -38,11 +43,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 
 	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
 
-	const {
-		selectedSize: quantity,
-		availableSizes: availableBundleSizes,
-		setSelectedSize: setSelectedBundleSize,
-	} = useProductBundleSize();
+	const { selectedSize: quantity, availableSizes: availableBundleSizes } = useProductBundleSize();
 
 	const {
 		filteredProductsAndBundles,
@@ -273,16 +274,8 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 	}
 
 	return (
-		<div className="product-listing">
-			<QueryProductsList currency="USD" />
-
-			<div className="product-listing__actions">
-				<FilterSearch
-					label={ translate( 'Search plans, products, add-ons, and extensions' ) }
-					onSearch={ onProductSearch }
-					onClick={ trackClickCallback( 'search' ) }
-				/>
-
+		<>
+			<div className="product-listing__volume-price-selector-wrapper">
 				{ availableBundleSizes.length > 1 && (
 					<VolumePriceSelector
 						selectedBundleSize={ quantity }
@@ -292,55 +285,67 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 				) }
 			</div>
 
-			{ wooExtensions.length > 0 && (
-				<ListingSection
-					id="woocommerce-extensions"
-					icon={ <WooLogo width={ 45 } height={ 28 } /> }
-					title={ translate( 'WooCommerce Extensions' ) }
-					description={ translate(
-						'You must have WooCommerce installed to utilize these paid extensions.'
-					) }
-				>
-					{ getProductCards( wooExtensions ) }
-				</ListingSection>
-			) }
+			<div className="product-listing">
+				<QueryProductsList currency="USD" />
 
-			{ plans.length > 0 && (
-				<ListingSection
-					id="jetpack-plans"
-					icon={ <JetpackLogo size={ 26 } /> }
-					title={ translate( 'Jetpack Plans' ) }
-					description={ translate(
-						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
-					) } // FIXME: Add proper description for A4A
-				>
-					{ getProductCards( plans ) }
-				</ListingSection>
-			) }
+				<div className="product-listing__actions">
+					<FilterSearch
+						label={ translate( 'Search plans, products, add-ons, and extensions' ) }
+						onSearch={ onProductSearch }
+						onClick={ trackClickCallback( 'search' ) }
+					/>
+				</div>
 
-			{ products.length > 0 && (
-				<ListingSection
-					icon={ <JetpackLogo size={ 26 } /> }
-					title={ translate( 'Jetpack Products' ) }
-					description={ translate(
-						'Mix and match powerful security, performance, and growth tools for your sites.'
-					) }
-				>
-					{ getProductCards( products ) }
-				</ListingSection>
-			) }
+				{ wooExtensions.length > 0 && (
+					<ListingSection
+						id="woocommerce-extensions"
+						icon={ <WooLogo width={ 45 } height={ 28 } /> }
+						title={ translate( 'WooCommerce Extensions' ) }
+						description={ translate(
+							'You must have WooCommerce installed to utilize these paid extensions.'
+						) }
+					>
+						{ getProductCards( wooExtensions ) }
+					</ListingSection>
+				) }
 
-			{ backupAddons.length > 0 && (
-				<ListingSection
-					icon={ <JetpackLogo size={ 26 } /> }
-					title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
-					description={ translate(
-						'Add additional storage to your current VaultPress Backup plans.'
-					) }
-				>
-					{ getProductCards( backupAddons ) }
-				</ListingSection>
-			) }
-		</div>
+				{ plans.length > 0 && (
+					<ListingSection
+						id="jetpack-plans"
+						icon={ <JetpackLogo size={ 26 } /> }
+						title={ translate( 'Jetpack Plans' ) }
+						description={ translate(
+							'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
+						) } // FIXME: Add proper description for A4A
+					>
+						{ getProductCards( plans ) }
+					</ListingSection>
+				) }
+
+				{ products.length > 0 && (
+					<ListingSection
+						icon={ <JetpackLogo size={ 26 } /> }
+						title={ translate( 'Jetpack Products' ) }
+						description={ translate(
+							'Mix and match powerful security, performance, and growth tools for your sites.'
+						) }
+					>
+						{ getProductCards( products ) }
+					</ListingSection>
+				) }
+
+				{ backupAddons.length > 0 && (
+					<ListingSection
+						icon={ <JetpackLogo size={ 26 } /> }
+						title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
+						description={ translate(
+							'Add additional storage to your current VaultPress Backup plans.'
+						) }
+					>
+						{ getProductCards( backupAddons ) }
+					</ListingSection>
+				) }
+			</div>
+		</>
 	);
 }

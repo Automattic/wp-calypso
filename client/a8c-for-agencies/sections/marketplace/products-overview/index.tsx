@@ -19,6 +19,8 @@ import { ShoppingCartContext } from '../context';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import ProductListing from './product-listing';
+import { useProductBundleSize } from './product-listing/hooks/use-product-bundle-size';
+import VolumePriceSelector from './product-listing/volume-price-selector';
 import type { AssignLicenseProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -43,6 +45,12 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 	const sites = useSelector( getSites );
 
 	const showStickyContent = useBreakpoint( '>660px' ) && selectedCartItems.length > 0;
+
+	const {
+		selectedSize: quantity,
+		availableSizes: availableBundleSizes,
+		setSelectedSize: setSelectedBundleSize,
+	} = useProductBundleSize();
 
 	useEffect( () => {
 		if ( siteId && sites.length > 0 ) {
@@ -79,6 +87,14 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
 
+						{ availableBundleSizes.length > 1 && (
+							<VolumePriceSelector
+								selectedBundleSize={ quantity }
+								availableBundleSizes={ availableBundleSizes }
+								onBundleSizeChange={ setSelectedBundleSize }
+							/>
+						) }
+
 						<ShoppingCart
 							showCart={ showCart }
 							setShowCart={ setShowCart }
@@ -95,7 +111,11 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 
 			<LayoutBody>
 				<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
-					<ProductListing selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+					<ProductListing
+						selectedSite={ selectedSite }
+						suggestedProduct={ suggestedProduct }
+						setSelectedBundleSize={ setSelectedBundleSize }
+					/>
 				</ShoppingCartContext.Provider>
 			</LayoutBody>
 		</Layout>

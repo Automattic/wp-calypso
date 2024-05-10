@@ -25,6 +25,7 @@ p.product-listing__description {
 	border-color: transparent;
 }
 
+.product-listing__volume-price-selector-wrapper,
 .product-listing__actions {
 	display: flex;
 	flex-wrap: wrap;
@@ -88,5 +89,15 @@ p.product-listing__description {
 
 	@include break-medium {
 		min-width: 430px;
+	}
+}
+
+.a4a-layout__header .product-listing__volume-price-selector {
+	margin-inline-end: 50px;
+}
+
+@media ( max-width: $break-xlarge ) {
+	.a4a-layout__header .product-listing__volume-price-selector {
+		display: none;
 	}
 }
