@@ -21,6 +21,7 @@ const SectionNavbar = styled( SectionNav )`
 
 interface MetricsMenuProps {
 	basicMetricsRef?: React.RefObject< HTMLObjectElement >;
+	onCTAClick: () => void;
 }
 
 interface MenuItem {
@@ -32,9 +33,9 @@ enum MetricsMenuTabs {
 	basic = 'basic',
 }
 
-export const MetricsMenu: React.FC< MetricsMenuProps > = ( props: MetricsMenuProps ) => {
+export const MetricsMenu: React.FC< MetricsMenuProps > = ( props ) => {
 	const translate = useTranslate();
-	const { basicMetricsRef } = props;
+	const { basicMetricsRef, onCTAClick } = props;
 
 	const references = {
 		[ MetricsMenuTabs.basic ]: basicMetricsRef,
@@ -78,7 +79,7 @@ export const MetricsMenu: React.FC< MetricsMenuProps > = ( props: MetricsMenuPro
 						</NavItem>
 					) ) }
 				</NavTabs>
-				<FullReportButton primary>
+				<FullReportButton primary onClick={ onCTAClick }>
 					{ translate( "Get full site report - It's free" ) }
 				</FullReportButton>
 			</SectionNavbar>

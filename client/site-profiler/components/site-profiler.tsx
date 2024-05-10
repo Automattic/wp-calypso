@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
@@ -36,6 +36,7 @@ interface Props {
 export default function SiteProfiler( props: Props ) {
 	const { routerDomain } = props;
 	const basicMetricsRef = useRef( null );
+	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
 		domain,
@@ -100,13 +101,17 @@ export default function SiteProfiler( props: Props ) {
 	let showGetReportForm = false;
 
 	if ( isEnabled( 'site-profiler/metrics' ) ) {
-		showGetReportForm = !! showBasicMetrics && !! url;
+		showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 	}
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
+	};
+
+	const handleCloseGetReportForm = () => {
+		setIsGetReportFormOpen( false );
 	};
 
 	return (
@@ -162,7 +167,10 @@ export default function SiteProfiler( props: Props ) {
 					) }
 					{ showBasicMetrics && (
 						<LayoutBlockSection>
-							<MetricsMenu basicMetricsRef={ basicMetricsRef } />
+							<MetricsMenu
+								basicMetricsRef={ basicMetricsRef }
+								onCTAClick={ () => setIsGetReportFormOpen( true ) }
+							/>
 							<BasicMetrics ref={ basicMetricsRef } basicMetrics={ basicMetrics.basic } />
 						</LayoutBlockSection>
 					) }
@@ -171,7 +179,11 @@ export default function SiteProfiler( props: Props ) {
 
 			{ showGetReportForm && (
 				<LayoutBlock>
-					<GetReportForm url={ url } token={ basicMetrics?.token } onClose={ () => {} } />
+					<GetReportForm
+						url={ url }
+						token={ basicMetrics?.token }
+						onClose={ handleCloseGetReportForm }
+					/>
 				</LayoutBlock>
 			) }
 			<LayoutBlock

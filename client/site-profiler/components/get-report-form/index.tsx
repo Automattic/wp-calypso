@@ -98,10 +98,6 @@ export function GetReportForm( {
 		setIsTermsChecked( e );
 	};
 
-	const handleClose = () => {
-		onClose();
-	};
-
 	return (
 		<div className="get-report-form__container">
 			<div className="get-report-form__title">
@@ -115,7 +111,7 @@ export function GetReportForm( {
 						) }
 					</span>
 					<span>
-						<Gridicon icon="chevron-down" onClick={ handleClose } />
+						<Gridicon icon="chevron-down" onClick={ onClose } />
 					</span>
 				</div>
 				<form className="get-report-form__form" onSubmit={ handleSubmit }>
