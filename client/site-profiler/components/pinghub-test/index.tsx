@@ -11,6 +11,11 @@ export const PinghubTest = () => {
 			if ( error === null && event.response.type === 'open' ) {
 				setConnected( true );
 			}
+
+			if ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Error connecting to pinghub', error );
+			}
 		} );
 	};
 
