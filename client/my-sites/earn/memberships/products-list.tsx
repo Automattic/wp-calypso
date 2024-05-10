@@ -15,7 +15,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { bumpStat } from 'calypso/state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -83,6 +83,11 @@ function ProductsList() {
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
+	}
+
+	function onAddNewPaymentPlanButtonClick() {
+		dispatch( recordTracksEvent( 'calypso_memberships_add_payment_plan_click' ) );
+		openAddEditDialog();
 	}
 
 	function openAddEditDialog( productId?: number ) {
@@ -160,7 +165,7 @@ function ProductsList() {
 
 			{ hasLoadedFeatures && hasStripeFeature && (
 				<SectionHeader label={ translate( 'Manage plans' ) }>
-					<Button primary compact onClick={ () => openAddEditDialog() }>
+					<Button primary compact onClick={ onAddNewPaymentPlanButtonClick }>
 						{ translate( 'Add a new payment plan' ) }
 					</Button>
 				</SectionHeader>

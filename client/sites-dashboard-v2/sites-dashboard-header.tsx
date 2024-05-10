@@ -26,6 +26,7 @@ const HeaderControls = styled.div( {
 	flexDirection: 'row',
 	alignItems: 'flex-start',
 	fontWeight: 500,
+	justifyContent: 'flex-end',
 } );
 
 export const PageBodyBottomContainer = styled.div( {

@@ -20,9 +20,11 @@ import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
+	LayoutHeaderSubtitle as Subtitle,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import DocumentHead from 'calypso/components/data/document-head';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import {
 	SitesDashboardQueryParams,
@@ -105,6 +107,7 @@ const SitesDashboardV2 = ( {
 			addDummyDataViewPrefix( 'site' ),
 			addDummyDataViewPrefix( 'last-publish' ),
 			addDummyDataViewPrefix( 'last-interacted' ),
+			addDummyDataViewPrefix( 'status' ),
 		],
 		filters:
 			status === 'all'
@@ -155,7 +158,9 @@ const SitesDashboardV2 = ( {
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
-		const statusFilter = dataViewsState.filters.find( ( filter ) => filter.field === 'status' );
+		const statusFilter = dataViewsState.filters.find(
+			( filter ) => filter.field === addDummyDataViewPrefix( 'status' )
+		);
 		const statusNumber = statusFilter?.value || 1;
 		return ( siteStatusGroups.find( ( status ) => status.value === statusNumber )?.slug ||
 			'all' ) as GroupableSiteLaunchStatuses;
@@ -238,6 +243,12 @@ const SitesDashboardV2 = ( {
 					<LayoutTop withNavigation={ false }>
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
+							<Subtitle>
+								{ translate( 'Manage all your sites' ) }
+								{ '. ' }
+								<InlineSupportLink supportPostId="230679" showIcon={ false } />.
+							</Subtitle>
+
 							<Actions>
 								<SitesDashboardHeader />
 							</Actions>

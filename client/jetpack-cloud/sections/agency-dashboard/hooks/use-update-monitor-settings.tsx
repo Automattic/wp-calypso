@@ -1,9 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useContext } from 'react';
 import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
@@ -32,7 +32,7 @@ export default function useUpdateMonitorSettings(
 
 	const agencyId = useSelector( getActiveAgencyId );
 
-	const queryKey = isEnabled( 'a8c-for-agencies' )
+	const queryKey = isA8CForAgencies()
 		? [
 				'jetpack-agency-dashboard-sites',
 				dataViewsState.search,

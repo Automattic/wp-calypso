@@ -5,6 +5,7 @@ import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+import DevToolsIcon from 'calypso/dev-tools-promo/components/dev-tools-icon';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -12,6 +13,7 @@ import {
 	DOTCOM_PHP_LOGS,
 	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
+	DOTCOM_DEVELOPER_TOOLS_PROMO,
 } from './constants';
 
 type Props = {
@@ -38,9 +40,8 @@ const DotcomPreviewPane = ( {
 	const { __ } = useI18n();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
-	const isJetpackNonAtomic = ! isAtomicSite && !! site.jetpack;
+	const isSimpleSite = ! site.jetpack;
 
-	// Dotcom tabs: Overview, Monitoring, GitHub Deployments, Hosting Config
 	const features = useMemo(
 		() => [
 			createFeaturePreview(
@@ -52,9 +53,19 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
+				DOTCOM_DEVELOPER_TOOLS_PROMO,
+				<span>
+					{ __( 'Dev Tools' ) } <DevToolsIcon />
+				</span>,
+				isSimpleSite,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				selectedSiteFeaturePreview
+			),
+			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
 				__( 'Hosting Config' ),
-				! isJetpackNonAtomic,
+				isAtomicSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -86,7 +97,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
 				__( 'GitHub Deployments' ),
-				! isJetpackNonAtomic,
+				isAtomicSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview

@@ -1,5 +1,6 @@
 import { FeatureList, PlanSlug, TERMS_LIST } from '@automattic/calypso-products';
 import { AddOnMeta, Plans } from '@automattic/data-stores';
+import { TranslateResult } from 'i18n-calypso';
 import { GridPlan, HiddenPlans, PlansIntent } from '../../types';
 import { UseFreeTrialPlanSlugs } from './use-grid-plans';
 
@@ -21,7 +22,10 @@ export interface UseGridPlansParams {
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs?: UseFreeTrialPlanSlugs;
-	includePreviousPlanFeatures?: boolean; // if true, each plan would contain the full feature list. if false, the previous plan features are excluded.
+	/**
+	 * Provide a map of plan slug keyed strings to display as the highlight label on top of each plan.
+	 */
+	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 }
 
 export type UseGridPlansType = (

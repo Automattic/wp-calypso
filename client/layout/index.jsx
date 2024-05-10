@@ -28,6 +28,7 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import OfflineStatus from 'calypso/layout/offline-status';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import { navigate } from 'calypso/lib/navigate';
@@ -389,7 +390,7 @@ class Layout extends Component {
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'a8c-for-agencies' ) && (
+				{ isA8CForAgencies() && (
 					<>
 						<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
 						<QueryAgencies />
@@ -505,7 +506,7 @@ export default withCurrentRoute(
 				isWpMobileApp() ||
 				isWcMobileApp() ||
 				isJetpackCloud() ||
-				config.isEnabled( 'a8c-for-agencies' );
+				isA8CForAgencies();
 			const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 			const isJetpackWooCommerceFlow =
 				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
