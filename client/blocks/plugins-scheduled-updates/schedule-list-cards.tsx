@@ -30,7 +30,7 @@ export const ScheduleListCards = ( props: Props ) => {
 
 	return (
 		<div className="schedule-list--cards">
-			{ schedules.map( ( schedule ) => (
+			{ schedules.map( ( schedule, i ) => (
 				<div className="schedule-list--card" key={ schedule.id }>
 					<DropdownMenu
 						className="schedule-list--card-actions"
@@ -53,8 +53,8 @@ export const ScheduleListCards = ( props: Props ) => {
 					/>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="name">{ translate( 'Name' ) }</label>
-						<strong id="name">
+						<label htmlFor={ `name-${ i }` }>{ translate( 'Name' ) }</label>
+						<strong id={ `name-${ i }` }>
 							<Button
 								className="schedule-name"
 								variant="link"
@@ -66,8 +66,8 @@ export const ScheduleListCards = ( props: Props ) => {
 					</div>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="last-update">{ translate( 'Last update' ) }</label>
-						<span id="last-update">
+						<label htmlFor={ `last-update-${ i }` }>{ translate( 'Last update' ) }</label>
+						<span id={ `last-update-${ i }` }>
 							{ schedule.last_run_timestamp && (
 								<Button
 									className="schedule-last-run"
@@ -82,13 +82,13 @@ export const ScheduleListCards = ( props: Props ) => {
 					</div>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="next-update">{ translate( 'Next update' ) }</label>
-						<span id="next-update">{ prepareDateTime( schedule.timestamp ) }</span>
+						<label htmlFor={ `next-update-${ i }` }>{ translate( 'Next update' ) }</label>
+						<span id={ `next-update-${ i }` }>{ prepareDateTime( schedule.timestamp ) }</span>
 					</div>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="frequency">{ translate( 'Frequency' ) }</label>
-						<span id="frequency">
+						<label htmlFor={ `frequency-${ i }` }>{ translate( 'Frequency' ) }</label>
+						<span id={ `frequency-${ i }` }>
 							{
 								{
 									daily: translate( 'Daily' ),
@@ -99,8 +99,8 @@ export const ScheduleListCards = ( props: Props ) => {
 					</div>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="plugins">{ translate( 'Plugins' ) }</label>
-						<span id="plugins">
+						<label htmlFor={ `plugins-${ i }` }>{ translate( 'Plugins' ) }</label>
+						<span id={ `plugins-${ i }` }>
 							{ countInstalledPlugins( schedule.args ) }
 							<Tooltip
 								text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
@@ -114,8 +114,8 @@ export const ScheduleListCards = ( props: Props ) => {
 					</div>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="active">{ translate( 'Active' ) }</label>
-						<span id="active">
+						<label htmlFor={ `active-${ i }` }>{ translate( 'Active' ) }</label>
+						<span id={ `active-${ i }` }>
 							<FormToggle
 								checked={ schedule.active }
 								onChange={ ( e ) => activateSchedule( schedule.id, { active: e.target.checked } ) }
