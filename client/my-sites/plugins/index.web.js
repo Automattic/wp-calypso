@@ -155,22 +155,37 @@ export default function ( router ) {
 			makeLayout,
 			clientRender
 		);
-	}
 
-	router(
-		[
-			`/${ langParam }/plugins/scheduled-updates/:site_slug?`,
-			`/${ langParam }/plugins/scheduled-updates/:action/:site_slug?`,
-			`/${ langParam }/plugins/scheduled-updates/:action/:site_slug?/:schedule_id`,
-		],
-		redirectLoggedOut,
-		siteSelection,
-		redirectIfCurrentUserCannot( 'update_plugins' ),
-		navigation,
-		scheduledUpdates,
-		makeLayout,
-		clientRender
-	);
+		router(
+			[
+				`/${ langParam }/plugins/scheduled-updates/:site_slug`,
+				`/${ langParam }/plugins/scheduled-updates/:action/:site_slug?`,
+				`/${ langParam }/plugins/scheduled-updates/:action/:site_slug?/:schedule_id`,
+			],
+			redirectLoggedOut,
+			siteSelection,
+			redirectIfCurrentUserCannot( 'update_plugins' ),
+			navigation,
+			scheduledUpdates,
+			makeLayout,
+			clientRender
+		);
+	} else {
+		router(
+			[
+				`/${ langParam }/plugins/scheduled-updates/:site_slug?`,
+				`/${ langParam }/plugins/scheduled-updates/:action/:site_slug?`,
+				`/${ langParam }/plugins/scheduled-updates/:action/:site_slug?/:schedule_id`,
+			],
+			redirectLoggedOut,
+			siteSelection,
+			redirectIfCurrentUserCannot( 'update_plugins' ),
+			navigation,
+			scheduledUpdates,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	// This rule needs to preceed the one below, to work
 	// when the site_id parameter is omitted.
