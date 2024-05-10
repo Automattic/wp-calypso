@@ -125,9 +125,7 @@ function useGenerateActionHook( {
 		 */
 		if ( isLaunchPage ) {
 			let text = translate( 'Select %(plan)s', {
-				args: {
-					plan: planTitle,
-				},
+				args: { plan: planTitle ?? '' },
 				context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
 				comment:
 					'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
@@ -144,7 +142,7 @@ function useGenerateActionHook( {
 				 */
 				text = translate( 'Select %(plan)s – %(priceString)s', {
 					args: {
-						plan: planTitle,
+						plan: planTitle ?? '',
 						priceString: priceString ?? '',
 					},
 					comment:
@@ -166,7 +164,7 @@ function useGenerateActionHook( {
 		if ( isInSignup ) {
 			let text = translate( 'Get %(plan)s', {
 				args: {
-					plan: planTitle,
+					plan: planTitle ?? '',
 				},
 			} );
 			let postButtonText;
@@ -181,7 +179,7 @@ function useGenerateActionHook( {
 				 */
 				text = translate( 'Get %(plan)s – %(priceString)s', {
 					args: {
-						plan: planTitle,
+						plan: planTitle ?? '',
 						priceString: priceString ?? '',
 					},
 					comment:
@@ -194,7 +192,7 @@ function useGenerateActionHook( {
 				 */
 				text = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
 					args: {
-						plan: planTitle,
+						plan: planTitle ?? '',
 						priceString: priceString ?? '',
 					},
 					comment:
@@ -316,7 +314,7 @@ function useGenerateActionHook( {
 			if ( isLargeCurrency ) {
 				text = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
 					args: {
-						plan: planTitle,
+						plan: planTitle ?? '',
 						priceString: priceString ?? '',
 					},
 					comment:

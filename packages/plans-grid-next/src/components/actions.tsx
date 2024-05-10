@@ -257,9 +257,9 @@ const PlanFeatures2023GridActions = ( {
 		primary: { callback, text, status },
 		postButtonText,
 	} = useAction( {
-		// TODO: Double check that we need to do this boolean coercion
 		availableForPurchase,
 		billingPeriod,
+		// TODO: Double check that we need to do this boolean coercion
 		isLargeCurrency: !! isLargeCurrency,
 		isStuck,
 		planSlug,
@@ -273,9 +273,9 @@ const PlanFeatures2023GridActions = ( {
 	const {
 		primary: { callback: freeTrialCallback, text: freeTrialText },
 	} = useAction( {
-		// TODO: Double check that we need to do this boolean coercion
 		billingPeriod,
 		isFreeTrialAction: true,
+		// TODO: Double check that we need to do this boolean coercion
 		isLargeCurrency: !! isLargeCurrency,
 		isStuck,
 		// TODO: Unsure about using free plan as a fallback. We should revisit.
