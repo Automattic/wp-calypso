@@ -366,8 +366,6 @@ const PlansFeaturesMain = ( {
 		isInSignup,
 		isLaunchPage,
 		showModalAndExit,
-		sitePlanSlug,
-		siteSlug,
 		withDiscount,
 	} );
 
