@@ -199,7 +199,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'multisite-schedules-update' ],
 			} );
-		}, 5000 ); // 5000 milliseconds = 5 seconds
+		}, 5000 );
 	};
 
 	return (
