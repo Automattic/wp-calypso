@@ -17,7 +17,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -26,7 +26,7 @@ import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
 import useGenerateActionCallback from './use-generate-action-callback';
-import type { PlansIntent } from '@automattic/plans-grid-next';
+import type { GridAction, PlansIntent, UseAction } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useGenerateActionHook( {
@@ -47,7 +47,7 @@ function useGenerateActionHook( {
 	isLaunchPage: boolean | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	withDiscount?: string;
-} ) {
+} ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
@@ -96,18 +96,20 @@ function useGenerateActionHook( {
 		isLargeCurrency?: boolean;
 		isStuck?: boolean;
 		planSlug: PlanSlug;
-		planTitle?: string;
+		planTitle?: TranslateResult;
 		priceString?: string;
 		selectedStorageAddOn?: AddOns.AddOnMeta | null;
-	} ) => {
+	} ): GridAction => {
 		/**
 		 * 1. Enterprise Plan actions
 		 */
 		if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 			const text = translate( 'Learn more' );
 			return {
-				callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
-				text,
+				primary: {
+					callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
+					text,
+				},
 			};
 		}
 
@@ -141,8 +143,10 @@ function useGenerateActionHook( {
 			}
 
 			return {
-				callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
-				text,
+				primary: {
+					callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
+					text,
+				},
 			};
 		}
 
@@ -155,7 +159,7 @@ function useGenerateActionHook( {
 					plan: planTitle,
 				},
 			} );
-			let postButtonText = null;
+			let postButtonText;
 
 			if ( isFreeTrialAction ) {
 				text = translate( 'Try for free' );
@@ -200,11 +204,13 @@ function useGenerateActionHook( {
 			}
 
 			return {
-				callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
+				primary: {
+					callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
+					// TODO: Revisit status
+					status: 'enabled',
+					text,
+				},
 				postButtonText,
-				// TODO: Revisit status
-				status: 'enabled',
-				text,
 			};
 		}
 
@@ -312,9 +318,11 @@ function useGenerateActionHook( {
 		}
 
 		return {
-			callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
-			status,
-			text,
+			primary: {
+				callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
+				status,
+				text,
+			},
 		};
 	};
 

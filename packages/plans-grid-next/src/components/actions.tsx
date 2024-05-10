@@ -15,7 +15,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
 import useSelectedStorageAddOn from '../hooks/data-store/use-selected-storage-add-on';
@@ -69,9 +69,9 @@ const PlanFeatureActionButton = ( {
 	hasFreeTrialPlan: boolean;
 	onCtaClick: () => void;
 	onFreeTrialCtaClick: () => void;
-	text: string;
-	freeTrialText?: string;
-	postButtonText: string | null;
+	text: TranslateResult;
+	freeTrialText?: TranslateResult;
+	postButtonText?: TranslateResult;
 	status: string;
 } ) => {
 	// TODO: Is status ever 'blocked'? We should do some thorough investigation at some point.
@@ -118,7 +118,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
 	storageOptions?: StorageOption[];
-	text: string;
+	text: TranslateResult;
 	billingPeriod?: PlanPricing[ 'billPeriod' ];
 	currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
 } ) => {
@@ -273,7 +273,10 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		billingPeriod &&
 		currentPlanBillingPeriod > billingPeriod;
 
-	const { callback, text, postButtonText, status } = useAction( {
+	const {
+		primary: { callback, text, status },
+		postButtonText,
+	} = useAction( {
 		// TODO: Double check that we need to do this boolean coercion
 		availableForPurchase,
 		billingPeriod,
@@ -287,7 +290,9 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		selectedStorageAddOn,
 	} );
 
-	const { callback: freeTrialCallback, text: freeTrialText } = useAction( {
+	const {
+		primary: { callback: freeTrialCallback, text: freeTrialText },
+	} = useAction( {
 		// TODO: Double check that we need to do this boolean coercion
 		billingPeriod,
 		isFreeTrialAction: true,

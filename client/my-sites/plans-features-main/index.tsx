@@ -652,7 +652,9 @@ const PlansFeaturesMain = ( {
 		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
 	);
 
-	const { callback: onFreePlanCTAClick } = useAction( {
+	const {
+		primary: { callback: onFreePlanCTAClick },
+	} = useAction( {
 		planSlug: PLAN_FREE,
 	} );
 
