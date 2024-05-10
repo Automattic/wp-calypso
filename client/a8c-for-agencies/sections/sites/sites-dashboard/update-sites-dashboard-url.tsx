@@ -42,8 +42,13 @@ const buildQueryString = ( {
 
 	if ( filters && filters.length > 0 ) {
 		const selectedFilters = getSelectedFilters( filters );
-		urlQuery.set( 'issue_types', selectedFilters.status.join( ',' ) );
-		urlQuery.set( 'site_tags', selectedFilters.siteTags.join( ',' ) );
+		if ( selectedFilters.status.length ) {
+			urlQuery.set( 'issue_types', selectedFilters.status.join( ',' ) );
+		}
+
+		if ( selectedFilters.siteTags.length ) {
+			urlQuery.set( 'site_tags', selectedFilters.siteTags.join( ',' ) );
+		}
 	}
 
 	if ( showOnlyFavorites ) {
