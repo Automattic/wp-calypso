@@ -301,6 +301,8 @@ function useGenerateActionHook( {
 			} else if ( domainFromHomeUpsellFlow ) {
 				text = translate( 'Keep my plan', { context: 'verb' } );
 			}
+		} else if ( textOverride ) {
+			text = textOverride;
 		} else if ( isStuck && availableForPurchase ) {
 			/**
 			 * `isStuck` indicates the buttons are fixed/sticky in the grid, and we show the price.
