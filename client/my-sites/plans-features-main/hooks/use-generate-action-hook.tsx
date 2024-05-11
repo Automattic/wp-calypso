@@ -214,7 +214,6 @@ function useGenerateActionHook( {
 			return {
 				primary: {
 					callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
-					// TODO: Revisit status
 					status: 'enabled',
 					text,
 				},
