@@ -114,7 +114,6 @@ const PlanFeatureActionButton = ( {
 	}
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
-		// TODO: this block can be another "exception" that stays
 		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
 			return (
 				<PlanButton
