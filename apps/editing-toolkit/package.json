@@ -134,7 +134,7 @@
 		"eslint-filtered-fix": "^0.3.0",
 		"eslint-nibble": "^8.1.0",
 		"eslint-plugin-inclusive-language": "^2.2.1",
-		"eslint-plugin-json-es": "^1.5.7",
+		"eslint-plugin-json-es": "^1.6.0",
 		"eslint-plugin-md": "^1.0.19",
 		"eslint-plugin-you-dont-need-lodash-underscore": "^6.14.0",
 		"prettier": "npm:wp-prettier@3.0.3",
