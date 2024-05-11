@@ -256,8 +256,7 @@ function useGenerateActionHook( {
 			text = translate( 'Contact support', { context: 'verb' } );
 			status = 'disabled';
 
-			// TODO: Consider DRYing this up
-			if ( sitePlanSlug === planSlug && plansIntent !== 'plans-p2' ) {
+			if ( current ) {
 				text = translate( 'Manage add-ons', { context: 'verb' } );
 				status = 'enabled';
 			}
@@ -292,7 +291,7 @@ function useGenerateActionHook( {
 			if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
 				text = textOverride || translate( 'Upgrade to Yearly' );
 			}
-		} else if ( sitePlanSlug === planSlug && plansIntent !== 'plans-p2' ) {
+		} else if ( current ) {
 			// All other actions for a current plan
 			text = translate( 'View plan' );
 

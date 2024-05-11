@@ -3,7 +3,6 @@ import {
 	type PlanSlug,
 	type StorageOption,
 	isP2FreePlan,
-	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
@@ -51,74 +50,38 @@ const DummyDisabledButton = styled.div`
 `;
 
 const PlanFeatureActionButton = ( {
-	planSlug,
-	isStuck,
-	hasFreeTrialPlan,
-	onCtaClick,
-	onFreeTrialCtaClick,
-	text,
-	freeTrialText,
-	postButtonText,
-	status,
-}: {
-	planSlug: PlanSlug;
-	isStuck: boolean;
-	hasFreeTrialPlan: boolean;
-	onCtaClick: () => void;
-	onFreeTrialCtaClick: () => void;
-	text: TranslateResult;
-	freeTrialText?: TranslateResult;
-	postButtonText?: TranslateResult;
-	status?: 'disabled' | 'blocked' | 'enabled';
-} ) => {
-	// TODO: Is status ever 'blocked'? We should do some thorough investigation at some point.
-	const busy = isFreePlan( planSlug ) && status === 'blocked';
-
-	return hasFreeTrialPlan ? (
-		<div className="plan-features-2023-grid__multiple-actions-container">
-			<PlanButton planSlug={ planSlug } onClick={ () => onFreeTrialCtaClick() } busy={ busy }>
-				{ freeTrialText }
-			</PlanButton>
-			{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } borderless>
-					{ text }
-				</PlanButton>
-			) }
-		</div>
-	) : (
-		<>
-			<PlanButton planSlug={ planSlug } onClick={ onCtaClick } busy={ busy }>
-				{ text }
-			</PlanButton>
-			{ postButtonText && (
-				<span className="plan-features-2023-grid__actions-post-button-text">
-					{ postButtonText }
-				</span>
-			) }
-		</>
-	);
-};
-
-const LoggedInPlansFeatureActionButton = ( {
 	availableForPurchase,
 	disabled,
+	freeTrialText,
+	hasFreeTrialPlan,
 	isMonthlyPlan,
+	isStuck,
 	onCtaClick,
+	onFreeTrialCtaClick,
 	planSlug,
+	postButtonText,
+	status,
 	storageOptions,
 	text,
 }: {
 	availableForPurchase?: boolean;
-	disabled: boolean;
-	isMonthlyPlan?: boolean;
-	onCtaClick: () => void;
-	planSlug: PlanSlug;
-	currentSitePlanSlug?: string | null;
-	storageOptions?: StorageOption[];
-	text: TranslateResult;
 	billingPeriod?: PlanPricing[ 'billPeriod' ];
 	currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
+	currentSitePlanSlug?: string | null;
+	disabled: boolean;
+	freeTrialText?: TranslateResult;
+	hasFreeTrialPlan: boolean;
+	isMonthlyPlan?: boolean;
+	isStuck: boolean;
+	onCtaClick: () => void;
+	onFreeTrialCtaClick: () => void;
+	planSlug: PlanSlug;
+	postButtonText?: TranslateResult;
+	status?: 'disabled' | 'blocked' | 'enabled';
+	storageOptions?: StorageOption[];
+	text: TranslateResult;
 } ) => {
+	const busy = isFreePlan( planSlug ) && status === 'blocked';
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const { gridPlansIndex, siteId } = usePlansGridContext();
@@ -162,49 +125,55 @@ const LoggedInPlansFeatureActionButton = ( {
 					{ translate( 'Upgrade' ) }
 				</PlanButton>
 			);
-		} else if ( text ) {
-			// TODO: this can be removed and done in the final single-render call. there's nothing special about it outside of "disabled" status
-			return (
+		}
+	}
+
+	if ( availableForPurchase || current ) {
+		return hasFreeTrialPlan ? (
+			<div className="plan-features-2023-grid__multiple-actions-container">
+				<PlanButton planSlug={ planSlug } onClick={ () => onFreeTrialCtaClick() } busy={ busy }>
+					{ freeTrialText }
+				</PlanButton>
+				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
+					<PlanButton planSlug={ planSlug } onClick={ onCtaClick } borderless>
+						{ text }
+					</PlanButton>
+				) }
+			</div>
+		) : (
+			<>
 				<PlanButton
 					planSlug={ planSlug }
-					disabled={ ! onCtaClick }
+					disabled={ disabled }
 					onClick={ onCtaClick }
 					current={ current }
 				>
 					{ text }
 				</PlanButton>
-			);
-		}
-	}
-
-	if ( ! availableForPurchase ) {
-		return (
-			<Plans2023Tooltip
-				text={ translate( 'Please contact support to downgrade your plan.' ) }
-				setActiveTooltipId={ setActiveTooltipId }
-				activeTooltipId={ activeTooltipId }
-				showOnMobile={ false }
-				id="downgrade"
-			>
-				<DummyDisabledButton>{ text }</DummyDisabledButton>
-				{ isMobile() && (
-					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
-						{ translate( 'Please contact support to downgrade your plan.' ) }
-					</div>
+				{ postButtonText && (
+					<span className="plan-features-2023-grid__actions-post-button-text">
+						{ postButtonText }
+					</span>
 				) }
-			</Plans2023Tooltip>
+			</>
 		);
 	}
 
 	return (
-		<PlanButton
-			planSlug={ planSlug }
-			disabled={ disabled }
-			onClick={ onCtaClick }
-			current={ current }
+		<Plans2023Tooltip
+			text={ translate( 'Please contact support to downgrade your plan.' ) }
+			setActiveTooltipId={ setActiveTooltipId }
+			activeTooltipId={ activeTooltipId }
+			showOnMobile={ false }
+			id="downgrade"
 		>
-			{ text }
-		</PlanButton>
+			<DummyDisabledButton>{ text }</DummyDisabledButton>
+			{ isMobile() && (
+				<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
+					{ translate( 'Please contact support to downgrade your plan.' ) }
+				</div>
+			) }
+		</Plans2023Tooltip>
 	);
 };
 
@@ -259,8 +228,7 @@ const PlanFeatures2023GridActions = ( {
 	} = useAction( {
 		availableForPurchase,
 		billingPeriod,
-		// TODO: Double check that we need to do this boolean coercion
-		isLargeCurrency: !! isLargeCurrency,
+		isLargeCurrency,
 		isStuck,
 		planSlug,
 		planTitle,
@@ -275,8 +243,7 @@ const PlanFeatures2023GridActions = ( {
 	} = useAction( {
 		billingPeriod,
 		isFreeTrialAction: true,
-		// TODO: Double check that we need to do this boolean coercion
-		isLargeCurrency: !! isLargeCurrency,
+		isLargeCurrency,
 		isStuck,
 		// TODO: Unsure about using free plan as a fallback. We should revisit.
 		planSlug: freeTrialPlanSlug ?? PLAN_FREE,
@@ -290,30 +257,22 @@ const PlanFeatures2023GridActions = ( {
 	return (
 		<div className="plan-features-2023-gridrison__actions">
 			<div className="plan-features-2023-gridrison__actions-buttons">
-				{ isInSignup || isWpcomEnterpriseGridPlan( planSlug ) ? (
-					<PlanFeatureActionButton
-						planSlug={ planSlug }
-						isStuck={ isStuck }
-						postButtonText={ postButtonText }
-						status={ status }
-						hasFreeTrialPlan={ isInSignup ? !! freeTrialPlanSlug : false }
-						onCtaClick={ callback }
-						onFreeTrialCtaClick={ freeTrialCallback }
-						text={ text }
-						freeTrialText={ freeTrialText }
-					/>
-				) : (
-					<LoggedInPlansFeatureActionButton
-						disabled={ ! callback || 'disabled' === status }
-						planSlug={ planSlug }
-						availableForPurchase={ availableForPurchase }
-						onCtaClick={ callback }
-						currentSitePlanSlug={ currentSitePlanSlug }
-						isMonthlyPlan={ isMonthlyPlan }
-						storageOptions={ storageOptions }
-						text={ text }
-					/>
-				) }
+				<PlanFeatureActionButton
+					availableForPurchase={ availableForPurchase }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					disabled={ ! callback || 'disabled' === status }
+					freeTrialText={ freeTrialText }
+					hasFreeTrialPlan={ isInSignup ? !! freeTrialPlanSlug : false }
+					isMonthlyPlan={ isMonthlyPlan }
+					isStuck={ isStuck }
+					onCtaClick={ callback }
+					onFreeTrialCtaClick={ freeTrialCallback }
+					planSlug={ planSlug }
+					postButtonText={ postButtonText }
+					status={ status }
+					storageOptions={ storageOptions }
+					text={ text }
+				/>
 			</div>
 		</div>
 	);
