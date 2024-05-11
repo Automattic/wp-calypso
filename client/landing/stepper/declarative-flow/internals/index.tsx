@@ -160,20 +160,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
 
-	// Get any flow-specific event props to include in the
-	// `calypso_signup_start` Tracks event triggerd in the effect below.
-	const signupStartEventProps = useMemo( () => flow.useSignupStartEventProps?.() ?? {}, [ flow ] );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	useEffect( () => {
-		if ( flow.isSignupFlow && ! isLoggedIn ) {
-			return;
+		if ( flow.trackingConfig?.isRecordSignupStart && isFlowStart() ) {
+			recordSignupStart( flow.name, ref, flow.trackingConfig?.signupStartProps );
 		}
-
-		if ( flow.isSignupFlow && isFlowStart() ) {
-			recordSignupStart( flow.name, ref, signupStartEventProps );
-		}
-	}, [ flow, ref, isFlowStart, isLoggedIn, signupStartEventProps ] );
+	}, [ flow, ref, isFlowStart, isLoggedIn ] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
@@ -182,7 +175,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 
 		// We do not log stats if the user is not logged in and if this is a signup flow.
-		if ( flow.isSignupFlow && ! isLoggedIn ) {
+		if ( flow.trackingConfig?.isSignupFlow && ! isLoggedIn ) {
 			return;
 		}
 

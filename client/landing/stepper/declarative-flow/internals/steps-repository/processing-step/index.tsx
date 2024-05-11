@@ -103,8 +103,8 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			// We should only trigger signup completion for signup flows, so check if we have one.
 			if ( availableFlows[ flow ] ) {
 				availableFlows[ flow ]().then( ( flowExport ) => {
-					if ( flowExport.default.isSignupFlow ) {
-						recordSignupComplete();
+					if ( flowExport.default.trackingConfig?.isRecordSignupComplete ) {
+						recordSignupComplete( flowExport.default.trackingConfig?.signupStartProps );
 					}
 				} );
 			}

@@ -25,7 +25,10 @@ const startWriting: Flow = {
 	get title() {
 		return translate( 'Blog' );
 	},
-	isSignupFlow: true,
+	trackingConfig: {
+		isRecordSignupStart: true,
+		isRecordSignupComplete: true,
+	},
 	useSteps() {
 		return [
 			{

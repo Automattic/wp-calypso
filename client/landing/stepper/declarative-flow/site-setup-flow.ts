@@ -45,7 +45,10 @@ function isLaunchpadIntent( intent: string ) {
 
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
-	isSignupFlow: false,
+	trackingConfig: {
+		isRecordSignupStart: false,
+		isRecordSignupComplete: false,
+	},
 
 	useSideEffect( currentStep, navigate ) {
 		const selectedDesign = useSelect(

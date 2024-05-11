@@ -23,7 +23,10 @@ const FLOW_NAME = 'site-migration';
 
 const siteMigration: Flow = {
 	name: FLOW_NAME,
-	isSignupFlow: false,
+	trackingConfig: {
+		isRecordSignupStart: false,
+		isRecordSignupComplete: false,
+	},
 
 	useSteps() {
 		return [

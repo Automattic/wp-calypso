@@ -21,7 +21,10 @@ import './internals/new-hosted-site-flow.scss';
 
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
-	isSignupFlow: true,
+	trackingConfig: {
+		isRecordSignupStart: true,
+		isRecordSignupComplete: true,
+	},
 	useSteps() {
 		return [
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },

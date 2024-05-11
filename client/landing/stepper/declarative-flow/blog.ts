@@ -17,7 +17,10 @@ const Blog: Flow = {
 	get title() {
 		return translate( 'Blog' );
 	},
-	isSignupFlow: false,
+	trackingConfig: {
+		isRecordSignupStart: false,
+		isRecordSignupComplete: false,
+	},
 	useSteps() {
 		return [
 			{

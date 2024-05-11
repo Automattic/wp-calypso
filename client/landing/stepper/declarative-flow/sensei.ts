@@ -26,7 +26,10 @@ const sensei: Flow = {
 	get title() {
 		return translate( 'Course Creator' );
 	},
-	isSignupFlow: false,
+	trackingConfig: {
+		isRecordSignupStart: false,
+		isRecordSignupComplete: false,
+	},
 	useSteps() {
 		return [
 			{ slug: 'intro', component: Intro },

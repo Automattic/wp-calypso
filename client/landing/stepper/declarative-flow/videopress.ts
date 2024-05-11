@@ -31,7 +31,10 @@ const videopress: Flow = {
 	get title() {
 		return translate( 'Video' );
 	},
-	isSignupFlow: true,
+	trackingConfig: {
+		isRecordSignupStart: true,
+		isRecordSignupComplete: true,
+	},
 	useSteps() {
 		return [
 			{

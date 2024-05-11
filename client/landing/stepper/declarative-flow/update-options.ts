@@ -8,7 +8,10 @@ import type { Flow } from './internals/types';
 
 const updateOptions: Flow = {
 	name: 'update-options',
-	isSignupFlow: false,
+	trackingConfig: {
+		isRecordSignupStart: false,
+		isRecordSignupComplete: false,
+	},
 	useSteps() {
 		return [ STEPS.OPTIONS, STEPS.PROCESSING, STEPS.ERROR ];
 	},

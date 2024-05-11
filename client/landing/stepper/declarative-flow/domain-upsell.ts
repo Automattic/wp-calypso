@@ -16,7 +16,10 @@ const domainUpsell: Flow = {
 	get title() {
 		return translate( 'Domain Upsell' );
 	},
-	isSignupFlow: false,
+	trackingConfig: {
+		isRecordSignupStart: false,
+		isRecordSignupComplete: false,
+	},
 
 	useSteps() {
 		return [

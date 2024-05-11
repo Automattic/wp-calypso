@@ -22,7 +22,10 @@ const updateDesign: Flow = {
 	get title() {
 		return translate( 'Choose Design' );
 	},
-	isSignupFlow: false,
+	trackingConfig: {
+		isRecordSignupStart: false,
+		isRecordSignupComplete: false,
+	},
 	useSteps() {
 		return [ STEPS.DESIGN_SETUP, STEPS.PATTERN_ASSEMBLER, STEPS.PROCESSING, STEPS.ERROR ];
 	},

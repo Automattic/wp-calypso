@@ -10,7 +10,10 @@ const podcasts: Flow = {
 	get title() {
 		return translate( 'Podcasting' );
 	},
-	isSignupFlow: false,
+	trackingConfig: {
+		isRecordSignupStart: false,
+		isRecordSignupComplete: false,
+	},
 	useSteps() {
 		return [
 			{ slug: 'letsGetStarted', component: LetsGetStarted },

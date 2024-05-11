@@ -33,7 +33,10 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 const importHostedSiteFlow: Flow = {
 	name: IMPORT_HOSTED_SITE_FLOW,
-	isSignupFlow: true,
+	trackingConfig: {
+		isRecordSignupStart: true,
+		isRecordSignupComplete: true,
+	},
 
 	useSteps() {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );

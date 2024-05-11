@@ -102,11 +102,6 @@ export type Flow = {
 	variantSlug?: string;
 	title?: string;
 	classnames?: string | [ string ];
-	/**
-	 * Required flag to indicate if the flow is a signup flow.
-	 */
-	isSignupFlow: boolean;
-	useSignupStartEventProps?: () => Record< string, string | number >;
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;
@@ -114,6 +109,24 @@ export type Flow = {
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
+	trackingConfig?: {
+		/**
+		 * Should signup start be tracked at the start of the flow
+		 */
+		isRecordSignupStart: boolean;
+		/**
+		 * Should signup complete be tracked at the end of the flow
+		 */
+		isRecordSignupComplete: boolean;
+		/**
+		 * Supply additional event props to the `calypso_signup_start` event
+		 */
+		signupStartProps?: Record< string, string | number >;
+		/**
+		 * Supply additional event props to the `calypso_signup_complete` event
+		 */
+		signupCompleteProps?: Record< string, string | number >;
+	};
 };
 
 export type StepProps = {

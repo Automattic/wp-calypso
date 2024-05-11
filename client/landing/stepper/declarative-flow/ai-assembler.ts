@@ -29,7 +29,10 @@ const SiteIntent = Onboard.SiteIntent;
 
 const withAIAssemblerFlow: Flow = {
 	name: AI_ASSEMBLER_FLOW,
-	isSignupFlow: true,
+	trackingConfig: {
+		isRecordSignupStart: true,
+		isRecordSignupComplete: true,
+	},
 	useSideEffect() {
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),

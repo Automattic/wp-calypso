@@ -25,7 +25,10 @@ const domainTransfer: Flow = {
 	get title() {
 		return translate( 'Bulk domain transfer' );
 	},
-	isSignupFlow: false,
+	trackingConfig: {
+		isRecordSignupStart: false,
+		isRecordSignupComplete: false,
+	},
 	useSteps() {
 		return [
 			{
