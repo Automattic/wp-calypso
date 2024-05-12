@@ -46,7 +46,7 @@ export default function ItemPreviewPaneHeader( {
 			<div className="item-preview__header-content">
 				<SiteFavicon
 					blogId={ itemData.blogId }
-					isDotcomSite={ itemData.isDotcomSite }
+					fallback={ itemData.isDotcomSite ? 'wordpress-logo' : 'color' }
 					color={ itemData.color }
 					className="item-preview__header-favicon"
 					size={ size }
