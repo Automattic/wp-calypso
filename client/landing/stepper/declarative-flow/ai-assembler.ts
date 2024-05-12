@@ -30,8 +30,8 @@ const SiteIntent = Onboard.SiteIntent;
 const withAIAssemblerFlow: Flow = {
 	name: AI_ASSEMBLER_FLOW,
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 	useSideEffect() {
 		const selectedDesign = useSelect(

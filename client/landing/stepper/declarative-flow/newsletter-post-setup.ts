@@ -12,8 +12,8 @@ const newsletterPostSetup: Flow = {
 		return translate( 'Newsletter' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 	useSteps() {
 		return [ { slug: 'newsletterPostSetup', component: NewsletterPostSetup } ];

@@ -12,8 +12,8 @@ const linkInBioPostSetup: Flow = {
 		return translate( 'Link in Bio' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 	useSteps() {
 		return [ { slug: 'linkInBioPostSetup', component: LinkInBioPostSetup } ];

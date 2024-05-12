@@ -27,8 +27,8 @@ const designFirst: Flow = {
 		return translate( 'Blog' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 	useSteps() {
 		return [

@@ -44,8 +44,8 @@ import type { SiteExcerptData } from '@automattic/sites';
 const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 
 	useSteps() {

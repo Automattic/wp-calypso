@@ -15,8 +15,8 @@ const build: Flow = {
 		return 'WordPress';
 	},
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 	useSteps() {
 		return [

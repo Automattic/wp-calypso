@@ -31,8 +31,8 @@ const linkInBio: Flow = {
 		return translate( 'Link in Bio' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 	useSteps() {
 		return [

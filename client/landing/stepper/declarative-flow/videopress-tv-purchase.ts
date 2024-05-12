@@ -26,8 +26,8 @@ const videopressTvPurchase: Flow = {
 		return translate( 'VideoPress TV' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 	useSteps() {
 		return [

@@ -27,8 +27,8 @@ const sensei: Flow = {
 		return translate( 'Course Creator' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 	useSteps() {
 		return [

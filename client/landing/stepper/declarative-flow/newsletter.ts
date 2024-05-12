@@ -27,8 +27,8 @@ const newsletter: Flow = {
 		return translate( 'Newsletter' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 	useSteps() {
 		const query = useQuery();

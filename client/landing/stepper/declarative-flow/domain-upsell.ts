@@ -17,8 +17,8 @@ const domainUpsell: Flow = {
 		return translate( 'Domain Upsell' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 
 	useSteps() {

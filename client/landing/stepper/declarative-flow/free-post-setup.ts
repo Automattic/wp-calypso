@@ -12,8 +12,8 @@ const freePostSetup: Flow = {
 		return translate( 'Free' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 	useSteps() {
 		return [ STEPS.FREE_POST_SETUP ];

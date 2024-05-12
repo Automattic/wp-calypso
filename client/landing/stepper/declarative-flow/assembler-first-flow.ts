@@ -29,8 +29,8 @@ const SiteIntent = Onboard.SiteIntent;
 const assemblerFirstFlow: Flow = {
 	name: ASSEMBLER_FIRST_FLOW,
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 	useSideEffect() {
 		const selectedDesign = useSelect(

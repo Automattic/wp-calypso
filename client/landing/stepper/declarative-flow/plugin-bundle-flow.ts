@@ -40,8 +40,8 @@ const SiteIntent = Onboard.SiteIntent;
 const pluginBundleFlow: Flow = {
 	name: 'plugin-bundle',
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 
 	useSteps() {

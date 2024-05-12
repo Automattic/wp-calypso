@@ -24,8 +24,8 @@ const FLOW_NAME = MIGRATION_SIGNUP_FLOW;
 const migrationSignup: Flow = {
 	name: FLOW_NAME,
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 
 	useSteps() {

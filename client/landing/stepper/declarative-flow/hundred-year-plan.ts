@@ -21,8 +21,8 @@ const HundredYearPlanFlow: Flow = {
 		return translate( '100-year Plan' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 	useSteps() {
 		const currentUser = useSelect(

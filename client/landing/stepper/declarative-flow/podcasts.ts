@@ -11,8 +11,8 @@ const podcasts: Flow = {
 		return translate( 'Podcasting' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 	useSteps() {
 		return [

@@ -76,8 +76,8 @@ const copySite: Flow = {
 		return '';
 	},
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 
 	useSteps() {

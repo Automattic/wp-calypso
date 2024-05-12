@@ -34,8 +34,8 @@ const free: Flow = {
 		return translate( 'Free' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 	useSteps() {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );

@@ -29,8 +29,8 @@ const linkInBioDomain: Flow = {
 		return translate( 'Link in Bio' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 	variantSlug: LINK_IN_BIO_DOMAIN_FLOW,
 	useAssertConditions: () => {

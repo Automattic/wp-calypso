@@ -163,7 +163,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	useEffect( () => {
-		if ( flow.trackingConfig?.isRecordSignupStart && isFlowStart() ) {
+		let isSignupStartTracked = flow.trackingConfig?.isSignupStartTracked;
+		if ( typeof isSignupStartTracked === 'function' ) {
+			isSignupStartTracked = isSignupStartTracked( { isLoggedIn } );
+		}
+		if ( isSignupStartTracked && isFlowStart() ) {
 			recordSignupStart( flow.name, ref, flow.trackingConfig?.signupStartProps );
 		}
 	}, [ flow, ref, isFlowStart, isLoggedIn ] );
@@ -171,11 +175,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
 		if ( ! currentStepRoute || ! hasRequestedSelectedSite ) {
-			return;
-		}
-
-		// We do not log stats if the user is not logged in and if this is a signup flow.
-		if ( flow.trackingConfig?.isSignupFlow && ! isLoggedIn ) {
 			return;
 		}
 

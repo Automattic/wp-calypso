@@ -31,8 +31,8 @@ const connectDomain: Flow = {
 		return translate( 'Connect your domain' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 	useAssertConditions: () => {
 		const { domain, provider } = useDomainParams();

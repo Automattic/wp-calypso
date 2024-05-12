@@ -17,8 +17,8 @@ const SEGMENTATION_SURVEY_SLUG = 'start';
 const entrepreneurFlow: Flow = {
 	name: ENTREPRENEUR_FLOW,
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 
 	useSteps() {

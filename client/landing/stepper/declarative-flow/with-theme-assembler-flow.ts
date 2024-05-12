@@ -19,8 +19,8 @@ const SiteIntent = Onboard.SiteIntent;
 const withThemeAssemblerFlow: Flow = {
 	name: WITH_THEME_ASSEMBLER_FLOW,
 	trackingConfig: {
-		isRecordSignupStart: false,
-		isRecordSignupComplete: false,
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
 	},
 	useSideEffect() {
 		const selectedDesign = useSelect(

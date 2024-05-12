@@ -21,8 +21,8 @@ const reblogging: Flow = {
 		return translate( 'Reblogging' );
 	},
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 	},
 	useSteps() {
 		return [

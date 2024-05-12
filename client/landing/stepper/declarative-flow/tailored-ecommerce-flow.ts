@@ -49,8 +49,8 @@ function getPlanFromRecurType( recurType: string ) {
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	trackingConfig: {
-		isRecordSignupStart: true,
-		isRecordSignupComplete: true,
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
 		useSignupStartEventProps() {
 			const recur = useSelect(
 				( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
