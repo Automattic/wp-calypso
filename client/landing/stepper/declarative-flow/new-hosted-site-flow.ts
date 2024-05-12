@@ -22,7 +22,7 @@ import './internals/new-hosted-site-flow.scss';
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
 	trackingConfig: {
-		isSignupStartTracked: true,
+		isSignupStartTracked: ( { isLoggedIn } ) => isLoggedIn,
 		isSignupCompleteTracked: true,
 	},
 	useSteps() {
