@@ -27,11 +27,7 @@ const siteMigration: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
-<<<<<<< HEAD
 		const baseSteps = [
-=======
-		const steps = [
->>>>>>> b4d4ed41fe (add variant for hosted-site-migration)
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
@@ -41,19 +37,11 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
 
-<<<<<<< HEAD
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
 			? [ STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
 			: [];
 
 		return [ ...baseSteps, ...hostedVariantSteps ];
-=======
-		if ( isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
-			steps.push( STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP );
-		}
-
-		return steps;
->>>>>>> b4d4ed41fe (add variant for hosted-site-migration)
 	},
 
 	useAssertConditions(): AssertConditionResult {
@@ -140,7 +128,6 @@ const siteMigration: Flow = {
 					};
 
 					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
-<<<<<<< HEAD
 						if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) ) {
 							// siteId/siteSlug wont be defined here if coming from a direct link/signup.
 							// We need to make sure there's a site to import into.
@@ -148,10 +135,6 @@ const siteMigration: Flow = {
 								return navigate( STEPS.SITE_CREATION_STEP.slug );
 							}
 						}
-=======
-						// siteId/siteSlug wont be defined here if coming from a direct link/signup.
-						// We need to make sure the importer works when no site is available.
->>>>>>> b4d4ed41fe (add variant for hosted-site-migration)
 						return exitFlow(
 							addQueryArgs(
 								{
@@ -173,18 +156,7 @@ const siteMigration: Flow = {
 							}
 
 							if ( from ) {
-<<<<<<< HEAD
 								return navigate( addQueryArgs( { from }, STEPS.SITE_CREATION_STEP.slug ) );
-=======
-								// return navigate(
-								// 	addQueryArgs( { from: fromQueryParam }, STEPS.SITE_CREATION_STEP.slug )
-								// );
-								return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug, {
-									siteId,
-									siteSlug,
-								} );
-								// return navigate( `createSite?from=${ encodeURIComponent( from ) }` );
->>>>>>> b4d4ed41fe (add variant for hosted-site-migration)
 							}
 							return navigate( 'error' );
 						}
@@ -218,11 +190,7 @@ const siteMigration: Flow = {
 							return navigate(
 								addQueryArgs(
 									{ siteId: newSiteId, siteSlug: newSiteSlug, from: fromQueryParam },
-<<<<<<< HEAD
 									STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
-=======
-									STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
->>>>>>> b4d4ed41fe (add variant for hosted-site-migration)
 								)
 							);
 						}
@@ -234,7 +202,6 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
-<<<<<<< HEAD
 					return navigate( addQueryArgs( { from: fromQueryParam }, STEPS.PROCESSING.slug ) );
 				}
 
@@ -262,11 +229,6 @@ const siteMigration: Flow = {
 							)
 						);
 					}
-=======
-					return navigate(
-						addQueryArgs( { from: fromQueryParam, siteSlug, siteId }, STEPS.PROCESSING.slug )
-					);
->>>>>>> b4d4ed41fe (add variant for hosted-site-migration)
 				}
 
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
