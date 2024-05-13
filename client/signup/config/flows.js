@@ -22,19 +22,24 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 		checkoutURL += `/${ localeSlug }`;
 	}
 
+	let checkoutBackUrl = `https://${ config( 'hostname' ) }/start/${ flowName }/domain-only`;
+	if ( config( 'env' ) !== 'production' ) {
+		const protocol = config( 'protocol' ) ?? 'https';
+		const port = config( 'port' ) ? ':' + config( 'port' ) : '';
+
+		checkoutBackUrl = `${ protocol }://${ config(
+			'hostname'
+		) }${ port }/start/${ flowName }/domain-only`;
+	}
+
 	return addQueryArgs(
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
-			...( [ 'domain' ].includes( flowName ) && {
+			...( [ 'domain', 'domain-for-gravatar' ].includes( flowName ) && {
 				isDomainOnly: 1,
-				checkoutBackUrl:
-					config( 'env' ) === 'production'
-						? `https://${ config( 'hostname' ) }/start/domain/domain-only`
-						: `${ config( 'protocol' ) ? config( 'protocol' ) : 'https' }://${ config(
-								'hostname'
-						  ) }${ config( 'port' ) ? ':' + config( 'port' ) : '' }/start/domain/domain-only`,
+				checkoutBackUrl,
 			} ),
 		},
 		checkoutURL

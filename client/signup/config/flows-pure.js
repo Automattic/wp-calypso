@@ -411,11 +411,10 @@ export function generateFlows( {
 			name: 'domain-for-gravatar',
 			steps: [
 				'domain-only',
-				// 'site-or-domain',
-				// 'site-picker',
-				// 'plans-site-selected',
-				// userSocialStep,
-				'user',
+				'site-or-domain',
+				'site-picker',
+				'plans-site-selected',
+				userSocialStep,
 			],
 			destination: getDomainSignupFlowDestination, // TODO: Redirect to Gravatar
 			description: 'Test domain signup flow for Gravatar',

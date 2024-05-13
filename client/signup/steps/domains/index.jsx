@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
@@ -396,7 +397,7 @@ export class RenderDomainsStep extends Component {
 		signupDomainOrigin,
 		migrateSite = false,
 	} ) => {
-		const { step } = this.props;
+		const { step, goToStep } = this.props;
 		const { suggestion } = step;
 
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -456,6 +457,32 @@ export class RenderDomainsStep extends Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
+
+		// For the `domain-for-gravatar` flow, pre-select the "domain" choice in the "site or domain" step and
+		// skip the others, going straight to checkout
+		if ( this.props.flowName === 'domain-for-gravatar' ) {
+			this.props.submitSignupStep(
+				{
+					stepName: 'site-or-domain',
+					domainItem,
+					designType: 'domain',
+					siteSlug: domainItem.meta,
+					siteUrl,
+					isPurchasingItem: true,
+				},
+				{ designType: 'domain', domainItem, siteUrl }
+			);
+			this.props.submitSignupStep(
+				{ stepName: 'site-picker', wasSkipped: true },
+				{ themeSlugWithRepo: 'pub/twentysixteen' }
+			);
+			this.props.submitSignupStep(
+				{ stepName: 'plans-site-selected', wasSkipped: true },
+				{ cartItems: null }
+			);
+			goToStep( config.isEnabled( 'signup/social-first' ) ? 'user-social' : 'user' );
+			return;
+		}
 
 		if ( migrateSite ) {
 			this.props.goToNextStep( 'site-migration' );
