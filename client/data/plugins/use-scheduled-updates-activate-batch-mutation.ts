@@ -55,10 +55,6 @@ export function useScheduledUpdatesActivateBatchMutation( mutationOptions = {} )
 			// Set previous value on error
 			queryClient.setQueryData( [ 'multisite-schedules-update' ], context?.prevResult );
 		},
-		onSettled: () => {
-			// Re-fetch after error or success
-			queryClient.invalidateQueries( { queryKey: [ 'multisite-schedules-update' ] } );
-		},
 		...mutationOptions,
 	} );
 
