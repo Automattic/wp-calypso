@@ -37,7 +37,7 @@ const siteMigration: Flow = {
 		];
 
 		if ( isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
-			steps.push( STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP );
+			steps.push( STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
 		}
 
 		return steps;
@@ -190,9 +190,18 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
-					return navigate(
-						addQueryArgs( { from: fromQueryParam, siteSlug, siteId }, STEPS.PROCESSING.slug )
-					);
+					return navigate( addQueryArgs( { from: fromQueryParam }, STEPS.PROCESSING.slug ) );
+				}
+
+				case STEPS.PROCESSING.slug: {
+					if ( providedDependencies?.siteCreated ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, siteSlug, from: fromQueryParam },
+								STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+							)
+						);
+					}
 				}
 
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {

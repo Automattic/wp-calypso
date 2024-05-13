@@ -81,6 +81,34 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 		} );
 
+		it( 'redirects to processing after site creation', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_CREATION_STEP.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.PROCESSING.slug }`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects to import/migrate screen after site creation', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.PROCESSING.slug,
+				dependencies: {
+					siteCreated: true,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
 		it( 'migrate redirects from the import-from page to new instructions if flag enabled', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
@@ -134,42 +162,6 @@ describe( 'Hosted site Migration Flow', () => {
 			expect( getFlowLocation() ).toEqual( {
 				path: '/site-migration-upgrade-plan',
 				state: { siteSlug: 'example.wordpress.com' },
-			} );
-		} );
-
-		it( 'redirects from upgrade-plan to verifyEmail if user is unverified', async () => {
-			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-				dependencies: {
-					verifyEmail: true,
-				},
-			} );
-
-			await waitFor( () => {
-				expect( getFlowLocation() ).toEqual( {
-					path: `/${ STEPS.VERIFY_EMAIL.slug }`,
-					state: {
-						pollForEmailVerification: false,
-					},
-				} );
-			} );
-		} );
-
-		it( 'redirects from verifyEmail to site-migration-assign-trial-plan step', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.VERIFY_EMAIL.slug,
-				dependencies: {
-					verifyEmail: true,
-				},
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug }`,
-				state: null,
 			} );
 		} );
 
