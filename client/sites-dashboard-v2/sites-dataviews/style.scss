@@ -14,7 +14,7 @@
 }
 
 .sites-dataviews__site-name {
-	align-self: center;
+	align-self: flex-start;
 	display: inline-block;
 	text-align: left;
 	text-overflow: ellipsis;
@@ -47,18 +47,6 @@
 
 	&:visited {
 		color: var(--color-neutral-70);
-	}
-}
-
-.preview-hidden {
-	.sites-dataviews__site-name {
-		width: 180px;
-	}
-
-	@media (min-width: 2040px) {
-		.sites-dataviews__site-name {
-			width: 250px;
-		}
 	}
 }
 
