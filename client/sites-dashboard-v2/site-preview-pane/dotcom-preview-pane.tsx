@@ -1,16 +1,11 @@
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
-import HostingOverview from 'calypso/hosting-overview/components/hosting-overview';
-import { GitHubDeployments } from 'calypso/my-sites/github-deployments/deployments';
-import Hosting from 'calypso/my-sites/hosting/main';
-import SiteMonitoringPhpLogs from 'calypso/site-monitoring/components/php-logs';
-import SiteMonitoringServerLogs from 'calypso/site-monitoring/components/server-logs';
-import SiteMonitoringOverview from 'calypso/site-monitoring/components/site-monitoring-overview';
+import DevToolsIcon from 'calypso/dev-tools-promo/components/dev-tools-icon';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -18,34 +13,36 @@ import {
 	DOTCOM_PHP_LOGS,
 	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
+	DOTCOM_DEVELOPER_TOOLS_PROMO,
 } from './constants';
-
-import './style.scss';
 
 type Props = {
 	site: SiteExcerptData;
+	selectedSiteFeature: string;
+	setSelectedSiteFeature: ( feature: string ) => void;
+	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
 };
 
-const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
+const OVERLAY_MODAL_SELECTORS = [
+	'body.modal-open',
+	'#wpnc-panel.wpnt-open',
+	'div.help-center__container:not(.is-minimized)',
+];
+
+const DotcomPreviewPane = ( {
+	site,
+	selectedSiteFeature,
+	setSelectedSiteFeature,
+	selectedSiteFeaturePreview,
+	closeSitePreviewPane,
+}: Props ) => {
 	const { __ } = useI18n();
 
-	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState< string | undefined >(
-		'dotcom-overview'
-	);
+	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
+	const isSimpleSite = ! site.jetpack;
+	const isPlanExpired = !! site.plan?.expired;
 
-	useEffect( () => {
-		if ( selectedSiteFeature === undefined ) {
-			setSelectedSiteFeature( DOTCOM_OVERVIEW );
-		}
-		return () => {
-			setSelectedSiteFeature( undefined );
-		};
-	}, [] );
-
-	const isDotcomSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
-
-	// Dotcom tabs: Overview, Monitoring, GitHub Deployments, Hosting Config
 	const features = useMemo(
 		() => [
 			createFeaturePreview(
@@ -54,50 +51,68 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<HostingOverview />
+				selectedSiteFeaturePreview
+			),
+			createFeaturePreview(
+				DOTCOM_DEVELOPER_TOOLS_PROMO,
+				<span>
+					{ __( 'Dev Tools' ) } <DevToolsIcon />
+				</span>,
+				isSimpleSite || isPlanExpired,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
 				__( 'Hosting Config' ),
-				true,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<Hosting />
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_MONITORING,
 				__( 'Monitoring' ),
-				isDotcomSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<SiteMonitoringOverview />
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_PHP_LOGS,
 				__( 'PHP Logs' ),
-				isDotcomSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<SiteMonitoringPhpLogs />
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_SERVER_LOGS,
 				__( 'Server Logs' ),
-				isDotcomSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<SiteMonitoringServerLogs />
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
 				__( 'GitHub Deployments' ),
-				true,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<GitHubDeployments />
+				selectedSiteFeaturePreview
 			),
 		],
-		[ selectedSiteFeature, setSelectedSiteFeature, site ]
+		[
+			__,
+			selectedSiteFeature,
+			setSelectedSiteFeature,
+			selectedSiteFeaturePreview,
+			isSimpleSite,
+			isPlanExpired,
+			isAtomicSite,
+		]
 	);
 
 	const itemData: ItemData = {
@@ -108,6 +123,25 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 		isDotcomSite: site.is_wpcom_atomic || site.is_wpcom_staging_site,
 		adminUrl: site.options?.admin_url || `${ site.URL }/wp-admin`,
 	};
+
+	useEffect( () => {
+		const handleKeydown = ( e: KeyboardEvent ) => {
+			if ( e.key !== 'Escape' ) {
+				return;
+			}
+
+			if ( document.querySelector( OVERLAY_MODAL_SELECTORS.join( ',' ) ) ) {
+				return;
+			}
+
+			closeSitePreviewPane();
+		};
+
+		document.addEventListener( 'keydown', handleKeydown, true );
+		return () => {
+			document.removeEventListener( 'keydown', handleKeydown, true );
+		};
+	}, [ closeSitePreviewPane ] );
 
 	return (
 		<ItemPreviewPane

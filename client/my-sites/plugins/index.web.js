@@ -6,6 +6,7 @@ import {
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
 	render as clientRender,
+	redirectIfCurrentUserCannot,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
@@ -146,7 +147,7 @@ export default function ( router ) {
 			[
 				`/${ langParam }/plugins/scheduled-updates`,
 				`/${ langParam }/plugins/scheduled-updates/:action(create)`,
-				`/${ langParam }/plugins/scheduled-updates/:action(edit)/:schedule_id`,
+				`/${ langParam }/plugins/scheduled-updates/:action(edit)/:id`,
 			],
 			redirectLoggedOut,
 			navigation,
@@ -164,6 +165,7 @@ export default function ( router ) {
 		],
 		redirectLoggedOut,
 		siteSelection,
+		redirectIfCurrentUserCannot( 'update_plugins' ),
 		navigation,
 		scheduledUpdates,
 		makeLayout,

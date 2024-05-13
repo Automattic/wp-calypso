@@ -49,13 +49,16 @@ import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import PromoCards from './promo-cards';
+import StatsCardUpgradeJepackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleDevices from './stats-module-devices';
+import StatsModuleUpgradeOverlay from './stats-module-devices/stats-module-upgrade-overlay';
 import StatsModuleEmails from './stats-module-emails';
 import StatsModuleUTM from './stats-module-utm';
+import StatsModuleUTMOverlay from './stats-module-utm/stats-module-utm-overlay';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -213,6 +216,7 @@ class StatsSite extends Component {
 			supportsEmailStats,
 			supportsUTMStatsFeature,
 			supportsDevicesStatsFeature,
+			isOldJetpack,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -338,6 +342,7 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+				<div id="jp-admin-notices"></div>
 				<StatsNotices
 					siteId={ siteId }
 					isOdysseyStats={ isOdysseyStats }
@@ -432,48 +437,60 @@ class StatsSite extends Component {
 							className={ classNames( 'stats__flexible-grid-item--full' ) }
 						/>
 
-						{ supportsUTMStats && (
-							<>
-								<StatsModuleUTM
-									siteId={ siteId }
-									period={ this.props.period }
-									query={ query }
-									className={ classNames(
-										'stats__flexible-grid-item--60',
-										'stats__flexible-grid-item--full--large',
-										'stats__flexible-grid-item--full--medium'
-									) }
-								/>
-								<StatsModule
-									path="clicks"
-									moduleStrings={ moduleStrings.clicks }
-									period={ this.props.period }
-									query={ query }
-									statType="statsClicks"
-									showSummaryLink
-									className={ classNames(
-										'stats__flexible-grid-item--40--once-space',
-										'stats__flexible-grid-item--full--large',
-										'stats__flexible-grid-item--full--medium'
-									) }
-								/>
-								{ supportsEmailStats && (
-									<StatsModuleEmails
-										period={ this.props.period }
-										query={ query }
-										className={ classNames(
-											{
-												'stats__flexible-grid-item--half': ! this.isModuleHidden( 'authors' ),
-												'stats__flexible-grid-item--full': this.isModuleHidden( 'authors' ),
-											},
-											'stats__flexible-grid-item--full--large',
-											'stats__flexible-grid-item--full--medium'
-										) }
-									/>
+						{ /* If UTM if supported display the module or update Jetpack plugin card */ }
+						{ supportsUTMStats && ! isOldJetpack && (
+							<StatsModuleUTM
+								siteId={ siteId }
+								period={ this.props.period }
+								query={ query }
+								className={ classNames(
+									'stats__flexible-grid-item--60',
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
 								) }
-							</>
+							/>
 						) }
 
+						{ supportsUTMStats && isOldJetpack && (
+							<StatsModuleUTMOverlay
+								siteId={ siteId }
+								className={ classNames(
+									'stats__flexible-grid-item--60',
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+								overlay={
+									<StatsCardUpgradeJepackVersion
+										className="stats-module__upsell stats-module__upgrade"
+										siteId={ siteId }
+										statType="utm"
+									/>
+								}
+							/>
+						) }
+
+						{ /* If UTM card or update card is not visible, shift "Clicks" and reduct to 1/2 for easier stacking */ }
+						<StatsModule
+							path="clicks"
+							moduleStrings={ moduleStrings.clicks }
+							period={ this.props.period }
+							query={ query }
+							statType="statsClicks"
+							showSummaryLink
+							className={ classNames(
+								{
+									'stats__flexible-grid-item--40--once-space': supportsUTMStats,
+									'stats__flexible-grid-item--full--large': supportsUTMStats,
+									'stats__flexible-grid-item--full--medium': supportsUTMStats,
+								},
+								{
+									'stats__flexible-grid-item--half': ! supportsUTMStats,
+								},
+								'stats__flexible-grid-item--full--medium'
+							) }
+						/>
+
+						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
 						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModule
 								path="authors"
@@ -484,16 +501,33 @@ class StatsSite extends Component {
 								className={ classNames(
 									{
 										'stats__author-views': ! supportsUTMStats,
-										'stats__flexible-grid-item--one-third--two-spaces': ! supportsUTMStats,
-										'stats__flexible-grid-item--half--large': ! supportsUTMStats,
 									},
-									{
-										'stats__flexible-grid-item--half': supportsUTMStats,
-										'stats__flexible-grid-item--half--large': supportsUTMStats,
-									},
+									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--medium'
 								) }
 								showSummaryLink
+							/>
+						) }
+
+						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
+						{ supportsEmailStats && (
+							<StatsModuleEmails
+								period={ this.props.period }
+								query={ query }
+								className={ classNames(
+									{
+										// half if odd number of modules after countries - UTM + Clicks + Authors or Clicks
+										'stats__flexible-grid-item--half':
+											( supportsUTMStats && ! this.isModuleHidden( 'authors' ) ) ||
+											( ! supportsUTMStats && this.isModuleHidden( 'authors' ) ),
+										// full if even number of modules after countries - UTM + Clicks or Authors + Clicks
+										'stats__flexible-grid-item--full':
+											( supportsUTMStats && this.isModuleHidden( 'authors' ) ) ||
+											( ! supportsUTMStats && ! this.isModuleHidden( 'authors' ) ),
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
 							/>
 						) }
 
@@ -506,40 +540,18 @@ class StatsSite extends Component {
 							showSummaryLink
 							className={ classNames(
 								{
+									// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
 									'stats__flexible-grid-item--one-third--two-spaces':
-										! this.isModuleHidden( 'authors' ) && ! supportsUTMStats,
-									'stats__flexible-grid-item--half--large':
-										! this.isModuleHidden( 'authors' ) && ! supportsUTMStats,
-									'stats__flexible-grid-item--half':
-										this.isModuleHidden( 'authors' ) && ! supportsUTMStats,
+										! isJetpack && ! this.isModuleHidden( 'videos' ),
 								},
 								{
-									'stats__flexible-grid-item--one-third--two-spaces': supportsUTMStats,
-									'stats__flexible-grid-item--half--large': supportsUTMStats,
+									// 1/2 for all other cases to stack with Devices or empty space
+									'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
 								},
 								'stats__flexible-grid-item--full--medium'
 							) }
 						/>
 
-						{ ! supportsUTMStats && (
-							<StatsModule
-								path="clicks"
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								statType="statsClicks"
-								showSummaryLink
-								className={ classNames(
-									{
-										'stats__flexible-grid-item--one-third--two-spaces':
-											! this.isModuleHidden( 'authors' ),
-										'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
-										'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
-									},
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
 						{ ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
 								path="videoplays"
@@ -550,26 +562,9 @@ class StatsSite extends Component {
 								showSummaryLink
 								className={ classNames(
 									{
-										'stats__flexible-grid-item--half': ! supportsUTMStats,
+										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
+										'stats__flexible-grid-item--half': isJetpack,
 									},
-									{
-										'stats__flexible-grid-item--one-third--two-spaces': supportsUTMStats,
-										'stats__flexible-grid-item--half--large': supportsUTMStats,
-									},
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ supportsEmailStats && ! supportsUTMStats && (
-							<StatsModuleEmails
-								period={ this.props.period }
-								query={ query }
-								className={ classNames(
-									{
-										'stats__flexible-grid-item--half': ! this.isModuleHidden( 'videos' ),
-										'stats__flexible-grid-item--full': this.isModuleHidden( 'videos' ),
-									},
-									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
@@ -589,27 +584,43 @@ class StatsSite extends Component {
 									useShortLabel={ true }
 									className={ classNames(
 										{
-											'stats__flexible-grid-item--half': ! supportsUTMStats,
-											'stats__flexible-grid-item--full--large': ! supportsUTMStats,
+											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
 										},
 										{
-											'stats__flexible-grid-item--one-third--two-spaces': supportsUTMStats,
-											'stats__flexible-grid-item--half--large': supportsUTMStats,
+											'stats__flexible-grid-item--one-third--two-spaces':
+												! this.isModuleHidden( 'videos' ),
 										},
+										'stats__flexible-grid-item--half--large',
 										'stats__flexible-grid-item--full--medium'
 									) }
 								/>
 							)
 						}
-						{ supportsDevicesStats && (
+						{ supportsDevicesStats && ! isOldJetpack && (
 							<StatsModuleDevices
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
 								className={ classNames(
 									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--xlarge'
+									'stats__flexible-grid-item--full--large'
 								) }
+							/>
+						) }
+						{ ! supportsDevicesStats && isOldJetpack && (
+							<StatsModuleUpgradeOverlay
+								className={ classNames(
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large'
+								) }
+								siteId={ siteId }
+								overlay={
+									<StatsCardUpgradeJepackVersion
+										className="stats-module__upsell stats-module__upgrade"
+										siteId={ siteId }
+										statType="devices"
+									/>
+								}
 							/>
 						) }
 					</div>
@@ -756,8 +767,13 @@ export default connect(
 		const upsellModalView =
 			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 
-		const { supportsPlanUsage, supportsEmailStats, supportsUTMStats, supportsDevicesStats } =
-			getEnvStatsFeatureSupportChecks( state, siteId );
+		const {
+			supportsPlanUsage,
+			supportsEmailStats,
+			supportsUTMStats,
+			supportsDevicesStats,
+			isOldJetpack,
+		} = getEnvStatsFeatureSupportChecks( state, siteId );
 
 		return {
 			canUserViewStats,
@@ -777,6 +793,7 @@ export default connect(
 			supportsPlanUsage,
 			supportsUTMStatsFeature: supportsUTMStats,
 			supportsDevicesStatsFeature: supportsDevicesStats,
+			isOldJetpack,
 		};
 	},
 	{

@@ -1,10 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.is-section-reader {
-	background: var(--studio-white);
-}
-
 .layout.has-header-section.is-section-reader .layout__header-section-content {
 	box-sizing: border-box;
 	max-width: 1140px;

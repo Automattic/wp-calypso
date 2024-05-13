@@ -49,7 +49,9 @@ import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import './style.scss';
 
-export const WIDE_DISPLAY_CUTOFF = 900;
+// minimal size for the two-column layout to show without cut off
+// 64 is padding, 8 is margin
+export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
@@ -488,6 +490,36 @@ class ReaderStream extends Component {
 		);
 	};
 
+	setListContext = ( component ) => {
+		if ( ! component ) {
+			return;
+		}
+
+		this.listRef.current = component;
+		this.setState( {
+			listContext: this.getScrollContainer( ReactDom.findDOMNode( component ) ),
+		} );
+	};
+
+	getScrollContainer = ( node ) => {
+		if ( ! node ) {
+			return undefined;
+		}
+
+		// ...except when overflow is defined to be hidden or visible
+		const { overflowY } = getComputedStyle( node );
+		if ( /(auto|scroll)/.test( overflowY ) ) {
+			return node;
+		}
+
+		if ( node.ownerDocument === node.parentNode ) {
+			return node;
+		}
+
+		// Continue traversing.
+		return this.getScrollContainer( node.parentNode );
+	};
+
 	render() {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
@@ -520,7 +552,7 @@ class ReaderStream extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			const bodyContent = (
 				<InfiniteList
-					ref={ this.listRef }
+					ref={ this.setListContext }
 					items={ items }
 					lastPage={ lastPage }
 					fetchingNextPage={ isRequesting }
@@ -530,6 +562,7 @@ class ReaderStream extends Component {
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 					className="stream__list"
+					context={ this.state.listContext ?? false }
 				/>
 			);
 

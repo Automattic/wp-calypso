@@ -28,6 +28,7 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import OfflineStatus from 'calypso/layout/offline-status';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import { navigate } from 'calypso/lib/navigate';
@@ -222,8 +223,21 @@ class Layout extends Component {
 		this.refreshColorScheme( undefined, this.props.colorScheme );
 	}
 
+	/**
+	 * Refresh the color scheme if
+	 * - the color scheme has changed
+	 * - the global sidebar is visible and the color scheme is not `modern`
+	 * - the global sidebar was visible and is now hidden and the color scheme is not `modern`
+	 * @param prevProps object
+	 */
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.colorScheme !== this.props.colorScheme ) {
+		if (
+			prevProps.colorScheme !== this.props.colorScheme ||
+			( this.props.isGlobalSidebarVisible && this.props.colorScheme !== 'modern' ) ||
+			( prevProps.isGlobalSidebarVisible &&
+				! this.props.isGlobalSidebarVisible &&
+				this.props.colorScheme !== 'modern' )
+		) {
 			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
 		}
 	}
@@ -235,6 +249,14 @@ class Layout extends Component {
 
 		if ( typeof document !== 'undefined' ) {
 			const classList = document.querySelector( 'body' ).classList;
+
+			// We only want to apply the `modern` color scheme when the global sidebar is visible
+			if ( this.props.isGlobalSidebarVisible && nextColorScheme !== 'modern' ) {
+				// Remove the color scheme in case it was set before
+				classList.remove( `is-${ nextColorScheme }` );
+				nextColorScheme = 'modern';
+			}
+
 			classList.remove( `is-${ prevColorScheme }` );
 			classList.add( `is-${ nextColorScheme }` );
 
@@ -368,7 +390,7 @@ class Layout extends Component {
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'a8c-for-agencies' ) && (
+				{ isA8CForAgencies() && (
 					<>
 						<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
 						<QueryAgencies />
@@ -484,7 +506,7 @@ export default withCurrentRoute(
 				isWpMobileApp() ||
 				isWcMobileApp() ||
 				isJetpackCloud() ||
-				config.isEnabled( 'a8c-for-agencies' );
+				isA8CForAgencies();
 			const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 			const isJetpackWooCommerceFlow =
 				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&

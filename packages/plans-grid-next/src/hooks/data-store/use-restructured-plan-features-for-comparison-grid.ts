@@ -58,7 +58,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.();
 				const isMonthlyPlan = isMonthly( planSlug );
 
-				const wpcomFeatures = planConstantObj.get2023PlanComparisonFeatureOverride
+				const wpcomFeatures = planConstantObj.get2023PlanComparisonFeatureOverride?.().length
 					? getPlanFeaturesObject(
 							allFeaturesList,
 							planConstantObj.get2023PlanComparisonFeatureOverride().slice()
@@ -68,7 +68,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 							planConstantObj.get2023PricingGridSignupWpcomFeatures?.().slice()
 					  );
 
-				const jetpackFeatures = planConstantObj.get2023PlanComparisonJetpackFeatureOverride
+				const jetpackFeatures = planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.()
+					.length
 					? getPlanFeaturesObject(
 							allFeaturesList,
 							planConstantObj.get2023PlanComparisonJetpackFeatureOverride().slice()

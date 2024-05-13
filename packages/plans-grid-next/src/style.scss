@@ -351,6 +351,36 @@ $mobile-card-max-width: 440px;
 	}
 }
 
+.plans-grid-next-features-grid__feature-group-title {
+	font-weight: 600;
+	color: var(--studio-gray-80);
+}
+
+.plans-grid-next-features-grid__feature-group-row {
+	> .plan-features-2023-grid__table-item {
+		padding-top: 24px;
+	}
+
+	/**
+	 * This is only relevant to match the styling for the Enterprise plan's parter logos,
+	 * which should probably be cleaned-up/refactored instead
+	 */
+	&.is-first-feature-group-row > .plan-features-2023-grid__table-item {
+		@include plans-grid-medium-large {
+			padding-top: 14px;
+		}
+	}
+
+	/**
+	 * This is to handle storage row's internal padding
+	 */
+	&.is-first-feature-group-row > .plan-features-2023-grid__storage {
+		@include plans-grid-medium-large {
+			padding-bottom: 12px;
+		}
+	}
+}
+
 .plan-features-2023-grid__item-info {
 	display: flex;
 	flex-direction: column;
@@ -382,6 +412,13 @@ $mobile-card-max-width: 440px;
 
 		.plan-features-2023-grid__item-title {
 			text-decoration: line-through;
+		}
+	}
+
+	.plan-features-2023-grid__item-sub-feature-list {
+		margin-bottom: 0;
+		& > li {
+			margin-top: 8px;
 		}
 	}
 }
@@ -601,13 +638,7 @@ $mobile-card-max-width: 440px;
 			padding: 24px 20px 38px 20px;
 
 			.plan-features-2023-grid__storage-title {
-				color: var(--studio-gray-100);
-				font-weight: 500;
-				/* stylelint-disable-next-line */
-				font-size: 0.688rem;
-				line-height: 16px;
 				margin-bottom: 10px;
-				text-transform: uppercase;
 			}
 
 			.plan-features-2023-grid__storage-buttons {
@@ -950,6 +981,13 @@ $mobile-card-max-width: 440px;
 			.plan-comparison-grid__plan-title,
 			.plan-comparison-grid__plan-subtitle {
 				text-decoration: line-through;
+			}
+
+			&.hide-unsupported-feature {
+				.plan-comparison-grid__plan-title,
+				.plan-comparison-grid__plan-subtitle {
+					display: none;
+				}
 			}
 		}
 

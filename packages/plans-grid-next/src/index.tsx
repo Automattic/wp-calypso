@@ -22,12 +22,11 @@ const WrappedComparisonGrid = ( {
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
-	useActionCallback,
+	useAction,
 	recordTracksEvent,
 	allFeaturesList,
 	intervalType,
 	isInSignup,
-	isLaunchPage,
 	currentSitePlanSlug,
 	selectedPlan,
 	selectedFeature,
@@ -36,6 +35,9 @@ const WrappedComparisonGrid = ( {
 	stickyRowOffset,
 	coupon,
 	className,
+	hideUnsupportedFeatures,
+	enableFeatureTooltips,
+	featureGroupMap,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -66,15 +68,17 @@ const WrappedComparisonGrid = ( {
 				siteId={ siteId }
 				gridPlans={ gridPlans }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-				useActionCallback={ useActionCallback }
+				useAction={ useAction }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				coupon={ coupon }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				featureGroupMap={ featureGroupMap }
+				hideUnsupportedFeatures={ hideUnsupportedFeatures }
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -96,12 +100,15 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		intent,
 		gridPlans,
 		useCheckPlanAvailabilityForPurchase,
-		useActionCallback,
+		useAction,
 		recordTracksEvent,
 		allFeaturesList,
 		coupon,
 		isInAdmin,
 		className,
+		enableFeatureTooltips,
+		enableCategorisedFeatures,
+		featureGroupMap = {},
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -128,9 +135,12 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				gridPlans={ gridPlans }
 				coupon={ coupon }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-				useActionCallback={ useActionCallback }
+				useAction={ useAction }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				enableCategorisedFeatures={ enableCategorisedFeatures }
+				featureGroupMap={ featureGroupMap }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>

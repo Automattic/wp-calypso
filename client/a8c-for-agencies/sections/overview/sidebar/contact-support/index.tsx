@@ -8,13 +8,16 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
 export const CONTACT_URL_HASH_FRAGMENT = '#contact-support';
+export const CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT = '#contact-support-migration-offer';
 
 export default function OverviewSidebarContactSupport() {
 	const translate = useTranslate();
 
-	const [ showUserSupportForm, setShowUserSupportForm ] = useState(
-		window.location.hash === CONTACT_URL_HASH_FRAGMENT
-	);
+	const hashSupportFormHash =
+		window.location.hash === CONTACT_URL_HASH_FRAGMENT ||
+		window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
+
+	const [ showUserSupportForm, setShowUserSupportForm ] = useState( hashSupportFormHash );
 	const dispatch = useDispatch();
 
 	const toggleContactForm = () => {
@@ -39,6 +42,11 @@ export default function OverviewSidebarContactSupport() {
 		setShowUserSupportForm( false );
 	}, [] );
 
+	// We need make sure to set this to true when we have the support form hash fragment.
+	if ( hashSupportFormHash && ! showUserSupportForm ) {
+		setShowUserSupportForm( true );
+	}
+
 	return (
 		<>
 			<Button className="overview__contact-support-button" onClick={ toggleContactForm }>
@@ -47,6 +55,11 @@ export default function OverviewSidebarContactSupport() {
 			<UserContactSupportModalForm
 				show={ showUserSupportForm }
 				onClose={ onCloseUserSupportForm }
+				defaultMessage={
+					window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT
+						? translate( "I'd like to chat more about the migration offer." )
+						: undefined
+				}
 			/>
 		</>
 	);

@@ -1,9 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext } from 'react';
 import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { setSiteMonitorStatus } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -17,7 +17,7 @@ const NOTIFICATION_DURATION = 3000;
 const DEFAULT_CHECK_INTERVAL = 5;
 
 export default function useToggleActivateMonitor(
-	sites: Array< { blog_id: number; url: string } >
+	sites: Array< Site >
 ): ( isEnabled: boolean ) => void {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -29,7 +29,7 @@ export default function useToggleActivateMonitor(
 
 	const agencyId = useSelector( getActiveAgencyId );
 
-	const queryKey = isEnabled( 'a8c-for-agencies' )
+	const queryKey = isA8CForAgencies()
 		? [
 				'jetpack-agency-dashboard-sites',
 				dataViewsState.search,
@@ -104,7 +104,11 @@ export default function useToggleActivateMonitor(
 			sites.forEach( ( site ) =>
 				requests.push( {
 					site,
-					mutation: toggleActivateMonitoring.mutateAsync( { siteId: site.blog_id, params } ),
+					mutation: toggleActivateMonitoring.mutateAsync( {
+						siteId: site.blog_id,
+						params,
+						hasJetpackPluginInstalled: site?.enabled_plugin_slugs?.includes( 'jetpack' ) ?? false,
+					} ),
 				} )
 			);
 			const promises = await Promise.allSettled(

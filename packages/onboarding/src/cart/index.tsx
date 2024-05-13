@@ -172,6 +172,9 @@ export const createSiteWithCart = async (
 	const locale = getLocaleSlug();
 	const hasSegmentationSurvey: boolean =
 		newSiteParams[ 'options' ][ 'site_creation_flow' ] === 'entrepreneur';
+	const segmentationSurveyAnswersAnonId = localStorage.getItem( 'ss-anon-id' );
+	localStorage.removeItem( 'ss-anon-id' );
+
 	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
 		path: '/sites/new',
 		apiVersion: '1.1',
@@ -182,7 +185,13 @@ export const createSiteWithCart = async (
 			lang_id: getLanguage( locale as string )?.value,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-			has_segmentation_survey: hasSegmentationSurvey,
+			options: {
+				...newSiteParams.options,
+				has_segmentation_survey: hasSegmentationSurvey,
+				...( hasSegmentationSurvey && segmentationSurveyAnswersAnonId
+					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
+					: {} ),
+			},
 		},
 	} );
 

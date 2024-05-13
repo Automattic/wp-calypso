@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import {
 	A4A_PURCHASES_LINK,
 	A4A_MARKETPLACE_CHECKOUT_LINK,
+	A4A_SITES_LINK_NEEDS_SETUP,
 } from '../../../../components/sidebar-menu/lib/constants';
 
 type Props = {
@@ -17,7 +18,8 @@ export function useReturnUrl( { redirect }: Props ) {
 			const returnUrl =
 				returnQuery &&
 				( returnQuery.startsWith( A4A_PURCHASES_LINK ) ||
-					returnQuery.startsWith( A4A_MARKETPLACE_CHECKOUT_LINK ) )
+					returnQuery.startsWith( A4A_MARKETPLACE_CHECKOUT_LINK ) ||
+					returnQuery.startsWith( A4A_SITES_LINK_NEEDS_SETUP ) )
 					? returnQuery
 					: A4A_PURCHASES_LINK;
 

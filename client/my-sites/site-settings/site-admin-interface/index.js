@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 import { Card, FormLabel, MaterialIcon } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
@@ -34,7 +35,7 @@ const FormRadioStyled = styled( FormRadio )( {
 	},
 } );
 
-const SiteAdminInterface = ( { siteId, isHosting } ) => {
+const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const dispatch = useDispatch();
@@ -128,7 +129,7 @@ const SiteAdminInterface = ( { siteId, isHosting } ) => {
 					) }
 				/>
 			) }
-			<Card>
+			<Card className="admin-interface-style-card">
 				{ isHosting && (
 					<>
 						<MaterialIcon icon="display_settings" style="filled" size={ 32 } />
@@ -150,42 +151,60 @@ const SiteAdminInterface = ( { siteId, isHosting } ) => {
 								}
 							) }
 						</p>
+						{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) && (
+							<p className="form-setting-explanation">
+								{ translate( 'This setting has now moved to {{a}}Settings → General{{/a}}.', {
+									components: {
+										a: (
+											<a
+												href={ `/settings/general/${ siteSlug }#admin-interface-style` }
+												rel="noreferrer"
+											/>
+										),
+									},
+								} ) }
+							</p>
+						) }
 					</>
 				) }
-				<FormFieldset>
-					<FormLabel>
-						<FormRadioStyled
-							label={ translate( 'Classic style' ) }
-							name="wpcom_admin_interface"
-							value="wp-admin"
-							checked={ selectedAdminInterface === 'wp-admin' }
-							onChange={ ( event ) => handleInputChange( event.target.value ) }
-							disabled={ isUpdating }
-						/>
-					</FormLabel>
-					<FormSettingExplanation>
-						{ hasEnTranslation( 'Use WP-Admin to manage your site.' )
-							? translate( 'Use WP-Admin to manage your site.' )
-							: translate( 'The classic WP-Admin WordPress interface.' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel>
-						<FormRadioStyled
-							label={ translate( 'Default style' ) }
-							name="wpcom_admin_interface"
-							value="calypso"
-							checked={ selectedAdminInterface === 'calypso' }
-							onChange={ ( event ) => handleInputChange( event.target.value ) }
-							disabled={ isUpdating }
-						/>
-					</FormLabel>
-					<FormSettingExplanation>
-						{ hasEnTranslation( 'Use WordPress.com’s legacy dashboard to manage your site.' )
-							? translate( 'Use WordPress.com’s legacy dashboard to manage your site.' )
-							: translate( 'The WordPress.com redesign for a better experience.' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
+				{ ( ! isHosting || ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) && (
+					<>
+						<FormFieldset>
+							<FormLabel>
+								<FormRadioStyled
+									label={ translate( 'Classic style' ) }
+									name="wpcom_admin_interface"
+									value="wp-admin"
+									checked={ selectedAdminInterface === 'wp-admin' }
+									onChange={ ( event ) => handleInputChange( event.target.value ) }
+									disabled={ isUpdating }
+								/>
+							</FormLabel>
+							<FormSettingExplanation>
+								{ hasEnTranslation( 'Use WP-Admin to manage your site.' )
+									? translate( 'Use WP-Admin to manage your site.' )
+									: translate( 'The classic WP-Admin WordPress interface.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
+						<FormFieldset>
+							<FormLabel>
+								<FormRadioStyled
+									label={ translate( 'Default style' ) }
+									name="wpcom_admin_interface"
+									value="calypso"
+									checked={ selectedAdminInterface === 'calypso' }
+									onChange={ ( event ) => handleInputChange( event.target.value ) }
+									disabled={ isUpdating }
+								/>
+							</FormLabel>
+							<FormSettingExplanation>
+								{ hasEnTranslation( 'Use WordPress.com’s legacy dashboard to manage your site.' )
+									? translate( 'Use WordPress.com’s legacy dashboard to manage your site.' )
+									: translate( 'The WordPress.com redesign for a better experience.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
+					</>
+				) }
 			</Card>
 		</>
 	);

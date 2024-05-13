@@ -1,8 +1,34 @@
+.referrals-overview__section-notice {
+	margin-block-end: 48px;
+}
+
 .referrals-overview__section-heading {
 	margin-block-start: 24px;
 	font-size: rem(24px);
-	margin-block-end: 48px;
+	margin-block-end: 8px;
 	font-weight: 600;
+}
+.referrals-overview__section-subtitle {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	font-size: rem(14px);
+	font-weight: 400;
+	margin-block-end: 48px;
+	color: var(--color-neutral-50);
+}
+
+
+.referrals-overview__step-section-woo-payments {
+	a,
+	a:visited {
+		color: var(--color-neutral-100);
+		text-decoration: underline;
+	}
+
+	.step-section-item__icon {
+		opacity: 1;
+	}
 }
 
 .referrals-overview__section-container {

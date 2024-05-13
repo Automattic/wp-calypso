@@ -27,7 +27,7 @@ $signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_t
 				<?php esc_html_e( 'Sit back as our team of experts builds a site you\'ll fall in love with. From single page sites to full stores, they\'ll help you make it happen.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<a href="<?php echo esc_url( 'https://wordpress.com/website-design-service/?ref=banner-learn' ); ?>">
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/website-design-service/?ref=banner-learn' ) ); ?>">
 					<?php esc_html_e( 'Get Started', 'happy-blocks' ); ?>
 				</a>
 			</div>
@@ -101,7 +101,7 @@ $signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_t
 			<p class="support-content-subscribe-disclaimer">
 				<?php
 					// translators: %s: 'WordPress.com privacy policy'.
-					echo sprintf( esc_html__( 'Your information will be used in accordance with %s.', 'happy-blocks' ), '<a href="https://automattic.com/privacy/">' . esc_html__( 'WordPress.com privacy policy', 'happy-blocks' ) . '</a>' );
+					printf( esc_html__( 'Your information will be used in accordance with %s.', 'happy-blocks' ), '<a href="https://automattic.com/privacy/">' . esc_html__( 'WordPress.com privacy policy', 'happy-blocks' ) . '</a>' );
 				?>
 			</p>
 		</div>

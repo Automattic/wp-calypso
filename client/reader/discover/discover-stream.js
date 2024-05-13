@@ -128,13 +128,14 @@ const DiscoverStream = ( props ) => {
 
 	return (
 		<>
-			{ DiscoverHeader() }
-			<DiscoverNavigation
-				width={ props.width }
-				selectedTab={ selectedTab }
-				recommendedTags={ interestTags }
-			/>
-			<Stream { ...streamProps } />
+			<Stream { ...streamProps }>
+				{ DiscoverHeader() }
+				<DiscoverNavigation
+					width={ props.width }
+					selectedTab={ selectedTab }
+					recommendedTags={ interestTags }
+				/>
+			</Stream>
 		</>
 	);
 };

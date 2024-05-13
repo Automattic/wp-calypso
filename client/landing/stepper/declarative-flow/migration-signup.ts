@@ -1,8 +1,9 @@
-import { useLocale } from '@automattic/i18n-utils';
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteData } from '../hooks/use-site-data';
@@ -51,15 +52,7 @@ const migrationSignup: Flow = {
 
 		const flowName = this.name;
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+		const locale = useFlowLocale();
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const aff = queryParams.get( 'aff' );
@@ -263,10 +256,15 @@ const migrationSignup: Flow = {
 						);
 						goToCheckout( {
 							flowName: FLOW_NAME,
-							stepName: currentStep,
+							stepName: 'site-migration-upgrade-plan',
 							siteSlug: siteSlug,
 							destination: destination,
 							plan: providedDependencies.plan as string,
+							extraQueryParams:
+								providedDependencies?.sendIntentWhenCreatingTrial &&
+								providedDependencies?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
+									? { hosting_intent: HOSTING_INTENT_MIGRATE }
+									: {},
 						} );
 						return;
 					}

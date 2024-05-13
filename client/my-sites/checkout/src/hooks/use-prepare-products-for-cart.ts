@@ -52,6 +52,7 @@ export default function usePrepareProductsForCart( {
 	jetpackPurchaseToken,
 	source,
 	isGiftPurchase,
+	hostingIntent,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -66,6 +67,7 @@ export default function usePrepareProductsForCart( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	isGiftPurchase?: boolean;
+	hostingIntent?: string | undefined;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -118,6 +120,7 @@ export default function usePrepareProductsForCart( {
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source,
+		hostingIntent,
 	} );
 	useAddProductFromBillingIntent( {
 		intentId: productAliasFromUrl,
@@ -450,6 +453,7 @@ function useAddProductFromSlug( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
+	hostingIntent,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -460,6 +464,7 @@ function useAddProductFromSlug( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
+	hostingIntent?: string | undefined;
 } ) {
 	const translate = useTranslate();
 
@@ -494,6 +499,7 @@ function useAddProductFromSlug( {
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
 				source,
+				hostingIntent,
 			} )
 		);
 
@@ -555,7 +561,7 @@ function useAddProductFromSlug( {
  * (`-label-DATA`). Since domain names cannot start with a hyphen we will know
  * that the label refers to something else.
  */
-function getProductPartsFromAlias( productAlias: string ): {
+export function getProductPartsFromAlias( productAlias: string ): {
 	slug: string;
 	meta: null | string;
 	quantity: null | number;
@@ -647,6 +653,7 @@ function createItemToAddToCart( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
+	hostingIntent,
 }: {
 	productSlug: string;
 	productAlias: string;
@@ -654,6 +661,7 @@ function createItemToAddToCart( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
+	hostingIntent?: string | undefined;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
 	// using a colon between the product slug and the meta.
@@ -683,6 +691,7 @@ function createItemToAddToCart( {
 			jetpackPurchaseToken,
 			context: 'calypstore',
 			source: source ?? undefined,
+			hosting_intent: hostingIntent,
 		},
 		...( cartMeta ? { meta: cartMeta } : {} ),
 	} );

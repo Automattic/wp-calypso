@@ -271,6 +271,7 @@ class DnsRecords extends Component {
 						<DnsRecordsList
 							dns={ dns }
 							selectedSite={ selectedSite }
+							selectedDomain={ selectedDomain }
 							selectedDomainName={ selectedDomainName }
 						/>
 						<EmailSetup selectedDomainName={ selectedDomainName } />

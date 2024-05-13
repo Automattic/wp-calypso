@@ -1,5 +1,8 @@
 import config from '@automattic/calypso-config';
+import { setPlansListExperiment } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { localStorageExperimentAssignmentKey } from '@automattic/explat-client/src/internal/experiment-assignment-store';
+import localStorage from '@automattic/explat-client/src/internal/local-storage';
 import {
 	getLanguage,
 	getLanguageSlugs,
@@ -7,6 +10,7 @@ import {
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
@@ -14,7 +18,8 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { login, createAccountUrl } from 'calypso/lib/paths';
+import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
+import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -25,14 +30,15 @@ import {
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
-import { render, hydrate } from './web-util.js';
+import { hydrate, render } from './web-util.js';
 
 /**
  * Re-export
  */
-export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
-export { render, hydrate } from './web-util.js';
+export { setLocaleMiddleware, setSectionMiddleware } from './shared.js';
+export { hydrate, render } from './web-util.js';
 
+const PLAN_NAME_EXPERIMENT = 'wpcom_plan_name_change_starter_to_beginner_v5';
 export const ProviderWrappedLayout = ( {
 	store,
 	queryClient,
@@ -46,6 +52,20 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
+
+	const [ isLoading, experimentAssignment ] = useExperiment( PLAN_NAME_EXPERIMENT );
+
+	useEffect( () => {
+		if ( ! isLoading ) {
+			setPlansListExperiment( PLAN_NAME_EXPERIMENT, experimentAssignment?.variationName );
+		}
+	}, [ isLoading, experimentAssignment?.variationName ] );
+
+	useEffect( () => {
+		// TODO: Implement a proper way to reset the experiment assignment
+		localStorage.removeItem( localStorageExperimentAssignmentKey( PLAN_NAME_EXPERIMENT ) );
+		loadExperimentAssignment( PLAN_NAME_EXPERIMENT );
+	}, [ userLoggedIn ] );
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />
@@ -82,7 +102,6 @@ export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
  * For logged in users with bootstrap (production), ReactDOM.hydrate().
  * Otherwise (development), ReactDOM.render().
  * See: https://wp.me/pd2qbF-P#comment-20
- *
  * @param context - Middleware context
  */
 function smartHydrate( context ) {
@@ -96,7 +115,6 @@ function smartHydrate( context ) {
 
 /**
  * Isomorphic routing helper, client side
- *
  * @param { string } route - A route path
  * @param {...Function} middlewares - Middleware to be invoked for route
  *
@@ -170,7 +188,6 @@ export function redirectLoggedOut( context, next ) {
 /**
  * Middleware to redirect logged out users to create an account.
  * Designed for use in situations where no site is selected, such as the reader.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -187,7 +204,6 @@ export function redirectLoggedOutToSignup( context, next ) {
 
 /**
  * Middleware to redirect a user if they don't have the appropriate capability.
- *
  * @param   {string}   capability Capability to check
  * @returns {Function}            Middleware function
  */
@@ -207,7 +223,6 @@ export function redirectIfCurrentUserCannot( capability ) {
 
 /**
  * Removes the locale parameter from the path, and redirects logged-in users to it.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -226,7 +241,6 @@ export function redirectWithoutLocaleParamIfLoggedIn( context, next ) {
 
 /**
  * Removes the locale parameter from the beginning of the path, and redirects logged-in users to it.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}

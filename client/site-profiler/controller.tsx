@@ -1,17 +1,8 @@
-import config from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import Main from 'calypso/components/main';
 import SiteProfiler from 'calypso/site-profiler/components/site-profiler';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-
-export const featureFlagFirewall: Callback = ( _context, next ) => {
-	if ( config.isEnabled( 'site-profiler' ) ) {
-		next();
-	} else {
-		page.redirect( '/' );
-	}
-};
 
 export const handleDomainQueryParam: Callback = ( context, next ) => {
 	const { querystring } = context;

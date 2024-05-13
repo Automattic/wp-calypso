@@ -11,6 +11,10 @@ import {
 	UrlFriendlyTermType,
 	isValidFeatureKey,
 	getFeaturesList,
+	getWooExpressFeaturesGrouped,
+	getPlanFeaturesGrouped,
+	isWooExpressPlan,
+	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -37,7 +41,7 @@ import {
 } from '@wordpress/element';
 import { hasQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
-import { localize, useTranslate } from 'i18n-calypso';
+import { TranslateResult, localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
@@ -45,7 +49,6 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -60,16 +63,16 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
-import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
-import useGenerateActionCallback from './hooks/use-action-callback';
+import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
-import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
+import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
+import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -78,29 +81,11 @@ import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-fro
 import type {
 	PlansIntent,
 	DataResponse,
-	PlanActionOverrides,
 	SupportedUrlFriendlyTermType,
 } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
-
-const FreePlanSubHeader = styled.p`
-	margin: -32px 0 40px 0;
-	color: var( --studio-gray-60 );
-	font-size: 1rem;
-	text-align: center;
-	button.is-borderless {
-		font-weight: 500;
-		color: var( --studio-gray-90 );
-		text-decoration: underline;
-		font-size: 16px;
-		padding: 0;
-	}
-	@media ( max-width: 960px ) {
-		margin-top: -16px;
-	}
-`;
 
 const PlanComparisonHeader = styled.h1`
 	.plans .step-container .step-container__content &&,
@@ -192,25 +177,6 @@ export interface PlansFeaturesMainProps {
 	deemphasizeFreePlan?: boolean;
 }
 
-const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
-	const translate = useTranslate();
-	const headerText = translate( 'Upgrade your plan to access this feature and more' );
-	const subHeaderText = (
-		<Button className="plans-features-main__view-all-plans is-link" href={ `/plans/${ siteSlug }` }>
-			{ translate( 'View all plans' ) }
-		</Button>
-	);
-
-	return (
-		<FormattedHeader
-			headerText={ headerText }
-			subHeaderText={ subHeaderText }
-			compactOnMobile
-			isSecondary
-		/>
-	);
-};
-
 const PlansFeaturesMain = ( {
 	paidDomainName,
 	freeSubdomain: signupFlowSubdomain,
@@ -276,12 +242,6 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
-	const currentPlanManageHref = useCurrentPlanManageHref();
-	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
-		siteId
-			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-			: null
-	);
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
 	const resolveModal = useModalResolutionCallback( {
@@ -361,6 +321,17 @@ const PlansFeaturesMain = ( {
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
 
+	const {
+		isLoading: isTrailMapExperimentLoading,
+		isTrailMapAny,
+		isTrailMapCopy,
+		isTrailMapStructure,
+	} = useExperimentForTrailMap( {
+		flowName,
+		isInSignup,
+		intent,
+	} );
+
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	// TODO: We should move the modal logic into a data store
@@ -386,17 +357,17 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
-	const useActionCallback = useGenerateActionCallback( {
-		currentPlan,
-		eligibleForFreeHostingTrial,
+	const useAction = useGenerateActionHook( {
+		siteId,
 		cartHandler: onUpgradeClick,
 		flowName,
-		intent,
+		plansIntent: intent,
+		isInSignup,
+		isLaunchPage,
 		showModalAndExit,
-		sitePlanSlug,
-		siteSlug,
 		withDiscount,
 	} );
+
 	const hiddenPlans = {
 		hideFreePlan,
 		hidePersonalPlan,
@@ -432,6 +403,13 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 	} );
 
+	let highlightLabelOverrides: { [ K in PlanSlug ]?: TranslateResult } | undefined;
+	if ( isTrailMapAny ) {
+		highlightLabelOverrides = {
+			[ PLAN_ECOMMERCE ]: translate( 'Best for eCommerce' ),
+		};
+	}
+
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGridRaw = useGridPlansForFeaturesGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -451,6 +429,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		highlightLabelOverrides,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -574,64 +553,6 @@ const PlansFeaturesMain = ( {
 		( gridPlan ) => gridPlan.planSlug
 	);
 
-	/**
-	 * The effects on /plans page need to be checked if this variable is initialized
-	 */
-	const planActionOverrides = useMemo( () => {
-		let actionOverrides: PlanActionOverrides | undefined;
-
-		if ( isInSignup ) {
-			actionOverrides = {
-				loggedInFreePlan: {
-					status: 'enabled',
-				},
-			};
-
-			if ( ! eligibleForFreeHostingTrial && intentFromProps === 'plans-new-hosted-site' ) {
-				actionOverrides.trialAlreadyUsed = {
-					postButtonText: translate( "You've already used your free trial! Thanks!" ),
-				};
-			}
-		}
-
-		if ( sitePlanSlug && intentFromProps !== 'plans-p2' ) {
-			if ( isFreePlan( sitePlanSlug ) ) {
-				actionOverrides = {
-					loggedInFreePlan: {
-						status: 'enabled',
-						text: translate( 'Manage add-ons', { context: 'verb' } ),
-					},
-				};
-
-				if ( domainFromHomeUpsellFlow ) {
-					actionOverrides.loggedInFreePlan = {
-						...actionOverrides.loggedInFreePlan,
-						text: translate( 'Keep my plan', { context: 'verb' } ),
-					};
-				}
-			} else {
-				actionOverrides = {
-					currentPlan: {
-						text: canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ),
-					},
-				};
-			}
-		}
-
-		return actionOverrides;
-	}, [
-		isInSignup,
-		sitePlanSlug,
-		intentFromProps,
-		resolvedSubdomainName.isLoading,
-		translate,
-		domainFromHomeUpsellFlow,
-		siteSlug,
-		showDomainUpsellDialog,
-		canUserManageCurrentPlan,
-		currentPlanManageHref,
-	] );
-
 	const gridPlanForSpotlight = useGridPlanForSpotlight( {
 		intent,
 		isSpotlightOnCurrentPlan,
@@ -716,7 +637,11 @@ const PlansFeaturesMain = ( {
 		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
 	);
 	const isLoadingGridPlans = Boolean(
-		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid || isExperimentLoading
+		! intent ||
+			! gridPlansForFeaturesGrid ||
+			! gridPlansForComparisonGrid ||
+			isExperimentLoading ||
+			isTrailMapExperimentLoading
 	);
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
@@ -734,7 +659,23 @@ const PlansFeaturesMain = ( {
 		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
 	);
 
-	const onFreePlanCTAClick = useActionCallback( { planSlug: PLAN_FREE } );
+	const {
+		primary: { callback: onFreePlanCTAClick },
+	} = useAction( {
+		planSlug: PLAN_FREE,
+	} );
+
+	// Check to see if we have at least one Woo Express plan we're comparing.
+	const hasWooExpressFeatures = useMemo( () => {
+		return gridPlansForComparisonGrid?.some(
+			( { planSlug, isVisible } ) => isVisible && isWooExpressPlan( planSlug )
+		);
+	}, [ gridPlansForComparisonGrid ] );
+
+	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
+	const featureGroupMap = hasWooExpressFeatures
+		? getWooExpressFeaturesGrouped()
+		: getPlanFeaturesGrouped();
 
 	return (
 		<>
@@ -790,19 +731,13 @@ const PlansFeaturesMain = ( {
 							} ) }
 					/>
 				) }
-				{ deemphasizeFreePlan && (
-					<FreePlanSubHeader>
-						{ translate(
-							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
-							{
-								components: {
-									link: <Button onClick={ onFreePlanCTAClick } borderless />,
-								},
-							}
-						) }
-					</FreePlanSubHeader>
-				) }
-				{ isDisplayingPlansNeededForFeature && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
+				<PlansPageSubheader
+					siteSlug={ siteSlug }
+					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+					deemphasizeFreePlan={ deemphasizeFreePlan }
+					onFreePlanCTAClick={ onFreePlanCTAClick }
+					showPlanBenefits={ isInSignup && isTrailMapAny }
+				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
 					<>
@@ -843,10 +778,8 @@ const PlansFeaturesMain = ( {
 										isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 										isInAdmin={ ! isInSignup }
 										isInSignup={ isInSignup }
-										isLaunchPage={ isLaunchPage }
 										onStorageAddOnClick={ handleStorageAddOnClick }
-										paidDomainName={ paidDomainName }
-										planActionOverrides={ planActionOverrides }
+										paidDomainName={ isTrailMapCopy ? undefined : paidDomainName }
 										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }
 										selectedFeature={ selectedFeature }
@@ -856,7 +789,10 @@ const PlansFeaturesMain = ( {
 										siteId={ siteId }
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-										useActionCallback={ useActionCallback }
+										useAction={ useAction }
+										enableFeatureTooltips={ ! isTrailMapCopy }
+										enableCategorisedFeatures={ isTrailMapStructure }
+										featureGroupMap={ isTrailMapStructure ? featureGroupMap : undefined }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -912,9 +848,7 @@ const PlansFeaturesMain = ( {
 													intervalType={ intervalType }
 													isInAdmin={ ! isInSignup }
 													isInSignup={ isInSignup }
-													isLaunchPage={ isLaunchPage }
 													onStorageAddOnClick={ handleStorageAddOnClick }
-													planActionOverrides={ planActionOverrides }
 													planTypeSelectorProps={
 														! hidePlanSelector
 															? { ...planTypeSelectorProps, plans: gridPlansForPlanTypeSelector }
@@ -928,10 +862,13 @@ const PlansFeaturesMain = ( {
 													siteId={ siteId }
 													stickyRowOffset={ comparisonGridStickyRowOffset }
 													showRefundPeriod={ isAnyHostingFlow( flowName ) }
-													useActionCallback={ useActionCallback }
+													useAction={ useAction }
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
+													enableFeatureTooltips={ ! isTrailMapCopy }
+													featureGroupMap={ featureGroupMap }
+													hideUnsupportedFeatures={ isTrailMapStructure }
 												/>
 											) }
 											<ComparisonGridToggle

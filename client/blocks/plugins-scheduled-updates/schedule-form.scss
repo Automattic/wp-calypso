@@ -113,6 +113,27 @@
 			box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 		}
 
+		&__sites {
+			> div {
+				display: flex;
+				align-items: center;
+
+				label {
+					max-width: calc(100% - 2rem);
+
+					.site-slug {
+						color: var(--studio-gray-50);
+						display: inline-block;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						max-width: 100%;
+					}
+				}
+			}
+
+		}
+
 	}
 
 	.form-field {
@@ -210,6 +231,14 @@
 	}
 
 	.form-field--paths {
+		.paths,
+		.new-path {
+			.components-button {
+				min-width: rem(100px);
+				justify-content: center;
+			}
+		}
+
 		.paths {
 			.components-input-control__backdrop {
 				border-color: var(--studio-gray-0);
@@ -245,4 +274,8 @@
 			}
 		}
 	}
+}
+
+.schedule-form-button {
+	margin: 0.5rem 0;
 }

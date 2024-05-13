@@ -1,4 +1,5 @@
 import { Context, type Callback } from '@automattic/calypso-router';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SitesSidebar from '../../components/sidebar-menu/sites';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
@@ -6,6 +7,7 @@ import {
 	DEFAULT_SORT_DIRECTION,
 	DEFAULT_SORT_FIELD,
 } from './constants';
+import NeedSetup from './needs-setup-sites';
 import SitesDashboard from './sites-dashboard';
 import { SitesDashboardProvider } from './sites-dashboard-provider';
 import type { DashboardSortInterface } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
@@ -47,6 +49,16 @@ function configureSitesContext( context: Context ) {
 			sort={ sort }
 			{ ...( context.featurePreview ? { featurePreview: context.featurePreview } : {} ) }
 		>
+			<PageViewTracker
+				title="Sites"
+				path={ context.path }
+				properties={ {
+					category: context.params.category,
+					siteUrl: context.params.siteUrl,
+					feature: context.params.feature,
+				} }
+			/>
+
 			<SitesDashboard />
 		</SitesDashboardProvider>
 	);
@@ -56,5 +68,17 @@ function configureSitesContext( context: Context ) {
 
 export const sitesContext: Callback = ( context: Context, next ) => {
 	configureSitesContext( context );
+	next();
+};
+
+export const needsSetupContext: Callback = ( context: Context, next ) => {
+	context.secondary = <SitesSidebar path={ context.path } />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Sites > Needs Setup" path={ context.path } />
+			<NeedSetup />
+		</>
+	);
+
 	next();
 };

@@ -12,7 +12,10 @@ import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { saveSignupDataToLocalStorage } from '../lib/signup-data-to-local-storage';
+import {
+	getSignupDataFromLocalStorage,
+	saveSignupDataToLocalStorage,
+} from '../lib/signup-data-to-local-storage';
 import { useHandleWPCOMRedirect } from './hooks/use-handle-wpcom-redirect';
 import type { AgencyDetailsPayload } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/types';
 import type { APIError } from 'calypso/state/a8c-for-agencies/types';
@@ -23,6 +26,7 @@ export default function SignupForm() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const notificationId = 'a4a-agency-signup-form';
+	const signupData = getSignupDataFromLocalStorage() ?? undefined;
 
 	const queryParams = new URLSearchParams( window.location.search );
 	const referer = queryParams.get( 'ref' );
@@ -43,10 +47,9 @@ export default function SignupForm() {
 	const onSubmit = useCallback(
 		async ( payload: AgencyDetailsPayload ) => {
 			dispatch( removeNotice( notificationId ) );
-
 			if ( shouldRedirectToWPCOM ) {
 				saveSignupDataToLocalStorage( payload );
-				await handleWPCOMRedirect( payload );
+				handleWPCOMRedirect( payload );
 				return;
 			}
 
@@ -97,6 +100,7 @@ export default function SignupForm() {
 				onSubmit={ onSubmit }
 				submitLabel={ translate( 'Continue' ) }
 				referer={ referer }
+				initialValues={ signupData }
 			/>
 		</Card>
 	);

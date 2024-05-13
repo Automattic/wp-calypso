@@ -1,22 +1,32 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
+import { useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
+import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
 import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
 import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
+import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
+import { BasicMetrics } from './basic-metrics';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
+import { GetReportForm } from './get-report-form';
 import HeadingInformation from './heading-information';
 import HostingInformation from './hosting-information';
 import HostingIntro from './hosting-intro';
+import { MetricsMenu } from './metrics-menu';
 import './styles.scss';
+
+const debug = debugFactory( 'apps:site-profiler' );
 
 interface Props {
 	routerDomain?: string;
@@ -25,6 +35,8 @@ interface Props {
 
 export default function SiteProfiler( props: Props ) {
 	const { routerDomain } = props;
+	const basicMetricsRef = useRef( null );
+
 	const {
 		domain,
 		category: domainCategory,
@@ -63,6 +75,34 @@ export default function SiteProfiler( props: Props ) {
 		urlData
 	);
 
+	const url = getValidUrl( routerDomain );
+
+	const {
+		data: basicMetrics,
+		error: errorBasicMetrics,
+		isFetching: isFetchingBasicMetrics,
+	} = useUrlBasicMetricsQuery( url );
+
+	const showBasicMetrics =
+		basicMetrics &&
+		! isFetchingBasicMetrics &&
+		! errorBasicMetrics &&
+		isEnabled( 'site-profiler/metrics' );
+
+	// TODO: Remove this debug statement once we have a better error handling mechanism
+	if ( isEnabled( 'site-profiler/metrics' ) && errorBasicMetrics ) {
+		debug(
+			`Error fetching basic metrics for domain ${ domain }: ${ errorBasicMetrics.message }`,
+			errorBasicMetrics
+		);
+	}
+
+	let showGetReportForm = false;
+
+	if ( isEnabled( 'site-profiler/metrics' ) ) {
+		showGetReportForm = !! showBasicMetrics && !! url;
+	}
+
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
@@ -91,18 +131,16 @@ export default function SiteProfiler( props: Props ) {
 						// Translators: %s is the domain name searched
 						<DocumentHead title={ translate( '%s ‹ Site Profiler', { args: [ domain ] } ) } />
 					}
-					{ showResultScreen && (
-						<LayoutBlockSection>
-							<HeadingInformation
-								domain={ domain }
-								conversionAction={ conversionAction }
-								onCheckAnotherSite={ () => updateDomainRouteParam( '' ) }
-								hostingProvider={ hostingProviderData?.hosting_provider }
-								urlData={ urlData }
-								domainCategory={ domainCategory }
-							/>
-						</LayoutBlockSection>
-					) }
+					<LayoutBlockSection>
+						<HeadingInformation
+							domain={ domain }
+							conversionAction={ conversionAction }
+							onCheckAnotherSite={ () => updateDomainRouteParam( '' ) }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							urlData={ urlData }
+							domainCategory={ domainCategory }
+						/>
+					</LayoutBlockSection>
 					{ siteProfilerData && ! siteProfilerData.is_domain_available && (
 						<>
 							<LayoutBlockSection>
@@ -122,9 +160,20 @@ export default function SiteProfiler( props: Props ) {
 							</LayoutBlockSection>
 						</>
 					) }
+					{ showBasicMetrics && (
+						<LayoutBlockSection>
+							<MetricsMenu basicMetricsRef={ basicMetricsRef } />
+							<BasicMetrics ref={ basicMetricsRef } basicMetrics={ basicMetrics.basic } />
+						</LayoutBlockSection>
+					) }
 				</LayoutBlock>
 			) }
 
+			{ showGetReportForm && (
+				<LayoutBlock>
+					<GetReportForm url={ url } token={ basicMetrics?.token } onClose={ () => {} } />
+				</LayoutBlock>
+			) }
 			<LayoutBlock
 				className="hosting-intro-block globe-bg"
 				isMonoBg={ showResultScreen && conversionAction && conversionAction !== 'register-domain' }

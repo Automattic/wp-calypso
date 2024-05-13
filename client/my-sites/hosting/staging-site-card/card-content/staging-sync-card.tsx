@@ -5,6 +5,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { urlToSlug } from 'calypso/lib/url';
@@ -156,7 +157,14 @@ const StagingToProductionSync = ( {
 				name: 'sqls',
 				label: 'Site database (SQL)',
 				subTitle: translate(
-					'Overwrite the database, including any posts, pages, products, or orders.'
+					'Overwrite the database, including any posts, pages, products, or orders. {{a}}Learn more{{/a}}.',
+					{
+						components: {
+							a: (
+								<InlineSupportLink supportContext="staging-to-production-sync" showIcon={ false } />
+							),
+						},
+					}
 				),
 				checked: false,
 				isDangerous: true,

@@ -116,7 +116,14 @@ export function plugins( context, next ) {
 export function scheduledUpdates( context, next ) {
 	const siteSlug = context?.params?.site_slug;
 	const scheduleId = context?.params?.schedule_id;
-	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/${ siteSlug }` );
+	const goToScheduledUpdatesList = () => {
+		// check if window.location query has multisite
+		if ( window?.location.search.includes( 'multisite' ) ) {
+			page.show( `/plugins/scheduled-updates` );
+		} else {
+			page.show( `/plugins/scheduled-updates/${ siteSlug }` );
+		}
+	};
 
 	if ( ! siteSlug ) {
 		sites( context, next );
@@ -181,30 +188,38 @@ export function scheduledUpdates( context, next ) {
 
 export function scheduledUpdatesMultisite( context, next ) {
 	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/` );
+	const goToScheduleEdit = ( id ) => page.show( `/plugins/scheduled-updates/edit/${ id }` );
+	const goToScheduleLogs = ( id, siteSlug ) =>
+		page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }?multisite` );
+	const goToScheduleCreate = () => page.show( `/plugins/scheduled-updates/create/` );
+
+	const callbackHandlers = {
+		onNavBack: goToScheduledUpdatesList,
+		onShowLogs: goToScheduleLogs,
+		onEditSchedule: goToScheduleEdit,
+		onCreateNewSchedule: goToScheduleCreate,
+	};
+
 	switch ( context.params.action ) {
 		case 'create':
 			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
-				onNavBack: goToScheduledUpdatesList,
 				context: 'create',
+				...callbackHandlers,
 			} );
 			break;
 
 		case 'edit':
 			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
-				onNavBack: goToScheduledUpdatesList,
-				scheduleId: context.params.scheduleId,
+				id: context.params.id,
 				context: 'edit',
+				...callbackHandlers,
 			} );
 			break;
 
 		default:
 			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
-				onNavBack: goToScheduledUpdatesList,
 				context: 'list',
-				onEditSchedule: ( id ) => page.show( `/plugins/scheduled-updates/edit/${ id }` ),
-				onShowLogs: ( id, siteSlug ) =>
-					page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }` ),
-				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/` ),
+				...callbackHandlers,
 			} );
 			break;
 	}
