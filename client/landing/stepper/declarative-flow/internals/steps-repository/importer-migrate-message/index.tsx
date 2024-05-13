@@ -1,8 +1,9 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, globe, group, shield, backup } from '@wordpress/icons';
-import { useEffect } from 'react';
+import { createElement, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -43,14 +44,19 @@ const ImporterMigrateMessage: Step = () => {
 					{ isPending && <LoadingEllipsis /> }
 					{ ! isPending && (
 						<div className="message">
-							{ sprintf(
-								// translators: %(email)s is the customer's email and %(webSite)s his site.
-								__(
-									'You are all set! Our Happiness Engineers will be reaching out to you shortly at %(email)s to help you migrate %(webSite)s to WordPress.com.'
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %(email)s is the customer's email and %(webSite)s his site.
+									__(
+										'You are all set! Our Happiness Engineers will be reaching out to you shortly at <strong>%(email)s</strong> to help you migrate <strong>%(webSite)s</strong> to WordPress.com.'
+									),
+									{
+										email: user?.email,
+										webSite: siteSlug,
+									}
 								),
 								{
-									email: user?.email,
-									webSite: siteSlug,
+									strong: createElement( 'strong' ),
 								}
 							) }
 						</div>

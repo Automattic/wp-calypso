@@ -14,7 +14,6 @@ import {
 
 const ComponentWrapper = (
 	props: FeaturesGridExternalProps & {
-		includePreviousPlanFeatures: boolean;
 		trailMapVariant: TrailMapVariantType;
 	}
 ) => {
@@ -32,7 +31,6 @@ const ComponentWrapper = (
 
 		// Mirror values from props
 		siteId: props.siteId,
-		includePreviousPlanFeatures: props.includePreviousPlanFeatures,
 		intent: props.intent,
 		coupon: props.coupon,
 		allFeaturesList: props.allFeaturesList,
@@ -75,7 +73,6 @@ const defaultProps: Omit< FeaturesGridExternalProps, 'gridPlans' > = {
 	isCustomDomainAllowedOnFreePlan: false,
 	isInAdmin: false,
 	isInSignup: true,
-	isLaunchPage: false,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
 	planUpgradeCreditsApplicable: undefined,
@@ -86,7 +83,14 @@ const defaultProps: Omit< FeaturesGridExternalProps, 'gridPlans' > = {
 	siteId: undefined,
 	stickyRowOffset: 0,
 	useCheckPlanAvailabilityForPurchase: () => ( {} ),
-	useActionCallback: () => () => {},
+	useAction: () => ( {
+		primary: {
+			text: 'test',
+			callback: () => {},
+			status: 'enabled',
+		},
+		postButtonText: '',
+	} ),
 };
 
 type Story = StoryObj< typeof ComponentWrapper >;

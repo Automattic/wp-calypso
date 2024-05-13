@@ -1,13 +1,13 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import {
 	APIError,
 	APIToggleFavorite,
 	ToggleFavoriteOptions,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import wpcom, { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 
-const client = isEnabled( 'a8c-for-agencies' ) ? wpcom : wpcomJpl;
+const client = isA8CForAgencies() ? wpcom : wpcomJpl;
 
 function mutationToggleFavoriteSite( {
 	siteId,

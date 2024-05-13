@@ -5,6 +5,8 @@ import type { ProvidedDependencies, Step } from '../../types';
 import './style.scss';
 
 const SURVEY_KEY = 'entrepreneur-trial';
+const WHAT_WOULD_YOU_LIKE_TO_DO_QUESTION_KEY = 'what-would-you-like-to-do';
+const MIGRATE_MY_STORE_ANSWER_KEY = 'migrate-my-store';
 
 type NavigationDecision = {
 	proceedWithNavigation: boolean;
@@ -16,9 +18,13 @@ const shouldNavigate = (
 	answerKeys: string[],
 	isLastQuestion?: boolean
 ): NavigationDecision => {
+	const isMigrationFlow =
+		questionKey === WHAT_WOULD_YOU_LIKE_TO_DO_QUESTION_KEY &&
+		answerKeys.includes( MIGRATE_MY_STORE_ANSWER_KEY );
+
 	return {
-		proceedWithNavigation: !! isLastQuestion,
-		providedDependencies: {},
+		proceedWithNavigation: isLastQuestion || isMigrationFlow,
+		providedDependencies: { isMigrationFlow },
 	};
 };
 

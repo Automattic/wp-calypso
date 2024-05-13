@@ -76,6 +76,10 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						max-height: 41px;
 					}
 
+					.navigation-header__main {
+						align-items: center;
+					}
+
 					.formatted-header__title {
 						color: var( --studio-gray-80, #2c3338 );
 						font-family: 'SF Pro Display', sans-serif;
@@ -131,6 +135,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 							height: calc( 100vh - 32px );
 							overflow: hidden;
 							max-width: none;
+							height: calc( 100vh - 32px );
 						}
 					}
 				}
@@ -138,7 +143,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				@media only screen and ( max-width: 600px ) {
 					.navigation-header__main {
 						justify-content: normal;
-						align-items: center;
 						.formatted-header {
 							flex: none;
 						}
@@ -152,6 +156,11 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					table {
 						padding-inline: 0 !important;
 					}
+					div.layout.is-global-sidebar-visible {
+						.layout__primary > main {
+							height: calc( 100vh - var(--masterbar-height) );
+						}
+					}
 				}
 
 				@media only screen and ( max-width: 781px ) {
@@ -164,7 +173,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						background: var( --color-surface );
 						margin: 0;
 						border-radius: 8px;
-						height: calc( 100vh - 32px );
 					}
 					header.navigation-header {
 						padding-inline: 16px;
@@ -180,20 +188,17 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 							padding-inline: 16px;
 						}
 					}
+					div.layout.is-global-sidebar-visible {
+						.layout__primary > main {
+							height: calc( 100vh - var(--masterbar-height) - 48px );
+						}
+					}
 				}
 
 			}
 		`;
 	const item = {
-		label: translate( 'All Domains' ),
-		subtitle: translate(
-			'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-			{
-				components: {
-					learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
-				},
-			}
-		),
+		label: translate( 'Domains' ),
 		helpBubble: translate(
 			'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 			{

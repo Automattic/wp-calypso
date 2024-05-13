@@ -13,10 +13,11 @@ import {
 	TimeLogo,
 } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
+import { debounce } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -31,6 +32,10 @@ type Props = {
 	pressableOwnership?: boolean;
 	highestDiscountPercentage?: number;
 	className?: string;
+	/** The minimum height for the pricing section. */
+	minPriceHeight?: number;
+	/** Callback to sync the card's pricing section height with others. */
+	setPriceHeight?: ( height: number ) => void;
 };
 
 export default function HostingCard( {
@@ -38,6 +43,8 @@ export default function HostingCard( {
 	pressableOwnership,
 	highestDiscountPercentage,
 	className,
+	minPriceHeight,
+	setPriceHeight,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -46,6 +53,8 @@ export default function HostingCard( {
 	const pressableUrl = 'https://my.pressable.com/agency/auth';
 
 	const { name, description, features } = useHostingDescription( plan.family_slug );
+
+	const priceRef = useRef< HTMLDivElement >( null );
 
 	const onExploreClick = useCallback( () => {
 		dispatch(
@@ -79,6 +88,25 @@ export default function HostingCard( {
 
 		return translate( 'USD' );
 	}, [ plan.price_interval, translate ] );
+
+	// Call `setPriceHeight` when the component mounts and when the window is resized,
+	// to keep the height of the card consistent with others.
+	useEffect( () => {
+		const handleResize = debounce( () => {
+			if ( priceRef.current && setPriceHeight ) {
+				setPriceHeight( priceRef.current.clientHeight );
+			}
+		}, 100 );
+
+		// Set the initial height when the component mounts.
+		handleResize();
+		// Update the height when the window is resized.
+		window.addEventListener( 'resize', handleResize );
+
+		return () => {
+			window.removeEventListener( 'resize', handleResize );
+		};
+	}, [ setPriceHeight ] );
 
 	const exploreButton = useMemo( () => {
 		if ( pressableOwnership ) {
@@ -136,7 +164,11 @@ export default function HostingCard( {
 					{ pressableOwnership && <Badge type="success">{ translate( 'You own this' ) }</Badge> }
 				</div>
 
-				<div className="hosting-card__price">
+				<div
+					className="hosting-card__price"
+					ref={ priceRef }
+					style={ { minHeight: `${ minPriceHeight }px` } }
+				>
 					<div>
 						<div className="hosting-card__price-value">
 							{ translate( 'Starting at %(priceStartingAt)s', {

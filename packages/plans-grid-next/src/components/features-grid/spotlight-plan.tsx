@@ -14,7 +14,6 @@ type SpotlightPlanProps = {
 	gridPlanForSpotlight?: GridPlan;
 	intervalType: string;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
@@ -29,7 +28,6 @@ const SpotlightPlan = ( {
 	gridPlanForSpotlight,
 	intervalType,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
@@ -68,7 +66,6 @@ const SpotlightPlan = ( {
 			<TopButtons
 				renderedGridPlans={ [ gridPlanForSpotlight ] }
 				isInSignup={ isInSignup }
-				isLaunchPage={ isLaunchPage }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				planActionOverrides={ planActionOverrides }
 			/>

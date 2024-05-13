@@ -330,6 +330,16 @@ const contextLinks = {
 		post_id: 99421,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
+	'site-monitoring-metrics': {
+		link: 'https://developer.wordpress.com/docs/troubleshooting/site-monitoring/#metrics',
+		post_id: 99421,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
+	'site-monitoring-logs': {
+		link: 'https://developer.wordpress.com/docs/troubleshooting/site-monitoring/#php-logs-and-webserver-logs',
+		post_id: 99421,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
 	'github-deployments': {
 		link: 'https://developer.wordpress.com/docs/developer-tools/github-deployments/',
 		post_id: 99879,
@@ -342,6 +352,10 @@ const contextLinks = {
 	'featured-images': {
 		link: 'https://wordpress.com/support/featured-images/',
 		post_id: 5259,
+	},
+	'hosting-configuration': {
+		link: 'https://wordpress.com/support/hosting-configuration/',
+		post_id: 160841,
 	},
 };
 

@@ -54,7 +54,6 @@ const defaultProps: Omit< ComparisonGridExternalProps, 'gridPlans' > = {
 	intervalType: 'yearly',
 	isInAdmin: false,
 	isInSignup: true,
-	isLaunchPage: false,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
 	planUpgradeCreditsApplicable: undefined,
@@ -64,7 +63,14 @@ const defaultProps: Omit< ComparisonGridExternalProps, 'gridPlans' > = {
 	siteId: undefined,
 	stickyRowOffset: 0,
 	useCheckPlanAvailabilityForPurchase: () => ( {} ),
-	useActionCallback: () => () => {},
+	useAction: () => ( {
+		primary: {
+			text: 'test',
+			callback: () => {},
+			status: 'enabled',
+		},
+		postButtonText: '',
+	} ),
 };
 
 type Story = StoryObj< typeof ComponentWrapper >;

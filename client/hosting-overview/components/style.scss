@@ -27,29 +27,19 @@ $card-padding: 24px;
 }
 
 .hosting-overview__plan {
-	&--is-free {
-		grid-column: 1 / -1;
-
-		& + .hosting-overview__quick-actions {
-			grid-column: 1 / -1;
-		}
-	}
-
-	&:not(:has(.plan-storage)) {
-		.hosting-overview__plan-card-header {
-			align-items: center;
-			display: flex;
-			margin-bottom: 0;
-		}
-	}
+	grid-column: 1 / 2;
+	grid-row: 1 / 2;
 }
 
 .hosting-overview__quick-actions {
+	grid-column: 2 / 3;
+	grid-row: 1 / 2;
 	padding-bottom: 10px;
 }
 
 .hosting-overview__active-domains {
-	grid-column: 1 / -1;
+	grid-column: 1 / 3;
+	grid-row: 2 / 3;
 	padding-bottom: 0;
 }
 
@@ -169,6 +159,10 @@ a.hosting-overview__link-button {
 	font-size: $font-body-extra-small;
 	line-height: 16px;
 	margin-bottom: 4px;
+
+	&.is-expired {
+		color: #ea303f;
+	}
 }
 
 .hosting-overview__plan-info-loading-placeholder {

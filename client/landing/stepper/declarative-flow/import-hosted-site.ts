@@ -1,9 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
 import localStorageHelper from 'store';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import CreateSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/create-site';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
@@ -11,6 +11,8 @@ import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin'
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
+import { useSite } from '../hooks/use-site';
+import { useLoginUrl } from '../utils/path';
 import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
@@ -77,6 +79,8 @@ const importHostedSiteFlow: Flow = {
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
 		const siteSlugParam = useSiteSlugParam();
+		const site = useSite();
+		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const siteCount =
 			useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] )
 				?.site_count ?? 0;
@@ -229,17 +233,19 @@ const importHostedSiteFlow: Flow = {
 					return window.location.assign( '/sites?hosting-flow=true' );
 
 				case 'importerWordpress':
-					if ( urlQueryParams.has( 'showModal' ) || ! isEnabled( 'migration_assistance_modal' ) ) {
+					if ( urlQueryParams.has( 'showModal' ) ) {
 						// remove the siteSlug in case they want to change the destination site
 						urlQueryParams.delete( 'siteSlug' );
 						urlQueryParams.delete( 'showModal' );
 						return navigate( `sitePicker?${ urlQueryParams.toString() }` );
 					}
 
-					if ( isEnabled( 'migration_assistance_modal' ) ) {
+					if ( ! isSitePlanCompatible ) {
 						urlQueryParams.set( 'showModal', 'true' );
+						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 					}
-					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+
+					return navigate( `sitePicker?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker':
 					// remove the from parameter to restart the flow
@@ -282,17 +288,23 @@ const importHostedSiteFlow: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 	useSideEffect( currentStep ) {
+		const flowName = this.name;
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+
+		const logInUrl = useLoginUrl( {
+			variationName: flowName,
+			redirectTo: `/setup/${ flowName }`,
+		} );
 
 		const urlQueryParams = useQuery();
 		const restoreFlowQueryParam = urlQueryParams.get( 'restore-progress' );
 
 		useLayoutEffect( () => {
 			if ( ! userIsLoggedIn ) {
-				window.location.assign( '/start/hosting' );
+				window.location.assign( logInUrl );
 			}
 
 			if ( restoreFlowQueryParam === null ) {

@@ -99,7 +99,16 @@ describe( 'PlanFeatures2023GridActions', () => {
 						},
 					},
 				},
-				helpers: { useActionCallback: () => {} },
+				helpers: {
+					useAction: () => ( {
+						primary: {
+							callback: () => {},
+							text: contactSupport,
+							status: 'disabled',
+						},
+						postButtonText: '',
+					} ),
+				},
 			} ) );
 
 			render(
@@ -134,7 +143,16 @@ describe( 'PlanFeatures2023GridActions', () => {
 						},
 					},
 				},
-				helpers: { useActionCallback: () => {} },
+				helpers: {
+					useAction: () => ( {
+						primary: {
+							callback: () => {},
+							text: upgrade,
+							status: '',
+						},
+						postButtonText: '',
+					} ),
+				},
 			} ) );
 
 			render(
@@ -169,7 +187,16 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
-					helpers: { useActionCallback: () => {} },
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: upgradeToYearly,
+								status: '',
+							},
+							postButtonText: '',
+						} ),
+					},
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
@@ -195,7 +222,16 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
-					helpers: { useActionCallback: () => {} },
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: '',
+								status: '',
+							},
+							postButtonText: '',
+						} ),
+					},
 				} ) );
 				usePlansGridContext.mockImplementation( () => ( {
 					gridPlansIndex: {
@@ -207,7 +243,16 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
-					helpers: { useActionCallback: () => {} },
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: upgradeToBiennial,
+								status: '',
+							},
+							postButtonText: '',
+						} ),
+					},
 				} ) );
 
 				render(
@@ -241,7 +286,16 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
-					helpers: { useActionCallback: () => {} },
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: upgradeToTriennial,
+								status: '',
+							},
+							postButtonText: '',
+						} ),
+					},
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
@@ -267,7 +321,16 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
-					helpers: { useActionCallback: () => {} },
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: 'Upgrade – $20',
+								status: '',
+							},
+							postButtonText: '',
+						} ),
+					},
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
@@ -296,12 +359,20 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
-					helpers: { useActionCallback: () => {} },
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: '',
+								status: '',
+							},
+							postButtonText: "You've already used your free trial! Thanks!",
+						} ),
+					},
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
 						{ ...defaultProps }
-						planActionOverrides={ planActionOverrides }
 						isInSignup={ true }
 						planSlug={ PLAN_BUSINESS }
 						isStuck={ false }

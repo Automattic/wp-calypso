@@ -129,7 +129,7 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
 					) }
 				/>
 			) }
-			<Card>
+			<Card className="admin-interface-style-card">
 				{ isHosting && (
 					<>
 						<MaterialIcon icon="display_settings" style="filled" size={ 32 } />
