@@ -21,13 +21,17 @@ import {
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
+import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import areLicenseKeysAssignableToMultisite from 'calypso/jetpack-cloud/sections/partner-portal/lib/are-license-keys-assignable-to-multisite';
 import isWooCommerceProduct from 'calypso/jetpack-cloud/sections/partner-portal/lib/is-woocommerce-product';
 import { addQueryArgs } from 'calypso/lib/url';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite, setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD } from '../../sites/constants';
+import { Site } from '../../sites/types';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
 import useAssignLicensesToSite from '../products-overview/hooks/use-assign-licenses-to-site';
 import { SITE_CARDS_PER_PAGE } from './constants';
@@ -67,6 +71,7 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 	const dispatch = useDispatch();
 
 	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
+	const [ filteredSites, setFilteredSites ] = useState( Array< any > );
 
 	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite, {
 		onError: ( error: Error ) => {
@@ -88,14 +93,47 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 		return [];
 	}, [] );
 
-	// We need to filter out multisites if the licenses are not assignable to a multisite.
-	let results = areLicenseKeysAssignableToMultisite( licenseKeysArray )
-		? sites
-		: sites.filter( ( site: any ) => ! site.is_multisite );
+	const agencyId = useSelector( getActiveAgencyId );
 
-	if ( search ) {
-		results = results.filter( ( site: any ) => site.domain.search( search ) !== -1 );
-	}
+	const { data, isError, isLoading } = useFetchDashboardSites( {
+		isPartnerOAuthTokenLoaded: false,
+		searchQuery: '',
+		currentPage: 0,
+		filter: {
+			issueTypes: [],
+			showOnlyFavorites: false,
+		},
+		sort: {
+			field: DEFAULT_SORT_FIELD,
+			direction: DEFAULT_SORT_DIRECTION,
+		},
+		agencyId,
+	} );
+
+	useEffect( () => {
+		if ( isError || isLoading ) {
+			return;
+		}
+
+		// TODO: Update the 'useFetchDashboardSites' API endpoint to include the 'is_multisite' attribute in its response.
+		// Currently, we rely on the 'sites' prop for filtering based on the 'is_multisite' status because this attribute
+		// is not provided by the API. Adding 'is_multisite' to the API response would allow us to directly filter
+		// the 'data.sites' array instead of depending on the external 'sites' array.
+		let results = areLicenseKeysAssignableToMultisite( licenseKeysArray )
+			? sites
+			: sites.filter( ( site ) => ! site.is_multisite );
+
+		if ( data && data.sites ) {
+			const siteBlogIds = new Set( data.sites.map( ( site: Site ) => site.blog_id ) );
+			results = results.filter( ( site ) => siteBlogIds.has( site.ID ) );
+		}
+
+		if ( search ) {
+			results = results.filter( ( site ) => site.domain.includes( search ) );
+		}
+
+		setFilteredSites( results );
+	}, [ sites, data, search, isLoading, licenseKeysArray, isError ] );
 
 	const showDownloadStep = licenseKeysArray.some( isWooCommerceProduct );
 
@@ -214,7 +252,7 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 				/>
 
 				<div className="assign-license__sites-list">
-					{ paginate( results, currentPage ).map( ( site: any ) => {
+					{ paginate( filteredSites, currentPage ).map( ( site: any ) => {
 						if ( -1 !== site.domain.search( search ) || null === search ) {
 							return (
 								<Card key={ site.ID } onClick={ () => setSelectedSite( site ) }>
@@ -235,7 +273,7 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 					className="assign-license__pagination"
 					page={ currentPage }
 					perPage={ SITE_CARDS_PER_PAGE }
-					total={ results.length }
+					total={ filteredSites.length }
 					pageClick={ ( page: number ) => setPage( page ) }
 				/>
 			</LayoutBody>
