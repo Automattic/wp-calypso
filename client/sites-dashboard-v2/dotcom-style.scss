@@ -116,8 +116,21 @@
 		}
 	}
 
+	table.dataviews-view-table {
+		table-layout: fixed;
+	}
+
 	table.dataviews-view-table thead .dataviews-view-table__row th {
 		border-bottom-color: var(--color-border-secondary);
+		padding-left: 16px;
+		@include break-large {
+			padding-left: 26px;
+		}
+		@include break-huge {
+			&:first-child {
+				padding-left: 64px;
+			}
+		}
 
 		span,
 		.dataviews-view-table-header-button {
@@ -127,6 +140,14 @@
 
 	table.dataviews-view-table .dataviews-view-table__row td {
 		border-bottom-color: var(--color-border-secondary);
+		@include break-large {
+			padding-left: 26px;
+		}
+		@include break-huge {
+			&:first-child {
+				padding-left: 64px;
+			}
+		}
 	}
 
 	table.dataviews-view-table th,
@@ -331,28 +352,33 @@
 				// Since we changed the original height of the search input, we need to adjust the position of this icon.
 				margin-top: 5px;
 			}
-		}
 
-		.sites-site-thumbnail {
-			display: flex;
+			.components-button.is-compact.has-icon:not(.has-text) {
+				@media ( max-width: 961px ) {
+					margin-inline-end: 8px;
+				}
+			}
 		}
 
 		.sites-site-favicon {
-			display: none;
+			margin-right: 0;
+
+			.is-blank {
+				font-size: xx-large !important;
+				text-transform: uppercase;
+				background-color: #f5f7f7;
+				border: 1px solid rgb(238, 238, 238);
+				border-radius: 4px;
+				box-sizing: border-box;
+			}
 		}
 	}
 
 	.sites-dashboard:not(.preview-hidden) {
-		.sites-site-favicon {
-			display: flex;
-			margin-right: 0;
-		}
-
 		.a4a-layout__header {
 			align-items: center !important;
 		}
 
-		.sites-site-thumbnail,
 		.sites-manage-all-domains-button,
 		.a4a-layout__header-subtitle {
 			display: none;
@@ -416,9 +442,6 @@
 		}
 	}
 	.item-preview__header {
-		.site-favicon .site-icon {
-			box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-		}
 		.item-preview__header-title {
 			font-family: Recoleta, sans-serif;
 		}

@@ -1,8 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import classNames from 'classnames';
-import { STATS_FEATURE_UTM_STATS } from '../constants';
 import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
-import { useShouldGateStats } from '../hooks/use-should-gate-stats';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import statsStrings from '../stats-strings';
@@ -14,14 +12,11 @@ const StatsModuleUTMWrapper = ( { siteId, period, postId, query, summary, classN
 
 	// Check if blog is internal.
 	const { isPending: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
-	// Check if the UTM stats module is valid by the standalone Stats commercial purchase.
 	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
-	// Check if the UTM stats module should be gated by WPCOM plans.
-	const { isGatedStats: isGatedUTMStats } = useShouldGateStats( STATS_FEATURE_UTM_STATS );
 
 	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
 	const isFetching = isFetchingUsage || isLoadingFeatureCheck;
-	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse || ! isGatedUTMStats;
+	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
 
 	// TODO: trigger useUTMMetricsQuery manually once isAdvancedFeatureEnabled === true
 

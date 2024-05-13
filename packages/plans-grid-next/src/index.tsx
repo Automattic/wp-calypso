@@ -22,12 +22,11 @@ const WrappedComparisonGrid = ( {
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
-	useActionCallback,
+	useAction,
 	recordTracksEvent,
 	allFeaturesList,
 	intervalType,
 	isInSignup,
-	isLaunchPage,
 	currentSitePlanSlug,
 	selectedPlan,
 	selectedFeature,
@@ -69,7 +68,7 @@ const WrappedComparisonGrid = ( {
 				siteId={ siteId }
 				gridPlans={ gridPlans }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-				useActionCallback={ useActionCallback }
+				useAction={ useAction }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				coupon={ coupon }
@@ -80,7 +79,6 @@ const WrappedComparisonGrid = ( {
 				<ComparisonGrid
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -102,7 +100,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		intent,
 		gridPlans,
 		useCheckPlanAvailabilityForPurchase,
-		useActionCallback,
+		useAction,
 		recordTracksEvent,
 		allFeaturesList,
 		coupon,
@@ -137,7 +135,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				gridPlans={ gridPlans }
 				coupon={ coupon }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-				useActionCallback={ useActionCallback }
+				useAction={ useAction }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				enableFeatureTooltips={ enableFeatureTooltips }

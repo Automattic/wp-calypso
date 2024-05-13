@@ -134,6 +134,7 @@
 		"plans/starter-plan": false,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
+		"plugins/multisite-scheduled-updates": true,
 		"plugins/ssr-categories": true,
 		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
