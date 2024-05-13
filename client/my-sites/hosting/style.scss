@@ -11,6 +11,36 @@
 		min-width: 0;
 	}
 
+	&--is-two-columns {
+		.hosting__layout .layout__column {
+			@include breakpoint-deprecated( ">1280px" ) {
+				box-sizing: border-box;
+				flex-basis: 45%;
+				flex-grow: 1;
+			}
+		}
+	}
+
+	&:not(.hosting--is-two-columns) {
+		@include breakpoint-deprecated( ">1280px" ) {
+			.hosting__layout {
+				gap: 0;
+
+				.layout__column {
+					box-sizing: border-box;
+					flex-basis: 30%;
+					padding-left: 8px;
+
+					&.hosting__main-layout-col {
+						flex-basis: 70%;
+						padding-left: 0;
+						padding-right: 8px;
+					}
+				}
+			}
+		}
+	}
+
 	.card > .card-icon,
 	.card > .material-icon,
 	.card > .gridicon {
@@ -84,12 +114,6 @@
 					left: 24px;
 				}
 			}
-		}
-
-		.hosting__layout .layout__column {
-			flex-basis: 45%;
-			box-sizing: border-box;
-			flex-grow: 1;
 		}
 	}
 
