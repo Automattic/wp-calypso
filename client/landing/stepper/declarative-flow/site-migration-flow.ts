@@ -33,7 +33,6 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			STEPS.VERIFY_EMAIL,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
@@ -212,10 +211,6 @@ const siteMigration: Flow = {
 					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug );
 				}
 
-				case STEPS.VERIFY_EMAIL.slug: {
-					return navigate( STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug );
-				}
-
 				case STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug: {
 					if ( providedDependencies?.error ) {
 						return navigate( STEPS.ERROR.slug );
@@ -228,20 +223,6 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					if ( providedDependencies?.verifyEmail ) {
-						if ( siteSlug ) {
-							// Set the in_site_migration_flow option if the user needs to be verified.
-							await saveSiteSettings( siteSlug, {
-								in_site_migration_flow: flowName,
-							} );
-						}
-
-						// We don't want the Verify Email step to poll for email verification since the new verification email will redirect them back into the flow.
-						return navigate( STEPS.VERIFY_EMAIL.slug, {
-							pollForEmailVerification: false,
-						} );
-					}
-
 					if ( providedDependencies?.goToCheckout ) {
 						const redirectAfterCheckout = providedDependencies?.userAcceptedDeal
 							? STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
@@ -303,10 +284,6 @@ const siteMigration: Flow = {
 					urlQueryParams.set( 'showModal', 'true' );
 
 					return navigate( `site-migration-upgrade-plan?${ urlQueryParams.toString() }` );
-				}
-
-				case STEPS.VERIFY_EMAIL.slug: {
-					return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug );
 				}
 			}
 		};
