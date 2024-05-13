@@ -1,4 +1,4 @@
-import { Button, Tooltip } from '@wordpress/components';
+import { Button, FormToggle, Tooltip } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon, info } from '@wordpress/icons';
 import clsx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +8,7 @@ import { usePrepareMultisitePluginsTooltipInfo } from 'calypso/blocks/plugin-sch
 import { usePrepareScheduleName } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-prepare-schedule-name';
 import { ScheduleListLastRunStatus } from 'calypso/blocks/plugins-scheduled-updates-multisite/schedule-list-last-run-status';
 import { ScheduleListTableRowMenu } from 'calypso/blocks/plugins-scheduled-updates-multisite/schedule-list-table-row-menu';
+import { useScheduledUpdatesActivateMutation } from 'calypso/data/plugins/use-scheduled-updates-activate-mutation';
 import { SiteSlug } from 'calypso/types';
 import type {
 	MultisiteSchedulesUpdates,
@@ -24,13 +25,14 @@ type Props = {
 };
 
 export const ScheduleListCard = ( props: Props ) => {
+	const translate = useTranslate();
 	const { className, compact, schedule, onEditClick, onRemoveClick, onLogsClick } = props;
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat();
 	const { preparePluginsTooltipInfo } = usePrepareMultisitePluginsTooltipInfo(
 		schedule.sites.map( ( site ) => site.ID )
 	);
-	const translate = useTranslate();
+	const { activateSchedule } = useScheduledUpdatesActivateMutation();
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	return (
@@ -93,6 +95,17 @@ export const ScheduleListCard = ( props: Props ) => {
 								<div>
 									<ScheduleListLastRunStatus schedule={ schedule } site={ site } />
 								</div>
+							</div>
+							<div className="plugins-update-manager-multisite-card__label">
+								<label htmlFor="name">{ translate( 'Active' ) }</label>
+								<FormToggle
+									checked={ schedule.active }
+									onChange={ ( e ) =>
+										activateSchedule( site.slug, schedule.schedule_id, {
+											active: e.target.checked,
+										} )
+									}
+								/>
 							</div>
 						</div>
 					) ) }
