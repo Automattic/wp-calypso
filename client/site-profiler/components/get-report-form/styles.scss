@@ -7,11 +7,11 @@
 	background-color: var(--studio-gray-0);
 	border: 1px solid #cbcbcb;
 	padding: 0 1.5rem;
-	animation: slideUp 500ms ease-out;
+	animation: 500ms ease-out slideUp;
 
 	&--hidden {
 		display: none;
-		animation: slideDown 500ms ease-out;
+		animation: 500ms ease-out slideDown;
 	}
 }
 
