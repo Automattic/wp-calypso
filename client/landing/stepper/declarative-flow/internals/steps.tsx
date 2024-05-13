@@ -251,6 +251,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
 	},
 
+	PICK_SITE: {
+		slug: 'sitePicker',
+		asyncComponent: () => import( './steps-repository/site-picker' ),
+	},
+
 	SEGMENTATION_SURVEY: {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
