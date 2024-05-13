@@ -69,7 +69,7 @@ const GlobalSidebar = ( {
 		return <Spinner className="sidebar__menu-loading" />;
 	}
 
-	const { requireBackLink, appTitle, backLinkHref, ...sidebarProps } = props;
+	const { requireBackLink, siteTitle, backLinkHref, ...sidebarProps } = props;
 	const sidebarBackLinkHref = backLinkHref || previousLink.current || '/sites';
 
 	return (
@@ -82,7 +82,7 @@ const GlobalSidebar = ( {
 							<a href={ sidebarBackLinkHref } onClick={ handleBackLinkClick }>
 								<Gridicon icon="chevron-left" size={ 24 } />
 							</a>
-							<span className="sidebar__app-title">{ appTitle || translate( 'Back' ) }</span>
+							<span className="sidebar__site-title">{ siteTitle || translate( 'Back' ) }</span>
 						</div>
 					) }
 					{ children }
