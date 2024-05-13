@@ -34,6 +34,7 @@ export const ScheduleListCard = ( props: Props ) => {
 	);
 	const { activateSchedule } = useScheduledUpdatesActivateBatchMutation();
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const batchActiveState = schedule.sites.every( ( site ) => site.active );
 
 	return (
 		<div className={ clsx( 'plugins-update-manager-multisite-card', className ) }>
@@ -66,17 +67,34 @@ export const ScheduleListCard = ( props: Props ) => {
 			</div>
 
 			{ ! compact && (
-				<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
-					<label htmlFor="last-update">
-						<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) }>
-							{ translate( 'Last update' ) }
-							<Icon icon={ isExpanded ? chevronUp : chevronDown } />
-						</Button>
-					</label>
-					<div>
-						<ScheduleListLastRunStatus schedule={ schedule } />
+				<>
+					<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
+						<label htmlFor="last-update">
+							<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) }>
+								{ translate( 'Last update' ) }
+								<Icon icon={ isExpanded ? chevronUp : chevronDown } />
+							</Button>
+						</label>
+						<div>
+							<ScheduleListLastRunStatus schedule={ schedule } />
+						</div>
 					</div>
-				</div>
+					<div className="plugins-update-manager-multisite-card__label">
+						<label htmlFor={ `active-${ schedule.id }` }>{ translate( 'Active' ) }</label>
+						<span id={ `active-${ schedule.id }` }>
+							<FormToggle
+								checked={ batchActiveState }
+								onChange={ ( e ) =>
+									activateSchedule(
+										schedule.sites.map( ( site ) => ( { id: site.ID, slug: site.slug } ) ),
+										schedule.schedule_id,
+										{ active: e.target.checked }
+									)
+								}
+							/>
+						</span>
+					</div>
+				</>
 			) }
 
 			{ isExpanded && (

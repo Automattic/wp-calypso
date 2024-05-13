@@ -33,6 +33,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 	const translate = useTranslate();
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const { activateSchedule } = useScheduledUpdatesActivateBatchMutation();
+	const batchActiveState = schedule.sites.every( ( site ) => site.active );
 
 	return (
 		<>
@@ -86,7 +87,18 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						<Icon className="icon-info" icon={ info } size={ 16 } />
 					</Tooltip>
 				</td>
-				<td className="active"></td>
+				<td className="active">
+					<FormToggle
+						checked={ batchActiveState }
+						onChange={ ( e ) => {
+							activateSchedule(
+								schedule.sites.map( ( site ) => ( { id: site.ID, slug: site.slug } ) ),
+								schedule.schedule_id,
+								{ active: e.target.checked }
+							);
+						} }
+					/>
+				</td>
 				<td className="menu">
 					<ScheduleListTableRowMenu { ...props } />
 				</td>
