@@ -77,13 +77,6 @@ const SiteMigrationInstructions: Step = function () {
 	}, [ fromUrl, hasErrorGetMigrationKey ] );
 
 	useEffect( () => {
-		if ( showSupportMessage ) {
-			recordTracksEvent( 'calypso_onboarding_site_migration_instructions_preparation_failed', {
-				error: setupError?.message,
-			} );
-		}
-	} );
-	useEffect( () => {
 		if ( isSetupCompleted ) {
 			recordTracksEvent( 'calypso_site_migration_instructions_preparation_complete' );
 		}

@@ -6,13 +6,11 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SiteMigrationInstructions from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
-jest.mock( 'calypso/lib/analytics/tracks' );
 
 ( useSite as jest.Mock ).mockReturnValue( {
 	ID: 123,
@@ -38,7 +36,6 @@ describe( 'SiteMigrationInstructions i2', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
-		( recordTracksEvent as jest.Mock ).mockClear();
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/123/atomic-migration-status/migrate-guru-key` )
@@ -154,9 +151,5 @@ describe( 'SiteMigrationInstructions i2', () => {
 		render();
 
 		expect( await getSupportMessage() ).toBeVisible();
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_onboarding_site_migration_instructions_preparation_failed',
-			expect.objectContaining( { error: expect.any( String ) } )
-		);
 	} );
 } );
