@@ -221,6 +221,7 @@ class Layout extends Component {
 		} );
 
 		this.refreshColorScheme( undefined, this.props.colorScheme );
+		this.addSidebarClassToBody();
 	}
 
 	/**
@@ -239,6 +240,21 @@ class Layout extends Component {
 				this.props.colorScheme !== 'modern' )
 		) {
 			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
+		}
+		this.addSidebarClassToBody();
+	}
+
+	addSidebarClassToBody() {
+		if ( this.props.isGlobalSidebarVisible ) {
+			document.querySelector( 'body' ).classList.add( 'has-global-sidebar' );
+		} else {
+			document.querySelector( 'body' ).classList.remove( 'has-global-sidebar' );
+		}
+
+		if ( this.props.isGlobalSidebarCollapsed ) {
+			document.querySelector( 'body' ).classList.add( 'has-global-sidebar-collapsed' );
+		} else {
+			document.querySelector( 'body' ).classList.remove( 'has-global-sidebar-collapsed' );
 		}
 	}
 
