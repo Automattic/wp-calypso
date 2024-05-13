@@ -139,8 +139,7 @@
 			padding: 8px 0 8px 8px;
 		}
 		.dataviews-view-table tr td:last-child {
-			padding: 0;
-			padding-inline-end: 8px;
+			padding: 8px 8px 8px 0;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
