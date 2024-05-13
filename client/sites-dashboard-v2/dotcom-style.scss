@@ -432,6 +432,7 @@
 			padding: 0 8px;
 		}
 	}
+
 	.item-preview__header {
 		.item-preview__header-title {
 			font-family: Recoleta, sans-serif;
@@ -458,6 +459,10 @@
 					color: var(--color-accent, #3858e9);
 				}
 			}
+		}
+
+		.item-preview__header-actions .button {
+			border-radius: 4px;
 		}
 
 		.item-preview__header-content .item-preview__close-preview {
