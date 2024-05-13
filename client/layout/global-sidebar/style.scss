@@ -334,6 +334,7 @@ $brand-text: "SF Pro Text", $sans;
 		margin-bottom: 24px;
 		display: flex;
 		align-items: center;
+		gap: 4px;
 
 		a {
 			color: var(--nav-link);
