@@ -527,8 +527,6 @@ class ReaderStream extends Component {
 		let body;
 		let showingStream;
 
-		console.log( streamHeader );
-
 		// trick an infinite list to showing placeholders
 		if ( forcePlaceholders ) {
 			items = [];

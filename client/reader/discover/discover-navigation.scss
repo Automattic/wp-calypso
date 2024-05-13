@@ -2,7 +2,7 @@
 	margin: 0 auto;
 	max-width: 600px;
 	&.reader-dual-column {
-		max-width: 968px; // Max width of dual column reader stream.
+		max-width: 100%; // Max width of dual column reader stream.
 	}
 }
 
@@ -17,7 +17,7 @@
 	}
 
 	&.reader-dual-column {
-		max-width: 968px; // Max width of dual column reader stream.
+		max-width: 100%; // Max width of dual column reader stream.
 		margin-bottom: 0;
 	}
 	@media only screen and (max-width: 660px) {
@@ -98,10 +98,4 @@
 .accessible-focus .discover-stream-navigation .discover-stream-navigation__left-button,
 .accessible-focus .discover-stream-navigation .discover-stream-navigation__right-button {
 	display: none;
-}
-
-.is-global-sidebar-visible.is-section-reader .tag-stream__main.main {
-	&.reader-two-column {
-		max-width: 100%;
-	}
 }
