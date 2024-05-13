@@ -185,7 +185,7 @@ const siteMigration: Flow = {
 							return navigate(
 								addQueryArgs(
 									{ siteId: newSiteId, siteSlug: newSiteSlug, from: fromQueryParam },
-									STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+									STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
 								)
 							);
 						}
