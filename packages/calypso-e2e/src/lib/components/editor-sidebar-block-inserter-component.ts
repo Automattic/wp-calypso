@@ -41,11 +41,12 @@ export class EditorSidebarBlockInserterComponent {
 		const editorParent = await this.editor.parent();
 		const blockInserterPanelLocator = editorParent.locator( selectors.closeBlockInserterButton );
 
-		// The panel is expected to auto-close. Let's possible wait for that
-		// detach event before we attempt to use the close button
-		await blockInserterPanelLocator.waitFor( { state: 'detached' } );
-
-		if ( ( await blockInserterPanelLocator.count() ) > 0 ) {
+		try {
+			// The panel is expected to auto-close. Let's possibly wait for that
+			// detach event
+			await blockInserterPanelLocator.waitFor( { state: 'detached' } );
+		} catch {
+			// If not auto-closed, trigger a close
 			await blockInserterPanelLocator.click();
 		}
 
