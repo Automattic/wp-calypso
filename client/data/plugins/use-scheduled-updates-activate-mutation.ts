@@ -1,37 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import type {
-	ScheduleUpdates,
-	MultisiteSchedulesUpdatesResponse,
-} from 'calypso/data/plugins/use-update-schedules-query';
+import type { ScheduleUpdates } from 'calypso/data/plugins/use-update-schedules-query';
 import type { SiteSlug } from 'calypso/types';
 
 export type ActiveRequestParams = {
 	active: boolean;
 };
-
-interface IStringIndex extends Record< string, any > {}
-
-function updateMultisiteSchedule(
-	multisiteSchedules: IStringIndex & MultisiteSchedulesUpdatesResponse,
-	updatedSchedule?: ScheduleUpdates
-): MultisiteSchedulesUpdatesResponse {
-	if ( ! updatedSchedule ) {
-		return multisiteSchedules;
-	}
-
-	for ( const key in multisiteSchedules ) {
-		if ( typeof multisiteSchedules[ key ] === 'object' ) {
-			if ( key === updatedSchedule.id ) {
-				multisiteSchedules[ key ] = updatedSchedule;
-			} else {
-				updateMultisiteSchedule( multisiteSchedules[ key ], updatedSchedule );
-			}
-		}
-	}
-	return multisiteSchedules;
-}
 
 export function useScheduledUpdatesActivateMutation( queryOptions = {} ) {
 	const queryClient = useQueryClient();
