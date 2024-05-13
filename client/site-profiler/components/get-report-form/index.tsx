@@ -1,5 +1,6 @@
 import { FormLabel, FormInputValidation, Gridicon, Button } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
+import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -17,10 +18,12 @@ type Errors = {
 export function GetReportForm( {
 	url,
 	token,
+	isOpen,
 	onClose,
 }: {
 	url?: string;
 	token?: string;
+	isOpen: boolean;
 	onClose: () => void;
 } ) {
 	const [ name, setName ] = useState( '' );
@@ -99,7 +102,11 @@ export function GetReportForm( {
 	};
 
 	return (
-		<div className="get-report-form__wrapper">
+		<div
+			className={ classnames( 'get-report-form__wrapper', {
+				'get-report-form__wrapper--hidden': ! isOpen,
+			} ) }
+		>
 			<div className="get-report-form__container">
 				<div className="get-report-form__title">
 					<span className="title">{ translate( 'Get full report' ) }</span>
@@ -112,7 +119,7 @@ export function GetReportForm( {
 							) }
 						</span>
 						<span>
-							<Gridicon icon="cross" onClick={ onClose } />
+							<Gridicon icon="chevron-down" onClick={ onClose } />
 						</span>
 					</div>
 					<form className="get-report-form__form" onSubmit={ handleSubmit }>

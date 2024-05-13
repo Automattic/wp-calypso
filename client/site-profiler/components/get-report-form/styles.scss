@@ -7,6 +7,31 @@
 	background-color: var(--studio-gray-0);
 	border: 1px solid #cbcbcb;
 	padding: 0 1.5rem;
+	animation: slideUp 500ms ease-out;
+
+	&--hidden {
+		display: none;
+		animation: slideDown 500ms ease-out;
+	}
+}
+
+@keyframes slideUp {
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+@keyframes slideDown {
+	from {
+		display: block;
+		transform: translateY(0);
+	}
+	to {
+		display: none;
+		transform: translateY(100%);
+	}
 }
 .get-report-form__container {
 	box-sizing: border-box;

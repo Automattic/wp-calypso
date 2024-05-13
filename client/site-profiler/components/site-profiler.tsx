@@ -125,7 +125,6 @@ export default function SiteProfiler( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-
 			{ showResultScreen && (
 				<LayoutBlock className="domain-result-block">
 					{
@@ -172,14 +171,12 @@ export default function SiteProfiler( props: Props ) {
 					) }
 				</LayoutBlock>
 			) }
-
-			{ showGetReportForm && (
-				<GetReportForm
-					url={ url }
-					token={ basicMetrics?.token }
-					onClose={ () => setIsGetReportFormOpen( false ) }
-				/>
-			) }
+			<GetReportForm
+				url={ url }
+				token={ basicMetrics?.token }
+				isOpen={ showGetReportForm }
+				onClose={ () => setIsGetReportFormOpen( false ) }
+			/>
 			<LayoutBlock
 				className="hosting-intro-block globe-bg"
 				isMonoBg={ showResultScreen && conversionAction && conversionAction !== 'register-domain' }
