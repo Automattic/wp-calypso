@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import useSiteSettingsQuery from 'calypso/data/site-settings/use-site-settings-query';
 import useUpdateSiteSettingsMutation from 'calypso/data/site-settings/use-update-site-settings-mutation';
+import { useProtectForm } from 'calypso/lib/protect-form';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
@@ -23,6 +24,7 @@ const withSiteSettings = createHigherOrderComponent( ( Wrapped ) => {
 		const translate = useTranslate();
 		const queryClient = useQueryClient();
 		const path = useSelector( ( state ) => getCurrentRouteParameterized( state, siteId ) );
+		const { markChanged, markSaved } = useProtectForm();
 
 		const trackEvent = useCallback(
 			( name ) => {
@@ -42,6 +44,7 @@ const withSiteSettings = createHigherOrderComponent( ( Wrapped ) => {
 
 		const updateSettings = useCallback(
 			( fields ) => {
+				markChanged();
 				return setUnsavedSettings( { ...unsavedSettings, ...fields } );
 			},
 			[ unsavedSettings, setUnsavedSettings ]
@@ -77,6 +80,7 @@ const withSiteSettings = createHigherOrderComponent( ( Wrapped ) => {
 				if ( path === '/settings/newsletter/:site' ) {
 					trackTracksEvent( 'calypso_settings_newsletter_saved', unsavedSettings );
 				}
+				markSaved();
 			},
 			onError( err, newSettings, context ) {
 				// Revert to previous settings on failure
