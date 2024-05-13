@@ -43,12 +43,12 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 
 	return (
 		<div className="domains-table-mobile-card" ref={ ref }>
-			{ domainManagementLink && (
+			{ ! showBulkActions && domainManagementLink && (
 				<a className="domains-table__domain-link" href={ domainManagementLink } />
 			) }
 			<div>
 				<div className="domains-table-mobile-card-header">
-					{ canBulkUpdate( domain ) && showBulkActions && (
+					{ showBulkActions && (
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							checked={ isSelected }
@@ -58,6 +58,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 								domain: domain.domain,
 							} ) }
 							size={ 20 }
+							disabled={ ! canBulkUpdate( domain ) }
 						/>
 					) }
 					<div>

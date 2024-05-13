@@ -28,6 +28,10 @@
 			&:first-child {
 				padding-inline-start: 0;
 			}
+
+			&.domains-table-checkbox-td {
+				min-width: fit-content;
+			}
 		}
 
 		// Note: The checkbox does not count for column counting purposes
