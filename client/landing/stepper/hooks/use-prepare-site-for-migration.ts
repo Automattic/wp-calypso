@@ -27,7 +27,7 @@ const getMigrationKeyStatus = (
 };
 
 const getError = ( original: Error ) => {
-	return new Error( 'Error to prepare a site for migration', { cause: original } );
+	return new Error( 'Failed to prepare a site for migration', { cause: original } );
 };
 
 /**
