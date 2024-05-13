@@ -33,7 +33,6 @@ type MobileViewProps = {
 	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
@@ -66,7 +65,6 @@ const MobileView = ( {
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
@@ -121,7 +119,6 @@ const MobileView = ( {
 					<TopButtons
 						renderedGridPlans={ [ gridPlan ] }
 						isInSignup={ isInSignup }
-						isLaunchPage={ isLaunchPage }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						planActionOverrides={ planActionOverrides }
 					/>
@@ -185,7 +182,6 @@ type TabletViewProps = {
 	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
@@ -205,7 +201,6 @@ const TabletView = ( {
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
@@ -230,7 +225,6 @@ const TabletView = ( {
 		intervalType,
 		isCustomDomainAllowedOnFreePlan,
 		isInSignup,
-		isLaunchPage,
 		onStorageAddOnClick,
 		paidDomainName,
 		planActionOverrides,
@@ -265,7 +259,6 @@ const FeaturesGrid = ( {
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
@@ -280,7 +273,6 @@ const FeaturesGrid = ( {
 		gridPlanForSpotlight,
 		intervalType,
 		isInSignup,
-		isLaunchPage,
 		onStorageAddOnClick,
 		planActionOverrides,
 		planUpgradeCreditsApplicable,

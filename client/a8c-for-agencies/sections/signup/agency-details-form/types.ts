@@ -1,5 +1,4 @@
 export interface AgencyDetailsPayload {
-	email?: string | null;
 	firstName: string;
 	lastName: string;
 	agencyName: string;

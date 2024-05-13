@@ -17,7 +17,6 @@
 
 	th {
 		padding: 16px 0;
-		margin-bottom: calc(-1 * var(--row-gap));
 		color: var(--studio-gray-60);
 		display: flex;
 		align-items: center;
@@ -38,6 +37,7 @@
 	}
 
 	.list__header-column {
+		text-transform: uppercase;
 		display: flex;
 		align-items: center;
 		&.is-sortable {

@@ -53,10 +53,10 @@ export const GlobalSidebarFooter: FC< {
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.SEARCH_CLICK ) }
 			/>
 			<SidebarNotifications
-				isActive
 				className="sidebar__item-notifications"
 				tooltip={ translate( 'Notifications' ) }
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.NOTIFICATION_CLICK ) }
+				translate={ translate }
 			/>
 			{ isInSupportSession && (
 				<QuickLanguageSwitcher className="sidebar__footer-language-switcher" shouldRenderAsButton />

@@ -17,7 +17,6 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -91,8 +90,6 @@ export default function ReferralsOverview() {
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<PageViewTracker title="Referrals" path="/referrals" />
-
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title } </Title>

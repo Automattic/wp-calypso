@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { setPlansListExperiment } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localStorageExperimentAssignmentKey } from '@automattic/explat-client/src/internal/experiment-assignment-store';
+import localStorage from '@automattic/explat-client/src/internal/local-storage';
 import {
 	getLanguage,
 	getLanguageSlugs,

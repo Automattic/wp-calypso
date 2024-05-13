@@ -28,11 +28,6 @@ export default function ( props ) {
 
 	return (
 		<>
-			<NavigationHeader
-				title={ translate( 'Conversations' ) }
-				subtitle={ translate( 'Monitor all of your ongoing discussions.' ) }
-				className="conversations__header"
-			/>
 			<Stream
 				key="conversations"
 				streamKey={ props.streamKey }
@@ -44,6 +39,11 @@ export default function ( props ) {
 				intro={ intro }
 			>
 				<ConversationTitle title={ props.title } />
+				<NavigationHeader
+					title={ translate( 'Conversations' ) }
+					subtitle={ translate( 'Monitor all of your ongoing discussions.' ) }
+					className="conversations__header"
+				/>
 			</Stream>
 		</>
 	);

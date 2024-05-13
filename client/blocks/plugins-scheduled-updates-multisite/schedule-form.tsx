@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -31,6 +32,7 @@ type InitialData = {
 };
 
 export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
+	const queryClient = useQueryClient();
 	const initialData: InitialData = scheduleForEdit
 		? {
 				sites: scheduleForEdit?.sites.map( ( site ) => site.ID ),
@@ -192,6 +194,12 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 		// Create monitors for sites that have been successfully scheduled
 		createMonitors( successfulSiteSlugs );
 		onNavBack && onNavBack();
+		// Trigger an extra refetch 5 seconds later
+		setTimeout( () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'multisite-schedules-update' ],
+			} );
+		}, 5000 );
 	};
 
 	return (

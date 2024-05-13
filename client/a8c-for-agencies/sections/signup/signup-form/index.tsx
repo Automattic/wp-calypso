@@ -47,10 +47,9 @@ export default function SignupForm() {
 	const onSubmit = useCallback(
 		async ( payload: AgencyDetailsPayload ) => {
 			dispatch( removeNotice( notificationId ) );
-
 			if ( shouldRedirectToWPCOM ) {
 				saveSignupDataToLocalStorage( payload );
-				await handleWPCOMRedirect( payload );
+				handleWPCOMRedirect( payload );
 				return;
 			}
 

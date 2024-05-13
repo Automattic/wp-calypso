@@ -18,18 +18,22 @@ const exported = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		context.primary = createElement( LikedPostsStream, {
-			key: 'liked',
-			streamKey,
-			trackScrollPage: trackScrollPage.bind(
-				null,
-				basePath,
-				fullAnalyticsPageTitle,
-				analyticsPageTitle,
-				mcKey
-			),
-			onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-		} );
+		context.primary = (
+			<div>
+				{ createElement( LikedPostsStream, {
+					key: 'liked',
+					streamKey,
+					trackScrollPage: trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						analyticsPageTitle,
+						mcKey
+					),
+					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+				} ) }
+			</div>
+		);
 		next();
 	},
 };

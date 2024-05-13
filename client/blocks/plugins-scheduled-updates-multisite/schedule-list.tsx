@@ -42,6 +42,7 @@ export const ScheduleList = ( props: Props ) => {
 		data: schedules = [],
 		isLoading: isLoadingSchedules,
 		isFetched,
+		refetch,
 	} = useMultisiteUpdateScheduleQuery( true );
 	const translate = useTranslate();
 	const { searchTerm } = useContext( MultisitePluginUpdateManagerContext );
@@ -57,7 +58,14 @@ export const ScheduleList = ( props: Props ) => {
 	}, [ selectedScheduleId ] );
 	useEffect( () => setSelectedScheduleId( initSelectedScheduleId ), [ initSelectedScheduleId ] );
 
-	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugs );
+	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugs, {
+		onSuccess: () => {
+			// Refetch again after 5 seconds
+			setTimeout( () => {
+				refetch();
+			}, 5000 );
+		},
+	} );
 
 	const openRemoveDialog = ( id: string ) => {
 		setRemoveDialogOpen( true );
@@ -104,7 +112,7 @@ export const ScheduleList = ( props: Props ) => {
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">
 			<div className="plugins-update-manager-multisite__header">
-				<h1>{ translate( 'Update schedules' ) }</h1>
+				<h1>{ translate( 'Scheduled Updates' ) }</h1>
 				{ showNewScheduleBtn && ! isScheduleEmpty && (
 					<Button
 						__next40pxDefaultSize={ ! compact }
@@ -120,7 +128,6 @@ export const ScheduleList = ( props: Props ) => {
 
 			<ScheduleErrors />
 
-			{ schedules.length === 0 && isLoading && <Spinner /> }
 			{ isScheduleEmpty && ! compact && (
 				<ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } />
 			) }
@@ -138,6 +145,7 @@ export const ScheduleList = ( props: Props ) => {
 					/>
 				</>
 			) : null }
+			{ schedules.length === 0 && isLoading && <Spinner /> }
 			<ConfirmDialog
 				isOpen={ removeDialogOpen }
 				onConfirm={ onRemoveDialogConfirm }

@@ -1,22 +1,13 @@
 import {
-	getPlanClass,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_P2_FREE,
-	TERM_BIENNIALLY,
-	TERM_TRIENNIALLY,
-	planMatches,
-	TERM_ANNUALLY,
 	type PlanSlug,
-	PLAN_HOSTING_TRIAL_MONTHLY,
 	type StorageOption,
 	isP2FreePlan,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	isBusinessPlan,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { PlanPricing, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
@@ -37,7 +28,6 @@ type PlanFeaturesActionsButtonProps = {
 	currentSitePlanSlug?: string | null;
 	isPopular?: boolean;
 	isInSignup?: boolean;
-	isLaunchPage?: boolean | null;
 	isMonthlyPlan?: boolean;
 	planSlug: PlanSlug;
 	buttonText?: string;
@@ -60,83 +50,45 @@ const DummyDisabledButton = styled.div`
 	text-align: center;
 `;
 
-const SignupFlowPlanFeatureActionButton = ( {
+const PlanFeatureActionButton = ( {
 	planSlug,
-	planTitle,
-	priceString,
 	isStuck,
-	isLargeCurrency,
 	hasFreeTrialPlan,
 	onCtaClick,
 	onFreeTrialCtaClick,
-	planActionOverrides,
+	text,
+	freeTrialText,
+	postButtonText,
+	status,
 }: {
 	planSlug: PlanSlug;
-	planTitle: TranslateResult;
-	priceString: string | null;
 	isStuck: boolean;
-	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
 	onCtaClick: () => void;
 	onFreeTrialCtaClick: () => void;
-	planActionOverrides?: PlanActionOverrides;
+	text: TranslateResult;
+	freeTrialText?: TranslateResult;
+	postButtonText?: TranslateResult;
+	status?: 'disabled' | 'blocked' | 'enabled';
 } ) => {
-	const translate = useTranslate();
-	const busy =
-		isFreePlan( planSlug ) && planActionOverrides?.loggedInFreePlan?.status === 'blocked';
-	const postButtonText =
-		isBusinessPlan( planSlug ) && planActionOverrides?.trialAlreadyUsed?.postButtonText;
+	// TODO: Is status ever 'blocked'? We should do some thorough investigation at some point.
+	const busy = isFreePlan( planSlug ) && status === 'blocked';
 
-	let btnText = translate( 'Get %(plan)s', {
-		args: {
-			plan: planTitle,
-		},
-	} );
-
-	if ( isFreePlan( planSlug ) ) {
-		btnText = translate( 'Start with Free' );
-	} else if ( isStuck && ! isLargeCurrency ) {
-		btnText = translate( 'Get %(plan)s – %(priceString)s', {
-			args: {
-				plan: planTitle,
-				priceString: priceString ?? '',
-			},
-			comment:
-				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
-		} );
-	} else if ( isStuck && isLargeCurrency ) {
-		btnText = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
-			args: {
-				plan: planTitle,
-				priceString: priceString ?? '',
-			},
-			comment:
-				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
-			components: {
-				span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
-			},
-		} );
-	}
-
-	if ( hasFreeTrialPlan ) {
-		return (
-			<div className="plan-features-2023-grid__multiple-actions-container">
-				<PlanButton planSlug={ planSlug } onClick={ () => onFreeTrialCtaClick() } busy={ busy }>
-					{ translate( 'Try for free' ) }
+	return hasFreeTrialPlan ? (
+		<div className="plan-features-2023-grid__multiple-actions-container">
+			<PlanButton planSlug={ planSlug } onClick={ () => onFreeTrialCtaClick() } busy={ busy }>
+				{ freeTrialText }
+			</PlanButton>
+			{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
+				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } borderless>
+					{ text }
 				</PlanButton>
-				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-					<PlanButton planSlug={ planSlug } onClick={ onCtaClick } borderless>
-						{ btnText }
-					</PlanButton>
-				) }
-			</div>
-		);
-	}
-
-	return (
+			) }
+		</div>
+	) : (
 		<>
 			<PlanButton planSlug={ planSlug } onClick={ onCtaClick } busy={ busy }>
-				{ btnText }
+				{ text }
 			</PlanButton>
 			{ postButtonText && (
 				<span className="plan-features-2023-grid__actions-post-button-text">
@@ -147,81 +99,25 @@ const SignupFlowPlanFeatureActionButton = ( {
 	);
 };
 
-const LaunchPagePlanFeatureActionButton = ( {
-	planSlug,
-	planTitle,
-	priceString,
-	isStuck,
-	isLargeCurrency,
-	onCtaClick,
-}: {
-	planSlug: PlanSlug;
-	planTitle: TranslateResult;
-	priceString: string | null;
-	isStuck: boolean;
-	isLargeCurrency: boolean;
-	onCtaClick: () => void;
-} ) => {
-	const translate = useTranslate();
-
-	let buttonText = translate( 'Select %(plan)s', {
-		args: {
-			plan: planTitle,
-		},
-		context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
-		comment:
-			'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-	} );
-
-	if ( isFreePlan( planSlug ) ) {
-		buttonText = translate( 'Keep this plan', {
-			comment:
-				'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-		} );
-	} else if ( isStuck && ! isLargeCurrency ) {
-		buttonText = translate( 'Select %(plan)s – %(priceString)s', {
-			args: {
-				plan: planTitle,
-				priceString: priceString ?? '',
-			},
-			comment:
-				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Select Premium - $10',
-		} );
-	}
-
-	return (
-		<PlanButton planSlug={ planSlug } onClick={ onCtaClick }>
-			{ buttonText }
-		</PlanButton>
-	);
-};
-
 const LoggedInPlansFeatureActionButton = ( {
 	availableForPurchase,
-	priceString,
-	isStuck,
-	isLargeCurrency,
+	disabled,
 	isMonthlyPlan,
-	planTitle,
 	onCtaClick,
 	planSlug,
-	currentSitePlanSlug,
-	buttonText,
-	planActionOverrides,
 	storageOptions,
+	text,
 }: {
 	availableForPurchase?: boolean;
-	priceString: string | null;
-	isStuck: boolean;
-	isLargeCurrency: boolean;
+	disabled: boolean;
 	isMonthlyPlan?: boolean;
-	planTitle: TranslateResult;
 	onCtaClick: () => void;
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
-	buttonText?: string;
-	planActionOverrides?: PlanActionOverrides;
 	storageOptions?: StorageOption[];
+	text: TranslateResult;
+	billingPeriod?: PlanPricing[ 'billPeriod' ];
+	currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
@@ -231,14 +127,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
 		[ planSlug ]
 	);
-	const {
-		current,
-		storageAddOnsForPlan,
-		pricing: { billingPeriod },
-	} = gridPlansIndex[ planSlug ];
-	const currentPlanBillingPeriod = currentSitePlanSlug
-		? gridPlansIndex[ currentSitePlanSlug ]?.pricing.billingPeriod
-		: null;
+	const { current, storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
 	const defaultStorageOption = useDefaultStorageOption( {
 		storageOptions,
 		storageAddOnsForPlan,
@@ -253,29 +142,16 @@ const LoggedInPlansFeatureActionButton = ( {
 	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
 
 	if (
-		isFreePlan( planSlug ) ||
-		( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected )
+		( isFreePlan( planSlug ) ||
+			( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
+		isP2FreePlan( planSlug ) &&
+		current
 	) {
-		if ( planActionOverrides?.loggedInFreePlan ) {
-			return (
-				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-					{ planActionOverrides.loggedInFreePlan.text }
-				</PlanButton>
-			);
-		}
-
-		if ( isP2FreePlan( planSlug ) && current ) {
-			return null;
-		}
-
-		return (
-			<PlanButton planSlug={ planSlug } current={ current } disabled>
-				{ translate( 'Contact support', { context: 'verb' } ) }
-			</PlanButton>
-		);
+		return null;
 	}
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
+		// TODO: this block can be another "exception" that stays
 		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
 			return (
 				<PlanButton
@@ -286,8 +162,8 @@ const LoggedInPlansFeatureActionButton = ( {
 					{ translate( 'Upgrade' ) }
 				</PlanButton>
 			);
-		} else if ( planActionOverrides?.currentPlan ) {
-			const { text } = planActionOverrides.currentPlan;
+		} else if ( text ) {
+			// TODO: this can be removed and done in the final single-render call. there's nothing special about it outside of "disabled" status
 			return (
 				<PlanButton
 					planSlug={ planSlug }
@@ -299,100 +175,6 @@ const LoggedInPlansFeatureActionButton = ( {
 				</PlanButton>
 			);
 		}
-		return (
-			<PlanButton planSlug={ planSlug } current={ current } disabled>
-				{ translate( 'Active Plan' ) }
-			</PlanButton>
-		);
-	}
-
-	const isTrialPlan =
-		currentSitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
-		currentSitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
-		currentSitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
-
-	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
-	if (
-		availableForPurchase &&
-		currentSitePlanSlug &&
-		! current &&
-		! isTrialPlan &&
-		currentPlanBillingPeriod &&
-		billingPeriod &&
-		currentPlanBillingPeriod > billingPeriod
-	) {
-		return (
-			<PlanButton planSlug={ planSlug } disabled current={ current }>
-				{ translate( 'Contact support', { context: 'verb' } ) }
-			</PlanButton>
-		);
-	}
-
-	// If the current plan matches on a lower-term, then show an "Upgrade to..." button.
-	if (
-		availableForPurchase &&
-		currentSitePlanSlug &&
-		! current &&
-		getPlanClass( planSlug ) === getPlanClass( currentSitePlanSlug ) &&
-		! isTrialPlan
-	) {
-		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
-			return (
-				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-					{ buttonText || translate( 'Upgrade to Triennial' ) }
-				</PlanButton>
-			);
-		}
-
-		if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
-			return (
-				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-					{ buttonText || translate( 'Upgrade to Biennial' ) }
-				</PlanButton>
-			);
-		}
-
-		if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
-			return (
-				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-					{ buttonText || translate( 'Upgrade to Yearly' ) }
-				</PlanButton>
-			);
-		}
-	}
-
-	let buttonTextFallback;
-
-	if ( buttonText ) {
-		buttonTextFallback = buttonText;
-	} else if ( isStuck && ! isLargeCurrency ) {
-		buttonTextFallback = translate( 'Upgrade – %(priceString)s', {
-			context: 'verb',
-			args: { priceString: priceString ?? '' },
-			comment: '%(priceString)s is the full price including the currency. Eg: Get Upgrade - $10',
-		} );
-	} else if ( isStuck && isLargeCurrency ) {
-		buttonTextFallback = translate( 'Get %(plan)s {{span}}%(priceString)s{{/span}}', {
-			args: {
-				plan: planTitle,
-				priceString: priceString ?? '',
-			},
-			comment:
-				'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
-			components: {
-				span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
-			},
-		} );
-	} else {
-		buttonTextFallback = translate( 'Upgrade', { context: 'verb' } );
-	}
-
-	if ( availableForPurchase ) {
-		return (
-			<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-				{ buttonTextFallback }
-			</PlanButton>
-		);
 	}
 
 	if ( ! availableForPurchase ) {
@@ -404,7 +186,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				showOnMobile={ false }
 				id="downgrade"
 			>
-				<DummyDisabledButton>{ translate( 'Downgrade', { context: 'verb' } ) }</DummyDisabledButton>
+				<DummyDisabledButton>{ text }</DummyDisabledButton>
 				{ isMobile() && (
 					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
 						{ translate( 'Please contact support to downgrade your plan.' ) }
@@ -414,35 +196,43 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	return null;
+	return (
+		<PlanButton
+			planSlug={ planSlug }
+			disabled={ disabled }
+			onClick={ onCtaClick }
+			current={ current }
+		>
+			{ text }
+		</PlanButton>
+	);
 };
 
-const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( {
-	availableForPurchase = true,
-	currentSitePlanSlug,
-	isInSignup,
-	isLaunchPage,
+const PlanFeatures2023GridActions = ( {
 	planSlug,
-	buttonText,
-	planActionOverrides,
+	currentSitePlanSlug,
+	visibleGridPlans,
+	availableForPurchase,
 	isStuck,
+	isInSignup,
 	isMonthlyPlan,
 	storageOptions,
-	visibleGridPlans,
-} ) => {
-	const translate = useTranslate();
+}: PlanFeaturesActionsButtonProps ) => {
 	const {
 		gridPlansIndex,
-		helpers: { useActionCallback },
 		siteId,
+		helpers: { useAction },
 	} = usePlansGridContext();
 	const {
 		planTitle,
-		pricing: { currencyCode, originalPrice, discountedPrice },
+		pricing: { billingPeriod, currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
 		cartItemForPlan,
 		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
+	const currentPlanBillingPeriod = currentSitePlanSlug
+		? gridPlansIndex[ currentSitePlanSlug ]?.pricing.billingPeriod
+		: undefined;
 	const { prices } = usePlanPricingInfoFromGridPlans( {
 		gridPlans: visibleGridPlans,
 	} );
@@ -454,26 +244,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		storageAddOnsForPlan,
 	} );
 
-	const onCtaClick = useActionCallback( {
-		planSlug,
-		cartItemForPlan,
-		selectedStorageAddOn,
-	} );
-
-	// TODO: Unsure about using free plan as a fallback. We should revisit.
-	const onFreeTrialCtaClick = useActionCallback( {
-		planSlug: freeTrialPlanSlug ?? PLAN_FREE,
-		cartItemForPlan: { product_slug: freeTrialPlanSlug ?? PLAN_FREE },
-	} );
-
-	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-		return (
-			<PlanButton planSlug={ planSlug } onClick={ onCtaClick }>
-				{ translate( 'Learn more' ) }
-			</PlanButton>
-		);
-	}
-
 	const priceString = formatCurrency(
 		( discountedPrice.monthly || originalPrice.monthly ) ?? 0,
 		currencyCode || 'USD',
@@ -483,57 +253,67 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		}
 	);
 
-	if ( isLaunchPage ) {
-		return (
-			<LaunchPagePlanFeatureActionButton
-				planSlug={ planSlug }
-				planTitle={ planTitle }
-				priceString={ priceString }
-				isStuck={ isStuck }
-				isLargeCurrency={ !! isLargeCurrency }
-				onCtaClick={ onCtaClick }
-			/>
-		);
-	}
-	if ( isInSignup ) {
-		return (
-			<SignupFlowPlanFeatureActionButton
-				planSlug={ planSlug }
-				planTitle={ planTitle }
-				priceString={ priceString }
-				isStuck={ isStuck }
-				isLargeCurrency={ !! isLargeCurrency }
-				hasFreeTrialPlan={ !! freeTrialPlanSlug }
-				onCtaClick={ onCtaClick }
-				onFreeTrialCtaClick={ onFreeTrialCtaClick }
-				planActionOverrides={ planActionOverrides }
-			/>
-		);
-	}
+	const {
+		primary: { callback, text, status },
+		postButtonText,
+	} = useAction( {
+		availableForPurchase,
+		billingPeriod,
+		// TODO: Double check that we need to do this boolean coercion
+		isLargeCurrency: !! isLargeCurrency,
+		isStuck,
+		planSlug,
+		planTitle,
+		priceString,
+		cartItemForPlan,
+		currentPlanBillingPeriod,
+		selectedStorageAddOn,
+	} );
 
-	return (
-		<LoggedInPlansFeatureActionButton
-			planSlug={ planSlug }
-			availableForPurchase={ availableForPurchase }
-			onCtaClick={ onCtaClick }
-			currentSitePlanSlug={ currentSitePlanSlug }
-			buttonText={ buttonText }
-			planActionOverrides={ planActionOverrides }
-			priceString={ priceString }
-			isStuck={ isStuck }
-			isLargeCurrency={ !! isLargeCurrency }
-			isMonthlyPlan={ isMonthlyPlan }
-			planTitle={ planTitle }
-			storageOptions={ storageOptions }
-		/>
-	);
-};
+	const {
+		primary: { callback: freeTrialCallback, text: freeTrialText },
+	} = useAction( {
+		billingPeriod,
+		isFreeTrialAction: true,
+		// TODO: Double check that we need to do this boolean coercion
+		isLargeCurrency: !! isLargeCurrency,
+		isStuck,
+		// TODO: Unsure about using free plan as a fallback. We should revisit.
+		planSlug: freeTrialPlanSlug ?? PLAN_FREE,
+		planTitle,
+		priceString,
+		cartItemForPlan: { product_slug: freeTrialPlanSlug ?? PLAN_FREE },
+		currentPlanBillingPeriod,
+		selectedStorageAddOn,
+	} );
 
-const PlanFeatures2023GridActions = ( props: PlanFeaturesActionsButtonProps ) => {
 	return (
 		<div className="plan-features-2023-gridrison__actions">
 			<div className="plan-features-2023-gridrison__actions-buttons">
-				<PlanFeaturesActionsButton { ...props } />
+				{ isInSignup || isWpcomEnterpriseGridPlan( planSlug ) ? (
+					<PlanFeatureActionButton
+						planSlug={ planSlug }
+						isStuck={ isStuck }
+						postButtonText={ postButtonText }
+						status={ status }
+						hasFreeTrialPlan={ isInSignup ? !! freeTrialPlanSlug : false }
+						onCtaClick={ callback }
+						onFreeTrialCtaClick={ freeTrialCallback }
+						text={ text }
+						freeTrialText={ freeTrialText }
+					/>
+				) : (
+					<LoggedInPlansFeatureActionButton
+						disabled={ ! callback || 'disabled' === status }
+						planSlug={ planSlug }
+						availableForPurchase={ availableForPurchase }
+						onCtaClick={ callback }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						isMonthlyPlan={ isMonthlyPlan }
+						storageOptions={ storageOptions }
+						text={ text }
+					/>
+				) }
 			</div>
 		</div>
 	);

@@ -93,10 +93,12 @@ export const MySitesSidebarUnifiedMenu = ( {
 	};
 
 	const shouldForceShowExternalIcon = ( item ) => {
+		if ( ! isUnifiedSiteSidebarVisible ) {
+			return false;
+		}
 		return (
-			isUnifiedSiteSidebarVisible &&
-			item?.parent === 'jetpack' &&
-			item?.url?.startsWith( 'https://jetpack.com' )
+			( item?.parent === 'jetpack' && item?.url?.startsWith( 'https://jetpack.com' ) ) ||
+			( item?.parent === 'wpcom-hosting-menu' && item?.url?.startsWith( '/hosting/' ) )
 		);
 	};
 

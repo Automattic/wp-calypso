@@ -171,7 +171,7 @@ describe( 'ContactDetailsFormFields', () => {
 				/>
 			);
 
-			expect( screen.getByRole( 'link', { name: 'Nice Guys Inc' } ) ).toBeVisible();
+			expect( screen.getByText( 'Nice Guys Inc' ) ).toBeVisible();
 		} );
 	} );
 
