@@ -479,7 +479,7 @@ export class CheckoutThankYou extends Component<
 
 	getMasterBar = () => {
 		const { translate } = this.props;
-		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
+		const purchases = getPurchases( this.props );
 		const wasEcommercePlanPurchased = purchases.some( isEcommerce );
 
 		const siteId = this.props.selectedSite?.ID;
