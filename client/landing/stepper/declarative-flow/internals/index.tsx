@@ -20,7 +20,6 @@ import {
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
 import { useQuery } from '../../hooks/use-query';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
@@ -160,17 +159,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
 
-	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isSignupStartTracked = flow.trackingConfig?.useIsSignupStartTracked?.();
+	const signupEventProps = flow.trackingConfig?.useSignupStartEventProps?.();
 
 	useEffect( () => {
-		let isSignupStartTracked = flow.trackingConfig?.isSignupStartTracked;
-		if ( typeof isSignupStartTracked === 'function' ) {
-			isSignupStartTracked = isSignupStartTracked( { isLoggedIn } );
-		}
 		if ( isSignupStartTracked && isFlowStart() ) {
-			recordSignupStart( flow.name, ref, flow.trackingConfig?.signupStartProps );
+			recordSignupStart( flow.name, ref, signupEventProps );
 		}
-	}, [ flow, ref, isFlowStart, isLoggedIn ] );
+	}, [ flow, ref, isFlowStart, isSignupStartTracked, signupEventProps ] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
