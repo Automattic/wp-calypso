@@ -294,7 +294,7 @@
 	text-align: left;
 
 	a {
-		@include breakpoint-deprecated( ">480px" ) {
+		@include break-mobile {
 			white-space: pre;
 		}
 	}
