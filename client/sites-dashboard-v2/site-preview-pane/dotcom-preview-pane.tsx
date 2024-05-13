@@ -150,6 +150,7 @@ const DotcomPreviewPane = ( {
 			features={ features }
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
+				siteIconFallback: 'first-grapheme',
 			} }
 		/>
 	);

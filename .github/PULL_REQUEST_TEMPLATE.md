@@ -11,6 +11,15 @@ Related to #
 
 *
 
+## Why are these changes being made?
+<!--
+It's easy to see what a PR does but much harder to find out why it was made,
+particularly when researching old changes in history. Record an explanation of
+the motivation behind this change and how it will help.
+-->
+
+*
+
 ## Testing Instructions
 
 <!--
