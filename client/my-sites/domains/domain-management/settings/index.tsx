@@ -206,7 +206,7 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				title={ translate( 'Gravatar domain card', { textOnly: true } ) }
+				title={ translate( 'Gravatar profile domain', { textOnly: true } ) }
 				key="status"
 				expanded
 			>
@@ -423,8 +423,7 @@ const Settings = ( {
 			domain.type === domainTypes.SITE_REDIRECT ||
 			domain.transferStatus === transferStatus.PENDING_ASYNC ||
 			! domain.canManageDnsRecords ||
-			! domains ||
-			domain.isGravatarDomain
+			! domains
 		) {
 			return null;
 		}
@@ -698,8 +697,7 @@ const Settings = ( {
 			! domain ||
 			domain.type !== domainTypes.REGISTERED ||
 			domain.registrar !== 'KS_RAM' ||
-			! domain.canManageDnsRecords ||
-			domain.isGravatarDomain
+			! domain.canManageDnsRecords
 		) {
 			return null;
 		}

@@ -1,15 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
-import { GravatarDomainCardProps } from './types';
 
-const GravatarDomainCard = ( props: GravatarDomainCardProps ) => {
+const GravatarDomainCard = () => {
 	const translate = useTranslate();
-	const { selectedDomainName } = props;
 
 	return (
 		<div>
 			<div>
-				<p>{ translate( 'Placeholder text for Gravatar domain card.' ) }</p>
-				<p>{ selectedDomainName }</p>
+				<p>{ translate( 'This domain is used as a custom domain for your Gravatar profile.' ) }</p>
 			</div>
 		</div>
 	);
