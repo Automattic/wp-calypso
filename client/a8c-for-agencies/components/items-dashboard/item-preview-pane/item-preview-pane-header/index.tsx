@@ -51,52 +51,58 @@ export default function ItemPreviewPaneHeader( {
 					className="item-preview__header-favicon"
 					size={ size }
 				/>
-				<div className="item-preview__header-title-summary">
-					<div className="item-preview__header-title">{ itemData.title }</div>
-					<div className="item-preview__header-summary">
-						<Button
-							variant="link"
-							className="item-preview__header-summary-link"
-							href={ itemData.url }
-							target="_blank"
-						>
-							<span>{ itemData.subtitle }</span>
-							<Icon
-								className="sidebar-v2__external-icon"
-								icon={ external }
-								size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
-							/>
-						</Button>
+				<div className="item-preview__header-info">
+					<div className="item-preview__header-title-summary">
+						<div className="item-preview__header-title">{ itemData.title }</div>
+						<div className="item-preview__header-summary">
+							<Button
+								variant="link"
+								className="item-preview__header-summary-link"
+								href={ itemData.url }
+								target="_blank"
+							>
+								<span>
+									{ itemData.subtitle }
+									<Icon
+										className="sidebar-v2__external-icon"
+										icon={ external }
+										size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
+									/>
+								</span>
+							</Button>
+						</div>
+					</div>
+					<div className="item-preview__header-actions">
+						{ itemData.adminUrl ? (
+							<>
+								<Button
+									onClick={ closeItemPreviewPane }
+									className="item-preview__close-preview-button"
+									variant="secondary"
+								>
+									{ translate( 'Close' ) }
+								</Button>
+								<Button
+									variant="primary"
+									className="item-preview__admin-button"
+									href={ `${ adminUrl }` }
+									ref={ focusRef }
+								>
+									{ adminLabel }
+								</Button>
+							</>
+						) : (
+							<Button
+								onClick={ closeItemPreviewPane }
+								className="item-preview__close-preview"
+								aria-label={ translate( 'Close Preview' ) }
+								ref={ focusRef }
+							>
+								<Gridicon icon="cross" size={ ICON_SIZE_REGULAR } />
+							</Button>
+						) }
 					</div>
 				</div>
-				{ itemData.adminUrl ? (
-					<>
-						<Button
-							onClick={ closeItemPreviewPane }
-							className="item-preview__close-preview-button"
-							variant="secondary"
-						>
-							{ translate( 'Close' ) }
-						</Button>
-						<Button
-							variant="primary"
-							className="item-preview__admin-button"
-							href={ `${ adminUrl }` }
-							ref={ focusRef }
-						>
-							{ adminLabel }
-						</Button>
-					</>
-				) : (
-					<Button
-						onClick={ closeItemPreviewPane }
-						className="item-preview__close-preview"
-						aria-label={ translate( 'Close Preview' ) }
-						ref={ focusRef }
-					>
-						<Gridicon icon="cross" size={ ICON_SIZE_REGULAR } />
-					</Button>
-				) }
 			</div>
 		</div>
 	);
