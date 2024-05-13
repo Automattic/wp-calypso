@@ -54,6 +54,7 @@ import type {
 	PlanSlug,
 	WPComStorageAddOnSlug,
 	FeatureGroupMap,
+	StorageOption,
 } from '@automattic/calypso-products';
 
 const featureGroupRowTitleCellMaxWidth = 450;
@@ -360,6 +361,7 @@ type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeS
 	allVisible: boolean;
 	isLastInRow: boolean;
 	planSlug: PlanSlug;
+	storageOptions: StorageOption[];
 };
 
 type PlanFeatureFootnotes = {
@@ -381,6 +383,7 @@ const ComparisonGridHeaderCell = ( {
 	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
+	storageOptions,
 }: ComparisonGridHeaderCellProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
@@ -473,6 +476,7 @@ const ComparisonGridHeaderCell = ( {
 				showMonthlyPrice={ false }
 				isStuck={ false }
 				visibleGridPlans={ visibleGridPlans }
+				storageOptions={ storageOptions }
 			/>
 		</Cell>
 	);
@@ -526,7 +530,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						</PlanTypeSelectorWrapper>
 					) }
 				</RowTitleCell>
-				{ visibleGridPlans.map( ( { planSlug }, index ) => (
+				{ visibleGridPlans.map( ( { planSlug, features: { storageOptions } }, index ) => (
 					<ComparisonGridHeaderCell
 						planSlug={ planSlug }
 						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
@@ -543,6 +547,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						selectedPlan={ selectedPlan }
 						showRefundPeriod={ showRefundPeriod }
 						isStuck={ isStuck }
+						storageOptions={ storageOptions }
 					/>
 				) ) }
 			</PlanRow>
