@@ -1,13 +1,47 @@
+.get-report-form__wrapper {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
+	background-color: var(--studio-gray-0);
+	border: 1px solid #cbcbcb;
+	padding: 0 1.5rem;
+	animation: 500ms ease-out slideUp;
+
+	&--hidden {
+		display: none;
+		animation: 500ms ease-out slideDown;
+	}
+}
+
+@keyframes slideUp {
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+@keyframes slideDown {
+	from {
+		display: block;
+		transform: translateY(0);
+	}
+	to {
+		display: none;
+		transform: translateY(100%);
+	}
+}
 .get-report-form__container {
 	box-sizing: border-box;
-	margin: 0 -3rem;
-	padding: 3rem 3rem;
-	border: 1px solid #cbcbcb;
-	background-color: var(--studio-gray-0);
+	padding: 3rem 0;
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
 	gap: 20px;
+	margin: 0 auto;
+	max-width: 1224px;
 }
 .get-report-form__title {
 	color: #000;
@@ -30,6 +64,9 @@
 
 	.description {
 		color: #3c4043;
+	}
+	.gridicon {
+		cursor: pointer;
 	}
 }
 
