@@ -12,7 +12,7 @@ import type {
 	PlansIntent,
 	GridPlan,
 } from '../../types';
-import type { FeatureObject, FeatureList, PlanSlug } from '@automattic/calypso-products';
+import type { FeatureObject, FeatureList } from '@automattic/calypso-products';
 
 export type UsePlanFeaturesForGridPlans = ( {
 	gridPlans,
@@ -23,7 +23,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
-	includePreviousPlanFeatures,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -32,7 +31,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
-	includePreviousPlanFeatures?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -48,11 +46,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
-	includePreviousPlanFeatures,
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
-		let previousPlan: PlanSlug | null = null;
 		return gridPlans.reduce(
 			( acc, gridPlan ) => {
 				const planSlug = gridPlan.planSlug;
@@ -196,25 +192,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					} );
 				}
 
-				const previousPlanFeatures = {
-					wpcomFeatures: previousPlan !== null ? acc[ previousPlan ].wpcomFeatures : [],
-				};
-
-				previousPlan = planSlug;
-
-				if ( includePreviousPlanFeatures ) {
-					// Add the previous plan features only if it is not present in the current plan features.
-					previousPlanFeatures.wpcomFeatures.forEach( ( feature ) => {
-						if (
-							! wpcomFeaturesTransformed.find(
-								( featureToFind ) => featureToFind.getSlug() === feature.getSlug()
-							)
-						) {
-							wpcomFeaturesTransformed.push( feature );
-						}
-					} );
-				}
-
 				return {
 					...acc,
 					[ planSlug ]: {
@@ -234,7 +211,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		intent,
 		highlightedFeatures,
 		selectedFeature,
-		includePreviousPlanFeatures,
 		showLegacyStorageFeature,
 		allFeaturesList,
 		hasRedeemedDomainCredit,

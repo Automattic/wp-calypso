@@ -12,7 +12,6 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
-import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { TypeToggle } from 'calypso/my-sites/patterns/components/type-toggle';
 import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
@@ -240,14 +239,7 @@ export const PatternLibrary = ( {
 				/>
 			) }
 
-			<PatternsDocumentHead category={ category } />
-
-			<PatternsHeader
-				description={ translate(
-					'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.'
-				) }
-				title={ translate( "It's Easier With Patterns" ) }
-			/>
+			<PatternsHeader />
 
 			<div className="pattern-library__wrapper">
 				<div

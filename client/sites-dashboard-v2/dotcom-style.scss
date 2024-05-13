@@ -28,12 +28,42 @@
 		}
 	}
 
+	.a4a-layout__header {
+		align-items: center;
+	}
+
 	.a4a-layout__header-main {
 		display: block;
 	}
 
 	.a4a-layout__header-title {
 		display: block;
+	}
+
+	.a4a-layout__header-subtitle {
+		font-size: 0.875rem;
+		margin: 4px 0 0 0;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+	}
+
+	.a4a-layout__header-actions {
+		width: auto;
+		a {
+			font-weight: normal;
+		}
+	}
+
+	.sites-manage-all-domains-button {
+		border-color: var(--color-neutral-10);
+
+		@media (max-width: 959px) {
+			margin-inline-end: 8px !important;
+		}
+	}
+
+	.sites-manage-all-domains-button:hover {
+		border-color: var(--color-neutral-20);
 	}
 
 	height: calc(100vh - var(--masterbar-height));
@@ -87,11 +117,20 @@
 	}
 
 	table.dataviews-view-table {
-		--color-border-dataviews-view-table: #f1f1f1;
+		table-layout: fixed;
 	}
 
 	table.dataviews-view-table thead .dataviews-view-table__row th {
-		border-bottom-color: var(--color-border-dataviews-view-table);
+		border-bottom-color: var(--color-border-secondary);
+		padding-left: 16px;
+		@include break-large {
+			padding-left: 26px;
+		}
+		@include break-huge {
+			&:first-child {
+				padding-left: 64px;
+			}
+		}
 
 		span,
 		.dataviews-view-table-header-button {
@@ -100,7 +139,15 @@
 	}
 
 	table.dataviews-view-table .dataviews-view-table__row td {
-		border-bottom-color: var(--color-border-dataviews-view-table);
+		border-bottom-color: var(--color-border-secondary);
+		@include break-large {
+			padding-left: 26px;
+		}
+		@include break-huge {
+			&:first-child {
+				padding-left: 64px;
+			}
+		}
 	}
 
 	table.dataviews-view-table th,
@@ -113,6 +160,10 @@
 	table.dataviews-view-table th:last-child,
 	table.dataviews-view-table td:last-child {
 		display: table-cell; /* ensures these cells are always shown */
+	}
+
+	.sites-overview__content {
+		margin-top: 35px;
 	}
 
 	@media (max-width: $break-wide) {
@@ -186,7 +237,8 @@
 }
 
 .wpcom-site .is-group-sites.is-global-sidebar-collapsed,
-.wpcom-site .is-group-sites.is-global-sidebar-visible:has(.sites-dashboard.sites-dashboard__layout) {
+.wpcom-site .is-group-sites.is-global-sidebar-visible:has(.sites-dashboard.sites-dashboard__layout),
+.wpcom-site .is-group-sites.is-global-sidebar-visible.is-section-plugins {
 	.layout__content {
 		min-height: 100vh;
 
@@ -300,25 +352,35 @@
 				// Since we changed the original height of the search input, we need to adjust the position of this icon.
 				margin-top: 5px;
 			}
-		}
 
-		.sites-site-thumbnail {
-			display: flex;
+			.components-button.is-compact.has-icon:not(.has-text) {
+				@media ( max-width: 961px ) {
+					margin-inline-end: 8px;
+				}
+			}
 		}
 
 		.sites-site-favicon {
-			display: none;
+			margin-right: 0;
+
+			.is-blank {
+				font-size: xx-large !important;
+				text-transform: uppercase;
+				background-color: #f5f7f7;
+				border: 1px solid rgb(238, 238, 238);
+				border-radius: 4px;
+				box-sizing: border-box;
+			}
 		}
 	}
 
 	.sites-dashboard:not(.preview-hidden) {
-		.sites-site-favicon {
-			display: flex;
-			margin-right: 0;
+		.a4a-layout__header {
+			align-items: center !important;
 		}
 
-		.sites-site-thumbnail,
-		.sites-manage-all-domains-button {
+		.sites-manage-all-domains-button,
+		.a4a-layout__header-subtitle {
 			display: none;
 		}
 
@@ -364,6 +426,13 @@
 
 // Styles for site preview pane.
 .wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
+	.dev-tools-promo__icon {
+		display: inline-block;
+		height: 18px;
+		vertical-align: top;
+		margin-left: 4px;
+	}
+
 	.section-nav-tabs__list {
 		box-sizing: border-box;
 		overflow-x: auto;
@@ -373,14 +442,15 @@
 		}
 	}
 	.item-preview__header {
-		.site-favicon .site-icon {
-			box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-		}
 		.item-preview__header-title {
 			font-family: Recoleta, sans-serif;
 		}
 
 		.item-preview__header-content {
+			.item-preview__header-info {
+				flex-wrap: wrap;
+			}
+
 			@media (max-width: $break-large) {
 				padding: 0;
 			}
@@ -475,6 +545,7 @@
 			margin-top: 0;
 			overflow: hidden;
 			padding-bottom: 0 !important;
+
 		}
 
 		.dataviews-wrapper {
@@ -495,7 +566,8 @@
 
 // Override styles from my-sites/sidebar
 .wpcom-site div.is-group-sites:not(.has-no-masterbar),
-.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) {
+.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar),
+.wpcom-site div.is-section-plugins:not(.has-no-masterbar) {
 	&.focus-content .layout__content,
 	&.focus-sidebar .layout__content {
 		padding-bottom: 0;
@@ -520,7 +592,8 @@
 	}
 }
 
-.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
+.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper,
+.wpcom-site div.is-section-plugins:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
 	max-height: calc(100vh - 276px); /* 276px is the size of all the height above and below the dataviews-view-table-wrapper */
 
 	// With 48px padding.

@@ -1,16 +1,13 @@
-@import "~@automattic/color-studio/dist/color-variables";
-@import "@wordpress/base-styles/breakpoints";
+@import "../plugin-scheduled-updates-common/styles";
 
 $brand-display: "SF Pro Display", sans-serif;
 
 .plugins-update-manager-multisite {
-	@media screen and (max-width: $break-small) {
-		margin: 1rem;
-	}
-
-	h1 {
-		font-size: 2rem;
-		margin-bottom: 1rem;
+	&.plugins-update-manager-multisite-edit,
+	&.plugins-update-manager-multisite-create {
+		h1 {
+			font-size: 2rem !important;
+		}
 	}
 
 	.components-notice {
@@ -19,67 +16,6 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		ul {
 			margin-top: 1.25rem;
-		}
-	}
-
-	.schedule-form {
-		margin-bottom: 1.25rem;
-
-		& > .form-control-container {
-			margin-bottom: 1.25rem;
-
-			&:last-child {
-				margin-bottom: 0;
-			}
-
-			& > .components-flex {
-				gap: 2rem;
-
-				& > .components-flex-item {
-					flex-basis: 100%;
-					width: 100%;
-				}
-			}
-		}
-	}
-
-	.plugins-update-manager-multisite-table {
-		th,
-		td {
-			font-size: 0.875rem;
-			padding: 1rem 0;
-			color: var(--studio-gray-60);
-			border-bottom: solid 1px var(--studio-gray-0);
-		}
-
-		th {
-			font-weight: 500;
-		}
-
-		td {
-			padding: 0.5rem 0;
-			vertical-align: middle;
-
-			&.last-update {
-				min-width: 200px;
-			}
-
-			.badge-component {
-				line-height: 2;
-			}
-
-			&.expand {
-				line-height: 1;
-
-				button {
-					margin-top: rem(2px);
-				}
-			}
-		}
-
-
-		&__expanded {
-			background-color: var(--studio-gray-0);
 		}
 	}
 
@@ -97,11 +33,21 @@ $brand-display: "SF Pro Display", sans-serif;
 			flex: 1;
 
 			max-width: 30rem;
-			height: 3rem;
 			box-sizing: border-box;
 
 			border: 1px solid $studio-gray-10;
 			border-radius: 2px;
+
+			&.is-compact {
+				.plugins-update-manager-multisite-filter__search-icon {
+					width: 0.875rem;
+					margin: 0 0.5rem;
+				}
+
+				input {
+					font-size: 0.875rem;
+				}
+			}
 
 			.plugins-update-manager-multisite-filter__search-icon {
 				margin-left: 1rem;
@@ -117,36 +63,15 @@ $brand-display: "SF Pro Display", sans-serif;
 			}
 		}
 	}
-	&__header {
-		align-items: center;
-		border-block-end: 1px solid var(--color-border-secondary);
-		display: flex;
-		font-family: $brand-display;
-		justify-content: space-between;
-		padding-bottom: 1.5rem;
-
-		&.no-border {
-			border-block-end: none;
-		}
-
-		h1 {
-			font-size: 1.5rem;
-			font-style: normal;
-			font-weight: 500;
-			line-height: 1.2;
-			margin-bottom: 0;
-		}
-
-		button {
-			font-size: rem(14px);
-			border-radius: 4px;
-		}
-	}
 
 	.empty-state {
 		max-width: 50%;
 		text-align: left;
 		padding: 0;
+
+		@media screen and (max-width: $break-large) {
+			max-width: 100%;
+		}
 
 		p {
 			color: var(--studio-gray-100);
@@ -159,7 +84,19 @@ $brand-display: "SF Pro Display", sans-serif;
 
 	.plugins-update-manager-multisite-card {
 		margin-bottom: 1rem;
-		border-bottom: solid 1px var(--studio-gray-5);
+		border-bottom: solid 1px var(--studio-gray-0);
+
+		&:first-child {
+			border-top: solid 1px var(--studio-gray-0);
+		}
+
+		&.is-selected {
+			background: #f7faff;
+		}
+
+		&__new {
+			line-height: 2;
+		}
 
 		&__label {
 			font-size: 0.875rem;
@@ -231,7 +168,6 @@ $brand-display: "SF Pro Display", sans-serif;
 				}
 			}
 		}
-
 	}
 
 	.components-card__footer {

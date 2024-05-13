@@ -1,15 +1,16 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import CreateSite from './internals/steps-repository/create-site';
@@ -88,6 +89,8 @@ const importFlow: Flow = {
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 		const urlQueryParams = useQuery();
+		const site = useSite();
+		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const fromParam = urlQueryParams.get( 'from' );
 		const { data: migrationStatus } = useSourceMigrationStatusQuery( fromParam );
 		const siteSlugParam = useSiteSlugParam();
@@ -203,6 +206,7 @@ const importFlow: Flow = {
 
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
+
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
 					}
@@ -218,6 +222,7 @@ const importFlow: Flow = {
 						}
 						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` );
 					}
+
 					// End of Pattern Assembler flow
 					if ( isAssemblerDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
@@ -316,20 +321,18 @@ const importFlow: Flow = {
 						return navigate( `importList?siteSlug=${ siteSlugParam }` );
 					} else if ( isMigrateFromWp && fromParam ) {
 						return navigate( `sitePicker?from=${ fromParam }` );
-					} else if (
-						urlQueryParams.has( 'showModal' ) ||
-						! isEnabled( 'migration_assistance_modal' )
-					) {
+					} else if ( urlQueryParams.has( 'showModal' ) ) {
 						urlQueryParams.delete( 'showModal' );
 						return navigate( `import?siteSlug=${ siteSlugParam }` );
 					}
 
-					if ( isEnabled( 'migration_assistance_modal' ) ) {
+					// In this case, it means that we are in the Upgrade Plan page
+					if ( ! isSitePlanCompatible ) {
 						urlQueryParams.set( 'showModal', 'true' );
 						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 					}
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':

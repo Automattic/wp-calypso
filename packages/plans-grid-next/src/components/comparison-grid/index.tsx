@@ -344,7 +344,6 @@ type ComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
 	visibleGridPlans: GridPlan[];
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	isFooter?: boolean;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
@@ -378,7 +377,6 @@ const ComparisonGridHeaderCell = ( {
 	onPlanChange,
 	displayedGridPlans,
 	currentSitePlanSlug,
-	isLaunchPage,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
 	showRefundPeriod,
@@ -470,7 +468,6 @@ const ComparisonGridHeaderCell = ( {
 				currentSitePlanSlug={ currentSitePlanSlug }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				isInSignup={ isInSignup }
-				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
@@ -494,7 +491,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			displayedGridPlans,
 			visibleGridPlans,
 			isInSignup,
-			isLaunchPage,
 			isFooter,
 			onPlanChange,
 			currentSitePlanSlug,
@@ -543,7 +539,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						onPlanChange={ onPlanChange }
 						displayedGridPlans={ displayedGridPlans }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						isLaunchPage={ isLaunchPage }
 						planActionOverrides={ planActionOverrides }
 						selectedPlan={ selectedPlan }
 						showRefundPeriod={ showRefundPeriod }
@@ -979,7 +974,6 @@ const FeatureGroup = ( {
 const ComparisonGrid = ( {
 	intervalType,
 	isInSignup,
-	isLaunchPage,
 	currentSitePlanSlug,
 	planActionOverrides,
 	selectedPlan,
@@ -1128,7 +1122,6 @@ const ComparisonGrid = ( {
 							displayedGridPlans={ displayedGridPlans }
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							planActionOverrides={ planActionOverrides }
@@ -1159,7 +1152,6 @@ const ComparisonGrid = ( {
 					displayedGridPlans={ displayedGridPlans }
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }

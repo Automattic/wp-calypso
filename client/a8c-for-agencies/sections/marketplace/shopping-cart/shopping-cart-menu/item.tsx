@@ -40,7 +40,7 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 					<span className="shopping-cart__menu-list-item-price-discounted">
 						{ formatCurrency( discountedCost, item.currency ) }
 					</span>
-					{ actualCost !== discountedCost && (
+					{ actualCost > discountedCost && (
 						<span className="shopping-cart__menu-list-item-price-actual">
 							{ formatCurrency( actualCost, item.currency ) }
 						</span>
