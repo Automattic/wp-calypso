@@ -6,6 +6,11 @@
 		margin-top: 0;
 	}
 
+	.hosting__layout .layout__column,
+	.hosting__layout .layout__column fieldset {
+		min-width: 0;
+	}
+
 	.card > .card-icon,
 	.card > .material-icon,
 	.card > .gridicon {
@@ -66,6 +71,7 @@
 		.layout-wrapper {
 			gap: 16px;
 		}
+
 		&__main-layout-col {
 			.card:not(.github-deployments-card) {
 				padding-left: 72px;
@@ -79,6 +85,7 @@
 				}
 			}
 		}
+
 		.hosting__layout .layout__column {
 			flex-basis: 45%;
 			box-sizing: border-box;
@@ -109,6 +116,12 @@
 		.banner__action {
 			margin-right: 0;
 		}
+	}
+
+	.happiness-engineers-tray {
+		align-items: flex-start;
+		display: flex;
+		justify-content: flex-start;
 	}
 }
 
