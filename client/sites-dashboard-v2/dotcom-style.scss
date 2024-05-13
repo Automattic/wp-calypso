@@ -207,11 +207,11 @@
 		// Places search above filters
 		z-index: 1;
 		border-radius: 2px;
-		border: 1px solid var(--color-border-subtle);
+		border: 1px solid var(--studio-gray-10);
 		background-color: var(--color-surface, $white);
 
 		.components-input-control__input {
-			padding-left: 10px;
+			padding: 0 0 0 10px;
 			font-size: $font-body-small;
 			color: var(--studio-gray-40);
 
@@ -223,6 +223,7 @@
 		// Search icon
 		.components-input-control__suffix {
 			color: var(--studio-gray-40);
+			margin-right: 4px;
 		}
 	}
 }

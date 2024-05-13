@@ -122,13 +122,13 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				flex-direction: row-reverse;
 				padding-inline: 10px 8px;
 				font-size: 14px;
-				color: var(--studio-gray-40);
+				color: var( --studio-gray-40 );
 				svg {
-					fill: var(--studio-gray-40);
-					color: var(--studio-gray-40);
+					fill: var( --studio-gray-40 );
+					color: var( --studio-gray-40 );
 				}
 
-				input.search-component__input[type="search"] {
+				input.search-component__input[type='search'] {
 					font-size: 14px;
 					height: 36px;
 
@@ -150,11 +150,10 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					.layout__primary > main {
 						background: var( --color-surface );
 						border-radius: 8px;
-						box-shadow: 0 0 17.4px 0 rgba( 0, 0, 0, 0.05 );
+						box-shadow: none;
 						height: calc( 100vh - 32px );
 						overflow: hidden;
 						max-width: none;
-						height: calc( 100vh - 32px );
 					}
 				}
 			}
