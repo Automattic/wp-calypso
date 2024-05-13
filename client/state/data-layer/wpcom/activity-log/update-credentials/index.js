@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 import {
@@ -149,20 +150,25 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 	debug( 'failure: error=%o', error );
 
+	const onLearnMoreClick = () => {
+		recordTracksEvent( 'calypso_jetpack_settings_credentials_error_learn_more_click', {
+			error_code: error.code,
+		} );
+	};
+
 	switch ( error.code ) {
 		case 'service_unavailable':
 			dispatchFailure(
 				i18n.translate(
 					'A error occurred when we were trying to validate your site information. ' +
 						'Please make sure your credentials and host URL are correct and try again. ' +
-						'{{a}}Learn more{{/a}}.',
+						'{{a}}Learn more{{/a}}',
 					{
 						components: {
 							a: (
-								<a
+								<ExternalLink
 									href="https://jetpack.com/support/backup/adding-credentials-to-jetpack/"
-									target="blank"
-									rel="noreferrer"
+									onClick={ onLearnMoreClick }
 								/>
 							),
 						},
@@ -199,14 +205,13 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 				i18n.translate(
 					'We looked for `wp-config.php` in the WordPress installation ' +
 						"path you provided but couldn't find it. " +
-						'{{a}}Learn more{{/a}}.',
+						'{{a}}Learn more{{/a}}',
 					{
 						components: {
 							a: (
-								<a
+								<ExternalLink
 									href="https://jetpack.com/support/backup/adding-credentials-to-jetpack/#troubleshoot-remote-server-credentials-errors"
-									target="blank"
-									rel="noreferrer"
+									onClick={ onLearnMoreClick }
 								/>
 							),
 						},
@@ -220,14 +225,13 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 				i18n.translate(
 					'It looks like your server is read-only. ' +
 						'To create backups and restore your site, we need permission to write to your server. ' +
-						'{{a}}Learn more{{/a}}.',
+						'{{a}}Learn more{{/a}}',
 					{
 						components: {
 							a: (
-								<a
+								<ExternalLink
 									href="https://jetpack.com/support/backup/ssh-sftp-and-ftp-credentials/#file-access-permission"
-									target="blank"
-									rel="noreferrer"
+									onClick={ onLearnMoreClick }
 								/>
 							),
 						},
@@ -250,14 +254,13 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 				i18n.translate(
 					'Error saving. ' +
 						'Please ensure that the WordPress installation path has write permissions. ' +
-						'{{a}}Learn more{{/a}}.',
+						'{{a}}Learn more{{/a}}',
 					{
 						components: {
 							a: (
-								<a
+								<ExternalLink
 									href="https://jetpack.com/support/backup/ssh-sftp-and-ftp-credentials/#file-access-permission"
-									target="blank"
-									rel="noreferrer"
+									onClick={ onLearnMoreClick }
 								/>
 							),
 						},
