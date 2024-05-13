@@ -7,7 +7,7 @@ import { usePrepareMultisitePluginsTooltipInfo } from 'calypso/blocks/plugin-sch
 import { usePrepareScheduleName } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-prepare-schedule-name';
 import { usePrepareSitesTooltipInfo } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-prepare-sites-tooltip-info';
 import { ScheduleListLastRunStatus } from 'calypso/blocks/plugins-scheduled-updates-multisite/schedule-list-last-run-status';
-import { useScheduledUpdatesActivateMutation } from 'calypso/data/plugins/use-scheduled-updates-activate-mutation';
+import { useScheduledUpdatesActivateBatchMutation } from 'calypso/data/plugins/use-scheduled-updates-activate-batch-mutation';
 import { SiteSlug } from 'calypso/types';
 import { ScheduleListTableRowMenu } from './schedule-list-table-row-menu';
 import type {
@@ -32,7 +32,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 		usePrepareMultisitePluginsTooltipInfo( schedule.sites.map( ( site ) => site.ID ) );
 	const translate = useTranslate();
 	const [ isExpanded, setIsExpanded ] = useState( false );
-	const { activateSchedule } = useScheduledUpdatesActivateMutation();
+	const { activateSchedule } = useScheduledUpdatesActivateBatchMutation();
 
 	return (
 		<>
@@ -115,7 +115,9 @@ export const ScheduleListTableRow = ( props: Props ) => {
 							<FormToggle
 								checked={ site.active }
 								onChange={ ( e ) =>
-									activateSchedule( site.slug, schedule.schedule_id, { active: e.target.checked } )
+									activateSchedule( [ { id: site.ID, slug: site.slug } ], schedule.schedule_id, {
+										active: e.target.checked,
+									} )
 								}
 							/>
 						</td>
