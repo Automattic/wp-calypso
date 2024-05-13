@@ -47,7 +47,7 @@ const withSiteSettings = createHigherOrderComponent( ( Wrapped ) => {
 				markChanged();
 				return setUnsavedSettings( { ...unsavedSettings, ...fields } );
 			},
-			[ unsavedSettings, setUnsavedSettings ]
+			[ markChanged, unsavedSettings, setUnsavedSettings ]
 		);
 
 		const {

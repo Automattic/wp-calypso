@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
-const useSiteSettingsQuery = ( siteId ) =>
+const useSiteSettingsQuery = ( siteId: number | null ) =>
 	useQuery( {
 		queryKey: [ 'site-settings', siteId ],
 		queryFn: () => wp.req.get( `/sites/${ siteId }/settings`, { apiVersion: '1.4' } ),
