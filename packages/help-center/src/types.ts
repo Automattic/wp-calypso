@@ -112,7 +112,7 @@ export interface OtherSupportAvailability {
 }
 
 export interface EmailSupportStatus {
-	is_email_contact_enabled: boolean;
+	force_email_contact_form: boolean;
 }
 
 export interface SupportActivity {

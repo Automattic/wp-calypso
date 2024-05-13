@@ -5,6 +5,6 @@ export function useShouldRenderEmailOption() {
 
 	return {
 		isLoading: isFetching,
-		render: supportAvailability?.is_email_contact_enabled ?? false,
+		render: supportAvailability?.force_email_contact_form ?? false,
 	};
 }
