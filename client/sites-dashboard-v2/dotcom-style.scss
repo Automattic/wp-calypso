@@ -71,6 +71,10 @@
 	@media ( min-width: 782px ) {
 		height: calc(100vh - var(--masterbar-height) - 32px);
 	}
+
+	.sites-site-favicon {
+		margin-right: 0;
+	}
 }
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
@@ -357,19 +361,6 @@
 				@media ( max-width: 961px ) {
 					margin-inline-end: 8px;
 				}
-			}
-		}
-
-		.sites-site-favicon {
-			margin-right: 0;
-
-			.is-blank {
-				font-size: xx-large !important;
-				text-transform: uppercase;
-				background-color: #f5f7f7;
-				border: 1px solid rgb(238, 238, 238);
-				border-radius: 4px;
-				box-sizing: border-box;
 			}
 		}
 	}
