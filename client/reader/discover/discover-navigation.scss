@@ -99,3 +99,9 @@
 .accessible-focus .discover-stream-navigation .discover-stream-navigation__right-button {
 	display: none;
 }
+
+.is-global-sidebar-visible.is-section-reader .tag-stream__main.main {
+	&.reader-two-column {
+		max-width: 100%;
+	}
+}

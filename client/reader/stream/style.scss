@@ -30,6 +30,12 @@
 	}
 }
 
+.is-section-reader .is-global-sidebar-visible .tag-stream__main.main {
+	&.reader-two-column {
+		max-width: 100%;
+	}
+}
+
 .is-reader-page .reader__card.card.is-placeholder {
 	border-bottom: 1px solid #e9e9ea;
 	box-shadow: none;

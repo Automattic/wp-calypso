@@ -527,6 +527,8 @@ class ReaderStream extends Component {
 		let body;
 		let showingStream;
 
+		console.log( streamHeader );
+
 		// trick an infinite list to showing placeholders
 		if ( forcePlaceholders ) {
 			items = [];
@@ -573,13 +575,13 @@ class ReaderStream extends Component {
 				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {
 				body = (
-					<div className="stream__two-column">
-						<div className="reader__content">
-							{ streamHeader?.() }
-							{ bodyContent }
+					<>
+						{ streamHeader?.() }
+						<div className="stream__two-column">
+							<div className="reader__content">{ bodyContent }</div>
+							<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 						</div>
-						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
-					</div>
+					</>
 				);
 				baseClassnames = classnames( 'reader-two-column', baseClassnames );
 			} else {

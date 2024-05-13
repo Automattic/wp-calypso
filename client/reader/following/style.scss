@@ -18,6 +18,12 @@
 	}
 }
 
+.is-section-reader .is-global-sidebar-visible .tag-stream__main.main {
+	&.reader-two-column {
+		max-width: 100%;
+	}
+}
+
 .following.main  .section-nav {
 	margin-top: 0;
 
