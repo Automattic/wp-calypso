@@ -111,13 +111,6 @@ export default function SitesDashboard() {
 			return;
 		}
 
-		if (
-			dataViewsState.selectedItem &&
-			dataViewsState.selectedItem.url === initialSelectedSiteUrl
-		) {
-			return;
-		}
-
 		if ( ! isLoading && ! isError && data && initialSelectedSiteUrl ) {
 			const site = data.sites.find( ( site: Site ) => site.url === initialSelectedSiteUrl );
 

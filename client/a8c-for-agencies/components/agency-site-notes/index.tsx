@@ -8,7 +8,6 @@ import './style.scss';
 
 interface Props {
 	notes: any[];
-	isLoading: boolean;
 	onCreateNote: ( note: string ) => void;
 }
 
@@ -19,12 +18,11 @@ export default function AgencySiteNotes( { notes, onCreateNote }: Props ) {
 	const currentUser = useSelector( getCurrentUser );
 
 	const onFieldChange = ( e: any ) => {
-		e.preventDefault();
 		setFieldState( e.target.value );
 	};
 
 	const maybeSubmit = ( e: any ) => {
-		if ( 'Enter' === e.key ) {
+		if ( 'Enter' === e.key && ! e.shiftKey ) {
 			e.preventDefault();
 			onCreateNote( fieldState );
 			setFieldState( '' );

@@ -1,19 +1,14 @@
 import { FormTokenField } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
 
 interface Props {
 	tags: string[];
-	isLoading: boolean;
-	onSetTags: ( newTags: string[] ) => void;
+	onChange: ( newTags: string[] ) => void;
 }
 
-export default function AgencySiteTags( { tags: initialTags, onSetTags }: Props ) {
-	const [ tags, setTags ] = useState( initialTags );
-
+export default function AgencySiteTags( { tags, onChange }: Props ) {
 	const handleSetTags = ( tokens: any ) => {
-		setTags( tokens );
-		onSetTags( tokens );
+		onChange( tokens );
 	};
 
 	return (

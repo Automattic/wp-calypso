@@ -74,6 +74,12 @@ export interface BoostData {
 	desktop: number;
 }
 
+export default interface SiteTag {
+	id: number;
+	slug: string;
+	label: string;
+}
+
 export interface Site {
 	sticker: string[];
 	blog_id: number;
@@ -108,6 +114,8 @@ export interface Site {
 	active_paid_subscription_slugs: Array< string >;
 	site_color?: string;
 	enabled_plugin_slugs?: Array< string >;
+	a4a_site_id: number;
+	a4a_site_tags: SiteTag[];
 }
 export interface SiteNode {
 	value: Site;
