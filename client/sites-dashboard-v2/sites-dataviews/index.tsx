@@ -176,6 +176,7 @@ const DotcomSitesDataViews = ( {
 				render: ( { item }: { item: SiteInfo } ) => <SiteStats site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
+				width: '80px',
 			},
 			{
 				id: 'actions',
