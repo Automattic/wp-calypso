@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import Main from 'calypso/components/main';
 import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import { useCachedAnswers } from 'calypso/data/segmentaton-survey';
 import type { ProvidedDependencies, Step } from '../../types';
 import './style.scss';
@@ -29,7 +31,14 @@ const shouldNavigate = (
 };
 
 const SegmentationSurveyStep: Step = ( { navigation } ) => {
+	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents( SURVEY_KEY );
 	const { clearAnswers } = useCachedAnswers( SURVEY_KEY );
+
+	// Record Tracks start event on component mount
+	useEffect( () => {
+		recordStartEvent();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	const handleNext = ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => {
 		const { proceedWithNavigation, providedDependencies } = shouldNavigate(
@@ -44,6 +53,7 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 				clearAnswers();
 			}
 
+			recordCompleteEvent();
 			navigation.submit?.( providedDependencies );
 		}
 	};
