@@ -41,12 +41,15 @@ export default function ItemPreviewPaneHeader( {
 		}
 	}, [] );
 
+	const siteIconFallback =
+		extraProps.siteIconFallback ?? ( itemData.isDotcomSite ? 'wordpress-logo' : 'color' );
+
 	return (
 		<div className={ classNames( 'item-preview__header', className ) }>
 			<div className="item-preview__header-content">
 				<SiteFavicon
 					blogId={ itemData.blogId }
-					fallback={ itemData.isDotcomSite ? 'wordpress-logo' : 'color' }
+					fallback={ siteIconFallback }
 					color={ itemData.color }
 					className="item-preview__header-favicon"
 					size={ size }

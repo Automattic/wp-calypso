@@ -17,4 +17,16 @@
 			}
 		}
 	}
+
+	&.is-first-grapheme {
+		.is-blank {
+			font-size: xx-large !important;
+			text-transform: uppercase;
+			background-color: #f5f7f7;
+			border: 1px solid rgb(238, 238, 238);
+			border-radius: 4px;
+			box-sizing: border-box;
+			color: var(--color-link);
+		}
+	}
 }
