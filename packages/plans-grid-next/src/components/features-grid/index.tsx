@@ -136,14 +136,12 @@ const MobileView = ( {
 					>
 						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
 						{ enableCategorisedFeatures ? (
-							featureGroups.map( ( featureGroupSlug, featureGroupIndex ) => (
+							featureGroups.map( ( featureGroupSlug ) => (
 								<div
-									className={ classNames( 'plans-grid-next-features-grid__feature-group-row', {
-										'is-first-feature-group': featureGroupIndex === 0,
-									} ) }
+									className="plans-grid-next-features-grid__feature-group-row"
+									key={ featureGroupSlug }
 								>
 									<PlanFeaturesList
-										key={ featureGroupSlug }
 										renderedGridPlans={ [ gridPlan ] }
 										selectedFeature={ selectedFeature }
 										paidDomainName={ paidDomainName }

@@ -149,7 +149,7 @@ const Table = ( {
 				</tr>
 				{ enableCategorisedFeatures ? (
 					<>
-						<tr>
+						<tr className="plans-grid-next-features-grid__feature-group-row is-first-feature-group-row">
 							<PlanStorageOptions
 								renderedGridPlans={ gridPlansWithoutSpotlight }
 								options={ { isTableCell: true } }
@@ -158,11 +158,9 @@ const Table = ( {
 								showUpgradeableStorage={ showUpgradeableStorage }
 							/>
 						</tr>
-						{ featureGroups.map( ( featureGroupSlug, featureGroupIndex ) => (
+						{ featureGroups.map( ( featureGroupSlug ) => (
 							<tr
-								className={ classNames( 'plans-grid-next-features-grid__feature-group-row', {
-									'is-first-feature-group': featureGroupIndex === 0,
-								} ) }
+								className="plans-grid-next-features-grid__feature-group-row"
 								key={ featureGroupSlug }
 							>
 								<PlanFeaturesList
