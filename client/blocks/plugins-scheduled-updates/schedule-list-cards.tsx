@@ -26,7 +26,7 @@ export const ScheduleListCards = ( props: Props ) => {
 		usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat( siteSlug );
-	const { activateSchedule } = useScheduledUpdatesActivateMutation( siteSlug );
+	const { activateSchedule } = useScheduledUpdatesActivateMutation();
 
 	return (
 		<div className="schedule-list--cards">
@@ -118,7 +118,9 @@ export const ScheduleListCards = ( props: Props ) => {
 						<span id={ `active-${ i }` }>
 							<FormToggle
 								checked={ schedule.active }
-								onChange={ ( e ) => activateSchedule( schedule.id, { active: e.target.checked } ) }
+								onChange={ ( e ) =>
+									activateSchedule( siteSlug, schedule.id, { active: e.target.checked } )
+								}
 							/>
 						</span>
 					</div>
