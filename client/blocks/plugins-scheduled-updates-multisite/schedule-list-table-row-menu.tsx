@@ -10,7 +10,7 @@ import type {
 type Props = {
 	schedule: MultisiteSchedulesUpdates;
 	onEditClick: ( id: string ) => void;
-	onRemoveClick: ( id: string ) => void;
+	onRemoveClick: ( id: string, siteSlug?: SiteSlug ) => void;
 	onLogsClick: ( id: string, siteSlug: SiteSlug ) => void;
 };
 
@@ -39,7 +39,7 @@ export const ScheduleListTableRowMenu = ( {
 
 	items.push( {
 		title: translate( 'Remove' ),
-		onClick: () => onRemoveClick( schedule.schedule_id ),
+		onClick: () => onRemoveClick( schedule.schedule_id, site?.slug ),
 	} );
 
 	return (

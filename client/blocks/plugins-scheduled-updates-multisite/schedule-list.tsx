@@ -9,6 +9,7 @@ import { MultisitePluginUpdateManagerContext } from 'calypso/blocks/plugins-sche
 import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { SiteSlug } from 'calypso/types';
 import { ScheduleErrors } from './schedule-errors';
 import { ScheduleListCardNew } from './schedule-list-card-new';
 import { ScheduleListCards } from './schedule-list-cards';
@@ -50,7 +51,9 @@ export const ScheduleList = ( props: Props ) => {
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >(
 		initSelectedScheduleId
 	);
+	const [ selectedSiteSlug, setSelectedSiteSlug ] = useState< string | undefined >();
 	const [ selectedSiteSlugs, setSelectedSiteSlugs ] = useState< string[] >( [] );
+	const selectedSiteSlugsForMutate = selectedSiteSlug ? [ selectedSiteSlug ] : selectedSiteSlugs;
 
 	useEffect( () => {
 		const schedule = schedules?.find( ( schedule ) => schedule.schedule_id === selectedScheduleId );
@@ -58,7 +61,7 @@ export const ScheduleList = ( props: Props ) => {
 	}, [ selectedScheduleId ] );
 	useEffect( () => setSelectedScheduleId( initSelectedScheduleId ), [ initSelectedScheduleId ] );
 
-	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugs, {
+	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugsForMutate, {
 		onSuccess: () => {
 			// Refetch again after 5 seconds
 			setTimeout( () => {
@@ -67,8 +70,9 @@ export const ScheduleList = ( props: Props ) => {
 		},
 	} );
 
-	const openRemoveDialog = ( id: string ) => {
+	const openRemoveDialog = ( id: string, siteSlug?: SiteSlug ) => {
 		setRemoveDialogOpen( true );
+		setSelectedSiteSlug( siteSlug );
 		setSelectedScheduleId( id );
 	};
 
@@ -81,7 +85,7 @@ export const ScheduleList = ( props: Props ) => {
 		if ( selectedSiteSlugs && selectedScheduleId ) {
 			deleteUpdateSchedules.mutate( selectedScheduleId );
 			recordTracksEvent( 'calypso_scheduled_updates_multisite_delete_schedule', {
-				site_slugs: selectedSiteSlugs.join( ',' ),
+				site_slugs: selectedSiteSlugsForMutate.join( ',' ),
 			} );
 		}
 		closeRemoveConfirm();
