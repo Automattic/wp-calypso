@@ -42,7 +42,7 @@ export default function ItemPreviewPaneHeader( {
 	}, [] );
 
 	const siteIconFallback =
-		extraProps.siteIconFallback ?? ( itemData.isDotcomSite ? 'wordpress-logo' : 'color' );
+		extraProps?.siteIconFallback ?? ( itemData.isDotcomSite ? 'wordpress-logo' : 'color' );
 
 	return (
 		<div className={ classNames( 'item-preview__header', className ) }>
