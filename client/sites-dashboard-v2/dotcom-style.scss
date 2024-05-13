@@ -447,6 +447,10 @@
 		}
 
 		.item-preview__header-content {
+			.item-preview__header-info {
+				flex-wrap: wrap;
+			}
+
 			@media (max-width: $break-large) {
 				padding: 0;
 			}
