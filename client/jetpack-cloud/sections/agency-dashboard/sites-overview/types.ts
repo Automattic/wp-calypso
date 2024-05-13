@@ -265,6 +265,7 @@ export interface AgencyDashboardFilterMap {
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption >;
 	showOnlyFavorites: boolean;
+	isMultisite?: boolean;
 };
 
 export type ProductInfo = { name: string; key: string; status: 'rejected' | 'fulfilled' };
