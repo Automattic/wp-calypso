@@ -44,7 +44,8 @@
 		"a8c-for-agencies-marketplace": true,
 		"a8c-for-agencies-purchases": true,
 		"a8c-for-agencies-signup": true,
-		"a8c-for-agencies-referrals": true
+		"a8c-for-agencies-referrals": true,
+		"a8c-for-agencies-migrations": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",
