@@ -10,7 +10,7 @@ type Props = {
 export const ScheduleCreate = ( { onNavBack }: Props ) => {
 	const translate = useTranslate();
 	return (
-		<div className="plugins-update-manager plugins-update-manager-multisite">
+		<div className="plugins-update-manager plugins-update-manager-multisite plugins-update-manager-multisite-create">
 			<div className="plugins-update-manager-multisite__header no-border">
 				<h1 className="wp-brand-font">{ translate( 'New schedule' ) }</h1>
 				<Button onClick={ onNavBack }>

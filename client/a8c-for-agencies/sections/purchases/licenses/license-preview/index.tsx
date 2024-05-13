@@ -5,6 +5,7 @@ import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
+import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
@@ -89,7 +90,9 @@ export default function LicensePreview( {
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
 	const assign = useCallback( () => {
-		const redirectUrl = addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
+		const redirectUrl = isWPCOMLicense
+			? A4A_SITES_LINK_NEEDS_SETUP
+			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
 		if ( paymentMethodRequired ) {
 			const noticeLinkHref = addQueryArgs(
 				{
@@ -113,7 +116,7 @@ export default function LicensePreview( {
 		}
 
 		page.redirect( redirectUrl );
-	}, [ paymentMethodRequired, translate, dispatch, licenseKey ] );
+	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, translate, dispatch ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -138,6 +141,10 @@ export default function LicensePreview( {
 		</Badge>
 	);
 
+	// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
+	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
+	const productTitle = product === 'WordPress.com Creator' ? 'WordPress.com Site' : product;
+
 	return (
 		<div
 			className={ classnames( {
@@ -154,7 +161,7 @@ export default function LicensePreview( {
 				} ) }
 			>
 				<div>
-					<span className="license-preview__product">{ product }</span>
+					<span className="license-preview__product">{ productTitle }</span>
 				</div>
 
 				<div>
@@ -188,7 +195,7 @@ export default function LicensePreview( {
 											compact
 											onClick={ assign }
 										>
-											{ translate( 'Assign' ) }
+											{ isWPCOMLicense ? translate( 'Create site' ) : translate( 'Assign' ) }
 										</Button>
 									) }
 								</span>
@@ -255,8 +262,6 @@ export default function LicensePreview( {
 					{ isWPCOMLicense && isSiteAtomic ? (
 						<LicenseActions
 							siteUrl={ siteUrl }
-							licenseKey={ licenseKey }
-							product={ product }
 							attachedAt={ attachedAt }
 							revokedAt={ revokedAt }
 							licenseType={ licenseType }

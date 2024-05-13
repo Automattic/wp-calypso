@@ -1,19 +1,20 @@
+import page from '@automattic/calypso-router';
 import { Button, FoldableCard } from '@automattic/components';
 import { Icon, reusableBlock, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { A4A_OVERVIEW_LINK } from '../sidebar-menu/lib/constants';
 
 import './style.scss';
-
 type Props = {
 	foldable?: boolean;
 };
 
-const MigrationOfferHeader = () => {
+const MigrationOfferHeader = ( { withIcon }: { withIcon?: boolean } ) => {
 	const translate = useTranslate();
 	const title = translate( 'Special limited-time migration offer for our partners' );
 	return (
 		<div className="a4a-migration-offer__title">
-			<Icon icon={ reusableBlock } size={ 32 } />
+			{ withIcon && <Icon icon={ reusableBlock } size={ 32 } /> }
 			<h3>{ title }</h3>
 		</div>
 	);
@@ -24,15 +25,15 @@ const MigrationOfferBody = () => {
 	const description = translate(
 		'Migrate your clients sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2024. You’ll also receive an additional $100 for each migrated site—up to $3,000 until July 31, 2024.'
 	);
-	const note = translate( 'Must have 3 or more sites to be eligible.' );
 
 	return (
 		<>
 			<p className="a4a-migration-offer__description">{ description }</p>
-			<p className="a4a-migration-offer__note">{ note }</p>
 			<Button
 				className="a4a-migration-offer__chat-button"
-				href="mailto:partnerships@automattic.com"
+				onClick={ () => {
+					page( `${ A4A_OVERVIEW_LINK }#contact-support-migration-offer` );
+				} }
 				primary
 			>
 				{ translate( 'Chat with us' ) }
@@ -57,7 +58,7 @@ const MigrationOffer = ( props: Props ) => {
 	return foldable ? (
 		<FoldableCard
 			className="a4a-migration-offer__wrapper"
-			header={ <MigrationOfferHeader /> }
+			header={ <MigrationOfferHeader withIcon /> }
 			expanded
 			clickableHeader
 			summary={ false }
@@ -66,8 +67,14 @@ const MigrationOffer = ( props: Props ) => {
 		</FoldableCard>
 	) : (
 		<div className="a4a-migration-offer__wrapper non-foldable">
-			<MigrationOfferHeader />
-			<MigrationOfferBody />
+			<div className="a4a-migration-offer__aside">
+				<Icon icon={ reusableBlock } size={ 24 } />
+			</div>
+
+			<div className="a4a-migration-offer__main">
+				<MigrationOfferHeader />
+				<MigrationOfferBody />
+			</div>
 		</div>
 	);
 };

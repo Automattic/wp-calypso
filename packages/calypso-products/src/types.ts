@@ -30,6 +30,7 @@ import {
 	type TYPES_LIST,
 	type WPCOM_SPACE_UPGRADE_PRODUCTS,
 	type WPCOM_OTHER_PRODUCTS,
+	type JETPACK_ALIAS_LIST,
 	FEATURE_50GB_STORAGE_ADD_ON,
 	FEATURE_100GB_STORAGE_ADD_ON,
 	FEATURE_GROUP_WEBSITE_BUILDING,
@@ -138,6 +139,7 @@ export type IncompleteWPcomPlan = Partial< WPComPlan > &
  * Jetpack
  */
 export type JetpackProductSlug = ( typeof JETPACK_PRODUCTS_LIST )[ number ];
+export type JetpackAliasSlug = ( typeof JETPACK_ALIAS_LIST )[ number ];
 export type JetpackLegacyPlanSlug = ( typeof JETPACK_LEGACY_PLANS )[ number ];
 export type JetpackYearlyLegacyPlanSlug = ( typeof JETPACK_YEARLY_LEGACY_PLANS )[ number ];
 export type JetpackMonthlyLegacyPlanSlug = ( typeof JETPACK_MONTHLY_LEGACY_PLANS )[ number ];
@@ -205,6 +207,7 @@ export type PurchasableItemSlug = WPComPurchasableItemSlug | JetpackPurchasableI
 export interface Product {
 	product_name: TranslateResult;
 	product_slug: ProductSlug;
+	product_alias?: JetpackAliasSlug;
 	type: ProductSlug;
 	term: ( typeof TERMS_LIST )[ number ];
 	bill_period: ( typeof PERIOD_LIST )[ number ];

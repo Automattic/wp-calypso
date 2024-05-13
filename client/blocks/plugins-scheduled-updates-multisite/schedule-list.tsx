@@ -1,4 +1,3 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
 	Button,
@@ -11,6 +10,7 @@ import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-u
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ScheduleErrors } from './schedule-errors';
+import { ScheduleListCardNew } from './schedule-list-card-new';
 import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleListFilter } from './schedule-list-filter';
@@ -19,31 +19,53 @@ import { ScheduleListTable } from './schedule-list-table';
 import './styles.scss';
 
 type Props = {
+	compact?: boolean;
+	previewMode: 'table' | 'card';
+	showNewScheduleBtn?: boolean;
+	selectedScheduleId?: string;
 	onEditSchedule: ( id: string ) => void;
 	onShowLogs: ( id: string, siteSlug: string ) => void;
 	onCreateNewSchedule: () => void;
 };
 
 export const ScheduleList = ( props: Props ) => {
-	const { onEditSchedule, onShowLogs, onCreateNewSchedule } = props;
+	const {
+		compact,
+		previewMode,
+		showNewScheduleBtn = true,
+		selectedScheduleId: initSelectedScheduleId,
+		onEditSchedule,
+		onShowLogs,
+		onCreateNewSchedule,
+	} = props;
 	const {
 		data: schedules = [],
 		isLoading: isLoadingSchedules,
 		isFetched,
+		refetch,
 	} = useMultisiteUpdateScheduleQuery( true );
-	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
 	const { searchTerm } = useContext( MultisitePluginUpdateManagerContext );
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
-	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >();
+	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >(
+		initSelectedScheduleId
+	);
 	const [ selectedSiteSlugs, setSelectedSiteSlugs ] = useState< string[] >( [] );
 
 	useEffect( () => {
 		const schedule = schedules?.find( ( schedule ) => schedule.schedule_id === selectedScheduleId );
 		setSelectedSiteSlugs( schedule?.sites?.map( ( site ) => site.slug ) || [] );
 	}, [ selectedScheduleId ] );
+	useEffect( () => setSelectedScheduleId( initSelectedScheduleId ), [ initSelectedScheduleId ] );
 
-	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugs );
+	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugs, {
+		onSuccess: () => {
+			// Refetch again after 5 seconds
+			setTimeout( () => {
+				refetch();
+			}, 5000 );
+		},
+	} );
 
 	const openRemoveDialog = ( id: string ) => {
 		setRemoveDialogOpen( true );
@@ -84,17 +106,18 @@ export const ScheduleList = ( props: Props ) => {
 		.filter( ( schedule ) => schedule.sites.length > 0 );
 
 	const isLoading = isLoadingSchedules;
-	const ScheduleListComponent = isMobile ? ScheduleListCards : ScheduleListTable;
+	const ScheduleListComponent = previewMode === 'table' ? ScheduleListTable : ScheduleListCards;
 	const isScheduleEmpty = schedules.length === 0 && isFetched;
 
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">
 			<div className="plugins-update-manager-multisite__header">
-				<h1>{ translate( 'Update schedules' ) }</h1>
-				{ ! isScheduleEmpty && (
+				<h1>{ translate( 'Scheduled Updates' ) }</h1>
+				{ showNewScheduleBtn && ! isScheduleEmpty && (
 					<Button
-						__next40pxDefaultSize
-						variant="primary"
+						__next40pxDefaultSize={ ! compact }
+						isSmall={ compact }
+						variant={ compact ? 'secondary' : 'primary' }
 						onClick={ onCreateNewSchedule }
 						disabled={ false }
 					>
@@ -105,19 +128,24 @@ export const ScheduleList = ( props: Props ) => {
 
 			<ScheduleErrors />
 
-			{ schedules.length === 0 && isLoading && <Spinner /> }
-			{ isScheduleEmpty && <ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } /> }
-			{ isFetched && filteredSchedules.length > 0 && ScheduleListComponent ? (
+			{ isScheduleEmpty && ! compact && (
+				<ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } />
+			) }
+			{ isScheduleEmpty && compact && <ScheduleListCardNew className="is-selected" /> }
+			{ ! isScheduleEmpty && ScheduleListComponent ? (
 				<>
-					<ScheduleListFilter />
+					<ScheduleListFilter compact={ compact } />
 					<ScheduleListComponent
+						compact={ compact }
 						schedules={ filteredSchedules }
+						selectedScheduleId={ selectedScheduleId }
 						onRemoveClick={ openRemoveDialog }
 						onEditClick={ onEditSchedule }
 						onLogsClick={ onShowLogs }
 					/>
 				</>
 			) : null }
+			{ schedules.length === 0 && isLoading && <Spinner /> }
 			<ConfirmDialog
 				isOpen={ removeDialogOpen }
 				onConfirm={ onRemoveDialogConfirm }

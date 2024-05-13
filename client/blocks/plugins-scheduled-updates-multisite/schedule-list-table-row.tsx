@@ -35,7 +35,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 	return (
 		<>
 			<tr>
-				<td>
+				<td className="expand">
 					<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) }>
 						<Icon icon={ isExpanded ? chevronDown : chevronRight } />
 					</Button>
@@ -49,7 +49,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						{ prepareScheduleName( schedule as unknown as ScheduleUpdates ) }
 					</Button>
 				</td>
-				<td>
+				<td className="sites">
 					{ schedule.sites.length }{ ' ' }
 					<Tooltip
 						text={ prepareSitesTooltipInfo( schedule.sites ) as unknown as string }
@@ -84,7 +84,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						<Icon className="icon-info" icon={ info } size={ 16 } />
 					</Tooltip>
 				</td>
-				<td style={ { textAlign: 'end' } }>
+				<td className="menu">
 					<ScheduleListTableRowMenu { ...props } />
 				</td>
 			</tr>
@@ -108,7 +108,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						<td></td>
 
 						<td></td>
-						<td style={ { textAlign: 'end' } }>
+						<td className="menu">
 							<ScheduleListTableRowMenu { ...props } site={ site } />
 						</td>
 					</tr>

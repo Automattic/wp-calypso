@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -15,6 +16,8 @@ import { ScheduleFormPlugins } from '../plugins-scheduled-updates/schedule-form-
 import { validateSites, validatePlugins } from '../plugins-scheduled-updates/schedule-form.helper';
 import { useErrors } from './hooks/use-errors';
 import { ScheduleFormSites } from './schedule-form-sites';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
 	scheduleForEdit?: MultisiteSchedulesUpdates;
@@ -29,6 +32,7 @@ type InitialData = {
 };
 
 export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
+	const queryClient = useQueryClient();
 	const initialData: InitialData = scheduleForEdit
 		? {
 				sites: scheduleForEdit?.sites.map( ( site ) => site.ID ),
@@ -51,7 +55,13 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 
 	const translate = useTranslate();
 
-	const { data: sites } = useSiteExcerptsQuery( [ 'atomic' ] );
+	const siteFilter = ( site: SiteExcerptData ): boolean => {
+		return ( site as SiteDetails ).capabilities?.update_plugins;
+	};
+
+	const { data: sites } = useSiteExcerptsQuery( [ 'atomic' ], siteFilter, 'all', [
+		'capabilities',
+	] );
 	const {
 		data: plugins,
 		isInitialLoading: isPluginsFetching,
@@ -184,6 +194,12 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 		// Create monitors for sites that have been successfully scheduled
 		createMonitors( successfulSiteSlugs );
 		onNavBack && onNavBack();
+		// Trigger an extra refetch 5 seconds later
+		setTimeout( () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'multisite-schedules-update' ],
+			} );
+		}, 5000 );
 	};
 
 	return (
@@ -209,6 +225,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 					onTouch={ ( touched ) => setFieldTouched( { ...fieldTouched, plugins: touched } ) }
 					error={ validationErrors?.plugins }
 					showError={ fieldTouched?.plugins }
+					selectedSites={ selectedSites }
 				/>
 
 				<Text>{ translate( 'Step 3' ) }</Text>

@@ -2,8 +2,8 @@ import { Page } from 'playwright';
 import { EditorComponent } from './editor-component';
 
 const selectors = {
-	primaryFieldByText: ( primaryFieldText: string ) =>
-		`.dataviews-view-table__primary-field:has-text("${ primaryFieldText }") a`,
+	primaryFieldByText: ( tableOrGrid: string, primaryFieldText: string ) =>
+		`.dataviews-view-${ tableOrGrid }__primary-field:has-text("${ primaryFieldText }") a`,
 };
 
 /**
@@ -30,6 +30,13 @@ export class FullSiteEditorDataViewsComponent {
 	 */
 	async clickPrimaryFieldByExactText( primaryFieldText: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		await editorParent.locator( selectors.primaryFieldByText( primaryFieldText ) ).click();
+		const primaryFieldInTable = editorParent.locator(
+			selectors.primaryFieldByText( 'table', primaryFieldText )
+		);
+		const primaryFieldInGrid = editorParent.locator(
+			selectors.primaryFieldByText( 'grid', primaryFieldText )
+		);
+
+		await Promise.race( [ primaryFieldInTable.click(), primaryFieldInGrid.click() ] );
 	}
 }

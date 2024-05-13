@@ -5,6 +5,7 @@ import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
@@ -94,6 +95,9 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 		[ navigation, siteSlug ]
 	);
 
+	const urlQueryParams = useQuery();
+	const isEntrepreneurSignup = urlQueryParams.get( 'ref' ) === 'entrepreneur-signup';
+
 	return (
 		<>
 			<DocumentHead title="Site migration instructions" />
@@ -101,6 +105,7 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 				stepName="site-migration-identify"
 				flowName="site-migration"
 				className="import__onboarding-page"
+				hideBack={ isEntrepreneurSignup }
 				hideSkip={ true }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }

@@ -66,7 +66,7 @@ export default function BlazeDisabled() {
 				<h3 className="setup-pages__title wp-brand-font">
 					{ translate( 'Set up Blaze and start advertising' ) }
 				</h3>
-				<p className="empty-promotion-list__body">
+				<p className="setup-pages__body">
 					{ translate(
 						'To get started, go to the Jetpack settings page and follow the steps below.'
 					) }

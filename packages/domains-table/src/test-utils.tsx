@@ -96,6 +96,7 @@ export function testDomain(
 		private_domain: false,
 		partner_domain: false,
 		has_zone: false,
+		is_gravatar_domain: false,
 		is_renewable: false,
 		is_redeemable: false,
 		is_subdomain: false,

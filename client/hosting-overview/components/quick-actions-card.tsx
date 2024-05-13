@@ -13,7 +13,7 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';
 import getStatsUrl from 'calypso/state/selectors/get-stats-url';
 import getThemeInstallUrl from 'calypso/state/selectors/get-theme-install-url';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface ActionProps {
@@ -40,13 +40,12 @@ const QuickActionsCard: FC = () => {
 	const hasEnTranslation = useHasEnTranslation();
 	const site = useSelector( getSelectedSite );
 	const { data: activeThemeData } = useActiveThemeQuery( site?.ID || -1, !! site );
-	const { editorUrl, themeInstallUrl, pluginInstallUrl, statsUrl, siteAdminUrl, siteEditorUrl } =
-		useSelector( ( state ) => ( {
+	const { editorUrl, themeInstallUrl, pluginInstallUrl, statsUrl, siteEditorUrl } = useSelector(
+		( state ) => ( {
 			editorUrl: site?.ID ? getEditorUrl( state, site.ID ) : '#',
 			themeInstallUrl: getThemeInstallUrl( state, site?.ID ) ?? '',
 			pluginInstallUrl: getPluginInstallUrl( state, site?.ID ) ?? '',
 			statsUrl: getStatsUrl( state, site?.ID ) ?? '',
-			siteAdminUrl: getSiteAdminUrl( state, site?.ID ) ?? '',
 			siteEditorUrl:
 				site?.ID && activeThemeData
 					? getCustomizeUrl(
@@ -56,23 +55,26 @@ const QuickActionsCard: FC = () => {
 							activeThemeData[ 0 ]?.is_block_theme
 					  )
 					: '',
-		} ) );
+		} )
+	);
+
+	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site?.ID );
 
 	return (
 		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__quick-actions' ) }>
 			<div className="hosting-overview__card-header">
 				<h3 className="hosting-overview__card-title">
-					{ hasEnTranslation( 'WP Admin links' )
-						? translate( 'WP Admin links' )
-						: translate( 'Quick actions' ) }
+					{ hasEnTranslation( 'Quick actions' )
+						? translate( 'Quick actions' )
+						: translate( 'WP Admin links' ) }
 				</h3>
 			</div>
 
 			<ul className="hosting-overview__actions-list">
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-wordpress-alt hosting-overview__dashicon" /> }
-					href={ siteAdminUrl }
-					text={ translate( 'WP Admin' ) }
+					href={ adminUrl }
+					text={ adminLabel }
 				/>
 				<Action
 					icon={
