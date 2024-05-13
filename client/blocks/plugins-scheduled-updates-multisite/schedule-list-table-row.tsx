@@ -113,7 +113,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						<td></td>
 						<td className="active">
 							<FormToggle
-								checked={ schedule.active }
+								checked={ site.active }
 								onChange={ ( e ) =>
 									activateSchedule( site.slug, schedule.schedule_id, { active: e.target.checked } )
 								}

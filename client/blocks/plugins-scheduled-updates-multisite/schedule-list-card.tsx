@@ -99,7 +99,7 @@ export const ScheduleListCard = ( props: Props ) => {
 							<div className="plugins-update-manager-multisite-card__label">
 								<label htmlFor="name">{ translate( 'Active' ) }</label>
 								<FormToggle
-									checked={ schedule.active }
+									checked={ site.active }
 									onChange={ ( e ) =>
 										activateSchedule( site.slug, schedule.schedule_id, {
 											active: e.target.checked,
