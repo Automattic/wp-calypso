@@ -12,6 +12,10 @@
 
 		.item-preview__header-title-summary {
 			word-wrap: anywhere;
+
+			.item-preview__header-summary-link svg {
+				vertical-align: middle;
+			}
 		}
 
 		.item-preview__close-preview,

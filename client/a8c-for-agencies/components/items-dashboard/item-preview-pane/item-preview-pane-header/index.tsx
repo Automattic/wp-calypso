@@ -61,12 +61,14 @@ export default function ItemPreviewPaneHeader( {
 								href={ itemData.url }
 								target="_blank"
 							>
-								<span>{ itemData.subtitle }</span>
-								<Icon
-									className="sidebar-v2__external-icon"
-									icon={ external }
-									size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
-								/>
+								<span>
+									{ itemData.subtitle }
+									<Icon
+										className="sidebar-v2__external-icon"
+										icon={ external }
+										size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
+									/>
+								</span>
 							</Button>
 						</div>
 					</div>
