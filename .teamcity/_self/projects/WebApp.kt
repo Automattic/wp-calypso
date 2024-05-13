@@ -572,7 +572,6 @@ object CheckCodeStyleBranch : BuildType({
 			scriptContent = """
 				set -x
 				export NODE_ENV="test"
-				export NODE_OPTIONS=--max_old_space_size=1024
 
 				# Find files to lint
 				if [ "%run_full_eslint%" = "true" ]; then
