@@ -282,6 +282,10 @@ const ProductTitleAreaForCostOverridesList = styled.div`
 	display: flex;
 	justify-content: space-between;
 	gap: 0.5em;
+
+	& .cost-overrides-list-product__title {
+		flex: 1 1 min-content;
+	}
 `;
 
 function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
