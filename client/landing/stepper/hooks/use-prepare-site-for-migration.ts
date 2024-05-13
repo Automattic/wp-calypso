@@ -26,6 +26,10 @@ const getMigrationKeyStatus = (
 	return status as Status;
 };
 
+const getError = ( original: Error ) => {
+	return new Error( 'Error to prepare a site for migration', { cause: original } );
+};
+
 /**
  *  Hook to manage the site to prepare a site for migration using Migrate Guru plugin.
  *  This hook manages the site transfer, plugin installation and migration key fetching.
@@ -58,7 +62,7 @@ export const usePrepareSiteForMigration = ( siteId?: number ) => {
 	return {
 		detailedStatus,
 		completed,
-		error,
+		error: error ? getError( error ) : null,
 		migrationKey: migrationKey ?? null,
 	};
 };
