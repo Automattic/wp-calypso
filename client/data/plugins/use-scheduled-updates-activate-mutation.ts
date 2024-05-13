@@ -65,40 +65,27 @@ export function useScheduledUpdatesActivateMutation( queryOptions = {} ) {
 			const prevSchedules: ScheduleUpdates[] =
 				queryClient.getQueryData( [ 'schedule-updates', siteSlug ] ) || [];
 
-			const prevMultisiteSchedules: MultisiteSchedulesUpdatesResponse | undefined =
-				queryClient.getQueryData( [ 'multisite-schedules-update' ] );
-
-			let newSchedule;
 			const newSchedules = prevSchedules.map( ( x ) => {
 				if ( x.id === scheduleId ) {
-					newSchedule = { ...x, active: params.active };
-					return newSchedule;
+					return { ...x, active: params.active };
 				}
 				return x;
 			} );
 
-			const newMultisiteSchedules = updateMultisiteSchedule(
-				JSON.parse( JSON.stringify( prevMultisiteSchedules ) ), // deep copy
-				newSchedule
-			);
-
 			queryClient.setQueryData( [ 'schedule-updates', siteSlug ], newSchedules );
-			queryClient.setQueryData( [ 'multisite-schedules-update' ], newMultisiteSchedules );
 
-			return { prevSchedules, prevMultisiteSchedules };
+			return { prevSchedules };
 		},
 		onError: ( err, params, context ) => {
 			const { siteSlug } = params;
 			// Set previous value on error
 			queryClient.setQueryData( [ 'schedule-updates', siteSlug ], context?.prevSchedules );
-			queryClient.setQueryData( [ 'multisite-schedules-update' ], context?.prevMultisiteSchedules );
 		},
 		onSettled: ( data, error, variables ) => {
 			const { siteSlug } = variables;
 
 			// Re-fetch after error or success
 			queryClient.invalidateQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
-			queryClient.invalidateQueries( { queryKey: [ 'multisite-schedules-update', siteSlug ] } );
 		},
 		...queryOptions,
 	} );
