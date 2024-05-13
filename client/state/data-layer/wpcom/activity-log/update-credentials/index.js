@@ -1,7 +1,5 @@
-import page from '@automattic/calypso-router';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
-import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
@@ -19,13 +17,8 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { markCredentialsAsValid } from 'calypso/state/jetpack/credentials/actions';
 import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
-import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
 const debug = debugModule( 'calypso:data-layer:update-credentials' );
-const navigateTo =
-	'undefined' !== typeof window
-		? ( path ) => window.open( path, '_blank' )
-		: ( path ) => page( path );
 
 const getMaybeNoticeId = ( action ) =>
 	'noticeId' in action ? { noticeId: action.noticeId } : {};
@@ -116,8 +109,6 @@ export const success = ( action, { rewind_state } ) =>
 	].filter( Boolean );
 
 export const failure = ( action, error ) => ( dispatch, getState ) => {
-	const getHelp = () => navigateTo( contactSupportUrl( getSelectedSiteSlug( getState() ) ) );
-
 	const baseOptions = { duration: 10000, ...getMaybeNoticeId( action ) };
 
 	const dispatchFailure = ( message, options = {} ) => {
@@ -164,9 +155,19 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 				i18n.translate(
 					'A error occurred when we were trying to validate your site information. ' +
 						'Please make sure your credentials and host URL are correct and try again. ' +
-						'If you need help, please click on the support link.'
-				),
-				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
+						'{{a}}Learn more{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://jetpack.com/support/backup/adding-credentials-to-jetpack/"
+									target="blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				)
 			);
 			break;
 
@@ -197,9 +198,20 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			dispatchFailure(
 				i18n.translate(
 					'We looked for `wp-config.php` in the WordPress installation ' +
-						"path you provided but couldn't find it."
-				),
-				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
+						"path you provided but couldn't find it. " +
+						'{{a}}Learn more{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://jetpack.com/support/backup/adding-credentials-to-jetpack/#troubleshoot-remote-server-credentials-errors"
+									target="blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				)
 			);
 			break;
 
@@ -207,9 +219,20 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			dispatchFailure(
 				i18n.translate(
 					'It looks like your server is read-only. ' +
-						'To create backups and restore your site, we need permission to write to your server.'
-				),
-				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
+						'To create backups and restore your site, we need permission to write to your server.' +
+						'{{a}}Learn more{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://jetpack.com/support/backup/ssh-sftp-and-ftp-credentials/#file-access-permission"
+									target="blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				)
 			);
 			break;
 
