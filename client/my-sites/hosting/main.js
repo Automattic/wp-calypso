@@ -384,14 +384,7 @@ const Hosting = ( props ) => {
 									/>
 								</Column>
 								<Column>
-									<SidebarCards
-										hasStagingSitesFeature={ hasStagingSitesFeature }
-										isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
-										isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
-										isWpcomStagingSite={ isWpcomStagingSite }
-										siteId={ siteId }
-										siteSlug={ siteSlug }
-									/>
+									<SidebarCards isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic } />
 								</Column>
 							</>
 						) }
