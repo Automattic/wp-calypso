@@ -191,11 +191,7 @@ const migrationSignup: Flow = {
 					}
 
 					return navigate(
-						addQueryArgs(
-							{ from: from, siteSlug, siteId },
-							STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
-						),
-						{ hideFreeMigrationTrialForNonVerifiedEmail: true }
+						addQueryArgs( { from: from, siteSlug, siteId }, STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug )
 					);
 				}
 

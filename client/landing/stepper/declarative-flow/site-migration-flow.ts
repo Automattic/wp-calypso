@@ -304,6 +304,10 @@ const siteMigration: Flow = {
 
 					return navigate( `site-migration-upgrade-plan?${ urlQueryParams.toString() }` );
 				}
+
+				case STEPS.VERIFY_EMAIL.slug: {
+					return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug );
+				}
 			}
 		};
 
