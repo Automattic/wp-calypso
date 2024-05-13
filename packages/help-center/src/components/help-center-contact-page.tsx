@@ -153,7 +153,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	const emailUrlSearchParams = new URLSearchParams( {
 		mode: 'EMAIL',
 		// Set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
-		overflow: 'true',
+		overflow: renderEmail.render.toString(),
 		wapuuFlow: hideHeaders.toString(),
 	} );
 	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
