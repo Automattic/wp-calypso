@@ -68,7 +68,7 @@ const SiteMigrationInstructions: Step = function () {
 			<ol className="site-migration-instructions__list">
 				<li>
 					{ translate(
-						'Install and activate the {{a}}Migrate Guru plugin{{/a}} on your existing site.',
+						'Install and activate the {{a}}Migrate Guru plugin{{/a}} on your source site.',
 						{
 							components: {
 								a: (
