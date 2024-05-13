@@ -122,7 +122,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				flex-direction: row-reverse;
 				padding-inline: 10px 8px;
 				font-size: 14px;
-				color: var(--studio-gray-40 );
+				color: var( --studio-gray-40 );
 				svg {
 					fill: var( --studio-gray-40 );
 					color: var( --studio-gray-40 );
