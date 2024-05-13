@@ -144,14 +144,7 @@ const siteMigration: Flow = {
 							}
 
 							if ( from ) {
-								// return navigate(
-								// 	addQueryArgs( { from: fromQueryParam }, STEPS.SITE_CREATION_STEP.slug )
-								// );
-								return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug, {
-									siteId,
-									siteSlug,
-								} );
-								// return navigate( `createSite?from=${ encodeURIComponent( from ) }` );
+								return navigate( addQueryArgs( { from }, STEPS.SITE_CREATION_STEP.slug ) );
 							}
 							return navigate( 'error' );
 						}
