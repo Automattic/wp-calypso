@@ -7,29 +7,9 @@
 	background-color: var(--studio-gray-0);
 	border: 1px solid #cbcbcb;
 	padding: 0 1.5rem;
-	animation: 500ms ease-out slideUp;
+	transition: transform ease-out 500ms;
 
 	&--hidden {
-		display: none;
-		animation: 500ms ease-out slideDown;
-	}
-}
-
-@keyframes slideUp {
-	from {
-		transform: translateY(100%);
-	}
-	to {
-		transform: translateY(0);
-	}
-}
-@keyframes slideDown {
-	from {
-		display: block;
-		transform: translateY(0);
-	}
-	to {
-		display: none;
 		transform: translateY(100%);
 	}
 }
