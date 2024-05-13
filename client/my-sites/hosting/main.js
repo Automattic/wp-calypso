@@ -95,91 +95,59 @@ const MainCards = ( {
 	siteId,
 	siteSlug,
 } ) => {
-	let mainCards = [];
-
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		mainCards = [
-			{
-				feature: 'github-deployments',
-				content: <GitHubDeploymentsCard />,
-				type: 'advanced',
-			},
-			{
-				feature: 'sftp',
-				content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
-				type: 'advanced',
-			},
-			{
-				feature: 'phpmyadmin',
-				content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
-				type: 'advanced',
-			},
-			{
-				feature: 'restore-plan-software',
-				content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
-				type: 'basic',
-			},
-			{
-				feature: 'web-server-settings',
-				content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
-				type: 'advanced',
-			},
-		];
-	} else {
-		mainCards = [
-			{
-				feature: 'github-deployments',
-				content: <GitHubDeploymentsCard />,
-				type: 'advanced',
-			},
-			{
-				feature: 'sftp',
-				content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
-				type: 'advanced',
-			},
-			{
-				feature: 'phpmyadmin',
-				content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
-				type: 'advanced',
-			},
-			! isWpcomStagingSite && hasStagingSitesFeature
-				? {
-						feature: 'staging-site',
-						content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
-						type: 'advanced',
-				  }
-				: null,
-			isWpcomStagingSite && siteId
-				? {
-						feature: 'staging-production-site',
-						content: (
-							<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
-						),
-						type: 'advanced',
-				  }
-				: null,
-			{
-				feature: 'web-server-settings',
-				content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
-				type: 'advanced',
-			},
-			{
-				feature: 'restore-plan-software',
-				content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
-				type: 'basic',
-			},
-			{
-				feature: 'cache',
-				content: <CacheCard disabled={ isBasicHostingDisabled } />,
-				type: 'basic',
-			},
-			siteId && {
-				feature: 'wp-admin',
-				content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
-				type: 'basic',
-			},
-		].filter( ( card ) => card !== null );
-	}
+	const mainCards = [
+		{
+			feature: 'github-deployments',
+			content: <GitHubDeploymentsCard />,
+			type: 'advanced',
+		},
+		{
+			feature: 'sftp',
+			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		{
+			feature: 'phpmyadmin',
+			content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		! isWpcomStagingSite && hasStagingSitesFeature
+			? {
+					feature: 'staging-site',
+					content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
+					type: 'advanced',
+			  }
+			: null,
+		isWpcomStagingSite && siteId
+			? {
+					feature: 'staging-production-site',
+					content: (
+						<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
+					),
+					type: 'advanced',
+			  }
+			: null,
+		{
+			feature: 'web-server-settings',
+			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		{
+			feature: 'restore-plan-software',
+			content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'cache',
+			content: <CacheCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		siteId && {
+			feature: 'wp-admin',
+			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
+			type: 'basic',
+		},
+	].filter( ( card ) => card !== null );
 
 	const availableTypes = [
 		! isAdvancedHostingDisabled ? 'advanced' : null,
@@ -195,7 +163,24 @@ const MainCards = ( {
 	);
 };
 
-const SidebarCards = ( {
+const SidebarCards = ( { isBasicHostingDisabled } ) => {
+	const sidebarCards = [
+		{
+			feature: 'site-backup',
+			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'support',
+			content: <SupportCard />,
+		},
+	];
+
+	const availableTypes = isBasicHostingDisabled ? [] : [ 'basic' ];
+	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
+};
+
+const AllCards = ( {
 	hasStagingSitesFeature,
 	isAdvancedHostingDisabled,
 	isBasicHostingDisabled,
@@ -203,66 +188,75 @@ const SidebarCards = ( {
 	siteId,
 	siteSlug,
 } ) => {
-	let sidebarCards = [];
-
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		sidebarCards = [
-			{
-				feature: 'site-backup',
-				content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
-				type: 'basic',
-			},
-			{
-				feature: 'support',
-				content: <SupportCard />,
-			},
-			! isWpcomStagingSite && hasStagingSitesFeature
-				? {
-						feature: 'staging-site',
-						content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
-						type: 'advanced',
-				  }
-				: null,
-			isWpcomStagingSite && siteId
-				? {
-						feature: 'staging-production-site',
-						content: (
-							<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
-						),
-						type: 'advanced',
-				  }
-				: null,
-			{
-				feature: 'cache',
-				content: <CacheCard disabled={ isBasicHostingDisabled } />,
-				type: 'basic',
-			},
-			siteId && {
-				feature: 'wp-admin',
-				content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
-				type: 'basic',
-			},
-		].filter( ( card ) => card !== null );
-	} else {
-		sidebarCards = [
-			{
-				feature: 'site-backup',
-				content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
-				type: 'basic',
-			},
-			{
-				feature: 'support',
-				content: <SupportCard />,
-			},
-		];
-	}
+	const allCards = [
+		{
+			feature: 'github-deployments',
+			content: <GitHubDeploymentsCard />,
+			type: 'advanced',
+		},
+		{
+			feature: 'sftp',
+			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		{
+			feature: 'phpmyadmin',
+			content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		! isWpcomStagingSite && hasStagingSitesFeature
+			? {
+					feature: 'staging-site',
+					content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
+					type: 'advanced',
+			  }
+			: null,
+		isWpcomStagingSite && siteId
+			? {
+					feature: 'staging-production-site',
+					content: (
+						<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
+					),
+					type: 'advanced',
+			  }
+			: null,
+		{
+			feature: 'web-server-settings',
+			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		{
+			feature: 'restore-plan-software',
+			content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'cache',
+			content: <CacheCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		siteId && {
+			feature: 'wp-admin',
+			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
+			type: 'basic',
+		},
+		{
+			feature: 'site-backup',
+			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'support',
+			content: <SupportCard />,
+		},
+	].filter( ( card ) => card !== null );
 
 	const availableTypes = [
 		! isAdvancedHostingDisabled ? 'advanced' : null,
 		! isBasicHostingDisabled ? 'basic' : null,
 	].filter( ( type ) => type !== null );
 
-	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
+	return <ShowEnabledFeatureCards cards={ allCards } availableTypes={ availableTypes } />;
 };
 
 const Hosting = ( props ) => {
@@ -366,8 +360,8 @@ const Hosting = ( props ) => {
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<WrapperComponent>
 					<Layout className="hosting__layout">
-						<Column className="hosting__main-layout-col">
-							<MainCards
+						{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) ? (
+							<AllCards
 								hasStagingSitesFeature={ hasStagingSitesFeature }
 								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
@@ -376,17 +370,31 @@ const Hosting = ( props ) => {
 								siteId={ siteId }
 								siteSlug={ siteSlug }
 							/>
-						</Column>
-						<Column>
-							<SidebarCards
-								hasStagingSitesFeature={ hasStagingSitesFeature }
-								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
-								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
-								isWpcomStagingSite={ isWpcomStagingSite }
-								siteId={ siteId }
-								siteSlug={ siteSlug }
-							/>
-						</Column>
+						) : (
+							<>
+								<Column className="hosting__main-layout-col">
+									<MainCards
+										hasStagingSitesFeature={ hasStagingSitesFeature }
+										isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
+										isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
+										isBusinessTrial={ isBusinessTrial && ! hasTransfer }
+										isWpcomStagingSite={ isWpcomStagingSite }
+										siteId={ siteId }
+										siteSlug={ siteSlug }
+									/>
+								</Column>
+								<Column>
+									<SidebarCards
+										hasStagingSitesFeature={ hasStagingSitesFeature }
+										isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
+										isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
+										isWpcomStagingSite={ isWpcomStagingSite }
+										siteId={ siteId }
+										siteSlug={ siteSlug }
+									/>
+								</Column>
+							</>
+						) }
 					</Layout>
 				</WrapperComponent>
 			</>

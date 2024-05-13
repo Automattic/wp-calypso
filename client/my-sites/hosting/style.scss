@@ -1,5 +1,7 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
+$areas: github-deployments, sftp, site-backup, support, phpmyadmin, staging-site, restore-plan-software, cache, web-server-settings, admin-interface-style;
+
 .hosting {
 	/* Rely on the standard spacing for the underlying elements. */
 	.feature-example {
@@ -12,11 +14,30 @@
 	}
 
 	&--is-two-columns {
-		.hosting__layout .layout__column {
+		.hosting__layout {
+			.card {
+				width: 100%;
+			}
+
 			@include breakpoint-deprecated( ">1280px" ) {
+				@each $area in $areas {
+					.#{$area}-card {
+						margin-bottom: 0;
+						grid-area: $area;
+						width: 100%;
+					}
+				}
+
 				box-sizing: border-box;
-				flex-basis: 45%;
-				flex-grow: 1;
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				grid-template-areas:
+					"github-deployments github-deployments"
+					"sftp site-backup"
+					"sftp support"
+					"phpmyadmin staging-site"
+					"restore-plan-software cache"
+					"web-server-settings admin-interface-style";
 			}
 		}
 	}
