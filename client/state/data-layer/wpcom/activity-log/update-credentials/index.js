@@ -219,7 +219,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			dispatchFailure(
 				i18n.translate(
 					'It looks like your server is read-only. ' +
-						'To create backups and restore your site, we need permission to write to your server.' +
+						'To create backups and restore your site, we need permission to write to your server. ' +
 						'{{a}}Learn more{{/a}}.',
 					{
 						components: {
