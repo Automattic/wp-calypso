@@ -61,7 +61,9 @@ const tscCommands = [
 const testClient = withUnitTestInfo( 'test-client --maxWorkers=8 --workerIdleMemoryLimit=1GB' );
 const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
 const testServer = withUnitTestInfo( 'test-server --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
-const testBuildTools = withUnitTestInfo( 'test-build-tools --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
+const testBuildTools = withUnitTestInfo(
+	'test-build-tools --maxWorkers=4 --workerIdleMemoryLimit=1GB'
+);
 // Includes ETK and Odyssey Stats, migrated here from their individual builds.
 const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
 

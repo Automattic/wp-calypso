@@ -173,7 +173,7 @@ export function GetReportForm( {
 							<Gridicon icon="product-downloadable" />
 						</Button>
 					</div>
-					{ responseError && <FormInputValidation isError={ true } text={ responseError } /> }
+					{ responseError && <FormInputValidation isError text={ responseError } /> }
 					{ responseSuccess && (
 						<FormInputValidation
 							isError={ false }

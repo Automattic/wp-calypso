@@ -53,10 +53,7 @@ const QuickLinksForEcommerceSites = ( props ) => {
 					hideLinkIndicator
 					label={ translate( 'Add a product' ) }
 					iconComponent={
-						<span
-							className="quick-links__action-box-icon dashicons dashicons-cart"
-							aria-hidden={ true }
-						/>
+						<span className="quick-links__action-box-icon dashicons dashicons-cart" aria-hidden />
 					}
 				/>
 			) }
@@ -68,7 +65,7 @@ const QuickLinksForEcommerceSites = ( props ) => {
 					iconComponent={
 						<span
 							className="quick-links__action-box-icon dashicons dashicons-archive"
-							aria-hidden={ true }
+							aria-hidden
 						/>
 					}
 				/>
@@ -79,10 +76,7 @@ const QuickLinksForEcommerceSites = ( props ) => {
 					hideLinkIndicator
 					label={ translate( 'View customers' ) }
 					iconComponent={
-						<span
-							className="quick-links__action-box-icon dashicons dashicons-money"
-							aria-hidden={ true }
-						/>
+						<span className="quick-links__action-box-icon dashicons dashicons-money" aria-hidden />
 					}
 				/>
 			) }
