@@ -69,7 +69,7 @@ export const ScheduleListCard = ( props: Props ) => {
 			{ ! compact && (
 				<>
 					<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
-						<label htmlFor="last-update">
+						<label htmlFor={ `last-update-${ schedule.id }` }>
 							<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) }>
 								{ translate( 'Last update' ) }
 								<Icon icon={ isExpanded ? chevronUp : chevronDown } />
@@ -105,17 +105,17 @@ export const ScheduleListCard = ( props: Props ) => {
 							className="plugins-update-manager-multisite-card__sites-site"
 						>
 							<div className="plugins-update-manager-multisite-card__label">
-								<label htmlFor="name">{ translate( 'Name' ) }</label>
-								<strong id="name">{ site.title }</strong>
+								<label htmlFor={ `name-${ site.ID }` }>{ translate( 'Name' ) }</label>
+								<strong id={ `name-${ site.ID }` }>{ site.title }</strong>
 							</div>
 							<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
-								<label htmlFor="last-update">{ translate( 'Last update' ) }</label>
+								<label htmlFor={ `last-update-${ site.ID }` }>{ translate( 'Last update' ) }</label>
 								<div>
 									<ScheduleListLastRunStatus schedule={ schedule } site={ site } />
 								</div>
 							</div>
 							<div className="plugins-update-manager-multisite-card__label">
-								<label htmlFor="name">{ translate( 'Active' ) }</label>
+								<label htmlFor={ `active-${ site.ID }` }>{ translate( 'Active' ) }</label>
 								<FormToggle
 									checked={ site.active }
 									onChange={ ( e ) =>
@@ -132,8 +132,10 @@ export const ScheduleListCard = ( props: Props ) => {
 
 			{ ! compact && (
 				<div className="plugins-update-manager-multisite-card__label">
-					<label htmlFor="next-update">{ translate( 'Next update' ) }</label>
-					<span id="next-update">{ prepareDateTime( schedule.timestamp ) }</span>
+					<label htmlFor={ `next-update-${ schedule.id }` }>{ translate( 'Next update' ) }</label>
+					<span id={ `next-update-${ schedule.id }` }>
+						{ prepareDateTime( schedule.timestamp ) }
+					</span>
 				</div>
 			) }
 		</div>
