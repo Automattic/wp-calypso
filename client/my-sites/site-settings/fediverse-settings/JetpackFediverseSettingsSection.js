@@ -18,6 +18,7 @@ export const JetpackFediverseSettingsSection = ( { siteId, needsBorders } ) => {
 		getSiteAdminUrl( state, siteId, 'options-general.php?page=activitypub' )
 	);
 	const pluginIsActive = plugin?.active;
+	const pluginIsInstalledAndInactive = plugin && ! pluginIsActive;
 
 	return (
 		<>
@@ -42,7 +43,9 @@ export const JetpackFediverseSettingsSection = ( { siteId, needsBorders } ) => {
 						</>
 					) : (
 						<Button primary={ true } onClick={ () => page( `/plugins/activitypub/${ domain }` ) }>
-							{ translate( 'Install ActivityPub' ) }
+							{ pluginIsInstalledAndInactive
+								? translate( 'Activate ActivityPub' )
+								: translate( 'Install ActivityPub' ) }
 						</Button>
 					) }
 				</p>
