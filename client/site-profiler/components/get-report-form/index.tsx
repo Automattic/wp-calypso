@@ -128,9 +128,7 @@ export function GetReportForm( {
 									onChange={ handleNameChange }
 								/>
 
-								{ errors?.name && (
-									<FormInputValidation isError={ !! errors } text={ errors.name } />
-								) }
+								{ errors?.name && <FormInputValidation isError text={ errors.name } /> }
 							</FormFieldset>
 							<FormFieldset>
 								<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
@@ -142,9 +140,7 @@ export function GetReportForm( {
 									isError={ !! errors?.email }
 									onChange={ handleEmailChange }
 								/>
-								{ errors?.email && (
-									<FormInputValidation isError={ !! errors } text={ errors.email } />
-								) }
+								{ errors?.email && <FormInputValidation isError text={ errors.email } /> }
 							</FormFieldset>
 						</div>
 						<div className="get-report-form__form-footer">
@@ -159,7 +155,7 @@ export function GetReportForm( {
 									) }
 								/>
 								{ errors?.termsAccepted && (
-									<FormInputValidation isError={ !! errors } text={ errors.termsAccepted } />
+									<FormInputValidation isError text={ errors.termsAccepted } />
 								) }
 							</FormFieldset>
 							<Button
@@ -172,7 +168,7 @@ export function GetReportForm( {
 								<Gridicon icon="product-downloadable" />
 							</Button>
 						</div>
-						{ responseError && <FormInputValidation isError={ true } text={ responseError } /> }
+						{ responseError && <FormInputValidation isError text={ responseError } /> }
 						{ responseSuccess && (
 							<FormInputValidation
 								isError={ false }
