@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -131,12 +130,19 @@ const SharingServicesGroup = ( {
 								</Fragment>
 							);
 						}
-
+						{
+							/* Injecting the Fediverse above Twitter */
+							if ( service.ID === 'twitter' && type === 'publicize' ) {
+								return (
+									<>
+										<Components.fediverse key="fediverse" />
+										<Component key={ service.ID } service={ service } />
+									</>
+								);
+							}
+						}
 						return <Component key={ service.ID } service={ service } />;
 					} ) }
-				{ isEnabled( 'fediverse/on-connections-page' ) && type === 'publicize' && (
-					<Components.fediverse key="fediverse" />
-				) }
 			</ul>
 		</div>
 	);

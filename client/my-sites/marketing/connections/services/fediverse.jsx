@@ -77,6 +77,7 @@ export default function Fediverse() {
 				title="Fediverse"
 				summary={ <FediverseStatus /> }
 				clickableHeader={ true }
+				compact
 			>
 				<FediverseServiceSection needsBorders={ false } />
 			</FoldableCard>
