@@ -241,7 +241,13 @@ class Layout extends Component {
 		) {
 			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
 		}
-		this.addSidebarClassToBody();
+
+		if (
+			prevProps.isGlobalSidebarVisible !== this.props.isGlobalSidebarVisible ||
+			prevProps.isGlobalSidebarCollapsed !== this.props.isGlobalSidebarCollapsed
+		) {
+			this.addSidebarClassToBody();
+		}
 	}
 
 	addSidebarClassToBody() {
