@@ -332,16 +332,20 @@ $brand-text: "SF Pro Text", $sans;
 	.sidebar__back-link {
 		padding-left: 12px;
 		margin-top: 4px;
+		margin-bottom: 24px;
+		display: flex;
+		align-items: center;
+		gap: 4px;
 
 		a {
 			color: var(--nav-link);
 			text-decoration: none;
 			align-items: center;
-			display: inline-flex;
-			margin-bottom: 24px;
 			padding: 9px;
-			border-radius: 2px;
-			gap: 8px;
+			border-radius: 4px;
+			&:hover {
+				background-color: var(--color-sidebar-menu-hover-background);
+			}
 		}
 
 		svg.gridicons-chevron-left {
@@ -349,7 +353,7 @@ $brand-text: "SF Pro Text", $sans;
 			fill: var(--color-sidebar-gridicon-fill);
 		}
 
-		.sidebar__back-link-text {
+		.sidebar__app-title {
 			font-size: $default-font-size;
 			vertical-align: text-bottom;
 		}
