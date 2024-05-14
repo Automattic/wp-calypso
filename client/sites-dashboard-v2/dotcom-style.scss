@@ -273,15 +273,11 @@
 			}
 		}
 		.sidebar__header {
-			flex-wrap: wrap;
-			span.dotcom {
+			flex-direction: row !important;
+			transition: none;
+			.dotcom {
+				transition: width 220ms ease-out;
 				background-position: left;
-			}
-			.gap,
-			button.sidebar__item-search,
-			a.sidebar__item-notifications {
-				justify-content: flex-start;
-				flex-basis: 0%;
 			}
 			.sidebar__menu-link {
 				transition: all 220ms ease-out;
@@ -311,14 +307,9 @@
 						}
 					}
 					.sidebar__header {
-						flex-direction: row !important;
 						padding-inline: 19px;
-						.gap {
-							flex-basis: 100%;
-						}
-						button.sidebar__item-search,
-						a.sidebar__item-notifications {
-							flex-basis: 100%;
+						.dotcom {
+							// transition: all 220ms ease-out;
 						}
 					}
 					.sidebar__body {
