@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 /* eslint-disable wpcalypso/jsx-gridicon-size */
-import { Card, FormLabel, MaterialIcon } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
@@ -132,7 +132,6 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
 			<Card className="admin-interface-style-card">
 				{ isHosting && (
 					<>
-						<MaterialIcon icon="display_settings" style="filled" size={ 32 } />
 						<CardHeading id="admin-interface-style" size={ 20 }>
 							{ translate( 'Admin interface style' ) }
 						</CardHeading>

@@ -1,5 +1,5 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
-import { Card, Button, FormLabel, Spinner, MaterialIcon } from '@automattic/components';
+import { Card, Button, FormLabel, Spinner } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { PanelBody, ToggleControl } from '@wordpress/components';
@@ -219,7 +219,6 @@ export const SftpCard = ( {
 
 	return (
 		<Card className="sftp-card">
-			<MaterialIcon icon="key" size={ 32 } />
 			<CardHeading id="sftp-credentials">
 				{ siteHasSshFeature
 					? translate( 'SFTP/SSH credentials' )

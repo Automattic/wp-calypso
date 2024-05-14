@@ -1,4 +1,4 @@
-import { Button, Card, FormLabel, LoadingPlaceholder, MaterialIcon } from '@automattic/components';
+import { Button, Card, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
@@ -385,7 +385,6 @@ const WebServerSettingsCard = ( {
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteWpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
-			<MaterialIcon icon="build" size={ 32 } />
 			<CardHeading id="web-server-settings">{ translate( 'Web server settings' ) }</CardHeading>
 			<p>
 				{ translate(

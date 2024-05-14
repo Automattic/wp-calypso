@@ -1,4 +1,4 @@
-import { Button, Card, MaterialIcon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -35,7 +35,6 @@ export default function RestorePlanSoftwareCard() {
 
 	return (
 		<Card className="restore-plan-software-card">
-			<MaterialIcon icon="apps" size={ 32 } />
 			<CardHeading>{ translate( 'Restore plugins and themes' ) }</CardHeading>
 			<p>
 				{ translate(
