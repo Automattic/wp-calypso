@@ -181,7 +181,7 @@ module.exports = {
 				'jest/expect-expect': 'off',
 				'jest/no-focused-tests': 'off',
 				'jest/no-standalone-expect': 'off',
-				'jsdoc/require-param-description': 'off',
+				//'jsdoc/require-param-description': 'off',
 				'no-console': 'off',
 				'no-redeclare': 'off',
 				'no-restricted-imports': 'off',
@@ -192,8 +192,8 @@ module.exports = {
 				'react/react-in-jsx-scope': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
 				'@typescript-eslint/no-unused-vars': 'off',
-				'jsdoc/require-param': 'off',
-				'jsdoc/check-param-names': 'off',
+				//'jsdoc/require-param': 'off',
+				//'jsdoc/check-param-names': 'off',
 				'@typescript-eslint/no-empty-function': 'off',
 				'prettier/prettier': [ 'error', { parser: 'babel' } ],
 			},
@@ -339,15 +339,17 @@ module.exports = {
 		],
 
 		// Only use known tag names plus `jest-environment`.
+		/*
 		'jsdoc/check-tag-names': [
 			'error',
 			{ definedTags: [ 'jest-environment', 'jsxImportSource' ] },
 		],
+		*/
 
 		// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
-		'jsdoc/require-param-description': 'off',
-		'jsdoc/require-param': 'off',
-		'jsdoc/require-returns-description': 'off',
+		// 'jsdoc/require-param-description': 'off',
+		// 'jsdoc/require-param': 'off',
+		// 'jsdoc/require-returns-description': 'off',
 
 		// Deprecated rule, fails in some valid cases with custom input components
 		'jsx-a11y/label-has-for': 'off',

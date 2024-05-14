@@ -8,9 +8,10 @@ module.exports = {
 			jsx: true,
 		},
 	},
-	extends: [ 'eslint:recommended', 'plugin:jsdoc/recommended' ],
-	plugins: [ 'jsdoc', 'wpcalypso', 'inclusive-language' ],
+	extends: [ 'eslint:recommended' ],
+	plugins: [ 'wpcalypso', 'inclusive-language' ],
 	settings: {
+		/*
 		jsdoc: {
 			preferredTypes: {
 				// Enforce capitalized "Object" types to align with WordPress
@@ -18,6 +19,7 @@ module.exports = {
 				object: 'Object',
 			},
 		},
+		*/
 	},
 	rules: {
 		'array-bracket-spacing': [ 'error', 'always' ],
@@ -117,6 +119,7 @@ module.exports = {
 		'template-curly-spacing': [ 'error', 'always' ],
 
 		// jsdoc plugin
+		/*
 		'jsdoc/check-access': 'error',
 		'jsdoc/check-alignment': 'error',
 		'jsdoc/check-param-names': 'error',
@@ -140,6 +143,7 @@ module.exports = {
 		'jsdoc/require-returns-description': 'error',
 		'jsdoc/require-returns-type': 'off',
 		'jsdoc/valid-types': 'off',
+		*/
 
 		// wpcalypso plugin
 		'wpcalypso/i18n-ellipsis': 'error',
