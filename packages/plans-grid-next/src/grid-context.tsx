@@ -22,10 +22,6 @@ interface PlansGridContext {
 	 * for rendering features with categories based on available/associated feature group map.
 	 */
 	enableCategorisedFeatures?: boolean;
-	/**
-	 * `featureGroupMap` is relevant for rendering features with categories.
-	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `enableCategorisedFeatures` is set).
-	 */
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
 }

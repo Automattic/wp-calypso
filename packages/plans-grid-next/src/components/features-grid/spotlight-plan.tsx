@@ -58,7 +58,7 @@ const SpotlightPlan = ( {
 			) }
 			{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
 			<PlanStorageOptions
-				renderedGridPlans={ [ gridPlanForSpotlight ] }
+				planSlug={ gridPlanForSpotlight.planSlug }
 				intervalType={ intervalType }
 				onStorageAddOnClick={ onStorageAddOnClick }
 				showUpgradeableStorage={ showUpgradeableStorage }

@@ -1,4 +1,10 @@
-import { type FeatureGroupSlug, isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
+import {
+	type FeatureGroupSlug,
+	isWpcomEnterpriseGridPlan,
+	FEATURE_GROUP_STORAGE,
+	FEATURE_GROUP_ALL_FEATURES,
+	WPComStorageAddOnSlug,
+} from '@automattic/calypso-products';
 import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -8,6 +14,7 @@ import PlanFeatures2023GridFeatures from '../features';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
+import PlanStorageOptions from './plan-storage-options';
 import type { DataResponse, GridPlan } from '../../types';
 
 type PlanFeaturesListProps = {
@@ -30,6 +37,9 @@ type PlanFeaturesListProps = {
 		isTableCell?: boolean;
 	};
 	featureGroupSlug?: FeatureGroupSlug;
+	intervalType: string;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	showUpgradeableStorage: boolean;
 };
 
 const PlanFeaturesList = ( {
@@ -41,6 +51,9 @@ const PlanFeaturesList = ( {
 	renderedGridPlans,
 	selectedFeature,
 	featureGroupSlug,
+	intervalType,
+	onStorageAddOnClick,
+	showUpgradeableStorage = false,
 }: PlanFeaturesListProps ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
@@ -59,13 +72,45 @@ const PlanFeaturesList = ( {
 
 	return plansWithFeatures.map(
 		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
-			const filteredWpcomFeatures = wpcomFeatures.filter(
-				( feature ) => featureGroup?.getFeatures().includes( feature.getSlug() )
-			);
+			// This is temporary. Ideally all feature-groups will include the included features.
+			const filteredWpcomFeatures =
+				featureGroup?.slug === FEATURE_GROUP_ALL_FEATURES
+					? wpcomFeatures
+					: wpcomFeatures.filter(
+							( feature ) => featureGroup?.getFeatures().includes( feature.getSlug() )
+					  );
 
-			if ( featureGroup && ! filteredWpcomFeatures.length ) {
+			/**
+			 * 1. Storage group is still it's own thing, with no actual features associated. It will join the rest in a follow-up.
+			 */
+			if ( FEATURE_GROUP_STORAGE === featureGroup?.slug ) {
+				return (
+					<PlanDivOrTdContainer
+						key={ `${ planSlug }-${ mapIndex }` }
+						isTableCell={ options?.isTableCell }
+						className="plan-features-2023-grid__table-item"
+					>
+						<PlanFeaturesItem>
+							<h2 className="plans-grid-next-features-grid__feature-group-title">
+								{ featureGroup?.getTitle() }
+							</h2>
+						</PlanFeaturesItem>
+						<PlanStorageOptions
+							planSlug={ planSlug }
+							options={ { isTableCell: true } }
+							intervalType={ intervalType }
+							onStorageAddOnClick={ onStorageAddOnClick }
+							showUpgradeableStorage={ showUpgradeableStorage }
+						/>
+					</PlanDivOrTdContainer>
+				);
+			}
+
+			/**
+			 * 2. Render a placeholder to keep the grid (table) aligned.
+			 */
+			if ( ! filteredWpcomFeatures.length ) {
 				if ( options?.isTableCell ) {
-					// Render a placeholder to keep the grid aligned
 					return (
 						<PlanDivOrTdContainer
 							key={ `${ planSlug }-${ mapIndex }` }
@@ -74,17 +119,21 @@ const PlanFeaturesList = ( {
 						/>
 					);
 				}
+
 				// No placeholder required if the element is not a part of the table.
-				return;
+				return null;
 			}
 
+			/**
+			 * 3. Everything else gets rendered as usual.
+			 */
 			return (
 				<PlanDivOrTdContainer
 					key={ `${ planSlug }-${ mapIndex }` }
 					isTableCell={ options?.isTableCell }
 					className="plan-features-2023-grid__table-item"
 				>
-					{ featureGroup && (
+					{ featureGroup?.getTitle() && (
 						<PlanFeaturesItem>
 							<h2 className="plans-grid-next-features-grid__feature-group-title">
 								{ featureGroup?.getTitle() }
@@ -92,7 +141,7 @@ const PlanFeaturesList = ( {
 						</PlanFeaturesItem>
 					) }
 					<PlanFeatures2023GridFeatures
-						features={ featureGroup ? filteredWpcomFeatures : wpcomFeatures }
+						features={ filteredWpcomFeatures }
 						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
 						generatedWPComSubdomain={ generatedWPComSubdomain }
@@ -102,7 +151,7 @@ const PlanFeaturesList = ( {
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					/>
-					{ ! featureGroup && jetpackFeatures.length !== 0 && (
+					{ jetpackFeatures.length !== 0 && (
 						<>
 							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
 								<Plans2023Tooltip
@@ -133,4 +182,5 @@ const PlanFeaturesList = ( {
 		}
 	);
 };
+
 export default PlanFeaturesList;

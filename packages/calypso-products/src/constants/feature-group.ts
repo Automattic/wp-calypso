@@ -25,3 +25,6 @@ export const FEATURE_GROUP_PAYMENTS = 'feature-group-payments';
 export const FEATURE_GROUP_MARKETING_EMAIL = 'feature-group-marketing-email';
 export const FEATURE_GROUP_SHIPPING = 'feature-group-shipping';
 /* END: Woo Express Feature Groups */
+
+export const FEATURE_GROUP_STORAGE = 'feature-group-storage';
+export const FEATURE_GROUP_ALL_FEATURES = 'feature-group-all-freatures';

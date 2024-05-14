@@ -52,6 +52,7 @@ import {
 	FEATURE_GITHUB_DEPLOYMENTS,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_GOOGLE_ANALYTICS_V3,
+	FEATURE_GROUP_ALL_FEATURES,
 	FEATURE_GROUP_DEVELOPER_TOOLS,
 	FEATURE_GROUP_ECOMMERCE,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
@@ -64,6 +65,7 @@ import {
 	FEATURE_GROUP_PRODUCTS,
 	FEATURE_GROUP_SECURITY_AND_SAFETY,
 	FEATURE_GROUP_SHIPPING,
+	FEATURE_GROUP_STORAGE,
 	FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS,
 	FEATURE_GROUP_SUPPORT,
 	FEATURE_GROUP_THEMES_AND_CUSTOMIZATION,
@@ -172,6 +174,16 @@ import {
 import { FeatureGroupMap } from './types';
 
 export const featureGroups: Partial< FeatureGroupMap > = {
+	[ FEATURE_GROUP_ALL_FEATURES ]: {
+		slug: FEATURE_GROUP_ALL_FEATURES,
+		getTitle: () => null, // Intentionally null, as this is a placeholder for all features.
+		getFeatures: () => [], // This is a placeholder for now. It will not be processed, but theoretically a reference to all the features.
+	},
+	[ FEATURE_GROUP_STORAGE ]: {
+		slug: FEATURE_GROUP_STORAGE,
+		getTitle: () => i18n.translate( 'Storage' ),
+		getFeatures: () => [], // Intentionally empty for now. We will include a fixed list of feature slugs in a follow-up.
+	},
 	/* START: Plans 2023 Feature Group (To be deleted after pau2Xa-5Ol-P2 if trail map wins) */
 	[ FEATURE_GROUP_ESSENTIAL_FEATURES ]: {
 		slug: FEATURE_GROUP_ESSENTIAL_FEATURES,
@@ -585,9 +597,28 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	/* START: WooExpress Feature Groups */
 };
 
-export function resolvePlansGridFeatureGroups(): Partial< FeatureGroupMap > {
+export function resolveFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap > {
 	if ( isTrailMapAnyVariant() ) {
 		return {
+			[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
+			[ FEATURE_GROUP_WEBSITE_BUILDING ]: featureGroups[ FEATURE_GROUP_WEBSITE_BUILDING ],
+			[ FEATURE_GROUP_MANAGED_WP_HOSTING ]: featureGroups[ FEATURE_GROUP_MANAGED_WP_HOSTING ],
+			[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
+			[ FEATURE_GROUP_ECOMMERCE ]: featureGroups[ FEATURE_GROUP_ECOMMERCE ],
+			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
+		};
+	}
+
+	return {
+		[ FEATURE_GROUP_ALL_FEATURES ]: featureGroups[ FEATURE_GROUP_ALL_FEATURES ],
+		[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
+	};
+}
+
+export function resolveFeatureGroupsForComparisonGrid(): Partial< FeatureGroupMap > {
+	if ( isTrailMapCopyVariant() ) {
+		return {
+			[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
 			[ FEATURE_GROUP_WEBSITE_BUILDING ]: featureGroups[ FEATURE_GROUP_WEBSITE_BUILDING ],
 			[ FEATURE_GROUP_MANAGED_WP_HOSTING ]: featureGroups[ FEATURE_GROUP_MANAGED_WP_HOSTING ],
 			[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
@@ -608,10 +639,11 @@ export function resolvePlansGridFeatureGroups(): Partial< FeatureGroupMap > {
 			featureGroups[ FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS ],
 		[ FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS ]:
 			featureGroups[ FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS ],
+		[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
 	};
 }
 
-export function resolveWooExpressFeaturesGrouped(): Partial< FeatureGroupMap > {
+export function resolveWooExpressFeatureGroupsForComparisonGrid(): Partial< FeatureGroupMap > {
 	return {
 		[ FEATURE_GROUP_YOUR_STORE ]: featureGroups[ FEATURE_GROUP_YOUR_STORE ],
 		[ FEATURE_GROUP_PRODUCTS ]: featureGroups[ FEATURE_GROUP_PRODUCTS ],
