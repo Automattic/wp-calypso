@@ -18,6 +18,7 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import localStorageHelper from 'store';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -57,8 +58,8 @@ export class Notifications extends Component {
 	};
 
 	componentDidMount() {
-		window.addEventListener( 'mousedown', this.props.checkToggle );
-		window.addEventListener( 'touchstart', this.props.checkToggle );
+		window.addEventListener( 'mousedown', this.props.checkToggle, { passive: false } );
+		window.addEventListener( 'touchstart', this.props.checkToggle, { passive: false } );
 		window.addEventListener( 'keydown', this.handleKeyPress );
 
 		if ( typeof document.hidden !== 'undefined' ) {
@@ -78,8 +79,8 @@ export class Notifications extends Component {
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'mousedown', this.props.checkToggle );
-		window.removeEventListener( 'touchstart', this.props.checkToggle );
+		window.removeEventListener( 'mousedown', this.props.checkToggle, { passive: false } );
+		window.removeEventListener( 'touchstart', this.props.checkToggle, { passive: false } );
 		window.removeEventListener( 'keydown', this.handleKeyPress );
 
 		if ( typeof document.hidden !== 'undefined' ) {
@@ -174,7 +175,7 @@ export class Notifications extends Component {
 		const customMiddleware = {
 			APP_RENDER_NOTES: [
 				( store, { newNoteCount } ) => {
-					this.props.setIndicator( newNoteCount );
+					localStorageHelper.set( 'wpnotes_unseen_count', newNoteCount );
 					this.props.setUnseenCount( newNoteCount );
 				},
 			],
@@ -257,7 +258,6 @@ export class Notifications extends Component {
 				className={ classNames( 'wide', 'wpnc__main', {
 					'wpnt-open': this.props.isShowing,
 					'wpnt-closed': ! this.props.isShowing,
-					'global-sidebar-visible': this.props.isGlobalSidebarVisible ?? false,
 				} ) }
 			>
 				<NotificationsPanel
