@@ -261,7 +261,7 @@
 		"eslint-plugin-import": "^2.29.1",
 		"eslint-plugin-inclusive-language": "^2.2.1",
 		"eslint-plugin-jest": "^27.9.0",
-		"eslint-plugin-jsdoc": "patch:eslint-plugin-jsdoc@npm%3A46.10.1#~/.yarn/patches/eslint-plugin-jsdoc-npm-46.10.1-18dfff75a6.patch",
+		"eslint-plugin-jsdoc": "^46.10.1",
 		"eslint-plugin-jsx-a11y": "^6.8.0",
 		"eslint-plugin-md": "^1.0.19",
 		"eslint-plugin-prettier": "^5.1.3",
@@ -402,8 +402,7 @@
 		"@wordpress/viewport": "5.34.0",
 		"@wordpress/warning": "2.57.0",
 		"@wordpress/widgets": "3.34.0",
-		"@wordpress/wordcount": "3.57.0",
-		"eslint-plugin-jsdoc@npm:^46.4.6": "patch:eslint-plugin-jsdoc@npm%3A46.10.1#~/.yarn/patches/eslint-plugin-jsdoc-npm-46.10.1-18dfff75a6.patch"
+		"@wordpress/wordcount": "3.57.0"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {
