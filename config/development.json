@@ -67,7 +67,6 @@
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
-		"fediverse/on-connections-page": true,
 		"cookie-banner": false,
 		"google-drive": true,
 		"google-my-business": true,
