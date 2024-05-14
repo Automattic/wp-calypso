@@ -23,6 +23,15 @@ export default function globalSidebarMenu() {
 			url: '/domains/manage',
 		},
 		{
+			icon: 'dashicons-admin-plugins',
+			slug: 'plugins',
+			title: translate( 'Plugins' ),
+			navigationLabel: translate( 'Plugins' ),
+			type: 'menu-item',
+			url: '/plugins/scheduled-updates',
+			forceChevronIcon: true,
+		},
+		{
 			icon: (
 				<svg
 					width="20"
