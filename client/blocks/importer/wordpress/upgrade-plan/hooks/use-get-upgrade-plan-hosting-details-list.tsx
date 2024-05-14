@@ -1,4 +1,4 @@
-import { trendingUp } from '@wordpress/icons';
+import { trendingUp, next } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { defaultHostingDetails } from '../constants';
 import wordpressCwvtechReportJson from '../wordpress-cwvtech-report.json';
@@ -6,9 +6,12 @@ import { useGetUpgradePlanSiteMetrics } from './use-get-upgrade-plan-site-metric
 
 export const useUpgradePlanHostingDetailsList = () => {
 	const translate = useTranslate();
-	const { lcpPercentageDifference } = useGetUpgradePlanSiteMetrics();
-	const hostingDetails = [ ...defaultHostingDetails ];
+	const { lcpPercentageDifference, fidPercentageDifference } = useGetUpgradePlanSiteMetrics();
 
+	let newDefaultHostingDetails = [ ...defaultHostingDetails ];
+	const newHostingDetails = [];
+
+	// LCP hosting details.
 	if ( lcpPercentageDifference > 0 ) {
 		const wordpressLCP = Math.round( 100 * wordpressCwvtechReportJson?.goodLCP );
 
@@ -25,9 +28,34 @@ export const useUpgradePlanHostingDetailsList = () => {
 			),
 			icon: trendingUp,
 		};
-		hostingDetails.splice( 1, 1 );
-		hostingDetails.unshift( updatedHostingSpeedDetails );
+		newDefaultHostingDetails = newDefaultHostingDetails.filter(
+			( { id } ) => id !== 'increased-speed'
+		);
+		newHostingDetails.push( updatedHostingSpeedDetails );
 	}
 
-	return hostingDetails;
+	// FID hosting details.
+	if ( fidPercentageDifference > 0 ) {
+		const wordpressFID = Math.round( 100 * wordpressCwvtechReportJson?.goodFID );
+
+		const updatedHostingFasterResponseDetails = {
+			title: translate( 'Faster response' ),
+			description: translate(
+				'%(wordpressFidPercentage)s of sites on WordPress.com respond at least %(sitePercentageDifference)s faster than yours on the first interaction.',
+				{
+					args: {
+						wordpressFidPercentage: `${ wordpressFID }%`,
+						sitePercentageDifference: `${ fidPercentageDifference }%`,
+					},
+				}
+			),
+			icon: next,
+		};
+		newDefaultHostingDetails = newDefaultHostingDetails.filter(
+			( { id } ) => id !== 'reduced-error-rate'
+		);
+		newHostingDetails.push( updatedHostingFasterResponseDetails );
+	}
+
+	return [ ...newHostingDetails, ...newDefaultHostingDetails ];
 };
