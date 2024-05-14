@@ -14,7 +14,7 @@ const GlobalNotifications = () => {
 	const isNotificationsOpenRef = useRef( isNotificationsOpen );
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 	const unseenCount = useSelector( ( state: AppState ) => getUnseenCount( state ) );
-	const containerRef = useRef();
+	const containerRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
 	const toggleNotesFrame = useCallback( ( event: MouseEvent | null ) => {
 		if ( event ) {
@@ -37,7 +37,7 @@ const GlobalNotifications = () => {
 			const target = event ? event.target : false;
 
 			// Ignore clicks or other events which occur inside of the notification panel.
-			if ( target && containerRef.current.contains( target ) ) {
+			if ( target && containerRef.current?.contains( target as Node ) ) {
 				return;
 			}
 
@@ -73,7 +73,7 @@ const GlobalNotifications = () => {
 	 */
 	useEffect( () => {
 		if ( prevIsNotificationsOpen && ! isNotificationsOpen ) {
-			containerRef.current.ownerDocument.body.focus();
+			containerRef.current?.ownerDocument.body.focus();
 		}
 	}, [ prevIsNotificationsOpen, isNotificationsOpen, dispatch ] );
 
