@@ -204,7 +204,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ flow.name, currentStepRoute, hasRequestedSelectedSite ] );
 
-	const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
+	const assertCondition = flow.useAssertConditions?.( _navigate, currentStepRoute ) ?? {
 		state: AssertConditionState.SUCCESS,
 	};
 

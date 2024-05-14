@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useFlowLoginUrl } from 'calypso/landing/stepper/hooks/use-flow-login-url';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -16,7 +17,6 @@ import {
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
@@ -86,9 +86,9 @@ const newsletter: Flow = {
 		const isLoadingIntroScreen =
 			! isComingFromMarketingPage && ( 'intro' === _currentStep || undefined === _currentStep );
 
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/newsletterSetup`,
+		const logInUrl = useFlowLoginUrl( {
+			flow: this,
+			returnStepSlug: 'newsletterSetup',
 			pageTitle: translate( 'Newsletter' ),
 		} );
 

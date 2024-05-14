@@ -3,21 +3,20 @@ import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { useFlowLoginUrl } from 'calypso/landing/stepper/hooks/use-flow-login-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE } from '../stores';
-import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import LaunchPad from './internals/steps-repository/launchpad';
 import Processing from './internals/steps-repository/processing-step';
 import {
-	AssertConditionResult,
+	type AssertConditionResult,
 	AssertConditionState,
-	Flow,
-	ProvidedDependencies,
+	type Flow,
+	type ProvidedDependencies,
 } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -80,7 +79,7 @@ const write: Flow = {
 		return { goNext, submit };
 	},
 
-	useAssertConditions(): AssertConditionResult {
+	useAssertConditions( navigate, currentStepSlug ): AssertConditionResult {
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -88,39 +87,27 @@ const write: Flow = {
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		const queryParams = new URLSearchParams( window.location.search );
-		const flowName = this.name;
-
-		const locale = useFlowLocale();
 
 		const flags = queryParams.get( 'flags' );
 		const siteSlug = queryParams.get( 'siteSlug' );
 
-		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
+		const loginUrlParams: Record< string, string | number > = {};
+		const returnUrlParams: Record< string, string | number > = {};
 
-			if ( siteSlug ) {
-				flowParams.set( 'siteSlug', siteSlug );
-				hasFlowParams = true;
-			}
+		if ( flags ) {
+			loginUrlParams.flags = flags;
+			returnUrlParams.flags = flags;
+		}
+		if ( siteSlug ) {
+			returnUrlParams.siteSlug = siteSlug;
+		}
 
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				window?.location?.pathname +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-
-			const logInUrl = getLoginUrl( {
-				variationName: flowName,
-				redirectTo: redirectTarget,
-				locale,
-			} );
-
-			return logInUrl + ( flags ? `&flags=${ flags }` : '' );
-		};
+		const logInUrl = useFlowLoginUrl( {
+			flow: this,
+			loginUrlParams,
+			returnStepSlug: currentStepSlug,
+			returnUrlParams,
+		} );
 
 		// Despite sending a CHECKING state, this function gets called again with the
 		// /setup/write/launchpad route which has no locale in the path so we need to
@@ -129,10 +116,9 @@ const write: Flow = {
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
 			if ( ! userIsLoggedIn ) {
-				const logInUrl = getStartUrl();
 				window.location.assign( logInUrl );
 			}
-		}, [] );
+		}, [ logInUrl ] );
 
 		if ( ! userIsLoggedIn ) {
 			result = {
