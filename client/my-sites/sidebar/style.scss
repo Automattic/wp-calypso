@@ -833,6 +833,11 @@ $font-size: rem(14px);
 			}
 		}
 
+		.sidebar__expandable-title,
+		.sidebar__menu-link-text {
+			max-height: 34px;
+		}
+
 		.sidebar .notice {
 			.notice__content,
 			.notice__action {
