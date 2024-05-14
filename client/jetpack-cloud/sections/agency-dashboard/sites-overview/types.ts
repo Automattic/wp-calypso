@@ -74,10 +74,20 @@ export interface BoostData {
 	desktop: number;
 }
 
-export default interface SiteTag {
+export interface SiteTag {
 	id: number;
 	slug: string;
 	label: string;
+}
+
+export interface SiteNote {
+	id: number;
+	site_id: number;
+	author_id: number;
+	author_name: string;
+	author_gravatar: string;
+	date: string;
+	content: string;
 }
 
 export interface Site {
@@ -116,6 +126,7 @@ export interface Site {
 	enabled_plugin_slugs?: Array< string >;
 	a4a_site_id: number;
 	a4a_site_tags: SiteTag[];
+	a4a_site_notes: SiteNote[];
 }
 export interface SiteNode {
 	value: Site;

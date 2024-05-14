@@ -1,18 +1,20 @@
-import { Gravatar } from '@automattic/components';
+import { Gravatar, LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import useCreateSiteNoteMutation from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/hooks/use-create-site-note-mutation';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
 interface Props {
+	siteId: number;
 	notes: any[];
-	onCreateNote: ( note: string ) => void;
 }
 
-export default function AgencySiteNotes( { notes, onCreateNote }: Props ) {
+export default function AgencySiteNotes( { siteId, notes }: Props ) {
 	const translate = useTranslate();
+	const notesMutation = useCreateSiteNoteMutation();
 
 	const [ fieldState, setFieldState ] = useState( '' );
 	const currentUser = useSelector( getCurrentUser );
@@ -24,7 +26,7 @@ export default function AgencySiteNotes( { notes, onCreateNote }: Props ) {
 	const maybeSubmit = ( e: any ) => {
 		if ( 'Enter' === e.key && ! e.shiftKey ) {
 			e.preventDefault();
-			onCreateNote( fieldState );
+			notesMutation.mutate( { siteId, content: fieldState } );
 			setFieldState( '' );
 		}
 	};
@@ -71,6 +73,23 @@ export default function AgencySiteNotes( { notes, onCreateNote }: Props ) {
 					/>
 				</div>
 			</div>
+
+			{ notesMutation.isPending && (
+				<div className="agency-site-notes__note-block">
+					<div className="agency-site-notes__note-block-avatar">
+						<LoadingPlaceholder style={ { width: '32px', height: '32px', borderRadius: '50%' } } />
+					</div>
+					<div className="agency-site-notes__note-block-content" style={ { flexGrow: 1 } }>
+						<div className="agency-site-notes__note-block-meta">
+							<LoadingPlaceholder style={ { height: '21px', maxWidth: '256px' } } />
+						</div>
+						<div className="agency-site-notes__note-block-content">
+							<LoadingPlaceholder style={ { height: '21px' } } />
+						</div>
+					</div>
+				</div>
+			) }
+
 			{ noteBlocks }
 		</div>
 	);
