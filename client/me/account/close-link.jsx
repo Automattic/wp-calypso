@@ -1,6 +1,5 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { translate } from 'i18n-calypso';
 import { Component } from 'react';
 
 import './close-link.scss';
