@@ -16,12 +16,12 @@ import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/intern
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
 import { patternFiltersClassName } from 'calypso/my-sites/patterns/components/pattern-library';
+import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import { usePatternsContext } from '../../context';
 import type { Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
 import type { Dispatch, SetStateAction } from 'react';
 

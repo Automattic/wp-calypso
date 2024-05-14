@@ -11,11 +11,11 @@ import {
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
+import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { PatternTypeFilter, type PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { usePatternsContext } from '../../context';
 
 import './style.scss';
 
