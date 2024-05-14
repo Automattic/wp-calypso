@@ -232,7 +232,7 @@ export const useComparisonData = () => {
 									<>
 										{ translate( 'Basic stats' ) }
 										<br data-screen="desktop" />
-										{ /* Space between description and parenthasis on mobile */ }
+										{ /* Space between description and parenthesis on mobile */ }
 										<span data-screen="mobile"> </span>
 										{ translate( '(Personal sites only)' ) }
 									</>
@@ -243,7 +243,7 @@ export const useComparisonData = () => {
 									<>
 										{ translate( 'Basic stats' ) }
 										<br data-screen="desktop" />
-										{ /* Space between description and parenthasis on mobile */ }
+										{ /* Space between description and parenthesis on mobile */ }
 										<span data-screen="mobile"> </span>
 										{ translate( '(Personal sites only)' ) }
 									</>
@@ -255,7 +255,7 @@ export const useComparisonData = () => {
 									<>
 										{ translate( 'Advanced stats' ) }
 										<br data-screen="desktop" />
-										{ /* Space between description and parenthasis on mobile */ }
+										{ /* Space between description and parenthesis on mobile */ }
 										<span data-screen="mobile"> </span>
 										{ translate( '(100k page views)' ) }
 									</>
