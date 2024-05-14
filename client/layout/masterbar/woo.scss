@@ -221,11 +221,11 @@ $breakpoint-mobile: 660px;
 		width: 100%;
 	}
 
-	.masterbar__woo-nav-item a.masterbar__login-back-link {
+	.masterbar__woo-nav-item button.masterbar__login-back-link {
 		color: var(--studio-gray-100);
-		text-decoration: none;
 		display: flex;
 		font-weight: 500;
+		padding: 0;
 	}
 
 	.masterbar__woo-mobile-nav {
@@ -1417,6 +1417,7 @@ $breakpoint-mobile: 660px;
 					font-weight: 500;
 					line-height: 24px;
 					color: var(--studio-gray-100);
+					font-family: $woo-inter-font;
 				}
 
 				.social-icons {

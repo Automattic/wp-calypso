@@ -19,13 +19,14 @@ export const ScheduleListTable = ( props: Props ) => {
 		<table className="plugins-update-manager-multisite-table">
 			<thead>
 				<tr>
-					<th></th>
+					<th className="expand"></th>
 					<th>{ translate( 'Name' ) }</th>
 					<th>{ translate( 'Sites' ) }</th>
 					<th>{ translate( 'Last update' ) }</th>
 					<th>{ translate( 'Next update' ) }</th>
 					<th>{ translate( 'Frequency' ) }</th>
 					<th>{ translate( 'Plugins' ) }</th>
+					<th>{ translate( 'Active' ) }</th>
 					<th></th>
 				</tr>
 			</thead>

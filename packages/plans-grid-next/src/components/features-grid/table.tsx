@@ -24,7 +24,6 @@ type TableProps = {
 	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
@@ -47,7 +46,6 @@ const Table = ( {
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
@@ -138,7 +136,6 @@ const Table = ( {
 							renderedGridPlans={ gridPlansWithoutSpotlight }
 							options={ { isTableCell: true, isStuck } }
 							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							planActionOverrides={ planActionOverrides }
 						/>
@@ -152,7 +149,7 @@ const Table = ( {
 				</tr>
 				{ enableCategorisedFeatures ? (
 					<>
-						<tr>
+						<tr className="plans-grid-next-features-grid__feature-group-row is-first-feature-group-row">
 							<PlanStorageOptions
 								renderedGridPlans={ gridPlansWithoutSpotlight }
 								options={ { isTableCell: true } }
@@ -161,11 +158,9 @@ const Table = ( {
 								showUpgradeableStorage={ showUpgradeableStorage }
 							/>
 						</tr>
-						{ featureGroups.map( ( featureGroupSlug, featureGroupIndex ) => (
+						{ featureGroups.map( ( featureGroupSlug ) => (
 							<tr
-								className={ classNames( 'plans-grid-next-features-grid__feature-group-row', {
-									'is-first-feature-group': featureGroupIndex === 0,
-								} ) }
+								className="plans-grid-next-features-grid__feature-group-row"
 								key={ featureGroupSlug }
 							>
 								<PlanFeaturesList

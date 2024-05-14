@@ -1,9 +1,9 @@
-import { Card, Button, MaterialIcon } from '@automattic/components';
+import { Button, MaterialIcon } from '@automattic/components';
 import { PanelBody } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -65,14 +65,16 @@ export default function PhpMyAdminCard( { disabled } ) {
 	const { openPhpMyAdmin, loading } = useOpenPhpMyAdmin();
 
 	return (
-		<Card className="phpmyadmin-card">
-			<MaterialIcon icon="dns" size={ 32 } />
-			<CardHeading id="database-access">{ translate( 'Database access' ) }</CardHeading>
-			<p>
+		<HostingCard
+			className="phpmyadmin-card"
+			headingId="database-access"
+			title={ translate( 'Database access' ) }
+		>
+			<HostingCardDescription>
 				{ translate(
 					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
 				) }
-			</p>
+			</HostingCardDescription>
 			<div className="phpmyadmin-card__questions">
 				<PanelBody title={ translate( 'What is phpMyAdmin?' ) } initialOpen={ false }>
 					{ translate(
@@ -118,6 +120,6 @@ export default function PhpMyAdminCard( { disabled } ) {
 				onCancel={ () => setIsRestorePasswordDialogVisible( false ) }
 				onRestore={ () => setIsRestorePasswordDialogVisible( false ) }
 			/>
-		</Card>
+		</HostingCard>
 	);
 }

@@ -16,9 +16,11 @@ import wrapSettingsForm from '../wrap-settings-form';
 import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
+import { ReplyToSetting } from './ReplyToSetting';
 import { SubscribeModalOnCommentSetting } from './SubscribeModalOnCommentSetting';
 import { SubscribeModalSetting } from './SubscribeModalSetting';
 import { SubscribePostEndSetting } from './SubscribePostEndSetting';
+import { SubscriberLoginNavigationSetting } from './SubscriberLoginNavigationSetting';
 import { NewsletterCategoriesSection } from './newsletter-categories-section';
 
 const defaultNewsletterCategoryIds: number[] = [];
@@ -35,8 +37,10 @@ type Fields = {
 	wpcom_newsletter_categories?: number[];
 	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
+	jetpack_subscriptions_reply_to?: string;
 	sm_enabled?: boolean;
 	jetpack_subscriptions_subscribe_post_end_enabled?: boolean;
+	jetpack_subscriptions_login_navigation_enabled?: boolean;
 	jetpack_verbum_subscription_modal?: boolean;
 };
 
@@ -51,8 +55,10 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories,
 		wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt,
+		jetpack_subscriptions_reply_to,
 		sm_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
 	} = settings;
 
@@ -62,9 +68,12 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories: wpcom_newsletter_categories || [],
 		wpcom_newsletter_categories_enabled: !! wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
+		jetpack_subscriptions_reply_to: jetpack_subscriptions_reply_to || '',
 		sm_enabled: !! sm_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled:
 			!! jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_login_navigation_enabled:
+			!! jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal: !! jetpack_verbum_subscription_modal,
 	};
 };
@@ -94,9 +103,11 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	const {
 		wpcom_featured_image_in_email,
 		wpcom_subscription_emails_use_excerpt,
+		jetpack_subscriptions_reply_to,
 		subscription_options,
 		sm_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
 	} = fields;
 
@@ -164,6 +175,11 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 						value={ jetpack_verbum_subscription_modal }
 					/>
 				) }
+				<SubscriberLoginNavigationSetting
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ jetpack_subscriptions_login_navigation_enabled }
+				/>
 			</Card>
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
@@ -186,6 +202,13 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					updateFields={ updateFields }
 					value={ wpcom_subscription_emails_use_excerpt }
+				/>
+			</Card>
+			<Card className="site-settings__card">
+				<ReplyToSetting
+					disabled={ disabled }
+					updateFields={ updateFields }
+					value={ jetpack_subscriptions_reply_to }
 				/>
 			</Card>
 

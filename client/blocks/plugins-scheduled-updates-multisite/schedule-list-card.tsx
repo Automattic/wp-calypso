@@ -1,5 +1,6 @@
-import { Button, Tooltip } from '@wordpress/components';
+import { Button, FormToggle, Tooltip } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon, info } from '@wordpress/icons';
+import clsx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDateTimeFormat } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-date-time-format';
@@ -7,6 +8,7 @@ import { usePrepareMultisitePluginsTooltipInfo } from 'calypso/blocks/plugin-sch
 import { usePrepareScheduleName } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-prepare-schedule-name';
 import { ScheduleListLastRunStatus } from 'calypso/blocks/plugins-scheduled-updates-multisite/schedule-list-last-run-status';
 import { ScheduleListTableRowMenu } from 'calypso/blocks/plugins-scheduled-updates-multisite/schedule-list-table-row-menu';
+import { useScheduledUpdatesActivateBatchMutation } from 'calypso/data/plugins/use-scheduled-updates-activate-batch-mutation';
 import { SiteSlug } from 'calypso/types';
 import type {
 	MultisiteSchedulesUpdates,
@@ -14,6 +16,8 @@ import type {
 } from 'calypso/data/plugins/use-update-schedules-query';
 
 type Props = {
+	className?: string;
+	compact?: boolean;
 	schedule: MultisiteSchedulesUpdates;
 	onEditClick: ( id: string ) => void;
 	onRemoveClick: ( id: string ) => void;
@@ -21,17 +25,19 @@ type Props = {
 };
 
 export const ScheduleListCard = ( props: Props ) => {
-	const { schedule, onEditClick, onRemoveClick, onLogsClick } = props;
+	const translate = useTranslate();
+	const { className, compact, schedule, onEditClick, onRemoveClick, onLogsClick } = props;
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat();
 	const { preparePluginsTooltipInfo } = usePrepareMultisitePluginsTooltipInfo(
 		schedule.sites.map( ( site ) => site.ID )
 	);
-	const translate = useTranslate();
+	const { activateSchedule } = useScheduledUpdatesActivateBatchMutation();
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const batchActiveState = schedule.sites.some( ( site ) => site.active );
 
 	return (
-		<div className="plugins-update-manager-multisite-card">
+		<div className={ clsx( 'plugins-update-manager-multisite-card', className ) }>
 			<div className="plugins-update-manager-multisite-card__label  plugins-update-manager-multisite-card__name-label">
 				<strong id="name">
 					<Button
@@ -60,17 +66,36 @@ export const ScheduleListCard = ( props: Props ) => {
 				/>
 			</div>
 
-			<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
-				<label htmlFor="last-update">
-					<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) }>
-						{ translate( 'Last update' ) }
-						<Icon icon={ isExpanded ? chevronUp : chevronDown } />
-					</Button>
-				</label>
-				<div>
-					<ScheduleListLastRunStatus schedule={ schedule } />
-				</div>
-			</div>
+			{ ! compact && (
+				<>
+					<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
+						<label htmlFor={ `last-update-${ schedule.id }` }>
+							<Button variant="link" onClick={ () => setIsExpanded( ! isExpanded ) }>
+								{ translate( 'Last update' ) }
+								<Icon icon={ isExpanded ? chevronUp : chevronDown } />
+							</Button>
+						</label>
+						<div>
+							<ScheduleListLastRunStatus schedule={ schedule } />
+						</div>
+					</div>
+					<div className="plugins-update-manager-multisite-card__label">
+						<label htmlFor={ `active-${ schedule.id }` }>{ translate( 'Active' ) }</label>
+						<span id={ `active-${ schedule.id }` }>
+							<FormToggle
+								checked={ batchActiveState }
+								onChange={ ( e ) =>
+									activateSchedule(
+										schedule.sites.map( ( site ) => ( { id: site.ID, slug: site.slug } ) ),
+										schedule.schedule_id,
+										{ active: e.target.checked }
+									)
+								}
+							/>
+						</span>
+					</div>
+				</>
+			) }
 
 			{ isExpanded && (
 				<div className="plugins-update-manager-multisite-card__sites">
@@ -80,24 +105,39 @@ export const ScheduleListCard = ( props: Props ) => {
 							className="plugins-update-manager-multisite-card__sites-site"
 						>
 							<div className="plugins-update-manager-multisite-card__label">
-								<label htmlFor="name">{ translate( 'Name' ) }</label>
-								<strong id="name">{ site.title }</strong>
+								<label htmlFor={ `name-${ site.ID }` }>{ translate( 'Name' ) }</label>
+								<strong id={ `name-${ site.ID }` }>{ site.title }</strong>
 							</div>
 							<div className="plugins-update-manager-multisite-card__label plugins-update-manager-multisite-card__last-update-label">
-								<label htmlFor="last-update">{ translate( 'Last update' ) }</label>
+								<label htmlFor={ `last-update-${ site.ID }` }>{ translate( 'Last update' ) }</label>
 								<div>
 									<ScheduleListLastRunStatus schedule={ schedule } site={ site } />
 								</div>
+							</div>
+							<div className="plugins-update-manager-multisite-card__label">
+								<label htmlFor={ `active-${ site.ID }` }>{ translate( 'Active' ) }</label>
+								<FormToggle
+									checked={ site.active }
+									onChange={ ( e ) =>
+										activateSchedule( [ { id: site.ID, slug: site.slug } ], schedule.schedule_id, {
+											active: e.target.checked,
+										} )
+									}
+								/>
 							</div>
 						</div>
 					) ) }
 				</div>
 			) }
 
-			<div className="plugins-update-manager-multisite-card__label">
-				<label htmlFor="next-update">{ translate( 'Next update' ) }</label>
-				<span id="next-update">{ prepareDateTime( schedule.timestamp ) }</span>
-			</div>
+			{ ! compact && (
+				<div className="plugins-update-manager-multisite-card__label">
+					<label htmlFor={ `next-update-${ schedule.id }` }>{ translate( 'Next update' ) }</label>
+					<span id={ `next-update-${ schedule.id }` }>
+						{ prepareDateTime( schedule.timestamp ) }
+					</span>
+				</div>
+			) }
 		</div>
 	);
 };

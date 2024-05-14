@@ -15,7 +15,7 @@ export default function SidebarItem( props ) {
 	const classes = classnames( props.className, props.tipTarget, {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
-		tooltip: !! props.tooltip,
+		'tooltip tooltip-right': !! props.tooltip,
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;

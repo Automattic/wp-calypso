@@ -1,10 +1,11 @@
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+import DevToolsIcon from 'calypso/dev-tools-promo/components/dev-tools-icon';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -12,9 +13,9 @@ import {
 	DOTCOM_PHP_LOGS,
 	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
+	DOTCOM_DEVELOPER_TOOLS_PROMO,
 } from './constants';
-
-import './style.scss';
+import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 
 type Props = {
 	site: SiteExcerptData;
@@ -23,6 +24,12 @@ type Props = {
 	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
 };
+
+const OVERLAY_MODAL_SELECTORS = [
+	'body.modal-open',
+	'#wpnc-panel.wpnt-open',
+	'div.help-center__container:not(.is-minimized)',
+];
 
 const DotcomPreviewPane = ( {
 	site,
@@ -34,9 +41,9 @@ const DotcomPreviewPane = ( {
 	const { __ } = useI18n();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
-	const isJetpackNonAtomic = ! isAtomicSite && !! site.jetpack;
+	const isSimpleSite = ! site.jetpack;
+	const isPlanExpired = !! site.plan?.expired;
 
-	// Dotcom tabs: Overview, Monitoring, GitHub Deployments, Hosting Config
 	const features = useMemo(
 		() => [
 			createFeaturePreview(
@@ -48,9 +55,19 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
+				DOTCOM_DEVELOPER_TOOLS_PROMO,
+				<span>
+					{ __( 'Dev Tools' ) } <DevToolsIcon />
+				</span>,
+				isSimpleSite || isPlanExpired,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				selectedSiteFeaturePreview
+			),
+			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
 				__( 'Hosting Config' ),
-				! isJetpackNonAtomic,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -58,7 +75,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_MONITORING,
 				__( 'Monitoring' ),
-				isAtomicSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -66,7 +83,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_PHP_LOGS,
 				__( 'PHP Logs' ),
-				isAtomicSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -74,7 +91,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_SERVER_LOGS,
 				__( 'Server Logs' ),
-				isAtomicSite,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
@@ -82,13 +99,21 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
 				__( 'GitHub Deployments' ),
-				! isJetpackNonAtomic,
+				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
 			),
 		],
-		[ selectedSiteFeature, setSelectedSiteFeature, selectedSiteFeaturePreview, site ]
+		[
+			__,
+			selectedSiteFeature,
+			setSelectedSiteFeature,
+			selectedSiteFeaturePreview,
+			isSimpleSite,
+			isPlanExpired,
+			isAtomicSite,
+		]
 	);
 
 	const itemData: ItemData = {
@@ -100,6 +125,25 @@ const DotcomPreviewPane = ( {
 		adminUrl: site.options?.admin_url || `${ site.URL }/wp-admin`,
 	};
 
+	useEffect( () => {
+		const handleKeydown = ( e: KeyboardEvent ) => {
+			if ( e.key !== 'Escape' ) {
+				return;
+			}
+
+			if ( document.querySelector( OVERLAY_MODAL_SELECTORS.join( ',' ) ) ) {
+				return;
+			}
+
+			closeSitePreviewPane();
+		};
+
+		document.addEventListener( 'keydown', handleKeydown, true );
+		return () => {
+			document.removeEventListener( 'keydown', handleKeydown, true );
+		};
+	}, [ closeSitePreviewPane ] );
+
 	return (
 		<ItemPreviewPane
 			itemData={ itemData }
@@ -107,6 +151,8 @@ const DotcomPreviewPane = ( {
 			features={ features }
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
+				siteIconFallback: 'first-grapheme',
+				headerButtons: PreviewPaneHeaderButtons,
 			} }
 		/>
 	);

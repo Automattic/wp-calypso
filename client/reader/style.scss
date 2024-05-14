@@ -231,6 +231,31 @@
 	}
 }
 
+.is-group-reader {
+	@media screen and (min-width: 782px) {
+		.navigation-header::after {
+			content: "";
+			display: block;
+			position: relative;
+			left: calc(-1 * (100vw - 100%)/2 - 132px);
+			margin: 24px 0;
+			width: 100vw;
+			height: 1px;
+			background: var(--color-border-secondary);
+		}
+	}
+}
+.is-group-reader .reader-notifications__panel {
+	@media only screen and ( min-width: 1114px ) {
+		.wpnc__main {
+			width: calc(100vw - 310px);
+			.wpnc__note-list {
+				left: 0;
+			}
+		}
+	}
+}
+
 .reader__post-embed-count {
 	padding: 4px 6px;
 	border-radius: 2px;

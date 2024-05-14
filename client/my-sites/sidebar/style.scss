@@ -24,6 +24,8 @@ $brand-text: "SF Pro Text", $sans;
 	--color-sidebar-text-rgb: 238, 238, 238;
 	--color-sidebar-text-alternative: #a2aab2;
 	--color-sidebar-gridicon-fill: #a2aab2;
+	--color-sidebar-gridicon-hover-fill: #00b9eb;
+	--color-sidebar-gridicon-selected-fill: #00b9eb;
 	--color-sidebar-notice-background: #3c434a;
 
 	--color-sidebar-submenu-background: #32373c;
@@ -42,16 +44,18 @@ $brand-text: "SF Pro Text", $sans;
 		--color-sidebar-text: var(--studio-gray-80);
 		--color-sidebar-text-alternative: var(--studio-gray-40);
 		--color-sidebar-text-alternative-selected: rgba(var(--studio-white-rgb), 0.7);
-		--color-sidebar-menu-selected-background: #3858e9;
-		--color-sidebar-menu-selected-text: var(--studio-white);
-		--color-sidebar-menu-hover-text: var(--studio-black);
-		--color-sidebar-menu-hover-background: #eee;
+		--color-sidebar-menu-selected-background: #e3e8fc;
+		--color-sidebar-menu-selected-text: var(--color-accent);
+		--color-sidebar-menu-hover-text: var(--studio-gray-80);
+		--color-sidebar-menu-hover-background: var(--color-sidebar-menu-selected-background);
 		--color-sidebar-submenu-background: var(--studio-white);
 		--color-sidebar-border: var(--studio-gray-5);
 		--color-sidebar-submenu-text: var(--color-sidebar-text);
 		--color-sidebar-submenu-selected-text: var(--color-sidebar-menu-selected-text);
-		--color-sidebar-submenu-hover-text: var(--color-sidebar-text);
+		--color-sidebar-submenu-hover-text: var(--color-sidebar-menu-selected-text);
 		--color-sidebar-gridicon-fill: var(--color-sidebar-text);
+		--color-sidebar-gridicon-hover-fill: var(--color-sidebar-text);
+		--color-sidebar-gridicon-selected-fill: var(--color-sidebar-menu-selected-text);
 		--color-sidebar-tooltip-background: var(--color-sidebar-menu-hover-background);
 		--color-sidebar-tooltip-text: var(--color-sidebar-menu-hover-text);
 	}
@@ -67,6 +71,15 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar {
 			padding-top: 12px;
+
+			.sidebar__menu-link-text {
+				flex: none;
+			}
+
+			.sidebar__menu-link .gridicons-external {
+				position: unset;
+				margin-left: 4px;
+			}
 		}
 	}
 
@@ -195,7 +208,7 @@ $font-size: rem(14px);
 		}
 
 		.gridicons-chevron-right {
-			color: var(--studio-gray-20);
+			fill: var(--color-sidebar-text);
 		}
 
 		.sidebar__expandable-content {
@@ -463,6 +476,12 @@ $font-size: rem(14px);
 				background-color: var(--color-sidebar-submenu-background);
 				border-bottom-left-radius: 0;
 				border-bottom-right-radius: 0;
+
+				&:not(:hover) {
+					.sidebar_svg-a8c g {
+						fill: var(--color-sidebar-submenu-background);
+					}
+				}
 			}
 			.sidebar__expandable-content {
 				border-top-left-radius: 0;
@@ -882,18 +901,13 @@ $font-size: rem(14px);
 			border-color: var(--color-sidebar-menu-text);
 		}
 
-		.sidebar__menu-link:hover .count {
-			color: var(--color-sidebar-submenu-hover-text);
-			border-color: var(--color-sidebar-submenu-hover-text);
-		}
-
 		.selected .sidebar__menu-link {
 			.count {
 				color: var(--color-sidebar-submenu-selected-text);
 				border-color: var(--color-sidebar-submenu-selected-text);
 			}
 			.sidebar__menu-item-last-updated {
-				color: var(--color-sidebar-text-alternative-selected);
+				color: var(--studio-gray-50);
 			}
 		}
 

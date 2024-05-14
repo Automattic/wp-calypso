@@ -21,6 +21,7 @@ export const MySitesSidebarUnifiedBody = ( {
 	path,
 	children,
 	onMenuItemClick,
+	isUnifiedSiteSidebarVisible,
 } ) => {
 	const menuItems = useSiteMenuItems();
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
@@ -66,6 +67,7 @@ export const MySitesSidebarUnifiedBody = ( {
 								selected={ isSelected }
 								sidebarCollapsed={ sidebarIsCollapsed }
 								shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+								isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
 								{ ...item }
 							/>
 						);

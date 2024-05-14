@@ -75,6 +75,8 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		cannotUpdateContactInfoReason: domain.cannot_update_contact_info_reason
 			? String( domain.cannot_update_contact_info_reason )
 			: null,
+		canTransferToAnyUser: Boolean( domain.can_transfer_to_any_user ),
+		canTransferToOtherSite: Boolean( domain.can_transfer_to_other_site ),
 		connectionMode: String( domain.connection_mode ),
 		contactInfoDisclosureAvailable: Boolean( domain.contact_info_disclosure_available ),
 		contactInfoDisclosed: Boolean( domain.contact_info_disclosed ),
@@ -104,6 +106,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
+		isGravatarDomain: Boolean( domain.is_gravatar_domain ),
 		isLocked: Boolean( domain.is_locked ),
 		isRenewable: Boolean( domain.is_renewable ),
 		isRedeemable: Boolean( domain.is_redeemable ),

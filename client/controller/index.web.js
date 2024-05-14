@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
 import { setPlansListExperiment } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { localStorageExperimentAssignmentKey } from '@automattic/explat-client/src/internal/experiment-assignment-store';
+import localStorage from '@automattic/explat-client/src/internal/local-storage';
 import {
 	getLanguage,
 	getLanguageSlugs,
@@ -16,7 +18,7 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { useExperiment } from 'calypso/lib/explat';
+import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
@@ -36,6 +38,7 @@ import { hydrate, render } from './web-util.js';
 export { setLocaleMiddleware, setSectionMiddleware } from './shared.js';
 export { hydrate, render } from './web-util.js';
 
+const PLAN_NAME_EXPERIMENT = 'wpcom_plan_name_change_starter_to_beginner_v5';
 export const ProviderWrappedLayout = ( {
 	store,
 	queryClient,
@@ -50,18 +53,19 @@ export const ProviderWrappedLayout = ( {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
-	const [ isLoading, experimentAssignment ] = useExperiment(
-		'wpcom_plan_name_change_starter_to_beginner_v4'
-	);
+	const [ isLoading, experimentAssignment ] = useExperiment( PLAN_NAME_EXPERIMENT );
 
 	useEffect( () => {
 		if ( ! isLoading ) {
-			setPlansListExperiment(
-				'wpcom_plan_name_change_starter_to_beginner_v4',
-				experimentAssignment?.variationName
-			);
+			setPlansListExperiment( PLAN_NAME_EXPERIMENT, experimentAssignment?.variationName );
 		}
 	}, [ isLoading, experimentAssignment?.variationName ] );
+
+	useEffect( () => {
+		// TODO: Implement a proper way to reset the experiment assignment
+		localStorage.removeItem( localStorageExperimentAssignmentKey( PLAN_NAME_EXPERIMENT ) );
+		loadExperimentAssignment( PLAN_NAME_EXPERIMENT );
+	}, [ userLoggedIn ] );
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />

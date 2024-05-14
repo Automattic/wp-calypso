@@ -12,7 +12,6 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
-import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { TypeToggle } from 'calypso/my-sites/patterns/components/type-toggle';
 import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
@@ -81,7 +80,7 @@ export const PatternLibrary = ( {
 	const navRef = useRef< HTMLDivElement >( null );
 
 	const { recordPatternsEvent } = useRecordPatternsEvent();
-	const { category, searchTerm, isGridView, patternTypeFilter, referrer, patternPermalinkId } =
+	const { category, searchTerm, isGridView, patternTypeFilter, patternPermalinkId } =
 		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
@@ -224,30 +223,17 @@ export const PatternLibrary = ( {
 		<>
 			{ isHomePage ? (
 				<PatternsPageViewTracker
-					searchTerm={ searchTerm }
-					referrer={ referrer }
 					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
 				/>
 			) : (
 				<PatternsPageViewTracker
-					category={ category }
 					patternPermalinkName={ patternPermalinkName }
-					patternTypeFilter={ patternTypeFilter }
 					view={ currentView }
-					searchTerm={ searchTerm }
-					referrer={ referrer }
 					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
 				/>
 			) }
 
-			<PatternsDocumentHead category={ category } />
-
-			<PatternsHeader
-				description={ translate(
-					'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.'
-				) }
-				title={ translate( "It's Easier With Patterns" ) }
-			/>
+			<PatternsHeader />
 
 			<div className="pattern-library__wrapper">
 				<div
@@ -334,8 +320,6 @@ export const PatternLibrary = ( {
 							isGridView={ isGridView }
 							key={ `pattern-gallery-${ patternGalleryKey }` }
 							patterns={ patterns }
-							patternTypeFilter={ searchTerm ? PatternTypeFilter.REGULAR : patternTypeFilter }
-							searchTerm={ searchTerm }
 						/>
 
 						{ searchTerm && ! patterns.length && category && (

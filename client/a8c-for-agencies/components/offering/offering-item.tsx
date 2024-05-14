@@ -32,7 +32,7 @@ const OfferingItem: React.FC< OfferingItemProps > = ( {
 				{ highlights.map( ( highlightItemText ) => (
 					<li className="a4a-offering-item__card-list-item" key={ highlightItemText }>
 						<div className="a4a-offering-item__icon-container">
-							<Gridicon className="a4a-offering-item__gridicon" icon="checkmark" size={ 24 } />
+							<Gridicon className="a4a-offering-item__gridicon" icon="checkmark" size={ 18 } />
 						</div>
 						<span className="a4a-offering-item__text">{ highlightItemText }</span>
 					</li>

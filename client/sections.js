@@ -222,6 +222,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'dev-tools-promo',
+		paths: [ '/dev-tools-promo' ],
+		module: 'calypso/dev-tools-promo',
+		group: 'sites',
+	},
+	{
 		name: 'jetpack-connect',
 		paths: [ '/jetpack' ],
 		module: 'calypso/jetpack-connect',
@@ -777,8 +783,14 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-referrals',
-		paths: [ '/referrals', '/referrals/bank-details' ],
+		paths: [ '/referrals', '/referrals/bank-details', '/referrals/commissions' ],
 		module: 'calypso/a8c-for-agencies/sections/referrals',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-migrations',
+		paths: [ '/migrations' ],
+		module: 'calypso/a8c-for-agencies/sections/migrations',
 		group: 'a8c-for-agencies',
 	},
 	{

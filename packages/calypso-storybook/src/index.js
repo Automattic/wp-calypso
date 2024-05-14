@@ -2,6 +2,7 @@ const path = require( 'path' );
 const calypsoBabelConfig = require( '@automattic/calypso-babel-config' );
 
 module.exports = function storybookDefaultConfig( {
+	staticDirs = [],
 	stories,
 	plugins = [],
 	webpackAliases = {},
@@ -35,7 +36,7 @@ module.exports = function storybookDefaultConfig( {
 				],
 			};
 		},
-
+		staticDirs,
 		stories: stories && stories.length ? stories : [ '../src/**/*.stories.{js,jsx,ts,tsx}' ],
 		addons: [
 			'@storybook/addon-actions',

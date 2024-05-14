@@ -41,7 +41,7 @@ export function useDateTimeFormat( siteSlug?: string ) {
 					case 'second':
 						return 's';
 					case 'dayPeriod':
-						return 'A';
+						return '';
 					default:
 						return part.value;
 				}

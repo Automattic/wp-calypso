@@ -2,13 +2,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import FilterSearch from 'calypso/a8c-for-agencies/components/filter-search';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { useDispatch } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import SimpleList from '../../common/simple-list';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
@@ -25,7 +22,6 @@ interface Props {
 
 export default function HostingList( { selectedSite }: Props ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const activeAgency = useSelector( getActiveAgency );
 
 	const { data } = useProductsQuery( false, true );
@@ -45,11 +41,8 @@ export default function HostingList( { selectedSite }: Props ) {
 		);
 	}, [ activeAgency ] );
 
-	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
-
 	const { isLoadingProducts, pressablePlans, wpcomPlans } = useProductAndPlans( {
 		selectedSite,
-		productSearchQuery,
 	} );
 
 	const isWPCOMOptionEnabled = isEnabled( 'a8c-for-agencies/wpcom-creator-plan-purchase-flow' );
@@ -89,15 +82,19 @@ export default function HostingList( { selectedSite }: Props ) {
 		[ translate ]
 	);
 
-	const onProductSearch = useCallback(
-		( value: string ) => {
-			setProductSearchQuery( value );
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_hosting_overview_search_submit', { value } )
-			);
+	// Track the tallest price section across hosting cards, to keep them aligned with each other.
+	const [ minHostingCardPriceHeight, setMinHostingCardPriceHeight ] = useState( 0 );
+	const hostingCardPriceHeightProps = {
+		minPriceHeight: minHostingCardPriceHeight,
+		setPriceHeight: ( height: number ): void => {
+			setMinHostingCardPriceHeight( ( currentHeight ) => {
+				if ( height > currentHeight ) {
+					return height;
+				}
+				return currentHeight;
+			} );
 		},
-		[ dispatch ]
-	);
+	};
 
 	if ( isLoadingProducts ) {
 		return (
@@ -109,19 +106,19 @@ export default function HostingList( { selectedSite }: Props ) {
 
 	return (
 		<div className="hosting-list">
-			<div className="hosting-list__actions">
-				<FilterSearch label={ translate( 'Search products' ) } onSearch={ onProductSearch } />
-			</div>
-
 			<ListingSection
 				title={ translate( 'Hosting' ) }
 				description={ translate(
-					'Mix and match powerful security, performance, and growth tools for your sites.'
+					'Choose the hosting that suits your needs from our best-in-class offerings.'
 				) }
 				isTwoColumns
 			>
 				{ creatorPlan && (
-					<HostingCard plan={ creatorPlan } highestDiscountPercentage={ highestDiscountWPCOM } />
+					<HostingCard
+						plan={ creatorPlan }
+						highestDiscountPercentage={ highestDiscountWPCOM }
+						{ ...hostingCardPriceHeightProps }
+					/>
 				) }
 
 				{ cheapestPressablePlan && (
@@ -129,11 +126,16 @@ export default function HostingList( { selectedSite }: Props ) {
 						plan={ cheapestPressablePlan }
 						pressableOwnership={ !! hasPressablePlan }
 						highestDiscountPercentage={ highestDiscountPressable }
+						{ ...hostingCardPriceHeightProps }
 					/>
 				) }
 
 				{ isWPCOMOptionEnabled && (
-					<HostingCard plan={ vipPlan } className="hosting-list__vip-card" />
+					<HostingCard
+						plan={ vipPlan }
+						className="hosting-list__vip-card"
+						{ ...hostingCardPriceHeightProps }
+					/>
 				) }
 			</ListingSection>
 			{ isWPCOMOptionEnabled && (

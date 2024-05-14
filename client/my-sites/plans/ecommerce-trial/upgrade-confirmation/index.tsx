@@ -1,3 +1,9 @@
+import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
+	PLAN_ECOMMERCE_MONTHLY,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -42,6 +48,22 @@ const TrialUpgradeConfirmation = () => {
 	} );
 
 	const currentPlanName = isFetchingSitePlan ? '' : selectedSite?.plan?.product_name_short ?? '';
+	const currentPlanSlug = isFetchingSitePlan ? '' : selectedSite?.plan?.product_slug ?? '';
+	const isEntrepreneurPlan = [
+		PLAN_ECOMMERCE_MONTHLY,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
+		PLAN_ECOMMERCE_3_YEARS,
+	].includes( currentPlanSlug );
+	const entrepreneurTrialWelcome =
+		currentPlanName &&
+		translate( 'Welcome to the %(planName)s plan', {
+			args: { planName: currentPlanName },
+			comment: 'The `planName` is the name of the plan the user has just upgraded to.',
+		} );
+	const welcomeTitle = isEntrepreneurPlan
+		? entrepreneurTrialWelcome
+		: translate( 'Woo! Welcome to Woo Express' );
 
 	return (
 		<>
@@ -54,9 +76,7 @@ const TrialUpgradeConfirmation = () => {
 					title="Plans > Ecommerce Trial Post Upgrade Actions"
 				/>
 				<div className="trial-upgrade-confirmation__header">
-					<h1 className="trial-upgrade-confirmation__title">
-						{ translate( 'Woo! Welcome to Woo Express' ) }
-					</h1>
+					<h1 className="trial-upgrade-confirmation__title">{ welcomeTitle }</h1>
 					<div className="trial-upgrade-confirmation__subtitle">
 						<span className="trial-upgrade-confirmation__subtitle-line">
 							{ currentPlanName &&

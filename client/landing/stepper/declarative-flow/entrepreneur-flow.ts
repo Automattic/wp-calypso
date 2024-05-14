@@ -1,7 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { anonIdCache } from 'calypso/data/segmentaton-survey';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -46,6 +46,7 @@ const entrepreneurFlow: Flow = {
 		);
 
 		const locale = useFlowLocale();
+		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
 
 		const getEntrepreneurLoginUrl = () => {
 			let hasFlowParams = false;
@@ -75,6 +76,8 @@ const entrepreneurFlow: Flow = {
 
 			switch ( currentStep ) {
 				case SEGMENTATION_SURVEY_SLUG: {
+					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
+
 					if ( userIsLoggedIn ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
@@ -109,15 +112,18 @@ const entrepreneurFlow: Flow = {
 							'.wpcomstaging.com'
 						);
 
+						if ( isMigrationFlow ) {
+							return window.location.replace(
+								`/setup/migration-signup?siteSlug=${ stagingUrl }&ref=entrepreneur-signup`
+							);
+						}
+
 						const redirectTo = encodeURIComponent(
 							`https://${ stagingUrl }/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign-with-ai&ref=entrepreneur-signup`
 						);
 
 						// Redirect users to the login page with the 'action=jetpack-sso' parameter to initiate Jetpack SSO login and redirect them to Woo CYS's Design With AI after. This URL, however, is just symbolic because somewhere within Jetpack SSO or some plugin is stripping off the `redirect_to` param. The actual work that is doing the redirection is in wpcomsh/1801.
-						let redirectToWithSSO = `https://${ stagingUrl }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`;
-
-						// Temporarily redirect to Calypso My Home until Woo Express 8.9 is deployed.
-						redirectToWithSSO = `/home/${ stagingUrl }?ref=entrepreneur-signup&flags=entrepreneur-my-home`;
+						const redirectToWithSSO = `https://${ stagingUrl }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`;
 
 						return window.location.assign( redirectToWithSSO );
 					}

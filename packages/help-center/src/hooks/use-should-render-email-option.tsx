@@ -1,10 +1,10 @@
 import { useSupportAvailability } from '../data/use-support-availability';
 
 export function useShouldRenderEmailOption() {
-	const { data: supportAvailability, isFetching } = useSupportAvailability( 'OTHER' );
+	const { data: supportAvailability, isFetching } = useSupportAvailability( 'EMAIL' );
 
 	return {
 		isLoading: isFetching,
-		render: supportAvailability?.is_user_eligible_for_tickets ?? false,
+		render: supportAvailability?.force_email_contact_form ?? false,
 	};
 }

@@ -678,6 +678,9 @@
 		vertical-align: middle;
 		color: var(--color-accent-5);
 	}
+	.sites-overview__stats-trend {
+		padding: 0 8px 0 4px;
+	}
 	.sites-overview__stats-trend__up,
 	.sites-overview__stats-trend__down {
 		vertical-align: middle;
@@ -707,13 +710,6 @@
 		vertical-align: middle;
 		color: var(--color-accent-80);
 		font-size: 0.75rem;
-	}
-	.sites-overview__stats-trend svg {
-		position: relative;
-		inset-block-start: 0.3rem;
-		@media screen and (max-width: $break-xlarge) {
-			inset-block-start: 0.27rem;
-		}
 	}
 	.sites-overview__disabled {
 		color: var(--color-accent-5);
@@ -819,7 +815,7 @@
 	.sites-overview__stats {
 		color: var(--color-text-black);
 		display: inline-block;
-		line-height: 17px;
+		line-height: 1;
 		height: 18px;
 		padding: 2px 1px;
 	}
@@ -1143,3 +1139,11 @@
 	}
 }
 
+.sites-dashboard .notice-banner {
+	display: none;
+}
+
+.sites-dashboard.preview-hidden .notice-banner {
+	display: flex;
+	margin: 0 64px 24px !important;
+}

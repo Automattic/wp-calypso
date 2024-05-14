@@ -9,7 +9,7 @@ export interface FeaturePreviewInterface {
 }
 
 export interface FeatureTabInterface {
-	label: string;
+	label: string | React.ReactNode;
 	countValue?: number;
 	countColor?: string;
 	selected?: boolean;
@@ -42,4 +42,10 @@ export interface PreviewPaneProps {
 
 export interface ItemPreviewPaneHeaderExtraProps {
 	externalIconSize?: number;
+	siteIconFallback?: 'color' | 'wordpress-logo' | 'first-grapheme';
+	headerButtons?: React.ComponentType< {
+		focusRef: React.RefObject< HTMLButtonElement >;
+		itemData: ItemData;
+		closeSitePreviewPane: () => void;
+	} >;
 }

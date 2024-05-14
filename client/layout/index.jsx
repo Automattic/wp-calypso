@@ -28,6 +28,7 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import OfflineStatus from 'calypso/layout/offline-status';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import { navigate } from 'calypso/lib/navigate';
@@ -61,6 +62,7 @@ import {
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
+import GlobalNotifications from './global-notifications';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
 // goofy import for environment badge, which is SSR'd
@@ -220,6 +222,7 @@ class Layout extends Component {
 		} );
 
 		this.refreshColorScheme( undefined, this.props.colorScheme );
+		this.addSidebarClassToBody();
 	}
 
 	/**
@@ -238,6 +241,31 @@ class Layout extends Component {
 				this.props.colorScheme !== 'modern' )
 		) {
 			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
+		}
+
+		if (
+			prevProps.isGlobalSidebarVisible !== this.props.isGlobalSidebarVisible ||
+			prevProps.isGlobalSidebarCollapsed !== this.props.isGlobalSidebarCollapsed
+		) {
+			this.addSidebarClassToBody();
+		}
+	}
+
+	addSidebarClassToBody() {
+		if ( typeof document === 'undefined' ) {
+			return;
+		}
+
+		if ( this.props.isGlobalSidebarVisible ) {
+			document.querySelector( 'body' ).classList.add( 'has-global-sidebar' );
+		} else {
+			document.querySelector( 'body' ).classList.remove( 'has-global-sidebar' );
+		}
+
+		if ( this.props.isGlobalSidebarCollapsed ) {
+			document.querySelector( 'body' ).classList.add( 'has-global-sidebar-collapsed' );
+		} else {
+			document.querySelector( 'body' ).classList.remove( 'has-global-sidebar-collapsed' );
 		}
 	}
 
@@ -389,7 +417,7 @@ class Layout extends Component {
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'a8c-for-agencies' ) && (
+				{ isA8CForAgencies() && (
 					<>
 						<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
 						<QueryAgencies />
@@ -435,6 +463,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
+				<GlobalNotifications />
 				{ shouldEnableCommandPalette && (
 					<AsyncLoad
 						require="@automattic/command-palette"
@@ -505,7 +534,7 @@ export default withCurrentRoute(
 				isWpMobileApp() ||
 				isWcMobileApp() ||
 				isJetpackCloud() ||
-				config.isEnabled( 'a8c-for-agencies' );
+				isA8CForAgencies();
 			const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 			const isJetpackWooCommerceFlow =
 				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&

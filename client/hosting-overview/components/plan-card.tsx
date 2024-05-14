@@ -1,5 +1,6 @@
-import { PlanSlug } from '@automattic/calypso-products';
-import { Button, Card, PlanPrice, LoadingPlaceholder } from '@automattic/components';
+import { PlanSlug, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
+import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
@@ -8,6 +9,7 @@ import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import PlanStorage from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { HostingCard } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
@@ -31,16 +33,18 @@ const PlanCard: FC = () => {
 		useCheckPlanAvailabilityForPurchase,
 	} );
 
+	// Check for storage addons available for purchase.
+	const addOns = AddOns.useAddOns( { selectedSiteId: site?.ID } );
+	const storageAddons = addOns.filter(
+		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
+	);
+
 	const isLoading = ! pricing || ! planData;
 
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
-			<Card
-				className={ classNames( 'hosting-overview__card', 'hosting-overview__plan', {
-					'hosting-overview__plan--is-free': ! isPaidPlan,
-				} ) }
-			>
+			<HostingCard className="hosting-overview__plan">
 				<div className="hosting-overview__plan-card-header">
 					<h3 className="hosting-overview__plan-card-title">{ planName }</h3>
 
@@ -111,10 +115,16 @@ const PlanCard: FC = () => {
 								height="16px"
 							/>
 						) : (
-							<div className="hosting-overview__plan-info">
-								{ translate( 'Expires on %s.', {
-									args: moment( planData?.expiryDate ).format( 'LL' ),
+							<div
+								className={ classNames( 'hosting-overview__plan-info', {
+									'is-expired': site?.plan?.expired,
 								} ) }
+							>
+								{ site?.plan?.expired
+									? translate( 'Expired' )
+									: translate( 'Expires on %s.', {
+											args: moment( planData?.expiryDate ).format( 'LL' ),
+									  } ) }
 							</div>
 						) }
 					</>
@@ -125,17 +135,19 @@ const PlanCard: FC = () => {
 					siteId={ site?.ID }
 					StorageBarComponent={ PlanStorageBar }
 				>
-					<div className="hosting-overview__plan-storage-footer">
-						<Button
-							className="hosting-overview__link-button"
-							plain
-							href={ `/add-ons/${ site?.slug }` }
-						>
-							{ translate( 'Need more storage?' ) }
-						</Button>
-					</div>
+					{ storageAddons.length > 0 && (
+						<div className="hosting-overview__plan-storage-footer">
+							<Button
+								className="hosting-overview__link-button"
+								plain
+								href={ `/add-ons/${ site?.slug }` }
+							>
+								{ translate( 'Need more storage?' ) }
+							</Button>
+						</div>
+					) }
 				</PlanStorage>
-			</Card>
+			</HostingCard>
 		</>
 	);
 };

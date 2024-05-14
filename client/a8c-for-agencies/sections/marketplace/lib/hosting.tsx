@@ -90,9 +90,9 @@ export function isPressableHostingProduct( keyOrSlug: string ) {
 
 /**
  * Determine if current slug is a WPCOM hosting product.
- * @param {string} slug - Product slug
+ * @param {string} keyOrSlug - Product slug
  * @returns {boolean} - True if WPCOM hosting product, false if not
  */
-export function isWPCOMHostingProduct( slug: string ) {
-	return slug.startsWith( 'wpcom-hosting' );
+export function isWPCOMHostingProduct( keyOrSlug: string ) {
+	return keyOrSlug.startsWith( 'wpcom-hosting' );
 }

@@ -7,7 +7,7 @@ import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { getOdieStorage } from '@automattic/odie-client';
+import { useGetOdieStorage } from '@automattic/odie-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -133,6 +133,8 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats
 	);
+
+	const wapuuChatId = useGetOdieStorage( 'last_chat_id' );
 
 	useEffect( () => {
 		const supportVariation = getSupportVariationFromMode( mode );
@@ -300,7 +302,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		const productId = plan?.getProductId();
 		const productName = plan?.getTitle();
 		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
-		const wapuuChatId = getOdieStorage( 'last_chat_id' );
+
 		const aiChatId = wapuuFlow ? wapuuChatId ?? '' : gptResponse?.answer_id;
 
 		switch ( mode ) {

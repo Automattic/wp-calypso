@@ -55,7 +55,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const isWpcomStagingSite = site?.is_wpcom_staging_site ?? false;
 
 		return (
-			site.capabilities.manage_options &&
+			site?.capabilities?.manage_options &&
 			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
 			! isWpcomStagingSite &&
 			! ( site?.options?.is_domain_only ?? false ) &&

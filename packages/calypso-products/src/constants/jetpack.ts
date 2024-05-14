@@ -4,8 +4,23 @@ export const GROUP_JETPACK = 'GROUP_JETPACK';
 
 // Products
 export const PRODUCT_JETPACK_AI_BI_YEARLY = 'jetpack_ai_bi_yearly';
+export const PRODUCT_JETPACK_AI_BI_YEARLY_100 = 'jetpack_ai_bi_yearly:-q-100';
+export const PRODUCT_JETPACK_AI_BI_YEARLY_200 = 'jetpack_ai_bi_yearly:-q-200';
+export const PRODUCT_JETPACK_AI_BI_YEARLY_500 = 'jetpack_ai_bi_yearly:-q-500';
+export const PRODUCT_JETPACK_AI_BI_YEARLY_750 = 'jetpack_ai_bi_yearly:-q-750';
+export const PRODUCT_JETPACK_AI_BI_YEARLY_1000 = 'jetpack_ai_bi_yearly:-q-1000';
 export const PRODUCT_JETPACK_AI_MONTHLY = 'jetpack_ai_monthly';
+export const PRODUCT_JETPACK_AI_MONTHLY_100 = 'jetpack_ai_monthly:-q-100';
+export const PRODUCT_JETPACK_AI_MONTHLY_200 = 'jetpack_ai_monthly:-q-200';
+export const PRODUCT_JETPACK_AI_MONTHLY_500 = 'jetpack_ai_monthly:-q-500';
+export const PRODUCT_JETPACK_AI_MONTHLY_750 = 'jetpack_ai_monthly:-q-750';
+export const PRODUCT_JETPACK_AI_MONTHLY_1000 = 'jetpack_ai_monthly:-q-1000';
 export const PRODUCT_JETPACK_AI_YEARLY = 'jetpack_ai_yearly';
+export const PRODUCT_JETPACK_AI_YEARLY_100 = 'jetpack_ai_yearly:-q-100';
+export const PRODUCT_JETPACK_AI_YEARLY_200 = 'jetpack_ai_yearly:-q-200';
+export const PRODUCT_JETPACK_AI_YEARLY_500 = 'jetpack_ai_yearly:-q-500';
+export const PRODUCT_JETPACK_AI_YEARLY_750 = 'jetpack_ai_yearly:-q-750';
+export const PRODUCT_JETPACK_AI_YEARLY_1000 = 'jetpack_ai_yearly:-q-1000';
 export const PRODUCT_JETPACK_BOOST_BI_YEARLY = 'jetpack_boost_bi_yearly';
 export const PRODUCT_JETPACK_BOOST = 'jetpack_boost_yearly';
 export const PRODUCT_JETPACK_BOOST_MONTHLY = 'jetpack_boost_monthly';
@@ -230,6 +245,24 @@ export const JETPACK_AI_PRODUCTS = < const >[
 	PRODUCT_JETPACK_AI_YEARLY,
 ];
 
+export const JETPACK_AI_ALIASES = < const >[
+	PRODUCT_JETPACK_AI_BI_YEARLY_100,
+	PRODUCT_JETPACK_AI_BI_YEARLY_200,
+	PRODUCT_JETPACK_AI_BI_YEARLY_500,
+	PRODUCT_JETPACK_AI_BI_YEARLY_750,
+	PRODUCT_JETPACK_AI_BI_YEARLY_1000,
+	PRODUCT_JETPACK_AI_MONTHLY_100,
+	PRODUCT_JETPACK_AI_MONTHLY_200,
+	PRODUCT_JETPACK_AI_MONTHLY_500,
+	PRODUCT_JETPACK_AI_MONTHLY_750,
+	PRODUCT_JETPACK_AI_MONTHLY_1000,
+	PRODUCT_JETPACK_AI_YEARLY_100,
+	PRODUCT_JETPACK_AI_YEARLY_200,
+	PRODUCT_JETPACK_AI_YEARLY_500,
+	PRODUCT_JETPACK_AI_YEARLY_750,
+	PRODUCT_JETPACK_AI_YEARLY_1000,
+];
+
 // Creator
 export const JETPACK_CREATOR_PRODUCTS = < const >[
 	PRODUCT_JETPACK_CREATOR_BI_YEARLY,
@@ -261,6 +294,10 @@ export const JETPACK_PRODUCTS_LIST = < const >[
 	...JETPACK_MONITOR_PRODUCTS,
 	...JETPACK_CREATOR_PRODUCTS,
 ];
+
+// Aliases are for products with quantity slugs in checkout (ex. jetpack-ai-yearly:-q-100)
+// These are here to help with handling product quantity in situations where infrastructure is not aware of it
+export const JETPACK_ALIAS_LIST = < const >[ ...JETPACK_AI_ALIASES ];
 
 export const JETPACK_PRODUCTS_BY_TERM = < const >[
 	{

@@ -561,7 +561,7 @@ function useAddProductFromSlug( {
  * (`-label-DATA`). Since domain names cannot start with a hyphen we will know
  * that the label refers to something else.
  */
-function getProductPartsFromAlias( productAlias: string ): {
+export function getProductPartsFromAlias( productAlias: string ): {
 	slug: string;
 	meta: null | string;
 	quantity: null | number;

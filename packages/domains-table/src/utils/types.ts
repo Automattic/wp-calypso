@@ -59,6 +59,8 @@ export type ResponseDomain = {
 	bundledPlanSubscriptionId: string | number | null | undefined;
 	canManageDnsRecords: boolean;
 	canManageNameServers: boolean;
+	canTransferToOtherSite: boolean;
+	canTransferToAnyUser: boolean;
 	cannotManageDnsRecordsReason: string | null;
 	cannotManageNameServersReason: string | null;
 	cannotUpdateContactInfoReason: string | null;
@@ -87,6 +89,7 @@ export type ResponseDomain = {
 	hasZone: boolean;
 	isAutoRenewing: boolean;
 	isEligibleForInboundTransfer: boolean;
+	isGravatarDomain: boolean;
 	isIcannVerificationSuspended: boolean | null;
 	isLocked: boolean;
 	isMappedToAtomicSite: boolean;
