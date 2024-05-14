@@ -92,9 +92,10 @@ const OverviewBodyHosting = () => {
 			description={ translate(
 				'Choose the hosting that suits your needs from our best-in-class offerings.'
 			) }
-			children={ migrationOffer }
 			items={ [ pressable, wpcom ] }
-		/>
+		>
+			{ migrationOffer }
+		</Offering>
 	);
 };
 
