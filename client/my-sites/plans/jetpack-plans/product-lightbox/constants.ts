@@ -70,42 +70,222 @@ export const PRODUCT_OPTIONS: Record< string, TranslateResult > = {
 };
 
 export const PRODUCT_TIER_OPTIONS: Record< string, TranslateResult > = {
-	[ PRODUCT_JETPACK_AI_YEARLY ]: translate( '100 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_YEARLY_100 ]: translate( '100 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_YEARLY_200 ]: translate( '200 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_YEARLY_500 ]: translate( '500 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_YEARLY_750 ]: translate( '750 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_YEARLY_1000 ]: translate( '1000 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( '100 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_MONTHLY_100 ]: translate( '100 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_MONTHLY_200 ]: translate( '200 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_MONTHLY_500 ]: translate( '500 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_MONTHLY_750 ]: translate( '750 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_MONTHLY_1000 ]: translate( '1000 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_BI_YEARLY ]: translate( '100 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_BI_YEARLY_100 ]: translate( '100 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_BI_YEARLY_200 ]: translate( '200 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_BI_YEARLY_500 ]: translate( '500 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_BI_YEARLY_750 ]: translate( '750 requests /mo' ),
-	[ PRODUCT_JETPACK_AI_BI_YEARLY_1000 ]: translate( '1000 requests /mo' ),
-	[ PRODUCT_JETPACK_STATS_YEARLY ]: translate( '10K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_YEARLY_10K ]: translate( '10K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_YEARLY_100K ]: translate( '100K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_YEARLY_250K ]: translate( '250K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_YEARLY_500K ]: translate( '500K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_YEARLY_1M ]: translate( '1M site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_MONTHLY ]: translate( '10K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_MONTHLY_10K ]: translate( '10K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_MONTHLY_100K ]: translate( '100K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_MONTHLY_250K ]: translate( '250K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_MONTHLY_500K ]: translate( '500K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_MONTHLY_1M ]: translate( '1M site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: translate( '10K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_BI_YEARLY_10K ]: translate( '10K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_BI_YEARLY_100K ]: translate( '100K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_BI_YEARLY_250K ]: translate( '250K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_BI_YEARLY_500K ]: translate( '500K site views /mo' ),
-	[ PRODUCT_JETPACK_STATS_BI_YEARLY_1M ]: translate( '1M site views /mo' ),
+	[ PRODUCT_JETPACK_AI_YEARLY ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 100,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_YEARLY_100 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 100,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_YEARLY_200 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 200,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_YEARLY_500 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 500,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_YEARLY_750 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 750,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_YEARLY_1000 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 1000,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 100,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_MONTHLY_100 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 100,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_MONTHLY_200 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 200,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_MONTHLY_500 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 500,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_MONTHLY_750 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 750,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_MONTHLY_1000 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 1000,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_BI_YEARLY ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 100,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_BI_YEARLY_100 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 100,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_BI_YEARLY_200 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 200,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_BI_YEARLY_500 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 500,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_BI_YEARLY_750 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 750,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_AI_BI_YEARLY_1000 ]: translate( '%(numRequests)d requests /mo', {
+		args: {
+			numRequests: 1000,
+		},
+		comment: '%(numRequests)d is the number of requests per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_YEARLY ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '10K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_YEARLY_10K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '10K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_YEARLY_100K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '100K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_YEARLY_250K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '250K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_YEARLY_500K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '500K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_YEARLY_1M ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '1M',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_MONTHLY ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '10K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_MONTHLY_10K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '10K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_MONTHLY_100K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '100K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_MONTHLY_250K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '250K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_MONTHLY_500K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '500K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_MONTHLY_1M ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '1M',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '10K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_BI_YEARLY_10K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '10K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_BI_YEARLY_100K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '100K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_BI_YEARLY_250K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '250K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_BI_YEARLY_500K ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '500K',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
+	[ PRODUCT_JETPACK_STATS_BI_YEARLY_1M ]: translate( '%(numSiteViews)s site views /mo', {
+		args: {
+			numSiteViews: '1M',
+		},
+		comment: '%(numSiteViews)s is the number of site views per month',
+	} ),
 };
 
 export const PRODUCT_OPTIONS_HEADER: Record< string, TranslateResult > = {
