@@ -1,4 +1,4 @@
-import { Plans, AddOns } from '@automattic/data-stores';
+import { Plans, AddOns, PlanPricing } from '@automattic/data-stores';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	UrlFriendlyTermType,
@@ -100,7 +100,6 @@ export interface CommonGridProps {
 	siteId?: number | null;
 	isInSignup: boolean;
 	isInAdmin: boolean;
-	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	intervalType: string;
@@ -135,17 +134,51 @@ export interface ComparisonGridProps extends CommonGridProps {
 	selectedPlan?: string;
 }
 
-export type UseActionCallbackParams = {
-	planSlug: PlanSlug;
-	cartItemForPlan?: MinimalRequestCartProduct | null;
-	selectedStorageAddOn?: AddOns.AddOnMeta | null;
-};
-
 export type UseActionCallback = ( {
 	planSlug,
 	cartItemForPlan,
 	selectedStorageAddOn,
-}: UseActionCallbackParams ) => () => void;
+}: {
+	planSlug: PlanSlug;
+	cartItemForPlan?: MinimalRequestCartProduct | null;
+	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+} ) => () => void;
+
+export interface GridAction {
+	primary: {
+		text: TranslateResult;
+		callback: () => void;
+		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
+		status?: 'disabled' | 'blocked' | 'enabled';
+	};
+	postButtonText?: TranslateResult;
+}
+
+export type UseAction = ( {
+	availableForPurchase,
+	billingPeriod,
+	cartItemForPlan,
+	currentPlanBillingPeriod,
+	isFreeTrialAction,
+	isLargeCurrency,
+	isStuck,
+	planSlug,
+	planTitle,
+	priceString,
+	selectedStorageAddOn,
+}: {
+	availableForPurchase?: boolean;
+	billingPeriod?: PlanPricing[ 'billPeriod' ];
+	cartItemForPlan?: MinimalRequestCartProduct | null;
+	currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
+	isFreeTrialAction?: boolean;
+	isLargeCurrency?: boolean;
+	isStuck?: boolean;
+	planSlug: PlanSlug;
+	planTitle?: TranslateResult;
+	priceString?: string;
+	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+} ) => GridAction;
 
 export type GridContextProps = {
 	gridPlans: GridPlan[];
@@ -153,7 +186,7 @@ export type GridContextProps = {
 	intent?: PlansIntent;
 	siteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
-	useActionCallback: UseActionCallback;
+	useAction: UseAction;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;

@@ -231,6 +231,17 @@
 	}
 }
 
+.is-group-reader .reader-notifications__panel {
+	@media only screen and ( min-width: 1114px ) {
+		.wpnc__main {
+			width: calc(100vw - 310px);
+			.wpnc__note-list {
+				left: 0;
+			}
+		}
+	}
+}
+
 .reader__post-embed-count {
 	padding: 4px 6px;
 	border-radius: 2px;

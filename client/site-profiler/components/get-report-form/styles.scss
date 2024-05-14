@@ -1,0 +1,140 @@
+.get-report-form__wrapper {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
+	background-color: var(--studio-gray-0);
+	border: 1px solid #cbcbcb;
+	padding: 0 1.5rem;
+	animation: 500ms ease-out slideUp;
+
+	&--hidden {
+		display: none;
+		animation: 500ms ease-out slideDown;
+	}
+}
+
+@keyframes slideUp {
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+@keyframes slideDown {
+	from {
+		display: block;
+		transform: translateY(0);
+	}
+	to {
+		display: none;
+		transform: translateY(100%);
+	}
+}
+.get-report-form__container {
+	box-sizing: border-box;
+	padding: 3rem 0;
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 20px;
+	margin: 0 auto;
+	max-width: 1224px;
+}
+.get-report-form__title {
+	color: #000;
+	flex-basis: 170px;
+}
+
+.get-report-form__body {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	flex-basis: 620px;
+	gap: 20px;
+	flex-grow: 1;
+}
+
+.get-report-form__header {
+	display: flex;
+	gap: 10px;
+	justify-content: space-between;
+
+	.description {
+		color: #3c4043;
+	}
+	.gridicon {
+		cursor: pointer;
+	}
+}
+
+.get-report-form__form {
+	display: flex;
+	gap: 25px;
+	flex-wrap: wrap;
+
+	&-email.form-text-input {
+		flex-basis: 300px;
+	}
+}
+
+
+.get-report-form__form-body {
+	display: flex;
+	gap: 30px;
+	flex-wrap: wrap;
+	flex-grow: 1;
+
+	& fieldset {
+		flex-basis: 300px;
+		margin-bottom: 0;
+	}
+}
+
+input[type="text"].form-text-input.get-report-form__form {
+	&-name,
+	&-email {
+		border-top: none;
+		border-left: none;
+		border-right: none;
+
+		&:focus,
+		&:hover,
+		&:focus:hover {
+			box-shadow: none;
+		}
+	}
+}
+
+.get-report-form__form-footer {
+	display: flex;
+	gap: 20px;
+	align-items: center;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	& fieldset {
+		margin-bottom: 0;
+		flex-basis: 70%;
+	}
+	.terms-checkbox {
+		font-size: 0.75rem;
+		line-height: 1.5;
+	}
+	.submit-button {
+		background-color: var(--color-accent);
+		color: #fff;
+		border-radius: 4px;
+		font-weight: 500;
+		font-size: 1rem;
+		padding: 1rem;
+		line-height: 1;
+		text-decoration: none;
+		min-width: 191px;
+		border: none;
+		svg {
+			margin-left: 1rem;
+		}
+	}
+}

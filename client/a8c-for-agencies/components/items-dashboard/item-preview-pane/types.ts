@@ -42,4 +42,5 @@ export interface PreviewPaneProps {
 
 export interface ItemPreviewPaneHeaderExtraProps {
 	externalIconSize?: number;
+	siteIconFallback?: 'color' | 'wordpress-logo' | 'first-grapheme';
 }

@@ -20,11 +20,9 @@ import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
-	LayoutHeaderSubtitle as Subtitle,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import DocumentHead from 'calypso/components/data/document-head';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import {
 	SitesDashboardQueryParams,
@@ -243,12 +241,6 @@ const SitesDashboardV2 = ( {
 					<LayoutTop withNavigation={ false }>
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
-							<Subtitle>
-								{ translate( 'Manage all your sites' ) }
-								{ '. ' }
-								<InlineSupportLink supportPostId="230679" showIcon={ false } />.
-							</Subtitle>
-
 							<Actions>
 								<SitesDashboardHeader />
 							</Actions>

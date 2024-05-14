@@ -7,6 +7,7 @@ import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
+import { getFirstGrapheme } from 'calypso/lib/string';
 import { P2Thumbnail } from './p2-thumbnail';
 import { SiteComingSoon } from './sites-site-coming-soon';
 import type { SitesDisplayMode } from './sites-display-mode-switcher';
@@ -131,18 +132,3 @@ export const SiteItemThumbnail = ( {
 		</SiteThumbnail>
 	);
 };
-
-function getFirstGrapheme( input: string ) {
-	if ( 'Segmenter' in Intl ) {
-		const segmenter = new Intl.Segmenter();
-		const [ firstSegmentData ] = segmenter.segment( input );
-
-		return firstSegmentData?.segment ?? '';
-	}
-
-	const codePoint = input.codePointAt( 0 );
-	if ( codePoint ) {
-		return String.fromCodePoint( codePoint );
-	}
-	return '';
-}

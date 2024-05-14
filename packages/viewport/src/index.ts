@@ -42,6 +42,7 @@ const SERVER_WIDTH = 769;
 
 export const MOBILE_BREAKPOINT = '<480px';
 export const DESKTOP_BREAKPOINT = '>960px';
+export const WIDE_BREAKPOINT = '>1280px';
 
 const isServer = typeof window === 'undefined' || ! window.matchMedia;
 

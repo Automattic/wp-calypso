@@ -159,6 +159,10 @@ a.hosting-overview__link-button {
 	font-size: $font-body-extra-small;
 	line-height: 16px;
 	margin-bottom: 4px;
+
+	&.is-expired {
+		color: #ea303f;
+	}
 }
 
 .hosting-overview__plan-info-loading-placeholder {

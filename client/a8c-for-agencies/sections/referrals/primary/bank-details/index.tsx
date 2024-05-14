@@ -8,7 +8,6 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_REFERRALS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useGetTipaltiIFrameURL from '../../hooks/use-get-tipalti-iframe-url';
 
 import './style.scss';
@@ -24,8 +23,6 @@ export default function ReferralsBankDetails() {
 
 	return (
 		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
-			<PageViewTracker title="Add bank details" path="/referrals/bank-details" />
-
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb

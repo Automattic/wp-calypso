@@ -246,6 +246,7 @@ export const defaultDomainResponse: any = {
 	hasZone: false,
 	isAutoRenewing: false,
 	isEligibleForInboundTransfer: false,
+	isGravatarDomain: false,
 	isIcannVerificationSuspended: false,
 	isLocked: false,
 	isPendingIcannVerification: false,

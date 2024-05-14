@@ -253,15 +253,15 @@ export class EditorToolbarComponent {
 	/* Publish and unpublish */
 
 	/**
-	 * Returns the text present for the save/publish button.
+	 * Waits for the save/publish button.
 	 *
 	 * @returns {Promise<string>} String found on the button.
 	 */
-	async getPublishButtonText(): Promise< string > {
+	async waitForPublishButton(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const publishButtonLocator = editorParent.locator( selectors.publishButton( 'enabled' ) );
 
-		return await publishButtonLocator.innerText();
+		await publishButtonLocator.waitFor();
 	}
 
 	/**

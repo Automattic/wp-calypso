@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
@@ -19,6 +19,7 @@ import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { BasicMetrics } from './basic-metrics';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
+import { GetReportForm } from './get-report-form';
 import HeadingInformation from './heading-information';
 import HostingInformation from './hosting-information';
 import HostingIntro from './hosting-intro';
@@ -35,6 +36,7 @@ interface Props {
 export default function SiteProfiler( props: Props ) {
 	const { routerDomain } = props;
 	const basicMetricsRef = useRef( null );
+	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
 		domain,
@@ -96,6 +98,12 @@ export default function SiteProfiler( props: Props ) {
 		);
 	}
 
+	let showGetReportForm = false;
+
+	if ( isEnabled( 'site-profiler/metrics' ) ) {
+		showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
+	}
+
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
@@ -117,7 +125,6 @@ export default function SiteProfiler( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-
 			{ showResultScreen && (
 				<LayoutBlock className="domain-result-block">
 					{
@@ -155,13 +162,21 @@ export default function SiteProfiler( props: Props ) {
 					) }
 					{ showBasicMetrics && (
 						<LayoutBlockSection>
-							<MetricsMenu basicMetricsRef={ basicMetricsRef } />
+							<MetricsMenu
+								basicMetricsRef={ basicMetricsRef }
+								onCTAClick={ () => setIsGetReportFormOpen( true ) }
+							/>
 							<BasicMetrics ref={ basicMetricsRef } basicMetrics={ basicMetrics.basic } />
 						</LayoutBlockSection>
 					) }
 				</LayoutBlock>
 			) }
-
+			<GetReportForm
+				url={ url }
+				token={ basicMetrics?.token }
+				isOpen={ showGetReportForm }
+				onClose={ () => setIsGetReportFormOpen( false ) }
+			/>
 			<LayoutBlock
 				className="hosting-intro-block globe-bg"
 				isMonoBg={ showResultScreen && conversionAction && conversionAction !== 'register-domain' }

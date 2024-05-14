@@ -10,7 +10,6 @@ import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
-import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
@@ -277,7 +276,6 @@ const Home = ( {
 		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
-			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }

@@ -93,4 +93,5 @@ export type BasicMetrics = {
 export interface UrlBasicMetricsQueryResponse {
 	basic: BasicMetrics;
 	advanced: Record< string, string >;
+	token: string;
 }

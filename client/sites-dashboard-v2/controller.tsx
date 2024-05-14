@@ -87,7 +87,6 @@ export function sitesDashboard( context: Context, next: () => void ) {
 
 		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
 			padding-bottom: 0;
-			box-shadow: none;
 		}
 
 		// Update body margin to account for the sidebar width

@@ -80,17 +80,15 @@ const StatsBenefitsCommercial = () => {
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'Priority support' ) }</li>
 				<li>{ translate( 'Commercial use' ) }</li>
-				{ config.isEnabled( 'stats/utm-module' ) && (
-					<li>
-						{ translate( 'UTM tracking' ) }
-						<Icon
-							icon={ info }
-							ref={ trackingInfoIconRef }
-							onMouseEnter={ handleUTMTrackingPopoverOpen }
-							onMouseLeave={ handleUTMTrackingPopoverClose }
-						/>
-					</li>
-				) }
+				<li>
+					{ translate( 'UTM tracking' ) }
+					<Icon
+						icon={ info }
+						ref={ trackingInfoIconRef }
+						onMouseEnter={ handleUTMTrackingPopoverOpen }
+						onMouseLeave={ handleUTMTrackingPopoverClose }
+					/>
+				</li>
 				<li>
 					{ translate( 'Traffic spike forgiveness' ) }
 					<Icon

@@ -45,7 +45,9 @@
 }
 
 body.is-section-plugins {
-	background: var(--studio-gray-0);
+	.is-section-plugins.is-global-sidebar-visible {
+		background: var(--studio-gray-0);
+	}
 
 	.a4a-layout-column {
 		overflow: scroll;

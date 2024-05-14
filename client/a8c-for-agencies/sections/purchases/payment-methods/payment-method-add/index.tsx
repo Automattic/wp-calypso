@@ -13,7 +13,6 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_PAYMENT_METHODS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PaymentMethodStripeInfo from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-stripe-info';
 import { usePaymentMethodStepper } from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add-v2/hooks/use-payment-method-stepper';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PaymentMethodForm from './payment-method-form';
 
 import './style.scss';
@@ -36,11 +35,6 @@ export default function PaymentMethodAdd( { withAssignLicense }: Props ) {
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<PageViewTracker
-				title="Purchases > Payment Methods > Add"
-				path="/purchases/payment-methods/add"
-			/>
-
 			{ !! stepper && <LayoutStepper steps={ stepper.steps } current={ stepper.current } /> }
 
 			<LayoutTop>

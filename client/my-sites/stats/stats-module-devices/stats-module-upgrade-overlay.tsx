@@ -9,11 +9,13 @@ import './stats-module-devices.scss';
 type StatsModuleUpgradeOverlayProps = {
 	siteId: number;
 	className?: string;
+	overlay?: React.ReactNode;
 };
 
 const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( {
 	siteId,
 	className,
+	overlay,
 } ) => {
 	const fakeData = [
 		{
@@ -61,11 +63,13 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 			mainItemLabel="Visitors"
 			splitHeader
 			overlay={
-				<StatsCardUpsellJetpack
-					className="stats-module__upsell"
-					siteId={ siteId }
-					statType={ STATS_TYPE_DEVICE_STATS }
-				/>
+				overlay ?? (
+					<StatsCardUpsellJetpack
+						className="stats-module__upsell"
+						siteId={ siteId }
+						statType={ STATS_TYPE_DEVICE_STATS }
+					/>
+				)
 			}
 		/>
 	);

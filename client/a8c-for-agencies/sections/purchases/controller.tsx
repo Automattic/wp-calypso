@@ -11,6 +11,7 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingDashboard from './billing/billing-dashboard';
 import InvoicesOverview from './invoices/invoices-overview';
 import LicensesOverview from './licenses/licenses-overview';
@@ -33,13 +34,20 @@ export const licensesContext: Callback = ( context, next ) => {
 	);
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
-		<LicensesOverview
-			filter={ filter }
-			search={ search || '' }
-			currentPage={ currentPage }
-			sortDirection={ sortDirection }
-			sortField={ sortField }
-		/>
+		<>
+			<PageViewTracker
+				title="Purchases > Licenses"
+				path={ context.path }
+				properties={ { filter } }
+			/>
+			<LicensesOverview
+				filter={ filter }
+				search={ search || '' }
+				currentPage={ currentPage }
+				sortDirection={ sortDirection }
+				sortField={ sortField }
+			/>
+		</>
 	);
 
 	next();
@@ -47,28 +55,48 @@ export const licensesContext: Callback = ( context, next ) => {
 
 export const billingContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
-	context.primary = <BillingDashboard />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Purchases > Billing" path={ context.path } />
+			<BillingDashboard />
+		</>
+	);
 
 	next();
 };
 
 export const invoicesContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
-	context.primary = <InvoicesOverview />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Purchases > Invoices" path={ context.path } />
+			<InvoicesOverview />
+		</>
+	);
 
 	next();
 };
 
 export const paymentMethodsContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
-	context.primary = <PaymentMethodOverview />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Purchases > Payment Methods" path={ context.path } />
+			<PaymentMethodOverview />
+		</>
+	);
 
 	next();
 };
 
 export const paymentMethodsAddContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
-	context.primary = <PaymentMethodAdd />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Purchases > Payment Methods > Add" path={ context.path } />
+			<PaymentMethodAdd />
+		</>
+	);
 
 	next();
 };

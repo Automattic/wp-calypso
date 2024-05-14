@@ -77,6 +77,14 @@ export default function A4AWPCOMSlider( {
 		setCurrentSliderPos( valueToSliderPos( next, mappedOptions ) );
 	};
 
+	const onNumberSelect = ( value: number ) => {
+		if ( value >= minimum ) {
+			onChange?.( value );
+			setCurrentValue( value );
+			setCurrentSliderPos( valueToSliderPos( value, mappedOptions ) );
+		}
+	};
+
 	const ratio = valueToSliderPos( minimum, mappedOptions ) / total;
 
 	const thumbSize = 14;
@@ -121,10 +129,12 @@ export default function A4AWPCOMSlider( {
 								key={ `slider-option-${ option.value }` }
 								role="button"
 								tabIndex={ -1 }
-								onClick={ () => onChange?.( index ) }
+								onClick={ () => {
+									onNumberSelect( option.value as number );
+								} }
 								onKeyDown={ ( event ) => {
 									if ( event.key === 'Enter' ) {
-										onChange?.( index );
+										onNumberSelect( option.value as number );
 									}
 								} }
 							>

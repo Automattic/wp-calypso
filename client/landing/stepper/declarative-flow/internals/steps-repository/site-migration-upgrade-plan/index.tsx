@@ -23,7 +23,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const translate = useTranslate();
 	const queryParams = useQuery();
 	const hideFreeMigrationTrialForNonVerifiedEmail =
-		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? false;
+		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? true;
 
 	const selectedPlanData = useSelectedPlanUpgradeQuery();
 	const selectedPlanPathSlug = selectedPlanData.data;

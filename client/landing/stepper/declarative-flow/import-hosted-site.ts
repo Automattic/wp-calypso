@@ -3,6 +3,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
 import localStorageHelper from 'store';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import CreateSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/create-site';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
@@ -10,6 +11,7 @@ import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin'
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
+import { useSite } from '../hooks/use-site';
 import { useLoginUrl } from '../utils/path';
 import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
@@ -77,6 +79,8 @@ const importHostedSiteFlow: Flow = {
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
 		const siteSlugParam = useSiteSlugParam();
+		const site = useSite();
+		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const siteCount =
 			useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] )
 				?.site_count ?? 0;
@@ -236,8 +240,12 @@ const importHostedSiteFlow: Flow = {
 						return navigate( `sitePicker?${ urlQueryParams.toString() }` );
 					}
 
-					urlQueryParams.set( 'showModal', 'true' );
-					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					if ( ! isSitePlanCompatible ) {
+						urlQueryParams.set( 'showModal', 'true' );
+						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					}
+
+					return navigate( `sitePicker?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker':
 					// remove the from parameter to restart the flow

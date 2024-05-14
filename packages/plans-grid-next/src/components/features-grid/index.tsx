@@ -33,7 +33,6 @@ type MobileViewProps = {
 	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
@@ -66,7 +65,6 @@ const MobileView = ( {
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
@@ -121,7 +119,6 @@ const MobileView = ( {
 					<TopButtons
 						renderedGridPlans={ [ gridPlan ] }
 						isInSignup={ isInSignup }
-						isLaunchPage={ isLaunchPage }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						planActionOverrides={ planActionOverrides }
 					/>
@@ -139,14 +136,12 @@ const MobileView = ( {
 					>
 						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
 						{ enableCategorisedFeatures ? (
-							featureGroups.map( ( featureGroupSlug, featureGroupIndex ) => (
+							featureGroups.map( ( featureGroupSlug ) => (
 								<div
-									className={ classNames( 'plans-grid-next-features-grid__feature-group-row', {
-										'is-first-feature-group': featureGroupIndex === 0,
-									} ) }
+									className="plans-grid-next-features-grid__feature-group-row"
+									key={ featureGroupSlug }
 								>
 									<PlanFeaturesList
-										key={ featureGroupSlug }
 										renderedGridPlans={ [ gridPlan ] }
 										selectedFeature={ selectedFeature }
 										paidDomainName={ paidDomainName }
@@ -185,7 +180,6 @@ type TabletViewProps = {
 	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
@@ -205,7 +199,6 @@ const TabletView = ( {
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
@@ -230,7 +223,6 @@ const TabletView = ( {
 		intervalType,
 		isCustomDomainAllowedOnFreePlan,
 		isInSignup,
-		isLaunchPage,
 		onStorageAddOnClick,
 		paidDomainName,
 		planActionOverrides,
@@ -265,7 +257,6 @@ const FeaturesGrid = ( {
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
@@ -280,7 +271,6 @@ const FeaturesGrid = ( {
 		gridPlanForSpotlight,
 		intervalType,
 		isInSignup,
-		isLaunchPage,
 		onStorageAddOnClick,
 		planActionOverrides,
 		planUpgradeCreditsApplicable,

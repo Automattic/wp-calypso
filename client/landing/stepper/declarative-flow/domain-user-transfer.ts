@@ -1,7 +1,5 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
-import { getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
@@ -11,6 +9,7 @@ import {
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useDomainParams } from 'calypso/landing/stepper/hooks/use-domain-params';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useLoginUrl } from '../utils/path';
@@ -56,11 +55,7 @@ const domainUserTransfer: Flow = {
 		const flowName = this.name;
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		const useLocaleSlug = useLocale();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = pathLocaleSlug || useLocaleSlug;
+		const locale = useFlowLocale();
 
 		const { domain } = useDomainParams();
 

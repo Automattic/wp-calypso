@@ -89,11 +89,11 @@ export function getJetpackPluginImage( productSlug: string ): string {
 		: JetpackPluginImage;
 }
 
-export function isBulkDomainTransfer( purchases: ReceiptPurchase[] ): boolean {
+export function isOnlyDomainTransfers( purchases: ReceiptPurchase[] ): boolean {
 	return purchases?.length > 0 && purchases?.every( isDomainTransfer );
 }
 
-export function isDomainOnly( purchases: ReceiptPurchase[] ): boolean {
+export function isOnlyDomainPurchases( purchases: ReceiptPurchase[] ): boolean {
 	return (
 		purchases?.length > 0 &&
 		purchases?.every(

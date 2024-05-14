@@ -490,6 +490,36 @@ class ReaderStream extends Component {
 		);
 	};
 
+	setListContext = ( component ) => {
+		if ( ! component ) {
+			return;
+		}
+
+		this.listRef.current = component;
+		this.setState( {
+			listContext: this.getScrollContainer( ReactDom.findDOMNode( component ) ),
+		} );
+	};
+
+	getScrollContainer = ( node ) => {
+		if ( ! node ) {
+			return undefined;
+		}
+
+		// ...except when overflow is defined to be hidden or visible
+		const { overflowY } = getComputedStyle( node );
+		if ( /(auto|scroll)/.test( overflowY ) ) {
+			return node;
+		}
+
+		if ( node.ownerDocument === node.parentNode ) {
+			return node;
+		}
+
+		// Continue traversing.
+		return this.getScrollContainer( node.parentNode );
+	};
+
 	render() {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
@@ -522,7 +552,7 @@ class ReaderStream extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			const bodyContent = (
 				<InfiniteList
-					ref={ this.listRef }
+					ref={ this.setListContext }
 					items={ items }
 					lastPage={ lastPage }
 					fetchingNextPage={ isRequesting }
@@ -532,6 +562,7 @@ class ReaderStream extends Component {
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 					className="stream__list"
+					context={ this.state.listContext ?? false }
 				/>
 			);
 

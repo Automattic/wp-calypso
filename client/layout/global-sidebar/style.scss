@@ -134,6 +134,7 @@ $brand-text: "SF Pro Text", $sans;
 		}
 
 		.sidebar {
+			overflow: visible;
 			&:first-child {
 				margin-top: 4px;
 			}
@@ -475,5 +476,11 @@ $brand-text: "SF Pro Text", $sans;
 				}
 			}
 		}
+	}
+}
+
+@media ( max-width: 660px ) {
+	.global-sidebar .tooltip:hover::after {
+		display: none;
 	}
 }

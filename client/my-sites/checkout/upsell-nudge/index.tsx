@@ -231,9 +231,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				);
 
 			case BUSINESS_PLAN_UPGRADE_UPSELL:
-				return isLoading ? (
-					this.renderGenericPlaceholder()
-				) : (
+				return (
 					<BusinessPlanUpgradeUpsell
 						currencyCode={ currencyCode }
 						planRawPrice={ planRawPrice }
@@ -243,6 +241,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+						isLoading={ isLoading }
 					/>
 				);
 			case PROFESSIONAL_EMAIL_UPSELL:

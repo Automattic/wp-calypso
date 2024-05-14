@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
-import { Icon, reusableBlock as cacheIcon } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -138,7 +137,6 @@ export const CacheCard = ( {
 	//autorenew
 	return (
 		<Card className="cache-card">
-			<Icon className="card-icon" icon={ cacheIcon } size={ 32 } />
 			<CardHeading id="cache" size={ 20 }>
 				{ translate( 'Cache' ) }
 			</CardHeading>

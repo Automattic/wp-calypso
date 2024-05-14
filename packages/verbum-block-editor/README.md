@@ -34,3 +34,9 @@ To deploy modifications to the package:
 2. Run `yarn build --sync`.
 3. Create a patch.
 4. Deploy the patch.
+
+### Translations
+
+This project uses .org's GlotPress translations as a source. 
+
+To translate simply run `yarn build`. 
