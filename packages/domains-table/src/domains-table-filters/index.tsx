@@ -1,7 +1,8 @@
 import { Gridicon, SelectDropdown } from '@automattic/components';
-import SearchControl, { SearchIcon } from '@automattic/search';
+import SearchControl from '@automattic/search';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { DropdownMenu, MenuGroup, MenuItem, ToggleControl } from '@wordpress/components';
+import { Icon, search } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactNode } from 'react';
 import { useDomainsTable } from '../domains-table/domains-table';
@@ -65,7 +66,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 	return (
 		<div className="domains-table-filter">
 			<SearchControl
-				searchIcon={ <SearchIcon /> }
+				searchIcon={ <Icon icon={ search } size={ 24 } /> }
 				className="domains-table-filter__search"
 				onSearch={ onSearch }
 				defaultValue={ filter.query }
