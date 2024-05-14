@@ -74,8 +74,8 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect }: P
 				</Button>
 
 				<div className="wpcom-plan-card__features">
-					{ features1.length && <SimpleList items={ features1 } /> }
-					{ features2.length && <SimpleList items={ features2 } /> }
+					{ !! features1.length && <SimpleList items={ features1 } /> }
+					{ !! features2.length && <SimpleList items={ features2 } /> }
 				</div>
 			</div>
 			<div className="wpcom-plan-card__section">
@@ -84,8 +84,8 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect }: P
 				</h2>
 
 				<div className="wpcom-plan-card__features is-jetpack">
-					{ features1.length && <SimpleList items={ features1 } /> }
-					{ features2.length && <SimpleList items={ features2 } /> }
+					{ !! features1.length && <SimpleList items={ features1 } /> }
+					{ !! features2.length && <SimpleList items={ features2 } /> }
 				</div>
 			</div>
 		</div>
