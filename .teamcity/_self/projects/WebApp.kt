@@ -6,14 +6,14 @@ import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.mergeTrunk
 
 import jetbrains.buildServer.configs.kotlin.*
-import jetbrains.buildServer.configs.kotlin.BuildFeature
-import jetbrains.buildServer.configs.kotlin.CompoundParam
-import jetbrains.buildServer.configs.kotlin.Trigger
+import jetbrains.buildServer.configs.kotlin.BuildFeature.*
+import jetbrains.buildServer.configs.kotlin.BuildStep.*
+import jetbrains.buildServer.configs.kotlin.FailureCondition.*
+import jetbrains.buildServer.configs.kotlin.Trigger.*
 import jetbrains.buildServer.configs.kotlin.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.triggers.*
-
 
 object WebApp : Project({
 	id("WebApp")
