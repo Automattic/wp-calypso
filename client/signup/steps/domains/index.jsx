@@ -476,11 +476,6 @@ export class RenderDomainsStep extends Component {
 				{ stepName: 'site-picker', wasSkipped: true },
 				{ themeSlugWithRepo: 'pub/twentysixteen' }
 			);
-			this.props.submitSignupStep(
-				{ stepName: 'plans-site-selected', wasSkipped: true },
-				{ cartItems: null }
-			);
-			goToStep( config.isEnabled( 'signup/social-first' ) ? 'user-social' : 'user' );
 			return;
 		}
 
