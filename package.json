@@ -261,7 +261,7 @@
 		"eslint-plugin-import": "^2.29.1",
 		"eslint-plugin-inclusive-language": "^2.2.1",
 		"eslint-plugin-jest": "^27.9.0",
-		"eslint-plugin-jsdoc": "^46.10.1",
+		"eslint-plugin-jsdoc": "^48.2.4",
 		"eslint-plugin-jsx-a11y": "^6.8.0",
 		"eslint-plugin-md": "^1.0.19",
 		"eslint-plugin-prettier": "^5.1.3",
