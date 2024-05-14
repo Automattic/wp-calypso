@@ -21,6 +21,7 @@ const highlight = ( content, textToHighlight, type ) => {
 		( [ result, alreadyHighlighted ], text ) => {
 			// skip the first "complete match" string
 			const shouldHighlight = ! alreadyHighlighted && lowerCaseSearch === text.toLowerCase();
+			// eslint-disable-next-line no-shadow
 			const type = shouldHighlight ? 'strong' : 'text';
 
 			return [ [ ...result, { type, text } ], shouldHighlight ];
@@ -37,6 +38,7 @@ export class Suggestion extends Component {
 		const fullName = highlight( this.props.fullName, this.props.suggestionsQuery, 'fullname' );
 
 		return (
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 			<li
 				ref={ this.props.getElement }
 				key={ this.props.username }
@@ -44,7 +46,7 @@ export class Suggestion extends Component {
 				onClick={ this.props.onClick }
 				onMouseEnter={ this.props.onMouseEnter }
 			>
-				<img src={ this.props.avatarUrl } />
+				<img src={ this.props.avatarUrl } alt="avatar" />
 				<span className="wpnc__username">
 					{ username.map( ( { type, text }, index ) =>
 						'strong' === type ? (

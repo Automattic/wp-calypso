@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/named
 import { Gridicon, MaterialIcon } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';

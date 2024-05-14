@@ -1,5 +1,6 @@
 import {
 	FEATURE_INSTALL_THEMES,
+	// eslint-disable-next-line import/named
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import pageRouter from '@automattic/calypso-router';

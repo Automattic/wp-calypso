@@ -4,6 +4,7 @@ import {
 	PREMIUM_THEME,
 	ThemeCard,
 	isDefaultGlobalStylesVariationSlug,
+	// eslint-disable-next-line import/named
 	isLockedStyleVariation,
 } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';

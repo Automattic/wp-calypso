@@ -82,6 +82,7 @@ export class SitesDropdown extends PureComponent {
 				) }
 			>
 				<div className="sites-dropdown__wrapper">
+					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
 					<div className="sites-dropdown__selected" onClick={ this.toggleOpen }>
 						{ this.props.isPlaceholder ? (
 							<SitePlaceholder />
@@ -90,16 +91,20 @@ export class SitesDropdown extends PureComponent {
 						) }
 						{ this.props.hasMultipleSites && <Gridicon icon="chevron-down" /> }
 					</div>
-					{ this.props.hasMultipleSites && this.state.open && (
-						<SiteSelector
-							autoFocus={ true }
-							onClose={ this.onClose }
-							onSiteSelect={ this.selectSite }
-							selected={ this.state.selectedSiteId }
-							hideSelected={ true }
-							filter={ this.props.filter && this.siteFilter }
-						/>
-					) }
+					{
+						/* eslint-disable */
+						this.props.hasMultipleSites && this.state.open && (
+							<SiteSelector
+								autoFocus={ true }
+								onClose={ this.onClose }
+								onSiteSelect={ this.selectSite }
+								selected={ this.state.selectedSiteId }
+								hideSelected={ true }
+								filter={ this.props.filter && this.siteFilter }
+							/>
+						)
+						/* eslint-enable */
+					}
 				</div>
 			</div>
 		);

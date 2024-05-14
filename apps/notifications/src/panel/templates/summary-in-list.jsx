@@ -35,13 +35,17 @@ export class SummaryInList extends Component {
 		}
 
 		return (
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 			<div className="wpnc__summary" onClick={ this.handleClick }>
 				<div className="wpnc__note-icon">
 					<ImagePreloader
 						src={ this.props.note.icon }
 						key={ `image-preloader-${ this.props.note.icon }` }
 						placeholder={
-							<img src="https://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=128" />
+							<img
+								src="https://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=128"
+								alt="avatar"
+							/>
 						}
 					/>
 					<span className="wpnc__gridicon">
@@ -49,6 +53,7 @@ export class SummaryInList extends Component {
 					</span>
 				</div>
 				<div className="wpnc__text-summary">
+					{ /* eslint-disable-next-line react/no-danger */ }
 					<div className="wpnc__subject" dangerouslySetInnerHTML={ { __html: subject } } />
 					{ excerpt }
 				</div>

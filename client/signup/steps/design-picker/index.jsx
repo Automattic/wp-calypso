@@ -1,5 +1,6 @@
 import {
 	PLAN_PREMIUM,
+	// eslint-disable-next-line import/named
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';

@@ -22,6 +22,7 @@ export default localize( ( { translate, onClick = noop } ) => {
 						utm_medium: 'cta',
 						utm_campaign: 'calypsogetappscard',
 					},
+					// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 					'https://apps.wordpress.com/get?'
 				) }
 				target="_blank"

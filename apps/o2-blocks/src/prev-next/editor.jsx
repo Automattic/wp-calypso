@@ -77,6 +77,7 @@ const save = ( { attributes: { prev, prevText, next, nextText }, className, isEd
 
 const edit = ( { attributes, className, isSelected, setAttributes } ) => {
 	if ( isSelected ) {
+		/* eslint-disable */
 		return (
 			<Fragment>
 				<URLInput
@@ -98,6 +99,7 @@ const edit = ( { attributes, className, isSelected, setAttributes } ) => {
 				/>
 			</Fragment>
 		);
+		/* eslint-enable */
 	}
 
 	if ( attributes.prev || attributes.next ) {

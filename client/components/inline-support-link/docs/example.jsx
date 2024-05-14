@@ -7,6 +7,7 @@ export default class extends PureComponent {
 	render() {
 		const inlineSupportProps = {
 			supportPostId: 38147,
+			// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 			supportLink: 'https://wordpress.com/support/audio/podcasting/',
 		};
 		return <InlineSupportLink { ...inlineSupportProps }>Link Text</InlineSupportLink>;

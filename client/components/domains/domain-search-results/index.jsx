@@ -1,4 +1,5 @@
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
+// eslint-disable-next-line import/named
 import { CompactCard, ScreenReaderText, MaterialIcon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';

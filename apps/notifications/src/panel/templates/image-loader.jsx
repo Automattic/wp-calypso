@@ -61,7 +61,7 @@ export class ImageLoader extends Component {
 		return (
 			<div className="image-preloader">
 				{ status === LoadStatus.LOADING && placeholder }
-				{ status === LoadStatus.LOADED && <img src={ src } /> }
+				{ status === LoadStatus.LOADED && <img src={ src } alt="loaded" /> }
 				{ status === LoadStatus.FAILED && children }
 			</div>
 		);

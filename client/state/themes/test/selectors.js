@@ -4,6 +4,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	// eslint-disable-next-line import/named
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';

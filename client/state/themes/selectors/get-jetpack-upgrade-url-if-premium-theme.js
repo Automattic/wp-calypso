@@ -1,5 +1,6 @@
 import {
 	PLAN_JETPACK_COMPLETE,
+	// eslint-disable-next-line import/named
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';

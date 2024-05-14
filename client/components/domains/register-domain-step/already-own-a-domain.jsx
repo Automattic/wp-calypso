@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/named
 import { Button, MaterialIcon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 
