@@ -137,6 +137,26 @@ class DomainProductPrice extends Component {
 		);
 	}
 
+	// This method returns "Free domain for one year" text (different from "Free with plan")
+	renderFreeForFirstYear() {
+		const { translate } = this.props;
+
+		const className = classnames( 'domain-product-price', 'is-free-domain', {
+			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
+		} );
+
+		return (
+			<div className={ className }>
+				<div className="domain-product-price__free-text">
+					<span className="domain-product-price__free-price">
+						{ translate( 'Free domain for one year' ) }
+					</span>
+				</div>
+				{ this.renderReskinDomainPrice() }
+			</div>
+		);
+	}
+
 	renderFreeWithPlan() {
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
@@ -261,6 +281,8 @@ class DomainProductPrice extends Component {
 		switch ( this.props.rule ) {
 			case 'FREE_DOMAIN':
 				return this.renderFree();
+			case 'FREE_FOR_FIRST_YEAR':
+				return this.renderFreeForFirstYear();
 			case 'FREE_WITH_PLAN':
 			case 'INCLUDED_IN_HIGHER_PLAN':
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
