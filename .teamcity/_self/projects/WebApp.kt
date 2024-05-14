@@ -561,8 +561,6 @@ object CheckCodeStyleBranch : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				export NODE_ENV="test"
-
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
@@ -571,7 +569,6 @@ object CheckCodeStyleBranch : BuildType({
 			name = "Run eslint"
 			scriptContent = """
 				set -x
-				export NODE_ENV="test"
 
 				# Find files to lint
 				TOTAL_FILES_TO_LINT=$(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -cE '\.[jt]sx? || true')
