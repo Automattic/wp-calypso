@@ -541,7 +541,12 @@ export const MetricsTab = () => {
 			<div className="site-monitoring-time-controls__container">
 				<NavigationHeader
 					className="site-monitoring__navigation-header"
-					title={ dateRange }
+					title={
+						<>
+							{ translate( 'Monitoring: ' ) }
+							{ dateRange }
+						</>
+					}
 					subtitle={ translate( 'Monitor your site’s performance. {{link}}Learn more.{{/link}}', {
 						components: {
 							link: <InlineSupportLink supportContext="site-monitoring" showIcon={ false } />,
