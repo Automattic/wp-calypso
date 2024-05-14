@@ -148,18 +148,7 @@ const PlanFeatures2023GridActions = ( {
 	)?.checkoutLink;
 	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
 
-	let actionButton = null;
-
-	if (
-		( isFreePlan( planSlug ) ||
-			( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
-		isP2FreePlan( planSlug ) &&
-		current
-	) {
-		return null;
-	}
-
-	if ( ! availableForPurchase && ! current && ! isWpcomEnterpriseGridPlan( planSlug ) ) {
+	let actionButton = (
 		<Plans2023Tooltip
 			text={ translate( 'Please contact support to downgrade your plan.' ) }
 			setActiveTooltipId={ setActiveTooltipId }
@@ -173,50 +162,66 @@ const PlanFeatures2023GridActions = ( {
 					{ translate( 'Please contact support to downgrade your plan.' ) }
 				</div>
 			) }
-		</Plans2023Tooltip>;
+		</Plans2023Tooltip>
+	);
+
+	if (
+		( isFreePlan( planSlug ) ||
+			( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
+		isP2FreePlan( planSlug ) &&
+		current
+	) {
+		return null;
 	}
 
-	// TODO: Move this condition into the useAction hook
-	if ( current && canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
-		actionButton = (
-			<PlanButton
-				planSlug={ planSlug }
-				classes="is-storage-upgradeable"
-				href={ storageAddOnCheckoutHref }
-			>
-				{ translate( 'Upgrade' ) }
-			</PlanButton>
-		);
-	} else {
-		const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
-		actionButton = hasFreeTrialPlan ? (
-			<div className="plan-features-2023-grid__multiple-actions-container">
-				<PlanButton planSlug={ planSlug } onClick={ () => freeTrialCallback() } busy={ busy }>
-					{ freeTrialText }
-				</PlanButton>
-				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-					<PlanButton planSlug={ planSlug } onClick={ callback } borderless>
-						{ text }
-					</PlanButton>
-				) }
-			</div>
-		) : (
-			<>
+	if ( availableForPurchase || current || isWpcomEnterpriseGridPlan( planSlug ) ) {
+		// TODO: Move the condition below into the useAction hook
+		if (
+			current &&
+			canPurchaseStorageAddOns &&
+			nonDefaultStorageOptionSelected &&
+			! isMonthlyPlan
+		) {
+			actionButton = (
 				<PlanButton
 					planSlug={ planSlug }
-					disabled={ ! callback || 'disabled' === status }
-					onClick={ callback }
-					current={ current }
+					classes="is-storage-upgradeable"
+					href={ storageAddOnCheckoutHref }
 				>
-					{ text }
+					{ translate( 'Upgrade' ) }
 				</PlanButton>
-				{ postButtonText && (
-					<span className="plan-features-2023-grid__actions-post-button-text">
-						{ postButtonText }
-					</span>
-				) }
-			</>
-		);
+			);
+		} else {
+			const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
+			actionButton = hasFreeTrialPlan ? (
+				<div className="plan-features-2023-grid__multiple-actions-container">
+					<PlanButton planSlug={ planSlug } onClick={ () => freeTrialCallback() } busy={ busy }>
+						{ freeTrialText }
+					</PlanButton>
+					{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
+						<PlanButton planSlug={ planSlug } onClick={ callback } borderless>
+							{ text }
+						</PlanButton>
+					) }
+				</div>
+			) : (
+				<>
+					<PlanButton
+						planSlug={ planSlug }
+						disabled={ ! callback || 'disabled' === status }
+						onClick={ callback }
+						current={ current }
+					>
+						{ text }
+					</PlanButton>
+					{ postButtonText && (
+						<span className="plan-features-2023-grid__actions-post-button-text">
+							{ postButtonText }
+						</span>
+					) }
+				</>
+			);
+		}
 	}
 
 	return (
