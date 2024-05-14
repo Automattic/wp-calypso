@@ -694,6 +694,27 @@ function wpcomPages( app ) {
 		res.redirect( redirectUrl );
 	} );
 
+	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/sites`, function ( req, res, next ) {
+		const locale = req.params?.locale;
+		const queryParams = new URLSearchParams( req.query );
+		const queryString = queryParams.size ? '?' + queryParams.toString() : '';
+
+		if ( ! req.context.isLoggedIn ) {
+			const loginUrl = `/log-in/${ locale }`;
+			const sitesDashboard = `https://wordpress.com/sites/${ queryString }`;
+
+			const redirectUrl = encodeURIComponent( sitesDashboard );
+
+			res.redirect( `${ loginUrl }?redirect_to=${ redirectUrl }` );
+		} else {
+			if ( locale ) {
+				res.redirect( `/sites${ queryString }` );
+				return;
+			}
+			next();
+		}
+	} );
+
 	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/plans`, function ( req, res, next ) {
 		const locale = req.params?.locale;
 
