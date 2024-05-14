@@ -115,6 +115,7 @@ function useGenerateActionHook( {
 			return {
 				primary: {
 					callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
+					status: 'enabled',
 					text,
 				},
 			};

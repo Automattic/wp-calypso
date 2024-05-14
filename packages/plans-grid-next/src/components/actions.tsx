@@ -4,6 +4,7 @@ import {
 	isP2FreePlan,
 	isFreePlan,
 	PLAN_FREE,
+	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
@@ -183,9 +184,7 @@ const PlanFeatures2023GridActions = ( {
 				{ translate( 'Upgrade' ) }
 			</PlanButton>
 		);
-	}
-
-	if ( availableForPurchase || current ) {
+	} else if ( availableForPurchase || current || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
 		actionButton = hasFreeTrialPlan ? (
 			<div className="plan-features-2023-grid__multiple-actions-container">
