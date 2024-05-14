@@ -66,7 +66,6 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 			<DocumentHead title={ pageTitle } />
 			<NavigationHeader
 				compactBreadcrumb
-				css={ { paddingBottom: '40px !important' } }
 				title={ translate( 'GitHub Deployments' ) }
 				subtitle={ translate(
 					'Automate updates from GitHub to streamline workflows. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',

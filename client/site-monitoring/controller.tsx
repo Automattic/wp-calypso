@@ -22,6 +22,7 @@ export function siteMonitoringPhpLogs( context: PageJSContext, next: () => void 
 		<>
 			<PageViewTracker path="/site-monitoring/:site/php" title="Site Monitoring" />
 			<NavigationHeader
+				className="site-logs__navigation-header"
 				title={ translate( 'PHP Logs' ) }
 				subtitle={ translate( 'View and download PHP error logs. {{link}}Learn more.{{/link}}', {
 					components: {
@@ -41,6 +42,7 @@ export function siteMonitoringServerLogs( context: PageJSContext, next: () => vo
 		<>
 			<PageViewTracker path="/site-monitoring/:site/web" title="Site Monitoring" />
 			<NavigationHeader
+				className="site-logs__navigation-header"
 				title={ translate( 'Server Logs' ) }
 				subtitle={ translate(
 					'Gain full visibility into server activity. {{link}}Learn more.{{/link}}',

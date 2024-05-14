@@ -19,6 +19,10 @@ $card-padding: 24px;
 .hosting-overview__navigation-header {
 	grid-column: 1 / -1;
 	grid-row: 1 / 2;
+
+	&.navigation-header {
+		margin-bottom: 16px;
+	}
 }
 
 .hosting-overview__plan {
