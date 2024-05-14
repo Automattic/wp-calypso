@@ -5,6 +5,7 @@ import { useMemo, useCallback, type FC } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import InfoPopover from 'calypso/components/info-popover';
+import { preventWidows } from 'calypso/lib/formatting';
 import { getProductPartsFromAlias } from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -79,7 +80,7 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 						screenReaderText={ translate( 'Learn more' ) }
 						className="product-lightbox__variants-dropdown--popover"
 					>
-						{ PRODUCT_OPTIONS_HEADER_INFO_CONTENT[ product?.productSlug ] }
+						{ preventWidows( PRODUCT_OPTIONS_HEADER_INFO_CONTENT[ product?.productSlug ] ) }
 					</InfoPopover>
 				</FormLegend>
 				<SelectDropdown

@@ -260,6 +260,6 @@
 // The lightbox z-index is 100200, consequences of updating the popover z-index
 // to higher than that are unclear, so we'll manually set it to 100200 here so we
 // can see the popover in the lightbox.
-.popover {
+.popover.product-lightbox__variants-dropdown--popover {
 	z-index: 100200;
 }
