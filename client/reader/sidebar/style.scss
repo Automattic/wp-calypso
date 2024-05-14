@@ -275,8 +275,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-following,
-			.sidebar__menu-icon.sidebar_svg-likes,
-			.sidebar__menu-icon.sidebar_svg-notifications {
+			.sidebar__menu-icon.sidebar_svg-likes {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					stroke: var(--color-sidebar-gridicon-hover-fill);
@@ -323,8 +322,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 			}
 		}
 		.sidebar__menu-icon.sidebar_svg-following,
-		.sidebar__menu-icon.sidebar_svg-likes,
-		.sidebar__menu-icon.sidebar_svg-notifications {
+		.sidebar__menu-icon.sidebar_svg-likes {
 			fill: var(--color-sidebar-background);
 			path {
 				stroke: var(--color-sidebar-gridicon-fill);
@@ -374,8 +372,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-following,
-			.sidebar__menu-icon.sidebar_svg-likes,
-			.sidebar__menu-icon.sidebar_svg-notifications {
+			.sidebar__menu-icon.sidebar_svg-likes {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					stroke: var(--color-sidebar-gridicon-selected-fill);
