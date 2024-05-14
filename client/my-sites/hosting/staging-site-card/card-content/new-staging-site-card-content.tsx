@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { ExceedQuotaErrorContent } from './exceed-quota-error-content';
 
@@ -18,7 +19,7 @@ export const NewStagingSiteCardContent = ( {
 		const translate = useTranslate();
 		return (
 			<>
-				<p>
+				<HostingCardDescription>
 					{ translate(
 						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site. {{a}}Learn more{{/a}}.',
 						{
@@ -27,7 +28,7 @@ export const NewStagingSiteCardContent = ( {
 							},
 						}
 					) }
-				</p>
+				</HostingCardDescription>
 				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
