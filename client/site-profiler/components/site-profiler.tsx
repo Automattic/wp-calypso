@@ -25,6 +25,7 @@ import HostingInformation from './hosting-information';
 import HostingIntro from './hosting-intro';
 import { MetricsMenu } from './metrics-menu';
 import './styles.scss';
+import { MetricsSection } from './metrics-section';
 
 const debug = debugFactory( 'apps:site-profiler' );
 
@@ -36,6 +37,8 @@ interface Props {
 export default function SiteProfiler( props: Props ) {
 	const { routerDomain } = props;
 	const basicMetricsRef = useRef( null );
+	const performanceMetricsRef = useRef( null );
+	const healthScoresRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -164,9 +167,39 @@ export default function SiteProfiler( props: Props ) {
 						<LayoutBlockSection>
 							<MetricsMenu
 								basicMetricsRef={ basicMetricsRef }
+								performanceMetricsRef={ performanceMetricsRef }
+								healthScoresRef={ healthScoresRef }
 								onCTAClick={ () => setIsGetReportFormOpen( true ) }
 							/>
 							<BasicMetrics ref={ basicMetricsRef } basicMetrics={ basicMetrics.basic } />
+							<MetricsSection
+								name={ translate( 'Performance Metrics' ) }
+								title={ translate(
+									"Your site {{success}}performs well{{/success}}, but there's always room to be faster and smoother for your visitors.",
+									{
+										components: {
+											success: <span className="success" />,
+											alert: <span className="alert" />,
+										},
+									}
+								) }
+								subtitle={ translate( "Boost your site's performance" ) }
+								ref={ performanceMetricsRef }
+							/>
+							<MetricsSection
+								name={ translate( 'Health Scores' ) }
+								title={ translate(
+									"Your site's health scores {{alert}}suggest critical area{{/alert}} but need attention to prevent low performance.",
+									{
+										components: {
+											success: <span className="success" />,
+											alert: <span className="alert" />,
+										},
+									}
+								) }
+								subtitle={ translate( "Optimize your site's health" ) }
+								ref={ healthScoresRef }
+							/>
 						</LayoutBlockSection>
 					) }
 				</LayoutBlock>

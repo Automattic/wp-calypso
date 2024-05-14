@@ -159,12 +159,10 @@ const Home = ( {
 		isSiteWooExpressEcommerceTrial &&
 		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
 		( fetchingJetpackModules || ssoModuleActive ) &&
-		( config.isEnabled( 'entrepreneur-my-home' )
-			? isRequestingSitePlans ||
-			  isRequestingSitePurchases ||
-			  isSiteWooExpress ||
-			  purchase?.isWooExpressTrial
-			: true )
+		( isRequestingSitePlans ||
+			isRequestingSitePurchases ||
+			isSiteWooExpress ||
+			purchase?.isWooExpressTrial )
 	) {
 		return <WooCommerceHomePlaceholder />;
 	}
