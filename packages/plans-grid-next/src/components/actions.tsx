@@ -148,7 +148,18 @@ const PlanFeatures2023GridActions = ( {
 	)?.checkoutLink;
 	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
 
-	let actionButton = (
+	let actionButton = null;
+
+	if (
+		( isFreePlan( planSlug ) ||
+			( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
+		isP2FreePlan( planSlug ) &&
+		current
+	) {
+		return null;
+	}
+
+	if ( ! availableForPurchase && ! current && ! isWpcomEnterpriseGridPlan( planSlug ) ) {
 		<Plans2023Tooltip
 			text={ translate( 'Please contact support to downgrade your plan.' ) }
 			setActiveTooltipId={ setActiveTooltipId }
@@ -162,18 +173,10 @@ const PlanFeatures2023GridActions = ( {
 					{ translate( 'Please contact support to downgrade your plan.' ) }
 				</div>
 			) }
-		</Plans2023Tooltip>
-	);
-
-	if (
-		( isFreePlan( planSlug ) ||
-			( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
-		isP2FreePlan( planSlug ) &&
-		current
-	) {
-		return null;
+		</Plans2023Tooltip>;
 	}
 
+	// TODO: Move this condition into the useAction hook
 	if ( current && canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
 		actionButton = (
 			<PlanButton
@@ -184,7 +187,7 @@ const PlanFeatures2023GridActions = ( {
 				{ translate( 'Upgrade' ) }
 			</PlanButton>
 		);
-	} else if ( availableForPurchase || current || isWpcomEnterpriseGridPlan( planSlug ) ) {
+	} else {
 		const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
 		actionButton = hasFreeTrialPlan ? (
 			<div className="plan-features-2023-grid__multiple-actions-container">
