@@ -11,10 +11,8 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_REFERRALS_BANK_DETAILS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
-import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hooks/use-get-tipalti-payee';
-import { getAccountStatus } from 'calypso/a8c-for-agencies/sections/referrals/lib/get-account-status';
-import tipaltiLogo from 'calypso/a8c-for-agencies/sections/referrals/lib/tipalti-logo';
+import tipaltiLogo from 'calypso/a8c-for-agencies/components/tipalti-logo';
+import TipaltiStatusBadge from 'calypso/a8c-for-agencies/components/tipalti-status-badge';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -25,14 +23,6 @@ export default function MigrationsOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const title = translate( 'Migrations' );
-
-	const { data } = useGetTipaltiPayee();
-	const accountStatus = getAccountStatus( data, translate );
-	const statusProps = {
-		children: accountStatus?.status,
-		type: accountStatus?.statusType,
-		tooltip: accountStatus?.statusReason,
-	};
 
 	const onAddBankDetailsClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );
@@ -115,7 +105,7 @@ export default function MigrationsOverview() {
 							<div className="migrations-overview__card-heading">
 								{ translate( 'Enter your bank details so we can pay you commissions' ) }
 							</div>
-							<StatusBadge statusProps={ statusProps } />
+							<TipaltiStatusBadge />
 						</div>
 						<div style={ { maxWidth: '428px' } }>
 							{ translate(

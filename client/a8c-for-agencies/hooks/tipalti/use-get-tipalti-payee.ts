@@ -4,13 +4,13 @@ import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 export const getGetTipaltiPayeeQueryKey = ( agencyId?: number ) => {
-	return [ 'a4a-tipalti-payee', agencyId ];
+	return agencyId ? [ 'a4a-tipalti-payee' ] : [ 'a4a-tipalti-payee', agencyId ];
 };
 
 export default function useGetTipaltiPayee() {
 	const agencyId = useSelector( getActiveAgencyId );
 
-	const data = useQuery( {
+	return useQuery( {
 		queryKey: getGetTipaltiPayeeQueryKey( agencyId ),
 		queryFn: () =>
 			wpcom.req.get( {
@@ -19,7 +19,6 @@ export default function useGetTipaltiPayee() {
 			} ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
+		refetchOnMount: false,
 	} );
-
-	return data;
 }

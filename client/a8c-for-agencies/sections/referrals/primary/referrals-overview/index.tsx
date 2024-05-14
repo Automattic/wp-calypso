@@ -16,16 +16,15 @@ import {
 	A4A_REFERRALS_COMMISSIONS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import tipaltiLogo from 'calypso/a8c-for-agencies/components/tipalti-logo';
 import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
+import useTipaltiAccountStatus from 'calypso/a8c-for-agencies/hooks/tipalti/use-tipalti-account-status';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import StepSection from '../../common/step-section';
 import StepSectionItem from '../../common/step-section-item';
-import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
-import { getAccountStatus } from '../../lib/get-account-status';
-import tipaltiLogo from '../../lib/tipalti-logo';
 import ReferralsFooter from '../footer';
 
 import './style.scss';
@@ -44,9 +43,11 @@ export default function ReferralsOverview() {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_download_a4a_plugin_button_click' ) );
 	}, [ dispatch ] );
 
-	const { data, isFetching } = useGetTipaltiPayee();
-
-	const accountStatus = getAccountStatus( data, translate );
+	const {
+		data: accountStatus,
+		isFetching,
+		refetch: refetchAccountStatus,
+	} = useTipaltiAccountStatus();
 
 	const hasPayeeAccount = !! accountStatus?.status;
 
@@ -77,11 +78,20 @@ export default function ReferralsOverview() {
 
 	// Only display the success notice for submitted banking details once.
 	useEffect( () => {
-		if ( accountStatus?.statusType === 'success' && ! successNoticeSeen ) {
+		if (
+			accountStatus?.statusType === 'success' &&
+			! successNoticeSeen &&
+			! successNoticePreferenceSaved
+		) {
 			dispatch( savePreference( 'a4a-referrals-bank-details-success-notice-seen', true ) );
 			setSuccessNoticePreferenceSaved( true );
 		}
-	}, [ dispatch, successNoticeSeen, accountStatus ] );
+	}, [ dispatch, successNoticeSeen, accountStatus?.statusType, successNoticePreferenceSaved ] );
+
+	// Refresh the Tipalti payee data when the user navigates back to this page.
+	useEffect( () => {
+		refetchAccountStatus();
+	}, [ refetchAccountStatus ] );
 
 	return (
 		<Layout
@@ -156,15 +166,7 @@ export default function ReferralsOverview() {
 										primary: ! hasPayeeAccount,
 										compact: true,
 									} }
-									statusProps={
-										accountStatus
-											? {
-													children: accountStatus?.status,
-													type: accountStatus?.statusType,
-													tooltip: accountStatus?.statusReason,
-											  }
-											: undefined
-									}
+									showStatusBadge={ true }
 								/>
 								<StepSectionItem
 									icon={ plugins }
