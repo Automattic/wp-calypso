@@ -251,6 +251,10 @@ class Layout extends Component {
 	}
 
 	addSidebarClassToBody() {
+		if ( typeof document === 'undefined' ) {
+			return;
+		}
+
 		if ( this.props.isGlobalSidebarVisible ) {
 			document.querySelector( 'body' ).classList.add( 'has-global-sidebar' );
 		} else {
