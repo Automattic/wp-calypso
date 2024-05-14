@@ -51,18 +51,21 @@ export const UpgradePlanHostingTestimonials = [
 
 export const defaultHostingDetails = [
 	{
+		id: 'reduced-error-rate',
 		title: translate( 'Reduced error rate' ),
 		description: translate( '16% fewer errors' ),
 		icon: shield,
 	},
 	{
+		id: 'increased-speed',
 		title: translate( 'Increased speed' ),
 		description: translate( '30% faster' ),
 		icon: trendingUp,
 	},
 	{
+		id: 'higher-availability',
 		title: translate( 'Higher availability' ),
 		description: translate( '3% better uptime' ),
 		icon: chartBar,
 	},
-] as Array< { title: string; description: string | ReactNode; icon: JSX.Element } >;
+] as Array< { id: string; title: string; description: string | ReactNode; icon: JSX.Element } >;
