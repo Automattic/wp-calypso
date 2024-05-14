@@ -43,7 +43,7 @@ export const JetpackSitesDataViews = ( {
 
 	const sites = useFormattedSites( data?.sites ?? [] ).reduce< SiteData[] >( ( acc, item ) => {
 		acc.push( item );
-		// If this site has an error we should add a row to display an error message below this site's row
+		// If this site has an error, we duplicate this row - while changing the duplicate's type to 'error' - to display an error message below it.
 		if ( item.site.error ) {
 			acc.push( {
 				...item,
