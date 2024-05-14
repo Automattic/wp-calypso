@@ -71,7 +71,7 @@ class ProfileLink extends Component {
 						rel="noopener noreferrer"
 						onClick={ this.getClickHandler( 'Profile Links Site Images Link' ) }
 					>
-						<img className="profile-link__image" src={ imageSrc } />
+						<img className="profile-link__image" src={ imageSrc } alt="profile" />
 					</a>
 				) }
 				<a

@@ -10,6 +10,7 @@ class PagePlaceholder extends Component {
 		return (
 			<CompactCard className="page is-placeholder">
 				{ this.props.multisite ? <SiteIcon size={ 34 } /> : null }
+				{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 				<a className="page__title">
 					<span className="placeholder-text">
 						{ this.props.translate( 'Loading a page of Pages…' ) }
