@@ -35,8 +35,6 @@ import {
 	AKISMET_UPGRADES_PRODUCTS_MAP,
 	JETPACK_STARTER_UPGRADE_MAP,
 	is100Year,
-	isJetpackAISlug,
-	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -53,7 +51,7 @@ import {
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import classNames from 'classnames';
-import { localize, LocalizeProps, numberFormat, useTranslate } from 'i18n-calypso';
+import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -1155,27 +1153,6 @@ class ManagePurchase extends Component<
 
 		if ( ! purchase ) {
 			return '';
-		}
-
-		if ( isJetpackAISlug( purchase.productSlug ) && purchase.purchaseRenewalQuantity ) {
-			return translate( '%(productName)s (%(quantity)d requests per month)', {
-				args: {
-					productName: getDisplayName( purchase ),
-					quantity: purchase.purchaseRenewalQuantity,
-				},
-			} );
-		}
-
-		if (
-			isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
-			purchase.purchaseRenewalQuantity
-		) {
-			return translate( '%(productName)s (%(quantity)s views per month)', {
-				args: {
-					productName: getDisplayName( purchase ),
-					quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
-				},
-			} );
 		}
 
 		if ( ! plan || ! isWpComMonthlyPlan( purchase.productSlug ) ) {
