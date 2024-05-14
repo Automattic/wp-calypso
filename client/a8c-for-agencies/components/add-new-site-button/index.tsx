@@ -4,6 +4,7 @@ import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants'
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import A4ALogo, { LOGO_COLOR_SECONDARY_ALT } from '../a4a-logo';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { A4A_SITES_CONNECT_URL_LINK } from '../sidebar-menu/lib/constants';
 import type { MutableRefObject } from 'react';
 
@@ -31,6 +32,9 @@ const AddNewSiteButton = ( {
 	/** @todo Remove this line once the A4A_SITES_CONNECT_URL_LINK URL exists. */
 	const showAddSitesByURLButton = false;
 
+	// @todo Use a feature flag to get value for this
+	const showAddSitesFromWPCOMAccount = true;
+
 	return (
 		<SplitButton
 			popoverContext={ popoverContext }
@@ -49,6 +53,13 @@ const AddNewSiteButton = ( {
 				/>
 				<span>{ translate( 'Download A4A Plugin' ) }</span>
 			</PopoverMenuItem>
+
+			{ showAddSitesFromWPCOMAccount && (
+				<PopoverMenuItem href="/sites/add/from-wpcom">
+					<WordPressLogo className="gridicon" size={ 18 } fill="#021A23" />
+					<span>{ translate( 'From your WordPress.com account' ) }</span>
+				</PopoverMenuItem>
+			) }
 
 			{ showAddSitesByURLButton && (
 				<>
