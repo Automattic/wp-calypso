@@ -299,9 +299,18 @@ export const PRODUCT_OPTIONS_HEADER: Record< string, TranslateResult > = {
 	[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: translate( 'Select your plan:' ),
 	[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: translate( 'Select your plan:' ),
 	[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: translate( 'Select your plan:' ),
-	[ PRODUCT_JETPACK_AI_BI_YEARLY ]: translate( 'Pick your AI tier' ),
-	[ PRODUCT_JETPACK_AI_YEARLY ]: translate( 'Pick your AI tier' ),
-	[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'Pick your AI tier' ),
+	[ PRODUCT_JETPACK_AI_BI_YEARLY ]: translate( 'Pick your %(product)s tier', {
+		args: { product: 'AI' },
+		comment: '%(product)s is the name of the product',
+	} ),
+	[ PRODUCT_JETPACK_AI_YEARLY ]: translate( 'Pick your %(product)s tier', {
+		args: { product: 'AI' },
+		comment: '%(product)s is the name of the product',
+	} ),
+	[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'Pick your %(product)s tier', {
+		args: { product: 'AI' },
+		comment: '%(product)s is the name of the product',
+	} ),
 	[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: translate( 'Pick your %(product)s tier', {
 		args: { product: 'Stats' },
 		comment: '%(product)s is the name of the product',
