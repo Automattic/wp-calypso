@@ -1,11 +1,9 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
-import { englishLocales } from '@automattic/i18n-utils';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { hasTranslation } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -37,6 +35,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { Experiment } from 'calypso/lib/explat';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -934,18 +933,21 @@ export class RenderDomainsStep extends Component {
 
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
 
-		// Ensure we don't show the migration explainer to non-English locales until all translations are complete.
-		const showMigrationExplainer =
-			englishLocales.includes( this.props.localeSlug || '' ) ||
-			hasTranslation( 'Migrating an existing site?' );
-
 		return (
 			<div className="domains__domain-side-content-container">
-				{ showMigrationExplainer && (
-					<div className="domains__domain-side-content domains__domain-site-migration">
-						<ReskinSideExplainer type="site-migration" onClick={ this.handleSiteMigrationClick } />
-					</div>
-				) }
+				<Experiment
+					name="calypso_signup_domains_show_migrate_cta_2024"
+					defaultExperience={ null }
+					loadingExperience={ null }
+					treatmentExperience={
+						<div className="domains__domain-side-content domains__domain-site-migration">
+							<ReskinSideExplainer
+								type="site-migration"
+								onClick={ this.handleSiteMigrationClick }
+							/>
+						</div>
+					}
+				/>
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
 					<DomainsMiniCart
 						domainsInCart={ domainsInCart }
