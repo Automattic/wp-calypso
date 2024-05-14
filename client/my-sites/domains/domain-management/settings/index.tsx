@@ -464,8 +464,7 @@ const Settings = ( {
 			! domain ||
 			domain.type === domainTypes.SITE_REDIRECT ||
 			domain.transferStatus === transferStatus.PENDING_ASYNC ||
-			! domain.canManageDnsRecords ||
-			domain.isGravatarDomain
+			! domain.canManageDnsRecords
 		) {
 			return null;
 		}
@@ -497,7 +496,7 @@ const Settings = ( {
 	};
 
 	const renderSetAsPrimaryDomainSection = () => {
-		if ( ! domain || domain.isGravatarDomain ) {
+		if ( ! domain ) {
 			return null;
 		}
 		return <SetAsPrimary domain={ domain } selectedSite={ selectedSite } key="set-as-primary" />;
@@ -749,9 +748,7 @@ const Settings = ( {
 				) }
 				<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
 				<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
-				{ ! domain.isGravatarDomain && (
-					<DomainDisconnectCard selectedSite={ selectedSite } domain={ domain } />
-				) }
+				<DomainDisconnectCard selectedSite={ selectedSite } domain={ domain } />
 			</>
 		);
 	};
