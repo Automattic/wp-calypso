@@ -180,7 +180,7 @@ export default function HostingCard( {
 					{ highestDiscountPercentage ? (
 						<div className="hosting-card__price-discount">
 							{ translate( 'Volume savings up to %(highestDiscountPercentage)s%', {
-								args: { highestDiscountPercentage },
+								args: { highestDiscountPercentage: Math.trunc( highestDiscountPercentage ) },
 							} ) }
 						</div>
 					) : null }
