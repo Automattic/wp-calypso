@@ -362,7 +362,11 @@ export const JetpackSitesDataViews = ( {
 					return (
 						<>
 							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
-							<div className="sites-dataviews__actions">
+							<div
+								className={ `sites-dataviews__actions ${
+									item.site.error ? 'sites-dataviews__actions-error' : ''
+								}` }
+							>
 								<SiteActions
 									isLargeScreen={ isLargeScreen }
 									site={ item.site }
