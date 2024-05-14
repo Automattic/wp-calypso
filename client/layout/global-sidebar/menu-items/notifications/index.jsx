@@ -49,6 +49,7 @@ class SidebarNotifications extends Component {
 
 	toggleNotesFrame = ( event ) => {
 		event.preventDefault();
+		event.stopPropagation();
 
 		// Get URL and if it matches "/read/notifications", don't open the panel
 		// As it will cause duplicate notification panels to show

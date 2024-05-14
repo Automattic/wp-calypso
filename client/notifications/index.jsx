@@ -58,9 +58,8 @@ export class Notifications extends Component {
 	};
 
 	componentDidMount() {
-		window.addEventListener( 'mousedown', this.props.checkToggle, { passive: false } );
-		window.addEventListener( 'touchstart', this.props.checkToggle, { passive: false } );
-		window.addEventListener( 'keydown', this.handleKeyPress );
+		document.addEventListener( 'click', this.props.checkToggle );
+		document.addEventListener( 'keydown', this.handleKeyPress );
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
@@ -79,9 +78,8 @@ export class Notifications extends Component {
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'mousedown', this.props.checkToggle, { passive: false } );
-		window.removeEventListener( 'touchstart', this.props.checkToggle, { passive: false } );
-		window.removeEventListener( 'keydown', this.handleKeyPress );
+		document.removeEventListener( 'click', this.props.checkToggle );
+		document.removeEventListener( 'keydown', this.handleKeyPress );
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
