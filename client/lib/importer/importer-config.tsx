@@ -327,4 +327,10 @@ export function getImporterByKey(
 	return filter( getImporters( args ), ( importer ) => importer.key === key )[ 0 ];
 }
 
+export function isSupportedImporterEngine( engine: string ): boolean {
+	const allImporters = getImporters();
+
+	return allImporters.some( ( importer ) => importer.engine === engine );
+}
+
 export default getConfig;
