@@ -123,10 +123,7 @@ const entrepreneurFlow: Flow = {
 						);
 
 						// Redirect users to the login page with the 'action=jetpack-sso' parameter to initiate Jetpack SSO login and redirect them to Woo CYS's Design With AI after. This URL, however, is just symbolic because somewhere within Jetpack SSO or some plugin is stripping off the `redirect_to` param. The actual work that is doing the redirection is in wpcomsh/1801.
-						let redirectToWithSSO = `https://${ stagingUrl }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`;
-
-						// Temporarily redirect to Calypso My Home until Woo Express 8.9 is deployed.
-						redirectToWithSSO = `/home/${ stagingUrl }?ref=entrepreneur-signup&flags=entrepreneur-my-home`;
+						const redirectToWithSSO = `https://${ stagingUrl }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`;
 
 						return window.location.assign( redirectToWithSSO );
 					}

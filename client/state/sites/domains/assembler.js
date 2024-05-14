@@ -65,6 +65,8 @@ export const createSiteDomainObject = ( domain ) => {
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
 		canManageDnsRecords: Boolean( domain.can_manage_dns_records ),
 		canManageNameServers: Boolean( domain.can_manage_name_servers ),
+		canTransferToAnyUser: Boolean( domain.can_transfer_to_any_user ),
+		canTransferToOtherSite: Boolean( domain.can_transfer_to_other_site ),
 		canUpdateContactInfo: Boolean( domain.can_update_contact_info ),
 		cannotManageDnsRecordsReason: domain.cannot_manage_dns_records_reason
 			? String( domain.cannot_manage_dns_records_reason )

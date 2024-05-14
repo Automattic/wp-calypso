@@ -79,10 +79,8 @@ function CategoryGalleryItem( { category, patternTypeFilter }: CategoryGalleryIt
 			>
 				<div className="patterns-category-gallery__item-preview-inner">
 					<PatternPreview
-						category={ category.name }
 						className="pattern-preview--category-gallery"
 						pattern={ pattern }
-						patternTypeFilter={ patternTypeFilter }
 						viewportWidth={ GRID_VIEW_VIEWPORT_WIDTH }
 					/>
 				</div>

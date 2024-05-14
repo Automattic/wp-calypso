@@ -4,6 +4,7 @@ import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { isSupportedImporterEngine } from 'calypso/lib/importer/importer-config';
 import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser, getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
@@ -99,7 +100,11 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 				break;
 
 			default:
-				stepSectionName = 'preview';
+				if ( ! isSupportedImporterEngine( urlData.platform ) ) {
+					stepSectionName = 'not';
+				} else {
+					stepSectionName = 'preview';
+				}
 				break;
 		}
 

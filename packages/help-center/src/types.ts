@@ -111,6 +111,10 @@ export interface OtherSupportAvailability {
 	is_user_eligible_for_chat: boolean;
 }
 
+export interface EmailSupportStatus {
+	force_email_contact_form: boolean;
+}
+
 export interface SupportActivity {
 	id: number;
 	status: string;

@@ -16,16 +16,13 @@ import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/intern
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
 import { patternFiltersClassName } from 'calypso/my-sites/patterns/components/pattern-library';
+import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import type {
-	Pattern,
-	PatternGalleryProps,
-	PatternTypeFilter,
-} from 'calypso/my-sites/patterns/types';
+import type { Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
 import type { Dispatch, SetStateAction } from 'react';
 
 import './style.scss';
@@ -85,26 +82,22 @@ function useTimeoutToResetBoolean(
 
 type PatternPreviewProps = {
 	canCopy?: boolean;
-	category?: string;
 	className?: string;
 	getPatternPermalink?: PatternGalleryProps[ 'getPatternPermalink' ];
 	isResizable?: boolean;
 	pattern: Pattern | null;
-	patternTypeFilter?: PatternTypeFilter;
-	isGridView?: boolean;
 	viewportWidth?: number;
 };
 
 function PatternPreviewFragment( {
 	canCopy = true,
-	category,
 	className,
 	getPatternPermalink = () => '',
 	pattern,
-	patternTypeFilter,
-	isGridView,
 	viewportWidth: fixedViewportWidth,
 }: PatternPreviewProps ) {
+	const { category, patternTypeFilter, isGridView } = usePatternsContext();
+
 	const { recordPatternsEvent } = useRecordPatternsEvent();
 	const ref = useRef< HTMLDivElement >( null );
 	const hasScrolledToAnchorRef = useRef< boolean >( false );
@@ -392,7 +385,9 @@ function PatternPreviewFragment( {
 }
 
 export function PatternPreview( props: PatternPreviewProps ) {
-	const { category, isResizable, pattern, patternTypeFilter } = props;
+	const { isResizable, pattern } = props;
+	const { category, patternTypeFilter } = usePatternsContext();
+
 	const isMobile = useMobileBreakpoint();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
