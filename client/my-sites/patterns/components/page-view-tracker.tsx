@@ -2,34 +2,28 @@ import { useEffect } from 'react';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
-import { PatternTypeFilter, PatternView } from 'calypso/my-sites/patterns/types';
+import { PatternView } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type { AppState } from 'calypso/types';
 
 type PatternsPageViewTrackerProps = {
-	category?: string;
-	searchTerm?: string;
 	patternPermalinkName?: string;
-	patternTypeFilter?: PatternTypeFilter;
 	view?: PatternView;
-	referrer?: string;
 	error?: string;
 	patternsCount?: number;
 };
 
 export function PatternsPageViewTracker( {
-	category,
-	searchTerm,
 	patternPermalinkName,
-	patternTypeFilter,
 	view,
-	referrer,
 	error,
 	patternsCount,
 }: PatternsPageViewTrackerProps ) {
+	const { category, searchTerm, patternTypeFilter, referrer } = usePatternsContext();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	// Default to `undefined` while user settings are loading
