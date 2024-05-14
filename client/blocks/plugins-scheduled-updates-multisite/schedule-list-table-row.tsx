@@ -33,7 +33,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 	const translate = useTranslate();
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const { activateSchedule } = useScheduledUpdatesActivateBatchMutation();
-	const batchActiveState = schedule.sites.every( ( site ) => site.active );
+	const batchActiveState = schedule.sites.some( ( site ) => site.active );
 
 	return (
 		<>

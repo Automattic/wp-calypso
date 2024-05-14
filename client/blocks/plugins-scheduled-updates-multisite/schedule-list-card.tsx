@@ -34,7 +34,7 @@ export const ScheduleListCard = ( props: Props ) => {
 	);
 	const { activateSchedule } = useScheduledUpdatesActivateBatchMutation();
 	const [ isExpanded, setIsExpanded ] = useState( false );
-	const batchActiveState = schedule.sites.every( ( site ) => site.active );
+	const batchActiveState = schedule.sites.some( ( site ) => site.active );
 
 	return (
 		<div className={ clsx( 'plugins-update-manager-multisite-card', className ) }>
