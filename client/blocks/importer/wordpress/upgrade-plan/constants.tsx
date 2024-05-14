@@ -6,9 +6,13 @@ import customerImageAntonyAgnel from 'calypso/assets/images/migrations/customer-
 import customerImageChrisCoyier from 'calypso/assets/images/migrations/customer-testimonials/chris-coyier.jpg';
 import customerImageEmmaLucasCopley from 'calypso/assets/images/migrations/customer-testimonials/emma-lucas-copley.jpg';
 
-// Threshold for a website that has a "good" Largest Contentful Paint (LCP) score according to Core Web Vital metrics
-// A "good" LCP score is considered to be 2.5 seconds or less
+// Threshold for a website that has a "good" Largest Contentful Paint (LCP) score according to Core Web Vital metrics.
+// A "good" LCP score is considered to be 2.5 seconds or less.
 export const upgradePlanSiteMetricsLcpThreshold = 2500;
+
+// Threshold for a website that has a "good" First Input Delay (FID) score according to Core Web Vital metrics.
+// A "good" FID score is considered to be 100 miliseconds (0.1 seconds) or less.
+export const upgradePlanSiteMetricsFidThreshold = 0.1;
 
 export const UpgradePlanHostingTestimonials = [
 	{
