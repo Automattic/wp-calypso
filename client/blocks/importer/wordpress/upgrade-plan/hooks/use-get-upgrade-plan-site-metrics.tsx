@@ -7,7 +7,6 @@ export const useGetUpgradePlanSiteMetrics = () => {
 	const isEnglishLocale = useIsEnglishLocale();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	const { data: siteMetricData } = useUrlBasicMetricsQuery( importSiteQueryParam );
-	let showUpdatedSpeedMetrics = false;
 	let lcpPercentageDifference = 0;
 
 	if (
@@ -25,14 +24,9 @@ export const useGetUpgradePlanSiteMetrics = () => {
 						)
 				) ) ||
 			0;
-
-		if ( lcpPercentageDifference > 0 ) {
-			showUpdatedSpeedMetrics = true;
-		}
 	}
 
 	return {
-		showUpdatedSpeedMetrics,
 		siteMetricData,
 		lcpPercentageDifference,
 	};

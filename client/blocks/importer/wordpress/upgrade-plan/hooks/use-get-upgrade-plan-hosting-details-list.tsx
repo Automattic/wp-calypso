@@ -6,10 +6,10 @@ import { useGetUpgradePlanSiteMetrics } from './use-get-upgrade-plan-site-metric
 
 export const useUpgradePlanHostingDetailsList = () => {
 	const translate = useTranslate();
-	const { showUpdatedSpeedMetrics, lcpPercentageDifference } = useGetUpgradePlanSiteMetrics();
+	const { lcpPercentageDifference } = useGetUpgradePlanSiteMetrics();
 	const hostingDetails = [ ...defaultHostingDetails ];
 
-	if ( showUpdatedSpeedMetrics ) {
+	if ( lcpPercentageDifference > 0 ) {
 		const wordpressLCP = Math.round( 100 * wordpressCwvtechReportJson?.goodLCP );
 
 		const updatedHostingSpeedDetails = {
