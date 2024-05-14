@@ -23,14 +23,14 @@
 	.pending-actions__action--success {
 		.pending-actions__action-icon {
 			svg {
-				fill: #008a20;
+				fill: var(--color-success);
 			}
 		}
 	}
 	.pending-actions__action--error {
 		.pending-actions__action-icon {
 			svg {
-				fill: #d94e4e;
+				fill: var(--color-error);
 			}
 		}
 	}
