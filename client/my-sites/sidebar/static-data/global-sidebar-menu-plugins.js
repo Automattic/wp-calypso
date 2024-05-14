@@ -2,7 +2,7 @@ import { chevronLeft, Icon } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
 /**
- * Menu items that support all sites screen.
+ * Menu items that support plugins section screen.
  */
 export default function globalSidebarMenuPlugins() {
 	return [
