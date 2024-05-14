@@ -1,5 +1,4 @@
 import {
-	PLAN_P2_FREE,
 	type PlanSlug,
 	type StorageOption,
 	isP2FreePlan,
@@ -113,7 +112,7 @@ const PlanFeatureActionButton = ( {
 		return null;
 	}
 
-	if ( current && planSlug !== PLAN_P2_FREE ) {
+	if ( current ) {
 		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
 			return (
 				<PlanButton
