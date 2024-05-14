@@ -81,6 +81,24 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 		} );
 
+		it( 'redirects to the site creation step when import action is selected', async () => {
+			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: '/setup/hosted-site-migration',
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+				dependencies: {
+					action: 'skip_platform_identification',
+				},
+			} );
+
+			await waitFor( () => {
+				expect( getFlowLocation() ).toEqual( {
+					path: `/${ STEPS.SITE_CREATION_STEP.slug }`,
+					state: null,
+				} );
+			} );
+		} );
 		it( 'redirects to processing after site creation', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
@@ -94,10 +112,26 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects to import/migrate screen after site creation', () => {
+		it( 'redirects to setup/importList after site creation if no from query parameter is set', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
+				currentURL: `/processing?siteSlug=example.wordpress.com`,
+				currentStep: STEPS.PROCESSING.slug,
+				dependencies: {
+					siteCreated: true,
+				},
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'/setup/site-setup/importList?siteSlug=example.wordpress.com&origin=site-migration-identify&backToFlow=%2Fhosted-site-migration%2Fsite-migration-identify'
+			);
+		} );
+		it( 'redirects to import/migrate screen after site creation if a from query parameter is set', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/processing?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com`,
 				currentStep: STEPS.PROCESSING.slug,
 				dependencies: {
 					siteCreated: true,
@@ -105,7 +139,7 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?siteSlug=example.wordpress.com`,
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 				state: null,
 			} );
 		} );
