@@ -619,7 +619,7 @@ object CheckCodeStyleBranch : BuildType({
 			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
 			comparison = BuildFailureOnMetric.MetricComparison.MORE
 			compareTo = build {
-				buildRule = lastSuccessful()
+				buildRule = lastSuccessful("refs/head/trunk")
 			}
 		}
 	}
