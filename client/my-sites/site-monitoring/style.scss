@@ -276,3 +276,8 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 		font-weight: 400;
 	}
 }
+
+.site-monitoring__navigation-header.navigation-header {
+	width: auto;
+	padding-bottom: 0;
+}

@@ -26,20 +26,25 @@ $card-padding: 24px;
 	height: 100%;
 }
 
+.hosting-overview__navigation-header {
+	grid-column: 1 / -1;
+	grid-row: 1 / 2;
+}
+
 .hosting-overview__plan {
 	grid-column: 1 / 2;
-	grid-row: 1 / 2;
+	grid-row: 2 / 3;
 }
 
 .hosting-overview__quick-actions {
 	grid-column: 2 / 3;
-	grid-row: 1 / 2;
+	grid-row: 2 / 3;
 	padding-bottom: 10px;
 }
 
 .hosting-overview__active-domains {
 	grid-column: 1 / 3;
-	grid-row: 2 / 3;
+	grid-row: 3 / 4;
 	padding-bottom: 0;
 }
 
