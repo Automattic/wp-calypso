@@ -151,9 +151,11 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	debug( 'failure: error=%o', error );
 
 	const onLearnMoreClick = () => {
-		recordTracksEvent( 'calypso_jetpack_settings_credentials_error_learn_more_click', {
-			error_code: error.code,
-		} );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_settings_credentials_error_learn_more_click', {
+				error: error.code,
+			} )
+		);
 	};
 
 	switch ( error.code ) {
