@@ -208,7 +208,9 @@ export default function SiteProfiler( props: Props ) {
 								) }
 								subtitle={ translate( "Optimize your site's health" ) }
 								ref={ healthScoresRef }
-							/>
+							>
+								<MetricsInsightsList locked />
+							</MetricsSection>
 						</LayoutBlockSection>
 					) }
 				</LayoutBlock>
