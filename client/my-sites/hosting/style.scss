@@ -13,6 +13,11 @@ $areas: github-deployments, sftp, site-backup, support, phpmyadmin, staging-site
 		min-width: 0;
 	}
 
+	.hosting-card {
+		padding-left: 22px;
+		margin-bottom: 12px;
+	}
+
 	&--is-two-columns {
 		.hosting__layout {
 			.card {
