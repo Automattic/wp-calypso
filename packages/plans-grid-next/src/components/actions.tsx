@@ -173,22 +173,19 @@ const PlanFeatures2023GridActions = ( {
 		return null;
 	}
 
-	if ( current ) {
-		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
-			actionButton = (
-				<PlanButton
-					planSlug={ planSlug }
-					classes="is-storage-upgradeable"
-					href={ storageAddOnCheckoutHref }
-				>
-					{ translate( 'Upgrade' ) }
-				</PlanButton>
-			);
-		}
+	if ( current && canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
+		actionButton = (
+			<PlanButton
+				planSlug={ planSlug }
+				classes="is-storage-upgradeable"
+				href={ storageAddOnCheckoutHref }
+			>
+				{ translate( 'Upgrade' ) }
+			</PlanButton>
+		);
 	}
 
 	if ( availableForPurchase || current ) {
-		// TODO: Fix this condition
 		const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
 		actionButton = hasFreeTrialPlan ? (
 			<div className="plan-features-2023-grid__multiple-actions-container">
