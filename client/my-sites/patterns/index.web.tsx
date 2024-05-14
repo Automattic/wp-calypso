@@ -24,10 +24,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
 	context.primary = (
 		<PatternsWrapper>
-			<PatternsCategoryNotFound
-				category={ context.params.category }
-				referrer={ context.query.ref }
-			/>
+			<PatternsCategoryNotFound />
 		</PatternsWrapper>
 	);
 
