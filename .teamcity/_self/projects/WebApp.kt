@@ -579,7 +579,7 @@ object CheckCodeStyleBranch : BuildType({
 				# Avoid running more than 10 parallel eslint tasks as it could OOM
 				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" -gt 10 ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
 					echo "Linting all files"
-					yarn run eslint  --quiet --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
+					NODE_OPTIONS='--no-deprecation' yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 				else
 					# To avoid `ENAMETOOLONG` errors linting files, we have to lint them one by one,
 					# instead of passing the full list of files to eslint directly.
