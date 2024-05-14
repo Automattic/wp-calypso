@@ -1,4 +1,7 @@
-import { isJetpackSocialSlug, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
+import {
+	isJetpackMultiOptionProduct,
+	JETPACK_RELATED_PRODUCTS_MAP,
+} from '@automattic/calypso-products';
 import { useMemo, useCallback, type FC } from 'react';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { useDispatch } from 'calypso/state';
@@ -15,7 +18,6 @@ interface ProductSelectProps {
 
 const ProductSelect: FC< ProductSelectProps > = ( { product, siteId, onChangeProduct } ) => {
 	const dispatch = useDispatch();
-	const isMultiOptionProduct = isJetpackSocialSlug( product.productSlug );
 
 	const variantOptions = useMemo( () => {
 		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
@@ -40,7 +42,8 @@ const ProductSelect: FC< ProductSelectProps > = ( { product, siteId, onChangePro
 		[ onChangeProduct, dispatch, siteId ]
 	);
 
-	const shouldShowOptions = isMultiOptionProduct && variantOptions.length > 1;
+	const shouldShowOptions =
+		isJetpackMultiOptionProduct( product.productSlug ) && variantOptions.length > 1;
 
 	if ( ! shouldShowOptions ) {
 		return <></>;

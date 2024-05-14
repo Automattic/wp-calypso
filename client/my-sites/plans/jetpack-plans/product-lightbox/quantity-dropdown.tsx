@@ -1,4 +1,4 @@
-import { isJetpackAISlug, isJetpackStatsSlug } from '@automattic/calypso-products';
+import { isJetpackTieredProduct } from '@automattic/calypso-products';
 import { SelectDropdown } from '@automattic/components';
 import { useMemo, useCallback, type FC } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -20,11 +20,9 @@ interface QuantityDropdownProps {
 const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onChangeProduct } ) => {
 	const dispatch = useDispatch();
 	const listPrices = useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
-	const isProductWithTierList =
-		isJetpackAISlug( product.productSlug ) || isJetpackStatsSlug( product.productSlug );
 
 	const tierOptions = useMemo( () => {
-		if ( ! isProductWithTierList ) {
+		if ( ! isJetpackTieredProduct( product.productSlug ) ) {
 			return [];
 		}
 
@@ -42,7 +40,7 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 				label: PRODUCT_TIER_OPTIONS[ id ].toString(),
 			};
 		} );
-	}, [ listPrices.priceTierList, product.productSlug, isProductWithTierList ] );
+	}, [ listPrices.priceTierList, product.productSlug ] );
 
 	const onDropdownTierSelect = useCallback(
 		( { value: slug }: { value: string } ) => {
@@ -60,7 +58,7 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 		[ onChangeProduct, dispatch, siteId ]
 	);
 
-	if ( ! isProductWithTierList || tierOptions.length < 1 ) {
+	if ( ! isJetpackTieredProduct( product.productSlug ) || tierOptions.length < 1 ) {
 		return <></>;
 	}
 

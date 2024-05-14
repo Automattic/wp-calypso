@@ -332,6 +332,15 @@ export const JETPACK_PRODUCTS_LIST = < const >[
 // These are here to help with handling product quantity in situations where infrastructure is not aware of it
 export const JETPACK_ALIAS_LIST = < const >[ ...JETPACK_AI_ALIASES, ...JETPACK_STATS_ALIASES ];
 
+// Defines Jetpack products with multiple tiers
+export const JETPACK_TIERED_PRODUCTS = < const >[
+	...JETPACK_AI_PRODUCTS,
+	...JETPACK_STATS_PRODUCTS,
+];
+
+// Defines Jetpack products with multiple product options (ex. Social Basic/Social Advanced)
+export const JETPACK_MULTI_OPTION_PRODUCTS = < const >[ ...JETPACK_SOCIAL_PRODUCTS ];
+
 export const JETPACK_PRODUCTS_BY_TERM = < const >[
 	{
 		yearly: PRODUCT_JETPACK_BACKUP_DAILY,
