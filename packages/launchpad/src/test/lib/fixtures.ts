@@ -223,6 +223,8 @@ export const defaultDomainResponse: any = {
 	cannotManageNameServersReason: null,
 	cannotUpdateContactInfoReason: null,
 	canSetAsPrimary: false,
+	canTransferToOtherSite: true,
+	canTransferToAnyUser: true,
 	canUpdateContactInfo: false,
 	connectionMode: '',
 	contactInfoDisclosed: false,

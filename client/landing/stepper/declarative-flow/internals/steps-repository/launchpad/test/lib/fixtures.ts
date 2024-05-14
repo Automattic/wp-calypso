@@ -219,6 +219,8 @@ export const defaultDomainResponse: ResponseDomain = {
 	bundledPlanSubscriptionId: undefined,
 	canManageDnsRecords: false,
 	canManageNameServers: false,
+	canTransferToOtherSite: true,
+	canTransferToAnyUser: true,
 	cannotManageDnsRecordsReason: null,
 	cannotManageNameServersReason: null,
 	cannotUpdateContactInfoReason: null,
