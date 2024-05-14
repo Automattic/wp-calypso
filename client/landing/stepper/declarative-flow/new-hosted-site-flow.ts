@@ -25,6 +25,7 @@ const hosting: Flow = {
 	isSignupFlow: true,
 	useSteps() {
 		return [
+			{ slug: 'user', asyncComponent: () => import( './internals/steps-repository/user' ) },
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'trialAcknowledge',
