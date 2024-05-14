@@ -11,8 +11,8 @@ import customerImageEmmaLucasCopley from 'calypso/assets/images/migrations/custo
 export const upgradePlanSiteMetricsLcpThreshold = 2500;
 
 // Threshold for a website that has a "good" First Input Delay (FID) score according to Core Web Vital metrics.
-// A "good" FID score is considered to be 100 miliseconds (0.1 seconds) or less.
-export const upgradePlanSiteMetricsFidThreshold = 0.1;
+// A "good" FID score is considered to be 100 milliseconds or less.
+export const upgradePlanSiteMetricsFidThreshold = 100;
 
 export const UpgradePlanHostingTestimonials = [
 	{
