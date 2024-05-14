@@ -6,20 +6,11 @@ import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.mergeTrunk
 
 import jetbrains.buildServer.configs.kotlin.*
-import jetbrains.buildServer.configs.kotlin.BuildFeature
-import jetbrains.buildServer.configs.kotlin.BuildFeature.*
-import jetbrains.buildServer.configs.kotlin.BuildStep
-import jetbrains.buildServer.configs.kotlin.BuildStep.*
-import jetbrains.buildServer.configs.kotlin.FailureCondition
-import jetbrains.buildServer.configs.kotlin.FailureCondition.*
-import jetbrains.buildServer.configs.kotlin.buildFeatures.Notifications
-import jetbrains.buildServer.configs.kotlin.buildFeatures.Notifications.*
-import jetbrains.buildServer.configs.kotlin.Trigger
-import jetbrains.buildServer.configs.kotlin.Trigger.*
-import jetbrains.buildServer.configs.kotlin.buildFeatures.*
-import jetbrains.buildServer.configs.kotlin.buildSteps.*
-import jetbrains.buildServer.configs.kotlin.failureConditions.*
-import jetbrains.buildServer.configs.kotlin.triggers.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.*
 
 object WebApp : Project({
 	id("WebApp")
@@ -628,7 +619,7 @@ object CheckCodeStyleBranch : BuildType({
 			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
 			comparison = BuildFailureOnMetric.MetricComparison.MORE
 			compareTo = build {
-				buildRule = lastSuccessful("trunk")
+				buildRule = lastSuccessful()
 			}
 		}
 	}
