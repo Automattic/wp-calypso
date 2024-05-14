@@ -65,7 +65,7 @@ const siteSetupFlow: Flow = {
 	useSteps() {
 		return [
 			STEPS.GOALS,
-			STEPS.INTENT,
+			STEPS.INTENT_I2,
 			STEPS.OPTIONS,
 			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,

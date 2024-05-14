@@ -1,0 +1,46 @@
+@import "@automattic/typography/styles/variables";
+
+.intent-step {
+	margin: 0 16px;
+
+	.site-intent {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+
+		.site-intent__item-card {
+			border-radius: 4px;
+			border: 1px solid var(--studio-gray-5, #dcdcde);
+			background: var(--studio-white, #fff);
+			height: 140px;
+			max-width: 430px;
+			padding: 24px;
+			gap: 16px;
+
+			.site-intent__content {
+				display: flex;
+				text-align: left;
+				flex-direction: column;
+				gap: 4px;
+				max-width: 342px;
+
+				.site-intent__title {
+					color: var(--studio-gray-100, #101517);
+					/* stylelint-disable-next-line scales/font-sizes */
+					font-size: 1.125rem;
+					font-weight: 500;
+					line-height: 24px;
+				}
+
+				.site-intent__description {
+					color: var(--studio-gray-60, #50575e);
+					font-size: 0.875rem;
+					letter-spacing: -0.15px;
+					line-height: 20px;
+				}
+			}
+
+		}
+	}
+}

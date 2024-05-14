@@ -122,6 +122,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/intent-step' ),
 	},
 
+	INTENT_I2: {
+		slug: 'intent',
+		asyncComponent: () => import( './steps-repository/intent-step-i2' ),
+	},
+
 	NEW_OR_EXISTING_SITE: {
 		slug: 'new-or-existing-site',
 		asyncComponent: () => import( './steps-repository/new-or-existing-site' ),
