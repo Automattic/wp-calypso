@@ -17,7 +17,7 @@ class SitePicker extends Component {
 	};
 
 	filterSites = ( site ) => {
-		return site.capabilities.manage_options && ! site.jetpack && ! site.options?.is_domain_only;
+		return site.capabilities?.manage_options && ! site.jetpack && ! site.options?.is_domain_only;
 	};
 
 	renderScreen() {
