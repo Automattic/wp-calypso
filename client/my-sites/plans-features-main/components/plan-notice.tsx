@@ -133,9 +133,9 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					isReskinned={ true }
 				>
 					{ translate(
-						'Your plan currently has a legacy feature that provides 200 GB of space. ' +
+						'Your plan currently has a legacy feature that provides 200GB of space. ' +
 							'You are currently using {{b}}%(usedGigabytes)s{{/b}} of space. ' +
-							'Switching billing plans will lower the amount of default storage to 50GB. ' +
+							'Switching to a different plan or billing interval will lower the amount of available storage to 50GB. ' +
 							'Please keep in mind that the change will be irreversible.',
 						{
 							args: {
