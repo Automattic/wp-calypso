@@ -18,7 +18,6 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import localStorageHelper from 'store';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -58,8 +57,9 @@ export class Notifications extends Component {
 	};
 
 	componentDidMount() {
-		document.addEventListener( 'click', this.props.checkToggle );
-		document.addEventListener( 'keydown', this.handleKeyPress );
+		window.addEventListener( 'mousedown', this.props.checkToggle );
+		window.addEventListener( 'touchstart', this.props.checkToggle );
+		window.addEventListener( 'keydown', this.handleKeyPress );
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
@@ -78,8 +78,9 @@ export class Notifications extends Component {
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener( 'click', this.props.checkToggle );
-		document.removeEventListener( 'keydown', this.handleKeyPress );
+		window.removeEventListener( 'mousedown', this.props.checkToggle );
+		window.removeEventListener( 'touchstart', this.props.checkToggle );
+		window.removeEventListener( 'keydown', this.handleKeyPress );
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
@@ -173,7 +174,7 @@ export class Notifications extends Component {
 		const customMiddleware = {
 			APP_RENDER_NOTES: [
 				( store, { newNoteCount } ) => {
-					localStorageHelper.set( 'wpnotes_unseen_count', newNoteCount );
+					this.props.setIndicator( newNoteCount );
 					this.props.setUnseenCount( newNoteCount );
 				},
 			],
@@ -256,6 +257,7 @@ export class Notifications extends Component {
 				className={ classNames( 'wide', 'wpnc__main', {
 					'wpnt-open': this.props.isShowing,
 					'wpnt-closed': ! this.props.isShowing,
+					'global-sidebar-visible': this.props.isGlobalSidebarVisible ?? false,
 				} ) }
 			>
 				<NotificationsPanel

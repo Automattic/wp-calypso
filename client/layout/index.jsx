@@ -62,7 +62,6 @@ import {
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
-import GlobalNotifications from './global-notifications';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
 // goofy import for environment badge, which is SSR'd
@@ -463,7 +462,6 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				<GlobalNotifications />
 				{ shouldEnableCommandPalette && (
 					<AsyncLoad
 						require="@automattic/command-palette"
