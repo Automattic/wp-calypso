@@ -34,7 +34,9 @@ const DomainUpsellCard = ( { siteId, needsCard } ) => {
 	} );
 	const translate = useTranslate();
 	const recordClick = () => {
-		recordTracksEvent( 'calypso_activitypub_domain_upsell_click' );
+		const domainRegExp = new RegExp( `/${ domain }$` );
+		const currentRoute = window.location.pathname.replace( domainRegExp, '' ).split( '/' ).pop();
+		recordTracksEvent( 'calypso_activitypub_domain_upsell_click', { route: currentRoute } );
 	};
 	return (
 		<Wrapper needsCard={ needsCard }>
@@ -107,7 +109,9 @@ const BusinessPlanUpsellCard = ( { siteId, needsCard } ) => {
 	const linkUrl = `/plans/select/business/${ domain }`;
 	const translate = useTranslate();
 	const recordClick = () => {
-		recordTracksEvent( 'calypso_activitypub_business_plan_upsell_click' );
+		const domainRegExp = new RegExp( `/${ domain }$` );
+		const currentRoute = window.location.pathname.replace( domainRegExp, '' ).split( '/' ).pop();
+		recordTracksEvent( 'calypso_activitypub_business_plan_upsell_click', { route: currentRoute } );
 	};
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 	if ( isBusinessPlan ) {
