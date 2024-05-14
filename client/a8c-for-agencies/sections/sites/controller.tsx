@@ -1,6 +1,7 @@
 import { Context, type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SitesSidebar from '../../components/sidebar-menu/sites';
+import AddSitesFromWPCOM from './add-sites/add-sites-from-wpcom';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
@@ -68,6 +69,17 @@ function configureSitesContext( context: Context ) {
 
 export const sitesContext: Callback = ( context: Context, next ) => {
 	configureSitesContext( context );
+	next();
+};
+
+export const addSitesContext: Callback = ( context: Context, next ) => {
+	context.secondary = <SitesSidebar path={ context.path } />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Add Sites > Add sites from WordPress.com" path={ context.path } />
+			<AddSitesFromWPCOM />
+		</>
+	);
 	next();
 };
 
