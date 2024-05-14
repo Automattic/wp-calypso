@@ -1423,6 +1423,9 @@ export class RenderDomainsStep extends Component {
 		} else if ( ! previousStepBackUrl && 'domain-transfer' === flowName ) {
 			backUrl = null;
 			backLabelText = null;
+		} else if ( 'domain-for-gravatar' === flowName ) {
+			backUrl = null;
+			backLabelText = null;
 		} else if ( 'with-plugin' === flowName ) {
 			backUrl = '/plugins';
 			backLabelText = translate( 'Back to plugins' );
