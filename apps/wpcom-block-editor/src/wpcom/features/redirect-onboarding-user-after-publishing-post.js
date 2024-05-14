@@ -1,6 +1,7 @@
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
+import useLaunchpadScreen from './use-launchpad-screen';
 import useSiteIntent from './use-site-intent';
 
 const START_WRITING_FLOW = 'start-writing';
@@ -8,6 +9,7 @@ const DESIGN_FIRST_FLOW = 'design-first';
 
 export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
+	const { launchpad_screen: launchpadScreen } = useLaunchpadScreen();
 
 	useEffect( () => {
 		// We check the URL param along with site intent because the param loads faster and prevents element flashing.
@@ -25,6 +27,10 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 	}, [ intent ] );
 
 	if ( intent !== START_WRITING_FLOW && intent !== DESIGN_FIRST_FLOW ) {
+		return false;
+	}
+
+	if ( [ 'off', 'skipped' ].includes( launchpadScreen ) ) {
 		return false;
 	}
 
