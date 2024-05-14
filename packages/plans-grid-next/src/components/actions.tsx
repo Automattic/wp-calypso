@@ -5,12 +5,12 @@ import {
 	isFreePlan,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
-import { PlanPricing, WpcomPlansUI } from '@automattic/data-stores';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
 import useSelectedStorageAddOn from '../hooks/data-store/use-selected-storage-add-on';
@@ -48,133 +48,6 @@ const DummyDisabledButton = styled.div`
 	text-align: center;
 `;
 
-const PlanFeatureActionButton = ( {
-	availableForPurchase,
-	disabled,
-	freeTrialText,
-	hasFreeTrialPlan,
-	isMonthlyPlan,
-	isStuck,
-	onCtaClick,
-	onFreeTrialCtaClick,
-	planSlug,
-	postButtonText,
-	status,
-	storageOptions,
-	text,
-}: {
-	availableForPurchase?: boolean;
-	billingPeriod?: PlanPricing[ 'billPeriod' ];
-	currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
-	currentSitePlanSlug?: string | null;
-	disabled: boolean;
-	freeTrialText?: TranslateResult;
-	hasFreeTrialPlan: boolean;
-	isMonthlyPlan?: boolean;
-	isStuck: boolean;
-	onCtaClick: () => void;
-	onFreeTrialCtaClick: () => void;
-	planSlug: PlanSlug;
-	postButtonText?: TranslateResult;
-	status?: 'disabled' | 'blocked' | 'enabled';
-	storageOptions?: StorageOption[];
-	text: TranslateResult;
-} ) => {
-	const busy = isFreePlan( planSlug ) && status === 'blocked';
-	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
-	const translate = useTranslate();
-	const { gridPlansIndex, siteId } = usePlansGridContext();
-
-	const selectedStorageOptionForPlan = useSelect(
-		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
-		[ planSlug ]
-	);
-	const { current, storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
-	const defaultStorageOption = useDefaultStorageOption( {
-		storageOptions,
-		storageAddOnsForPlan,
-	} );
-	const canPurchaseStorageAddOns = storageAddOnsForPlan?.some(
-		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
-	);
-	const storageAddOnCheckoutHref = storageAddOnsForPlan?.find(
-		( addOn ) =>
-			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
-	)?.checkoutLink;
-	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
-
-	if (
-		( isFreePlan( planSlug ) ||
-			( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
-		isP2FreePlan( planSlug ) &&
-		current
-	) {
-		return null;
-	}
-
-	if ( current ) {
-		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
-			return (
-				<PlanButton
-					planSlug={ planSlug }
-					classes="is-storage-upgradeable"
-					href={ storageAddOnCheckoutHref }
-				>
-					{ translate( 'Upgrade' ) }
-				</PlanButton>
-			);
-		}
-	}
-
-	if ( availableForPurchase || current ) {
-		return hasFreeTrialPlan ? (
-			<div className="plan-features-2023-grid__multiple-actions-container">
-				<PlanButton planSlug={ planSlug } onClick={ () => onFreeTrialCtaClick() } busy={ busy }>
-					{ freeTrialText }
-				</PlanButton>
-				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-					<PlanButton planSlug={ planSlug } onClick={ onCtaClick } borderless>
-						{ text }
-					</PlanButton>
-				) }
-			</div>
-		) : (
-			<>
-				<PlanButton
-					planSlug={ planSlug }
-					disabled={ disabled }
-					onClick={ onCtaClick }
-					current={ current }
-				>
-					{ text }
-				</PlanButton>
-				{ postButtonText && (
-					<span className="plan-features-2023-grid__actions-post-button-text">
-						{ postButtonText }
-					</span>
-				) }
-			</>
-		);
-	}
-
-	return (
-		<Plans2023Tooltip
-			text={ translate( 'Please contact support to downgrade your plan.' ) }
-			setActiveTooltipId={ setActiveTooltipId }
-			activeTooltipId={ activeTooltipId }
-			showOnMobile={ false }
-			id="downgrade"
-		>
-			<DummyDisabledButton>{ text }</DummyDisabledButton>
-			{ isMobile() && (
-				<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
-					{ translate( 'Please contact support to downgrade your plan.' ) }
-				</div>
-			) }
-		</Plans2023Tooltip>
-	);
-};
-
 const PlanFeatures2023GridActions = ( {
 	planSlug,
 	currentSitePlanSlug,
@@ -185,12 +58,14 @@ const PlanFeatures2023GridActions = ( {
 	isMonthlyPlan,
 	storageOptions,
 }: PlanFeaturesActionsButtonProps ) => {
+	const translate = useTranslate();
 	const {
 		gridPlansIndex,
 		siteId,
 		helpers: { useAction },
 	} = usePlansGridContext();
 	const {
+		current,
 		planTitle,
 		pricing: { billingPeriod, currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
@@ -252,26 +127,102 @@ const PlanFeatures2023GridActions = ( {
 		selectedStorageAddOn,
 	} );
 
+	const busy = isFreePlan( planSlug ) && status === 'blocked';
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
+
+	const selectedStorageOptionForPlan = useSelect(
+		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
+		[ planSlug ]
+	);
+	const defaultStorageOption = useDefaultStorageOption( {
+		storageOptions,
+		storageAddOnsForPlan,
+	} );
+	const canPurchaseStorageAddOns = storageAddOnsForPlan?.some(
+		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
+	);
+	const storageAddOnCheckoutHref = storageAddOnsForPlan?.find(
+		( addOn ) =>
+			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
+	)?.checkoutLink;
+	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
+
+	let actionButton = (
+		<Plans2023Tooltip
+			text={ translate( 'Please contact support to downgrade your plan.' ) }
+			setActiveTooltipId={ setActiveTooltipId }
+			activeTooltipId={ activeTooltipId }
+			showOnMobile={ false }
+			id="downgrade"
+		>
+			<DummyDisabledButton>{ text }</DummyDisabledButton>
+			{ isMobile() && (
+				<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
+					{ translate( 'Please contact support to downgrade your plan.' ) }
+				</div>
+			) }
+		</Plans2023Tooltip>
+	);
+
+	if (
+		( isFreePlan( planSlug ) ||
+			( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
+		isP2FreePlan( planSlug ) &&
+		current
+	) {
+		return null;
+	}
+
+	if ( current ) {
+		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
+			actionButton = (
+				<PlanButton
+					planSlug={ planSlug }
+					classes="is-storage-upgradeable"
+					href={ storageAddOnCheckoutHref }
+				>
+					{ translate( 'Upgrade' ) }
+				</PlanButton>
+			);
+		}
+	}
+
+	if ( availableForPurchase || current ) {
+		// TODO: Fix this condition
+		const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
+		actionButton = hasFreeTrialPlan ? (
+			<div className="plan-features-2023-grid__multiple-actions-container">
+				<PlanButton planSlug={ planSlug } onClick={ () => freeTrialCallback() } busy={ busy }>
+					{ freeTrialText }
+				</PlanButton>
+				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
+					<PlanButton planSlug={ planSlug } onClick={ callback } borderless>
+						{ text }
+					</PlanButton>
+				) }
+			</div>
+		) : (
+			<>
+				<PlanButton
+					planSlug={ planSlug }
+					disabled={ ! callback || 'disabled' === status }
+					onClick={ callback }
+					current={ current }
+				>
+					{ text }
+				</PlanButton>
+				{ postButtonText && (
+					<span className="plan-features-2023-grid__actions-post-button-text">
+						{ postButtonText }
+					</span>
+				) }
+			</>
+		);
+	}
+
 	return (
 		<div className="plan-features-2023-gridrison__actions">
-			<div className="plan-features-2023-gridrison__actions-buttons">
-				<PlanFeatureActionButton
-					availableForPurchase={ availableForPurchase }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					disabled={ ! callback || 'disabled' === status }
-					freeTrialText={ freeTrialText }
-					hasFreeTrialPlan={ isInSignup ? !! freeTrialPlanSlug : false }
-					isMonthlyPlan={ isMonthlyPlan }
-					isStuck={ isStuck }
-					onCtaClick={ callback }
-					onFreeTrialCtaClick={ freeTrialCallback }
-					planSlug={ planSlug }
-					postButtonText={ postButtonText }
-					status={ status }
-					storageOptions={ storageOptions }
-					text={ text }
-				/>
-			</div>
+			<div className="plan-features-2023-gridrison__actions-buttons">{ actionButton }</div>
 		</div>
 	);
 };
