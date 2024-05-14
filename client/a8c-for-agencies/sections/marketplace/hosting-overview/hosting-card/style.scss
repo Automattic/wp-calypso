@@ -32,6 +32,7 @@
 
 	.hosting-card__price {
 		display: flex;
+		flex-direction: column;
 		flex-wrap: wrap;
 		gap: 8px;
 	}
