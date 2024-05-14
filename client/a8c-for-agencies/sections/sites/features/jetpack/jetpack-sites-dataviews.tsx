@@ -161,7 +161,7 @@ export const JetpackSitesDataViews = ( {
 						return (
 							<div className="sites-dataview__site-error">
 								<Gridicon size={ 18 } icon="notice-outline" />
-								<span>Jetpack is unable to connect to this site.</span>
+								<span>{ translate( "Jetpack can't connect to this site." ) }</span>
 							</div>
 						);
 					}
