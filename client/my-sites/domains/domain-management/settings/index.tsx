@@ -210,7 +210,7 @@ const Settings = ( {
 				key="status"
 				expanded
 			>
-				<GravatarDomainCard selectedDomainName={ domain.domain } />
+				<GravatarDomainCard />
 			</Accordion>
 		);
 	};
