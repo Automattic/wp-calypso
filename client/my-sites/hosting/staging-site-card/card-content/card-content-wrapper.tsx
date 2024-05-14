@@ -1,14 +1,16 @@
-import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, PropsWithChildren } from 'react';
-import CardHeading from 'calypso/components/card-heading';
+import { HostingCard } from 'calypso/components/hosting-card';
 
 export const CardContentWrapper: FunctionComponent< PropsWithChildren > = ( { children } ) => {
 	const translate = useTranslate();
 	return (
-		<Card className="staging-site-card">
-			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
+		<HostingCard
+			className="staging-site-card"
+			headingId="staging-site"
+			title={ translate( 'Staging site' ) }
+		>
 			{ children }
-		</Card>
+		</HostingCard>
 	);
 };

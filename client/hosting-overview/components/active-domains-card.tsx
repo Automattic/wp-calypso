@@ -1,10 +1,11 @@
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable } from '@automattic/domains-table';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
+import { HostingCard, HostingCardHeading } from 'calypso/components/hosting-card';
 import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -18,10 +19,8 @@ const ActiveDomainsCard: FC = () => {
 	const translate = useTranslate();
 
 	return (
-		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__active-domains' ) }>
-			<div className="hosting-overview__card-header">
-				<h3 className="hosting-overview__card-title">{ translate( 'Active domains' ) }</h3>
-
+		<HostingCard className="hosting-overview__active-domains">
+			<HostingCardHeading title={ translate( 'Active domains' ) }>
 				<Button
 					className={ classNames(
 						'hosting-overview__link-button',
@@ -39,7 +38,7 @@ const ActiveDomainsCard: FC = () => {
 				>
 					{ translate( 'Manage domains' ) }
 				</Button>
-			</div>
+			</HostingCardHeading>
 
 			<DomainsTable
 				className="hosting-overview__domains-table"
@@ -50,7 +49,7 @@ const ActiveDomainsCard: FC = () => {
 				useMobileCards={ forceMobile }
 				siteSlug={ site?.slug ?? null }
 			/>
-		</Card>
+		</HostingCard>
 	);
 };
 

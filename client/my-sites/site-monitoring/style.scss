@@ -70,11 +70,6 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	.site-monitoring__chart {
 		border: 0;
 		padding: 0;
-		margin: 0 -24px 24px -50px;
-
-		.site-monitoring__chart-header {
-			padding: 0 24px 0 50px;
-		}
 	}
 
 	.u-legend {
@@ -91,11 +86,6 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 			align-items: center;
 		}
 	}
-
-	.site-monitoring__chart-header {
-		margin-bottom: 12px;
-	}
-
 }
 
 .site-monitoring {
