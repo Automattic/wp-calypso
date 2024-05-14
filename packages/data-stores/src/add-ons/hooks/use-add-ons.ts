@@ -25,8 +25,6 @@ import type { AddOnMeta } from '../types';
 const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	const translate = useTranslate();
 	const checkoutLink = useAddOnCheckoutLink();
-	const selectedSite = Site.useSite( { siteIdOrSlug: selectedSiteId } );
-	const selectedSiteSlug = selectedSite.data?.slug;
 
 	/*
 	 * TODO: `useAddOnFeatureSlugs` be refactored instead to return an index of `{ [ slug ]: featureSlug[] }`
@@ -100,7 +98,7 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 					),
 					featured: false,
 					purchased: false,
-					checkoutLink: checkoutLink( selectedSiteSlug ?? null, PRODUCT_1GB_SPACE, 50 ),
+					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 50 ),
 				},
 				{
 					productSlug: PRODUCT_1GB_SPACE,
@@ -115,7 +113,7 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 					),
 					featured: false,
 					purchased: false,
-					checkoutLink: checkoutLink( selectedSiteSlug ?? null, PRODUCT_1GB_SPACE, 100 ),
+					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 100 ),
 				},
 			] as const,
 		[
@@ -132,7 +130,7 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 			featureSlugsCustomDesign,
 			featureSlugsJetpackAIMonthly,
 			featureSlugsUnlimitedThemes,
-			selectedSiteSlug,
+			selectedSiteId,
 			translate,
 		]
 	);
