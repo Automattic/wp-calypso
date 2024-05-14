@@ -18,6 +18,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
+import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import { BellIcon } from './icon';
 
 import './style.scss';
@@ -54,8 +55,8 @@ class SidebarNotifications extends Component {
 
 		// focus on main window if we just closed the notes panel
 		if ( prevProps.isNotificationsOpen && ! this.props.isNotificationsOpen ) {
-			this.notificationLink.current.blur();
-			this.notificationPanel.current.blur();
+			this.notificationLink.current?.blur();
+			this.notificationPanel.current?.blur();
 			window.focus();
 		}
 	}
@@ -69,8 +70,8 @@ class SidebarNotifications extends Component {
 			// Ignore clicks or other events which occur inside of the notification panel.
 			if (
 				target &&
-				( this.notificationLink.current.contains( target ) ||
-					this.notificationPanel.current.contains( target ) )
+				( this.notificationLink.current?.contains( target ) ||
+					this.notificationPanel.current?.contains( target ) )
 			) {
 				return;
 			}
@@ -169,27 +170,31 @@ class SidebarNotifications extends Component {
 						</DismissibleCard>,
 						document.querySelector( '.layout' )
 					) }
-				<SidebarMenuItem
-					url="/notifications"
-					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
-					onClick={ this.handleClick }
-					isActive={ this.props.isActive }
-					tooltip={ this.props.tooltip }
-					tooltipPlacement="top"
-					className={ classes }
-					ref={ this.notificationLink }
-					key={ this.state.animationState }
-				/>
-				<div className="sidebar-notifications__panel" ref={ this.notificationPanel }>
-					<AsyncLoad
-						require="calypso/notifications"
-						isShowing={ this.props.isNotificationsOpen }
-						checkToggle={ this.checkToggleNotes }
-						setIndicator={ this.setNotesIndicator }
-						isGlobalSidebarVisible={ true }
-						placeholder={ null }
+				{ this.props.masterbarIsHidden && (
+					<SidebarMenuItem
+						url="/notifications"
+						icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
+						onClick={ this.handleClick }
+						isActive={ this.props.isActive }
+						tooltip={ this.props.tooltip }
+						tooltipPlacement="top"
+						className={ classes }
+						ref={ this.notificationLink }
+						key={ this.state.animationState }
 					/>
-				</div>
+				) }
+				{ this.props.masterbarIsHidden && (
+					<div className="sidebar-notifications__panel" ref={ this.notificationPanel }>
+						<AsyncLoad
+							require="calypso/notifications"
+							isShowing={ this.props.isNotificationsOpen }
+							checkToggle={ this.checkToggleNotes }
+							setIndicator={ this.setNotesIndicator }
+							isGlobalSidebarVisible={ true }
+							placeholder={ null }
+						/>
+					</div>
+				) }
 			</>
 		);
 	}
@@ -203,6 +208,7 @@ const mapStateToProps = ( state ) => {
 		hasUnseenNotifications: hasUnseenNotifications( state ),
 		currentUserId: getCurrentUserId( state ),
 		locale: getCurrentLocaleSlug( state ),
+		masterbarIsHidden: ! masterbarIsVisible( state ),
 	};
 };
 const mapDispatchToProps = {
