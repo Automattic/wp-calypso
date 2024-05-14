@@ -49,7 +49,7 @@ describe( 'Migration Signup Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/start/account/user-social?variationName=migration-signup&toStepper=true&redirect_to=/setup/migration-signup&vid=vid321&aff=aff123&ref=logged-out-homepage`
+				`/start/account/user-social?variationName=migration-signup&redirect_to=%2Fsetup%2Fmigration-signup&toStepper=true&ref=logged-out-homepage&aff=aff123&vid=vid321`
 			);
 		} );
 
@@ -65,7 +65,7 @@ describe( 'Migration Signup Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/start/account/user-social/fr?variationName=migration-signup&toStepper=true&redirect_to=/setup/migration-signup%3Flocale%3Dfr&vid=vid321&aff=aff123&ref=logged-out-homepage`
+				`/start/account/user-social/fr?variationName=migration-signup&redirect_to=%2Fsetup%2Fmigration-signup%3Flocale%3Dfr&toStepper=true&ref=logged-out-homepage&aff=aff123&vid=vid321`
 			);
 		} );
 	} );
