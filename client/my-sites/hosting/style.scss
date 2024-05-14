@@ -52,6 +52,11 @@ $areas: github-deployments, sftp, site-backup, support, phpmyadmin, staging-site
 					flex-basis: 30%;
 					padding-left: 8px;
 
+					.hosting-card {
+						padding-left: 22px;
+						margin-bottom: 12px;
+					}
+
 					&.hosting__main-layout-col {
 						flex-basis: 70%;
 						padding-left: 0;
