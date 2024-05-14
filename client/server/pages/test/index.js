@@ -1007,6 +1007,17 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /<locale>/sites', () => {
+		it( 'redirects to login if the request contains a locale', async () => {
+			const { response } = await app.run( {
+				request: { url: '/es/sites', query: { status: 'deleted' } },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'/log-in/es?redirect_to=https%3A%2F%2Fwordpress.com%2Fsites%2F%3Fstatus%3Ddeleted'
+			);
+		} );
+	} );
+
 	describe( 'Route /plans', () => {
 		it( 'redirects to login if the request is for jetpack', async () => {
 			const { response } = await app.run( {
