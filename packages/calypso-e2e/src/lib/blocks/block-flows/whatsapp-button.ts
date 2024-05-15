@@ -1,5 +1,5 @@
 import { Locator } from 'playwright';
-import { envVariables } from '../../..';
+import { EditorComponent, EditorSettingsSidebarComponent } from '../../..';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
@@ -11,7 +11,8 @@ const selectors = {
 	// Editor
 	phoneNumberInput: 'input[placeholder="Your phone number…"]',
 	buttonLabel: 'a.whatsapp-block__button',
-	editorSettingsButton: '.editor-header__settings button[aria-label="Settings"], .edit-post-header__settings button[aria-label="Settings"]',
+	editorSettingsButton:
+		'.editor-header__settings button[aria-label="Settings"], .edit-post-header__settings button[aria-label="Settings"]',
 
 	// Published
 	// 'main' needs to be specified due to the debug elements
@@ -100,14 +101,11 @@ export class WhatsAppButtonFlow implements BlockFlow {
 
 		await phoneInputLocator.waitFor( { state: 'detached' } );
 
-		// Close the settings dialog specifically on mobiles
-		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-			return;
-		}
-
-		if ( await this.targetIsOpen( editorSettingsButton ) ) {
-			await editorSettingsButton.click();
-		}
+		const editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
+			context.page,
+			new EditorComponent( context.page )
+		);
+		await editorSettingsSidebarComponent.closeSidebarForMobile();
 	}
 
 	/**
