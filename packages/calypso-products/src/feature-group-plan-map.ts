@@ -616,7 +616,7 @@ export function resolveFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap 
 }
 
 export function resolveFeatureGroupsForComparisonGrid(): Partial< FeatureGroupMap > {
-	if ( isTrailMapCopyVariant() ) {
+	if ( isTrailMapAnyVariant() ) {
 		return {
 			[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
 			[ FEATURE_GROUP_WEBSITE_BUILDING ]: featureGroups[ FEATURE_GROUP_WEBSITE_BUILDING ],
