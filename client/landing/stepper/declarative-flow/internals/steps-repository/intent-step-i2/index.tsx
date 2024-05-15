@@ -52,6 +52,7 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 				{ intents.map( ( intent ) => {
 					return (
 						<FlowCard
+							key={ intent.value }
 							title={ intent.label }
 							text={ intent.helpText ?? '' }
 							onClick={ () => {
