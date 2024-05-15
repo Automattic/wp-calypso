@@ -72,10 +72,11 @@ export class WhatsAppButtonFlow implements BlockFlow {
 		const editorParent = await context.editorPage.getEditorParent();
 
 		const editorSettingsButton = editorParent.locator( selectors.editorSettingsButton );
+		const editorSettingsButtonIsVisible = await editorSettingsButton.isVisible();
 
 		// This is especially needed in mobile viewport where the settings panel takes up the screen
 		// and needs to be open deliberately
-		if ( ! ( await this.targetIsOpen( editorSettingsButton ) ) ) {
+		if ( editorSettingsButtonIsVisible && ! ( await this.targetIsOpen( editorSettingsButton ) ) ) {
 			await editorSettingsButton.click();
 		}
 
@@ -105,7 +106,7 @@ export class WhatsAppButtonFlow implements BlockFlow {
 			return;
 		}
 
-		if ( await this.targetIsOpen( editorSettingsButton ) ) {
+		if ( editorSettingsButtonIsVisible && ( await this.targetIsOpen( editorSettingsButton ) ) ) {
 			await editorSettingsButton.click();
 		}
 	}
