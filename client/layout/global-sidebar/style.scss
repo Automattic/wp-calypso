@@ -188,7 +188,8 @@ $brand-text: "SF Pro Text", $sans;
 				}
 
 				&.svg_all-sites,
-				&.svg-plugins {
+				&.svg-plugins,
+				&.svg-calendar {
 					.is-global-sidebar-visible:not(.is-global-sidebar-collapsed) & {
 						margin-left: -2px;
 					}
