@@ -177,7 +177,7 @@ const useSiteMenuItems = () => {
 							slug: 'hosting-overview',
 							title: translate( 'Overview' ),
 							type: 'submenu-item',
-							url: `/hosting/${ siteDomain }`,
+							url: `/overview/${ siteDomain }`,
 						},
 						...children.splice( pos - 1 ),
 					];
