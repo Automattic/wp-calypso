@@ -10,8 +10,8 @@ export function useInitializeDataViewsPage(
 	dataViewsState: DataViewsState,
 	setDataViewsState: ( state: DataViewsState ) => void
 ) {
-	const prevPage = usePrevious( dataViewsState.page );
-	const prevSearch = usePrevious( dataViewsState.search );
+	const prevPage = usePrevious( dataViewsState.page ) as number;
+	const prevSearch = usePrevious( dataViewsState.search ) as string;
 
 	const done = useRef( false );
 
