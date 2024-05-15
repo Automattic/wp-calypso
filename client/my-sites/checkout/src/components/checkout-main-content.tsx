@@ -52,6 +52,7 @@ import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-val
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
@@ -523,7 +524,14 @@ export default function CheckoutMainContent( {
 									</CheckoutSummaryTitlePrice>
 								</CheckoutSummaryTitleContent>
 							</CheckoutSummaryTitleLink>
+
 							<CheckoutSummaryBody className="checkout__summary-body">
+								<div className="checkout-site-preview">
+									<SitePreviewWrapper>
+										<SitePreview showEditSite={ false } showSiteDetails={ false } />
+									</SitePreviewWrapper>
+								</div>
+
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
 								<CheckoutSidebarNudge
 									addItemToCart={ addItemToCart }
@@ -1137,6 +1145,31 @@ const WPCheckoutSidebarContent = styled.div`
 
 		.rtl & {
 			padding: 144px 64px 0 24px;
+		}
+	}
+`;
+const SitePreviewWrapper = styled.div`
+	.home-site-preview {
+		margin-bottom: 1.5em;
+		padding: 0.5em;
+		box-shadow:
+			0 0 0 1px var( --color-border-subtle ),
+			rgba( 0, 0, 0, 0.2 ) 0 7px 30px -10px;
+		border-radius: 6px;
+		& .home-site-preview__thumbnail-wrapper {
+			aspect-ratio: 16 / 9;
+			border-radius: 6px;
+			box-shadow: none;
+			min-width: 100%;
+			&:hover {
+				box-shadow: unset;
+				& .home-site-preview__thumbnail {
+					opacity: unset;
+				}
+			}
+		}
+		& home-site-preview__thumbnail {
+			opacity: 1;
 		}
 	}
 `;
