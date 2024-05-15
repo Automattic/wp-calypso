@@ -576,8 +576,8 @@ object CheckCodeStyleBranch : BuildType({
 				# Find files to lint
 				TOTAL_FILES_TO_LINT=5
 
-				# Avoid running more than 10 parallel eslint tasks as it could OOM
-				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" -gt 10 ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
+				# Avoid running more than 16 parallel eslint tasks as it could OOM
+				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" -gt 16 ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
 					echo "Linting all files"
 					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 				else
