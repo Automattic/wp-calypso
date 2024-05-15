@@ -1,16 +1,16 @@
-import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { StepContainer } from '@automattic/onboarding';
-import { Button, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useSurveyStructureQuery } from 'calypso/data/segmentaton-survey';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE } from '../../../../stores';
-import { useIntents } from './intents';
+import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 
 import './styles.scss';
+
+const SEGMENTATION_SURVEY_KEY = 'guided-onboarding-flow';
 
 /**
  * The intent capture step - i2
@@ -18,12 +18,12 @@ import './styles.scss';
 const IntentStep: Step = function IntentStep( { navigation } ) {
 	const { submit } = navigation;
 	const translate = useTranslate();
-
 	const { setIntent } = useDispatch( ONBOARD_STORE );
+	const { data: surveyQuestions } = useSurveyStructureQuery( {
+		surveyKey: SEGMENTATION_SURVEY_KEY,
+	} );
 
-	const intents = useIntents();
-
-	const submitIntent = ( intent: SiteIntent ) => {
+	const submitIntent = ( intent: string ) => {
 		const providedDependencies = { intent };
 		recordTracksEvent( 'calypso_signup_intent_select', providedDependencies );
 		setIntent( intent );
@@ -45,23 +45,19 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 	};
 
 	const intentScreenContent = () => {
+		const intents = [ ...( surveyQuestions?.[ 0 ].options ?? [] ) ];
+
 		return (
 			<div className="site-intent">
 				{ intents.map( ( intent ) => {
 					return (
-						<Button
-							key={ intent.key }
-							className="site-intent__item-card"
+						<FlowCard
+							title={ intent.label }
+							text={ intent.helpText ?? '' }
 							onClick={ () => {
 								submitIntent( intent.value );
 							} }
-						>
-							<div className="site-intent__content">
-								<p className="site-intent__title">{ intent.title }</p>
-								<p className="site-intent__description">{ intent.description }</p>
-							</div>
-							<Icon size={ 24 } icon={ chevronRight } />
-						</Button>
+						/>
 					);
 				} ) }
 			</div>
