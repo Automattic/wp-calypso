@@ -49,6 +49,15 @@ body.is-section-plugins {
 		background: var(--studio-gray-0);
 	}
 
+	.is-logged-in .main {
+		@include breakpoint-deprecated( ">660px" ) {
+			padding-left: 35px;
+			padding-right: 35px;
+		}
+
+
+	}
+
 	.a4a-layout-column {
 		overflow: scroll;
 	}
