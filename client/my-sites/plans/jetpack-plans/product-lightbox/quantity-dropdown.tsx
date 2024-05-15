@@ -1,4 +1,4 @@
-import { isJetpackAISlug } from '@automattic/calypso-products';
+import { isJetpackTieredProduct } from '@automattic/calypso-products';
 import { SelectDropdown } from '@automattic/components';
 import { useMemo, useCallback, type FC } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -20,16 +20,19 @@ interface QuantityDropdownProps {
 const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onChangeProduct } ) => {
 	const dispatch = useDispatch();
 	const listPrices = useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
-	const isProductWithTierList = isJetpackAISlug( product.productSlug );
 
 	const tierOptions = useMemo( () => {
-		if ( ! isProductWithTierList ) {
+		if ( ! isJetpackTieredProduct( product.productSlug ) ) {
 			return [];
 		}
 
 		const tiers = listPrices.priceTierList || [];
 
 		return tiers.map( ( tier ) => {
+			if ( ! tier.maximum_units ) {
+				return;
+			}
+
 			const id = `${ product.productSlug }:-q-${ tier.maximum_units }`;
 
 			return {
@@ -37,7 +40,7 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 				label: PRODUCT_TIER_OPTIONS[ id ].toString(),
 			};
 		} );
-	}, [ listPrices.priceTierList, product.productSlug, isProductWithTierList ] );
+	}, [ listPrices.priceTierList, product.productSlug ] );
 
 	const onDropdownTierSelect = useCallback(
 		( { value: slug }: { value: string } ) => {
@@ -55,7 +58,7 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 		[ onChangeProduct, dispatch, siteId ]
 	);
 
-	if ( ! isProductWithTierList || tierOptions.length < 1 ) {
+	if ( ! isJetpackTieredProduct( product.productSlug ) || tierOptions.length < 1 ) {
 		return <></>;
 	}
 
@@ -67,7 +70,7 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 					className="product-lightbox__tiers-dropdown"
 					options={ tierOptions }
 					onSelect={ onDropdownTierSelect }
-					initialSelected={ tierOptions[ 0 ].value }
+					initialSelected={ tierOptions[ 0 ]?.value }
 				/>
 			</FormFieldset>
 		</div>
