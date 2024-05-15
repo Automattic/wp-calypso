@@ -89,7 +89,18 @@ export default function SidebarItem( props ) {
 				{ ( showAsExternal || props.forceShowExternalIcon ) && ! sidebarIsCollapsed && (
 					<Gridicon icon="external" size={ 24 } />
 				) }
-				{ props.forceChevronIcon && <Gridicon icon="chevron-right" size={ 18 } /> }
+				{ props.forceChevronIcon && (
+					<svg
+						ariaHidden="true"
+						focusable="false"
+						height="24"
+						viewBox="0 0 24 24"
+						width="24"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path d="M10.8622 8.04053L14.2805 12.0286L10.8622 16.0167L9.72327 15.0405L12.3049 12.0286L9.72327 9.01672L10.8622 8.04053Z"></path>
+					</svg>
+				) }
 				{ props.children }
 			</a>
 		</li>
