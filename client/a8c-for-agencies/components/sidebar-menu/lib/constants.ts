@@ -29,3 +29,4 @@ export const A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }
 export const A4A_SIGNUP_LINK = '/signup';
 export const A4A_SIGNUP_FINISH_LINK = '/signup/finish';
 export const A4A_MIGRATIONS_LINK = '/migrations';
+export const A4A_SETTINGS_LINK = '/settings';
