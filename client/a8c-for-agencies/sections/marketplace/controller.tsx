@@ -2,7 +2,6 @@ import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
 import { A4A_MARKETPLACE_HOSTING_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import getSites from 'calypso/state/selectors/get-sites';
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
@@ -74,15 +73,13 @@ export const checkoutContext: Callback = ( context, next ) => {
 
 export const assignLicenseContext: Callback = ( context, next ) => {
 	const { page, search } = context.query;
-	const state = context.store.getState();
-	const sites = getSites( state );
-	const currentPage = parseInt( page ) || 1;
+	const initialPage = parseInt( page ) || 1;
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Assign License" path={ context.path } />
-			<AssignLicense sites={ sites } currentPage={ currentPage } search={ search || '' } />
+			<AssignLicense initialPage={ initialPage } initialSearch={ search || '' } />
 		</>
 	);
 	next();

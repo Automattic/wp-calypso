@@ -39,39 +39,18 @@ import { SITE_CARDS_PER_PAGE } from './constants';
 import './styles.scss';
 
 type Props = {
-	sites: Array< any >;
-	currentPage: number;
-	search: string;
+	initialPage: number;
+	initialSearch: string;
 };
 
-function setPage( pageNumber: number ): void {
-	const queryParams = { page: pageNumber };
-	const currentPath = window.location.pathname + window.location.search;
-
-	page( addQueryArgs( queryParams, currentPath ) );
-}
-
-function setSearch( search: string ): void {
-	const queryParams = { search, page: 1 };
-	const currentPath = window.location.pathname + window.location.search;
-
-	page( addQueryArgs( queryParams, currentPath ) );
-}
-
-function paginate( arr: Array< any >, currentPage: number ): Array< any > {
-	return (
-		arr
-			// Slices sites list based on pagination settings
-			.slice( SITE_CARDS_PER_PAGE * ( currentPage - 1 ), SITE_CARDS_PER_PAGE * currentPage )
-	);
-}
-
-export default function AssignLicense( { sites, currentPage, search }: Props ) {
+export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
-	const [ filteredSites, setFilteredSites ] = useState( Array< any > );
+	const [ currentPage, setCurrentPage ] = useState< number >( initialPage );
+	const [ search, setSearch ] = useState< string >( initialSearch );
+	const [ totalSites, setTotalSites ] = useState< number >( 0 );
 
 	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite, {
 		onError: ( error: Error ) => {
@@ -93,15 +72,19 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 		return [];
 	}, [] );
 
+	const filterOutMultisites = ! areLicenseKeysAssignableToMultisite( licenseKeysArray );
+
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const { data, isError, isLoading } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
-		searchQuery: '',
-		currentPage: 0,
+		searchQuery: search,
+		currentPage: currentPage,
+		perPage: SITE_CARDS_PER_PAGE,
 		filter: {
 			issueTypes: [],
 			showOnlyFavorites: false,
+			...( filterOutMultisites && { isNotMultisite: true } ),
 		},
 		sort: {
 			field: DEFAULT_SORT_FIELD,
@@ -111,29 +94,30 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 	} );
 
 	useEffect( () => {
-		if ( isError || isLoading ) {
+		if ( isLoading || isError ) {
 			return;
 		}
 
-		// TODO: Update the 'useFetchDashboardSites' API endpoint to include the 'is_multisite' attribute in its response.
-		// Currently, we rely on the 'sites' prop for filtering based on the 'is_multisite' status because this attribute
-		// is not provided by the API. Adding 'is_multisite' to the API response would allow us to directly filter
-		// the 'data.sites' array instead of depending on the external 'sites' array.
-		let results = areLicenseKeysAssignableToMultisite( licenseKeysArray )
-			? sites
-			: sites.filter( ( site ) => ! site.is_multisite );
+		setTotalSites( data?.total );
+	}, [ data, isError, isLoading ] );
 
-		if ( data && data.sites ) {
-			const siteBlogIds = new Set( data.sites.map( ( site: Site ) => site.blog_id ) );
-			results = results.filter( ( site ) => siteBlogIds.has( site.ID ) );
+	useEffect( () => {
+		const urlSearch = getQueryArg( window.location.search, 'search' );
+		const urlPage = getQueryArg( window.location.search, 'page' );
+
+		if ( search !== urlSearch ) {
+			setCurrentPage( 1 );
 		}
 
-		if ( search ) {
-			results = results.filter( ( site ) => site.domain.includes( search ) );
+		if ( search === urlSearch && currentPage.toString() === urlPage ) {
+			return;
 		}
 
-		setFilteredSites( results );
-	}, [ sites, data, search, isLoading, licenseKeysArray, isError ] );
+		const queryParams = { search, page: currentPage };
+		const currentPath = window.location.pathname + window.location.search;
+
+		page( addQueryArgs( queryParams, currentPath ) );
+	}, [ search, currentPage, setCurrentPage ] );
 
 	const showDownloadStep = licenseKeysArray.some( isWooCommerceProduct );
 
@@ -248,33 +232,45 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 				<SearchCard
 					className="assign-license__search-field"
 					placeHolder={ translate( 'Search for website URL right here' ) }
-					onSearch={ ( query: any ) => setSearch( query ) }
+					onSearch={ ( query: string ) => setSearch( query ) }
+					initialValue={ search }
 				/>
 
 				<div className="assign-license__sites-list">
-					{ paginate( filteredSites, currentPage ).map( ( site: any ) => {
-						if ( -1 !== site.domain.search( search ) || null === search ) {
-							return (
-								<Card key={ site.ID } onClick={ () => setSelectedSite( site ) }>
-									<FormRadio
-										className="assign-license-form__site-card-radio"
-										label={ site.domain }
-										name="site_select"
-										disabled={ ! isReady }
-										checked={ selectedSite?.ID === site.ID }
-									/>
-								</Card>
-							);
-						}
+					{ data?.sites.map( ( site: Site ) => {
+						return (
+							<Card
+								key={ site.blog_id }
+								onClick={ () =>
+									setSelectedSite( { ID: site.blog_id, domain: site.url_with_scheme } )
+								}
+							>
+								<FormRadio
+									className="assign-license-form__site-card-radio"
+									label={ site.url_with_scheme }
+									name="site_select"
+									disabled={ ! isReady }
+									checked={ selectedSite?.ID === site.blog_id }
+									onChange={ () =>
+										setSelectedSite( { ID: site.blog_id, domain: site.url_with_scheme } )
+									}
+								/>
+							</Card>
+						);
 					} ) }
+					{ data?.sites.length === 0 && (
+						<div className={ classNames( 'card', 'assign-license__sites-no-results' ) }>
+							No results
+						</div>
+					) }
 				</div>
 
 				<Pagination
 					className="assign-license__pagination"
 					page={ currentPage }
 					perPage={ SITE_CARDS_PER_PAGE }
-					total={ filteredSites.length }
-					pageClick={ ( page: number ) => setPage( page ) }
+					total={ totalSites }
+					pageClick={ ( page: number ) => setCurrentPage( page ) }
 				/>
 			</LayoutBody>
 		</Layout>
