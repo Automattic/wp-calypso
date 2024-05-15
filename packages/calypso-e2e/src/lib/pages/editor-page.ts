@@ -580,7 +580,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
 
-		await this.editorSettingsSidebarComponent.expandSectionIfExists( 'Summary' );
+		await this.editorSettingsSidebarComponent.expandSummary( 'Summary' );
 		await this.editorSettingsSidebarComponent.openVisibilityOptions();
 		await this.editorSettingsSidebarComponent.selectVisibility( visibility, {
 			password: password,
@@ -637,7 +637,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
-		await this.editorSettingsSidebarComponent.expandSectionIfExists( 'Summary' );
+		await this.editorSettingsSidebarComponent.expandSummary( 'Summary' );
 		await this.editorSettingsSidebarComponent.enterUrlSlug( slug );
 	}
 
@@ -753,7 +753,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
 
-		await this.editorSettingsSidebarComponent.expandSectionIfExists( 'Summary' );
+		await this.editorSettingsSidebarComponent.expandSummary( 'Summary' );
 		await this.editorSettingsSidebarComponent.openSchedule();
 		await this.editorSettingsSidebarComponent.setScheduleDetails( date );
 		await this.editorSettingsSidebarComponent.closeSchedule();

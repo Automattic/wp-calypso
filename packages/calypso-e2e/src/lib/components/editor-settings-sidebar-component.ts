@@ -134,7 +134,7 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
-	 * Expands a collapsed section of the sidebar if the section exists in the first place.
+	 * Expands a collapsed `Summary` section of the sidebar if it exists.
 	 * The `Summary` section is no longer collapsible in recent GB iterations
 	 * @see https://github.com/WordPress/gutenberg/commit/201099408131e2abe3cd094f7a1e7e539a350c12
 	 * @deprecated To discourage the adoption of this function
@@ -144,7 +144,7 @@ export class EditorSettingsSidebarComponent {
 	 *
 	 * @param {string} name Name of section to be expanded.
 	 */
-	async expandSectionIfExists( name: string ): Promise< void > {
+	async expandSummary( name: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const sectionLocator = editorParent.locator( selectors.section( name ) );
 
