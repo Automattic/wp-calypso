@@ -32,6 +32,7 @@ import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
+import { useLoginUrl } from './utils/path';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
 
@@ -49,14 +50,25 @@ function determineFlow() {
 }
 
 /**
- * TODO: this is no longer a switch and should be removed
+ * If the flow requires authentication, this checks if the user is authenticated and redirects to the login page if not.
  */
-const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flow } > = ( {
+const AuthGuard: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flow } > = ( {
 	user,
 	flow,
 } ) => {
 	const { receiveCurrentUser } = useDispatch( USER_STORE );
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
+
+	const logInUrl = useLoginUrl( {
+		variationName: flow.name,
+		redirectTo: window.location.pathname,
+		pageTitle: flow.title,
+	} );
+
+	if ( flow.startsWithAuth && ! user ) {
+		window.location = logInUrl;
+		return null;
+	}
 
 	return <FlowRenderer flow={ flow } />;
 };
@@ -107,7 +119,7 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } />
+						<AuthGuard user={ user as UserStore.CurrentUser } flow={ flow } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }

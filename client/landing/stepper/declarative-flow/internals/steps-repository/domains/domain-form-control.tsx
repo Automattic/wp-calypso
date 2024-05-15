@@ -4,6 +4,7 @@ import {
 	isDomainUpsellFlow,
 	LINK_IN_BIO_TLD_FLOW,
 	isSiteAssemblerFlow,
+	GUIDED_ONBOARDING,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
@@ -210,7 +211,7 @@ export function DomainFormControl( {
 			return false;
 		}
 
-		return isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow );
+		return isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) || flow === GUIDED_ONBOARDING;
 	};
 
 	const renderDomainForm = () => {

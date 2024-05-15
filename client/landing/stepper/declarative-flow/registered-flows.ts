@@ -16,6 +16,7 @@ import {
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
+	GUIDED_ONBOARDING,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -31,6 +32,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'import-focused': () =>
 		import( /* webpackChunkName: "import-flow" */ '../declarative-flow/import-flow' ),
+
+	[ GUIDED_ONBOARDING ]: () =>
+		import( /* webpackChunkName: "import-flow" */ '../declarative-flow/guided' ),
 
 	videopress: () =>
 		import( /* webpackChunkName: "videopress-flow" */ '../declarative-flow/videopress' ),
