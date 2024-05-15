@@ -55,6 +55,7 @@ export const mockedSites: Site[] = [
 		has_paid_agency_monitor: false,
 		has_pending_boost_one_time_score: false,
 		monitor_last_status_change: '',
+		multisite: false,
 	},
 	{
 		url: 'instantdelightfully.wpcomstaging.com',
@@ -110,6 +111,7 @@ export const mockedSites: Site[] = [
 		has_paid_agency_monitor: false,
 		has_pending_boost_one_time_score: false,
 		monitor_last_status_change: '',
+		multisite: false,
 	},
 	{
 		url: 'jetpackcrm.com',
@@ -180,6 +182,7 @@ export const mockedSites: Site[] = [
 		},
 		has_paid_agency_monitor: false,
 		has_pending_boost_one_time_score: false,
+		multisite: false,
 	},
 	{
 		url: 'kb.jetpackcrm.com',
@@ -249,5 +252,6 @@ export const mockedSites: Site[] = [
 		},
 		has_paid_agency_monitor: false,
 		has_pending_boost_one_time_score: false,
+		multisite: false,
 	},
 ];

@@ -74,6 +74,7 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE: SiteData[] = [
 				has_vulnerable_plugins: false,
 				latest_scan_has_threats_found: false,
 				active_paid_subscription_slugs: [],
+				multisite: false,
 			},
 			error: false,
 			status: 'active',
