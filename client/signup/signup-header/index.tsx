@@ -46,7 +46,8 @@ const SignupHeader = ( {
 	const refundPeriodInSignupHeaderBanner =
 		config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step' ) &&
 		progressBar.flowName === 'onboarding' &&
-		progressBar.stepName === 'plans';
+		progressBar.stepName === 'plans' &&
+		! shouldShowLoadingScreen;
 
 	const logoClasses = classnames( 'wordpress-logo', {
 		'is-large': shouldShowLoadingScreen && ! isReskinned,
