@@ -1,7 +1,5 @@
 import { translate, useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-// Function is not a hook, should be fine to use here
-// eslint-disable-next-line no-restricted-imports
 import {
 	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
