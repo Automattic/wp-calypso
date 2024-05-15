@@ -458,19 +458,27 @@ export class RenderDomainsStep extends Component {
 
 		this.props.setDesignType( this.getDesignType() );
 
-		// For the `domain-for-gravatar` flow, pre-select the "domain" choice in the "site or domain" step and
-		// skip the others, going straight to checkout
+		// For the `domain-for-gravatar` flow, add an extra `domain_for_gravatar` property to the domain registration product,
+		// pre-select the "domain" choice in the "site or domain" step and skip the others, going straight to checkout
 		if ( this.props.flowName === 'domain-for-gravatar' ) {
+			const domainForGravatarItem = domainRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug,
+				extra: {
+					domain_for_gravatar: true,
+				},
+			} );
+
 			this.props.submitSignupStep(
 				{
 					stepName: 'site-or-domain',
-					domainItem,
+					domainItem: domainForGravatarItem,
 					designType: 'domain',
-					siteSlug: domainItem.meta,
+					siteSlug: domainForGravatarItem.meta,
 					siteUrl,
 					isPurchasingItem: true,
 				},
-				{ designType: 'domain', domainItem, siteUrl }
+				{ designType: 'domain', domainItem: domainForGravatarItem, siteUrl }
 			);
 			this.props.submitSignupStep(
 				{ stepName: 'site-picker', wasSkipped: true },
