@@ -21,6 +21,8 @@ const entrepreneurFlow: Flow = {
 
 	isSignupFlow: true,
 
+	__experimentalEnablePathLocale: true,
+
 	useSteps() {
 		return [
 			// Replacing the `segmentation-survey` slug with `start` as having the
