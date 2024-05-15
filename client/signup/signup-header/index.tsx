@@ -46,6 +46,7 @@ const SignupHeader = ( {
 	const refundPeriodInSignupHeaderBanner = useRefundPeriodInSignupHeaderBanner( {
 		flowName: progressBar.flowName,
 		stepName: progressBar.stepName,
+		shouldShowLoadingScreen,
 	} ).result;
 
 	const logoClasses = classnames( 'wordpress-logo', {
