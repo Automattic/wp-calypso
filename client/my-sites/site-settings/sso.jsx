@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -43,7 +43,7 @@ const Sso = ( {
 							) }
 							link={
 								isAtomic
-									? 'https://wordpress.com/support/wordpress-com-secure-sign-on-sso/'
+									? localizeUrl( 'https://wordpress.com/support/wordpress-com-secure-sign-on-sso/' )
 									: 'https://jetpack.com/support/sso/'
 							}
 							privacyLink={ ! isAtomic }
