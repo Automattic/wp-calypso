@@ -11,9 +11,15 @@ type Props = {
 	selectedTier: DiscountTier;
 	onSelectTier: ( value: DiscountTier ) => void;
 	ownedPlans: number;
+	isLoading?: boolean;
 };
 
-export default function WPCOMBulkSelector( { selectedTier, onSelectTier, ownedPlans }: Props ) {
+export default function WPCOMBulkSelector( {
+	selectedTier,
+	onSelectTier,
+	ownedPlans,
+	isLoading,
+}: Props ) {
 	const translate = useTranslate();
 
 	const { data } = useProductsQuery( false, true );
@@ -46,6 +52,14 @@ export default function WPCOMBulkSelector( { selectedTier, onSelectTier, ownedPl
 		onSelectTier( calculateTier( options, minimumQuantity ) );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ ownedPlans, options ] );
+
+	if ( isLoading ) {
+		return (
+			<div className="bulk-selection is-placeholder">
+				<div className="bulk-selection__slider"></div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="bulk-selection">

@@ -154,6 +154,7 @@ export default function WpcomOverview() {
 					selectedTier={ selectedTier }
 					onSelectTier={ onSelectTier }
 					ownedPlans={ ownedPlans }
+					isLoading={ ! isLicenseCountsReady }
 				/>
 
 				{ creatorPlan && (

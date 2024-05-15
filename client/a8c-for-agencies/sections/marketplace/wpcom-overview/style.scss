@@ -37,3 +37,13 @@
 	padding: 8px 16px;
 	margin: 0 auto 32px;
 }
+
+
+.bulk-selection.is-placeholder .bulk-selection__slider {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var(--color-neutral-10);
+	width: 800px;
+	height: 80px;
+	margin: 0 auto;
+	border-radius: 4px;
+}
