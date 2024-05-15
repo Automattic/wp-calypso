@@ -94,7 +94,7 @@ export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 		if ( isJetpackNonAtomic ) {
-			context.page.replace( `/hosting/${ site?.slug }` );
+			context.page.replace( `/overview/${ site?.slug }` );
 			return;
 		}
 		next();
