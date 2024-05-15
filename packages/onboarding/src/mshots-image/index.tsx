@@ -177,7 +177,12 @@ const MShotsImage = ( {
 	return scrollable || ! visible ? (
 		<div className={ className } style={ style } aria-labelledby={ labelledby } />
 	) : (
-		<img { ...{ className, style, src, alt } } aria-labelledby={ labelledby } alt={ alt } />
+		<img
+			loading="lazy"
+			{ ...{ className, style, src, alt } }
+			aria-labelledby={ labelledby }
+			alt={ alt }
+		/>
 	);
 };
 
