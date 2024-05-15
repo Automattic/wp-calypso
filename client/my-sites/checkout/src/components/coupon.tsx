@@ -115,8 +115,8 @@ const ApplyButton = styled( Button )`
 	position: absolute;
 	font-size: 14px;
 	padding: 8px;
-	top: 3px;
-	right: 3px;
+	top: 2px;
+	right: 2px;
 
 	.rtl & {
 		animation-name: ${ animateInRTL };
