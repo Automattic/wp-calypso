@@ -357,14 +357,20 @@ export default function CheckoutMainContent( {
 		removeCoupon,
 		couponStatus,
 	} = useShoppingCart( cartKey );
-	const searchParams = new URLSearchParams( window.location.search );
 
+	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
 	);
+
+	/*
+	 * Only show the site preview for WPCOM domains that have a site connected to the site id
+	 * */
+	const shouldShowSitePreview =
+		showSitePreview && selectedSiteData && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
 
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
@@ -557,20 +563,13 @@ export default function CheckoutMainContent( {
 								className="checkout__summary-body"
 								shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 							>
-								{ /*
-								 * Only show the site preview for WPCOM domains that have a site connected to the site id
-								 * */ }
-								{ showSitePreview &&
-									selectedSiteData &&
-									wpcomDomain &&
-									! isSignupCheckout &&
-									! isDIFMInCart && (
-										<div className="checkout-site-preview">
-											<SitePreviewWrapper>
-												<SitePreview showEditSite={ false } showSiteDetails={ false } />
-											</SitePreviewWrapper>
-										</div>
-									) }
+								{ shouldShowSitePreview && (
+									<div className="checkout-site-preview">
+										<SitePreviewWrapper>
+											<SitePreview showEditSite={ false } showSiteDetails={ false } />
+										</SitePreviewWrapper>
+									</div>
+								) }
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
 								<CheckoutSidebarNudge
