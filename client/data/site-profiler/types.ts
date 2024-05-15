@@ -82,14 +82,10 @@ export interface HostingProviderQueryResponse {
 	hosting_provider: HostingProvider;
 }
 
-export type BasicMetrics = {
-	cls: number;
-	fid: number;
-	lcp: number;
-	fcp: number;
-	ttfb: number;
-	inp: number;
-};
+export type Metrics = 'cls' | 'fid' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
+
+export type BasicMetrics = Record< Metrics, number >;
+
 export interface UrlBasicMetricsQueryResponse {
 	final_url: string;
 	basic: BasicMetrics;
