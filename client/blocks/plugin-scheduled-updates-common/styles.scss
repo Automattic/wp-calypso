@@ -50,6 +50,23 @@ $brand-display: "SF Pro Display", sans-serif;
 		}
 	}
 
+	.empty-state {
+		max-width: 50%;
+		text-align: left;
+		padding: 0;
+
+		@media screen and (max-width: $break-large) {
+			max-width: 100%;
+		}
+
+		p {
+			color: var(--studio-gray-100);
+			margin: 1.5rem auto;
+			font-size: rem(18px);
+			line-height: 1.625;
+		}
+	}
+
 	&-table {
 		th,
 		td {
