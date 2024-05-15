@@ -197,7 +197,6 @@ $font-size: rem(14px);
 		.sidebar__expandable-title,
 		.sidebar__menu-link-text {
 			padding: $sidebar-item-padding;
-			max-height: 34px;
 			box-sizing: border-box;
 		}
 
@@ -832,6 +831,11 @@ $font-size: rem(14px);
 				border-width: 4px;
 				margin-top: -4px;
 			}
+		}
+
+		.sidebar__expandable-title,
+		.sidebar__menu-link-text {
+			max-height: 34px;
 		}
 
 		.sidebar .notice {
