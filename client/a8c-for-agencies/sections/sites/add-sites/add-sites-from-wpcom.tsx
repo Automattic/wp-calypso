@@ -1,34 +1,56 @@
-import { SiteDetails } from '@automattic/data-stores';
+import page from '@automattic/calypso-router';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
-import LayoutHeader, { LayoutHeaderTitle } from 'calypso/a8c-for-agencies/components/layout/header';
+import LayoutHeader, {
+	LayoutHeaderTitle,
+	LayoutHeaderActions,
+} from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import BaseSiteSelector from 'calypso/components/site-selector';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
+import useImportWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-import-wpcom-site';
+import AtomicSitesSelector from './atomic-sites-selector';
 import './styles.scss';
 
 const AddSitesFromWPCOM = () => {
 	const translate = useTranslate();
 
-	const atomicSitesFilter = ( site: SiteDetails ) => site?.is_wpcom_atomic;
+	const { mutate: importWPCOMSite, isPending: isImportingSite } = useImportWPCOMSiteMutation();
+	const { refetch: refetchPendingSites } = useFetchPendingSites();
+
+	const handleSiteSelection = useCallback(
+		( blogId: number ) => {
+			importWPCOMSite(
+				{ blog_id: blogId },
+				{
+					onSuccess: () => {
+						refetchPendingSites();
+						page( addQueryArgs( A4A_SITES_LINK, { created_site: blogId } ) );
+					},
+				}
+			);
+		},
+		[ importWPCOMSite ]
+	);
 
 	return (
 		<LayoutColumn className="add-sites-from-wpcom add-sites-from-wpcom__layout" wide>
 			<LayoutTop>
 				<LayoutHeader>
 					<LayoutHeaderTitle>{ translate( 'Add sites from WordPress.com' ) }</LayoutHeaderTitle>
+					<LayoutHeaderActions>
+						<MobileSidebarNavigation />
+					</LayoutHeaderActions>
 				</LayoutHeader>
 			</LayoutTop>
 
 			<div className="add-sites-from-wpcom__body">
-				<BaseSiteSelector
-					clasName="add-sites-from-wpcom_site-selector"
-					indicator
-					allSitesPath="/sites"
-					sitesBasePath="/sites"
-					onSiteSelect={ () => {} }
-					filter={ atomicSitesFilter }
-					showHiddenSites={ false }
-					showListBottomAdornment={ false }
+				<AtomicSitesSelector
+					onSiteSelect={ handleSiteSelection }
+					isPlaceholder={ isImportingSite }
 				/>
 			</div>
 		</LayoutColumn>
