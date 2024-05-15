@@ -26,10 +26,9 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	if ( config( 'env' ) !== 'production' ) {
 		const protocol = config( 'protocol' ) ?? 'https';
 		const port = config( 'port' ) ? ':' + config( 'port' ) : '';
+		const hostName = config( 'hostname' );
 
-		checkoutBackUrl = `${ protocol }://${ config(
-			'hostname'
-		) }${ port }/start/${ flowName }/domain-only`;
+		checkoutBackUrl = `${ protocol }://${ hostName }${ port }/start/${ flowName }/domain-only`;
 	}
 
 	return addQueryArgs(
