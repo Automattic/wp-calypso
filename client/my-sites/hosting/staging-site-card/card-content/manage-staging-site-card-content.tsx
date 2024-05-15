@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -128,7 +129,17 @@ export const ManageStagingSiteCardContent = ( {
 			return (
 				<Button
 					primary
-					onClick={ () => navigate( `/hosting-config/${ urlToSlug( stagingSite.url ) }` ) }
+					onClick={ () => {
+						if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+							navigate(
+								`/hosting-config/${ urlToSlug( stagingSite.url ) }?search=${ stagingSite.url }`,
+								false,
+								true
+							);
+						} else {
+							navigate( `/hosting-config/${ urlToSlug( stagingSite.url ) }` );
+						}
+					} }
 					disabled={ isButtonDisabled }
 				>
 					<span>{ translate( 'Manage staging site' ) }</span>
