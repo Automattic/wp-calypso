@@ -50,9 +50,13 @@ body.is-section-plugins {
 	}
 
 	.is-logged-in main:not(.a4a-layout):not(.a4a-layout-column) {
-		@include breakpoint-deprecated( ">660px" ) {
-			padding-left: 35px;
-			padding-right: 35px;
+		@include break-small {
+			padding-left: 1rem;
+			padding-right: 1rem;
+		}
+		@include break-small {
+			padding-left: 2rem;
+			padding-right: 2rem;
 		}
 	}
 
@@ -465,6 +469,17 @@ body.is-section-plugins #primary {
 				}
 			}
 		}
+	}
+}
+
+body.is-section-plugins .plugin-management-wrapper {
+	@include break-small {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+	@include break-medium {
+		padding-left: 2rem;
+		padding-right: 2rem;
 	}
 }
 
