@@ -3,6 +3,7 @@ import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -32,6 +33,7 @@ const PlanCard: FC = () => {
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
+	const hasEnTranslation = useHasEnTranslation();
 
 	// Check for storage addons available for purchase.
 	const addOns = AddOns.useAddOns( { selectedSiteId: site?.ID } );
@@ -40,6 +42,12 @@ const PlanCard: FC = () => {
 	);
 
 	const isLoading = ! pricing || ! planData;
+
+	const explorePlansLabel = hasEnTranslation( 'Explore paid plans' )
+		? translate( 'Explore paid plans' )
+		: translate( 'Manage plan' );
+
+	const plansPageLinkLabel = isPaidPlan ? translate( 'Manage plan' ) : explorePlansLabel;
 
 	return (
 		<>
@@ -56,7 +64,7 @@ const PlanCard: FC = () => {
 						plain
 						href={ `/plans/${ site?.slug }` }
 					>
-						{ translate( 'Manage plan' ) }
+						{ plansPageLinkLabel }
 					</Button>
 				</div>
 				{ isPaidPlan && (
