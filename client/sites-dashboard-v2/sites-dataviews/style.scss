@@ -33,6 +33,12 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+	a,
+	a:hover,
+	a:focus,
+	a:visited {
+		color: var(--studio-gray-60);
+	}
 }
 
 .sites-dataviews__site-wp-admin-url {
