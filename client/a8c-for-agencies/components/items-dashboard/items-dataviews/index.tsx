@@ -10,13 +10,22 @@ import './style.scss';
 const getIdByPath = ( item: object, path: string ) => {
 	const fields = path.split( '.' );
 	let result: Record< string, any > = item;
+	let prefix = '';
+
+	// TODO: When the Dataviews component gets updated and able to show error rows, we should remove this prefix.
+	// The prefix is used to make the error row unique, allowing Dataviews to delete it when cleaning the table.
+	if ( result[ 'site' ] !== undefined && result[ 'site' ][ 'type' ] !== 'error' ) {
+		prefix = 'error-';
+	}
+
 	for ( const field of fields ) {
 		if ( result[ field ] === undefined ) {
 			return undefined;
 		}
 		result = result[ field ];
 	}
-	return result;
+
+	return prefix + result;
 };
 
 /**
