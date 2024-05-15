@@ -16,7 +16,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 
 	return (
 		<div className="empty-state">
-			<Text as="p" align="center">
+			<Text as="p">
 				{ ( () => {
 					if ( ! siteHasEligiblePlugins && canCreateSchedules ) {
 						return translate(
