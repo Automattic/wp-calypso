@@ -104,6 +104,11 @@ class ReaderStream extends Component {
 
 	isMounted = false;
 
+	/**
+	 * A mutation observer to watch whether the target exists
+	 */
+	observer = null;
+
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
 	};
@@ -195,6 +200,25 @@ class ReaderStream extends Component {
 		}
 
 		document.addEventListener( 'keydown', this.handleKeydown, true );
+
+		/**
+		 * Observe the class list of the body element because the scroll container depends on it.
+		 */
+		this.observer = new window.MutationObserver( () => {
+			if ( ! this.listRef.current ) {
+				return;
+			}
+
+			const scrollContainer = this.getScrollContainer(
+				ReactDom.findDOMNode( this.listRef.current )
+			);
+			if ( scrollContainer !== this.state.listContext ) {
+				this.setState( {
+					listContext: scrollContainer,
+				} );
+			}
+		} );
+		this.observer.observe( document.body, { attributeFilter: [ 'class' ] } );
 	}
 
 	componentWillUnmount() {
@@ -204,6 +228,10 @@ class ReaderStream extends Component {
 		}
 
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
+
+		if ( this.observer ) {
+			this.observer.disconnect();
+		}
 	}
 
 	handleKeydown = ( event ) => {
