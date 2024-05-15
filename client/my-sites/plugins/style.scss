@@ -419,7 +419,17 @@ body.is-section-plugins header .select-dropdown__item {
 	padding: 0 0 0 16px !important;
 }
 
+body.is-section-plugins .is-logged-in {
+	#primary {
+		background-color: var(--color-surface);
+	}
+	.navigation-header {
+		padding-top: 24px;
+	}
+}
+
 body.is-section-plugins #primary {
+
 	.search-box-header::before {
 		box-sizing: border-box;
 		content: "";
