@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/named
 import { ExternalLinkWithTracking } from '@automattic/components';
 
 // We're in the process of migrating to @automattic/components. Because of this, we're using this wrapper

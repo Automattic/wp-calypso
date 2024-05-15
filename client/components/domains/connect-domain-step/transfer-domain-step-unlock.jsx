@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/named
 import { Button, MaterialIcon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';

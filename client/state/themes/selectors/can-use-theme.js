@@ -1,7 +1,6 @@
 import {
 	FEATURE_WOOP,
 	WPCOM_FEATURES_ATOMIC,
-	// eslint-disable-next-line import/named
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_INSTALL_THEMES,
 } from '@automattic/calypso-products';

@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 /* eslint-disable no-shadow -- shadowing localizeUrl makes tests readable */
-// eslint-disable-next-line import/named
 import { renderHook } from '@testing-library/react';
 import { localizeUrl, useLocalizeUrl } from '../';
 

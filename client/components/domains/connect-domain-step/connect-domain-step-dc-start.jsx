@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/named
 import { Button, MaterialIcon } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';

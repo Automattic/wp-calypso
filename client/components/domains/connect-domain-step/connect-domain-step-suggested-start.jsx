@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-// eslint-disable-next-line import/named
 import { Button, FoldableCard, MaterialIcon } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, chevronDown, chevronUp, info } from '@wordpress/icons';
