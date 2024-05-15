@@ -17,6 +17,7 @@ import {
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import {
@@ -460,8 +461,35 @@ class MagicLogin extends Component {
 		);
 	}
 
+	renderStudioLoginTos = () => {
+		const options = {
+			components: {
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				privacyLink: (
+					<a
+						href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		};
+		const tosText = this.props.translate(
+			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			options
+		);
+
+		return <p className="studio-magic-login__tos">{ tosText }</p>;
+	};
+
 	render() {
-		const { oauth2Client, showCheckYourEmail } = this.props;
+		const { oauth2Client, showCheckYourEmail, query, translate } = this.props;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			return (
@@ -473,6 +501,30 @@ class MagicLogin extends Component {
 					{ showCheckYourEmail
 						? this.renderGravPoweredEmailVerification()
 						: this.renderGravPoweredMagicLogin() }
+				</Main>
+			);
+		}
+
+		// "query?.redirect_to" is used to determine if Studio app users are creating a new account (vs. logging in)
+		if ( isStudioAppOAuth2Client( oauth2Client ) && query?.redirect_to ) {
+			return (
+				<Main className="magic-login magic-login__request-link is-white-login">
+					{ this.renderLocaleSuggestions() }
+
+					<GlobalNotices id="notices" />
+
+					<RequestLoginEmailForm
+						headerText={ translate( 'Sign up for WordPress.com' ) }
+						tosComponent={ this.renderStudioLoginTos() }
+						subHeaderText={ translate(
+							'Connecting a WordPress.com account unlocks additional Studio features like demo sites.'
+						) }
+						customFormLabel={ translate( 'Your email address' ) }
+						submitButtonLabel={ translate( 'Send activation link' ) }
+						createAccountForNewUser={ true }
+					/>
+
+					{ this.renderLinks() }
 				</Main>
 			);
 		}

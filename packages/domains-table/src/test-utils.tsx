@@ -74,6 +74,8 @@ export function testDomain(
 		cannot_manage_dns_records_reason: null,
 		cannot_manage_name_servers_reason: null,
 		cannot_update_contact_info_reason: null,
+		can_transfer_to_any_user: true,
+		can_transfer_to_other_site: true,
 		connection_mode: null,
 		current_user_can_add_email: false,
 		current_user_can_create_site_from_domain_only: false,

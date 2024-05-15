@@ -40,163 +40,180 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const translate = useTranslate();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 	const sitesDashboardGlobalStyles = css`
-			html {
-				overflow-y: auto;
+		html {
+			overflow-y: auto;
+		}
+		body.is-section-domains {
+			background: var( --studio-gray-0 );
+
+			&.rtl .layout__content {
+				padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;
 			}
-			body.is-section-domains {
-				background: var( --studio-gray-0 );
 
-				&.rtl .layout__content {
-					padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;
+			.layout__content {
+				// Add border around everything
+				overflow: hidden;
+				min-height: 100vh;
+				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
+
+				.layout_primary > main {
+					padding-bottom: 0;
+				}
+			}
+
+			.layout__secondary .global-sidebar {
+				border: none;
+			}
+
+			.has-no-masterbar .layout__content {
+				padding-top: 16px !important;
+			}
+
+			header.navigation-header {
+				padding-top: 24px;
+
+				.formatted-header {
+					max-height: 41px;
 				}
 
-				.layout__content {
-					// Add border around everything
-					overflow: hidden;
-					min-height: 100vh;
-					padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
-
-					.layout_primary > main {
-						padding-bottom: 0;
-					}
+				.navigation-header__main {
+					align-items: center;
 				}
 
-				.layout__secondary .global-sidebar {
-					border: none;
+				.formatted-header__title {
+					color: var( --studio-gray-80, #2c3338 );
+					font-family: 'SF Pro Display', sans-serif;
+					font-size: 1.5rem;
+					font-style: normal;
+					font-weight: 500;
+					line-height: 1.2;
 				}
-
-				.has-no-masterbar .layout__content {
-					padding-top: 16px !important;
-				}
-
-				header.navigation-header {
-					padding-top: 24px;
-
-					.formatted-header {
-						max-height: 41px;
-					}
-
-					.navigation-header__main {
-						align-items: center;
-					}
-
-					.formatted-header__title {
-						color: var( --studio-gray-80, #2c3338 );
-						font-family: 'SF Pro Display', sans-serif;
-						font-size: 1.5rem;
-						font-style: normal;
-						font-weight: 500;
-						line-height: 1.2;
-					}
-					.domain-header__buttons .button {
-						border-radius: 4px;
-						white-space: nowrap;
-						margin-left: 0;
-						&:not( .is-primary ) {
-							margin-inline-end: 1rem;
-						}
-					}
-				}
-
-				.search-component.domains-table-filter__search.is-open.has-open-icon {
+				.domain-header__buttons .button {
 					border-radius: 4px;
-					height: 44px;
+					white-space: nowrap;
+					margin-left: 0;
+					&:not( .is-primary ) {
+						margin-inline-end: 1rem;
+					}
+				}
+			}
+
+			.domains-table {
+				margin-top: 35px;
+				.domains-table-toolbar {
+					margin-inline: 64px;
+				}
+				table {
+					overflow-y: auto;
+					max-height: calc( 100vh - 235px );
+					padding-inline: 64px;
+					margin-bottom: 0;
+				}
+				.domains-table-header {
+					position: sticky;
+					top: 0;
+					z-index: 2;
+				}
+			}
+
+			.search-component.domains-table-filter__search.is-open.has-open-icon {
+				border-radius: 2px;
+				height: 36px;
+				flex-direction: row-reverse;
+				padding-inline: 10px 8px;
+				font-size: 14px;
+				color: var( --studio-gray-40 );
+				svg {
+					fill: var( --studio-gray-40 );
+					color: var( --studio-gray-40 );
 				}
 
-				.domains-table {
-					margin-top: 48px;
-					.domains-table-toolbar {
-						margin-inline: 64px;
+				input.search-component__input[type='search'] {
+					font-size: 14px;
+					height: 36px;
+
+					&::placeholder {
+						color: var( --studio-gray-40 );
 					}
-					table {
-						overflow-y: auto;
-						max-height: calc( 100vh - 235px );
+				}
+				max-width: 245px;
+				transition: none;
+			}
+
+			@media only screen and ( min-width: 782px ) {
+				div.layout.is-global-sidebar-visible {
+					header.navigation-header {
+						padding-top: 24px;
 						padding-inline: 64px;
-						margin-bottom: 0;
-					}
-					.domains-table-header {
-						position: sticky;
-						top: 0;
-						z-index: 2;
-					}
-				}
-
-				@media only screen and ( min-width: 782px ) {
-					div.layout.is-global-sidebar-visible {
-						header.navigation-header {
-							padding-top: 24px;
-							padding-inline: 64px;
-							border-block-end: 1px solid var( --studio-gray-0 );
-						}
-						.layout__primary > main {
-							background: var( --color-surface );
-							border-radius: 8px;
-							box-shadow: none
-							height: calc( 100vh - 32px );
-							overflow: hidden;
-							max-width: none;
-							height: calc( 100vh - 32px );
-						}
-					}
-				}
-
-				@media only screen and ( max-width: 600px ) {
-					.navigation-header__main {
-						justify-content: normal;
-						.formatted-header {
-							flex: none;
-						}
-					}
-					.domains-table {
-						padding: 0 8px;
-					}
-					.domains-table-toolbar {
-						margin-inline: 0 !important;
-					}
-					table {
-						padding-inline: 0 !important;
-					}
-					div.layout.is-global-sidebar-visible {
-						.layout__primary > main {
-							height: calc( 100vh - var(--masterbar-height) );
-						}
-					}
-				}
-
-				@media only screen and ( max-width: 781px ) {
-					div.layout.is-global-sidebar-visible {
-						.layout__primary {
-							overflow-x: auto;
-						}
+						border-block-end: 1px solid var( --studio-gray-0 );
 					}
 					.layout__primary > main {
 						background: var( --color-surface );
-						margin: 0;
 						border-radius: 8px;
-					}
-					header.navigation-header {
-						padding-inline: 16px;
-						padding-bottom: 0;
-					}
-				}
-				@media only screen and ( min-width: 601px ) and ( max-width: 781px ) {
-					.domains-table {
-						.domains-table-toolbar {
-							margin-inline: 16px;
-						}
-						table {
-							padding-inline: 16px;
-						}
-					}
-					div.layout.is-global-sidebar-visible {
-						.layout__primary > main {
-							height: calc( 100vh - var(--masterbar-height) - 48px );
-						}
+						box-shadow: none;
+						height: calc( 100vh - 32px );
+						overflow: hidden;
+						max-width: none;
 					}
 				}
-
 			}
-		`;
+
+			@media only screen and ( max-width: 600px ) {
+				.navigation-header__main {
+					justify-content: normal;
+					.formatted-header {
+						flex: none;
+					}
+				}
+				.domains-table {
+					padding: 0 8px;
+				}
+				.domains-table-toolbar {
+					margin-inline: 0 !important;
+				}
+				table {
+					padding-inline: 0 !important;
+				}
+				div.layout.is-global-sidebar-visible {
+					.layout__primary > main {
+						height: calc( 100vh - var( --masterbar-height ) );
+					}
+				}
+			}
+
+			@media only screen and ( max-width: 781px ) {
+				div.layout.is-global-sidebar-visible {
+					.layout__primary {
+						overflow-x: auto;
+					}
+				}
+				.layout__primary > main {
+					background: var( --color-surface );
+					margin: 0;
+					border-radius: 8px;
+				}
+				header.navigation-header {
+					padding-inline: 16px;
+					padding-bottom: 0;
+				}
+			}
+			@media only screen and ( min-width: 601px ) and ( max-width: 781px ) {
+				.domains-table {
+					.domains-table-toolbar {
+						margin-inline: 16px;
+					}
+					table {
+						padding-inline: 16px;
+					}
+				}
+				div.layout.is-global-sidebar-visible {
+					.layout__primary > main {
+						height: calc( 100vh - var( --masterbar-height ) - 48px );
+					}
+				}
+			}
+		}
+	`;
 	const item = {
 		label: translate( 'Domains' ),
 		helpBubble: translate(

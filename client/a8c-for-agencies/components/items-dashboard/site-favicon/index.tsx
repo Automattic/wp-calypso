@@ -28,6 +28,7 @@ const SiteFavicon = ( {
 	const site = useSelector( ( state ) => getSite( state, blogId ) );
 
 	let defaultFavicon;
+	let defaultFaviconClass = '';
 	switch ( fallback ) {
 		case 'wordpress-logo':
 			defaultFavicon = <WordPressLogo className="wpcom-favicon" size={ size * 0.8 } />;
@@ -38,6 +39,7 @@ const SiteFavicon = ( {
 					{ getFirstGrapheme( site?.title ?? '' ) }
 				</div>
 			);
+			defaultFaviconClass = 'is-first-grapheme';
 			break;
 		case 'color':
 		default:
@@ -46,7 +48,7 @@ const SiteFavicon = ( {
 	}
 
 	return (
-		<div className={ classNames( 'site-favicon', className ) }>
+		<div className={ classNames( 'site-favicon', className, defaultFaviconClass ) }>
 			<SiteIcon siteId={ blogId } size={ size } defaultIcon={ defaultFavicon } />
 		</div>
 	);

@@ -1,5 +1,6 @@
 import { FormLabel, FormInputValidation, Gridicon, Button } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
+import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -17,10 +18,12 @@ type Errors = {
 export function GetReportForm( {
 	url,
 	token,
+	isOpen,
 	onClose,
 }: {
 	url?: string;
 	token?: string;
+	isOpen: boolean;
 	onClose: () => void;
 } ) {
 	const [ name, setName ] = useState( '' );
@@ -98,89 +101,89 @@ export function GetReportForm( {
 		setIsTermsChecked( e );
 	};
 
-	const handleClose = () => {
-		onClose();
-	};
-
 	return (
-		<div className="get-report-form__container">
-			<div className="get-report-form__title">
-				<span className="title">{ translate( 'Get full report' ) }</span>
-			</div>
-			<div className="get-report-form__body">
-				<div className="get-report-form__header">
-					<span className="description">
-						{ translate(
-							'Enter your details below to receive the full report with detailed insights and recommendations for your site.'
-						) }
-					</span>
-					<span>
-						<Gridicon icon="chevron-down" onClick={ handleClose } />
-					</span>
+		<div
+			className={ classnames( 'get-report-form__wrapper', {
+				'get-report-form__wrapper--hidden': ! isOpen,
+			} ) }
+		>
+			<div className="get-report-form__container">
+				<div className="get-report-form__title">
+					<span className="title">{ translate( 'Get full report' ) }</span>
 				</div>
-				<form className="get-report-form__form" onSubmit={ handleSubmit }>
-					<div className="get-report-form__form-body">
-						<FormFieldset>
-							<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
-							<FormTextInput
-								name="name"
-								className="get-report-form__form-name"
-								label={ translate( 'Name' ) }
-								value={ name }
-								isError={ !! errors?.name }
-								onChange={ handleNameChange }
-							/>
+				<div className="get-report-form__body">
+					<div className="get-report-form__header">
+						<span className="description">
+							{ translate(
+								'Enter your details below to receive the full report with detailed insights and recommendations for your site.'
+							) }
+						</span>
+						<span>
+							<Gridicon icon="chevron-down" onClick={ onClose } />
+						</span>
+					</div>
+					<form className="get-report-form__form" onSubmit={ handleSubmit }>
+						<div className="get-report-form__form-body">
+							<FormFieldset>
+								<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
+								<FormTextInput
+									name="name"
+									className="get-report-form__form-name"
+									label={ translate( 'Name' ) }
+									value={ name }
+									isError={ !! errors?.name }
+									onChange={ handleNameChange }
+								/>
 
-							{ errors?.name && <FormInputValidation isError={ !! errors } text={ errors.name } /> }
-						</FormFieldset>
-						<FormFieldset>
-							<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
-							<FormTextInput
-								name="email"
-								className="get-report-form__form-email"
-								label={ translate( 'Email' ) }
-								value={ email }
-								isError={ !! errors?.email }
-								onChange={ handleEmailChange }
-							/>
-							{ errors?.email && (
-								<FormInputValidation isError={ !! errors } text={ errors.email } />
-							) }
-						</FormFieldset>
-					</div>
-					<div className="get-report-form__form-footer">
-						<FormFieldset>
-							<CheckboxControl
-								name="termsAccepted"
-								className="terms-checkbox"
-								checked={ isTermsChecked }
-								onChange={ handleTermsChange }
-								label={ translate(
-									`By submitting your details, you agree to WordPress.com‘s Privacy Policy and Terms of Service. You also consent to receiving occasional updates and offers. You can unsubscribe from these communications at any time through the instructions.`
+								{ errors?.name && <FormInputValidation isError text={ errors.name } /> }
+							</FormFieldset>
+							<FormFieldset>
+								<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
+								<FormTextInput
+									name="email"
+									className="get-report-form__form-email"
+									label={ translate( 'Email' ) }
+									value={ email }
+									isError={ !! errors?.email }
+									onChange={ handleEmailChange }
+								/>
+								{ errors?.email && <FormInputValidation isError text={ errors.email } /> }
+							</FormFieldset>
+						</div>
+						<div className="get-report-form__form-footer">
+							<FormFieldset>
+								<CheckboxControl
+									name="termsAccepted"
+									className="terms-checkbox"
+									checked={ isTermsChecked }
+									onChange={ handleTermsChange }
+									label={ translate(
+										`By submitting your details, you agree to WordPress.com‘s Privacy Policy and Terms of Service. You also consent to receiving occasional updates and offers. You can unsubscribe from these communications at any time through the instructions.`
+									) }
+								/>
+								{ errors?.termsAccepted && (
+									<FormInputValidation isError text={ errors.termsAccepted } />
 								) }
+							</FormFieldset>
+							<Button
+								type="submit"
+								className="submit-button"
+								busy={ isSubmitting }
+								disabled={ responseSuccess }
+							>
+								{ translate( 'Get my report' ) }
+								<Gridicon icon="product-downloadable" />
+							</Button>
+						</div>
+						{ responseError && <FormInputValidation isError text={ responseError } /> }
+						{ responseSuccess && (
+							<FormInputValidation
+								isError={ false }
+								text="Success! An email with the report link will be sent shortly"
 							/>
-							{ errors?.termsAccepted && (
-								<FormInputValidation isError={ !! errors } text={ errors.termsAccepted } />
-							) }
-						</FormFieldset>
-						<Button
-							type="submit"
-							className="submit-button"
-							busy={ isSubmitting }
-							disabled={ responseSuccess }
-						>
-							{ translate( 'Get my report' ) }
-							<Gridicon icon="product-downloadable" />
-						</Button>
-					</div>
-					{ responseError && <FormInputValidation isError text={ responseError } /> }
-					{ responseSuccess && (
-						<FormInputValidation
-							isError={ false }
-							text="Success! An email with the report link will be sent shortly"
-						/>
-					) }
-				</form>
+						) }
+					</form>
+				</div>
 			</div>
 		</div>
 	);

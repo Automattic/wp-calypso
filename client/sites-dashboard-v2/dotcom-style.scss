@@ -71,6 +71,10 @@
 	@media ( min-width: 782px ) {
 		height: calc(100vh - var(--masterbar-height) - 32px);
 	}
+
+	.sites-site-favicon {
+		margin-right: 0;
+	}
 }
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
@@ -191,26 +195,24 @@
 // Styles for actions (search, filters).
 .dataviews-filters__view-actions {
 	.components-search-control {
-		@include break-large {
-			min-width: 337px;
-		}
+		min-width: 245px;
 	}
 
 	.components-search-control .components-input-control__container {
 		width: 100%;
-		height: 44px;
+		height: 36px;
 		flex: 1 1 auto;
-		flex-direction: row-reverse;
+		flex-direction: row;
 		align-items: center;
 		// Places search above filters
 		z-index: 1;
-		border-radius: 4px;
-		border: 1px solid var(--color-border-subtle);
+		border-radius: 2px;
+		border: 1px solid var(--studio-gray-10);
 		background-color: var(--color-surface, $white);
 
 		.components-input-control__input {
-			padding-left: 0;
-			font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			padding: 0 0 0 10px;
+			font-size: $font-body-small;
 			color: var(--studio-gray-40);
 
 			&::placeholder {
@@ -220,8 +222,8 @@
 
 		// Search icon
 		.components-input-control__suffix {
-			padding-inline-start: 11px;
-			color: var(--studio-black);
+			color: var(--studio-gray-40);
+			margin-right: 4px;
 		}
 	}
 }
@@ -255,10 +257,10 @@
 // Styles collapsed site list.
 .wpcom-site {
 	.layout__content {
-		transition: all 220ms ease-out;
+		transition: padding-left 220ms ease-out;
 	}
 	.layout__secondary {
-		transition: all 220ms ease-out;
+		transition: width 220ms ease-out;
 
 		.sidebar__header,
 		.sidebar__body,
@@ -269,15 +271,11 @@
 			}
 		}
 		.sidebar__header {
-			flex-wrap: wrap;
-			span.dotcom {
+			flex-direction: row !important;
+			transition: none;
+			.dotcom {
+				transition: width 220ms ease-out;
 				background-position: left;
-			}
-			.gap,
-			button.sidebar__item-search,
-			a.sidebar__item-notifications {
-				justify-content: flex-start;
-				flex-basis: 0%;
 			}
 			.sidebar__menu-link {
 				transition: all 220ms ease-out;
@@ -307,15 +305,7 @@
 						}
 					}
 					.sidebar__header {
-						flex-direction: row !important;
 						padding-inline: 19px;
-						.gap {
-							flex-basis: 100%;
-						}
-						button.sidebar__item-search,
-						a.sidebar__item-notifications {
-							flex-basis: 100%;
-						}
 					}
 					.sidebar__body {
 						.sidebar__menu-link-text {
@@ -359,19 +349,6 @@
 				}
 			}
 		}
-
-		.sites-site-favicon {
-			margin-right: 0;
-
-			.is-blank {
-				font-size: xx-large !important;
-				text-transform: uppercase;
-				background-color: #f5f7f7;
-				border: 1px solid rgb(238, 238, 238);
-				border-radius: 4px;
-				box-sizing: border-box;
-			}
-		}
 	}
 
 	.sites-dashboard:not(.preview-hidden) {
@@ -400,10 +377,6 @@
 		.dataviews-filters__view-actions {
 			align-items: center;
 			display: flex;
-
-			.components-search-control {
-				min-width: initial;
-			}
 		}
 
 		ul.dataviews-view-list {
@@ -441,12 +414,17 @@
 			padding: 0 8px;
 		}
 	}
+
 	.item-preview__header {
 		.item-preview__header-title {
 			font-family: Recoleta, sans-serif;
 		}
 
 		.item-preview__header-content {
+			.item-preview__header-info {
+				flex-wrap: wrap;
+			}
+
 			@media (max-width: $break-large) {
 				padding: 0;
 			}
@@ -465,6 +443,10 @@
 			}
 		}
 
+		.item-preview__header-actions .button {
+			border-radius: 4px;
+		}
+
 		.item-preview__header-content .item-preview__close-preview {
 			height: 16px;
 			padding-left: 0;
@@ -477,8 +459,16 @@
 		}
 	}
 	.item-preview__content {
+		padding: 32px 48px 48px;
+
+		.navigation-header {
+			padding: 0;
+		}
+
 		> * {
-			margin: 0;
+			margin-top: 0;
+			margin-left: 0;
+			margin-right: 0;
 			padding-top: 0;
 			padding-left: 0;
 			padding-right: 0;

@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
@@ -15,7 +14,6 @@ import siteMigrationFlow from '../site-migration-flow';
 import { getAssertionConditionResult, getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
-const originalIsEnabled = config.isEnabled;
 
 jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
@@ -43,11 +41,6 @@ describe( 'Site Migration Flow', () => {
 		const testSettingsEndpoint = '/rest/v1.4/sites/example.wordpress.com/settings';
 		nock( apiBaseUrl ).get( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( testSettingsEndpoint ).reply( 200, {} );
-		jest
-			.spyOn( config, 'isEnabled' )
-			.mockImplementation( ( key ) =>
-				key === 'migration-flow/remove-processing-step' ? false : originalIsEnabled( key )
-			);
 	} );
 
 	afterEach( () => {
@@ -172,30 +165,8 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'migrate redirects from the import-from page to bundleTransfer step if new instructions not enabled', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.BUNDLE_TRANSFER.slug,
-				dependencies: {
-					destination: 'migrate',
-				},
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.PROCESSING.slug }`,
-				state: {
-					bundleProcessing: true,
-				},
-			} );
-		} );
-
 		it( 'migrate redirects from the import-from page to new instructions if flag enabled', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			( config.isEnabled as jest.Mock ).mockImplementation( ( key: string ) =>
-				key === 'migration-flow/remove-processing-step' ? true : originalIsEnabled( key )
-			);
 
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
@@ -224,7 +195,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 				flowName: 'site-migration',
 				siteSlug: 'example.wordpress.com',
@@ -250,42 +221,6 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects from upgrade-plan to verifyEmail if user is unverified', async () => {
-			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-				dependencies: {
-					verifyEmail: true,
-				},
-			} );
-
-			await waitFor( () => {
-				expect( getFlowLocation() ).toEqual( {
-					path: `/${ STEPS.VERIFY_EMAIL.slug }`,
-					state: {
-						pollForEmailVerification: false,
-					},
-				} );
-			} );
-		} );
-
-		it( 'redirects from verifyEmail to site-migration-assign-trial-plan step', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.VERIFY_EMAIL.slug,
-				dependencies: {
-					verifyEmail: true,
-				},
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug }`,
-				state: null,
-			} );
-		} );
-
 		it( 'redirects from site-migration-assign-trial-plan step to bundleTransfer step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
@@ -294,7 +229,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/bundleTransfer',
+				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`,
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );

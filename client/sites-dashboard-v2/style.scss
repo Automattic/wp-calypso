@@ -190,6 +190,7 @@
 
 			.components-flex.components-h-stack {
 				flex: 6;
+				padding-left: 8px;
 			}
 
 		}
@@ -563,6 +564,9 @@
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 			.preview-pane__navigation {
 				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);
+				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
+				padding-top: 1px;
+				clip-path: inset(2px -1px -1px -1px);
 			}
 		}
 

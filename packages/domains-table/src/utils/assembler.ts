@@ -75,6 +75,8 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		cannotUpdateContactInfoReason: domain.cannot_update_contact_info_reason
 			? String( domain.cannot_update_contact_info_reason )
 			: null,
+		canTransferToAnyUser: Boolean( domain.can_transfer_to_any_user ),
+		canTransferToOtherSite: Boolean( domain.can_transfer_to_other_site ),
 		connectionMode: String( domain.connection_mode ),
 		contactInfoDisclosureAvailable: Boolean( domain.contact_info_disclosure_available ),
 		contactInfoDisclosed: Boolean( domain.contact_info_disclosed ),

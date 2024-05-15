@@ -59,6 +59,8 @@ export type ResponseDomain = {
 	bundledPlanSubscriptionId: string | number | null | undefined;
 	canManageDnsRecords: boolean;
 	canManageNameServers: boolean;
+	canTransferToOtherSite: boolean;
+	canTransferToAnyUser: boolean;
 	cannotManageDnsRecordsReason: string | null;
 	cannotManageNameServersReason: string | null;
 	cannotUpdateContactInfoReason: string | null;

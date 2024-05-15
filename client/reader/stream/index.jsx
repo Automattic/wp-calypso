@@ -502,17 +502,14 @@ class ReaderStream extends Component {
 	};
 
 	getScrollContainer = ( node ) => {
-		if ( ! node ) {
-			return undefined;
+		// Leave it to the default scroll container if we cannot find it or its the root element.
+		if ( ! node || node.ownerDocument === node.parentNode ) {
+			return false;
 		}
 
-		// ...except when overflow is defined to be hidden or visible
+		// Return when overflow is defined to either auto or scroll.
 		const { overflowY } = getComputedStyle( node );
 		if ( /(auto|scroll)/.test( overflowY ) ) {
-			return node;
-		}
-
-		if ( node.ownerDocument === node.parentNode ) {
 			return node;
 		}
 

@@ -46,7 +46,6 @@ export function notifications( context, next ) {
 					require="calypso/notifications"
 					isShowing
 					checkToggle={ () => {} }
-					setIndicator={ () => {} }
 					placeholder={ null }
 					isGlobalSidebarVisible={ shouldShowGlobalSidebar }
 				/>

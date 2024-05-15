@@ -10,6 +10,7 @@ import {
 	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isIntenseDebateOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 
@@ -92,8 +93,8 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
 	}
 
-	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-		// Gravatar powered clients signup via the magic login page
+	if ( isGravPoweredOAuth2Client( oauth2Client ) || isStudioAppOAuth2Client( oauth2Client ) ) {
+		// Studio app and Gravatar powered clients signup via the magic login page
 		return login( {
 			locale,
 			twoFactorAuthType: 'link',

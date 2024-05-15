@@ -8,6 +8,7 @@ import { getReferenceId } from '../helpers/notes';
 import { setLikeStatus } from '../state/notes/thunks/index';
 import ActionButton from './action-button';
 
+// eslint-disable-next-line no-shadow
 const LikeButton = ( { commentId, isLiked, note, translate, setLikeStatus } ) => {
 	const restClient = useContext( RestClientContext );
 

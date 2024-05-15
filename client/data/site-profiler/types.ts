@@ -91,6 +91,7 @@ export type BasicMetrics = {
 	inp: number;
 };
 export interface UrlBasicMetricsQueryResponse {
+	final_url: string;
 	basic: BasicMetrics;
 	advanced: Record< string, string >;
 	token: string;

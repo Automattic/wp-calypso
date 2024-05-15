@@ -49,7 +49,7 @@ const QuickLinksForEcommerceSites = ( props ) => {
 		<div className="quick-links-for-hosted-sites__boxes quick-links__boxes">
 			{ isAtomic && (
 				<ActionBox
-					href={ `https://${ siteSlug }/wp-admin/edit.php?post_type=shop_order` }
+					href={ `https://${ siteSlug }/wp-admin/post-new.php?post_type=product` }
 					hideLinkIndicator
 					label={ translate( 'Add a product' ) }
 					iconComponent={
@@ -59,7 +59,7 @@ const QuickLinksForEcommerceSites = ( props ) => {
 			) }
 			{ isAtomic && (
 				<ActionBox
-					href={ `https://${ siteSlug }/wp-admin/post-new.php?post_type=product` }
+					href={ `https://${ siteSlug }/wp-admin/edit.php?post_type=shop_order` }
 					hideLinkIndicator
 					label={ translate( 'View orders' ) }
 					iconComponent={

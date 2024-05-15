@@ -5,6 +5,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const JetpackConnectExampleInstall = ( { url, translate, onClick } ) => {
 	return (
+		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div className="example-components__main" onClick={ onClick }>
 			<div className="example-components__browser-chrome example-components__site-url-input-container">
 				<div className="example-components__browser-chrome-dots">

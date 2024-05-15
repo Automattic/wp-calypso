@@ -33,6 +33,7 @@ class JetpackInstallStep extends Component {
 
 	renderAlreadyHaveJetpackButton() {
 		return (
+			// eslint-disable-next-line jsx-a11y/anchor-is-valid
 			<a
 				className="jetpack-connect__already-installed-jetpack-button"
 				href="#"
@@ -45,6 +46,7 @@ class JetpackInstallStep extends Component {
 
 	renderNotJetpackButton() {
 		return (
+			// eslint-disable-next-line jsx-a11y/anchor-is-valid
 			<a
 				className="jetpack-connect__no-jetpack-button"
 				href="#"

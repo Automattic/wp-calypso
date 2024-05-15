@@ -1,10 +1,12 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { OtherSupportAvailability, ChatAvailability } from '../types';
+import { OtherSupportAvailability, ChatAvailability, EmailSupportStatus } from '../types';
 
-type ResponseType< T extends 'CHAT' | 'OTHER' > = T extends 'CHAT'
+type ResponseType< T extends 'CHAT' | 'OTHER' | 'EMAIL' > = T extends 'CHAT'
 	? ChatAvailability
+	: T extends 'EMAIL'
+	? EmailSupportStatus
 	: OtherSupportAvailability;
 
 interface APIFetchOptions {
@@ -12,7 +14,7 @@ interface APIFetchOptions {
 	path: string;
 }
 
-export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
+export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' | 'EMAIL' >(
 	supportType: SUPPORT_TYPE,
 	enabled = true
 ) {
@@ -21,12 +23,16 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
-						path: `help/eligibility/${ supportType === 'OTHER' ? 'all' : 'chat' }/mine`,
+						path: `help/eligibility/${
+							supportType === 'OTHER' ? 'all' : supportType.toLocaleLowerCase()
+						}/mine`,
 						apiNamespace: 'wpcom/v2/',
 						apiVersion: '2',
 				  } )
 				: await apiFetch( {
-						path: `help-center/support-availability/${ supportType === 'OTHER' ? 'all' : 'chat' }`,
+						path: `help-center/support-availability/${
+							supportType === 'OTHER' ? 'all' : supportType.toLocaleLowerCase()
+						}`,
 						global: true,
 				  } as APIFetchOptions ),
 		enabled,

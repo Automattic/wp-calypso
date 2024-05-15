@@ -7,6 +7,7 @@ import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getTaskList } from 'calypso/lib/checklist';
@@ -385,4 +386,21 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 	};
 } )( SiteSetupList );
 
-export default withIsFSEActive( ConnectedSiteSetupList );
+const WithIsFSEActiveSiteSetupList = withIsFSEActive( ConnectedSiteSetupList );
+export default WithIsFSEActiveSiteSetupList;
+
+const SiteSetupListWrapper = ( { siteId } ) => {
+	if ( ! siteId ) {
+		return null;
+	}
+	return (
+		<>
+			<QuerySiteChecklist siteId={ siteId } />
+			<WithIsFSEActiveSiteSetupList />
+		</>
+	);
+};
+
+export const ConnectedSiteSetupListWrapper = connect( ( state ) => ( {
+	siteId: getSelectedSiteId( state ),
+} ) )( SiteSetupListWrapper );

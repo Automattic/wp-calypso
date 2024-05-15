@@ -15,6 +15,7 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_DEVELOPER_TOOLS_PROMO,
 } from './constants';
+import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 
 type Props = {
 	site: SiteExcerptData;
@@ -150,6 +151,8 @@ const DotcomPreviewPane = ( {
 			features={ features }
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
+				siteIconFallback: 'first-grapheme',
+				headerButtons: PreviewPaneHeaderButtons,
 			} }
 		/>
 	);

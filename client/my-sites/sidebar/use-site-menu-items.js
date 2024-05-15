@@ -179,7 +179,7 @@ const useSiteMenuItems = () => {
 							type: 'submenu-item',
 							url: `/hosting/${ siteDomain }`,
 						},
-						...children.splice( pos ),
+						...children.splice( pos - 1 ),
 					];
 				}
 

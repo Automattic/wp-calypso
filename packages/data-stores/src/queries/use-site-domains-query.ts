@@ -23,6 +23,8 @@ export interface DomainData {
 	current_user_can_manage: boolean;
 	current_user_is_owner: boolean;
 	can_set_as_primary: boolean;
+	can_transfer_to_any_user: boolean;
+	can_transfer_to_other_site: boolean;
 	domain: string;
 	domain_notice_states: unknown;
 	supports_domain_connect: unknown;
