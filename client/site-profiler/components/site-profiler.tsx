@@ -205,7 +205,7 @@ export default function SiteProfiler( props: Props ) {
 				</LayoutBlock>
 			) }
 			<GetReportForm
-				url={ url }
+				url={ basicMetrics?.final_url }
 				token={ basicMetrics?.token }
 				isOpen={ showGetReportForm }
 				onClose={ () => setIsGetReportFormOpen( false ) }
