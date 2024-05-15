@@ -7,6 +7,7 @@ import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-tri
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useStartUrl } from '../hooks/use-start-url';
@@ -105,6 +106,8 @@ const siteMigration: Flow = {
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
+
+		triggerGuidesForStep( flowName, currentStep );
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
