@@ -35,11 +35,9 @@ const SiteLaunchNagLink = styled.a( {
 	gap: '25px',
 	marginLeft: '-5px',
 	fontSize: '12px',
-	lineHeight: '20px',
+	lineHeight: '16px',
 	whiteSpace: 'nowrap',
-	'&:hover span': {
-		textDecoration: 'underline',
-	},
+	textDecoration: 'underline',
 } );
 
 const SiteLaunchNagText = styled.span( {

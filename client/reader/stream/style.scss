@@ -737,9 +737,10 @@
 		margin-bottom: 32px;
 
 		a {
-			font-weight: 500;
 			font-size: $font-body-small;
+			font-weight: 400;
 			line-height: 20px;
+			text-decoration: underline;
 		}
 	}
 	.sidebar-streams__following-load-more {
@@ -778,9 +779,7 @@
 		display: block;
 		font-size: $font-body-small;
 		text-decoration: underline;
-		font-weight: 500;
 		margin-bottom: 32px;
-		color: var(--color-neutral-100);
 	}
 
 	.reader-tag-sidebar__recent-prompts {
