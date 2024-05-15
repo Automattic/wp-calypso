@@ -40,7 +40,7 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	}
 
 	if ( pathIncludes( currentPath, 'settings', 1 ) ) {
-		// Jetpack Cloud uses a simpler /settings/:site pattern for the settings page.
+		// Jetpack Cloud uses a simpler /settings/:site pattern, and A4A uses /settings/:tab, for the settings page.
 		if ( isJetpackCloud() || isA8CForAgencies() ) {
 			return fragmentIsEqual( path, currentPath, 1 );
 		}
