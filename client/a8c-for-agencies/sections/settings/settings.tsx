@@ -6,6 +6,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import AgencyProfile from './agency-profile';
 
 export default function Settings() {
 	const translate = useTranslate();
@@ -18,7 +19,10 @@ export default function Settings() {
 					<Title>{ title }</Title>
 				</LayoutHeader>
 			</LayoutTop>
-			<LayoutBody>This is the Settings section (WIP)</LayoutBody>
+			<LayoutBody>
+				<h1>This is the Settings section with tabs (WIP)</h1>
+				<AgencyProfile />
+			</LayoutBody>
 		</Layout>
 	);
 }
