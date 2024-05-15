@@ -507,6 +507,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_EMAIL_SUPPORT,
 			FEATURE_SUPPORT_EMAIL,
 			EXPERT_SUPPORT_ALL_DAYS,
+			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 		],
 	},
