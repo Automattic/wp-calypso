@@ -11,7 +11,7 @@ const selectors = {
 	// Editor
 	phoneNumberInput: 'input[placeholder="Your phone number…"]',
 	buttonLabel: 'a.whatsapp-block__button',
-	editorSettingsButton: '.editor-header__settings button[aria-label="Settings"]',
+	editorSettingsButton: '.editor-header__settings button[aria-label="Settings"], .edit-post-header__settings button[aria-label="Settings"]',
 
 	// Published
 	// 'main' needs to be specified due to the debug elements
@@ -72,11 +72,10 @@ export class WhatsAppButtonFlow implements BlockFlow {
 		const editorParent = await context.editorPage.getEditorParent();
 
 		const editorSettingsButton = editorParent.locator( selectors.editorSettingsButton );
-		const editorSettingsButtonIsVisible = await editorSettingsButton.isVisible();
 
 		// This is especially needed in mobile viewport where the settings panel takes up the screen
 		// and needs to be open deliberately
-		if ( editorSettingsButtonIsVisible && ! ( await this.targetIsOpen( editorSettingsButton ) ) ) {
+		if ( ! ( await this.targetIsOpen( editorSettingsButton ) ) ) {
 			await editorSettingsButton.click();
 		}
 
@@ -106,7 +105,7 @@ export class WhatsAppButtonFlow implements BlockFlow {
 			return;
 		}
 
-		if ( editorSettingsButtonIsVisible && ( await this.targetIsOpen( editorSettingsButton ) ) ) {
+		if ( await this.targetIsOpen( editorSettingsButton ) ) {
 			await editorSettingsButton.click();
 		}
 	}
