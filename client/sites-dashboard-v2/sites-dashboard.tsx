@@ -112,7 +112,7 @@ const SitesDashboardV2 = ( {
 				? []
 				: [
 						{
-							field: 'status',
+							field: addDummyDataViewPrefix( 'status' ),
 							operator: 'in',
 							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
