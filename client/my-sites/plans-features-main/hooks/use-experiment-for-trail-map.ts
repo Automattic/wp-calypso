@@ -23,7 +23,7 @@ function useExperimentForTrailMap( { flowName, isInSignup, intent }: Params ): {
 	isTrailMapStructure: boolean;
 } {
 	const [ isLoading, assignment ] = useExperiment(
-		'calypso_signup_onboarding_plans_trail_map_feature_grid',
+		'calypso_signup_onboarding_plans_trail_map_feature_grid_v2',
 		{
 			isEligible: flowName === 'onboarding' || ( ! isInSignup && intent === 'plans-default-wpcom' ),
 		}
