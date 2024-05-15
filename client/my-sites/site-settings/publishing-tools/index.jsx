@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card, Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
@@ -15,12 +16,19 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import isRegeneratingJetpackPostByEmail from 'calypso/state/selectors/is-regenerating-jetpack-post-by-email';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PressThis from '../press-this';
+import { PostByVoiceSetting } from './post-by-voice';
 
 import './style.scss';
 
 class PublishingTools extends Component {
+	isMobile() {
+		return /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent );
+	}
+
 	componentDidUpdate() {
 		const {
 			fields,
@@ -105,32 +113,73 @@ class PublishingTools extends Component {
 		const formPending = this.isFormPending();
 
 		return (
-			<FormFieldset>
-				<SupportInfo
-					text={ translate(
-						'Allows you to publish new posts by sending an email to a special address.'
-					) }
-					link={
-						isAtomic
-							? localizeUrl( 'https://wordpress.com/support/post-by-email/' )
-							: 'https://jetpack.com/support/post-by-email/'
-					}
-					privacyLink={ ! isAtomic }
-				/>
-				<JetpackModuleToggle
-					siteId={ selectedSiteId }
-					moduleSlug="post-by-email"
-					label={ translate( 'Publish posts by sending an email' ) }
-					disabled={ formPending || moduleUnavailable }
-				/>
+			<>
+				<FormFieldset>
+					<SupportInfo
+						text={ translate(
+							'Allows you to publish new posts by sending an email to a special address.'
+						) }
+						link={
+							isAtomic
+								? localizeUrl( 'https://wordpress.com/support/post-by-email/' )
+								: 'https://jetpack.com/support/post-by-email/'
+						}
+						privacyLink={ ! isAtomic }
+					/>
+					<JetpackModuleToggle
+						siteId={ selectedSiteId }
+						moduleSlug="post-by-email"
+						label={ translate( 'Publish posts by sending an email' ) }
+						disabled={ formPending || moduleUnavailable }
+					/>
 
-				{ this.renderPostByEmailSettings() }
-			</FormFieldset>
+					{ this.renderPostByEmailSettings() }
+				</FormFieldset>
+				<hr />
+			</>
+		);
+	}
+
+	renderPostByVoiceModule() {
+		const { fields } = this.props;
+
+		const isRequestingSettings = false;
+		const isSavingSettings = false;
+		const handleSubmitForm = () => {};
+
+		const postByVoiceCode =
+			fields.post_by_email_address && fields.post_by_email_address !== 'regenerate'
+				? fields.post_by_email_address
+				: '';
+
+		return (
+			<>
+				<FormFieldset>
+					<PostByVoiceSetting
+						isRequestingSettings={ isRequestingSettings }
+						isSavingSettings={ isSavingSettings }
+						onSubmitForm={ handleSubmitForm }
+						code={ postByVoiceCode }
+					/>
+				</FormFieldset>
+				<hr />
+			</>
 		);
 	}
 
 	render() {
-		const { selectedSiteId, translate } = this.props;
+		const { selectedSiteId, translate, siteIsJetpack, isAtomic } = this.props;
+
+		const renderPressThis =
+			config.isEnabled( 'press-this' ) &&
+			( siteIsJetpack || ( ! siteIsJetpack && ! this.isMobile() ) );
+		const renderPostByEmail = config.isEnabled( 'press-this' ) && siteIsJetpack;
+		const renderPostByVoice =
+			config.isEnabled( 'settings/post-by-voice' ) && ! siteIsJetpack && ! isAtomic;
+
+		if ( ! renderPressThis && ! renderPostByVoice && ! renderPostByEmail ) {
+			return;
+		}
 
 		return (
 			<div>
@@ -139,11 +188,13 @@ class PublishingTools extends Component {
 				<SettingsSectionHeader title={ translate( 'Publishing Tools' ) } />
 
 				<Card className="publishing-tools__card site-settings__module-settings">
-					{ this.renderPostByEmailModule() }
-					<hr />
-					<FormFieldset>
-						<PressThis />
-					</FormFieldset>
+					{ renderPostByVoice && this.renderPostByVoiceModule() }
+					{ renderPostByEmail && this.renderPostByEmailModule() }
+					{ renderPressThis && (
+						<FormFieldset>
+							<PressThis />
+						</FormFieldset>
+					) }
 				</Card>
 			</div>
 		);
@@ -166,6 +217,8 @@ PublishingTools.propTypes = {
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const siteIsJetpack = isJetpackSite( state, selectedSiteId );
+		const isAtomic = isSiteAutomatedTransfer( state, selectedSiteId );
 		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail( state, selectedSiteId );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
@@ -175,6 +228,8 @@ export default connect(
 		);
 
 		return {
+			siteIsJetpack,
+			isAtomic,
 			selectedSiteId,
 			regeneratingPostByEmail,
 			postByEmailAddressModuleActive: !! isJetpackModuleActive(
