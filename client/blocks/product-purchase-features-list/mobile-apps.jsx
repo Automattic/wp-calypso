@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import appsImage from 'calypso/assets/images/illustrations/apps.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
@@ -22,8 +23,7 @@ export default localize( ( { translate, onClick = noop } ) => {
 						utm_medium: 'cta',
 						utm_campaign: 'calypsogetappscard',
 					},
-					// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-					'https://apps.wordpress.com/get?'
+					localizeUrl( 'https://apps.wordpress.com/get?' )
 				) }
 				target="_blank"
 				onClick={ onClick }

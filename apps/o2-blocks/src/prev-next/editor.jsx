@@ -77,12 +77,12 @@ const save = ( { attributes: { prev, prevText, next, nextText }, className, isEd
 
 const edit = ( { attributes, className, isSelected, setAttributes } ) => {
 	if ( isSelected ) {
-		/* eslint-disable */
 		return (
 			<Fragment>
 				<URLInput
 					className="prev-next__link-entry"
-					autoFocus={ true }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus
 					label="Previous link"
 					value={ attributes.prev }
 					onChange={ ( url, post ) =>
@@ -99,7 +99,6 @@ const edit = ( { attributes, className, isSelected, setAttributes } ) => {
 				/>
 			</Fragment>
 		);
-		/* eslint-enable */
 	}
 
 	if ( attributes.prev || attributes.next ) {
