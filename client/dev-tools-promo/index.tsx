@@ -10,7 +10,7 @@ const redirectForNonSimpleSite = ( context: PageJSContext, next: () => void ) =>
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	if ( site && site.jetpack && ! site.plan?.expired ) {
-		return page.redirect( `/hosting/${ context.params.site }` );
+		return page.redirect( `/overview/${ context.params.site }` );
 	}
 	return next();
 };
