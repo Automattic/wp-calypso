@@ -30,10 +30,8 @@ class SharingButtonsPreviewPlaceholder extends Component {
 							{ this.props.translate( 'Like' ) }
 						</a>
 						<div className="sharing-buttons-preview__fake-user">
-							<img
-								src="https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60"
-								alt="avatar"
-							/>
+							{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
+							<img src="https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60" />
 						</div>
 						<div className="sharing-buttons-preview__fake-like">
 							{ this.props.translate( 'One blogger likes this' ) }

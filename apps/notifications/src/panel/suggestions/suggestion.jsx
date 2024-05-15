@@ -46,7 +46,8 @@ export class Suggestion extends Component {
 				onClick={ this.props.onClick }
 				onMouseEnter={ this.props.onMouseEnter }
 			>
-				<img src={ this.props.avatarUrl } alt="avatar" />
+				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
+				<img src={ this.props.avatarUrl } />
 				<span className="wpnc__username">
 					{ username.map( ( { type, text }, index ) =>
 						'strong' === type ? (

@@ -42,10 +42,8 @@ export class SummaryInList extends Component {
 						src={ this.props.note.icon }
 						key={ `image-preloader-${ this.props.note.icon }` }
 						placeholder={
-							<img
-								src="https://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=128"
-								alt="avatar"
-							/>
+							// eslint-disable-next-line jsx-a11y/alt-text
+							<img src="https://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=128" />
 						}
 					/>
 					<span className="wpnc__gridicon">

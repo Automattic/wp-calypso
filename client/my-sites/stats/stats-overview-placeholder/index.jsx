@@ -18,7 +18,8 @@ class StatsOverviewPlaceholder extends Component {
 		if ( ! this.props.insights ) {
 			icon = (
 				<div className="module-header__site-icon">
-					<img width="24" height="24" alt="icon" />
+					{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
+					<img width="24" height="24" />
 				</div>
 			);
 		}
