@@ -61,7 +61,9 @@
 	}
 }
 
-.tags__main {
+.tags__header {
+	border-bottom: 1px solid var(--studio-gray-5);
+	padding: 0 35px;
 	h4 {
 		color: var(--studio-gray-50);
 		margin-bottom: 15px;
@@ -79,8 +81,8 @@
 		display: flex;
 		flex-direction: row;
 		// we need to set the border on the column for mobile and the row for desktop
-		border-top: 1px solid var(--studio-gray-5);
-		&:last-child {
+		//border-top: 1px solid var(--studio-gray-5);
+		&:not(:last-child) {
 			border-bottom: 1px solid var(--studio-gray-5);
 		}
 	}
@@ -88,12 +90,11 @@
 		width: 100%;
 		// we need to set the border on the column for mobile and the row for desktop
 		border-top: 1px solid var(--studio-gray-5);
-		padding: 10px;
+		padding: 10px 35px;
 		box-sizing: border-box;
 		@include break-small {
 			width: 50%;
 			border-top: none;
-			padding: 10px 0;
 		}
 		a:focus {
 			outline: none;
@@ -129,15 +130,10 @@
 
 .alphabetic-tags__header {
 	background-color: var(--studio-white);
-	padding-top: 20px;
-	padding-bottom: 10px;
 	border-bottom: 1px solid var(--studio-gray-5);
 	margin-bottom: 26px;
-	padding-left: 10px;
+	padding: 20px 35px 10px 35px;
 
-	@include break-small {
-		padding-left: 0;
-	}
 	@include break-large {
 		display: flex;
 		flex-direction: row;
@@ -187,7 +183,7 @@
 	.alphabetic-tags__header {
 		border: none;
 		margin: 0;
-		padding: 0;
+		padding: 0 35px;
 
 		.alphabetic-tags__tag-links {
 			align-items: center;
@@ -213,12 +209,11 @@
 
 .alphabetic-tags__table {
 	padding-bottom: 26px;
-	border-bottom: 1px solid var(--studio-gray-5);
-	margin-bottom: 26px;
-	padding-left: 10px;
-	@include break-small {
-		padding-left: 0;
+	&:not(:last-child) {
+		border-bottom: 1px solid var(--studio-gray-5);
 	}
+	margin-bottom: 26px;
+	padding-left: 35px;
 
 	.alphabetic-tags__letter-title {
 		font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
