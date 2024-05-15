@@ -129,7 +129,6 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 24px;
 }
 
 .site-monitoring-time-controls__title {
@@ -270,4 +269,19 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 .site-monitoring__navigation-header.navigation-header {
 	width: auto;
 	padding-bottom: 0;
+	margin-bottom: 16px;
+
+	@media (max-width: $break-medium) {
+		margin-bottom: 8px;
+	}
+}
+
+.site-logs__navigation-header.navigation-header {
+	margin-bottom: 32px;
+}
+
+.site-logs-container {
+	@media (max-width: $break-small) {
+		margin-top: -12px !important;
+	}
 }

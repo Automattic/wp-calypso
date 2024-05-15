@@ -18,6 +18,11 @@ $areas: github-deployments, sftp, site-backup, support, phpmyadmin, staging-site
 		margin-bottom: 12px;
 	}
 
+	.navigation-header {
+		padding: 0;
+		margin-bottom: 32px;
+	}
+
 	&--is-two-columns {
 		.hosting__layout {
 			.card {
