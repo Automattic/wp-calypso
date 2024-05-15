@@ -390,6 +390,9 @@
 			}
 
 			li.is-selected,
+			li.is-selected:hover {
+				background-color: #ebf2fc;
+			}
 			li:hover {
 				background-color: #f7faff;
 			}
