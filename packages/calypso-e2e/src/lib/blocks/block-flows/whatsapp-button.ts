@@ -1,6 +1,6 @@
 import { Locator } from 'playwright';
-import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 import { envVariables } from '../../..';
+import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
 	phoneNumber: number | string;

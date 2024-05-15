@@ -96,7 +96,10 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 			onClick={ domainManagementLink ? handleSelect : undefined }
 		>
 			{ canSelectAnyDomains && (
-				<td className="domains-table-checkbox-td" onClick={ ( e: MouseEvent ) => e.stopPropagation() }>
+				<td
+					className="domains-table-checkbox-td"
+					onClick={ ( e: MouseEvent ) => e.stopPropagation() }
+				>
 					<CheckboxControl
 						__nextHasNoMarginBottom
 						checked={ isSelected }
