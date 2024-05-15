@@ -521,7 +521,7 @@ class MagicLogin extends Component {
 						) }
 						customFormLabel={ translate( 'Your email address' ) }
 						submitButtonLabel={ translate( 'Send activation link' ) }
-						createAccountForNewUser={ true }
+						createAccountForNewUser
 					/>
 
 					{ this.renderLinks() }
