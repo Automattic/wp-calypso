@@ -86,6 +86,7 @@ export const ScheduleList = ( props: Props ) => {
 			deleteUpdateSchedules.mutate( selectedScheduleId );
 			recordTracksEvent( 'calypso_scheduled_updates_multisite_delete_schedule', {
 				site_slugs: selectedSiteSlugsForMutate.join( ',' ),
+				sites_count: selectedSiteSlugsForMutate.length,
 			} );
 		}
 		closeRemoveConfirm();
