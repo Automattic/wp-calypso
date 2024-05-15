@@ -512,12 +512,11 @@ class SignupForm extends Component {
 		return login( {
 			emailAddress,
 			isJetpack: this.isJetpack(),
-			from: this.getLoginLinkFrom(),
+			from: this.props.isP2Flow ? 'p2' : this.props.from,
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 			wccomFrom: this.props.wccomFrom,
-			isWhiteLogin: this.props.isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
 		} );
 	}
@@ -1212,13 +1211,46 @@ class SignupForm extends Component {
 		const logInUrl = this.getLoginLink();
 
 		if ( this.props.isSocialFirst ) {
+			console.log( { p: this.props } );
+			console.log( { p: this.props } );
 			return (
 				<SignupFormSocialFirst
+					/**
+					 * step
+					 * {
+					 *	lastKnownFlow: "onboarding"
+					 *	lastUpdated: 1715739964040
+					 *	status: "in-progress"
+					 *	stepName: "user-social"
+					 * }
+					 */
 					step={ this.props.step }
+					/**
+					 * String stepName
+					 */
 					stepName={ this.props.stepName }
+					/**
+					 * String flowName
+					 */
 					flowName={ this.props.flowName }
+					/**
+					 * Callback to go to next step
+					 */
 					goToNextStep={ this.props.goToNextStep }
+					/**
+					 * 
+						emailAddress, // Ignored
+						isJetpack: this.isJetpack(), // Not required for hosting
+						from: this.getLoginLinkFrom(), // from query param,
+						redirectTo: this.props.redirectToAfterLoginUrl, // Maybe add the redirect url to the current flow
+						locale: this.props.locale, // Just the locale i.e. en
+						oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id, //	const oauth2Client = useSelector( getCurrentOAuth2Client );
+						wccomFrom: this.props.wccomFrom, // const wccomForm = useSelector( getWccomFrom );
+						isWhiteLogin: this.props.isReskinned,
+						signupUrl: window.location.pathname + window.location.search,
+					 */
 					logInUrl={ logInUrl }
+					//
 					handleSocialResponse={ this.props.handleSocialResponse }
 					socialService={ this.props.socialService }
 					socialServiceResponse={ this.props.socialServiceResponse }

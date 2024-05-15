@@ -297,12 +297,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	const locale = getLocaleSlug();
 
-	// ************************************************************************
-	// ****  Experiment skeleton left in for future BBE copy change tests  ****
-	// ************************************************************************
-	// Pre Load Experiment relevant to the post site creation goal screen
-	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
-
 	wpcom.req.post(
 		'/sites/new',
 		{
