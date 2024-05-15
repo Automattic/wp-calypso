@@ -254,7 +254,7 @@ class DnsRecordsList extends Component {
 					dnsRecord={ dnsRecord }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
-					enabled={ true }
+					enabled
 					actions={ this.getActionsForDnsRecord( dnsRecord ) }
 				/>
 			);

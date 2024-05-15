@@ -80,7 +80,7 @@ export const SiteStats = ( { site }: SiteStatsProps ) => {
 						<StatsOffIndicator />
 					) : (
 						<a href={ `/stats/day/${ site.slug }` }>
-							<StatsSparkline siteId={ site.ID } showLoader={ true } />
+							<StatsSparkline siteId={ site.ID } showLoader />
 						</a>
 					) }
 				</>

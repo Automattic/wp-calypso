@@ -12,7 +12,7 @@ const ThemeCollectionPlaceholder = ( { items }: ThemeCollectionPlaceholderProps 
 			<Theme
 				key={ `placeholder-${ index }` }
 				theme={ { id: `placeholder-${ index }`, name: 'Loading…' } }
-				isPlaceholder={ true }
+				isPlaceholder
 			/>
 		</ThemeCollectionItem>
 	) );

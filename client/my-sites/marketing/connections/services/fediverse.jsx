@@ -76,7 +76,7 @@ export default function Fediverse() {
 				className="sharing-service sharing-service--fediverse"
 				title="Fediverse"
 				summary={ <FediverseStatus /> }
-				clickableHeader={ true }
+				clickableHeader
 				compact
 			>
 				<FediverseServiceSection needsBorders={ false } />

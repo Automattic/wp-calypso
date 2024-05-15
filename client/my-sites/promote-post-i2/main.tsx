@@ -273,7 +273,7 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			{ ! isLoadingBillingSummary && paymentBlocked && (
 				<Notice
-					isReskinned={ true }
+					isReskinned
 					showDismiss={ false }
 					status="is-error"
 					icon="notice-outline"

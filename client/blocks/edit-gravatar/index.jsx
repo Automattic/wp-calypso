@@ -123,7 +123,7 @@ export class EditGravatar extends Component {
 	renderImageEditor() {
 		if ( this.state.isEditingImage ) {
 			return (
-				<Dialog additionalClassNames="edit-gravatar-modal" isVisible={ true }>
+				<Dialog additionalClassNames="edit-gravatar-modal" isVisible>
 					<ImageEditor
 						allowedAspectRatios={ [ AspectRatios.ASPECT_1X1 ] }
 						media={ { src: this.state.image } }
@@ -198,7 +198,7 @@ export class EditGravatar extends Component {
 											href={ gravatarLink }
 											target="_blank"
 											rel="noopener noreferrer"
-											icon={ true }
+											icon
 										/>
 									),
 									p: <p />,
@@ -288,7 +288,7 @@ export class EditGravatar extends Component {
 											href={ gravatarLink }
 											target="_blank"
 											rel="noopener noreferrer"
-											icon={ true }
+											icon
 										/>
 									),
 									p: <p />,

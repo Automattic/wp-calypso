@@ -126,7 +126,7 @@ export default function SiteOptionsStep( props: Props ) {
 			align="left"
 			skipButtonAlign="top"
 			skipLabelText={ translate( 'Skip this step' ) }
-			isHorizontalLayout={ true }
+			isHorizontalLayout
 			defaultDependencies={ {
 				siteTitle: '',
 				tagline: '',

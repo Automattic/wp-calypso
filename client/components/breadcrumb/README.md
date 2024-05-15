@@ -21,7 +21,7 @@ const BreadcrumbExamples = () => {
 			<br />
 			<Breadcrumb items={ navigationItems } />
 			<br />
-			<Breadcrumb items={ navigationItems } mobileItem="Go Back" compact={ true } />
+			<Breadcrumb items={ navigationItems } mobileItem="Go Back" compact />
 		</>
 	);
 };

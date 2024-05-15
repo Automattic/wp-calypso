@@ -367,7 +367,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 			</MenuItemLink>
 			<SubmenuPopover
 				{ ...submenuProps.submenu }
-				inline={ true }
+				inline
 				focusOnMount={ displayUpsell ? false : 'firstElement' }
 			>
 				{ displayUpsell ? (

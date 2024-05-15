@@ -135,7 +135,7 @@ export const JetpackSitesDataViews = ( {
 				id: 'site',
 				header: (
 					<>
-						<SiteSort isSortable={ true } columnKey="site">
+						<SiteSort isSortable columnKey="site">
 							<span
 								className="sites-dataview__site-header sites-dataview__site-header--sort"
 								ref={ ( ref ) => setIntroRef( ref as HTMLElement | null ) }

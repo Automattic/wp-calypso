@@ -1415,7 +1415,7 @@ export class RenderDomainsStep extends Component {
 				}
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
-				hideSkip={ true }
+				hideSkip
 				goToNextStep={ this.handleSkip }
 				align="center"
 				isWideLayout={ isReskinned }

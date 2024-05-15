@@ -24,7 +24,7 @@ jest.mock( 'calypso/components/empty-content', () => () => <div data-testid="emp
 
 describe( 'SiteSettingsSecurity basic tests', () => {
 	test( 'error page should not show if active security settings feature', () => {
-		render( <SiteSettingsSecurity { ...props } hasSecuritySettings={ true } /> );
+		render( <SiteSettingsSecurity { ...props } hasSecuritySettings /> );
 		expect( screen.queryByTestId( 'empty-content' ) ).not.toBeInTheDocument();
 	} );
 	test( 'error page should show if no active security settings feature', () => {

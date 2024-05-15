@@ -42,7 +42,7 @@ export const JetpackFediverseSettingsSection = ( { siteId, needsBorders } ) => {
 							</p>
 						</>
 					) : (
-						<Button primary={ true } onClick={ () => page( `/plugins/activitypub/${ domain }` ) }>
+						<Button primary onClick={ () => page( `/plugins/activitypub/${ domain }` ) }>
 							{ pluginIsInstalledAndInactive
 								? translate( 'Activate ActivityPub' )
 								: translate( 'Install ActivityPub' ) }

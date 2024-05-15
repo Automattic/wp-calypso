@@ -193,7 +193,7 @@ describe( '<PlanNotice /> Tests', () => {
 			<PlanNotice
 				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
 				visiblePlans={ plansList }
-				isInSignup={ true }
+				isInSignup
 				siteId={ 32234 }
 			/>
 		);

@@ -65,7 +65,7 @@ describe( 'Scan History Jetpack Benefit Block', () => {
 		getSiteScanState.mockReturnValue( { state: 'idle', mostRecent: { timestamp: '' } } );
 		isRequestingJetpackScan.mockReturnValue( false );
 
-		const { container } = render( <JetpackBenefitsScanHistory isStandalone={ true } /> );
+		const { container } = render( <JetpackBenefitsScanHistory isStandalone /> );
 		expect( container ).toMatchSnapshot();
 	} );
 } );

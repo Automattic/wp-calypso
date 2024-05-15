@@ -62,7 +62,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	return (
 		<JetpackLightbox
 			className={ classNames( 'license-lightbox', className ) }
-			isOpen={ true }
+			isOpen
 			onClose={ onClose }
 			onAfterOpen={ initMobileSidebar }
 		>

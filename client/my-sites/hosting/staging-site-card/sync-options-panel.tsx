@@ -160,7 +160,7 @@ export default function SyncOptionsPanel( {
 							{ 'sqls' === item.name && isSqlsOptionDisabled ? (
 								<ToggleWithLabelFontSize
 									data-testid="danger-zone-checkbox"
-									disabled={ true }
+									disabled
 									help={
 										<ItemSubtitle>
 											{ translate(

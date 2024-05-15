@@ -66,15 +66,7 @@ class VideoPressStatsModule extends Component {
 		const { period, startOf } = this.props.period;
 		const { path, query } = this.props;
 
-		return (
-			<DatePicker
-				period={ period }
-				date={ startOf }
-				path={ path }
-				query={ query }
-				summary={ true }
-			/>
-		);
+		return <DatePicker period={ period } date={ startOf } path={ path } query={ query } summary />;
 	}
 
 	getHref() {

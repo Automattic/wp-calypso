@@ -351,7 +351,7 @@ const JetpackComFooter: React.FC = () => {
 												<span className="social-properties__accessible-name">
 													{ accessibleName }
 												</span>
-												<SocialLogo icon={ icon } aria-hidden={ true } />
+												<SocialLogo icon={ icon } aria-hidden />
 											</ExternalLink>
 										</li>
 									) ) }

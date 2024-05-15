@@ -98,7 +98,7 @@ export class SitesDropdown extends PureComponent {
 							onClose={ this.onClose }
 							onSiteSelect={ this.selectSite }
 							selected={ this.state.selectedSiteId }
-							hideSelected={ true }
+							hideSelected
 							filter={ this.props.filter && this.siteFilter }
 						/>
 					) }

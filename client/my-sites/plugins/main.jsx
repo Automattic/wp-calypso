@@ -461,7 +461,7 @@ export class PluginsMain extends Component {
 		const selectedTextContent = (
 			<span>
 				{ title }
-				{ count ? <Count count={ count } compact={ true } /> : null }
+				{ count ? <Count count={ count } compact /> : null }
 			</span>
 		);
 

@@ -55,8 +55,8 @@ const ConfirmationTask = ( props: ConfirmationTaskProps ) => {
 			{ buttonText && onButtonClick && (
 				<div className="confirmation-task__action">
 					<Button
-						borderless={ true }
-						primary={ true }
+						borderless
+						primary
 						onClick={ () => {
 							dispatch(
 								recordTracksEvent( `calypso_${ context }_upgraded_card_click`, { card_id: id } )

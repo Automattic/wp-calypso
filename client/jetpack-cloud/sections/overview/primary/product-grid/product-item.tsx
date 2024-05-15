@@ -52,7 +52,7 @@ const ProductItem: React.FC< Props > = ( { productData, onMoreAboutClick } ) => 
 
 	return (
 		<SimpleItemCard
-			isCondensedVersion={ true }
+			isCondensedVersion
 			title={ productData.name }
 			icon={ displayIcon }
 			description={ displayDescription }
