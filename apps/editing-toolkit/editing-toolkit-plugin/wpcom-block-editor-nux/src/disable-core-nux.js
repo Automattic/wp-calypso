@@ -5,6 +5,7 @@ import '@wordpress/nux'; //ensure nux store loads
 // Disable nux and welcome guide features from core.
 const unsubscribe = subscribe( () => {
 	dispatch( 'core/nux' ).disableTips();
+	dispatch( 'core/interface' ).setFeatureValue( 'core/customize-widgets', 'welcomeGuide', false );
 	if ( select( 'core/edit-post' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
 		unsubscribe();
