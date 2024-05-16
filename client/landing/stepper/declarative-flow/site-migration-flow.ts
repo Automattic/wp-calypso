@@ -107,7 +107,10 @@ const siteMigration: Flow = {
 			window.location.assign( to );
 		};
 
-		triggerGuidesForStep( flowName, currentStep );
+		// Call triggerGuidesForStep for the current step
+		useEffect( () => {
+			triggerGuidesForStep( flowName, currentStep );
+		}, [ flowName, currentStep ] );
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
