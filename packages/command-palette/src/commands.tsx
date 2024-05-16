@@ -315,9 +315,7 @@ export function useCommands() {
 			},
 			openPHPmyAdmin: {
 				name: 'openPHPmyAdmin',
-				get label() {
-					return __( 'Open database in phpMyAdmin', __i18n_text_domain__ );
-				},
+				label: __( 'Open database in phpMyAdmin', __i18n_text_domain__ ),
 				callback: commandNavigation( '/hosting-config/:site#database-access' ),
 				searchLabel: [
 					_x(
