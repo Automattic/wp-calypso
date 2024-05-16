@@ -3,25 +3,25 @@ import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
 import { Step } from '../../types';
 
-const UserStep: Step = function UserStep( { navigation } ) {
+const UserStep: Step = function UserStep( { flow, stepName, navigation } ) {
 	const { submit } = navigation;
 	const socialService = getSocialServiceFromClientId( '' );
 
 	return (
 		<h1>
 			<SignupFormSocialFirst
-				step="user"
-				stepName="user"
-				flowName="new-hosted-site"
+				step={ {} }
+				stepName={ stepName }
+				flowName={ flow }
 				goToNextStep={ () => submit?.() }
 				logInUrl={ login( {
 					signupUrl: window.location.pathname + window.location.search,
 				} ) }
-				handleSocialResponse={ () => {} }
-				socialService={ socialService as string }
-				socialServiceResponse=""
+				handleSocialResponse={ () => submit?.() }
+				socialService={ socialService ?? '' }
+				socialServiceResponse={ {} }
 				isReskinned={ true }
-				redirectToAfterLoginUrl=""
+				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
 				userEmail=""
 				notice={ false }

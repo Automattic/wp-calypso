@@ -1212,7 +1212,6 @@ class SignupForm extends Component {
 
 		if ( this.props.isSocialFirst ) {
 			console.log( { p: this.props } );
-			console.log( { p: this.props } );
 			return (
 				<SignupFormSocialFirst
 					/**

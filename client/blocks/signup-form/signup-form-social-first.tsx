@@ -14,13 +14,13 @@ import './style.scss';
 
 interface SignupFormSocialFirst {
 	goToNextStep: () => void;
-	step: string;
+	step: object;
 	stepName: string;
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
 	socialService: string;
-	socialServiceResponse: string;
+	socialServiceResponse: object;
 	handleSocialResponse: () => void;
 	isReskinned: boolean;
 	queryArgs: object;

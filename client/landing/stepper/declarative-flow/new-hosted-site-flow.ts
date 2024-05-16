@@ -141,12 +141,12 @@ const hosting: Flow = {
 			const urlWithQueryParams = addQueryArgs( '/setup/new-hosted-site', queryParams );
 
 			if ( ! userIsLoggedIn ) {
-				window.location.assign(
-					addQueryArgs( logInUrl, {
-						...queryParams,
-						flow: 'new-hosted-site',
-					} )
-				);
+				// window.location.assign(
+				// 	addQueryArgs( logInUrl, {
+				// 		...queryParams,
+				// 		flow: 'new-hosted-site',
+				// 	} )
+				// );
 			}
 
 			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
