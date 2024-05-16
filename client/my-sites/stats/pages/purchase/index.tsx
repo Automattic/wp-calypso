@@ -228,7 +228,7 @@ const StatsPurchasePage = ( {
 							interval="day"
 							siteId={ siteId }
 							slug={ siteSlug }
-							showLock={ true }
+							showLock
 							hideModuleSettings
 						/>
 					</>

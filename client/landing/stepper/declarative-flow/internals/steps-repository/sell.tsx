@@ -17,7 +17,7 @@ const SellStep: Step = function SellStep( { navigation } ) {
 			stepName="sell"
 			hideSkip
 			goBack={ goBack }
-			isHorizontalLayout={ true }
+			isHorizontalLayout
 			formattedHeader={
 				<FormattedHeader id="seller-step-header" headerText={ headerText } align="left" />
 			}

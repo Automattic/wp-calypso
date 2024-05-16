@@ -119,13 +119,13 @@ export default function StoredCreditCardV2( {
 						`stored-credit-card-v2__payment-logo-${ cardBrand }`
 					) }
 				>
-					<PaymentLogo brand={ cardBrand } isSummary={ true } />
+					<PaymentLogo brand={ cardBrand } isSummary />
 				</div>
 			</div>
 			{ isDeleteDialogVisible && (
 				<PaymentMethodDeleteDialog
 					paymentMethod={ creditCard }
-					isVisible={ true }
+					isVisible
 					onClose={ closeDialog }
 					onConfirm={ handleDelete }
 				/>

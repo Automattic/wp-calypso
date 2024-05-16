@@ -128,7 +128,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 					/>
 					{ hasSubmitted && ! siteTitle && (
 						<FormInputValidation
-							isError={ true }
+							isError
 							text={ __( `Oops. Looks like your course site doesn't have a name yet.` ) }
 						/>
 					) }

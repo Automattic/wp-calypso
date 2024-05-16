@@ -79,8 +79,8 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 	return (
 		<StepContainer
 			stepName="free-setup"
-			isWideLayout={ true }
-			hideBack={ true }
+			isWideLayout
+			hideBack
 			flowName="free"
 			formattedHeader={
 				<FormattedHeader

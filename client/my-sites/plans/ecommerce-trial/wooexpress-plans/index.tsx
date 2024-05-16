@@ -119,7 +119,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					<PlanIntervalSelector
 						className="wooexpress-plans__interval-toggle price-toggle"
 						intervals={ planIntervals }
-						use2023PricingGridStyles={ true }
+						use2023PricingGridStyles
 					/>
 				</div>
 			) }
@@ -128,8 +128,8 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					siteId={ siteId }
 					onUpgradeClick={ onUpgradeClick }
 					intervalType={ interval }
-					hidePlanTypeSelector={ true }
-					hideUnavailableFeatures={ true }
+					hidePlanTypeSelector
+					hideUnavailableFeatures
 					intent="plans-woocommerce"
 				/>
 			</div>

@@ -157,7 +157,7 @@ export const StorageAddOnDropdown = ( {
 	return (
 		<>
 			<CustomSelectControl
-				hideLabelFromVision={ true }
+				hideLabelFromVision
 				options={ selectControlOptions }
 				value={ selectedOption }
 				onChange={ handleOnChange }

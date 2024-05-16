@@ -1,4 +1,5 @@
 import { Count, Badge, Gridicon, MaterialIcon } from '@automattic/components';
+import { Icon, chevronRightSmall } from '@wordpress/icons';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
@@ -89,7 +90,7 @@ export default function SidebarItem( props ) {
 				{ ( showAsExternal || props.forceShowExternalIcon ) && ! sidebarIsCollapsed && (
 					<Gridicon icon="external" size={ 24 } />
 				) }
-				{ props.forceChevronIcon && <Gridicon icon="chevron-right" size={ 18 } /> }
+				{ props.forceChevronIcon && <Icon icon={ chevronRightSmall } size={ 24 } /> }
 				{ props.children }
 			</a>
 		</li>

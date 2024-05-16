@@ -346,7 +346,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				{ renderCurrentPageInfo() }
 				<Pagination
 					className="import__user-migration-user-list-pagination-list"
-					compact={ true }
+					compact
 					page={ page }
 					perPage={ perPage }
 					total={ usersListToDisplay.length }

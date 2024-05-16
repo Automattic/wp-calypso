@@ -33,6 +33,7 @@ import {
 	useShowSiteTransferredNotice,
 } from 'calypso/sites-dashboard/components/sites-dashboard';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { useInitializeDataViewsPage } from './hooks/use-initialize-dataviews-page';
 import { useInitializeDataViewsSelectedItem } from './hooks/use-initialize-dataviews-selected-item';
 import { useSyncSelectedSite } from './hooks/use-sync-selected-site';
 import { useSyncSelectedSiteFeature } from './hooks/use-sync-selected-site-feature';
@@ -112,7 +113,7 @@ const SitesDashboardV2 = ( {
 				? []
 				: [
 						{
-							field: 'status',
+							field: addDummyDataViewPrefix( 'status' ),
 							operator: 'in',
 							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
@@ -187,6 +188,7 @@ const SitesDashboardV2 = ( {
 		dataViewsState.page * dataViewsState.perPage
 	);
 
+	useInitializeDataViewsPage( dataViewsState, setDataViewsState );
 	useInitializeDataViewsSelectedItem( { selectedSite, paginatedSites } );
 
 	// Update URL with view control params on change.

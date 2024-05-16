@@ -14,9 +14,9 @@ import {
 import { hostingOverview, hostingConfiguration, hostingActivate } from './controller';
 
 export default function () {
-	page( '/hosting', siteSelection, sites, makeLayout, clientRender );
+	page( '/overview', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/hosting/:site',
+		'/overview/:site',
 		siteSelection,
 		navigation,
 		hostingOverview,

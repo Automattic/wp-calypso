@@ -166,11 +166,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	const renderChatOption = () => {
 		return (
 			<div>
-				<ConditionalLink
-					active={ true }
-					to={ chatUrl }
-					onClick={ contactOptionsEventMap[ 'chat' ] }
-				>
+				<ConditionalLink active to={ chatUrl } onClick={ contactOptionsEventMap[ 'chat' ] }>
 					<div className="help-center-contact-page__box chat" role="button" tabIndex={ 0 }>
 						<div className="help-center-contact-page__box-icon">
 							<Icon icon={ comment } />

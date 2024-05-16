@@ -58,11 +58,11 @@ export function SiteIconWithPicker( {
 			<Dialog
 				className="site-icon-with-picker__background"
 				isVisible={ Boolean( editingFile && imageEditorOpen ) }
-				isBackdropVisible={ true }
+				isBackdropVisible
 				onClose={ () => {
 					setImageEditorOpen( false );
 				} }
-				shouldCloseOnEsc={ true }
+				shouldCloseOnEsc
 			>
 				<ImageEditor
 					className={ classNames( 'site-icon-with-picker__image-editor', imageEditorClassName ) }
@@ -87,7 +87,7 @@ export function SiteIconWithPicker( {
 						setImageEditorOpen( false );
 					} }
 					doneButtonText={ __( ' Apply ' ) }
-					displayOnlyIcon={ true }
+					displayOnlyIcon
 					widthLimit={ 512 }
 				/>
 			</Dialog>

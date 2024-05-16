@@ -105,7 +105,7 @@ const BackupSuccessful = ( {
 												href={ multiSiteInfoLink }
 												target="_blank"
 												rel="noopener noreferrer"
-												icon={ true }
+												icon
 											/>
 										),
 									},

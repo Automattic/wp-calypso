@@ -216,7 +216,7 @@ class ConfirmCancelDomain extends Component {
 
 		if ( this.state.submitting ) {
 			return (
-				<FormButton isPrimary={ true } disabled={ true }>
+				<FormButton isPrimary disabled>
 					{ this.props.translate( 'Cancelling Domain…' ) }
 				</FormButton>
 			);
@@ -227,14 +227,14 @@ class ConfirmCancelDomain extends Component {
 
 		if ( selectedReason && 'misspelled' === selectedReason.value ) {
 			return (
-				<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed }>
+				<FormButton isPrimary onClick={ this.onSubmit } disabled={ ! confirmed }>
 					{ this.props.translate( 'Cancel Anyway' ) }
 				</FormButton>
 			);
 		}
 
 		return (
-			<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed }>
+			<FormButton isPrimary onClick={ this.onSubmit } disabled={ ! confirmed }>
 				{ this.props.translate( 'Cancel Domain' ) }
 			</FormButton>
 		);

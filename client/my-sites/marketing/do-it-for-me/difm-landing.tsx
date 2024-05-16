@@ -496,7 +496,7 @@ export default function DIFMLanding( {
 						</FAQHeader>
 						<FoldableFAQ
 							id="faq-1"
-							expanded={ true }
+							expanded
 							question={ translate(
 								'What is the Express Website Design Service, and who is it for?'
 							) }

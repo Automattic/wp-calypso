@@ -129,7 +129,7 @@ export default function JetpackCancellationSurvey( {
 				headerText={ headerText }
 				subHeaderText={ translate( 'Please let us know why you are cancelling.' ) }
 				align="center"
-				isSecondary={ true }
+				isSecondary
 			/>
 			{ choices.map( renderChoiceCard ) }
 		</>

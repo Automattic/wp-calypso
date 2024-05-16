@@ -66,7 +66,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 					interval={ interval }
 					yearlyControlProps={ { path: plansLink( '/plans', siteSlug, 'yearly', true ) } }
 					monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
-					showIntervalToggle={ true }
+					showIntervalToggle
 					triggerTracksEvent={ triggerPlansGridTracksEvent }
 				/>
 			) : (

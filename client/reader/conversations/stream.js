@@ -33,7 +33,7 @@ export default function ( props ) {
 				streamKey={ props.streamKey }
 				className="conversations__stream"
 				followSource="conversations"
-				useCompactCards={ true }
+				useCompactCards
 				trackScrollPage={ props.trackScrollPage }
 				emptyContent={ emptyContent }
 				intro={ intro }

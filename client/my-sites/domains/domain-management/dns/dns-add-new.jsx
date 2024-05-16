@@ -290,7 +290,7 @@ class DnsAddNew extends React.Component {
 			<selectedRecordType.component
 				selectedDomain={ this.props.selectedDomain }
 				selectedDomainName={ this.props.selectedDomainName }
-				show={ true }
+				show
 				fieldValues={ formState.getAllFieldValues( this.state.fields ) }
 				isValid={ this.isValid }
 				onChange={ this.onChange }

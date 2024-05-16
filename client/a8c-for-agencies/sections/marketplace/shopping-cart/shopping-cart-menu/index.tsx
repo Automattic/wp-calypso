@@ -27,7 +27,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 
 	return (
 		<Popover
-			isVisible={ true }
+			isVisible
 			onClose={ onClose }
 			noArrow={ false }
 			offset={ 24 }

@@ -23,9 +23,10 @@ import { GetReportForm } from './get-report-form';
 import HeadingInformation from './heading-information';
 import HostingInformation from './hosting-information';
 import HostingIntro from './hosting-intro';
+import { MetricsInsightsList } from './metrics-insights-list';
 import { MetricsMenu } from './metrics-menu';
-import './styles.scss';
 import { MetricsSection } from './metrics-section';
+import './styles.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
 
@@ -185,7 +186,15 @@ export default function SiteProfiler( props: Props ) {
 								) }
 								subtitle={ translate( "Boost your site's performance" ) }
 								ref={ performanceMetricsRef }
-							/>
+							>
+								<MetricsInsightsList
+									insights={ Array( 10 ).fill( {
+										header:
+											'Your site reveals first content slower than 76% of peers, affecting first impressions.',
+										description: 'This is how you can improve it',
+									} ) }
+								/>
+							</MetricsSection>
 							<MetricsSection
 								name={ translate( 'Health Scores' ) }
 								title={ translate(
@@ -205,7 +214,7 @@ export default function SiteProfiler( props: Props ) {
 				</LayoutBlock>
 			) }
 			<GetReportForm
-				url={ url }
+				url={ basicMetrics?.final_url }
 				token={ basicMetrics?.token }
 				isOpen={ showGetReportForm }
 				onClose={ () => setIsGetReportFormOpen( false ) }

@@ -517,14 +517,14 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 				<RowTitleCell
 					key="feature-name"
 					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
-					isPlaceholderHeaderCell={ true }
+					isPlaceholderHeaderCell
 				>
 					{ isStuck && planTypeSelectorProps && (
 						<PlanTypeSelectorWrapper>
 							<PlanTypeSelector
 								{ ...planTypeSelectorProps }
 								title={ translate( 'Billing Cycle' ) }
-								hideDiscount={ true }
+								hideDiscount
 								coupon={ coupon }
 							/>
 						</PlanTypeSelectorWrapper>
@@ -770,7 +770,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 			<RowTitleCell
 				key="feature-name"
 				className="is-feature-group-row-title-cell"
-				isFeatureGroupRowTitleCell={ true }
+				isFeatureGroupRowTitleCell
 			>
 				{ isStorageFeature ? (
 					<Plans2023Tooltip
@@ -963,7 +963,7 @@ const FeatureGroup = ( {
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
 					planFeatureFootnotes={ planFeatureFootnotes }
-					isStorageFeature={ true }
+					isStorageFeature
 					isHighlighted={ false }
 					intervalType={ intervalType }
 					activeTooltipId={ activeTooltipId }
@@ -1157,14 +1157,14 @@ const ComparisonGrid = ( {
 					displayedGridPlans={ displayedGridPlans }
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
-					isFooter={ true }
+					isFooter
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }
 					isStuck={ false }
-					isHiddenInMobile={ true }
+					isHiddenInMobile
 					ref={ bottomHeaderRef }
 					planTypeSelectorProps={ planTypeSelectorProps }
 					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }

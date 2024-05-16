@@ -121,7 +121,7 @@ test( 'when isAllSitesView is true, the primary domain label is displayed if a d
 		<DomainsTable
 			domains={ [ primaryPartial, notPrimaryPartial ] }
 			fetchSiteDomains={ fetchSiteDomains }
-			isAllSitesView={ true }
+			isAllSitesView
 		/>
 	);
 

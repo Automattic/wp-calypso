@@ -213,11 +213,11 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 						}
 					) }
 					stepName="importer-step"
-					hideSkip={ true }
+					hideSkip
 					hideBack={ isMigrationInProgress }
-					hideFormattedHeader={ true }
+					hideFormattedHeader
 					goBack={ onGoBack }
-					isWideLayout={ true }
+					isWideLayout
 					stepContent={ renderStepContent() }
 					recordTracksEvent={ recordTracksEvent }
 				/>

@@ -161,7 +161,7 @@ export const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) =
 				shouldHideNavButtons={ false }
 				className={ `is-step-${ intent }` }
 				headerImageUrl={ headerImage }
-				hideSkip={ true }
+				hideSkip
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout

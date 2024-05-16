@@ -83,7 +83,7 @@ class PostItem extends Component {
 			<PostShare
 				post={ post }
 				siteId={ post.site_ID }
-				showClose={ true }
+				showClose
 				onClose={ this.props.hideActiveSharePanel }
 			/>
 		);
@@ -162,7 +162,7 @@ class PostItem extends Component {
 
 							{ ! isPlaceholder && externalPostLink && (
 								<ExternalLink
-									icon={ true }
+									icon
 									href={ postUrl }
 									target="_blank"
 									className="post-item__title-link"
@@ -179,7 +179,7 @@ class PostItem extends Component {
 										link={ enabledPostLink }
 										target={ null }
 										gridiconSize={ ICON_SIZE }
-										includeBasicStatus={ true }
+										includeBasicStatus
 										showPublishedStatus={ showPublishedStatus }
 									/>
 								) }

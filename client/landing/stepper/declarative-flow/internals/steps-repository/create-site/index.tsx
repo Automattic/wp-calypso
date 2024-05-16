@@ -170,6 +170,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			return {
 				siteSlug: getSignupCompleteSlug(),
 				goToCheckout: true,
+				siteCreated: true,
 			};
 		}
 
@@ -203,6 +204,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 				siteId: site.siteId,
 				siteSlug: site.siteSlug,
 				goToCheckout: false,
+				siteCreated: true,
 			};
 		}
 
@@ -224,6 +226,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteSlug: site?.siteSlug,
 			goToCheckout: Boolean( planCartItem ),
 			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
+			siteCreated: true,
 		};
 	}
 
@@ -259,10 +262,10 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		<>
 			<DocumentHead title={ getCurrentMessage() } />
 			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
+				shouldHideNavButtons
+				hideFormattedHeader
 				stepName="create-site"
-				isHorizontalLayout={ true }
+				isHorizontalLayout
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>

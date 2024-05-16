@@ -29,7 +29,7 @@ const SidebarCustomIcon = ( { icon, ...rest } ) => {
 		return (
 			<span
 				className={ 'sidebar__menu-icon dashicons' + ( isSVG ? ' sidebar__menu-icon-img' : '' ) }
-				aria-hidden={ true }
+				aria-hidden
 				{ ...rest }
 				style={ imgStyles }
 			/>
@@ -37,11 +37,7 @@ const SidebarCustomIcon = ( { icon, ...rest } ) => {
 	}
 
 	return (
-		<span
-			className={ 'sidebar__menu-icon dashicons-before ' + icon }
-			aria-hidden={ true }
-			{ ...rest }
-		/>
+		<span className={ 'sidebar__menu-icon dashicons-before ' + icon } aria-hidden { ...rest } />
 	);
 };
 export default SidebarCustomIcon;

@@ -502,7 +502,7 @@ class Layout extends Component {
 								key={ 'note-' + currentNote.id }
 								client={ this.props.client }
 								currentNote={ this.props.selectedNoteId }
-								detailView={ true }
+								detailView
 								global={ this.props.global }
 								note={ currentNote }
 								selectedNote={ this.state.selectedNote }
