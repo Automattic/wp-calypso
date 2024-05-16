@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
@@ -62,10 +63,14 @@ export const MetricsMenu: React.FC< MetricsMenuProps > = ( props ) => {
 		},
 	];
 
-	const [ selectedTab, setSelectedTab ] = useState< MetricsMenuTabs | undefined >();
 	const basicMetricsVisible = useIsMenuSectionVisible( basicMetricsRef );
 	const performanceMetricsVisible = useIsMenuSectionVisible( performanceMetricsRef );
 	const healthScoresVisible = useIsMenuSectionVisible( healthScoresRef );
+
+	const [ selectedTab, setSelectedTab ] = useState< MetricsMenuTabs | undefined >();
+	const selectedTabText = selectedTab
+		? menuItems.find( ( item ) => item.id === selectedTab )?.label
+		: '';
 
 	useEffect( () => {
 		if ( basicMetricsVisible ) {
@@ -74,8 +79,6 @@ export const MetricsMenu: React.FC< MetricsMenuProps > = ( props ) => {
 			setSelectedTab( MetricsMenuTabs.performance );
 		} else if ( healthScoresVisible ) {
 			setSelectedTab( MetricsMenuTabs.health );
-		} else {
-			setSelectedTab( undefined );
 		}
 	}, [ basicMetricsVisible, performanceMetricsVisible, healthScoresVisible ] );
 
@@ -86,8 +89,8 @@ export const MetricsMenu: React.FC< MetricsMenuProps > = ( props ) => {
 	};
 
 	return (
-		<StickyPanel>
-			<SectionNavbar className="metrics-menu-navbar">
+		<StickyPanel minLimit={ 0 }>
+			<SectionNavbar className="metrics-menu-navbar" selectedText={ selectedTabText }>
 				<NavTabs>
 					{ menuItems.map( ( item ) => (
 						<NavItem
@@ -99,9 +102,12 @@ export const MetricsMenu: React.FC< MetricsMenuProps > = ( props ) => {
 						</NavItem>
 					) ) }
 				</NavTabs>
-				<FullReportButton primary onClick={ onCTAClick }>
-					{ translate( "Get full site report - It's free" ) }
-				</FullReportButton>
+
+				{ ! isMobile() && (
+					<FullReportButton primary onClick={ onCTAClick }>
+						{ translate( "Get full site report - It's free" ) }
+					</FullReportButton>
+				) }
 			</SectionNavbar>
 		</StickyPanel>
 	);
