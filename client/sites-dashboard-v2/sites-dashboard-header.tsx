@@ -52,7 +52,7 @@ const responsiveButtonStyles = {
 
 const ManageAllDomainsButton = styled( Button )`
 	border-color: var( --color-neutral-5 );
-	border-radius: 4px;
+	border-radius: 2px;
 	margin-inline-end: 1rem;
 	white-space: nowrap;
 
@@ -64,19 +64,19 @@ const ManageAllDomainsButton = styled( Button )`
 
 const AddNewSiteSplitButton = styled( SplitButton )< { isMobile: boolean } >`
 	.split-button__main {
-		border-radius: 4px 0 0 4px;
+		border-radius: 2px 0 0 2px;
 		-webkit-font-smoothing: antialiased;
 
 		.rtl & {
-			border-radius: 0 4px 4px 0;
+			border-radius: 0 2px 2px 0;
 		}
 	}
 
 	.split-button__toggle {
-		border-radius: ${ ( { isMobile } ) => ( isMobile ? '4px' : '0 4px 4px 0' ) };
+		border-radius: ${ ( { isMobile } ) => ( isMobile ? '2px' : '0 2px 2px 0' ) };
 
 		.rtl & {
-			border-radius: ${ ( { isMobile } ) => ( isMobile ? '4px' : '4px 0 0 4px' ) };
+			border-radius: ${ ( { isMobile } ) => ( isMobile ? '2px' : '2px 0 0 2px' ) };
 		}
 	}
 
