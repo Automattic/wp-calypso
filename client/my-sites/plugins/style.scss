@@ -70,6 +70,7 @@ body.is-section-plugins {
 	}
 
 	.is-section-plugins.is-global-sidebar-collapsed {
+		.sidebar__description,
 		.sidebar__back-link .sidebar__site-title {
 			display: none;
 		}

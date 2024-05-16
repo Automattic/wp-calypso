@@ -1,8 +1,10 @@
+import clsx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import { SidebarIconCalendar } from './icons';
+import './style.scss';
 
 interface Props {
 	path: string;
@@ -13,11 +15,16 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 
 	return (
 		<GlobalSidebar
-			className={ isCollapsed ? 'is-collapsed' : '' }
+			className={ clsx( 'sidebar--plugins', { 'is-collapsed': isCollapsed } ) }
 			siteTitle={ ! isCollapsed && translate( 'Plugins' ) }
 			requireBackLink={ true }
 			backLinkHref="/sites"
 		>
+			<p className="sidebar__description">
+				{ translate(
+					'Streamline your workflow with scheduled updates, timed to suit your needs.'
+				) }
+			</p>
 			<SidebarMenu>
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
