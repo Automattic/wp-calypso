@@ -162,7 +162,7 @@ export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 		return plugin.sites.hasOwnProperty( siteId );
 	} );
 
-	return sortBy( pluginSites, ( siteId ) => getSiteTitle( state, siteId ).toLowerCase() );
+	return sortBy( pluginSites, ( siteId ) => getSiteTitle( state, siteId )?.toLowerCase() );
 }
 
 export function getSiteObjectsWithPlugin( state, siteIds, pluginSlug ) {

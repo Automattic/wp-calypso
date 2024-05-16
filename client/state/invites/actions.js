@@ -32,7 +32,7 @@ import 'calypso/state/invites/init';
 
 /**
  * Triggers a network request to fetch invites for the specified site.
- * @param  {?number}  siteId Site ID
+ * @param  {?number | string}  siteId Site ID
  * @returns {Function}        Action thunk
  */
 export function requestSiteInvites( siteId ) {
