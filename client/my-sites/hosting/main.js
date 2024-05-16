@@ -38,7 +38,6 @@ import { isSiteOnBusinessTrial, isSiteOnECommerceTrial } from 'calypso/state/sit
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { WithOnclickTrialRequest } from '../plans/trials/trial-acknowledge/with-onclick-trial-request';
 import SiteAdminInterface from '../site-settings/site-admin-interface';
 import CacheCard from './cache-card';
 import { GitHubDeploymentsCard } from './github-deployments-card';
@@ -267,7 +266,6 @@ const Hosting = ( props ) => {
 		hasSftpFeature,
 		hasStagingSitesFeature,
 		isJetpack,
-		fetchUpdatedData,
 		isSiteAtomic,
 		transferState,
 	} = props;
@@ -288,13 +286,9 @@ const Hosting = ( props ) => {
 	const showHostingActivationBanner = canSiteGoAtomic && ! hasTransfer;
 
 	const requestUpdatedSiteData = useCallback(
-		( isTransferring, wasTransferring, isTransferCompleted ) => {
+		( isTransferring ) => {
 			if ( isTransferring && ! hasTransfer ) {
 				setHasTransferring( true );
-			}
-
-			if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
-				fetchUpdatedData();
 			}
 		},
 		[ hasTransfer ]
@@ -457,4 +451,4 @@ export default connect(
 		fetchAutomatedTransferStatus,
 		requestSiteById: requestSite,
 	}
-)( localize( WithOnclickTrialRequest( Hosting ) ) );
+)( localize( Hosting ) );
