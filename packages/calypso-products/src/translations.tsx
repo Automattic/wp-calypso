@@ -1361,7 +1361,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: [
-			highlightable( translate( '10K site views (upgradeable)' ) ),
+			translate( '10K site views (upgradeable)' ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_10K ]: [
