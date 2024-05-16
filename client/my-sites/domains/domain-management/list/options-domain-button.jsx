@@ -4,7 +4,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
-import { Icon, search } from '@wordpress/icons';
+import { Icon, plus, search } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -123,7 +123,12 @@ class AddDomainButton extends Component {
 		}
 
 		return (
-			<>{ ! isMobile() && <span className="options-domain-button__desktop">{ label }</span> }</>
+			<>
+				{ isMobile() && (
+					<Icon icon={ plus } className="options-domain-button__add gridicon" viewBox="2 2 20 20" />
+				) }
+				{ ! isMobile() && <span className="options-domain-button__desktop">{ label }</span> }
+			</>
 		);
 	}
 

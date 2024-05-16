@@ -581,7 +581,7 @@ class StatsSite extends Component {
 									query={ query }
 									statType="statsFileDownloads"
 									showSummaryLink
-									useShortLabel={ true }
+									useShortLabel
 									className={ classNames(
 										{
 											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),

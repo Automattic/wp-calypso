@@ -176,7 +176,7 @@ class SearchStream extends React.Component {
 							onSearchClose={ this.scrollToTop }
 							onSearchOpen={ this.resetSearchFeeds }
 							autoFocus={ this.props.autoFocusInput }
-							delaySearch={ true }
+							delaySearch
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
 							initialValue={ query || '' }

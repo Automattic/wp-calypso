@@ -126,7 +126,7 @@ const AddOnsMain = () => {
 					actionSecondary={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
 					useAddOnAvailabilityStatus={ AddOns.useAddOnPurchaseStatus }
 					addOns={ filteredAddOns }
-					highlightFeatured={ true }
+					highlightFeatured
 				/>
 			</ContentWithHeader>
 		</div>

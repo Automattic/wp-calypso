@@ -212,8 +212,8 @@ export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) 
 	return (
 		<StepWrapper
 			flowName="woocommerce-install"
-			hideSkip={ true }
-			allowBackFirstStep={ true }
+			hideSkip
+			allowBackFirstStep
 			backUrl={ backUrl }
 			headerText={ __( 'Add an address to accept payments' ) }
 			fallbackHeaderText={ __( 'Add an address to accept payments' ) }
@@ -234,7 +234,7 @@ export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) 
 function ControlError( props: { error: string } ) {
 	const { error } = props;
 	if ( error ) {
-		return <FormInputValidation isError={ true } isValid={ false } text={ error } />;
+		return <FormInputValidation isError isValid={ false } text={ error } />;
 	}
 	return null;
 }

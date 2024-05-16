@@ -33,7 +33,7 @@ export default function ReviewLicenses( {
 	return (
 		<JetpackLightbox
 			className="review-licenses__lightbox"
-			isOpen={ true }
+			isOpen
 			onClose={ onClose }
 			onAfterOpen={ initMobileSidebar }
 		>

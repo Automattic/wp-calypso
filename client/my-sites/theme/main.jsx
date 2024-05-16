@@ -1147,7 +1147,7 @@ class ThemeSheet extends Component {
 							) }
 						</div>
 					</div>
-					<Button primary={ true } href={ localizeThemesPath( '/themes/', locale, ! isLoggedIn ) }>
+					<Button primary href={ localizeThemesPath( '/themes/', locale, ! isLoggedIn ) }>
 						{ translate( 'See all themes' ) }
 					</Button>
 				</Card>
@@ -1492,7 +1492,7 @@ class ThemeSheet extends Component {
 					disableHref={ onClick !== null }
 					onClick={ null === onClick ? noop : onClick }
 					href={ plansUrl }
-					showIcon={ true }
+					showIcon
 					forceDisplay={ forceDisplay }
 					displayAsLink={ onClick !== null }
 					tracksClickProperties={ { theme_tier: themeTier?.slug } }

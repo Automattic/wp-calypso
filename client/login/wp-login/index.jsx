@@ -447,7 +447,7 @@ export class Login extends Component {
 		if ( isWooPasswordless && isLoginView ) {
 			return (
 				<>
-					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos={ true } />
+					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />
 					<TranslatorInvite path={ path } />
 				</>
 			);

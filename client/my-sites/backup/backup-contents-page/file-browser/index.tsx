@@ -29,7 +29,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 				rewindId={ rewindId }
 				item={ rootItem }
 				path="/"
-				isAlternate={ true }
+				isAlternate
 				setActiveNodePath={ handleClick }
 				activeNodePath={ activeNodePath }
 			/>

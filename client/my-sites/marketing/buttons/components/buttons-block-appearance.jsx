@@ -34,7 +34,7 @@ const ButtonsBlockAppearance = ( { isJetpack, translate, siteId } ) => {
 					{ translate( 'Go to the Site Editor' ) }
 				</a>
 
-				<ExternalLink className="button" href={ supportDocLink } icon={ true }>
+				<ExternalLink className="button" href={ supportDocLink } icon>
 					{ translate( 'Learn how to add Sharing Buttons' ) }
 				</ExternalLink>
 			</div>

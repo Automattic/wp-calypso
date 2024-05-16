@@ -50,7 +50,7 @@ export default function MigrationSuccess( {
 						<Flex
 							className="migration-success__ctas"
 							direction={ [ 'column', 'row' ] }
-							expanded={ true }
+							expanded
 							align="center"
 						>
 							<FlexItem>

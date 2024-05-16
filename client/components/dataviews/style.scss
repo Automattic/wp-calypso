@@ -154,6 +154,12 @@
 				height: 18px;
 			}
 		}
+
+		&.sites-dataviews__actions-error {
+			svg {
+				color: var(--color-accent-5);
+			}
+		}
 	}
 
 	.dataviews-no-results,

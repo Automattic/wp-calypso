@@ -348,12 +348,7 @@ export class NoteList extends Component {
 
 		return (
 			<>
-				<StatusBar
-					statusClasses={ this.state.statusClasses }
-					statusMessage={ this.state.statusMessage }
-					statusTimeout={ this.state.statusTimeout }
-					statusReset={ this.resetStatusBar }
-				/>
+				{ /* Keep the wpnc__note-list as the first child of the Fragment to ensure the ReactDOM.findDOMNode returns the list element */ }
 				<div className={ classes } id="wpnc__note-list">
 					<FilterBar controller={ this.props.filterController } />
 					<button className="screen-reader-text" onClick={ this.props.closePanel }>
@@ -374,6 +369,12 @@ export class NoteList extends Component {
 						</ol>
 					</div>
 				</div>
+				<StatusBar
+					statusClasses={ this.state.statusClasses }
+					statusMessage={ this.state.statusMessage }
+					statusTimeout={ this.state.statusTimeout }
+					statusReset={ this.resetStatusBar }
+				/>
 			</>
 		);
 	}

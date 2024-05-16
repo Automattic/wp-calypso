@@ -18,7 +18,15 @@ import {
 	getSitePlanSlug,
 } from 'calypso/state/sites/selectors';
 
-const DomainUpsellCard = ( { siteId } ) => {
+function Wrapper( { children, needsCard } ) {
+	return needsCard ? (
+		<Card className="site-settings__card">{ children }</Card>
+	) : (
+		<p className="fediverse-settings-wrapper">{ children }</p>
+	);
+}
+
+const DomainUpsellCard = ( { siteId, needsCard } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const linkUrl = addQueryArgs( domainAddNew( domain ), {
 		domainAndPlanPackage: 'true',
@@ -26,10 +34,12 @@ const DomainUpsellCard = ( { siteId } ) => {
 	} );
 	const translate = useTranslate();
 	const recordClick = () => {
-		recordTracksEvent( 'calypso_activitypub_domain_upsell_click' );
+		const domainRegExp = new RegExp( `/${ domain }$` );
+		const currentRoute = window.location.pathname.replace( domainRegExp, '' ).split( '/' ).pop();
+		recordTracksEvent( 'calypso_activitypub_domain_upsell_click', { route: currentRoute } );
 	};
 	return (
-		<Card className="site-settings__card">
+		<Wrapper needsCard={ needsCard }>
 			<p>
 				{ translate(
 					'Unlock the full power of the fediverse with a memorable custom domain. Your domain also means that you can take your followers with you, using self-hosted WordPress with the ActivityPub plugin, or any other ActivityPub software.'
@@ -38,7 +48,7 @@ const DomainUpsellCard = ( { siteId } ) => {
 			<Button primary href={ linkUrl } onClick={ recordClick }>
 				{ translate( 'Add a custom domain' ) }
 			</Button>
-		</Card>
+		</Wrapper>
 	);
 };
 
@@ -79,18 +89,13 @@ const DomainPendingWarning = ( { siteId, domains } ) => {
 		  );
 
 	return (
-		<Notice
-			status="is-warning"
-			translate={ translate }
-			isCompact={ true }
-			className="is-full-width"
-		>
+		<Notice status="is-warning" translate={ translate } isCompact className="is-full-width">
 			{ message }
 		</Notice>
 	);
 };
 
-const BusinessPlanUpsellCard = ( { siteId } ) => {
+const BusinessPlanUpsellCard = ( { siteId, needsCard } ) => {
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ?? '' );
 	// If the user is already on Atomic, we'll be in `JetpackFediverseSettingsSection` instead.
 	// But they could have purchased the upgrade and not have transferred yet.
@@ -99,13 +104,15 @@ const BusinessPlanUpsellCard = ( { siteId } ) => {
 	const linkUrl = `/plans/select/business/${ domain }`;
 	const translate = useTranslate();
 	const recordClick = () => {
-		recordTracksEvent( 'calypso_activitypub_business_plan_upsell_click' );
+		const domainRegExp = new RegExp( `/${ domain }$` );
+		const currentRoute = window.location.pathname.replace( domainRegExp, '' ).split( '/' ).pop();
+		recordTracksEvent( 'calypso_activitypub_business_plan_upsell_click', { route: currentRoute } );
 	};
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 	if ( isBusinessPlan ) {
 		// show a card that links to the plugin page to install the ActivityPub plugin
 		return (
-			<Card className="site-settings__card">
+			<Wrapper needsCard={ needsCard }>
 				<p>
 					{ translate(
 						'Install the ActivityPub plugin to unlock per-author profiles, fine-grained controls, and more.'
@@ -114,11 +121,11 @@ const BusinessPlanUpsellCard = ( { siteId } ) => {
 				<Button primary href={ `/plugins/activitypub/${ domain }` }>
 					{ translate( 'Install ActivityPub plugin' ) }
 				</Button>
-			</Card>
+			</Wrapper>
 		);
 	}
 	return (
-		<Card className="site-settings__card">
+		<Wrapper needsCard={ needsCard }>
 			<p>
 				{ translate(
 					// Translators: %(planName)s is the name of a plan, eg "Business" or "Creator"
@@ -129,7 +136,7 @@ const BusinessPlanUpsellCard = ( { siteId } ) => {
 			<Button primary href={ linkUrl } onClick={ recordClick }>
 				{ translate( 'Upgrade to %(planName)s', { args: { planName } } ) }
 			</Button>
-		</Card>
+		</Wrapper>
 	);
 };
 
@@ -144,7 +151,7 @@ const hasPendingDomain = ( domains ) => {
 	return pendingDomain;
 };
 
-const EnabledSettingsSection = ( { data, siteId } ) => {
+const EnabledSettingsSection = ( { data, siteId, needsCard } ) => {
 	const translate = useTranslate();
 	const domains = useSiteDomains( siteId );
 	const { blogIdentifier = '' } = data;
@@ -154,8 +161,8 @@ const EnabledSettingsSection = ( { data, siteId } ) => {
 
 	return (
 		<>
-			{ ! hasDomain && <DomainUpsellCard siteId={ siteId } /> }
-			<Card className="site-settings__card">
+			{ ! hasDomain && <DomainUpsellCard siteId={ siteId } needsCard={ needsCard } /> }
+			<Wrapper needsCard={ needsCard }>
 				<p>
 					{ translate(
 						'Anyone in the fediverse (eg Mastodon) can follow your site with this identifier:'
@@ -165,8 +172,10 @@ const EnabledSettingsSection = ( { data, siteId } ) => {
 				<p>
 					<ClipboardButtonInput value={ blogIdentifier } />
 				</p>
-			</Card>
-			{ hasDomain && ! isDomainPending && <BusinessPlanUpsellCard siteId={ siteId } /> }
+			</Wrapper>
+			{ hasDomain && ! isDomainPending && (
+				<BusinessPlanUpsellCard siteId={ siteId } needsCard={ needsCard } />
+			) }
 		</>
 	);
 };
@@ -176,7 +185,7 @@ function useDispatchSuccessNotice() {
 	return ( message ) => dispatch( successNotice( message, { duration: 3333 } ) );
 }
 
-export const WpcomFediverseSettingsSection = ( { siteId } ) => {
+export const WpcomFediverseSettingsSection = ( { siteId, needsBorders = true } ) => {
 	const translate = useTranslate();
 	const dispatchSuccessNotice = useDispatchSuccessNotice();
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
@@ -200,7 +209,7 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 	const disabled = isLoading || isError || isPrivate;
 	return (
 		<>
-			<Card className="site-settings__card">
+			<Wrapper needsCard={ needsBorders }>
 				<p>
 					{ translate(
 						'Broadcast your blog into the fediverse! Attract followers, deliver updates, and receive comments from a diverse user base of ActivityPub-compliant platforms like {{b}}Mastodon{{/b}}.',
@@ -218,7 +227,7 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 					onChange={ ( value ) => setEnabled( value ) }
 				/>
 				{ isPrivate && (
-					<Notice status="is-warning" translate={ translate } isCompact={ true }>
+					<Notice status="is-warning" translate={ translate } isCompact>
 						{ translate(
 							'You cannot enter the fediverse until your site is publicly launched. {{link}}Review Privacy settings{{/link}}.',
 							{
@@ -229,8 +238,10 @@ export const WpcomFediverseSettingsSection = ( { siteId } ) => {
 						) }
 					</Notice>
 				) }
-			</Card>
-			{ isEnabled && <EnabledSettingsSection data={ data } siteId={ siteId } /> }
+			</Wrapper>
+			{ isEnabled && (
+				<EnabledSettingsSection data={ data } siteId={ siteId } needsCard={ needsBorders } />
+			) }
 		</>
 	);
 };

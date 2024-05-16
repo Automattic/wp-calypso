@@ -124,8 +124,8 @@ const SignupFormSocialFirst = ( {
 						socialServiceResponse={ socialServiceResponse }
 						isReskinned={ isReskinned }
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-						disableTosText={ true }
-						compact={ true }
+						disableTosText
+						compact
 						isSocialFirst={ isSocialFirst }
 					>
 						<Button

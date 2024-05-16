@@ -174,7 +174,7 @@ function P2JoinWorkspaceCodeInput( { workspaceStatus, setWorkspaceStatus } ) {
 				<Button
 					className="p2-join-workspace__code-input-submit"
 					onClick={ handleSubmitCode }
-					isPrimary={ true }
+					isPrimary
 					disabled={ challengeCode.length !== CHALLENGE_CODE_LENGTH }
 					isBusy={ isLoading }
 				>

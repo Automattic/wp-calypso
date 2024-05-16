@@ -43,7 +43,7 @@ export default function PluginCommonCard( {
 									id={ item.slug }
 									onClick={ item.onClick }
 									checked={ item.isSelected }
-									readOnly={ true }
+									readOnly
 								/>
 							) }
 						</div>

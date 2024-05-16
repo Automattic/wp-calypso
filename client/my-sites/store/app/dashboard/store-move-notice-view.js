@@ -1,4 +1,5 @@
 import { Card, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { Component } from 'react';
@@ -31,7 +32,9 @@ class StoreMoveNoticeView extends Component {
 								link: (
 									<a
 										onClick={ this.trackLearnMoreAboutWooCommerceClick }
-										href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/"
+										href={ localizeUrl(
+											'https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/'
+										) }
 									/>
 								),
 							},

@@ -27,7 +27,7 @@ export const StatsNoContentBanner = ( { siteId, siteSlug }: StatsNoContentBanner
 			description={ translate(
 				'Sites with content get more visitors. We’ve found that adding some personality and introducing yourself is a great start to click with your audience.'
 			) }
-			disableCircle={ true }
+			disableCircle
 			event="calypso_stats_no-content_banner"
 			dismissPreferenceName={ `stats-launch-no-content-${ siteSlug }` }
 			href={ `/post/${ siteSlug }` }

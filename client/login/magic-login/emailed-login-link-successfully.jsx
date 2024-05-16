@@ -62,7 +62,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 			<div>
 				<RedirectWhenLoggedIn
 					redirectTo="/help"
-					replaceCurrentLocation={ true }
+					replaceCurrentLocation
 					waitForEmailAddress={ emailAddress }
 				/>
 

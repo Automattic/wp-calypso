@@ -247,7 +247,7 @@ export const EligibilityWarnings = ( {
 						} ) }
 					</div>
 					<Button
-						primary={ true }
+						primary
 						disabled={
 							isProceedButtonDisabled( isEligible, listHolds ) ||
 							siteIsSavingSettings ||

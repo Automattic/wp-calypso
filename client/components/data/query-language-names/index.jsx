@@ -5,6 +5,7 @@ import { requestLanguageNames } from 'calypso/state/i18n/language-names/actions'
 
 export default function QueryLanguageNames() {
 	const dispatch = useDispatch();
+	// eslint-disable-next-line wpcalypso/i18n-translate-identifier
 	const { localeSlug } = useTranslate();
 
 	useEffect( () => {

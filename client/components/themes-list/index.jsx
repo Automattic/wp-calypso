@@ -524,7 +524,7 @@ function LoadingPlaceholders( { placeholderCount } ) {
 			<Theme
 				key={ 'placeholder-' + i }
 				theme={ { id: 'placeholder-' + i, name: 'Loading…' } }
-				isPlaceholder={ true }
+				isPlaceholder
 			/>
 		);
 	} );

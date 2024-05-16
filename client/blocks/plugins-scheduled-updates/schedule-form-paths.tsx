@@ -120,7 +120,7 @@ export function ScheduleFormPaths( props: Props ) {
 
 				<div className="paths">
 					<Flex className="path" gap={ 2 }>
-						<FlexItem isBlock={ true }>
+						<FlexItem isBlock>
 							<InputControl value={ siteSlug } size="__unstable-large" readOnly />
 						</FlexItem>
 						<FlexItem>
@@ -129,7 +129,7 @@ export function ScheduleFormPaths( props: Props ) {
 					</Flex>
 					{ paths.map( ( path, i ) => (
 						<Flex className="path" gap={ 2 } key={ i }>
-							<FlexItem isBlock={ true }>
+							<FlexItem isBlock>
 								<InputControl value={ path } size="__unstable-large" readOnly />
 							</FlexItem>
 							<FlexItem>
@@ -143,7 +143,7 @@ export function ScheduleFormPaths( props: Props ) {
 				{ paths.length < MAX_SELECTABLE_PATHS && (
 					<div className="new-path">
 						<Flex gap={ 2 }>
-							<FlexItem isBlock={ true }>
+							<FlexItem isBlock>
 								<InputControl
 									value={ newPath }
 									size="__unstable-large"

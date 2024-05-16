@@ -419,7 +419,7 @@ class Starter_Page_Templates {
 	 * Custom styles are safe because they are overwritten by local block styles, global styles, or theme stylesheets.
 	 **/
 	public function add_default_editor_styles_for_classic_themes( $editor_settings, $editor_context ) {
-		$theme = wp_get_theme( normalize_theme_slug( get_stylesheet() ) );
+		$theme = wp_get_theme( get_stylesheet() );
 		if ( $theme->is_block_theme() ) {
 			// Only for classic themes
 			return $editor_settings;
