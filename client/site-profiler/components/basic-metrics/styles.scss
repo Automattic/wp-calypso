@@ -1,0 +1,22 @@
+.basic-metric-details {
+	& .good {
+		color: #019c3b;
+
+	}
+	& .needs-improvement {
+		color: #d4bb4c;
+	}
+	& .bad {
+		color: #b24158;
+	}
+
+
+}
+.basic-metrics__values {
+	width: 80px;
+	text-align: right;
+}
+.basic-metrics__unit {
+	width: 20px;
+
+}

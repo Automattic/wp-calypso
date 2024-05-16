@@ -1,4 +1,10 @@
-import { Metrics } from './types';
+import { Metrics, Scores } from './types';
+
+export const SCORES: Record< string, Scores > = {
+	good: 'good',
+	needsImprovement: 'needs-improvement',
+	poor: 'poor',
+};
 
 export const BASIC_METRICS_UNITS: Record< Metrics, string > = {
 	cls: '',
@@ -9,11 +15,7 @@ export const BASIC_METRICS_UNITS: Record< Metrics, string > = {
 	inp: 'ms',
 };
 
-export type Scores = 'good' | 'needs-improvement' | 'poor';
-
-type Range = [ number, number ];
-
-export const BASIC_METRICS_SCORES: Record< Metrics, Range > = {
+export const BASIC_METRICS_SCORES: Record< Metrics, [ number, number ] > = {
 	cls: [ 0.1, 0.25 ],
 	fid: [ 100, 300 ],
 	lcp: [ 2500, 4000 ],
@@ -25,10 +27,10 @@ export const BASIC_METRICS_SCORES: Record< Metrics, Range > = {
 export function getScore( metric: Metrics, value: number ): Scores {
 	const [ good, poor ] = BASIC_METRICS_SCORES[ metric ];
 	if ( value <= good ) {
-		return 'good';
+		return SCORES.good;
 	}
 	if ( value > poor ) {
-		return 'poor';
+		return SCORES.poor;
 	}
-	return 'needs-improvement';
+	return SCORES.needsImprovement;
 }

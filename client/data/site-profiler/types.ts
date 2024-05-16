@@ -84,7 +84,13 @@ export interface HostingProviderQueryResponse {
 
 export type Metrics = 'cls' | 'fid' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
 
+export type Scores = 'good' | 'needs-improvement' | 'poor';
+
 export type BasicMetrics = Record< Metrics, number >;
+export type BasicMetricsList = [ Metrics, number ][];
+
+export type BasicMetricsScored = Record< Metrics, { value: number; score: Scores } >;
+export type BasicMetricsScoredList = [ Metrics, { value: number; score: Scores } ][];
 
 export interface UrlBasicMetricsQueryResponse {
 	final_url: string;

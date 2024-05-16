@@ -1,23 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
-import { Metrics, UrlBasicMetricsQueryResponse } from 'calypso/data/site-profiler/types';
+import {
+	BasicMetricsList,
+	BasicMetricsScored,
+	Metrics,
+	UrlBasicMetricsQueryResponse,
+} from 'calypso/data/site-profiler/types';
 import wp from 'calypso/lib/wp';
 import { getScore } from './metrics-dictionaries';
 
 function mapScores( response: UrlBasicMetricsQueryResponse ) {
 	const { basic } = response;
 
-	if ( ! basic ) {
-		return response;
-	}
-
-	const basicMetricsScored = ( Object.entries( basic ) as [ Metrics, number ][] ).reduce<
-		Record< Metrics, { value: number; score: string } >
-	>(
+	const basicMetricsScored = ( Object.entries( basic ) as BasicMetricsList ).reduce(
 		( acc, [ key, value ] ) => {
 			acc[ key ] = { value: value, score: getScore( key as Metrics, value ) };
 			return acc;
 		},
-		{} as Record< Metrics, { value: number; score: string } >
+		{} as BasicMetricsScored
 	);
 
 	return { ...response, basic: basicMetricsScored };
