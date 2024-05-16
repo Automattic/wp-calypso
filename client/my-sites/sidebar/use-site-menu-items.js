@@ -21,7 +21,6 @@ import { requestAdminMenu } from '../../state/admin-menu/actions';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import globalSidebarMenu from './static-data/global-sidebar-menu';
-import globalSidebarMenuPlugins from './static-data/global-sidebar-menu-plugins';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 
 const useSiteMenuItems = () => {
@@ -113,12 +112,7 @@ const useSiteMenuItems = () => {
 	}, [ isJetpack, menuItems, siteDomain, translate ] );
 
 	if ( shouldShowGlobalSidebar ) {
-		switch ( currentSection?.name ) {
-			case 'plugins':
-				return globalSidebarMenuPlugins();
-			default:
-				return globalSidebarMenu();
-		}
+		return globalSidebarMenu();
 	}
 
 	/**
