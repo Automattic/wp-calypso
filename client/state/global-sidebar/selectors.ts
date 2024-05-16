@@ -63,7 +63,7 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	const pluginsScheduledUpdatesEditMode =
 		state.route.path?.current?.includes( 'scheduled-updates/edit' ) ||
 		state.route.path?.current?.includes( 'scheduled-updates/create' );
-	const isBulkDomainsDashboard = state.route.path?.current?.endsWith( 'domains/manage' );
+	const isBulkDomainsDashboard = state.route.path?.current === '/domains/manage';
 	const isSmallScreenDashboard =
 		( sectionGroup === 'sites-dashboard' || isBulkDomainsDashboard ) &&
 		isWithinBreakpoint( '<782px' );
