@@ -50,6 +50,10 @@ export const JetpackSitesDataViews = ( {
 				site: {
 					...item.site,
 					type: 'error',
+					value: {
+						...item.site.value,
+						blog_id: 'error-' + item.site.value.blog_id,
+					},
 				},
 			} );
 		}

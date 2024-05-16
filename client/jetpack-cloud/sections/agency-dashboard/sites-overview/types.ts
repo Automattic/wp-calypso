@@ -84,7 +84,7 @@ export interface BoostData {
 
 export interface Site {
 	sticker: string[];
-	blog_id: number;
+	blog_id: number | string;
 	blogname: string;
 	url: string;
 	url_with_scheme: string;
@@ -301,7 +301,7 @@ export interface APIToggleFavorite {
 }
 
 export interface ToggleFavoriteOptions {
-	siteId: number;
+	siteId: number | string;
 	isFavorite: boolean;
 	agencyId?: number;
 }
