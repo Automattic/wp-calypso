@@ -1,12 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import {
-	AUTOMOMANAGED_PLUGINS,
-	ECOMMERCE_BUNDLED_PLUGINS,
-	PREINSTALLED_PLUGINS,
-	PREINSTALLED_PREMIUM_PLUGINS,
-} from 'calypso/my-sites/plugins/constants';
-import {
 	BackupNode,
 	BoostNode,
 	ErrorNode,
@@ -156,15 +150,11 @@ const useFormatPluginData = () => {
 
 	return useCallback(
 		( site: Site ): PluginNode => {
-			const pluginUpdates = site.is_atomic
-				? site.awaiting_plugin_updates?.filter(
-						( plugin ) =>
-							! PREINSTALLED_PLUGINS.includes( plugin ) &&
-							! AUTOMOMANAGED_PLUGINS.includes( plugin ) &&
-							! ECOMMERCE_BUNDLED_PLUGINS.includes( plugin ) &&
-							! Object.keys( PREINSTALLED_PREMIUM_PLUGINS ).includes( plugin )
-				  )
-				: site.awaiting_plugin_updates;
+			// Filter auto-managed Plugins that requires updates and leave only plugins that the user can update
+			const managedPluginsWithUpdates = new Set( site.awaiting_plugin_autoupdates );
+			const pluginUpdates = site.awaiting_plugin_updates?.filter(
+				( element ) => ! managedPluginsWithUpdates.has( element )
+			);
 
 			if ( ! pluginUpdates ) {
 				return {

@@ -97,6 +97,7 @@ export interface Site {
 	latest_backup_status: string;
 	is_connection_healthy: boolean;
 	awaiting_plugin_updates: Array< string >;
+	awaiting_plugin_autoupdates: Array< string >;
 	is_favorite: boolean;
 	monitor_settings: MonitorSettings;
 	monitor_last_status_change: string;
