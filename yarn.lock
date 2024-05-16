@@ -602,6 +602,7 @@ __metadata:
     "@wordpress/compose": "npm:^6.34.0"
     "@wordpress/i18n": "npm:^4.57.0"
     "@wordpress/icons": "npm:^9.48.0"
+    "@wordpress/react-i18n": "npm:^3.56.0"
     "@wordpress/url": "npm:^3.58.0"
     classnames: "npm:^2.3.2"
     cmdk: "npm:^0.2.0"
