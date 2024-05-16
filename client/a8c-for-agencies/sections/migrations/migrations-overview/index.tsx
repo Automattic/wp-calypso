@@ -35,7 +35,7 @@ export default function MigrationsOverview() {
 	};
 
 	const onAddBankDetailsClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_migrations_add_bank_details_button_click' ) );
 	}, [ dispatch ] );
 
 	return (
