@@ -69,6 +69,12 @@ body.is-section-plugins {
 		}
 	}
 
+	.is-section-plugins.is-global-sidebar-collapsed {
+		.sidebar__back-link .sidebar__site-title {
+			display: none;
+		}
+	}
+
 	.a4a-layout-column {
 		overflow: scroll;
 	}

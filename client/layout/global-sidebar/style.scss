@@ -156,6 +156,13 @@ $brand-text: "SF Pro Text", $sans;
 					padding-inline-end: 0;
 				}
 			}
+
+			&.is-collapsed {
+				li.sidebar__menu-item--plugins a {
+					padding-top: 6px;
+					padding-bottom: 6px;
+				}
+			}
 		}
 
 		li.sidebar__separator {
