@@ -598,7 +598,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 };
 
 export function resolveFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap > {
-	if ( isTrailMapAnyVariant() ) {
+	if ( isTrailMapStructureVariant() ) {
 		return {
 			[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
 			[ FEATURE_GROUP_WEBSITE_BUILDING ]: featureGroups[ FEATURE_GROUP_WEBSITE_BUILDING ],
