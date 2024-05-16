@@ -59,6 +59,14 @@ const GlobalSidebar = ( {
 		}
 	}, [ previousRoute, section.group ] );
 
+	// If the previous route is the same as the current route, then we are on the same page
+	// To avoid issues with back button, we fallback to the `/sites` route
+	const index = previousLink.current.indexOf( '?' );
+	let route = index >= 0 ? previousLink.current.substring( 0, index ) : previousLink.current;
+	if ( previousRoute.startsWith( route ) ) {
+		route = null;
+	}
+
 	/**
 	 * If there are no menu items and we are currently requesting some,
 	 * then show a spinner. The check for menuItems is necessary because
@@ -70,7 +78,7 @@ const GlobalSidebar = ( {
 	}
 
 	const { requireBackLink, siteTitle, backLinkHref, ...sidebarProps } = props;
-	const sidebarBackLinkHref = backLinkHref || previousLink.current || '/sites';
+	const sidebarBackLinkHref = backLinkHref || route || '/sites';
 
 	return (
 		<div className="global-sidebar" ref={ wrapperRef }>
