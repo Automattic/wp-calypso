@@ -1,0 +1,11 @@
+.signup.is-guided {
+
+	.question-step__content {
+		align-items: center;
+
+		.site-intent-flow-cards {
+			display: flex;
+			flex-direction: column;
+		}
+	}
+}

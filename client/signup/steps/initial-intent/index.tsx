@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import SegmentationSurvey from 'calypso/components/segmentation-survey';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import './styles.scss';
 
 interface Props {
 	stepName: string;
