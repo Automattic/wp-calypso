@@ -793,12 +793,6 @@ export interface TermsOfServiceRecordArgsBase {
 	renewal_price_integer: number;
 
 	/**
-	 * If the promotional price is due to an introductory offer, this is true
-	 * when `should_prorate_when_offer_ends` is set on the offer.
-	 */
-	is_renewal_price_prorated: boolean;
-
-	/**
 	 * The price of the product after the promotional pricing expires. If the
 	 * next auto-renewal after the price expires would prorate the renewal price,
 	 * this DOES NOT include that proration. See
@@ -829,7 +823,7 @@ export interface TermsOfServiceRecordArgsBase {
 	 * included.
 	 *
 	 * This is the price that we will attempt to charge on
-	 * `subscription_regular_auto_renew_date`.
+	 * `subscription_maybe_prorated_regular_auto_renew_date`.
 	 *
 	 * This price is an integer in the currency's smallest unit.
 	 */
@@ -852,17 +846,20 @@ export interface TermsOfServiceRecordArgsRenewal extends TermsOfServiceRecordArg
 
 	/**
 	 * This date that an auto-renew will be attempted with the non-promotional
-	 * price (`maybe_prorated_regular_renewal_price_integer`).
+	 * possibly prorated price (`maybe_prorated_regular_renewal_price_integer`).
 	 *
 	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
 	 *
-	 * If the promotional price only lasts for the initial purchase, then this
-	 * will be the same as `subscription_auto_renew_date`.
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
+	subscription_maybe_prorated_regular_auto_renew_date: string;
+
+	/**
+	 * This date that an auto-renew will be attempted with the non-promotional
+	 * regular recurring price (`regular_renewal_price_integer`).
 	 *
-	 * If the auto-renewal happens on the same date as the end of the
-	 * promotion, this may be the same as `subscription_end_of_promotion_date`,
-	 * but if the subscription renews earlier than its expiry date, it will be
-	 * before that.
+	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
 	 *
 	 * Only set if we can easily determine when the product will renew. Does not
 	 * apply to domain transfers or multi-year domains.
