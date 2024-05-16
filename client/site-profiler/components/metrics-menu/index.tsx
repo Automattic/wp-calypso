@@ -21,9 +21,9 @@ const SectionNavbar = styled( SectionNav )`
 
 interface MetricsMenuProps {
 	basicMetricsRef?: React.RefObject< HTMLObjectElement >;
-	onCTAClick: () => void;
 	performanceMetricsRef?: React.RefObject< HTMLObjectElement >;
 	healthScoresRef?: React.RefObject< HTMLObjectElement >;
+	onCTAClick: () => void;
 }
 
 interface MenuItem {
