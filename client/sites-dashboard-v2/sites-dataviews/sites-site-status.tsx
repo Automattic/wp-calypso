@@ -109,7 +109,7 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 		if ( isRestoring ) {
 			return <Spinner />;
 			// `is_wpcom_staging_site` is false for deleted staging
-			// sites so need to check the slub
+			// sites so need to check the slug
 		} else if ( ! site.slug.startsWith( 'staging-' ) ) {
 			return (
 				<RestoreButton borderless onClick={ handleRestoreSite }>
