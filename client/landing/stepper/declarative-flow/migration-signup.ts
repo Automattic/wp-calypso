@@ -66,7 +66,7 @@ const migrationSignup: Flow = {
 			if ( ! userIsLoggedIn ) {
 				window.location.assign( logInUrl );
 			}
-		}, [ logInUrl ] );
+		}, [ logInUrl, userIsLoggedIn ] );
 
 		if ( ! userIsLoggedIn ) {
 			result = {
