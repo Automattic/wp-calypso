@@ -98,11 +98,10 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		const domainMappingUrl = domainUseMyDomain(
-			this.props.selectedSiteSlug,
+		const domainMappingUrl = domainUseMyDomain( this.props.selectedSiteSlug, {
 			domain,
-			useMyDomainInputMode.transferOrConnect
-		);
+			initialMode: useMyDomainInputMode.transferOrConnect,
+		} );
 		this.isMounted && page( domainMappingUrl );
 	};
 
