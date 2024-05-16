@@ -663,6 +663,15 @@ export function generateFlows( {
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
+		{
+			name: 'guided',
+			steps: [ userSocialStep, 'initial-intent', 'domains' ],
+			destination: getSignupDestination,
+			description: 'Choose what brings them to WordPress.com',
+			lastModified: '2024-05-15',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
 	];
 
 	// convert the array to an object keyed by `name`
