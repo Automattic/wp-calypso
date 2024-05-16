@@ -50,7 +50,11 @@ const MAXTRIES = 10;
 // want some sort of loading display.
 //
 // Inspired by https://stackoverflow.com/a/60458593
-const useMshotsImg = ( src: string, options: MShotsOptions ): HTMLImageElement | undefined => {
+const useMshotsImg = (
+	src: string,
+	options: MShotsOptions,
+	handleImageLoad: boolean
+): HTMLImageElement | undefined => {
 	const [ loadedImg, setLoadedImg ] = useState< HTMLImageElement >();
 	const [ count, setCount ] = useState( 0 );
 	const previousSrc = useRef( src );
@@ -68,6 +72,13 @@ const useMshotsImg = ( src: string, options: MShotsOptions ): HTMLImageElement |
 	// to browser caching. Getting this wrong looks like the url resolving
 	// before the image is ready.
 	useEffect( () => {
+		// Ignore all this work if we don't want the hook to handle the image load.
+		// Since hooks can't be inside conditions, we need to handle that logic here,
+		// once all hooks are in place...
+		if ( ! handleImageLoad ) {
+			return;
+		}
+
 		// If there's been a "props" change we need to reset everything:
 		if (
 			options !== previousOptions.current ||
@@ -147,8 +158,8 @@ const MShotsImage = ( {
 	options,
 	scrollable = false,
 }: MShotsImageProps ) => {
-	const maybeImage = useMshotsImg( url, options );
-	const src: string = maybeImage?.src || '';
+	const maybeImage = useMshotsImg( url, options, scrollable );
+	const src: string = ( scrollable ? maybeImage?.src : mshotsUrl( url, options ) ) || '';
 	const visible = !! src;
 	const backgroundImage = maybeImage?.src && `url( ${ maybeImage?.src } )`;
 
