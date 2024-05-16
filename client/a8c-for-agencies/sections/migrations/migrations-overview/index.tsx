@@ -39,7 +39,7 @@ export default function MigrationsOverview() {
 	}, [ dispatch ] );
 
 	return (
-		<Layout className="referrals-layout" title={ title } wide>
+		<Layout className="migrations-overview__layout" title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>
