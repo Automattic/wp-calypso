@@ -12,14 +12,11 @@ import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { useSitesDashboardImportSiteUrl } from 'calypso/sites-dashboard/hooks/use-sites-dashboard-import-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 
-const MAX_PAGE_WIDTH = '1224px';
-
 const PageHeader = styled.div( {
 	backgroundColor: 'var( --studio-white )',
 } );
 
 const HeaderControls = styled.div( {
-	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
 	display: 'flex',

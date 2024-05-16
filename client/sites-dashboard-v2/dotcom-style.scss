@@ -23,7 +23,11 @@
 			}
 
 			@include breakpoint-deprecated( ">960px" ) {
-				padding-inline: 64px;
+				padding-inline: 26px;
+			}
+
+			@include breakpoint-deprecated( ">1440px" ) {
+				padding-inline: 8px;
 			}
 		}
 	}
@@ -137,7 +141,7 @@
 		}
 		@include break-huge {
 			&:first-child {
-				padding-left: 64px;
+				padding-left: 8px;
 			}
 		}
 		&:nth-child(2) {

@@ -152,7 +152,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			}
 
 			@media only screen and ( min-width: 782px ) {
-				div.layout.is-global-sidebar-visible {
+				.is-global-sidebar-visible {
 					header.navigation-header {
 						padding-top: 24px;
 						padding-inline: 64px;
