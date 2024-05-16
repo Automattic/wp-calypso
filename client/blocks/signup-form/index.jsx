@@ -1251,8 +1251,8 @@ class SignupForm extends Component {
 					 */
 					logInUrl={ logInUrl }
 					//
-					handleSocialResponse={ this.props.handleSocialResponse }
-					socialService={ this.props.socialService }
+					handleSocialResponse={ this.props.handleSocialResponse } /// Submits signup step loads redirect_to from session storage and oauth validate
+					socialService={ this.props.socialService } // getSocialServiceFromClientId
 					socialServiceResponse={ this.props.socialServiceResponse }
 					isReskinned={ this.props.isReskinned }
 					redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
