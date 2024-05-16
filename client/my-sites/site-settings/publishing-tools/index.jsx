@@ -9,7 +9,6 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SupportInfo from 'calypso/components/support-info';
-import { userCan } from 'calypso/lib/site/utils';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import PressThis from 'calypso/my-sites/site-settings/press-this';
 import { PostByVoiceSetting } from 'calypso/my-sites/site-settings/publishing-tools/post-by-voice';
@@ -20,7 +19,7 @@ import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import isRegeneratingJetpackPostByEmail from 'calypso/state/selectors/is-regenerating-jetpack-post-by-email';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -163,15 +162,12 @@ class PublishingTools extends Component {
 	}
 
 	render() {
-		const { translate, siteIsJetpack, isAtomic, site } = this.props;
+		const { translate, siteIsJetpack, isAtomic } = this.props;
 
 		const renderPressThis = config.isEnabled( 'press-this' ) && ! this.isMobile();
 		const renderPostByEmail = siteIsJetpack;
 		const renderPostByVoice =
-			config.isEnabled( 'settings/post-by-voice' ) &&
-			userCan( 'upload_files', site ) &&
-			! siteIsJetpack &&
-			! isAtomic;
+			config.isEnabled( 'settings/post-by-voice' ) && ! siteIsJetpack && ! isAtomic;
 
 		if ( ! renderPressThis && ! renderPostByVoice && ! renderPostByEmail ) {
 			return;
@@ -205,7 +201,6 @@ PublishingTools.propTypes = {
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
-		const site = getSite( state, selectedSiteId );
 		const siteIsJetpack = isJetpackSite( state, selectedSiteId );
 		const isAtomic = isSiteAutomatedTransfer( state, selectedSiteId );
 		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail( state, selectedSiteId );
@@ -220,7 +215,6 @@ export default connect(
 			siteIsJetpack,
 			isAtomic,
 			selectedSiteId,
-			site,
 			regeneratingPostByEmail,
 			postByEmailAddressModuleActive: !! isJetpackModuleActive(
 				state,
