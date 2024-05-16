@@ -45,6 +45,7 @@ describe( 'Site Migration Flow', () => {
 		const testSettingsEndpoint = '/rest/v1.4/sites/example.wordpress.com/settings';
 		nock( apiBaseUrl ).get( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( testSettingsEndpoint ).reply( 200, {} );
+		nock( apiBaseUrl ).post( '/wpcom/v2/guides/trigger' ).reply( 200, {} );
 	} );
 
 	afterEach( () => {
