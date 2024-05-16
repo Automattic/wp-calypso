@@ -15,7 +15,6 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
 import {
 	fetchAutomatedTransferStatus,
@@ -121,7 +120,6 @@ class PluginUpload extends Component {
 			this.setState( { isTransferring: true } );
 		}
 		if ( wasTransferring && isTransferCompleted ) {
-			this.props.fetchUpdatedData();
 			this.setState( { isTransferring: false } );
 		}
 	};
@@ -202,4 +200,4 @@ const flowRightArgs = [
 	localize,
 ];
 
-export default flowRight( ...flowRightArgs )( WithOnclickTrialRequest( PluginUpload ) );
+export default flowRight( ...flowRightArgs )( PluginUpload );
