@@ -18,9 +18,9 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	getPlan,
-	getTermDuration,
+	getTermDuration, // eslint-disable-next-line import/newline-after-import
 } from '@automattic/calypso-products';
-import { cartItems } from '../cart-items';
+const cartItems = require( '../cart-items' );
 
 const {
 	planItem,
