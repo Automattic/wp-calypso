@@ -56,8 +56,7 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	sectionGroup: string,
 	sectionName: string
 ) => {
-	const isAllowedRegion =
-		sectionGroup === 'sites-dashboard' || sectionGroup === 'sites' || sectionName === 'plugins';
+	const isAllowedRegion = sectionGroup === 'sites-dashboard' || sectionName === 'plugins';
 	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
 	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
 	const pluginsScheduledUpdatesEditMode =
