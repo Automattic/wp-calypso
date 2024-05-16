@@ -18,3 +18,4 @@ export { getProductSaleCouponCost } from './get-product-sale-coupon-cost';
 export { getProductSaleCouponDiscount } from './get-product-sale-coupon-discount';
 export { getProductCurrencyCode } from './get-product-currency-code';
 export { getMarketplaceProducts } from './get-marketplace-products';
+export { getProductBillingSlugByThemeId } from './get-product-billing-slug-by-theme-id';
