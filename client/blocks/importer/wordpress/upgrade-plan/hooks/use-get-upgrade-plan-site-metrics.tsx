@@ -15,16 +15,8 @@ export const useGetUpgradePlanSiteMetrics = () => {
 		siteMetricData?.basic?.lcp &&
 		siteMetricData?.basic?.lcp > upgradePlanSiteMetricsLcpThreshold
 	) {
-		lcpPercentageDifference =
-			( siteMetricData?.basic?.lcp &&
-				Math.round(
-					100 *
-						Math.abs(
-							( siteMetricData?.basic?.lcp - upgradePlanSiteMetricsLcpThreshold ) /
-								( ( siteMetricData?.basic?.lcp + upgradePlanSiteMetricsLcpThreshold ) / 2 )
-						)
-				) ) ||
-			0;
+		const lcpMsDiff = siteMetricData?.basic?.lcp - upgradePlanSiteMetricsLcpThreshold;
+		lcpPercentageDifference = Math.round( ( lcpMsDiff / siteMetricData?.basic?.lcp ) * 100 );
 
 		if ( lcpPercentageDifference > 0 ) {
 			showUpdatedSpeedMetrics = true;
