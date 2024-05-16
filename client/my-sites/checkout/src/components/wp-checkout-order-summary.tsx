@@ -77,7 +77,7 @@ const StyledIcon = styled( Icon )`
 export function WPCheckoutOrderSummary( {
 	siteId,
 	onChangeSelection,
-	showFeaturesList = true,
+	showFeaturesList,
 }: {
 	siteId: number | undefined;
 	onChangeSelection: (

@@ -552,7 +552,11 @@ export default function CheckoutMainContent( {
 									</div>
 								) }
 
-								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
+								<WPCheckoutOrderSummary
+									siteId={ siteId }
+									onChangeSelection={ changeSelection }
+									showFeaturesList
+								/>
 								<CheckoutSidebarNudge
 									siteId={ siteId }
 									formStatus={ formStatus }
