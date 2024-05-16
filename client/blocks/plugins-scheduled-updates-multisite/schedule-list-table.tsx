@@ -40,6 +40,20 @@ export const ScheduleListTable = ( props: Props ) => {
 						key={ schedule.id }
 					/>
 				) ) }
+
+				{ schedules.length === 0 && (
+					<tr>
+						<td colSpan={ 9 }>
+							<div className="empty-state empty-state__center">
+								<p>
+									{ translate(
+										"Oops! We couldn't find any scheduled updates based on your search criteria. You might want to check your input and try again"
+									) }
+								</p>
+							</div>
+						</td>
+					</tr>
+				) }
 			</tbody>
 		</table>
 	);
