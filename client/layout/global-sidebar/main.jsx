@@ -64,7 +64,7 @@ const GlobalSidebar = ( {
 	// Determine the route to use for the back link.
 	// If there is no previous link, then there is no route to use - fallback to the default.
 	// If the current route is a sub-route of the previous link, then there is no route to use - fallback to the default.
-	const route = useMemo( () => {
+	const previousRouteHref = useMemo( () => {
 		if ( ! previousLink.current ) {
 			return null;
 		}
@@ -85,7 +85,7 @@ const GlobalSidebar = ( {
 	}
 
 	const { requireBackLink, siteTitle, backLinkHref, ...sidebarProps } = props;
-	const sidebarBackLinkHref = backLinkHref || route || '/sites';
+	const sidebarBackLinkHref = backLinkHref || previousRouteHref || '/sites';
 
 	return (
 		<div className="global-sidebar" ref={ wrapperRef }>
