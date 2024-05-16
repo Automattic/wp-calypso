@@ -73,6 +73,15 @@
 		max-width: none;
 		padding: 24px 0;
 
+		.tags__header h4 {
+			margin: -4px 0 19px;
+		}
+
+		.alphabetic-tags__header {
+			padding-bottom: 24px;
+			padding-top: 24px;
+		}
+
 		@include break-small {
 			.sticky-panel.is-sticky .sticky-panel__content {
 				border-top-left-radius: 4px;
