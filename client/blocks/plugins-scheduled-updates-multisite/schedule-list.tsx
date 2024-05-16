@@ -88,6 +88,12 @@ export const ScheduleList = ( props: Props ) => {
 				site_slugs: selectedSiteSlugsForMutate.join( ',' ),
 				sites_count: selectedSiteSlugsForMutate.length,
 			} );
+
+			selectedSiteSlugsForMutate.forEach( ( siteSlug ) => {
+				recordTracksEvent( 'calypso_scheduled_updates_delete_schedule', {
+					site_slug: siteSlug,
+				} );
+			} );
 		}
 		closeRemoveConfirm();
 	};

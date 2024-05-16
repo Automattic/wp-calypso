@@ -6,7 +6,10 @@ import { usePrepareScheduleName } from 'calypso/blocks/plugin-scheduled-updates-
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useLoadScheduleFromId } from './hooks/use-load-schedule-from-id';
 import { ScheduleForm } from './schedule-form';
-import type { MultiSiteSuccessParams } from 'calypso/blocks/plugins-scheduled-updates-multisite/types';
+import type {
+	MultiSitesResults,
+	MultiSiteBaseParams,
+} from 'calypso/blocks/plugins-scheduled-updates-multisite/types';
 import type { ScheduleUpdates } from 'calypso/data/plugins/use-update-schedules-query';
 
 type Props = {
@@ -26,8 +29,32 @@ export const ScheduleEdit = ( { id, onNavBack }: Props ) => {
 		}
 	}, [ scheduleNotFound, onNavBack ] );
 
-	const onRecordSuccessEvent = ( params: MultiSiteSuccessParams ) => {
-		recordTracksEvent( 'calypso_scheduled_updates_multisite_edit_schedule', params );
+	const onRecordSuccessEvent = ( sites: MultiSitesResults, params: MultiSiteBaseParams ) => {
+		recordTracksEvent( 'calypso_scheduled_updates_multisite_edit_schedule', {
+			sites_count: sites.createdSiteSlugs.length + sites.editedSiteSlugs.length,
+			...params,
+		} );
+
+		// Add track event for each site
+		sites.createdSiteSlugs.forEach( ( siteSlug ) => {
+			recordTracksEvent( 'calypso_scheduled_updates_create_schedule', {
+				site_slug: siteSlug,
+				...params,
+			} );
+		} );
+
+		sites.editedSiteSlugs.forEach( ( siteSlug ) => {
+			recordTracksEvent( 'calypso_scheduled_updates_edit_schedule', {
+				site_slug: siteSlug,
+				...params,
+			} );
+		} );
+
+		sites.deletedSiteSlugs.forEach( ( siteSlug ) => {
+			recordTracksEvent( 'calypso_scheduled_updates_delete_schedule', {
+				site_slug: siteSlug,
+			} );
+		} );
 	};
 
 	return (
