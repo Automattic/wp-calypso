@@ -34,15 +34,17 @@ const useGetLicenseIssuedMessage = () => {
 			}
 
 			// Only one individual license; let's be more specific
-			if ( licenses.length === 1 && ( licenses[ 0 ].quantity ?? 1 ) === 1 ) {
+			if ( licenses.length === 1 ) {
 				const productName =
 					products?.data?.find?.( ( p ) => p.slug === licenses[ 0 ].slug )?.name ?? '';
 				return translate(
 					'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} license to a website.',
+					'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} licenses to a website.',
 					{
 						args: {
 							productName,
 						},
+						count: licenses[ 0 ].licenses.length ?? 1,
 						components: {
 							strong: <strong />,
 						},
@@ -103,7 +105,7 @@ function useIssueAndAssignLicenses(
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_multiple_licenses_issued', {
 					products: issuedLicenses
-						.map( ( license ) => `${ license.slug }:${ license.quantity ?? 1 }` )
+						.map( ( license ) => `${ license.slug }:${ license.licenses.length ?? 1 }` )
 						.join( ',' ),
 				} )
 			);
@@ -111,7 +113,9 @@ function useIssueAndAssignLicenses(
 			// We have issued the licenses successfully so we can now call onSuccess callback regardless if it was able to assign it.
 			options.onSuccess?.();
 
-			const issuedKeys = issuedLicenses.map( ( { license_key } ) => license_key );
+			const issuedKeys = issuedLicenses
+				.map( ( item ) => item.licenses.map( ( lic ) => lic.license_key ) )
+				.flat();
 
 			// TODO: Move dispatch events and redirects outside this function
 			//
