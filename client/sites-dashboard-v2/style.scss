@@ -511,12 +511,17 @@
 		}
 
 		@media (min-width: $break-huge) {
-			.a4a-layout__viewport,
-			.dataviews-wrapper {
-				max-width: 1096px;
-				padding-left: 8px;
-				padding-right: 8px;
+			div.a4a-layout__viewport {
 				margin: 0 auto;
+				max-width: 1096px;
+				box-sizing: border-box;
+				padding-inline: 8px;
+			}
+			.dataviews-wrapper {
+				margin: 0 auto;
+				max-width: 1096px;
+				box-sizing: border-box;
+				padding-inline: 8px;
 			}
 		}
 
@@ -596,11 +601,11 @@
 				.sites-overview {
 					.dataviews-filters__view-actions {
 						& > :first-child {
-							margin-inline-start: 8px;
+							margin-inline-start: 0;
 						}
 
 						& > :last-child {
-							margin-inline-end: 8px;
+							margin-inline-end: 0;
 						}
 					}
 				}

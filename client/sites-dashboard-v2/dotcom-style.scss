@@ -141,7 +141,7 @@
 		}
 		@include break-huge {
 			&:first-child {
-				padding-left: 8px;
+				padding-left: 0;
 			}
 		}
 		&:nth-child(2) {
