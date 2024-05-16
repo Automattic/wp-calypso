@@ -1,11 +1,9 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { OtherSupportAvailability, ChatAvailability, EmailSupportStatus } from '../types';
+import { OtherSupportAvailability, EmailSupportStatus } from '../types';
 
-type ResponseType< T extends 'CHAT' | 'OTHER' | 'EMAIL' > = T extends 'CHAT'
-	? ChatAvailability
-	: T extends 'EMAIL'
+type ResponseType< T extends 'CHAT' | 'OTHER' | 'EMAIL' > = T extends 'EMAIL'
 	? EmailSupportStatus
 	: OtherSupportAvailability;
 
@@ -14,7 +12,7 @@ interface APIFetchOptions {
 	path: string;
 }
 
-export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' | 'EMAIL' >(
+export function useSupportAvailability< SUPPORT_TYPE extends 'OTHER' | 'EMAIL' >(
 	supportType: SUPPORT_TYPE,
 	enabled = true
 ) {

@@ -64,38 +64,14 @@ const ChatButton: FC< Props > = ( {
 	const { __ } = useI18n();
 
 	const messagingGroup = getMessagingGroupForIntent( chatIntent );
-	const {
-		canConnectToZendesk,
-		hasActiveChats,
-		isChatAvailable,
-		isEligibleForChat,
-		isPrecancellationChatOpen,
-		isPresalesChatOpen,
-	} = useChatStatus( messagingGroup );
+	const { canConnectToZendesk, hasActiveChats, isChatAvailable } = useChatStatus( messagingGroup );
 	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	function shouldShowChatButton(): boolean {
-		if ( isEligibleForChat && hasActiveChats ) {
+		if ( hasActiveChats ) {
 			return true;
 		}
-
-		switch ( chatIntent ) {
-			case 'PRESALES':
-				if ( ! isPresalesChatOpen ) {
-					return false;
-				}
-				break;
-
-			case 'PRECANCELLATION':
-				if ( ! isPrecancellationChatOpen ) {
-					return false;
-				}
-				break;
-			default:
-				break;
-		}
-
-		if ( isEligibleForChat && isChatAvailable && ( canConnectToZendesk || withHelpCenter ) ) {
+		if ( isChatAvailable && ( canConnectToZendesk || withHelpCenter ) ) {
 			return true;
 		}
 

@@ -110,11 +110,11 @@ const HelpCenter: React.FC< Container > = ( {
 
 	useStillNeedHelpURL();
 
-	const { hasActiveChats, isEligibleForChat } = useChatStatus( 'wpcom_messaging', false );
+	const { hasActiveChats } = useChatStatus( 'wpcom_messaging', false );
 	const { isMessagingScriptLoaded } = useZendeskMessaging(
 		'zendesk_support_chat_key',
-		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
-		isEligibleForChat && hasActiveChats
+		isHelpCenterShown || hasActiveChats,
+		hasActiveChats
 	);
 
 	useMessagingBindings( hasActiveChats, isMessagingScriptLoaded );

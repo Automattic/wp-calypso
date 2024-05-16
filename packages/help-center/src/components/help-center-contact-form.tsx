@@ -123,15 +123,10 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
 
-	const {
-		canConnectToZendesk,
-		hasActiveChats,
-		isEligibleForChat,
-		isLoading: isLoadingChatStatus,
-	} = useChatStatus();
+	const { canConnectToZendesk, hasActiveChats, isLoading: isLoadingChatStatus } = useChatStatus();
 	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
-		isEligibleForChat || hasActiveChats
+		hasActiveChats
 	);
 
 	const wapuuChatId = useGetOdieStorage( 'last_chat_id' );

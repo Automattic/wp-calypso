@@ -34,11 +34,8 @@ export const MigrationError = ( props: Props ) => {
 		goToImportContentOnlyPage,
 	} = props;
 	const translate = useTranslate();
-	const { isChatAvailable, isEligibleForChat, canConnectToZendesk } = useChatStatus();
-	const { openChatWidget, isOpeningChatWidget } = useChatWidget(
-		'zendesk_support_chat_key',
-		isEligibleForChat
-	);
+	const { isChatAvailable, canConnectToZendesk } = useChatStatus();
+	const { openChatWidget, isOpeningChatWidget } = useChatWidget( 'zendesk_support_chat_key' );
 	const { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta, importContentCta } =
 		useErrorDetails( status, sourceSiteUrl, targetSiteUrl );
 

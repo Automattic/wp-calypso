@@ -73,17 +73,8 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	const locale = useLocale();
 	const isEnglishLocale = useIsEnglishLocale();
 	const renderEmail = useShouldRenderEmailOption();
-	const {
-		hasActiveChats,
-		isEligibleForChat,
-		isLoading: isLoadingChatStatus,
-		supportActivity,
-	} = useChatStatus();
-	useZendeskMessaging(
-		'zendesk_support_chat_key',
-		isEligibleForChat || hasActiveChats,
-		isEligibleForChat || hasActiveChats
-	);
+	const { hasActiveChats, isLoading: isLoadingChatStatus, supportActivity } = useChatStatus();
+	useZendeskMessaging( 'zendesk_support_chat_key', hasActiveChats, hasActiveChats );
 
 	const isLoading = renderEmail.isLoading || isLoadingChatStatus;
 
