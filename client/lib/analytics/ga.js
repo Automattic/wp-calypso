@@ -46,7 +46,8 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
 	urlPath,
 	pageTitle,
 	useJetpackGoogleAnalytics = false,
-	useAkismetGoogleAnalytics = false
+	useAkismetGoogleAnalytics = false,
+	useA4AGoogleAnalytics = false
 ) {
 	gaDebug(
 		'Recording Page View ~ [URL: ' +
@@ -57,6 +58,8 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
 			useJetpackGoogleAnalytics +
 			'] [useAksiemtGoogleAnalytics: ' +
 			useAkismetGoogleAnalytics +
+			'] [useA4AGoogleAnalytics: ' +
+			useA4AGoogleAnalytics +
 			']'
 	);
 
@@ -64,7 +67,8 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
 		urlPath,
 		pageTitle,
 		useJetpackGoogleAnalytics,
-		useAkismetGoogleAnalytics
+		useAkismetGoogleAnalytics,
+		useA4AGoogleAnalytics
 	);
 } );
 
