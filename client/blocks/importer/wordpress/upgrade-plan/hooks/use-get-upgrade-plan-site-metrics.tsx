@@ -11,7 +11,8 @@ const calcPercentageDifferenceFromThreshold = ( value: number | undefined, thres
 		return 0;
 	}
 
-	return Math.round( 100 * Math.abs( ( value - threshold ) / ( ( value + threshold ) / 2 ) ) );
+	const diff = value - threshold;
+	return Math.round( ( diff / value ) * 100 );
 };
 
 export const useGetUpgradePlanSiteMetrics = () => {
