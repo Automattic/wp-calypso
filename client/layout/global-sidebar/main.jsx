@@ -63,7 +63,7 @@ const GlobalSidebar = ( {
 
 	// Determine the route to use for the back link.
 	// If there is no previous link, then there is no route to use - fallback to the default.
-	// If the current route is a sub-route of the previous link, then there is no route to use - fallback to the default.
+	// If the previous link is the same as the current route, then there is no route to use - fallback to the default.
 	const previousRouteHref = useMemo( () => {
 		if ( ! previousLink.current ) {
 			return null;
