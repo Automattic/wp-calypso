@@ -11,7 +11,7 @@ export const useRegeneratePostByVoiceMutation = ( siteId: number | null ) => {
 
 	return useMutation( {
 		mutationFn: async () => {
-			const response: PostByVoiceResponse = await await wpcom.req.put( {
+			const response: PostByVoiceResponse = await wpcom.req.put( {
 				method: 'PUT',
 				path: getPostByVoicePath( siteId ),
 				apiNamespace: 'wpcom/v2',
