@@ -204,6 +204,9 @@ const useMyDomain = ( context, next ) => {
 				path = `/domains/manage/${ context.query.initialQuery }/edit/${ context.params.site }`;
 			}
 		}
+		if ( context.query.redirect_to ) {
+			path = context.query.redirect_to;
+		}
 
 		page( path );
 	};
