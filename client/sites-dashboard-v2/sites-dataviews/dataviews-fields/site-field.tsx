@@ -1,6 +1,7 @@
 import { ListTile, Button } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
+import { Icon, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import * as React from 'react';
@@ -115,9 +116,18 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						</>
 					) : (
 						<>
-							<div className="sites-dataviews__site-url">
-								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-							</div>
+							<a
+								className="sites-dataviews__site-url"
+								href={ siteUrl }
+								title={ siteUrl }
+								target="_blank"
+								rel="noreferrer"
+							>
+								<Truncated>
+									{ displaySiteUrl( siteUrl ) }
+									<Icon icon={ external } size={ 16 } />
+								</Truncated>
+							</a>
 							<a className="sites-dataviews__site-wp-admin-url" href={ adminUrl }>
 								<Truncated>{ adminLabel }</Truncated>
 							</a>
