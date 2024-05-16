@@ -260,7 +260,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 					} ) }
 					{ data?.sites.length === 0 && (
 						<div className={ classNames( 'card', 'assign-license__sites-no-results' ) }>
-							No results
+							{ translate( 'No results' ) }
 						</div>
 					) }
 				</div>
