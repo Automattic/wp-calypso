@@ -37,7 +37,7 @@ export const useFeaturesList = () => {
 		},
 		{
 			id: 'multi-site-management',
-			title: translate( 'Multi-site Management', {
+			title: translate( 'Multi-site management', {
 				comment: 'Feature title',
 			} ),
 			description: translate(
