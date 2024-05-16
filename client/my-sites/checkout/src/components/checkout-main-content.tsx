@@ -366,9 +366,7 @@ export default function CheckoutMainContent( {
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
 	);
 
-	/*
-	 * Only show the site preview for WPCOM domains that have a site connected to the site id
-	 * */
+	// Only show the site preview for WPCOM domains that have a site connected to the site id
 	const shouldShowSitePreview =
 		showSitePreview && selectedSiteData && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
 
