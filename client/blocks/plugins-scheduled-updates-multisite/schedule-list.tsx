@@ -98,8 +98,8 @@ export const ScheduleList = ( props: Props ) => {
 			}
 			const filteredSites = schedule.sites.filter(
 				( site ) =>
-					site.title.toLowerCase().includes( lowercasedSearchTerm ) ||
-					site.URL.toLowerCase().includes( lowercasedSearchTerm )
+					site.title?.toLowerCase().includes( lowercasedSearchTerm ) ||
+					site.URL?.toLowerCase().includes( lowercasedSearchTerm )
 			);
 
 			return {
