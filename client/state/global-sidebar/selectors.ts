@@ -56,12 +56,17 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	sectionGroup: string,
 	sectionName: string
 ) => {
-	const isAllowedRegion = sectionGroup === 'sites-dashboard' || sectionName === 'plugins';
+	const isAllowedRegion =
+		sectionGroup === 'sites-dashboard' || sectionGroup === 'sites' || sectionName === 'plugins';
 	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
 	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
 	const pluginsScheduledUpdatesEditMode =
 		state.route.path?.current?.includes( 'scheduled-updates/edit' ) ||
 		state.route.path?.current?.includes( 'scheduled-updates/create' );
+	const isBulkDomainsDashboard = state.route.path?.current?.endsWith( 'domains/manage' );
+	const isSmallScreenDashboard =
+		( sectionGroup === 'sites-dashboard' || isBulkDomainsDashboard ) &&
+		isWithinBreakpoint( '<782px' );
 
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
@@ -69,7 +74,7 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		( siteSelected ||
 			siteLoaded ||
 			( ! siteId && pluginsScheduledUpdatesEditMode ) ||
-			isWithinBreakpoint( '<782px' ) )
+			isSmallScreenDashboard )
 	);
 };
 
