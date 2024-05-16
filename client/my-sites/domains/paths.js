@@ -370,7 +370,7 @@ export function domainUseYourDomain( siteName, domain ) {
 	return path;
 }
 
-export function domainUseMyDomain( siteName, domain, initialMode ) {
+export function domainUseMyDomain( siteName, { domain, initialMode, redirectTo } = {} ) {
 	const path = `/domains/add/use-my-domain/${ siteName }`;
 	const queryArgs = [];
 	if ( domain ) {
@@ -379,6 +379,9 @@ export function domainUseMyDomain( siteName, domain, initialMode ) {
 		if ( initialMode ) {
 			queryArgs.push( `initialMode=${ initialMode }` );
 		}
+	}
+	if ( redirectTo ) {
+		queryArgs.push( `redirect_to=${ redirectTo }` );
 	}
 
 	return path + ( queryArgs.length ? `?${ queryArgs.join( '&' ) }` : '' );
