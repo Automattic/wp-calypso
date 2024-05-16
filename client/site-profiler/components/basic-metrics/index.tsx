@@ -42,7 +42,7 @@ export const BasicMetrics = forwardRef(
 						return (
 							showMetric && (
 								<li key={ key }>
-									<div>
+									<div className="name">
 										<a href={ `https://web.dev/articles/${ key }` }>{ key }</a>
 									</div>
 									<div className="basic-metrics__values">{ metricScored.value }</div>
