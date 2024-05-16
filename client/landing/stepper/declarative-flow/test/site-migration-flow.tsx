@@ -7,6 +7,7 @@ import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
@@ -232,6 +233,15 @@ describe( 'Site Migration Flow', () => {
 				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`,
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
+		} );
+
+		it( 'calls triggerGuidesForStep when navigating to the import or migrate step', async () => {
+			const flowName = 'site-migration';
+			const currentStep = STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug;
+
+			triggerGuidesForStep( flowName, currentStep );
+
+			expect( triggerGuidesForStep ).toHaveBeenCalledWith( flowName, currentStep );
 		} );
 	} );
 
