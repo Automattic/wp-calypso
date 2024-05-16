@@ -6,13 +6,13 @@ import getSiteOption from './get-site-option';
  * for the site cannot be determined.
  * @see https://developer.wordpress.org/reference/functions/get_admin_url/
  * @param  {Object}  state  Global state tree
- * @param  {?number}  siteId Site ID
+ * @param  {?number | string}  siteId Site ID
  * @param  {?string} path   Admin screen path
  * @returns {?string}        Admin URL
  */
 export default function getSiteAdminUrl(
 	state: AppState,
-	siteId: number | null | undefined,
+	siteId: number | string | null | undefined,
 	path = ''
 ): string | null {
 	const adminUrl = getSiteOption( state, siteId, 'admin_url' );

@@ -10,7 +10,7 @@ import SitePreviewPaneContent from '../site-preview-pane/site-preview-pane-conte
 import 'calypso/my-sites/scan/style.scss';
 
 type Props = {
-	siteId: number;
+	siteId: number | string;
 };
 type ContextHandler = ( context: object, next: () => void ) => void;
 

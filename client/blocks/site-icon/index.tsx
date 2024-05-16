@@ -21,7 +21,7 @@ type Site = {
 };
 
 type SiteIconProps = {
-	siteId?: number;
+	siteId?: number | string;
 	site?: object;
 	iconUrl?: string | null;
 	size?: number;
@@ -89,7 +89,7 @@ export function SiteIcon( {
 }
 
 type SiteIconContainerProps = {
-	siteId?: number;
+	siteId?: number | string;
 	site?: Site;
 	imgSize?: number;
 };

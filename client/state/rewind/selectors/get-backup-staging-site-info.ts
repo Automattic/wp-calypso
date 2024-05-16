@@ -7,7 +7,9 @@ import type { AppState } from 'calypso/types';
  * @param siteId The site for which to fetch the staging info.
  * @returns APIRewindStagingSiteInfo object if staging site info is available; otherwise, null.
  */
-const getBackupStagingSiteInfo = ( state: AppState, siteId: number ): APIRewindStagingSiteInfo =>
-	state.rewind[ siteId ]?.staging?.site?.info ?? null;
+const getBackupStagingSiteInfo = (
+	state: AppState,
+	siteId: number | string
+): APIRewindStagingSiteInfo => state.rewind[ siteId ]?.staging?.site?.info ?? null;
 
 export default getBackupStagingSiteInfo;

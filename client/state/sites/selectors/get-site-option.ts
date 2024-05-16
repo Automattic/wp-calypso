@@ -7,7 +7,7 @@ import type { AppState } from 'calypso/types';
  */
 export default function getSiteOption(
 	state: AppState,
-	siteId: number | undefined | null,
+	siteId: number | string | undefined | null,
 	optionName: string
 ): SiteDetailsOptions[ keyof SiteDetailsOptions ] | null {
 	if ( ! siteId ) {

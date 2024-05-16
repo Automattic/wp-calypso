@@ -36,5 +36,5 @@ export interface SitesViewState {
 }
 
 export interface SiteInfo extends SiteData {
-	id: number;
+	id: number | string;
 }

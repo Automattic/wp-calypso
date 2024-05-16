@@ -23,9 +23,9 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, true );
 
-	const [ expandedRow, setExpandedRow ] = useState< number | null >( null );
+	const [ expandedRow, setExpandedRow ] = useState< number | string | null >( null );
 
-	const setExpanded = ( blogId: number ) => {
+	const setExpanded = ( blogId: number | string ) => {
 		recordEvent( 'expandable_block_toggled', {
 			expanded: expandedRow !== blogId,
 			site_id: blogId,

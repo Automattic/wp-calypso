@@ -70,7 +70,7 @@ export default function ToggleActivateMonitoring( {
 	const statusContentRef = useRef< HTMLSpanElement | null >( null );
 
 	const isChecked = status !== 'disabled';
-	const isLoading = statuses?.[ site.blog_id ] === 'loading';
+	const isLoading = typeof site.blog_id === 'number' && statuses?.[ site.blog_id ] === 'loading';
 	const smsLimitReached = settings?.is_over_limit;
 
 	const currentSettings = () => {

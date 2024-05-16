@@ -39,7 +39,7 @@ export const requestUpdateBackupStagingFlag = (
 } );
 
 export const requestBackupStagingSiteInfo = (
-	siteId: number | null
+	siteId: number | string | null
 ): GetStagingSiteRequestActionType => ( {
 	type: JETPACK_BACKUP_STAGING_GET_REQUEST,
 	siteId,

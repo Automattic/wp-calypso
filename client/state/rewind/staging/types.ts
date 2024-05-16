@@ -44,5 +44,5 @@ export type UpdateStagingFlagRequestActionType = Action<
 export type GetStagingSiteRequestActionType = Action<
 	typeof JETPACK_BACKUP_STAGING_GET_REQUEST
 > & {
-	siteId: number | null;
+	siteId: number | string | null;
 };

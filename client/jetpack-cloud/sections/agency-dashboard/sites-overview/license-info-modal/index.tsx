@@ -19,7 +19,7 @@ interface Props {
 	label?: string;
 	currentLicenseInfo: string | null;
 	onClose?: () => void;
-	siteId?: number;
+	siteId?: number | string;
 	extraAsideContent?: JSX.Element;
 	isDisabled?: boolean;
 	onCtaClick?: () => void;

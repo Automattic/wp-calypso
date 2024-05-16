@@ -44,7 +44,7 @@ export const useFetchTestConnections = ( isPartnerOAuthTokenLoaded: boolean, sit
 export const useFetchTestConnection = (
 	isPartnerOAuthTokenLoaded: boolean,
 	isConnectionHealthy: boolean,
-	siteId: number
+	siteId: number | string
 ) => {
 	return useQuery( {
 		queryKey: getQueryKey( siteId ),

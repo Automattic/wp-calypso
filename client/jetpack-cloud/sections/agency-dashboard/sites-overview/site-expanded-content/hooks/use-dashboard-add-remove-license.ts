@@ -7,7 +7,7 @@ import {
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import type { AllowedTypes } from '../../types';
 
-const useDashboardAddRemoveLicense = ( siteId: number, type: AllowedTypes ) => {
+const useDashboardAddRemoveLicense = ( siteId: number | string, type: AllowedTypes ) => {
 	const dispatch = useDispatch();
 
 	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
