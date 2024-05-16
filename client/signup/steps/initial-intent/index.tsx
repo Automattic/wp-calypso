@@ -1,11 +1,15 @@
-import { Card } from '@automattic/components';
+import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import StepWrapper from 'calypso/signup/step-wrapper';
 
 interface Props {
 	stepName: string;
 	goToNextStep: () => void;
 }
+
+const SURVEY_KEY = 'guided-onboarding-flow';
 
 export default function InitialIntentStep( props: Props ) {
 	const translate = useTranslate();
@@ -14,36 +18,29 @@ export default function InitialIntentStep( props: Props ) {
 		'This will help us tailor your onboarding experience to your needs.'
 	);
 
+	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents( SURVEY_KEY );
+
+	// Record Tracks start event on component mount
+	useEffect( () => {
+		recordStartEvent();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	const handleNext = ( _questionKey: string, _answerKeys: string[], isLastQuestion?: boolean ) => {
+		if ( isLastQuestion ) {
+			recordCompleteEvent();
+			props.goToNextStep();
+		}
+	};
+
 	return (
 		<StepWrapper
+			hideFormattedHeader
 			headerText={ headerText }
 			fallbackHeaderText={ headerText }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
-			stepContent={
-				<>
-					<Card tagName="button" displayAsLink onClick={ () => {} }>
-						<strong>{ translate( 'Creating a site for myself, a business, or a friend' ) }</strong>
-						<p>{ translate( 'Everything you need to build a website and grow your audience.' ) }</p>
-					</Card>
-					<Card tagName="button" displayAsLink onClick={ () => {} }>
-						<strong>{ translate( 'Creating a site for a client' ) }</strong>
-						<p>
-							{ translate(
-								'Ideal for freelancers, agencies or developers seeking to manage one or more sites.'
-							) }
-						</p>
-					</Card>
-					<Card tagName="button" displayAsLink onClick={ () => {} }>
-						<strong>{ translate( 'Migrating or importing an existing site' ) }</strong>
-						<p>
-							{ translate(
-								'Bring your site from another platform just by following few simple steps.'
-							) }
-						</p>
-					</Card>
-				</>
-			}
+			stepContent={ <SegmentationSurvey surveyKey={ SURVEY_KEY } onNext={ handleNext } /> }
 			align="center"
 			hideSkip
 			{ ...props }
