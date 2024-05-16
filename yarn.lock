@@ -950,7 +950,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@wordpress/npm-package-json-lint-config": "npm:^4.42.0"
-    eslint-plugin-json-es: "npm:^1.5.7"
+    eslint-plugin-json-es: "npm:^1.6.0"
     esquery: "npm:^1.4.0"
     npm-package-json-lint: "npm:^6.0.0"
   peerDependencies:
@@ -2237,7 +2237,7 @@ __metadata:
     eslint-filtered-fix: "npm:^0.3.0"
     eslint-nibble: "npm:^8.1.0"
     eslint-plugin-inclusive-language: "npm:^2.2.1"
-    eslint-plugin-json-es: "npm:^1.5.7"
+    eslint-plugin-json-es: "npm:^1.6.0"
     eslint-plugin-md: "npm:^1.0.19"
     eslint-plugin-you-dont-need-lodash-underscore: "npm:^6.14.0"
     jest: "npm:^29.7.0"
@@ -16415,15 +16415,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-json-es@npm:^1.5.7":
-  version: 1.5.7
-  resolution: "eslint-plugin-json-es@npm:1.5.7"
+"eslint-plugin-json-es@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "eslint-plugin-json-es@npm:1.6.0"
   dependencies:
     eslint-visitor-keys: "npm:^3.3.0"
     espree: "npm:^9.3.1"
   peerDependencies:
     eslint: ">= 7"
-  checksum: 9f6efb1d5288785ea78bea6d268c0df0f0caabad8734c31c261d9bf76d89f04e50a38adc3d6c0bc8bf9e4ace4d655a76b1df72540bed809fb4e088bb3633549e
+  checksum: 05340c04ad8c5737a0f080c89c6a5169c144d0ad9785afcab1857fca0124c917f2e74d4ffcfb0b5b3d448a51ade32f7da290d07f218a880606557fd13b808d55
   languageName: node
   linkType: hard
 
@@ -16501,12 +16501,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-hooks@npm:^4.3.0, eslint-plugin-react-hooks@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "eslint-plugin-react-hooks@npm:4.6.0"
+"eslint-plugin-react-hooks@npm:^4.3.0, eslint-plugin-react-hooks@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "eslint-plugin-react-hooks@npm:4.6.2"
   peerDependencies:
     eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
-  checksum: 58c7e10ea5792c33346fcf5cb4024e14837035ce412ff99c2dcb7c4f903dc9b17939078f80bfef826301ce326582c396c00e8e0ac9d10ac2cde2b42d33763c65
+  checksum: 4844e58c929bc05157fb70ba1e462e34f1f4abcbc8dd5bbe5b04513d33e2699effb8bca668297976ceea8e7ebee4e8fc29b9af9d131bcef52886feaa2308b2cc
   languageName: node
   linkType: hard
 
@@ -33330,7 +33330,7 @@ __metadata:
     eslint-plugin-md: "npm:^1.0.19"
     eslint-plugin-prettier: "npm:^5.1.3"
     eslint-plugin-react: "npm:^7.34.1"
-    eslint-plugin-react-hooks: "npm:^4.6.0"
+    eslint-plugin-react-hooks: "npm:^4.6.2"
     eslint-plugin-wpcalypso: "workspace:^"
     eslint-plugin-you-dont-need-lodash-underscore: "npm:^6.14.0"
     fsevents: "npm:^2.3.3"
