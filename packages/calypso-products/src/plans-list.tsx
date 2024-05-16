@@ -2188,12 +2188,15 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 					FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 					FEATURE_COMMISSION_FEE_WOO_FEATURES,
 			  ],
-	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature ) => {
+	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature, isCurrentPlan ) => {
 		let storageOptionSlugs = [];
 		const storageAddOns = [ FEATURE_50GB_STORAGE_ADD_ON, FEATURE_100GB_STORAGE_ADD_ON ];
 
 		if ( showLegacyStorageFeature ) {
-			storageOptionSlugs = [ FEATURE_200GB_STORAGE ];
+			/* If the user is currently has a legacy plan with 200GB storage space, the capacity will decrease to
+			 * 50GB if they change their billing terms.
+			 */
+			storageOptionSlugs = isCurrentPlan ? [ FEATURE_200GB_STORAGE ] : [ FEATURE_50GB_STORAGE ];
 		} else {
 			storageOptionSlugs = isEnabled( 'plans/updated-storage-labels' )
 				? [ FEATURE_50GB_STORAGE, ...storageAddOns ]
