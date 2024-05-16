@@ -13,7 +13,7 @@ export const useUpgradePlanHostingDetailsList = () => {
 
 	// LCP hosting details.
 	if ( lcpPercentageDifference > 0 ) {
-		const wordpressLCP = Math.floor( 100 * wordpressCwvtechReportJson?.goodLCP );
+		const wordpressLCP = Math.floor( 100 * wordpressCwvtechReportJson.goodLCP );
 
 		const updatedHostingSpeedDetails = {
 			title: translate( 'Higher speed' ),
@@ -36,7 +36,7 @@ export const useUpgradePlanHostingDetailsList = () => {
 
 	// FID hosting details.
 	if ( fidPercentageDifference > 0 ) {
-		const wordpressFID = Math.floor( 100 * wordpressCwvtechReportJson?.goodFID );
+		const wordpressFID = Math.floor( 100 * wordpressCwvtechReportJson.goodFID );
 
 		const updatedHostingFasterResponseDetails = {
 			title: translate( 'Faster response' ),
