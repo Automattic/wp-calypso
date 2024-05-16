@@ -1,14 +1,20 @@
 import { Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import { activateModule, deactivateModule } from 'calypso/state/jetpack/modules/actions';
+import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { IAppState } from 'calypso/state/types';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 type PostByEmailSettingProps = {
-	isRequestingSettings: boolean;
-	isSavingSettings: boolean;
+	isFormPending: boolean;
 	postByEmailAddress?: string;
 };
 
@@ -23,20 +29,25 @@ type PostByEmailSettingComponentProps = PostByEmailSettingProps & {
 	activateModule: ( siteId: number, moduleSlug: string ) => void;
 	deactivateModule: ( siteId: number, moduleSlug: string ) => void;
 	onRegenerateButtonClick: () => void;
+	active: boolean;
 };
 
-export const PostByEmailSettingComponent = ( {
-	isRequestingSettings,
-	isSavingSettings,
+const moduleSlug = 'post-by-email';
+
+const PostByEmailSettingComponent = ( {
+	isFormPending,
 	moduleUnavailable,
 	postByEmailAddressModuleActive,
 	regeneratingPostByEmail,
 	selectedSiteId,
 	siteIsAtomic,
+	siteIsJetpack,
+	activateModule,
+	deactivateModule,
 	onRegenerateButtonClick,
 	postByEmailAddress,
+	active,
 }: PostByEmailSettingComponentProps ) => {
-	const isFormPending = isRequestingSettings || isSavingSettings;
 	const translate = useTranslate();
 
 	const email = postByEmailAddress && postByEmailAddress !== 'regenerate' ? postByEmailAddress : '';
@@ -59,13 +70,31 @@ export const PostByEmailSettingComponent = ( {
 					}
 					privacyLink={ ! siteIsAtomic }
 				/>
+				{ siteIsJetpack ? (
+					<JetpackModuleToggle
+						siteId={ selectedSiteId }
+						moduleSlug="post-by-email"
+						label={ translate( 'Publish posts by sending an email' ) }
+						disabled={ isFormPending || moduleUnavailable }
+					/>
+				) : (
+					<ToggleControl
+						checked={ active }
+						disabled={ isFormPending }
+						label={ translate( 'Post by Email' ) }
+						onChange={ ( checked ) => {
+							if ( ! selectedSiteId ) {
+								return;
+							}
 
-				<JetpackModuleToggle
-					siteId={ selectedSiteId }
-					moduleSlug="post-by-email"
-					label={ translate( 'Publish posts by sending an email' ) }
-					disabled={ isFormPending || moduleUnavailable }
-				/>
+							if ( checked ) {
+								activateModule( selectedSiteId, moduleSlug );
+							} else {
+								deactivateModule( selectedSiteId, moduleSlug );
+							}
+						} }
+					/>
+				) }
 
 				<div className="publishing-tools__module-settings site-settings__child-settings">
 					<FormLabel className={ labelClassName }>
@@ -96,3 +125,20 @@ export const PostByEmailSettingComponent = ( {
 		</>
 	);
 };
+
+export const PostByEmailSetting = connect(
+	( state: IAppState ) => {
+		const selectedSiteId = getSelectedSiteId( state ) || 0;
+		const active = !! isJetpackModuleActive( state, selectedSiteId, moduleSlug );
+
+		return {
+			selectedSiteId,
+			active,
+		};
+	},
+	{
+		activateModule,
+		deactivateModule,
+		regeneratePostByEmail,
+	}
+)( PostByEmailSettingComponent );

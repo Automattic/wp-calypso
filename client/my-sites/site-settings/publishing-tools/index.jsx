@@ -16,7 +16,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PressThis from '../press-this';
-import { PostByEmailSettingComponent } from './post-by-email';
+import { PostByEmailSetting } from './post-by-email';
 import { PostByVoiceSetting } from './post-by-voice';
 
 import './style.scss';
@@ -61,13 +61,17 @@ class PublishingTools extends Component {
 	renderPostByEmailModule() {
 		const { moduleUnavailable, selectedSiteId, isAtomic, siteIsJetpack } = this.props;
 
+		const isRequestingSettings = false;
+		const isSavingSettings = false;
+
 		return (
 			<CompactCard className="site-settings__module-settings">
 				<QueryJetpackConnection siteId={ this.props.selectedSiteId } />
 
 				<FormFieldset>
-					<PostByEmailSettingComponent
+					<PostByEmailSetting
 						isAtomic={ isAtomic }
+						isFormPending={ isRequestingSettings || isSavingSettings }
 						moduleUnavailable={ moduleUnavailable }
 						postByEmailAddressModuleActive={ this.props.postByEmailAddressModuleActive }
 						postByEmailAddress={ this.props.fields.post_by_email_address }
@@ -76,7 +80,7 @@ class PublishingTools extends Component {
 						onRegenerateButtonClick={ () => {
 							this.props.regeneratePostByEmail( this.props.selectedSiteId );
 						} }
-					></PostByEmailSettingComponent>
+					></PostByEmailSetting>
 				</FormFieldset>
 			</CompactCard>
 		);
