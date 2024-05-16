@@ -5,20 +5,17 @@ import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Question, QuestionType } from '../types';
+import getQuestionProps from './hooks/get-question-props';
 import SurveyCheckboxControl from './survey-checkbox-control';
 import SurveyRadioControl from './survey-radio-control';
 import './style.scss';
-
-const questionTypeComponentMap = {
-	[ QuestionType.SINGLE_CHOICE ]: SurveyRadioControl,
-	[ QuestionType.MULTIPLE_CHOICE ]: SurveyCheckboxControl,
-};
 
 export type QuestionSelectionComponentProps = {
 	question: Question;
 	value: string[];
 	onChange: ( questionKey: string, value: string[] ) => void;
 	disabled?: boolean;
+	onContinue?: () => void;
 };
 
 type QuestionStepType = {
@@ -39,7 +36,12 @@ const QuestionStep = ( {
 	hideBack,
 }: QuestionStepType ) => {
 	const translate = useTranslate();
-	const SelectionComponent = questionTypeComponentMap[ question.type ];
+	const flowPath = window.location.pathname;
+	const { questionTypeComponentMapping, shouldHideContinueButton, shouldHideSkipButton } =
+		getQuestionProps( question, flowPath );
+
+	console.log( { questionTypeComponentMapping, shouldHideContinueButton, shouldHideSkipButton } );
+	const SelectionComponent = questionTypeComponentMapping[ question.type ];
 
 	return (
 		<StepContainer
@@ -49,9 +51,10 @@ const QuestionStep = ( {
 			goNext={ onSkip }
 			formattedHeader={
 				<FormattedHeader
-					align="left"
+					align="center"
 					headerText={ question.headerText }
 					subHeaderText={ question.subHeaderText }
+					subHeaderAlign="center"
 				/>
 			}
 			stepName={ question.key }
@@ -62,18 +65,22 @@ const QuestionStep = ( {
 						value={ value }
 						onChange={ onChange }
 						disabled={ disabled }
+						onContinue={ onContinue }
 					/>
-					<Button
-						className="question-step__continue-button"
-						onClick={ onContinue }
-						variant="primary"
-						disabled={ disabled }
-					>
-						{ translate( 'Continue' ) }
-					</Button>
+					{ ! shouldHideContinueButton && (
+						<Button
+							className="question-step__continue-button"
+							onClick={ onContinue }
+							variant="primary"
+							disabled={ disabled }
+						>
+							{ translate( 'Continue' ) }
+						</Button>
+					) }
 				</div>
 			}
 			skipLabelText={ translate( 'Skip' ) }
+			hideSkip={ shouldHideSkipButton }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

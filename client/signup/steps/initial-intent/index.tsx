@@ -1,5 +1,9 @@
 import { Card } from '@automattic/components';
+import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import { useSaveAnswersMutation, useSurveyStructureQuery } from 'calypso/data/segmentaton-survey';
+import FlowCard from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/flow-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
 
 interface Props {
@@ -13,6 +17,31 @@ export default function InitialIntentStep( props: Props ) {
 	const subHeaderText = translate(
 		'This will help us tailor your onboarding experience to your needs.'
 	);
+	const surveyKey = 'guided-onboarding-flow';
+	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
+	const { mutateAsync, isPending } = useSaveAnswersMutation( { surveyKey } );
+
+	const handleNext = ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => {
+		// const { proceedWithNavigation, providedDependencies } = shouldNavigate(
+		// 	questionKey,
+		// 	answerKeys,
+		// 	isLastQuestion
+		// );
+
+		// if ( proceedWithNavigation ) {
+		// 	// For custom navigation, we need to clear the answers before the last question
+		// 	if ( ! isLastQuestion ) {
+		// 		clearAnswers();
+		// 	}
+
+		// 	// recordCompleteEvent();
+		// 	navigation.submit?.( providedDependencies );
+		// }
+
+		if ( isLastQuestion ) {
+			props.goToNextStep();
+		}
+	};
 
 	return (
 		<StepWrapper
@@ -21,28 +50,7 @@ export default function InitialIntentStep( props: Props ) {
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={
-				<>
-					<Card tagName="button" displayAsLink onClick={ () => {} }>
-						<strong>{ translate( 'Creating a site for myself, a business, or a friend' ) }</strong>
-						<p>{ translate( 'Everything you need to build a website and grow your audience.' ) }</p>
-					</Card>
-					<Card tagName="button" displayAsLink onClick={ () => {} }>
-						<strong>{ translate( 'Creating a site for a client' ) }</strong>
-						<p>
-							{ translate(
-								'Ideal for freelancers, agencies or developers seeking to manage one or more sites.'
-							) }
-						</p>
-					</Card>
-					<Card tagName="button" displayAsLink onClick={ () => {} }>
-						<strong>{ translate( 'Migrating or importing an existing site' ) }</strong>
-						<p>
-							{ translate(
-								'Bring your site from another platform just by following few simple steps.'
-							) }
-						</p>
-					</Card>
-				</>
+				<SegmentationSurvey surveyKey={ surveyKey } onBack={ () => {} } onNext={ handleNext } />
 			}
 			align="center"
 			hideSkip

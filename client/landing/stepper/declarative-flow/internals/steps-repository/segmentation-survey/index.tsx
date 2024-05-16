@@ -6,7 +6,8 @@ import { useCachedAnswers } from 'calypso/data/segmentaton-survey';
 import type { ProvidedDependencies, Step } from '../../types';
 import './style.scss';
 
-const SURVEY_KEY = 'entrepreneur-trial';
+// const SURVEY_KEY = 'entrepreneur-trial';
+const SURVEY_KEY = 'guided-onboarding-flow';
 const WHAT_WOULD_YOU_LIKE_TO_DO_QUESTION_KEY = 'what-would-you-like-to-do';
 const MIGRATE_MY_STORE_ANSWER_KEY = 'migrate-my-store';
 

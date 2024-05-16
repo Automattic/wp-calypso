@@ -22,7 +22,8 @@ const useSegmentationSurveyNavigation = ( {
 }: SegmentationSurveyNavigationProps ) => {
 	const { recordBackEvent, recordContinueEvent, recordSkipEvent } =
 		useSegmentationSurveyTracksEvents( surveyKey );
-	const { hash } = useLocation();
+	// const { hash } = useLocation();
+	const hash = window.location.hash;
 	const currentPage = useMemo( () => parseInt( hash.replace( '#', '' ), 10 ) || 1, [ hash ] );
 
 	const currentQuestion = useMemo(
