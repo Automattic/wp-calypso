@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
 import { SiteType } from './commands';
@@ -155,6 +155,8 @@ export const useCommandPalette = (): {
 	const sites = useSites();
 
 	const commands = useCommands();
+
+	const { __ } = useI18n();
 
 	const trackSelectedCommand = ( command: Command ) => {
 		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
