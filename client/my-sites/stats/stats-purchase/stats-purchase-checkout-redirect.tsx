@@ -18,8 +18,11 @@ const getStatsCheckoutURL = (
 	siteSlug: string,
 	product: string,
 	redirectUrl: string,
-	checkoutBackUrl: string
+	checkoutBackUrl: string,
+	from?: string,
+	adminUrl?: string
 ) => {
+	const isFromMyJetpack = from === 'jetpack-my-jetpack';
 	// Get the checkout URL for the product, or the siteless checkout URL if no siteSlug is provided
 	const checkoutProductUrl = new URL(
 		`/checkout/${ siteSlug || 'jetpack' }/${ product }`,
@@ -29,6 +32,12 @@ const getStatsCheckoutURL = (
 	// Add redirect_to parameter
 	setUrlParam( checkoutProductUrl, 'redirect_to', redirectUrl );
 	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
+
+	if ( isFromMyJetpack ) {
+		setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
+		setUrlParam( checkoutProductUrl, 'admin_url', adminUrl );
+		setUrlParam( checkoutProductUrl, 'from_site_slug', siteSlug );
+	}
 
 	return checkoutProductUrl.toString();
 };
@@ -168,7 +177,9 @@ const gotoCheckoutPage = ( {
 				siteSlug,
 				product,
 				redirectUrl,
-				checkoutBackUrl
+				checkoutBackUrl,
+				from,
+				adminUrl
 			) ),
 		250
 	);
