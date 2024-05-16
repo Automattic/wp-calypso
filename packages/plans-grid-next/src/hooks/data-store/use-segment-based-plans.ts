@@ -55,6 +55,13 @@ export function useSegmentedPlans( segment: string ) {
 		case 'Agency':
 			return [ 'TYPE_CREATOR', 'TYPE_ENTREPRENEUR', 'TYPE_ENTERPRISE' ];
 		default:
-			return []; // Return an empty array if the segment is not recognized
+			return [
+				'TYPE_FREE',
+				'TYPE_STARTER',
+				'TYPE_EXPLORER',
+				'TYPE_CREATOR',
+				'TYPE_ENTREPRENEUR',
+				'TYPE_ENTERPRISE',
+			];
 	}
 }
