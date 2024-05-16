@@ -5,8 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
+import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useGetPostByVoice } from './hooks/use-get-post-by-voice';
 import { useRegeneratePostByVoiceMutation } from './hooks/use-regenerate-post-by-voice-mutation';
@@ -15,17 +15,16 @@ import { useSwitchPostByVoiceMutation } from './hooks/use-switch-post-by-voice-m
 import './style.scss';
 
 type PostByVoiceSettingComponentProps = {
-	selectedSiteId: number | null;
 	successNotice: typeof successNotice;
 	errorNotice: typeof errorNotice;
 };
 
 const PostByVoiceSettingComponent = ( {
-	selectedSiteId,
 	successNotice,
 	errorNotice,
 }: PostByVoiceSettingComponentProps ) => {
 	const translate = useTranslate();
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const { data: postByVoiceSettings } = useGetPostByVoice( selectedSiteId );
 	const { mutate: switchPostByVoice, isPending: isPendingSwitch } =
 		useSwitchPostByVoiceMutation( selectedSiteId );
@@ -103,16 +102,7 @@ const PostByVoiceSettingComponent = ( {
 	);
 };
 
-export const PostByVoiceSetting = connect(
-	( state: IAppState ) => {
-		const selectedSiteId = getSelectedSiteId( state ) || 0;
-
-		return {
-			selectedSiteId,
-		};
-	},
-	{
-		successNotice,
-		errorNotice,
-	}
-)( PostByVoiceSettingComponent );
+export const PostByVoiceSetting = connect( null, {
+	successNotice,
+	errorNotice,
+} )( PostByVoiceSettingComponent );

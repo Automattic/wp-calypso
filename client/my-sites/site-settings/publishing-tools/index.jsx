@@ -165,7 +165,7 @@ class PublishingTools extends Component {
 		const renderPressThis =
 			config.isEnabled( 'press-this' ) &&
 			( siteIsJetpack || ( ! siteIsJetpack && ! this.isMobile() ) );
-		const renderPostByEmail = config.isEnabled( 'press-this' ) && siteIsJetpack;
+		const renderPostByEmail = siteIsJetpack;
 		const renderPostByVoice =
 			config.isEnabled( 'settings/post-by-voice' ) && ! siteIsJetpack && ! isAtomic;
 
