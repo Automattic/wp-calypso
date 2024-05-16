@@ -1,5 +1,4 @@
-import { useCallback, useMemo } from 'react';
-import { useLocation } from 'react-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Answers, Question } from 'calypso/components/survey-container/types';
 import useSegmentationSurveyTracksEvents from './use-segmentation-survey-tracks-events';
 
@@ -22,7 +21,21 @@ const useSegmentationSurveyNavigation = ( {
 }: SegmentationSurveyNavigationProps ) => {
 	const { recordBackEvent, recordContinueEvent, recordSkipEvent } =
 		useSegmentationSurveyTracksEvents( surveyKey );
-	const { hash } = useLocation();
+	const [ hash, setHash ] = useState( window.location.hash );
+
+	// Update hash state when the hash changes
+	useEffect( () => {
+		const handleHashChange = () => {
+			setHash( window.location.hash );
+		};
+
+		window.addEventListener( 'hashchange', handleHashChange );
+
+		return () => {
+			window.removeEventListener( 'hashchange', handleHashChange );
+		};
+	}, [] );
+
 	const currentPage = useMemo( () => parseInt( hash.replace( '#', '' ), 10 ) || 1, [ hash ] );
 
 	const currentQuestion = useMemo(
