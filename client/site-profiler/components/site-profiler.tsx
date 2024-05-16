@@ -16,6 +16,7 @@ import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
+import { AdvancedMetrics } from './advanced-metrics';
 import { BasicMetrics } from './basic-metrics';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
@@ -25,7 +26,6 @@ import HostingInformation from './hosting-information';
 import HostingIntro from './hosting-intro';
 import { MetricsMenu } from './metrics-menu';
 import './styles.scss';
-import { MetricsSection } from './metrics-section';
 
 const debug = debugFactory( 'apps:site-profiler' );
 
@@ -172,33 +172,9 @@ export default function SiteProfiler( props: Props ) {
 								onCTAClick={ () => setIsGetReportFormOpen( true ) }
 							/>
 							<BasicMetrics ref={ basicMetricsRef } basicMetrics={ basicMetrics.basic } />
-							<MetricsSection
-								name={ translate( 'Performance Metrics' ) }
-								title={ translate(
-									"Your site {{success}}performs well{{/success}}, but there's always room to be faster and smoother for your visitors.",
-									{
-										components: {
-											success: <span className="success" />,
-											alert: <span className="alert" />,
-										},
-									}
-								) }
-								subtitle={ translate( "Boost your site's performance" ) }
-								ref={ performanceMetricsRef }
-							/>
-							<MetricsSection
-								name={ translate( 'Health Scores' ) }
-								title={ translate(
-									"Your site's health scores {{alert}}suggest critical area{{/alert}} but need attention to prevent low performance.",
-									{
-										components: {
-											success: <span className="success" />,
-											alert: <span className="alert" />,
-										},
-									}
-								) }
-								subtitle={ translate( "Optimize your site's health" ) }
-								ref={ healthScoresRef }
+							<AdvancedMetrics
+								performanceMetricsRef={ performanceMetricsRef }
+								healthScoresRef={ healthScoresRef }
 							/>
 						</LayoutBlockSection>
 					) }

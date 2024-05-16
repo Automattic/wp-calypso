@@ -1,8 +1,10 @@
 import { PlanSlug, isProPlan, isStarterPlan } from '@automattic/calypso-products';
+import { Site, SiteMediaStorage } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getDiscountByName } from 'calypso/lib/discounts';
@@ -18,6 +20,8 @@ export type PlanNoticeProps = {
 	siteId: number;
 	visiblePlans: PlanSlug[];
 	isInSignup?: boolean;
+	showLegacyStorageFeature?: boolean;
+	mediaStorage?: SiteMediaStorage;
 	discountInformation?: {
 		withDiscount: string;
 		discountEndDate: Date;
@@ -30,6 +34,7 @@ const PLAN_UPGRADE_CREDIT_NOTICE = 'plan-upgrade-credit-notice';
 const MARKETING_NOTICE = 'marketing-notice';
 const PLAN_RETIREMENT_NOTICE = 'plan-retirement-notice';
 const CURRENT_PLAN_IN_APP_PURCHASE_NOTICE = 'current-plan-in-app-purchase-notice';
+const PLAN_LEGACY_STORAGE_NOTICE = 'plan-legacy-storage-notice';
 
 export type PlanNoticeTypes =
 	| typeof NO_NOTICE
@@ -38,10 +43,17 @@ export type PlanNoticeTypes =
 	| typeof PLAN_UPGRADE_CREDIT_NOTICE
 	| typeof MARKETING_NOTICE
 	| typeof PLAN_RETIREMENT_NOTICE
-	| typeof CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
+	| typeof CURRENT_PLAN_IN_APP_PURCHASE_NOTICE
+	| typeof PLAN_LEGACY_STORAGE_NOTICE;
 
 function useResolveNoticeType(
-	{ siteId, isInSignup, visiblePlans = [], discountInformation }: PlanNoticeProps,
+	{
+		showLegacyStorageFeature,
+		siteId,
+		isInSignup,
+		visiblePlans = [],
+		discountInformation,
+	}: PlanNoticeProps,
 	isNoticeDismissed: boolean
 ): PlanNoticeTypes {
 	const canUserPurchasePlan = useSelector(
@@ -68,6 +80,8 @@ function useResolveNoticeType(
 		return PLAN_RETIREMENT_NOTICE;
 	} else if ( currentPurchase?.isInAppPurchase ) {
 		return CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
+	} else if ( showLegacyStorageFeature ) {
+		return PLAN_LEGACY_STORAGE_NOTICE;
 	} else if ( activeDiscount ) {
 		return ACTIVE_DISCOUNT_NOTICE;
 	} else if ( planUpgradeCreditsApplicable ) {
@@ -81,6 +95,8 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 	const translate = useTranslate();
 	const [ isNoticeDismissed, setIsNoticeDismissed ] = useState( false );
 	const noticeType = useResolveNoticeType( props, isNoticeDismissed );
+	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
+	const usedGigabytes = useStorageText( mediaStorage?.storageUsedBytes ?? 0 );
 	const handleDismissNotice = () => setIsNoticeDismissed( true );
 	let activeDiscount =
 		discountInformation &&
@@ -103,6 +119,32 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				>
 					{ translate(
 						'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+					) }
+				</Notice>
+			);
+		case PLAN_LEGACY_STORAGE_NOTICE:
+			return (
+				<Notice
+					className="plan-features-main__notice"
+					showDismiss={ true }
+					onDismissClick={ handleDismissNotice }
+					icon="info-outline"
+					status="is-warning"
+					isReskinned={ true }
+				>
+					{ translate(
+						'Your plan currently has a legacy feature that provides 200GB of space. ' +
+							'You are currently using {{b}}%(usedGigabytes)s{{/b}} of space. ' +
+							'Switching to a different plan or billing interval will lower the amount of available storage to 50GB. ' +
+							'Please keep in mind that the change will be irreversible.',
+						{
+							args: {
+								usedGigabytes: usedGigabytes ?? '',
+							},
+							components: {
+								b: <strong />,
+							},
+						}
 					) }
 				</Notice>
 			);

@@ -104,7 +104,7 @@ class StatsModule extends Component {
 			'statsSearchTerms',
 			'statsClicks',
 			'statsReferrers',
-			// statsEmailsOpen and statsEmailsClick are not used. statsEmailsSummary and statsEmailsSummaryByOpens are used at the moment,
+			// statsEmailsOpen and statsEmailsClick are not used. statsEmailsSummary are used at the moment,
 			// besides this, email page uses separate summary component: <StatsEmailSummary />
 			'statsEmailsOpen',
 			'statsEmailsClick',

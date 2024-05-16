@@ -11,9 +11,10 @@ export type IssueLicenseRequest = {
 	quantity: number;
 };
 
-export type FulfilledIssueLicenseResult = APILicense & {
+export type FulfilledIssueLicenseResult = {
 	status: 'fulfilled';
 	slug: string;
+	licenses: APILicense[];
 };
 export type RejectedIssueLicenseResult = {
 	status: 'rejected';
@@ -51,9 +52,9 @@ const useIssueLicenses = ( options: UseIssueLicensesOptions = {} ) => {
 		const requests: Promise< IssueLicenseResult >[] = selectedLicenses.map(
 			( { slug, quantity } ) =>
 				mutateAsync( { product: slug, quantity } )
-					.then(
-						( value ): FulfilledIssueLicenseResult => ( { slug, status: 'fulfilled', ...value } )
-					)
+					.then( ( value ): FulfilledIssueLicenseResult => {
+						return { slug, status: 'fulfilled', licenses: value };
+					} )
 					.catch( (): RejectedIssueLicenseResult => ( { slug, status: 'rejected' } ) )
 		);
 
