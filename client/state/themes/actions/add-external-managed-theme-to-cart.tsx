@@ -11,8 +11,8 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import 'calypso/state/themes/init';
 import { marketplaceThemeProduct } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
+import { getProductBillingSlugByThemeId } from 'calypso/state/products-list/selectors/get-product-billing-slug-by-theme-id';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
@@ -62,7 +62,7 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 
 		const products = getProductsByBillingSlug(
 			state,
-			marketplaceThemeBillingProductSlug( themeId )
+			getProductBillingSlugByThemeId( state, themeId )
 		);
 
 		if ( undefined === products || products.length === 0 ) {

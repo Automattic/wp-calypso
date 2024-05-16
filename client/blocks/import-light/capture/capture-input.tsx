@@ -75,7 +75,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					onChange={ onInputChange }
 				/>
 				<Button
-					borderless={ true }
+					borderless
 					className="action-buttons__importer-list"
 					onClick={ onDontHaveSiteAddressClick }
 				>

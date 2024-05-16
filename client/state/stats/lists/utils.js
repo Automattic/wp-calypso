@@ -974,15 +974,4 @@ export const normalizers = {
 			};
 		} );
 	},
-	/**
-	 * Returns a normalized statsEmailsSummaryByOpens array, ready for use in stats-module
-	 * @param   {Object} data   Stats data
-	 * @param   {Object} query  Stats query
-	 * @param   {number} siteId  Site ID
-	 * @param   {Object} site    Site object
-	 * @returns {Array}       Normalized stats data
-	 */
-	statsEmailsSummaryByOpens: ( data, query, siteId, site ) => {
-		return normalizers.statsEmailsSummary( data, query, siteId, site );
-	},
 };

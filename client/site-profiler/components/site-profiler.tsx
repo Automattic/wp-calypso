@@ -16,6 +16,7 @@ import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
+import { AdvancedMetrics } from './advanced-metrics';
 import { BasicMetrics } from './basic-metrics';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
@@ -36,6 +37,8 @@ interface Props {
 export default function SiteProfiler( props: Props ) {
 	const { routerDomain } = props;
 	const basicMetricsRef = useRef( null );
+	const performanceMetricsRef = useRef( null );
+	const healthScoresRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -164,15 +167,21 @@ export default function SiteProfiler( props: Props ) {
 						<LayoutBlockSection>
 							<MetricsMenu
 								basicMetricsRef={ basicMetricsRef }
+								performanceMetricsRef={ performanceMetricsRef }
+								healthScoresRef={ healthScoresRef }
 								onCTAClick={ () => setIsGetReportFormOpen( true ) }
 							/>
 							<BasicMetrics ref={ basicMetricsRef } basicMetrics={ basicMetrics.basic } />
+							<AdvancedMetrics
+								performanceMetricsRef={ performanceMetricsRef }
+								healthScoresRef={ healthScoresRef }
+							/>
 						</LayoutBlockSection>
 					) }
 				</LayoutBlock>
 			) }
 			<GetReportForm
-				url={ url }
+				url={ basicMetrics?.final_url }
 				token={ basicMetrics?.token }
 				isOpen={ showGetReportForm }
 				onClose={ () => setIsGetReportFormOpen( false ) }

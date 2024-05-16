@@ -63,6 +63,10 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	const pluginsScheduledUpdatesEditMode =
 		state.route.path?.current?.includes( 'scheduled-updates/edit' ) ||
 		state.route.path?.current?.includes( 'scheduled-updates/create' );
+	const isBulkDomainsDashboard = state.route.path?.current === '/domains/manage';
+	const isSmallScreenDashboard =
+		( sectionGroup === 'sites-dashboard' || isBulkDomainsDashboard ) &&
+		isWithinBreakpoint( '<782px' );
 
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
@@ -70,7 +74,7 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		( siteSelected ||
 			siteLoaded ||
 			( ! siteId && pluginsScheduledUpdatesEditMode ) ||
-			isWithinBreakpoint( '<782px' ) )
+			isSmallScreenDashboard )
 	);
 };
 

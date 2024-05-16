@@ -67,8 +67,8 @@ const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 							minBarWidth={ 10 }
 							sliceFromBeginning={ false }
 							minBarsToBeShown={ 20 }
-							hideYAxis={ true }
-							hideXAxis={ true }
+							hideYAxis
+							hideXAxis
 						/>
 					) : (
 						<TextPlaceholder />

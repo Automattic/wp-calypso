@@ -202,7 +202,7 @@ class ReaderPostCard extends Component {
 				showSiteName={ showSiteName }
 				showAvatar={ ! compact }
 				teams={ teams }
-				showFollow={ true }
+				showFollow
 				openSuggestedFollows={ this.openSuggestedFollowsModal }
 				compact={ compact }
 			/>

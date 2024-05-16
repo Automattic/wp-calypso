@@ -248,11 +248,11 @@ export default function LicensePreview( {
 				) }
 
 				<div className="license-preview__badge-container">
-					{ isParentLicense && bundleCountContent }
+					{ !! isParentLicense && bundleCountContent }
 				</div>
 
 				<div>
-					{ isParentLicense && ! revokedAt && (
+					{ !! isParentLicense && ! revokedAt && (
 						<LicenseBundleDropDown
 							product={ product }
 							licenseKey={ licenseKey }

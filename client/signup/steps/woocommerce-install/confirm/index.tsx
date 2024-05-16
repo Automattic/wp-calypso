@@ -146,7 +146,7 @@ export default function Confirm( props: WooCommerceInstallProps ) {
 	return (
 		<StepWrapper
 			flowName="woocommerce-install"
-			hideSkip={ true }
+			hideSkip
 			nextLabelText={ __( 'Confirm' ) }
 			headerText={ __( 'One final step' ) }
 			fallbackHeaderText={ __( 'One final step' ) }

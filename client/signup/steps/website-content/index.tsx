@@ -376,8 +376,8 @@ export default function WrapperWebsiteContent(
 				hideFormattedHeader={ false }
 				hideBack={ false }
 				align="left"
-				isHorizontalLayout={ true }
-				isWideLayout={ true }
+				isHorizontalLayout
+				isWideLayout
 			/>
 		</>
 	);

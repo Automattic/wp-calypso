@@ -125,7 +125,7 @@ class ReaderFeaturedVideo extends Component {
 					onClick={ this.handleThumbnailClick }
 					className={ classNames }
 					href={ href }
-					fetched={ true }
+					fetched
 					isCompactPost={ isCompactPost }
 					hasExcerpt={ hasExcerpt }
 					imageWidth={ imageWidth }

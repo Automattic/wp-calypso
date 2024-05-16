@@ -96,7 +96,7 @@ const HighlightCardsSettings = function ( {
 				isVisible={ showTooltip }
 				position="bottom left"
 				context={ settingsActionRef.current }
-				autoRepositionOnInitialLoad={ true }
+				autoRepositionOnInitialLoad
 			>
 				<div className="highlight-card-tooltip-content">
 					<p>

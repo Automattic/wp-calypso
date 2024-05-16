@@ -158,7 +158,7 @@ function InviteForm( props: Props ) {
 	function getRoleLearnMoreLink() {
 		return (
 			<Button
-				plain={ true }
+				plain
 				target="_blank"
 				href={ localizeUrl( 'https://wordpress.com/support/user-roles/' ) }
 			>
@@ -227,8 +227,8 @@ function InviteForm( props: Props ) {
 				{ ! showMsg && (
 					<Button
 						className="team-invite-form__add-message"
-						primary={ true }
-						borderless={ true }
+						primary
+						borderless
 						onClick={ () => setShowMsg( true ) }
 					>
 						{ translate( '+ Add a message' ) }

@@ -172,11 +172,7 @@ class EmailedLoginLinkExpired extends Component {
 
 		return (
 			<div>
-				<RedirectWhenLoggedIn
-					delayAtMount={ 3500 }
-					redirectTo="/"
-					replaceCurrentLocation={ true }
-				/>
+				<RedirectWhenLoggedIn delayAtMount={ 3500 } redirectTo="/" replaceCurrentLocation />
 
 				<EmptyContent
 					action={ action }

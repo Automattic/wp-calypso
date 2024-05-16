@@ -199,7 +199,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	);
 
 	if ( isFetchingSiteFeatures || ! isPoliciesInitialized ) {
-		return <BackupPlaceholder showDatePicker={ true } />;
+		return <BackupPlaceholder showDatePicker />;
 	}
 
 	return (
