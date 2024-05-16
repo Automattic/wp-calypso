@@ -97,16 +97,11 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				.domain-header__buttons-mobile {
 					white-space: nowrap;
 				}
-				.options-domain-button__add {
-					display: none;
-				}
 				@media only screen and ( max-width: 479px ) {
 					.domain-header__buttons-mobile {
 						.options-domain-button__add {
-							display: inline;
 							height: 24px;
 							width: 24px;
-							margin: auto;
 							transition: transform 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 						}
 
