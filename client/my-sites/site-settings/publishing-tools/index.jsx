@@ -141,29 +141,21 @@ class PublishingTools extends Component {
 	}
 
 	renderPostByVoiceModule() {
-		const { fields } = this.props;
-
-		const isRequestingSettings = false;
-		const isSavingSettings = false;
-		const handleSubmitForm = () => {};
-
-		const postByVoiceCode =
-			fields.post_by_email_address && fields.post_by_email_address !== 'regenerate'
-				? fields.post_by_email_address
-				: '';
-
 		return (
 			<>
 				<FormFieldset>
-					<PostByVoiceSetting
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-						onSubmitForm={ handleSubmitForm }
-						code={ postByVoiceCode }
-					/>
+					<PostByVoiceSetting />
 				</FormFieldset>
 				<hr />
 			</>
+		);
+	}
+
+	renderPressThisModule() {
+		return (
+			<FormFieldset>
+				<PressThis />
+			</FormFieldset>
 		);
 	}
 
@@ -190,11 +182,7 @@ class PublishingTools extends Component {
 				<Card className="publishing-tools__card site-settings__module-settings">
 					{ renderPostByVoice && this.renderPostByVoiceModule() }
 					{ renderPostByEmail && this.renderPostByEmailModule() }
-					{ renderPressThis && (
-						<FormFieldset>
-							<PressThis />
-						</FormFieldset>
-					) }
+					{ renderPressThis && this.renderPressThisModule() }
 				</Card>
 			</div>
 		);

@@ -5,49 +5,53 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
-import { activateModule, deactivateModule } from 'calypso/state/jetpack/modules/actions';
-import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useGetPostByVoice } from './hooks/use-get-post-by-voice';
+import { useRegeneratePostByVoiceMutation } from './hooks/use-regenerate-post-by-voice-mutation';
+import { useSwitchPostByVoiceMutation } from './hooks/use-switch-post-by-voice-mutation';
 
 import './style.scss';
 
-type PostByVoiceSettingProps = {
-	isRequestingSettings: boolean;
-	isSavingSettings: boolean;
-	code?: string;
-};
-
-type PostByVoiceSettingComponentProps = PostByVoiceSettingProps & {
+type PostByVoiceSettingComponentProps = {
 	selectedSiteId: number | null;
-	regeneratePostByEmail: ( siteId: number ) => void;
-	activateModule: ( siteId: number, moduleSlug: string ) => void;
-	deactivateModule: ( siteId: number, moduleSlug: string ) => void;
-	active: boolean;
+	successNotice: typeof successNotice;
+	errorNotice: typeof errorNotice;
 };
-
-const moduleSlug = 'post-by-email';
 
 const PostByVoiceSettingComponent = ( {
-	isRequestingSettings,
-	isSavingSettings,
 	selectedSiteId,
-	regeneratePostByEmail,
-	code,
-	activateModule,
-	deactivateModule,
-	active,
+	successNotice,
+	errorNotice,
 }: PostByVoiceSettingComponentProps ) => {
-	const isFormPending = isRequestingSettings || isSavingSettings;
 	const translate = useTranslate();
+	const { data: postByVoiceSettings } = useGetPostByVoice( selectedSiteId );
+	const { mutate: switchPostByVoice, isPending: isPendingSwitch } =
+		useSwitchPostByVoiceMutation( selectedSiteId );
+	const { mutate: regeneratePostByVoice, isPending: isPendingRegenerate } =
+		useRegeneratePostByVoiceMutation( selectedSiteId );
+
+	const handleSwitch = ( checked: boolean ) => {
+		switchPostByVoice( checked, {
+			onSuccess: () => {
+				successNotice( translate( 'Changes saved successfully!' ) );
+			},
+			onError: () => {
+				errorNotice( translate( 'There was a problem saving your changes.' ) );
+			},
+		} );
+	};
 
 	const handleRegenerate = () => {
-		if ( ! selectedSiteId ) {
-			return;
-		}
-
-		regeneratePostByEmail( selectedSiteId );
+		regeneratePostByVoice( undefined, {
+			onSuccess: () => {
+				successNotice( translate( 'Code regenerated successfully!' ) );
+			},
+			onError: () => {
+				errorNotice( translate( 'There was a problem regenerating the code.' ) );
+			},
+		} );
 	};
 
 	return (
@@ -61,20 +65,10 @@ const PostByVoiceSettingComponent = ( {
 			/>
 
 			<ToggleControl
-				checked={ active }
-				disabled={ isFormPending }
+				checked={ !! postByVoiceSettings?.isEnabled }
+				disabled={ isPendingSwitch || isPendingRegenerate }
 				label={ translate( 'Post by Voice' ) }
-				onChange={ ( checked ) => {
-					if ( ! selectedSiteId ) {
-						return;
-					}
-
-					if ( checked ) {
-						activateModule( selectedSiteId, moduleSlug );
-					} else {
-						deactivateModule( selectedSiteId, moduleSlug );
-					}
-				} }
+				onChange={ handleSwitch }
 			/>
 
 			<div className="publishing-tools__module-settings site-settings__child-settings">
@@ -82,7 +76,7 @@ const PostByVoiceSettingComponent = ( {
 					{ translate( 'Post audio recordings to your blog by placing a phone call.' ) }
 				</FormSettingExplanation>
 
-				{ active && code && (
+				{ postByVoiceSettings?.isEnabled && postByVoiceSettings.code && (
 					<>
 						<div className="post-by-voice__info">
 							{ translate(
@@ -90,7 +84,7 @@ const PostByVoiceSettingComponent = ( {
 								{
 									args: {
 										phone: '+1 (713) 574-9075',
-										code,
+										code: postByVoiceSettings.code,
 									},
 									components: {
 										b: <b />,
@@ -99,12 +93,10 @@ const PostByVoiceSettingComponent = ( {
 								}
 							) }
 						</div>
+						<Button onClick={ handleRegenerate } disabled={ isPendingRegenerate }>
+							{ translate( 'Regenerate code' ) }
+						</Button>
 					</>
-				) }
-				{ active && (
-					<Button onClick={ handleRegenerate } disabled={ isFormPending }>
-						{ ! code ? translate( 'Generate code' ) : translate( 'Regenerate code' ) }
-					</Button>
 				) }
 			</div>
 		</div>
@@ -114,16 +106,13 @@ const PostByVoiceSettingComponent = ( {
 export const PostByVoiceSetting = connect(
 	( state: IAppState ) => {
 		const selectedSiteId = getSelectedSiteId( state ) || 0;
-		const active = !! isJetpackModuleActive( state, selectedSiteId, moduleSlug );
 
 		return {
 			selectedSiteId,
-			active,
 		};
 	},
 	{
-		activateModule,
-		deactivateModule,
-		regeneratePostByEmail,
+		successNotice,
+		errorNotice,
 	}
 )( PostByVoiceSettingComponent );
