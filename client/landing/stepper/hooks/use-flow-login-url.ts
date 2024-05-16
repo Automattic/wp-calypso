@@ -12,15 +12,17 @@ type UseFlowLoginUrlProps = {
 };
 
 export function useFlowLoginUrl( {
-	flow,
+	flow: { name: flowName, variantSlug: flowVariantSlug },
 	loginUrlParams = {},
 	pageTitle,
 	returnStepSlug,
 	returnUrlParams = {},
 }: UseFlowLoginUrlProps ): string {
+	// Note: We SHOULD NOT call any hooks on the incoming flow argument.
+	// We accept the argument as a cleaner API to get flow.name and flow.variantSlug.
 	const locale = useFlowLocale();
 
-	const flowPath = flow.variantSlug ?? flow.name;
+	const flowPath = flowVariantSlug ?? flowName;
 	const isNonEnglishLocale = locale && locale !== 'en';
 	const returnQueryParams = {
 		...returnUrlParams,
@@ -33,7 +35,7 @@ export function useFlowLoginUrl( {
 	);
 
 	const loginUrl = useLoginUrl( {
-		variationName: flow.name,
+		variationName: flowName,
 		pageTitle,
 		locale,
 		redirectTo,
