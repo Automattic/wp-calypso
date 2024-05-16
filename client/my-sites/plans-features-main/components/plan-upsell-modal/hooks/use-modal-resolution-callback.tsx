@@ -6,6 +6,7 @@ import {
 	ModalType,
 	PAID_PLAN_IS_REQUIRED_DIALOG,
 } from '..';
+
 type Props = {
 	isCustomDomainAllowedOnFreePlan?: boolean | null;
 	flowName?: string | null;

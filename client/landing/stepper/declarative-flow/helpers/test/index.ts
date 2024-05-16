@@ -1,5 +1,6 @@
 import { shouldRedirectToSiteMigration } from '..';
 import { STEPS } from '../../internals/steps';
+
 describe( 'DeclarativeFlowHelpers', () => {
 	it( 'returns true when current step, platform and origin as set properly', () => {
 		expect(

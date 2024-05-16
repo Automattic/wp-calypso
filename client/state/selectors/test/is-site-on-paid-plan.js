@@ -8,6 +8,7 @@ import {
 import deepFreeze from 'deep-freeze';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import isSiteOnPaidPlan from '../is-site-on-paid-plan';
+
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getCurrentPlan: jest.fn(),
 } ) );

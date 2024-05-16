@@ -1,4 +1,5 @@
 const webpack = require( 'webpack' );
+
 const PLUGIN_NAME = 'MiniCSSWithRTL';
 
 class MiniCSSWithRTLModule extends webpack.RuntimeModule {

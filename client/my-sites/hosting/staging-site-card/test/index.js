@@ -11,8 +11,9 @@ import { useGetLockQuery } from 'calypso/my-sites/hosting/staging-site-card/use-
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-const middlewares = [ thunk ];
 import { StagingSiteCard } from '..';
+
+const middlewares = [ thunk ];
 const addStagingSiteBtnName = 'Add staging site';
 const manageStagingBtnName = 'Manage staging site';
 const INITIAL_STATE = {

@@ -9,6 +9,7 @@ import type {
 import type { NonUndefined } from 'utility-types';
 
 import './style.scss';
+
 export interface OwnProps {
 	className?: string;
 	compact?: boolean;

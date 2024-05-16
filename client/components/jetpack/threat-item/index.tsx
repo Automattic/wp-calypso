@@ -17,6 +17,7 @@ import type { Threat } from 'calypso/components/jetpack/threat-item/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
+
 interface Props {
 	threat: Threat;
 	isPlaceholder: boolean;

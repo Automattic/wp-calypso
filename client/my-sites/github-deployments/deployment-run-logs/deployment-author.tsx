@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+
 interface DeploymentAuthorProps {
 	name: string;
 	avatarUrl: string;

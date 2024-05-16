@@ -17,9 +17,11 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	getPlan,
+	getTermDuration,
 } from '@automattic/calypso-products';
-const { getPlan, getTermDuration } = require( '@automattic/calypso-products' );
-const cartItems = require( '../cart-items' );
+import { cartItems } from '../cart-items';
+
 const {
 	planItem,
 	isNextDomainFree,

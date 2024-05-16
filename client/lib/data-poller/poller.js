@@ -1,4 +1,5 @@
 import debugFactory from 'debug';
+
 const debug = debugFactory( 'calypso:poller' );
 
 const DEFAULT_INTERVAL = 30000;

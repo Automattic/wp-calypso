@@ -58,6 +58,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { THEMES_LOADING_CART } from 'calypso/state/themes/action-types';
 import { requestTheme } from 'calypso/state/themes/actions';
 import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
+
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
 

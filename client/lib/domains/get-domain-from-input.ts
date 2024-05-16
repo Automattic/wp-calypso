@@ -1,4 +1,5 @@
 import { parseUrl } from 'calypso/lib/importer/url-validation';
+
 export function extractDomainFromInput( input: string ) {
 	if ( ! isNaN( Number( input ) ) ) {
 		return input;

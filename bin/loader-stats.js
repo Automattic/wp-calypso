@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// eslint-disable-next-line import/newline-after-import
 const path = require( 'path' );
 const stats = require( path.join( __dirname, '..', 'build', 'assets.json' ) );
 const gzipSize = require( 'gzip-size' );

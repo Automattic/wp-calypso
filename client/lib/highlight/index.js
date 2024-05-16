@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
 import { compact } from 'lodash';
+
 const debug = debugFactory( 'calypso:highlight' );
 
 /**

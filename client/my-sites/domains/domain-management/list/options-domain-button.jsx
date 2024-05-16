@@ -18,6 +18,7 @@ import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/act
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './options-domain-button.scss';
+
 class AddDomainButton extends Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string,

@@ -9,6 +9,7 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import type { StepProps } from '../../types';
+
 interface SiteLaunchStepProps extends StepProps {
 	title?: string;
 	subtitle?: string;

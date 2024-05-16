@@ -3,6 +3,7 @@ import './style.scss';
 import photoBanner from 'calypso/assets/images/blaze/wp-blaze-banner@3x.png';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
+
 export default function PostsListBanner() {
 	return (
 		<div className="posts-list-banner__container">

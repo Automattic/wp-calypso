@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useState } from 'react';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 import './help-center-feedback-form.scss';
+
 interface HelpCenterFeedbackFormProps {
 	postId: number;
 	blogId?: string | null;

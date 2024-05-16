@@ -6,6 +6,7 @@
 
 import { loadjQueryDependentScript } from '@automattic/load-script';
 import debugFactory from 'debug';
+
 const debug = debugFactory( 'lib/load-jquery-dependent-script-desktop-wrapper' );
 
 export function loadjQueryDependentScriptDesktopWrapper( url, callback ) {

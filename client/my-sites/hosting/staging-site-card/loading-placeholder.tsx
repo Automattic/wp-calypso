@@ -1,5 +1,6 @@
 import { LoadingPlaceholder as DefaultLoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
+
 const FirstPlaceholder = styled( DefaultLoadingPlaceholder )( {
 	height: 24,
 	width: '85%',

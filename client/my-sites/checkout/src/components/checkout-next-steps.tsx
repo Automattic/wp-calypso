@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
+
 interface Props {
 	responseCart: ResponseCart;
 	headerText?: TranslateResult;

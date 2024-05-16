@@ -24,6 +24,7 @@ import {
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 import './style.scss';
+
 const changeLoadingNoticeId = 'admin-interface-change-loading';
 const successNoticeId = 'admin-interface-change-success';
 const failureNoticeId = 'admin-interface-change-failure';

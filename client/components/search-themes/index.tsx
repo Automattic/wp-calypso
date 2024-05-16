@@ -11,6 +11,7 @@ import { filterDelistedTaxonomyTermSlugs } from 'calypso/state/themes/utils';
 import { allowSomeThemeFilters, computeEditedSearchElement, insertSuggestion } from './utils';
 import type { ThemeFilters } from './types';
 import './style.scss';
+
 interface SearchThemesProps {
 	query: string;
 	onSearch: ( query: string ) => void;

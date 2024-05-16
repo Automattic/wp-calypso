@@ -28,6 +28,7 @@ import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
+
 interface ProcessingStepProps extends StepProps {
 	title?: string;
 	subtitle?: string;

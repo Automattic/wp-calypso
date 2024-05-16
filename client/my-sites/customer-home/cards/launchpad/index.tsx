@@ -16,6 +16,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
+
 interface CustomerHomeLaunchpadProps {
 	checklistSlug: string;
 	onSiteLaunched?: () => void;

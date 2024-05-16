@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { A4A_OVERVIEW_LINK } from '../sidebar-menu/lib/constants';
 
 import './style.scss';
+
 type Props = {
 	foldable?: boolean;
 };

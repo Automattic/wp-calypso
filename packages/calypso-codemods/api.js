@@ -6,6 +6,7 @@ const jscodeshiftBin = require( 'module' )
 	.createRequire( require.resolve( 'jscodeshift' ) )
 	.resolve( require( 'jscodeshift/package.json' ).bin.jscodeshift );
 const path = require( 'path' );
+
 const config = require( path.join( __dirname, 'config' ) );
 const transformsDir = path.join( __dirname, './transforms' );
 

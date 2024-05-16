@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { EVERY_TEN_SECONDS, useInterval } from 'calypso/lib/interval';
+
 const MILLIS_IN_MINUTE = 60 * 1000;
 
 export function getHumanDateString( now, date, dateFormat, moment, translate ) {

@@ -1,5 +1,6 @@
 /* eslint-disable import/order */
 const electron = require( 'electron' );
+
 const BrowserWindow = electron.BrowserWindow;
 const app = electron.app;
 const { getPath } = require( '../../lib/assets' );

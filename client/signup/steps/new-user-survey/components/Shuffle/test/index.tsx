@@ -5,6 +5,7 @@
 import { render } from '@testing-library/react';
 import React, { ReactNode, useState } from 'react';
 import Shuffle from '../index';
+
 interface MockComponentProps {
 	children?: ReactNode[];
 	childOrderOverride?: string[] | null;
