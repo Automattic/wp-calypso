@@ -414,3 +414,18 @@ html {
 		}
 	}
 }
+
+.gray-tooltip {
+	.popover__arrow {
+		&::before {
+			border-bottom-color: var(--studio-gray-60) !important;
+			inset-block-start: 1px !important;
+		}
+	}
+	.popover__inner {
+		background: var(--studio-gray-60);
+		color: var(--studio-white);
+		padding: 10px 12px;
+		border: none;
+	}
+}

@@ -10,20 +10,25 @@ import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 export default function useHostingDescription( slug: string ): {
 	name: TranslateResult;
 	description: TranslateResult;
+	heading: TranslateResult;
 	features: TranslateResult[];
+	footerText: TranslateResult;
 } {
 	const translate = useTranslate();
 
 	return useMemo( () => {
 		let description = '';
 		let name = '';
+		let heading = '';
 		let features: TranslateResult[] = [];
+		let footerText: TranslateResult = '';
 
 		switch ( slug ) {
 			case 'pressable-hosting':
 				name = translate( 'Pressable' );
+				heading = translate( 'Premier Agency Hosting w/ WooCommerce' );
 				description = translate(
-					'Best for premier agencies and developers who need significant control and build sites that require scaling.'
+					'Premier agency hosting for large-scale businesses and major eCommerce.'
 				);
 				features = [
 					translate( 'Optimized for high-traffic WooCommerce stores {{img/}}', {
@@ -37,10 +42,14 @@ export default function useHostingDescription( slug: string ): {
 					translate( 'Custom pricing and packaging are available' ),
 					translate( 'Agency tools to manage sites at scale' ),
 				];
+				footerText = translate( 'WP.Cloud powered hosting by' );
 				break;
 			case 'wpcom-hosting':
 				name = translate( 'WordPress.com' );
-				description = translate( 'Best for those who want a hassle-free WordPress experience.' );
+				heading = translate( 'Standard Agency Hosting' );
+				description = translate(
+					'Optimized and hassle-free hosting for business websites, local merchants, and small online retailers.'
+				);
 				features = [
 					translate( 'Great for developers with client-managed sites.' ),
 					translate( '24/7 Expert Support' ),
@@ -49,19 +58,31 @@ export default function useHostingDescription( slug: string ): {
 					translate( 'Self-service sales' ),
 					translate( 'Studio (local dev)' ),
 				];
+				footerText = translate( 'WP.Cloud powered hosting by' );
 				break;
 			case 'vip':
 				name = translate( 'VIP' );
+				heading = translate( 'Enterprise CMS' );
 				description = translate(
 					'Deliver unmatched performance with the highest security standards on our enterprise content platform.'
 				);
-				features = [];
+				features = [
+					translate( 'Unmatched flexibility to build a customized web experience' ),
+					translate( 'Tools to increase customer engagement' ),
+					translate(
+						'Scalability to ensure top-notch site performance during campaigns or events'
+					),
+				];
+				footerText = translate( 'Enterprise WordPress hosting by' );
+				break;
 		}
 
 		return {
 			name,
+			heading,
 			description,
 			features,
+			footerText,
 		};
 	}, [ slug, translate ] );
 }
