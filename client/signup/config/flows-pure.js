@@ -523,7 +523,7 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePresales: true,
+			enablePresales: false,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
