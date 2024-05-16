@@ -390,6 +390,26 @@ export function useProductDescription( productSlug: string ): {
 					'Seamlessly accept purchase orders as a payment method on your WooCommerce store.'
 				);
 				break;
+			case 'woocommerce-shipping':
+				description = translate(
+					'Print USPS and DHL labels right from your WooCommerce dashboard and instantly save on shipping. WooCommerce Shipping is free to use and saves you time and money.'
+				);
+				break;
+			case 'woocommerce-accommodations-bookings':
+				description = translate(
+					'Book accommodation using WooCommerce and the WooCommerce Bookings extension.'
+				);
+				break;
+			case 'woocommerce-tax':
+				description = translate(
+					'Automatically calculate how much sales tax should be collected for WooCommerce orders — by city, country, or state — at checkout.'
+				);
+				break;
+			case 'woocommerce-woopayments':
+				description = translate(
+					'The only payment solution fully integrated to Woo. Accept credit/debit cards and local payment options with no setup or monthly fees.'
+				);
+				break;
 			case 'jetpack-stats':
 				description = translate( 'Powerful analytics to help you understand your audience.' );
 				break;
