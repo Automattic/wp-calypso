@@ -2,12 +2,13 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { GlobalSidebarHeader } from 'calypso/layout/global-sidebar/header';
 import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSection } from 'calypso/state/ui/selectors';
 import Sidebar from '../sidebar';
@@ -32,6 +33,7 @@ const GlobalSidebar = ( {
 	const previousRoute = useSelector( getPreviousRoute );
 	const section = useSelector( getSection );
 	const previousLink = useRef( previousRoute );
+	const currentRoute = useSelector( getCurrentRoute );
 
 	const handleWheel = useCallback( ( event ) => {
 		const bodyEl = bodyRef.current;
@@ -59,13 +61,18 @@ const GlobalSidebar = ( {
 		}
 	}, [ previousRoute, section.group ] );
 
-	// If the previous route is the same as the current route, then we are on the same page
-	// To avoid issues with back button, we fallback to the `/sites` route
-	const index = previousLink.current.indexOf( '?' );
-	let route = index >= 0 ? previousLink.current.substring( 0, index ) : previousLink.current;
-	if ( previousRoute.startsWith( route ) ) {
-		route = null;
-	}
+	// Determine the route to use for the back link.
+	// If there is no previous link, then there is no route to use - fallback to the default.
+	// If the current route is a sub-route of the previous link, then there is no route to use - fallback to the default.
+	const route = useMemo( () => {
+		if ( ! previousLink.current ) {
+			return null;
+		}
+		const index = previousLink.current.indexOf( '?' );
+		const baseRoute =
+			index >= 0 ? previousLink.current.substring( 0, index ) : previousLink.current;
+		return currentRoute.startsWith( baseRoute ) ? null : baseRoute;
+	}, [ currentRoute ] );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
