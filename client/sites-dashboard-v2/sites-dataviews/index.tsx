@@ -137,7 +137,7 @@ const DotcomSitesDataViews = ( {
 				render: ( { item }: { item: SiteInfo } ) => <SitePlan site={ item } userId={ userId } />,
 				enableHiding: false,
 				enableSorting: false,
-				width: '5%',
+				width: '100px',
 			},
 			{
 				id: 'status',
