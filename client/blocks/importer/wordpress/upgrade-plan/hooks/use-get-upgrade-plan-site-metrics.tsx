@@ -6,7 +6,7 @@ import {
 	upgradePlanSiteMetricsFidThreshold,
 } from '../constants';
 
-const calcPercentageDifferenceFromThreshold = ( value: number | undefined, threshold: number ) => {
+const calcPercentageDifferenceFromThreshold = ( value: number, threshold: number ) => {
 	if ( ! value || value <= threshold ) {
 		return 0;
 	}
@@ -26,12 +26,12 @@ export const useGetUpgradePlanSiteMetrics = () => {
 
 	if ( isEnglishLocale ) {
 		lcpPercentageDifference = calcPercentageDifferenceFromThreshold(
-			siteMetricData?.basic?.lcp,
+			siteMetricData?.basic?.lcp || 0,
 			upgradePlanSiteMetricsLcpThreshold
 		);
 
 		fidPercentageDifference = calcPercentageDifferenceFromThreshold(
-			siteMetricData?.basic?.fid,
+			siteMetricData?.basic?.fid || 0,
 			upgradePlanSiteMetricsFidThreshold
 		);
 	}
