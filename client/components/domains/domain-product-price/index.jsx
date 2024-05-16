@@ -149,7 +149,7 @@ class DomainProductPrice extends Component {
 			<div className={ className }>
 				<div className="domain-product-price__free-text">
 					<span className="domain-product-price__free-price">
-						{ translate( 'Free domain for one year' ) }
+						{ translate( 'Free for the first year' ) }
 					</span>
 				</div>
 				{ this.renderReskinDomainPrice() }

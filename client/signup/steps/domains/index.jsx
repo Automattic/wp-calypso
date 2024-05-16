@@ -465,7 +465,7 @@ export class RenderDomainsStep extends Component {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug,
 				extra: {
-					domain_for_gravatar: true,
+					is_gravatar_domain: true,
 				},
 			} );
 
