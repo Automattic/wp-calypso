@@ -23,6 +23,7 @@ const loadLanguageFile = async ( languageFileName: string ) => {
 				i18n.setLocale( body );
 				// Work with the wordpress i18n `__` etc
 				defaultI18n.setLocaleData( body, __i18n_text_domain__ );
+				return;
 			}
 		}
 		Promise.reject( response );
