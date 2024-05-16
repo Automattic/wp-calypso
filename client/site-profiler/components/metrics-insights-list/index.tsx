@@ -33,13 +33,14 @@ export const MetricsInsightsList = ( props: MetricsInsightsListProps ) => {
 
 	return (
 		<Container className="metrics-insights-list">
-			{ insights.map( ( insight ) => (
+			{ insights.map( ( insight, index ) => (
 				<FoldableCard
 					header={ <InsightHeader>{ insight.header }</InsightHeader> }
 					screenReaderText={ translate( 'More' ) }
 					compact
 					clickableHeader
 					smooth
+					key={ `insight-${ index }` }
 				>
 					<InsightContent>{ insight.description }</InsightContent>
 				</FoldableCard>
