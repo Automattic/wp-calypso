@@ -13,10 +13,10 @@ export const useGetUpgradePlanSiteMetrics = () => {
 	if (
 		isEnglishLocale &&
 		siteMetricData?.basic?.lcp &&
-		siteMetricData?.basic?.lcp > upgradePlanSiteMetricsLcpThreshold
+		siteMetricData.basic.lcp > upgradePlanSiteMetricsLcpThreshold
 	) {
-		const lcpMsDiff = siteMetricData?.basic?.lcp - upgradePlanSiteMetricsLcpThreshold;
-		lcpPercentageDifference = Math.round( ( lcpMsDiff / siteMetricData?.basic?.lcp ) * 100 );
+		const lcpMsDiff = siteMetricData.basic.lcp - upgradePlanSiteMetricsLcpThreshold;
+		lcpPercentageDifference = Math.round( ( lcpMsDiff / siteMetricData.basic.lcp ) * 100 );
 
 		if ( lcpPercentageDifference > 0 ) {
 			showUpdatedSpeedMetrics = true;
