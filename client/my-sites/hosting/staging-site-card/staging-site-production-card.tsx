@@ -144,9 +144,9 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 						onClick={ () => {
 							if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 								navigate(
-									`/hosting-config/${ urlToSlug( productionSite.url ) }?search=${
+									`/hosting-config/${ urlToSlug( productionSite.url ) }?search=${ urlToSlug(
 										productionSite.url
-									}`,
+									) }`,
 									false,
 									true
 								);
