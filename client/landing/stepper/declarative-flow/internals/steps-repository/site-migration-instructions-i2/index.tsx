@@ -1,13 +1,17 @@
+import { MigrationStatus } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
+import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, type FC } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useQuery as useQueryParams } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { MaybeLink } from '../site-migration-instructions/maybe-link';
 import { ShowHideInput } from '../site-migration-instructions/show-hide-input';
 import { PendingActions } from './pending-actions';
@@ -31,11 +35,52 @@ const getMigrateGuruPageURL = ( siteURL: string ) =>
 
 const DoNotTranslateIt: FC< { value: string } > = ( { value } ) => <>{ value }</>;
 
-const SiteMigrationInstructions: Step = function () {
+interface MigrationStatusResponse {
+	status: MigrationStatus;
+}
+const getMigrationStatus = ( siteId: number ): Promise< MigrationStatusResponse > =>
+	wpcom.req.get( {
+		path: `/sites/${ siteId }/migration-status`,
+		apiNamespace: 'wpcom/v2',
+	} );
+
+type Options = {
+	enabled: boolean;
+};
+
+const useMigrationStatus = ( siteId?: number, options?: Options ) => {
+	return useQuery( {
+		queryKey: [ 'migrationStatus', siteId ],
+		queryFn: () => getMigrationStatus( siteId! ),
+		refetchInterval: 1000,
+		select: ( data ) => data.status,
+		enabled: Boolean( siteId && ( options?.enabled ?? true ) ),
+	} );
+};
+
+const MigrationProgress: FC< { status: MigrationStatus } > = () => {
+	const translate = useTranslate();
+
+	return (
+		<div className="migration-in-progress">
+			<h2 className="migration-in-progress__title">
+				{ translate( 'We are migrating your site' ) }
+			</h2>
+			<p>
+				{ translate(
+					'Feel free to close this window. We’ll email you when your new site is ready.'
+				) }
+			</p>
+			<LoadingEllipsis className="migration-in-progress__loading" />
+		</div>
+	);
+};
+
+const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const siteId = site?.ID;
-	const fromUrl = useQuery().get( 'from' ) || '';
+	const fromUrl = useQueryParams().get( 'from' ) || '';
 	const {
 		detailedStatus,
 		migrationKey,
@@ -45,6 +90,7 @@ const SiteMigrationInstructions: Step = function () {
 	const hasErrorGetMigrationKey = detailedStatus.migrationKey === 'error';
 	const showFallback = isSetupCompleted && hasErrorGetMigrationKey;
 	const showCopyIntoNewSite = isSetupCompleted && migrationKey;
+	const { data: migrationStatus } = useMigrationStatus( siteId, { enabled: true } );
 
 	useEffect( () => {
 		if ( hasErrorGetMigrationKey ) {
@@ -63,7 +109,13 @@ const SiteMigrationInstructions: Step = function () {
 		}
 	}, [ isSetupCompleted ] );
 
-	const stepContent = (
+	useEffect( () => {
+		if ( migrationStatus === MigrationStatus.DONE ) {
+			navigation?.submit?.();
+		}
+	}, [ migrationStatus, navigation ] );
+
+	const instructions = (
 		<div className="site-migration-instructions__content">
 			<ol className="site-migration-instructions__list">
 				<li>
@@ -174,6 +226,14 @@ const SiteMigrationInstructions: Step = function () {
 		</div>
 	);
 
+	const content =
+		migrationStatus &&
+		[ MigrationStatus.IN_PROGRESS, MigrationStatus.DONE ].includes( migrationStatus ) ? (
+			<MigrationProgress status={ migrationStatus } />
+		) : (
+			instructions
+		);
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'Migrate your site' ) } />
@@ -192,7 +252,7 @@ const SiteMigrationInstructions: Step = function () {
 						subHeaderAlign="center"
 					/>
 				}
-				stepContent={ stepContent }
+				stepContent={ content }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</>

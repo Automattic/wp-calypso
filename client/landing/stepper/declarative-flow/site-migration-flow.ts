@@ -32,6 +32,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+			STEPS.CELEBRATION,
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
@@ -204,6 +205,10 @@ const siteMigration: Flow = {
 						} );
 						return;
 					}
+				}
+
+				case STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug: {
+					return navigate( STEPS.CELEBRATION.slug, { siteId, siteSlug } );
 				}
 			}
 		}

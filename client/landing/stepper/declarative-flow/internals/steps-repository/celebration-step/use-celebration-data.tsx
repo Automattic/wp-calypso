@@ -1,4 +1,8 @@
-import { isStartWritingFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
+import {
+	isStartWritingFlow,
+	isSiteAssemblerFlow,
+	isNewSiteMigrationFlow,
+} from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 
 interface Props {
@@ -16,11 +20,27 @@ const useCelebrationData = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const isStartWritingFlowOrFirstPostPublished = isStartWritingFlow( flow ) || isFirstPostPublished;
+
+	const isMigrationFlowValue = isNewSiteMigrationFlow( flow );
+
 	const defaultCelebrationData = {
 		dashboardCtaName: 'Go to dashboard',
 		dashboardCtaText: translate( 'Go to dashboard' ),
 		dashboardCtaLink: `/home/${ siteSlug }`,
 	};
+
+	if ( isMigrationFlowValue ) {
+		return {
+			...defaultCelebrationData,
+			title: translate( 'Your site’s ready!' ),
+			primaryCtaName: 'Edit your content',
+			primaryCtaText: translate( 'Edit your content' ),
+			primaryCtaLink: `#########`,
+			secondaryCtaName: 'Migrate your domain',
+			secondaryCtaText: translate( 'Visit your site' ),
+			secondaryCtaLink: `https://${ siteSlug }`,
+		};
+	}
 
 	if ( isSiteAssemblerFlow( flow ) ) {
 		const siteEditorParams = new URLSearchParams( {

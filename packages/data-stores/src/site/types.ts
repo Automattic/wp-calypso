@@ -549,6 +549,7 @@ export enum MigrationStatus {
 	DONE = 'done',
 	DONE_USER = 'done-user',
 	ERROR = 'error',
+	IN_PROGRESS = 'in-progress',
 }
 
 export enum MigrationStatusError {

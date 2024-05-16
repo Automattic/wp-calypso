@@ -30,7 +30,7 @@ export const MigrationInProgress: FC< Props > = ( props ) => {
 	} );
 
 	useEffect( () => {
-		if ( status === MigrationStatus.DONE || status === MigrationStatus.INACTIVE ) {
+		if ( status === MigrationStatus.DONE ) {
 			onComplete();
 		}
 	}, [ onComplete, status ] );
