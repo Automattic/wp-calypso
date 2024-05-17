@@ -34,7 +34,7 @@ const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: st
 const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) => {
 	return filterPurchasesByProducts( ownedPurchases, [ searchedProduct ] ).length > 0;
 };
-const isProductsOwned = ( ownedPurchases: Purchase[], searchedProducts: string[] ) => {
+const areProductsOwned = ( ownedPurchases: Purchase[], searchedProducts: string[] ) => {
 	return filterPurchasesByProducts( ownedPurchases, searchedProducts ).length > 0;
 };
 
