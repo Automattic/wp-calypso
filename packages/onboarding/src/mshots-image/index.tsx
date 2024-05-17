@@ -53,16 +53,15 @@ const MAXTRIES = 10;
 const useMshotsImg = (
 	src: string,
 	options: MShotsOptions,
-	handleImageLoad: boolean
-): HTMLImageElement | undefined => {
-	const [ loadedImg, setLoadedImg ] = useState< HTMLImageElement >();
+	imgRef: React.MutableRefObject< HTMLImageElement | null >
+): HTMLImageElement | null => {
+	const [ loadedImg, setLoadedImg ] = useState< HTMLImageElement | null >( null );
 	const [ count, setCount ] = useState( 0 );
 	const previousSrc = useRef( src );
 
-	const imgRef = useRef< HTMLImageElement >();
 	const timeoutIdRef = useRef< number >();
 
-	const previousImg = useRef< HTMLImageElement >();
+	const previousImg = useRef< HTMLImageElement | null >( null );
 	const previousOptions = useRef< MShotsOptions >();
 	// Oddly, we need to assign to current here after ref creation in order to
 	// pass the equivalence check and avoid a spurious reset
@@ -72,13 +71,6 @@ const useMshotsImg = (
 	// to browser caching. Getting this wrong looks like the url resolving
 	// before the image is ready.
 	useEffect( () => {
-		// Ignore all this work if we don't want the hook to handle the image load.
-		// Since hooks can't be inside conditions, we need to handle that logic here,
-		// once all hooks are in place...
-		if ( ! handleImageLoad ) {
-			return;
-		}
-
 		// If there's been a "props" change we need to reset everything:
 		if (
 			options !== previousOptions.current ||
@@ -100,47 +92,53 @@ const useMshotsImg = (
 				}
 			}
 
-			setLoadedImg( undefined );
+			setLoadedImg( null );
 			setCount( 0 );
-			previousImg.current = imgRef.current;
+			if ( previousImg.current !== imgRef.current ) {
+				previousImg.current = imgRef.current;
+			}
 
 			previousOptions.current = options;
 			previousSrc.current = src;
 		}
 
 		const srcUrl = mshotsUrl( src, options, count );
-		const newImage = new Image();
-		newImage.onload = () => {
-			// Detect default image (Don't request a 400x300 image).
-			//
-			// If this turns out to be a problem, it might help to know that the
-			// http request status for the default is a 307. Unfortunately we
-			// don't get the request through an img element so we'd need to
-			// take a completely different approach using ajax.
-			if ( newImage.naturalWidth !== 400 || newImage.naturalHeight !== 300 ) {
-				// Note we're using the naked object here, not the ref, because
-				// this is the callback on the image itself. We'd never want
-				// the image to finish loading and set some other image.
-				setLoadedImg( newImage );
-			} else if ( count < MAXTRIES ) {
-				// Only refresh 10 times
-				// Triggers a target.src change with increasing timeouts
-				timeoutIdRef.current = window.setTimeout(
-					() => setCount( ( count ) => count + 1 ),
-					count * 500
-				);
-			}
-		};
-		newImage.src = srcUrl;
-		imgRef.current = newImage;
+
+		if ( imgRef.current ) {
+			imgRef.current.onload = () => {
+				// Detect default image (Don't request a 400x300 image).
+				//
+				// If this turns out to be a problem, it might help to know that the
+				// http request status for the default is a 307. Unfortunately we
+				// don't get the request through an img element so we'd need to
+				// take a completely different approach using ajax.
+				if ( imgRef.current?.naturalWidth !== 400 || imgRef.current?.naturalHeight !== 300 ) {
+					// Note we're using the naked object here, not the ref, because
+					// this is the callback on the image itself. We'd never want
+					// the image to finish loading and set some other image.
+					setLoadedImg( imgRef.current );
+				} else if ( count < MAXTRIES ) {
+					// Only refresh 10 times
+					// Triggers a target.src change with increasing timeouts
+					timeoutIdRef.current = window.setTimeout(
+						() => setCount( ( count ) => count + 1 ),
+						count * 500
+					);
+				}
+			};
+			imgRef.current.src = srcUrl;
+		}
 
 		return () => {
 			if ( imgRef.current && imgRef.current.onload ) {
 				imgRef.current.onload = null;
 			}
+			if ( previousImg.current && previousImg.current.onload ) {
+				previousImg.current.onload = null;
+			}
 			clearTimeout( timeoutIdRef.current );
 		};
-	}, [ src, count, options ] );
+	}, [ src, count, options, imgRef ] );
 
 	return loadedImg;
 };
@@ -158,8 +156,9 @@ const MShotsImage = ( {
 	options,
 	scrollable = false,
 }: MShotsImageProps ) => {
-	const maybeImage = useMshotsImg( url, options, scrollable );
-	const src: string = ( scrollable ? maybeImage?.src : mshotsUrl( url, options ) ) || '';
+	const imgRef = useRef< HTMLImageElement | null >( null );
+	const maybeImage = useMshotsImg( url, options, imgRef );
+	const src: string = maybeImage?.src || '';
 	const visible = !! src;
 	const backgroundImage = maybeImage?.src && `url( ${ maybeImage?.src } )`;
 
@@ -182,14 +181,14 @@ const MShotsImage = ( {
 		visible ? 'mshots-image-visible' : 'mshots-image__loader'
 	);
 
-	// The "! visible" here is only to dodge a particularly specific css
-	// rule effecting the placeholder while loading static images:
-	// '.design-picker .design-picker__image-frame img { ..., height: auto }'
-	return scrollable || ! visible ? (
-		<div className={ className } style={ style } aria-labelledby={ labelledby } />
+	return scrollable ? (
+		<div className={ className } style={ style } aria-labelledby={ labelledby }>
+			<img ref={ imgRef } loading="lazy" className="mshots-dummy-image" aria-hidden="true" alt="" />
+		</div>
 	) : (
 		<img
 			loading="lazy"
+			ref={ imgRef }
 			{ ...{ className, style, src, alt } }
 			aria-labelledby={ labelledby }
 			alt={ alt }
