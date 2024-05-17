@@ -14,11 +14,7 @@ import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
-import type {
-	UseActionCallbackParams,
-	PlansIntent,
-	UseActionCallback,
-} from '@automattic/plans-grid-next';
+import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler( {
@@ -129,7 +125,7 @@ function useGenerateActionCallback( {
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const handleUpgrade = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
 
-	return ( { planSlug, cartItemForPlan, selectedStorageAddOn }: UseActionCallbackParams ) => {
+	return ( { planSlug, cartItemForPlan, selectedStorageAddOn } ) => {
 		return () => {
 			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];

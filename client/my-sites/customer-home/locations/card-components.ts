@@ -80,7 +80,7 @@ import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
 import SiteResumeCopy from 'calypso/my-sites/customer-home/cards/tasks/site-resume-copy';
-import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
+import { ConnectedSiteSetupListWrapper } from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
 import UseBuiltBy from 'calypso/my-sites/customer-home/cards/tasks/use-built-by';
 import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email';
@@ -120,7 +120,7 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ TASK_REACTIVATE_EXPIRED_PLAN ]: ReviveAutoRevertedAtomic,
 	[ TASK_REACTIVATE_RESTORE_BACKUP ]: ReviveAutoRevertedAtomic,
 	[ TASK_SITE_RESUME_COPY ]: SiteResumeCopy,
-	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
+	[ TASK_SITE_SETUP_CHECKLIST ]: ConnectedSiteSetupListWrapper,
 	[ TASK_UPSELL_TITAN ]: TitanBanner,
 	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,

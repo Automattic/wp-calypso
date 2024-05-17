@@ -4,17 +4,17 @@ import {
 	getPlanFeaturesGrouped,
 	setTrailMapExperiment,
 } from '@automattic/calypso-products';
-import { Meta, StoryObj } from '@storybook/react';
 import {
 	FeaturesGrid,
 	FeaturesGridExternalProps,
 	useGridPlanForSpotlight,
 	useGridPlansForFeaturesGrid,
 } from '../..';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const ComponentWrapper = (
-	props: FeaturesGridExternalProps & {
-		trailMapVariant: TrailMapVariantType;
+	props: Omit< FeaturesGridExternalProps, 'gridPlans' > & {
+		trailMapVariant?: TrailMapVariantType;
 	}
 ) => {
 	const gridPlans = useGridPlansForFeaturesGrid( {
@@ -60,7 +60,7 @@ const ComponentWrapper = (
 	);
 };
 
-const defaultProps: Omit< FeaturesGridExternalProps, 'gridPlans' > = {
+const defaultProps = {
 	allFeaturesList: getFeaturesList(),
 	coupon: undefined,
 	currentSitePlanSlug: undefined,
@@ -73,7 +73,6 @@ const defaultProps: Omit< FeaturesGridExternalProps, 'gridPlans' > = {
 	isCustomDomainAllowedOnFreePlan: false,
 	isInAdmin: false,
 	isInSignup: true,
-	isLaunchPage: false,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
 	planUpgradeCreditsApplicable: undefined,
@@ -84,12 +83,32 @@ const defaultProps: Omit< FeaturesGridExternalProps, 'gridPlans' > = {
 	siteId: undefined,
 	stickyRowOffset: 0,
 	useCheckPlanAvailabilityForPurchase: () => ( {} ),
-	useActionCallback: () => () => {},
+	useAction: () => ( {
+		primary: {
+			text: 'test',
+			callback: () => {},
+			status: 'enabled' as const,
+		},
+		postButtonText: '',
+	} ),
 };
 
-type Story = StoryObj< typeof ComponentWrapper >;
+const meta = {
+	title: 'FeaturesGrid',
+	component: ComponentWrapper,
+	decorators: [
+		( Story, { args: { trailMapVariant } } ) => {
+			trailMapVariant && setTrailMapExperiment( trailMapVariant );
+			return <Story />;
+		},
+	],
+} satisfies Meta< typeof ComponentWrapper >;
 
-export const Plans: Story = {
+export default meta;
+
+type Story = StoryObj< typeof meta >;
+
+export const Plans = {
 	name: '/plans',
 	args: {
 		...defaultProps,
@@ -98,55 +117,43 @@ export const Plans: Story = {
 		isInAdmin: true,
 		isInSignup: false,
 	},
-};
+} satisfies Story;
 
-export const Newsletter: Story = {
+export const Newsletter = {
 	name: '/setup/newsletter',
 	args: {
 		...defaultProps,
 		intent: 'plans-newsletter',
 	},
-};
+} satisfies Story;
 
-export const TrailMapControl: Story = {
+export const TrailMapControl = {
 	args: {
 		...Plans.args,
 		trailMapVariant: 'control',
 		gridPlanForSpotlight: undefined,
 	},
-};
+} satisfies Story;
 
-export const TrailMapStructure: Story = {
+export const TrailMapStructure = {
 	args: {
 		...TrailMapControl.args,
 		trailMapVariant: 'treatment_structure',
 		enableCategorisedFeatures: true,
 	},
-};
+} satisfies Story;
 
-export const TrailMapCopy: Story = {
+export const TrailMapCopy = {
 	args: {
 		...TrailMapControl.args,
 		trailMapVariant: 'treatment_copy',
 	},
-};
-export const TrailMapCopyAndStructure: Story = {
+} satisfies Story;
+
+export const TrailMapCopyAndStructure = {
 	args: {
 		...TrailMapControl.args,
 		trailMapVariant: 'treatment_copy_and_structure',
 		enableCategorisedFeatures: true,
 	},
-};
-
-const meta: Meta< typeof ComponentWrapper > = {
-	title: 'FeaturesGrid',
-	component: ComponentWrapper,
-	decorators: [
-		( Story, storyContext ) => {
-			setTrailMapExperiment( storyContext.args.trailMapVariant );
-			return <Story />;
-		},
-	],
-};
-
-export default meta;
+} satisfies Story;

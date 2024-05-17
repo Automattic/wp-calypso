@@ -6,7 +6,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import StickyPanel from 'calypso/components/sticky-panel';
-import { useIsMenuSectionVisible } from '../hooks/use-is-menu-section-visible';
+import { useIsMenuSectionVisible } from 'calypso/site-profiler/hooks/use-is-menu-section-visible';
 
 const FullReportButton = styled( Button )`
 	margin-right: 8px;
@@ -21,6 +21,9 @@ const SectionNavbar = styled( SectionNav )`
 
 interface MetricsMenuProps {
 	basicMetricsRef?: React.RefObject< HTMLObjectElement >;
+	performanceMetricsRef?: React.RefObject< HTMLObjectElement >;
+	healthScoresRef?: React.RefObject< HTMLObjectElement >;
+	onCTAClick: () => void;
 }
 
 interface MenuItem {
@@ -30,33 +33,51 @@ interface MenuItem {
 
 enum MetricsMenuTabs {
 	basic = 'basic',
+	performance = 'performance',
+	health = 'health',
 }
 
-export const MetricsMenu: React.FC< MetricsMenuProps > = ( props: MetricsMenuProps ) => {
+export const MetricsMenu: React.FC< MetricsMenuProps > = ( props ) => {
 	const translate = useTranslate();
-	const { basicMetricsRef } = props;
+	const { basicMetricsRef, performanceMetricsRef, healthScoresRef, onCTAClick } = props;
 
 	const references = {
 		[ MetricsMenuTabs.basic ]: basicMetricsRef,
+		[ MetricsMenuTabs.performance ]: performanceMetricsRef,
+		[ MetricsMenuTabs.health ]: healthScoresRef,
 	};
 
 	const menuItems: MenuItem[] = [
 		{
 			id: MetricsMenuTabs.basic,
+			label: translate( 'Basic Performance Metrics' ),
+		},
+		{
+			id: MetricsMenuTabs.performance,
 			label: translate( 'Performance Metrics' ),
+		},
+		{
+			id: MetricsMenuTabs.health,
+			label: translate( 'Health Scores' ),
 		},
 	];
 
 	const [ selectedTab, setSelectedTab ] = useState< MetricsMenuTabs | undefined >();
 	const basicMetricsVisible = useIsMenuSectionVisible( basicMetricsRef );
+	const performanceMetricsVisible = useIsMenuSectionVisible( performanceMetricsRef );
+	const healthScoresVisible = useIsMenuSectionVisible( healthScoresRef );
 
 	useEffect( () => {
 		if ( basicMetricsVisible ) {
 			setSelectedTab( MetricsMenuTabs.basic );
+		} else if ( performanceMetricsVisible ) {
+			setSelectedTab( MetricsMenuTabs.performance );
+		} else if ( healthScoresVisible ) {
+			setSelectedTab( MetricsMenuTabs.health );
 		} else {
 			setSelectedTab( undefined );
 		}
-	}, [ basicMetricsVisible ] );
+	}, [ basicMetricsVisible, performanceMetricsVisible, healthScoresVisible ] );
 
 	const onMenuItemClick = ( tab: MetricsMenuTabs ) => {
 		if ( references[ tab ]?.current ) {
@@ -78,7 +99,7 @@ export const MetricsMenu: React.FC< MetricsMenuProps > = ( props: MetricsMenuPro
 						</NavItem>
 					) ) }
 				</NavTabs>
-				<FullReportButton primary>
+				<FullReportButton primary onClick={ onCTAClick }>
 					{ translate( "Get full site report - It's free" ) }
 				</FullReportButton>
 			</SectionNavbar>

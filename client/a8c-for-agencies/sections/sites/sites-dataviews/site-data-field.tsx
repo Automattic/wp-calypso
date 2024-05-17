@@ -16,7 +16,10 @@ const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProp
 
 	return (
 		<Button className="sites-dataviews__site" onClick={ () => onSiteTitleClick( site ) } borderless>
-			<SiteFavicon blogId={ site.blog_id } isDotcomSite={ site.is_atomic } />
+			<SiteFavicon
+				blogId={ site.blog_id }
+				fallback={ site.is_atomic ? 'wordpress-logo' : 'color' }
+			/>
 			<div className="sites-dataviews__site-name">
 				{ site.blogname }
 				<div className="sites-dataviews__site-url">{ site.url }</div>

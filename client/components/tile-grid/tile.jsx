@@ -46,6 +46,7 @@ export default class extends PureComponent {
 			>
 				{ image && (
 					<div className="tile-grid__image">
+						{ /* eslint-disable-next-line jsx-a11y/img-redundant-alt, jsx-a11y/alt-text */ }
 						<img src={ image } />
 					</div>
 				) }

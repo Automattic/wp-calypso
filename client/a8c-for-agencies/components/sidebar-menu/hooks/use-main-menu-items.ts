@@ -1,4 +1,4 @@
-import { category, currencyDollar, home, reusableBlock, tag } from '@wordpress/icons';
+import { category, currencyDollar, home, moveTo, reusableBlock, tag, cog } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
@@ -10,6 +10,8 @@ import {
 	A4A_REFERRALS_LINK,
 	A4A_SITES_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
+	A4A_MIGRATIONS_LINK,
+	A4A_SETTINGS_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -77,6 +79,32 @@ const useMainMenuItems = ( path: string ) => {
 							title: translate( 'Referrals' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Referrals',
+							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-migrations' )
+				? [
+						{
+							icon: moveTo,
+							path: '/',
+							link: A4A_MIGRATIONS_LINK,
+							title: translate( 'Migrations' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Migrations',
+							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-settings' )
+				? [
+						{
+							icon: cog,
+							path: '/',
+							link: A4A_SETTINGS_LINK,
+							title: translate( 'Settings' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Settings',
 							},
 						},
 				  ]

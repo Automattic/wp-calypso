@@ -48,6 +48,7 @@ export const keyboardShortcutsAreEnabled = ( state = false, action ) => {
 	return state;
 };
 
+// eslint-disable-next-line no-shadow
 export const filterName = ( state = 'all', { type, filterName } ) =>
 	SET_FILTER === type ? filterName : state;
 

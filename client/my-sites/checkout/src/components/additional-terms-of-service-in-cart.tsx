@@ -8,7 +8,6 @@ import {
 import { EDIT_PAYMENT_DETAILS } from '@automattic/urls';
 import debugFactory from 'debug';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import moment from 'moment';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
@@ -46,6 +45,17 @@ export default function AdditionalTermsOfServiceInCart() {
 	);
 }
 
+function formatDate( isoDate: string ): string {
+	// This somewhat mimics `moment.format('ll')` (used here formerly) without
+	// needing the depdecated `moment` package.
+	return new Date( Date.parse( isoDate ) ).toLocaleDateString( 'en-US', {
+		weekday: undefined,
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+	} );
+}
+
 function getMessageForTermsOfServiceRecordUnknown(
 	termsOfServiceRecord: TermsOfServiceRecord,
 	translate: ReturnType< typeof useTranslate >,
@@ -66,7 +76,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
-	const startDate = moment( args.subscription_start_date ).format( 'll' );
+	const startDate = formatDate( args.subscription_start_date );
 	const maybeProratedRegularPrice = formatCurrency(
 		args.maybe_prorated_regular_renewal_price_integer,
 		currency,
@@ -78,9 +88,12 @@ function getMessageForTermsOfServiceRecordUnknown(
 	const manageSubscriptionLink = `/purchases/subscriptions/${ siteSlug }`;
 
 	if ( doesTermsOfServiceRecordHaveDates( args ) ) {
-		const endDate = moment( args.subscription_end_of_promotion_date ).format( 'll' );
+		const endDate = formatDate( args.subscription_end_of_promotion_date );
 		const numberOfDays = args.subscription_pre_renew_reminder_days || 7;
-		const renewalDate = moment( args.subscription_auto_renew_date ).format( 'll' );
+		const renewalDate = formatDate( args.subscription_auto_renew_date );
+		const proratedRenewalDate = formatDate(
+			args.subscription_maybe_prorated_regular_auto_renew_date
+		);
 
 		const termLengthText = translate(
 			'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s.',
@@ -108,7 +121,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 			'On %(endDate)s, we will attempt to renew your subscription for %(maybeProratedRegularPrice)s.',
 			{
 				args: {
-					endDate,
+					endDate: proratedRenewalDate,
 					maybeProratedRegularPrice,
 				},
 			}
@@ -147,9 +160,9 @@ function getMessageForTermsOfServiceRecordUnknown(
 		// we are already showing as the next renewal info is the same as the
 		// end of promotion renewal info.
 		const shouldShowEndOfPromotionText =
-			// Show the endOfPromotionChargeText if the endDate differs from
-			// the renewalDate because it is about the endDate.
-			renewalDate !== endDate ||
+			// Show the endOfPromotionChargeText if the proratedRenewalDate differs from
+			// the renewalDate because it is about the proratedRenewalDate.
+			renewalDate !== proratedRenewalDate ||
 			// Show the endOfPromotionChargeText if the
 			// maybeProratedRegularPrice differs from the renewalPrice because
 			// it is about the maybeProratedRegularPrice.

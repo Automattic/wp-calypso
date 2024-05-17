@@ -238,7 +238,7 @@ export default function TransferDomainToAnyUser( {
 								} ) }
 								maxLength={ 1000 }
 							/>
-							{ ! isValidEmail && <FormInputValidation isError={ true } text={ errorMessage } /> }
+							{ ! isValidEmail && <FormInputValidation isError text={ errorMessage } /> }
 						</FormFieldset>
 						<div className="transfer-domain-to-any-user__notice">
 							<Gridicon icon="info-outline" size={ 18 } />

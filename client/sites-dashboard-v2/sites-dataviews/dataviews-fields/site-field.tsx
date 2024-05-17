@@ -1,6 +1,7 @@
 import { ListTile, Button } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
+import { Icon, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import * as React from 'react';
@@ -8,7 +9,6 @@ import * as React from 'react';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
-import { SiteItemThumbnail } from 'calypso/sites-dashboard/components/sites-site-item-thumbnail';
 import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
 import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
@@ -88,16 +88,11 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 				leading={
 					<Button className="sites-dataviews__preview-trigger" onClick={ onSiteClick } borderless>
 						<ListTileLeading title={ title }>
-							<SiteItemThumbnail
-								className="sites-site-thumbnail"
-								displayMode="list"
-								showPlaceholder={ false }
-								site={ site }
-							/>
 							<SiteFavicon
 								className="sites-site-favicon"
 								blogId={ site.ID }
-								isDotcomSite={ site.is_wpcom_atomic }
+								fallback="first-grapheme"
+								size={ 56 }
 							/>
 						</ListTileLeading>
 					</Button>
@@ -121,8 +116,19 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						</>
 					) : (
 						<>
-							<div className="sites-dataviews__site-url">
-								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
+							<div>
+								<a
+									className="sites-dataviews__site-url"
+									href={ siteUrl }
+									title={ siteUrl }
+									target="_blank"
+									rel="noreferrer"
+								>
+									<Truncated>
+										{ displaySiteUrl( siteUrl ) }
+										<Icon icon={ external } size={ 16 } />
+									</Truncated>
+								</a>
 							</div>
 							<a className="sites-dataviews__site-wp-admin-url" href={ adminUrl }>
 								<Truncated>{ adminLabel }</Truncated>

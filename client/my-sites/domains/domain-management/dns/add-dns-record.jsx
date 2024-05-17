@@ -19,7 +19,7 @@ import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DnsAddNew from './dns-add-new';
 

@@ -142,7 +142,7 @@ const GoogleAnalyticsJetpackForm = ( {
 								/>
 								{ ! isCodeValid && (
 									<FormTextValidation
-										isError={ true }
+										isError
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
@@ -212,7 +212,7 @@ const GoogleAnalyticsJetpackForm = ( {
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ PLAN_JETPACK_SECURITY_DAILY }
 						href={ upsellHref }
-						showIcon={ true }
+						showIcon
 						title={ nudgeTitle }
 					/>
 				) : (

@@ -9,8 +9,8 @@ import { devToolsPromo } from './controller';
 const redirectForNonSimpleSite = ( context: PageJSContext, next: () => void ) => {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
-	if ( site && site.jetpack ) {
-		return page.redirect( `/hosting/${ context.params.site }` );
+	if ( site && site.jetpack && ! site.plan?.expired ) {
+		return page.redirect( `/overview/${ context.params.site }` );
 	}
 	return next();
 };

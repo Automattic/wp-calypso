@@ -9,6 +9,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -108,7 +109,13 @@ const AddOnsMain = () => {
 	}
 
 	const handleActionPrimary = ( addOnSlug: string, quantity?: number ) => {
-		page.redirect( `${ checkoutLink( selectedSite?.slug ?? null, addOnSlug, quantity ) }` );
+		recordTracksEvent( 'calypso_add_ons_action_primary_click', {
+			add_on_slug_with_quantity: `${ addOnSlug }${ quantity ? `:${ quantity }` : '' }`,
+			add_on_slug: addOnSlug,
+			quantity,
+		} );
+
+		page.redirect( `${ checkoutLink( selectedSite?.ID ?? null, addOnSlug, quantity ) }` );
 	};
 
 	const handleActionSelected = () => {
@@ -126,7 +133,7 @@ const AddOnsMain = () => {
 					actionSecondary={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
 					useAddOnAvailabilityStatus={ AddOns.useAddOnPurchaseStatus }
 					addOns={ filteredAddOns }
-					highlightFeatured={ true }
+					highlightFeatured
 				/>
 			</ContentWithHeader>
 		</div>

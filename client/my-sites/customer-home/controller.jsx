@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
@@ -97,8 +96,7 @@ export async function maybeRedirect( context, next ) {
 
 				const isWooExpressPlatform =
 					isSiteOnWooExpress( refetchedState, siteId ) || purchase?.isWooExpressTrial;
-				const shouldUseCalypsoMyHome =
-					config.isEnabled( 'entrepreneur-my-home' ) && ! isWooExpressPlatform;
+				const shouldUseCalypsoMyHome = ! isWooExpressPlatform;
 
 				const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
 				const isSSOEnabled = !! isJetpackModuleActive( refetchedState, siteId, 'sso' );

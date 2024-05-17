@@ -17,12 +17,14 @@ class RelatedPostCardExample extends Component {
 				<Card>
 					<div className="reader-related-card__blocks is-same-site">
 						<h1 className="reader-related-card__heading">
+							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 							More in <a className="reader-related-card__link">Longreads</a>
 						</h1>
 						<RelatedPostsFromSameSite siteId={ LONGREADS_SITE_ID } postId={ LONGREADS_POST_ID } />
 					</div>
 					<div className="reader-related-card__blocks is-other-site">
 						<h1 className="reader-related-card__heading">
+							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 							More in <a className="reader-related-card__link">WordPress.com</a>
 						</h1>
 						<RelatedPostsFromOtherSites siteId={ LONGREADS_SITE_ID } postId={ LONGREADS_POST_ID } />

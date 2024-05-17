@@ -402,10 +402,10 @@ body.is-mobile-app-view {
 
 // Ensure reader streams have the neutral background.
 .layout.is-section-reader {
-	background: var(--studio-white); // TODO: Remove after nav-redesign-v2 for reader is done.
 	min-height: 100vh;
-	.layout__content {
-		background: var(--studio-white); // TODO: Remove after nav-redesign-v2 for reader is done.
+
+	&.has-header-section {
+		background: var(--studio-white);
 	}
 	.section-header.card {
 		box-shadow: none;

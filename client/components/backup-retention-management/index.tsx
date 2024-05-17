@@ -297,7 +297,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 		( isFetching && <LoadingPlaceholder /> ) || (
 			<div className="backup-retention-management">
 				{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-				<Card compact={ true } className="setting-title">
+				<Card compact className="setting-title">
 					<h3>{ translate( 'Days of backups saved' ) } </h3>
 					<InfoTooltip />
 				</Card>

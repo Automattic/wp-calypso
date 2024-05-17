@@ -63,6 +63,8 @@ export type ResponseDomain = {
 	cannotManageNameServersReason: string | null;
 	cannotUpdateContactInfoReason: string | null;
 	canSetAsPrimary: boolean;
+	canTransferToOtherSite: boolean;
+	canTransferToAnyUser: boolean;
 	canUpdateContactInfo: boolean;
 	connectionMode: string;
 	contactInfoDisclosed: boolean;
@@ -88,6 +90,7 @@ export type ResponseDomain = {
 	isAutoRenewing: boolean;
 	isEligibleForInboundTransfer: boolean;
 	isIcannVerificationSuspended: boolean;
+	isGravatarDomain: boolean;
 	isLocked: boolean;
 	isMappedToAtomicSite: boolean;
 	isMoveToNewSitePending: boolean;

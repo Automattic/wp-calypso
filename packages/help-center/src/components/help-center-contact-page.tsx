@@ -21,12 +21,11 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from '..';
 import {
 	useChatStatus,
-	useShouldRenderChatOption,
 	useShouldRenderEmailOption,
 	useStillNeedHelpURL,
 	useZendeskMessaging,
 } from '../hooks';
-import { Mail, Forum } from '../icons';
+import { Mail } from '../icons';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 
 const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
@@ -36,7 +35,7 @@ const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...pr
 	return <span { ...props }></span>;
 };
 
-type ContactOption = 'chat' | 'forum' | 'email';
+type ContactOption = 'chat' | 'email';
 const generateContactOnClickEvent = (
 	contactOption: ContactOption,
 	contactOptionEventName?: string
@@ -76,7 +75,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	const renderEmail = useShouldRenderEmailOption();
 	const {
 		hasActiveChats,
-		isChatAvailable,
 		isEligibleForChat,
 		isLoading: isLoadingChatStatus,
 		supportActivity,
@@ -86,10 +84,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		isEligibleForChat || hasActiveChats,
 		isEligibleForChat || hasActiveChats
 	);
-	const renderChat = useShouldRenderChatOption(
-		isChatAvailable || hasActiveChats,
-		isEligibleForChat
-	);
+
 	const isLoading = renderEmail.isLoading || isLoadingChatStatus;
 
 	useEffect( () => {
@@ -99,17 +94,17 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		recordTracksEvent( 'calypso_helpcenter_contact_options_impression', {
 			force_site_id: true,
 			location: 'help-center',
-			chat_available: renderChat.state === 'AVAILABLE',
+			chat_available: ! renderEmail.render,
 			email_available: renderEmail.render,
 		} );
-	}, [ isLoading, renderChat.state, renderEmail.render ] );
+	}, [ isLoading, renderEmail.render ] );
 
 	const liveChatHeaderText = useMemo( () => {
-		if ( isEnglishLocale || ! hasTranslation( 'Live chat (English)' ) ) {
-			return __( 'Live chat', __i18n_text_domain__ );
+		if ( isEnglishLocale || ! hasTranslation( 'Contact WordPress.com Support (English)' ) ) {
+			return __( 'Contact WordPress.com Support', __i18n_text_domain__ );
 		}
 
-		return __( 'Live chat (English)', __i18n_text_domain__ );
+		return __( 'Contact WordPress.com Support (English)', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	const emailHeaderText = useMemo( () => {
@@ -139,13 +134,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		return __( 'Email', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
-	const forumHeaderText = useMemo( () => {
-		if ( isEnglishLocale ) {
-			return __( 'Community forums', __i18n_text_domain__ );
-		}
-		return __( 'Community forums (English)', __i18n_text_domain__ );
-	}, [ __, locale ] );
-
 	if ( isLoading ) {
 		return (
 			<div className="help-center-contact-page__loading">
@@ -153,13 +141,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 			</div>
 		);
 	}
-
-	// Create URLSearchParams for forum
-	const forumUrlSearchParams = new URLSearchParams( {
-		mode: 'FORUM',
-		wapuuFlow: hideHeaders.toString(),
-	} );
-	const forumUrl = `/contact-form?${ forumUrlSearchParams.toString() }`;
 
 	// Create URLSearchParams for chat
 	const chatUrlSearchParams = new URLSearchParams( {
@@ -172,15 +153,52 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	const emailUrlSearchParams = new URLSearchParams( {
 		mode: 'EMAIL',
 		// Set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
-		overflow: ( renderChat.eligible && renderChat.state !== 'AVAILABLE' ).toString(),
+		overflow: renderEmail.render.toString(),
 		wapuuFlow: hideHeaders.toString(),
 	} );
 	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
 
 	const contactOptionsEventMap: Record< ContactOption, () => void > = {
 		chat: generateContactOnClickEvent( 'chat', trackEventName ),
-		forum: generateContactOnClickEvent( 'forum', trackEventName ),
 		email: generateContactOnClickEvent( 'email', trackEventName ),
+	};
+
+	const renderChatOption = () => {
+		return (
+			<div>
+				<ConditionalLink active to={ chatUrl } onClick={ contactOptionsEventMap[ 'chat' ] }>
+					<div className="help-center-contact-page__box chat" role="button" tabIndex={ 0 }>
+						<div className="help-center-contact-page__box-icon">
+							<Icon icon={ comment } />
+						</div>
+						<div>
+							<h2>{ liveChatHeaderText }</h2>
+							<p>{ __( 'Our Happiness team will get back to you soon', __i18n_text_domain__ ) }</p>
+						</div>
+					</div>
+				</ConditionalLink>
+			</div>
+		);
+	};
+
+	const renderEmailOption = () => {
+		return (
+			<Link to={ emailUrl } onClick={ contactOptionsEventMap[ 'email' ] }>
+				<div
+					className={ classnames( 'help-center-contact-page__box', 'email' ) }
+					role="button"
+					tabIndex={ 0 }
+				>
+					<div className="help-center-contact-page__box-icon">
+						<Icon icon={ <Mail /> } />
+					</div>
+					<div>
+						<h2>{ emailHeaderText }</h2>
+						<p>{ __( 'An expert will get back to you soon', __i18n_text_domain__ ) }</p>
+					</div>
+				</div>
+			</Link>
+		);
 	};
 
 	return (
@@ -195,76 +213,11 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					displayAt="2023-12-26 00:00Z"
 					closesAt="2023-12-31 00:00Z"
 					reopensAt="2024-01-02 07:00Z"
-					enabled={ renderChat.render }
+					enabled={ ! renderEmail.render }
 				/>
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
-					{ ! renderEmail.render && (
-						<Link to={ forumUrl } onClick={ contactOptionsEventMap[ 'forum' ] }>
-							<div
-								className={ classnames( 'help-center-contact-page__box', 'forum' ) }
-								role="button"
-								tabIndex={ 0 }
-							>
-								<div className="help-center-contact-page__box-icon">
-									<Icon icon={ <Forum /> } />
-								</div>
-								<div>
-									<h2>{ forumHeaderText }</h2>
-									<p>
-										{ __( 'Your question and any answers will be public', __i18n_text_domain__ ) }
-									</p>
-								</div>
-							</div>
-						</Link>
-					) }
-					{ renderChat.render && (
-						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
-							<ConditionalLink
-								active={ renderChat.state === 'AVAILABLE' }
-								to={ chatUrl }
-								onClick={ contactOptionsEventMap[ 'chat' ] }
-							>
-								<div
-									className={ classnames( 'help-center-contact-page__box', 'chat', {
-										'is-disabled': renderChat.state !== 'AVAILABLE',
-									} ) }
-									role="button"
-									tabIndex={ 0 }
-								>
-									<div className="help-center-contact-page__box-icon">
-										<Icon icon={ comment } />
-									</div>
-									<div>
-										<h2>{ liveChatHeaderText }</h2>
-										<p>
-											{ renderChat.state !== 'AVAILABLE'
-												? __( 'Chat is unavailable right now', __i18n_text_domain__ )
-												: __( 'Get an immediate reply', __i18n_text_domain__ ) }
-										</p>
-									</div>
-								</div>
-							</ConditionalLink>
-						</div>
-					) }
-
-					{ renderEmail.render && (
-						<Link to={ emailUrl } onClick={ contactOptionsEventMap[ 'email' ] }>
-							<div
-								className={ classnames( 'help-center-contact-page__box', 'email' ) }
-								role="button"
-								tabIndex={ 0 }
-							>
-								<div className="help-center-contact-page__box-icon">
-									<Icon icon={ <Mail /> } />
-								</div>
-								<div>
-									<h2>{ emailHeaderText }</h2>
-									<p>{ __( 'An expert will get back to you soon', __i18n_text_domain__ ) }</p>
-								</div>
-							</div>
-						</Link>
-					) }
+					{ renderEmail.render ? renderEmailOption() : renderChatOption() }
 				</div>
 			</div>
 		</div>

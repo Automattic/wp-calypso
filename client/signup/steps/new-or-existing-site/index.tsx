@@ -66,11 +66,11 @@ export default function NewOrExistingSiteStep( props: Props ) {
 					isStoreFlow={ 'do-it-for-me-store' === flowName }
 				/>
 			}
-			hideFormattedHeader={ true }
+			hideFormattedHeader
 			align="left"
 			hideSkip
 			isHorizontalLayout={ false }
-			isWideLayout={ true }
+			isWideLayout
 			headerImageUrl={ difmImage }
 			{ ...props }
 		/>

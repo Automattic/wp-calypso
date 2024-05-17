@@ -2,8 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { __experimentalHStack as HStack, Modal, TextHighlight } from '@wordpress/components';
 import { useDebounce } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
 import { chevronLeft as backIcon, Icon, search as inputIcon } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
@@ -164,6 +164,7 @@ function CommandInput() {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const itemValue = useCommandState( ( state ) => state.value );
 	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
+	const { __ } = useI18n();
 
 	useEffect( () => {
 		// Focus the command palette input when mounting the modal,
@@ -192,6 +193,7 @@ const NotFoundMessage = () => {
 			search_text: search,
 		} );
 	}, 600 );
+	const { __ } = useI18n();
 
 	useEffect( () => {
 		// Track search queries only for root
@@ -275,6 +277,7 @@ const CommandPalette = ( {
 	);
 	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
 	const commandFilter = useCommandFilter();
+	const { __ } = useI18n();
 
 	const commandListRef = useRef< HTMLDivElement >( null );
 
@@ -423,4 +426,4 @@ const CommandPalette = ( {
 
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './commands';
-export { COMMANDS } from './commands';
+export { useCommands } from './commands';

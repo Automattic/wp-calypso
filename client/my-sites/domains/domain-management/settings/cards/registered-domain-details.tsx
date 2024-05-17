@@ -95,7 +95,7 @@ const RegisteredDomainDetails = ( {
 					planName={ selectedSite.plan?.product_name_short }
 					siteDomain={ selectedSite.domain }
 					purchase={ purchase }
-					withTextStatus={ true }
+					withTextStatus
 					toggleSource="registered-domain-status"
 				/>
 				{ autoRenewAdditionalText && (

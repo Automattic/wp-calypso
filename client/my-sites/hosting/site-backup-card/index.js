@@ -1,8 +1,7 @@
-import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
+import { HostingCard } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import getLastGoodRewindBackup from 'calypso/state/selectors/get-last-good-rewind-backup';
@@ -36,8 +35,7 @@ const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) 
 		: null;
 
 	return (
-		<Card className="site-backup-card">
-			<CardHeading>{ translate( 'Site backup' ) }</CardHeading>
+		<HostingCard className="site-backup-card" title={ translate( 'Site backup' ) }>
 			{ hasRetrievedLastBackup && lastGoodBackup && ! isLoading && ! disabled && (
 				<>
 					<p className="site-backup-card__date">
@@ -61,7 +59,7 @@ const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) 
 					<div className="site-backup-card__placeholder is-large"></div>
 				</>
 			) }
-		</Card>
+		</HostingCard>
 	);
 };
 

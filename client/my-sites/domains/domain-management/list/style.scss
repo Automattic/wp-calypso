@@ -150,4 +150,43 @@
 			box-shadow: none;
 		}
 	}
+
+	.domains-table {
+		.components-base-control {
+			--checkbox-input-size: 16px;
+
+			.components-checkbox-control__input-container {
+				height: var(--checkbox-input-size);
+				width: var(--checkbox-input-size);
+			}
+		}
+
+		.domains-table__domain-name {
+			font-size: 0.875rem;
+		}
+
+		.domains-table-checkbox-th {
+			line-height: 14px;
+		}
+	}
+
+	.domains-table-mobile-cards {
+		.components-base-control {
+			display: flex;
+			align-items: center;
+
+			&__field {
+				line-height: 14px;
+			}
+
+			.components-checkbox-control__input {
+				height: var(--checkbox-input-size);
+				width: var(--checkbox-input-size);
+			}
+		}
+	}
+
+	.options-domain-button__add.gridicon:not(:last-child) {
+		margin: auto;
+	}
 }

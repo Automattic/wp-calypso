@@ -1,3 +1,4 @@
+import { captureException } from '@automattic/calypso-sentry';
 import { StepContainer } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -31,7 +32,7 @@ const getMigrateGuruPageURL = ( siteURL: string ) =>
 
 const DoNotTranslateIt: FC< { value: string } > = ( { value } ) => <>{ value }</>;
 
-const SiteMigrationInstructions: Step = function () {
+const SiteMigrationInstructions: Step = function ( { flow } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const siteId = site?.ID;
@@ -40,6 +41,7 @@ const SiteMigrationInstructions: Step = function () {
 		detailedStatus,
 		migrationKey,
 		completed: isSetupCompleted,
+		error: setupError,
 	} = usePrepareSiteForMigration( siteId );
 
 	const hasErrorGetMigrationKey = detailedStatus.migrationKey === 'error';
@@ -63,12 +65,26 @@ const SiteMigrationInstructions: Step = function () {
 		}
 	}, [ isSetupCompleted ] );
 
+	useEffect( () => {
+		if ( setupError ) {
+			captureException( setupError, {
+				tags: {
+					blog_id: siteId,
+					calypso_section: 'setup',
+					flow,
+					stepName: 'site-migration-instructions',
+					context: 'failed_to_prepare_site_for_migration',
+				},
+			} );
+		}
+	}, [ flow, setupError, siteId ] );
+
 	const stepContent = (
 		<div className="site-migration-instructions__content">
 			<ol className="site-migration-instructions__list">
 				<li>
 					{ translate(
-						'Install and activate the {{a}}Migrate Guru plugin{{/a}} on your existing site.',
+						'Install and activate the {{a}}Migrate Guru plugin{{/a}} on your source site.',
 						{
 							components: {
 								a: (
@@ -181,8 +197,8 @@ const SiteMigrationInstructions: Step = function () {
 				stepName="site-migration-instructions"
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-instructions site-migration-instructions-i2"
-				hideSkip={ true }
-				hideBack={ true }
+				hideSkip
+				hideBack
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"

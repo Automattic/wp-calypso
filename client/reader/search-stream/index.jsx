@@ -40,15 +40,6 @@ const updateQueryArg = ( params ) =>
 
 const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-const SpacerDiv = withDimensions( ( { width, height } ) => (
-	<div
-		style={ {
-			width: `${ width }px`,
-			height: `${ height - 38 }px`,
-		} }
-	/>
-) );
-
 class SearchStream extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
@@ -185,7 +176,7 @@ class SearchStream extends React.Component {
 							onSearchClose={ this.scrollToTop }
 							onSearchOpen={ this.resetSearchFeeds }
 							autoFocus={ this.props.autoFocusInput }
-							delaySearch={ true }
+							delaySearch
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
 							initialValue={ query || '' }
@@ -221,7 +212,7 @@ class SearchStream extends React.Component {
 						/>
 					) }
 				</div>
-				{ isLoggedIn && <SpacerDiv domTarget={ this.fixedAreaRef } /> }
+				{ /* { isLoggedIn && <SpacerDiv domTarget={ this.fixedAreaRef } /> } */ }
 				{ ! hidePostsAndSites && wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">

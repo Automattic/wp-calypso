@@ -20,7 +20,7 @@ export const Content: React.FC< ContentProps > = ( {
 		<>
 			<DocumentHead
 				title={ translate( 'Full Jetpack plan listing and price comparison – Jetpack' ) }
-				skipTitleFormatting={ true }
+				skipTitleFormatting
 			/>
 			{ nav }
 
