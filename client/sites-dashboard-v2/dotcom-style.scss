@@ -54,18 +54,6 @@
 		}
 	}
 
-	.sites-manage-all-domains-button {
-		border-color: var(--color-neutral-10);
-
-		@media (max-width: 959px) {
-			margin-inline-end: 8px !important;
-		}
-	}
-
-	.sites-manage-all-domains-button:hover {
-		border-color: var(--color-neutral-20);
-	}
-
 	height: calc(100vh - var(--masterbar-height));
 
 	@media ( min-width: 782px ) {
