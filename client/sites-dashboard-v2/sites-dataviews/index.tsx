@@ -2,7 +2,6 @@ import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -254,7 +253,7 @@ const DotcomSitesDataViews = ( {
 		<ItemsDataViews
 			data={ itemsData }
 			isLoading={ isLoading }
-			className={ classnames( 'sites-overview__content', 'is-hiding-navigation' ) }
+			className="sites-overview__content"
 		/>
 	);
 };
