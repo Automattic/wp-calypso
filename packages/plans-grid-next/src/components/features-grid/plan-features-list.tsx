@@ -21,7 +21,7 @@ type PlanFeaturesListProps = {
 	/**
 	 * Used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	 */
-	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
+	generatedWPComSubdomain?: DataResponse< { domain_name: string } >;
 	/**
 	 * Used to hide features that are not available, instead of strike-through as explained in #76206
 	 */
@@ -29,7 +29,7 @@ type PlanFeaturesListProps = {
 	/**
 	 * Indicates when a custom domain is allowed to be used with the Free plan.
 	 */
-	isCustomDomainAllowedOnFreePlan: boolean;
+	isCustomDomainAllowedOnFreePlan?: boolean;
 	paidDomainName?: string;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
