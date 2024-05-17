@@ -39,14 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
-			// Switching to or logging into eCommerce plan sites inevitably
-			// loads WP-Admin instead of Calypso, but the rediret occurs
-			// only after Calypso attempts to load.
-			await testAccount.authenticate( page, { url: /wp-admin/ } );
-		} else {
-			await testAccount.authenticate( page );
-		}
+		await testAccount.authenticate( page );
 
 		mediaPage = new MediaPage( page );
 	} );

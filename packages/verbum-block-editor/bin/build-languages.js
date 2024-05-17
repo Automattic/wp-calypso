@@ -54,15 +54,14 @@ function buildLanguages( downloadedLanguages ) {
 
 	downloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 		// Keep only used phrases.
-		const filteredTranslations = Object.fromEntries(
+		languageTranslations.locale_data.messages = Object.fromEntries(
 			Object.entries( languageTranslations.locale_data.messages ).filter( ( [ key ] ) =>
 				usedPhrases.includes( key )
 			)
 		);
 
-		filteredTranslations[ '' ].localeSlug = langSlug;
-		const output = resolve( process.cwd(), outputPath, `${ langSlug }-v1.1.json` );
-		fs.writeFileSync( output, JSON.stringify( filteredTranslations ) );
+		const output = resolve( process.cwd(), outputPath, `${ langSlug }-verbum.json` );
+		fs.writeFileSync( output, JSON.stringify( languageTranslations ) );
 	} );
 
 	console.info( 'VBE: Language build completed.' );

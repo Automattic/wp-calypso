@@ -45,14 +45,14 @@ const PostCardComments = ( { post, handleClick, fixedHeaderHeight, streamKey } )
 	return (
 		<PostComments
 			commentCount={ post.discussion?.comment_count }
-			expandableView={ true }
+			expandableView
 			commentsFilterDisplay={ COMMENTS_FILTER_ALL }
 			post={ post }
 			shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-			shouldHighlightNew={ true }
+			shouldHighlightNew
 			showCommentCount={ false }
 			showConversationFollowButton={ false }
-			showNestingReplyArrow={ true }
+			showNestingReplyArrow
 			initialSize={ 5 }
 			maxDepth={ 1 }
 			openPostPageAtComments={ onOpenPostPageAtCommentsClick }

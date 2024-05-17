@@ -43,7 +43,7 @@ const DeletePrimaryCardConfirmation = ( { card, altCard, isFetching }: Props ) =
 				</div>
 				<div className="delete-primary-card-confirmation__card-details">
 					<div className="delete-primary-card-confirmation__card-details-logo">
-						<PaymentLogo brand={ card.brand } isSummary={ true } />
+						<PaymentLogo brand={ card.brand } isSummary />
 					</div>
 					<div>**** **** **** { card.last4 }</div>
 					<div>{ `${ card.exp_month }/${ card.exp_year }` }</div>
@@ -59,7 +59,7 @@ const DeletePrimaryCardConfirmation = ( { card, altCard, isFetching }: Props ) =
 
 				<div className="delete-primary-card-confirmation__card-details">
 					<div className="delete-primary-card-confirmation__card-details-logo">
-						<PaymentLogo brand={ altCard.brand } isSummary={ true } />
+						<PaymentLogo brand={ altCard.brand } isSummary />
 					</div>
 					<div>**** **** **** { altCard.last4 }</div>
 					<div>{ `${ altCard.exp_month }/${ altCard.exp_year }` }</div>

@@ -71,7 +71,7 @@ class ThemePreview extends Component {
 				{ children }
 				{ demoUrl && (
 					<WebPreview
-						showPreview={ true }
+						showPreview
 						showExternal={ false }
 						showSEO={ false }
 						onClose={ this.props.hideThemePreview }

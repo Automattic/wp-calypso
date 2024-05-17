@@ -18,10 +18,10 @@ const MigrationError: Step = function ( props ) {
 		<StepContainer
 			className={ classnames( 'import__onboarding-page', 'import__error-message' ) }
 			stepName="migration-error"
-			hideSkip={ true }
-			hideBack={ true }
-			hideFormattedHeader={ true }
-			isWideLayout={ true }
+			hideSkip
+			hideBack
+			hideFormattedHeader
+			isWideLayout
 			stepContent={ renderError() }
 			recordTracksEvent={ recordTracksEvent }
 		/>

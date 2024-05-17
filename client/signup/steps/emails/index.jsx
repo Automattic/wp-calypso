@@ -157,7 +157,7 @@ class EmailsStep extends Component {
 				skipLabelText={ translate( 'Buy an email later' ) }
 				skipButtonAlign="bottom"
 				align="left"
-				isWideLayout={ true }
+				isWideLayout
 			/>
 		);
 	}

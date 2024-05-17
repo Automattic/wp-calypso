@@ -58,7 +58,7 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 	if ( domain && ! domain.canUpdateContactInfo ) {
 		return (
 			<>
-				<InfoNotice redesigned={ true } text={ domain.cannotUpdateContactInfoReason } />
+				<InfoNotice redesigned text={ domain.cannotUpdateContactInfoReason } />
 				<br />
 				{ renderForOwner( true ) }
 			</>

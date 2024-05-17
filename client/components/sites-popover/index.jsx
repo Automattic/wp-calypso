@@ -42,7 +42,7 @@ class SitesPopover extends Component {
 				showAddNewSite={ false }
 				indicator={ false }
 				autoFocus={ ! hasTouch() } // eslint-disable-line jsx-a11y/no-autofocus
-				groups={ true }
+				groups
 				onClose={ this.props.onClose }
 			/>
 		);

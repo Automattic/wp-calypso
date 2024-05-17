@@ -36,3 +36,8 @@ export const isA4AOAuth2Client = ( oauth2Client ) => {
 export const isIntenseDebateOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 2665;
 };
+
+export const isStudioAppOAuth2Client = ( oauth2Client ) => {
+	// 95109 => Studio by WordPress.com.
+	return oauth2Client?.id === 95109;
+};

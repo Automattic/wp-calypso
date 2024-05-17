@@ -81,8 +81,8 @@ export default function SocialProfilesStep( props: Props ) {
 			}
 			align="left"
 			hideSkip
-			isHorizontalLayout={ true }
-			isWideLayout={ true }
+			isHorizontalLayout
+			isWideLayout
 			headerImageUrl={ startingPointImageUrl }
 			{ ...props }
 		/>

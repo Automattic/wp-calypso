@@ -27,9 +27,9 @@ const TrialAcknowledge: Step = function TrialAcknowledge( { navigation, flow, st
 		<StepContainer
 			stepName="migration-trial"
 			className="import-layout__center"
-			hideSkip={ true }
+			hideSkip
 			hideBack={ false }
-			hideFormattedHeader={ true }
+			hideFormattedHeader
 			goBack={ goBack }
 			isWideLayout={ false }
 			stepContent={ getStepContent() }

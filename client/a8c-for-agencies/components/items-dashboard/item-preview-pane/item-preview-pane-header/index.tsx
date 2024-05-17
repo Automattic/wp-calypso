@@ -5,7 +5,6 @@ import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
-import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import SiteFavicon from '../../site-favicon';
 import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
 
@@ -30,9 +29,7 @@ export default function ItemPreviewPaneHeader( {
 	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
 	const size = isLargerThan960px ? 64 : 50;
 
-	const focusRef = useRef< HTMLInputElement >( null );
-
-	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
+	const focusRef = useRef< HTMLButtonElement >( null );
 
 	// Use useEffect to set the focus when the component mounts
 	useEffect( () => {
@@ -41,12 +38,15 @@ export default function ItemPreviewPaneHeader( {
 		}
 	}, [] );
 
+	const siteIconFallback =
+		extraProps?.siteIconFallback ?? ( itemData.isDotcomSite ? 'wordpress-logo' : 'color' );
+
 	return (
 		<div className={ classNames( 'item-preview__header', className ) }>
 			<div className="item-preview__header-content">
 				<SiteFavicon
 					blogId={ itemData.blogId }
-					fallback={ itemData.isDotcomSite ? 'wordpress-logo' : 'color' }
+					fallback={ siteIconFallback }
 					color={ itemData.color }
 					className="item-preview__header-favicon"
 					size={ size }
@@ -73,24 +73,12 @@ export default function ItemPreviewPaneHeader( {
 						</div>
 					</div>
 					<div className="item-preview__header-actions">
-						{ itemData.adminUrl ? (
-							<>
-								<Button
-									onClick={ closeItemPreviewPane }
-									className="item-preview__close-preview-button"
-									variant="secondary"
-								>
-									{ translate( 'Close' ) }
-								</Button>
-								<Button
-									variant="primary"
-									className="item-preview__admin-button"
-									href={ `${ adminUrl }` }
-									ref={ focusRef }
-								>
-									{ adminLabel }
-								</Button>
-							</>
+						{ extraProps?.headerButtons ? (
+							<extraProps.headerButtons
+								focusRef={ focusRef }
+								itemData={ itemData }
+								closeSitePreviewPane={ closeItemPreviewPane || ( () => {} ) }
+							/>
 						) : (
 							<Button
 								onClick={ closeItemPreviewPane }

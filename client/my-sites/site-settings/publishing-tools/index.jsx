@@ -1,4 +1,5 @@
 import { Card, Button, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -111,7 +112,7 @@ class PublishingTools extends Component {
 					) }
 					link={
 						isAtomic
-							? 'https://wordpress.com/support/post-by-email/'
+							? localizeUrl( 'https://wordpress.com/support/post-by-email/' )
 							: 'https://jetpack.com/support/post-by-email/'
 					}
 					privacyLink={ ! isAtomic }

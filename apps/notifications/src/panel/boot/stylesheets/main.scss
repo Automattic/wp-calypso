@@ -17,11 +17,11 @@ $with-sidebar-min-page-width: 1114px;
 
 	.wpnc__note-list {
 		left: auto;
-		width: 410px;
+		width: 400px;
 	}
 
 	.wpnc__single-view {
-		right: 410px;
+		right: 400px;
 		left: 10px;
 		top: 0;
 		bottom: 0;
@@ -944,14 +944,14 @@ $with-sidebar-min-page-width: 1114px;
 	}
 
 	// Check if global-sidebar-visible not present
-	&:not(.global-sidebar-visible) {
+	body:not(:has(.is-global-sidebar-visible)) & {
 		@media only screen and ( min-width: $no-sidebar-min-page-width ) {
 			@include setToggleNoteBehaviour;
 		}
 	}
 
 	// Override the CSS variable value if .global-sidebar-visible is present
-	&.global-sidebar-visible {
+	body:has(.is-global-sidebar-visible) & {
 		@media only screen and ( min-width: $with-sidebar-min-page-width ) {
 			@include setToggleNoteBehaviour;
 		}

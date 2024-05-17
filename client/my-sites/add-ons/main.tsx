@@ -108,7 +108,7 @@ const AddOnsMain = () => {
 	}
 
 	const handleActionPrimary = ( addOnSlug: string, quantity?: number ) => {
-		page.redirect( `${ checkoutLink( selectedSite?.slug ?? null, addOnSlug, quantity ) }` );
+		page.redirect( `${ checkoutLink( selectedSite?.ID ?? null, addOnSlug, quantity ) }` );
 	};
 
 	const handleActionSelected = () => {
@@ -126,7 +126,7 @@ const AddOnsMain = () => {
 					actionSecondary={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
 					useAddOnAvailabilityStatus={ AddOns.useAddOnPurchaseStatus }
 					addOns={ filteredAddOns }
-					highlightFeatured={ true }
+					highlightFeatured
 				/>
 			</ContentWithHeader>
 		</div>

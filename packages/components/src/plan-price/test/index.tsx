@@ -362,7 +362,7 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders a price with the "is-large-currency" class if isLargeCurrency is set', () => {
-		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" isLargeCurrency={ true } /> );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" isLargeCurrency /> );
 		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
 		expect( document.querySelector( '.is-large-currency' ) ).toBeTruthy();
 	} );

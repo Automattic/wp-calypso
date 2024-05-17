@@ -11,7 +11,7 @@ import type { ThunkDispatch } from 'redux-thunk';
  *
  * Example:
  * const recordTracksEventWithUserIsDevAccount = useRecordTracksEventWithUserIsDevAccount();
-* <MyComponent onClick={ () => { recordTracksEventWithUserIsDevAccount( 'some_event', { 'data': 'test' } ) } >
+ * <MyComponent onClick={ () => { recordTracksEventWithUserIsDevAccount( 'some_event', { 'data': 'test' } ) } >
  */
 export const useRecordTracksEventWithUserIsDevAccount = () => {
 	const dispatch = useDispatch() as ThunkDispatch< Store, void, AnyAction >;

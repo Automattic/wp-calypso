@@ -48,7 +48,7 @@ describe( 'item', () => {
 		test( 'should do nothing when is disabled', async () => {
 			const onClickSpy = jest.fn();
 			render(
-				<SelectDropdownItem disabled={ true } onClick={ onClickSpy }>
+				<SelectDropdownItem disabled onClick={ onClickSpy }>
 					Published
 				</SelectDropdownItem>
 			);

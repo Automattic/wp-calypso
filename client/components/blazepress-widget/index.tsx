@@ -179,7 +179,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 
 					<div className={ classNames( 'blazepress-widget__content', { loading: isLoading } ) }>
 						<Dialog
-							showCloseIcon={ true }
+							showCloseIcon
 							additionalOverlayClassNames="blazepress-widget"
 							isVisible={ showCancelDialog && showCancelButton }
 							buttons={ cancelDialogButtons }

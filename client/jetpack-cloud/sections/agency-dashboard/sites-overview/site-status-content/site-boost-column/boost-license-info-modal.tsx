@@ -146,7 +146,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 										<ExternalLink
 											href="https://wordpress.org/plugins/jetpack-boost/"
 											onClick={ onJetpackBoostClick }
-											icon={ true }
+											icon
 										>
 											{ translate( 'Jetpack Boost' ) }
 										</ExternalLink>

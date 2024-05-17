@@ -129,7 +129,7 @@ export const FeaturedLicenseItemCard = ( {
 					product={ item }
 					quantity={ bundleSize }
 					ctaLabel={ translate( 'Select license' ) }
-					isCTAPrimary={ true }
+					isCTAPrimary
 					isCTAExternalLink={ false }
 					isDisabled={ false }
 					onActivate={ onSelectProduct }

@@ -33,9 +33,8 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-}
+	display: block;
 
-.sites-dataviews__site-wp-admin-url {
 	&:focus {
 		border-radius: 2px;
 		box-shadow: 0 0 0 2px var(--color-primary-light);
@@ -47,6 +46,10 @@
 
 	&:visited {
 		color: var(--color-neutral-70);
+	}
+
+	svg {
+		vertical-align: sub;
 	}
 }
 

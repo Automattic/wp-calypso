@@ -104,7 +104,7 @@ export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props
 			{ ! isMigrateFromWp && (
 				<div className="import__footer-button-container">
 					<Button
-						borderless={ true }
+						borderless
 						className="action-buttons__install-jetpack-manually"
 						onClick={ onInstallJetpackManuallyClick }
 					>

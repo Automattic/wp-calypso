@@ -16,6 +16,7 @@ import {
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
+	HOSTED_SITE_MIGRATION_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -168,4 +169,16 @@ const siteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-export default { ...availableFlows, ...videoPressTvFlows, ...siteMigrationFlow };
+const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
+	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "hosted-site-migration-flow" */ '../declarative-flow/hosted-site-migration-flow'
+		),
+};
+
+export default {
+	...availableFlows,
+	...videoPressTvFlows,
+	...siteMigrationFlow,
+	...hostedSiteMigrationFlow,
+};

@@ -72,7 +72,7 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 				className={ classNames( `${ DEFAULT_CLASS }__left-button-wrapper`, {
 					'display-none': shouldHideLeftScrollButton(),
 				} ) }
-				aria-hidden={ true }
+				aria-hidden
 			>
 				<Button
 					className={ `${ DEFAULT_CLASS }__left-button` }
@@ -87,7 +87,7 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 				className={ classNames( `${ DEFAULT_CLASS }__right-button-wrapper`, {
 					'display-none': shouldHideRightScrollButton(),
 				} ) }
-				aria-hidden={ true }
+				aria-hidden
 			>
 				<Button
 					className={ `${ DEFAULT_CLASS }__right-button` }

@@ -1,125 +1,128 @@
+.is-group-a8c-for-agencies {
+	.hosting-card {
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 4px;
+		user-select: none;
+		padding: 0;
 
-.hosting-card {
-	border: 1px solid var(--color-neutral-10);
-	border-radius: 4px;
-	user-select: none;
+		.button {
+			width: 100%;
+		}
 
-	.button {
-		width: 100%;
-	}
+		.woo-logo {
+			margin: 0;
 
-	.woo-logo {
-		margin: 0;
-
-		path {
-			fill: var(--color-woocommerce);
+			path {
+				fill: var(--color-woocommerce);
+			}
 		}
 	}
-}
 
-.hosting-card__section {
-	padding: 24px;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 24px;
-
-	&:last-child:not(:first-child) {
-		border-block-start: 1px solid var(--color-neutral-5);
-	}
-}
-
-.hosting-card__price {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-}
-
-.hosting-card__price-value {
-	display: block;
-	font-size: 1.5rem;
-	font-weight: 600;
-	line-height: 1;
-	margin-bottom: 6px;
-}
-
-.hosting-card__price-interval {
-	font-size: 0.875rem;
-	line-height: 1.1;
-	font-weight: 400;
-	color: var(--studio-gray-60, #50575e);
-}
-
-.hosting-card__price-discount {
-	color: var(--color-green-40, #00a32a);
-	font-size: 0.875rem;
-	line-height: 1.75;
-}
-
-.hosting-card__description {
-	font-size: 1rem;
-	line-height: 1.3;
-	font-weight: 400;
-	min-height: 62px;
-	margin: 0;
-	color: var(--studio-gray-80, #2c3338);
-}
-
-.hosting-card__header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-	font-size: 1.5rem;
-	font-weight: 600;
-	line-height: 28px;
-
-	.badge {
+	.hosting-card__section {
+		padding: 24px;
 		display: flex;
-		background-color: #b8e6bf;
-		color: #00450c;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 24px;
 
+		&:last-child:not(:first-child) {
+			border-block-start: 1px solid var(--color-neutral-5);
+		}
 	}
-}
 
-.button .hosting-card__explore-button-content {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 4px;
-
-	.gridicon {
-		width: 16px;
-		height: 16px;
-		top: 0;
-		margin-top: 0;
+	.hosting-card__price {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		gap: 8px;
 	}
-}
 
-.hosting-card__pressable-dashboard-button {
-	svg {
-		margin-inline-start: 6px;
+	.hosting-card__price-value {
+		display: block;
+		font-size: 1.5rem;
+		font-weight: 600;
+		line-height: 1;
+		margin-bottom: 6px;
 	}
-}
 
-ul.hosting-card__features {
-	display: flex;
-	flex-direction: column;
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
+	.hosting-card__price-interval {
+		font-size: 0.875rem;
+		line-height: 1.1;
+		font-weight: 400;
+		color: var(--studio-gray-60, #50575e);
+	}
 
-.hosting-card__logos {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 16px;
-	max-width: 300px;
-	margin: 0 auto;
+	.hosting-card__price-discount {
+		color: var(--color-green-40, #00a32a);
+		font-size: 0.875rem;
+		line-height: 1.75;
+	}
 
-	svg {
-		flex-basis: 88px;
-		height: 48px;
+	.hosting-card__description {
+		font-size: 1rem;
+		line-height: 1.3;
+		font-weight: 400;
+		min-height: 62px;
+		margin: 0;
+		color: var(--studio-gray-80, #2c3338);
+	}
+
+	.hosting-card__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		font-size: 1.5rem;
+		font-weight: 600;
+		line-height: 28px;
+
+		.badge {
+			display: flex;
+			background-color: #b8e6bf;
+			color: #00450c;
+
+		}
+	}
+
+	.button .hosting-card__explore-button-content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 4px;
+
+		.gridicon {
+			width: 16px;
+			height: 16px;
+			top: 0;
+			margin-top: 0;
+		}
+	}
+
+	.hosting-card__pressable-dashboard-button {
+		svg {
+			margin-inline-start: 6px;
+		}
+	}
+
+	ul.hosting-card__features {
+		display: flex;
+		flex-direction: column;
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.hosting-card__logos {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 16px;
+		max-width: 300px;
+		margin: 0 auto;
+
+		svg {
+			flex-basis: 88px;
+			height: 48px;
+		}
 	}
 }

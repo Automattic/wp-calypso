@@ -415,7 +415,7 @@ const Hosting = ( props ) => {
 			<DocumentHead title={ translate( 'Hosting' ) } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Hosting' ) }
+				title={ translate( 'Hosting Config' ) }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
 			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (

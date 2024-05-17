@@ -45,7 +45,7 @@ export function SiteTransferCard( {
 				path="/settings/start-site-transfer/:site"
 				title="Settings > Start Site Transfer"
 			/>
-			<HeaderCake onClick={ onClick } isCompact={ true }>
+			<HeaderCake onClick={ onClick } isCompact>
 				<h1>{ translate( 'Site Transfer' ) }</h1>
 			</HeaderCake>
 			<ActionPanelStyled>{ children }</ActionPanelStyled>

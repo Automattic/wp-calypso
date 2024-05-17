@@ -174,7 +174,7 @@ export const Sharing = ( {
 					} ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
-					showIcon={ true }
+					showIcon
 				/>
 			) }
 			{ contentComponent }

@@ -43,7 +43,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 				{ context === 'create' || context === 'edit' ? (
 					<LayoutColumn className="scheduled-updates-list-compact">
 						<ScheduleList
-							compact={ true }
+							compact
 							previewMode="card"
 							showNewScheduleBtn={ context === 'edit' }
 							selectedScheduleId={ selectedSchedule?.schedule_id }

@@ -90,6 +90,11 @@ export const initialClientsData = {
 		name: 'a8c-for-agencies',
 		title: 'A8C for Agencies',
 	},
+	95109: {
+		id: 95109,
+		name: 'studio',
+		title: 'Studio by WordPress.com',
+	},
 };
 
 export function clients( state = initialClientsData, action ) {

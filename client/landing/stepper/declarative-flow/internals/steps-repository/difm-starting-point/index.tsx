@@ -24,8 +24,8 @@ const DIFMStartingPoint: Step = function ( { navigation } ) {
 				stepName={ STEP_NAME }
 				goBack={ goBack }
 				goNext={ goNext }
-				isHorizontalLayout={ true }
-				isWideLayout={ true }
+				isHorizontalLayout
+				isWideLayout
 				isLargeSkipLayout={ false }
 				skipLabelText={ translate( 'No Thanks, I’ll Build It' ) }
 				stepContent={

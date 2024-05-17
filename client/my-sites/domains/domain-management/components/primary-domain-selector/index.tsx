@@ -118,12 +118,7 @@ const PrimaryDomainSelector = ( {
 
 	return (
 		<Card className="domains-set-primary-address">
-			<CardHeading
-				className="domains-set-primary-address__title"
-				isBold={ true }
-				size={ 16 }
-				tagName="h2"
-			>
+			<CardHeading className="domains-set-primary-address__title" isBold size={ 16 } tagName="h2">
 				{ translate( 'Primary site address' ) }
 			</CardHeading>
 			<>

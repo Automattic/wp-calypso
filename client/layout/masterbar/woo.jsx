@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { createInterpolateElement, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
@@ -8,13 +9,17 @@ import './typekit';
 import './woo.scss';
 
 const WooOauthMasterbar = () => {
+	function onClick() {
+		window.history.back();
+	}
+
 	const backNav = (
 		<li className="masterbar__woo-nav-item">
-			<a className="masterbar__login-back-link" href="https://woocommerce.com">
+			<Button className="masterbar__login-back-link" onClick={ onClick }>
 				{ createInterpolateElement( __( '<arrow/> Back' ), {
 					arrow: <Gridicon icon="chevron-left" size={ 18 } />,
 				} ) }
-			</a>
+			</Button>
 		</li>
 	);
 

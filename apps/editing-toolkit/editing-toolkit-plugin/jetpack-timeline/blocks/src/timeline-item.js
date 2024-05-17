@@ -82,7 +82,7 @@ export function registerTimelineItemBlock() {
 						<InspectorControls>
 							<PanelColorSettings
 								title={ __( 'Color Settings', 'full-site-editing' ) }
-								enableAlpha={ true }
+								enableAlpha
 								colorSettings={ [
 									{
 										value: attributes.background,

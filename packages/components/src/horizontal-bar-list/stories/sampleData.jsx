@@ -1,4 +1,6 @@
 // Video widget
+import { localizeUrl } from '@automattic/i18n-utils';
+
 const videData = [
 	{
 		label: 'A video type widget',
@@ -247,7 +249,7 @@ const searchTermsData = [
 	{
 		label: 'Unknown Search Terms',
 		value: 3,
-		link: 'https://wordpress.com/support/stats/#search-engine-terms',
+		link: localizeUrl( 'https://wordpress.com/support/stats/#search-engine-terms' ),
 		labelIcon: 'external',
 	},
 ];

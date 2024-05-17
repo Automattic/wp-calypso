@@ -494,7 +494,7 @@ class MasterbarLoggedIn extends Component {
 		const { translate } = this.props;
 		return (
 			<Notifications
-				isShowing={ true }
+				isShowing
 				isActive={ this.isActive( 'notifications' ) }
 				className="masterbar__item-notifications"
 				tooltip={ translate( 'Manage your notifications' ) }
@@ -680,8 +680,8 @@ class MasterbarLoggedIn extends Component {
 								<Site
 									siteId={ currentSelectedSiteId }
 									href={ this.getHomeUrl() }
-									isSelected={ true }
-									inlineBadges={ true }
+									isSelected
+									inlineBadges
 								/>
 							) }
 						</div>

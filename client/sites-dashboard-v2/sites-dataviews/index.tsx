@@ -115,7 +115,7 @@ const DotcomSitesDataViews = ( {
 				id: 'site',
 				header: (
 					<SiteSort
-						isSortable={ true }
+						isSortable
 						columnKey="site"
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
@@ -151,7 +151,7 @@ const DotcomSitesDataViews = ( {
 				id: 'last-publish',
 				header: (
 					<SiteSort
-						isSortable={ true }
+						isSortable
 						columnKey="last-publish"
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }

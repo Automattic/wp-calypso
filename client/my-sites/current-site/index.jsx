@@ -94,7 +94,7 @@ class CurrentSite extends Component {
 
 					{ selectedSite ? (
 						<div>
-							<Site site={ selectedSite } homeLink={ true } />
+							<Site site={ selectedSite } homeLink />
 						</div>
 					) : (
 						<AllSites href="/sites" onSelect={ this.onAllSitesClick } />
