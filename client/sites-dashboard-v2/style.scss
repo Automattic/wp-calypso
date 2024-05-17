@@ -280,11 +280,6 @@
 				min-height: calc(100vh - 277px); /* Set min-height to prevent the table from shrinking when there are few rows. */
 				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
 			}
-
-			.is-hiding-navigation .dataviews-view-table-wrapper {
-				overflow-y: auto;
-				max-height: calc(100vh - 277px); /* 277px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
-			}
 		}
 
 		&.sites-dashboard__layout:not(.preview-hidden) {
@@ -533,10 +528,6 @@
 
 			.sites-overview__content {
 				margin-top: 24px;
-
-				&.is-hiding-navigation {
-					margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
-				}
 			}
 		}
 
