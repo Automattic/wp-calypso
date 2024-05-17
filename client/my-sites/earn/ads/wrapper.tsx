@@ -3,7 +3,9 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	WPCOM_FEATURES_WORDADS,
 	FEATURE_WORDADS_INSTANT,
+	Plan,
 	getPlan,
+	getPlanFeaturesObject,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -209,6 +211,10 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 
 	const renderUpsell = () => {
 		const bannerURL = `/checkout/${ siteSlug }/premium`;
+		const plan = getPlan( PLAN_PREMIUM ) as Plan;
+		const jetpackFeatures = plan?.get2023PricingGridSignupJetpackFeatures?.();
+		const jetpackFeaturesObject = getPlanFeaturesObject( jetpackFeatures );
+
 		return (
 			<UpsellNudge
 				callToAction={ translate( 'Upgrade' ) }
@@ -236,6 +242,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 				list={ [
 					translate( 'Instantly enroll into the WordAds network.' ),
 					translate( 'Earn money from your content and traffic.' ),
+					...jetpackFeaturesObject.map( ( feature ) => feature.getSlug() ),
 				] }
 			/>
 		);
