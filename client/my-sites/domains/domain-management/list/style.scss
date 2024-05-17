@@ -153,6 +153,13 @@
 			box-shadow: none;
 		}
 	}
+	.options-domain-button {
+		padding: 8px 14px;
+		border-radius: 4px;
+	}
+	.domains-table-filter {
+		align-items: flex-start;
+	}
 	.domains-table {
 		@include break-xhuge {
 			max-width: 1400px;
@@ -169,6 +176,15 @@
 				padding-inline: 64px;
 			}
 		}
+		.list__header-column {
+			font-size: rem(11px);
+			font-weight: 500;
+			color: var(--color-text);
+		}
+		.domains-table__row:hover > td {
+			background-color: #f7faff;
+		}
+
 		.components-base-control {
 			--checkbox-input-size: 16px;
 

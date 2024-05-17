@@ -189,7 +189,6 @@
 
 			.components-flex.components-h-stack {
 				flex: 6;
-				padding-left: 8px;
 			}
 
 		}
@@ -585,11 +584,11 @@
 
 					.dataviews-filters__view-actions {
 						& > :first-child {
-							margin-inline-start: 30px;
+							margin-inline-start: 26px;
 						}
 
 						& > :last-child {
-							margin-inline-end: 30px;
+							margin-inline-end: 26px;
 						}
 					}
 				}
@@ -1145,6 +1144,6 @@
 
 .layout__content {
 	@include breakpoint-deprecated( "<960px" ) {
-		padding: 71px 24px 24px calc(var(--sidebar-width-min) + 1px);
+		padding: 70px 24px 24px calc(var(--sidebar-width-min) + 1px);
 	}
 }
