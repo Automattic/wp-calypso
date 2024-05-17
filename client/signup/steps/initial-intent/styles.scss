@@ -2,6 +2,20 @@
 
 	.question-step {
 
+		.action-buttons.step-container__navigation {
+			button.button.navigation-link.is-borderless {
+				color: #000;
+				svg {
+					fill: #000;
+				}
+			}
+		}
+
+		.step-container__header {
+			margin-top: 48px;
+			margin-bottom: 40px;
+		}
+
 		.question-step__content {
 			align-items: center;
 
