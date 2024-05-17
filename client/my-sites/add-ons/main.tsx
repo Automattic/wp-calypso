@@ -110,9 +110,11 @@ const AddOnsMain = () => {
 
 	const handleActionPrimary = ( addOnSlug: string, quantity?: number ) => {
 		recordTracksEvent( 'calypso_add_ons_action_primary_click', {
+			add_on_slug_with_quantity: `${ addOnSlug }${ quantity ? `:${ quantity }` : '' }`,
 			add_on_slug: addOnSlug,
 			quantity,
 		} );
+
 		page.redirect( `${ checkoutLink( selectedSite?.ID ?? null, addOnSlug, quantity ) }` );
 	};
 
