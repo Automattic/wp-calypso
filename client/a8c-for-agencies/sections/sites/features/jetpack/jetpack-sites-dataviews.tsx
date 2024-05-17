@@ -42,6 +42,7 @@ export const JetpackSitesDataViews = ( {
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 
 	const sites = useFormattedSites( data?.sites ?? [] ).reduce< SiteData[] >( ( acc, item ) => {
+		item.ref = item.site.value.blog_id;
 		acc.push( item );
 		// If this site has an error, we duplicate this row - while changing the duplicate's type to 'error' - to display an error message below it.
 		if ( item.site.error ) {
@@ -50,11 +51,8 @@ export const JetpackSitesDataViews = ( {
 				site: {
 					...item.site,
 					type: 'error',
-					value: {
-						...item.site.value,
-						blog_id: 'error-' + item.site.value.blog_id,
-					},
 				},
+				ref: `error-${ item.ref }`,
 			} );
 		}
 		return acc;
@@ -427,7 +425,7 @@ export const JetpackSitesDataViews = ( {
 			totalItems: totalSites,
 			totalPages: totalPages,
 		},
-		itemFieldId: 'site.value.blog_id',
+		itemFieldId: 'ref',
 		searchLabel: translate( 'Search for sites' ),
 		fields: [],
 		actions: [],
