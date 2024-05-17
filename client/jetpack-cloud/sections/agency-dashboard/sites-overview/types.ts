@@ -178,7 +178,7 @@ export interface SiteData {
 	isFavorite?: boolean;
 	isSelected?: boolean;
 	onSelect?: () => void;
-	ref: string | number;
+	ref?: string | number;
 }
 
 export interface RowMetaData {
