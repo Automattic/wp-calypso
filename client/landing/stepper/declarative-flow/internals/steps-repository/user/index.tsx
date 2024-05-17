@@ -1,14 +1,27 @@
+import { StepContainer } from '@automattic/onboarding';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Step } from '../../types';
 
-const UserStep: Step = function UserStep( { flow, stepName, navigation } ) {
+import './style.scss';
+
+const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const { submit } = navigation;
 	const socialService = getSocialServiceFromClientId( '' );
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	if ( isLoggedIn ) {
+		submit?.();
+	}
 
 	return (
-		<h1>
+		<>
+			<FormattedHeader align="center" headerText="Create your account" brandFont />
 			<SignupFormSocialFirst
 				step={ {} }
 				stepName={ stepName }
@@ -27,7 +40,26 @@ const UserStep: Step = function UserStep( { flow, stepName, navigation } ) {
 				notice={ false }
 				isSocialFirst={ true }
 			/>
-		</h1>
+		</>
+	);
+};
+
+const UserStep: Step = function UserStep( props ) {
+	return (
+		<StepContainer
+			stepName="user"
+			goBack={ () => {
+				window.location.assign( 'https://wordpress.com/hosting' );
+			} }
+			isHorizontalLayout={ false }
+			isWideLayout={ false }
+			isFullLayout={ true }
+			hideFormattedHeader={ true }
+			isLargeSkipLayout={ false }
+			hideBack={ false }
+			stepContent={ <StepContent { ...props } /> }
+			recordTracksEvent={ recordTracksEvent }
+		/>
 	);
 };
 

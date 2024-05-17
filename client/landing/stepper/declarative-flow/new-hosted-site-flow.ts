@@ -13,7 +13,6 @@ import { useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
@@ -62,6 +61,9 @@ const hosting: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
+				case 'user': {
+					return navigate( 'plans' );
+				}
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
 						.product_slug;
@@ -121,7 +123,6 @@ const hosting: Flow = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
-		const flowName = this.name;
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
@@ -130,24 +131,10 @@ const hosting: Flow = {
 			[]
 		);
 
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }`,
-		} );
-
 		useLayoutEffect( () => {
 			const queryParams = Object.fromEntries( query );
 
 			const urlWithQueryParams = addQueryArgs( '/setup/new-hosted-site', queryParams );
-
-			if ( ! userIsLoggedIn ) {
-				// window.location.assign(
-				// 	addQueryArgs( logInUrl, {
-				// 		...queryParams,
-				// 		flow: 'new-hosted-site',
-				// 	} )
-				// );
-			}
 
 			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
 				window.location.assign( urlWithQueryParams );

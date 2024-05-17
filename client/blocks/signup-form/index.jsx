@@ -1211,7 +1211,6 @@ class SignupForm extends Component {
 		const logInUrl = this.getLoginLink();
 
 		if ( this.props.isSocialFirst ) {
-			console.log( { p: this.props } );
 			return (
 				<SignupFormSocialFirst
 					/**
@@ -1317,6 +1316,19 @@ class SignupForm extends Component {
 						labelText={ this.props.labelText }
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
+						onCreateAccountError={ ( error, email ) => {
+							if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+								page(
+									addQueryArgs(
+										{
+											email_address: email,
+											is_signup_existing_account: true,
+										},
+										logInUrl
+									)
+								);
+							}
+						} }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (
