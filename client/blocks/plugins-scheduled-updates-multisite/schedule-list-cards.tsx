@@ -1,4 +1,5 @@
 import clsx from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'calypso/types';
 import { ScheduleListCard } from './schedule-list-card';
 import type { MultisiteSchedulesUpdates } from 'calypso/data/plugins/use-update-schedules-query';
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export const ScheduleListCards = ( props: Props ) => {
+	const translate = useTranslate();
 	const { compact, schedules, selectedScheduleId, onEditClick, onLogsClick, onRemoveClick } = props;
 
 	return (
@@ -29,6 +31,15 @@ export const ScheduleListCards = ( props: Props ) => {
 					key={ schedule.id }
 				/>
 			) ) }
+			{ schedules.length === 0 && (
+				<div className="empty-state empty-state__center">
+					<p>
+						{ translate(
+							"Oops! We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
+						) }
+					</p>
+				</div>
+			) }
 		</div>
 	);
 };
