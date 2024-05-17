@@ -35,16 +35,14 @@ export function mshotsUrl( targetUrl: string, options: MShotsOptions, count = 0 
 
 const MAXTRIES = 10;
 
-// This custom react hook returns undefined while the image is loading and
-// a HTMLImageElement (i.e. the class you get from `new Image()`) once loading
-// is complete.
+// This custom react hook returns null while the image is loading and the page
+// (not image) URL once loading is complete.
 //
 // It also triggers a re-render (via setState()) when the value changes, so just
-// check if it's truthy and then treat it like any other Image.
+// check that the requested URL matches the returned URL.
 //
-// Note the loading may occur immediately and synchronously if the image is
-// already or may take up to several seconds if mshots has to generate and cache
-// new images.
+// Note the loading may occur immediately if the image is already available, or
+// may take several seconds if mshots has to generate and cache new images.
 //
 // The calling code doesn't need to worry about the details except that you'll
 // want some sort of loading display.
@@ -112,9 +110,6 @@ const useMshotsImg = (
 				// don't get the request through an img element so we'd need to
 				// take a completely different approach using ajax.
 				if ( imgRef.current?.naturalWidth !== 400 || imgRef.current?.naturalHeight !== 300 ) {
-					// Note we're using the naked object here, not the ref, because
-					// this is the callback on the image itself. We'd never want
-					// the image to finish loading and set some other image.
 					setLoadedImg( src );
 				} else if ( count < MAXTRIES ) {
 					// Only refresh 10 times
