@@ -1,10 +1,11 @@
-import { useRef, useEffect, type FC, type ReactNode } from 'react';
+import { useRef, useEffect } from 'react';
+import type { TranslateResult } from 'i18n-calypso';
 
 type Props = {
-	items: ReactNode[];
+	items: TranslateResult[];
 };
 
-const JetpackProductInfoRegularList: FC< Props > = ( { items } ) => {
+const JetpackProductInfoRegularList = ( { items }: Props ) => {
 	const listRef = useRef< HTMLUListElement | null >( null );
 
 	const highlightListItem = ( target: HTMLElement ) => {
@@ -25,10 +26,6 @@ const JetpackProductInfoRegularList: FC< Props > = ( { items } ) => {
 
 		const observer = new MutationObserver( ( record ) => {
 			for ( const mutation of record ) {
-				if ( mutation.type !== 'characterData' ) {
-					continue;
-				}
-
 				const targetParent = mutation.target.parentNode as HTMLElement | null;
 				if ( targetParent?.className === 'jetpack-product-info__regular-list-item' ) {
 					highlightListItem( targetParent );
