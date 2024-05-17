@@ -26,8 +26,8 @@
 				padding-inline: 26px;
 			}
 
-			@include breakpoint-deprecated( ">1440px" ) {
-				padding-inline: 8px;
+			@include break-huge {
+				padding-inline: 64px;
 			}
 		}
 	}
@@ -140,9 +140,7 @@
 			padding-left: 26px;
 		}
 		@include break-huge {
-			&:first-child {
-				padding-left: 0;
-			}
+			padding-left: 64px;
 		}
 		&:nth-child(2) {
 			white-space: wrap;
@@ -506,6 +504,14 @@
 				margin: 0;
 				position: relative;
 				width: 100%;
+				@include break-large {
+					padding-left: 26px;
+					padding-right: 26px;
+				}
+				@include break-huge {
+					padding-left: 64px;
+					padding-right: 64px;
+				}
 			}
 		}
 	}
