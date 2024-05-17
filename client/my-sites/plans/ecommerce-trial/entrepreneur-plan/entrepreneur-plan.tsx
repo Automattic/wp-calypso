@@ -94,7 +94,7 @@ const useEntrepreneurPlanPrices = () => {
 					args: {
 						rawPrice: formatCurrency( plan.price, currencyCode, {
 							stripZeros: true,
-							isSmallestUnit: true,
+							isSmallestUnit: false,
 						} ),
 					},
 					comment: 'Excl. Taxes is short for excluding taxes',
@@ -105,7 +105,7 @@ const useEntrepreneurPlanPrices = () => {
 					args: {
 						rawPrice: formatCurrency( plan.price, currencyCode, {
 							stripZeros: true,
-							isSmallestUnit: true,
+							isSmallestUnit: false,
 						} ),
 					},
 					comment: 'Excl. Taxes is short for excluding taxes',
@@ -116,7 +116,7 @@ const useEntrepreneurPlanPrices = () => {
 					args: {
 						rawPrice: formatCurrency( plan.price, currencyCode, {
 							stripZeros: true,
-							isSmallestUnit: true,
+							isSmallestUnit: false,
 						} ),
 					},
 					comment: 'Excl. Taxes is short for excluding taxes',
