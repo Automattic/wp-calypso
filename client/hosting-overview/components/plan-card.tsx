@@ -1,4 +1,4 @@
-import { PlanSlug, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import { isJetpackProductSlug, PlanSlug, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
@@ -158,18 +158,20 @@ const PlanCard: FC = () => {
 				<div className="hosting-overview__plan-card-header">
 					<h3 className="hosting-overview__plan-card-title">{ planName }</h3>
 
-					<Button
-						className={ classNames(
-							'hosting-overview__link-button',
-							'hosting-overview__mobile-hidden-link-button'
-						) }
-						plain
-						href={
-							isFreePlan ? `/add-ons/${ site?.slug }` : `/purchases/subscriptions/${ site?.slug }`
-						}
-					>
-						{ isFreePlan ? translate( 'Manage add-ons' ) : translate( 'Manage plan' ) }
-					</Button>
+					{ isJetpackProductSlug( planDetails?.product_slug ?? '' ) && (
+						<Button
+							className={ classNames(
+								'hosting-overview__link-button',
+								'hosting-overview__mobile-hidden-link-button'
+							) }
+							plain
+							href={
+								isFreePlan ? `/add-ons/${ site?.slug }` : `/purchases/subscriptions/${ site?.slug }`
+							}
+						>
+							{ isFreePlan ? translate( 'Manage add-ons' ) : translate( 'Manage plan' ) }
+						</Button>
+					) }
 				</div>
 				<PricingSection />
 				<PlanStorage
