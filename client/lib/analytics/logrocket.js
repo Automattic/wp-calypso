@@ -38,9 +38,19 @@ export function maybeAddLogRocketScript() {
 					inputSanitizer: true,
 				},
 				network: {
-					// Disable recording of network data
-					// @see https://docs.logrocket.com/reference/network#disable-recording-of-network-data
-					isEnabled: false,
+					requestSanitizer: ( request ) => {
+						// Remove the Authorization header from the request
+						request.headers.Authorization = null;
+
+						// Remove the body from the request
+						delete request.body;
+						return request;
+					},
+					responseSanitizer: ( response ) => {
+						// Remove the body from the response
+						delete response.body;
+						return response;
+					},
 				},
 			} );
 
