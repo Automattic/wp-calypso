@@ -204,6 +204,9 @@
 	}
 
 	.domains-table-mobile-cards {
+		.domains-table-mobile-card:hover {
+			background-color: #f7faff;
+		}
 		.components-base-control {
 			display: flex;
 			align-items: center;

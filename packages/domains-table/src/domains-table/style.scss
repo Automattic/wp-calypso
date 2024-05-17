@@ -37,22 +37,22 @@
 		// Note: The checkbox does not count for column counting purposes
 
 		&.is-7-column {
-			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto auto;
+			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
 		}
 		&.is-7-column:not(.has-checkbox) {
-			grid-template-columns: 2fr 1fr 1fr auto auto auto auto;
+			grid-template-columns: 2fr 1fr 1fr auto auto auto 36px;
 		}
 		&.is-6-column {
-			grid-template-columns: 20px 2fr 1fr minmax(auto, 1fr) auto auto auto;
+			grid-template-columns: 20px 2fr 1fr minmax(auto, 1fr) auto auto 36px;
 		}
 		&.is-6-column:not(.has-checkbox) {
-			grid-template-columns: 2fr 1fr minmax(auto, 1fr) auto auto auto;
+			grid-template-columns: 2fr 1fr minmax(auto, 1fr) auto auto 36px;
 		}
 		&.is-5-column {
-			grid-template-columns: 20px 1fr minmax(auto, 1fr) auto auto auto;
+			grid-template-columns: 20px 1fr minmax(auto, 1fr) auto auto 36px;
 		}
 		&.is-5-column:not(.has-checkbox) {
-			grid-template-columns: 1fr minmax(auto, 1fr) auto auto auto;
+			grid-template-columns: 1fr minmax(auto, 1fr) auto auto 36px;
 		}
 
 		tr::after {
@@ -104,10 +104,6 @@
 	.domains-table__row {
 		&:has(a.domains-table__domain-name) {
 			cursor: pointer;
-
-			&:hover td {
-				background-color: #f7faff;
-			}
 		}
 	}
 
@@ -152,12 +148,6 @@
 
 	.domains-table-row__actions {
 		text-align: right;
-		justify-content: flex-end;
-
-		button {
-			min-width: unset;
-			padding: 0;
-		}
 	}
 }
 
