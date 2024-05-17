@@ -494,6 +494,15 @@
 			padding-right: 24px;
 		}
 	}
+
+	.domains-table-header .list__header-column {
+		font-style: normal;
+		font-weight: 400;
+		font-size: rem(13px);
+		line-height: 20px;
+		color: #757575;
+		text-transform: capitalize;
+	}
 }
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout {
