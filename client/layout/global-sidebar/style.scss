@@ -187,10 +187,14 @@ $brand-text: "SF Pro Text", $sans;
 					}
 				}
 
-				&.svg_all-sites,
-				&.sidebar_svg-reader {
+				&.svg_all-sites {
 					.is-global-sidebar-visible:not(.is-global-sidebar-collapsed) & {
 						margin-left: -2px;
+					}
+				}
+				&.sidebar_svg-reader {
+					.is-global-sidebar-visible:not(.is-global-sidebar-collapsed) & {
+						margin-right: 10px;
 					}
 				}
 			}
