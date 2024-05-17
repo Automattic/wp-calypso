@@ -59,8 +59,6 @@ class PublishingTools extends Component {
 	}
 
 	renderPostByEmailModule() {
-		const { moduleUnavailable, selectedSiteId, isAtomic, siteIsJetpack } = this.props;
-
 		const isRequestingSettings = false;
 		const isSavingSettings = false;
 
@@ -70,17 +68,9 @@ class PublishingTools extends Component {
 
 				<FormFieldset>
 					<PostByEmailSetting
-						isAtomic={ isAtomic }
 						isFormPending={ isRequestingSettings || isSavingSettings }
-						moduleUnavailable={ moduleUnavailable }
-						postByEmailAddressModuleActive={ this.props.postByEmailAddressModuleActive }
-						postByEmailAddress={ this.props.fields.post_by_email_address }
-						selectedSiteId={ selectedSiteId }
-						siteIsJetpack={ siteIsJetpack }
-						onRegenerateButtonClick={ () => {
-							this.props.regeneratePostByEmail( this.props.selectedSiteId );
-						} }
-					></PostByEmailSetting>
+						address={ this.props.fields.post_by_email_address }
+					/>
 				</FormFieldset>
 			</CompactCard>
 		);

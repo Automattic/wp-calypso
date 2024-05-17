@@ -10,51 +10,59 @@ import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-t
 import { activateModule, deactivateModule } from 'calypso/state/jetpack/modules/actions';
 import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import isRegeneratingJetpackPostByEmail from 'calypso/state/selectors/is-regenerating-jetpack-post-by-email';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 type PostByEmailSettingProps = {
 	isFormPending: boolean;
-	postByEmailAddress?: string;
+	address?: string;
 };
 
 type PostByEmailSettingComponentProps = PostByEmailSettingProps & {
-	moduleUnavailable: boolean;
-	postByEmailAddressModuleActive: boolean;
-	regeneratePostByEmail: ( siteId: number ) => void;
-	regeneratingPostByEmail: boolean;
 	selectedSiteId: number | null;
-	siteIsAtomic: boolean;
-	siteIsJetpack: boolean;
+	regeneratePostByEmail: ( siteId: number ) => void;
 	activateModule: ( siteId: number, moduleSlug: string ) => void;
 	deactivateModule: ( siteId: number, moduleSlug: string ) => void;
-	onRegenerateButtonClick: () => void;
 	active: boolean;
+	moduleUnavailable: boolean | null;
+	regeneratingPostByEmail: boolean;
+	siteIsAtomic: boolean;
+	siteIsJetpack: boolean | null;
 };
 
 const moduleSlug = 'post-by-email';
 
 const PostByEmailSettingComponent = ( {
-	isFormPending,
-	moduleUnavailable,
-	postByEmailAddressModuleActive,
-	regeneratingPostByEmail,
 	selectedSiteId,
-	siteIsAtomic,
-	siteIsJetpack,
+	isFormPending,
+	regeneratePostByEmail,
 	activateModule,
 	deactivateModule,
-	onRegenerateButtonClick,
-	postByEmailAddress,
 	active,
+	moduleUnavailable,
+	regeneratingPostByEmail,
+	siteIsAtomic,
+	siteIsJetpack,
+	address,
 }: PostByEmailSettingComponentProps ) => {
 	const translate = useTranslate();
 
-	const email = postByEmailAddress && postByEmailAddress !== 'regenerate' ? postByEmailAddress : '';
+	const handleRegenerate = () => {
+		if ( ! selectedSiteId ) {
+			return;
+		}
+
+		regeneratePostByEmail( selectedSiteId );
+	};
+
+	const email = address && address !== 'regenerate' ? address : '';
 	const labelClassName =
-		moduleUnavailable || regeneratingPostByEmail || ! postByEmailAddressModuleActive
-			? 'is-disabled'
-			: undefined;
+		moduleUnavailable || regeneratingPostByEmail || ! active ? 'is-disabled' : undefined;
 
 	return (
 		<>
@@ -102,18 +110,13 @@ const PostByEmailSettingComponent = ( {
 					</FormLabel>
 					<ClipboardButtonInput
 						className="publishing-tools__email-address"
-						disabled={
-							regeneratingPostByEmail || ! postByEmailAddressModuleActive || moduleUnavailable
-						}
+						disabled={ regeneratingPostByEmail || ! active || moduleUnavailable }
 						value={ email }
 					/>
 					<Button
-						onClick={ onRegenerateButtonClick }
+						onClick={ handleRegenerate }
 						disabled={
-							isFormPending ||
-							regeneratingPostByEmail ||
-							! postByEmailAddressModuleActive ||
-							moduleUnavailable
+							isFormPending || regeneratingPostByEmail || ! active || !! moduleUnavailable
 						}
 					>
 						{ regeneratingPostByEmail
@@ -129,11 +132,24 @@ const PostByEmailSettingComponent = ( {
 export const PostByEmailSetting = connect(
 	( state: IAppState ) => {
 		const selectedSiteId = getSelectedSiteId( state ) || 0;
+		const siteIsJetpack = isJetpackSite( state, selectedSiteId );
+		const isAtomic = isSiteAutomatedTransfer( state, selectedSiteId );
+		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail( state, selectedSiteId );
 		const active = !! isJetpackModuleActive( state, selectedSiteId, moduleSlug );
+		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+			state,
+			selectedSiteId,
+			moduleSlug
+		);
 
 		return {
 			selectedSiteId,
+			siteIsJetpack,
+			isAtomic,
+			regeneratingPostByEmail,
 			active,
+			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		};
 	},
 	{
