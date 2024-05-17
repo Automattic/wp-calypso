@@ -92,7 +92,6 @@ const useMshotsImg = (
 				}
 			}
 
-			setLoadedImg( null );
 			setCount( 0 );
 			if ( previousImg.current !== imgRef.current ) {
 				previousImg.current = imgRef.current;
