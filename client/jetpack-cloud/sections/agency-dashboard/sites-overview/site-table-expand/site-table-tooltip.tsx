@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { forwardRef } from 'react';
 
 interface Props {
-	siteId: number | string;
+	siteId: number;
 	showTooltip: boolean;
 }
 

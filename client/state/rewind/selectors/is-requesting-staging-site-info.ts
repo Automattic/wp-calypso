@@ -7,7 +7,7 @@ import type { AppState } from 'calypso/types';
  * @param siteId The site for which to retrieve request status.
  * @returns true if staging site info are being requested; otherwise, false.
  */
-const isRequestingStagingSiteInfo = ( state: AppState, siteId: number | string ): boolean =>
+const isRequestingStagingSiteInfo = ( state: AppState, siteId: number ): boolean =>
 	state.rewind[ siteId ]?.staging?.site?.isFetching || false;
 
 export default isRequestingStagingSiteInfo;

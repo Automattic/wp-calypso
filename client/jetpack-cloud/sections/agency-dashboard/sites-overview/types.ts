@@ -332,7 +332,7 @@ export interface UpdateMonitorSettingsParams {
 	urls?: MonitorURLS[];
 }
 export interface UpdateMonitorSettingsArgs {
-	siteId: number | string;
+	siteId: number;
 	params: UpdateMonitorSettingsParams;
 }
 
@@ -351,7 +351,7 @@ export interface ToggleActivaateMonitorAPIResponse {
 	message: string;
 }
 export interface ToggleActivateMonitorArgs {
-	siteId: number | string;
+	siteId: number;
 	params: { monitor_active: boolean };
 	hasJetpackPluginInstalled: boolean;
 	agencyId?: number;
@@ -409,7 +409,7 @@ export type StateMonitoringSettingsContact = StateMonitorSettingsEmail | StateMo
 export interface RequestVerificationCodeParams {
 	type: AllowedMonitorContactTypes;
 	value: string;
-	site_ids: Array< number | string >;
+	site_ids: Array< number >;
 	// For SMS contacts
 	number?: string;
 	country_code?: string;

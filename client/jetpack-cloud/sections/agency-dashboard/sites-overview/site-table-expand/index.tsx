@@ -15,7 +15,7 @@ interface Props {
 	index: number;
 	setExpanded: () => void;
 	isExpanded: boolean;
-	siteId: number | string;
+	siteId: number;
 }
 export default function SiteTableExpand( { index, setExpanded, isExpanded, siteId }: Props ) {
 	const dispatch = useDispatch();

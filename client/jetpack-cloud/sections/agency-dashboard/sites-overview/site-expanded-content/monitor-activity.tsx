@@ -19,7 +19,7 @@ interface Props {
 
 const START_INDEX = 10;
 
-const MonitorDataContent = ( { siteId }: { siteId: string | number } ) => {
+const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
 	const getMonitorDowntimeText = useGetMonitorDowntimeText();
 
@@ -88,7 +88,7 @@ export default function MonitorActivity( { hasMonitor, site, trackEvent, hasErro
 
 	const toggleActivateMonitor = useToggleActivateMonitor( [ site ] );
 	const statuses = useSelector( getSiteMonitorStatuses );
-	const isLoading = typeof site.blog_id === 'number' && statuses?.[ site.blog_id ] === 'loading';
+	const isLoading = statuses?.[ site.blog_id ] === 'loading';
 
 	const handleOnClick = () => {
 		trackEvent( 'expandable_block_activate_monitor_click' );

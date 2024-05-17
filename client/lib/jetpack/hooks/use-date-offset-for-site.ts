@@ -7,7 +7,7 @@ import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-valu
 
 export default function useDateOffsetForSite(
 	date: Moment | undefined | null,
-	siteId: number | string,
+	siteId: number,
 	{ keepLocalTime = false } = {}
 ): Moment | undefined {
 	const timezone = useSelector( ( state ) =>

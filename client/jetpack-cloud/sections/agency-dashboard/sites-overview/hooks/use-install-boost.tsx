@@ -8,7 +8,7 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import type { Site } from '../types';
 
 export default function useInstallBoost(
-	siteId: number | string,
+	siteId: number,
 	siteUrl: string,
 	queryKey: any[]
 ): {

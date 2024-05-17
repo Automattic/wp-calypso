@@ -29,7 +29,7 @@ const stagingIcon = (
 );
 
 interface Props {
-	siteId: number | string;
+	siteId: number;
 }
 
 export default function SiteBackupStaging( { siteId }: Props ) {

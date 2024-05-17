@@ -19,5 +19,5 @@ export interface SitesDataViewsProps {
 }
 
 export interface SiteInfo extends SiteData {
-	id: number | string;
+	id: number;
 }

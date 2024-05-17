@@ -80,7 +80,7 @@ export function getSelectedLicensesSiteId( state: AppState ): number | null {
  */
 export function hasSelectedLicensesOfType(
 	state: AppState,
-	siteId: number | string,
+	siteId: number,
 	type: AllowedTypes
 ): boolean {
 	return (
@@ -94,7 +94,7 @@ export function hasSelectedLicensesOfType(
  */
 export function hasSelectedSiteLicensesOfType(
 	state: AppState,
-	siteId: number | string,
+	siteId: number,
 	type: AllowedTypes
 ): boolean {
 	return !! state.agencyDashboard?.selectedSiteLicenses?.licenses.find(

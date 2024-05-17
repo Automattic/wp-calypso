@@ -9,7 +9,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 interface SiteFaviconProps {
-	blogId?: number | string;
+	blogId?: number;
 	color?: string;
 	size?: number;
 	className?: string;

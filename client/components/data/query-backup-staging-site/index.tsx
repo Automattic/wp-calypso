@@ -4,7 +4,7 @@ import isRequestingStagingSiteInfo from 'calypso/state/rewind/selectors/is-reque
 import { requestBackupStagingSiteInfo } from 'calypso/state/rewind/staging/actions';
 import type { AppState } from 'calypso/types';
 
-export const useQueryBackupStagingSite = ( siteId: number | string ): void => {
+export const useQueryBackupStagingSite = ( siteId: number ): void => {
 	const dispatch = useDispatch();
 	const requesting = useSelector( ( state: AppState ) =>
 		isRequestingStagingSiteInfo( state, siteId )
@@ -25,7 +25,7 @@ export const useQueryBackupStagingSite = ( siteId: number | string ): void => {
 };
 
 type OwnProps = {
-	siteId: number | string;
+	siteId: number;
 };
 
 const QueryBackupStagingSite: React.FC< OwnProps > = ( { siteId } ) => {

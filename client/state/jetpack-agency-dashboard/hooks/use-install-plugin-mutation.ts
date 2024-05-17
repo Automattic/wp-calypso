@@ -8,7 +8,7 @@ interface APIResponse {
 }
 
 interface InstallPluginParams {
-	site_id: number | string;
+	site_id: number;
 	plugin_slug: string;
 	agency_id?: number;
 }

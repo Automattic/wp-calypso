@@ -7,7 +7,7 @@ const EMPTY_OPTIONS = Object.freeze( {} );
 /**
  * Returns the site options
  */
-export default ( state: AppState, siteId: number | string ): SiteDetailsOptions | null => {
+export default ( state: AppState, siteId: number ): SiteDetailsOptions | null => {
 	const site = getRawSite( state, siteId );
 	if ( ! site ) {
 		return null;

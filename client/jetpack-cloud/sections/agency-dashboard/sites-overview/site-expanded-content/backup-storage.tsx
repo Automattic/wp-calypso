@@ -31,7 +31,7 @@ const BackupStorageContent = ( {
 	isAtomicSite,
 	trackEvent,
 }: {
-	siteId: number | string;
+	siteId: number;
 	siteUrl: string;
 	trackEvent: ( eventName: string ) => void;
 	isAtomicSite?: boolean;

@@ -23,7 +23,7 @@ export interface ItemData {
 	url?: string;
 	icon?: string;
 	color?: string;
-	blogId?: number | string;
+	blogId?: number;
 	isDotcomSite?: boolean;
 	adminUrl?: string;
 }
