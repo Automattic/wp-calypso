@@ -25,7 +25,7 @@ export default function globalSidebarMenu() {
 		},
 	];
 
-	isEnabled( 'plugins/multisite-scheduled-updates' ) &&
+	isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
 		menuItems.push( {
 			icon: (
 				<svg
