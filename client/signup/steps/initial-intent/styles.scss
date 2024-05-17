@@ -1,11 +1,26 @@
 .signup.is-guided {
 
-	.question-step__content {
-		align-items: center;
+	.question-step {
 
-		.site-intent-flow-cards {
-			display: flex;
-			flex-direction: column;
+		.question-step__content {
+			align-items: center;
+
+			.question-flow-cards {
+				display: flex;
+				flex-direction: column;
+			}
+
+			.question-step__continue-button {
+				display: flex;
+				width: 158px;
+				height: 40px;
+				padding: 8px 14px;
+				justify-content: center;
+				align-items: center;
+				gap: 4px;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				font-size: 14px;
+			}
 		}
 	}
 }
