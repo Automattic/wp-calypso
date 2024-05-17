@@ -140,10 +140,10 @@
 
 	.main {
 		.navigation-header {
-			@include break-huge {
+			@include break-xhuge {
 				margin: 0 auto;
-				max-width: 1096px;
-				padding-inline: 8px;
+				max-width: 1400px;
+				padding-inline: 64px;
 			}
 		}
 	}
@@ -154,19 +154,19 @@
 		}
 	}
 	.domains-table {
-		@include break-huge {
-			max-width: 1096px;
+		@include break-xhuge {
+			max-width: 1400px;
 			margin-left: auto;
 			margin-right: auto;
 		}
 		.domains-table-toolbar {
 			@include break-huge {
-				margin-inline: 8px;
+				margin-inline: 64px;
 			}
 		}
 		> table {
 			@include break-huge {
-				padding-inline: 8px;
+				padding-inline: 64px;
 			}
 		}
 		.components-base-control {
