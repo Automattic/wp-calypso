@@ -1,7 +1,5 @@
-import { Button } from '@automattic/components';
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
 import { Global, css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -29,11 +27,6 @@ interface BulkAllDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
 }
-
-const ManageAllSitesButton = styled( Button )`
-	white-space: nowrap;
-	height: 40px;
-`;
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const { domains, isLoading } = useDomainsTable( fetchAllDomains );
@@ -245,7 +238,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	};
 
 	const buttons = [
-		<ManageAllSitesButton href="/sites">{ translate( 'Manage all sites' ) }</ManageAllSitesButton>,
 		<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
 	];
 
