@@ -45,7 +45,7 @@ type Fields = {
 };
 
 type NewsletterSettingsFormProps = {
-	siteId: number | null;
+	siteId: number;
 	settings: Fields;
 	isLoadingSettings: boolean;
 	isSavingSettings: boolean;
@@ -203,13 +203,13 @@ const NewsletterSettingsForm = withSiteSettings(
 
 const NewsletterSettings = () => {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId ) ?? 0;
 	return (
 		<Main>
 			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
 			<NavigationHeader navigationItems={ [] } title={ translate( 'Newsletter Settings' ) } />
 			<SubscriptionsModuleBanner />
-			<NewsletterSettingsForm siteId={ siteId } />
+			<NewsletterSettingsForm siteId={ Number( siteId ) } />
 		</Main>
 	);
 };
