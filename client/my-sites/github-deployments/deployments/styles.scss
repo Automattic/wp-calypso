@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+$brand-text: "SF Pro Text", $sans;
+
 .github-deployments-list {
 	display: flex;
 	flex-direction: column;
@@ -207,5 +210,26 @@
 .github-deployments-commit-details-popover {
 	.popover__inner {
 		padding: 16px;
+	}
+}
+
+.github-deployments {
+	.header-cake {
+		gap: 32px;
+		font-family: $brand-text;
+	}
+	.header-cake__title {
+		flex: none;
+		color: var(--studio-gray-80);
+		font-size: $font-body;
+		padding: 0;
+	}
+	.header-cake__back {
+		color: var(--studio-gray-60);
+		font-size: $font-body-small;
+		svg {
+			fill: var(--studio-gray-10);
+			height: 8px;
+		}
 	}
 }
