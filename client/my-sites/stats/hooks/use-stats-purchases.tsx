@@ -55,7 +55,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 	}, [ sitePurchases ] );
 
 	const isCommercialOwned = useMemo( () => {
-		return isProductsOwned( sitePurchases, [
+		return areProductsOwned( sitePurchases, [
 			...JETPACK_VIDEOPRESS_PRODUCTS,
 			PRODUCT_JETPACK_STATS_MONTHLY,
 			PRODUCT_JETPACK_STATS_YEARLY,
