@@ -100,9 +100,9 @@ export class ImageEditorCanvas extends Component {
 	}
 
 	fetchImageBlob( src ) {
-		const { siteSlug, isPrivateAtomic } = this.props;
+		const { siteSlug } = this.props;
 		const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
-		const useProxy = isPrivateAtomic && filePath && isRelativeToSiteRoot;
+		const useProxy = filePath && isRelativeToSiteRoot;
 
 		if ( useProxy ) {
 			return getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, { query } );
