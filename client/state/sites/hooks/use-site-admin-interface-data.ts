@@ -8,7 +8,7 @@ import type { AppState } from 'calypso/types';
 /**
  * Returns the site admin interface data
  */
-const useSiteAdminInterfaceData = ( siteId: string | number = 0 ) => {
+const useSiteAdminInterfaceData = ( siteId: number = 0 ) => {
 	const translate = useTranslate();
 	const wpcomAdminInterface = useSelector( ( state: AppState ) =>
 		getSiteOption( state, siteId, 'wpcom_admin_interface' )

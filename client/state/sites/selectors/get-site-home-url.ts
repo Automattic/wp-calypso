@@ -9,7 +9,7 @@ import type { AppState } from 'calypso/types';
  * @param  {?number} siteId Site ID.
  * @returns {string}         Url of the site home.
  */
-export default function getSiteHomeUrl( state: AppState, siteId?: number | string | null ): string {
+export default function getSiteHomeUrl( state: AppState, siteId?: number | null ): string {
 	const selectedSiteId = siteId || getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, selectedSiteId );
 
