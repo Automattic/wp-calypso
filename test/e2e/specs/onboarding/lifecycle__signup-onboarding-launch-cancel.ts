@@ -85,14 +85,14 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		it( 'See secure payment', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 			try {
+				// Check for either the "Beginner" or "Starter" plan while the name change experiment is in progress.
 				await Promise.any( [
 					cartCheckoutPage.validateCartItem( 'WordPress.com Beginner' ),
 					cartCheckoutPage.validateCartItem( `WordPress.com ${ newPlanName }` ),
 				] );
 			} catch ( error ) {
-				// If both promises are rejected, handle the error (optional)
 				console.log( `Neither "Beginner" or "Starter" were found on the page.` );
-				throw error; // Re-throw the error to fail the test
+				throw error;
 			}
 		} );
 
@@ -241,6 +241,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			purchasesPage = new PurchasesPage( page );
 
 			try {
+				// Check for either the "Beginner" or "Starter" plan while the name change experiment is in progress.
 				await Promise.any( [
 					purchasesPage.clickOnPurchase(
 						'WordPress.com Beginner',
