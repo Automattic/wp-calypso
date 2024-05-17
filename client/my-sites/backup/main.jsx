@@ -202,6 +202,11 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 		return <BackupPlaceholder showDatePicker={ true } />;
 	}
 
+	const onBackupNowClick = () => {
+		// Redirect back to the main backup page when queueing a new backup
+		page( backupMainPath( siteSlug ) );
+	};
+
 	return (
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
@@ -216,7 +221,11 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 						<div className="backup__header-right">
 							{ siteSlug && (
 								<>
-									<BackupActionsToolbar siteId={ siteId } siteSlug={ siteSlug } />
+									<BackupActionsToolbar
+										siteId={ siteId }
+										siteSlug={ siteSlug }
+										onBackupNowClick={ onBackupNowClick }
+									/>
 								</>
 							) }
 						</div>

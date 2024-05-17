@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
@@ -7,7 +6,6 @@ import { FunctionComponent } from 'react';
 import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
 import { EVERY_SECOND, Interval } from 'calypso/lib/interval';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import { backupMainPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindBackupSite } from 'calypso/state/activity-log/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
@@ -21,6 +19,7 @@ interface Props {
 	tooltipText?: string;
 	trackEventName: string;
 	variant: 'primary' | 'secondary' | 'tertiary';
+	onClick?: ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => void;
 }
 
 const BackupNowButton: FunctionComponent< Props > = ( {
@@ -29,6 +28,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	tooltipText,
 	trackEventName,
 	variant,
+	onClick = () => {},
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -43,12 +43,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		[ dispatch, siteId ]
 	);
 	const trackedRequestBackupSite = useTrackCallback( requestBackupSite, trackEventName );
-	const enqueueBackup = () => {
-		trackedRequestBackupSite();
-		recordLogRocketEvent( trackEventName );
-		setDisabled( true );
-		setEnqueued( true );
-	};
+
 	const backupCurrentlyInProgress = useSelector( ( state ) =>
 		getInProgressBackupForSite( state, siteId )
 	);
@@ -57,6 +52,17 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		() => dispatch( requestRewindBackups( siteId ) ),
 		[ dispatch, siteId ]
 	);
+
+	const onClickHandler = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
+		trackedRequestBackupSite();
+		recordLogRocketEvent( trackEventName );
+		setDisabled( true );
+		setEnqueued( true );
+
+		if ( onClick ) {
+			onClick( event );
+		}
+	};
 
 	useEffect( () => {
 		const statusLabels = {
@@ -76,7 +82,6 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 			setButtonContent( statusLabels.IN_PROGRESS );
 			setEnqueued( false );
 		} else if ( enqueued ) {
-			page( backupMainPath( siteSlug ) );
 			setButtonContent( statusLabels.QUEUED );
 			setCurrentTooltip( statusTooltipTexts.QUEUED );
 		} else {
@@ -100,7 +105,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 			<Button
 				primary={ variant === 'primary' }
 				plain={ variant === 'tertiary' }
-				onClick={ enqueueBackup }
+				onClick={ onClickHandler }
 				disabled={ backupCurrentlyInProgress || areBackupsStopped || disabled }
 			>
 				{ buttonContent }

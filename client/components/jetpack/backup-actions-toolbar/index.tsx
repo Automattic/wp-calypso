@@ -12,9 +12,14 @@ import './style.scss';
 interface Props {
 	siteId: number;
 	siteSlug: string;
+	onBackupNowClick?: ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => void;
 }
 
-const BackupActionsToolbar: FunctionComponent< Props > = ( { siteId, siteSlug } ) => {
+const BackupActionsToolbar: FunctionComponent< Props > = ( {
+	siteId,
+	siteSlug,
+	onBackupNowClick,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -41,6 +46,7 @@ const BackupActionsToolbar: FunctionComponent< Props > = ( { siteId, siteSlug } 
 			siteId={ siteId }
 			variant="primary"
 			trackEventName="calypso_jetpack_backup_now"
+			onClick={ onBackupNowClick }
 		>
 			{ translate( 'Back up now' ) }
 		</BackupNowButton>
