@@ -1,29 +1,30 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { backupClonePath } from 'calypso/my-sites/backup/paths';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { backupClonePath, backupMainPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasBackups from 'calypso/state/rewind/selectors/site-has-backups';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BackupNowButton from '../backup-now-button';
 import './style.scss';
 
 interface Props {
 	siteId: number;
-	siteSlug: string;
-	onBackupNowClick?: ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => void;
 }
 
-const BackupActionsToolbar: FunctionComponent< Props > = ( {
-	siteId,
-	siteSlug,
-	onBackupNowClick,
-} ) => {
+const BackupActionsToolbar: FunctionComponent< Props > = ( { siteId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
+	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 	const hasBackups = useSelector( ( state ) => siteHasBackups( state, siteId ) );
+
+	// Show the "Copy site" button if accessing on Jetpack Cloud or A4A
+	const showCopySiteButton = isJetpackCloud() || isA8CForAgencies();
 
 	const copySite = (
 		<Tooltip
@@ -41,6 +42,11 @@ const BackupActionsToolbar: FunctionComponent< Props > = ( {
 		</Tooltip>
 	);
 
+	const onBackupNowClick = () => {
+		// Redirect back to the main backup page when queueing a new backup
+		page( backupMainPath( siteSlug ) );
+	};
+
 	const backupNow = (
 		<BackupNowButton
 			siteId={ siteId }
@@ -54,7 +60,7 @@ const BackupActionsToolbar: FunctionComponent< Props > = ( {
 
 	return (
 		<div className="jetpack-backup__actions-toolbar">
-			{ hasBackups && copySite }
+			{ showCopySiteButton && hasBackups && copySite }
 			{ backupNow }
 		</div>
 	);
