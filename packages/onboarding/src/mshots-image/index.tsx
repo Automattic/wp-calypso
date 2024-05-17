@@ -54,8 +54,8 @@ const useMshotsImg = (
 	src: string,
 	options: MShotsOptions,
 	imgRef: React.MutableRefObject< HTMLImageElement | null >
-): HTMLImageElement | null => {
-	const [ loadedImg, setLoadedImg ] = useState< HTMLImageElement | null >( null );
+): string | null => {
+	const [ loadedImg, setLoadedImg ] = useState< string | null >( null );
 	const [ count, setCount ] = useState( 0 );
 	const previousSrc = useRef( src );
 
@@ -115,7 +115,7 @@ const useMshotsImg = (
 					// Note we're using the naked object here, not the ref, because
 					// this is the callback on the image itself. We'd never want
 					// the image to finish loading and set some other image.
-					setLoadedImg( imgRef.current );
+					setLoadedImg( src );
 				} else if ( count < MAXTRIES ) {
 					// Only refresh 10 times
 					// Triggers a target.src change with increasing timeouts
@@ -156,14 +156,14 @@ const MShotsImage = ( {
 	scrollable = false,
 }: MShotsImageProps ) => {
 	const imgRef = useRef< HTMLImageElement | null >( null );
-	const maybeImage = useMshotsImg( url, options, imgRef );
-	const src: string = maybeImage?.src || '';
-	const visible = !! src;
-	const backgroundImage = maybeImage?.src && `url( ${ maybeImage?.src } )`;
+	const currentlyLoadedUrl = useMshotsImg( url, options, imgRef );
+	const src: string = imgRef.current?.src || '';
+	const visible = src && url === currentlyLoadedUrl;
+	const backgroundImage = src && `url( ${ src } )`;
 
 	const animationScrollSpeedInPixelsPerSecond = 400;
 	const animationDuration =
-		( maybeImage?.naturalHeight || 600 ) / animationScrollSpeedInPixelsPerSecond;
+		( imgRef.current?.naturalHeight || 600 ) / animationScrollSpeedInPixelsPerSecond;
 
 	const scrollableStyles = {
 		backgroundImage,
