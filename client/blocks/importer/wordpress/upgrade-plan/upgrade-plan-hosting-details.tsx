@@ -96,13 +96,12 @@ export const UpgradePlanHostingDetails = () => {
 					</div>
 				) }
 			</div>
-			{ shouldDisplayHostIdentificationMessage && (
-				<div className="import__upgrade-plan-hosting-details-identified-host">
-					{ translate( "We've identified %(hostingProviderName)s as your host.", {
+			<div className="import__upgrade-plan-hosting-details-identified-host">
+				{ shouldDisplayHostIdentificationMessage &&
+					translate( "We've identified %(hostingProviderName)s as your host.", {
 						args: { hostingProviderName },
 					} ) }
-				</div>
-			) }
+			</div>
 		</div>
 	);
 };
