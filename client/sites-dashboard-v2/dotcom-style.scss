@@ -152,6 +152,10 @@
 				padding-left: 64px;
 			}
 		}
+		&:nth-child(2) {
+			white-space: wrap;
+			overflow-wrap: anywhere;
+		}
 	}
 
 	table.dataviews-view-table th,
