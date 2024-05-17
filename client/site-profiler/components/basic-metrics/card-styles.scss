@@ -1,0 +1,40 @@
+.basic-metrics-card {
+	font-family: "SF Pro Text", sans-serif;
+	max-width: 320px;
+	display: flex;
+	flex-direction: column;
+
+}
+
+.basic-metrics-card__header-container {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+}
+
+.basic-metrics-card__header-body {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.basic-metrics-card__title {
+	color: #a8aaad;
+}
+.basic-metrics-card__value {
+	font-size: 3.375rem;
+	background: var(--L-R-Gradient, linear-gradient(270deg, #349f4b 10.23%, #3858e9 100%));
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	margin-bottom: 0;
+}
+
+.basic-metrics-card__main-paragraph {
+	font-size: 1.75rem;
+}
+
+.basic-metrics-card__card-cta {
+	text-decoration-line: underline;
+	font-weight: 500;
+}
