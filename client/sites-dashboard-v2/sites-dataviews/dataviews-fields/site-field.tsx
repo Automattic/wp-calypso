@@ -116,18 +116,20 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						</>
 					) : (
 						<>
-							<a
-								className="sites-dataviews__site-url"
-								href={ siteUrl }
-								title={ siteUrl }
-								target="_blank"
-								rel="noreferrer"
-							>
-								<Truncated>
-									{ displaySiteUrl( siteUrl ) }
-									<Icon icon={ external } size={ 16 } />
-								</Truncated>
-							</a>
+							<div>
+								<a
+									className="sites-dataviews__site-url"
+									href={ siteUrl }
+									title={ siteUrl }
+									target="_blank"
+									rel="noreferrer"
+								>
+									<Truncated>
+										{ displaySiteUrl( siteUrl ) }
+										<Icon icon={ external } size={ 16 } />
+									</Truncated>
+								</a>
+							</div>
 							<a className="sites-dataviews__site-wp-admin-url" href={ adminUrl }>
 								<Truncated>{ adminLabel }</Truncated>
 							</a>
