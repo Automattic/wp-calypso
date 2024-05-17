@@ -142,8 +142,16 @@
 		}
 
 		&:nth-child(4) {
-			white-space: wrap;
-			overflow-wrap: anywhere;
+			span {
+				display: inline-block;
+				max-width: calc(100% - 14px);
+				white-space: normal;
+				overflow-wrap: anywhere;
+			}
+
+			svg.site-sort__icon {
+				display: inline-block;
+			}
 		}
 
 		span,
