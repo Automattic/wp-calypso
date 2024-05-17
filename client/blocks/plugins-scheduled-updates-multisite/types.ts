@@ -7,10 +7,6 @@ export type MultiSiteBaseParams = {
 	weekday?: number;
 };
 
-export type MultiSiteSuccessParams = MultiSiteBaseParams & {
-	sites_count: number;
-};
-
 export type MultiSitesResults = {
 	createdSiteSlugs: SiteSlug[];
 	editedSiteSlugs: SiteSlug[];
