@@ -68,7 +68,7 @@ const SharingServiceAction = ( {
 			context: 'Sharing: Publicize connect unavailable button label',
 		} );
 		return (
-			<Button compact disabled={ true }>
+			<Button compact disabled>
 				{ label }
 			</Button>
 		);

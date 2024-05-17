@@ -127,7 +127,7 @@ export class DailyPostButton extends Component {
 				header={ <div> { translate( 'Post on' ) } </div> }
 				context={ this.dailyPostButtonRef.current }
 				visible={ this.state.showingMenu }
-				groups={ true }
+				groups
 				onSiteSelect={ this.openEditorWithSite }
 				onClose={ this.closeMenu }
 				position="top"

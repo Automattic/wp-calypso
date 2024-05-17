@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { isWithinBreakpoint } from '@automattic/viewport';
+import isScheduledUpdatesMultisiteRoute from 'calypso/state/selectors/is-scheduled-updates-multisite-route';
 import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -37,11 +38,14 @@ export const getShouldShowGlobalSidebar = (
 	sectionGroup: string,
 	sectionName: string
 ) => {
+	const pluginsScheduledUpdates = isScheduledUpdatesMultisiteRoute( state );
+
 	return (
 		sectionGroup === 'me' ||
 		sectionGroup === 'reader' ||
 		sectionGroup === 'sites-dashboard' ||
 		( sectionGroup === 'sites' && ! siteId ) ||
+		( sectionGroup === 'sites' && sectionName === 'plugins' && pluginsScheduledUpdates ) ||
 		getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName )
 	);
 };
@@ -59,6 +63,10 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	const pluginsScheduledUpdatesEditMode =
 		state.route.path?.current?.includes( 'scheduled-updates/edit' ) ||
 		state.route.path?.current?.includes( 'scheduled-updates/create' );
+	const isBulkDomainsDashboard = state.route.path?.current === '/domains/manage';
+	const isSmallScreenDashboard =
+		( sectionGroup === 'sites-dashboard' || isBulkDomainsDashboard ) &&
+		isWithinBreakpoint( '<782px' );
 
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
@@ -66,7 +74,7 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		( siteSelected ||
 			siteLoaded ||
 			( ! siteId && pluginsScheduledUpdatesEditMode ) ||
-			isWithinBreakpoint( '<782px' ) )
+			isSmallScreenDashboard )
 	);
 };
 

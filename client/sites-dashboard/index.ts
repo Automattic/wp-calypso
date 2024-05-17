@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import sitesDashboardV2 from 'calypso/sites-dashboard-v2/routes';
+import sitesDashboardV2 from 'calypso/sites-dashboard-v2';
 import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import {
 	maybeRemoveCheckoutSuccessNotice,

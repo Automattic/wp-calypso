@@ -183,7 +183,7 @@ class SocialLoginForm extends Component {
 				disableTosText={ ! this.props.shouldRenderToS }
 				flowName={ this.props.flowName }
 				isSocialFirst={ this.props.isSocialFirst }
-				isLogin={ true }
+				isLogin
 			>
 				{ this.props.children }
 			</SocialAuthenticationForm>

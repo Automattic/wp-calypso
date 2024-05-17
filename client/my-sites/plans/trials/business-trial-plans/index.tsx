@@ -47,9 +47,9 @@ export function BusinessTrialPlans( props: BusinessTrialPlansProps ) {
 				siteId={ siteId }
 				onUpgradeClick={ onUpgradeClick }
 				intervalType="yearly"
-				hidePlanTypeSelector={ true }
-				hideUnavailableFeatures={ true }
-				hidePlansFeatureComparison={ true }
+				hidePlanTypeSelector
+				hideUnavailableFeatures
+				hidePlansFeatureComparison
 				intent="plans-business-trial"
 			/>
 		</div>

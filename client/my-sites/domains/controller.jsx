@@ -247,11 +247,7 @@ const transferDomainPrecheck = ( context, next ) => {
 			/>
 			<CalypsoShoppingCartProvider>
 				<div>
-					<TransferDomainStep
-						forcePrecheck={ true }
-						initialQuery={ domain }
-						goBack={ handleGoBack }
-					/>
+					<TransferDomainStep forcePrecheck initialQuery={ domain } goBack={ handleGoBack } />
 				</div>
 			</CalypsoShoppingCartProvider>
 		</Main>

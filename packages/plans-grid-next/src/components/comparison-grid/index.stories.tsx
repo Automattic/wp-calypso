@@ -4,12 +4,12 @@ import {
 	getPlanFeaturesGrouped,
 	setTrailMapExperiment,
 } from '@automattic/calypso-products';
-import { Meta, StoryObj } from '@storybook/react';
 import { ComparisonGrid, ComparisonGridExternalProps, useGridPlansForComparisonGrid } from '../..';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const ComponentWrapper = (
-	props: ComparisonGridExternalProps & {
-		trailMapVariant: TrailMapVariantType;
+	props: Omit< ComparisonGridExternalProps, 'gridPlans' > & {
+		trailMapVariant?: TrailMapVariantType;
 	}
 ) => {
 	const gridPlans = useGridPlansForComparisonGrid( {
@@ -45,7 +45,7 @@ const ComponentWrapper = (
 	);
 };
 
-const defaultProps: Omit< ComparisonGridExternalProps, 'gridPlans' > = {
+const defaultProps = {
 	allFeaturesList: getFeaturesList(),
 	coupon: undefined,
 	currentSitePlanSlug: undefined,
@@ -54,7 +54,6 @@ const defaultProps: Omit< ComparisonGridExternalProps, 'gridPlans' > = {
 	intervalType: 'yearly',
 	isInAdmin: false,
 	isInSignup: true,
-	isLaunchPage: false,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
 	planUpgradeCreditsApplicable: undefined,
@@ -64,58 +63,65 @@ const defaultProps: Omit< ComparisonGridExternalProps, 'gridPlans' > = {
 	siteId: undefined,
 	stickyRowOffset: 0,
 	useCheckPlanAvailabilityForPurchase: () => ( {} ),
-	useActionCallback: () => () => {},
+	useAction: () => ( {
+		primary: {
+			text: 'test',
+			callback: () => {},
+			status: 'enabled' as const,
+		},
+		postButtonText: '',
+	} ),
 };
 
-type Story = StoryObj< typeof ComponentWrapper >;
+const meta = {
+	title: 'ComparisonGrid',
+	component: ComponentWrapper,
+	decorators: [
+		( Story, { args: { trailMapVariant } } ) => {
+			trailMapVariant && setTrailMapExperiment( trailMapVariant );
+			return <Story />;
+		},
+	],
+} satisfies Meta< typeof ComponentWrapper >;
 
-export const Start: Story = {
+export default meta;
+
+type Story = StoryObj< typeof meta >;
+
+export const Start = {
 	name: '/start',
 	args: {
 		...defaultProps,
 		intent: 'plans-default-wpcom',
 	},
-};
+} satisfies Story;
 
-export const TrailMapControl: Story = {
+export const TrailMapControl = {
 	args: {
 		...Start.args,
 		trailMapVariant: 'control',
 	},
-};
+} satisfies Story;
 
-export const TrailMapStructure: Story = {
+export const TrailMapStructure = {
 	args: {
 		...TrailMapControl.args,
 		trailMapVariant: 'treatment_structure',
 		hideUnsupportedFeatures: true,
 	},
-};
+} satisfies Story;
 
-export const TrailMapCopy: Story = {
+export const TrailMapCopy = {
 	args: {
 		...TrailMapControl.args,
 		trailMapVariant: 'treatment_copy',
 	},
-};
+} satisfies Story;
 
-export const TrailMapCopyAndStructure: Story = {
+export const TrailMapCopyAndStructure = {
 	args: {
 		...TrailMapControl.args,
 		trailMapVariant: 'treatment_copy_and_structure',
 		hideUnsupportedFeatures: true,
 	},
-};
-
-const meta: Meta< typeof ComponentWrapper > = {
-	title: 'ComparisonGrid',
-	component: ComponentWrapper,
-	decorators: [
-		( Story, storyContext ) => {
-			setTrailMapExperiment( storyContext.args.trailMapVariant );
-			return <Story />;
-		},
-	],
-};
-
-export default meta;
+} satisfies Story;

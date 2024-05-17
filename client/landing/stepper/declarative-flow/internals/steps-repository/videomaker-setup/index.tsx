@@ -92,8 +92,8 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 	return (
 		<StepContainer
 			stepName="videomaker-setup"
-			isWideLayout={ true }
-			hideBack={ true }
+			isWideLayout
+			hideBack
 			flowName="videopress"
 			formattedHeader={
 				<FormattedHeader

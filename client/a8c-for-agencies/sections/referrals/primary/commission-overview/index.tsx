@@ -12,7 +12,6 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import StepSection from '../../common/step-section';
 import ReferralsFooter from '../footer';
 
@@ -30,8 +29,6 @@ export default function CommissionOverview() {
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<PageViewTracker title={ title } path="/referrals/" />
-
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb

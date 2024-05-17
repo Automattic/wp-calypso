@@ -1,15 +1,7 @@
-import {
-	__experimentalText as Text,
-	Button,
-	Card,
-	CardBody,
-	CardHeader,
-	Tooltip,
-	Spinner,
-} from '@wordpress/components';
-import { arrowLeft, Icon, info } from '@wordpress/icons';
+import { __experimentalText as Text, Tooltip, Spinner } from '@wordpress/components';
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import Timeline from 'calypso/components/timeline';
 import TimelineEvent from 'calypso/components/timeline/timeline-event';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
@@ -35,11 +27,12 @@ import {
 interface Props {
 	scheduleId: string;
 	onNavBack?: () => void;
+	setNavigationTitle: ( title: string ) => void;
 }
 export const ScheduleLogs = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const { scheduleId, onNavBack } = props;
+	const { scheduleId, onNavBack, setNavigationTitle } = props;
 
 	const siteAdminUrl = useSiteAdminUrl();
 	const {
@@ -68,6 +61,15 @@ export const ScheduleLogs = ( props: Props ) => {
 		window.location.href = `${ siteAdminUrl }plugins.php`;
 	}, [ siteAdminUrl ] );
 
+	useEffect( () => {
+		// a bit hacky, but needed to override the title
+		setTimeout( () => {
+			setNavigationTitle(
+				`${ translate( 'Logs' ) } - ${ prepareScheduleName( schedule as ScheduleUpdates ) }`
+			);
+		} );
+	}, [ setNavigationTitle, schedule ] );
+
 	if ( isPending ) {
 		return <Spinner />;
 	}
@@ -78,20 +80,10 @@ export const ScheduleLogs = ( props: Props ) => {
 	}
 
 	return (
-		<Card className="plugins-update-manager">
-			<CardHeader size="extraSmall">
+		<>
+			<div>
 				<div className="ch-placeholder">
-					{ onNavBack && (
-						<Button icon={ arrowLeft } onClick={ onNavBack }>
-							{ translate( 'Back' ) }
-						</Button>
-					) }
-				</div>
-				<Text>
-					{ translate( 'Logs' ) } - { prepareScheduleName( schedule as ScheduleUpdates ) }
-				</Text>
-				<div className="ch-placeholder">
-					<Text isBlock={ true } align="end" lineHeight={ 2.5 }>
+					<Text isBlock align="end" lineHeight={ 2.5 }>
 						{ translate( '%(pluginsNumber)d plugin', '%(pluginsNumber)d plugins', {
 							count: schedule?.args?.length || 0,
 							args: {
@@ -109,20 +101,18 @@ export const ScheduleLogs = ( props: Props ) => {
 						) }
 					</Text>
 				</div>
-			</CardHeader>
-			<CardBody>
-				{ isPendingLogs && <Spinner /> }
-				{ ! isPendingLogs && ! scheduleLogs.length && (
-					<div className="empty-state">
-						<Text align="center">{ translate( 'No logs available at the moment.' ) }</Text>
-					</div>
-				) }
-			</CardBody>
+			</div>
+			{ isPendingLogs && <Spinner /> }
+			{ ! isPendingLogs && ! scheduleLogs.length && (
+				<div className="empty-state">
+					<Text align="center">{ translate( 'No logs available at the moment.' ) }</Text>
+				</div>
+			) }
 			{ scheduleLogs.map( ( logs, i ) => (
 				<Timeline key={ i }>
-					{ logs.reverse().map( ( log ) => (
+					{ logs.reverse().map( ( log, j ) => (
 						<TimelineEvent
-							key={ log.timestamp }
+							key={ `${ log.timestamp }.${ j }` }
 							date={ log.date }
 							dateFormat={
 								log.action === 'PLUGIN_UPDATES_START'
@@ -140,12 +130,12 @@ export const ScheduleLogs = ( props: Props ) => {
 									? translate( 'Try manual update' )
 									: undefined
 							}
-							actionIsPrimary={ true }
+							actionIsPrimary
 							onActionClick={ goToPluginsPage }
 						/>
 					) ) }
 				</Timeline>
 			) ) }
-		</Card>
+		</>
 	);
 };

@@ -140,7 +140,7 @@ class TagStream extends Component {
 				following={ this.isSubscribed() }
 				onFollowToggle={ this.toggleFollowing }
 				showBack={ this.props.showBack }
-				showSort={ true }
+				showSort
 				sort={ this.props.sort }
 				recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 			/>
@@ -158,11 +158,11 @@ class TagStream extends Component {
 				className="tag-stream__main"
 				listName={ title }
 				emptyContent={ emptyContent }
-				showFollowInHeader={ true }
+				showFollowInHeader
 				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder
 				streamHeader={ tagHeader }
 				showSiteNameOnCards={ false }
-				useCompactCards={ true }
+				useCompactCards
 				{ ...sidebarProps }
 			>
 				<QueryReaderFollowedTags />

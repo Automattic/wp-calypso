@@ -36,7 +36,7 @@ const ImporterMigrateMessage: Step = () => {
 	return (
 		<StepContainer
 			stepName="migration-message"
-			hideBack={ true }
+			hideBack
 			formattedHeader={ <FormattedHeader headerText={ __( 'Let us take it from here!' ) } /> }
 			isHorizontalLayout={ false }
 			stepContent={

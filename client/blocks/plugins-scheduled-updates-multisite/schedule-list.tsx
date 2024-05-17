@@ -9,6 +9,7 @@ import { MultisitePluginUpdateManagerContext } from 'calypso/blocks/plugins-sche
 import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { SiteSlug } from 'calypso/types';
 import { ScheduleErrors } from './schedule-errors';
 import { ScheduleListCardNew } from './schedule-list-card-new';
 import { ScheduleListCards } from './schedule-list-cards';
@@ -42,6 +43,7 @@ export const ScheduleList = ( props: Props ) => {
 		data: schedules = [],
 		isLoading: isLoadingSchedules,
 		isFetched,
+		refetch,
 	} = useMultisiteUpdateScheduleQuery( true );
 	const translate = useTranslate();
 	const { searchTerm } = useContext( MultisitePluginUpdateManagerContext );
@@ -49,7 +51,9 @@ export const ScheduleList = ( props: Props ) => {
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >(
 		initSelectedScheduleId
 	);
+	const [ selectedSiteSlug, setSelectedSiteSlug ] = useState< string | undefined >();
 	const [ selectedSiteSlugs, setSelectedSiteSlugs ] = useState< string[] >( [] );
+	const selectedSiteSlugsForMutate = selectedSiteSlug ? [ selectedSiteSlug ] : selectedSiteSlugs;
 
 	useEffect( () => {
 		const schedule = schedules?.find( ( schedule ) => schedule.schedule_id === selectedScheduleId );
@@ -57,10 +61,18 @@ export const ScheduleList = ( props: Props ) => {
 	}, [ selectedScheduleId ] );
 	useEffect( () => setSelectedScheduleId( initSelectedScheduleId ), [ initSelectedScheduleId ] );
 
-	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugs );
+	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugsForMutate, {
+		onSuccess: () => {
+			// Refetch again after 5 seconds
+			setTimeout( () => {
+				refetch();
+			}, 5000 );
+		},
+	} );
 
-	const openRemoveDialog = ( id: string ) => {
+	const openRemoveDialog = ( id: string, siteSlug?: SiteSlug ) => {
 		setRemoveDialogOpen( true );
+		setSelectedSiteSlug( siteSlug );
 		setSelectedScheduleId( id );
 	};
 
@@ -73,7 +85,14 @@ export const ScheduleList = ( props: Props ) => {
 		if ( selectedSiteSlugs && selectedScheduleId ) {
 			deleteUpdateSchedules.mutate( selectedScheduleId );
 			recordTracksEvent( 'calypso_scheduled_updates_multisite_delete_schedule', {
-				site_slugs: selectedSiteSlugs.join( ',' ),
+				site_slugs: selectedSiteSlugsForMutate.join( ',' ),
+				sites_count: selectedSiteSlugsForMutate.length,
+			} );
+
+			selectedSiteSlugsForMutate.forEach( ( siteSlug ) => {
+				recordTracksEvent( 'calypso_scheduled_updates_delete_schedule', {
+					site_slug: siteSlug,
+				} );
 			} );
 		}
 		closeRemoveConfirm();
@@ -104,7 +123,7 @@ export const ScheduleList = ( props: Props ) => {
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">
 			<div className="plugins-update-manager-multisite__header">
-				<h1>{ translate( 'Update schedules' ) }</h1>
+				<h1>{ translate( 'Scheduled Updates' ) }</h1>
 				{ showNewScheduleBtn && ! isScheduleEmpty && (
 					<Button
 						__next40pxDefaultSize={ ! compact }
@@ -120,7 +139,6 @@ export const ScheduleList = ( props: Props ) => {
 
 			<ScheduleErrors />
 
-			{ schedules.length === 0 && isLoading && <Spinner /> }
 			{ isScheduleEmpty && ! compact && (
 				<ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } />
 			) }
@@ -138,6 +156,7 @@ export const ScheduleList = ( props: Props ) => {
 					/>
 				</>
 			) : null }
+			{ schedules.length === 0 && isLoading && <Spinner /> }
 			<ConfirmDialog
 				isOpen={ removeDialogOpen }
 				onConfirm={ onRemoveDialogConfirm }

@@ -1,9 +1,3 @@
-@media only screen and (min-width: 601px) {
-	html {
-		overflow-y: hidden;
-	}
-}
-
 body.is-section-me {
 	background: var(--studio-gray-0);
 
@@ -49,7 +43,7 @@ body.is-section-me {
 		.layout__primary {
 			background: var(--color-surface);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			box-shadow: none;
+			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			@media only screen and (min-width: 601px) {
 				height: calc(100vh - var(--masterbar-height) - 50px);
 			}

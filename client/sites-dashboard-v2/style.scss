@@ -38,6 +38,23 @@
 		padding-block-start: 24px;
 	}
 
+	.sites-dataviews__site {
+		.button {
+			flex-shrink: 0;
+			@include breakpoint-deprecated("<480px") {
+				width: 90px;
+			}
+		}
+		.sites-dataviews__site-name {
+			padding: 0;
+		}
+	}
+	th[data-field-id="actions"] {
+		padding-inline-end: 16px;
+		text-align: end;
+	}
+
+
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -58,13 +75,23 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
+			padding-left: 30px;
+		}
+		.dataviews-view-table tr th:last-child,
+		.dataviews-view-table tr td:last-child {
+			padding-right: 30px;
+			width: 20px;
+			white-space: nowrap;
+		}
+	}
+	@media (min-width: $break-huge) {
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
 			padding-left: 64px;
 		}
 		.dataviews-view-table tr th:last-child,
 		.dataviews-view-table tr td:last-child {
 			padding-right: 64px;
-			width: 20px;
-			white-space: nowrap;
 		}
 	}
 
@@ -132,11 +159,11 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
-			padding: 8px 24px 8px 16px;
+			padding: 8px 16px 8px 16px;
 		}
 		.dataviews-view-table tr td:last-child {
 			padding: 0;
-			padding-inline-end: 8px;
+			padding-inline-end: 16px;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
@@ -154,7 +181,7 @@
 			padding-bottom: 8px;
 
 			& > :first-child {
-				margin-inline-start: 8px;
+				margin-inline-start: 16px;
 			}
 
 			.components-input-control {
@@ -163,12 +190,9 @@
 
 			.components-flex.components-h-stack {
 				flex: 6;
+				padding-left: 8px;
 			}
 
-			.components-button.is-compact.has-icon {
-				flex: 1;
-				margin-left: -12px;
-			}
 		}
 
 		.sites-overview__stats-trend,
@@ -219,10 +243,6 @@
 				display: none;
 			}
 
-			th[data-field-id="actions"] {
-				padding-inline-end: 12px;
-				text-align: end;
-			}
 		}
 	}
 
@@ -544,6 +564,9 @@
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 			.preview-pane__navigation {
 				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);
+				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
+				padding-top: 1px;
+				clip-path: inset(2px -1px -1px -1px);
 			}
 		}
 
@@ -566,6 +589,20 @@
 				.sites-overview {
 					padding: 0;
 
+					.dataviews-filters__view-actions {
+						& > :first-child {
+							margin-inline-start: 30px;
+						}
+
+						& > :last-child {
+							margin-inline-end: 30px;
+						}
+					}
+				}
+			}
+
+			@media only screen and (min-width: $break-huge) {
+				.sites-overview {
 					.dataviews-filters__view-actions {
 						& > :first-child {
 							margin-inline-start: 64px;

@@ -12,7 +12,6 @@ import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic
 import type { AddOnMeta } from '@automattic/data-stores';
 
 type StorageAddOnDropdownProps = {
-	label?: string;
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
@@ -74,7 +73,6 @@ const StorageAddOnOption = ( {
 };
 
 export const StorageAddOnDropdown = ( {
-	label = '',
 	planSlug,
 	storageOptions,
 	onStorageAddOnClick,
@@ -159,7 +157,7 @@ export const StorageAddOnDropdown = ( {
 	return (
 		<>
 			<CustomSelectControl
-				label={ label }
+				hideLabelFromVision
 				options={ selectControlOptions }
 				value={ selectedOption }
 				onChange={ handleOnChange }

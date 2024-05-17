@@ -76,11 +76,11 @@ const DevToolsPromo = () => {
 						'Upgrade to the Creator plan or higher to get access to all developer tools'
 					) }
 				</p>
-				<Button variant="primary" className="dev-tools-promo__button" href={ upgradeLink }>
-					{ translate( 'Upgrade now' ) }
-				</Button>
 				<Button variant="secondary" className="dev-tools-promo__button" href={ pluginsLink }>
 					{ translate( 'Browse plugins' ) }
+				</Button>
+				<Button variant="primary" className="dev-tools-promo__button" href={ upgradeLink }>
+					{ translate( 'Upgrade now' ) }
 				</Button>
 			</div>
 			<div className="dev-tools-promo__cards">

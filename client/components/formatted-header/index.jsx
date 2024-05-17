@@ -34,7 +34,7 @@ function FormattedHeader( {
 		'is-center-align': 'center' === subHeaderAlign,
 	} );
 	const tooltip = tooltipText && (
-		<InfoPopover icon="help-outline" position="right" iconSize={ 18 } showOnHover={ true }>
+		<InfoPopover icon="help-outline" position="right" iconSize={ 18 } showOnHover>
 			{ tooltipText }
 		</InfoPopover>
 	);

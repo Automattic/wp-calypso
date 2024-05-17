@@ -41,7 +41,7 @@ export const promoteWidget = ( context, next ) => {
 
 	context.primary = (
 		<BlazePressWidget
-			isVisible={ true }
+			isVisible
 			siteId={ siteId }
 			postId={ postId }
 			keyValue={ item }

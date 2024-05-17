@@ -580,7 +580,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
 
-		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
+		await this.editorSettingsSidebarComponent.expandSummary( 'Summary' );
 		await this.editorSettingsSidebarComponent.openVisibilityOptions();
 		await this.editorSettingsSidebarComponent.selectVisibility( visibility, {
 			password: password,
@@ -637,7 +637,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
-		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
+		await this.editorSettingsSidebarComponent.expandSummary( 'Summary' );
 		await this.editorSettingsSidebarComponent.enterUrlSlug( slug );
 	}
 
@@ -700,6 +700,7 @@ export class EditorPage {
 		timeout,
 	}: { visit?: boolean; timeout?: number } = {} ): Promise< URL > {
 		const actionsArray = [];
+		await this.editorToolbarComponent.waitForPublishButton();
 
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
@@ -752,7 +753,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
 
-		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
+		await this.editorSettingsSidebarComponent.expandSummary( 'Summary' );
 		await this.editorSettingsSidebarComponent.openSchedule();
 		await this.editorSettingsSidebarComponent.setScheduleDetails( date );
 		await this.editorSettingsSidebarComponent.closeSchedule();
@@ -764,14 +765,27 @@ export class EditorPage {
 	async unpublish(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		await this.editorToolbarComponent.switchToDraft();
+
+		// For mobiles, we need to dismiss the settings panel before we can click on publish
+		await this.closeSettings();
+
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		// Saves the draft
-		await Promise.race( [
-			this.editorToolbarComponent.clickPublish(),
-			editorParent.getByRole( 'button' ).getByText( 'OK' ).click(),
-		] );
+		await Promise.race( [ this.editorToolbarComponent.clickPublish(), this.confirmUnpublish() ] );
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
 		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
+	}
+
+	/**
+	 * Confirms the unpublish action in some views
+	 */
+	async confirmUnpublish(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const okButtonLocator = editorParent.getByRole( 'button' ).getByText( 'OK' );
+
+		if ( await okButtonLocator.count() ) {
+			okButtonLocator.click();
+		}
 	}
 
 	/**

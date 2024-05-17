@@ -23,7 +23,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const translate = useTranslate();
 	const queryParams = useQuery();
 	const hideFreeMigrationTrialForNonVerifiedEmail =
-		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? false;
+		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? true;
 
 	const selectedPlanData = useSelectedPlanUpgradeQuery();
 	const selectedPlanPathSlug = selectedPlanData.data;
@@ -91,7 +91,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-upgrade-plan"
 				goBack={ navigation.goBack }
-				hideSkip={ true }
+				hideSkip
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"

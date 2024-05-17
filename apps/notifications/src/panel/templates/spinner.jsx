@@ -27,7 +27,9 @@ export default class Spinner extends PureComponent {
 
 		return (
 			<div className={ className }>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="wpnc__spinner__outer" style={ style }>
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="wpnc__spinner__inner" />
 				</div>
 			</div>

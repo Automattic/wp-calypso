@@ -15,6 +15,7 @@ export default class extends Component {
 
 		return (
 			<div className={ classes }>
+				{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }
 				<Gridicon icon="pages" size={ 120 } />
 			</div>
 		);

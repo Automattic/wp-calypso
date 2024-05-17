@@ -102,7 +102,7 @@ describe( 'ContactDetailsFormFields', () => {
 
 		test( 'should render GAppsFieldset in place of default contact fields when required', () => {
 			const { container } = render(
-				<ContactDetailsFormFields { ...defaultProps } needsOnlyGoogleAppsDetails={ true } />
+				<ContactDetailsFormFields { ...defaultProps } needsOnlyGoogleAppsDetails />
 			);
 
 			const [ gapps ] = container.getElementsByClassName( 'g-apps-fieldset' );
@@ -142,7 +142,7 @@ describe( 'ContactDetailsFormFields', () => {
 		} );
 
 		test( 'should render fax field when fax required', () => {
-			render( <ContactDetailsFormFields { ...defaultProps } needsFax={ true } /> );
+			render( <ContactDetailsFormFields { ...defaultProps } needsFax /> );
 
 			expect( screen.queryByRole( 'textbox', { name: /fax/i } ) ).toBeVisible();
 		} );
@@ -171,7 +171,7 @@ describe( 'ContactDetailsFormFields', () => {
 				/>
 			);
 
-			expect( screen.getByRole( 'link', { name: 'Nice Guys Inc' } ) ).toBeVisible();
+			expect( screen.getByText( 'Nice Guys Inc' ) ).toBeVisible();
 		} );
 	} );
 

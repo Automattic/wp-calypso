@@ -82,6 +82,7 @@ function useLearnGrowCards() {
 	const siteId = useSelector( getSelectedSiteId );
 	const { data: layout } = useHomeLayoutQuery( siteId, { enabled: false } );
 
+	// eslint-disable-next-line wpcalypso/i18n-translate-identifier
 	const { localeSlug } = useTranslate();
 
 	let allCards = layout?.[ 'secondary.learn-grow' ] ?? [];

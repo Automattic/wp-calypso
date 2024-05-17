@@ -1,13 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
@@ -15,11 +15,13 @@ import siteMigrationFlow from '../site-migration-flow';
 import { getAssertionConditionResult, getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
-const originalIsEnabled = config.isEnabled;
 
 jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
+jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
+	triggerGuidesForStep: jest.fn(),
+} ) );
 
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
@@ -43,11 +45,7 @@ describe( 'Site Migration Flow', () => {
 		const testSettingsEndpoint = '/rest/v1.4/sites/example.wordpress.com/settings';
 		nock( apiBaseUrl ).get( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( testSettingsEndpoint ).reply( 200, {} );
-		jest
-			.spyOn( config, 'isEnabled' )
-			.mockImplementation( ( key ) =>
-				key === 'migration-flow/remove-processing-step' ? false : originalIsEnabled( key )
-			);
+		nock( apiBaseUrl ).post( '/wpcom/v2/guides/trigger' ).reply( 200, {} );
 	} );
 
 	afterEach( () => {
@@ -103,6 +101,36 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	describe( 'navigation', () => {
+		beforeEach( () => {
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/guides/trigger', {
+					flow: 'site-migration',
+					step: 'site-migration-identify',
+				} )
+				.reply( 200, { success: true } );
+
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/guides/trigger', {
+					flow: 'site-migration',
+					step: 'site-migration-import-or-migrate',
+				} )
+				.reply( 200, { success: true } );
+
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/guides/trigger', {
+					flow: 'site-migration',
+					step: 'site-migration-upgrade-plan',
+				} )
+				.reply( 200, { success: true } );
+
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/guides/trigger', {
+					flow: 'site-migration',
+					step: 'site-migration-assign-trial-plan',
+				} )
+				.reply( 200, { success: true } );
+		} );
+
 		it( 'redirects the user to the migrate or import page when the platform is wordpress', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
@@ -172,30 +200,8 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'migrate redirects from the import-from page to bundleTransfer step if new instructions not enabled', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.BUNDLE_TRANSFER.slug,
-				dependencies: {
-					destination: 'migrate',
-				},
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.PROCESSING.slug }`,
-				state: {
-					bundleProcessing: true,
-				},
-			} );
-		} );
-
 		it( 'migrate redirects from the import-from page to new instructions if flag enabled', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			( config.isEnabled as jest.Mock ).mockImplementation( ( key: string ) =>
-				key === 'migration-flow/remove-processing-step' ? true : originalIsEnabled( key )
-			);
 
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
@@ -224,7 +230,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 				flowName: 'site-migration',
 				siteSlug: 'example.wordpress.com',
@@ -250,42 +256,6 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects from upgrade-plan to verifyEmail if user is unverified', async () => {
-			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-				dependencies: {
-					verifyEmail: true,
-				},
-			} );
-
-			await waitFor( () => {
-				expect( getFlowLocation() ).toEqual( {
-					path: `/${ STEPS.VERIFY_EMAIL.slug }`,
-					state: {
-						pollForEmailVerification: false,
-					},
-				} );
-			} );
-		} );
-
-		it( 'redirects from verifyEmail to site-migration-assign-trial-plan step', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.VERIFY_EMAIL.slug,
-				dependencies: {
-					verifyEmail: true,
-				},
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug }`,
-				state: null,
-			} );
-		} );
-
 		it( 'redirects from site-migration-assign-trial-plan step to bundleTransfer step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
@@ -294,9 +264,45 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/bundleTransfer',
+				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`,
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
+		} );
+
+		it( 'calls triggerGuidesForStep when navigating site migration identify', async () => {
+			const flowName = 'site-migration';
+			const currentStep = STEPS.SITE_MIGRATION_IDENTIFY.slug;
+
+			triggerGuidesForStep( flowName, currentStep );
+
+			expect( triggerGuidesForStep ).toHaveBeenCalledWith( flowName, currentStep );
+		} );
+
+		it( 'calls triggerGuidesForStep when navigating to the import or migrate step', async () => {
+			const flowName = 'site-migration';
+			const currentStep = STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug;
+
+			triggerGuidesForStep( flowName, currentStep );
+
+			expect( triggerGuidesForStep ).toHaveBeenCalledWith( flowName, currentStep );
+		} );
+
+		it( 'calls triggerGuidesForStep when navigating site migration upgrade plan', async () => {
+			const flowName = 'site-migration';
+			const currentStep = STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug;
+
+			triggerGuidesForStep( flowName, currentStep );
+
+			expect( triggerGuidesForStep ).toHaveBeenCalledWith( flowName, currentStep );
+		} );
+
+		it( 'calls triggerGuidesForStep when navigating site migration assign trial plan', async () => {
+			const flowName = 'site-migration';
+			const currentStep = STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug;
+
+			triggerGuidesForStep( flowName, currentStep );
+
+			expect( triggerGuidesForStep ).toHaveBeenCalledWith( flowName, currentStep );
 		} );
 	} );
 

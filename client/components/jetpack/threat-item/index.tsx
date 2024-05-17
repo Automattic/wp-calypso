@@ -164,8 +164,8 @@ const ThreatItem: React.FC< Props > = ( {
 				'is-ignored': threat.status === 'ignored',
 				'is-current': threat.status === 'current',
 			} ) }
-			header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
-			clickableHeader={ true }
+			header={ <ThreatItemHeader threat={ threat } isStyled /> }
+			clickableHeader
 			onClick={ onOpenTrackEvent }
 		>
 			<ThreatDescription

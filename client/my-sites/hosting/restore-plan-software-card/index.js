@@ -1,7 +1,7 @@
-import { Button, Card, MaterialIcon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import { stripHTML } from 'calypso/lib/formatting/strip-html';
 import wpcom from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -34,17 +34,18 @@ export default function RestorePlanSoftwareCard() {
 	}
 
 	return (
-		<Card className="restore-plan-software-card">
-			<MaterialIcon icon="apps" size={ 32 } />
-			<CardHeading>{ translate( 'Restore plugins and themes' ) }</CardHeading>
-			<p>
+		<HostingCard
+			className="restore-plan-software-card"
+			title={ translate( 'Restore plugins and themes' ) }
+		>
+			<HostingCardDescription>
 				{ translate(
 					'If your website is missing plugins and themes that come with your plan, you may restore them here.'
 				) }
-			</p>
+			</HostingCardDescription>
 			<Button primary onClick={ requestRestore }>
 				{ translate( "Restore plugins and themes for my website's plan" ) }
 			</Button>
-		</Card>
+		</HostingCard>
 	);
 }

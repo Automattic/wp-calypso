@@ -5,13 +5,19 @@ import {
 	A4A_SIGNUP_FINISH_LINK,
 	A4A_SIGNUP_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import AgencySignUp from './primary/agency-signup';
 import AgencySignupFinish from './primary/agency-signup-finish';
 
 export const signUpContext: Callback = ( context, next ) => {
 	context.store.dispatch( hideMasterbar() );
-	context.primary = <AgencySignUp />;
+	context.primary = (
+		<>
+			<PageViewTracker title="A4A Signup" path={ context.path } />
+			<AgencySignUp />
+		</>
+	);
 	next();
 };
 

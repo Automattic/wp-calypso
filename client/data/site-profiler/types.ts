@@ -82,15 +82,19 @@ export interface HostingProviderQueryResponse {
 	hosting_provider: HostingProvider;
 }
 
-export type BasicMetrics = {
-	cls: number;
-	fid: number;
-	lcp: number;
-	fcp: number;
-	ttfb: number;
-	inp: number;
-};
+export type Metrics = 'cls' | 'fid' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
+
+export type Scores = 'good' | 'needs-improvement' | 'poor';
+
+export type BasicMetrics = Record< Metrics, number >;
+export type BasicMetricsList = [ Metrics, number ][];
+
+export type BasicMetricsScored = Record< Metrics, { value: number; score: Scores } >;
+export type BasicMetricsScoredList = [ Metrics, { value: number; score: Scores } ][];
+
 export interface UrlBasicMetricsQueryResponse {
+	final_url: string;
 	basic: BasicMetrics;
 	advanced: Record< string, string >;
+	token: string;
 }

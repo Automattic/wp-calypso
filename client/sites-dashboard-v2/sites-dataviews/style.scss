@@ -14,7 +14,7 @@
 }
 
 .sites-dataviews__site-name {
-	align-self: center;
+	align-self: flex-start;
 	display: inline-block;
 	text-align: left;
 	text-overflow: ellipsis;
@@ -33,9 +33,7 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-}
 
-.sites-dataviews__site-wp-admin-url {
 	&:focus {
 		border-radius: 2px;
 		box-shadow: 0 0 0 2px var(--color-primary-light);
@@ -48,17 +46,9 @@
 	&:visited {
 		color: var(--color-neutral-70);
 	}
-}
 
-.preview-hidden {
-	.sites-dataviews__site-name {
-		width: 180px;
-	}
-
-	@media (min-width: 2040px) {
-		.sites-dataviews__site-name {
-			width: 250px;
-		}
+	svg {
+		vertical-align: sub;
 	}
 }
 

@@ -1,6 +1,7 @@
 import { ListTile, Button } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
+import { Icon, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import * as React from 'react';
@@ -8,16 +9,14 @@ import * as React from 'react';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
-import { SiteItemThumbnail } from 'calypso/sites-dashboard/components/sites-site-item-thumbnail';
 import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
 import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
 import { displaySiteUrl, isStagingSite, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
+import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { getSiteHomeUrl, isSimpleSite } from 'calypso/state/sites/selectors';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
@@ -65,9 +64,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	}
 
 	const title = __( 'View Site Details' );
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ?? '' );
-	const siteHomeUrl = useSelector( ( state ) => getSiteHomeUrl( state, site.ID ) ?? '' );
-	const isSimple = useSelector( ( state ) => isSimpleSite( state, site.ID ) );
+	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site.ID );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
@@ -91,16 +88,11 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 				leading={
 					<Button className="sites-dataviews__preview-trigger" onClick={ onSiteClick } borderless>
 						<ListTileLeading title={ title }>
-							<SiteItemThumbnail
-								className="sites-site-thumbnail"
-								displayMode="list"
-								showPlaceholder={ false }
-								site={ site }
-							/>
 							<SiteFavicon
 								className="sites-site-favicon"
 								blogId={ site.ID }
-								isDotcomSite={ site.is_wpcom_atomic }
+								fallback="first-grapheme"
+								size={ 56 }
 							/>
 						</ListTileLeading>
 					</Button>
@@ -124,14 +116,22 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						</>
 					) : (
 						<>
-							<div className="sites-dataviews__site-url">
-								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
+							<div>
+								<a
+									className="sites-dataviews__site-url"
+									href={ siteUrl }
+									title={ siteUrl }
+									target="_blank"
+									rel="noreferrer"
+								>
+									<Truncated>
+										{ displaySiteUrl( siteUrl ) }
+										<Icon icon={ external } size={ 16 } />
+									</Truncated>
+								</a>
 							</div>
-							<a
-								className="sites-dataviews__site-wp-admin-url"
-								href={ isSimple ? siteHomeUrl : siteAdminUrl }
-							>
-								<Truncated>{ isSimple ? __( 'My Home' ) : __( 'WP Admin' ) }</Truncated>
+							<a className="sites-dataviews__site-wp-admin-url" href={ adminUrl }>
+								<Truncated>{ adminLabel }</Truncated>
 							</a>
 						</>
 					)

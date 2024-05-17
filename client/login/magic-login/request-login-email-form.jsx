@@ -50,7 +50,9 @@ class RequestLoginEmailForm extends Component {
 
 		tosComponent: PropTypes.node,
 		headerText: PropTypes.string,
+		subHeaderText: PropTypes.string,
 		hideSubHeaderText: PropTypes.bool,
+		customFormLabel: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
 		onSendEmailLogin: PropTypes.func,
@@ -119,8 +121,12 @@ class RequestLoginEmailForm extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, locale } = this.props;
+		const { translate, locale, subHeaderText } = this.props;
 		const siteName = this.state.site?.name;
+
+		if ( subHeaderText ) {
+			return subHeaderText;
+		}
 
 		// If we have a siteName and new translation is available
 		if (
@@ -171,6 +177,7 @@ class RequestLoginEmailForm extends Component {
 			inputPlaceholder,
 			submitButtonLabel,
 			locale,
+			customFormLabel,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -199,9 +206,11 @@ class RequestLoginEmailForm extends Component {
 				? translate( 'Send link' )
 				: translate( 'Get Link' );
 
-		const formLabel = hasTranslation( 'Email address or username' )
-			? this.props.translate( 'Email address or username' )
-			: this.props.translate( 'Email Address or Username' );
+		const formLabel =
+			customFormLabel ||
+			( hasTranslation( 'Email address or username' )
+				? this.props.translate( 'Email address or username' )
+				: this.props.translate( 'Email Address or Username' ) );
 
 		return (
 			<div className="magic-login__form">

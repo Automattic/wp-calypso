@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useLocation } from 'react-router';
 import { Answers, Question } from 'calypso/components/survey-container/types';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import useSegmentationSurveyTracksEvents from './use-segmentation-survey-tracks-events';
 
 type SegmentationSurveyNavigationProps = {
 	onBack?: () => void;
@@ -20,6 +20,8 @@ const useSegmentationSurveyNavigation = ( {
 	questions,
 	answers,
 }: SegmentationSurveyNavigationProps ) => {
+	const { recordBackEvent, recordContinueEvent, recordSkipEvent } =
+		useSegmentationSurveyTracksEvents( surveyKey );
 	const { hash } = useLocation();
 	const currentPage = useMemo( () => parseInt( hash.replace( '#', '' ), 10 ) || 1, [ hash ] );
 
@@ -33,10 +35,7 @@ const useSegmentationSurveyNavigation = ( {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_segmentation_survey_back', {
-			survey_key: surveyKey,
-			question_key: currentQuestion.key,
-		} );
+		recordBackEvent( currentQuestion );
 
 		if ( currentPage === 1 ) {
 			onBack?.();
@@ -44,7 +43,7 @@ const useSegmentationSurveyNavigation = ( {
 		}
 
 		window.location.hash = `${ currentPage - 1 }`;
-	}, [ currentPage, currentQuestion, onBack, surveyKey ] );
+	}, [ currentPage, currentQuestion, onBack, recordBackEvent ] );
 
 	const nextPage = useCallback( () => {
 		if ( currentPage === questions?.length ) {
@@ -59,14 +58,11 @@ const useSegmentationSurveyNavigation = ( {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_segmentation_survey_skip', {
-			survey_key: surveyKey,
-			question_key: currentQuestion.key,
-		} );
+		recordSkipEvent( currentQuestion );
 
 		await onSkip?.( currentQuestion );
 		nextPage();
-	}, [ currentQuestion, nextPage, onSkip, surveyKey ] );
+	}, [ currentQuestion, nextPage, onSkip, recordSkipEvent ] );
 
 	const continueToNextPage = useCallback( async () => {
 		if ( ! currentQuestion ) {
@@ -78,15 +74,11 @@ const useSegmentationSurveyNavigation = ( {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_segmentation_survey_continue', {
-			survey_key: surveyKey,
-			question_key: currentQuestion.key,
-			answer_keys: answers?.[ currentQuestion.key ].join( ',' ) || '',
-		} );
+		recordContinueEvent( currentQuestion, answers );
 
 		await onContinue?.( currentQuestion );
 		nextPage();
-	}, [ answers, currentQuestion, nextPage, onContinue, skipToNextPage, surveyKey ] );
+	}, [ answers, currentQuestion, nextPage, onContinue, recordContinueEvent, skipToNextPage ] );
 
 	return {
 		currentQuestion,
