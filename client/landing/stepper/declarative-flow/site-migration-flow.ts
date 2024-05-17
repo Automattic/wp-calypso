@@ -27,7 +27,7 @@ const siteMigration: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
-		const steps = [
+		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
@@ -37,12 +37,13 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
 
-		if ( isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
-			steps.push( STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
-		}
+		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
+			? [ STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
+			: [];
 
-		return steps;
+		return [ ...baseSteps, ...hostedVariantSteps ];
 	},
+
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
 		const userIsLoggedIn = useSelect(
