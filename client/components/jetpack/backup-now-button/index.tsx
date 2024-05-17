@@ -11,7 +11,6 @@ import { rewindBackupSite } from 'calypso/state/activity-log/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getBackupStoppedFlag from 'calypso/state/rewind/selectors/get-backup-stopped-flag';
-import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
 interface Props {
 	children?: React.ReactNode;
@@ -37,7 +36,6 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	const [ buttonContent, setButtonContent ] = useState( children );
 	const [ currentTooltip, setCurrentTooltip ] = useState( tooltipText );
 	const [ enqueued, setEnqueued ] = useState( false );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const requestBackupSite = useCallback(
 		() => dispatch( rewindBackupSite( siteId ) ),
 		[ dispatch, siteId ]
@@ -89,15 +87,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 			setCurrentTooltip( tooltipText );
 			setDisabled( false );
 		}
-	}, [
-		areBackupsStopped,
-		backupCurrentlyInProgress,
-		tooltipText,
-		translate,
-		enqueued,
-		children,
-		siteSlug,
-	] );
+	}, [ areBackupsStopped, backupCurrentlyInProgress, tooltipText, translate, enqueued, children ] );
 
 	const button = (
 		<div>
