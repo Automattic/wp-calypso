@@ -27,7 +27,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	tooltipText,
 	trackEventName,
 	variant,
-	onClick = () => {},
+	onClick,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
