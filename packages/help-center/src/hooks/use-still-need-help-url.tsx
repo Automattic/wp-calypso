@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 
 import { useSupportAvailability } from '../data/use-support-availability';
-import { useIsWapuuEnabled } from './use-is-wapuu-enabled';
 
 /**
  * This function is used as a fallback for users navigating through wp-admin.
@@ -16,11 +15,12 @@ export function isWapuuFlagSetInURL(): boolean {
 
 export function useStillNeedHelpURL() {
 	const { data: supportAvailability, isLoading } = useSupportAvailability( 'OTHER' );
-	const isWapuuEnabled = useIsWapuuEnabled() || isWapuuFlagSetInURL();
-	const isFreeUser = ! supportAvailability?.is_user_eligible_for_tickets;
+
+	// Free users are not eligible for chat support
+	const isFreeUser = ! supportAvailability?.is_user_eligible_for_chat;
 
 	if ( ! isFreeUser ) {
-		const url = isWapuuEnabled ? '/odie' : '/contact-options';
+		const url = '/odie';
 		return { url, isLoading: false };
 	}
 
