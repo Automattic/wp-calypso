@@ -6,7 +6,7 @@ import getSiteDomain from './get-site-domain';
  * site's name if available, falling back to its domain. Returns null if the
  * site is not known.
  * @param  {Object}  state  Global state tree
- * @param  {?number | string}  siteId Site ID
+ * @param  {?number}  siteId Site ID
  * @returns {?string}        Site title
  */
 export default function getSiteTitle( state, siteId ) {
