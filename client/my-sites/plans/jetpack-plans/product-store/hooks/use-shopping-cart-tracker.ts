@@ -16,6 +16,7 @@ type EventData = {
 type EventDataOptions = {
 	productSlug?: string;
 	addProducts?: boolean;
+	quantity?: number | null;
 };
 
 // Record tracks are not allowing objects inside track events
