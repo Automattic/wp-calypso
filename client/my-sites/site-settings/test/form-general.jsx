@@ -133,7 +133,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 		} );
 
 		test( 'No UpsellNudge for jetpack plans', () => {
-			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } />, {
+			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack />, {
 				ui: {
 					selectedSiteId: 1234,
 				},

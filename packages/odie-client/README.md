@@ -61,10 +61,12 @@ import {
 } from '@automattic/odie-client';
 
 // Usage examples
-const updateChatId = useSetOdieStorage( 'chat_id' )
-updateChatId( 'new_chat_id' );
+function Examples() {
+	const updateChatId = useSetOdieStorage( 'chat_id' )
+	updateChatId( 'new_chat_id' );
 
-const chatId = useGetOdieStorage( 'chat_id' );
+	const chatId = useGetOdieStorage( 'chat_id' );
+}
 ```
 
 _Note: Setting `chat_id` fetches a new chat from the server and also sets `last_chat_id`. Clearing `chat_id` does not clear `last_chat_id`._

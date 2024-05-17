@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
@@ -101,7 +102,7 @@ class PeopleListSectionHeader extends Component {
 								position="right"
 								text={ popoverText }
 								privacyLink={ false }
-								link="https://wordpress.com/support/followers/"
+								link={ localizeUrl( 'https://wordpress.com/support/followers/' ) }
 							/>
 						) }
 					</>

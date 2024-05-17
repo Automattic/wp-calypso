@@ -49,26 +49,23 @@ const QuickLinksForEcommerceSites = ( props ) => {
 		<div className="quick-links-for-hosted-sites__boxes quick-links__boxes">
 			{ isAtomic && (
 				<ActionBox
-					href={ `https://${ siteSlug }/wp-admin/edit.php?post_type=shop_order` }
+					href={ `https://${ siteSlug }/wp-admin/post-new.php?post_type=product` }
 					hideLinkIndicator
 					label={ translate( 'Add a product' ) }
 					iconComponent={
-						<span
-							className="quick-links__action-box-icon dashicons dashicons-cart"
-							aria-hidden={ true }
-						/>
+						<span className="quick-links__action-box-icon dashicons dashicons-cart" aria-hidden />
 					}
 				/>
 			) }
 			{ isAtomic && (
 				<ActionBox
-					href={ `https://${ siteSlug }/wp-admin/post-new.php?post_type=product` }
+					href={ `https://${ siteSlug }/wp-admin/edit.php?post_type=shop_order` }
 					hideLinkIndicator
 					label={ translate( 'View orders' ) }
 					iconComponent={
 						<span
 							className="quick-links__action-box-icon dashicons dashicons-archive"
-							aria-hidden={ true }
+							aria-hidden
 						/>
 					}
 				/>
@@ -79,10 +76,7 @@ const QuickLinksForEcommerceSites = ( props ) => {
 					hideLinkIndicator
 					label={ translate( 'View customers' ) }
 					iconComponent={
-						<span
-							className="quick-links__action-box-icon dashicons dashicons-money"
-							aria-hidden={ true }
-						/>
+						<span className="quick-links__action-box-icon dashicons dashicons-money" aria-hidden />
 					}
 				/>
 			) }

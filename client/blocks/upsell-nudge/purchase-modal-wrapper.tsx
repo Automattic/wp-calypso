@@ -45,8 +45,8 @@ export default function PurchaseModalWrapper( {
 								} )
 							);
 						} }
-						disabledThankYouPage={ true }
-						showFeatureList={ true }
+						disabledThankYouPage
+						showFeatureList
 						siteSlug={ siteSlug }
 					/>
 				</RazorpayHookProvider>

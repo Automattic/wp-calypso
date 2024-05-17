@@ -1,6 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
-import { Global, css } from '@emotion/react';
 import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -26,113 +24,6 @@ import {
 } from './helper';
 
 const DiscoverStream = ( props ) => {
-	let navRedesignV2GlobalStyles;
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		navRedesignV2GlobalStyles = css`
-			html {
-				overflow-y: auto;
-			}
-			body.is-reader-page,
-			.is-reader-page .layout,
-			.layout.is-section-reader,
-			.layout.is-section-reader .layout__content,
-			.is-section-reader {
-				background: initial;
-			}
-			body.is-section-reader {
-				background: var( --studio-gray-0 );
-
-				&.rtl .layout__content {
-					padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;
-				}
-
-				.layout__content {
-					// Add border around everything
-					overflow: hidden;
-					min-height: 100vh;
-					@media only screen and ( min-width: 782px ) {
-						padding: 16px 16px 16px calc( var( --sidebar-width-max ) ) !important;
-					}
-					.layout_primary > div {
-						padding-bottom: 0;
-					}
-				}
-
-				.layout__secondary .global-sidebar {
-					border: none;
-				}
-
-				.has-no-masterbar .layout__content .main {
-					padding-top: 16px;
-				}
-
-				div.layout.is-global-sidebar-visible {
-					.main {
-						@media only screen and ( min-width: 600px ) and ( max-width: 960px ) {
-							padding: 24px;
-						}
-						@media only screen and ( max-width: 660px ) {
-							padding-top: 0;
-						}
-						border-block-end: 1px solid var( --studio-gray-0 );
-					}
-					.layout__primary > div {
-						background: var( --color-surface );
-						border-radius: 8px;
-						box-shadow: none;
-						@media only screen and ( min-width: 600px ) {
-							height: calc( 100vh - var( --masterbar-height ) - 50px );
-						}
-						@media only screen and ( min-width: 782px ) {
-							height: calc( 100vh - 32px );
-						}
-						overflow: hidden;
-					}
-					.layout__primary > div > div {
-						height: 100%;
-						overflow-y: auto;
-						overflow-x: hidden;
-					}
-				}
-
-				@media only screen and ( max-width: 600px ) {
-					.navigation-header__main {
-						justify-content: normal;
-						align-items: center;
-						.formatted-header {
-							flex: none;
-						}
-					}
-				}
-
-				@media only screen and ( max-width: 781px ) {
-					div.layout.is-global-sidebar-visible {
-						.layout__primary {
-							overflow-x: auto;
-						}
-					}
-					.layout__primary > div {
-						background: var( --color-surface );
-						margin: 0;
-						border-radius: 8px;
-						height: calc( 100vh - 32px );
-					}
-				}
-
-				.is-discover-stream {
-					header.navigation-header.discover-stream-header {
-						padding: 0;
-					}
-					@media only screen and ( max-width: 660px ) {
-						.discover-stream-navigation {
-							margin-left: 0;
-							margin-right: 0;
-						}
-					}
-				}
-			}
-		`;
-	}
 	const locale = useLocale();
 	const translate = useTranslate();
 	const followedTags = useSelector( getReaderFollowedTags );
@@ -222,7 +113,7 @@ const DiscoverStream = ( props ) => {
 				</>
 			);
 		} else if ( ! ( isDefaultTab || selectedTab === 'latest' ) ) {
-			return <ReaderTagSidebar tag={ selectedTab } showFollow={ true } />;
+			return <ReaderTagSidebar tag={ selectedTab } showFollow />;
 		}
 	};
 
@@ -237,7 +128,6 @@ const DiscoverStream = ( props ) => {
 
 	return (
 		<>
-			<Global styles={ navRedesignV2GlobalStyles } />
 			<Stream { ...streamProps }>
 				{ DiscoverHeader() }
 				<DiscoverNavigation

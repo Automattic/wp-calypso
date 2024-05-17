@@ -1,15 +1,15 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
-import { Card, Button, FormLabel, Spinner, MaterialIcon } from '@automattic/components';
+import { Button, FormLabel, Spinner } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -218,15 +218,15 @@ export const SftpCard = ( {
 		  );
 
 	return (
-		<Card className="sftp-card">
-			<MaterialIcon icon="key" size={ 32 } />
-			<CardHeading id="sftp-credentials">
-				{ siteHasSshFeature
-					? translate( 'SFTP/SSH credentials' )
-					: translate( 'SFTP credentials' ) }
-			</CardHeading>
+		<HostingCard
+			className="sftp-card"
+			headingId="sftp-credentials"
+			title={
+				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
+			}
+		>
 			{ ! hasSftpFeatureAndIsLoading && (
-				<div className="sftp-card__body">
+				<HostingCardDescription>
 					<p>
 						{ username
 							? translate(
@@ -239,7 +239,7 @@ export const SftpCard = ( {
 							  )
 							: featureExplanation }
 					</p>
-				</div>
+				</HostingCardDescription>
 			) }
 			{ displayQuestionsAndButton && (
 				<SftpQuestionsContainer>
@@ -321,7 +321,7 @@ export const SftpCard = ( {
 			) }
 			{ isLoading && <Spinner /> }
 			{ hasSftpFeatureAndIsLoading && <SftpCardLoadingPlaceholder /> }
-		</Card>
+		</HostingCard>
 	);
 };
 

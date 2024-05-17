@@ -154,6 +154,7 @@ export default function WpcomOverview() {
 					selectedTier={ selectedTier }
 					onSelectTier={ onSelectTier }
 					ownedPlans={ ownedPlans }
+					isLoading={ ! isLicenseCountsReady }
 				/>
 
 				{ creatorPlan && (
@@ -162,6 +163,7 @@ export default function WpcomOverview() {
 						quantity={ ( selectedTier.value as number ) - ownedPlans } // We only calculate the difference between the selected tier and the owned plans
 						discount={ selectedTier.discount }
 						onSelect={ onAddToCart }
+						isLoading={ ! isLicenseCountsReady }
 					/>
 				) }
 

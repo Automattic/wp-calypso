@@ -46,7 +46,7 @@ class SegmentedControlDemo extends PureComponent {
 				<SegmentedControl
 					selectedText={ this.state.childSelected }
 					style={ controlDemoStyles }
-					primary={ true }
+					primary
 					compact={ this.state.compact }
 				>
 					<SegmentedControl.Item

@@ -18,10 +18,15 @@ import { useErrors } from './hooks/use-errors';
 import { ScheduleFormSites } from './schedule-form-sites';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
+import type {
+	MultiSitesResults,
+	MultiSiteBaseParams,
+} from 'calypso/blocks/plugins-scheduled-updates-multisite/types';
 
 type Props = {
 	scheduleForEdit?: MultisiteSchedulesUpdates;
 	onNavBack?: () => void;
+	onRecordSuccessEvent?: ( sites: MultiSitesResults, params: MultiSiteBaseParams ) => void;
 };
 
 type InitialData = {
@@ -31,7 +36,7 @@ type InitialData = {
 	timestamp: number;
 };
 
-export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
+export const ScheduleForm = ( { onNavBack, scheduleForEdit, onRecordSuccessEvent }: Props ) => {
 	const queryClient = useQueryClient();
 	const initialData: InitialData = scheduleForEdit
 		? {
@@ -156,11 +161,19 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 		};
 
 		const successfulSiteSlugs = [];
+		const createdSiteSlugs = [];
+		const editedSiteSlugs = [];
+		const deletedSiteSlugs = [];
 		// Create new schedules
 		const createResults = await createUpdateScheduleAsync( params );
 		successfulSiteSlugs.push(
 			...createResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
 		);
+
+		createdSiteSlugs.push(
+			...createResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
+		);
+
 		createResults
 			.filter( ( result ) => result.error )
 			.forEach( ( result ) =>
@@ -174,8 +187,13 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 				params,
 			} );
 			successfulSiteSlugs.push(
-				...createResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
+				...updateResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
 			);
+
+			editedSiteSlugs.push(
+				...updateResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
+			);
+
 			updateResults
 				.filter( ( result ) => result.error )
 				.forEach( ( result ) =>
@@ -184,6 +202,9 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 
 			// Delete schedules no longer needed
 			const deleteResults = await deleteUpdateScheduleAsync( scheduleForEdit.schedule_id );
+			deletedSiteSlugs.push(
+				...deleteResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
+			);
 			deleteResults
 				.filter( ( result ) => result.error )
 				.forEach( ( result ) =>
@@ -193,6 +214,24 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 
 		// Create monitors for sites that have been successfully scheduled
 		createMonitors( successfulSiteSlugs );
+
+		if ( successfulSiteSlugs.length > 0 ) {
+			const date = new Date( timestamp * 1000 );
+			onRecordSuccessEvent?.(
+				{
+					createdSiteSlugs,
+					editedSiteSlugs,
+					deletedSiteSlugs,
+				},
+				{
+					plugins_number: selectedPlugins.length,
+					frequency,
+					hours: date.getHours(),
+					weekday: frequency === 'weekly' ? date.getDay() : undefined,
+				}
+			);
+		}
+
 		onNavBack && onNavBack();
 		// Trigger an extra refetch 5 seconds later
 		setTimeout( () => {

@@ -134,6 +134,28 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
+	 * Expands a collapsed `Summary` section of the sidebar if it exists.
+	 * The `Summary` section is no longer collapsible in recent GB iterations
+	 * @see https://github.com/WordPress/gutenberg/commit/201099408131e2abe3cd094f7a1e7e539a350c12
+	 * @deprecated To discourage the adoption of this function
+	 * @todo Remove when all platforms have eventually been migrated
+	 *
+	 * If the section is already open, this method will pass.
+	 *
+	 * @param {string} name Name of section to be expanded.
+	 */
+	async expandSummary( name: string ): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const sectionLocator = editorParent.locator( selectors.section( name ) );
+
+		if ( ! ( await sectionLocator.isVisible() ) ) {
+			return;
+		}
+
+		this.expandSection( name );
+	}
+
+	/**
 	 * Given a selector, determines whether the target button/toggle is
 	 * in an expanded state.
 	 *

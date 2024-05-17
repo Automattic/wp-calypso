@@ -35,7 +35,7 @@ export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 			{ sitePickerEnabled && (
 				<section>
 					<SitePickerDropDown
-						enabled={ true }
+						enabled
 						onPickSite={ ( id: string | number ) => {
 							if ( id !== 0 ) {
 								setSite( currentSite );

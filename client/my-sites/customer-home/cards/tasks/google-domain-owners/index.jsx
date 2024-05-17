@@ -46,8 +46,8 @@ export default function GoogleDomainOwners() {
 			actionBusy={ ctaIsBusy }
 			hasSecondaryAction={ false }
 			illustration={ googleDomainOwnersIllustration }
-			illustrationAlwaysShow={ true }
-			illustrationTopActions={ true }
+			illustrationAlwaysShow
+			illustrationTopActions
 			timing={ 2 }
 			taskId={ TASK_GOOGLE_DOMAIN_OWNERS }
 		/>

@@ -26,6 +26,7 @@ export const ScheduleListTable = ( props: Props ) => {
 					<th>{ translate( 'Next update' ) }</th>
 					<th>{ translate( 'Frequency' ) }</th>
 					<th>{ translate( 'Plugins' ) }</th>
+					<th>{ translate( 'Active' ) }</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -39,6 +40,20 @@ export const ScheduleListTable = ( props: Props ) => {
 						key={ schedule.id }
 					/>
 				) ) }
+
+				{ schedules.length === 0 && (
+					<tr>
+						<td colSpan={ 9 }>
+							<div className="empty-state empty-state__center">
+								<p>
+									{ translate(
+										"Oops! We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
+									) }
+								</p>
+							</div>
+						</td>
+					</tr>
+				) }
 			</tbody>
 		</table>
 	);

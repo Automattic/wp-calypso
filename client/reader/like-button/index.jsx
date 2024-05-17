@@ -110,7 +110,7 @@ class ReaderLikeButton extends Component {
 						onMouseLeave={ this.hideLikesPopover }
 						siteId={ siteId }
 						postId={ postId }
-						showDisplayNames={ true }
+						showDisplayNames
 						context={ this.likeButtonRef.current }
 					/>
 				) }

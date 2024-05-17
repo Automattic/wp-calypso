@@ -66,6 +66,8 @@ type ErrResponse = {
 const TransferPage = ( props: TransferPageProps ) => {
 	const dispatch = useDispatch();
 	const {
+		canTransferToAnyUser,
+		canTransferToOtherSite,
 		currentRoute,
 		domains,
 		isDomainInfoLoading,
@@ -118,7 +120,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const renderTransferOptions = () => {
 		const options = [];
 
-		if ( ! isDomainOnly ) {
+		if ( ! isDomainOnly && canTransferToAnyUser ) {
 			const mainText = isMapping
 				? __( 'Transfer this domain connection to any administrator on this site' )
 				: __( 'Transfer this domain to any administrator on this site' );
@@ -139,7 +141,8 @@ const TransferPage = ( props: TransferPageProps ) => {
 				/>
 			);
 		} else if (
-			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) )
+			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) ) &&
+			canTransferToOtherSite
 		) {
 			options.push(
 				<ActionCard
@@ -175,21 +178,23 @@ const TransferPage = ( props: TransferPageProps ) => {
 			? __( 'Transfer this domain connection to any site you are an administrator on' )
 			: __( 'Transfer this domain to any site you are an administrator on' );
 
-		options.push(
-			<ActionCard
-				key="transfer-to-another-site"
-				buttonHref={ domainManagementTransferToOtherSite(
-					selectedSite?.slug,
-					selectedDomainName,
-					currentRoute
-				) }
-				// translators: Continue is a verb
-				buttonText={ __( 'Continue' ) }
-				// translators: Transfer a domain to another WordPress.com site
-				headerText={ __( 'To another WordPress.com site' ) }
-				mainText={ mainText }
-			/>
-		);
+		if ( canTransferToOtherSite ) {
+			options.push(
+				<ActionCard
+					key="transfer-to-another-site"
+					buttonHref={ domainManagementTransferToOtherSite(
+						selectedSite?.slug,
+						selectedDomainName,
+						currentRoute
+					) }
+					// translators: Continue is a verb
+					buttonText={ __( 'Continue' ) }
+					// translators: Transfer a domain to another WordPress.com site
+					headerText={ __( 'To another WordPress.com site' ) }
+					mainText={ mainText }
+				/>
+			);
+		}
 
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};
@@ -443,6 +448,8 @@ const transferPageComponent = connect( ( state: AppState, ownProps: TransferPage
 	const siteId = getSelectedSiteId( state );
 	const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
 	return {
+		canTransferToAnyUser: domain?.canTransferToAnyUser ?? false,
+		canTransferToOtherSite: domain?.canTransferToOtherSite ?? false,
 		currentRoute: getCurrentRoute( state ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ) ?? false,
 		isDomainInfoLoading: ! domainInfo.hasLoadedFromServer,

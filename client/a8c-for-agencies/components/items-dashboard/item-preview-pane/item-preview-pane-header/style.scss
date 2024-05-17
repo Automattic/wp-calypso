@@ -3,8 +3,19 @@
 .item-preview__header {
 
 	.item-preview__header-content {
+		.item-preview__header-info {
+			display: flex;
+			flex-direction: row;
+			flex-grow: 1;
+			gap: 10px;
+		}
+
 		.item-preview__header-title-summary {
 			word-wrap: anywhere;
+
+			.item-preview__header-summary-link svg {
+				vertical-align: middle;
+			}
 		}
 
 		.item-preview__close-preview,
@@ -82,7 +93,7 @@
 		.item-preview__header-content {
 			flex-grow: 1;
 			display: flex;
-			justify-content: space-between;
+
 			.item-preview__header-title-summary {
 				flex-grow: 1;
 				display: flex;

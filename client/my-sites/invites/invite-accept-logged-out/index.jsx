@@ -196,7 +196,7 @@ class InviteAcceptLoggedOut extends Component {
 					</header>
 					<SignupForm
 						redirectToAfterLoginUrl={ window.location.href }
-						isPasswordless={ true }
+						isPasswordless
 						displayUsernameInput={ false }
 						disabled={ this.state.submitting }
 						formHeader={ this.renderFormHeader() }
@@ -215,7 +215,7 @@ class InviteAcceptLoggedOut extends Component {
 							}
 						) }
 						submitButtonLabel={ this.props.translate( 'Create an account' ) }
-						isInviteLoggedOutForm={ true }
+						isInviteLoggedOutForm
 						labelText={ this.props.translate( 'Your email address' ) }
 					/>
 					{ this.state.userData && this.loginUser() }

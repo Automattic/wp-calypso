@@ -1,3 +1,4 @@
+import { before } from 'node:test';
 import proxy, { reloadProxy } from '../';
 
 /**

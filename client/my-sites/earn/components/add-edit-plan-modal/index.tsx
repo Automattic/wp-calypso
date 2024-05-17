@@ -327,7 +327,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			onClose={ onClose }
 			buttons={ [
 				{
@@ -500,7 +500,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							setEditedCustomConfirmationMessage( event.target.value )
 						}
 						acceptableLength={ MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE }
-						showRemainingCharacters={ true }
+						showRemainingCharacters
 						placeholder={ translate( 'Thank you for subscribing!' ) }
 					/>
 					<FormSettingExplanation>

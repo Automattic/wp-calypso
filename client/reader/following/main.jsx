@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Global, css } from '@emotion/react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
@@ -13,109 +11,9 @@ import FollowingIntro from './intro';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
-	let navRedesignV2GlobalStyles;
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		navRedesignV2GlobalStyles = css`
-			html {
-				overflow-y: auto;
-			}
-			body.is-reader-page,
-			.is-reader-page .layout,
-			.layout.is-section-reader,
-			.layout.is-section-reader .layout__content,
-			.is-section-reader {
-				background: initial;
-			}
-			body.is-section-reader {
-				background: var( --studio-gray-0 );
-
-				&.rtl .layout__content {
-					padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;
-				}
-
-				.layout__content {
-					// Add border around everything
-					overflow: hidden;
-					min-height: 100vh;
-					@media only screen and ( min-width: 782px ) {
-						padding: 16px 16px 16px calc( var( --sidebar-width-max ) ) !important;
-					}
-					.layout_primary > div {
-						padding-bottom: 0;
-					}
-				}
-
-				.layout__secondary .global-sidebar {
-					border: none;
-				}
-
-				.has-no-masterbar .layout__content .main {
-					padding-top: 16px;
-				}
-
-				div.layout.is-global-sidebar-visible {
-					.main {
-						@media only screen and ( min-width: 600px ) and ( max-width: 960px ) {
-							padding: 24px;
-						}
-						@media only screen and ( max-width: 660px ) {
-							padding-top: 0;
-						}
-						border-block-end: 1px solid var( --studio-gray-0 );
-					}
-					.layout__primary > div {
-						background: var( --color-surface );
-						border-radius: 8px;
-						box-shadow: none;
-						@media only screen and ( min-width: 600px ) {
-							height: calc( 100vh - var( --masterbar-height ) - 50px );
-						}
-						@media only screen and ( min-width: 782px ) {
-							height: calc( 100vh - 32px );
-						}
-						overflow: hidden;
-					}
-					.layout__primary > div > div {
-						height: 100%;
-						overflow-y: auto;
-						overflow-x: hidden;
-					}
-				}
-
-				@media only screen and ( max-width: 600px ) {
-					.navigation-header__main {
-						justify-content: normal;
-						align-items: center;
-						.formatted-header {
-							flex: none;
-						}
-					}
-				}
-
-				@media only screen and ( max-width: 781px ) {
-					div.layout.is-global-sidebar-visible {
-						.layout__primary {
-							overflow-x: auto;
-						}
-					}
-					.layout__primary > div {
-						background: var( --color-surface );
-						margin: 0;
-						border-radius: 8px;
-						height: calc( 100vh - 32px );
-					}
-					header.navigation-header {
-						padding-inline: 16px;
-						padding-bottom: 0;
-					}
-				}
-			}
-		`;
-	}
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<>
-			<Global styles={ navRedesignV2GlobalStyles } />
 			<Stream
 				{ ...props }
 				className="following"

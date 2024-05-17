@@ -41,7 +41,7 @@ export const MigrationProgress = ( props: Props ) => {
 			<Interval onTick={ fetchStatus } period={ EVERY_FIVE_SECONDS } />
 			<div className="import__heading import__heading-center">
 				<Title>{ getTitle() }</Title>
-				<ProgressBar compact={ true } value={ details.percent ?? 0 } />
+				<ProgressBar compact value={ details.percent ?? 0 } />
 				<SubTitle tagName="h3">
 					{ translate(
 						'Feel free to close this window. We’ll email you when your new site is ready.'

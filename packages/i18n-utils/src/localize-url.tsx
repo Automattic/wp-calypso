@@ -172,6 +172,11 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
 	'wordpress.com/learn/': ( url: URL, localeSlug: Locale ) => {
+		const webinars = url.pathname.includes( '/learn/webinars/' );
+		if ( webinars && 'es' === localeSlug ) {
+			url.pathname = url.pathname.replace( '/learn/webinars/', '/learn/es/webinars/' );
+			return url;
+		}
 		return suffixLocalizedUrlPath( localesWithLearn )( url, localeSlug );
 	},
 	'wordpress.com/plans/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {

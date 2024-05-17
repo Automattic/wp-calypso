@@ -104,6 +104,11 @@ class ReaderStream extends Component {
 
 	isMounted = false;
 
+	/**
+	 * A mutation observer to watch whether the target exists
+	 */
+	observer = null;
+
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
 	};
@@ -195,6 +200,25 @@ class ReaderStream extends Component {
 		}
 
 		document.addEventListener( 'keydown', this.handleKeydown, true );
+
+		/**
+		 * Observe the class list of the body element because the scroll container depends on it.
+		 */
+		this.observer = new window.MutationObserver( () => {
+			if ( ! this.listRef.current ) {
+				return;
+			}
+
+			const scrollContainer = this.getScrollContainer(
+				ReactDom.findDOMNode( this.listRef.current )
+			);
+			if ( scrollContainer !== this.state.listContext ) {
+				this.setState( {
+					listContext: scrollContainer,
+				} );
+			}
+		} );
+		this.observer.observe( document.body, { attributeFilter: [ 'class' ] } );
 	}
 
 	componentWillUnmount() {
@@ -204,6 +228,10 @@ class ReaderStream extends Component {
 		}
 
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
+
+		if ( this.observer ) {
+			this.observer.disconnect();
+		}
 	}
 
 	handleKeydown = ( event ) => {
@@ -439,7 +467,7 @@ class ReaderStream extends Component {
 					iconSize={ 40 }
 					campaign="calypso-reader-stream"
 					title={ this.props.translate( 'Read on the go with the Jetpack Mobile App' ) }
-					hasQRCode={ true }
+					hasQRCode
 					hasGetAppButton={ false }
 				/>
 			)
@@ -490,6 +518,33 @@ class ReaderStream extends Component {
 		);
 	};
 
+	setListContext = ( component ) => {
+		if ( ! component ) {
+			return;
+		}
+
+		this.listRef.current = component;
+		this.setState( {
+			listContext: this.getScrollContainer( ReactDom.findDOMNode( component ) ),
+		} );
+	};
+
+	getScrollContainer = ( node ) => {
+		// Leave it to the default scroll container if we cannot find it or its the root element.
+		if ( ! node || node.ownerDocument === node.parentNode ) {
+			return false;
+		}
+
+		// Return when overflow is defined to either auto or scroll.
+		const { overflowY } = getComputedStyle( node );
+		if ( /(auto|scroll)/.test( overflowY ) ) {
+			return node;
+		}
+
+		// Continue traversing.
+		return this.getScrollContainer( node.parentNode );
+	};
+
 	render() {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
@@ -522,7 +577,7 @@ class ReaderStream extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			const bodyContent = (
 				<InfiniteList
-					ref={ this.listRef }
+					ref={ this.setListContext }
 					items={ items }
 					lastPage={ lastPage }
 					fetchingNextPage={ isRequesting }
@@ -532,6 +587,7 @@ class ReaderStream extends Component {
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 					className="stream__list"
+					context={ this.state.listContext ?? false }
 				/>
 			);
 

@@ -1,4 +1,5 @@
 import { FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -143,7 +144,7 @@ class SharingButtonsAppearance extends Component {
 						text={ translate(
 							'Give your readers the ability to show appreciation for your posts.'
 						) }
-						link="https://wordpress.com/support/likes/"
+						link={ localizeUrl( 'https://wordpress.com/support/likes/' ) }
 						privacyLink={ false }
 						position="bottom left"
 					/>

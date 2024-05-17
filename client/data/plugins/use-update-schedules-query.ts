@@ -29,19 +29,20 @@ export type ScheduleUpdates = {
 };
 
 export type MultisiteSiteDetails = SiteDetails & {
+	active: boolean;
 	last_run_status: LastRunStatus;
 	last_run_timestamp: number | null;
 };
 
 export type MultisiteSchedulesUpdates = Omit<
 	ScheduleUpdates,
-	'last_run_status' | 'last_run_timestamp'
+	'active' | 'last_run_status' | 'last_run_timestamp'
 > & {
 	schedule_id: string;
 	sites: MultisiteSiteDetails[];
 };
 
-type MultisiteSchedulesUpdatesResponse = {
+export type MultisiteSchedulesUpdatesResponse = {
 	sites: { [ site_id: string ]: { [ scheduleId: string ]: ScheduleUpdates } };
 };
 
@@ -141,6 +142,7 @@ export const useMultisiteUpdateScheduleQuery = (
 					if ( existingSchedule ) {
 						existingSchedule.sites.push( {
 							...site,
+							active,
 							last_run_status,
 							last_run_timestamp,
 						} );
@@ -152,10 +154,10 @@ export const useMultisiteUpdateScheduleQuery = (
 							schedule,
 							args,
 							interval,
-							active,
 							sites: [
 								{
 									...site,
+									active,
 									last_run_status,
 									last_run_timestamp,
 								},

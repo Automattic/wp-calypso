@@ -130,7 +130,7 @@ function CheckoutTermsReadMore( { children }: { children: ReactNode } ) {
 	return (
 		<TermsCollapsedContent>
 			<FoldableCard
-				clickableHeader={ true }
+				clickableHeader
 				compact
 				className="checkout__terms-foldable-card"
 				header={ translate( 'Read more' ) }

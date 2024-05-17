@@ -3,7 +3,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { isMobile } from '@automattic/viewport';
 import { Icon, plus, search } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -119,13 +118,13 @@ class AddDomainButton extends Component {
 
 		let label = translate( 'Other domain options' );
 		if ( specificSiteActions ) {
-			label = translate( 'Add a domain' );
+			label = translate( 'Add new domain' );
 		}
 
 		return (
 			<>
 				<Icon icon={ plus } className="options-domain-button__add gridicon" viewBox="2 2 20 20" />
-				{ ! isMobile() && <span className="options-domain-button__desktop">{ label }</span> }
+				<span className="options-domain-button__desktop">{ label }</span>
 			</>
 		);
 	}
@@ -133,6 +132,9 @@ class AddDomainButton extends Component {
 	render() {
 		const { specificSiteActions, ellipsisButton, borderless } = this.props;
 		const classes = classNames( 'options-domain-button', ellipsisButton && 'ellipsis' );
+		const spanClasses = classNames( {
+			'is-menu-visible': this.state.isAddMenuVisible,
+		} );
 
 		if ( ellipsisButton ) {
 			return (
@@ -143,7 +145,7 @@ class AddDomainButton extends Component {
 		}
 
 		return (
-			<Fragment>
+			<span className={ spanClasses }>
 				<Button
 					primary={ specificSiteActions }
 					className={ classes }
@@ -162,7 +164,7 @@ class AddDomainButton extends Component {
 				>
 					{ this.renderOptions() }
 				</PopoverMenu>
-			</Fragment>
+			</span>
 		);
 	}
 }

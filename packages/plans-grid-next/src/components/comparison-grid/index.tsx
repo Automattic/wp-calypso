@@ -54,6 +54,7 @@ import type {
 	PlanSlug,
 	WPComStorageAddOnSlug,
 	FeatureGroupMap,
+	StorageOption,
 } from '@automattic/calypso-products';
 
 const featureGroupRowTitleCellMaxWidth = 450;
@@ -344,7 +345,6 @@ type ComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
 	visibleGridPlans: GridPlan[];
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	isFooter?: boolean;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
@@ -361,6 +361,7 @@ type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeS
 	allVisible: boolean;
 	isLastInRow: boolean;
 	planSlug: PlanSlug;
+	storageOptions: StorageOption[];
 };
 
 type PlanFeatureFootnotes = {
@@ -378,11 +379,11 @@ const ComparisonGridHeaderCell = ( {
 	onPlanChange,
 	displayedGridPlans,
 	currentSitePlanSlug,
-	isLaunchPage,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
+	storageOptions,
 }: ComparisonGridHeaderCellProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
@@ -470,12 +471,12 @@ const ComparisonGridHeaderCell = ( {
 				currentSitePlanSlug={ currentSitePlanSlug }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				isInSignup={ isInSignup }
-				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
 				isStuck={ false }
 				visibleGridPlans={ visibleGridPlans }
+				storageOptions={ storageOptions }
 			/>
 		</Cell>
 	);
@@ -494,7 +495,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			displayedGridPlans,
 			visibleGridPlans,
 			isInSignup,
-			isLaunchPage,
 			isFooter,
 			onPlanChange,
 			currentSitePlanSlug,
@@ -517,20 +517,20 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 				<RowTitleCell
 					key="feature-name"
 					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
-					isPlaceholderHeaderCell={ true }
+					isPlaceholderHeaderCell
 				>
 					{ isStuck && planTypeSelectorProps && (
 						<PlanTypeSelectorWrapper>
 							<PlanTypeSelector
 								{ ...planTypeSelectorProps }
 								title={ translate( 'Billing Cycle' ) }
-								hideDiscount={ true }
+								hideDiscount
 								coupon={ coupon }
 							/>
 						</PlanTypeSelectorWrapper>
 					) }
 				</RowTitleCell>
-				{ visibleGridPlans.map( ( { planSlug }, index ) => (
+				{ visibleGridPlans.map( ( { planSlug, features: { storageOptions } }, index ) => (
 					<ComparisonGridHeaderCell
 						planSlug={ planSlug }
 						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
@@ -543,11 +543,11 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						onPlanChange={ onPlanChange }
 						displayedGridPlans={ displayedGridPlans }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						isLaunchPage={ isLaunchPage }
 						planActionOverrides={ planActionOverrides }
 						selectedPlan={ selectedPlan }
 						showRefundPeriod={ showRefundPeriod }
 						isStuck={ isStuck }
+						storageOptions={ storageOptions }
 					/>
 				) ) }
 			</PlanRow>
@@ -770,7 +770,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 			<RowTitleCell
 				key="feature-name"
 				className="is-feature-group-row-title-cell"
-				isFeatureGroupRowTitleCell={ true }
+				isFeatureGroupRowTitleCell
 			>
 				{ isStorageFeature ? (
 					<Plans2023Tooltip
@@ -963,7 +963,7 @@ const FeatureGroup = ( {
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
 					planFeatureFootnotes={ planFeatureFootnotes }
-					isStorageFeature={ true }
+					isStorageFeature
 					isHighlighted={ false }
 					intervalType={ intervalType }
 					activeTooltipId={ activeTooltipId }
@@ -979,7 +979,6 @@ const FeatureGroup = ( {
 const ComparisonGrid = ( {
 	intervalType,
 	isInSignup,
-	isLaunchPage,
 	currentSitePlanSlug,
 	planActionOverrides,
 	selectedPlan,
@@ -1128,7 +1127,6 @@ const ComparisonGrid = ( {
 							displayedGridPlans={ displayedGridPlans }
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							planActionOverrides={ planActionOverrides }
@@ -1159,15 +1157,14 @@ const ComparisonGrid = ( {
 					displayedGridPlans={ displayedGridPlans }
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
-					isFooter={ true }
+					isFooter
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }
 					isStuck={ false }
-					isHiddenInMobile={ true }
+					isHiddenInMobile
 					ref={ bottomHeaderRef }
 					planTypeSelectorProps={ planTypeSelectorProps }
 					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }

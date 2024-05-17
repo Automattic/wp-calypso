@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { GlobalSidebarHeader } from 'calypso/layout/global-sidebar/header';
 import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
@@ -31,8 +31,7 @@ const GlobalSidebar = ( {
 	const isDesktop = useBreakpoint( '>=782px' );
 	const previousRoute = useSelector( getPreviousRoute );
 	const section = useSelector( getSection );
-	const previousLink = useRef( previousRoute );
-
+	const [ previousLink, setPreviousLink ] = useState( '' );
 	const handleWheel = useCallback( ( event ) => {
 		const bodyEl = bodyRef.current;
 		if ( bodyEl && bodyEl.contains( event.target ) && bodyEl.scrollHeight > bodyEl.clientHeight ) {
@@ -55,7 +54,7 @@ const GlobalSidebar = ( {
 	useEffect( () => {
 		// Update the previous link only when the group is changed.
 		if ( previousRoute && ! previousRoute.startsWith( `/${ section.group }` ) ) {
-			previousLink.current = previousRoute;
+			setPreviousLink( previousRoute );
 		}
 	}, [ previousRoute, section.group ] );
 
@@ -69,9 +68,8 @@ const GlobalSidebar = ( {
 		return <Spinner className="sidebar__menu-loading" />;
 	}
 
-	const { requireBackLink, backLinkText, backLinkHref, ...sidebarProps } = props;
-	const sidebarBackLinkText = backLinkText ?? translate( 'Back' );
-	const sidebarBackLinkHref = backLinkHref || previousLink.current || '/sites';
+	const { requireBackLink, siteTitle, backLinkHref, ...sidebarProps } = props;
+	const sidebarBackLinkHref = backLinkHref || previousLink || '/sites';
 
 	return (
 		<div className="global-sidebar" ref={ wrapperRef }>
@@ -82,8 +80,8 @@ const GlobalSidebar = ( {
 						<div className="sidebar__back-link">
 							<a href={ sidebarBackLinkHref } onClick={ handleBackLinkClick }>
 								<Gridicon icon="chevron-left" size={ 24 } />
-								<span className="sidebar__back-link-text">{ sidebarBackLinkText }</span>
 							</a>
+							<span className="sidebar__site-title">{ siteTitle || translate( 'Back' ) }</span>
 						</div>
 					) }
 					{ children }

@@ -11,7 +11,11 @@ const ActionButton = ( { isActive, hotkey, icon, onToggle, text, title } ) => (
 				'inactive-action': ! isActive,
 			} ) }
 			title={ title }
-			onClick={ onToggle }
+			onClick={ ( event ) => {
+				// Prevent the notification panel from being closed.
+				event.stopPropagation();
+				onToggle();
+			} }
 		>
 			<Gridicon icon={ icon } size={ 24 } />
 			<p>{ text }</p>

@@ -110,7 +110,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			}
 
 			if ( isNewSiteMigrationFlow( flow ) ) {
-				submit?.( { ...props.data }, ProcessingResult.SUCCESS );
+				submit?.( { ...destinationState, ...props.data }, ProcessingResult.SUCCESS );
 				return;
 			}
 
@@ -148,8 +148,8 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		<>
 			<DocumentHead title={ __( 'Processing' ) } />
 			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
+				shouldHideNavButtons
+				hideFormattedHeader
 				stepName="processing-step"
 				stepContent={
 					<>

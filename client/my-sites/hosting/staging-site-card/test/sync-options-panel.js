@@ -65,9 +65,7 @@ describe( 'SyncOptionsPanel component', () => {
 				isDangerous: true,
 			},
 		];
-		render(
-			<SyncOptionsPanel items={ items } isSqlsOptionDisabled={ true } onChange={ jest.fn } />
-		);
+		render( <SyncOptionsPanel items={ items } isSqlsOptionDisabled onChange={ jest.fn } /> );
 		expect( screen.getByLabelText( 'Site database' ) ).toBeInTheDocument();
 		expect(
 			screen.getByText(

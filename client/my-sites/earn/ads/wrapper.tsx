@@ -102,7 +102,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 					>
 						<NoticeAction
 							href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/"
-							external={ true }
+							external
 						>
 							{ translate( 'Learn more' ) }
 						</NoticeAction>
@@ -284,7 +284,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		return (
 			<>
 				<UpsellNudge
-					forceDisplay={ true }
+					forceDisplay
 					callToAction={ translate( 'Upgrade' ) }
 					plan={ PLAN_PREMIUM }
 					title={ translate( 'Upgrade to the %(premiumPlanName)s plan to continue earning', {

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	FEATURE_SFTP_DATABASE,
@@ -5,6 +6,7 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { Fragment, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
@@ -88,8 +90,8 @@ const MainCards = ( {
 	hasStagingSitesFeature,
 	isAdvancedHostingDisabled,
 	isBasicHostingDisabled,
-	isWpcomStagingSite,
 	isBusinessTrial,
+	isWpcomStagingSite,
 	siteId,
 	siteSlug,
 } ) => {
@@ -175,8 +177,86 @@ const SidebarCards = ( { isBasicHostingDisabled } ) => {
 	];
 
 	const availableTypes = isBasicHostingDisabled ? [] : [ 'basic' ];
-
 	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
+};
+
+const AllCards = ( {
+	hasStagingSitesFeature,
+	isAdvancedHostingDisabled,
+	isBasicHostingDisabled,
+	isWpcomStagingSite,
+	siteId,
+	siteSlug,
+} ) => {
+	const allCards = [
+		{
+			feature: 'github-deployments',
+			content: <GitHubDeploymentsCard />,
+			type: 'advanced',
+		},
+		{
+			feature: 'sftp',
+			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		{
+			feature: 'phpmyadmin',
+			content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		! isWpcomStagingSite && hasStagingSitesFeature
+			? {
+					feature: 'staging-site',
+					content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
+					type: 'advanced',
+			  }
+			: null,
+		isWpcomStagingSite && siteId
+			? {
+					feature: 'staging-production-site',
+					content: (
+						<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
+					),
+					type: 'advanced',
+			  }
+			: null,
+		{
+			feature: 'web-server-settings',
+			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		},
+		{
+			feature: 'restore-plan-software',
+			content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'cache',
+			content: <CacheCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		siteId && {
+			feature: 'wp-admin',
+			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
+			type: 'basic',
+		},
+		{
+			feature: 'site-backup',
+			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		{
+			feature: 'support',
+			content: <SupportCard />,
+		},
+	].filter( ( card ) => card !== null );
+
+	const availableTypes = [
+		! isAdvancedHostingDisabled ? 'advanced' : null,
+		! isBasicHostingDisabled ? 'basic' : null,
+	].filter( ( type ) => type !== null );
+
+	return <ShowEnabledFeatureCards cards={ allCards } availableTypes={ availableTypes } />;
 };
 
 const Hosting = ( props ) => {
@@ -280,20 +360,34 @@ const Hosting = ( props ) => {
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<WrapperComponent>
 					<Layout className="hosting__layout">
-						<Column type="main" className="hosting__main-layout-col">
-							<MainCards
+						{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) ? (
+							<AllCards
 								hasStagingSitesFeature={ hasStagingSitesFeature }
 								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
-								isWpcomStagingSite={ isWpcomStagingSite }
 								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
+								isWpcomStagingSite={ isWpcomStagingSite }
 								siteId={ siteId }
 								siteSlug={ siteSlug }
 							/>
-						</Column>
-						<Column type="sidebar">
-							<SidebarCards isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic } />
-						</Column>
+						) : (
+							<>
+								<Column className="hosting__main-layout-col">
+									<MainCards
+										hasStagingSitesFeature={ hasStagingSitesFeature }
+										isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
+										isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
+										isBusinessTrial={ isBusinessTrial && ! hasTransfer }
+										isWpcomStagingSite={ isWpcomStagingSite }
+										siteId={ siteId }
+										siteSlug={ siteSlug }
+									/>
+								</Column>
+								<Column>
+									<SidebarCards isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic } />
+								</Column>
+							</>
+						) }
 					</Layout>
 				</WrapperComponent>
 			</>
@@ -310,13 +404,18 @@ const Hosting = ( props ) => {
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 	return (
-		<Main wideLayout className="hosting">
+		<Main
+			wideLayout
+			className={ classnames( 'hosting', {
+				'hosting--is-two-columns': isEnabled( 'layout/dotcom-nav-redesign-v2' ),
+			} ) }
+		>
 			{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
 			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
 			<DocumentHead title={ translate( 'Hosting' ) } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Hosting' ) }
+				title={ translate( 'Hosting Config' ) }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
 			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (

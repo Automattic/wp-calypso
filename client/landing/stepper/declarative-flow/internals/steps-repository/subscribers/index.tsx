@@ -43,12 +43,12 @@ const Subscribers: Step = function ( { navigation } ) {
 
 	return (
 		<StepContainer
-			shouldHideNavButtons={ true }
-			hideFormattedHeader={ true }
+			shouldHideNavButtons
+			hideFormattedHeader
 			stepName="subscribers"
 			flowName="newsletter"
 			isHorizontalLayout={ false }
-			showJetpackPowered={ true }
+			showJetpackPowered
 			stepContent={
 				<div className="subscribers">
 					{ site?.ID && (
@@ -66,8 +66,8 @@ const Subscribers: Step = function ( { navigation } ) {
 							recordTracksEvent={ recordTracksEvent }
 							titleText={ translate( 'Ready to add your first subscribers?' ) }
 							subtitleText={ subtitleText }
-							showSubtitle={ true }
-							showSkipLink={ true }
+							showSubtitle
+							showSkipLink
 							submitBtnAlwaysEnable={ false }
 						/>
 					) }

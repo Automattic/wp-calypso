@@ -16,6 +16,7 @@ const EducationStore = () => {
 			links={ [
 				{
 					externalLink: true,
+					// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 					url: `https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/`,
 					text: translate( 'Learn how' ),
 				},

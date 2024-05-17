@@ -65,7 +65,7 @@ export default function StartingPointStep( props: Props ) {
 			skipLabelText={ translate( 'Skip to My Home' ) }
 			// We need to redirect user to My Home and apply the default theme if the user skips this step
 			goToNextStep={ () => submitStartingPoint( 'skip-to-my-home' ) }
-			isHorizontalLayout={ true }
+			isHorizontalLayout
 		/>
 	);
 }

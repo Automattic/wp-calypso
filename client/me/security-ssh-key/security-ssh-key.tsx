@@ -222,12 +222,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 				</div>
 
 				{ currentUser?.username && (
-					<Dialog
-						isVisible={ showDialog }
-						onClose={ closeDialog }
-						showCloseIcon={ true }
-						shouldCloseOnEsc={ true }
-					>
+					<Dialog isVisible={ showDialog } onClose={ closeDialog } showCloseIcon shouldCloseOnEsc>
 						<UpdateSSHDialogContainer>
 							<UpdateSSHModalTitle>{ __( 'Update SSH Key' ) }</UpdateSSHModalTitle>
 							<UpdateSSHModalDescription>

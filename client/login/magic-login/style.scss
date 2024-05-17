@@ -288,6 +288,18 @@
 	}
 }
 
+.studio-magic-login__tos {
+	font-size: $font-body-extra-small;
+	margin: 20px 0 20px;
+	text-align: left;
+
+	a {
+		@include break-mobile {
+			white-space: pre;
+		}
+	}
+}
+
 .magic-login__successfully-jetpack {
 	p {
 		text-align: center;

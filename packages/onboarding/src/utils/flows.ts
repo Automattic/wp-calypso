@@ -25,6 +25,7 @@ export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 export const MIGRATION_FLOW = 'import-focused';
 export const SITE_MIGRATION_FLOW = 'site-migration';
 export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
+export const HOSTED_SITE_MIGRATION_FLOW = 'hosted-site-migration';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
@@ -131,6 +132,10 @@ export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
 
 export const isMigrationSignupFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ MIGRATION_SIGNUP_FLOW ].includes( flowName ) );
+};
+
+export const isHostedSiteMigrationFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ HOSTED_SITE_MIGRATION_FLOW ].includes( flowName ) );
 };
 
 export const isBuildFlow = ( flowName: string | null ) => {
