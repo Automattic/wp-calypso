@@ -1,7 +1,7 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .signup.is-guided {
-
 	.question-step {
-
 		.action-buttons.step-container__navigation {
 			button.button.navigation-link.is-borderless {
 				color: #000;
@@ -18,6 +18,20 @@
 
 		.question-step__content {
 			align-items: center;
+			padding: 0 32px;
+			margin-bottom: 40px;
+
+			.question-options__container {
+				justify-content: center;
+
+				.question-options__option-control {
+					padding: 24px;
+
+					@media (min-width: $break-medium) {
+						flex-basis: 324px;
+					}
+				}
+			}
 
 			.question-flow-cards {
 				display: flex;
