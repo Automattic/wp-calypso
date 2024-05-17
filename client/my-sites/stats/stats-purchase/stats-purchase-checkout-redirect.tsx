@@ -23,9 +23,10 @@ const getStatsCheckoutURL = (
 	adminUrl?: string
 ) => {
 	const isFromMyJetpack = from === 'jetpack-my-jetpack';
-	// Get the checkout URL for the product, or the siteless checkout URL if no siteSlug is provided
+	// Get the checkout URL for the product, or the siteless checkout URL if from My Jetpack or no siteSlug is provided
+	const checkoutType = isFromMyJetpack || ! siteSlug ? 'jetpack' : siteSlug;
 	const checkoutProductUrl = new URL(
-		`/checkout/${ siteSlug || 'jetpack' }/${ product }`,
+		`/checkout/${ checkoutType }/${ product }`,
 		'https://wordpress.com'
 	);
 
@@ -33,7 +34,7 @@ const getStatsCheckoutURL = (
 	setUrlParam( checkoutProductUrl, 'redirect_to', redirectUrl );
 	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
 
-	if ( isFromMyJetpack ) {
+	if ( isFromMyJetpack && siteSlug ) {
 		setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
 		setUrlParam( checkoutProductUrl, 'admin_url', adminUrl );
 		setUrlParam( checkoutProductUrl, 'from_site_slug', siteSlug );
