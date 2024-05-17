@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
@@ -6,11 +7,13 @@ import { FunctionComponent } from 'react';
 import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
 import { EVERY_SECOND, Interval } from 'calypso/lib/interval';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { backupMainPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindBackupSite } from 'calypso/state/activity-log/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getBackupStoppedFlag from 'calypso/state/rewind/selectors/get-backup-stopped-flag';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
 interface Props {
 	children?: React.ReactNode;
@@ -34,6 +37,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	const [ buttonContent, setButtonContent ] = useState( children );
 	const [ currentTooltip, setCurrentTooltip ] = useState( tooltipText );
 	const [ enqueued, setEnqueued ] = useState( false );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const requestBackupSite = useCallback(
 		() => dispatch( rewindBackupSite( siteId ) ),
 		[ dispatch, siteId ]
@@ -72,6 +76,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 			setButtonContent( statusLabels.IN_PROGRESS );
 			setEnqueued( false );
 		} else if ( enqueued ) {
+			page( backupMainPath( siteSlug ) );
 			setButtonContent( statusLabels.QUEUED );
 			setCurrentTooltip( statusTooltipTexts.QUEUED );
 		} else {
@@ -79,9 +84,15 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 			setCurrentTooltip( tooltipText );
 			setDisabled( false );
 		}
-	}, [ areBackupsStopped, backupCurrentlyInProgress, tooltipText, translate, enqueued, children ] );
-
-	// TODO: If we want to re-enable the backup button we can set enqueue to false once we detect a backup in progress
+	}, [
+		areBackupsStopped,
+		backupCurrentlyInProgress,
+		tooltipText,
+		translate,
+		enqueued,
+		children,
+		siteSlug,
+	] );
 
 	const button = (
 		<div>
