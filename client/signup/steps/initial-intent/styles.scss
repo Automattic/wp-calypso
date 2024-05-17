@@ -23,6 +23,7 @@
 
 			.question-options__container {
 				justify-content: center;
+				gap: 16px;
 
 				.question-options__option-control {
 					padding: 24px;
@@ -36,6 +37,19 @@
 			.question-flow-cards {
 				display: flex;
 				flex-direction: column;
+
+				.flow-question {
+					max-width: 430px;
+					.flow-question__heading {
+						margin-bottom: 4px;
+						line-height: 24px;
+					}
+					.flow-question__description {
+						line-height: 20px;
+						letter-spacing: -0.15px;
+						margin-bottom: 0;
+					}
+				}
 			}
 
 			.question-step__continue-button {
