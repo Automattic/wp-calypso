@@ -35,7 +35,7 @@ export const ScheduleListCards = ( props: Props ) => {
 				<div className="empty-state empty-state__center">
 					<p>
 						{ translate(
-							"Oops! We couldn't find any scheduled updates based on your search criteria. You might want to check your input and try again"
+							'Oops! We couldn&#8217;t find any schedules based on your search criteria. You might want to check your search terms and try again.'
 						) }
 					</p>
 				</div>
