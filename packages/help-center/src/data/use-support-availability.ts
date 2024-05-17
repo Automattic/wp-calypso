@@ -1,18 +1,18 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { OtherSupportAvailability, EmailSupportStatus } from '../types';
+import { UserSupportAvailability, EmailSupportStatus } from '../types';
 
-type ResponseType< T extends 'OTHER' | 'EMAIL' > = T extends 'EMAIL'
+type ResponseType< T extends 'USER' | 'EMAIL' > = T extends 'EMAIL'
 	? EmailSupportStatus
-	: OtherSupportAvailability;
+	: UserSupportAvailability;
 
 interface APIFetchOptions {
 	global: boolean;
 	path: string;
 }
 
-export function useSupportAvailability< SUPPORT_TYPE extends 'OTHER' | 'EMAIL' >(
+export function useSupportAvailability< SUPPORT_TYPE extends 'USER' | 'EMAIL' >(
 	supportType: SUPPORT_TYPE,
 	enabled = true
 ) {
@@ -22,14 +22,14 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'OTHER' | 'EMAIL' >
 			canAccessWpcomApis()
 				? await wpcomRequest( {
 						path: `help/eligibility/${
-							supportType === 'OTHER' ? 'all' : supportType.toLocaleLowerCase()
+							supportType === 'USER' ? 'user' : supportType.toLocaleLowerCase()
 						}/mine`,
 						apiNamespace: 'wpcom/v2/',
 						apiVersion: '2',
 				  } )
 				: await apiFetch( {
 						path: `help-center/support-availability/${
-							supportType === 'OTHER' ? 'all' : supportType.toLocaleLowerCase()
+							supportType === 'USER' ? 'user' : supportType.toLocaleLowerCase()
 						}`,
 						global: true,
 				  } as APIFetchOptions ),

@@ -14,7 +14,7 @@ export function isWapuuFlagSetInURL(): boolean {
 }
 
 export function useStillNeedHelpURL() {
-	const { data: supportAvailability, isLoading } = useSupportAvailability( 'OTHER' );
+	const { data: supportAvailability, isLoading } = useSupportAvailability( 'USER' );
 
 	// Free users are not eligible for chat support
 	const isFreeUser = ! supportAvailability?.is_user_eligible_for_chat;

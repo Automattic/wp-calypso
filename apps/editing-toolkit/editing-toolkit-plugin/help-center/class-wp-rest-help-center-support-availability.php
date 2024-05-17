@@ -27,10 +27,10 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 	public function register_rest_route() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/all',
+			$this->rest_base . '/user',
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_all_support_eligibility' ),
+				'callback'            => array( $this, 'get_user_live_chat_support_eligibility' ),
 				'permission_callback' => array( $this, 'permission_callback' ),
 			)
 		);
@@ -57,12 +57,12 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Should return the support eligibility
+	 * Should return if the user is eligible for live chat support
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_all_support_eligibility() {
-		$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/all/mine' );
+	public function get_user_live_chat_support_eligibility() {
+		$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/user/mine' );
 		if ( is_wp_error( $body ) ) {
 			return $body;
 		}

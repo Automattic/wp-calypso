@@ -105,7 +105,7 @@ export interface ChatAvailability {
 	wapuu_assistant_enabled: boolean;
 }
 
-export interface OtherSupportAvailability {
+export interface UserSupportAvailability {
 	is_user_eligible_for_chat: boolean;
 }
 
