@@ -37,16 +37,6 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/chat',
-			array(
-				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_chat_support_eligibility' ),
-				'permission_callback' => array( $this, 'permission_callback' ),
-			)
-		);
-
-		register_rest_route(
-			$this->namespace,
 			$this->rest_base . '/messaging',
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
@@ -64,21 +54,6 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 				),
 			)
 		);
-	}
-
-	/**
-	 * Should return the chat eligibility
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function get_chat_support_eligibility() {
-		$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/chat/mine' );
-		if ( is_wp_error( $body ) ) {
-			return $body;
-		}
-		$response = json_decode( wp_remote_retrieve_body( $body ) );
-
-		return rest_ensure_response( $response );
 	}
 
 	/**

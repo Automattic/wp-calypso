@@ -3,7 +3,7 @@ import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { OtherSupportAvailability, EmailSupportStatus } from '../types';
 
-type ResponseType< T extends 'CHAT' | 'OTHER' | 'EMAIL' > = T extends 'EMAIL'
+type ResponseType< T extends 'OTHER' | 'EMAIL' > = T extends 'EMAIL'
 	? EmailSupportStatus
 	: OtherSupportAvailability;
 
