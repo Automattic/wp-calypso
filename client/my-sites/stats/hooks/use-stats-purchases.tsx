@@ -1,5 +1,6 @@
 import {
 	JETPACK_COMPLETE_PLANS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
 	PRODUCT_JETPACK_STATS_BI_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 	PRODUCT_JETPACK_STATS_MONTHLY,
@@ -33,6 +34,9 @@ const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: st
 const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) => {
 	return filterPurchasesByProducts( ownedPurchases, [ searchedProduct ] ).length > 0;
 };
+const isProductsOwned = ( ownedPurchases: Purchase[], searchedProducts: string[] ) => {
+	return filterPurchasesByProducts( ownedPurchases, searchedProducts ).length > 0;
+};
 
 const getPurchasesBySiteId = createSelector(
 	( state, siteId ) => getSitePurchases( state, siteId ),
@@ -51,11 +55,12 @@ export default function useStatsPurchases( siteId: number | null ) {
 	}, [ sitePurchases ] );
 
 	const isCommercialOwned = useMemo( () => {
-		return (
-			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_MONTHLY ) ||
-			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_YEARLY ) ||
-			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_BI_YEARLY )
-		);
+		return isProductsOwned( sitePurchases, [
+			...JETPACK_VIDEOPRESS_PRODUCTS,
+			PRODUCT_JETPACK_STATS_MONTHLY,
+			PRODUCT_JETPACK_STATS_YEARLY,
+			PRODUCT_JETPACK_STATS_BI_YEARLY,
+		] );
 	}, [ sitePurchases ] );
 
 	const isPWYWOwned = useMemo( () => {
