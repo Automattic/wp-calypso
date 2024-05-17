@@ -23,7 +23,7 @@ import './style.scss';
 
 interface Props {
 	isFavorite: boolean;
-	siteId: number | string;
+	siteId: number;
 	siteUrl: string;
 }
 
@@ -106,13 +106,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 
 	const handleMutation = () => {
 		return {
-			onMutate: async ( {
-				siteId,
-				isFavorite,
-			}: {
-				siteId: number | string;
-				isFavorite: boolean;
-			} ) => {
+			onMutate: async ( { siteId, isFavorite }: { siteId: number; isFavorite: boolean } ) => {
 				// Cancel any current refetches, so they don't overwrite our optimistic update
 				await queryClient.cancelQueries( {
 					queryKey,
