@@ -34,6 +34,7 @@ const ItemStyled = styled( Item )`
 
 		.masterbar__item-content {
 			color: var( --color-masterbar-text );
+			text-decoration: underline;
 		}
 	}
 	.gridicon {
