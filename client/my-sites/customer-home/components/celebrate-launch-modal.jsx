@@ -3,10 +3,12 @@ import { Button, Modal } from '@wordpress/components';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { omitUrlParams } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { fetchSitePurchases } from 'calypso/state/purchases/actions';
+import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 
 import './celebrate-launch-modal.scss';
@@ -18,6 +20,8 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	const isBilledMonthly = site?.plan?.product_slug?.includes( 'monthly' );
 
 	const transformedDomains = allDomains.map( createSiteDomainObject );
+
+	const [ isInitiallyLoaded, setIsInitiallyLoaded ] = useState( false );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardButtonEl = useRef( null );
 	const hasCustomDomain = Boolean(
@@ -25,8 +29,27 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	);
 
 	useEffect( () => {
-		// remove the celebrateLaunch URL param without reloading the page as soon as the modal loads
-		// make sure the modal is shown only once
+		dispatch( fetchSitePurchases( site?.ID ) );
+	}, [ dispatch, site?.ID ] );
+
+	const isLoading = useSelector( isFetchingSitePurchases );
+	const purchases = useSelector( ( state ) => getSitePurchases( state, site?.ID ) );
+
+	useEffect( () => {
+		if ( ! isLoading && ( ! isPaidPlan || purchases.length > 0 ) && ! isInitiallyLoaded ) {
+			setIsInitiallyLoaded( true );
+		}
+	}, [ isLoading, purchases, isInitiallyLoaded ] );
+
+	const actualPlanPurchase =
+		purchases
+			.filter(
+				( purchase ) => purchase.productSlug === site?.plan?.product_slug && purchase.active
+			)
+			.sort( ( a, b ) => new Date( a.expiryDate ) - new Date( b.expiryDate ) )[ 0 ] || null;
+	const isA4ASite = actualPlanPurchase?.partnerType === 'a4a_agency';
+
+	useEffect( () => {
 		window.history.replaceState(
 			null,
 			'',
@@ -34,7 +57,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 		);
 
 		dispatch(
-			recordTracksEvent( `calypso_launchpad_celebration_modal_view`, {
+			recordTracksEvent( 'calypso_launchpad_celebration_modal_view', {
 				product_slug: site?.plan?.product_slug,
 			} )
 		);
@@ -66,7 +89,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 			);
 			buttonText = translate( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
-		} else if ( isPaidPlan && ! hasCustomDomain ) {
+		} else if ( isPaidPlan && ! hasCustomDomain && ! isA4ASite ) {
 			contentElement = (
 				<p>
 					{ translate(
@@ -77,7 +100,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 			);
 			buttonText = translate( 'Claim your free domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
-		} else if ( hasCustomDomain ) {
+		} else if ( hasCustomDomain || isA4ASite ) {
 			return null;
 		}
 
@@ -90,7 +113,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 					href={ buttonHref }
 					onClick={ () =>
 						dispatch(
-							recordTracksEvent( `calypso_launchpad_celebration_modal_upsell_clicked`, {
+							recordTracksEvent( 'calypso_launchpad_celebration_modal_upsell_clicked', {
 								product_slug: site?.plan?.product_slug,
 							} )
 						)
@@ -100,6 +123,10 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 				</Button>
 			</div>
 		);
+	}
+
+	if ( ! isInitiallyLoaded ) {
+		return null;
 	}
 
 	return (
