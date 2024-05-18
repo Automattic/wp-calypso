@@ -54,18 +54,6 @@
 		}
 	}
 
-	.sites-manage-all-domains-button {
-		border-color: var(--color-neutral-10);
-
-		@media (max-width: 959px) {
-			margin-inline-end: 8px !important;
-		}
-	}
-
-	.sites-manage-all-domains-button:hover {
-		border-color: var(--color-neutral-20);
-	}
-
 	height: calc(100vh - var(--masterbar-height));
 
 	@media ( min-width: 782px ) {
@@ -151,6 +139,10 @@
 			&:first-child {
 				padding-left: 64px;
 			}
+		}
+		&:nth-child(2) {
+			white-space: wrap;
+			overflow-wrap: anywhere;
 		}
 	}
 
@@ -489,6 +481,15 @@
 			padding-left: 24px;
 			padding-right: 24px;
 		}
+	}
+
+	.domains-table-header .list__header-column {
+		font-style: normal;
+		font-weight: 400;
+		font-size: rem(13px);
+		line-height: 20px;
+		color: #757575;
+		text-transform: capitalize;
 	}
 }
 

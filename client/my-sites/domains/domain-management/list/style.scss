@@ -185,4 +185,8 @@
 			}
 		}
 	}
+
+	.options-domain-button__add.gridicon:not(:last-child) {
+		margin: auto;
+	}
 }

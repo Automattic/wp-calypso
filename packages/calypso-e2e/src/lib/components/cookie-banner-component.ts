@@ -41,6 +41,8 @@ export class CookieBannerComponent {
 			return;
 		}
 
-		await locator.click();
+		if ( await locator.isVisible() ) {
+			await locator.click();
+		}
 	}
 }

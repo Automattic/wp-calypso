@@ -86,6 +86,13 @@ export const ScheduleList = ( props: Props ) => {
 			deleteUpdateSchedules.mutate( selectedScheduleId );
 			recordTracksEvent( 'calypso_scheduled_updates_multisite_delete_schedule', {
 				site_slugs: selectedSiteSlugsForMutate.join( ',' ),
+				sites_count: selectedSiteSlugsForMutate.length,
+			} );
+
+			selectedSiteSlugsForMutate.forEach( ( siteSlug ) => {
+				recordTracksEvent( 'calypso_scheduled_updates_delete_schedule', {
+					site_slug: siteSlug,
+				} );
 			} );
 		}
 		closeRemoveConfirm();
@@ -98,8 +105,8 @@ export const ScheduleList = ( props: Props ) => {
 			}
 			const filteredSites = schedule.sites.filter(
 				( site ) =>
-					site.title.toLowerCase().includes( lowercasedSearchTerm ) ||
-					site.URL.toLowerCase().includes( lowercasedSearchTerm )
+					site.title?.toLowerCase().includes( lowercasedSearchTerm ) ||
+					site.URL?.toLowerCase().includes( lowercasedSearchTerm )
 			);
 
 			return {

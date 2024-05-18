@@ -4,6 +4,8 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
+import useRefundPeriodInSignupHeaderBanner from './hooks/use-refund-period-in-signup-header-banner';
+import { SignupHeaderOverlayBannerWithRefundPeriod } from './overlay-banner';
 
 interface ProgressBarData {
 	flowName?: string;
@@ -27,9 +29,6 @@ const SignupHeader = ( {
 	pageTitle,
 	showWooLogo = false,
 }: Props ) => {
-	const logoClasses = classnames( 'wordpress-logo', {
-		'is-large': shouldShowLoadingScreen && ! isReskinned,
-	} );
 	const translate = useTranslate();
 	const VARIATION_TITLES: Record< string, string > = {
 		videopress: translate( 'Video' ),
@@ -44,27 +43,41 @@ const SignupHeader = ( {
 	);
 	const showProgressBar = progressBar.flowName !== FREE_FLOW;
 
+	const refundPeriodInSignupHeaderBanner = useRefundPeriodInSignupHeaderBanner( {
+		flowName: progressBar.flowName,
+		stepName: progressBar.stepName,
+		shouldShowLoadingScreen,
+	} ).result;
+
+	const logoClasses = classnames( 'wordpress-logo', {
+		'is-large': shouldShowLoadingScreen && ! isReskinned,
+		'is-dark-background': refundPeriodInSignupHeaderBanner,
+	} );
+
 	return (
-		<div className="signup-header" role="banner" aria-label="banner">
-			{ flowProgress &&
-				! shouldShowLoadingScreen &&
-				showProgressBar &&
-				flowProgress?.progress > 0 && (
-					<ProgressBar
-						className={ variationName ? variationName : progressBar.flowName }
-						value={ flowProgress.progress }
-						total={ flowProgress.count }
-					/>
+		<>
+			<div className="signup-header" role="banner" aria-label="banner">
+				{ refundPeriodInSignupHeaderBanner && <SignupHeaderOverlayBannerWithRefundPeriod /> }
+				{ flowProgress &&
+					! shouldShowLoadingScreen &&
+					showProgressBar &&
+					flowProgress?.progress > 0 && (
+						<ProgressBar
+							className={ variationName ? variationName : progressBar.flowName }
+							value={ flowProgress.progress }
+							total={ flowProgress.count }
+						/>
+					) }
+				{ ! showWooLogo && <WordPressLogo size={ 120 } className={ logoClasses } /> }
+				{ showWooLogo && (
+					<WooCommerceWooLogo width={ 120 } height={ 120 } className={ logoClasses } />
 				) }
-			{ ! showWooLogo && <WordPressLogo size={ 120 } className={ logoClasses } /> }
-			{ showWooLogo && (
-				<WooCommerceWooLogo width={ 120 } height={ 120 } className={ logoClasses } />
-			) }
-			{ showPageTitle && <h1>{ variablePageTitle }</h1> }
-			{ /* This should show a sign in link instead of
+				{ showPageTitle && <h1>{ variablePageTitle }</h1> }
+				{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
-			<div className="signup-header__right">{ ! shouldShowLoadingScreen && rightComponent }</div>
-		</div>
+				<div className="signup-header__right">{ ! shouldShowLoadingScreen && rightComponent }</div>
+			</div>
+		</>
 	);
 };
 

@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
@@ -26,7 +27,7 @@ const siteMigration: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
-		const steps = [
+		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
@@ -36,12 +37,13 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
 
-		if ( isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
-			steps.push( STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
-		}
+		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
+			? [ STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
+			: [];
 
-		return steps;
+		return [ ...baseSteps, ...hostedVariantSteps ];
 	},
+
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
 		const userIsLoggedIn = useSelect(
@@ -105,6 +107,11 @@ const siteMigration: Flow = {
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
+
+		// Call triggerGuidesForStep for the current step
+		useEffect( () => {
+			triggerGuidesForStep( flowName, currentStep );
+		}, [ flowName, currentStep ] );
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {

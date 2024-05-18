@@ -118,6 +118,10 @@ import {
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
+const highlightable = ( inner: TranslateResult ): TranslateResult => {
+	return <span className="highlight-on-render">{ inner }</span>;
+};
+
 export const getJetpackProductsShortNames = (): Record< string, React.ReactElement | string > => {
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
@@ -1248,75 +1252,75 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			highlightable( translate( '100 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_100 ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			highlightable( translate( '100 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_200 ]: [
-			translate( '200 monthly requests (upgradeable)' ),
+			highlightable( translate( '200 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_500 ]: [
-			translate( '500 monthly requests (upgradeable)' ),
+			highlightable( translate( '500 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_750 ]: [
-			translate( '750 monthly requests (upgradeable)' ),
+			highlightable( translate( '750 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_1000 ]: [
-			translate( '1000 monthly requests (upgradeable)' ),
+			highlightable( translate( '1000 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			highlightable( translate( '100 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_100 ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			highlightable( translate( '100 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_200 ]: [
-			translate( '200 monthly requests (upgradeable)' ),
+			highlightable( translate( '200 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_500 ]: [
-			translate( '500 monthly requests (upgradeable)' ),
+			highlightable( translate( '500 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_750 ]: [
-			translate( '750 monthly requests (upgradeable)' ),
+			highlightable( translate( '750 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_1000 ]: [
-			translate( '1000 monthly requests (upgradeable)' ),
+			highlightable( translate( '1000 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			highlightable( translate( '100 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_100 ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			highlightable( translate( '100 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_200 ]: [
-			translate( '200 monthly requests (upgradeable)' ),
+			highlightable( translate( '200 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_500 ]: [
-			translate( '500 monthly requests (upgradeable)' ),
+			highlightable( translate( '500 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_750 ]: [
-			translate( '750 monthly requests (upgradeable)' ),
+			highlightable( translate( '750 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_1000 ]: [
-			translate( '1000 monthly requests (upgradeable)' ),
+			highlightable( translate( '1000 monthly requests (upgradeable)' ) ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupIncludesInfoT0,
@@ -1357,75 +1361,75 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: [
-			translate( '10,000 site views (upgradeable)' ),
+			highlightable( translate( '10K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_10K ]: [
-			translate( '10K site views (upgradeable)' ),
+			highlightable( translate( '10K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_100K ]: [
-			translate( '100K site views (upgradeable)' ),
+			highlightable( translate( '100K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_250K ]: [
-			translate( '250K site views (upgradeable)' ),
+			highlightable( translate( '250K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_500K ]: [
-			translate( '500K site views (upgradeable)' ),
+			highlightable( translate( '500K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY_1M ]: [
-			translate( '1M site views (upgradeable)' ),
+			highlightable( translate( '1M site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: [
-			translate( '10K site views (upgradeable)' ),
+			highlightable( translate( '10K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY_10K ]: [
-			translate( '10K site views (upgradeable)' ),
+			highlightable( translate( '10K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY_100K ]: [
-			translate( '100K site views (upgradeable)' ),
+			highlightable( translate( '100K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY_250K ]: [
-			translate( '250K site views (upgradeable)' ),
+			highlightable( translate( '250K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY_500K ]: [
-			translate( '500K site views (upgradeable)' ),
+			highlightable( translate( '500K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_YEARLY_1M ]: [
-			translate( '1M site views (upgradeable)' ),
+			highlightable( translate( '1M site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: [
-			translate( '10K site views (upgradeable)' ),
+			highlightable( translate( '10K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY_10K ]: [
-			translate( '10K site views (upgradeable)' ),
+			highlightable( translate( '10K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY_100K ]: [
-			translate( '100K site views (upgradeable)' ),
+			highlightable( translate( '100K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY_250K ]: [
-			translate( '250K site views (upgradeable)' ),
+			highlightable( translate( '250K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY_500K ]: [
-			translate( '500K site views (upgradeable)' ),
+			highlightable( translate( '500K site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_STATS_MONTHLY_1M ]: [
-			translate( '1M site views (upgradeable)' ),
+			highlightable( translate( '1M site views (upgradeable)' ) ),
 			...statsCommercialIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorIncludesInfo,

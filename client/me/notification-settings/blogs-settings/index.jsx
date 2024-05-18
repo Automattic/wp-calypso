@@ -9,7 +9,7 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InfiniteList from 'calypso/components/infinite-list';
-import getSites from 'calypso/state/selectors/get-sites';
+import getUndeletedSites from 'calypso/state/selectors/get-undeleted-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import Blog from './blog';
 import Placeholder from './placeholder';
@@ -79,7 +79,7 @@ class BlogsSettings extends Component {
 		const renderBlog = ( site, index, disableToggle = false ) => {
 			const onSave = () => this.props.onSave( site.ID );
 			const onSaveToAll = () => this.props.onSaveToAll( site.ID );
-			const blogSettings = find( this.props.settings, { blog_id: site.ID } ) || {};
+			const blogSettings = find( this.props.settings, { blog_id: site.ID } );
 
 			return (
 				<Blog
@@ -123,7 +123,7 @@ class BlogsSettings extends Component {
 }
 
 const mapStateToProps = ( state ) => ( {
-	sites: getSites( state ),
+	sites: getUndeletedSites( state ),
 	requestingSites: isRequestingSites( state ),
 } );
 

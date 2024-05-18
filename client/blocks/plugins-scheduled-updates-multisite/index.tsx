@@ -1,8 +1,10 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import { useLoadScheduleFromId } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-load-schedule-from-id';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MultisitePluginUpdateManagerContextProvider } from './context';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
@@ -36,6 +38,12 @@ export const PluginsScheduledUpdatesMultisite = ( {
 		edit: translate( 'Edit schedule' ),
 		list: translate( 'Scheduled Updates' ),
 	}[ context ];
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_scheduled_updates_multisite_page_view', {
+			context: context,
+		} );
+	}, [ context ] );
 
 	return (
 		<MultisitePluginUpdateManagerContextProvider>

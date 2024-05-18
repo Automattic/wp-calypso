@@ -1,7 +1,5 @@
-import { Button } from '@automattic/components';
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
 import { Global, css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -29,11 +27,6 @@ interface BulkAllDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
 }
-
-const ManageAllSitesButton = styled( Button )`
-	white-space: nowrap;
-	height: 40px;
-`;
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const { domains, isLoading } = useDomainsTable( fetchAllDomains );
@@ -89,11 +82,29 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					line-height: 1.2;
 				}
 				.domain-header__buttons .button {
-					border-radius: 4px;
+					line-height: 22px;
+					border-radius: 2px;
 					white-space: nowrap;
 					margin-left: 0;
-					&:not( .is-primary ) {
-						margin-inline-end: 1rem;
+				}
+				.domain-header__buttons-mobile {
+					white-space: nowrap;
+				}
+				@media only screen and ( max-width: 479px ) {
+					.domain-header__buttons-mobile {
+						.options-domain-button__add {
+							height: 24px;
+							width: 24px;
+							transition: transform 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+						}
+
+						.is-menu-visible .options-domain-button__add {
+							transform: rotate( 180deg );
+						}
+
+						.options-domain-button {
+							width: 48px;
+						}
 					}
 				}
 			}
@@ -160,7 +171,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 			@media only screen and ( max-width: 600px ) {
 				.navigation-header__main {
-					justify-content: normal;
+					justify-content: space-between;
 					.formatted-header {
 						flex: none;
 					}
@@ -227,7 +238,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	};
 
 	const buttons = [
-		<ManageAllSitesButton href="/sites">{ translate( 'Manage all sites' ) }</ManageAllSitesButton>,
 		<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
 	];
 

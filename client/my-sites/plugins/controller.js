@@ -7,7 +7,9 @@ import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation, sites } from 'calypso/my-sites/controller';
+import PluginsSidebar from 'calypso/my-sites/plugins/sidebar';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -187,6 +189,8 @@ export function scheduledUpdates( context, next ) {
 }
 
 export function scheduledUpdatesMultisite( context, next ) {
+	const state = context.store.getState();
+
 	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/` );
 	const goToScheduleEdit = ( id ) => page.show( `/plugins/scheduled-updates/edit/${ id }` );
 	const goToScheduleLogs = ( id, siteSlug ) =>
@@ -223,6 +227,15 @@ export function scheduledUpdatesMultisite( context, next ) {
 			} );
 			break;
 	}
+
+	const isSidebarCollapsed = getShouldShowCollapsedGlobalSidebar(
+		state,
+		undefined,
+		context.section.group,
+		context.section.name
+	);
+
+	context.secondary = <PluginsSidebar path={ context.path } isCollapsed={ isSidebarCollapsed } />;
 
 	next();
 }

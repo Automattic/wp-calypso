@@ -67,6 +67,14 @@ $brand-display: "SF Pro Display", sans-serif;
 		}
 	}
 
+	.empty-state__center {
+		margin: auto;
+
+		p {
+			text-align: center;
+		}
+	}
+
 	&-table {
 		th,
 		td {

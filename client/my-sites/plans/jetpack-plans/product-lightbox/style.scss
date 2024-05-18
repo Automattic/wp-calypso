@@ -263,3 +263,21 @@
 .popover.product-lightbox__variants-dropdown--popover {
 	z-index: 100200;
 }
+
+.highlight-on-render {
+	display: inline-block;
+	height: 100%;
+
+	&.trigger-highlight {
+		animation: trigger-highlight 500ms ease-out;
+	}
+}
+
+@keyframes trigger-highlight {
+	0% {
+		background-color: var(--studio-yellow-5);
+	}
+	100% {
+		background-color: initial;
+	}
+}
