@@ -10,6 +10,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
+import { getLocaleFromPathname } from 'calypso/boot/locale';
 import DocumentHead from 'calypso/components/data/document-head';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -239,6 +240,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
+	const pathLocaleSlug = getLocaleFromPathname();
+
+	const pathLocaleRouteFragment =
+		flow.__experimentalEnablePathLocale && pathLocaleSlug ? '/' + pathLocaleSlug : '';
+
 	return (
 		<Suspense fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
@@ -246,7 +252,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				{ flowSteps.map( ( step ) => (
 					<Route
 						key={ step.slug }
-						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }
+						path={ `/${ flow.variantSlug ?? flow.name }/${
+							step.slug
+						}${ pathLocaleRouteFragment }` }
 						element={
 							<StepRoute
 								step={ step }
@@ -261,9 +269,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					path="*"
 					element={
 						<Navigate
-							to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${
-								window.location.search
-							}` }
+							to={ `/${ flow.variantSlug ?? flow.name }/${
+								stepPaths[ 0 ]
+							}${ pathLocaleRouteFragment }${ window.location.search }` }
 							replace
 						/>
 					}
