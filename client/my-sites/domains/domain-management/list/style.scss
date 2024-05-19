@@ -134,15 +134,18 @@
 		}
 	}
 }
-
 // Custom layout width for the bulk domains pages
-.is-bulk-domains-page {
-	.layout__content {
-		overflow: auto;
-	}
+.is-bulk-domains-page .layout__content {
+	overflow: auto;
 
-	main {
-		max-width: 1224px;
+	.main {
+		.navigation-header {
+			@include break-xhuge {
+				margin: 0 auto;
+				max-width: 1400px;
+				padding-inline: 64px;
+			}
+		}
 	}
 
 	.empty-domains-list-card {
@@ -150,8 +153,22 @@
 			box-shadow: none;
 		}
 	}
-
 	.domains-table {
+		@include break-xhuge {
+			max-width: 1400px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		.domains-table-toolbar {
+			@include break-huge {
+				margin-inline: 64px;
+			}
+		}
+		> table {
+			@include break-huge {
+				padding-inline: 64px;
+			}
+		}
 		.components-base-control {
 			--checkbox-input-size: 16px;
 
