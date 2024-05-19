@@ -140,7 +140,9 @@
 			padding-left: 26px;
 		}
 		@include break-huge {
-			padding-left: 64px;
+			&:first-child {
+				padding-left: 64px;
+			}
 		}
 		&:nth-child(2) {
 			white-space: wrap;
