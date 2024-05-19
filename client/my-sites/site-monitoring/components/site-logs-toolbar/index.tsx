@@ -103,14 +103,15 @@ export const SiteLogsToolbar = ( {
 
 	const requestStatuses = [
 		{ value: '', label: translate( 'All' ) },
-		{ value: '200', label: translate( '200' ) },
-		{ value: '301', label: translate( '301' ) },
-		{ value: '302', label: translate( '302' ) },
-		{ value: '400', label: translate( '400' ) },
-		{ value: '401', label: translate( '401' ) },
-		{ value: '403', label: translate( '403' ) },
-		{ value: '404', label: translate( '404' ) },
-		{ value: '500', label: translate( '500' ) },
+		{ value: '200', label: '200' },
+		{ value: '301', label: '301' },
+		{ value: '302', label: '302' },
+		{ value: '400', label: '400' },
+		{ value: '401', label: '401' },
+		{ value: '403', label: '403' },
+		{ value: '404', label: '404' },
+		{ value: '429', label: '429' },
+		{ value: '500', label: '500' },
 	];
 
 	const selectedSeverity =
