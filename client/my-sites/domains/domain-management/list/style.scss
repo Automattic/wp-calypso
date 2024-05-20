@@ -179,11 +179,6 @@
 				margin-inline: 64px;
 			}
 		}
-		> table {
-			@include break-huge {
-				padding-inline: 64px;
-			}
-		}
 
 		.components-base-control {
 			--checkbox-input-size: 16px;
@@ -208,6 +203,19 @@
 			.gridicons-ellipsis {
 				height: 18px;
 				width: 18px;
+			}
+		}
+
+		table {
+			padding-inline: 0;
+
+			&.is-7-column {
+				grid-template-columns: 100px 2fr 1fr 1fr auto auto auto auto;
+			}
+
+			th:first-child,
+			td:first-child {
+				padding: var(--row-gap) 0 0 72px;
 			}
 		}
 	}
