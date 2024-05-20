@@ -217,6 +217,8 @@ $brand-text: "SF Pro Text", $sans;
 	.header-cake {
 		gap: 16px;
 		font-family: $brand-text;
+		clip-path: inset(-1px -1px 0 -1px);
+		padding-top: 20px;
 	}
 	.header-cake__title {
 		flex: none;
@@ -228,9 +230,13 @@ $brand-text: "SF Pro Text", $sans;
 	.header-cake__back {
 		color: var(--studio-gray-60);
 		font-size: $font-body-small;
+		padding: 0;
 		svg {
 			fill: var(--studio-gray-10);
 			width: 14px !important;
 		}
+	}
+	.action-panel {
+		clip-path: inset(0 -1px -1px -1px);
 	}
 }
