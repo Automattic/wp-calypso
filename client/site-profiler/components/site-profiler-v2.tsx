@@ -31,7 +31,6 @@ interface Props {
 export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain } = props;
 	const domainRef = useRef( null );
-
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
