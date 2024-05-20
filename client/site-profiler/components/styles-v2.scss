@@ -57,12 +57,12 @@
 
 	a,
 	button.is-link {
-		color: var(--wp-admin-theme-color);
+		color: var(--studio-gray-20);
 		text-decoration: underline;
 		font-size: 1rem;
 
 		&:hover {
-			color: var(--wp-admin-theme-color-darker-20);
+			color: var(--studio-gray-40);
 		}
 	}
 
@@ -88,6 +88,7 @@
 	.result-list {
 		margin: 0;
 		list-style: none;
+		line-height: normal;
 
 		ul {
 			margin: 0;
@@ -96,13 +97,13 @@
 
 		& > li {
 			display: flex;
-			padding: 1rem 0;
-			border-top: solid 1px var(--studio-gray-5);
+			padding: 1.5rem 0;
+			border-top: solid 1px var(--studio-gray-100);
 			gap: 2rem;
 			overflow-x: scroll;
 
-			&:first-child {
-				border: none;
+			&:last-child {
+				border-bottom: solid 1px var(--studio-gray-100);
 			}
 
 			&.redacted {
@@ -114,7 +115,7 @@
 
 			.name {
 				min-width: 200px;
-				text-transform: uppercase;
+				text-transform: none;
 			}
 
 			@media (max-width: $break-small) {
@@ -151,6 +152,11 @@
 
 		.col {
 			max-width: 300px;
+			line-height: 20px;
+		}
+
+		div:not(:first-child) {
+			color: var(--studio-gray-20);
 		}
 	}
 
