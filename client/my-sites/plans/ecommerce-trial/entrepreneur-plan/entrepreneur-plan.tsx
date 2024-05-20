@@ -8,7 +8,9 @@ import {
 import page from '@automattic/calypso-router';
 import { PlanPrice } from '@automattic/components';
 import Card from '@automattic/components/src/card';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { CustomSelectControl } from '@wordpress/components';
+import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useState } from 'react';
 import './style.scss';
@@ -115,6 +117,7 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const plans = useEntrepreneurPlanPrices();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const isEnglish = useIsEnglishLocale();
 	const [ selectedInterval, setSelectedInterval ] = useState< PlanKeys >( 'PLAN_ECOMMERCE' );
 	const selectedPlan = plans[ selectedInterval ];
 
@@ -146,13 +149,17 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 		setSelectedInterval( key );
 	};
 
+	const hasNewTitleTranslation = hasTranslation( "What's included in your free trial:" );
+	const titleTranslation =
+		isEnglish || hasNewTitleTranslation
+			? translate( "What's included in your free trial:" )
+			: translate( "What's included in your free trial" );
+
 	return (
 		<>
 			{ ! hideTrialIncluded && (
 				<>
-					<h2 className="entrepreneur-trial-plan__section-title">
-						{ translate( "What's included in your free trial" ) }
-					</h2>
+					<h2 className="entrepreneur-trial-plan__section-title">{ titleTranslation }</h2>
 					<div className="entrepreneur-trial-plan__included-wrapper">
 						<EcommerceTrialIncluded displayAll />
 					</div>
