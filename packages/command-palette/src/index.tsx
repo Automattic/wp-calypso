@@ -79,6 +79,13 @@ const StyledCommandsFooter = styled.div( {
 	paddingBottom: '12px',
 	borderTop: '1px solid var(--studio-gray-5)',
 	color: 'var(--studio-gray-50)',
+	a: {
+		color: 'var(--studio-gray-50)',
+	},
+	'a.command-palette__footer-current-site': {
+		color: 'var(--studio-gray-100)',
+	},
+	'a:hover': { 'text-decoration': 'underline' },
 } );
 
 export function CommandMenuGroup() {
@@ -106,9 +113,17 @@ export function CommandMenuGroup() {
 				: '/sites/';
 			const message = (
 				<>
-					<a href={ sitesPath }>All sites</a> { ' / ' }
+					<a className="command-palette__footer-all-sites" href={ sitesPath }>
+						All sites
+					</a>{ ' ' }
+					{ ' / ' }
 					{ currentSite?.options && (
-						<a href={ currentSite.options.admin_url }>{ currentSite.name }</a>
+						<a
+							className="command-palette__footer-current-site"
+							href={ currentSite.options.admin_url }
+						>
+							{ currentSite.name }
+						</a>
 					) }
 				</>
 			);
