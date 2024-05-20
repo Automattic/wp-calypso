@@ -3,12 +3,23 @@ import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu
 import BaseSiteSelector from 'calypso/components/site-selector';
 
 interface AtomicSitesSelectorProps {
+	managedSites: [] | null;
 	onSiteSelect?: ( blogId: number ) => void;
 	isPlaceholder?: boolean;
 }
 
-const AtomicSitesSelector = ( { onSiteSelect, isPlaceholder }: AtomicSitesSelectorProps ) => {
+const AtomicSitesSelector = ( {
+	onSiteSelect,
+	isPlaceholder,
+	managedSites,
+}: AtomicSitesSelectorProps ) => {
 	const atomicSitesFilter = ( site: SiteDetails ) => site?.is_wpcom_atomic;
+	const notManagedSitesFilter = ( site: SiteDetails ) => {
+		return (
+			atomicSitesFilter( site ) &&
+			! managedSites?.find( ( managedSite: any ) => managedSite.blog_id === site.ID )
+		);
+	};
 
 	return (
 		<div className="atomic-sites-selector">
@@ -18,7 +29,7 @@ const AtomicSitesSelector = ( { onSiteSelect, isPlaceholder }: AtomicSitesSelect
 				allSitesPath={ A4A_SITES_LINK }
 				sitesBasePath={ A4A_SITES_LINK }
 				onSiteSelect={ onSiteSelect }
-				filter={ atomicSitesFilter }
+				filter={ notManagedSitesFilter }
 				showHiddenSites={ false }
 				showListBottomAdornment={ false }
 				isPlaceholder={ isPlaceholder }

@@ -12,12 +12,20 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import useImportWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-import-wpcom-site';
+import useFetchDashboardSites, {
+	FetchDashboardSitesArgsInterface,
+} from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import AtomicSitesSelector from './atomic-sites-selector';
 import './styles.scss';
 
-const AddSitesFromWPCOM = () => {
+interface AddSitesFromWPCOMProps {
+	dashboardSitesQuery: FetchDashboardSitesArgsInterface;
+}
+
+const AddSitesFromWPCOM = ( { dashboardSitesQuery }: AddSitesFromWPCOMProps ) => {
 	const translate = useTranslate();
 
+	const { data, isFetched, isLoading } = useFetchDashboardSites( dashboardSitesQuery );
 	const { mutate: importWPCOMSite, isPending: isImportingSite } = useImportWPCOMSiteMutation();
 	const { refetch: refetchPendingSites } = useFetchPendingSites();
 
@@ -50,7 +58,8 @@ const AddSitesFromWPCOM = () => {
 			<div className="add-sites-from-wpcom__body">
 				<AtomicSitesSelector
 					onSiteSelect={ handleSiteSelection }
-					isPlaceholder={ isImportingSite }
+					isPlaceholder={ isImportingSite || isLoading || ! isFetched }
+					managedSites={ data?.sites }
 				/>
 			</div>
 		</LayoutColumn>
