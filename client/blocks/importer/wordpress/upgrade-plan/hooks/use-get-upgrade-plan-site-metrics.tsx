@@ -26,12 +26,12 @@ export const useGetUpgradePlanSiteMetrics = () => {
 
 	if ( isEnglishLocale ) {
 		lcpPercentageDifference = calcPercentageDifferenceFromThreshold(
-			siteMetricData?.basic?.lcp || 0,
+			siteMetricData?.basic?.lcp?.value ?? 0,
 			upgradePlanSiteMetricsLcpThreshold
 		);
 
 		fidPercentageDifference = calcPercentageDifferenceFromThreshold(
-			siteMetricData?.basic?.fid || 0,
+			siteMetricData?.basic?.fid?.value ?? 0,
 			upgradePlanSiteMetricsFidThreshold
 		);
 	}
