@@ -58,5 +58,6 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		product_type: 'test',
 		included_domain_purchase_amount: 0,
 		product_variants: [],
+		cost_overrides: [],
 	};
 }
