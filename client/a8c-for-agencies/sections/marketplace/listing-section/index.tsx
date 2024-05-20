@@ -10,6 +10,7 @@ type Props = {
 	description: string;
 	children: ReactNode;
 	isTwoColumns?: boolean;
+	extraContent?: ReactNode;
 };
 
 export default function ListingSection( {
@@ -19,6 +20,7 @@ export default function ListingSection( {
 	description,
 	children,
 	isTwoColumns,
+	extraContent,
 }: Props ) {
 	return (
 		<div
@@ -30,6 +32,8 @@ export default function ListingSection( {
 				<span>{ title }</span>
 			</h2>
 			<p className="listing-section-description">{ description }</p>
+
+			{ extraContent }
 
 			<div className="listing-section-content">{ children }</div>
 		</div>
