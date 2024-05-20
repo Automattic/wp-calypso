@@ -16,6 +16,8 @@ interface CurrentUserCapabilitiesState {
 	};
 }
 
+// This selector is a bit too broad, but is needed to match the interface on CommandPalette.
+// We're therefore keeping it private here, instead of making it available across Calypso.
 const getCurrentUserCapabilities = ( state: CurrentUserCapabilitiesState ) =>
 	state.currentUser.capabilities;
 
