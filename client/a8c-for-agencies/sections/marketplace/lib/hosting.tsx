@@ -57,7 +57,7 @@ export function getHostingPageUrl( slug: string ) {
  * @param {string} slug - Hosting provider slug
  * @returns {Element} - Hosting provider logo
  */
-export function getHostingLogo( slug: string, showText = true ) {
+export function getHostingLogo( slug: string ) {
 	switch ( slug ) {
 		case 'pressable-hosting':
 			return <img src={ PressableLogo } alt="" />;
@@ -67,7 +67,7 @@ export function getHostingLogo( slug: string, showText = true ) {
 			return (
 				<div className="wordpress-vip-logo">
 					<VIPLogo height={ 30 } width={ 67 } />
-					{ showText && translate( '(Enterprise)' ) }
+					{ translate( '(Enterprise)' ) }
 				</div>
 			);
 	}
