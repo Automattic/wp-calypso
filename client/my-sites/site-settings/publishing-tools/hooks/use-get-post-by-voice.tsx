@@ -1,10 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { getCachePostByVoiceKey } from 'calypso/my-sites/site-settings/publishing-tools/hooks/get-cache-post-by-voice-key';
-import { getPostByVoicePath } from 'calypso/my-sites/site-settings/publishing-tools/hooks/get-post-by-voice-path';
-import { parsePostByVoiceResponse } from 'calypso/my-sites/site-settings/publishing-tools/hooks/parse-post-by-voice-response';
-import type { PostByVoice } from 'calypso/my-sites/site-settings/publishing-tools/types/post-by-voice';
-import type { PostByVoiceResponse } from 'calypso/my-sites/site-settings/publishing-tools/types/post-by-voice-response';
+import type {
+	PostByVoice,
+	PostByVoiceResponse,
+} from 'calypso/my-sites/site-settings/publishing-tools/types';
+
+export const getPostByVoicePath = ( siteId: number | null ) => `/sites/${ siteId }/post-by-voice`;
+
+export const getCachePostByVoiceKey = ( siteId: number | null ) => [
+	'sites',
+	siteId,
+	'post-by-voice',
+];
+
+export const parsePostByVoiceResponse = ( data: PostByVoiceResponse ): PostByVoice => ( {
+	isEnabled: data.is_enabled,
+	code: data.code,
+} );
 
 export const useGetPostByVoice = ( siteId: number | null ) => {
 	return useQuery< PostByVoice >( {

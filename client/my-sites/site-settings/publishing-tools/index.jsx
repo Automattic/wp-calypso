@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Card, Button, FormLabel } from '@automattic/components';
+import { CompactCard, Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -10,6 +10,8 @@ import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connec
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import PressThis from 'calypso/my-sites/site-settings/press-this';
+import { PostByVoiceSetting } from 'calypso/my-sites/site-settings/publishing-tools/post-by-voice';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -19,8 +21,6 @@ import isRegeneratingJetpackPostByEmail from 'calypso/state/selectors/is-regener
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import PressThis from '../press-this';
-import { PostByVoiceSetting } from './post-by-voice';
 
 import './style.scss';
 
@@ -113,7 +113,9 @@ class PublishingTools extends Component {
 		const formPending = this.isFormPending();
 
 		return (
-			<>
+			<CompactCard className="site-settings__module-settings">
+				<QueryJetpackConnection siteId={ selectedSiteId } />
+
 				<FormFieldset>
 					<SupportInfo
 						text={ translate(
@@ -135,36 +137,34 @@ class PublishingTools extends Component {
 
 					{ this.renderPostByEmailSettings() }
 				</FormFieldset>
-				<hr />
-			</>
+			</CompactCard>
 		);
 	}
 
 	renderPostByVoiceModule() {
 		return (
-			<>
+			<CompactCard className="site-settings__module-settings">
 				<FormFieldset>
 					<PostByVoiceSetting />
 				</FormFieldset>
-				<hr />
-			</>
+			</CompactCard>
 		);
 	}
 
 	renderPressThisModule() {
 		return (
-			<FormFieldset>
-				<PressThis />
-			</FormFieldset>
+			<CompactCard className="site-settings__module-settings">
+				<FormFieldset>
+					<PressThis />
+				</FormFieldset>
+			</CompactCard>
 		);
 	}
 
 	render() {
-		const { selectedSiteId, translate, siteIsJetpack, isAtomic } = this.props;
+		const { translate, siteIsJetpack, isAtomic } = this.props;
 
-		const renderPressThis =
-			config.isEnabled( 'press-this' ) &&
-			( siteIsJetpack || ( ! siteIsJetpack && ! this.isMobile() ) );
+		const renderPressThis = config.isEnabled( 'press-this' ) && ! this.isMobile();
 		const renderPostByEmail = siteIsJetpack;
 		const renderPostByVoice =
 			config.isEnabled( 'settings/post-by-voice' ) && ! siteIsJetpack && ! isAtomic;
@@ -175,15 +175,11 @@ class PublishingTools extends Component {
 
 		return (
 			<div>
-				<QueryJetpackConnection siteId={ selectedSiteId } />
-
 				<SettingsSectionHeader title={ translate( 'Publishing Tools' ) } />
 
-				<Card className="publishing-tools__card site-settings__module-settings">
-					{ renderPostByVoice && this.renderPostByVoiceModule() }
-					{ renderPostByEmail && this.renderPostByEmailModule() }
-					{ renderPressThis && this.renderPressThisModule() }
-				</Card>
+				{ renderPostByVoice && this.renderPostByVoiceModule() }
+				{ renderPostByEmail && this.renderPostByEmailModule() }
+				{ renderPressThis && this.renderPressThisModule() }
 			</div>
 		);
 	}

@@ -2,28 +2,24 @@ import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
-import { useSelector } from 'calypso/state';
+import { useGetPostByVoice } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-get-post-by-voice';
+import { useRegeneratePostByVoiceMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-regenerate-post-by-voice-mutation';
+import { useSwitchPostByVoiceMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-switch-post-by-voice-mutation';
+import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useGetPostByVoice } from './hooks/use-get-post-by-voice';
-import { useRegeneratePostByVoiceMutation } from './hooks/use-regenerate-post-by-voice-mutation';
-import { useSwitchPostByVoiceMutation } from './hooks/use-switch-post-by-voice-mutation';
 
 import './style.scss';
 
-type PostByVoiceSettingComponentProps = {
-	successNotice: typeof successNotice;
-	errorNotice: typeof errorNotice;
+const noticeConfig = {
+	duration: 4000,
 };
 
-const PostByVoiceSettingComponent = ( {
-	successNotice,
-	errorNotice,
-}: PostByVoiceSettingComponentProps ) => {
+export const PostByVoiceSetting = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const { data: postByVoiceSettings } = useGetPostByVoice( selectedSiteId );
 	const { mutate: switchPostByVoice, isPending: isPendingSwitch } =
@@ -34,10 +30,12 @@ const PostByVoiceSettingComponent = ( {
 	const handleSwitch = ( checked: boolean ) => {
 		switchPostByVoice( checked, {
 			onSuccess: () => {
-				successNotice( translate( 'Changes saved successfully!' ) );
+				dispatch( successNotice( translate( 'Settings saved successfully!' ), noticeConfig ) );
 			},
 			onError: () => {
-				errorNotice( translate( 'There was a problem saving your changes.' ) );
+				dispatch(
+					errorNotice( translate( 'There was a problem saving your changes.' ), noticeConfig )
+				);
 			},
 		} );
 	};
@@ -45,10 +43,12 @@ const PostByVoiceSettingComponent = ( {
 	const handleRegenerate = () => {
 		regeneratePostByVoice( undefined, {
 			onSuccess: () => {
-				successNotice( translate( 'Code regenerated successfully!' ) );
+				dispatch( successNotice( translate( 'Code regenerated successfully!' ), noticeConfig ) );
 			},
 			onError: () => {
-				errorNotice( translate( 'There was a problem regenerating the code.' ) );
+				dispatch(
+					errorNotice( translate( 'There was a problem regenerating the code.' ), noticeConfig )
+				);
 			},
 		} );
 	};
@@ -66,7 +66,10 @@ const PostByVoiceSettingComponent = ( {
 			<ToggleControl
 				checked={ !! postByVoiceSettings?.isEnabled }
 				disabled={ isPendingSwitch || isPendingRegenerate }
-				label={ translate( 'Post by Voice' ) }
+				label={ translate( 'Post by Voice', {
+					comment:
+						'Post by Voice is the name of a blog setting that lets users post to their blogs by placing a phone call',
+				} ) }
 				onChange={ handleSwitch }
 			/>
 
@@ -93,7 +96,10 @@ const PostByVoiceSettingComponent = ( {
 							) }
 						</div>
 						<Button onClick={ handleRegenerate } disabled={ isPendingRegenerate }>
-							{ translate( 'Regenerate code' ) }
+							{ translate( 'Regenerate code', {
+								comment:
+									'Button label to regenerate the secret PIN code used by the Post by Voice feature',
+							} ) }
 						</Button>
 					</>
 				) }
@@ -101,8 +107,3 @@ const PostByVoiceSettingComponent = ( {
 		</div>
 	);
 };
-
-export const PostByVoiceSetting = connect( null, {
-	successNotice,
-	errorNotice,
-} )( PostByVoiceSettingComponent );

@@ -1,9 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { getCachePostByVoiceKey } from 'calypso/my-sites/site-settings/publishing-tools/hooks/get-cache-post-by-voice-key';
-import { getPostByVoicePath } from 'calypso/my-sites/site-settings/publishing-tools/hooks/get-post-by-voice-path';
-import type { PostByVoice } from 'calypso/my-sites/site-settings/publishing-tools/types/post-by-voice';
-import type { PostByVoiceResponse } from 'calypso/my-sites/site-settings/publishing-tools/types/post-by-voice-response';
+import {
+	getCachePostByVoiceKey,
+	getPostByVoicePath,
+} from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-get-post-by-voice';
+import type {
+	PostByVoice,
+	PostByVoiceResponse,
+} from 'calypso/my-sites/site-settings/publishing-tools/types';
 
 export const useRegeneratePostByVoiceMutation = ( siteId: number | null ) => {
 	const queryClient = useQueryClient();
