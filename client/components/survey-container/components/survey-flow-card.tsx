@@ -41,6 +41,7 @@ const SurveyFlowCard = ( {
 							}
 						} }
 						icon={ undefined }
+						disabled={ disabled }
 					/>
 				);
 			} ) }

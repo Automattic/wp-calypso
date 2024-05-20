@@ -7,11 +7,18 @@ interface FlowCardProps {
 	onClick: () => void;
 	text: string;
 	title: string;
+	disabled?: boolean;
 }
 
-const FlowCard = ( { icon, onClick, text, title }: FlowCardProps ) => {
+const FlowCard = ( { icon, onClick, text, title, disabled = false }: FlowCardProps ) => {
 	return (
-		<Card className="flow-question" as="button" size="small" onClick={ onClick }>
+		<Card
+			className="flow-question"
+			as="button"
+			size="small"
+			onClick={ onClick }
+			disabled={ disabled }
+		>
 			<CardBody>
 				<Flex>
 					{ icon && (
