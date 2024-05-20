@@ -115,7 +115,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-success"
-					isReskinned={ true }
+					isReskinned
 				>
 					{ translate(
 						'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
