@@ -18,7 +18,7 @@ const calcPercentageDifferenceFromThreshold = ( value: number, threshold: number
 export const useGetUpgradePlanSiteMetrics = () => {
 	const isEnglishLocale = useIsEnglishLocale();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
-	const { data: siteMetricData } = useUrlBasicMetricsQuery( importSiteQueryParam );
+	const { data: siteMetricData, isFetching } = useUrlBasicMetricsQuery( importSiteQueryParam );
 
 	let lcpPercentageDifference = 0;
 	let fidPercentageDifference = 0;
@@ -36,6 +36,7 @@ export const useGetUpgradePlanSiteMetrics = () => {
 	}
 
 	return {
+		isFetching,
 		siteMetricData,
 		lcpPercentageDifference,
 		fidPercentageDifference,

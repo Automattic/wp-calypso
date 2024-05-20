@@ -6,7 +6,8 @@ import { useGetUpgradePlanSiteMetrics } from './use-get-upgrade-plan-site-metric
 
 export const useUpgradePlanHostingDetailsList = () => {
 	const translate = useTranslate();
-	const { lcpPercentageDifference, fidPercentageDifference } = useGetUpgradePlanSiteMetrics();
+	const { lcpPercentageDifference, fidPercentageDifference, isFetching } =
+		useGetUpgradePlanSiteMetrics();
 
 	let newDefaultHostingDetails = [ ...defaultHostingDetails ];
 	const newHostingDetails = [];
@@ -57,5 +58,10 @@ export const useUpgradePlanHostingDetailsList = () => {
 		newHostingDetails.push( updatedHostingFasterResponseDetails );
 	}
 
-	return [ ...newHostingDetails, ...newDefaultHostingDetails ];
+	const list = [ ...newHostingDetails, ...newDefaultHostingDetails ];
+
+	return {
+		isFetching,
+		list,
+	};
 };
