@@ -17,6 +17,7 @@ import {
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
+	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -113,6 +114,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ NEW_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "new-hosted-site-flow" */ './new-hosted-site-flow' ),
+
+	[ NEW_HOSTED_SITE_FLOW_USER_INCLUDED ]: () =>
+		import(
+			/* webpackChunkName: "new-hosted-site-flow-user-included" */ './new-hosted-site-flow-user-included'
+		),
 
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
