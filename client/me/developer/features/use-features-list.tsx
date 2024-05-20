@@ -41,7 +41,7 @@ export const useFeaturesList = () => {
 				comment: 'Feature title',
 			} ),
 			description: translate(
-				'Manage and host multiple sites with ease. Enjoy volume pricing discounts and 50% revenue sharing when you migrate sites to our platform and refer products to clients.',
+				'Seamlessly manage and host multiple sites. Receive 50% revenue sharing and volume discounts when you migrate sites to our platform and refer products to clients.',
 				{
 					comment: 'Feature description',
 				}
