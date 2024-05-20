@@ -108,18 +108,20 @@ const ProductLightbox: FC< Props > = ( {
 							siteId={ siteId }
 							onChangeProduct={ onChangeProduct }
 						/>
-						<QuantityDropdown
-							product={ product }
-							siteId={ siteId }
-							onChangeProduct={ onChangeProduct }
-						/>
 						{ ! isOwned && (
-							<PaymentPlan
-								isMultiSiteIncompatible={ isMultiSiteIncompatible }
-								siteId={ siteId }
-								product={ product }
-								quantity={ product.quantity }
-							/>
+							<>
+								<QuantityDropdown
+									product={ product }
+									siteId={ siteId }
+									onChangeProduct={ onChangeProduct }
+								/>
+								<PaymentPlan
+									isMultiSiteIncompatible={ isMultiSiteIncompatible }
+									siteId={ siteId }
+									product={ product }
+									quantity={ product.quantity }
+								/>
+							</>
 						) }
 						<Button
 							primary={ ! isProductInCart }

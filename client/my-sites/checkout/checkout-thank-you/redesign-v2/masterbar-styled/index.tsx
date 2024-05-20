@@ -31,7 +31,11 @@ const ItemStyled = styled( Item )`
 
 	&:hover {
 		background: var( --studio-white );
-		text-decoration: underline;
+
+		.masterbar__item-content {
+			color: var( --color-masterbar-text );
+			text-decoration: underline;
+		}
 	}
 	.gridicon {
 		height: 17px;

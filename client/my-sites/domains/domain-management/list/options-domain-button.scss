@@ -30,6 +30,14 @@ button {
 		}
 	}
 
+	.options-domain-button__add {
+		display: inline;
+
+		@include break-mobile {
+			display: none;
+		}
+	}
+
 	.options-domain-button.ellipsis {
 		border: none;
 

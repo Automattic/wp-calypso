@@ -41,9 +41,9 @@
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
-		"@wordpress/components": "^27.5.0",
-		"@wordpress/element": "^5.34.0",
-		"@wordpress/i18n": "^4.57.0",
+		"@wordpress/components": "^27.6.0",
+		"@wordpress/element": "^5.35.0",
+		"@wordpress/i18n": "^4.58.0",
 		"classnames": "^2.3.2",
 		"prop-types": "^15.7.2",
 		"tslib": "^2.3.0"

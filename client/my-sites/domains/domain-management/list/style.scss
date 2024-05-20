@@ -134,15 +134,20 @@
 		}
 	}
 }
-
 // Custom layout width for the bulk domains pages
-.is-bulk-domains-page {
-	.layout__content {
-		overflow: auto;
-	}
+.is-bulk-domains-page .layout__content {
+	overflow: auto;
 
-	main {
-		max-width: 1224px;
+	.main {
+		.navigation-header {
+			@include break-huge {
+				padding-inline: 64px;
+			}
+			@include break-xhuge {
+				margin: 0 auto;
+				max-width: 1400px;
+			}
+		}
 	}
 
 	.empty-domains-list-card {
@@ -150,8 +155,30 @@
 			box-shadow: none;
 		}
 	}
-
+	.options-domain-button {
+		padding: 8px 14px;
+		border-radius: 4px;
+	}
+	.domains-table-filter {
+		align-items: flex-start;
+	}
 	.domains-table {
+		@include break-xhuge {
+			max-width: 1400px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		.domains-table-toolbar {
+			@include break-huge {
+				margin-inline: 64px;
+			}
+		}
+		> table {
+			@include break-huge {
+				padding-inline: 64px;
+			}
+		}
+
 		.components-base-control {
 			--checkbox-input-size: 16px;
 
@@ -171,6 +198,9 @@
 	}
 
 	.domains-table-mobile-cards {
+		.domains-table-mobile-card:hover {
+			background-color: #f7faff;
+		}
 		.components-base-control {
 			display: flex;
 			align-items: center;
@@ -184,5 +214,9 @@
 				width: var(--checkbox-input-size);
 			}
 		}
+	}
+
+	.options-domain-button__add.gridicon:not(:last-child) {
+		margin: auto;
 	}
 }

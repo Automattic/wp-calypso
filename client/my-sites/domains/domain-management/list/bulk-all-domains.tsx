@@ -1,7 +1,5 @@
-import { Button } from '@automattic/components';
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
 import { Global, css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -29,11 +27,6 @@ interface BulkAllDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
 }
-
-const ManageAllSitesButton = styled( Button )`
-	white-space: nowrap;
-	height: 40px;
-`;
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const { domains, isLoading } = useDomainsTable( fetchAllDomains );
@@ -69,6 +62,12 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				padding-top: 16px !important;
 			}
 
+			.select-dropdown,
+			.select-dropdown__header {
+				height: 40px;
+				border-radius: 4px;
+			}
+
 			header.navigation-header {
 				padding-top: 24px;
 
@@ -89,11 +88,29 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					line-height: 1.2;
 				}
 				.domain-header__buttons .button {
-					border-radius: 4px;
+					line-height: 22px;
+					border-radius: 2px;
 					white-space: nowrap;
 					margin-left: 0;
-					&:not( .is-primary ) {
-						margin-inline-end: 1rem;
+				}
+				.domain-header__buttons-mobile {
+					white-space: nowrap;
+				}
+				@media only screen and ( max-width: 479px ) {
+					.domain-header__buttons-mobile {
+						.options-domain-button__add {
+							height: 24px;
+							width: 24px;
+							transition: transform 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+						}
+
+						.is-menu-visible .options-domain-button__add {
+							transform: rotate( 180deg );
+						}
+
+						.options-domain-button {
+							width: 48px;
+						}
 					}
 				}
 			}
@@ -101,12 +118,12 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			.domains-table {
 				margin-top: 35px;
 				.domains-table-toolbar {
-					margin-inline: 64px;
+					margin-inline: 16px;
 				}
 				table {
 					overflow-y: auto;
 					max-height: calc( 100vh - 235px );
-					padding-inline: 64px;
+					padding-inline: 16px;
 					margin-bottom: 0;
 				}
 				.domains-table-header {
@@ -117,8 +134,8 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			}
 
 			.search-component.domains-table-filter__search.is-open.has-open-icon {
-				border-radius: 2px;
-				height: 36px;
+				border-radius: 4px;
+				height: 40px;
 				flex-direction: row-reverse;
 				padding-inline: 10px 8px;
 				font-size: 14px;
@@ -130,7 +147,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 				input.search-component__input[type='search'] {
 					font-size: 14px;
-					height: 36px;
+					height: 40px;
 
 					&::placeholder {
 						color: var( --studio-gray-40 );
@@ -141,10 +158,10 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			}
 
 			@media only screen and ( min-width: 782px ) {
-				div.layout.is-global-sidebar-visible {
+				.is-global-sidebar-visible {
 					header.navigation-header {
 						padding-top: 24px;
-						padding-inline: 64px;
+						padding-inline: 16px;
 						border-block-end: 1px solid var( --studio-gray-0 );
 					}
 					.layout__primary > main {
@@ -158,15 +175,29 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				}
 			}
 
+			@media only screen and ( min-width: 960px ) {
+				.domains-table {
+					.domains-table-toolbar {
+						margin-inline: 26px;
+					}
+					table {
+						padding-inline: 26px;
+					}
+				}
+				.is-global-sidebar-visible header.navigation-header {
+					padding-inline: 26px;
+				}
+			}
+
 			@media only screen and ( max-width: 600px ) {
 				.navigation-header__main {
-					justify-content: normal;
+					justify-content: space-between;
 					.formatted-header {
 						flex: none;
 					}
 				}
 				.domains-table {
-					padding: 0 8px;
+					padding: 0 16px;
 				}
 				.domains-table-toolbar {
 					margin-inline: 0 !important;
@@ -227,7 +258,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	};
 
 	const buttons = [
-		<ManageAllSitesButton href="/sites">{ translate( 'Manage all sites' ) }</ManageAllSitesButton>,
 		<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
 	];
 

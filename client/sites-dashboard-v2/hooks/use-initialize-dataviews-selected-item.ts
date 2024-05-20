@@ -20,7 +20,7 @@ export function useInitializeDataViewsSelectedItem( {
 		}
 		for ( const site of document.querySelectorAll( '.sites-dataviews__site' ) ) {
 			const slug = site.querySelector( '.sites-dataviews__site-url span' );
-			if ( selectedSite.slug === slug?.innerHTML ) {
+			if ( selectedSite.slug === ( slug as HTMLElement )?.innerText ) {
 				( site as HTMLElement ).click?.();
 				initialized.current = true;
 				break;
