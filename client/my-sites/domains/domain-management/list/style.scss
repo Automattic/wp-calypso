@@ -140,10 +140,12 @@
 
 	.main {
 		.navigation-header {
+			@include break-huge {
+				padding-inline: 64px;
+			}
 			@include break-xhuge {
 				margin: 0 auto;
 				max-width: 1400px;
-				padding-inline: 64px;
 			}
 		}
 	}
