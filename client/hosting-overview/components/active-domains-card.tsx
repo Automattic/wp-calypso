@@ -7,20 +7,21 @@ import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { HostingCard, HostingCardHeading } from 'calypso/components/hosting-card';
 import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
+import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const ActiveDomainsCard: FC = () => {
 	const forceMobile = useBreakpoint( '<660px' );
 	const site = useSelector( getSelectedSite );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
+	const isJetpackNotAtomic = site && isNotAtomicJetpack( site );
 	const { data, isLoading } = useSiteDomainsQuery( site?.ID, {
 		queryFn: () => fetchSiteDomains( site?.ID ),
 	} );
 	const translate = useTranslate();
 
-	if ( isJetpack ) {
+	// Do not render for self hosted jetpack sites, since they cannot manage domains with us.
+	if ( isJetpackNotAtomic ) {
 		return null;
 	}
 
