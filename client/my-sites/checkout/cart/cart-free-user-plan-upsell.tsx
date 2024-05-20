@@ -46,9 +46,27 @@ function UpgradeText( {
 	firstDomain: ResponseCartProduct;
 } ) {
 	const translate = useTranslate();
+	// Use the subtotal with discounts for the current cart price, but use the
+	// subtotal without discounts to calculate the price after the upsell
+	// because some discounts may be removed by the upsell.
+	//
+	// For example, if the domain has a sale coupon then it will be removed by
+	// the "first year free" bundle discount when a plan is added to the cart
+	// because the bundle discount of 100% is higher than the sale coupon
+	// discount. Since we are trying to compare the current cart price with the
+	// predicted cart price with the plan, we must consider the current cart
+	// with the sale and the predicted cart without the sale.
+	//
+	// This may not be accurate for all types of discounts (in the previous
+	// example it only happens because they are both first-year percentage
+	// discounts) but it should be accurate most of the time.
+	const domainInCartPrice = firstDomain.item_subtotal_integer;
+	const domainInCartPricePerYear = firstDomain.item_original_subtotal_integer / firstDomain.volume;
+	const cartPriceWithDomainAndPlan =
+		domainInCartPricePerYear * ( firstDomain.volume - 1 ) + planPrice;
 
-	if ( planPrice > firstDomain.item_subtotal_integer ) {
-		const extraToPay = planPrice - firstDomain.item_subtotal_integer;
+	if ( cartPriceWithDomainAndPlan > domainInCartPrice ) {
+		const extraToPay = cartPriceWithDomainAndPlan - domainInCartPrice;
 		return translate(
 			'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our %(planName)s plan, and get access to all its features, plus the first year of your domain for free.',
 			{
@@ -66,8 +84,8 @@ function UpgradeText( {
 		);
 	}
 
-	if ( planPrice < firstDomain.item_subtotal_integer ) {
-		const savings = firstDomain.item_subtotal_integer - planPrice;
+	if ( cartPriceWithDomainAndPlan < domainInCartPrice ) {
+		const savings = domainInCartPrice - cartPriceWithDomainAndPlan;
 		return translate(
 			'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com %(planName)s plan instead — your domain comes free for a year.',
 			{
