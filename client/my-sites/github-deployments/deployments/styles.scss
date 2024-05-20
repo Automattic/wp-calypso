@@ -215,13 +215,14 @@ $brand-text: "SF Pro Text", $sans;
 
 .github-deployments {
 	.header-cake {
-		gap: 32px;
+		gap: 16px;
 		font-family: $brand-text;
 	}
 	.header-cake__title {
 		flex: none;
 		color: var(--studio-gray-80);
 		font-size: $font-body;
+		font-weight: 500;
 		padding: 0;
 	}
 	.header-cake__back {
@@ -229,7 +230,7 @@ $brand-text: "SF Pro Text", $sans;
 		font-size: $font-body-small;
 		svg {
 			fill: var(--studio-gray-10);
-			height: 8px;
+			width: 14px !important;
 		}
 	}
 }
