@@ -542,8 +542,14 @@
 
 		.dataviews-wrapper {
 			display: flex;
+			flex-direction: column;
 			height: 100%;
 			overflow: hidden;
+
+			> div[data-wp-component="VStack"] {
+				align-items: stretch;
+				overflow: hidden;
+			}
 
 			.components-button:focus:not(:disabled) {
 				box-shadow: 0 0 0 2px var(--color-primary-light);
