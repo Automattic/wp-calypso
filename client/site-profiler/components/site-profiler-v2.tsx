@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
@@ -25,6 +25,7 @@ import { GetReportForm } from './get-report-form';
 // import HostingInformation from './hosting-information';
 // import HostingIntro from './hosting-intro';
 // import { MetricsMenu } from './metrics-menu';
+import { MetricsSection } from './metrics-section';
 import './styles-v2.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
@@ -36,6 +37,7 @@ interface Props {
 
 export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain } = props;
+	const domainRef = useRef( null );
 	// const basicMetricsRef = useRef( null );
 	// const performanceMetricsRef = useRef( null );
 	// const healthScoresRef = useRef( null );
@@ -130,7 +132,21 @@ export default function SiteProfilerV2( props: Props ) {
 			) }
 			{ showResultScreen && (
 				<LayoutBlock width="medium">
-					<h1>Results Placeholder</h1>{ ' ' }
+					{ siteProfilerData && (
+						<MetricsSection
+							name={ translate( 'Domain' ) }
+							title={ translate(
+								"Your domain {{success}}set up is good,{{/success}} but you could boost your site's visibility and growth.",
+								{
+									components: {
+										success: <span className="success" />,
+									},
+								}
+							) }
+							subtitle={ translate( 'Optimize your domain' ) }
+							ref={ domainRef }
+						></MetricsSection>
+					) }
 				</LayoutBlock>
 			) }
 

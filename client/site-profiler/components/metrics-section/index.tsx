@@ -16,20 +16,20 @@ const Container = styled.div`
 
 const NameSpan = styled.span`
 	font-family: 'SF Pro Text';
-	color: var( --studio-gray-40 );
+	color: var( --studio-gray-20 );
 	font-size: 16px;
 	margin-bottom: 8px;
 `;
 
 const Title = styled.div`
-	font-family: 'SF Pro Display';
+	font-family: 'SF Pro Text';
 	font-size: 60px;
 	font-weight: 400;
 	line-height: 100%;
 	margin-bottom: 24px;
 
 	span {
-		font-family: 'SF Pro Display';
+		font-family: 'SF Pro Text';
 		font-size: 60px;
 		font-style: normal;
 		font-weight: 510;
@@ -54,7 +54,6 @@ const Title = styled.div`
 
 const Subtitle = styled.span`
 	cursor: pointer;
-	color: var( --studio-gray-70 );
 	font-family: 'SF Pro Text';
 	font-size: 16px;
 	font-style: normal;
@@ -63,7 +62,6 @@ const Subtitle = styled.span`
 
 	&:hover {
 		text-decoration-line: underline;
-		color: var( --studio-gray-80 );
 	}
 `;
 
