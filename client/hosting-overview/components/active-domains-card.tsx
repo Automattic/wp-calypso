@@ -8,15 +8,21 @@ import { FC } from 'react';
 import { HostingCard, HostingCardHeading } from 'calypso/components/hosting-card';
 import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const ActiveDomainsCard: FC = () => {
 	const forceMobile = useBreakpoint( '<660px' );
 	const site = useSelector( getSelectedSite );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const { data, isLoading } = useSiteDomainsQuery( site?.ID, {
 		queryFn: () => fetchSiteDomains( site?.ID ),
 	} );
 	const translate = useTranslate();
+
+	if ( isJetpack ) {
+		return null;
+	}
 
 	return (
 		<HostingCard className="hosting-overview__active-domains">
