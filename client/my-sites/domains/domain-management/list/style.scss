@@ -140,10 +140,12 @@
 
 	.main {
 		.navigation-header {
+			@include break-huge {
+				padding-inline: 64px;
+			}
 			@include break-xhuge {
 				margin: 0 auto;
 				max-width: 1400px;
-				padding-inline: 64px;
 			}
 		}
 	}
@@ -152,6 +154,13 @@
 		@include breakpoint-deprecated( "<480px" ) {
 			box-shadow: none;
 		}
+	}
+	.options-domain-button {
+		padding: 8px 14px;
+		border-radius: 4px;
+	}
+	.domains-table-filter {
+		align-items: flex-start;
 	}
 	.domains-table {
 		@include break-xhuge {
@@ -169,6 +178,7 @@
 				padding-inline: 64px;
 			}
 		}
+
 		.components-base-control {
 			--checkbox-input-size: 16px;
 
@@ -188,6 +198,9 @@
 	}
 
 	.domains-table-mobile-cards {
+		.domains-table-mobile-card:hover {
+			background-color: #f7faff;
+		}
 		.components-base-control {
 			display: flex;
 			align-items: center;
