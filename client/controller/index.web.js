@@ -19,6 +19,7 @@ import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
+import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
@@ -28,6 +29,7 @@ import {
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { hydrate, render } from './web-util.js';
@@ -212,9 +214,11 @@ export function redirectIfCurrentUserCannot( capability ) {
 		const state = context.store.getState();
 		const site = getSelectedSite( state );
 		const currentUserCan = canCurrentUser( state, site?.ID, capability );
+		const adminInterface = getSiteOption( state, site?.ID, 'wpcom_admin_interface' );
+		const siteAdminUrl = getSiteAdminUrl( state, site?.ID );
 
 		if ( site && ! currentUserCan ) {
-			return page.redirect( `/home/${ site.slug }` );
+			return navigate( adminInterface === 'wp-admin' ? siteAdminUrl : `/home/${ site.slug }` );
 		}
 
 		next();
