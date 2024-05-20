@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	Badge,
 	BloombergLogo,
 	Button,
 	CNNLogo,
@@ -11,13 +10,14 @@ import {
 	SalesforceLogo,
 	SlackLogo,
 	TimeLogo,
+	Tooltip,
 } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { debounce } from '@wordpress/compose';
-import { Icon, external } from '@wordpress/icons';
+import { Icon, external, check } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -48,13 +48,19 @@ export default function HostingCard( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const [ showTooltip, setShowTooltip ] = useState( false );
+
 	//FIXME: We want to unify and refactor this logic, once we decide
 	//on how the UX should look in the end
 	const pressableUrl = 'https://my.pressable.com/agency/auth';
 
-	const { name, description, features } = useHostingDescription( plan.family_slug );
+	const { name, heading, description, features, footerText } = useHostingDescription(
+		plan.family_slug
+	);
 
 	const priceRef = useRef< HTMLDivElement >( null );
+	const tooltip = useRef< HTMLDivElement >( null );
 
 	const onExploreClick = useCallback( () => {
 		dispatch(
@@ -159,34 +165,72 @@ export default function HostingCard( {
 	return (
 		<div className={ classNames( 'hosting-card', className ) }>
 			<div className="hosting-card__section">
-				<div className="hosting-card__header">
-					{ getHostingLogo( plan.family_slug ) }
-					{ pressableOwnership && <Badge type="success">{ translate( 'You own this' ) }</Badge> }
-				</div>
+				<div className="hosting-card__heading">{ heading }</div>
 
-				<div
-					className="hosting-card__price"
-					ref={ priceRef }
-					style={ { minHeight: `${ minPriceHeight }px` } }
-				>
-					<div>
-						<div className="hosting-card__price-value">
-							{ translate( 'Starting at %(priceStartingAt)s', {
-								args: { priceStartingAt },
-							} ) }
-						</div>
-						<div className="hosting-card__price-interval">{ priceIntervalDescription }</div>
-					</div>
-					{ highestDiscountPercentage ? (
-						<div className="hosting-card__price-discount">
-							{ translate( 'Volume savings up to %(highestDiscountPercentage)s%', {
-								args: { highestDiscountPercentage: Math.trunc( highestDiscountPercentage ) },
-							} ) }
-						</div>
-					) : null }
-				</div>
+				{ pressableOwnership && (
+					<>
+						<Icon
+							onMouseEnter={ () => setShowTooltip( true ) }
+							onMouseLeave={ () => setShowTooltip( false ) }
+							onMouseDown={ () => setShowTooltip( false ) }
+							onTouchStart={ () => setShowTooltip( ! showTooltip ) }
+							role="button"
+							tabIndex={ 0 }
+							ref={ tooltip }
+							className="hosting-card__check-icon"
+							icon={ check }
+							size={ 18 }
+						/>
+						<Tooltip
+							className="gray-tooltip"
+							context={ tooltip.current }
+							isVisible={ showTooltip }
+							position="bottom"
+							showOnMobile
+						>
+							{ translate( 'You own this' ) }
+						</Tooltip>
+					</>
+				) }
 
 				<p className="hosting-card__description">{ description }</p>
+
+				{ plan.family_slug === 'vip' ? (
+					<div className="hosting-card__section hosting-card__logo-section">
+						<div className="hosting-card__logos">
+							<TimeLogo />
+							<SlackLogo />
+							<DisneyLogo />
+							<CondenastLogo />
+							<BloombergLogo />
+							<CNNLogo />
+							<SalesforceLogo />
+							<FacebookLogo />
+						</div>
+					</div>
+				) : (
+					<div
+						className="hosting-card__price"
+						ref={ priceRef }
+						style={ { minHeight: `${ minPriceHeight }px` } }
+					>
+						<div>
+							<div className="hosting-card__price-value">
+								{ translate( 'Starting at %(priceStartingAt)s', {
+									args: { priceStartingAt },
+								} ) }
+							</div>
+							<div className="hosting-card__price-interval">{ priceIntervalDescription }</div>
+						</div>
+						{ highestDiscountPercentage ? (
+							<div className="hosting-card__price-discount">
+								{ translate( 'Volume savings up to %(highestDiscountPercentage)s%', {
+									args: { highestDiscountPercentage: Math.trunc( highestDiscountPercentage ) },
+								} ) }
+							</div>
+						) : null }
+					</div>
+				) }
 
 				{ exploreButton }
 			</div>
@@ -198,22 +242,13 @@ export default function HostingCard( {
 							<SimpleList items={ features } />
 						</div>
 					) }
-					{ plan.family_slug === 'vip' && (
-						<div className="hosting-card__section">
-							<div className="hosting-card__logos">
-								<TimeLogo />
-								<SlackLogo />
-								<DisneyLogo />
-								<CNNLogo />
-								<SalesforceLogo />
-								<FacebookLogo />
-								<CondenastLogo />
-								<BloombergLogo />
-							</div>
-						</div>
-					) }
 				</>
 			) }
+
+			<div className="hosting-card__footer">
+				<span>{ footerText }</span>
+				{ getHostingLogo( plan.family_slug, false ) }
+			</div>
 		</div>
 	);
 }

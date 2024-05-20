@@ -4,6 +4,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
@@ -109,9 +110,10 @@ export default function HostingList( { selectedSite }: Props ) {
 			<ListingSection
 				title={ translate( 'Hosting' ) }
 				description={ translate(
-					'Choose the hosting that suits your needs from our best-in-class offerings.'
+					'Choose from a variety of world-class managed hosting that will scale with your business.'
 				) }
 				isTwoColumns
+				extraContent={ <MigrationOffer foldable /> }
 			>
 				{ creatorPlan && (
 					<HostingCard
@@ -141,7 +143,7 @@ export default function HostingList( { selectedSite }: Props ) {
 			{ isWPCOMOptionEnabled && (
 				<Card className="hosting-list__features">
 					<h3 className="hosting-list__features-heading">
-						{ translate( 'Included with WordPress.com and Pressable plans' ) }
+						{ translate( 'Included with Standard & Premier hosting' ) }
 					</h3>
 					<SimpleList
 						className="hosting-list__features-list"
@@ -157,7 +159,7 @@ export default function HostingList( { selectedSite }: Props ) {
 							<li>{ translate( 'SFTP/SSH, WP-CLI, Git tools' ) }</li>,
 							<li>{ translate( '10 PHP workers with auto-scaling' ) }</li>,
 							<li>{ translate( 'Resource isolation across every site' ) }</li>,
-							<li>{ translate( 'Real-time cloud backups via Jetpack' ) }</li>,
+							<li>{ translate( 'Jetpack real-time backups' ) }</li>,
 						] }
 					/>
 				</Card>
