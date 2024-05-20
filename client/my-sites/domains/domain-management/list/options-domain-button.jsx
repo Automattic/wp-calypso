@@ -3,7 +3,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
-import { compose } from '@wordpress/compose';
 import { Icon, search } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -112,20 +111,16 @@ const trackAddDomainMenuClick = ( menuUrl ) =>
 		menu_slug: menuUrl,
 	} );
 
-export default compose(
-	connect(
-		( state ) => {
-			return {
-				selectedSiteSlug: getSelectedSiteSlug( state ),
-			};
-		},
-		() => {
-			return {
-				trackAddDomainClick,
-				trackAddDomainMenuClick,
-			};
-		}
-	),
-	localize,
-	withMobileBreakpoint
-)( AddDomainButton );
+export default connect(
+	( state ) => {
+		return {
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+		};
+	},
+	() => {
+		return {
+			trackAddDomainClick,
+			trackAddDomainMenuClick,
+		};
+	}
+)( localize( withMobileBreakpoint( AddDomainButton ) ) );
