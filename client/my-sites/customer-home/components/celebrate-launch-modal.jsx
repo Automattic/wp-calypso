@@ -18,29 +18,14 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	const translate = useTranslate();
 	const isPaidPlan = ! site?.plan?.is_free;
 	const isBilledMonthly = site?.plan?.product_slug?.includes( 'monthly' );
-
 	const transformedDomains = allDomains.map( createSiteDomainObject );
-
 	const [ isInitiallyLoaded, setIsInitiallyLoaded ] = useState( false );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardButtonEl = useRef( null );
 	const hasCustomDomain = Boolean(
 		transformedDomains.find( ( domain ) => ! domain.isWPCOMDomain )
 	);
-
-	useEffect( () => {
-		dispatch( fetchSitePurchases( site?.ID ) );
-	}, [ dispatch, site?.ID ] );
-
-	const isLoading = useSelector( isFetchingSitePurchases );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, site?.ID ) );
-
-	useEffect( () => {
-		if ( ! isLoading && ( ! isPaidPlan || purchases.length > 0 ) && ! isInitiallyLoaded ) {
-			setIsInitiallyLoaded( true );
-		}
-	}, [ isLoading, purchases, isInitiallyLoaded ] );
-
 	const actualPlanPurchase =
 		purchases
 			.filter(
@@ -48,8 +33,21 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 			)
 			.sort( ( a, b ) => new Date( a.expiryDate ) - new Date( b.expiryDate ) )[ 0 ] || null;
 	const isA4ASite = actualPlanPurchase?.partnerType === 'a4a_agency';
+	const isLoading = useSelector( isFetchingSitePurchases );
 
 	useEffect( () => {
+		dispatch( fetchSitePurchases( site?.ID ) );
+	}, [ dispatch, site?.ID ] );
+
+	useEffect( () => {
+		if ( ! isLoading && ( ! isPaidPlan || purchases.length > 0 ) && ! isInitiallyLoaded ) {
+			setIsInitiallyLoaded( true );
+		}
+	}, [ isLoading, purchases, isPaidPlan, isInitiallyLoaded ] );
+
+	useEffect( () => {
+		// Remove the celebrateLaunch URL param without reloading the page as soon as the modal loads
+		// Make sure the modal is shown only once
 		window.history.replaceState(
 			null,
 			'',
