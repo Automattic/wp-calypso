@@ -3,10 +3,6 @@
 
 .hosting-list {
 	justify-content: flex-start;
-
-	.card.foldable-card.a4a-migration-offer__wrapper {
-		margin-block: 4px 32px;
-	}
 }
 
 .hosting-list__placeholder {
@@ -26,6 +22,11 @@
 	border: 1px solid var(--color-neutral-10);
 	box-shadow: none;
 	border-radius: 4px;
+	margin: 0;
+
+	@include break-wide {
+		width: calc(66.666% - 6px);
+	}
 }
 
 .hosting-list__features-heading {

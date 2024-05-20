@@ -5,7 +5,8 @@
 	display: flex;
 	flex-direction: column;
 	gap: 64px;
-	padding-block: 16px 32px;
+	margin-block-start: 48px;
+	margin-block-end: 64px;
 }
 
 .hosting-overview__banner {
