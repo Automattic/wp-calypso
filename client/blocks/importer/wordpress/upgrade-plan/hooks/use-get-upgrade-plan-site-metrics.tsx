@@ -20,7 +20,6 @@ export const useGetUpgradePlanSiteMetrics = () => {
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	const { data: siteMetricData } = useUrlBasicMetricsQuery( importSiteQueryParam );
 
-	let showUpdatedSpeedMetrics = false;
 	let lcpPercentageDifference = 0;
 	let fidPercentageDifference = 0;
 
@@ -36,12 +35,7 @@ export const useGetUpgradePlanSiteMetrics = () => {
 		);
 	}
 
-	if ( lcpPercentageDifference > 0 || fidPercentageDifference > 0 ) {
-		showUpdatedSpeedMetrics = true;
-	}
-
 	return {
-		showUpdatedSpeedMetrics,
 		siteMetricData,
 		lcpPercentageDifference,
 		fidPercentageDifference,

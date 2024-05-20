@@ -12,7 +12,6 @@ import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-sel
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { useGetUpgradePlanSiteMetrics } from './hooks/use-get-upgrade-plan-site-metrics';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
@@ -36,7 +35,6 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planId as number, true ) );
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
-	const { showUpdatedSpeedMetrics } = useGetUpgradePlanSiteMetrics();
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_migration_plan_display' );
