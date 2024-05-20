@@ -7,7 +7,6 @@ import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { CommandPaletteProps } from '@automattic/command-palette';
 
 interface CurrentUserCapabilitiesState {
 	currentUser: {
@@ -22,19 +21,7 @@ interface CurrentUserCapabilitiesState {
 const getCurrentUserCapabilities = ( state: CurrentUserCapabilitiesState ) =>
 	state.currentUser.capabilities;
 
-const CalypsoCommandPalette = (
-	props: Omit<
-		CommandPaletteProps,
-		| 'currentRoute'
-		| 'currentSiteId'
-		| 'isOpenGlobal'
-		| 'onClose'
-		| 'navigate'
-		| 'useCommands'
-		| 'useSites'
-		| 'userCapabilities'
-	>
-) => {
+const CalypsoCommandPalette = () => {
 	const isCommandPaletteOpen = useSelector( getIsCommandPaletteOpen );
 	const currentRoutePattern = useSelector( getCurrentRoutePattern ) ?? '';
 	const currentSiteId = useSelector( getSelectedSiteId );
@@ -50,7 +37,6 @@ const CalypsoCommandPalette = (
 			useCommands={ useCommandsCalypso }
 			useSites={ useSiteExcerptsSorted }
 			userCapabilities={ userCapabilities }
-			{ ...props }
 		/>
 	);
 };
