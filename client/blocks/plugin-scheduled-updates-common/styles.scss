@@ -84,7 +84,10 @@ $brand-display: "SF Pro Display", sans-serif;
 		}
 
 		th {
+			font-size: rem(11px);
 			font-weight: 500;
+			text-transform: uppercase;
+			color: var(--studio-gray-80);
 
 			&.expand {
 				width: 4rem;
