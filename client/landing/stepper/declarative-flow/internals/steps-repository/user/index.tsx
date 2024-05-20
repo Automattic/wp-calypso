@@ -33,12 +33,12 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 				handleSocialResponse={ () => submit?.() }
 				socialService={ socialService ?? '' }
 				socialServiceResponse={ {} }
-				isReskinned={ true }
+				isReskinned
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
 				userEmail=""
 				notice={ false }
-				isSocialFirst={ true }
+				isSocialFirst
 			/>
 		</>
 	);
@@ -53,8 +53,8 @@ const UserStep: Step = function UserStep( props ) {
 			} }
 			isHorizontalLayout={ false }
 			isWideLayout={ false }
-			isFullLayout={ true }
-			hideFormattedHeader={ true }
+			isFullLayout
+			hideFormattedHeader
 			isLargeSkipLayout={ false }
 			hideBack={ false }
 			stepContent={ <StepContent { ...props } /> }
