@@ -229,6 +229,12 @@
 					padding: 0 0 0 36px;
 				}
 			}
+
+			thead {
+				position: sticky;
+				top: 0;
+				z-index: 2;
+			}
 		}
 	}
 
