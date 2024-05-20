@@ -145,7 +145,7 @@ export const ScheduleList = ( props: Props ) => {
 			{ isScheduleEmpty && compact && <ScheduleListCardNew className="is-selected" /> }
 			{ ! isScheduleEmpty && ScheduleListComponent ? (
 				<>
-					<ScheduleListFilter compact={ compact } />
+					<ScheduleListFilter />
 					<ScheduleListComponent
 						compact={ compact }
 						schedules={ filteredSchedules }
