@@ -616,11 +616,10 @@ object CheckCodeStyleBranch : BuildType({
 		nonZeroExitCode = false
 		failOnMetricChange {
 			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
+			threshold = 0
 			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
 			comparison = BuildFailureOnMetric.MetricComparison.MORE
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
+			compareTo = value()
 		}
 	}
 
