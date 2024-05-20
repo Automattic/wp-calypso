@@ -2,7 +2,8 @@
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { withMobileBreakpoint } from '@automattic/viewport-react';
+import { compose } from '@wordpress/compose';
 import { Icon, plus, search } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -10,31 +11,26 @@ import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import SplitButton from 'calypso/components/split-button';
 import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './options-domain-button.scss';
+
 class AddDomainButton extends Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string,
 		specificSiteActions: PropTypes.bool,
 		ellipsisButton: PropTypes.bool,
-		borderless: PropTypes.bool,
 		allDomainsList: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		specificSiteActions: false,
 		ellipsisButton: false,
-		borderless: false,
 		allDomainsList: false,
-	};
-
-	state = {
-		isAddMenuVisible: false,
 	};
 
 	constructor( props ) {
@@ -42,19 +38,17 @@ class AddDomainButton extends Component {
 		this.addDomainButtonRef = createRef();
 	}
 
+	getAddNewDomainUrl = () => {
+		if ( ! this.props.selectedSiteSlug ) {
+			return '/start/domain';
+		}
+
+		return domainAddNew( this.props.selectedSiteSlug );
+	};
+
 	clickAddDomain = () => {
 		this.props.trackAddDomainClick();
-		page( domainAddNew( this.props.selectedSiteSlug ) );
-	};
-
-	toggleAddMenu = () => {
-		this.setState( ( state ) => {
-			return { isAddMenuVisible: ! state.isAddMenuVisible };
-		} );
-	};
-
-	closeAddMenu = () => {
-		this.setState( { isAddMenuVisible: false } );
+		page( this.getAddNewDomainUrl() );
 	};
 
 	trackMenuClick = ( reactEvent ) => {
@@ -130,11 +124,10 @@ class AddDomainButton extends Component {
 	}
 
 	render() {
-		const { specificSiteActions, ellipsisButton, borderless } = this.props;
-		const classes = classNames( 'options-domain-button', ellipsisButton && 'ellipsis' );
-		const spanClasses = classNames( {
-			'is-menu-visible': this.state.isAddMenuVisible,
-		} );
+		const { specificSiteActions, ellipsisButton, isBreakpointActive, translate } = this.props;
+		const label = specificSiteActions
+			? translate( 'Add new domain' )
+			: translate( 'Other domain options' );
 
 		if ( ellipsisButton ) {
 			return (
@@ -145,26 +138,20 @@ class AddDomainButton extends Component {
 		}
 
 		return (
-			<span className={ spanClasses }>
-				<Button
-					primary={ specificSiteActions }
-					className={ classes }
-					onClick={ this.toggleAddMenu }
-					ref={ this.addDomainButtonRef }
-					borderless={ borderless }
-				>
-					{ this.renderLabel() }
-				</Button>
-				<PopoverMenu
-					className="options-domain-button__popover"
-					isVisible={ this.state.isAddMenuVisible }
-					onClose={ this.closeAddMenu }
-					context={ this.addDomainButtonRef.current }
-					position="bottom"
-				>
-					{ this.renderOptions() }
-				</PopoverMenu>
-			</span>
+			<SplitButton
+				popoverContext={ this.addDomainButtonRef }
+				className={ classNames( 'options-domain-button', {
+					ellipsis: ellipsisButton,
+				} ) }
+				primary
+				whiteSeparator
+				label={ isBreakpointActive ? undefined : label }
+				toggleIcon={ isBreakpointActive ? 'plus' : undefined }
+				href={ this.getAddNewDomainUrl() }
+				onClick={ this.trackAddDomainClick }
+			>
+				{ this.renderOptions() }
+			</SplitButton>
 		);
 	}
 }
@@ -180,16 +167,20 @@ const trackAddDomainMenuClick = ( menuUrl ) =>
 		menu_slug: menuUrl,
 	} );
 
-export default connect(
-	( state ) => {
-		return {
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-		};
-	},
-	() => {
-		return {
-			trackAddDomainClick,
-			trackAddDomainMenuClick,
-		};
-	}
-)( localize( AddDomainButton ) );
+export default compose(
+	connect(
+		( state ) => {
+			return {
+				selectedSiteSlug: getSelectedSiteSlug( state ),
+			};
+		},
+		() => {
+			return {
+				trackAddDomainClick,
+				trackAddDomainMenuClick,
+			};
+		}
+	),
+	localize,
+	withMobileBreakpoint
+)( AddDomainButton );

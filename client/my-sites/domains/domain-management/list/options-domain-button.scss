@@ -1,6 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.options-domain-button {
+	&.split-button {
+		display: flex;
+	}
+}
+
 button {
 	&.options-domain-button {
 		padding: 8px;
