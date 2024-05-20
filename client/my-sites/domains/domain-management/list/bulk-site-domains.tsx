@@ -77,7 +77,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 
 	const purchaseActions = usePurchaseActions();
 
-	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions /> ];
+	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" /> ];
 
 	const [ changeSiteAddressSourceDomain, setChangeSiteAddressSourceDomain ] =
 		useState< ResponseDomain | null >( null );

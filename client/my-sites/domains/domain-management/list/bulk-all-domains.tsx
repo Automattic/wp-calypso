@@ -236,9 +236,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		),
 	};
 
-	const buttons = [
-		<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
-	];
+	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" allDomainsList /> ];
 
 	const purchaseActions = usePurchaseActions();
 

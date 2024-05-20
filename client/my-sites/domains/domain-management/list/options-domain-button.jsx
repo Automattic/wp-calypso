@@ -4,13 +4,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { compose } from '@wordpress/compose';
-import { Icon, plus, search } from '@wordpress/icons';
-import classNames from 'classnames';
+import { Icon, search } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { createRef, Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
@@ -22,20 +20,15 @@ import './options-domain-button.scss';
 class AddDomainButton extends Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string,
-		specificSiteActions: PropTypes.bool,
-		ellipsisButton: PropTypes.bool,
 		allDomainsList: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		specificSiteActions: false,
-		ellipsisButton: false,
 		allDomainsList: false,
 	};
 
 	constructor( props ) {
 		super( props );
-		this.addDomainButtonRef = createRef();
 	}
 
 	getAddNewDomainUrl = () => {
@@ -56,7 +49,7 @@ class AddDomainButton extends Component {
 	};
 
 	renderOptions = () => {
-		const { allDomainsList, selectedSiteSlug, specificSiteActions, translate } = this.props;
+		const { allDomainsList, translate } = this.props;
 
 		if ( allDomainsList ) {
 			return (
@@ -75,77 +68,29 @@ class AddDomainButton extends Component {
 			);
 		}
 
-		if ( specificSiteActions ) {
-			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
-			return (
-				<Fragment>
-					<PopoverMenuItem onClick={ this.clickAddDomain }>
-						<Icon icon={ search } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-						{ translate( 'Search for a domain' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem icon="domains" href={ useYourDomainUrl } onClick={ this.trackMenuClick }>
-						{ translate( 'Use a domain I own' ) }
-					</PopoverMenuItem>
-				</Fragment>
-			);
-		}
-
+		const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
 		return (
 			<Fragment>
-				<PopoverMenuItem icon="plus" href="/new" onClick={ this.trackMenuClick }>
-					{ translate( 'Add a domain to a new site' ) }
+				<PopoverMenuItem onClick={ this.clickAddDomain }>
+					<Icon icon={ search } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+					{ translate( 'Search for a domain' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem icon="create" href="/domains/add" onClick={ this.trackMenuClick }>
-					{ selectedSiteSlug
-						? translate( 'Add a domain to a different site' )
-						: translate( 'Add a domain to an existing site' ) }
-				</PopoverMenuItem>
-				<PopoverMenuItem icon="domains" href="/start/domain" onClick={ this.trackMenuClick }>
-					{ translate( 'Add a domain without a site' ) }
+				<PopoverMenuItem icon="domains" href={ useYourDomainUrl } onClick={ this.trackMenuClick }>
+					{ translate( 'Use a domain I own' ) }
 				</PopoverMenuItem>
 			</Fragment>
 		);
 	};
 
-	renderLabel() {
-		const { specificSiteActions, translate } = this.props;
-
-		let label = translate( 'Other domain options' );
-		if ( specificSiteActions ) {
-			label = translate( 'Add new domain' );
-		}
-
-		return (
-			<>
-				<Icon icon={ plus } className="options-domain-button__add gridicon" viewBox="2 2 20 20" />
-				<span className="options-domain-button__desktop">{ label }</span>
-			</>
-		);
-	}
-
 	render() {
-		const { specificSiteActions, ellipsisButton, isBreakpointActive, translate } = this.props;
-		const label = specificSiteActions
-			? translate( 'Add new domain' )
-			: translate( 'Other domain options' );
-
-		if ( ellipsisButton ) {
-			return (
-				<EllipsisMenu popoverClassName="options-domain-button__popover" position="bottom">
-					{ this.renderOptions() }
-				</EllipsisMenu>
-			);
-		}
+		const { isBreakpointActive, translate } = this.props;
 
 		return (
 			<SplitButton
-				popoverContext={ this.addDomainButtonRef }
-				className={ classNames( 'options-domain-button', {
-					ellipsis: ellipsisButton,
-				} ) }
+				className="options-domain-button"
 				primary
 				whiteSeparator
-				label={ isBreakpointActive ? undefined : label }
+				label={ isBreakpointActive ? undefined : translate( 'Add new domain' ) }
 				toggleIcon={ isBreakpointActive ? 'plus' : undefined }
 				href={ this.getAddNewDomainUrl() }
 				onClick={ this.trackAddDomainClick }
