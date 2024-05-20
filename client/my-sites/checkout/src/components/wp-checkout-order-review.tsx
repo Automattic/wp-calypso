@@ -272,8 +272,8 @@ function getDomainToDisplayInCheckoutHeader(
 		return domainUrl;
 	}
 
-	if ( responseCart.gift_details?.receiver_blog_url ) {
-		return responseCart.gift_details.receiver_blog_url;
+	if ( responseCart.gift_details?.receiver_blog_slug ) {
+		return responseCart.gift_details.receiver_blog_slug;
 	}
 
 	if (
