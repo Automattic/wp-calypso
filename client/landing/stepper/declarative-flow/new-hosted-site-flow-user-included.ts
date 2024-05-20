@@ -1,5 +1,6 @@
+import config from '@automattic/calypso-config';
 import { isFreeHostingTrial } from '@automattic/calypso-products';
-import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
+import { NEW_HOSTED_SITE_FLOW_USER_INCLUDED } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
@@ -13,7 +14,6 @@ import { useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
@@ -21,10 +21,11 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
 
 const hosting: Flow = {
-	name: NEW_HOSTED_SITE_FLOW,
+	name: NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	isSignupFlow: true,
 	useSteps() {
 		return [
+			{ slug: 'user', asyncComponent: () => import( './internals/steps-repository/user' ) },
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'trialAcknowledge',
@@ -61,6 +62,9 @@ const hosting: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
+				case 'user': {
+					return navigate( 'plans' );
+				}
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
 						.product_slug;
@@ -120,7 +124,6 @@ const hosting: Flow = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
-		const flowName = this.name;
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
@@ -129,24 +132,16 @@ const hosting: Flow = {
 			[]
 		);
 
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }`,
-		} );
-
 		useLayoutEffect( () => {
+			/**
+			 * User integration to the stepper framework is still experimental
+			 */
+			if ( ! config.isEnabled( 'onboarding/user-on-stepper-hosting' ) ) {
+				window.location.assign( window.location.origin + '/setup/new-hosted-site' );
+			}
 			const queryParams = Object.fromEntries( query );
 
 			const urlWithQueryParams = addQueryArgs( '/setup/new-hosted-site', queryParams );
-
-			if ( ! userIsLoggedIn ) {
-				window.location.assign(
-					addQueryArgs( logInUrl, {
-						...queryParams,
-						flow: 'new-hosted-site',
-					} )
-				);
-			}
 
 			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
 				window.location.assign( urlWithQueryParams );

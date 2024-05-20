@@ -1213,44 +1213,13 @@ class SignupForm extends Component {
 		if ( this.props.isSocialFirst ) {
 			return (
 				<SignupFormSocialFirst
-					/**
-					 * step
-					 * {
-					 *	lastKnownFlow: "onboarding"
-					 *	lastUpdated: 1715739964040
-					 *	status: "in-progress"
-					 *	stepName: "user-social"
-					 * }
-					 */
 					step={ this.props.step }
-					/**
-					 * String stepName
-					 */
 					stepName={ this.props.stepName }
-					/**
-					 * String flowName
-					 */
 					flowName={ this.props.flowName }
-					/**
-					 * Callback to go to next step
-					 */
 					goToNextStep={ this.props.goToNextStep }
-					/**
-					 * 
-						emailAddress, // Ignored
-						isJetpack: this.isJetpack(), // Not required for hosting
-						from: this.getLoginLinkFrom(), // from query param,
-						redirectTo: this.props.redirectToAfterLoginUrl, // Maybe add the redirect url to the current flow
-						locale: this.props.locale, // Just the locale i.e. en
-						oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id, //	const oauth2Client = useSelector( getCurrentOAuth2Client );
-						wccomFrom: this.props.wccomFrom, // const wccomForm = useSelector( getWccomFrom );
-						isWhiteLogin: this.props.isReskinned,
-						signupUrl: window.location.pathname + window.location.search,
-					 */
 					logInUrl={ logInUrl }
-					//
-					handleSocialResponse={ this.props.handleSocialResponse } /// Submits signup step loads redirect_to from session storage and oauth validate
-					socialService={ this.props.socialService } // getSocialServiceFromClientId
+					handleSocialResponse={ this.props.handleSocialResponse }
+					socialService={ this.props.socialService }
 					socialServiceResponse={ this.props.socialServiceResponse }
 					isReskinned={ this.props.isReskinned }
 					redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
