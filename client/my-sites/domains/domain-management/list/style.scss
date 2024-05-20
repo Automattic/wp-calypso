@@ -208,14 +208,23 @@
 
 		table {
 			padding-inline: 0;
+			margin-inline-start: 0;
 
 			&.is-7-column {
 				grid-template-columns: 100px 2fr 1fr 1fr auto auto auto auto;
-			}
 
-			th:first-child,
-			td:first-child {
-				padding: var(--row-gap) 0 0 72px;
+				th:first-child,
+				td:first-child {
+					padding: var(--row-gap) 0 0 72px;
+				}
+			}
+			&.is-5-column {
+				grid-template-columns: 50px 1fr minmax(auto, 1fr) auto auto auto;
+
+				th:first-child,
+				td:first-child {
+					padding: var(--row-gap) 0 0 36px;
+				}
 			}
 		}
 	}
