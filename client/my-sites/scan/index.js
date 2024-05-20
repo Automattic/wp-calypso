@@ -16,16 +16,17 @@ import {
 } from 'calypso/my-sites/scan/controller';
 import WPCOMScanUpsellPage from 'calypso/my-sites/scan/wpcom-upsell';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const showJetpackSection = isJetpackSectionEnabledForSite( state, siteId );
-	const isWPCOMSite = getIsSiteWPCOM( state, siteId );
+	const isHistoryScanForAtomicSite =
+		isAtomicSite( state, siteId ) && context.path.includes( '/scan/history' );
 
-	if ( isWPCOMSite || ( ! isJetpackCloud() && ! showJetpackSection ) ) {
+	if ( ! isHistoryScanForAtomicSite || ( ! isJetpackCloud() && ! showJetpackSection ) ) {
 		return notFound( context, next );
 	}
 

@@ -15,9 +15,10 @@ import './style.scss';
 
 interface Props {
 	filter: FilterValue;
+	showNavigation?: boolean;
 }
 
-export default function ScanHistoryPage( { filter }: Props ) {
+export default function ScanHistoryPage( { filter, showNavigation = true }: Props ) {
 	const translate = useTranslate();
 	const isJetpackPlatform = isJetpackCloud();
 
@@ -34,7 +35,7 @@ export default function ScanHistoryPage( { filter }: Props ) {
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
 			) }
 
-			<ScanNavigation section="history" />
+			{ showNavigation && <ScanNavigation section="history" /> }
 			<section className="history__body">
 				<p className="history__description">
 					{ translate(
