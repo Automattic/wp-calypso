@@ -613,6 +613,13 @@ object CheckCodeStyleBranch : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
+			threshold = 0
+			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
+			comparison = BuildFailureOnMetric.MetricComparison.MORE
+			compareTo = value()
+		}
 	}
 
 	features {
