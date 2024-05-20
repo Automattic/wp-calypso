@@ -162,7 +162,7 @@ const DotcomSitesDataViews = ( {
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
 				enableSorting: false,
-				width: '100px',
+				width: '120px',
 			},
 			{
 				id: 'stats',

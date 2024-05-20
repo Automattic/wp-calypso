@@ -116,6 +116,11 @@
 		table-layout: fixed;
 	}
 
+	table.dataviews-view-table th,
+	table.dataviews-view-table td {
+		white-space: nowrap; /* Optional: ensures text in cells does not wrap */
+	}
+
 	table.dataviews-view-table thead .dataviews-view-table__row th {
 		border-bottom-color: var(--color-border-secondary);
 		padding-left: 16px;
@@ -125,6 +130,19 @@
 		@include break-huge {
 			&:first-child {
 				padding-left: 64px;
+			}
+		}
+
+		&:nth-child(4) {
+			span {
+				display: inline-block;
+				max-width: calc(100% - 14px);
+				white-space: normal;
+				overflow-wrap: anywhere;
+			}
+
+			svg.site-sort__icon {
+				display: inline-block;
 			}
 		}
 
@@ -148,11 +166,6 @@
 			white-space: wrap;
 			overflow-wrap: anywhere;
 		}
-	}
-
-	table.dataviews-view-table th,
-	table.dataviews-view-table td {
-		white-space: nowrap; /* Optional: ensures text in cells does not wrap */
 	}
 
 	table.dataviews-view-table th:first-child,
