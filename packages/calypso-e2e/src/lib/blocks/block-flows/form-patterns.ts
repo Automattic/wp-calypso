@@ -48,7 +48,9 @@ export class FormPatternsFlow implements BlockFlow {
 		// So we have to grab a new parent locator ourselves instead of relying on the old on in the context.
 		const editorCanvas = await context.editorPage.getEditorCanvas();
 		const newParentBlockId = await editorCanvas
-			.locator( '[aria-label="Block: Form"].is-selected' )
+			.locator(
+				'[aria-label="Block: Form"].is-selected, [aria-label="Block: Group"].is-selected [aria-label="Block: Form"]'
+			)
 			.getAttribute( 'id' );
 		const newParentBlockLocator = editorCanvas.locator( `#${ newParentBlockId }` );
 
