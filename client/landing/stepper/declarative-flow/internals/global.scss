@@ -495,5 +495,9 @@ button {
 
 	.step-container.site-picker .step-container__content {
 		max-width: 100%;
+
+		svg {
+			fill: none;
+		}
 	}
 }
