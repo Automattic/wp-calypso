@@ -3,7 +3,7 @@ import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import WhatsNewGuide, { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
+import { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
 import { useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
@@ -123,7 +123,16 @@ function WhatsNewLoader( { loadWhatsNew, siteId } ) {
 		return null;
 	}
 
-	return showWhatsNew && <WhatsNewGuide onClose={ handleClose } siteId={ siteId } />;
+	return (
+		showWhatsNew && (
+			<AsyncLoad
+				require="@automattic/whats-new"
+				placeholder={ null }
+				onClose={ handleClose }
+				siteId={ siteId }
+			/>
+		)
+	);
 }
 
 function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
