@@ -42,7 +42,12 @@ const JetpackProductInfoRegularList = ( { items }: Props ) => {
 	}, [] );
 
 	return (
-		<ul className="jetpack-product-info__regular-list" ref={ listRef }>
+		<ul
+			className="jetpack-product-info__regular-list"
+			ref={ listRef }
+			aria-live="polite"
+			aria-relevant="text"
+		>
 			{ items.map( ( item, index ) => (
 				<li className="jetpack-product-info__regular-list-item" key={ index }>
 					{ item }
