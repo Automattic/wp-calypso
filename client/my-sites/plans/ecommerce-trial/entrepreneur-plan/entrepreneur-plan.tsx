@@ -8,6 +8,7 @@ import {
 import page from '@automattic/calypso-router';
 import { PlanPrice } from '@automattic/components';
 import Card from '@automattic/components/src/card';
+import { formatCurrency } from '@automattic/format-currency';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { CustomSelectControl } from '@wordpress/components';
 import { hasTranslation } from '@wordpress/i18n';
@@ -43,6 +44,7 @@ type PlanKeys =
 
 const useEntrepreneurPlanPrices = () => {
 	const translate = useTranslate();
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || '';
 	const state = useSelector( ( stateValue ) => stateValue );
 	const rawPlans = getPlans();
 
@@ -89,19 +91,34 @@ const useEntrepreneurPlanPrices = () => {
 		switch ( key ) {
 			case 'PLAN_ECOMMERCE':
 				plan.subText = translate( 'per month, %(rawPrice)s billed annually, excl. taxes', {
-					args: { rawPrice: plan.price },
+					args: {
+						rawPrice: formatCurrency( plan.price, currencyCode, {
+							stripZeros: true,
+							isSmallestUnit: false,
+						} ),
+					},
 					comment: 'Excl. Taxes is short for excluding taxes',
 				} );
 				break;
 			case 'PLAN_ECOMMERCE_2_YEARS':
 				plan.subText = translate( 'per month, %(rawPrice)s billed every two years, excl. taxes', {
-					args: { rawPrice: plan.price },
+					args: {
+						rawPrice: formatCurrency( plan.price, currencyCode, {
+							stripZeros: true,
+							isSmallestUnit: false,
+						} ),
+					},
 					comment: 'Excl. Taxes is short for excluding taxes',
 				} );
 				break;
 			case 'PLAN_ECOMMERCE_3_YEARS':
 				plan.subText = translate( 'per month, %(rawPrice)s billed every three years, excl. taxes', {
-					args: { rawPrice: plan.price },
+					args: {
+						rawPrice: formatCurrency( plan.price, currencyCode, {
+							stripZeros: true,
+							isSmallestUnit: false,
+						} ),
+					},
 					comment: 'Excl. Taxes is short for excluding taxes',
 				} );
 				break;
