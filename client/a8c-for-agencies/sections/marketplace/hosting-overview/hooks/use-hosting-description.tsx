@@ -27,19 +27,17 @@ export default function useHostingDescription( slug: string ): {
 			case 'pressable-hosting':
 				name = translate( 'Pressable' );
 				heading = translate( 'Premier Agency Hosting w/ WooCommerce' );
-				description = translate(
-					'Premier agency hosting for large-scale businesses and major eCommerce.'
-				);
+				description = translate( 'Best for large-scale businesses and major eCommerce sites.' );
 				features = [
 					translate( 'Optimized for high-traffic WooCommerce stores {{img/}}', {
 						components: {
 							img: <WooCommerceLogo size={ 32 } />,
 						},
 					} ),
-					translate( '24/7 Expert Support with expanded support options' ),
-					translate( '20GB-1TB Storage' ),
+					translate( '24/7 Expert support w/ expanded options' ),
+					translate( '75GB-1TB Storage' ),
 					translate( '100% uptime SLA' ),
-					translate( 'Custom pricing and packaging are available' ),
+					translate( 'Custom pricing' ),
 					translate( 'Agency tools to manage sites at scale' ),
 				];
 				footerText = translate( 'WP.Cloud powered hosting by' );
@@ -51,12 +49,12 @@ export default function useHostingDescription( slug: string ): {
 					'Optimized and hassle-free hosting for business websites, local merchants, and small online retailers.'
 				);
 				features = [
-					translate( 'Great for developers with client-managed sites.' ),
+					translate( 'Great for client-managed sites.' ),
 					translate( '24/7 Expert Support' ),
 					translate( '50 GB Storage' ),
-					translate( 'Unmetered Visits' ),
+					translate( 'Unlimited visitors' ),
 					translate( 'Self-service sales' ),
-					translate( 'Studio (local dev)' ),
+					translate( 'Studio (local development)' ),
 				];
 				footerText = translate( 'WP.Cloud powered hosting by' );
 				break;

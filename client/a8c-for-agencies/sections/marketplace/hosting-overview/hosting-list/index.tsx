@@ -143,7 +143,7 @@ export default function HostingList( { selectedSite }: Props ) {
 			{ isWPCOMOptionEnabled && (
 				<Card className="hosting-list__features">
 					<h3 className="hosting-list__features-heading">
-						{ translate( 'Included with WordPress.com and Pressable plans' ) }
+						{ translate( 'Included with Standard & Premier hosting' ) }
 					</h3>
 					<SimpleList
 						className="hosting-list__features-list"
@@ -159,7 +159,7 @@ export default function HostingList( { selectedSite }: Props ) {
 							<li>{ translate( 'SFTP/SSH, WP-CLI, Git tools' ) }</li>,
 							<li>{ translate( '10 PHP workers with auto-scaling' ) }</li>,
 							<li>{ translate( 'Resource isolation across every site' ) }</li>,
-							<li>{ translate( 'Real-time cloud backups via Jetpack' ) }</li>,
+							<li>{ translate( 'Jetpack real-time backups' ) }</li>,
 						] }
 					/>
 				</Card>
