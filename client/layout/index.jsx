@@ -26,7 +26,6 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
-import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -306,7 +305,9 @@ class Layout extends Component {
 			return <EmptyMasterbar />;
 		}
 		if ( this.props.isWooCoreProfilerFlow ) {
-			return <WooCoreProfilerMasterbar />;
+			return (
+				<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
+			);
 		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
