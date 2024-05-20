@@ -46,9 +46,10 @@ function UpgradeText( {
 	firstDomain: ResponseCartProduct;
 } ) {
 	const translate = useTranslate();
-	// Use the subtotal with discounts for the current cart price, but use the
-	// subtotal without discounts to calculate the price after the upsell
-	// because some discounts may be removed by the upsell.
+	// Use the subtotal with discounts for the current cart item price if the
+	// item's discounts are only for the first year, but use the subtotal
+	// without discounts to calculate the price after the upsell because the
+	// upsell will remove other first year discounts.
 	//
 	// For example, if the domain has a sale coupon then it will be removed by
 	// the "first year free" bundle discount when a plan is added to the cart
@@ -57,10 +58,15 @@ function UpgradeText( {
 	// predicted cart price with the plan, we must consider the current cart
 	// with the sale and the predicted cart without the sale.
 	//
-	// This may not be accurate for all types of discounts (in the previous
-	// example it only happens because they are both first-year percentage
-	// discounts) but it should be accurate most of the time.
-	const domainInCartPrice = firstDomain.item_subtotal_integer;
+	// This will not be accurate for all types of discounts and predicting what
+	// discounts will be applied is difficult, but this makes an attempt based
+	// on what discounts are currently applied.
+	const isDomainDiscountFromFirstYearOverride = firstDomain.cost_overrides.every(
+		( override ) => override.first_unit_only
+	);
+	const domainInCartPrice = isDomainDiscountFromFirstYearOverride
+		? firstDomain.item_subtotal_integer
+		: firstDomain.item_original_subtotal_integer;
 	const domainInCartPricePerYear = firstDomain.item_original_subtotal_integer / firstDomain.volume;
 	const cartPriceWithDomainAndPlan =
 		domainInCartPricePerYear * ( firstDomain.volume - 1 ) + planPrice;
