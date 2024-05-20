@@ -91,12 +91,32 @@ export function CommandMenuGroup() {
 		setEmptyListNotice,
 		navigate,
 		currentRoute,
+		currentSiteId,
+		useSites,
 	} = useCommandPaletteContext();
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette();
 
+	const sites = useSites();
+	const currentSite = sites.find( ( site: { ID: unknown } ) => site.ID === currentSiteId );
+
 	useEffect( () => {
+		if ( ! filterNotice && currentSiteId ) {
+			const sitesPath = currentRoute.startsWith( '/wp-admin' )
+				? 'https://wordpress.com/sites'
+				: '/sites/';
+			const message = (
+				<>
+					<a href={ sitesPath }>All sites</a> { ' / ' }
+					{ currentSite?.options && (
+						<a href={ currentSite.options.admin_url }>{ currentSite.name }</a>
+					) }
+				</>
+			);
+			setFooterMessage( message );
+			return;
+		}
 		setFooterMessage( filterNotice ?? '' );
-	}, [ setFooterMessage, filterNotice ] );
+	}, [ setFooterMessage, filterNotice, currentSiteId, currentRoute, currentSite ] );
 
 	useEffect( () => {
 		setEmptyListNotice( emptyListNotice ?? '' );
