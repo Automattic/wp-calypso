@@ -613,7 +613,6 @@ object CheckCodeStyleBranch : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
-		nonZeroExitCode = false
 		failOnMetricChange {
 			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
 			threshold = 0
