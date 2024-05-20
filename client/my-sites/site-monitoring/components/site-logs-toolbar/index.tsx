@@ -1,7 +1,7 @@
 import { SelectDropdown, Gridicon, Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
@@ -103,15 +103,15 @@ export const SiteLogsToolbar = ( {
 
 	const requestStatuses = [
 		{ value: '', label: translate( 'All' ) },
-		{ value: '200', label: '200' },
-		{ value: '301', label: '301' },
-		{ value: '302', label: '302' },
-		{ value: '400', label: '400' },
-		{ value: '401', label: '401' },
-		{ value: '403', label: '403' },
-		{ value: '404', label: '404' },
-		{ value: '429', label: '429' },
-		{ value: '500', label: '500' },
+		{ value: '200', label: numberFormat( 200, 0 ) },
+		{ value: '301', label: numberFormat( 301, 0 ) },
+		{ value: '302', label: numberFormat( 302, 0 ) },
+		{ value: '400', label: numberFormat( 400, 0 ) },
+		{ value: '401', label: numberFormat( 401, 0 ) },
+		{ value: '403', label: numberFormat( 403, 0 ) },
+		{ value: '404', label: numberFormat( 404, 0 ) },
+		{ value: '429', label: numberFormat( 429, 0 ) },
+		{ value: '500', label: numberFormat( 500, 0 ) },
 	];
 
 	const selectedSeverity =
