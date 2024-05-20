@@ -3,7 +3,6 @@ import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
-import { SiteExcerptNetworkData } from '@automattic/sites';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -14,7 +13,6 @@ import { HostingCard } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
-import { isP2Site } from 'calypso/sites-dashboard/utils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -146,7 +144,6 @@ const PlanCard: FC = () => {
 	const planDetails = site?.plan;
 	const planName = planDetails?.product_name_short ?? '';
 	const isFreePlan = planDetails?.is_free;
-	const isP2Plan = isP2Site( site as SiteExcerptNetworkData );
 
 	// Check for storage addons available for purchase.
 	const addOns = AddOns.useAddOns( { selectedSiteId: site?.ID } );
@@ -159,7 +156,7 @@ const PlanCard: FC = () => {
 			<QuerySitePlans siteId={ site?.ID } />
 			<HostingCard className="hosting-overview__plan">
 				<div className="hosting-overview__plan-card-header">
-					<h3 className="hosting-overview__plan-card-title">{ isP2Plan ? 'P2' : planName }</h3>
+					<h3 className="hosting-overview__plan-card-title">{ planName }</h3>
 
 					{ isJetpackProductSlug( planDetails?.product_slug ?? '' ) && (
 						<Button
