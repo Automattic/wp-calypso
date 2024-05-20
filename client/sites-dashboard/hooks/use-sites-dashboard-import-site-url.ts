@@ -13,6 +13,6 @@ export const useSitesDashboardImportSiteUrl = (
 			source: TRACK_SOURCE_NAME,
 			...additionalParameters,
 		},
-		isHostingFlow ? '/setup/import-hosted-site' : '/start/import'
+		isHostingFlow ? '/setup/import-hosted-site' : '/setup/hosted-site-migration'
 	);
 };
