@@ -89,7 +89,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				}
 				.domain-header__buttons .button {
 					line-height: 22px;
-					border-radius: 2px;
 					white-space: nowrap;
 					margin-left: 0;
 				}
@@ -257,9 +256,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		),
 	};
 
-	const buttons = [
-		<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
-	];
+	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" allDomainsList /> ];
 
 	const purchaseActions = usePurchaseActions();
 
