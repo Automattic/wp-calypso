@@ -5,4 +5,14 @@
 	&.split-button {
 		display: flex;
 	}
+
+	.split-button__main {
+		-webkit-font-smoothing: antialiased;
+	}
+
+	@media (max-width: 480px) {
+		.split-button__toggle {
+			border-radius: 2px;
+		}
+	}
 }
