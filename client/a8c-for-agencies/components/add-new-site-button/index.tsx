@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
@@ -32,8 +33,9 @@ const AddNewSiteButton = ( {
 	/** @todo Remove this line once the A4A_SITES_CONNECT_URL_LINK URL exists. */
 	const showAddSitesByURLButton = false;
 
-	// @todo Use a feature flag to get value for this
-	const showAddSitesFromWPCOMAccount = true;
+	const showAddSitesFromWPCOMAccount = config.isEnabled(
+		'a8c-for-agencies/import-site-from-wpcom'
+	);
 
 	return (
 		<SplitButton
