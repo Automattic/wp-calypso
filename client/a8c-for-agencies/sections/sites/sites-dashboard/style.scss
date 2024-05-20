@@ -14,6 +14,12 @@
 	}
 
 	.a4a-layout-column {
+		.a4a-layout-column__container {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+
 		@include breakpoint-deprecated( "<660px" ) {
 			border-radius: 0;
 		}
@@ -203,8 +209,8 @@
 		}
 
 		.dataviews-view-table-wrapper {
+			flex: 1;
 			overflow-y: auto;
-			max-height: calc(100vh - 326px); /* 326px is the size of all the height above and below the dataview, from the edges of the screen, plus 10px offset from the padding. Currently below 9px + 309 above */
 
 			table {
 				width: 100%;
@@ -248,12 +254,6 @@
 		&.sites-dashboard__layout {
 			.dataviews-view-table-wrapper {
 				overflow-y: auto;
-				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
-			}
-
-			.is-hiding-navigation .dataviews-view-table-wrapper {
-				overflow-y: auto;
-				max-height: calc(100vh - 260px); /* 260px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
 			}
 		}
 
@@ -541,6 +541,10 @@
 		}
 
 		.dataviews-wrapper {
+			display: flex;
+			height: 100%;
+			overflow: hidden;
+
 			.components-button:focus:not(:disabled) {
 				box-shadow: 0 0 0 2px var(--color-primary-light);
 			}
@@ -556,12 +560,17 @@
 		}
 
 		.sites-overview {
+			height: 100%;
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
 			background: var(--color-light-backdrop);
 
 			.sites-overview__content {
+				display: flex;
+				flex: 1;
+				height: 100%;
+				overflow: hidden;
 				margin-top: 24px;
 
 				&.is-hiding-navigation {

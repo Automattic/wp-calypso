@@ -54,6 +54,10 @@
 		text-align: end;
 	}
 
+	.dataviews-view-table-wrapper {
+		overflow: auto;
+	}
+
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -225,9 +229,8 @@
 		}
 
 		.dataviews-view-table-wrapper {
+			flex: 1;
 			overflow-y: auto;
-			// Without masterbar
-			max-height: calc(100vh - 285px); /* 285px is the size of all the height above and below the dataviews-view-table-wrapper */
 
 			table {
 				width: 100%;
@@ -241,12 +244,6 @@
 				display: none;
 			}
 
-		}
-	}
-
-	@media (max-width: 600px) {
-		.dataviews-view-table-wrapper {
-			max-height: calc(100vh - 323px); /* 323px is the size of all the height above and below the dataviews-view-table-wrapper */
 		}
 	}
 
@@ -272,14 +269,6 @@
 	}
 
 	@media (min-width: $break-large) {
-		&.sites-dashboard__layout {
-			.dataviews-view-table-wrapper {
-				overflow-y: auto;
-				min-height: calc(100vh - 277px); /* Set min-height to prevent the table from shrinking when there are few rows. */
-				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
-			}
-		}
-
 		&.sites-dashboard__layout:not(.preview-hidden) {
 			.sites-overview {
 				padding: 0;
@@ -510,12 +499,17 @@
 		}
 
 		.sites-overview {
+			height: 100%;
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
 			background: var(--color-light-backdrop);
 
 			.sites-overview__content {
+				display: flex;
+				flex: 1;
+				height: 100%;
+				overflow: hidden;
 				margin-top: 24px;
 			}
 		}

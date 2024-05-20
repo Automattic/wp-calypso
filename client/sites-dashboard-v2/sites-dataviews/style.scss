@@ -89,10 +89,6 @@
 	}
 }
 
-.sites-overview__content:has(.dataviews-pagination) {
-	padding-bottom: 32px !important;
-}
-
 .main.sites-dashboard.sites-dashboard__layout:has(.dataviews-pagination) {
 	.dataviews-view-table {
 		margin: 0;

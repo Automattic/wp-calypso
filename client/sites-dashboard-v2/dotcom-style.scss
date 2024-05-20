@@ -176,7 +176,7 @@
 	}
 
 	.sites-overview__content {
-		margin-top: 35px;
+		margin-top: 11px;
 	}
 
 	@media (max-width: $break-wide) {
@@ -512,7 +512,14 @@
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout {
 	.a4a-layout-column__container {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+
 		.dataviews-wrapper {
+			display: flex;
+			height: 100%;
+			overflow: hidden;
 			position: relative;
 
 			.dataviews-pagination {
@@ -627,15 +634,5 @@
 	// Prevent the content pushed out via translateX(100%) creating a scrollbar
 	&.focus-sidebar .layout__content .layout__primary {
 		overflow-x: hidden;
-	}
-}
-
-.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper,
-.wpcom-site div.is-section-plugins:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
-	max-height: calc(100vh - 276px); /* 276px is the size of all the height above and below the dataviews-view-table-wrapper */
-
-	// With 48px padding.
-	@media ( min-width: 601px ) {
-		max-height: calc(100vh - 324px); /* 324px is the size of all the height above and below the dataviews-view-table-wrapper */
 	}
 }

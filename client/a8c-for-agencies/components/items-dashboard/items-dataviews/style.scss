@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .dataviews-filters__view-actions {
+	flex-shrink: 0;
 	margin-bottom: 8px;
 
 	.components-button.is-compact.is-tertiary:not(.dataviews-filters-button)[aria-disabled="true"] {
@@ -10,6 +11,7 @@
 }
 
 .dataviews-pagination {
+	flex-shrink: 0;
 	background: #fff;
 	border-top: 1px solid #f1f1f1;
 	border-bottom-left-radius: 4px;
