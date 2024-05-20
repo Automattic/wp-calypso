@@ -38,9 +38,7 @@ export function GitHubDeployments() {
 
 		return (
 			<>
-				<HeaderCake isCompact onClick={ () => page( '/sites' ) } backIcon="chevron-left">
-					{ __( 'Manage Connection' ) }
-				</HeaderCake>
+				<HeaderCake isCompact>{ __( 'Manage Connection' ) }</HeaderCake>
 				<ActionPanel>
 					<GitHubDeploymentCreationForm onConnected={ refetch } />
 				</ActionPanel>
