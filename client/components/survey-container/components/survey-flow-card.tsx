@@ -35,10 +35,8 @@ const SurveyFlowCard = ( {
 						title={ question.label }
 						text={ question.helpText ?? '' }
 						onClick={ () => {
-							if ( ! disabled ) {
-								handleClick( questionKey, [ question.value ] );
-								onContinue?.();
-							}
+							handleClick( questionKey, [ question.value ] );
+							onContinue?.();
 						} }
 						icon={ undefined }
 						disabled={ disabled }
