@@ -36,6 +36,10 @@ const isRegistrationOrTransfer = ( item: ResponseCartProduct ) => {
 	return isDomainRegistration( item ) || isDomainTransfer( item );
 };
 
+function applyPercentageDiscount( percentageDiscount: number, basePrice: number ): number {
+	return basePrice - basePrice * ( percentageDiscount / 100 );
+}
+
 function UpgradeText( {
 	planPrice,
 	planName,
@@ -64,6 +68,12 @@ function UpgradeText( {
 	const isDomainDiscountFromFirstYearOverride = firstDomain.cost_overrides.every(
 		( override ) => override.first_unit_only
 	);
+	// Coupon code discounts will apply before and after the upsell, so we must
+	// re-apply them to the price difference also.
+	const domainCouponCodeDiscount = firstDomain.cost_overrides.find(
+		( override ) => override.override_code === 'coupon-discount'
+	);
+	const domainCouponPercentageDiscount = domainCouponCodeDiscount?.percentage ?? 0;
 	const domainInCartPrice = isDomainDiscountFromFirstYearOverride
 		? firstDomain.item_subtotal_integer
 		: firstDomain.item_original_subtotal_integer;
@@ -72,7 +82,11 @@ function UpgradeText( {
 		domainInCartPricePerYear * ( firstDomain.volume - 1 ) + planPrice;
 
 	if ( cartPriceWithDomainAndPlan > domainInCartPrice ) {
-		const extraToPay = cartPriceWithDomainAndPlan - domainInCartPrice;
+		// Re-apply any coupon code discount.
+		const extraToPay = applyPercentageDiscount(
+			domainCouponPercentageDiscount,
+			cartPriceWithDomainAndPlan - domainInCartPrice
+		);
 		return translate(
 			'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our %(planName)s plan, and get access to all its features, plus the first year of your domain for free.',
 			{
@@ -91,7 +105,11 @@ function UpgradeText( {
 	}
 
 	if ( cartPriceWithDomainAndPlan < domainInCartPrice ) {
-		const savings = domainInCartPrice - cartPriceWithDomainAndPlan;
+		// Re-apply any coupon code discount.
+		const savings = applyPercentageDiscount(
+			domainCouponPercentageDiscount,
+			domainInCartPrice - cartPriceWithDomainAndPlan
+		);
 		return translate(
 			'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com %(planName)s plan instead — your domain comes free for a year.',
 			{
