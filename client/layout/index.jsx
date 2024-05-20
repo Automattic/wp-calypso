@@ -459,11 +459,7 @@ class Layout extends Component {
 				) }
 				<GlobalNotifications />
 				{ shouldEnableCommandPalette && (
-					<AsyncLoad
-						require="calypso/layout/command-palette"
-						placeholder={ null }
-						currentSiteId={ this.props.siteId }
-					/>
+					<AsyncLoad require="calypso/layout/command-palette" placeholder={ null } />
 				) }
 			</div>
 		);
