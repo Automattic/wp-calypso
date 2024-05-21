@@ -22,14 +22,16 @@ const NameSpan = styled.span`
 `;
 
 const Title = styled.div`
-	font-family: 'SF Pro Text';
+	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 60px;
 	font-weight: 400;
 	line-height: 100%;
 	margin-bottom: 24px;
 
 	span {
-		font-family: 'SF Pro Text';
+		font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+			'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 		font-size: 60px;
 		font-style: normal;
 		font-weight: 510;
@@ -54,7 +56,8 @@ const Title = styled.div`
 
 const Subtitle = styled.span`
 	cursor: pointer;
-	font-family: 'SF Pro Text';
+	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 1rem;
 	font-style: normal;
 	font-weight: 500;
