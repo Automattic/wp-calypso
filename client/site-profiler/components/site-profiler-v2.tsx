@@ -141,7 +141,7 @@ export default function SiteProfilerV2( props: Props ) {
 								dns={ siteProfilerData.dns }
 								urlData={ urlData }
 								hostingProvider={ hostingProviderData?.hosting_provider }
-								displayTitle={ false }
+								hideTitle
 							/>
 						</MetricsSection>
 					) }
