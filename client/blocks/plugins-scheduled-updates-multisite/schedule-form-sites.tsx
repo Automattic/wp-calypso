@@ -55,17 +55,25 @@ export const ScheduleFormSites = ( props: Props ) => {
 						{ error }
 					</Text>
 				) }
-				<SearchControl
-					id="sites"
-					value={ searchTerm }
-					onChange={ ( s ) => setSearchTerm( s.trim() ) }
-					placeholder={ translate( 'Search sites' ) }
-				/>
+				{ !! sites.length && (
+					<SearchControl
+						id="sites"
+						value={ searchTerm }
+						onChange={ ( s ) => setSearchTerm( s.trim() ) }
+						placeholder={ translate( 'Search sites' ) }
+					/>
+				) }
 				{ ! sites.length && (
-					<Text className="info-msg">
-						You can only select sites with Creator plan. Please upgrade your site to enable this
-						feature.
-					</Text>
+					<p className="placeholder-info">
+						{ translate(
+							'You can only select sites with Creator plan.{{br/}}Please upgrade your site to enable this feature.',
+							{
+								components: {
+									br: <br />,
+								},
+							}
+						) }
+					</p>
 				) }
 				<div className="checkbox-options-container checkbox-options-container__sites">
 					{ sites.map( ( site ) => (
