@@ -19,10 +19,11 @@ interface Props {
 	whois: WhoIs;
 	hostingProvider?: HostingProvider;
 	urlData?: UrlData;
+	hideTitle?: boolean;
 }
 
 export default function DomainInformation( props: Props ) {
-	const { domain, whois, hostingProvider, urlData } = props;
+	const { domain, whois, hostingProvider, urlData, hideTitle = false } = props;
 	const moment = useLocalizedMoment();
 	const momentFormat = 'YYYY-MM-DD HH:mm:ss UTC';
 	const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/g;
@@ -70,7 +71,7 @@ export default function DomainInformation( props: Props ) {
 
 	return (
 		<div className="domain-information">
-			<h3>{ translate( 'Domain information' ) }</h3>
+			{ ! hideTitle && <h3>{ translate( 'Domain information' ) }</h3> }
 
 			<ul className="domain-information-details result-list">
 				{ filteredWhois.domain_name && (

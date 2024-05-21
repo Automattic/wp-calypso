@@ -16,6 +16,7 @@ import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
+import DomainInformation from './domain-information';
 import { GetReportForm } from './get-report-form';
 import HostingInformation from './hosting-information';
 import { LandingPageHeader } from './landing-page-header';
@@ -31,6 +32,7 @@ interface Props {
 
 export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain } = props;
+	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
@@ -124,26 +126,49 @@ export default function SiteProfilerV2( props: Props ) {
 			{ showResultScreen && (
 				<LayoutBlock width="medium">
 					{ siteProfilerData && (
-						<MetricsSection
-							name={ translate( 'Hosting' ) }
-							title={ translate(
-								'Struggles with hosting {{alert}}speed and uptime{{/alert}} deter visitors. A switch to WordPress.com could transform the user experience.',
-								{
-									components: {
-										alert: <span className="alert" />,
-									},
-								}
-							) }
-							subtitle={ translate( 'Upgrade your hosting with WordPress.com' ) }
-							ref={ domainRef }
-						>
-							<HostingInformation
-								dns={ siteProfilerData.dns }
-								urlData={ urlData }
-								hostingProvider={ hostingProviderData?.hosting_provider }
-								hideTitle
-							/>
-						</MetricsSection>
+						<>
+							<MetricsSection
+								name={ translate( 'Hosting' ) }
+								title={ translate(
+									'Struggles with hosting {{alert}}speed and uptime{{/alert}} deter visitors. A switch to WordPress.com could transform the user experience.',
+									{
+										components: {
+											alert: <span className="alert" />,
+										},
+									}
+								) }
+								subtitle={ translate( 'Upgrade your hosting with WordPress.com' ) }
+								ref={ hostingRef }
+							>
+								<HostingInformation
+									dns={ siteProfilerData.dns }
+									urlData={ urlData }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									hideTitle
+								/>
+							</MetricsSection>
+							<MetricsSection
+								name={ translate( 'Domain' ) }
+								title={ translate(
+									'Your domain {{success}}set up is good{{/success}}, but you could boost your site’s visibility and growth.',
+									{
+										components: {
+											success: <span className="success" />,
+										},
+									}
+								) }
+								subtitle={ translate( 'Optimize your domain' ) }
+								ref={ domainRef }
+							>
+								<DomainInformation
+									domain={ domain }
+									whois={ siteProfilerData.whois }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									urlData={ urlData }
+									hideTitle
+								/>
+							</MetricsSection>
+						</>
 					) }
 				</LayoutBlock>
 			) }
