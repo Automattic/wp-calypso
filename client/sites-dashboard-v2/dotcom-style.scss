@@ -81,6 +81,18 @@
 		}
 	}
 
+	.sites-a8c-for-agencies-banner {
+		margin-inline: 16px;
+
+		@include break-large {
+			margin-inline: 26px;
+		}
+
+		@include break-huge {
+			margin-inline: 64px;
+		}
+	}
+
 	.dataviews-filters__view-actions {
 		border-bottom: 0;
 		align-items: center;

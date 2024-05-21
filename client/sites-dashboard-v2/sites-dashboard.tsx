@@ -24,6 +24,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
+import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import {
@@ -237,6 +238,8 @@ const SitesDashboardV2 = ( {
 	const hideListing = false;
 	const isNarrowView = false;
 
+	const showA8CForAgenciesBanner = paginatedSites.length >= 5;
+
 	return (
 		<Layout
 			className={ clsx(
@@ -262,12 +265,26 @@ const SitesDashboardV2 = ( {
 					</LayoutTop>
 
 					<DocumentHead title={ __( 'Sites' ) } />
+					{ showA8CForAgenciesBanner && (
+						<Banner
+							callToAction={ translate( 'Learn more' ) }
+							className="sites-a8c-for-agencies-banner"
+							description={ translate(
+								'As you’re managing multiple sites, Automattic for Agencies offers you efficient multisite management, volume discounts on hosting products, and up to 50% revenue share for migrating sites and referring products.'
+							) }
+							dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
+							dismissTemporary
+							href="https://agencies.automattic.com"
+							title={ translate( 'Streamlined multisite agency hosting' ) }
+						/>
+					) }
 					<DotcomSitesDataViews
 						sites={ paginatedSites }
 						isLoading={ isLoading }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
+						showBanner={ showA8CForAgenciesBanner }
 					/>
 				</LayoutColumn>
 			) }
