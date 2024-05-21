@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import debug from 'debug';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from './ad-tracking/constants';
 import { mayWeTrackByTracker } from './tracker-buckets';
 
@@ -20,6 +21,11 @@ export function maybeAddLogRocketScript() {
 
 	if ( ! mayWeLoadLogRocketScript() ) {
 		logRocketDebug( 'Not loading LogRocket script' );
+		return;
+	}
+
+	if ( ! isJetpackCloud() ) {
+		logRocketDebug( 'Not loading LogRocket script: not Jetpack Cloud' );
 		return;
 	}
 
