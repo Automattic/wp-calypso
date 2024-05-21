@@ -31,7 +31,6 @@ import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object'
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
-import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanTypeSelector from '../plan-type-selector';
@@ -39,6 +38,7 @@ import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import BillingTimeframe from '../shared/billing-timeframe';
 import { StickyContainer } from '../sticky-container';
+import { PlanStorageLabel, useGetAvailableStorageOptions } from '../storage';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
 	GridPlan,
@@ -584,6 +584,42 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		renderedGridPlans: visibleGridPlans,
 	} );
 
+	/**
+	 * TODO: Consider centralising `canUpgradeStorageForPlan` behind `availableStorageOptions`
+	 */
+	const availableStorageOptions = useGetAvailableStorageOptions()( {
+		storageOptions: gridPlan.features.storageOptions,
+	} );
+	/**
+	 * The current plan is not marked as `availableForPurchase`, hence check on `current`.
+	 */
+	const canUpgradeStorageForPlan =
+		( gridPlan.current || gridPlan.availableForPurchase ) &&
+		isStorageUpgradeableForPlan( {
+			intervalType,
+			showUpgradeableStorage,
+			storageOptions: availableStorageOptions,
+		} );
+
+	const storageJSX = canUpgradeStorageForPlan ? (
+		<StorageAddOnDropdown
+			planSlug={ planSlug }
+			onStorageAddOnClick={ onStorageAddOnClick }
+			storageOptions={ availableStorageOptions }
+			priceOnSeparateLine
+		/>
+	) : (
+		gridPlan.features.storageOptions.map( ( storageOption ) => {
+			if ( ! storageOption?.isAddOn ) {
+				return (
+					<StorageButton>
+						<PlanStorageLabel storageOption={ storageOption } planSlug={ planSlug } />
+					</StorageButton>
+				);
+			}
+		} )
+	);
+
 	if ( ! gridPlan ) {
 		return null;
 	}
@@ -605,13 +641,6 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 				( feature ) => feature.getSlug() === featureSlug
 		  )
 		: false;
-	const storageOptions = gridPlan.features.storageOptions;
-	const defaultStorageOption = storageOptions.find( ( option ) => ! option.isAddOn );
-	const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
-		intervalType,
-		showUpgradeableStorage,
-		storageOptions,
-	} );
 
 	const cellClasses = classNames(
 		'plan-comparison-grid__feature-group-row-cell',
@@ -638,18 +667,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					{ canUpgradeStorageForPlan ? (
-						<StorageAddOnDropdown
-							planSlug={ planSlug }
-							storageOptions={ gridPlan.features.storageOptions }
-							onStorageAddOnClick={ onStorageAddOnClick }
-							priceOnSeparateLine
-						/>
-					) : (
-						<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>
-							{ getStorageStringFromFeature( defaultStorageOption?.slug || '' ) }
-						</StorageButton>
-					) }
+					{ storageJSX }
 				</>
 			) : (
 				<>

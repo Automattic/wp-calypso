@@ -6,8 +6,8 @@ import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
-import { getStorageStringFromFeature } from '../util';
 import DropdownOption from './dropdown-option';
+import { useStorageStringFromFeature } from './storage';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { AddOnMeta } from '@automattic/data-stores';
 
@@ -19,8 +19,9 @@ type StorageAddOnDropdownProps = {
 };
 
 type StorageAddOnOptionProps = {
-	title?: string;
+	planSlug: PlanSlug;
 	price?: string;
+	storageFeature: string;
 	isLargeCurrency?: boolean;
 	priceOnSeparateLine?: boolean;
 };
@@ -35,16 +36,15 @@ const getStorageOptionPrice = (
 };
 
 const StorageAddOnOption = ( {
-	title,
+	planSlug,
 	price,
+	storageFeature,
 	isLargeCurrency = false,
 	priceOnSeparateLine,
 }: StorageAddOnOptionProps ) => {
 	const translate = useTranslate();
-
-	if ( ! title ) {
-		return null;
-	}
+	const { siteId } = usePlansGridContext();
+	const title = useStorageStringFromFeature( { storageFeature, siteId, planSlug } ) ?? '';
 
 	return (
 		<>
@@ -114,28 +114,30 @@ export const StorageAddOnDropdown = ( {
 	}, [] );
 
 	const selectControlOptions = storageOptions.map( ( storageOption ) => {
-		const title = getStorageStringFromFeature( storageOption.slug ) || '';
-		const price = getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug );
 		return {
 			key: storageOption.slug,
-			name: <StorageAddOnOption title={ title } price={ price } />,
+			name: (
+				<StorageAddOnOption
+					planSlug={ planSlug }
+					price={ getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug ) }
+					storageFeature={ storageOption.slug }
+				/>
+			),
 		};
 	} );
 
 	const selectedOptionKey = selectedStorageOptionForPlan
 		? selectedStorageOptionForPlan
 		: defaultStorageOption;
-	const selectedOptionPrice =
-		selectedOptionKey && getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey );
-	const selectedOptionTitle =
-		( selectedOptionKey && getStorageStringFromFeature( selectedOptionKey ) ) || '';
+	const selectedOptionPrice = getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey );
 
 	const selectedOption = {
 		key: selectedOptionKey,
 		name: (
 			<StorageAddOnOption
-				title={ selectedOptionTitle }
+				planSlug={ planSlug }
 				price={ selectedOptionPrice }
+				storageFeature={ selectedOptionKey }
 				isLargeCurrency={ isLargeCurrency }
 				priceOnSeparateLine={ priceOnSeparateLine }
 			/>
