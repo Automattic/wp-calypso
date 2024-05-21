@@ -82,7 +82,7 @@ const StyledCommandsFooter = styled.div( {
 	a: {
 		color: 'var(--studio-gray-50)',
 	},
-	'a.command-palette__footer-current-site': {
+	'a.command-palette__footer-current-site, a:hover': {
 		color: 'var(--studio-gray-100)',
 	},
 	'a:hover': { 'text-decoration': 'underline' },
