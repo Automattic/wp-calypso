@@ -84,7 +84,16 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 
 		it( 'See secure payment', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( `WordPress.com ${ newPlanName }` );
+			try {
+				// Check for either the "Beginner" or "Starter" plan while the name change experiment is in progress.
+				await Promise.any( [
+					cartCheckoutPage.validateCartItem( 'WordPress.com Beginner' ),
+					cartCheckoutPage.validateCartItem( `WordPress.com ${ newPlanName }` ),
+				] );
+			} catch ( error ) {
+				console.log( `Neither "Beginner" or "Starter" were found on the page.` );
+				throw error;
+			}
 		} );
 
 		it( 'Prices are shown in GBP', async function () {
@@ -231,11 +240,23 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		it( 'View details of purchased plan', async function () {
 			purchasesPage = new PurchasesPage( page );
 
-			await purchasesPage.clickOnPurchase(
-				`WordPress.com ${ newPlanName }`,
-				newSiteDetails.blog_details.site_slug
-			);
-			await purchasesPage.purchaseAction( 'Cancel plan' );
+			try {
+				// Check for either the "Beginner" or "Starter" plan while the name change experiment is in progress.
+				await Promise.any( [
+					purchasesPage.clickOnPurchase(
+						'WordPress.com Beginner',
+						newSiteDetails.blog_details.site_slug
+					),
+					purchasesPage.clickOnPurchase(
+						`WordPress.com ${ newPlanName }`,
+						newSiteDetails.blog_details.site_slug
+					),
+				] );
+				await purchasesPage.purchaseAction( 'Cancel plan' );
+			} catch ( error ) {
+				console.log( `Neither "Beginner" nor "Starter" plan was found.` );
+				throw error;
+			}
 		} );
 
 		it( 'Cancel plan renewal', async function () {

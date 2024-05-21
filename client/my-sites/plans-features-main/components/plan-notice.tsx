@@ -126,11 +126,11 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 			return (
 				<Notice
 					className="plan-features-main__notice"
-					showDismiss={ true }
+					showDismiss
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-warning"
-					isReskinned={ true }
+					isReskinned
 				>
 					{ translate(
 						'Your plan currently has a legacy feature that provides 200GB of space. ' +

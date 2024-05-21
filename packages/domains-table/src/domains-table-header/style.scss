@@ -37,6 +37,11 @@
 	}
 
 	.list__header-column {
+		color: var(--studio-gray-80);
+		font-size: rem(11px);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 20px;
 		text-transform: uppercase;
 		display: flex;
 		align-items: center;

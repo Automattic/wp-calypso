@@ -76,7 +76,7 @@ export default function MigrationsOverview() {
 								) }
 							</div>
 							<div>
-								<Button primary compact>
+								<Button primary compact href="https://wordpress.com/move/" target="_blank">
 									{ translate( 'Migrate to WordPress.com' ) } <Icon icon={ external } size={ 16 } />
 								</Button>
 							</div>
@@ -98,7 +98,12 @@ export default function MigrationsOverview() {
 								{ translate( 'Best for large-scale businesses and major eCommerce sites.' ) }
 							</div>
 							<div>
-								<Button primary compact>
+								<Button
+									primary
+									compact
+									href="https://pressable.com/knowledgebase/migrate-a-site-to-pressable/"
+									target="_blank"
+								>
 									{ translate( 'Migrate to Pressable' ) } <Icon icon={ external } size={ 16 } />
 								</Button>
 							</div>
