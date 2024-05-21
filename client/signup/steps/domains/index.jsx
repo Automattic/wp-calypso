@@ -457,7 +457,7 @@ export class RenderDomainsStep extends Component {
 
 		this.props.setDesignType( this.getDesignType() );
 
-		// For the `domain-for-gravatar` flow, add an extra `domain_for_gravatar` property to the domain registration product,
+		// For the `domain-for-gravatar` flow, add an extra `is_gravatar_domain` property to the domain registration product,
 		// pre-select the "domain" choice in the "site or domain" step and skip the others, going straight to checkout
 		if ( this.props.flowName === 'domain-for-gravatar' ) {
 			const domainForGravatarItem = domainRegistration( {

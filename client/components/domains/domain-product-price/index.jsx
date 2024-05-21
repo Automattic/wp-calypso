@@ -137,7 +137,7 @@ class DomainProductPrice extends Component {
 		);
 	}
 
-	// This method returns "Free domain for one year" text (different from "Free with plan")
+	// This method returns "Free for the first year" text (different from "Free with plan")
 	renderFreeForFirstYear() {
 		const { translate } = this.props;
 
