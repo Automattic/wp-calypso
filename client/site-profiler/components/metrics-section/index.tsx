@@ -17,7 +17,7 @@ const Container = styled.div`
 const NameSpan = styled.span`
 	font-family: 'SF Pro Text';
 	color: var( --studio-gray-20 );
-	font-size: 16px;
+	font-size: 1rem;
 	margin-bottom: 8px;
 `;
 
@@ -55,7 +55,7 @@ const Title = styled.div`
 const Subtitle = styled.span`
 	cursor: pointer;
 	font-family: 'SF Pro Text';
-	font-size: 16px;
+	font-size: 1rem;
 	font-style: normal;
 	font-weight: 500;
 	line-height: 28px;
