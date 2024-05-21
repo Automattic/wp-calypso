@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { createInterpolateElement } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -90,63 +89,6 @@ export class SiteNotice extends Component {
 				href={ `/plans/${ site.slug }?discount=${ name }` }
 				title={ bannerText }
 			/>
-		);
-	}
-
-	trialUpgradeNotice() {
-		const { translate, site, isTrialSite, currentPlan } = this.props;
-		const { expiry } = currentPlan || {};
-
-		if ( ! isTrialSite || ! expiry ) {
-			return null;
-		}
-
-		let bannerText;
-		const eventProperties = { cta_name: 'migration-trial-upgrade-sidebar' };
-		const daysRemaining = this.daysRemaining( { endsAt: currentPlan.expiry } );
-
-		if ( daysRemaining < 0 ) {
-			bannerText = translate( 'Your trial has expired' );
-		} else if ( daysRemaining === 0 ) {
-			bannerText = createInterpolateElement(
-				translate( 'Your trial ends <strong>today</strong>' ),
-				{
-					strong: <strong />,
-				}
-			);
-		} else {
-			bannerText = createInterpolateElement(
-				translate(
-					'<strong>%(daysRemaining)d day</strong> left in your trial',
-					'<strong>%(daysRemaining)d days</strong> left in your trial',
-					{
-						count: daysRemaining,
-						args: {
-							daysRemaining,
-						},
-						comment: '%(daysRemaining) is the no of days, e.g. "1 day"',
-					}
-				),
-				{ strong: <strong /> }
-			);
-		}
-
-		return (
-			<>
-				<QuerySitePlans siteId={ site.ID } />
-				<UpsellNudge
-					compact
-					forceDisplay
-					event="calypso_upgrade_nudge_impression"
-					tracksClickName="calypso_upgrade_nudge_cta_click"
-					tracksClickProperties={ eventProperties }
-					tracksImpressionName="calypso_upgrade_nudge_impression"
-					tracksImpressionProperties={ eventProperties }
-					callToAction={ translate( 'Upgrade' ) }
-					href={ `/checkout/${ site.slug }/business` }
-					title={ bannerText }
-				/>
-			</>
 		);
 	}
 
