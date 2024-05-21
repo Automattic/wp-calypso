@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
@@ -397,7 +396,7 @@ export class RenderDomainsStep extends Component {
 		signupDomainOrigin,
 		migrateSite = false,
 	} ) => {
-		const { step, goToStep } = this.props;
+		const { step } = this.props;
 		const { suggestion } = step;
 
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
