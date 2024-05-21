@@ -63,7 +63,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit, onRecordSuccessEvent
 	const translate = useTranslate();
 
 	const siteFilter = ( site: SiteExcerptData ): boolean => {
-		return ( site as SiteDetails ).capabilities?.update_plugins;
+		return ( site as SiteDetails ).capabilities?.update_plugins && ! site.is_wpcom_staging_site;
 	};
 
 	const { data: sites } = useSiteExcerptsQuery( [ 'atomic' ], siteFilter, 'all', [
