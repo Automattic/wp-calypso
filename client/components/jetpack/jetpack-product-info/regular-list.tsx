@@ -38,11 +38,11 @@ const JetpackProductInfoRegularList = ( { items }: Props ) => {
 			subtree: true,
 		} );
 
-		window.addEventListener( 'animationend', ( event ) => removeHighlight( event ) );
+		window.addEventListener( 'animationend', removeHighlight );
 
 		return () => {
 			observer.disconnect();
-			window.removeEventListener( 'animationend', ( event ) => removeHighlight( event ) );
+			window.removeEventListener( 'animationend', removeHighlight );
 		};
 	}, [] );
 
