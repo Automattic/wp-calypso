@@ -8,6 +8,7 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import { UpgradePlanHostingTestimonials } from './constants';
+import cwvtechReportJson from './cwvtech-report.json';
 import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
 import { Skeleton } from './skeleton';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
@@ -71,6 +72,11 @@ export const UpgradePlanHostingDetails = () => {
 		);
 	}
 
+	const boostPercentage = Math.round(
+		( cwvtechReportJson[ 'WordPress.com' ].goodCWM - cwvtechReportJson[ 'WordPress' ].goodCWM ) *
+			100
+	);
+
 	return (
 		<div className="import__upgrade-plan-hosting-details">
 			<div className="import__upgrade-plan-hosting-details-card-container">
@@ -78,7 +84,10 @@ export const UpgradePlanHostingDetails = () => {
 					<p className="import__upgrade-plan-hosting-details-header-main">{ headerMainText }</p>
 					<p className="import__upgrade-plan-hosting-details-header-subtext">
 						{ translate(
-							'We offer a proven 24% boost in Core Web Vitals—endorsed by data from Google.*'
+							'We offer a proven %(boostPercentage)d% boost in Core Web Vitals—endorsed by data from Google.*',
+							{
+								args: { boostPercentage },
+							}
 						) }
 					</p>
 				</div>
