@@ -39,10 +39,6 @@ const isRegistrationOrTransfer = ( item: ResponseCartProduct ) => {
 	return isDomainRegistration( item ) || isDomainTransfer( item );
 };
 
-function applyPercentageDiscount( percentageDiscount: number, basePrice: number ): number {
-	return basePrice - basePrice * ( percentageDiscount / 100 );
-}
-
 function UpgradeText( {
 	planPrice,
 	planName,
@@ -53,43 +49,11 @@ function UpgradeText( {
 	firstDomain: ResponseCartProduct;
 } ) {
 	const translate = useTranslate();
-	// Use the subtotal with discounts for the current cart item price if the
-	// item's discounts are only for the first year, but use the subtotal
-	// without discounts to calculate the price after the upsell because the
-	// upsell will remove other first year discounts.
-	//
-	// For example, if the domain has a sale coupon then it will be removed by
-	// the "first year free" bundle discount when a plan is added to the cart
-	// because the bundle discount of 100% is higher than the sale coupon
-	// discount. Since we are trying to compare the current cart price with the
-	// predicted cart price with the plan, we must consider the current cart
-	// with the sale and the predicted cart without the sale.
-	//
-	// This will not be accurate for all types of discounts and predicting what
-	// discounts will be applied is difficult, but this makes an attempt based
-	// on what discounts are currently applied.
-	const isDomainDiscountFromFirstYearOverride = firstDomain.cost_overrides.every(
-		( override ) => override.first_unit_only
-	);
-	// Coupon code discounts will apply before and after the upsell, so we must
-	// re-apply them to the price difference also.
-	const domainCouponCodeDiscount = firstDomain.cost_overrides.find(
-		( override ) => override.override_code === 'coupon-discount'
-	);
-	const domainCouponPercentageDiscount = domainCouponCodeDiscount?.percentage ?? 0;
-	const domainInCartPrice = isDomainDiscountFromFirstYearOverride
-		? firstDomain.item_subtotal_integer
-		: firstDomain.item_original_subtotal_integer;
-	const domainInCartPricePerYear = firstDomain.item_original_subtotal_integer / firstDomain.volume;
-	const cartPriceWithDomainAndPlan =
-		domainInCartPricePerYear * ( firstDomain.volume - 1 ) + planPrice;
+	const domainInCartPrice = firstDomain.item_original_subtotal_integer;
 
-	if ( cartPriceWithDomainAndPlan > domainInCartPrice ) {
+	if ( planPrice > domainInCartPrice ) {
 		// Re-apply any coupon code discount.
-		const extraToPay = applyPercentageDiscount(
-			domainCouponPercentageDiscount,
-			cartPriceWithDomainAndPlan - domainInCartPrice
-		);
+		const extraToPay = planPrice - domainInCartPrice;
 		return translate(
 			'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our %(planName)s plan, and get access to all its features, plus the first year of your domain for free.',
 			{
@@ -107,12 +71,9 @@ function UpgradeText( {
 		);
 	}
 
-	if ( cartPriceWithDomainAndPlan < domainInCartPrice ) {
+	if ( planPrice < domainInCartPrice ) {
 		// Re-apply any coupon code discount.
-		const savings = applyPercentageDiscount(
-			domainCouponPercentageDiscount,
-			domainInCartPrice - cartPriceWithDomainAndPlan
-		);
+		const savings = domainInCartPrice - planPrice;
 		return translate(
 			'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com %(planName)s plan instead — your domain comes free for a year.',
 			{
