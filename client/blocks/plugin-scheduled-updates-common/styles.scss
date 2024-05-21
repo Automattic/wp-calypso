@@ -166,5 +166,9 @@ $brand-display: "SF Pro Display", sans-serif;
 		.components-base-control__field {
 			display: block !important;
 		}
+
+		.components-input-control__suffix svg {
+			fill: var(--studio-gray-30);
+		}
 	}
 }
