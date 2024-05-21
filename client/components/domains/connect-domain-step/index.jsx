@@ -236,14 +236,14 @@ function ConnectDomainStep( {
 			},
 			{
 				label: __( 'Transfer or connect' ),
-				href: domainUseMyDomain( selectedSite.slug, domain ),
+				href: domainUseMyDomain( selectedSite.slug, { domain } ),
 			},
 			{ label: __( 'Connect' ) },
 		];
 
 		let mobileItem = {
 			label: __( 'Back to transfer or connect' ),
-			href: domainUseMyDomain( selectedSite.slug, domain ),
+			href: domainUseMyDomain( selectedSite.slug, { domain } ),
 			showBackArrow: true,
 		};
 
