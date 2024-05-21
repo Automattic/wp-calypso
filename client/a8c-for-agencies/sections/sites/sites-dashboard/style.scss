@@ -328,7 +328,6 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: auto;
-				max-height: calc(100vh - 300px); /* 300px is the size of all content above the dataview in list style, which includes our CTA elements, the pagination bottom bar, and an additional 20px margin. */
 
 				li {
 					padding: 8px 24px;
@@ -576,11 +575,6 @@
 				flex: 1;
 				height: 100%;
 				overflow: hidden;
-				margin-top: 24px;
-
-				&.is-hiding-navigation {
-					margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
-				}
 			}
 		}
 
@@ -627,6 +621,14 @@
 			@media only screen and (min-width: $break-large) {
 				.sites-overview {
 					padding: 0;
+
+					.sites-overview__content {
+						margin-top: 24px;
+
+						&.is-hiding-navigation {
+							margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
+						}
+					}
 
 					.dataviews-filters__view-actions {
 						& > :first-child {
