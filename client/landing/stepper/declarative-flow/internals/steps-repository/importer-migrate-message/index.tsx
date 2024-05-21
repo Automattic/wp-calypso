@@ -8,6 +8,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
@@ -19,6 +20,7 @@ const ImporterMigrateMessage: Step = () => {
 	const locale = useLocale();
 	const user = useSelector( getCurrentUser ) as UserData;
 	const siteSlugParam = useSiteSlugParam();
+	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
 	const { isPending, sendTicket } = useSubmitMigrationTicket();
 
@@ -28,6 +30,7 @@ const ImporterMigrateMessage: Step = () => {
 		} );
 		sendTicket( {
 			locale,
+			from_url: fromUrl,
 			blog_url: siteSlug,
 		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,7 +55,7 @@ const ImporterMigrateMessage: Step = () => {
 									),
 									{
 										email: user?.email,
-										webSite: siteSlug,
+										webSite: fromUrl,
 									}
 								),
 								{
