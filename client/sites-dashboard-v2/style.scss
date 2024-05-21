@@ -509,19 +509,6 @@
 			}
 		}
 
-		@media (min-width: $break-xhuge) {
-			div.a4a-layout__viewport {
-				margin: 0 auto;
-				max-width: 1400px;
-				box-sizing: border-box;
-			}
-			.dataviews-wrapper {
-				margin: 0 auto;
-				max-width: 1400px;
-				box-sizing: border-box;
-			}
-		}
-
 		.sites-overview {
 			width: 400px;
 			flex: unset;
