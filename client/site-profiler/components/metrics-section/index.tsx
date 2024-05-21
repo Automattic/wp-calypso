@@ -16,7 +16,8 @@ const Container = styled.div`
 `;
 
 const NameSpan = styled.span`
-	font-family: 'SF Pro Text';
+	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	color: var( --studio-gray-20 );
 	font-size: 1rem;
 	margin-bottom: 8px;
@@ -35,7 +36,6 @@ const Title = styled.div`
 			'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 		font-size: 60px;
 		font-style: normal;
-		font-weight: 510;
 		line-height: 100%;
 		letter-spacing: -1.5px;
 
