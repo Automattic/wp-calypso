@@ -126,12 +126,12 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					padding-inline: 0;
 					margin-inline-start: 0;
 
+					grid-template-columns: 50px 1fr minmax( auto, 1fr ) auto auto auto;
+
 					th:last-child,
 					td:last-child {
-						padding: 0 36px 0 0;
+						padding: 0 16px 0 0;
 					}
-
-					grid-template-columns: 50px 1fr minmax( auto, 1fr ) auto auto auto;
 
 					th:first-child,
 					td:first-child {
@@ -196,6 +196,11 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					table {
 						grid-template-columns: 75px 2fr 1fr 1fr auto auto auto auto;
 
+						th:last-child,
+						td:last-child {
+							padding: 0 26px 0 0;
+						}
+
 						th:first-child,
 						td:first-child {
 							padding: 0 0 0 34px;
@@ -215,9 +220,13 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					}
 				}
 				.domains-table {
-					//padding: 0 16px;
 					table {
 						grid-template-columns: 50px 1fr minmax( auto, 1fr ) auto auto auto;
+
+						th:last-child,
+						td:last-child {
+							padding: 0 16px 0 0;
+						}
 
 						th:first-child,
 						td:first-child {
@@ -258,6 +267,11 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					}
 					table {
 						grid-template-columns: 50px 1fr minmax( auto, 1fr ) auto auto auto;
+
+						th:last-child,
+						td:last-child {
+							padding: 0 16px 0 0;
+						}
 
 						th:first-child,
 						td:first-child {
