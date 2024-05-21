@@ -64,7 +64,7 @@ const UpsellNudgeNotice = () => {
 			}
 		);
 
-		const href = addQueryArgs( `/setup/import-hosted-site/import`, {
+		const href = addQueryArgs( `/setup/hosted-site-migration`, {
 			source: 'scheduled-updates-dashboard',
 			ref: 'scheduled-updates-dashboard',
 		} );
