@@ -352,36 +352,44 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	switch ( variation ) {
 		case 'woo':
 			return i18n.translate(
-				'%(commission)d%% transaction fee for standard WooCommerce payments (+ standard processing fee)',
+				'%(commission)d%% transaction fee for standard WooCommerce payments {{br}}{{/br}}(+ standard processing fee)',
 				{
+					components: { br: <br /> },
 					args: { commission },
 				}
 			);
 
 		case 'all':
 			return i18n.translate(
-				'%(commission)d%% transaction fee for all payment features (+ standard processing fee)',
+				'%(commission)d%% transaction fee for all payment features {{br}}{{/br}}(+ standard processing fee)',
 				{
+					components: { br: <br /> },
 					args: { commission },
 				}
 			);
 
 		case 'regular':
 			return i18n.translate(
-				'%(commission)d%% transaction fee for standard payments (+ standard processing fee)',
+				'%(commission)d%% transaction fee for standard payments {{br}}{{/br}}(+ standard processing fee)',
 				{
+					components: { br: <br /> },
 					args: { commission },
 				}
 			);
 
 		default:
 			return isTrailMapCopyVariant()
-				? i18n.translate( 'Accept payments (%(commission)d%% fee) (+ standard processing fee)', {
-						args: { commission },
-				  } )
-				: i18n.translate(
-						'%(commission)d%% transaction fee for payments (+ standard processing fee)',
+				? i18n.translate(
+						'Accept payments (%(commission)d%% fee) {{br}}{{/br}}(+ standard processing fee)',
 						{
+							components: { br: <br /> },
+							args: { commission },
+						}
+				  )
+				: i18n.translate(
+						'%(commission)d%% transaction fee for payments {{br}}{{/br}}(+ standard processing fee)',
+						{
+							components: { br: <br /> },
 							args: { commission },
 						}
 				  );
@@ -1853,8 +1861,9 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			isTrailMapCopyVariant()
 				? i18n.translate(
-						'Accept payments (%(commission)d%% fee, %(wooCommerceCommission)d%% for WooCommerce)(+ standard processing fee)',
+						'Accept payments (%(commission)d%% fee, %(wooCommerceCommission)d%% for WooCommerce) {{br}}{{/br}}(+ standard processing fee)',
 						{
+							components: { br: <br /> },
 							args: { commission: 2, wooCommerceCommission: 0 },
 						}
 				  )
@@ -1868,9 +1877,13 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		getTitle: () =>
 			isTrailMapCopyVariant()
-				? i18n.translate( 'Accept payments (%(commission)d%% fee)(+ standard processing fee)', {
-						args: { commission: 0 },
-				  } )
+				? i18n.translate(
+						'Accept payments (%(commission)d%% fee) {{br}}{{/br}}(+ standard processing fee)',
+						{
+							components: { br: <br /> },
+							args: { commission: 0 },
+						}
+				  )
 				: i18n.translate( '%(commission)d%% transaction fee for payments', {
 						args: { commission: 0 },
 				  } ),

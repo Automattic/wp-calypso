@@ -1,7 +1,9 @@
+import { APIError } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { handleErrorMessage } from 'calypso/blocks/plugin-scheduled-updates-common/error-utils';
 import { useCreateMonitors } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-create-monitor';
 import { useCoreSitesPluginsQuery } from 'calypso/data/plugins/use-core-sites-plugins-query';
 import {
@@ -18,10 +20,15 @@ import { useErrors } from './hooks/use-errors';
 import { ScheduleFormSites } from './schedule-form-sites';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
+import type {
+	MultiSitesResults,
+	MultiSiteBaseParams,
+} from 'calypso/blocks/plugins-scheduled-updates-multisite/types';
 
 type Props = {
 	scheduleForEdit?: MultisiteSchedulesUpdates;
 	onNavBack?: () => void;
+	onRecordSuccessEvent?: ( sites: MultiSitesResults, params: MultiSiteBaseParams ) => void;
 };
 
 type InitialData = {
@@ -31,7 +38,7 @@ type InitialData = {
 	timestamp: number;
 };
 
-export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
+export const ScheduleForm = ( { onNavBack, scheduleForEdit, onRecordSuccessEvent }: Props ) => {
 	const queryClient = useQueryClient();
 	const initialData: InitialData = scheduleForEdit
 		? {
@@ -156,15 +163,23 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 		};
 
 		const successfulSiteSlugs = [];
+		const createdSiteSlugs = [];
+		const editedSiteSlugs = [];
+		const deletedSiteSlugs = [];
 		// Create new schedules
 		const createResults = await createUpdateScheduleAsync( params );
 		successfulSiteSlugs.push(
 			...createResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
 		);
+
+		createdSiteSlugs.push(
+			...createResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
+		);
+
 		createResults
 			.filter( ( result ) => result.error )
 			.forEach( ( result ) =>
-				addError( result.siteSlug, 'create', ( result.error as Error ).message )
+				addError( result.siteSlug, 'create', handleErrorMessage( result.error as APIError ) )
 			);
 
 		// Update existing schedules
@@ -174,25 +189,51 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit }: Props ) => {
 				params,
 			} );
 			successfulSiteSlugs.push(
-				...createResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
+				...updateResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
 			);
+
+			editedSiteSlugs.push(
+				...updateResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
+			);
+
 			updateResults
 				.filter( ( result ) => result.error )
 				.forEach( ( result ) =>
-					addError( result.siteSlug, 'update', ( result.error as Error ).message )
+					addError( result.siteSlug, 'update', handleErrorMessage( result.error as APIError ) )
 				);
 
 			// Delete schedules no longer needed
 			const deleteResults = await deleteUpdateScheduleAsync( scheduleForEdit.schedule_id );
+			deletedSiteSlugs.push(
+				...deleteResults.filter( ( result ) => ! result.error ).map( ( result ) => result.siteSlug )
+			);
 			deleteResults
 				.filter( ( result ) => result.error )
 				.forEach( ( result ) =>
-					addError( result.siteSlug, 'delete', ( result.error as Error ).message )
+					addError( result.siteSlug, 'delete', handleErrorMessage( result.error as APIError ) )
 				);
 		}
 
 		// Create monitors for sites that have been successfully scheduled
 		createMonitors( successfulSiteSlugs );
+
+		if ( successfulSiteSlugs.length > 0 ) {
+			const date = new Date( timestamp * 1000 );
+			onRecordSuccessEvent?.(
+				{
+					createdSiteSlugs,
+					editedSiteSlugs,
+					deletedSiteSlugs,
+				},
+				{
+					plugins_number: selectedPlugins.length,
+					frequency,
+					hours: date.getHours(),
+					weekday: frequency === 'weekly' ? date.getDay() : undefined,
+				}
+			);
+		}
+
 		onNavBack && onNavBack();
 		// Trigger an extra refetch 5 seconds later
 		setTimeout( () => {

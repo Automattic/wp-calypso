@@ -14,10 +14,13 @@ import {
 import { hostingOverview, hostingConfiguration, hostingActivate } from './controller';
 
 export default function () {
-	page( '/hosting', siteSelection, sites, makeLayout, clientRender );
+	page( '/overview', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/hosting/:site',
+		'/overview/:site',
 		siteSelection,
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		redirectIfCurrentUserCannot( 'manage_options' ),
 		navigation,
 		hostingOverview,
 		siteDashboard( DOTCOM_OVERVIEW ),

@@ -54,7 +54,6 @@
 		text-align: end;
 	}
 
-
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -75,11 +74,11 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
-			padding-left: 30px;
+			padding-left: 26px;
 		}
 		.dataviews-view-table tr th:last-child,
 		.dataviews-view-table tr td:last-child {
-			padding-right: 30px;
+			padding-right: 26px;
 			width: 20px;
 			white-space: nowrap;
 		}
@@ -190,7 +189,6 @@
 
 			.components-flex.components-h-stack {
 				flex: 6;
-				padding-left: 8px;
 			}
 
 		}
@@ -279,11 +277,6 @@
 				overflow-y: auto;
 				min-height: calc(100vh - 277px); /* Set min-height to prevent the table from shrinking when there are few rows. */
 				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
-			}
-
-			.is-hiding-navigation .dataviews-view-table-wrapper {
-				overflow-y: auto;
-				max-height: calc(100vh - 277px); /* 277px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
 			}
 		}
 
@@ -516,15 +509,6 @@
 			}
 		}
 
-		.a4a-layout__top-wrapper,
-		.a4a-layout__body {
-			> * {
-				@include breakpoint-deprecated(">660px") {
-					max-width: none;
-				}
-			}
-		}
-
 		.sites-overview {
 			width: 400px;
 			flex: unset;
@@ -533,10 +517,6 @@
 
 			.sites-overview__content {
 				margin-top: 24px;
-
-				&.is-hiding-navigation {
-					margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
-				}
 			}
 		}
 
@@ -591,16 +571,15 @@
 
 					.dataviews-filters__view-actions {
 						& > :first-child {
-							margin-inline-start: 30px;
+							margin-inline-start: 26px;
 						}
 
 						& > :last-child {
-							margin-inline-end: 30px;
+							margin-inline-end: 26px;
 						}
 					}
 				}
 			}
-
 			@media only screen and (min-width: $break-huge) {
 				.sites-overview {
 					.dataviews-filters__view-actions {
@@ -1152,6 +1131,6 @@
 
 .layout__content {
 	@include breakpoint-deprecated( "<960px" ) {
-		padding: 71px 24px 24px calc(var(--sidebar-width-min) + 1px);
+		padding: 70px 24px 24px calc(var(--sidebar-width-min) + 1px);
 	}
 }

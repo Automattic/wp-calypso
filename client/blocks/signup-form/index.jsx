@@ -512,12 +512,11 @@ class SignupForm extends Component {
 		return login( {
 			emailAddress,
 			isJetpack: this.isJetpack(),
-			from: this.getLoginLinkFrom(),
+			from: this.props.isP2Flow ? 'p2' : this.props.from,
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 			wccomFrom: this.props.wccomFrom,
-			isWhiteLogin: this.props.isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
 		} );
 	}
@@ -1286,6 +1285,19 @@ class SignupForm extends Component {
 						labelText={ this.props.labelText }
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
+						onCreateAccountError={ ( error, email ) => {
+							if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+								page(
+									addQueryArgs(
+										{
+											email_address: email,
+											is_signup_existing_account: true,
+										},
+										logInUrl
+									)
+								);
+							}
+						} }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (

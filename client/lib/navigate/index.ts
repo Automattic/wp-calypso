@@ -21,10 +21,12 @@ function shouldNavigateWithinSamePage( path: string ): boolean {
 	return currentPath === targetUrl.pathname && !! targetUrl.hash;
 }
 
-export function navigate( path: string, openInNewTab = false ): void {
+export function navigate( path: string, openInNewTab = false, forceReload = false ): void {
 	if ( isSameOrigin( path ) ) {
 		if ( openInNewTab ) {
 			window.open( path, '_blank' );
+		} else if ( forceReload ) {
+			window.location.href = path;
 		} else if ( isCurrentPathOutOfScope( window.location.pathname ) ) {
 			const state = { path };
 			window.history.pushState( state, '', path );

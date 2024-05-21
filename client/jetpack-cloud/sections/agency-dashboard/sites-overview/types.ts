@@ -97,6 +97,7 @@ export interface Site {
 	latest_backup_status: string;
 	is_connection_healthy: boolean;
 	awaiting_plugin_updates: Array< string >;
+	multisite: boolean;
 	is_favorite: boolean;
 	monitor_settings: MonitorSettings;
 	monitor_last_status_change: string;
@@ -178,6 +179,7 @@ export interface SiteData {
 	isFavorite?: boolean;
 	isSelected?: boolean;
 	onSelect?: () => void;
+	ref?: string | number;
 }
 
 export interface RowMetaData {
@@ -279,6 +281,7 @@ export interface AgencyDashboardFilterMap {
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption >;
 	showOnlyFavorites: boolean;
+	isNotMultisite?: boolean;
 };
 
 export type ProductInfo = { name: string; key: string; status: 'rejected' | 'fulfilled' };

@@ -24,6 +24,7 @@ import {
 	scrollTopIfNoHash,
 	navigationIfLoggedIn,
 	maybeRedirectLoggedOut,
+	redirectStagingSites,
 } from './controller';
 import { plans, upload } from './controller-logged-in';
 
@@ -166,6 +167,7 @@ export default function ( router ) {
 		redirectLoggedOut,
 		siteSelection,
 		redirectIfCurrentUserCannot( 'update_plugins' ),
+		redirectStagingSites,
 		navigation,
 		scheduledUpdates,
 		makeLayout,
