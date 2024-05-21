@@ -318,7 +318,13 @@ $business-plan-color: #7f54b3;
 					}
 				}
 
+				.import__upgrade-plan-hosting-details-list-loading {
+					flex-direction: column;
+				}
+
 				.import__upgrade-plan-hosting-details-list-icon {
+					display: flex;
+					flex: 0 0 24px;
 					border-radius: 4px;
 					background-color: var(--studio-purple-0);
 					padding: 4px;
@@ -360,6 +366,7 @@ $business-plan-color: #7f54b3;
 				.import__upgrade-plan-hosting-details-testimonials {
 					height: 37px;
 					text-align: center;
+					margin-bottom: 4px;
 
 					.import__upgrade-plan-hosting-details-tooltip-hover-area-container {
 						height: 36px;
