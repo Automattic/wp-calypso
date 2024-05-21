@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { defaultHostingDetails } from '../constants';
-import cwvtechReportJson from '../wordpress-cwvtech-report.json';
+import cwvtechReportJson from '../cwvtech-report.json';
 import { useGetUpgradePlanSiteMetrics } from './use-get-upgrade-plan-site-metrics';
 
 export const useUpgradePlanHostingDetailsList = () => {
