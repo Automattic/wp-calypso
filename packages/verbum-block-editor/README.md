@@ -33,7 +33,7 @@ This package can be utilized in two primary ways:
 
 To deploy modifications to the package:
 1. Ensure your sandbox is in a clean git state.
-2. Run `yarn build --sync`.
+2. Run `yarn upload`. This will upload the production-built files to your sandbox.
 3. Create a patch.
 4. Deploy the patch.
 
