@@ -21,7 +21,7 @@
 		font-family: "SF Pro Text", $sans;
 		color: var(--studio-white);
 		/* stylelint-disable-next-line */
-		font-size: 4.375rem;
+		font-size: 6rem;
 		line-height: 1;
 		margin-bottom: 1rem;
 
@@ -51,7 +51,7 @@
 
 	p {
 		font-family: "SF Pro Text", $sans;
-		font-size: 1rem;
+		font-size: 1.125 rem;
 		color: var(--studio-white);
 	}
 
@@ -191,10 +191,19 @@
 
 
 		background: url(calypso/assets/images/site-profiler/background-landing-header.svg) no-repeat left bottom;
-		padding-bottom: 244px;
+		padding-bottom: 240px;
 
+		// Huge screens and bigger
+		@media (min-width: $break-huge) {
+			background-position-x: center;
+		}
+
+
+		// Small screens
 		@media (max-width: $break-small ) {
 			padding-top: 6rem;
+			padding-bottom: 130px;
+			background-size: 820px;
 		}
 	}
 
