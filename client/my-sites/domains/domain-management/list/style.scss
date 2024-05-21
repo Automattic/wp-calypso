@@ -195,6 +195,15 @@
 		.domains-table-checkbox-th {
 			line-height: 14px;
 		}
+
+		.domains-table-row__actions button {
+			color: var(--color-text-subtle);
+
+			.gridicons-ellipsis {
+				height: 18px;
+				width: 18px;
+			}
+		}
 	}
 
 	.domains-table-mobile-cards {
