@@ -35,7 +35,6 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { Experiment } from 'calypso/lib/explat';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -324,18 +323,12 @@ export class RenderDomainsStep extends Component {
 		);
 	};
 
-	handleSkip = (
-		googleAppsCartItem,
-		shouldHideFreePlan = false,
-		signupDomainOrigin,
-		migrateSite = false
-	) => {
+	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin ) => {
 		const tracksProperties = Object.assign(
 			{
 				section: this.getAnalyticsSection(),
 				flow: this.props.flowName,
 				step: this.props.stepName,
-				is_migration: migrateSite,
 			},
 			this.isDependencyShouldHideFreePlanProvided()
 				? { should_hide_free_plan: shouldHideFreePlan }
@@ -353,25 +346,13 @@ export class RenderDomainsStep extends Component {
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain( {
-				googleAppsCartItem,
-				shouldHideFreePlan,
-				signupDomainOrigin,
-				migrateSite,
-			} );
+			this.submitWithDomain( { googleAppsCartItem, shouldHideFreePlan, signupDomainOrigin } );
 		} );
 	};
 
 	handleDomainExplainerClick = () => {
 		const hideFreePlan = true;
 		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
-	};
-
-	handleSiteMigrationClick = () => {
-		const hideFreePlan = true;
-		const migrateSite = true;
-
-		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.SITE_MIGRATION, migrateSite );
 	};
 
 	handleUseYourDomainClick = () => {
@@ -390,12 +371,7 @@ export class RenderDomainsStep extends Component {
 		}
 	};
 
-	submitWithDomain = ( {
-		googleAppsCartItem,
-		shouldHideFreePlan = false,
-		signupDomainOrigin,
-		migrateSite = false,
-	} ) => {
+	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
 		const { step } = this.props;
 		const { suggestion } = step;
 
@@ -456,10 +432,7 @@ export class RenderDomainsStep extends Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
-
-		if ( migrateSite ) {
-			this.props.goToNextStep( 'site-migration' );
-		}
+		this.props.goToNextStep();
 
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
@@ -935,19 +908,6 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<div className="domains__domain-side-content-container">
-				<Experiment
-					name="calypso_signup_domains_show_migrate_cta_2024"
-					defaultExperience={ null }
-					loadingExperience={ null }
-					treatmentExperience={
-						<div className="domains__domain-side-content domains__domain-site-migration">
-							<ReskinSideExplainer
-								type="site-migration"
-								onClick={ this.handleSiteMigrationClick }
-							/>
-						</div>
-					}
-				/>
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
 					<DomainsMiniCart
 						domainsInCart={ domainsInCart }
