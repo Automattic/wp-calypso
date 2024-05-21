@@ -199,7 +199,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						jetpackFeatures: jetpackFeaturesTransformed,
 						storageOptions:
 							planConstantObj.get2023PricingGridSignupStorageOptions?.(
-								showLegacyStorageFeature
+								showLegacyStorageFeature,
+								gridPlan.current
 							) ?? [],
 					},
 				};

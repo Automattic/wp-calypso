@@ -52,12 +52,14 @@ import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-val
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
@@ -323,6 +325,7 @@ export default function CheckoutMainContent( {
 	customizedPreviousPath,
 	loadingHeader,
 	onStepChanged,
+	showSitePreview = false,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changeSelection: OnChangeItemVariant;
@@ -341,7 +344,9 @@ export default function CheckoutMainContent( {
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
+	showSitePreview?: boolean;
 } ) {
+	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const {
 		responseCart,
@@ -352,7 +357,19 @@ export default function CheckoutMainContent( {
 		removeCoupon,
 		couponStatus,
 	} = useShoppingCart( cartKey );
-	const translate = useTranslate();
+
+	const searchParams = new URLSearchParams( window.location.search );
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
+	const selectedSiteData = useSelector( getSelectedSite );
+	const wpcomDomain = useSelector( ( state ) =>
+		getWpComDomainBySiteId( state, selectedSiteData?.ID )
+	);
+
+	// Only show the site preview for WPCOM domains that have a site connected to the site id
+	const shouldShowSitePreview =
+		showSitePreview && selectedSiteData && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
+
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
 	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
@@ -544,18 +561,12 @@ export default function CheckoutMainContent( {
 								className="checkout__summary-body"
 								shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 							>
-								{ shouldUseCheckoutV2 && (
-									<WPCheckoutOrderReview
-										removeProductFromCart={ removeProductFromCart }
-										replaceProductInCart={ replaceProductInCart }
-										couponFieldStateProps={ couponFieldStateProps }
-										removeCouponAndClearField={ removeCouponAndClearField }
-										isCouponFieldVisible={ isCouponFieldVisible }
-										setCouponFieldVisible={ setCouponFieldVisible }
-										onChangeSelection={ changeSelection }
-										siteUrl={ siteUrl }
-										createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-									/>
+								{ shouldShowSitePreview && (
+									<div className="checkout-site-preview">
+										<SitePreviewWrapper>
+											<SitePreview showEditSite={ false } showSiteDetails={ false } />
+										</SitePreviewWrapper>
+									</div>
 								) }
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
@@ -584,7 +595,7 @@ export default function CheckoutMainContent( {
 							className="wp-checkout__review-order-step"
 							stepId="review-order-step"
 							isStepActive={ false }
-							isStepComplete={ true }
+							isStepComplete
 							titleContent={ <OrderReviewTitle /> }
 							completeStepContent={
 								<WPCheckoutOrderReview
@@ -1207,6 +1218,36 @@ const WPCheckoutSidebarContent = styled.div`
 
 		.rtl & {
 			padding: 144px 64px 0 24px;
+		}
+	}
+`;
+
+const SitePreviewWrapper = styled.div`
+	.home-site-preview {
+		margin-bottom: 1.5em;
+		padding: 0.5em;
+		box-shadow:
+			0 0 0 1px var( --color-border-subtle ),
+			rgba( 0, 0, 0, 0.2 ) 0 7px 30px -10px;
+		border-radius: 6px;
+
+		& .home-site-preview__thumbnail-wrapper {
+			aspect-ratio: 16 / 9;
+			border-radius: 6px;
+			box-shadow: none;
+			min-width: 100%;
+
+			&:hover {
+				box-shadow: unset;
+
+				& .home-site-preview__thumbnail {
+					opacity: unset;
+				}
+			}
+		}
+
+		& home-site-preview__thumbnail {
+			opacity: 1;
 		}
 	}
 `;

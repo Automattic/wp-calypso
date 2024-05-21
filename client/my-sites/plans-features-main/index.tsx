@@ -722,6 +722,7 @@ const PlansFeaturesMain = ( {
 						visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
 						siteId={ siteId }
 						isInSignup={ isInSignup }
+						showLegacyStorageFeature={ showLegacyStorageFeature }
 						{ ...( withDiscount &&
 							discountEndDate && {
 								discountInformation: {
@@ -828,7 +829,8 @@ const PlansFeaturesMain = ( {
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector &&
 												showPlansComparisonGrid &&
-												gridPlansForPlanTypeSelector && (
+												gridPlansForPlanTypeSelector &&
+												! isMobile && (
 													<PlanTypeSelector
 														{ ...planTypeSelectorProps }
 														plans={ gridPlansForPlanTypeSelector }

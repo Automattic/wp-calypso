@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
@@ -33,7 +34,7 @@ const ThirdPartyCookiesNotice: React.FC = () => {
 					<a
 						target="_blank"
 						rel="noopener noreferrer"
-						href="https://wordpress.com/support/third-party-cookies/"
+						href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
 					>
 						{ __( 'Learn more in this support guide.', __i18n_text_domain__ ) }
 					</a>

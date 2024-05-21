@@ -104,7 +104,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
 					{ cta }
 				</NextButton>
-				<Button disabled={ true } transparent={ true }>
+				<Button disabled transparent>
 					{ trialText }
 				</Button>
 				<small>
@@ -145,7 +145,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 								'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
 								{
 									components: {
-										link: <Button borderless={ true } onClick={ onContentOnlyClick } />,
+										link: <Button borderless onClick={ onContentOnlyClick } />,
 									},
 								}
 							) }
@@ -153,9 +153,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				</div>
 			) }
 
-			<UpgradePlanDetails isEligibleForTrialPlan={ isEligibleForTrialPlan }>
-				{ renderCTAs() }
-			</UpgradePlanDetails>
+			<UpgradePlanDetails>{ renderCTAs() }</UpgradePlanDetails>
 		</div>
 	);
 };

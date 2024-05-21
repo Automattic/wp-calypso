@@ -72,7 +72,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 				defaultValue={ filter.query }
 				isReskinned
 				placeholder={ __( 'Search by domain…' ) }
-				disableAutocorrect={ true }
+				disableAutocorrect
 			/>
 			{ isMobile && (
 				<>

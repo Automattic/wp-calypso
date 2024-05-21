@@ -31,7 +31,7 @@ const PlanIntervalSelector = ( {
 		<SegmentedControl
 			compact
 			className={ classNames( 'plan-interval-selector', pricingGridStyles, className ) }
-			primary={ true }
+			primary
 		>
 			{ intervals.map( ( planInterval ) => (
 				<SegmentedControl.Item

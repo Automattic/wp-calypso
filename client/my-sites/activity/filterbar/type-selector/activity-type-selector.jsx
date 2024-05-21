@@ -14,7 +14,7 @@ const ActivityTypeSelector = ( { translate, variant = 'default', ...otherProps }
 		<TypeSelector
 			{ ...otherProps }
 			title={ translate( 'Activity type' ) }
-			showAppliedFiltersCount={ true }
+			showAppliedFiltersCount
 			variant={ variant }
 			translate={ translate }
 		/>

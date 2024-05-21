@@ -152,7 +152,7 @@ function ProductsList() {
 				<UpsellNudge
 					title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
 					href={ '/plans/' + site?.slug }
-					showIcon={ true }
+					showIcon
 					onClick={ () => trackUpgrade() }
 					// This could be any stripe payment features (see `hasStripeFeature`) but UpsellNudge only
 					// supports 1. They're all available on the same plans anyway, so practically it's ok to pick 1.

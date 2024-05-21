@@ -18,7 +18,6 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
-import BackupNowButton from 'calypso/components/jetpack/backup-now-button';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -106,13 +105,7 @@ const BackupPage = ( { queryDate } ) => {
 							}
 						) }
 					>
-						<BackupNowButton
-							siteId={ siteId }
-							variant="primary"
-							trackEventName="calypso_jetpack_backup_now"
-						>
-							{ translate( 'Back up now' ) }
-						</BackupNowButton>
+						<BackupActionsToolbar siteId={ siteId } />
 					</NavigationHeader>
 				) }
 
@@ -189,7 +182,6 @@ function AdminContent( { selectedDate } ) {
 function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 
@@ -199,7 +191,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	);
 
 	if ( isFetchingSiteFeatures || ! isPoliciesInitialized ) {
-		return <BackupPlaceholder showDatePicker={ true } />;
+		return <BackupPlaceholder showDatePicker />;
 	}
 
 	return (
@@ -214,11 +206,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 							</div>
 						</div>
 						<div className="backup__header-right">
-							{ siteSlug && (
-								<>
-									<BackupActionsToolbar siteId={ siteId } siteSlug={ siteSlug } />
-								</>
-							) }
+							<BackupActionsToolbar siteId={ siteId } />
 						</div>
 					</div>
 				) }

@@ -7,7 +7,7 @@ export const DOTCOM_HOSTING_CONFIG = 'dotcom-hosting-config';
 export const DOTCOM_DEVELOPER_TOOLS_PROMO = 'dotcom-developer-tools-promo';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
-	[ DOTCOM_OVERVIEW ]: 'hosting/:site',
+	[ DOTCOM_OVERVIEW ]: 'overview/:site',
 	[ DOTCOM_MONITORING ]: 'site-monitoring/:site',
 	[ DOTCOM_PHP_LOGS ]: 'site-monitoring/:site/php',
 	[ DOTCOM_SERVER_LOGS ]: 'site-monitoring/:site/web',

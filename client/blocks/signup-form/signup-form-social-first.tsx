@@ -5,6 +5,7 @@ import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -14,13 +15,13 @@ import './style.scss';
 
 interface SignupFormSocialFirst {
 	goToNextStep: () => void;
-	step: string;
+	step: object;
 	stepName: string;
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
 	socialService: string;
-	socialServiceResponse: string;
+	socialServiceResponse: object;
 	handleSocialResponse: () => void;
 	isReskinned: boolean;
 	queryArgs: object;
@@ -124,8 +125,8 @@ const SignupFormSocialFirst = ( {
 						socialServiceResponse={ socialServiceResponse }
 						isReskinned={ isReskinned }
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-						disableTosText={ true }
-						compact={ true }
+						disableTosText
+						compact
 						isSocialFirst={ isSocialFirst }
 					>
 						<Button
@@ -159,6 +160,20 @@ const SignupFormSocialFirst = ( {
 						submitButtonLabel={ __( 'Continue' ) }
 						userEmail={ userEmail }
 						renderTerms={ renderEmailStepTermsOfService }
+						onCreateAccountError={ ( error: { error: string }, email: string ) => {
+							if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+								window.location.assign(
+									addQueryArgs(
+										{
+											email_address: email,
+											is_signup_existing_account: true,
+											redirect_to: window.location.origin + `/setup/${ flowName }`,
+										},
+										logInUrl
+									)
+								);
+							}
+						} }
 						{ ...gravatarProps }
 					/>
 					<Button

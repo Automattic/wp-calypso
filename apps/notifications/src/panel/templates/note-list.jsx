@@ -347,28 +347,35 @@ export class NoteList extends Component {
 		};
 
 		return (
-			<div className={ classes } id="wpnc__note-list">
-				<FilterBar controller={ this.props.filterController } />
-				<button className="screen-reader-text" onClick={ this.props.closePanel }>
-					{ this.props.translate( 'Close notifications' ) }
-				</button>
-				<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
-					<ol ref={ this.storeNoteList } className="wpnc__notes" { ...notificationsListAriaProps }>
-						<StatusBar
-							statusClasses={ this.state.statusClasses }
-							statusMessage={ this.state.statusMessage }
-							statusTimeout={ this.state.statusTimeout }
-							statusReset={ this.resetStatusBar }
-						/>
-						{ notes }
-						{ this.props.isLoading && (
-							<div style={ loadingIndicatorVisibility } className="wpnc__loading-indicator">
-								<Spinner />
-							</div>
-						) }
-					</ol>
+			<>
+				{ /* Keep the wpnc__note-list as the first child of the Fragment to ensure the ReactDOM.findDOMNode returns the list element */ }
+				<div className={ classes } id="wpnc__note-list">
+					<FilterBar controller={ this.props.filterController } />
+					<button className="screen-reader-text" onClick={ this.props.closePanel }>
+						{ this.props.translate( 'Close notifications' ) }
+					</button>
+					<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
+						<ol
+							ref={ this.storeNoteList }
+							className="wpnc__notes"
+							{ ...notificationsListAriaProps }
+						>
+							{ notes }
+							{ this.props.isLoading && (
+								<div style={ loadingIndicatorVisibility } className="wpnc__loading-indicator">
+									<Spinner />
+								</div>
+							) }
+						</ol>
+					</div>
 				</div>
-			</div>
+				<StatusBar
+					statusClasses={ this.state.statusClasses }
+					statusMessage={ this.state.statusMessage }
+					statusTimeout={ this.state.statusTimeout }
+					statusReset={ this.resetStatusBar }
+				/>
+			</>
 		);
 	}
 }

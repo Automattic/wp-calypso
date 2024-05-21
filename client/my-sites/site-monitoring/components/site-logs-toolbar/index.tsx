@@ -110,6 +110,7 @@ export const SiteLogsToolbar = ( {
 		{ value: '401', label: translate( '401' ) },
 		{ value: '403', label: translate( '403' ) },
 		{ value: '404', label: translate( '404' ) },
+		{ value: '429', label: translate( '429' ) },
 		{ value: '500', label: translate( '500' ) },
 	];
 

@@ -13,7 +13,7 @@ function mutationIssueLicense( {
 	product,
 	quantity,
 	agencyId,
-}: MutationIssueLicenseVariables & { agencyId?: number } ): Promise< APILicense > {
+}: MutationIssueLicenseVariables & { agencyId?: number } ): Promise< APILicense[] > {
 	if ( ! agencyId ) {
 		throw new Error( 'Agency ID is required to issue a license' );
 	}
@@ -25,11 +25,11 @@ function mutationIssueLicense( {
 }
 
 export default function useIssueLicenseMutation< TContext = unknown >(
-	options?: UseMutationOptions< APILicense, APIError, MutationIssueLicenseVariables, TContext >
-): UseMutationResult< APILicense, APIError, MutationIssueLicenseVariables, TContext > {
+	options?: UseMutationOptions< APILicense[], APIError, MutationIssueLicenseVariables, TContext >
+): UseMutationResult< APILicense[], APIError, MutationIssueLicenseVariables, TContext > {
 	const agencyId = useSelector( getActiveAgencyId );
 
-	return useMutation< APILicense, APIError, MutationIssueLicenseVariables, TContext >( {
+	return useMutation< APILicense[], APIError, MutationIssueLicenseVariables, TContext >( {
 		...options,
 		mutationFn: ( args ) => mutationIssueLicense( { ...args, agencyId } ),
 	} );

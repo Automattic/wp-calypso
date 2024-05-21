@@ -147,8 +147,8 @@ export default function ToggleActivateMonitoring( {
 		<ToggleControl
 			onChange={ handleToggleActivateMonitoring }
 			checked={ isChecked }
-			disabled={ site.is_atomic || isLoading || siteError }
-			label={ ! site.is_atomic && isChecked && currentSettings() }
+			disabled={ isLoading || siteError }
+			label={ isChecked && currentSettings() }
 		/>
 	);
 

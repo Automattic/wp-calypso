@@ -377,7 +377,7 @@ export class SiteSelector extends Component {
 				showIcon={ !! multiSiteContext?.icon }
 				icon={
 					multiSiteContext?.icon && (
-						<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden={ true } />
+						<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden />
 					)
 				}
 			/>

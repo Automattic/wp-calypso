@@ -143,7 +143,7 @@ export default function SubscribersChartSection( {
 					/>
 					<div className="subscribers-section-duration-control-with-legend">
 						<StatsPeriodHeader>
-							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
+							<Intervals selected={ period } pathTemplate={ pathTemplate } compact />
 						</StatsPeriodHeader>
 						<div className="subscribers-section-legend" ref={ legendRef }></div>
 					</div>

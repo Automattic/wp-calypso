@@ -68,9 +68,9 @@ The `CommandPalette` component requires the following properties:
 
 ```tsx
 import CommandPalette, { COMMANDS } from '@automattic/command-palette';
+import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 
 export default function MyComponent() {
 	const navigate = ( url, openInNewTab ) => window.open( url, openInNewTab ? '_blank' : '_self' );

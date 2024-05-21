@@ -149,7 +149,7 @@ function Subscribers( props: Props ) {
 							>
 								<AddSubscriberForm
 									siteId={ site?.ID }
-									submitBtnAlwaysEnable={ true }
+									submitBtnAlwaysEnable
 									onImportFinished={ refetch }
 									hasSubscriberLimit={ hasSubscriberLimit }
 								/>

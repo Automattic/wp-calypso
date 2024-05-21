@@ -37,6 +37,7 @@ import {
 	isRequesting as isRequestingInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
 import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getRequest from 'calypso/state/selectors/get-request';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
@@ -80,6 +81,7 @@ const Home = ( {
 	ssoModuleActive,
 	fetchingJetpackModules,
 	handleVerifyIcannEmail,
+	isAdmin,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
@@ -159,12 +161,10 @@ const Home = ( {
 		isSiteWooExpressEcommerceTrial &&
 		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
 		( fetchingJetpackModules || ssoModuleActive ) &&
-		( config.isEnabled( 'entrepreneur-my-home' )
-			? isRequestingSitePlans ||
-			  isRequestingSitePurchases ||
-			  isSiteWooExpress ||
-			  purchase?.isWooExpressTrial
-			: true )
+		( isRequestingSitePlans ||
+			isRequestingSitePurchases ||
+			isSiteWooExpress ||
+			purchase?.isWooExpressTrial )
 	) {
 		return <WooCommerceHomePlaceholder />;
 	}
@@ -174,8 +174,8 @@ const Home = ( {
 			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 				{ isGlobalSiteViewEnabled ? translate( 'View site' ) : translate( 'Visit site' ) }
 			</Button>
-			{ config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && (
-				<Button primary href={ `/hosting/${ site.slug }` }>
+			{ config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && isAdmin && (
+				<Button primary href={ `/overview/${ site.slug }` }>
 					{ translate( 'Hosting Overview' ) }
 				</Button>
 			) }
@@ -260,7 +260,7 @@ const Home = ( {
 					}
 				) }
 				icon="cross-circle"
-				showDismiss={ true }
+				showDismiss
 				onDismissClick={ () => {
 					setDismissedEmailDnsDiagnostics( true );
 					setDomainNotice( primaryDomain.name, 'email-dns-records-diagnostics', 'ignored', () => {
@@ -340,6 +340,7 @@ const mapStateToProps = ( state ) => {
 		ssoModuleActive: !! isJetpackModuleActive( state, siteId, 'sso' ),
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
+		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 };
 

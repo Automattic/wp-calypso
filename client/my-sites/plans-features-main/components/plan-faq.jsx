@@ -52,7 +52,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 			<FoldableFAQ
 				id="faq-1"
 				question={ translate( 'Is hosting included?' ) }
-				expanded={ true }
+				expanded
 				onToggle={ onFaqToggle }
 			>
 				{ translate(
@@ -216,7 +216,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 						components: {
 							ExternalLinkWithTracking: (
 								<ExternalLinkWithTracking
-									icon={ true }
+									icon
 									href="https://wordpress.com/website-design-service/"
 									tracksEventName="calypso_signup_step_plans_faq_difm_lp"
 								/>

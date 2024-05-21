@@ -42,7 +42,7 @@ const UpsellNudgeNotice = () => {
 				href={ href }
 				callToAction={ translate( 'Upgrade' ) }
 				plan={ PLAN_BUSINESS }
-				showIcon={ true }
+				showIcon
 				feature={ WPCOM_FEATURES_SCHEDULED_UPDATES }
 			/>
 		);
@@ -78,7 +78,7 @@ const UpsellNudgeNotice = () => {
 				tracksClickName="calypso_scheduled_updates_migrate_click"
 				href={ href }
 				callToAction={ translate( 'Migrate' ) }
-				showIcon={ true }
+				showIcon
 				feature={ WPCOM_FEATURES_SCHEDULED_UPDATES }
 			/>
 		);

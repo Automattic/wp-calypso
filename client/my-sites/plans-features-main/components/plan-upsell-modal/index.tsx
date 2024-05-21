@@ -66,10 +66,10 @@ export default function ModalContainer( props: ModalContainerProps ) {
 	};
 	return (
 		<Dialog
-			isBackdropVisible={ true }
+			isBackdropVisible
 			isVisible={ isModalOpen && !! modalType }
 			onClose={ props.onClose }
-			showCloseIcon={ true }
+			showCloseIcon
 			labelledby="plan-upsell-modal-title"
 			describedby="plan-upsell-modal-description"
 		>

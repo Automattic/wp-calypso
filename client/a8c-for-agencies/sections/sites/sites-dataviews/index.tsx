@@ -44,7 +44,7 @@ const SitesDataViews = ( {
 				type: DATAVIEWS_LIST,
 			} ) );
 		},
-		[ setDataViewsState, dataViewsState ]
+		[ setDataViewsState ]
 	);
 
 	const renderField = useCallback(
@@ -107,7 +107,7 @@ const SitesDataViews = ( {
 				id: 'site',
 				header: (
 					<>
-						<SiteSort isSortable={ true } columnKey="site">
+						<SiteSort isSortable columnKey="site">
 							<span
 								className="sites-dataview__site-header sites-dataview__site-header--sort"
 								ref={ ( ref ) => setIntroRef( ref as HTMLElement | null ) }
@@ -441,7 +441,7 @@ const SitesDataViews = ( {
 				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
 				fields={ fields }
 				view={ dataViewsState }
-				search={ true }
+				search
 				searchLabel={ translate( 'Search for sites' ) }
 				getItemId={ ( item: SiteInfo ) => {
 					item.id = item.site.value.blog_id; // setting the id because of a issue with the DataViews component
