@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
@@ -199,6 +199,10 @@ const LayoutLoggedOut = ( {
 			<UniversalNavbarHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
+				{ ...( isEnabled( 'site-profiler/metrics' ) && {
+					logoColor: 'white',
+					className: 'is-style-monochrome',
+				} ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
 					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),
