@@ -1,6 +1,5 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { Button, FormLabel } from '@automattic/components';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import emailValidator from 'email-validator';
@@ -15,7 +14,6 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -32,6 +30,7 @@ class PasswordlessSignupForm extends Component {
 		isInviteLoggedOutForm: PropTypes.bool,
 		onInputBlur: PropTypes.func,
 		onInputChange: PropTypes.func,
+		onCreateAccountError: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -123,29 +122,17 @@ class PasswordlessSignupForm extends Component {
 	createAccountError = async ( error ) => {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
-		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-			page(
-				addQueryArgs(
-					{
-						email_address: this.state.email,
-						is_signup_existing_account: true,
-					},
-					this.props.logInUrl
-				)
-			);
-			return;
+		if ( ! [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+			this.setState( {
+				errorMessages: [
+					this.props.translate(
+						'Sorry, something went wrong when trying to create your account. Please try again.'
+					),
+				],
+				isSubmitting: false,
+			} );
 		}
-
-		this.setState( {
-			errorMessages: [
-				this.props.translate(
-					'Sorry, something went wrong when trying to create your account. Please try again.'
-				),
-			],
-			isSubmitting: false,
-		} );
-
-		return;
+		this.props.onCreateAccountError?.( error, this.state.email );
 	};
 
 	createAccountCallback = ( response ) => {

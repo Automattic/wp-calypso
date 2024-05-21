@@ -27,7 +27,7 @@ const siteMigration: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
-		const steps = [
+		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
@@ -37,12 +37,13 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
 
-		if ( isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
-			steps.push( STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
-		}
+		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
+			? [ STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
+			: [];
 
-		return steps;
+		return [ ...baseSteps, ...hostedVariantSteps ];
 	},
+
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
 		const userIsLoggedIn = useSelect(
@@ -127,8 +128,13 @@ const siteMigration: Flow = {
 					};
 
 					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
-						// siteId/siteSlug wont be defined here if coming from a direct link/signup.
-						// We need to make sure the importer works when no site is available.
+						if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) ) {
+							// siteId/siteSlug wont be defined here if coming from a direct link/signup.
+							// We need to make sure there's a site to import into.
+							if ( ! siteSlugParam ) {
+								return navigate( STEPS.SITE_CREATION_STEP.slug );
+							}
+						}
 						return exitFlow(
 							addQueryArgs(
 								{
@@ -201,6 +207,21 @@ const siteMigration: Flow = {
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies?.siteCreated ) {
+						if ( ! fromQueryParam ) {
+							// If we get to this point without a fromQueryParam then we are coming from a direct
+							// pick your current platform link. That's why we navigate to the importList step.
+							return exitFlow(
+								addQueryArgs(
+									{
+										siteId,
+										siteSlug,
+										origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+										backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+									},
+									'/setup/site-setup/importList'
+								)
+							);
+						}
 						return navigate(
 							addQueryArgs(
 								{ siteId, siteSlug, from: fromQueryParam },

@@ -1,7 +1,9 @@
+import { APIError } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalText as Text } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import { handleErrorMessage } from 'calypso/blocks/plugin-scheduled-updates-common/error-utils';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateUpdateScheduleMutation,
@@ -73,7 +75,7 @@ export const ScheduleForm = ( props: Props ) => {
 				weekday: frequency === 'weekly' ? date.getDay() : undefined,
 			} );
 		},
-		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
+		onError: ( e: APIError ) => onSyncError && onSyncError( handleErrorMessage( e ) ),
 	};
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
 	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, serverSyncCallbacks );

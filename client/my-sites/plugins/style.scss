@@ -69,6 +69,13 @@ body.is-section-plugins {
 		}
 	}
 
+	.is-section-plugins.is-global-sidebar-collapsed {
+		.sidebar__description,
+		.sidebar__back-link .sidebar__site-title {
+			display: none;
+		}
+	}
+
 	.a4a-layout-column {
 		overflow: scroll;
 	}
@@ -89,6 +96,10 @@ body.is-section-plugins {
 		.plugins-update-manager-multisite-filter {
 			margin: 0;
 			padding: 1rem 1.5rem;
+
+			.components-search-control {
+				max-width: 100%;
+			}
 		}
 
 		.plugins-update-manager-multisite-card {

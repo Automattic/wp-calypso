@@ -4,6 +4,7 @@ export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
+export const NEW_HOSTED_SITE_FLOW_USER_INCLUDED = 'new-hosted-site-user-included';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const LINK_IN_BIO_FLOW = 'link-in-bio';
 export const LINK_IN_BIO_DOMAIN_FLOW = 'link-in-bio-domain';

@@ -598,11 +598,10 @@ const Settings = ( {
 			>
 				<Button
 					onClick={ handleTransferDomainClick }
-					href={ domainUseMyDomain(
-						selectedSite?.slug,
-						domain.name,
-						useMyDomainInputMode.transferDomain
-					) }
+					href={ domainUseMyDomain( selectedSite?.slug, {
+						domain: domain.name,
+						initialMode: useMyDomainInputMode.transferDomain,
+					} ) }
 					primary
 				>
 					{ translate( 'Transfer' ) }

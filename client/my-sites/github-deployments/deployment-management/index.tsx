@@ -40,7 +40,7 @@ export const GitHubDeploymentManagement = ( {
 
 	return (
 		<PageShell pageTitle={ __( 'Manage GitHub connection' ) }>
-			<HeaderCake onClick={ goToDeployments } isCompact>
+			<HeaderCake onClick={ goToDeployments } isCompact backIcon="chevron-left">
 				<h1>{ __( 'Manage connection' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>{ renderContent() }</ActionPanel>

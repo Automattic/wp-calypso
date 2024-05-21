@@ -47,7 +47,7 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const isOverLimit = tierLimit ? currentUsage / tierLimit >= 1 : false;
 
 	const bannerTitle = isOverLimit
-		? translate( 'You have reached your monthly views limit' )
+		? translate( 'You have reached your views limit' )
 		: translate( 'You are nearing your monthly limit' );
 	const bannerBody = isOverLimit
 		? translate(

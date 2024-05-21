@@ -54,8 +54,6 @@ const useTooltip = ( type: AllowedRowType, rows: SiteData ): TranslateResult | u
 	// Backup and the site does not have a backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
 	const isMultisiteSupported = useIsMultisiteSupported( rows?.site?.value, type );
 
-	const isAtomicSite = rows?.site?.value?.is_atomic;
-
 	const translate = useTranslate();
 
 	return useMemo( () => {
@@ -64,12 +62,8 @@ const useTooltip = ( type: AllowedRowType, rows: SiteData ): TranslateResult | u
 			return translate( 'Not supported on multisite' );
 		}
 
-		if ( isAtomicSite && ( type === 'site' || type === 'monitor' ) ) {
-			return translate( 'Monitoring is managed by WordPress.com' );
-		}
-
 		return ALL_TOOLTIPS[ type ]?.[ row?.status ]?.( translate );
-	}, [ isAtomicSite, isMultisiteSupported, rows, translate, type ] );
+	}, [ isMultisiteSupported, rows, translate, type ] );
 };
 
 export default useTooltip;

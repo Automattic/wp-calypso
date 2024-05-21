@@ -337,7 +337,7 @@ const useErrorHttpCodeSeries = () => {
 		{
 			...seriesDefaultProps,
 			statusCode: 408,
-			label: __( 'Request Timeout' ),
+			label: __( '408: Request Timeout' ),
 		},
 		{
 			...seriesDefaultProps,

@@ -33,7 +33,7 @@ export function DeploymentRunsLogs( { codeDeploymentId }: DeploymentRunsDialogPr
 
 	return (
 		<PageShell pageTitle={ __( 'GitHub Deployments' ) }>
-			<HeaderCake onClick={ goToDeployments } isCompact>
+			<HeaderCake onClick={ goToDeployments } isCompact backIcon="chevron-left">
 				<h1>{ __( 'Deployment runs' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>

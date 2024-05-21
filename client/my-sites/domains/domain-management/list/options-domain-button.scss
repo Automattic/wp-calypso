@@ -1,42 +1,18 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-button {
-	&.options-domain-button {
-		padding: 8px;
-		align-items: center;
-
-		.gridicon {
-			top: 0;
-			margin-top: 0;
-		}
-
-		&__popover {
-			margin-top: 5px;
-		}
-
-		@include break-mobile {
-			padding: 7px 15px;
-			font-size: $font-body-small;
-			line-height: 1;
-		}
+.options-domain-button {
+	&.split-button {
+		display: flex;
 	}
 
-	.options-domain-button__desktop {
-		display: none;
-
-		@include break-mobile {
-			display: initial;
-		}
+	.split-button__main {
+		-webkit-font-smoothing: antialiased;
 	}
 
-	.options-domain-button.ellipsis {
-		border: none;
-
-		@include break-mobile {
-			&:hover {
-				color: var(--color-neutral-70);
-			}
+	@media (max-width: 480px) {
+		.split-button__toggle {
+			border-radius: 2px;
 		}
 	}
 }
