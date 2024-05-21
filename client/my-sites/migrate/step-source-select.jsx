@@ -18,6 +18,13 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import './section-migrate.scss';
+import { Analyzer } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter } from 'react-router-dom';
+import { User as UserStore } from '@automattic/data-stores';
+import AsyncLoad from 'calypso/components/async-load';
+import { createQueryClient } from 'calypso/state/query-client';
+import config from '@automattic/calypso-config';
 
 class StepSourceSelect extends Component {
 	static propTypes = {
@@ -31,6 +38,8 @@ class StepSourceSelect extends Component {
 		error: null,
 		isLoading: false,
 	};
+
+	queryClient = null;
 
 	onUrlChange = ( args ) => {
 		this.setState( { error: null } );
@@ -116,12 +125,20 @@ class StepSourceSelect extends Component {
 			const migrationFlow = 'in-product';
 			triggerMigrationStartingEvent( user, migrationFlow );
 		}
+
+		createQueryClient( user.ID ).then( ( { queryClient } ) => {
+			this.queryClient = queryClient;
+		} );
 	}
 
 	render() {
 		const { targetSite, targetSiteSlug, translate } = this.props;
 		const backHref = `/import/${ targetSiteSlug }`;
 		const uploadFileLink = getImportSectionLocation( targetSiteSlug, targetSite.jetpack );
+
+		if ( ! this.queryClient ) {
+			return null;
+		}
 
 		return (
 			<>
@@ -132,37 +149,30 @@ class StepSourceSelect extends Component {
 						{ this.state.error }
 					</Notice>
 				) }
-
-				<CompactCard>
-					<CardHeading>{ translate( 'What WordPress site do you want to import?' ) }</CardHeading>
-					<div className="migrate__explain">
-						{ translate(
-							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a " +
-								'WordPress export file, you can' +
-								' {{uploadFileLink}}upload it to import content{{/uploadFileLink}}.',
-							{
-								components: {
-									uploadFileLink: <a className="migrate__import-link" href={ uploadFileLink } />,
-								},
-							}
+				<QueryClientProvider client={ this.queryClient }>
+					{ /* <WindowLocaleEffectManager /> */ }
+					<BrowserRouter basename="setup">
+						{ config.isEnabled( 'cookie-banner' ) && (
+							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
-					</div>
-				</CompactCard>
-				<SitesBlock
-					sourceSite={ null }
-					loadingSourceSite={ this.state.isLoading }
-					targetSite={ targetSite }
-					onUrlChange={ this.onUrlChange }
-					onSubmit={ this.handleContinue }
-					url={ this.props.url }
-					step="sourceSelect"
-				/>
-
-				<Card>
-					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary>
-						{ translate( 'Continue' ) }
-					</Button>
-				</Card>
+						<AsyncLoad
+							require="calypso/components/global-notices"
+							placeholder={ null }
+							id="notices"
+						/>
+						<Analyzer
+							onComplete={ () => {
+								alert( 1 );
+							} }
+							onSkip={ () => {
+								alert( 2 );
+							} }
+						></Analyzer>
+					</BrowserRouter>
+					{ 'development' === process.env.NODE_ENV && (
+						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
+					) }
+				</QueryClientProvider>
 			</>
 		);
 	}
