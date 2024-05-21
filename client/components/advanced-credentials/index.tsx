@@ -8,7 +8,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { useSelector, useDispatch } from 'calypso/state';
 import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
-import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	deleteCredentials,
 	updateCredentials,
@@ -411,10 +411,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				return renderCredentialsForm( true );
 		}
 	};
-
-	useEffect( () => {
-		dispatch( loadTrackingTool( 'LogRocket' ) );
-	}, [ dispatch ] );
 
 	return (
 		<div className={ `advanced-credentials ${ isAlternate ? 'alternate' : '' }` }>
