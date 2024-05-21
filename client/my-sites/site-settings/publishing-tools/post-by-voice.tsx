@@ -6,7 +6,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import SupportInfo from 'calypso/components/support-info';
 import { useGetPostByVoice } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-get-post-by-voice';
 import { useRegeneratePostByVoiceMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-regenerate-post-by-voice-mutation';
-import { useSwitchPostByVoiceMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-switch-post-by-voice-mutation';
+import { useTogglePostByVoiceMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-toggle-post-by-voice-mutation';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -23,7 +23,7 @@ export const PostByVoiceSetting = () => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const { data: postByVoiceSettings } = useGetPostByVoice( selectedSiteId );
 	const { mutate: switchPostByVoice, isPending: isPendingSwitch } =
-		useSwitchPostByVoiceMutation( selectedSiteId );
+		useTogglePostByVoiceMutation( selectedSiteId );
 	const { mutate: regeneratePostByVoice, isPending: isPendingRegenerate } =
 		useRegeneratePostByVoiceMutation( selectedSiteId );
 
