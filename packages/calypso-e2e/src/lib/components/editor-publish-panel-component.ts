@@ -80,7 +80,7 @@ export class EditorPublishPanelComponent {
 
 		// Check if the button is able to be triggered before proceeding
 		try {
-			await publishButtonLocator.waitFor( { state: 'attached' } );
+			await publishButtonLocator.waitFor( { state: 'attached', timeout: 5 * 1000 } );
 		} catch {
 			return;
 		}
