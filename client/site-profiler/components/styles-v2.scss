@@ -70,7 +70,7 @@
 	// Button style overrides necessary because of conflicting WPcom styles.
 	.button-action {
 		color: #fff;
-		background: var(--color-accent);
+		background: #3858e9;
 		border-radius: 4px;
 		font-size: 1rem;
 		font-weight: 500;
@@ -209,15 +209,9 @@
 		position: relative;
 		z-index: 1;
 
-		// &::after {
-		// 	content: "";
-		// 	position: absolute;
-		// 	top: 0;
-		// 	right: 0;
-		// 	left: 0;
-		// 	background: #e5f4ff;
-		// 	z-index: -1;
-		// }
+		&::after {
+			display: none;
+		}
 	}
 
 	.domain-analyzer-block::after {

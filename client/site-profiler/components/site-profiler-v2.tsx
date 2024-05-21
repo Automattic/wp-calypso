@@ -116,7 +116,7 @@ export default function SiteProfilerV2( props: Props ) {
 	return (
 		<div id="site-profiler-v2">
 			{ ! showResultScreen && (
-				<LayoutBlock width="medium">
+				<LayoutBlock className="domain-analyzer-block" width="medium">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<DomainAnalyzer
 						domain={ domain }
@@ -125,6 +125,7 @@ export default function SiteProfilerV2( props: Props ) {
 						isBusyForWhile={ isBusyForWhile }
 						domainFetchingError={ errorSP instanceof Error ? errorSP : undefined }
 						onFormSubmit={ updateDomainRouteParam }
+						className="domain-analyzer-v2"
 					/>
 				</LayoutBlock>
 			) }
