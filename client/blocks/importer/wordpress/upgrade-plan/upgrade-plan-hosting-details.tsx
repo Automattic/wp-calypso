@@ -78,7 +78,7 @@ export const UpgradePlanHostingDetails = () => {
 					<p className="import__upgrade-plan-hosting-details-header-main">{ headerMainText }</p>
 					<p className="import__upgrade-plan-hosting-details-header-subtext">
 						{ translate(
-							'We offer a proven 25% boost* in Core Web Vitals—endorsed by data from Google.'
+							'We offer a proven 24% boost* in Core Web Vitals—endorsed by data from Google.'
 						) }
 					</p>
 				</div>
