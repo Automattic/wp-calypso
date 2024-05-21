@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import * as React from 'react';
 //import { useInView } from 'react-intersection-observer';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
+import { navigate } from 'calypso/lib/navigate';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
 import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
@@ -15,6 +16,7 @@ import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
 import { displaySiteUrl, isStagingSite, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -70,8 +72,14 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const isWpcomStagingSite = isStagingSite( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
 
+	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
+
 	const onSiteClick = ( event: React.MouseEvent ) => {
-		openSitePreviewPane && openSitePreviewPane( site );
+		if ( isAdmin ) {
+			openSitePreviewPane && openSitePreviewPane( site );
+		} else {
+			navigate( adminUrl );
+		}
 		event.preventDefault();
 	};
 
