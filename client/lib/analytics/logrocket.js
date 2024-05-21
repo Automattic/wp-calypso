@@ -37,18 +37,31 @@ export function maybeAddLogRocketScript() {
 					// @see https://docs.logrocket.com/reference/dom#sanitize-all-user-input-fields
 					inputSanitizer: true,
 				},
+				// @see https://docs.logrocket.com/v1.0/reference/network
 				network: {
 					requestSanitizer: ( request ) => {
-						// Remove the Authorization header from the request
-						request.headers.Authorization = null;
+						const { headers, body } = request;
 
-						// Remove the body from the request
-						delete request.body;
+						// Remove the Authorization header from the request if it exists
+						if ( headers && headers.Authorization ) {
+							headers.Authorization = null;
+						}
+
+						// Remove the body from the request if it exists
+						if ( body ) {
+							delete request.body;
+						}
+
 						return request;
 					},
 					responseSanitizer: ( response ) => {
-						// Remove the body from the response
-						delete response.body;
+						const { body } = response;
+
+						// Remove the body from the response if it exists
+						if ( body ) {
+							delete response.body;
+						}
+
 						return response;
 					},
 				},
