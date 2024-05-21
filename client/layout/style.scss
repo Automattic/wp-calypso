@@ -383,7 +383,9 @@ body.is-mobile-app-view {
 .layout.has-no-masterbar.is-group-me,
 .layout.has-no-masterbar.is-group-sites,
 .layout.has-no-masterbar.is-section-reader {
-	--masterbar-height: 0;
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-height: 0px;
 
 	.layout__content {
 		padding-top: 32px;
