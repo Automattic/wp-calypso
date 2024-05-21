@@ -9,6 +9,7 @@ export const useSites = (): SiteExcerptData[] => {
 		isComingSoon,
 		isP2,
 		siteHostname,
+		siteName,
 		shouldUseWpAdmin,
 		isWpcomStore,
 	} = window.commandPaletteConfig;
@@ -18,6 +19,7 @@ export const useSites = (): SiteExcerptData[] => {
 		{
 			ID: siteId,
 			slug: siteHostname,
+			name: siteName,
 			jetpack: isAtomic,
 			is_wpcom_atomic: isAtomic,
 			is_coming_soon: isComingSoon,
