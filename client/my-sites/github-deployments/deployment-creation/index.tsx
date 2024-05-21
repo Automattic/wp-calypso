@@ -19,7 +19,11 @@ export const GitHubDeploymentCreation = () => {
 
 	return (
 		<PageShell pageTitle={ __( 'Connect GitHub repository' ) }>
-			<HeaderCake onClick={ data?.length ? goToDeployments : undefined } isCompact>
+			<HeaderCake
+				onClick={ data?.length ? goToDeployments : undefined }
+				isCompact
+				backIcon="chevron-left"
+			>
 				<h1>{ __( 'Connect repository' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>

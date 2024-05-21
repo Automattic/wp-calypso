@@ -18,6 +18,9 @@ export default function () {
 	page(
 		'/overview/:site',
 		siteSelection,
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		redirectIfCurrentUserCannot( 'manage_options' ),
 		navigation,
 		hostingOverview,
 		siteDashboard( DOTCOM_OVERVIEW ),

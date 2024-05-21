@@ -296,7 +296,9 @@
 	position: relative;
 	padding: 16px 0;
 	border-bottom: 1px solid var(--color-border-secondary);
-
+	&:hover {
+		background-color: #f7faff;
+	}
 	&-header {
 		display: flex;
 		align-items: center;

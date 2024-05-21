@@ -519,10 +519,33 @@
 				margin: 0;
 				position: relative;
 				width: 100%;
+			}
+		}
+	}
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout.preview-hidden {
+	@media (min-width: $break-xhuge) {
+		div.a4a-layout__viewport {
+			margin: 0 auto;
+			max-width: 1400px;
+			box-sizing: border-box;
+		}
+		.dataviews-wrapper {
+			margin: 0 auto;
+			max-width: 1400px;
+			box-sizing: border-box;
+		}
+	}
+
+	.a4a-layout-column__container {
+		.dataviews-wrapper {
+			.dataviews-pagination {
 				@include break-large {
 					padding-left: 26px;
 					padding-right: 26px;
 				}
+
 				@include break-huge {
 					padding-left: 64px;
 					padding-right: 64px;

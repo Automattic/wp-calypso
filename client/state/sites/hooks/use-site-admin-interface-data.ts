@@ -14,7 +14,9 @@ const useSiteAdminInterfaceData = ( siteId: number = 0 ) => {
 	const wpcomAdminInterface = useSelector( ( state: AppState ) =>
 		getSiteOption( state, siteId, 'wpcom_admin_interface' )
 	);
-	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, siteId ) );
+	const isJetpack = useSelector( ( state: AppState ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 	const isWPAdmin = wpcomAdminInterface === 'wp-admin' || isJetpack;
 	const adminLabel = isWPAdmin ? translate( 'WP Admin' ) : translate( 'My Home' );
 	const adminUrl =

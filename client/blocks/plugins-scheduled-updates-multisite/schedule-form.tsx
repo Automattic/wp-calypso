@@ -1,7 +1,9 @@
+import { APIError } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { handleErrorMessage } from 'calypso/blocks/plugin-scheduled-updates-common/error-utils';
 import { useCreateMonitors } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-create-monitor';
 import { useCoreSitesPluginsQuery } from 'calypso/data/plugins/use-core-sites-plugins-query';
 import {
@@ -61,7 +63,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit, onRecordSuccessEvent
 	const translate = useTranslate();
 
 	const siteFilter = ( site: SiteExcerptData ): boolean => {
-		return ( site as SiteDetails ).capabilities?.update_plugins;
+		return ( site as SiteDetails ).capabilities?.update_plugins && ! site.is_wpcom_staging_site;
 	};
 
 	const { data: sites } = useSiteExcerptsQuery( [ 'atomic' ], siteFilter, 'all', [
@@ -177,7 +179,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit, onRecordSuccessEvent
 		createResults
 			.filter( ( result ) => result.error )
 			.forEach( ( result ) =>
-				addError( result.siteSlug, 'create', ( result.error as Error ).message )
+				addError( result.siteSlug, 'create', handleErrorMessage( result.error as APIError ) )
 			);
 
 		// Update existing schedules
@@ -197,7 +199,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit, onRecordSuccessEvent
 			updateResults
 				.filter( ( result ) => result.error )
 				.forEach( ( result ) =>
-					addError( result.siteSlug, 'update', ( result.error as Error ).message )
+					addError( result.siteSlug, 'update', handleErrorMessage( result.error as APIError ) )
 				);
 
 			// Delete schedules no longer needed
@@ -208,7 +210,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit, onRecordSuccessEvent
 			deleteResults
 				.filter( ( result ) => result.error )
 				.forEach( ( result ) =>
-					addError( result.siteSlug, 'delete', ( result.error as Error ).message )
+					addError( result.siteSlug, 'delete', handleErrorMessage( result.error as APIError ) )
 				);
 		}
 
