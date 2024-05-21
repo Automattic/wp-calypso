@@ -247,7 +247,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			@media only screen and ( max-width: 781px ) {
 				div.layout.is-global-sidebar-visible {
 					.layout__primary {
-						overflow-x: auto;
+						overflow-x: unset;
 					}
 				}
 				.layout__primary > main {
