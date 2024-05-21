@@ -574,10 +574,10 @@ object CheckCodeStyleBranch : BuildType({
 				export NODE_ENV="test"
 
 				# Find files to lint
-				TOTAL_FILES_TO_LINT=$(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -cE '\.[jt]sx? || true')
+				TOTAL_FILES_TO_LINT=$(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -cE '\.[jt]sx?' || true)
 
 				# Avoid running more than 16 parallel eslint tasks as it could OOM
-				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" -gt 16 ]; then
+				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" -gt 16 ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
 					echo "Linting all files"
 					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 				else
