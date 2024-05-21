@@ -199,6 +199,7 @@ const LayoutLoggedOut = ( {
 			<UniversalNavbarHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
+				{ ...( sectionName === 'site-profiler' && { logoColor: 'white' } ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
 					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),
