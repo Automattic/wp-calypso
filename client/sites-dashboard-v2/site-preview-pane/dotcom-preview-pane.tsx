@@ -6,6 +6,7 @@ import ItemPreviewPane, {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import DevToolsIcon from 'calypso/dev-tools-promo/components/dev-tools-icon';
+import { isP2Site } from 'calypso/sites-dashboard/utils';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -43,6 +44,7 @@ const DotcomPreviewPane = ( {
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack;
 	const isPlanExpired = !! site.plan?.expired;
+	const isP2 = isP2Site( site );
 
 	const features = useMemo(
 		() => [
@@ -59,7 +61,7 @@ const DotcomPreviewPane = ( {
 				<span>
 					{ __( 'Dev Tools' ) } <DevToolsIcon />
 				</span>,
-				isSimpleSite || isPlanExpired,
+				! isP2 && ( isSimpleSite || isPlanExpired ),
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
