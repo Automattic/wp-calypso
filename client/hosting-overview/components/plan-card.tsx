@@ -162,26 +162,37 @@ const PlanCard: FC = () => {
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
 	);
 	const renderManageButton = () => {
-		if ( ! isOwner || isJetpack || ! site || ! planPurchaseId ) {
+		if ( isJetpack || ! site ) {
 			return false;
 		}
-		return (
-			<Button
-				className={ classNames(
-					'hosting-overview__link-button',
-					'hosting-overview__mobile-hidden-link-button'
-				) }
-				plain
-				disabled
-				href={
-					isFreePlan
-						? `/add-ons/${ site?.slug }`
-						: getManagePurchaseUrlFor( site?.slug, planPurchaseId )
-				}
-			>
-				{ isFreePlan ? translate( 'Manage add-ons' ) : translate( 'Manage plan' ) }
-			</Button>
-		);
+		if ( isFreePlan ) {
+			return (
+				<Button
+					className={ classNames(
+						'hosting-overview__link-button',
+						'hosting-overview__mobile-hidden-link-button'
+					) }
+					plain
+					href={ `/add-ons/${ site?.slug }` }
+				>
+					{ translate( 'Manage add-ons' ) }
+				</Button>
+			);
+		}
+		if ( isOwner ) {
+			return (
+				<Button
+					className={ classNames(
+						'hosting-overview__link-button',
+						'hosting-overview__mobile-hidden-link-button'
+					) }
+					plain
+					href={ getManagePurchaseUrlFor( site?.slug, planPurchaseId ?? 0 ) }
+				>
+					{ translate( 'Manage plan' ) }
+				</Button>
+			);
+		}
 	};
 
 	return (
