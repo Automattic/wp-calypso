@@ -84,6 +84,23 @@
 	.sites-a8c-for-agencies-banner {
 		margin-inline: 16px;
 
+		.banner__content {
+			max-width: 90%;
+		}
+
+		.banner__action {
+			margin-top: 0;
+
+			a {
+				display: flex;
+				white-space: nowrap;
+			}
+		}
+
+		.dismissible-card__close-button {
+			top: 28px;
+		}
+
 		@include break-large {
 			margin-inline: 26px;
 		}

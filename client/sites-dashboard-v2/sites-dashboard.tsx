@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import {
 	SitesSortKey,
 	useSitesListFiltering,
@@ -267,7 +268,11 @@ const SitesDashboardV2 = ( {
 					<DocumentHead title={ __( 'Sites' ) } />
 					{ showA8CForAgenciesBanner && (
 						<Banner
-							callToAction={ translate( 'Learn more' ) }
+							callToAction={ translate( 'Learn more {{icon/}}', {
+								components: {
+									icon: <Gridicon icon="external" />,
+								},
+							} ) }
 							className="sites-a8c-for-agencies-banner"
 							description={ translate(
 								'As you’re managing multiple sites, Automattic for Agencies offers you efficient multisite management, volume discounts on hosting products, and up to 50% revenue share for migrating sites and referring products.'
