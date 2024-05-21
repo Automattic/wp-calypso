@@ -2,7 +2,7 @@ import CommandPalette from '@automattic/command-palette';
 import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 import { navigate } from 'calypso/lib/navigate';
 import { useCommandsCalypso } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
@@ -22,17 +22,19 @@ const getCurrentUserCapabilities = ( state: CurrentUserCapabilitiesState ) =>
 	state.currentUser.capabilities;
 
 const CalypsoCommandPalette = () => {
+	const dispatch = useDispatch();
 	const isCommandPaletteOpen = useSelector( getIsCommandPaletteOpen );
 	const currentRoutePattern = useSelector( getCurrentRoutePattern ) ?? '';
 	const currentSiteId = useSelector( getSelectedSiteId );
 	const userCapabilities = useSelector( getCurrentUserCapabilities );
+	const onClose = () => dispatch( closeCommandPalette() );
 
 	return (
 		<CommandPalette
 			currentRoute={ currentRoutePattern }
 			currentSiteId={ currentSiteId }
 			isOpenGlobal={ isCommandPaletteOpen }
-			onClose={ closeCommandPalette }
+			onClose={ onClose }
 			navigate={ navigate }
 			useCommands={ useCommandsCalypso }
 			useSites={ useSiteExcerptsSorted }
