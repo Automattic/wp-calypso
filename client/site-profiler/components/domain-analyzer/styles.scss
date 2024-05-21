@@ -78,10 +78,6 @@
 	}
 }
 
-.domain-analyzer-v2 .domain-analyzer--form-container input {
-	font-family: "SF Pro Text", $sans;
-}
-
 .domain-analyzer--form {
 	&.is-error {
 		@media (min-width: $break-small + 1px) {

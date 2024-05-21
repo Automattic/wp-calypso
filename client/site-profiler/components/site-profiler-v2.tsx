@@ -18,7 +18,7 @@ import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 // import { AdvancedMetrics } from './advanced-metrics';
 // import { BasicMetrics } from './basic-metrics';
-import DomainAnalyzer from './domain-analyzer';
+// import DomainAnalyzer from './domain-analyzer';
 // import DomainInformation from './domain-information';
 import { GetReportForm } from './get-report-form';
 // import HeadingInformation from './heading-information';
@@ -26,6 +26,7 @@ import { GetReportForm } from './get-report-form';
 // import HostingIntro from './hosting-intro';
 // import { MetricsMenu } from './metrics-menu';
 import './styles-v2.scss';
+import LandingPageHeader from './landing-page-header';
 
 const debug = debugFactory( 'apps:site-profiler' );
 
@@ -118,14 +119,13 @@ export default function SiteProfilerV2( props: Props ) {
 			{ ! showResultScreen && (
 				<LayoutBlock className="domain-analyzer-block" width="medium">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
-					<DomainAnalyzer
+					<LandingPageHeader
 						domain={ domain }
 						isDomainValid={ isDomainValid }
 						isBusy={ isFetchingSP }
 						isBusyForWhile={ isBusyForWhile }
 						domainFetchingError={ errorSP instanceof Error ? errorSP : undefined }
 						onFormSubmit={ updateDomainRouteParam }
-						className="domain-analyzer-v2"
 					/>
 				</LayoutBlock>
 			) }

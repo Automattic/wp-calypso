@@ -51,8 +51,7 @@
 
 	p {
 		font-family: "SF Pro Text", $sans;
-		/* stylelint-disable-next-line */
-		font-size: 1.125rem;
+		font-size: 1rem;
 		color: var(--studio-white);
 	}
 
@@ -189,7 +188,7 @@
 	.domain-analyzer-block {
 		padding-top: 10rem;
 		@media (max-width: $break-small ) {
-			padding-top: 4rem;
+			padding-top: 6rem;
 		}
 	}
 

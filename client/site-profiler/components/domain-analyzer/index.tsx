@@ -12,20 +12,12 @@ interface Props {
 	isDomainValid?: boolean;
 	domainFetchingError?: Error;
 	onFormSubmit: ( domain: string ) => void;
-	className?: string;
 }
 
 export default function DomainAnalyzer( props: Props ) {
 	const translate = useTranslate();
-	const {
-		domain,
-		isBusy,
-		isBusyForWhile,
-		isDomainValid,
-		domainFetchingError,
-		onFormSubmit,
-		className,
-	} = props;
+	const { domain, isBusy, isBusyForWhile, isDomainValid, domainFetchingError, onFormSubmit } =
+		props;
 
 	const showError = isDomainValid === false || domainFetchingError;
 
@@ -46,7 +38,7 @@ export default function DomainAnalyzer( props: Props ) {
 	};
 
 	return (
-		<div className={ classnames( 'domain-analyzer', className ) }>
+		<div className="domain-analyzer">
 			<h1>{ translate( 'Site Profiler' ) }</h1>
 			<p>
 				{ translate(

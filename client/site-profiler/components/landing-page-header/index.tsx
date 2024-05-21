@@ -12,20 +12,12 @@ interface Props {
 	isDomainValid?: boolean;
 	domainFetchingError?: Error;
 	onFormSubmit: ( domain: string ) => void;
-	className?: string;
 }
 
-export default function DomainAnalyzer( props: Props ) {
+export default function LandingPageHeader( props: Props ) {
 	const translate = useTranslate();
-	const {
-		domain,
-		isBusy,
-		isBusyForWhile,
-		isDomainValid,
-		domainFetchingError,
-		onFormSubmit,
-		className,
-	} = props;
+	const { domain, isBusy, isBusyForWhile, isDomainValid, domainFetchingError, onFormSubmit } =
+		props;
 
 	const showError = isDomainValid === false || domainFetchingError;
 
@@ -46,19 +38,19 @@ export default function DomainAnalyzer( props: Props ) {
 	};
 
 	return (
-		<div className={ classnames( 'domain-analyzer', className ) }>
+		<div className="landing-page-header">
 			<h1>{ translate( 'Site Profiler' ) }</h1>
 			<p>
 				{ translate(
-					'Access the essential information about any site, including hosting provider, domain details, and contact information.'
+					'Access a site‘s hosting, domain, contact info, performance metrics and security in one place.'
 				) }
 			</p>
 
 			<form
-				className={ classnames( 'domain-analyzer--form', { 'is-error': showError } ) }
+				className={ classnames( 'landing-page-header--form', { 'is-error': showError } ) }
 				onSubmit={ onSubmit }
 			>
-				<div className="domain-analyzer--form-container">
+				<div className="landing-page-header--form-container">
 					<div className="col-1">
 						<input
 							type="text"
@@ -84,7 +76,7 @@ export default function DomainAnalyzer( props: Props ) {
 						</Button>
 					</div>
 				</div>
-				<div className="domain-analyzer--msg">
+				<div className="landing-page-header--msg">
 					<p
 						className={ classnames( 'error', {
 							'vis-hidden': ! showError,
