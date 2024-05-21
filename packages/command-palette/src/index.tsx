@@ -105,6 +105,13 @@ export function CommandMenuGroup() {
 
 	const sites = useSites();
 	const currentSite = sites.find( ( site: { ID: unknown } ) => site.ID === currentSiteId );
+	const adminUrl =
+		currentSite?.options?.wpcom_admin_interface === 'wp-admin'
+			? 'https://' + currentSite.slug + '/wp-admin'
+			: 'https://wordpress.com/home/' + currentSite?.slug;
+
+	// Should just use the name but need Jetpack change for this to work in wp-admin
+	const siteName = currentSite?.name ?? currentSite?.slug;
 
 	useEffect( () => {
 		if ( ! filterNotice && singleSiteMode ) {
@@ -115,14 +122,11 @@ export function CommandMenuGroup() {
 				<>
 					<a className="command-palette__footer-all-sites" href={ sitesPath }>
 						All sites
-					</a>{ ' ' }
+					</a>
 					{ ' / ' }
-					{ currentSite?.options && (
-						<a
-							className="command-palette__footer-current-site"
-							href={ currentSite.options.admin_url }
-						>
-							{ currentSite.name }
+					{ adminUrl && (
+						<a className="command-palette__footer-current-site" href={ adminUrl }>
+							{ siteName }
 						</a>
 					) }
 				</>
@@ -130,8 +134,7 @@ export function CommandMenuGroup() {
 			setFooterMessage( message );
 			return;
 		}
-		setFooterMessage( filterNotice ?? '' );
-	}, [ setFooterMessage, filterNotice, singleSiteMode, currentRoute, currentSite ] );
+	}, [ setFooterMessage, filterNotice, singleSiteMode, currentRoute, adminUrl, siteName ] );
 
 	useEffect( () => {
 		setEmptyListNotice( emptyListNotice ?? '' );
