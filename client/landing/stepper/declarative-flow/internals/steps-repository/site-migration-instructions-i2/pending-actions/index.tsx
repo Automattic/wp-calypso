@@ -1,5 +1,5 @@
 import { Spinner } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
+import { Icon, check, closeSmall } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -21,7 +21,7 @@ const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 			icon = <Icon icon={ check } width={ 30 } />;
 			break;
 		case 'error':
-			icon = '❌';
+			icon = <Icon icon={ closeSmall } width={ 30 } />;
 			break;
 		default:
 			icon = '';
