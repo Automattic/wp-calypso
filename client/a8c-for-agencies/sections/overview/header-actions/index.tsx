@@ -20,8 +20,8 @@ export default function OverviewHeaderActions() {
 				onClickAddNewSite={ () =>
 					dispatch( recordTracksEvent( 'calypso_a4a_overview_add_new_site_click' ) )
 				}
-				onClickJetpackMenuItem={ () =>
-					dispatch( recordTracksEvent( 'calypso_a4a_overview_connect_jetpack_site_click' ) )
+				onClickA4APluginMenuItem={ () =>
+					dispatch( recordTracksEvent( 'calypso_a4a_overview_download_a4a_plugin_click' ) )
 				}
 				onClickUrlMenuItem={ () =>
 					dispatch( recordTracksEvent( 'calypso_a4a_overview_connect_url_site_click' ) )
