@@ -14,6 +14,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { isStagingSite } from 'calypso/sites-dashboard/utils';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -151,6 +152,7 @@ const PlanCard: FC = () => {
 	const isJetpack = useSelector( ( state ) =>
 		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
 	);
+	const isStaging = isStagingSite( site ?? undefined );
 	const isOwner = planDetails?.user_is_owner;
 	const planPurchaseId = useSelector( ( state: IAppState ) =>
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
@@ -162,7 +164,7 @@ const PlanCard: FC = () => {
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
 	);
 	const renderManageButton = () => {
-		if ( isJetpack || ! site ) {
+		if ( isJetpack || ! site || isStaging ) {
 			return false;
 		}
 		if ( isFreePlan ) {
@@ -200,28 +202,34 @@ const PlanCard: FC = () => {
 			<QuerySitePlans siteId={ site?.ID } />
 			<HostingCard className="hosting-overview__plan">
 				<div className="hosting-overview__plan-card-header">
-					<h3 className="hosting-overview__plan-card-title">{ planName }</h3>
+					<h3 className="hosting-overview__plan-card-title">
+						{ isStaging ? translate( 'Staging site' ) : planName }
+					</h3>
 					{ renderManageButton() }
 				</div>
-				<PricingSection />
-				<PlanStorage
-					className="hosting-overview__plan-storage"
-					hideWhenNoStorage
-					siteId={ site?.ID }
-					StorageBarComponent={ PlanStorageBar }
-				>
-					{ storageAddons.length > 0 && (
-						<div className="hosting-overview__plan-storage-footer">
-							<Button
-								className="hosting-overview__link-button"
-								plain
-								href={ `/add-ons/${ site?.slug }` }
-							>
-								{ translate( 'Need more storage?' ) }
-							</Button>
-						</div>
-					) }
-				</PlanStorage>
+				{ ! isStaging && (
+					<>
+						<PricingSection />
+						<PlanStorage
+							className="hosting-overview__plan-storage"
+							hideWhenNoStorage
+							siteId={ site?.ID }
+							StorageBarComponent={ PlanStorageBar }
+						>
+							{ storageAddons.length > 0 && (
+								<div className="hosting-overview__plan-storage-footer">
+									<Button
+										className="hosting-overview__link-button"
+										plain
+										href={ `/add-ons/${ site?.slug }` }
+									>
+										{ translate( 'Need more storage?' ) }
+									</Button>
+								</div>
+							) }
+						</PlanStorage>
+					</>
+				) }
 			</HostingCard>
 		</>
 	);
