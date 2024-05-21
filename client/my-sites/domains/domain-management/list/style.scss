@@ -134,10 +134,15 @@
 		}
 	}
 }
-// Custom layout width for the bulk domains pages
+
+// this affects the /domains/manage/:site page as well.
 .is-bulk-domains-page .layout__content {
 	overflow: auto;
+}
 
+// Custom layout for the global `/domains/manage` page only
+// Generic domains table styles should go in `packages/domains-table/src/domains-table/style.scss`
+.is-bulk-domains-page.is-group-sites .layout__content {
 	.main {
 		.navigation-header {
 			@include break-huge {
@@ -198,9 +203,6 @@
 	}
 
 	.domains-table-mobile-cards {
-		.domains-table-mobile-card:hover {
-			background-color: #f7faff;
-		}
 		.components-base-control {
 			display: flex;
 			align-items: center;
