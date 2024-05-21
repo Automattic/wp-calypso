@@ -242,7 +242,9 @@
 
 // New navigation will not include a masterbar
 .theme-a8c-for-agencies .layout.has-no-masterbar {
-	--masterbar-height: 0;
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-height: 0px;
 
 	.layout__content {
 		padding: 16px;
@@ -381,7 +383,6 @@ html {
 
 	.popover__menu-item {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
 		border: none;
 		outline: none;

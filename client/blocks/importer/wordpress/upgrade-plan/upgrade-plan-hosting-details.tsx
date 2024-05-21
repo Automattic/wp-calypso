@@ -7,7 +7,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
-import { useUpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from './constants';
+import { UpgradePlanHostingTestimonials } from './constants';
+import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
+import { Skeleton } from './skeleton';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
 
 export const UpgradePlanHostingDetails = () => {
@@ -25,7 +27,7 @@ export const UpgradePlanHostingDetails = () => {
 		hasTranslation( 'Why should you host with us?' ) || isEnglishLocale
 			? translate( 'Why should you host with us?' )
 			: translate( 'Why you should host with us?' );
-	const upgradePlanHostingDetailsList = useUpgradePlanHostingDetailsList();
+	const { list: upgradePlanHostingDetailsList, isFetching } = useUpgradePlanHostingDetailsList();
 
 	const { data: urlData } = useAnalyzeUrlQuery( importSiteQueryParam, true );
 
@@ -40,6 +42,35 @@ export const UpgradePlanHostingDetails = () => {
 		hostingProviderName !== 'Unknown' &&
 		hostingProviderName !== 'WordPress.com';
 
+	let hostingDetailsItems = null;
+
+	if ( isFetching ) {
+		hostingDetailsItems = Array.from( { length: 3 } ).map( ( _, index ) => (
+			<li key={ index } className="import__upgrade-plan-hosting-details-list-loading">
+				<Skeleton width="60%" />
+				<Skeleton height="15px" />
+			</li>
+		) );
+	} else {
+		hostingDetailsItems = upgradePlanHostingDetailsList.map(
+			( { title, description, icon }, i ) => (
+				<li key={ i }>
+					<Icon
+						className="import__upgrade-plan-hosting-details-list-icon"
+						icon={ icon }
+						size={ 24 }
+					/>
+					<div className="import__upgrade-plan-hosting-details-list-stats">
+						<p className="import__upgrade-plan-hosting-details-list-stats-title">{ title }</p>
+						<span className="import__upgrade-plan-hosting-details-list-stats-description">
+							{ description }
+						</span>
+					</div>
+				</li>
+			)
+		);
+	}
+
 	return (
 		<div className="import__upgrade-plan-hosting-details">
 			<div className="import__upgrade-plan-hosting-details-card-container">
@@ -50,23 +81,7 @@ export const UpgradePlanHostingDetails = () => {
 					</p>
 				</div>
 				<div className="import__upgrade-plan-hosting-details-list">
-					<ul>
-						{ upgradePlanHostingDetailsList.map( ( { title, description, icon }, i ) => (
-							<li key={ i }>
-								<Icon
-									className="import__upgrade-plan-hosting-details-list-icon"
-									icon={ icon }
-									size={ 24 }
-								/>
-								<div className="import__upgrade-plan-hosting-details-list-stats">
-									<p className="import__upgrade-plan-hosting-details-list-stats-title">{ title }</p>
-									<span className="import__upgrade-plan-hosting-details-list-stats-description">
-										{ description }
-									</span>
-								</div>
-							</li>
-						) ) }
-					</ul>
+					<ul>{ hostingDetailsItems }</ul>
 				</div>
 				{ isEnglishLocale && (
 					<div className="import__upgrade-plan-hosting-details-testimonials-container">

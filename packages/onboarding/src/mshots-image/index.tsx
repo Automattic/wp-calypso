@@ -35,30 +35,31 @@ export function mshotsUrl( targetUrl: string, options: MShotsOptions, count = 0 
 
 const MAXTRIES = 10;
 
-// This custom react hook returns undefined while the image is loading and
-// a HTMLImageElement (i.e. the class you get from `new Image()`) once loading
-// is complete.
+// This custom react hook returns null while the image is loading and the page
+// (not image) URL once loading is complete.
 //
 // It also triggers a re-render (via setState()) when the value changes, so just
-// check if it's truthy and then treat it like any other Image.
+// check that the requested URL matches the returned URL.
 //
-// Note the loading may occur immediately and synchronously if the image is
-// already or may take up to several seconds if mshots has to generate and cache
-// new images.
+// Note the loading may occur immediately if the image is already available, or
+// may take several seconds if mshots has to generate and cache new images.
 //
 // The calling code doesn't need to worry about the details except that you'll
 // want some sort of loading display.
 //
 // Inspired by https://stackoverflow.com/a/60458593
-const useMshotsImg = ( src: string, options: MShotsOptions ): HTMLImageElement | undefined => {
-	const [ loadedImg, setLoadedImg ] = useState< HTMLImageElement >();
+const useMshotsImg = (
+	src: string,
+	options: MShotsOptions,
+	imgRef: React.MutableRefObject< HTMLImageElement | null >
+): string | null => {
+	const [ loadedImg, setLoadedImg ] = useState< string | null >( null );
 	const [ count, setCount ] = useState( 0 );
 	const previousSrc = useRef( src );
 
-	const imgRef = useRef< HTMLImageElement >();
 	const timeoutIdRef = useRef< number >();
 
-	const previousImg = useRef< HTMLImageElement >();
+	const previousImg = useRef< HTMLImageElement | null >( null );
 	const previousOptions = useRef< MShotsOptions >();
 	// Oddly, we need to assign to current here after ref creation in order to
 	// pass the equivalence check and avoid a spurious reset
@@ -89,47 +90,49 @@ const useMshotsImg = ( src: string, options: MShotsOptions ): HTMLImageElement |
 				}
 			}
 
-			setLoadedImg( undefined );
 			setCount( 0 );
-			previousImg.current = imgRef.current;
+			if ( previousImg.current !== imgRef.current ) {
+				previousImg.current = imgRef.current;
+			}
 
 			previousOptions.current = options;
 			previousSrc.current = src;
 		}
 
 		const srcUrl = mshotsUrl( src, options, count );
-		const newImage = new Image();
-		newImage.onload = () => {
-			// Detect default image (Don't request a 400x300 image).
-			//
-			// If this turns out to be a problem, it might help to know that the
-			// http request status for the default is a 307. Unfortunately we
-			// don't get the request through an img element so we'd need to
-			// take a completely different approach using ajax.
-			if ( newImage.naturalWidth !== 400 || newImage.naturalHeight !== 300 ) {
-				// Note we're using the naked object here, not the ref, because
-				// this is the callback on the image itself. We'd never want
-				// the image to finish loading and set some other image.
-				setLoadedImg( newImage );
-			} else if ( count < MAXTRIES ) {
-				// Only refresh 10 times
-				// Triggers a target.src change with increasing timeouts
-				timeoutIdRef.current = window.setTimeout(
-					() => setCount( ( count ) => count + 1 ),
-					count * 500
-				);
-			}
-		};
-		newImage.src = srcUrl;
-		imgRef.current = newImage;
+
+		if ( imgRef.current ) {
+			imgRef.current.onload = () => {
+				// Detect default image (Don't request a 400x300 image).
+				//
+				// If this turns out to be a problem, it might help to know that the
+				// http request status for the default is a 307. Unfortunately we
+				// don't get the request through an img element so we'd need to
+				// take a completely different approach using ajax.
+				if ( imgRef.current?.naturalWidth !== 400 || imgRef.current?.naturalHeight !== 300 ) {
+					setLoadedImg( src );
+				} else if ( count < MAXTRIES ) {
+					// Only refresh 10 times
+					// Triggers a target.src change with increasing timeouts
+					timeoutIdRef.current = window.setTimeout(
+						() => setCount( ( count ) => count + 1 ),
+						count * 500
+					);
+				}
+			};
+			imgRef.current.src = srcUrl;
+		}
 
 		return () => {
 			if ( imgRef.current && imgRef.current.onload ) {
 				imgRef.current.onload = null;
 			}
+			if ( previousImg.current && previousImg.current.onload ) {
+				previousImg.current.onload = null;
+			}
 			clearTimeout( timeoutIdRef.current );
 		};
-	}, [ src, count, options ] );
+	}, [ src, count, options, imgRef ] );
 
 	return loadedImg;
 };
@@ -147,14 +150,15 @@ const MShotsImage = ( {
 	options,
 	scrollable = false,
 }: MShotsImageProps ) => {
-	const maybeImage = useMshotsImg( url, options );
-	const src: string = maybeImage?.src || '';
-	const visible = !! src;
-	const backgroundImage = maybeImage?.src && `url( ${ maybeImage?.src } )`;
+	const imgRef = useRef< HTMLImageElement | null >( null );
+	const currentlyLoadedUrl = useMshotsImg( url, options, imgRef );
+	const src: string = imgRef.current?.src || '';
+	const visible = src && url === currentlyLoadedUrl;
+	const backgroundImage = src && `url( ${ src } )`;
 
 	const animationScrollSpeedInPixelsPerSecond = 400;
 	const animationDuration =
-		( maybeImage?.naturalHeight || 600 ) / animationScrollSpeedInPixelsPerSecond;
+		( imgRef.current?.naturalHeight || 600 ) / animationScrollSpeedInPixelsPerSecond;
 
 	const scrollableStyles = {
 		backgroundImage,
@@ -171,13 +175,18 @@ const MShotsImage = ( {
 		visible ? 'mshots-image-visible' : 'mshots-image__loader'
 	);
 
-	// The "! visible" here is only to dodge a particularly specific css
-	// rule effecting the placeholder while loading static images:
-	// '.design-picker .design-picker__image-frame img { ..., height: auto }'
-	return scrollable || ! visible ? (
-		<div className={ className } style={ style } aria-labelledby={ labelledby } />
+	return scrollable ? (
+		<div className={ className } style={ style } aria-labelledby={ labelledby }>
+			<img ref={ imgRef } loading="lazy" className="mshots-dummy-image" aria-hidden="true" alt="" />
+		</div>
 	) : (
-		<img { ...{ className, style, src, alt } } aria-labelledby={ labelledby } alt={ alt } />
+		<img
+			loading="lazy"
+			ref={ imgRef }
+			{ ...{ className, style, src, alt } }
+			aria-labelledby={ labelledby }
+			alt={ alt }
+		/>
 	);
 };
 

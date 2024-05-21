@@ -42,6 +42,8 @@ html,
 	flex-direction: row;
 	flex-wrap: nowrap;
 	gap: 16px;
+	height: 100%;
+	overflow: hidden;
 }
 
 .a4a-layout-column {

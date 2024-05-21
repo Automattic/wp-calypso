@@ -176,3 +176,10 @@ $blueberry-focus-color: #abc0f5;
 		}
 	}
 }
+
+.question-flow-cards {
+	&.is-disabled > * {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+}
