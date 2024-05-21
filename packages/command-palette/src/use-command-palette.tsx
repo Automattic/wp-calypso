@@ -137,6 +137,7 @@ export const useCommandPalette = (): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
+	singleSiteMode: boolean | undefined;
 } => {
 	const {
 		currentSiteId,
@@ -168,6 +169,10 @@ export const useCommandPalette = (): {
 			search_text: search,
 		} );
 	};
+
+	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
+	const singleSiteMode =
+		currentSite && ( currentRoute.includes( ':site' ) || currentRoute.startsWith( '/wp-admin' ) );
 
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
@@ -220,7 +225,7 @@ export const useCommandPalette = (): {
 			);
 		}
 
-		return { commands: sitesToPick ?? [], filterNotice, emptyListNotice };
+		return { commands: sitesToPick ?? [], filterNotice, emptyListNotice, singleSiteMode };
 	}
 
 	// Logic for root commands
@@ -253,13 +258,8 @@ export const useCommandPalette = (): {
 		return 0; // no change in order
 	} );
 
-	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
-
 	// If we are on a current site context, filter and map the commands for single site use.
-	if (
-		currentSite &&
-		( currentRoute.includes( ':site' ) || currentRoute.startsWith( '/wp-admin' ) )
-	) {
+	if ( singleSiteMode ) {
 		sortedCommands = sortedCommands.filter( ( command ) =>
 			isCommandAvailableOnSite( command, currentSite, userCapabilities )
 		);
@@ -312,5 +312,10 @@ export const useCommandPalette = (): {
 		}
 	}
 
-	return { commands: finalSortedCommands, filterNotice: undefined, emptyListNotice: undefined };
+	return {
+		commands: finalSortedCommands,
+		filterNotice: undefined,
+		emptyListNotice: undefined,
+		singleSiteMode,
+	};
 };
