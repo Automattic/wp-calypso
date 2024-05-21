@@ -50,27 +50,8 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 		} );
 	}, [ listPrices.priceTierList, product.productSlug ] );
 
-	const triggerHighlightedIncludes = useCallback( () => {
-		const highlightedIncludes = document.getElementsByClassName( 'highlight-on-render' );
-
-		if ( highlightedIncludes.length > 0 ) {
-			for ( const element of highlightedIncludes ) {
-				element.classList.add( 'trigger-highlight' );
-			}
-		}
-
-		setTimeout( () => {
-			if ( highlightedIncludes.length > 0 ) {
-				for ( const element of highlightedIncludes ) {
-					element.classList.remove( 'trigger-highlight' );
-				}
-			}
-		}, 500 );
-	}, [] );
-
 	const onDropdownTierSelect = useCallback(
 		( { value: slug }: { value: string } ) => {
-			triggerHighlightedIncludes();
 			onChangeProduct( slugToSelectorProduct( slug ) );
 			const { slug: productSlug, quantity } = getProductPartsFromAlias( slug );
 
@@ -82,7 +63,7 @@ const QuantityDropdown: FC< QuantityDropdownProps > = ( { product, siteId, onCha
 				} )
 			);
 		},
-		[ onChangeProduct, dispatch, siteId, triggerHighlightedIncludes ]
+		[ onChangeProduct, dispatch, siteId ]
 	);
 
 	if ( ! isJetpackTieredProduct( product.productSlug ) || tierOptions.length < 1 ) {
