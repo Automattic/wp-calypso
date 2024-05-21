@@ -433,7 +433,7 @@ function JetpackSiteItems( { site, recordTracks }: SitesMenuItemProps ) {
 		},
 		{
 			label: __( 'Billing' ),
-			href: `https://cloud.jetpack.com/purchase/${ siteSlug }`,
+			href: `https://cloud.jetpack.com/purchases/${ siteSlug }`,
 			onClick: () => recordTracks( 'calypso_sites_dashboard_site_action_jetpack_billing_click' ),
 		},
 		{
