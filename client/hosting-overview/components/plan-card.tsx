@@ -14,7 +14,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import { isStagingSite } from 'calypso/sites-dashboard/utils';
+import { isP2Site, isStagingSite } from 'calypso/sites-dashboard/utils';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -152,6 +152,7 @@ const PlanCard: FC = () => {
 	const isJetpack = useSelector( ( state ) =>
 		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
 	);
+	const isP2 = site && isP2Site( site );
 	const isStaging = isStagingSite( site ?? undefined );
 	const isOwner = planDetails?.user_is_owner;
 	const planPurchaseId = useSelector( ( state: IAppState ) =>
@@ -164,7 +165,7 @@ const PlanCard: FC = () => {
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
 	);
 	const renderManageButton = () => {
-		if ( isJetpack || ! site || isStaging ) {
+		if ( isJetpack || ! site || isStaging || isP2 ) {
 			return false;
 		}
 		if ( isFreePlan ) {
@@ -207,7 +208,7 @@ const PlanCard: FC = () => {
 					</h3>
 					{ renderManageButton() }
 				</div>
-				{ ! isStaging && (
+				{ ! isStaging && ! isP2 && (
 					<>
 						<PricingSection />
 						<PlanStorage
