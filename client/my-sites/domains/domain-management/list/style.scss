@@ -180,6 +180,17 @@
 			}
 		}
 
+		table {
+			@include break-huge {
+				grid-template-columns: 100px 2fr 1fr 1fr auto auto auto auto;
+
+				th:first-child,
+				td:first-child {
+					padding: 0 0 0 72px;
+				}
+			}
+		}
+
 		.components-base-control {
 			--checkbox-input-size: 16px;
 
@@ -203,37 +214,6 @@
 			.gridicons-ellipsis {
 				height: 18px;
 				width: 18px;
-			}
-		}
-
-		table {
-			padding-inline: 0;
-			margin-inline-start: 0;
-			th:last-child,
-			td:last-child {
-				padding: 0 36px 0 0;
-			}
-			&.is-7-column {
-				grid-template-columns: 100px 2fr 1fr 1fr auto auto auto auto;
-
-				th:first-child,
-				td:first-child {
-					padding: 0 0 0 72px;
-				}
-			}
-			&.is-5-column {
-				grid-template-columns: 50px 1fr minmax(auto, 1fr) auto auto auto;
-
-				th:first-child,
-				td:first-child {
-					padding: 0 0 0 36px;
-				}
-			}
-
-			thead {
-				position: sticky;
-				top: 0;
-				z-index: 2;
 			}
 		}
 	}
