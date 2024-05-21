@@ -1,5 +1,6 @@
 import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
+import { useEffect, useState } from 'react';
 import FlowCard from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/flow-card';
 import { Option } from '../types';
 import { QuestionSelectionComponentProps } from './question-step';
@@ -12,6 +13,7 @@ const SurveyFlowCard = ( {
 	onContinue,
 }: QuestionSelectionComponentProps ) => {
 	const questionKey = question?.key;
+	const [ submitted, setSubmitted ] = useState( false );
 
 	const handleClick = useCallback(
 		( questionKey: string, newValue: string[] ) => {
@@ -21,6 +23,13 @@ const SurveyFlowCard = ( {
 		},
 		[ onChange, value ]
 	);
+
+	// We rely on submitted state, to ensure that the answer dependencies are properly resolved
+	useEffect( () => {
+		if ( submitted ) {
+			onContinue?.();
+		}
+	}, [ submitted, onContinue ] );
 
 	return (
 		<div
@@ -36,7 +45,7 @@ const SurveyFlowCard = ( {
 						text={ question.helpText ?? '' }
 						onClick={ () => {
 							handleClick( questionKey, [ question.value ] );
-							onContinue?.();
+							setSubmitted( true );
 						} }
 						icon={ undefined }
 						disabled={ disabled }
