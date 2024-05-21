@@ -197,6 +197,16 @@ export function generateFlows( {
 			onEnterFlow: onEnterOnboarding,
 		},
 		{
+			name: 'site-migration',
+			steps: [ 'domains' ],
+			destination: getSignupDestination,
+			description: 'Take users to the site migration flow from the domains step.',
+			lastModified: '2024-05-09',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+			onEnterFlow: onEnterOnboarding,
+		},
+		{
 			name: 'onboarding-2023-pricing-grid',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ userSocialStep, 'domains', 'emails', 'plans' ]

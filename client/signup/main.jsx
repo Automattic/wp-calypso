@@ -689,6 +689,9 @@ class Signup extends Component {
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
+		if ( flowName === 'site-migration' && ! stepName ) {
+			page( '/setup/migration-signup' );
+		}
 		// The `stepName` might be undefined after the user finish the last step but the value of
 		// `isEveryStepSubmitted` is still false. Thus, check the `stepName` here to avoid going
 		// to invalid step.
