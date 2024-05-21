@@ -46,7 +46,14 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		const themeImgSrc = photon( design.screenshot, { fit } ) || design.screenshot;
 		// const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
 
-		return <img src={ themeImgSrc } srcSet={ `${ themeImgSrc }` } alt={ design.description } />;
+		return (
+			<img
+				loading="lazy"
+				src={ themeImgSrc }
+				srcSet={ `${ themeImgSrc }` }
+				alt={ design.description }
+			/>
+		);
 	}
 
 	return (
