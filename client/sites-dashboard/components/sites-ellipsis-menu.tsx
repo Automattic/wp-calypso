@@ -17,6 +17,7 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
+import { external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
@@ -55,6 +56,7 @@ interface SitesMenuItemProps {
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof CoreMenuItem >, 'href' > {
 	href?: string;
+	target?: string;
 }
 
 // Work around changes to core button styles done in _wp-components-overrides.scss
@@ -449,7 +451,14 @@ function JetpackSiteItems( { site, recordTracks }: SitesMenuItemProps ) {
 	return (
 		<>
 			{ items.map( ( { label, href, onClick } ) => (
-				<MenuItemLink key={ label } href={ href } onClick={ onClick }>
+				<MenuItemLink
+					key={ label }
+					href={ href }
+					target="_blank"
+					icon={ external }
+					iconPosition="right"
+					onClick={ onClick }
+				>
 					{ label }
 				</MenuItemLink>
 			) ) }
