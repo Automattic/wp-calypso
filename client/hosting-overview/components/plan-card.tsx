@@ -1,4 +1,4 @@
-import { isJetpackProductSlug, PlanSlug, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import { PlanSlug, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
@@ -13,7 +13,11 @@ import { HostingCard } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const PricingSection: FC = () => {
@@ -144,12 +148,41 @@ const PlanCard: FC = () => {
 	const planDetails = site?.plan;
 	const planName = planDetails?.product_name_short ?? '';
 	const isFreePlan = planDetails?.is_free;
+	const isJetpack = useSelector( ( state ) =>
+		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
+	);
+	const isOwner = planDetails?.user_is_owner;
+	const planPurchaseId = useSelector( ( state: IAppState ) =>
+		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
+	);
 
 	// Check for storage addons available for purchase.
 	const addOns = AddOns.useAddOns( { selectedSiteId: site?.ID } );
 	const storageAddons = addOns.filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
 	);
+	const renderManageButton = () => {
+		if ( ! isOwner || isJetpack || ! site || ! planPurchaseId ) {
+			return false;
+		}
+		return (
+			<Button
+				className={ classNames(
+					'hosting-overview__link-button',
+					'hosting-overview__mobile-hidden-link-button'
+				) }
+				plain
+				disabled
+				href={
+					isFreePlan
+						? `/add-ons/${ site?.slug }`
+						: getManagePurchaseUrlFor( site?.slug, planPurchaseId )
+				}
+			>
+				{ isFreePlan ? translate( 'Manage add-ons' ) : translate( 'Manage plan' ) }
+			</Button>
+		);
+	};
 
 	return (
 		<>
@@ -157,21 +190,7 @@ const PlanCard: FC = () => {
 			<HostingCard className="hosting-overview__plan">
 				<div className="hosting-overview__plan-card-header">
 					<h3 className="hosting-overview__plan-card-title">{ planName }</h3>
-
-					{ isJetpackProductSlug( planDetails?.product_slug ?? '' ) && (
-						<Button
-							className={ classNames(
-								'hosting-overview__link-button',
-								'hosting-overview__mobile-hidden-link-button'
-							) }
-							plain
-							href={
-								isFreePlan ? `/add-ons/${ site?.slug }` : `/purchases/subscriptions/${ site?.slug }`
-							}
-						>
-							{ isFreePlan ? translate( 'Manage add-ons' ) : translate( 'Manage plan' ) }
-						</Button>
-					) }
+					{ renderManageButton() }
 				</div>
 				<PricingSection />
 				<PlanStorage
@@ -187,7 +206,7 @@ const PlanCard: FC = () => {
 								plain
 								href={ `/add-ons/${ site?.slug }` }
 							>
-								{ translate( 'Need more space?' ) }
+								{ translate( 'Need more storage?' ) }
 							</Button>
 						</div>
 					) }
