@@ -43,9 +43,6 @@ const ToggleContainer = styled.div( {
 	fontSize: '14px',
 	label: {
 		fontSize: '14px',
-		a: {
-			textDecoration: 'underline',
-		},
 	},
 } );
 

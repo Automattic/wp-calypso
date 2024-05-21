@@ -740,7 +740,6 @@
 			font-size: $font-body-small;
 			font-weight: 400;
 			line-height: 20px;
-			text-decoration: underline;
 		}
 	}
 	.sidebar-streams__following-load-more {
@@ -778,7 +777,6 @@
 	.reader-tag-sidebar-tags-page {
 		display: block;
 		font-size: $font-body-small;
-		text-decoration: underline;
 		margin-bottom: 32px;
 	}
 
@@ -790,9 +788,7 @@
 		.reader-tag-sidebar__recent-prompt-link {
 			display: block;
 			font-size: $font-body-small;
-			text-decoration: underline;
-			font-weight: 500;
-			color: var(--color-neutral-100);
+			font-weight: 400;
 			margin-bottom: 12px;
 		}
 	}
