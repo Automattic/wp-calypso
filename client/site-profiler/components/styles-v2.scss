@@ -185,8 +185,14 @@
 		margin-right: 0.25rem;
 	}
 
-	.domain-analyzer-block {
+	.landing-page-header-block {
+		position: relative;
 		padding-top: 10rem;
+
+
+		background: url(calypso/assets/images/site-profiler/background-landing-header.svg) no-repeat left bottom;
+		padding-bottom: 244px;
+
 		@media (max-width: $break-small ) {
 			padding-top: 6rem;
 		}
