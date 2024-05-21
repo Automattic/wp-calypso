@@ -23,7 +23,7 @@ const getStatsCheckoutURL = (
 	adminUrl?: string
 ) => {
 	const isFromJetpack = from?.startsWith( 'jetpack' );
-	// Get the checkout URL for the product, or the siteless checkout URL if from My Jetpack or no siteSlug is provided
+	// Get the checkout URL for the product, or the siteless checkout URL if from Jetpack or no siteSlug is provided
 	const checkoutType = isFromJetpack || ! siteSlug ? 'jetpack' : siteSlug;
 	const checkoutProductUrl = new URL(
 		`/checkout/${ checkoutType }/${ product }`,
