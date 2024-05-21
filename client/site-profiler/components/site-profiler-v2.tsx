@@ -17,6 +17,7 @@ import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-an
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { GetReportForm } from './get-report-form';
+import HostingInformation from './hosting-information';
 import { LandingPageHeader } from './landing-page-header';
 import { MetricsSection } from './metrics-section';
 import './styles-v2.scss';
@@ -31,7 +32,6 @@ interface Props {
 export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain } = props;
 	const domainRef = useRef( null );
-
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -125,18 +125,25 @@ export default function SiteProfilerV2( props: Props ) {
 				<LayoutBlock width="medium">
 					{ siteProfilerData && (
 						<MetricsSection
-							name={ translate( 'Domain' ) }
+							name={ translate( 'Hosting' ) }
 							title={ translate(
-								"Your domain {{success}}set up is good,{{/success}} but you could boost your site's visibility and growth.",
+								'Struggles with hosting {{alert}}speed and uptime{{/alert}} deter visitors. A switch to WordPress.com could transform the user experience.',
 								{
 									components: {
-										success: <span className="success" />,
+										alert: <span className="alert" />,
 									},
 								}
 							) }
-							subtitle={ translate( 'Optimize your domain' ) }
+							subtitle={ translate( 'Upgrade your hosting with WordPress.com' ) }
 							ref={ domainRef }
-						></MetricsSection>
+						>
+							<HostingInformation
+								dns={ siteProfilerData.dns }
+								urlData={ urlData }
+								hostingProvider={ hostingProviderData?.hosting_provider }
+								hideTitle
+							/>
+						</MetricsSection>
 					) }
 				</LayoutBlock>
 			) }
