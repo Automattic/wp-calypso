@@ -283,7 +283,7 @@ const CommandPalette = ( {
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpenLocal, setIsOpenLocal ] = useState( false );
 	const isOpen = isOpenLocal || isOpenGlobal;
-	const [ footerMessage, setFooterMessage ] = useState( '' );
+	const [ footerMessage, setFooterMessage ] = useState< string | JSX.Element >( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	const open = useCallback( () => {
 		toggleModalOpenClassnameOnDocumentHtmlElement( true );
