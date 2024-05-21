@@ -166,7 +166,6 @@ export class SiteNotice extends Component {
 
 		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
-		const siteTrialUpgrade = this.trialUpgradeNotice();
 
 		const showJitms =
 			! this.props.isSiteWPForTeams &&
@@ -177,7 +176,6 @@ export class SiteNotice extends Component {
 			<div className="current-site__notices">
 				<QueryActivePromotions />
 				{ siteRedirectNotice }
-				{ siteTrialUpgrade }
 				{ showJitms && (
 					<AsyncLoad
 						require="calypso/blocks/jitm"
