@@ -1,4 +1,4 @@
-import { shield, trendingUp, chartBar } from '@wordpress/icons';
+import { next, trendingUp, chartBar } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import customerImageAjitBohra from 'calypso/assets/images/migrations/customer-testimonials/ajit-bohra.jpg';
@@ -49,23 +49,26 @@ export const UpgradePlanHostingTestimonials = [
 	},
 ];
 
-export const defaultHostingDetails = [
-	{
-		id: 'reduced-error-rate',
-		title: translate( 'Reduced error rate' ),
-		description: translate( '16% fewer errors' ),
-		icon: shield,
-	},
-	{
-		id: 'increased-speed',
-		title: translate( 'Increased speed' ),
-		description: translate( '30% faster' ),
+export const defaultHostingDetails: {
+	[ key: string ]: {
+		title: string;
+		description: string | ReactNode;
+		icon: JSX.Element;
+	};
+} = {
+	'higher-speed': {
+		title: translate( 'Higher speed' ),
+		description: translate( '30% faster.' ) + '*',
 		icon: trendingUp,
 	},
-	{
-		id: 'higher-availability',
+	'faster-response': {
+		title: translate( 'Faster response' ),
+		description: translate( '98% of sites on WordPress.com have a fast response.' ),
+		icon: next,
+	},
+	'higher-availability': {
 		title: translate( 'Higher availability' ),
-		description: translate( '3% better uptime' ),
+		description: translate( '3% better uptime.' ) + '*',
 		icon: chartBar,
 	},
-] as Array< { id: string; title: string; description: string | ReactNode; icon: JSX.Element } >;
+};
