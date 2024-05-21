@@ -65,12 +65,12 @@ export function useLockedInsights(): Insight[] {
 	return [
 		{
 			header: translate(
-				'The full report will display all the informations you need to improve your site domain, hosting, performance, health, and security'
+				'The full report will display all the information you need to improve your site domain, hosting, performance, health, and security'
 			),
 		},
 		{
 			header: translate(
-				'Click on the "Get full site report - It\'s free" button to unlock the all the information you need to make your site stand out on the web'
+				'Click on the "Get full site report - It\'s free" button to unlock all the information you need to make your site stand out on the web'
 			),
 		},
 		{
@@ -80,12 +80,12 @@ export function useLockedInsights(): Insight[] {
 		},
 		{
 			header: translate(
-				'The full report will display all the information about how your site is perfoming currently among with information about how to improve it'
+				'The full report will display all the information about how your site is performing currently along with information about how to improve it'
 			),
 		},
 		{
 			header: translate(
-				'Feel free to use our tool how many times you want, its free, and once you have unlocked all functionalities you can see informations for any site'
+				"Feel free to use our tool as many times as you want, it's free, and once you have unlocked all functionalities you can see information for any site"
 			),
 		},
 	];
