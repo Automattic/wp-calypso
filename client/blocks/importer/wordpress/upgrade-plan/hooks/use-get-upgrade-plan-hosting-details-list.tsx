@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { defaultHostingDetails } from '../constants';
-import wordpressCwvtechReportJson from '../wordpress-cwvtech-report.json';
+import cwvtechReportJson from '../wordpress-cwvtech-report.json';
 import { useGetUpgradePlanSiteMetrics } from './use-get-upgrade-plan-site-metrics';
 
 export const useUpgradePlanHostingDetailsList = () => {
@@ -12,7 +12,7 @@ export const useUpgradePlanHostingDetailsList = () => {
 
 	// LCP hosting details.
 	if ( lcpPercentageDifference > 0 ) {
-		const wordpressLCP = Math.floor( 100 * wordpressCwvtechReportJson.goodLCP );
+		const wordpressLCP = Math.floor( 100 * cwvtechReportJson[ 'WordPress.com' ].goodLCP );
 
 		newHostingDetails[ 'higher-speed' ].description = translate(
 			'%(wordpressLcpPercentage)s of sites on WordPress.com are at least %(sitePercentageDifference)s faster than yours.',
@@ -27,7 +27,7 @@ export const useUpgradePlanHostingDetailsList = () => {
 
 	// FID hosting details.
 	if ( fidPercentageDifference > 0 ) {
-		const wordpressFID = Math.floor( 100 * wordpressCwvtechReportJson.goodFID );
+		const wordpressFID = Math.floor( 100 * cwvtechReportJson[ 'WordPress.com' ].goodFID );
 
 		newHostingDetails[ 'faster-response' ].description = translate(
 			'%(wordpressFidPercentage)s of sites on WordPress.com respond at least %(sitePercentageDifference)s faster than yours on the first interaction.',

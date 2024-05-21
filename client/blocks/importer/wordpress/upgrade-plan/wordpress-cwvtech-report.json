@@ -1,7 +1,16 @@
 {
-	"date": "Mar 2024",
-	"technology": "WordPress.com",
-	"goodLCP": 0.8341345685980653,
-	"goodCLS": 0.8036190653856916,
-	"goodFID": 0.99928994923137
+	"WordPress.com": {
+		"date": "Apr 2024",
+		"goodCWM": 0.6210015186,
+		"goodLCP": 0.7833214677,
+		"goodCLS": 0.8655190411,
+		"goodFID": 0.9784855011
+	},
+	"WordPress": {
+		"date": "Apr 2024",
+		"goodCWM": 0.3831480878,
+		"goodLCP": 0.4794839633,
+		"goodCLS": 0.8137198938,
+		"goodFID": 0.9800055656
+	}
 }
