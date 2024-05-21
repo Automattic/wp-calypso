@@ -26,6 +26,8 @@ This package can be utilized in two primary ways:
   1. Navigate to the package's directory: `cd package/verbum-block-editor`.
   2. Execute `yarn dev --sync`.
   3. Changes are synchronized to `/home/wpcom/public_html/widgets.wp.com/verbum-block-editor` on your sandbox.
+  4. **This this version, `wp.i18n` global is expected to be present**.
+
 
 ### Deploying Changes
 
