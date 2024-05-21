@@ -51,8 +51,13 @@
 
 	p {
 		font-family: "SF Pro Text", $sans;
-		font-size: 1.125 rem;
+		/* stylelint-disable-next-line */
+		font-size: 1.125rem;
 		color: var(--studio-white);
+
+		@media (max-width: $break-small) {
+			font-size: 1rem;
+		}
 	}
 
 	a,
@@ -235,6 +240,7 @@
 			height: 365px;
 		}
 	}
+
 	.domain-result-block::after {
 		height: 210px;
 	}

@@ -78,10 +78,6 @@
 	}
 }
 
-.landing-page-header-v2 .landing-page-header--form-container input {
-	font-family: "SF Pro Text", $sans;
-}
-
 .landing-page-header--form {
 	&.is-error {
 		@media (min-width: $break-small + 1px) {
