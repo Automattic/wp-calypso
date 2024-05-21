@@ -3,9 +3,10 @@ import {
 	PLAN_PERSONAL,
 	isDomainRegistration,
 	isDomainTransfer,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { StoreProductSlug, useProducts } from '@automattic/data-stores/src/products-list';
+import { Plans } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import {
 	type MinimalRequestCartProduct,
@@ -13,6 +14,7 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
+import { useDebugValue } from 'react';
 import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -22,10 +24,11 @@ import {
 	hasPlan,
 	planItem,
 } from 'calypso/lib/cart-values/cart-items';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCartKey from '../use-cart-key';
 
 export interface CartFreeUserPlanUpsellProps {
@@ -140,7 +143,15 @@ function UpgradeText( {
 }
 
 function useGetPriceForProduct( productSlug: string ): number | undefined {
-	const { data } = useProducts( [ productSlug as StoreProductSlug ] );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const data = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ productSlug as PlanSlug ],
+		siteId: selectedSiteId,
+		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
+	} );
+	useDebugValue( data );
 	if ( ! data ) {
 		return undefined;
 	}
@@ -148,7 +159,7 @@ function useGetPriceForProduct( productSlug: string ): number | undefined {
 	if ( ! productData ) {
 		return undefined;
 	}
-	return productData.costSmallestUnit;
+	return productData.originalPrice.full ?? undefined;
 }
 
 export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserPlanUpsellProps ) {
