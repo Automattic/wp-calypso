@@ -102,6 +102,7 @@ export function CommandMenuGroup() {
 		useSites,
 	} = useCommandPaletteContext();
 	const { commands, filterNotice, emptyListNotice, singleSiteMode } = useCommandPalette();
+	const { __ } = useI18n();
 
 	const sites = useSites();
 	const currentSite = sites.find( ( site: { ID: unknown } ) => site.ID === currentSiteId );
@@ -121,7 +122,7 @@ export function CommandMenuGroup() {
 			const message = (
 				<>
 					<a className="command-palette__footer-all-sites" href={ sitesPath }>
-						All sites
+						{ __( 'All sites', __i18n_text_domain__ ) }
 					</a>
 					{ ' / ' }
 					{ adminUrl && (
