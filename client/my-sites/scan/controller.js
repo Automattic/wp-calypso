@@ -100,7 +100,7 @@ export function scan( context, next ) {
 export function scanHistory( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const showNavigation = ! isAtomicSite( state, siteId );
+	const showNavigation = isJetpackCloud() || ! isAtomicSite( state, siteId );
 	const { filter } = context.params;
 	context.primary = <ScanHistoryPage filter={ filter } showNavigation={ showNavigation } />;
 	next();
