@@ -9,13 +9,13 @@ const JetpackProductInfoRegularList = ( { items }: Props ) => {
 	const listRef = useRef< HTMLUListElement | null >( null );
 
 	const highlightListItem = ( target: HTMLElement ) => {
-		target.animate(
-			[ { backgroundColor: 'var(--studio-yellow-5)' }, { backgroundColor: 'initial' } ],
-			{
-				duration: 500,
-				easing: 'ease-out',
-			}
-		);
+		target.classList.add( 'trigger-highlight' );
+	};
+
+	const removeHighlight = ( event: AnimationEvent ) => {
+		if ( event.animationName === 'trigger-highlight' ) {
+			( event.target as HTMLLIElement )?.classList.remove( 'trigger-highlight' );
+		}
 	};
 
 	// Highlight list item when its content changes
@@ -38,7 +38,12 @@ const JetpackProductInfoRegularList = ( { items }: Props ) => {
 			subtree: true,
 		} );
 
-		return () => observer.disconnect();
+		window.addEventListener( 'animationend', ( event ) => removeHighlight( event ) );
+
+		return () => {
+			observer.disconnect();
+			window.removeEventListener( 'animationend', ( event ) => removeHighlight( event ) );
+		};
 	}, [] );
 
 	return (
