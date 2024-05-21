@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
@@ -31,6 +32,10 @@ const AddNewSiteButton = ( {
 	/** @todo Remove this line once the A4A_SITES_CONNECT_URL_LINK URL exists. */
 	const showAddSitesByURLButton = false;
 
+	const showAddSitesFromWPCOMAccount = config.isEnabled(
+		'a8c-for-agencies/import-site-from-wpcom'
+	);
+
 	return (
 		<SplitButton
 			popoverContext={ popoverContext }
@@ -49,6 +54,12 @@ const AddNewSiteButton = ( {
 				/>
 				<span>{ translate( 'Download A4A Plugin' ) }</span>
 			</PopoverMenuItem>
+
+			{ showAddSitesFromWPCOMAccount && (
+				<PopoverMenuItem href="/sites/add/from-wpcom">
+					<span>{ translate( 'From your WordPress.com account' ) }</span>
+				</PopoverMenuItem>
+			) }
 
 			{ showAddSitesByURLButton && (
 				<>
