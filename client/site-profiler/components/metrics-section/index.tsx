@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import React, { ForwardedRef, forwardRef } from 'react';
 import { calculateMetricsSectionScrollOffset } from 'calypso/site-profiler/utils/calculate-metrics-section-scroll-offset';
@@ -5,7 +6,7 @@ import { calculateMetricsSectionScrollOffset } from 'calypso/site-profiler/utils
 interface MetricsSectionProps {
 	name: string;
 	title: string | React.ReactNode;
-	subtitle: string | React.ReactNode;
+	subtitle?: string | React.ReactNode;
 	children?: React.ReactNode;
 }
 
@@ -68,6 +69,11 @@ const Subtitle = styled.span`
 	}
 `;
 
+const SubtitleIcon = styled( Gridicon )`
+	transform: translate( 0, 3px );
+	margin-left: 8px;
+`;
+
 const Content = styled.div`
 	margin-top: 64px;
 `;
@@ -80,7 +86,12 @@ export const MetricsSection = forwardRef< HTMLObjectElement, MetricsSectionProps
 			<Container ref={ ref }>
 				<NameSpan>{ name }</NameSpan>
 				<Title>{ title }</Title>
-				<Subtitle>{ subtitle }</Subtitle>
+				{ subtitle && (
+					<>
+						<Subtitle>{ subtitle }</Subtitle>
+						<SubtitleIcon icon="chevron-right" size={ 18 } />
+					</>
+				) }
 
 				{ children && <Content>{ children }</Content> }
 			</Container>
