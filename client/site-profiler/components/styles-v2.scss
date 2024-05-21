@@ -1,4 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
 
 #site-profiler-v2 {
 	background: #000;
@@ -17,7 +18,7 @@
 .is-section-site-profiler .main #site-profiler-v2 {
 
 	h1 {
-		font-family: "SF Pro Text", Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-family: "SF Pro Text", $sans;
 		color: var(--studio-white);
 		/* stylelint-disable-next-line */
 		font-size: 4.375rem;
@@ -30,7 +31,7 @@
 	}
 
 	h2 {
-		font-family: "SF Pro Text", Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-family: "SF Pro Text", $sans;
 		/* stylelint-disable-next-line */
 		font-size: 2.5rem;
 		line-height: 1.15;
@@ -38,7 +39,7 @@
 	}
 
 	h3 {
-		font-family: "SF Pro Text", Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-family: "SF Pro Text", $sans;
 		font-size: 1.75rem;
 		line-height: 1.15;
 		margin-bottom: 1rem;
@@ -49,9 +50,8 @@
 	}
 
 	p {
-		font-family: "SF Pro Text", "Noto Sans", Helvetica, Arial, sans-serif;
-		/* stylelint-disable-next-line */
-		font-size: 1.125rem;
+		font-family: "SF Pro Text", $sans;
+		font-size: 1rem;
 		color: var(--studio-white);
 	}
 
@@ -69,7 +69,7 @@
 	// Button style overrides necessary because of conflicting WPcom styles.
 	.button-action {
 		color: #fff;
-		background: var(--color-accent);
+		background: #3858e9;
 		border-radius: 4px;
 		font-size: 1rem;
 		font-weight: 500;
@@ -188,7 +188,7 @@
 	.domain-analyzer-block {
 		padding-top: 10rem;
 		@media (max-width: $break-small ) {
-			padding-top: 4rem;
+			padding-top: 6rem;
 		}
 	}
 
@@ -208,15 +208,9 @@
 		position: relative;
 		z-index: 1;
 
-		// &::after {
-		// 	content: "";
-		// 	position: absolute;
-		// 	top: 0;
-		// 	right: 0;
-		// 	left: 0;
-		// 	background: #e5f4ff;
-		// 	z-index: -1;
-		// }
+		&::after {
+			display: none;
+		}
 	}
 
 	.domain-analyzer-block::after {
