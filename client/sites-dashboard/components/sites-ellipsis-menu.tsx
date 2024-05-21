@@ -17,6 +17,7 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
+import { external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
@@ -42,6 +43,7 @@ import {
 	isP2Site,
 } from '../utils';
 import type { SiteExcerptData } from '@automattic/sites';
+import type { AppState } from 'calypso/types';
 
 interface SitesMenuItemProps {
 	site: SiteExcerptData;
@@ -54,6 +56,7 @@ interface SitesMenuItemProps {
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof CoreMenuItem >, 'href' > {
 	href?: string;
+	target?: string;
 }
 
 // Work around changes to core button styles done in _wp-components-overrides.scss
@@ -119,8 +122,9 @@ const ManagePluginsItem = ( {
 }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const hasManagePluginsFeature =
-		useSelector( ( state ) => siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS ) ) ||
-		isNotAtomicJetpack( site );
+		useSelector( ( state: AppState ) =>
+			siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
+		) || isNotAtomicJetpack( site );
 	// If the site can't manage plugins then go to the main plugins page instead
 	// because it shows an upsell message.
 	const [ href, label ] = hasManagePluginsFeature
@@ -174,7 +178,7 @@ function useSafeSiteHasFeature( siteId: number, feature: string ) {
 		dispatch( fetchSiteFeatures( siteId ) );
 	}, [ dispatch, siteId ] );
 
-	return useSelector( ( state ) => {
+	return useSelector( ( state: AppState ) => {
 		return siteHasFeature( state, siteId, feature );
 	} );
 }
@@ -418,6 +422,50 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	);
 }
 
+function JetpackSiteItems( { site, recordTracks }: SitesMenuItemProps ) {
+	const { __ } = useI18n();
+	const siteSlug = site.slug;
+	const items = [
+		{
+			label: __( 'Jetpack Cloud' ),
+			href: `https://cloud.jetpack.com/landing/${ siteSlug }`,
+			onClick: () => recordTracks( 'calypso_sites_dashboard_site_action_jetpack_cloud_click' ),
+		},
+		{
+			label: __( 'Billing' ),
+			href: `https://cloud.jetpack.com/purchases/${ siteSlug }`,
+			onClick: () => recordTracks( 'calypso_sites_dashboard_site_action_jetpack_billing_click' ),
+		},
+		{
+			label: __( 'Support' ),
+			href: 'https://jetpack.com/support/',
+			onClick: () => recordTracks( 'calypso_sites_dashboard_site_action_jetpack_support_click' ),
+		},
+		{
+			label: __( 'Migrate to WordPress.com' ),
+			href: 'https://wordpress.com/move/',
+			onClick: () => recordTracks( 'calypso_sites_dashboard_site_action_migrate_to_wpcom_click' ),
+		},
+	];
+
+	return (
+		<>
+			{ items.map( ( { label, href, onClick } ) => (
+				<MenuItemLink
+					key={ label }
+					href={ href }
+					target="_blank"
+					icon={ external }
+					iconPosition="right"
+					onClick={ onClick }
+				>
+					{ label }
+				</MenuItemLink>
+			) ) }
+		</>
+	);
+}
+
 export const SitesEllipsisMenu = ( {
 	className,
 	site,
@@ -431,8 +479,8 @@ export const SitesEllipsisMenu = ( {
 		dispatch( recordTracksEvent( eventName, extraProps ) );
 	}
 
-	const wpAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ?? '' );
-	const adminInterface = useSelector( ( state ) =>
+	const wpAdminUrl = useSelector( ( state: AppState ) => getSiteAdminUrl( state, site.ID ) ?? '' );
+	const adminInterface = useSelector( ( state: AppState ) =>
 		getSiteOption( state, site.ID, 'wpcom_admin_interface' )
 	);
 
@@ -445,12 +493,74 @@ export const SitesEllipsisMenu = ( {
 		recordTracks,
 	};
 
-	const hasHostingFeatures = ! isNotAtomicJetpack( site ) && ! isP2Site( site );
+	const isSiteJetpackNotAtomic = isNotAtomicJetpack( site );
+	const hasHostingFeatures = ! isSiteJetpackNotAtomic && ! isP2Site( site );
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 	const hasCustomDomain = isCustomDomain( site.slug );
 	const isLaunched = site.launch_status !== 'unlaunched';
 	const isClassicSimple = isWpAdminInterface && isSimpleSite( site );
-	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, site.ID ) );
+	const isWpcomStagingSite = useSelector( ( state: AppState ) =>
+		isSiteWpcomStaging( state, site.ID )
+	);
+	const renderDropdownMenu = () => {
+		if ( isSiteJetpackNotAtomic ) {
+			return (
+				<SiteMenuGroup>
+					<WpAdminItem { ...props } />
+					<JetpackSiteItems { ...props } />
+				</SiteMenuGroup>
+			);
+		}
+
+		return (
+			<SiteMenuGroup>
+				{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
+				<SettingsItem { ...props } />
+				{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
+				{ site.is_wpcom_atomic && <SiteMonitoringItem { ...props } /> }
+				{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
+				{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
+				{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (
+					<CopySiteItem { ...props } onClick={ startSiteCopy } />
+				) }
+				{ ! isClassicSimple && (
+					<MenuItemLink
+						href={
+							isWpAdminInterface
+								? `${ wpAdminUrl }options-general.php?page=page-optimize`
+								: `/settings/performance/${ site.slug }`
+						}
+						onClick={ () =>
+							recordTracks( 'calypso_sites_dashboard_site_action_performance_settings_click' )
+						}
+					>
+						{ __( 'Performance settings' ) }
+					</MenuItemLink>
+				) }
+				{ isLaunched && (
+					<MenuItemLink
+						href={ `/settings/general/${ site.slug }#site-privacy-settings` }
+						onClick={ () =>
+							recordTracks( 'calypso_sites_dashboard_site_action_privacy_settings_click' )
+						}
+					>
+						{ __( 'Privacy settings' ) }
+					</MenuItemLink>
+				) }
+				{ hasCustomDomain && ! isSiteJetpackNotAtomic && (
+					<MenuItemLink
+						href={ `/domains/manage/${ site.slug }/dns/${ site.slug }` }
+						onClick={ () =>
+							recordTracks( 'calypso_sites_dashboard_site_action_dns_records_click' )
+						}
+					>
+						{ __( 'Domains and DNS' ) }
+					</MenuItemLink>
+				) }
+				<WpAdminItem { ...props } />
+			</SiteMenuGroup>
+		);
+	};
 
 	return (
 		<SiteDropdownMenu
@@ -459,54 +569,7 @@ export const SitesEllipsisMenu = ( {
 			popoverProps={ { className: siteDropdownMenuPopoverClassName } }
 			label={ __( 'Site Actions' ) }
 		>
-			{ () => (
-				<SiteMenuGroup>
-					{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
-					<SettingsItem { ...props } />
-					{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
-					{ site.is_wpcom_atomic && <SiteMonitoringItem { ...props } /> }
-					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
-					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (
-						<CopySiteItem { ...props } onClick={ startSiteCopy } />
-					) }
-					{ ! isClassicSimple && (
-						<MenuItemLink
-							href={
-								isWpAdminInterface
-									? `${ wpAdminUrl }options-general.php?page=page-optimize`
-									: `/settings/performance/${ site.slug }`
-							}
-							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_performance_settings_click' )
-							}
-						>
-							{ __( 'Performance settings' ) }
-						</MenuItemLink>
-					) }
-					{ isLaunched && (
-						<MenuItemLink
-							href={ `/settings/general/${ site.slug }#site-privacy-settings` }
-							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_privacy_settings_click' )
-							}
-						>
-							{ __( 'Privacy settings' ) }
-						</MenuItemLink>
-					) }
-					{ hasCustomDomain && ! isNotAtomicJetpack( site ) && (
-						<MenuItemLink
-							href={ `/domains/manage/${ site.slug }/dns/${ site.slug }` }
-							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_dns_records_click' )
-							}
-						>
-							{ __( 'Domains and DNS' ) }
-						</MenuItemLink>
-					) }
-					<WpAdminItem { ...props } />
-				</SiteMenuGroup>
-			) }
+			{ renderDropdownMenu }
 		</SiteDropdownMenu>
 	);
 };
