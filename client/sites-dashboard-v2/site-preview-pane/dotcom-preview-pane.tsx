@@ -1,3 +1,4 @@
+import { FEATURE_SFTP, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
@@ -6,6 +7,8 @@ import ItemPreviewPane, {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import DevToolsIcon from 'calypso/dev-tools-promo/components/dev-tools-icon';
+import { useSelector } from 'calypso/state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -43,6 +46,15 @@ const DotcomPreviewPane = ( {
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack;
 	const isPlanExpired = !! site.plan?.expired;
+	const siteId = site?.ID ?? null;
+	const { hasAtomicFeature, hasSftpFeature } = useSelector( ( state ) => ( {
+		hasAtomicFeature: siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC ),
+		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
+	} ) );
+
+	// Check for site features to determine if the promo should be shown in case the site has yet to transfer to Atomic.
+	const shouldShowDevToolsPromo =
+		isPlanExpired || ! hasAtomicFeature || ( ! hasSftpFeature && ! site.is_wpcom_staging_site );
 
 	const features = useMemo(
 		() => [
@@ -59,7 +71,7 @@ const DotcomPreviewPane = ( {
 				<span>
 					{ __( 'Dev Tools' ) } <DevToolsIcon />
 				</span>,
-				isSimpleSite || isPlanExpired,
+				shouldShowDevToolsPromo,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
