@@ -7,11 +7,14 @@ import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
-	LayoutHeaderTitle as Title,
+	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_MARKETPLACE_CHECKOUT_LINK,
+	A4A_MARKETPLACE_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -71,10 +74,21 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 			title={ translate( 'Product Marketplace' ) }
 			wide
 			withBorder
+			compact
 		>
 			<LayoutTop>
 				<LayoutHeader showStickyContent={ showStickyContent }>
-					<Title>{ translate( 'Marketplace' ) } </Title>
+					<Breadcrumb
+						items={ [
+							{
+								label: translate( 'Marketplace' ),
+								href: A4A_MARKETPLACE_LINK,
+							},
+							{
+								label: translate( 'Products' ),
+							},
+						] }
+					/>
 
 					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
