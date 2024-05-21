@@ -14,7 +14,7 @@ interface Props {
 	onFormSubmit: ( domain: string ) => void;
 }
 
-export default function LandingPageHeader( props: Props ) {
+export const LandingPageHeader = ( props: Props ) => {
 	const translate = useTranslate();
 	const { domain, isBusy, isBusyForWhile, isDomainValid, domainFetchingError, onFormSubmit } =
 		props;
@@ -90,4 +90,4 @@ export default function LandingPageHeader( props: Props ) {
 			</form>
 		</div>
 	);
-}
+};

@@ -16,17 +16,9 @@ import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
-// import { AdvancedMetrics } from './advanced-metrics';
-// import { BasicMetrics } from './basic-metrics';
-// import DomainAnalyzer from './domain-analyzer';
-// import DomainInformation from './domain-information';
 import { GetReportForm } from './get-report-form';
-// import HeadingInformation from './heading-information';
-// import HostingInformation from './hosting-information';
-// import HostingIntro from './hosting-intro';
-// import { MetricsMenu } from './metrics-menu';
+import { LandingPageHeader } from './landing-page-header';
 import './styles-v2.scss';
-import LandingPageHeader from './landing-page-header';
 
 const debug = debugFactory( 'apps:site-profiler' );
 
@@ -37,9 +29,6 @@ interface Props {
 
 export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain } = props;
-	// const basicMetricsRef = useRef( null );
-	// const performanceMetricsRef = useRef( null );
-	// const healthScoresRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
