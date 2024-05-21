@@ -135,14 +135,15 @@
 	}
 }
 
-// this affects the /domains/manage/:site page as well.
-.is-bulk-domains-page .layout__content {
+// The /domains/manage/:site page
+.is-bulk-site-domains-page .layout__content {
 	overflow: auto;
 }
 
-// Custom layout for the global `/domains/manage` page only
+// The `/domains/manage` page
 // Generic domains table styles should go in `packages/domains-table/src/domains-table/style.scss`
-.is-bulk-domains-page.is-group-sites .layout__content {
+.is-bulk-all-domains-page .layout__content {
+	overflow: auto;
 	.main {
 		.navigation-header {
 			@include break-huge {

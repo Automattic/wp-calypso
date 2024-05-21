@@ -266,7 +266,9 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
 			<Main>
 				<DocumentHead title={ translate( 'Domains' ) } />
-				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
+				<BodySectionCssClass
+					bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page', 'is-bulk-all-domains-page' ] }
+				/>
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && <GoogleDomainOwnerBanner /> }
 				<DomainsTable
