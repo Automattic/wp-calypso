@@ -44,7 +44,7 @@ const DotcomPreviewPane = ( {
 	const { __ } = useI18n();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
-	const isSimpleSite = ! site.jetpack;
+	const isJetpackSite = site.jetpack;
 	const isPlanExpired = !! site.plan?.expired;
 	const siteId = site?.ID ?? null;
 	const { hasAtomicFeature, hasSftpFeature } = useSelector( ( state ) => ( {
@@ -54,7 +54,8 @@ const DotcomPreviewPane = ( {
 
 	// Check for site features to determine if the promo should be shown in case the site has yet to transfer to Atomic.
 	const shouldShowDevToolsPromo =
-		isPlanExpired || ! hasAtomicFeature || ( ! hasSftpFeature && ! site.is_wpcom_staging_site );
+		! isJetpackSite &&
+		( isPlanExpired || ! hasAtomicFeature || ( ! hasSftpFeature && ! site.is_wpcom_staging_site ) );
 
 	const features = useMemo(
 		() => [
@@ -122,7 +123,7 @@ const DotcomPreviewPane = ( {
 			selectedSiteFeature,
 			setSelectedSiteFeature,
 			selectedSiteFeaturePreview,
-			isSimpleSite,
+			isJetpackSite,
 			isPlanExpired,
 			isAtomicSite,
 		]
