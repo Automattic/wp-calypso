@@ -290,7 +290,6 @@ const SitesDashboardV2 = ( {
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
-						showBanner={ showA8CForAgenciesBanner }
 					/>
 				</LayoutColumn>
 			) }
