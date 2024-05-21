@@ -97,7 +97,9 @@ class CurrentSite extends Component {
 							<Site site={ selectedSite } homeLink />
 						</div>
 					) : (
-						<AllSites href="/sites" onSelect={ this.onAllSitesClick } />
+						! isEnabled( 'layout/dotcom-nav-redesign-v2' ) && (
+							<AllSites href="/sites" onSelect={ this.onAllSitesClick } />
+						)
 					) }
 					{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
 						<AsyncLoad
