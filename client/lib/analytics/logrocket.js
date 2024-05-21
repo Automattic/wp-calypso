@@ -40,25 +40,21 @@ export function maybeAddLogRocketScript() {
 				// @see https://docs.logrocket.com/v1.0/reference/network
 				network: {
 					requestSanitizer: ( request ) => {
-						const { headers, body } = request;
-
 						// Remove the Authorization header from the request if it exists
-						if ( headers && headers.Authorization ) {
-							headers.Authorization = null;
+						if ( request.headers && request.headers.Authorization ) {
+							request.headers.Authorization = null;
 						}
 
 						// Remove the body from the request if it exists
-						if ( body ) {
+						if ( request.body ) {
 							delete request.body;
 						}
 
 						return request;
 					},
 					responseSanitizer: ( response ) => {
-						const { body } = response;
-
 						// Remove the body from the response if it exists
-						if ( body ) {
+						if ( response.body ) {
 							delete response.body;
 						}
 
