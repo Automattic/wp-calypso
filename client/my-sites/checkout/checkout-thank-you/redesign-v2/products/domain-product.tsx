@@ -64,6 +64,12 @@ export default function ThankYouDomainProduct( {
 
 	if ( purchase && isDomainTransfer( purchase ) ) {
 		actions = <DomainTransferSection purchase={ purchase } currency={ currency ?? 'USD' } />;
+	} else if ( isGravatarDomain ) {
+		actions = (
+			<Button variant="primary" href="https://gravatar.com/profile">
+				{ translate( 'Manage domain at Gravatar' ) }
+			</Button>
+		);
 	} else if ( purchase?.blogId && siteSlug ) {
 		const createSiteHref = siteSlug && createSiteFromDomainOnly( siteSlug, purchase.blogId );
 		const createSiteProps = createSiteHref ? { href: createSiteHref } : { disabled: true };
@@ -84,15 +90,6 @@ export default function ThankYouDomainProduct( {
 				</Button>
 			</>
 		);
-
-		if ( isGravatarDomain ) {
-			manageDomainProps.href = 'https://gravatar.com/profile';
-			actions = (
-				<Button variant="primary" { ...manageDomainProps }>
-					{ translate( 'Manage domain at Gravatar' ) }
-				</Button>
-			);
-		}
 	} else {
 		actions = (
 			<Button variant={ isDomainOnly ? 'secondary' : 'primary' } href={ domainManagementRoot() }>
