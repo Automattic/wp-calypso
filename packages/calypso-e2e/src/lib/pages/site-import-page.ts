@@ -21,7 +21,7 @@ const selectors = {
  * Class representing the Site Import page.
  */
 export class SiteImportPage {
-	static services = [ 'WordPress', 'Blogger', 'Medium', 'Squarespace', 'Wix' ] as const;
+	static services = [ 'Blogger', 'Medium', 'Squarespace', 'Wix' ] as const;
 	private page: Page;
 
 	/**

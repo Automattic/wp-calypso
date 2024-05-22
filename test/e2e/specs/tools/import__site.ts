@@ -29,4 +29,13 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 		await siteImportPage.verifyImporter( service );
 		await siteImportPage.cancel();
 	} );
+
+	// Extracted from the generic "Select service provider: %s" and skipped due to a new migration flow changes.
+	// More context on Automattic/wp-calypso/pull/90994
+	it.skip( 'Select service provider: WordPress', async function () {
+		siteImportPage = new SiteImportPage( page );
+		await siteImportPage.selectService( 'WordPress' );
+		await siteImportPage.verifyImporter( 'WordPress' );
+		await siteImportPage.cancel();
+	} );
 } );
