@@ -21,7 +21,11 @@ import { useDispatch, useSelector } from 'calypso/state';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
 import isSavingWordadsSettings from 'calypso/state/selectors/is-saving-wordads-settings';
-import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackMinimumVersion,
+	getCustomizerUrl,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
 
@@ -65,6 +69,9 @@ const AdsFormSettings = () => {
 	);
 	const wordadsSettings = useSelector( ( state ) => getWordadsSettings( state, siteId ) );
 	const widgetsUrl = useSelector( ( state ) => getCustomizerUrl( state, siteId, 'widgets' ) );
+	const supportsInlineAds = useSelector( ( state ) =>
+		isJetpackMinimumVersion( state, siteId, '13.5-a.1' )
+	);
 
 	const isLoading = ! wordadsSettings || isSavingSettings;
 	const isWordAds = site?.options?.wordads;
@@ -254,12 +261,14 @@ const AdsFormSettings = () => {
 						onChange={ () => handleDisplayToggle( 'second_belowpost' ) }
 						label={ translate( 'Second ad below post' ) }
 					/>
-					<ToggleControl
-						checked={ !! settings.display_options?.inline_enabled }
-						disabled={ isDisabled }
-						onChange={ () => handleDisplayToggle( 'inline_enabled' ) }
-						label={ translate( 'Inline within post content' ) }
-					/>
+					{ supportsInlineAds && (
+						<ToggleControl
+							checked={ !! settings.display_options?.inline_enabled }
+							disabled={ isDisabled }
+							onChange={ () => handleDisplayToggle( 'inline_enabled' ) }
+							label={ translate( 'Inline within post content' ) }
+						/>
+					) }
 					{ ! siteIsJetpack && (
 						<ToggleControl
 							checked={ !! settings.display_options?.sidebar }
