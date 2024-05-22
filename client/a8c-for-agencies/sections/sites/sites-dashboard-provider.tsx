@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { ReactNode, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -11,7 +12,7 @@ import SitesDashboardContext from './sites-dashboard-context';
 
 interface Props {
 	showOnlyFavorites?: boolean;
-	hideListing?: boolean;
+	showPreviewPane?: boolean;
 	selectedCategory: string;
 	siteUrl?: string;
 	siteFeature?: string;
@@ -61,7 +62,7 @@ const buildFilters = ( { status, siteTags }: { status: string; siteTags: string 
 };
 
 export const SitesDashboardProvider = ( {
-	hideListing = false,
+	showPreviewPane = false,
 	showOnlyFavorites = false,
 	selectedCategory,
 	siteUrl,
@@ -109,15 +110,19 @@ export const SitesDashboardProvider = ( {
 		selectedCategory,
 		setSelectedCategory: () => {},
 		selectedSiteFeature: siteFeature,
-		setSelectedSiteFeature: () => {},
-		hideListing,
-		setHideListing: () => {},
+		setSelectedSiteFeature: ( feature: string | undefined ) => {
+			page.show( `/sites/${ selectedCategory }/${ siteUrl }/${ feature || '' }` );
+		},
+		showPreviewPane,
+		closePreviewPane: () => {
+			page.show( `/sites/${ selectedCategory }` );
+		},
 		showOnlyFavorites,
 		setShowOnlyFavorites: () => {},
 		path,
 		currentPage,
 		isBulkManagementActive,
-		initialSelectedSiteUrl: siteUrl,
+		siteUrl,
 		setIsBulkManagementActive: handleSetBulkManagementActive,
 		selectedSites,
 		setSelectedSites,

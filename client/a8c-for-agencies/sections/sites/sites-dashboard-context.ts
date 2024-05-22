@@ -9,8 +9,8 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	selectedSiteFeature: undefined,
 	setSelectedSiteFeature: () => {},
 
-	hideListing: undefined,
-	setHideListing: () => {},
+	showPreviewPane: false,
+	closePreviewPane: () => {},
 
 	showOnlyFavorites: undefined,
 	setShowOnlyFavorites: () => {},
@@ -18,7 +18,7 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	dataViewsState: initialDataViewsState,
 	setDataViewsState: () => {},
 
-	initialSelectedSiteUrl: '',
+	siteUrl: '',
 	currentPage: 1,
 	path: '',
 	featurePreview: null,
