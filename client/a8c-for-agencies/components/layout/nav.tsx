@@ -12,7 +12,8 @@ type LayoutNavigationProps = {
 	selectedCount?: number;
 };
 
-type LayoutNavigationItemProps = {
+export type LayoutNavigationItemProps = {
+	key?: string;
 	label: string;
 	compactCount?: boolean;
 	onClick?: () => void;
@@ -26,6 +27,24 @@ type LayoutNavigationTabsProps = {
 	selectedCount?: number;
 	items: LayoutNavigationItemProps[];
 };
+
+export const buildNavItems = ( {
+	items,
+	selectedKey,
+	onItemClick,
+	basePath,
+}: {
+	items: LayoutNavigationItemProps[];
+	selectedKey: string;
+	onItemClick?: () => void;
+	basePath?: string;
+} ): LayoutNavigationItemProps[] =>
+	items.map( ( navItem ) => ( {
+		...navItem,
+		selected: selectedKey === navItem.key,
+		path: `${ basePath }/${ navItem.key }`,
+		onClick: onItemClick,
+	} ) );
 
 export function LayoutNavigationTabs( {
 	selectedText,
