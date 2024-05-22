@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import { defaultHostingDetails } from '../constants';
 import cwvtechReportJson from '../cwvtech-report.json';
+import { useDefaultHostingDetails } from '../use-default-hosting-details';
 import { useGetUpgradePlanSiteMetrics } from './use-get-upgrade-plan-site-metrics';
 
 export const useUpgradePlanHostingDetailsList = () => {
@@ -8,7 +8,7 @@ export const useUpgradePlanHostingDetailsList = () => {
 	const { lcpPercentageDifference, fidPercentageDifference, isFetching } =
 		useGetUpgradePlanSiteMetrics();
 
-	const newHostingDetails = { ...defaultHostingDetails };
+	const newHostingDetails = useDefaultHostingDetails();
 
 	// LCP hosting details.
 	if ( lcpPercentageDifference > 0 ) {

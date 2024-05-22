@@ -1,11 +1,8 @@
-import { next, trendingUp, chartBar } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
-import { ReactNode } from 'react';
 import customerImageAjitBohra from 'calypso/assets/images/migrations/customer-testimonials/ajit-bohra.jpg';
 import customerImageAntonyAgnel from 'calypso/assets/images/migrations/customer-testimonials/antony-agnel.jpg';
 import customerImageChrisCoyier from 'calypso/assets/images/migrations/customer-testimonials/chris-coyier.jpg';
 import customerImageEmmaLucasCopley from 'calypso/assets/images/migrations/customer-testimonials/emma-lucas-copley.jpg';
-import cwvtechReportJson from './cwvtech-report.json';
 
 // Threshold for a website that has a "good" Largest Contentful Paint (LCP) score according to Core Web Vital metrics.
 // A "good" LCP score is considered to be 2.5 seconds or less.
@@ -49,47 +46,3 @@ export const UpgradePlanHostingTestimonials = [
 		customerInfo: 'AntonyAgnel.com',
 	},
 ];
-
-// TODO: Move this since it has calcs and doesn't fit very well in constants.
-const higherSpeedPercentage = Math.round(
-	( cwvtechReportJson[ 'WordPress.com' ].goodLCP - cwvtechReportJson[ 'WordPress' ].goodLCP ) * 100
-);
-
-const fasterResponsePercentage = Math.round( cwvtechReportJson[ 'WordPress.com' ].goodFID * 100 );
-
-const higherAvailabilityPercentage = 3;
-
-export const defaultHostingDetails: {
-	[ key: string ]: {
-		title: string;
-		description: string | ReactNode;
-		icon: JSX.Element;
-	};
-} = {
-	'higher-speed': {
-		title: translate( 'Higher speed' ),
-		description:
-			translate( '%(higherSpeedPercentage)d 30% faster.', {
-				args: { higherSpeedPercentage },
-			} ) + '*',
-		icon: trendingUp,
-	},
-	'faster-response': {
-		title: translate( 'Faster response' ),
-		description: translate(
-			'%(fasterResponsePercentage)d% of sites on WordPress.com have a fast response.',
-			{
-				args: { fasterResponsePercentage },
-			}
-		),
-		icon: next,
-	},
-	'higher-availability': {
-		title: translate( 'Higher availability' ),
-		description:
-			translate( '%(higherAvailabilityPercentage)d% better uptime.', {
-				args: { higherAvailabilityPercentage },
-			} ) + '*',
-		icon: chartBar,
-	},
-};
