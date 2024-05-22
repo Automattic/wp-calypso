@@ -117,12 +117,11 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	};
 
 	const email = address && address !== 'regenerate' ? address : '';
+	const isActive = siteIsJetpack
+		? jetpackPostByEmailIsActive
+		: simpleSitePostByEmailSettings?.isEnabled;
 	const labelClassName =
-		moduleUnavailable ||
-		jetpackRegeneratingPostByEmail ||
-		( siteIsJetpack ? ! jetpackPostByEmailIsActive : ! simpleSitePostByEmailSettings?.isEnabled )
-			? 'is-disabled'
-			: undefined;
+		moduleUnavailable || jetpackRegeneratingPostByEmail || ! isActive ? 'is-disabled' : undefined;
 
 	return (
 		<>
@@ -160,13 +159,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 					</FormLabel>
 					<ClipboardButtonInput
 						className="publishing-tools__email-address"
-						disabled={
-							jetpackRegeneratingPostByEmail ||
-							( siteIsJetpack
-								? ! jetpackPostByEmailIsActive
-								: ! simpleSitePostByEmailSettings?.isEnabled ) ||
-							moduleUnavailable
-						}
+						disabled={ jetpackRegeneratingPostByEmail || ! isActive || moduleUnavailable }
 						value={ siteIsJetpack ? email : simpleSitePostByEmailSettings?.email }
 					/>
 					<Button
@@ -175,9 +168,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 							isFormPending ||
 							jetpackRegeneratingPostByEmail ||
 							isSimpleSitePendingRegenerate ||
-							( siteIsJetpack
-								? ! jetpackPostByEmailIsActive
-								: ! simpleSitePostByEmailSettings?.isEnabled ) ||
+							! isActive ||
 							!! moduleUnavailable
 						}
 					>
