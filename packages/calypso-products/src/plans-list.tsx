@@ -43,9 +43,6 @@ import {
 	FEATURE_EASY_SITE_MIGRATION,
 	FEATURE_ECOMMERCE_MARKETING,
 	FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-	FEATURE_EMAIL_SUPPORT,
 	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
@@ -88,9 +85,6 @@ import {
 	FEATURE_JETPACK_VIDEOPRESS_BI_YEARLY,
 	FEATURE_JETPACK_VIDEOPRESS,
 	FEATURE_JETPACK_VIDEOPRESS_MONTHLY,
-	FEATURE_LIVE_CHAT_SUPPORT,
-	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 	FEATURE_MALWARE_SCANNING_DAILY,
 	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 	FEATURE_MANAGE,
@@ -273,7 +267,6 @@ import {
 	FEATURE_ALWAYS_ONLINE,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
-	FEATURE_SUPPORT_EMAIL,
 	FEATURE_WORDADS,
 	FEATURE_PLUGINS_THEMES,
 	FEATURE_BANDWIDTH,
@@ -326,7 +319,6 @@ import {
 	FEATURE_JETPACK_SOCIAL_BASIC_BI_YEARLY,
 	FEATURE_JETPACK_SOCIAL_BASIC,
 	FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 	FEATURE_SELL_INTERNATIONALLY,
 	FEATURE_AUTOMATIC_SALES_TAX,
 	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
@@ -445,7 +437,6 @@ import {
 	FEATURE_WOOCOMMERCE_HOSTING,
 	FEATURE_1_WEBSITE,
 	FEATURE_AD_SUPPORTED_EXPERIENCE,
-	FEATURE_HELP_CENTER_SUPPORT,
 	FEATURE_LIMITED_STATS,
 	FEATURE_20_PREMIUM_THEMES,
 	FEATURE_48_PREMIUM_THEMES,
@@ -459,6 +450,16 @@ import {
 	FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
 	FEATURE_WEB_SERVER_SETTINGS,
 	FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
+	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+	FEATURE_PRIORITY_24_7_SUPPORT,
+	FEATURE_EMAIL_SUPPORT,
+	FEATURE_HELP_CENTER_SUPPORT,
+	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+	FEATURE_LIVE_CHAT_SUPPORT,
+	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 } from './constants';
 import { getTrailMapExperiment, isTrailMapCopyVariant } from './experiments';
 import {
@@ -888,7 +889,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_20_PREMIUM_THEMES,
 				FEATURE_AD_FREE_EXPERIENCE,
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
-				FEATURE_EMAIL_SUPPORT,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_copy_and_structure' ) {
@@ -905,7 +906,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_CDN,
 				FEATURE_POST_EDITS_HISTORY,
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
-				FEATURE_EMAIL_SUPPORT,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_structure' ) {
@@ -921,22 +922,26 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_SMART_REDIRECTS,
 				FEATURE_ALWAYS_ONLINE,
 				FEATURE_FAST_DNS,
-				FEATURE_SUPPORT_EMAIL,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			];
 		}
 		return [
 			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
-			FEATURE_SUPPORT_EMAIL,
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		];
 	},
 	get2023PlanComparisonFeatureOverride: () => {
 		if ( isTrailMapCopyVariant() ) {
-			return [ FEATURE_AD_FREE_EXPERIENCE, FEATURE_CUSTOM_DOMAIN, FEATURE_EMAIL_SUPPORT ];
+			return [
+				FEATURE_AD_FREE_EXPERIENCE,
+				FEATURE_CUSTOM_DOMAIN,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			];
 		}
 
 		if ( getTrailMapExperiment() === 'treatment_structure' ) {
@@ -952,7 +957,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_SMART_REDIRECTS,
 				FEATURE_ALWAYS_ONLINE,
 				FEATURE_FAST_DNS,
-				FEATURE_SUPPORT_EMAIL,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
 
@@ -960,7 +965,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
-			FEATURE_SUPPORT_EMAIL,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		];
 	},
@@ -984,7 +989,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
-		FEATURE_SUPPORT_EMAIL,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
@@ -1000,7 +1005,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_SUPPORT_EMAIL,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 		FEATURE_PAID_SUBSCRIBERS_JP,
 	],
@@ -1009,7 +1014,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
-		FEATURE_SUPPORT_EMAIL,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
 	getBlogOnboardingHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
@@ -1020,7 +1025,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getCheckoutFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_SUPPORT_EMAIL,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_PAID_SUBSCRIBERS_JP,
@@ -1173,7 +1178,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_PAYMENT_TRANSACTION_FEES_0,
 				FEATURE_STORE_DESIGN,
 				FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
-				FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_structure' ) {
@@ -1234,7 +1239,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_SELL_60_COUNTRIES,
 				FEATURE_SHIPPING_INTEGRATIONS,
 				FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
-				FEATURE_LIVE_CHAT_SUPPORT,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
 		return [
@@ -1323,7 +1328,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_STREAMLINED_CHECKOUT,
 				FEATURE_SELL_60_COUNTRIES,
 				FEATURE_SHIPPING_INTEGRATIONS,
-				FEATURE_LIVE_CHAT_SUPPORT,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
 
@@ -1331,7 +1336,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	},
 	getCheckoutFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_PLUGINS_THEMES,
 		FEATURE_ACCEPT_PAYMENTS,
 		FEATURE_SHIPPING_CARRIERS,
@@ -1414,6 +1419,7 @@ const getWooExpressMediumPlanCompareFeatures = (): string[] => [
 	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_UNLIMITED_ADMINS,
+	//TODO
 	FEATURE_LIVE_CHAT_SUPPORT,
 	FEATURE_EMAIL_SUPPORT,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
@@ -1456,6 +1462,7 @@ const getWooExpressSmallPlanCompareFeatures = (): string[] => [
 	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_UNLIMITED_ADMINS,
+	//TODO
 	FEATURE_LIVE_CHAT_SUPPORT,
 	FEATURE_EMAIL_SUPPORT,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
@@ -1520,6 +1527,7 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
+		//TODO
 		FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 		FEATURE_UNLIMITED_ADMINS,
 		FEATURE_50GB_STORAGE,
@@ -1620,12 +1628,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getTagline: function () {
 		return i18n.translate(
-			'Take your Newsletter further, faster. Get everything included in %(planName)s, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.',
+			'Take your Newsletter further, faster. Get everything included in %(planName)s, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and 24/7 expert support.',
 			{ args: { planName: this.getTitle() } }
 		);
 	},
 	getNewsletterSignupFeatures: () => [
-		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_STYLE_CUSTOMIZATION,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
@@ -1637,19 +1645,19 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_EMAILS,
 		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_REAL_TIME_ANALYTICS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	],
 	getLinkInBioDescription: function () {
 		return i18n.translate(
-			'Take your site further, faster. Get everything included in %(planName)s, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.',
+			'Take your site further, faster. Get everything included in %(planName)s, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics and 24/7 expert support.',
 			{ args: { planName: this.getTitle() } }
 		) as string;
 	},
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PRIORITY_24_7_SUPPORT,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_VIDEOPRESS_JP,
@@ -1662,7 +1670,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_STYLE_CUSTOMIZATION,
-		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_WORDADS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
@@ -1724,7 +1732,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_CDN,
 				FEATURE_POST_EDITS_HISTORY,
 				FEATURE_PAYMENT_TRANSACTION_FEES_4,
-				FEATURE_EMAIL_SUPPORT,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_structure' ) {
@@ -1742,14 +1750,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_STYLE_CUSTOMIZATION,
 				FEATURE_WORDADS,
 				FEATURE_FAST_DNS,
-				EXPERT_SUPPORT_ALL_DAYS,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 				FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			];
 		}
 
 		return [
 			FEATURE_CUSTOM_DOMAIN,
-			EXPERT_SUPPORT_ALL_DAYS,
+			FEATURE_PRIORITY_24_7_SUPPORT,
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_WORDADS,
 			FEATURE_STYLE_CUSTOMIZATION,
@@ -1789,7 +1797,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	},
 	getCheckoutFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PRIORITY_24_7_SUPPORT,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_WORDADS,
 		FEATURE_STYLE_CUSTOMIZATION,
@@ -1957,7 +1965,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_DATABASE_ACCESS,
 				FEATURE_WEB_SERVER_SETTINGS,
 				FEATURE_PAYMENT_TRANSACTION_FEES_2,
-				FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_copy_and_structure' ) {
@@ -1990,7 +1998,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_DATABASE_ACCESS,
 				FEATURE_WEB_SERVER_SETTINGS,
 				FEATURE_PAYMENT_TRANSACTION_FEES_2,
-				FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_structure' ) {
@@ -2033,7 +2041,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 				FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
 				FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
-				FEATURE_LIVE_CHAT_SUPPORT,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
 		return [
@@ -2041,7 +2049,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_BANDWIDTH,
 			FEATURE_UNLIMITED_TRAFFIC,
-			FEATURE_LIVE_CHAT_SUPPORT,
+			FEATURE_PRIORITY_24_7_SUPPORT,
 			FEATURE_GLOBAL_EDGE_CACHING,
 			FEATURE_BURST,
 			FEATURE_WAF_V2,
@@ -2087,7 +2095,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_DEV_TOOLS,
 				FEATURE_DATABASE_ACCESS,
 				FEATURE_WEB_SERVER_SETTINGS,
-				FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
 
@@ -2129,7 +2137,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_WP_UPDATES,
 				FEATURE_MULTI_SITE,
 				FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
-				FEATURE_LIVE_CHAT_SUPPORT,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
 
@@ -2141,7 +2149,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_BANDWIDTH,
 		FEATURE_CDN,
 		FEATURE_ADVANCED_SEO_TOOLS,
-		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_DEV_TOOLS,
 		FEATURE_REALTIME_BACKUPS_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,

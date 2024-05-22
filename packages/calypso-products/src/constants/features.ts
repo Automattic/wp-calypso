@@ -442,6 +442,8 @@ export const FEATURE_50GB_STORAGE_ADD_ON = '50gb-storage-add-on';
 export const FEATURE_100GB_STORAGE_ADD_ON = '100gb-storage-add-on';
 export const FEATURE_UNLIMITED_TRAFFIC = 'unlimited-traffic';
 export const FEATURE_TIERED_STORAGE_PLANS_AVAILABLE = 'tiered-storage-plans-available';
+export const FEATURE_FAST_SUPPORT_FROM_EXPERTS = 'fast-support-from-experts';
+export const FEATURE_PRIORITY_24_7_SUPPORT = 'priority-24-7-support';
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
