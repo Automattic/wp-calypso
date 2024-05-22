@@ -349,6 +349,7 @@ function StatsCommercialFlowOptOutForm( {
 		'contact-details': translate( 'Business Contact Details' ),
 		'manual-override': translate( 'Manual Override' ),
 		ecommerce: translate( 'Ecommerce' ),
+		donations: translate( 'Donations' ),
 	};
 	const { supportsOnDemandCommercialClassification } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
