@@ -5,7 +5,7 @@ import {
 } from '../constants';
 
 export function getValidBrand( brand: string ) {
-	return brand === PRODUCT_BRAND_FILTER_JETPACK || brand === PRODUCT_BRAND_FILTER_WOOCOMMERCE
-		? brand
-		: PRODUCT_BRAND_FILTER_ALL;
+	const validBrands = [ PRODUCT_BRAND_FILTER_JETPACK, PRODUCT_BRAND_FILTER_WOOCOMMERCE ];
+
+	return validBrands.includes( brand ) ? brand : PRODUCT_BRAND_FILTER_ALL;
 }
