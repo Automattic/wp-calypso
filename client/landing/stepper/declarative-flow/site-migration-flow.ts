@@ -90,6 +90,7 @@ const siteMigration: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
+		const { siteSlug, siteId } = useSiteData();
 		const variantSlug = this.variantSlug;
 		const flowPath = variantSlug ?? flowName;
 		const siteCount =
@@ -110,8 +111,8 @@ const siteMigration: Flow = {
 
 		// Call triggerGuidesForStep for the current step
 		useEffect( () => {
-			triggerGuidesForStep( flowName, currentStep );
-		}, [ flowName, currentStep ] );
+			triggerGuidesForStep( flowName, currentStep, siteSlug, siteId );
+		}, [ flowName, currentStep, siteSlug, siteId ] );
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
