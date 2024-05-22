@@ -14,18 +14,30 @@ interface HostingSectionProps {
 export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {
 	const translate = useTranslate();
 	const { dns = [], urlData, hostingProvider, hostingRef } = props;
+	const isWPcom = hostingProvider?.slug?.toLowerCase() === 'automattic';
 
 	return (
 		<MetricsSection
 			name={ translate( 'Hosting' ) }
-			title={ translate(
-				'Struggles with hosting {{alert}}speed and uptime{{/alert}} deter visitors. A switch to WordPress.com could transform the user experience.',
-				{
-					components: {
-						alert: <span className="alert" />,
-					},
-				}
-			) }
+			title={
+				isWPcom
+					? translate(
+							'Your hosting {{success}}speed and uptime{{/success}} is excellent, providing a reliable and enjoyable user experience.',
+							{
+								components: {
+									success: <span className="success" />,
+								},
+							}
+					  )
+					: translate(
+							'Struggles with hosting {{alert}}speed and uptime{{/alert}} deter visitors. A switch to WordPress.com could transform the user experience.',
+							{
+								components: {
+									alert: <span className="alert" />,
+								},
+							}
+					  )
+			}
 			subtitle={ translate( 'Upgrade your hosting with WordPress.com' ) }
 			ref={ hostingRef }
 		>
