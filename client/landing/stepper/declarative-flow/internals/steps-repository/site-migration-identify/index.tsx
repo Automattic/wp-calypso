@@ -98,7 +98,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 	const urlQueryParams = useQuery();
 
 	const shouldHideBack = () => {
-		const isEntrepreneurSignup = [ 'entrepreneur-signup', 'wp-admin-importer' ].includes(
+		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'wp-admin-importer' ].includes(
 			urlQueryParams.get( 'ref' ) || ''
 		);
 
