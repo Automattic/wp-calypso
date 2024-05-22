@@ -12,14 +12,14 @@ export const useUpgradePlanHostingDetailsList = () => {
 
 	// LCP hosting details.
 	if ( lcpPercentageDifference > 0 ) {
-		const wordpressLCP = Math.floor( 100 * cwvtechReportJson[ 'WordPress.com' ].goodLCP );
+		const goodLCPercentage = Math.floor( 100 * cwvtechReportJson[ 'WordPress.com' ].goodLCP );
 
 		newHostingDetails[ 'higher-speed' ].description = translate(
-			'%(wordpressLcpPercentage)s of sites on WordPress.com are at least %(sitePercentageDifference)s faster than yours.',
+			'%(goodLCPercentage)d%% of sites on WordPress.com are at least %(lcpPercentageDifference)d%% faster than yours.',
 			{
 				args: {
-					wordpressLcpPercentage: `${ wordpressLCP }%`,
-					sitePercentageDifference: `${ lcpPercentageDifference }%`,
+					goodLCPercentage,
+					lcpPercentageDifference,
 				},
 			}
 		);
@@ -27,14 +27,14 @@ export const useUpgradePlanHostingDetailsList = () => {
 
 	// FID hosting details.
 	if ( fidPercentageDifference > 0 ) {
-		const wordpressFID = Math.floor( 100 * cwvtechReportJson[ 'WordPress.com' ].goodFID );
+		const goodFIDPercentage = Math.floor( 100 * cwvtechReportJson[ 'WordPress.com' ].goodFID );
 
 		newHostingDetails[ 'faster-response' ].description = translate(
-			'%(wordpressFidPercentage)s of sites on WordPress.com respond at least %(sitePercentageDifference)s faster than yours on the first interaction.',
+			'%(goodFIDPercentage)d%% of sites on WordPress.com respond at least %(fidPercentageDifference)d%% faster than yours on the first interaction.',
 			{
 				args: {
-					wordpressFidPercentage: `${ wordpressFID }%`,
-					sitePercentageDifference: `${ fidPercentageDifference }%`,
+					goodFIDPercentage,
+					fidPercentageDifference,
 				},
 			}
 		);
