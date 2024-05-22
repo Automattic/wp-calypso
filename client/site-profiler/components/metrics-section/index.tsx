@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import React, { ForwardedRef, forwardRef } from 'react';
 import { calculateMetricsSectionScrollOffset } from 'calypso/site-profiler/utils/calculate-metrics-section-scroll-offset';
@@ -5,7 +6,8 @@ import { calculateMetricsSectionScrollOffset } from 'calypso/site-profiler/utils
 interface MetricsSectionProps {
 	name: string;
 	title: string | React.ReactNode;
-	subtitle: string | React.ReactNode;
+	subtitle?: string | React.ReactNode;
+	subtitleOnClick?: () => void;
 	children?: React.ReactNode;
 }
 
@@ -15,24 +17,26 @@ const Container = styled.div`
 `;
 
 const NameSpan = styled.span`
-	font-family: 'SF Pro Text';
-	color: var( --studio-gray-40 );
-	font-size: 16px;
+	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	color: var( --studio-gray-20 );
+	font-size: 1rem;
 	margin-bottom: 8px;
 `;
 
 const Title = styled.div`
-	font-family: 'SF Pro Display';
+	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 60px;
 	font-weight: 400;
 	line-height: 100%;
 	margin-bottom: 24px;
 
 	span {
-		font-family: 'SF Pro Display';
+		font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+			'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 		font-size: 60px;
 		font-style: normal;
-		font-weight: 510;
 		line-height: 100%;
 		letter-spacing: -1.5px;
 
@@ -54,17 +58,21 @@ const Title = styled.div`
 
 const Subtitle = styled.span`
 	cursor: pointer;
-	color: var( --studio-gray-70 );
-	font-family: 'SF Pro Text';
-	font-size: 16px;
+	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-size: 1rem;
 	font-style: normal;
 	font-weight: 500;
 	line-height: 28px;
 
 	&:hover {
 		text-decoration-line: underline;
-		color: var( --studio-gray-80 );
 	}
+`;
+
+const SubtitleIcon = styled( Gridicon )`
+	transform: translate( 0, 3px );
+	margin-left: 8px;
 `;
 
 const Content = styled.div`
@@ -73,13 +81,18 @@ const Content = styled.div`
 
 export const MetricsSection = forwardRef< HTMLObjectElement, MetricsSectionProps >(
 	( props, ref: ForwardedRef< HTMLObjectElement > ) => {
-		const { name, title, subtitle, children } = props;
+		const { name, title, subtitle, children, subtitleOnClick } = props;
 
 		return (
 			<Container ref={ ref }>
 				<NameSpan>{ name }</NameSpan>
 				<Title>{ title }</Title>
-				<Subtitle>{ subtitle }</Subtitle>
+				{ subtitle && (
+					<Subtitle onClick={ subtitleOnClick }>
+						{ subtitle }
+						<SubtitleIcon icon="chevron-right" size={ 18 } />
+					</Subtitle>
+				) }
 
 				{ children && <Content>{ children }</Content> }
 			</Container>

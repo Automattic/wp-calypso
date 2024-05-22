@@ -37,22 +37,22 @@
 		// Note: The checkbox does not count for column counting purposes
 
 		&.is-7-column {
-			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
+			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto auto;
 		}
 		&.is-7-column:not(.has-checkbox) {
-			grid-template-columns: 2fr 1fr 1fr auto auto auto 36px;
+			grid-template-columns: 2fr 1fr 1fr auto auto auto auto;
 		}
 		&.is-6-column {
-			grid-template-columns: 20px 2fr 1fr minmax(auto, 1fr) auto auto 36px;
+			grid-template-columns: 20px 2fr 1fr minmax(auto, 1fr) auto auto auto;
 		}
 		&.is-6-column:not(.has-checkbox) {
-			grid-template-columns: 2fr 1fr minmax(auto, 1fr) auto auto 36px;
+			grid-template-columns: 2fr 1fr minmax(auto, 1fr) auto auto auto;
 		}
 		&.is-5-column {
-			grid-template-columns: 20px 1fr minmax(auto, 1fr) auto auto 36px;
+			grid-template-columns: 20px 1fr minmax(auto, 1fr) auto auto auto;
 		}
 		&.is-5-column:not(.has-checkbox) {
-			grid-template-columns: 1fr minmax(auto, 1fr) auto auto 36px;
+			grid-template-columns: 1fr minmax(auto, 1fr) auto auto auto;
 		}
 
 		tr::after {
@@ -104,6 +104,10 @@
 	.domains-table__row {
 		&:has(a.domains-table__domain-name) {
 			cursor: pointer;
+
+			&:hover td {
+				background-color: #f7faff;
+			}
 		}
 	}
 
@@ -148,6 +152,12 @@
 
 	.domains-table-row__actions {
 		text-align: right;
+		justify-content: flex-end;
+
+		button {
+			min-width: unset;
+			padding: 0;
+		}
 	}
 }
 
@@ -249,6 +259,9 @@
 }
 
 .domains-table-mobile-cards {
+	overflow-y: auto;
+	max-height: calc(100vh - 326px);
+
 	.domains-table-mobile-cards-select-all {
 		display: flex;
 		align-items: center;
@@ -286,7 +299,9 @@
 	position: relative;
 	padding: 16px 0;
 	border-bottom: 1px solid var(--color-border-secondary);
-
+	&:hover {
+		background-color: #f7faff;
+	}
 	&-header {
 		display: flex;
 		align-items: center;
@@ -370,12 +385,11 @@
 }
 
 a.domains-table-add-email-button {
-	font-size: $font-body-small;
+	font-size: $font-body-extra-small;
 	font-style: normal;
 	font-weight: 400;
-	line-height: 20px; /* 142.857% */
+	line-height: 16px;
 	letter-spacing: -0.15px;
-	text-decoration: underline;
 	color: var(--color-link);
 }
 

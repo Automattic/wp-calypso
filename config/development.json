@@ -157,6 +157,7 @@
 		"onboarding/trail-map-feature-grid-copy": false,
 		"onboarding/trail-map-feature-grid-structure": false,
 		"onboarding/trail-map-feature-grid": false,
+		"onboarding/user-on-stepper-hosting": true,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"page/export": true,

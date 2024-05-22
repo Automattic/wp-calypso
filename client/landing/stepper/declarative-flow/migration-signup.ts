@@ -34,11 +34,9 @@ const migrationSignup: Flow = {
 		return [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_CREATION_STEP,
-			STEPS.BUNDLE_TRANSFER,
-			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			STEPS.SITE_MIGRATION_INSTRUCTIONS,
+			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
 			STEPS.ERROR,
 		];
 	},
@@ -201,14 +199,6 @@ const migrationSignup: Flow = {
 					);
 				}
 
-				case STEPS.BUNDLE_TRANSFER.slug: {
-					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
-				}
-
-				case STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug: {
-					return navigate( STEPS.PROCESSING.slug );
-				}
-
 				case STEPS.PROCESSING.slug: {
 					// If we just created the site, either go to the upgrade plan step, or the site identification step.
 					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
@@ -231,14 +221,6 @@ const migrationSignup: Flow = {
 					if ( providedDependencies?.error ) {
 						return navigate( STEPS.ERROR.slug );
 					}
-
-					// If the plugin was installed successfully, go to the migration instructions.
-					if ( providedDependencies?.pluginInstalled ) {
-						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
-					}
-
-					// Otherwise processing has finished from the BundleTransfer step and we need to install the plugin.
-					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -248,7 +230,7 @@ const migrationSignup: Flow = {
 								siteSlug,
 								from: fromQueryParam,
 							},
-							`/setup/${ FLOW_NAME }/${ STEPS.BUNDLE_TRANSFER.slug }`
+							`/setup/${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`
 						);
 						goToCheckout( {
 							flowName: FLOW_NAME,
@@ -264,26 +246,6 @@ const migrationSignup: Flow = {
 						} );
 						return;
 					}
-
-					if ( providedDependencies?.freeTrialSelected ) {
-						return navigate(
-							addQueryArgs(
-								{
-									siteSlug,
-									from: fromQueryParam,
-								},
-								STEPS.BUNDLE_TRANSFER.slug
-							),
-							{
-								siteId,
-								siteSlug,
-							}
-						);
-					}
-				}
-
-				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
-					return exitFlow( `/home/${ siteSlug }` );
 				}
 			}
 		}

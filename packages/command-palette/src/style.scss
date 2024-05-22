@@ -1,3 +1,8 @@
 .commands-command-menu__overlay {
 	z-index: z-index("root", ".commands-commands-menu__overlay");
 }
+
+div.commands-command-menu {
+	width: min(100% - 32px, 640px);
+	max-width: 640px;
+}

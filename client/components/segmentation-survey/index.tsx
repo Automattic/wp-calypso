@@ -10,6 +10,8 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-navigation';
 
+const SKIP_ANSWER_KEY = 'skip';
+
 type SegmentationSurveyProps = {
 	surveyKey: string;
 	onBack?: () => void;
@@ -68,14 +70,19 @@ const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyPr
 
 	const onContinue = useCallback(
 		async ( currentQuestion: Question ) => {
-			await handleSave( currentQuestion, answers[ currentQuestion.key ] || [] );
+			const currentAnswers = answers[ currentQuestion.key ] || [];
+
+			await handleSave(
+				currentQuestion,
+				currentAnswers.length ? currentAnswers : [ SKIP_ANSWER_KEY ]
+			);
 		},
 		[ answers, handleSave ]
 	);
 
 	const onSkip = useCallback(
 		async ( currentQuestion: Question ) => {
-			await handleSave( currentQuestion, [ 'skip' ] );
+			await handleSave( currentQuestion, [ SKIP_ANSWER_KEY ] );
 		},
 		[ handleSave ]
 	);

@@ -18,7 +18,7 @@ const selectors = {
 	previewButton: `${ panel } :text("View"):visible, [aria-label="View"]:visible`,
 
 	// Post status
-	postStatusButton: `button.editor-post-status-trigger`,
+	postStatusButton: `.editor-post-status > button`,
 
 	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
 		`button[role="menuitem"] span:text("${ target }")`,

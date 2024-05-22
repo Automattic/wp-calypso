@@ -4,12 +4,15 @@ import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
-	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
+	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_MARKETPLACE_CHECKOUT_LINK,
+	A4A_MARKETPLACE_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import HostingList from './hosting-list';
@@ -26,10 +29,21 @@ export default function Hosting() {
 			title={ translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder
+			compact
 		>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ translate( 'Marketplace' ) }</Title>
+					<Breadcrumb
+						items={ [
+							{
+								label: translate( 'Marketplace' ),
+								href: A4A_MARKETPLACE_LINK,
+							},
+							{
+								label: translate( 'Hosting' ),
+							},
+						] }
+					/>
 
 					<Actions>
 						<MobileSidebarNavigation />

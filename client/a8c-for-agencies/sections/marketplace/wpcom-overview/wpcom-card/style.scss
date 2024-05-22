@@ -74,3 +74,20 @@
 .wpcom-plan-card__features.is-jetpack .simple-list-icon {
 	fill: var(--color-jetpack);
 }
+
+.wpcom-plan-card__cta.is-placeholder,
+.wpcom-plan-card__price.is-placeholder {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var(--color-neutral-10);
+	border-radius: 4px;
+}
+
+.wpcom-plan-card__cta.is-placeholder {
+	width: 208px;
+	height: 40px;
+}
+
+.wpcom-plan-card__price.is-placeholder {
+	width: 154px;
+	height: 47.2px;
+}

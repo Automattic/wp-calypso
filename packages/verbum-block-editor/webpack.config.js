@@ -34,6 +34,9 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			filename: '[name].min.js', // dynamic filename
 			library: 'verbumBlockEditor',
 		},
+		externals: {
+			'@wordpress/i18n': [ 'wp', 'i18n' ],
+		},
 	};
 }
 

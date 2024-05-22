@@ -3,8 +3,8 @@ import page from '@automattic/calypso-router';
 import { ExternalLink } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -18,7 +18,6 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
-import BackupNowButton from 'calypso/components/jetpack/backup-now-button';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -29,7 +28,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import isRewindPoliciesInitialized from 'calypso/state/rewind/selectors/is-rewind-policies-initialized';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -74,12 +72,6 @@ const BackupPage = ( { queryDate } ) => {
 		<ExternalLink href="https://jetpack.com/support/backup/">Learn more</ExternalLink>
 	);
 
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		dispatch( loadTrackingTool( 'LogRocket' ) );
-	}, [ dispatch ] );
-
 	return (
 		<div
 			className={ classNames( 'backup__page', {
@@ -106,13 +98,7 @@ const BackupPage = ( { queryDate } ) => {
 							}
 						) }
 					>
-						<BackupNowButton
-							siteId={ siteId }
-							variant="primary"
-							trackEventName="calypso_jetpack_backup_now"
-						>
-							{ translate( 'Back up now' ) }
-						</BackupNowButton>
+						<BackupActionsToolbar siteId={ siteId } />
 					</NavigationHeader>
 				) }
 
@@ -189,7 +175,6 @@ function AdminContent( { selectedDate } ) {
 function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 
@@ -214,11 +199,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 							</div>
 						</div>
 						<div className="backup__header-right">
-							{ siteSlug && (
-								<>
-									<BackupActionsToolbar siteId={ siteId } siteSlug={ siteSlug } />
-								</>
-							) }
+							<BackupActionsToolbar siteId={ siteId } />
 						</div>
 					</div>
 				) }

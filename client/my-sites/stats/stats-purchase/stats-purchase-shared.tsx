@@ -128,7 +128,7 @@ const StatsBenefitsCommercial = () => {
 			>
 				<div className="stats-purchase__info-popover-content">
 					{ translate(
-						'You will only be prompted to upgrade to higher tiers when you exceed the limit for three consecutive months.' // TODO: We need a 'learn more' link here.
+						'You will only be prompted to upgrade to higher tiers when you exceed the limit for three consecutive periods.' // TODO: We need a 'learn more' link here.
 					) }
 				</div>
 			</Popover>

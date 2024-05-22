@@ -126,7 +126,6 @@ a.hosting-overview__link-button {
 	font-family: "SF Pro Text", $sans;
 	font-size: $font-body-extra-small;
 	line-height: 16px;
-	text-decoration-line: underline;
 }
 
 @media ( max-width: $break-xlarge ) {
@@ -155,6 +154,10 @@ a.hosting-overview__link-button {
 
 .hosting-overview__plan-info-loading-placeholder {
 	margin-bottom: 4px;
+}
+
+.hosting-overview__plan-cta {
+	margin-top: 8px;
 }
 
 .hosting-overview__plan-storage {

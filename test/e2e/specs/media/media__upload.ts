@@ -48,14 +48,27 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+			// Switching to or logging into eCommerce plan sites inevitably
+			// loads WP-Admin instead of Calypso, but the rediret occurs
+			// only after Calypso attempts to load.
+			await testAccount.authenticate( page, { url: /wp-admin/ } );
+		} else {
+			await testAccount.authenticate( page );
+		}
 
 		mediaPage = new MediaPage( page );
 	} );
 
 	it( 'Navigate to Media', async function () {
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Media' );
+		// eCommerce plan loads WP-Admin for home dashboard,
+		// so instead navigate straight to the Media page.
+		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
+			await mediaPage.visit( testAccount.credentials.testSites?.primary.url as string );
+		} else {
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Media' );
+		}
 	} );
 
 	it( 'Upload image and confirm addition to gallery', async function () {

@@ -1,4 +1,4 @@
-import { StepContainer, Title, SubTitle } from '@automattic/onboarding';
+import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
@@ -79,7 +79,7 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 	);
 };
 
-const SiteMigrationIdentify: Step = function ( { navigation } ) {
+const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 	const siteSlug = useSiteSlug();
 
 	const handleSubmit = useCallback(
@@ -96,7 +96,10 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 	);
 
 	const urlQueryParams = useQuery();
-	const isEntrepreneurSignup = urlQueryParams.get( 'ref' ) === 'entrepreneur-signup';
+	const shouldHideBack = () => {
+		const isEntrepreneurSignup = urlQueryParams.get( 'ref' ) === 'entrepreneur-signup';
+		return variantSlug === HOSTED_SITE_MIGRATION_FLOW || isEntrepreneurSignup;
+	};
 
 	return (
 		<>
@@ -105,7 +108,7 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 				stepName="site-migration-identify"
 				flowName="site-migration"
 				className="import__onboarding-page"
-				hideBack={ isEntrepreneurSignup }
+				hideBack={ shouldHideBack() }
 				hideSkip
 				hideFormattedHeader
 				goBack={ navigation.goBack }

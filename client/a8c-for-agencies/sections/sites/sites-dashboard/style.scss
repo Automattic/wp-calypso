@@ -14,6 +14,12 @@
 	}
 
 	.a4a-layout-column {
+		.a4a-layout-column__container {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+
 		@include breakpoint-deprecated( "<660px" ) {
 			border-radius: 0;
 		}
@@ -79,8 +85,6 @@
 	}
 
 	@media (max-width: $break-large) {
-		height: calc(100vh - 120px); /* Matches the offset defined in PR #65520 */
-
 		.section-nav__mobile-header {
 			padding: 13px;
 		}
@@ -203,8 +207,8 @@
 		}
 
 		.dataviews-view-table-wrapper {
+			flex: 1;
 			overflow-y: auto;
-			max-height: calc(100vh - 326px); /* 326px is the size of all the height above and below the dataview, from the edges of the screen, plus 10px offset from the padding. Currently below 9px + 309 above */
 
 			table {
 				width: 100%;
@@ -248,12 +252,6 @@
 		&.sites-dashboard__layout {
 			.dataviews-view-table-wrapper {
 				overflow-y: auto;
-				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
-			}
-
-			.is-hiding-navigation .dataviews-view-table-wrapper {
-				overflow-y: auto;
-				max-height: calc(100vh - 260px); /* 260px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
 			}
 		}
 
@@ -330,7 +328,6 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: auto;
-				max-height: calc(100vh - 300px); /* 300px is the size of all content above the dataview in list style, which includes our CTA elements, the pagination bottom bar, and an additional 20px margin. */
 
 				li {
 					padding: 8px 24px;
@@ -541,6 +538,17 @@
 		}
 
 		.dataviews-wrapper {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+
+			> div[data-wp-component="VStack"] {
+				align-items: stretch;
+				overflow: hidden;
+			}
+
 			.components-button:focus:not(:disabled) {
 				box-shadow: 0 0 0 2px var(--color-primary-light);
 			}
@@ -556,17 +564,17 @@
 		}
 
 		.sites-overview {
+			height: 100%;
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
 			background: var(--color-light-backdrop);
 
 			.sites-overview__content {
-				margin-top: 24px;
-
-				&.is-hiding-navigation {
-					margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
-				}
+				display: flex;
+				flex: 1;
+				height: 100%;
+				overflow: hidden;
 			}
 		}
 
@@ -613,6 +621,14 @@
 			@media only screen and (min-width: $break-large) {
 				.sites-overview {
 					padding: 0;
+
+					.sites-overview__content {
+						margin-top: 24px;
+
+						&.is-hiding-navigation {
+							margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
+						}
+					}
 
 					.dataviews-filters__view-actions {
 						& > :first-child {

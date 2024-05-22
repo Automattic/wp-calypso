@@ -11,6 +11,7 @@ export default class HeaderCake extends Component {
 		const {
 			backText,
 			backHref,
+			backIcon,
 			actionButton,
 			actionText,
 			actionIcon,
@@ -31,6 +32,7 @@ export default class HeaderCake extends Component {
 					<HeaderCakeBack
 						text={ backText }
 						href={ backHref }
+						icon={ backIcon }
 						onClick={ this.props.onClick }
 						alwaysShowActionText={ alwaysShowBackText }
 					/>
@@ -62,6 +64,7 @@ HeaderCake.propTypes = {
 	onTitleClick: PropTypes.func,
 	backText: PropTypes.string,
 	backHref: PropTypes.string,
+	backIcon: PropTypes.string,
 	actionButton: PropTypes.element,
 	actionText: PropTypes.string,
 	actionHref: PropTypes.string,
