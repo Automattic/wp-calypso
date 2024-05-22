@@ -82,6 +82,7 @@ const StyledCommandsFooter = styled.div( {
 	color: 'var(--studio-gray-50)',
 	a: {
 		color: 'var(--studio-gray-50)',
+		'text-decoration': 'none',
 	},
 	'a.command-palette__footer-current-site, a:hover': {
 		color: 'var(--studio-gray-100)',
