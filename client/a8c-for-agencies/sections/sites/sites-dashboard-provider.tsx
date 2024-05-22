@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -92,6 +92,16 @@ export const SitesDashboardProvider = ( {
 		sort,
 		filters: dataViewsFilters,
 	} );
+
+	// Effects
+
+	// When the sidebar menu items are clicked
+	// The URL gets updated out of the SitesDashboardContext
+	// which causes the SitesDashboard not to refetch the sites
+	// Updating the dataViews state triggers the dashboard sites refetch
+	useEffect( () => {
+		setDataViewsState( ( prevState ) => ( { ...prevState } ) );
+	}, [ showOnlyFavorites ] );
 
 	// Callbacks
 	const handleSetBulkManagementActive = ( isActive: boolean ) => {
