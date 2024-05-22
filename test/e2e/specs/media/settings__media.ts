@@ -37,7 +37,14 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () 
 
 		testAccount = new TestAccount( accountName );
 
-		await testAccount.authenticate( page );
+		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+			// Switching to or logging into eCommerce plan sites inevitably
+			// loads WP-Admin instead of Calypso, but the rediret occurs
+			// only after Calypso attempts to load.
+			await testAccount.authenticate( page, { url: /wp-admin/ } );
+		} else {
+			await testAccount.authenticate( page );
+		}
 	} );
 
 	if ( envVariables.JETPACK_TARGET === 'remote-site' ) {
@@ -75,8 +82,14 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () 
 		let wpAdminMediaSettingsPage: WpAdminMediaSettingsPage;
 
 		it( 'Navigate to Settings > Media', async function () {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Settings', 'Media' );
+			// eCommerce plan loads WP-Admin for home dashboard,
+			// so instead navigate straight to the Media page.
+			if ( testAccount.accountName === 'jetpackAtomicEcommPlanUser' ) {
+				await page.goto( `${ testAccount.getSiteURL() }wp-admin/options-media.php` );
+			} else {
+				const sidebarComponent = new SidebarComponent( page );
+				await sidebarComponent.navigate( 'Settings', 'Media' );
+			}
 			wpAdminMediaSettingsPage = new WpAdminMediaSettingsPage( page );
 		} );
 
