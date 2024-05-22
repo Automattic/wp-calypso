@@ -1,3 +1,4 @@
+import debug from 'debug';
 import PropTypes from 'prop-types';
 import { createContext, PureComponent } from 'react';
 import { Provider } from 'react-redux';
@@ -9,9 +10,10 @@ import { mergeHandlers } from './state/action-middleware/utils';
 import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
 import Layout from './templates';
-const debug = require( 'debug' )( 'notifications:panel' );
 
 import './boot/stylesheets/style.scss';
+
+const logger = debug( 'notifications:panel' );
 
 let client;
 
@@ -49,7 +51,7 @@ export class Notifications extends PureComponent {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		debug( 'component will mount', this.props );
+		logger( 'component will mount', this.props );
 		const { customEnhancer, customMiddleware, isShowing, isVisible, receiveMessage, wpcom } =
 			this.props;
 
@@ -63,7 +65,7 @@ export class Notifications extends PureComponent {
 						}
 
 						if ( 'boolean' === typeof action.isVisible ) {
-							debug( 'APP_REFRESH_NOTES', {
+							logger( 'APP_REFRESH_NOTES', {
 								isShowing: this.props.isShowing,
 								isVisible: action.isVisible,
 							} );
@@ -104,7 +106,7 @@ export class Notifications extends PureComponent {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( { isShowing, isVisible, wpcom } ) {
-		debug( 'Component will recieve props', {
+		logger( 'Component will recieve props', {
 			isShowing,
 			isVisible,
 			wpcom,

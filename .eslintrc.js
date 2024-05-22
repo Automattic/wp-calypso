@@ -427,8 +427,6 @@ module.exports = {
 		// - path because we use it quite a bit
 		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path', 'config' ] } ],
 
-		'import/newline-after-import': [ 'error', { count: 1 } ],
-
 		/**
 		 * temporarily demote inclusive language rule to a warning until we clear the repository
 		 * and allow certain terms that we can't fix yet due to complexity or lack of control over the name
@@ -475,6 +473,7 @@ module.exports = {
 				groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
 			},
 		],
+		'import/newline-after-import': [ 'error' ],
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'warn',
