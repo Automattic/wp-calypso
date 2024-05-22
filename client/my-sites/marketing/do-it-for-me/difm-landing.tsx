@@ -512,7 +512,7 @@ export default function DIFMLanding( {
 						<FoldableFAQ id="faq-2" question={ translate( 'How much does it cost?' ) }>
 							<p>
 								{ translate(
-									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and live chat support.',
+									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and fast support from our expert team.',
 									{
 										args: {
 											displayCost,
