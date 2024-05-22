@@ -117,7 +117,7 @@ describe( 'useSiteTransfer', () => {
 		);
 	} );
 
-	it( 'completes the migration with success when the site was reverted', async () => {
+	it( 'completes the site preparation when the site transfer status is "reverted"', async () => {
 		const siteId = 4444;
 
 		nock( 'https://public-api.wordpress.com:443' )
