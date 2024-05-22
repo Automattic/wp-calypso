@@ -45,12 +45,12 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Interval
 			discountText: '',
 			termInMonths: 24,
 		},
-		'3yearly': {
-			key: '3yearly',
-			name: translate( 'Pay every 3 years' ),
-			discountText: '',
-			termInMonths: 36,
-		},
+		// '3yearly': {
+		// 	key: '3yearly',
+		// 	name: translate( 'Pay every 3 years' ),
+		// 	discountText: '',
+		// 	termInMonths: 36,
+		// },
 		monthly: {
 			key: 'monthly',
 			name: translate( 'Pay monthly' ),

@@ -1,6 +1,15 @@
+import {
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
+	PLAN_PREMIUM_3_YEARS,
+	PLAN_BUSINESS_3_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
+} from '@automattic/calypso-products';
 import { doesStringResembleDomain } from '@automattic/onboarding';
 import { untrailingslashit } from 'calypso/lib/route';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { Context } from '@automattic/calypso-router';
 
@@ -125,3 +134,13 @@ export function isContextJetpackSitelessCheckout( context: Context ): boolean {
 	}
 	return true;
 }
+
+export const replacePlansSlug: { [ key: string ]: string } = {
+	[ PLAN_PERSONAL_3_YEARS ]: PLAN_PERSONAL_2_YEARS,
+	[ PLAN_PREMIUM_3_YEARS ]: PLAN_PREMIUM_2_YEARS,
+	[ PLAN_BUSINESS_3_YEARS ]: PLAN_BUSINESS_2_YEARS,
+	[ PLAN_ECOMMERCE_3_YEARS ]: PLAN_ECOMMERCE_2_YEARS,
+};
+export const shouldReplacePlanSlug = ( planSlug: string, userCountryCode: string ): boolean => {
+	return userCountryCode === 'DE' && !! replacePlansSlug[ planSlug ];
+};
