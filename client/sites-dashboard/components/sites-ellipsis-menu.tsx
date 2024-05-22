@@ -26,6 +26,7 @@ import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -342,6 +343,9 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 		offset: -8,
 	} );
 	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
+	const currentRoute = useSelector( getCurrentRoute );
+	const hostingConfigUrl = getHostingConfigUrl( site.slug );
+	const shouldShowHostingConfigLink = currentRoute !== hostingConfigUrl;
 
 	if ( submenuItems.length === 0 ) {
 		return null;
@@ -389,18 +393,20 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 							),
 							upsellPlanName
 						) }
-						<Button
-							compact
-							primary
-							href={ getHostingConfigUrl( site.slug ) }
-							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_upsell_click', {
-									product_slug: site.plan?.product_slug,
-								} )
-							}
-						>
-							{ __( 'See full feature list' ) }
-						</Button>
+						{ shouldShowHostingConfigLink && (
+							<Button
+								compact
+								primary
+								href={ getHostingConfigUrl( site.slug ) }
+								onClick={ () =>
+									recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_upsell_click', {
+										product_slug: site.plan?.product_slug,
+									} )
+								}
+							>
+								{ __( 'See full feature list' ) }
+							</Button>
+						) }
 					</UpsellMenuGroup>
 				) : (
 					submenuItems.map( ( item ) => (
