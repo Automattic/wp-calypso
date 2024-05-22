@@ -1,9 +1,13 @@
+import { FEATURE_SFTP } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
+import isAutomatedTransferActive from 'calypso/state/automated-transfer/selectors/is-automated-transfer-active';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
@@ -67,21 +71,46 @@ const DevToolsPromo = () => {
 			supportContext: 'github-deployments',
 		},
 	];
+
+	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
+	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
+	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
+	const hasTransfer = useSelector( ( state ) =>
+		isAutomatedTransferActive( state, siteId as number )
+	);
+	const showHostingActivationButton = canSiteGoAtomic && ! hasTransfer;
+
 	return (
 		<div className="dev-tools-promo">
 			<div className="dev-tools-promo__hero">
-				<h1> { translate( 'Unlock all developer tools' ) }</h1>
+				<h1>
+					{ showHostingActivationButton
+						? translate( 'Activate hosting configuration' )
+						: translate( 'Unlock all developer tools' ) }
+				</h1>
 				<p>
-					{ translate(
-						'Upgrade to the Creator plan or higher to get access to all developer tools'
-					) }
+					{ showHostingActivationButton
+						? translate(
+								'Your plan includes all the developer tools listed below. Click "Activate Now" to begin.'
+						  )
+						: translate(
+								'Upgrade to the Creator plan or higher to get access to all developer tools'
+						  ) }
 				</p>
-				<Button variant="secondary" className="dev-tools-promo__button" href={ pluginsLink }>
-					{ translate( 'Browse plugins' ) }
-				</Button>
-				<Button variant="primary" className="dev-tools-promo__button" href={ upgradeLink }>
-					{ translate( 'Upgrade now' ) }
-				</Button>
+				{ showHostingActivationButton ? (
+					<Button variant="primary" className="dev-tools-promo__button" href={ upgradeLink }>
+						{ translate( 'Activate now' ) }
+					</Button>
+				) : (
+					<>
+						<Button variant="secondary" className="dev-tools-promo__button" href={ pluginsLink }>
+							{ translate( 'Browse plugins' ) }
+						</Button>
+						<Button variant="primary" className="dev-tools-promo__button" href={ upgradeLink }>
+							{ translate( 'Upgrade now' ) }
+						</Button>
+					</>
+				) }
 			</div>
 			<div className="dev-tools-promo__cards">
 				{ promoCards.map( ( card ) => (
