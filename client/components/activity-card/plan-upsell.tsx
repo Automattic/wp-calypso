@@ -66,7 +66,7 @@ const PlanUpsellCard: React.FC< Props > = ( { upsellPlanName } ) => {
 									type="button"
 									className="button activity-card__activity-overlay-button is-primary"
 								>
-									Upgrade
+									{ translate( 'Upgrade' ) }
 								</button>
 							</div>
 						</div>
