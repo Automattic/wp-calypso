@@ -281,6 +281,10 @@ $business-plan-color: #7f54b3;
 				border-bottom-left-radius: 0;
 				border-bottom: 1px solid #e0e0e0;
 				border-left: 0;
+
+				&.import__upgrade-plan-hosting-details-card-container--without-identified-host {
+					margin-bottom: calc(16px + 1rem); /* Height + padding of `.import__upgrade-plan-hosting-details-identified-host` */
+				}
 			}
 
 			.import__upgrade-plan-hosting-details-header {
@@ -404,7 +408,6 @@ $business-plan-color: #7f54b3;
 			text-align: center;
 			padding: 0.5rem 1.5rem;
 			line-height: 16px;
-			min-height: 16px;
 		}
 	}
 
