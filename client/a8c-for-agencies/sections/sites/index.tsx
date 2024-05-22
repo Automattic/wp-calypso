@@ -35,11 +35,33 @@ export default function () {
 	page(
 		'/sites/:category/:siteUrl/:feature',
 		requireAccessContext,
+		dashboardSitesContext,
 		sitesContext,
 		makeLayout,
 		clientRender
 	);
-	page( '/sites/:category/:siteUrl', requireAccessContext, sitesContext, makeLayout, clientRender );
-	page( '/sites/:category', requireAccessContext, sitesContext, makeLayout, clientRender );
-	page( '/sites', requireAccessContext, sitesContext, makeLayout, clientRender );
+	page(
+		'/sites/:category/:siteUrl',
+		requireAccessContext,
+		dashboardSitesContext,
+		sitesContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/sites/:category',
+		requireAccessContext,
+		dashboardSitesContext,
+		sitesContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/sites',
+		requireAccessContext,
+		dashboardSitesContext,
+		sitesContext,
+		makeLayout,
+		clientRender
+	);
 }
