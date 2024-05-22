@@ -15,6 +15,7 @@ import {
 } from './context';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { useCommandPalette } from './use-command-palette';
+import { siteUsesWpAdminInterface } from './utils';
 import type { Command as PaletteCommand } from './commands';
 import type { SiteExcerptData } from '@automattic/sites';
 import './style.scss';
@@ -79,6 +80,14 @@ const StyledCommandsFooter = styled.div( {
 	paddingBottom: '12px',
 	borderTop: '1px solid var(--studio-gray-5)',
 	color: 'var(--studio-gray-50)',
+	a: {
+		color: 'var(--studio-gray-50)',
+		'text-decoration': 'none',
+	},
+	'a.command-palette__footer-current-site, a:hover': {
+		color: 'var(--studio-gray-100)',
+	},
+	'a:hover': { 'text-decoration': 'underline' },
 } );
 
 export function CommandMenuGroup() {
@@ -91,12 +100,44 @@ export function CommandMenuGroup() {
 		setEmptyListNotice,
 		navigate,
 		currentRoute,
+		currentSiteId,
+		useSites,
 	} = useCommandPaletteContext();
-	const { commands, filterNotice, emptyListNotice } = useCommandPalette();
+	const { commands, filterNotice, emptyListNotice, inSiteContext } = useCommandPalette();
+	const { __ } = useI18n();
+
+	const sites = useSites();
+	const currentSite = sites.find( ( site: { ID: unknown } ) => site.ID === currentSiteId );
+	const adminUrl =
+		currentSite && siteUsesWpAdminInterface( currentSite )
+			? 'https://' + currentSite.slug + '/wp-admin'
+			: 'https://wordpress.com/home/' + currentSite?.slug;
+
+	// Should just use the name but need Jetpack change for this to work in wp-admin
+	const siteName = currentSite?.name ?? currentSite?.slug;
 
 	useEffect( () => {
-		setFooterMessage( filterNotice ?? '' );
-	}, [ setFooterMessage, filterNotice ] );
+		if ( ! filterNotice && inSiteContext ) {
+			const sitesPath = currentRoute.startsWith( '/wp-admin' )
+				? 'https://wordpress.com/sites'
+				: '/sites/';
+			const message = (
+				<>
+					<a className="command-palette__footer-all-sites" href={ sitesPath }>
+						{ __( 'All sites', __i18n_text_domain__ ) }
+					</a>
+					{ ' / ' }
+					{ adminUrl && (
+						<a className="command-palette__footer-current-site" href={ adminUrl }>
+							{ siteName }
+						</a>
+					) }
+				</>
+			);
+			setFooterMessage( message );
+			return;
+		}
+	}, [ setFooterMessage, filterNotice, inSiteContext, currentRoute, adminUrl, siteName, __ ] );
 
 	useEffect( () => {
 		setEmptyListNotice( emptyListNotice ?? '' );
@@ -248,7 +289,7 @@ const CommandPalette = ( {
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpenLocal, setIsOpenLocal ] = useState( false );
 	const isOpen = isOpenLocal || isOpenGlobal;
-	const [ footerMessage, setFooterMessage ] = useState( '' );
+	const [ footerMessage, setFooterMessage ] = useState< string | JSX.Element >( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	const open = useCallback( () => {
 		toggleModalOpenClassnameOnDocumentHtmlElement( true );
