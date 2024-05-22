@@ -2,6 +2,8 @@
 @import "@automattic/typography/styles/variables";
 
 #site-profiler-v2 {
+	--color-button: #3858e9;
+	--color-button-60: #193de0;
 	background: #000;
 	color: var(--studio-white);
 }
@@ -73,8 +75,6 @@
 
 	// Button style overrides necessary because of conflicting WPcom styles.
 	.button-action {
-		--color-button: #3858e9;
-		--color-button-60: #193de0;
 		color: #fff;
 		background: var(--color-button);
 		border-radius: 4px;
@@ -217,6 +217,14 @@
 			padding-top: 6rem;
 			padding-bottom: 130px;
 			background-size: 820px;
+		}
+	}
+
+	.results-header-block {
+		position: relative;
+
+		&.bad {
+			background: url(calypso/assets/images/site-profiler/background-results-bad.svg) no-repeat right top;
 		}
 	}
 

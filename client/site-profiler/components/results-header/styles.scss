@@ -1,0 +1,34 @@
+
+@import "@automattic/typography/styles/variables";
+
+.results-header--container {
+	display: flex;
+	flex-direction: column;
+
+	h1 {
+		font-weight: 500;
+	}
+
+}
+
+.results-header--domain-container {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+
+	span {
+		font-weight: 500;
+		font-family: "SF Pro Display", $sans;
+	}
+
+}
+.results-header--button-container {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+
+	button {
+		background-color: var(--color-button);
+		color: #fff;
+	}
+}

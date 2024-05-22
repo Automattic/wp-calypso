@@ -21,6 +21,7 @@ import HostingInformation from './hosting-information';
 import { LandingPageHeader } from './landing-page-header';
 import { MetricsSection } from './metrics-section';
 import './styles-v2.scss';
+import { ResultsHeader } from './results-header';
 
 const debug = debugFactory( 'apps:site-profiler' );
 
@@ -115,53 +116,60 @@ export default function SiteProfilerV2( props: Props ) {
 				</LayoutBlock>
 			) }
 			{ showResultScreen && (
-				<LayoutBlock width="medium">
-					{ siteProfilerData && (
-						<>
-							<MetricsSection
-								name={ translate( 'Hosting' ) }
-								title={ translate(
-									'Struggles with hosting {{alert}}speed and uptime{{/alert}} deter visitors. A switch to WordPress.com could transform the user experience.',
-									{
-										components: {
-											alert: <span className="alert" />,
-										},
-									}
-								) }
-								subtitle={ translate( 'Upgrade your hosting with WordPress.com' ) }
-								ref={ hostingRef }
-							>
-								<HostingInformation
-									dns={ siteProfilerData.dns }
-									urlData={ urlData }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									hideTitle
-								/>
-							</MetricsSection>
-							<MetricsSection
-								name={ translate( 'Domain' ) }
-								title={ translate(
-									'Your domain {{success}}set up is good{{/success}}, but you could boost your site’s visibility and growth.',
-									{
-										components: {
-											success: <span className="success" />,
-										},
-									}
-								) }
-								subtitle={ translate( 'Optimize your domain' ) }
-								ref={ domainRef }
-							>
-								<DomainInformation
-									domain={ domain }
-									whois={ siteProfilerData.whois }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									urlData={ urlData }
-									hideTitle
-								/>
-							</MetricsSection>
-						</>
-					) }
-				</LayoutBlock>
+				<>
+					<LayoutBlock className="results-header-block bad" width="medium">
+						{ showBasicMetrics && (
+							<ResultsHeader domain={ domain } basicMetrics={ basicMetrics } />
+						) }
+					</LayoutBlock>
+					<LayoutBlock width="medium">
+						{ siteProfilerData && (
+							<>
+								<MetricsSection
+									name={ translate( 'Hosting' ) }
+									title={ translate(
+										'Struggles with hosting {{alert}}speed and uptime{{/alert}} deter visitors. A switch to WordPress.com could transform the user experience.',
+										{
+											components: {
+												alert: <span className="alert" />,
+											},
+										}
+									) }
+									subtitle={ translate( 'Upgrade your hosting with WordPress.com' ) }
+									ref={ hostingRef }
+								>
+									<HostingInformation
+										dns={ siteProfilerData.dns }
+										urlData={ urlData }
+										hostingProvider={ hostingProviderData?.hosting_provider }
+										hideTitle
+									/>
+								</MetricsSection>
+								<MetricsSection
+									name={ translate( 'Domain' ) }
+									title={ translate(
+										'Your domain {{success}}set up is good{{/success}}, but you could boost your site’s visibility and growth.',
+										{
+											components: {
+												success: <span className="success" />,
+											},
+										}
+									) }
+									subtitle={ translate( 'Optimize your domain' ) }
+									ref={ domainRef }
+								>
+									<DomainInformation
+										domain={ domain }
+										whois={ siteProfilerData.whois }
+										hostingProvider={ hostingProviderData?.hosting_provider }
+										urlData={ urlData }
+										hideTitle
+									/>
+								</MetricsSection>
+							</>
+						) }
+					</LayoutBlock>
+				</>
 			) }
 
 			<GetReportForm
