@@ -8,7 +8,8 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { isA4APurchase } from 'calypso/lib/purchases';
 import { omitUrlParams } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { fetchSitePurchases } from 'calypso/state/purchases/actions';
+import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 
@@ -20,6 +21,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	const isPaidPlan = ! site?.plan?.is_free;
 	const isBilledMonthly = site?.plan?.product_slug?.includes( 'monthly' );
 	const transformedDomains = allDomains.map( createSiteDomainObject );
+	const [ isInitiallyLoaded, setIsInitiallyLoaded ] = useState( false );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardButtonEl = useRef( null );
 	const hasCustomDomain = Boolean(
@@ -31,6 +33,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 		( purchase ) => purchase.productSlug === sitePlanSlug
 	);
 	const isA4ASite = isA4APurchase( actualPlanPurchase[ 0 ] );
+	const isLoading = useSelector( isFetchingSitePurchases );
 
 	useEffect( () => {
 		// Remove the celebrateLaunch URL param without reloading the page as soon as the modal loads
@@ -47,6 +50,16 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 			} )
 		);
 	}, [] );
+
+	useEffect( () => {
+		dispatch( fetchSitePurchases( site?.ID ) );
+	}, [ dispatch, site?.ID ] );
+
+	useEffect( () => {
+		if ( ! isLoading && ( ! isPaidPlan || purchases.length > 0 ) && ! isInitiallyLoaded ) {
+			setIsInitiallyLoaded( true );
+		}
+	}, [ isLoading, purchases, isPaidPlan ] );
 
 	function renderUpsellContent() {
 		let contentElement;
@@ -108,6 +121,10 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 				</Button>
 			</div>
 		);
+	}
+
+	if ( ! isInitiallyLoaded ) {
+		return null;
 	}
 
 	return (
