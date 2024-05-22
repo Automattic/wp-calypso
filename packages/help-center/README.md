@@ -11,7 +11,7 @@ Example
 "/wp-admin/post-new.php": "new post"
 ```
 
-# Suggest specific articles per page/route
+## Suggest specific articles per page/route
 
 In [tailored-post-ids-mapping.json](https://github.com/Automattic/wp-calypso/blob/add/tailored_posts_help_center/packages/help-center/src/tailored-post-ids-mapping.json), there is a JSON structure where you can specify which post id ( one or many ) from which blog ( just one blog ) should be displayed
 

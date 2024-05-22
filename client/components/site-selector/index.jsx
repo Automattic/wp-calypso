@@ -64,6 +64,7 @@ export class SiteSelector extends Component {
 		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
 		hasSiteWithPlugins: PropTypes.bool,
+		showListBottomAdornment: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -81,6 +82,7 @@ export class SiteSelector extends Component {
 		onSiteSelect: noop,
 		groups: false,
 		autoFocus: false,
+		showListBottomAdornment: true,
 	};
 
 	state = {
@@ -377,7 +379,7 @@ export class SiteSelector extends Component {
 				showIcon={ !! multiSiteContext?.icon }
 				icon={
 					multiSiteContext?.icon && (
-						<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden={ true } />
+						<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden />
 					)
 				}
 			/>
@@ -446,30 +448,33 @@ export class SiteSelector extends Component {
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
 					{ this.renderSites( sites ) }
-					{ ! this.props.showHiddenSites && hiddenSitesCount > 0 && ! this.state.searchTerm && (
-						<span className="site-selector__list-bottom-adornment">
-							{ this.props.translate(
-								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
-								'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
-								{
-									count: hiddenSitesCount,
-									args: {
-										hiddenSitesCount: hiddenSitesCount,
-									},
-									components: {
-										br: <br />,
-										a: (
-											<a
-												href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
-							) }
-						</span>
-					) }
+					{ this.props.showListBottomAdornment &&
+						! this.props.showHiddenSites &&
+						hiddenSitesCount > 0 &&
+						! this.state.searchTerm && (
+							<span className="site-selector__list-bottom-adornment">
+								{ this.props.translate(
+									'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
+									'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
+									{
+										count: hiddenSitesCount,
+										args: {
+											hiddenSitesCount: hiddenSitesCount,
+										},
+										components: {
+											br: <br />,
+											a: (
+												<a
+													href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							</span>
+						) }
 				</div>
 				{ ( this.props.showManageSitesButton || this.props.showAddNewSite ) && (
 					<div className="site-selector__actions">

@@ -147,7 +147,7 @@ class MagicLogin extends Component {
 					campaign="calypso-login-link-check-email"
 					className="magic-link-app-promo"
 					iconSize={ 32 }
-					hasQRCode={ true }
+					hasQRCode
 					hasGetAppButton={ false }
 				/>
 			);
@@ -178,7 +178,7 @@ class MagicLogin extends Component {
 					campaign="calypso-login-link"
 					className="magic-link-app-promo"
 					iconSize={ 32 }
-					hasQRCode={ true }
+					hasQRCode
 					hasGetAppButton={ false }
 				/>
 			</>
@@ -521,7 +521,7 @@ class MagicLogin extends Component {
 						) }
 						customFormLabel={ translate( 'Your email address' ) }
 						submitButtonLabel={ translate( 'Send activation link' ) }
-						createAccountForNewUser={ true }
+						createAccountForNewUser
 					/>
 
 					{ this.renderLinks() }

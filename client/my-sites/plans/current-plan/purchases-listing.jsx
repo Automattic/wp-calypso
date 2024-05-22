@@ -228,7 +228,7 @@ class PurchasesListing extends Component {
 						: '#'
 				}
 				disabled={ ! userIsPurchaseOwner }
-				compact={ true }
+				compact
 			>
 				{ label }
 				&nbsp;

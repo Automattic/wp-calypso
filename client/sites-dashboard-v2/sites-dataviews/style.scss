@@ -34,13 +34,6 @@
 	overflow: hidden;
 	white-space: nowrap;
 
-	&:hover,
-	&:hover:visited {
-		color: var(--color-link);
-	}
-}
-
-.sites-dataviews__site-wp-admin-url {
 	&:focus {
 		border-radius: 2px;
 		box-shadow: 0 0 0 2px var(--color-primary-light);
@@ -48,6 +41,15 @@
 
 	&:visited {
 		color: var(--color-neutral-70);
+	}
+
+	&:hover,
+	&:hover:visited {
+		color: var(--color-link);
+	}
+
+	svg {
+		vertical-align: sub;
 	}
 }
 
@@ -86,10 +88,6 @@
 			margin-right: 0 !important;
 		}
 	}
-}
-
-.sites-overview__content:has(.dataviews-pagination) {
-	padding-bottom: 32px !important;
 }
 
 .main.sites-dashboard.sites-dashboard__layout:has(.dataviews-pagination) {

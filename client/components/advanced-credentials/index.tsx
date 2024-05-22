@@ -8,7 +8,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { useSelector, useDispatch } from 'calypso/state';
 import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
-import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	deleteCredentials,
 	updateCredentials,
@@ -412,10 +412,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 		}
 	};
 
-	useEffect( () => {
-		dispatch( loadTrackingTool( 'LogRocket' ) );
-	}, [ dispatch ] );
-
 	return (
 		<div className={ `advanced-credentials ${ isAlternate ? 'alternate' : '' }` }>
 			<QuerySiteCredentials siteId={ siteId } />
@@ -424,7 +420,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				title="Advanced Credentials"
 				properties={ { step: currentStep } }
 			/>
-			<Card compact={ true } className="advanced-credentials__server-connection-status">
+			<Card compact className="advanced-credentials__server-connection-status">
 				<div className="advanced-credentials__server-connection-status-content">
 					<h3>{ translate( 'Remote server credentials' ) }</h3>
 					<ConnectionStatus state={ statusState } />

@@ -598,12 +598,11 @@ const Settings = ( {
 			>
 				<Button
 					onClick={ handleTransferDomainClick }
-					href={ domainUseMyDomain(
-						selectedSite?.slug,
-						domain.name,
-						useMyDomainInputMode.transferDomain
-					) }
-					primary={ true }
+					href={ domainUseMyDomain( selectedSite?.slug, {
+						domain: domain.name,
+						initialMode: useMyDomainInputMode.transferDomain,
+					} ) }
+					primary
 				>
 					{ translate( 'Transfer' ) }
 				</Button>
@@ -635,7 +634,7 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				expanded={ true }
+				expanded
 				title={ translate( 'Contact verification', { textOnly: true } ) }
 				subtitle={ translate( 'Additional contact verification required for your domain', {
 					textOnly: true,

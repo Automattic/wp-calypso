@@ -8,7 +8,10 @@ import {
 import page from '@automattic/calypso-router';
 import { PlanPrice } from '@automattic/components';
 import Card from '@automattic/components/src/card';
+import { formatCurrency } from '@automattic/format-currency';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { CustomSelectControl } from '@wordpress/components';
+import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useState } from 'react';
 import './style.scss';
@@ -41,6 +44,7 @@ type PlanKeys =
 
 const useEntrepreneurPlanPrices = () => {
 	const translate = useTranslate();
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || '';
 	const state = useSelector( ( stateValue ) => stateValue );
 	const rawPlans = getPlans();
 
@@ -87,19 +91,34 @@ const useEntrepreneurPlanPrices = () => {
 		switch ( key ) {
 			case 'PLAN_ECOMMERCE':
 				plan.subText = translate( 'per month, %(rawPrice)s billed annually, excl. taxes', {
-					args: { rawPrice: plan.price },
+					args: {
+						rawPrice: formatCurrency( plan.price, currencyCode, {
+							stripZeros: true,
+							isSmallestUnit: false,
+						} ),
+					},
 					comment: 'Excl. Taxes is short for excluding taxes',
 				} );
 				break;
 			case 'PLAN_ECOMMERCE_2_YEARS':
 				plan.subText = translate( 'per month, %(rawPrice)s billed every two years, excl. taxes', {
-					args: { rawPrice: plan.price },
+					args: {
+						rawPrice: formatCurrency( plan.price, currencyCode, {
+							stripZeros: true,
+							isSmallestUnit: false,
+						} ),
+					},
 					comment: 'Excl. Taxes is short for excluding taxes',
 				} );
 				break;
 			case 'PLAN_ECOMMERCE_3_YEARS':
 				plan.subText = translate( 'per month, %(rawPrice)s billed every three years, excl. taxes', {
-					args: { rawPrice: plan.price },
+					args: {
+						rawPrice: formatCurrency( plan.price, currencyCode, {
+							stripZeros: true,
+							isSmallestUnit: false,
+						} ),
+					},
 					comment: 'Excl. Taxes is short for excluding taxes',
 				} );
 				break;
@@ -115,6 +134,7 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const plans = useEntrepreneurPlanPrices();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const isEnglish = useIsEnglishLocale();
 	const [ selectedInterval, setSelectedInterval ] = useState< PlanKeys >( 'PLAN_ECOMMERCE' );
 	const selectedPlan = plans[ selectedInterval ];
 
@@ -146,15 +166,19 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 		setSelectedInterval( key );
 	};
 
+	const hasNewTitleTranslation = hasTranslation( "What's included in your free trial:" );
+	const titleTranslation =
+		isEnglish || hasNewTitleTranslation
+			? translate( "What's included in your free trial:" )
+			: translate( "What's included in your free trial" );
+
 	return (
 		<>
 			{ ! hideTrialIncluded && (
 				<>
-					<h2 className="entrepreneur-trial-plan__section-title">
-						{ translate( "What's included in your free trial" ) }
-					</h2>
+					<h2 className="entrepreneur-trial-plan__section-title">{ titleTranslation }</h2>
 					<div className="entrepreneur-trial-plan__included-wrapper">
-						<EcommerceTrialIncluded displayAll={ true } />
+						<EcommerceTrialIncluded displayAll />
 					</div>
 				</>
 			) }

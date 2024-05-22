@@ -24,6 +24,15 @@
 	animation: fadein 300ms;
 }
 
+// Increase specificity by repeating class name.
+.mshots-dummy-image.mshots-dummy-image {
+	position: absolute;
+	display: block;
+	visibility: hidden;
+	height: 0;
+	width: 0;
+}
+
 @keyframes fadein {
 	from {
 		opacity: 0;

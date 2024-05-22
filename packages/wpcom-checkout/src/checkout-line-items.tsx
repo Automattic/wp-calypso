@@ -1051,10 +1051,10 @@ const UpgradeCreditHelpIconLink = () => {
 				<Gridicon icon="help-outline" size={ 18 } />
 			</span>
 			<UpgradeCreditPopover
-				autoPosition={ true }
+				autoPosition
 				context={ ref.current }
 				isVisible={ isPopoverOpen }
-				hideArrow={ true }
+				hideArrow
 			>
 				{ translate(
 					'Upgrade now and we’ll automatically apply the remaining credit from your current plan. Remember, upgrade credit can only be used toward plan upgrades for the same website.'

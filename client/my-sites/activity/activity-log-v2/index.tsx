@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -21,7 +20,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { backupClonePath } from 'calypso/my-sites/backup/paths';
 import { useSelector, useDispatch } from 'calypso/state';
-import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
@@ -110,10 +109,6 @@ const ActivityLogV2: FunctionComponent = () => {
 			openButtonLinkOnNewTab={ false }
 		/>
 	);
-
-	useEffect( () => {
-		dispatch( loadTrackingTool( 'LogRocket' ) );
-	}, [ dispatch ] );
 
 	return (
 		<Main

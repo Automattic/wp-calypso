@@ -95,7 +95,7 @@ export default function SignupForm() {
 			</h2>
 
 			<AgencyDetailsForm
-				includeTermsOfService={ true }
+				includeTermsOfService
 				isLoading={ createAgency.isPending }
 				onSubmit={ onSubmit }
 				submitLabel={ translate( 'Continue' ) }

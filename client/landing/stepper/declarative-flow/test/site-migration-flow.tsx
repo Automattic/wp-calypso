@@ -7,6 +7,7 @@ import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
@@ -18,6 +19,9 @@ const originalLocation = window.location;
 jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
+jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
+	triggerGuidesForStep: jest.fn(),
+} ) );
 
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
@@ -41,6 +45,7 @@ describe( 'Site Migration Flow', () => {
 		const testSettingsEndpoint = '/rest/v1.4/sites/example.wordpress.com/settings';
 		nock( apiBaseUrl ).get( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( testSettingsEndpoint ).reply( 200, {} );
+		nock( apiBaseUrl ).post( '/wpcom/v2/guides/trigger' ).reply( 200, {} );
 	} );
 
 	afterEach( () => {
@@ -96,6 +101,36 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	describe( 'navigation', () => {
+		beforeEach( () => {
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/guides/trigger', {
+					flow: 'site-migration',
+					step: 'site-migration-identify',
+				} )
+				.reply( 200, { success: true } );
+
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/guides/trigger', {
+					flow: 'site-migration',
+					step: 'site-migration-import-or-migrate',
+				} )
+				.reply( 200, { success: true } );
+
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/guides/trigger', {
+					flow: 'site-migration',
+					step: 'site-migration-upgrade-plan',
+				} )
+				.reply( 200, { success: true } );
+
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/guides/trigger', {
+					flow: 'site-migration',
+					step: 'site-migration-assign-trial-plan',
+				} )
+				.reply( 200, { success: true } );
+		} );
+
 		it( 'redirects the user to the migrate or import page when the platform is wordpress', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
@@ -232,6 +267,42 @@ describe( 'Site Migration Flow', () => {
 				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`,
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
+		} );
+
+		it( 'calls triggerGuidesForStep when navigating site migration identify', async () => {
+			const flowName = 'site-migration';
+			const currentStep = STEPS.SITE_MIGRATION_IDENTIFY.slug;
+
+			triggerGuidesForStep( flowName, currentStep );
+
+			expect( triggerGuidesForStep ).toHaveBeenCalledWith( flowName, currentStep );
+		} );
+
+		it( 'calls triggerGuidesForStep when navigating to the import or migrate step', async () => {
+			const flowName = 'site-migration';
+			const currentStep = STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug;
+
+			triggerGuidesForStep( flowName, currentStep );
+
+			expect( triggerGuidesForStep ).toHaveBeenCalledWith( flowName, currentStep );
+		} );
+
+		it( 'calls triggerGuidesForStep when navigating site migration upgrade plan', async () => {
+			const flowName = 'site-migration';
+			const currentStep = STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug;
+
+			triggerGuidesForStep( flowName, currentStep );
+
+			expect( triggerGuidesForStep ).toHaveBeenCalledWith( flowName, currentStep );
+		} );
+
+		it( 'calls triggerGuidesForStep when navigating site migration assign trial plan', async () => {
+			const flowName = 'site-migration';
+			const currentStep = STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug;
+
+			triggerGuidesForStep( flowName, currentStep );
+
+			expect( triggerGuidesForStep ).toHaveBeenCalledWith( flowName, currentStep );
 		} );
 	} );
 

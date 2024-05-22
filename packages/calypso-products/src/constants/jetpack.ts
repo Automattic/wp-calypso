@@ -58,8 +58,23 @@ export const PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY = 'jetpack_social_advance
 export const PRODUCT_JETPACK_SOCIAL_ADVANCED = 'jetpack_social_advanced_yearly';
 export const PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY = 'jetpack_social_advanced_monthly';
 export const PRODUCT_JETPACK_STATS_MONTHLY = 'jetpack_stats_monthly';
+export const PRODUCT_JETPACK_STATS_MONTHLY_10K = 'jetpack_stats_monthly:-q-10000';
+export const PRODUCT_JETPACK_STATS_MONTHLY_100K = 'jetpack_stats_monthly:-q-100000';
+export const PRODUCT_JETPACK_STATS_MONTHLY_250K = 'jetpack_stats_monthly:-q-250000';
+export const PRODUCT_JETPACK_STATS_MONTHLY_500K = 'jetpack_stats_monthly:-q-500000';
+export const PRODUCT_JETPACK_STATS_MONTHLY_1M = 'jetpack_stats_monthly:-q-1000000';
 export const PRODUCT_JETPACK_STATS_YEARLY = 'jetpack_stats_yearly';
+export const PRODUCT_JETPACK_STATS_YEARLY_10K = 'jetpack_stats_yearly:-q-10000';
+export const PRODUCT_JETPACK_STATS_YEARLY_100K = 'jetpack_stats_yearly:-q-100000';
+export const PRODUCT_JETPACK_STATS_YEARLY_250K = 'jetpack_stats_yearly:-q-250000';
+export const PRODUCT_JETPACK_STATS_YEARLY_500K = 'jetpack_stats_yearly:-q-500000';
+export const PRODUCT_JETPACK_STATS_YEARLY_1M = 'jetpack_stats_yearly:-q-1000000';
 export const PRODUCT_JETPACK_STATS_BI_YEARLY = 'jetpack_stats_bi_yearly';
+export const PRODUCT_JETPACK_STATS_BI_YEARLY_10K = 'jetpack_stats_bi_yearly:-q-10000';
+export const PRODUCT_JETPACK_STATS_BI_YEARLY_100K = 'jetpack_stats_bi_yearly:-q-100000';
+export const PRODUCT_JETPACK_STATS_BI_YEARLY_250K = 'jetpack_stats_bi_yearly:-q-250000';
+export const PRODUCT_JETPACK_STATS_BI_YEARLY_500K = 'jetpack_stats_bi_yearly:-q-500000';
+export const PRODUCT_JETPACK_STATS_BI_YEARLY_1M = 'jetpack_stats_bi_yearly:-q-1000000';
 export const PRODUCT_JETPACK_STATS_PWYW_YEARLY = 'jetpack_stats_pwyw_yearly';
 export const PRODUCT_JETPACK_STATS_FREE = 'jetpack_stats_free_yearly';
 export const PRODUCT_JETPACK_MONITOR_YEARLY = 'jetpack_monitor_yearly';
@@ -263,6 +278,24 @@ export const JETPACK_AI_ALIASES = < const >[
 	PRODUCT_JETPACK_AI_YEARLY_1000,
 ];
 
+export const JETPACK_STATS_ALIASES = < const >[
+	PRODUCT_JETPACK_STATS_BI_YEARLY_10K,
+	PRODUCT_JETPACK_STATS_BI_YEARLY_100K,
+	PRODUCT_JETPACK_STATS_BI_YEARLY_250K,
+	PRODUCT_JETPACK_STATS_BI_YEARLY_500K,
+	PRODUCT_JETPACK_STATS_BI_YEARLY_1M,
+	PRODUCT_JETPACK_STATS_MONTHLY_10K,
+	PRODUCT_JETPACK_STATS_MONTHLY_100K,
+	PRODUCT_JETPACK_STATS_MONTHLY_250K,
+	PRODUCT_JETPACK_STATS_MONTHLY_500K,
+	PRODUCT_JETPACK_STATS_MONTHLY_1M,
+	PRODUCT_JETPACK_STATS_YEARLY_10K,
+	PRODUCT_JETPACK_STATS_YEARLY_100K,
+	PRODUCT_JETPACK_STATS_YEARLY_250K,
+	PRODUCT_JETPACK_STATS_YEARLY_500K,
+	PRODUCT_JETPACK_STATS_YEARLY_1M,
+];
+
 // Creator
 export const JETPACK_CREATOR_PRODUCTS = < const >[
 	PRODUCT_JETPACK_CREATOR_BI_YEARLY,
@@ -297,7 +330,16 @@ export const JETPACK_PRODUCTS_LIST = < const >[
 
 // Aliases are for products with quantity slugs in checkout (ex. jetpack-ai-yearly:-q-100)
 // These are here to help with handling product quantity in situations where infrastructure is not aware of it
-export const JETPACK_ALIAS_LIST = < const >[ ...JETPACK_AI_ALIASES ];
+export const JETPACK_ALIAS_LIST = < const >[ ...JETPACK_AI_ALIASES, ...JETPACK_STATS_ALIASES ];
+
+// Defines Jetpack products with multiple tiers
+export const JETPACK_TIERED_PRODUCTS = < const >[
+	...JETPACK_AI_PRODUCTS,
+	...JETPACK_STATS_PRODUCTS,
+];
+
+// Defines Jetpack products with multiple product options (ex. Social Basic/Social Advanced)
+export const JETPACK_MULTI_OPTION_PRODUCTS = < const >[ ...JETPACK_SOCIAL_PRODUCTS ];
 
 export const JETPACK_PRODUCTS_BY_TERM = < const >[
 	{

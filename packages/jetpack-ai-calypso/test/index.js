@@ -14,7 +14,7 @@ import { GeneratorModal } from '../src';
 
 describe( 'Base', () => {
 	it( 'should render modal header', async () => {
-		render( <GeneratorModal isOpen={ true } /> );
+		render( <GeneratorModal isOpen /> );
 		expect( await screen.findByText( 'Jetpack AI Logo Generator' ) ).toBeInTheDocument();
 	} );
 } );

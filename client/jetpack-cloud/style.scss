@@ -25,7 +25,9 @@
 
 // New navigation will not include a masterbar
 .theme-jetpack-cloud .layout.has-no-masterbar {
-	--masterbar-height: 0;
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-height: 0px;
 
 	// By default, there's 32px of top padding on the layout component.
 	// On mobile views this accommodates the masterbar, but we don't have one;

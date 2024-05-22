@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { LocalizeProps } from 'i18n-calypso';
 import { FC } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -20,6 +21,7 @@ export const GlobalSidebarFooter: FC< {
 } > = ( { translate, user } ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
+	const isDesktop = useBreakpoint( '>=782px' );
 
 	const isMac = window?.navigator.userAgent && window.navigator.userAgent.indexOf( 'Mac' ) > -1;
 	const searchShortcut = isMac ? '⌘ + K' : 'Ctrl + K';
@@ -44,20 +46,24 @@ export const GlobalSidebarFooter: FC< {
 				}
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.HELPCENTER_CLICK ) }
 			/>
-			<SidebarSearch
-				tooltip={
-					hasEnTranslation( 'Search (%(shortcut)s)' )
-						? translate( 'Search (%(shortcut)s)', { args: { shortcut: searchShortcut } } )
-						: translate( 'Jump to…' )
-				}
-				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.SEARCH_CLICK ) }
-			/>
-			<SidebarNotifications
-				className="sidebar__item-notifications"
-				tooltip={ translate( 'Notifications' ) }
-				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.NOTIFICATION_CLICK ) }
-				translate={ translate }
-			/>
+			{ isDesktop && (
+				<>
+					<SidebarSearch
+						tooltip={
+							hasEnTranslation( 'Search (%(shortcut)s)' )
+								? translate( 'Search (%(shortcut)s)', { args: { shortcut: searchShortcut } } )
+								: translate( 'Jump to…' )
+						}
+						onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.SEARCH_CLICK ) }
+					/>
+					<SidebarNotifications
+						className="sidebar__item-notifications"
+						tooltip={ translate( 'Notifications' ) }
+						onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.NOTIFICATION_CLICK ) }
+						translate={ translate }
+					/>
+				</>
+			) }
 			{ isInSupportSession && (
 				<QuickLanguageSwitcher className="sidebar__footer-language-switcher" shouldRenderAsButton />
 			) }

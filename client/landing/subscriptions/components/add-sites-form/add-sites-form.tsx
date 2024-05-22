@@ -110,7 +110,7 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 				onBlur={ () => validateInputValue( inputValue, true ) }
 			/>
 
-			{ inputFieldError ? <FormInputValidation isError={ true } text={ inputFieldError } /> : null }
+			{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
 
 			<Button
 				primary

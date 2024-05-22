@@ -22,65 +22,11 @@ $brand-display: "SF Pro Display", sans-serif;
 	.plugins-update-manager-multisite-filter {
 		margin-top: 1.25rem;
 		margin-bottom: 1.25rem;
-		display: flex;
-		justify-content: flex-start;
-		align-items: center;
-		gap: 1rem;
-		flex-wrap: wrap;
 
-		.search-component {
-			min-width: min(25rem, 100%);
-			flex: 1;
-
-			max-width: 30rem;
-			box-sizing: border-box;
-
-			border: 1px solid $studio-gray-10;
-			border-radius: 2px;
-
-			&.is-compact {
-				.plugins-update-manager-multisite-filter__search-icon {
-					width: 0.875rem;
-					margin: 0 0.5rem;
-				}
-
-				input {
-					font-size: 0.875rem;
-				}
-			}
-
-			.plugins-update-manager-multisite-filter__search-icon {
-				margin-left: 1rem;
-				margin-right: 0.875rem;
-			}
-
-			input.search-component__input[type="search"]::placeholder {
-				color: $studio-gray-50;
-			}
-
-			.components-spinner {
-				display: none;
-			}
+		.components-search-control {
+			margin-bottom: 0;
 		}
 	}
-
-	.empty-state {
-		max-width: 50%;
-		text-align: left;
-		padding: 0;
-
-		@media screen and (max-width: $break-large) {
-			max-width: 100%;
-		}
-
-		p {
-			color: var(--studio-gray-100);
-			margin: 1.5rem auto;
-			font-size: rem(18px);
-			line-height: 1.625;
-		}
-	}
-
 
 	.plugins-update-manager-multisite-card {
 		margin-bottom: 1rem;

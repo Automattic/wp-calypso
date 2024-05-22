@@ -58,8 +58,8 @@ const PageList = ( { pagesToShow, onSelectPage }: PageListProps ) => {
 					{ ...composite }
 					role="checkbox"
 					as="button"
-					disabled={ true }
-					focusable={ true }
+					disabled
+					focusable
 					aria-checked="true"
 				>
 					<PageListItem label={ translate( 'Homepage' ) } isDisabled />

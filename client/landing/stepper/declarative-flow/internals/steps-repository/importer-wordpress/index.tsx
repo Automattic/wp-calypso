@@ -39,7 +39,7 @@ const ImporterWordpress: Step = function ( props ) {
 					navigateBack={ props.navigation.goBack }
 				/>
 			) }
-			<Importer importer="wordpress" { ...props } />;
+			<Importer importer="wordpress" { ...props } />
 		</>
 	);
 };

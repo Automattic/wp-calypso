@@ -21,7 +21,7 @@ class SecurityCheckupTwoFactorBackupCodes extends Component {
 			this.props;
 
 		if ( ! areUserSettingsLoaded ) {
-			return <SecurityCheckupNavigationItem isPlaceholder={ true } />;
+			return <SecurityCheckupNavigationItem isPlaceholder />;
 		}
 
 		// Don't show this item if the user doesn't have 2FA enabled.

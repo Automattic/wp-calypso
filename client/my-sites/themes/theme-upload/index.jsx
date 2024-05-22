@@ -291,7 +291,7 @@ class Upload extends Component {
 				href={ upgradeUrl }
 				plan={ upsellPlan }
 				feature={ FEATURE_UPLOAD_THEMES }
-				showIcon={ true }
+				showIcon
 				onClick={ this.onUpsellNudgeClick }
 			/>
 		);

@@ -40,7 +40,7 @@ export const MostPopularPlans = ( {
 								<FeaturedLicenseMultiItemCard
 									variants={ item }
 									bundleSize={ supportedBundleSize }
-									ctaAsPrimary={ true }
+									ctaAsPrimary
 									isCtaDisabled={ false }
 									isCtaExternal={ false }
 								/>
@@ -48,7 +48,7 @@ export const MostPopularPlans = ( {
 								<FeaturedLicenseItemCard
 									item={ item }
 									bundleSize={ supportedBundleSize }
-									ctaAsPrimary={ true }
+									ctaAsPrimary
 									isCtaDisabled={ false }
 									isCtaExternal={ false }
 								/>

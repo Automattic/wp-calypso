@@ -204,6 +204,9 @@ const useMyDomain = ( context, next ) => {
 				path = `/domains/manage/${ context.query.initialQuery }/edit/${ context.params.site }`;
 			}
 		}
+		if ( context.query.redirect_to ) {
+			path = context.query.redirect_to;
+		}
 
 		page( path );
 	};
@@ -234,7 +237,7 @@ const transferDomainPrecheck = ( context, next ) => {
 
 	const handleGoBack = () => {
 		if ( context.query.goBack === 'use-my-domain' ) {
-			page( domainUseMyDomain( siteSlug, domain ) );
+			page( domainUseMyDomain( siteSlug, { domain } ) );
 			return;
 		}
 		page( domainManagementTransferIn( siteSlug, domain ) );
@@ -247,11 +250,7 @@ const transferDomainPrecheck = ( context, next ) => {
 			/>
 			<CalypsoShoppingCartProvider>
 				<div>
-					<TransferDomainStep
-						forcePrecheck={ true }
-						initialQuery={ domain }
-						goBack={ handleGoBack }
-					/>
+					<TransferDomainStep forcePrecheck initialQuery={ domain } goBack={ handleGoBack } />
 				</div>
 			</CalypsoShoppingCartProvider>
 		</Main>

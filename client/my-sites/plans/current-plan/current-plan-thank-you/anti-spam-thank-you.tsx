@@ -36,11 +36,7 @@ const AntiSpamProductThankYou = ( { installProgress }: { installProgress: number
 					) }
 				</p>
 				{ ! isInstalled && (
-					<ProgressBar
-						isPulsing={ true }
-						total={ 100 }
-						value={ Math.max( installProgress ?? 0, 10 ) }
-					/>
+					<ProgressBar isPulsing total={ 100 } value={ Math.max( installProgress ?? 0, 10 ) } />
 				) }
 			</>
 		</ThankYou>

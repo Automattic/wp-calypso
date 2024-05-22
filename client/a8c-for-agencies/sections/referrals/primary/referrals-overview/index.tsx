@@ -186,7 +186,7 @@ export default function ReferralsOverview() {
 									description={
 										<>
 											{ translate(
-												'Receive a revenue share of 5 basis points (0.05%) on new WooPayments gross merchandise value on clients’ sites.'
+												'Receive a revenue share of 5 basis points (0.05%) on new WooPayments total payments volume (TPV) on clients’ sites.'
 											) }
 											<div>
 												<Button

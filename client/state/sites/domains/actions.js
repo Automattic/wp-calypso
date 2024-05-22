@@ -3,15 +3,17 @@ import { translate } from 'i18n-calypso';
 import { map } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
-	DOMAIN_PRIVACY_ENABLE,
-	DOMAIN_PRIVACY_DISABLE,
-	SITE_DOMAINS_RECEIVE,
-	SITE_DOMAINS_REQUEST,
-	SITE_DOMAINS_REQUEST_SUCCESS,
-	SITE_DOMAINS_REQUEST_FAILURE,
 	DOMAIN_CONTACT_INFO_DISCLOSE,
 	DOMAIN_CONTACT_INFO_REDACT,
+	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_SUCCESS,
+	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_UPDATE,
 	DOMAIN_MARK_AS_PENDING_MOVE,
+	DOMAIN_PRIVACY_DISABLE,
+	DOMAIN_PRIVACY_ENABLE,
+	SITE_DOMAINS_RECEIVE,
+	SITE_DOMAINS_REQUEST,
+	SITE_DOMAINS_REQUEST_FAILURE,
+	SITE_DOMAINS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { requestSite } from 'calypso/state/sites/actions';
 import { createSiteDomainObject } from './assembler';
@@ -147,17 +149,35 @@ export function disableDomainPrivacy( siteId, domain ) {
 	};
 }
 
+export function updatePrimaryDomainAction( siteId, domain ) {
+	return {
+		type: DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_UPDATE,
+		siteId,
+		domain,
+	};
+}
+
+export function updatePrimaryDomainCompleteAction( siteId, domain ) {
+	return {
+		type: DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_SUCCESS,
+		siteId,
+		domain,
+	};
+}
+
 /**
  * @param {number} siteId
  * @param {string} domain
  */
 export const setPrimaryDomain = ( siteId, domain ) => async ( dispatch ) => {
+	dispatch( updatePrimaryDomainAction( siteId, domain ) );
 	debug( 'setPrimaryDomain', siteId, domain );
 	await wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain } );
 	await Promise.all( [
 		dispatch( requestSite( siteId ) ),
 		dispatch( fetchSiteDomains( siteId ) ),
 	] );
+	dispatch( updatePrimaryDomainCompleteAction( siteId, domain ) );
 };
 
 export function discloseDomainContactInfo( siteId, domain ) {

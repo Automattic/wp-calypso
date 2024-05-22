@@ -39,7 +39,6 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		button {
 			font-size: rem(14px);
-			border-radius: 4px;
 		}
 
 		.buttons {
@@ -47,6 +46,31 @@ $brand-display: "SF Pro Display", sans-serif;
 			align-items: center;
 			justify-content: flex-end;
 			gap: rem(10px);
+		}
+	}
+
+	.empty-state {
+		max-width: 50%;
+		text-align: left;
+		padding: 0;
+
+		@media screen and (max-width: $break-large) {
+			max-width: 100%;
+		}
+
+		p {
+			color: var(--studio-gray-100);
+			margin: 1.5rem auto;
+			font-size: rem(18px);
+			line-height: 1.625;
+		}
+	}
+
+	.empty-state__center {
+		margin: auto;
+
+		p {
+			text-align: center;
 		}
 	}
 
@@ -60,7 +84,10 @@ $brand-display: "SF Pro Display", sans-serif;
 		}
 
 		th {
+			font-size: rem(11px);
 			font-weight: 500;
+			text-transform: uppercase;
+			color: var(--studio-gray-80);
 
 			&.expand {
 				width: 4rem;
@@ -124,6 +151,24 @@ $brand-display: "SF Pro Display", sans-serif;
 					width: 100%;
 				}
 			}
+		}
+	}
+
+	.components-search-control {
+		max-width: 300px;
+		margin-bottom: 1.5rem;
+
+		.components-input-control__container {
+			border: solid 1px var(--studio-gray-10);
+			background-color: var(--studio-white);
+		}
+
+		.components-base-control__field {
+			display: block !important;
+		}
+
+		.components-input-control__suffix svg {
+			fill: var(--studio-gray-30);
 		}
 	}
 }

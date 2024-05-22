@@ -444,7 +444,7 @@ export default function CampaignItemDetails( props: Props ) {
 			<Main wideLayout className="campaign-item-details">
 				{ status === 'rejected' && (
 					<Notice
-						isReskinned={ true }
+						isReskinned
 						showDismiss={ false }
 						status="is-error"
 						icon="notice-outline"

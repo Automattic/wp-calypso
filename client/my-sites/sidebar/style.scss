@@ -197,7 +197,6 @@ $font-size: rem(14px);
 		.sidebar__expandable-title,
 		.sidebar__menu-link-text {
 			padding: $sidebar-item-padding;
-			max-height: 34px;
 			box-sizing: border-box;
 		}
 
@@ -834,6 +833,11 @@ $font-size: rem(14px);
 			}
 		}
 
+		.sidebar__expandable-title,
+		.sidebar__menu-link-text {
+			max-height: 34px;
+		}
+
 		.sidebar .notice {
 			.notice__content,
 			.notice__action {
@@ -1014,7 +1018,7 @@ $font-size: rem(14px);
 	// client/layout/sidebar/style.scss
 	.theme-default {
 		.focus-content .layout__content {
-			padding: 71px 24px 24px;
+			padding: 70px 24px 24px;
 			transition: padding 0.15s ease-in-out;
 		}
 
@@ -1095,7 +1099,8 @@ $font-size: rem(14px);
 		}
 
 		.focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
-			padding-top: 47px;
+			padding-top: 46px;
+			padding-bottom: 0;
 		}
 
 		// client/layout/sidebar/style.scss

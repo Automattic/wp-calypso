@@ -225,13 +225,6 @@ export default {
 			return;
 		}
 
-		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
-			return page.redirect(
-				getValidPath( context.params, userLoggedIn ) +
-					( context.querystring ? '?' + context.querystring : '' )
-			);
-		}
-
 		store.set( 'signup-locale', localeFromParams );
 
 		/**
@@ -259,6 +252,22 @@ export default {
 			// Force display of the new user survey for the onboarding flow
 			initialContext.isSignupSurveyActive = true;
 		}
+
+		// We have to filter out the new user survey at the beginning.
+		// Otherwise, calypso will redirect the user to the next step
+		// when they come back from the browser back button.
+		// See https://github.com/Automattic/dotcom-forge/issues/7232.
+		if ( ! initialContext.isSignupSurveyActive ) {
+			flows.excludeStep( 'new-user-survey' );
+		}
+
+		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
+			return page.redirect(
+				getValidPath( context.params, userLoggedIn ) +
+					( context.querystring ? '?' + context.querystring : '' )
+			);
+		}
+
 		next();
 	},
 

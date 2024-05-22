@@ -658,11 +658,10 @@ export function resolveDomainStatus(
 							components: {
 								a: (
 									<a
-										href={ domainUseMyDomain(
-											siteSlug as string,
-											domain.name,
-											useMyDomainInputMode.startPendingTransfer
-										) }
+										href={ domainUseMyDomain( siteSlug as string, {
+											domain: domain.name,
+											initialMode: useMyDomainInputMode.startPendingTransfer,
+										} ) }
 									/>
 								),
 							},
