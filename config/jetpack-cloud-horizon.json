@@ -97,7 +97,7 @@
 		"scan": true,
 		"site-purchases": true
 	},
-	"site_filter": [ "jetpack", "atomic", "wpcom" ],
+	"site_filter": [ "jetpack", "atomic" ],
 	"theme": "jetpack-cloud",
 	"hotjar_enabled": true,
 	"theme_color": "#2fb41f"
