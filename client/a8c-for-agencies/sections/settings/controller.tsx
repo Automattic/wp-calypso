@@ -8,7 +8,7 @@ export const settingsContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Settings" path={ context.path } />
-			<Settings />
+			<Settings tab={ context.params.tab } />
 		</>
 	);
 

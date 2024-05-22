@@ -14,7 +14,11 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AgencyProfile from './agency-profile';
 
-export default function Settings() {
+type Props = {
+	tab: string;
+};
+
+export default function Settings( { tab }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const title = translate( 'Settings' );
