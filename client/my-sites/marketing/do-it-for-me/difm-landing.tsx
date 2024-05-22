@@ -420,6 +420,44 @@ export default function DIFMLanding( {
 		}
 	);
 
+	let faqRevisionsAnswer = translate(
+		'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+			'Furthermore, our %s plan offers live chat and priority email support if you need assistance.',
+		{
+			args: [ planTitle || '' ],
+		}
+	);
+	if ( planSlug === PLAN_BUSINESS ) {
+		const isCopyTranslated = hasEnTranslation(
+			'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+				'Furthermore, our %s plan offers 24X7 priority support from our experts if you need assistance.'
+		);
+		if ( isCopyTranslated ) {
+			faqRevisionsAnswer = translate(
+				'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+					'Furthermore, our %s plan offers 24X7 priority support from our experts if you need assistance.',
+				{
+					args: [ planTitle || '' ],
+				}
+			);
+		}
+	}
+	if ( planSlug === PLAN_PREMIUM ) {
+		const isCopyTranslated = hasEnTranslation(
+			'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+				'Furthermore, our %s plan offers fast support from our experts if you need assistance.'
+		);
+		if ( isCopyTranslated ) {
+			faqRevisionsAnswer = translate(
+				'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+					'Furthermore, our %s plan offers fast support from our experts if you need assistance.',
+				{
+					args: [ planTitle || '' ],
+				}
+			);
+		}
+	}
+
 	return (
 		<>
 			{ ! hasPriceDataLoaded && (
@@ -606,15 +644,7 @@ export default function DIFMLanding( {
 							</p>
 						</FoldableFAQ>
 						<FoldableFAQ id="faq-7" question={ translate( 'How many revisions are included?' ) }>
-							<p>
-								{ translate(
-									'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
-										'Furthermore, our %s plan offers live chat and priority email support if you need assistance.',
-									{
-										args: [ planTitle || '' ],
-									}
-								) }
-							</p>
+							<p>{ faqRevisionsAnswer }</p>
 						</FoldableFAQ>
 						<FoldableFAQ
 							id="faq-8"
