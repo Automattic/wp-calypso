@@ -56,7 +56,6 @@ export default function SitesDashboard() {
 		setDataViewsState,
 		selectedSiteFeature,
 		selectedCategory: category,
-		setSelectedCategory: setCategory,
 		siteUrl,
 		showOnlyFavorites,
 		showPreviewPane,
@@ -122,7 +121,6 @@ export default function SitesDashboard() {
 
 		const updatedUrl = updateSitesDashboardUrl( {
 			category: category,
-			setCategory: setCategory,
 			filters: dataViewsState.filters,
 			selectedSite: dataViewsState.selectedItem,
 			selectedSiteFeature: selectedSiteFeature,
@@ -138,7 +136,6 @@ export default function SitesDashboard() {
 	}, [
 		selectedSiteFeature,
 		category,
-		setCategory,
 		dispatch,
 		dataViewsState.filters,
 		dataViewsState.search,
