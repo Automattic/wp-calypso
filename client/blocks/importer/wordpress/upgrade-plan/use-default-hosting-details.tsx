@@ -17,7 +17,8 @@ const higherSpeedPercentage = Math.round(
 
 const fasterResponsePercentage = Math.round( cwvtechReportJson[ 'WordPress.com' ].goodFID * 100 );
 
-const higherAvailabilityPercentage = 3;
+const wpcomMinutesDowntime = 0;
+const otherHostsAverageDowntime = 63;
 
 export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 	const translate = useTranslate();
@@ -44,9 +45,12 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'higher-availability': {
 			title: translate( 'Higher availability' ),
 			description:
-				translate( '%(higherAvailabilityPercentage)d%% better uptime.', {
-					args: { higherAvailabilityPercentage },
-				} ) + '*',
+				translate(
+					'WordPress.com has %(wpcomMinutesDowntime)d minutes downtime, versus %(otherHostsAverageDowntime)d minutes from other hosts per month.',
+					{
+						args: { wpcomMinutesDowntime, otherHostsAverageDowntime },
+					}
+				) + '*',
 			icon: chartBar,
 		},
 	};
