@@ -82,7 +82,7 @@ export const PostByVoiceSetting = () => {
 					<>
 						<div className="post-by-voice__info">
 							{ translate(
-								'Call {{b}}%(phone)s{{/b}} and enter {{b}}%(code)s{{/b}} for the code.',
+								'Call {{b}}%(phone)s{{/b}} and enter the posting code {{b}}%(code)s{{/b}}.',
 								{
 									args: {
 										phone: '+1 (713) 574-9075',
