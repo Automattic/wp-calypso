@@ -58,8 +58,7 @@ const entrepreneurFlow: Flow = {
 			}
 
 			const redirectTarget =
-				`/setup/entrepreneur/create-site` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
+				`/setup/entrepreneur/create-site` + ( hasFlowParams ? '?' + flowParams.toString() : '' );
 
 			const loginUrl = getLoginUrl( {
 				variationName: flowName,
