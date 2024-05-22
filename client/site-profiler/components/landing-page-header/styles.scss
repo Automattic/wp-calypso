@@ -59,7 +59,7 @@
 		font-family: "SF Pro Text", $sans;
 		font-size: 2.75rem;
 		/* stylelint-disable-next-line */
-		line-height: 4.75rem;
+		line-height: 155%;
 		color: var(--studio-gray-100);
 
 		&::placeholder {
@@ -76,10 +76,6 @@
 			line-height: 2;
 		}
 	}
-}
-
-.landing-page-header-v2 .landing-page-header--form-container input {
-	font-family: "SF Pro Text", $sans;
 }
 
 .landing-page-header--form {
