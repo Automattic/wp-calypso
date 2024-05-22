@@ -112,6 +112,7 @@ function useLocalizedStrings( isCommercial: boolean ) {
 	let continueButtonText = '';
 
 	// Page title, info text, and button text depend on isCommercial status.
+	// We maintain the old behaviour for pre-FLAGS_CHECKOUT_FLOWS_V2 cases.
 	if ( ! config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 ) ) {
 		pageTitle = translate( 'Jetpack Stats' );
 		infoText = translate( 'The most advanced stats Jetpack has to offer.' );
@@ -160,7 +161,6 @@ const StatsCommercialPurchase = ( {
 		setPurchaseTierQuantity( value );
 	}, [] );
 
-	// Page title, info text, and button text depend on isCommercial status.
 	const isCommercial = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'is_commercial' )
 	) as boolean;
