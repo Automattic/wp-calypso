@@ -39,7 +39,7 @@ const mapSurveyStructureResponse = ( response: SurveyStructureResponse ): Questi
 const useSurveyStructureQuery = ( { surveyKey }: SurveyStructureQueryArgs ) => {
 	// This follows exact logic as addLocaleQueryParam() middleware
 	// which will add _locale to the query param and we want to cache
-	// our surveys with by the same locale value.
+	// our surveys with the same locale value.
 	const locale = i18n.getLocaleVariant() || i18n.getLocaleSlug();
 	const queryKey = [ 'survey-structure', surveyKey, ...( locale ? [ locale ] : [] ) ];
 
