@@ -8,6 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -75,31 +76,38 @@ const TrialUpgradeConfirmation = () => {
 					path="/plans/my-plan/trial-upgraded/:site"
 					title="Plans > Ecommerce Trial Post Upgrade Actions"
 				/>
-				<div className="trial-upgrade-confirmation__header">
-					<h1 className="trial-upgrade-confirmation__title">{ welcomeTitle }</h1>
-					<div className="trial-upgrade-confirmation__subtitle">
-						<span className="trial-upgrade-confirmation__subtitle-line">
-							{ currentPlanName &&
-								translate(
-									"Your purchase is complete and you're now on the {{strong}}%(planName)s plan{{/strong}}. Now it's time to take your store to the next level. What would you like to do next?",
-									{
-										args: { planName: currentPlanName },
-										components: { strong: <strong /> },
-									}
-								) }
-						</span>
+				{ ! isFetchingSitePlan && currentPlanName ? (
+					<>
+						<div className="trial-upgrade-confirmation__header">
+							<h1 className="trial-upgrade-confirmation__title">{ welcomeTitle }</h1>
+							<div className="trial-upgrade-confirmation__subtitle">
+								<span className="trial-upgrade-confirmation__subtitle-line">
+									{ translate(
+										"Your purchase is complete and you're now on the {{strong}}%(planName)s plan{{/strong}}. Now it's time to take your store to the next level. What would you like to do next?",
+										{
+											args: { planName: currentPlanName },
+											components: { strong: <strong /> },
+										}
+									) }
+								</span>
+							</div>
+						</div>
+						<div className="trial-upgrade-confirmation__tasks">
+							{ tasks.map( ( task ) => (
+								<ConfirmationTask
+									key={ task.id }
+									context="wooexpress_trial"
+									{ ...task }
+									taskActionUrlProps={ taskActionUrlProps }
+								/>
+							) ) }
+						</div>
+					</>
+				) : (
+					<div className="trial-upgrade-confirmation__loading">
+						<LoadingEllipsis />
 					</div>
-				</div>
-				<div className="trial-upgrade-confirmation__tasks">
-					{ tasks.map( ( task ) => (
-						<ConfirmationTask
-							key={ task.id }
-							context="wooexpress_trial"
-							{ ...task }
-							taskActionUrlProps={ taskActionUrlProps }
-						/>
-					) ) }
-				</div>
+				) }
 			</Main>
 		</>
 	);
