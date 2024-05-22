@@ -133,6 +133,11 @@ const SitesDashboardV2 = ( {
 		queryParamKeys: [ 'page', 'per-page', 'status', 'search' ],
 	} );
 
+	// If calypso state changes the selected site, ensure the dataViewsState is updated as well.
+	useEffect( () => {
+		setDataViewsState( ( prevState ) => ( { ...prevState, selectedItem: selectedSite } ) );
+	}, [ selectedSite, setDataViewsState ] );
+
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
 	// initial mount.
 	useEffect( () => {
