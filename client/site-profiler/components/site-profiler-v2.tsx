@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
@@ -82,25 +81,17 @@ export default function SiteProfilerV2( props: Props ) {
 		isFetching: isFetchingBasicMetrics,
 	} = useUrlBasicMetricsQuery( url );
 
-	const showBasicMetrics =
-		basicMetrics &&
-		! isFetchingBasicMetrics &&
-		! errorBasicMetrics &&
-		isEnabled( 'site-profiler/metrics' );
+	const showBasicMetrics = basicMetrics && ! isFetchingBasicMetrics && ! errorBasicMetrics;
 
 	// TODO: Remove this debug statement once we have a better error handling mechanism
-	if ( isEnabled( 'site-profiler/metrics' ) && errorBasicMetrics ) {
+	if ( errorBasicMetrics ) {
 		debug(
 			`Error fetching basic metrics for domain ${ domain }: ${ errorBasicMetrics.message }`,
 			errorBasicMetrics
 		);
 	}
 
-	let showGetReportForm = false;
-
-	if ( isEnabled( 'site-profiler/metrics' ) ) {
-		showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
-	}
+	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
