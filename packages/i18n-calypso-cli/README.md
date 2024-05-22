@@ -15,6 +15,7 @@ Scans your JavaScript sources/build files and generates a POT file or a PHP tran
 
 ```js
 const i18nCalypso = require( 'i18n-calypso-cli' );
+
 i18nCalypso( {
 	inputPaths, // <paths to your js files to scan>,
 	output, // <path to your destination>

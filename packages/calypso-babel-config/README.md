@@ -6,6 +6,7 @@ This package exports the configuration used for Calypso projects in `./babel.con
 
 ```js
 const { babelConfig } = require( '@automattic/calypso-babel-config' );
+
 module.exports = babelConfig();
 ```
 
@@ -18,6 +19,7 @@ Example (with default values):
 
 ```js
 const { babelConfig } = require( '@automattic/calypso-babel-config' );
+
 module.exports = babelConfig( {
 	isBrowser: true,
 	outputPOT: './build',

@@ -13,6 +13,7 @@ to this:
 
 ```js
 import { __ as alias__, _x as alias_x } from '@wordpress/i18n';
+
 const __ = alias__;
 const _x = alias_x;
 

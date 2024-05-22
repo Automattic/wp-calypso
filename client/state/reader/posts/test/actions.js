@@ -1,9 +1,9 @@
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import * as tracks from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
+import { pageViewForPost } from 'calypso/reader/stats';
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
 import * as actions from '../actions';
-const { pageViewForPost } = require( 'calypso/reader/stats' );
 
 jest.mock( 'calypso/reader/stats', () => ( { pageViewForPost: jest.fn() } ) );
 

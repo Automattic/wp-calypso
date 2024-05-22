@@ -38,6 +38,7 @@ If you pass a single string into `translate`, it will trigger a simple translati
 
 ```js
 const i18n = require( 'i18n-calypso' );
+
 const translation = i18n.translate( 'Some content to translate' );
 ```
 
@@ -227,6 +228,7 @@ Using the method `hasTranslation` you can check whether a translation for a give
 
 ```js
 const i18n = require( 'i18n-calypso' );
+
 i18n.hasTranslation( 'This has been translated' ); // true
 i18n.hasTranslation( 'Not translation exists' ); // false
 ```

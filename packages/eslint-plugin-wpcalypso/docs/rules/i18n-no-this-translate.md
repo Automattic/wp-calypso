@@ -19,6 +19,7 @@ The following patterns are not warnings:
 
 ```js
 import i18n from 'i18n-calypso';
+
 i18n.translate( 'Hello World' );
 ```
 

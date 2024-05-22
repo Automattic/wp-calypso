@@ -25,6 +25,7 @@ The following patterns are considered incorrect:
 ```jsx
 /* eslint-disable import/order */
 import { localizeUrl } from 'lib/i18n-utils';
+
 export { default as ActionCard } from 'components/action-card/docs/example';
 export * from 'components/AppBar';
 const config1 = require( 'config' );
@@ -38,6 +39,7 @@ The following patterns are correct
 ```jsx
 /* eslint-disable import/order */
 import { localizeUrl } from '@automattic/i18n-utils';
+
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export * from 'calypso/components/AppBar';
 const config1 = require( '@automattic/calypso-config' );
