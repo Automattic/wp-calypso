@@ -23,6 +23,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
+import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils.js';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getImmediateLoginEmail,
@@ -216,9 +217,13 @@ export function redirectIfCurrentUserCannot( capability ) {
 		const currentUserCan = canCurrentUser( state, site?.ID, capability );
 		const adminInterface = getSiteOption( state, site?.ID, 'wpcom_admin_interface' );
 		const siteAdminUrl = getSiteAdminUrl( state, site?.ID );
+		const isJetpackNotAtomic = site && isNotAtomicJetpack( site );
+
+		const redirectUrl =
+			adminInterface === 'wp-admin' || isJetpackNotAtomic ? siteAdminUrl : `/home/${ site.slug }`;
 
 		if ( site && ! currentUserCan ) {
-			return navigate( adminInterface === 'wp-admin' ? siteAdminUrl : `/home/${ site.slug }` );
+			return navigate( redirectUrl );
 		}
 
 		next();
