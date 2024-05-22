@@ -1,5 +1,6 @@
 import { Button, WooLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { plugins, reusableBlock } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -47,9 +48,12 @@ export default function ReferralsOverview( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const title = isAutomatedReferral
-		? translate( 'Your referrals and commissions' )
-		: translate( 'Referrals' );
+	const isDesktop = useDesktopBreakpoint();
+
+	const title =
+		isAutomatedReferral && isDesktop
+			? translate( 'Your referrals and commissions' )
+			: translate( 'Referrals' );
 
 	const onAddBankDetailsClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );

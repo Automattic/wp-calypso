@@ -75,6 +75,8 @@
 
 	.badge {
 		white-space: nowrap;
+		position: relative;
+		top: -1px;
 	}
 
 	.badge--success {
