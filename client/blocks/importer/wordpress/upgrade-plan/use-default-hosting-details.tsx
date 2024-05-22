@@ -26,7 +26,7 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'higher-speed': {
 			title: translate( 'Higher speed' ),
 			description:
-				translate( '%(higherSpeedPercentage)d 30% faster.', {
+				translate( '%(higherSpeedPercentage)d%% faster.', {
 					args: { higherSpeedPercentage },
 				} ) + '*',
 			icon: trendingUp,
@@ -34,7 +34,7 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'faster-response': {
 			title: translate( 'Faster response' ),
 			description: translate(
-				'%(fasterResponsePercentage)d% of sites on WordPress.com have a fast response.',
+				'%(fasterResponsePercentage)d%% of sites on WordPress.com have a fast response.',
 				{
 					args: { fasterResponsePercentage },
 				}
@@ -44,7 +44,7 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'higher-availability': {
 			title: translate( 'Higher availability' ),
 			description:
-				translate( '%(higherAvailabilityPercentage)d% better uptime.', {
+				translate( '%(higherAvailabilityPercentage)d%% better uptime.', {
 					args: { higherAvailabilityPercentage },
 				} ) + '*',
 			icon: chartBar,
