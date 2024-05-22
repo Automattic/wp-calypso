@@ -1,8 +1,5 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
-import {
-	DATAVIEWS_TABLE,
-	initialDataViewsState,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { ReactNode, useMemo, useState } from 'react';
+import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { SitesDashboardContextInterface } from 'calypso/a8c-for-agencies/sections/sites/types';
 import {
@@ -86,8 +83,17 @@ export const SitesDashboardProvider = ( {
 	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
 	const [ mostRecentConnectedSite, setMostRecentConnectedSite ] = useState< string | null >( null );
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
-	const [ initialSelectedSiteUrl, setInitialSelectedSiteUrl ] = useState( siteUrlInitialState );
 
+	const dataViewsFilters = useMemo( () => buildFilters( filters ), [ filters ] );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		page: currentPage,
+		search: searchQuery,
+		sort,
+		filters: dataViewsFilters,
+	} );
+
+	// Callbacks
 	const handleSetBulkManagementActive = ( isActive: boolean ) => {
 		setIsBulkManagementActive( isActive );
 		if ( ! isActive ) {
@@ -103,49 +109,6 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
-	/* initialDataViewsState.sort.field = DEFAULT_SORT_FIELD; */
-	/* initialDataViewsState.sort.direction = DEFAULT_SORT_DIRECTION; */
-	// initialDataViewsState.hiddenFields = [ 'status', 'site_tags' ];
-
-	const dataViewsFilters = useMemo( () => buildFilters( filters ), [ filters ] );
-
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
-		...initialDataViewsState,
-		page: currentPage,
-		search: searchQuery,
-		sort,
-		filters: dataViewsFilters,
-	} );
-
-	useEffect( () => {
-		setInitialSelectedSiteUrl( siteUrlInitialState );
-		if ( ! siteUrlInitialState ) {
-			setShowOnlyFavorites( showOnlyFavoritesInitialState );
-			setHideListing( false );
-		}
-
-		setDataViewsState( ( previousState ) => ( {
-			...previousState,
-			...( siteUrlInitialState
-				? {}
-				: {
-						filters: dataViewsFilters,
-				  } ),
-			...( siteUrlInitialState ? {} : { search: searchQuery } ),
-			...( siteUrlInitialState ? {} : { sort } ),
-			...( siteUrlInitialState ? {} : { selectedItem: undefined } ),
-			...( siteUrlInitialState ? {} : { type: DATAVIEWS_TABLE } ),
-		} ) );
-	}, [
-		setDataViewsState,
-		showOnlyFavoritesInitialState,
-		searchQuery,
-		sort,
-		dataViewsFilters,
-		siteUrlInitialState,
-		setInitialSelectedSiteUrl,
-	] );
-
 	const sitesDashboardContextValue: SitesDashboardContextInterface = {
 		selectedCategory: selectedCategory,
 		setSelectedCategory: setSelectedCategory,
@@ -158,7 +121,7 @@ export const SitesDashboardProvider = ( {
 		path,
 		currentPage,
 		isBulkManagementActive,
-		initialSelectedSiteUrl: initialSelectedSiteUrl,
+		initialSelectedSiteUrl: siteUrlInitialState,
 		setIsBulkManagementActive: handleSetBulkManagementActive,
 		selectedSites,
 		setSelectedSites,
@@ -173,6 +136,7 @@ export const SitesDashboardProvider = ( {
 		setDataViewsState,
 		featurePreview,
 	};
+
 	return (
 		<SitesDashboardContext.Provider value={ sitesDashboardContextValue }>
 			{ children }
