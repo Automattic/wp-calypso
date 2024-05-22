@@ -15,7 +15,7 @@ const higherSpeedPercentage = Math.round(
 	( cwvtechReportJson[ 'WordPress.com' ].goodLCP - cwvtechReportJson[ 'WordPress' ].goodLCP ) * 100
 );
 
-const fasterResponsePercentage = Math.round( cwvtechReportJson[ 'WordPress.com' ].goodFID * 100 );
+const fastResponsePercentage = Math.round( cwvtechReportJson[ 'WordPress.com' ].goodFID * 100 );
 
 const wpcomMinutesDowntime = 0;
 const otherHostsAverageDowntime = 63;
@@ -27,7 +27,7 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'higher-speed': {
 			title: translate( 'Higher speed' ),
 			description: translate(
-				'WordPress.com is %(higherSpeedPercentage)d%% faster than the average of WordPress hosts.',
+				'%(higherSpeedPercentage)d%% more sites on WordPress.com are fast compared to other WordPress hosts.',
 				{
 					args: { higherSpeedPercentage },
 				}
@@ -37,9 +37,9 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'faster-response': {
 			title: translate( 'Faster response' ),
 			description: translate(
-				'%(fasterResponsePercentage)d%% of sites on WordPress.com have a fast response according with Google recommendations.',
+				'%(fastResponsePercentage)d%% of sites on WordPress.com respond fast, in accordance with Google recommendations.',
 				{
-					args: { fasterResponsePercentage },
+					args: { fastResponsePercentage },
 				}
 			),
 			icon: next,
@@ -47,7 +47,7 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'higher-availability': {
 			title: translate( 'Higher availability' ),
 			description: translate(
-				'WordPress.com has %(wpcomMinutesDowntime)d minutes downtime, versus %(otherHostsAverageDowntime)d minutes from other hosts per month.',
+				'WordPress.com has %(wpcomMinutesDowntime)d minutes downtime, versus %(otherHostsAverageDowntime)d minutes from other WordPress hosts per month.',
 				{
 					args: { wpcomMinutesDowntime, otherHostsAverageDowntime },
 				}
