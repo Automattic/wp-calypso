@@ -1,13 +1,14 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { anonIdCache } from 'calypso/data/segmentaton-survey';
+import { login } from 'calypso/lib/paths';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
-import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -49,25 +50,22 @@ const entrepreneurFlow: Flow = {
 		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
 
 		const getEntrepreneurLoginUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
+			const queryParams = new URLSearchParams();
 
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
+			const redirectTo = addQueryArgs(
+				`${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/create-site`,
+				{
+					...Object.fromEntries( queryParams ),
+				}
+			);
 
-			const redirectTarget =
-				`/setup/entrepreneur/create-site` + ( hasFlowParams ? '?' + flowParams.toString() : '' );
-
-			const loginUrl = getLoginUrl( {
-				variationName: flowName,
-				redirectTo: redirectTarget,
+			const loginUrl = login( {
 				locale,
+				redirectTo,
+				oauth2ClientId: queryParams.get( 'client_id' ) || undefined,
 			} );
 
-			const flags = new URLSearchParams( window.location.search ).get( 'flags' );
-			return loginUrl + ( flags ? `&flags=${ flags }` : '' );
+			return loginUrl;
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
