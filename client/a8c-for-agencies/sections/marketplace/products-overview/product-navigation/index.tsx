@@ -8,9 +8,18 @@ import LayoutNavigation, {
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	PRODUCT_BRAND_FILTER_ALL,
+	PRODUCT_BRAND_FILTER_JETPACK,
+	PRODUCT_BRAND_FILTER_WOOCOMMERCE,
+} from '../../constants';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 
-export default function ProductNavigation() {
+type Props = {
+	selectedTab?: string;
+};
+
+export default function ProductNavigation( { selectedTab }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -25,34 +34,37 @@ export default function ProductNavigation() {
 	const navItems = useMemo( () => {
 		const items: LayoutNavigationItemProps[] = [
 			{
-				key: 'all',
+				key: PRODUCT_BRAND_FILTER_ALL,
 				label: translate( 'All' ),
 				count: totalWooCommerceProducts + totalJetpackProducts,
 			},
 		];
 
-		if ( totalJetpackProducts ) {
-			items.push( {
-				key: 'jetpack',
-				label: translate( 'Jetpack' ),
-				icon: <JetpackLogo size={ 18 } />,
-				count: totalJetpackProducts,
-			} );
-		}
-
 		if ( totalWooCommerceProducts ) {
 			items.push( {
-				key: 'woocommerce',
+				key: PRODUCT_BRAND_FILTER_WOOCOMMERCE,
 				label: translate( 'Woo' ),
 				icon: <WooLogo />,
 				count: totalWooCommerceProducts,
 			} );
 		}
 
+		if ( totalJetpackProducts ) {
+			items.push( {
+				key: PRODUCT_BRAND_FILTER_JETPACK,
+				label: translate( 'Jetpack' ),
+				icon: <JetpackLogo size={ 18 } />,
+				count: totalJetpackProducts,
+			} );
+		}
+
 		return items.map( ( navItem ) => ( {
 			...navItem,
-			selected: navItem.key === 'all',
-			path: `${ A4A_MARKETPLACE_PRODUCTS_LINK }/${ navItem.key }`,
+			selected: navItem.key === selectedTab,
+			path:
+				navItem.key === PRODUCT_BRAND_FILTER_ALL
+					? A4A_MARKETPLACE_PRODUCTS_LINK
+					: `${ A4A_MARKETPLACE_PRODUCTS_LINK }/${ navItem.key }`,
 			onClick: () => {
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_product_brand_navigation_click', {
@@ -62,7 +74,7 @@ export default function ProductNavigation() {
 			},
 			children: navItem.label,
 		} ) );
-	}, [ dispatch, totalJetpackProducts, totalWooCommerceProducts, translate ] );
+	}, [ dispatch, selectedTab, totalJetpackProducts, totalWooCommerceProducts, translate ] );
 
 	const selectedItem = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
 	const selectedItemProps = {

@@ -28,9 +28,14 @@ import './style.scss';
 interface ProductListingProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
+	productBrand: string;
 }
 
-export default function ProductListing( { selectedSite, suggestedProduct }: ProductListingProps ) {
+export default function ProductListing( {
+	selectedSite,
+	suggestedProduct,
+	productBrand,
+}: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -56,6 +61,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 	} = useProductAndPlans( {
 		selectedSite,
 		selectedBundleSize: quantity,
+		selectedProductBrandFilter: productBrand,
 		productSearchQuery,
 	} );
 
