@@ -23,6 +23,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
+import { isP2Site } from 'calypso/sites-dashboard/utils.js';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getImmediateLoginEmail,
@@ -223,6 +224,26 @@ export function redirectIfCurrentUserCannot( capability ) {
 
 		next();
 	};
+}
+
+/**
+ * Middleware to redirect a user if the site is a P2.
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectIfP2( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const isP2 = isP2Site( site );
+	const adminInterface = getSiteOption( state, site?.ID, 'wpcom_admin_interface' );
+	const siteAdminUrl = getSiteAdminUrl( state, site?.ID );
+
+	if ( isP2 ) {
+		return navigate( adminInterface === 'wp-admin' ? siteAdminUrl : `/home/${ site.slug }` );
+	}
+
+	next();
 }
 
 /**
