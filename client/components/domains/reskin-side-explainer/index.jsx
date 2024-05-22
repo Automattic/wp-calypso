@@ -101,6 +101,12 @@ class ReskinSideExplainer extends Component {
 				ctaText = translate( 'Use a domain I own' );
 				break;
 
+			case 'site-migration':
+				title = translate( 'Migrating an existing site?' );
+				subtitle = translate( 'We will get your site working on our infrastructure in no time!' );
+				ctaText = translate( 'Migrate my site' );
+				break;
+
 			case 'free-domain-only-explainer':
 				title = translate(
 					'Get a {{b}}free{{/b}} one-year domain registration with any paid annual plan.',
