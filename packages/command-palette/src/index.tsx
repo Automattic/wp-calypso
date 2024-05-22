@@ -15,6 +15,7 @@ import {
 } from './context';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { useCommandPalette } from './use-command-palette';
+import { siteUsesWpAdminInterface } from './utils';
 import type { Command as PaletteCommand } from './commands';
 import type { SiteExcerptData } from '@automattic/sites';
 import './style.scss';
@@ -107,7 +108,7 @@ export function CommandMenuGroup() {
 	const sites = useSites();
 	const currentSite = sites.find( ( site: { ID: unknown } ) => site.ID === currentSiteId );
 	const adminUrl =
-		currentSite?.options?.wpcom_admin_interface === 'wp-admin'
+		currentSite && siteUsesWpAdminInterface( currentSite )
 			? 'https://' + currentSite.slug + '/wp-admin'
 			: 'https://wordpress.com/home/' + currentSite?.slug;
 
