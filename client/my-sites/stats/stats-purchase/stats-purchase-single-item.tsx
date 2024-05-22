@@ -122,9 +122,18 @@ function useLocalizedStrings( isCommercial: boolean ) {
 			? translate( 'Upgrade and continue using Jetpack Stats' )
 			: translate( 'Simple yet powerful stats to grow your site' );
 		infoText = isCommercial
-			? translate(
-					'To continue using Stats and access its newest premium features you need to get a commercial license.'
-			  )
+			? ( translate(
+					'To continue using Stats and access its newest premium features you need to get a commercial license. {{link}}Learn more about this update{{/link}}.',
+					{
+						comment: '{{link}} links to explainer post on Jetpack blog.',
+						components: {
+							link: (
+								<a href="https://jetpack.com/blog/updates-to-jetpack-stats-for-commercial-sites/" />
+							),
+						},
+						context: 'Stats: Descriptive text in the commercial purchase flow',
+					}
+			  ) as string )
 			: translate(
 					"With Jetpack Stats, you don't need to be a data scientist to see how your site is performing. Get premium access to:"
 			  );
