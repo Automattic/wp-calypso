@@ -27,7 +27,7 @@ export default function useWPCOMPlanDescription( slug: string ) {
 			translate( 'DDOS mitigation' ),
 			translate( 'Free staging environment' ),
 			translate( 'Isolated site infrastructure' ),
-			translate( 'Managed malware protection' ),
+			translate( 'Malware detection & removal' ),
 			translate( 'SFTP/SSH, WP-CLI, Git tools' ),
 			translate( 'Extremely fast DNS with SSL' ),
 			translate( 'Centralized site management' ),
