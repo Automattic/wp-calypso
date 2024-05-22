@@ -53,7 +53,7 @@ export interface DataViewsSort {
 }
 
 export interface DataViewsFilter {
-	field: string;
+	field: string | number;
 	operator: string;
 	value: number | string | undefined;
 }
