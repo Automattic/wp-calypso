@@ -13,7 +13,6 @@ import QueryAgencies from 'calypso/a8c-for-agencies/data/agencies/query-agencies
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPreferences from 'calypso/components/data/query-preferences';
-import QuerySiteAdminColor from 'calypso/components/data/query-site-admin-color';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -406,7 +405,6 @@ class Layout extends Component {
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
-				{ this.props.siteId && <QuerySiteAdminColor siteId={ this.props.siteId } /> }
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }
