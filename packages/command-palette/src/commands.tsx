@@ -236,7 +236,10 @@ export function useCommands() {
 			openSiteDashboard: {
 				name: 'openSiteDashboard',
 				label: __( 'Open site dashboard', __i18n_text_domain__ ),
-				callback: commandNavigation( '/home/:site' ),
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site ) ? '/wp-admin' : '/home/:site'
+					)( params ),
 				searchLabel: [
 					_x(
 						'open site dashboard',
