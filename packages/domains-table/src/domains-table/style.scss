@@ -259,6 +259,9 @@
 }
 
 .domains-table-mobile-cards {
+	overflow-y: auto;
+	max-height: calc(100vh - 326px);
+
 	.domains-table-mobile-cards-select-all {
 		display: flex;
 		align-items: center;

@@ -122,13 +122,27 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				table {
 					overflow-y: auto;
 					max-height: calc( 100vh - 235px );
-					padding-inline: 16px;
 					margin-bottom: 0;
-				}
-				.domains-table-header {
-					position: sticky;
-					top: 0;
-					z-index: 2;
+					padding-inline: 0;
+					margin-inline-start: 0;
+
+					grid-template-columns: 50px 1fr minmax( auto, 1fr ) auto auto auto;
+
+					th:last-child,
+					td:last-child {
+						padding: 0 16px 0 0;
+					}
+
+					th:first-child,
+					td:first-child {
+						padding: 0 0 0 24px;
+					}
+
+					thead.domains-table-header {
+						position: sticky;
+						top: 0;
+						z-index: 2;
+					}
 				}
 			}
 
@@ -180,7 +194,17 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						margin-inline: 26px;
 					}
 					table {
-						padding-inline: 26px;
+						grid-template-columns: 75px 2fr 1fr 1fr auto auto auto auto;
+
+						th:last-child,
+						td:last-child {
+							padding: 0 26px 0 0;
+						}
+
+						th:first-child,
+						td:first-child {
+							padding: 0 0 0 34px;
+						}
 					}
 				}
 				.is-global-sidebar-visible header.navigation-header {
@@ -196,13 +220,22 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					}
 				}
 				.domains-table {
-					padding: 0 16px;
+					table {
+						grid-template-columns: 50px 1fr minmax( auto, 1fr ) auto auto auto;
+
+						th:last-child,
+						td:last-child {
+							padding: 0 16px 0 0;
+						}
+
+						th:first-child,
+						td:first-child {
+							padding: 0 0 0 24px;
+						}
+					}
 				}
 				.domains-table-toolbar {
 					margin-inline: 0 !important;
-				}
-				table {
-					padding-inline: 0 !important;
 				}
 				div.layout.is-global-sidebar-visible {
 					.layout__primary > main {
@@ -214,7 +247,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			@media only screen and ( max-width: 781px ) {
 				div.layout.is-global-sidebar-visible {
 					.layout__primary {
-						overflow-x: auto;
+						overflow-x: unset;
 					}
 				}
 				.layout__primary > main {
@@ -233,7 +266,17 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						margin-inline: 16px;
 					}
 					table {
-						padding-inline: 16px;
+						grid-template-columns: 50px 1fr minmax( auto, 1fr ) auto auto auto;
+
+						th:last-child,
+						td:last-child {
+							padding: 0 16px 0 0;
+						}
+
+						th:first-child,
+						td:first-child {
+							padding: 0 0 0 24px;
+						}
 					}
 				}
 				div.layout.is-global-sidebar-visible {
