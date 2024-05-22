@@ -1,19 +1,22 @@
+import wpcom from 'calypso/lib/wp';
 import 'calypso/state/admin-color/init';
-import 'calypso/state/data-layer/wpcom/sites/admin-color';
-import { ADMIN_COLOR_RECEIVE, ADMIN_COLOR_REQUEST } from 'calypso/state/action-types';
+import { ADMIN_COLOR_RECEIVE } from 'calypso/state/action-types';
 
-export function requestAdminColor( siteId, adminColor ) {
-	return {
-		type: ADMIN_COLOR_REQUEST,
-		siteId,
-		adminColor,
-	};
-}
-
-export function receiveAdminColor( siteId, adminColor ) {
-	return {
-		type: ADMIN_COLOR_RECEIVE,
-		siteId,
-		adminColor,
-	};
+export function requestAdminColor( siteId ) {
+	return ( dispatch ) =>
+		wpcom.req
+			.get( {
+				path: `/sites/${ siteId }/admin-color/`,
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( ( response ) => {
+				dispatch( {
+					type: ADMIN_COLOR_RECEIVE,
+					siteId,
+					adminColor: response.admin_color,
+				} );
+			} )
+			.catch( {
+				// Do nothing
+			} );
 }

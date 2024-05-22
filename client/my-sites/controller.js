@@ -54,6 +54,7 @@ import {
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
+import { requestAdminColor } from 'calypso/state/admin-color/actions';
 import {
 	getCurrentUser,
 	isUserLoggedIn,
@@ -517,6 +518,14 @@ export function noSite( context, next ) {
 	return next();
 }
 
+// Prefetch the site data that is not from the `/sites` or `/sites/:site` endpoint.
+function prefetchSiteData( context, next ) {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	context.store.dispatch( requestAdminColor( selectedSite.ID ) ).then( next ).catch( next );
+}
+
 /*
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
@@ -620,7 +629,7 @@ export function siteSelection( context, next ) {
 			: Promise.resolve();
 		promise.then( () => {
 			if ( onSelectedSiteAvailable( context ) ) {
-				next();
+				prefetchSiteData( context, next );
 			}
 		} );
 	} else {
@@ -656,7 +665,7 @@ export function siteSelection( context, next ) {
 					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );
 					if ( onSelectedSiteAvailable( context ) ) {
-						next();
+						prefetchSiteData( context, next );
 					}
 				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
 					navigate( getJetpackAuthorizeURL( context, site ) );
