@@ -1,5 +1,5 @@
 import page, { Context as PageJSContext } from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, render as clientRender, redirectIfP2 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
 import { DOTCOM_DEVELOPER_TOOLS_PROMO } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
@@ -22,6 +22,7 @@ export default function () {
 		siteSelection,
 		navigation,
 		redirectForNonSimpleSite,
+		redirectIfP2,
 		devToolsPromo,
 		siteDashboard( DOTCOM_DEVELOPER_TOOLS_PROMO ),
 		makeLayout,

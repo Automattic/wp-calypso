@@ -3,6 +3,7 @@ import {
 	makeLayout,
 	render as clientRender,
 	redirectIfCurrentUserCannot,
+	redirectIfP2,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { handleHostingPanelRedirect } from 'calypso/my-sites/hosting/controller';
@@ -21,6 +22,7 @@ export default function () {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
+		redirectIfP2,
 		navigation,
 		hostingOverview,
 		siteDashboard( DOTCOM_OVERVIEW ),

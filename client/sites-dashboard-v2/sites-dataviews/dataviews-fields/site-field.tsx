@@ -75,7 +75,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
 
 	const onSiteClick = ( event: React.MouseEvent ) => {
-		if ( isAdmin ) {
+		if ( isAdmin && ! isP2Site ) {
 			openSitePreviewPane && openSitePreviewPane( site );
 		} else {
 			navigate( adminUrl );
