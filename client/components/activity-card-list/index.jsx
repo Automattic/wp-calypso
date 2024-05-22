@@ -1,4 +1,8 @@
-import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
+import {
+	PLAN_PERSONAL,
+	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+	getPlan,
+} from '@automattic/calypso-products';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -148,7 +152,10 @@ class ActivityCardList extends Component {
 		if ( pageLogs.length === 0 ) {
 			return;
 		}
-		return <PlanUpsellCard />;
+
+		const upsellPlanName = getPlan( PLAN_PERSONAL )?.getTitle();
+
+		return <PlanUpsellCard upsellPlanName={ upsellPlanName } />;
 	}
 
 	renderLogs( pageLogs ) {

@@ -20,7 +20,11 @@ type OwnProps = {
 	onClickClone?: ( period: string ) => void;
 };
 
-const PlanUpsellCard: React.FC< OwnProps > = () => {
+type Props = OwnProps & {
+	upsellPlanName: string;
+};
+
+const PlanUpsellCard: React.FC< Props > = ( { upsellPlanName } ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
@@ -49,7 +53,13 @@ const PlanUpsellCard: React.FC< OwnProps > = () => {
 								</div>
 								<p className="activity-card__activity-overlay-text">
 									{ translate(
-										'Upgrade to Starter plan or higher to unlock more powerful features.'
+										'Upgrade to %(planName)s plan or higher to unlock more powerful features.',
+										{
+											args: {
+												planName: upsellPlanName,
+											},
+											comment: '%(planName)s is the name of the selected plan.',
+										}
 									) }
 								</p>
 								<button
