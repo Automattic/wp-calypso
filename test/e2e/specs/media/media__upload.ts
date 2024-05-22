@@ -54,8 +54,14 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	} );
 
 	it( 'Navigate to Media', async function () {
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Media' );
+		// eCommerce plan loads WP-Admin for home dashboard,
+		// so instead navigate straight to the Media page.
+		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
+			await mediaPage.visit( testAccount.credentials.testSites?.primary.url as string );
+		} else {
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Media' );
+		}
 	} );
 
 	it( 'Upload image and confirm addition to gallery', async function () {
