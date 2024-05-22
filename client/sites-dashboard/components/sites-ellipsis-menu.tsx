@@ -397,7 +397,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 							<Button
 								compact
 								primary
-								href={ getHostingConfigUrl( site.slug ) }
+								href={ hostingConfigUrl }
 								onClick={ () =>
 									recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_upsell_click', {
 										product_slug: site.plan?.product_slug,
