@@ -33,32 +33,32 @@ const moduleSlug = 'post-by-email';
 
 export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSettingProps ) => {
 	const {
-		siteId: selectedSiteId,
-		siteIsJetpack: isJetpack,
-		siteIsAtomic: isAtomic,
-		regenerating: regeneratingPostByEmail,
-		isActive: active,
-		moduleIsUnavailable: moduleUnavailable,
+		selectedSiteId,
+		siteIsJetpack,
+		siteIsAtomic,
+		regeneratingPostByEmail,
+		isActive,
+		moduleUnavailable,
 	} = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state ) || 0;
-		const siteIsJetpack = isJetpackSite( state, siteId );
-		const siteIsAtomic = isSiteAutomatedTransfer( state, siteId );
-		const regenerating = isRegeneratingJetpackPostByEmail( state, siteId );
-		const isActive = !! isJetpackModuleActive( state, siteId, moduleSlug );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
+		const selectedSiteId = getSelectedSiteId( state ) || 0;
+		const siteIsJetpack = isJetpackSite( state, selectedSiteId );
+		const siteIsAtomic = isSiteAutomatedTransfer( state, selectedSiteId );
+		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail( state, selectedSiteId );
+		const isActive = !! isJetpackModuleActive( state, selectedSiteId, moduleSlug );
+		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 			state,
-			siteId,
+			selectedSiteId,
 			moduleSlug
 		);
 
 		return {
-			siteId,
+			selectedSiteId,
 			siteIsJetpack,
 			siteIsAtomic,
-			regenerating,
+			regeneratingPostByEmail,
 			isActive,
-			moduleIsUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		};
 	} );
 	const { data: postByEmailSettings } = useGetPostByEmail( selectedSiteId );
@@ -91,8 +91,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 		if ( ! selectedSiteId ) {
 			return;
 		}
-
-		if ( isJetpack ) {
+		if ( siteIsJetpack ) {
 			dispatch( regeneratePostByEmail( selectedSiteId ) );
 			return;
 		}
@@ -113,7 +112,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	const labelClassName =
 		moduleUnavailable ||
 		regeneratingPostByEmail ||
-		( isJetpack ? ! active : ! postByEmailSettings?.isEnabled )
+		( siteIsJetpack ? ! isActive : ! postByEmailSettings?.isEnabled )
 			? 'is-disabled'
 			: undefined;
 
@@ -125,15 +124,15 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 						'Allows you to publish new posts by sending an email to a special address.'
 					) }
 					link={
-						isAtomic
+						siteIsAtomic
 							? localizeUrl( 'https://wordpress.com/support/post-by-email/' )
 							: 'https://jetpack.com/support/post-by-email/'
 					}
-					privacyLink={ ! isAtomic }
+					privacyLink={ ! siteIsAtomic }
 				/>
-				{ isJetpack ? (
+				{ siteIsJetpack ? (
 					<JetpackModuleToggle
-						siteId={ selectedSiteId }
+						selectedSiteId={ selectedSiteId }
 						moduleSlug="post-by-email"
 						label={ translate( 'Publish posts by sending an email' ) }
 						disabled={ isFormPending || moduleUnavailable }
@@ -155,10 +154,10 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 						className="publishing-tools__email-address"
 						disabled={
 							regeneratingPostByEmail ||
-							( isJetpack ? ! active : ! postByEmailSettings?.isEnabled ) ||
+							( siteIsJetpack ? ! isActive : ! postByEmailSettings?.isEnabled ) ||
 							moduleUnavailable
 						}
-						value={ isJetpack ? email : postByEmailSettings?.email }
+						value={ siteIsJetpack ? email : postByEmailSettings?.email }
 					/>
 					<Button
 						onClick={ handleRegenerate }
@@ -166,7 +165,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 							isFormPending ||
 							regeneratingPostByEmail ||
 							isPendingRegenerate ||
-							( isJetpack ? ! active : ! postByEmailSettings?.isEnabled ) ||
+							( siteIsJetpack ? ! isActive : ! postByEmailSettings?.isEnabled ) ||
 							!! moduleUnavailable
 						}
 					>
