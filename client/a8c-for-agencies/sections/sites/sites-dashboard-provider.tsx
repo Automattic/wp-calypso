@@ -129,7 +129,9 @@ export const SitesDashboardProvider = ( {
 		},
 		selectedSiteFeature: siteFeature,
 		setSelectedSiteFeature: ( feature: string | undefined ) => {
-			page.show( `/sites/${ selectedCategory }/${ siteUrl }/${ feature || '' }` );
+			if ( feature ) {
+				page.show( `/sites/${ selectedCategory }/${ siteUrl }/${ feature || '' }` );
+			}
 		},
 		showPreviewPane,
 		closePreviewPane: onClosePreviewPane,

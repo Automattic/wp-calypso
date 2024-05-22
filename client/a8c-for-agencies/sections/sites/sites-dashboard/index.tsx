@@ -118,9 +118,11 @@ export default function SitesDashboard() {
 		if ( dataViewsState.selectedItem ) {
 			dispatch( setSelectedSiteId( dataViewsState.selectedItem.blog_id ) );
 		}
+	}, [ dispatch, setSelectedSiteId, dataViewsState.selectedItem ] );
 
+	useEffect( () => {
 		const updatedUrl = updateSitesDashboardUrl( {
-			category: category,
+			category,
 			filters: dataViewsState.filters,
 			selectedSite: dataViewsState.selectedItem,
 			selectedSiteFeature: selectedSiteFeature,
@@ -136,13 +138,13 @@ export default function SitesDashboard() {
 	}, [
 		selectedSiteFeature,
 		category,
-		dispatch,
 		dataViewsState.filters,
 		dataViewsState.search,
 		dataViewsState.page,
+		dataViewsState.selectedItem,
 		showOnlyFavorites,
 		dataViewsState.sort,
-		showPreviewPane,
+		updateSitesDashboardUrl,
 	] );
 
 	useEffect( () => {
