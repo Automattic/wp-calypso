@@ -6,6 +6,7 @@
 
 ```js
 const wpcom = require( 'wpcom' )( '<your-token>' );
+
 const me = wpcom.me();
 ```
 

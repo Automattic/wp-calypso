@@ -28,6 +28,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 
 export { default as ActionCard } from 'components/action-card/docs/example';
 export * from 'components/AppBar';
+
 const config1 = require( 'config' );
 const config2 = asyncRequire( 'config' );
 
@@ -42,6 +43,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export * from 'calypso/components/AppBar';
+
 const config1 = require( '@automattic/calypso-config' );
 const config2 = asyncRequire( '@automattic/calypso-config' );
 

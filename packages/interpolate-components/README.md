@@ -24,6 +24,7 @@ const example2 = 'Here is a self-closing example: {{input/}}';
 
 ```jsx
 import interpolateComponents from '@automattic/interpolate-components';
+
 const children = interpolateComponents( {
 	mixedString: 'This is a {{em}}fine{{/em}} example.',
 	components: { em: <em /> },

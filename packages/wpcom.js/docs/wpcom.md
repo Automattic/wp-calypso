@@ -13,6 +13,7 @@ Create a `Me` object. More info in [Me doc page](./me.md).
 
 ```js
 const wpcom = require( 'wpcom' )( '<your-token>' );
+
 const me = wpcom.me();
 ```
 
@@ -22,6 +23,7 @@ Create a `Site` object. More info in [Site doc page](./site.md).
 
 ```js
 const wpcom = require( 'wpcom' )( '<your-token>' );
+
 const site = wpcom.site();
 ```
 

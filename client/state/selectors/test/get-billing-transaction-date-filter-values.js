@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/newline-after-import
 import getBillingTransactionDateFilterValues from 'calypso/state/selectors/get-billing-transaction-date-filter-values';
 const moment = require( 'moment' );
 
