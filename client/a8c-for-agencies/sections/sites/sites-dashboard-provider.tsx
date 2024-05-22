@@ -1,6 +1,9 @@
 import page from '@automattic/calypso-router';
 import { ReactNode, useMemo, useState } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import {
+	DATAVIEWS_TABLE,
+	initialDataViewsState,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { SitesDashboardContextInterface } from 'calypso/a8c-for-agencies/sections/sites/types';
 import {
@@ -62,7 +65,7 @@ const buildFilters = ( { status, siteTags }: { status: string; siteTags: string 
 };
 
 export const SitesDashboardProvider = ( {
-	showPreviewPane = false,
+	showPreviewPane,
 	showOnlyFavorites = false,
 	selectedCategory,
 	siteUrl,
@@ -106,17 +109,30 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
+	const onClosePreviewPane = () => {
+		setDataViewsState( {
+			...dataViewsState,
+			type: DATAVIEWS_TABLE,
+			selectedItem: undefined,
+		} );
+		page.show( `/sites` );
+	};
+
 	const sitesDashboardContextValue: SitesDashboardContextInterface = {
 		selectedCategory,
-		setSelectedCategory: () => {},
+		setSelectedCategory: ( category: string | undefined ) => {
+			if ( siteUrl ) {
+				page.show( `/sites/${ category }/${ siteUrl }` );
+			}
+
+			page.show( `/sites/${ category }` );
+		},
 		selectedSiteFeature: siteFeature,
 		setSelectedSiteFeature: ( feature: string | undefined ) => {
 			page.show( `/sites/${ selectedCategory }/${ siteUrl }/${ feature || '' }` );
 		},
 		showPreviewPane,
-		closePreviewPane: () => {
-			page.show( `/sites/${ selectedCategory }` );
-		},
+		closePreviewPane: onClosePreviewPane,
 		showOnlyFavorites,
 		setShowOnlyFavorites: () => {},
 		path,

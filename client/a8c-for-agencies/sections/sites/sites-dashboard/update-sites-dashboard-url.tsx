@@ -62,7 +62,6 @@ const buildQueryString = ( {
 
 export const updateSitesDashboardUrl = ( {
 	category,
-	setCategory,
 	filters,
 	selectedSite,
 	selectedSiteFeature,
@@ -72,7 +71,6 @@ export const updateSitesDashboardUrl = ( {
 	showOnlyFavorites,
 }: {
 	category?: string;
-	setCategory: ( category: string ) => void;
 	filters: DataViewsFilter[];
 	selectedSite?: Site;
 	selectedSiteFeature?: string;
@@ -81,12 +79,6 @@ export const updateSitesDashboardUrl = ( {
 	sort: DashboardSortInterface;
 	showOnlyFavorites?: boolean;
 } ) => {
-	// We need a category in the URL if we have a selected site
-	if ( selectedSite && ! category ) {
-		setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
-		return;
-	}
-
 	const baseUrl = '/sites';
 	let url = baseUrl;
 	let shouldAddQueryArgs = true;
