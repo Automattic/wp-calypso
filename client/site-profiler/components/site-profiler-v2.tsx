@@ -16,6 +16,7 @@ import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
+import { BasicMetrics } from './basic-metrics';
 import DomainInformation from './domain-information';
 import { GetReportForm } from './get-report-form';
 import HostingInformation from './hosting-information';
@@ -127,6 +128,7 @@ export default function SiteProfilerV2( props: Props ) {
 				<LayoutBlock width="medium">
 					{ siteProfilerData && (
 						<>
+							{ showBasicMetrics && <BasicMetrics basicMetrics={ basicMetrics.basic } /> }
 							<MetricsSection
 								name={ translate( 'Hosting' ) }
 								title={ translate(
