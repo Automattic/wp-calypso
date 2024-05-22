@@ -211,6 +211,7 @@ const LineItemPriceWrapper = styled.span< {
 	shouldUseCheckoutV2?: boolean;
 } >`
 	display: flex;
+	flex: 0 0 auto;
 	gap: 4px;
 
 	${ ( props ) =>
