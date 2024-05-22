@@ -64,9 +64,10 @@
 
 	a,
 	button.is-link {
-		color: var(--studio-gray-20);
+		color: #fff;
 		text-decoration: underline;
 		font-size: 1rem;
+		font-size: 500;
 
 		&:hover {
 			color: var(--studio-gray-40);
@@ -225,6 +226,10 @@
 
 		&.bad {
 			background: url(calypso/assets/images/site-profiler/background-results-bad.svg) no-repeat right top;
+			// Huge screens and bigger
+			@media (min-width: $break-huge) {
+				background-position-x: center;
+			}
 		}
 	}
 

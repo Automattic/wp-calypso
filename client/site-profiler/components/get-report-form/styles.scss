@@ -1,4 +1,5 @@
 .get-report-form__wrapper {
+	color: #000;
 	position: fixed;
 	bottom: 0;
 	left: 0;
@@ -64,6 +65,8 @@
 
 	.description {
 		color: #3c4043;
+		//stylelint-disable-next-line scales/font-weights
+		font-weight: 300;
 	}
 	.gridicon {
 		cursor: pointer;
@@ -93,22 +96,9 @@
 	}
 }
 
-input[type="text"].form-text-input.get-report-form__form {
-	&-name,
-	&-email {
-		border-top: none;
-		border-left: none;
-		border-right: none;
-
-		&:focus,
-		&:hover,
-		&:focus:hover {
-			box-shadow: none;
-		}
-	}
-}
 
 .get-report-form__form-footer {
+	--wp-components-color-accent: var(--color-button);
 	display: flex;
 	gap: 20px;
 	align-items: center;
@@ -116,14 +106,15 @@ input[type="text"].form-text-input.get-report-form__form {
 	justify-content: space-between;
 	& fieldset {
 		margin-bottom: 0;
-		flex-basis: 70%;
+		flex-basis: 735px;
 	}
 	.terms-checkbox {
+		color: #000;
 		font-size: 0.75rem;
 		line-height: 1.5;
 	}
 	.submit-button {
-		background-color: var(--color-accent);
+		background-color: var(--color-button);
 		color: #fff;
 		border-radius: 4px;
 		font-weight: 500;

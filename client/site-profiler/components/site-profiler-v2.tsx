@@ -22,6 +22,7 @@ import { LandingPageHeader } from './landing-page-header';
 import { MetricsSection } from './metrics-section';
 import './styles-v2.scss';
 import { ResultsHeader } from './results-header';
+import './styles-v2.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
 
@@ -119,7 +120,11 @@ export default function SiteProfilerV2( props: Props ) {
 				<>
 					<LayoutBlock className="results-header-block bad" width="medium">
 						{ showBasicMetrics && (
-							<ResultsHeader domain={ domain } basicMetrics={ basicMetrics } />
+							<ResultsHeader
+								domain={ domain }
+								basicMetrics={ basicMetrics }
+								onGetReport={ () => setIsGetReportFormOpen( true ) }
+							/>
 						) }
 					</LayoutBlock>
 					<LayoutBlock width="medium">
