@@ -75,10 +75,10 @@ const DevToolsPromo = () => {
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
 	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
-	const hasTransfer = useSelector( ( state ) =>
-		isAutomatedTransferActive( state, siteId as number )
+	const hasTransfer = useSelector(
+		( state ) => isAutomatedTransferActive( state, siteId as number ) ?? false
 	);
-	const showHostingActivationButton = canSiteGoAtomic && ! hasTransfer;
+	const showHostingActivationButton = canSiteGoAtomic;
 
 	return (
 		<div className="dev-tools-promo">
@@ -98,7 +98,12 @@ const DevToolsPromo = () => {
 						  ) }
 				</p>
 				{ showHostingActivationButton ? (
-					<Button variant="primary" className="dev-tools-promo__button" href={ upgradeLink }>
+					<Button
+						variant="primary"
+						className="dev-tools-promo__button"
+						href={ upgradeLink }
+						disabled={ hasTransfer }
+					>
 						{ translate( 'Activate now' ) }
 					</Button>
 				) : (
