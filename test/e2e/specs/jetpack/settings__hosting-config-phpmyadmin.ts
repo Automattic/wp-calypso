@@ -23,7 +23,7 @@ declare const browser: Browser;
  * Keywords: Settings, Jetpack, Hosting Configuration, phpMyAdmin
  */
 skipDescribeIf( ! envVariables.TEST_ON_ATOMIC )(
-	DataHelper.createSuiteTitle( 'Settings: Accewss phpMyAdmin' ),
+	DataHelper.createSuiteTitle( 'Settings: Access phpMyAdmin' ),
 	function () {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 
@@ -37,14 +37,7 @@ skipDescribeIf( ! envVariables.TEST_ON_ATOMIC )(
 
 			testAccount = new TestAccount( accountName );
 
-			if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
-				// Switching to or logging into eCommerce plan sites inevitably
-				// loads WP-Admin instead of Calypso, but the rediret occurs
-				// only after Calypso attempts to load.
-				await testAccount.authenticate( page, { url: /wp-admin/ } );
-			} else {
-				await testAccount.authenticate( page );
-			}
+			await testAccount.authenticate( page );
 		} );
 
 		it( 'Navigate to Settings > Hosting Configuration', async function () {

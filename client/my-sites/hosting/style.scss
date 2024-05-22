@@ -27,14 +27,21 @@ $areas: github-deployments, sftp, site-backup, support, phpmyadmin, staging-site
 		.hosting__layout {
 			.card {
 				width: 100%;
+
+				@include breakpoint-deprecated( ">1280px" ) {
+					margin-bottom: 0;
+					min-width: 0;
+
+					fieldset {
+						min-width: 0;
+					}
+				}
 			}
 
 			@include breakpoint-deprecated( ">1280px" ) {
 				@each $area in $areas {
 					.#{$area}-card {
-						margin-bottom: 0;
 						grid-area: $area;
-						width: 100%;
 					}
 				}
 

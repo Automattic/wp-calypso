@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import debug from 'debug';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from './ad-tracking/constants';
 import { mayWeTrackByTracker } from './tracker-buckets';
 
@@ -23,6 +24,11 @@ export function maybeAddLogRocketScript() {
 		return;
 	}
 
+	if ( ! isJetpackCloud() ) {
+		logRocketDebug( 'Not loading LogRocket script: not Jetpack Cloud' );
+		return;
+	}
+
 	const script = document.createElement( 'script' );
 	script.src = 'https://cdn.logrocket.io/LogRocket.min.js';
 	script.crossOrigin = 'anonymous';
@@ -37,10 +43,29 @@ export function maybeAddLogRocketScript() {
 					// @see https://docs.logrocket.com/reference/dom#sanitize-all-user-input-fields
 					inputSanitizer: true,
 				},
+				// @see https://docs.logrocket.com/v1.0/reference/network
 				network: {
-					// Disable recording of network data
-					// @see https://docs.logrocket.com/reference/network#disable-recording-of-network-data
-					isEnabled: false,
+					requestSanitizer: ( request ) => {
+						// Remove the Authorization header from the request if it exists
+						if ( request.headers && request.headers.Authorization ) {
+							request.headers.Authorization = null;
+						}
+
+						// Remove the body from the request if it exists
+						if ( request.body ) {
+							delete request.body;
+						}
+
+						return request;
+					},
+					responseSanitizer: ( response ) => {
+						// Remove the body from the response if it exists
+						if ( response.body ) {
+							delete response.body;
+						}
+
+						return response;
+					},
 				},
 			} );
 

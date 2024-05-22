@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, JetpackLogo } from '@automattic/components';
+import { JetpackLogo } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -12,14 +12,11 @@ import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { useSitesDashboardImportSiteUrl } from 'calypso/sites-dashboard/hooks/use-sites-dashboard-import-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 
-const MAX_PAGE_WIDTH = '1224px';
-
 const PageHeader = styled.div( {
 	backgroundColor: 'var( --studio-white )',
 } );
 
 const HeaderControls = styled.div( {
-	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
 	display: 'flex',
@@ -50,33 +47,21 @@ const responsiveButtonStyles = {
 	padding: '0 12px',
 };
 
-const ManageAllDomainsButton = styled( Button )`
-	border-color: var( --color-neutral-5 );
-	border-radius: 4px;
-	margin-inline-end: 1rem;
-	white-space: nowrap;
-
-	.sites-dashboard__layout:not(.preview-hidden) & {
-		${ responsiveButtonStyles }
-		margin-inline-end: 0.5rem;
-	},
-`;
-
 const AddNewSiteSplitButton = styled( SplitButton )< { isMobile: boolean } >`
 	.split-button__main {
-		border-radius: 4px 0 0 4px;
+		border-radius: 2px 0 0 2px;
 		-webkit-font-smoothing: antialiased;
 
 		.rtl & {
-			border-radius: 0 4px 4px 0;
+			border-radius: 0 2px 2px 0;
 		}
 	}
 
 	.split-button__toggle {
-		border-radius: ${ ( { isMobile } ) => ( isMobile ? '4px' : '0 4px 4px 0' ) };
+		border-radius: ${ ( { isMobile } ) => ( isMobile ? '2px' : '0 2px 2px 0' ) };
 
 		.rtl & {
-			border-radius: ${ ( { isMobile } ) => ( isMobile ? '4px' : '4px 0 0 4px' ) };
+			border-radius: ${ ( { isMobile } ) => ( isMobile ? '2px' : '2px 0 0 2px' ) };
 		}
 	}
 
@@ -125,9 +110,6 @@ const SitesDashboardHeader = () => {
 	return (
 		<PageHeader>
 			<HeaderControls>
-				<ManageAllDomainsButton className="sites-manage-all-domains-button" href="/domains/manage">
-					{ __( 'Manage all domains' ) }
-				</ManageAllDomainsButton>
 				<AddNewSiteSplitButton
 					className="sites-add-new-site-split-button"
 					primary

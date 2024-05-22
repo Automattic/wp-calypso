@@ -1,4 +1,5 @@
-import { Command, COMMANDS } from '../src';
+import { renderHook } from '@testing-library/react';
+import { Command, useCommands } from '../src';
 
 jest.mock( '../src/utils', () => ( {
 	commandNavigation: ( path: string ) => () => path,
@@ -42,7 +43,7 @@ const expectedCommandsResults = {
 	disableEdgeCache: [ '/hosting-config/:site#edge', siteFilters.adminPublicAtomic ],
 	manageCacheSettings: [ '/hosting-config/:site#cache', siteFilters.adminAtomic ],
 	visitSite: [ 'https://:site' ],
-	openSiteDashboard: [ '/home/:site' ],
+	openSiteDashboard: [ '/wp-admin' ],
 	openHostingConfiguration: [ '/hosting-config/:site', siteFilters.adminP2SelfHosted ],
 	openPHPmyAdmin: [ '/hosting-config/:site#database-access', siteFilters.adminAtomic ],
 	openProfile: [ '/me' ],
@@ -107,6 +108,10 @@ const expectedCommandsResults = {
 
 describe( 'COMMANDS', () => {
 	it( 'should be correctly defined', () => {
+		const {
+			result: { current: COMMANDS },
+		} = renderHook( useCommands );
+
 		for ( const [ command, expectedResults ] of Object.entries( expectedCommandsResults ) ) {
 			const expectedPath = expectedResults[ 0 ];
 			expect( getNavigationPath( COMMANDS[ command ] ) ).toEqual( expectedPath );

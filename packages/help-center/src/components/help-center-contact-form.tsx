@@ -297,7 +297,8 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 			}
 		}
 
-		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
+		// Domain only sites don't have plans.
+		const productSlug = ( supportSite as HelpCenterSite )?.plan?.product_slug;
 		const plan = getPlan( productSlug );
 		const productId = plan?.getProductId();
 		const productName = plan?.getTitle();

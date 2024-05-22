@@ -8,7 +8,6 @@ import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
 	labelPrefix: string;
-	patternName: string;
 }
 
 interface ValidationData {
@@ -48,7 +47,10 @@ export class FormPatternsFlow implements BlockFlow {
 		// So we have to grab a new parent locator ourselves instead of relying on the old on in the context.
 		const editorCanvas = await context.editorPage.getEditorCanvas();
 		const newParentBlockId = await editorCanvas
-			.locator( '[aria-label="Block: Form"].is-selected' )
+			// Handle old and new block patterns.
+			.locator(
+				'[aria-label="Block: Form"].is-selected, [aria-label="Block: Group"].is-selected [aria-label="Block: Form"]'
+			)
 			.getAttribute( 'id' );
 		const newParentBlockLocator = editorCanvas.locator( `#${ newParentBlockId }` );
 
@@ -97,7 +99,8 @@ export class FormPatternsFlow implements BlockFlow {
 		const editorParent = await context.editorPage.getEditorParent();
 		await editorParent
 			.getByRole( 'dialog', { name: 'Choose a pattern' } )
-			.getByRole( 'option', { name: this.configurationData.patternName } )
+			.getByRole( 'option' )
+			.first()
 			// These patterns can load in quite slowly, messing with animation wait checks, so let's give extra time.
 			.click( { timeout: 30 * 1000 } );
 	}

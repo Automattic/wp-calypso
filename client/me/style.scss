@@ -1,9 +1,3 @@
-@media only screen and (min-width: 601px) {
-	html {
-		overflow-y: hidden;
-	}
-}
-
 body.is-section-me {
 	background: var(--studio-gray-0);
 
@@ -95,7 +89,7 @@ body.is-section-me {
 			background: var(--color-surface);
 			margin: 0;
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			height: calc(100vh - 32px);
+			height: calc(100vh - 46px);
 		}
 	}
 }

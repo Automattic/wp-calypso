@@ -1712,10 +1712,9 @@ class RegisterDomainStep extends Component {
 		} else {
 			useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
 			if ( this.props.selectedSite ) {
-				useYourDomainUrl = domainUseMyDomain(
-					this.props.selectedSite.slug,
-					this.state.lastQuery.trim()
-				);
+				useYourDomainUrl = domainUseMyDomain( this.props.selectedSite.slug, {
+					domain: this.state.lastQuery.trim(),
+				} );
 			}
 		}
 

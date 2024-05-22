@@ -54,8 +54,9 @@ jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/my-sites/themes/helpers', () => ( {
-	marketplaceThemeBillingProductSlug: () => {
+jest.mock( 'calypso/state/products-list/selectors', () => ( {
+	...jest.requireActual( 'calypso/state/products-list/selectors' ),
+	getProductBillingSlugByThemeId: () => {
 		return;
 	},
 } ) );

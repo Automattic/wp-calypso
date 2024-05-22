@@ -485,6 +485,7 @@ class StatsSite extends Component {
 								},
 								{
 									'stats__flexible-grid-item--half': ! supportsUTMStats,
+									'stats__flexible-grid-item--full--large': ! supportsUTMStats,
 								},
 								'stats__flexible-grid-item--full--medium'
 							) }
@@ -503,7 +504,7 @@ class StatsSite extends Component {
 										'stats__author-views': ! supportsUTMStats,
 									},
 									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--medium'
+									'stats__flexible-grid-item--full--large'
 								) }
 								showSummaryLink
 							/>
@@ -545,8 +546,14 @@ class StatsSite extends Component {
 										! isJetpack && ! this.isModuleHidden( 'videos' ),
 								},
 								{
+									'stats__flexible-grid-item--full--large':
+										isJetpack && this.isModuleHidden( 'videos' ),
+								},
+								{
 									// 1/2 for all other cases to stack with Devices or empty space
 									'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+									// Avoid 1/3 on smaller screen if Videos is visible
+									'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
 								},
 								'stats__flexible-grid-item--full--medium'
 							) }
@@ -565,6 +572,7 @@ class StatsSite extends Component {
 										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
 										'stats__flexible-grid-item--half': isJetpack,
 									},
+									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
@@ -590,7 +598,11 @@ class StatsSite extends Component {
 											'stats__flexible-grid-item--one-third--two-spaces':
 												! this.isModuleHidden( 'videos' ),
 										},
-										'stats__flexible-grid-item--half--large',
+
+										{
+											// Avoid 1/3 on smaller screen if Videos is visible
+											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+										},
 										'stats__flexible-grid-item--full--medium'
 									) }
 								/>

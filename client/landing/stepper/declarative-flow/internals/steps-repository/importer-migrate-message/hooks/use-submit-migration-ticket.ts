@@ -15,6 +15,7 @@ interface APIError {
 interface TicketRequest {
 	locale: string;
 	blog_url: string;
+	from_url: string;
 }
 
 export const useSubmitMigrationTicket = <
@@ -25,7 +26,7 @@ export const useSubmitMigrationTicket = <
 	options: UseMutationOptions< TData, TError, TicketRequest, TContext > = {}
 ) => {
 	const { mutate, ...rest } = useMutation( {
-		mutationFn: ( { locale, blog_url } ) =>
+		mutationFn: ( { locale, blog_url, from_url } ) =>
 			wpcomRequest( {
 				path: 'help/migration-ticket/new',
 				apiNamespace: 'wpcom/v2/',
@@ -34,6 +35,7 @@ export const useSubmitMigrationTicket = <
 				body: {
 					locale,
 					blog_url,
+					from_url,
 				},
 			} ),
 		...options,

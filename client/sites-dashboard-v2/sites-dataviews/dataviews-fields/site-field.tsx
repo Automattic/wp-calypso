@@ -1,11 +1,13 @@
 import { ListTile, Button } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
+import { Icon, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import * as React from 'react';
 //import { useInView } from 'react-intersection-observer';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
+import { navigate } from 'calypso/lib/navigate';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
 import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
@@ -14,6 +16,7 @@ import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
 import { displaySiteUrl, isStagingSite, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -69,8 +72,14 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const isWpcomStagingSite = isStagingSite( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
 
+	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
+
 	const onSiteClick = ( event: React.MouseEvent ) => {
-		openSitePreviewPane && openSitePreviewPane( site );
+		if ( isAdmin && ! isP2Site ) {
+			openSitePreviewPane && openSitePreviewPane( site );
+		} else {
+			navigate( adminUrl );
+		}
 		event.preventDefault();
 	};
 
@@ -115,8 +124,19 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						</>
 					) : (
 						<>
-							<div className="sites-dataviews__site-url">
-								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
+							<div>
+								<a
+									className="sites-dataviews__site-url"
+									href={ siteUrl }
+									title={ siteUrl }
+									target="_blank"
+									rel="noreferrer"
+								>
+									<Truncated>
+										{ displaySiteUrl( siteUrl ) }
+										<Icon icon={ external } size={ 16 } />
+									</Truncated>
+								</a>
 							</div>
 							<a className="sites-dataviews__site-wp-admin-url" href={ adminUrl }>
 								<Truncated>{ adminLabel }</Truncated>

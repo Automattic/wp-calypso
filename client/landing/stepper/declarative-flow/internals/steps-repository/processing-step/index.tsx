@@ -111,7 +111,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			}
 
 			if ( isNewSiteMigrationFlow( flow ) ) {
-				submit?.( { ...props.data }, ProcessingResult.SUCCESS );
+				submit?.( { ...destinationState, ...props.data }, ProcessingResult.SUCCESS );
 				return;
 			}
 

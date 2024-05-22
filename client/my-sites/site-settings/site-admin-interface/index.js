@@ -21,7 +21,7 @@ import {
 	removeNotice,
 	successNotice,
 } from 'calypso/state/notices/actions';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 import './style.scss';
 
@@ -49,6 +49,7 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
 	const adminInterface = useSelector(
 		( state ) => getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso'
 	);
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
 		onMutate: () => {
@@ -173,7 +174,11 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
 							components: {
 								a: (
 									<a
-										href={ `/settings/general/${ siteSlug }#admin-interface-style` }
+										href={
+											adminInterface === 'wp-admin'
+												? `${ siteAdminUrl }options-general.php`
+												: `/settings/general/${ siteSlug }#admin-interface-style`
+										}
 										rel="noreferrer"
 									/>
 								),

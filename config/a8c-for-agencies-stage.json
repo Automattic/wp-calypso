@@ -29,6 +29,7 @@
 	"features": {
 		"a8c-for-agencies": true,
 		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
+		"a8c-for-agencies/import-site-from-wpcom": true,
 		"oauth": true,
 		"a4a/site-details-pane": true,
 		"a4a-logged-out-signup": true

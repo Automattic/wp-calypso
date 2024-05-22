@@ -1,6 +1,8 @@
 import { Context, type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import SitesSidebar from '../../components/sidebar-menu/sites';
+import AddSitesFromWPCOM from './add-sites/add-sites-from-wpcom';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
@@ -68,6 +70,48 @@ function configureSitesContext( context: Context ) {
 
 export const sitesContext: Callback = ( context: Context, next ) => {
 	configureSitesContext( context );
+	next();
+};
+
+export const dashboardSitesContext: Callback = ( context: Context, next ) => {
+	const {
+		s: search,
+		page: contextPage,
+		sort_field,
+		sort_direction,
+		issue_types,
+		is_favorite,
+	} = context.query;
+	const state = context.store.getState();
+	const agency = getActiveAgency( state );
+
+	context.dashboardSitesQuery = {
+		isPartnerOAuthTokenLoaded: false,
+		searchQuery: search || '',
+		currentPage: contextPage || 1,
+		sort: {
+			field: sort_field || '',
+			direction: sort_direction || '',
+		},
+		perPage: 100,
+		agencyId: agency?.id,
+		filter: {
+			issueTypes: [ issue_types ],
+			showOnlyFavorites: !! is_favorite,
+		},
+	};
+
+	next();
+};
+
+export const addSitesContext: Callback = ( context: Context, next ) => {
+	context.secondary = <SitesSidebar path={ context.path } />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Add Sites > Add sites from WordPress.com" path={ context.path } />
+			<AddSitesFromWPCOM dashboardSitesQuery={ context.dashboardSitesQuery } />
+		</>
+	);
 	next();
 };
 

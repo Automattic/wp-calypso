@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
 import { SiteType } from './commands';
@@ -137,6 +137,7 @@ export const useCommandPalette = (): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
+	inSiteContext: boolean | undefined;
 } => {
 	const {
 		currentSiteId,
@@ -156,6 +157,8 @@ export const useCommandPalette = (): {
 
 	const commands = useCommands();
 
+	const { __ } = useI18n();
+
 	const trackSelectedCommand = ( command: Command ) => {
 		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
 			command: command.name,
@@ -166,6 +169,10 @@ export const useCommandPalette = (): {
 			search_text: search,
 		} );
 	};
+
+	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
+	const inSiteContext =
+		currentSite && ( currentRoute.includes( ':site' ) || currentRoute.startsWith( '/wp-admin' ) );
 
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
@@ -218,7 +225,7 @@ export const useCommandPalette = (): {
 			);
 		}
 
-		return { commands: sitesToPick ?? [], filterNotice, emptyListNotice };
+		return { commands: sitesToPick ?? [], filterNotice, emptyListNotice, inSiteContext };
 	}
 
 	// Logic for root commands
@@ -251,13 +258,8 @@ export const useCommandPalette = (): {
 		return 0; // no change in order
 	} );
 
-	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
-
 	// If we are on a current site context, filter and map the commands for single site use.
-	if (
-		currentSite &&
-		( currentRoute.includes( ':site' ) || currentRoute.startsWith( '/wp-admin' ) )
-	) {
+	if ( inSiteContext ) {
 		sortedCommands = sortedCommands.filter( ( command ) =>
 			isCommandAvailableOnSite( command, currentSite, userCapabilities )
 		);
@@ -310,5 +312,10 @@ export const useCommandPalette = (): {
 		}
 	}
 
-	return { commands: finalSortedCommands, filterNotice: undefined, emptyListNotice: undefined };
+	return {
+		commands: finalSortedCommands,
+		filterNotice: undefined,
+		emptyListNotice: undefined,
+		inSiteContext,
+	};
 };

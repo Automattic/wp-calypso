@@ -13,15 +13,6 @@ export function DomainsTableBody() {
 			<tbody>
 				<DomainsTableRowLoading />
 				<DomainsTableRowLoading />
-				<DomainsTableRowLoading />
-				<DomainsTableRowLoading />
-				<DomainsTableRowLoading />
-				<DomainsTableRowLoading />
-				<DomainsTableRowLoading />
-				<DomainsTableRowLoading />
-				<DomainsTableRowLoading />
-				<DomainsTableRowLoading />
-				<DomainsTableRowLoading />
 			</tbody>
 		);
 	}

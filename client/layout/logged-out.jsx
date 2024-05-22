@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
@@ -15,7 +15,6 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
-import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
@@ -200,6 +199,10 @@ const LayoutLoggedOut = ( {
 			<UniversalNavbarHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
+				{ ...( isEnabled( 'site-profiler/metrics' ) && {
+					logoColor: 'white',
+					className: 'is-style-monochrome',
+				} ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
 					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),
@@ -209,7 +212,9 @@ const LayoutLoggedOut = ( {
 	} else if ( isWooCoreProfilerFlow ) {
 		classes.woo = true;
 		classes[ 'has-no-masterbar' ] = false;
-		masterbar = <WooCoreProfilerMasterbar />;
+		masterbar = (
+			<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
+		);
 	} else {
 		masterbar = ! masterbarIsHidden && (
 			<MasterbarLoggedOut

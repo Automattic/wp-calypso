@@ -22,7 +22,16 @@
 
 	.pending-actions__action--success {
 		.pending-actions__action-icon {
-			fill: #008a20;
+			svg {
+				fill: var(--color-success);
+			}
+		}
+	}
+	.pending-actions__action--error {
+		.pending-actions__action-icon {
+			svg {
+				fill: var(--color-error);
+			}
 		}
 	}
 

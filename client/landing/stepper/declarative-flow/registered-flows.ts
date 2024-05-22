@@ -16,6 +16,8 @@ import {
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
+	HOSTED_SITE_MIGRATION_FLOW,
+	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -113,6 +115,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ NEW_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "new-hosted-site-flow" */ './new-hosted-site-flow' ),
 
+	[ NEW_HOSTED_SITE_FLOW_USER_INCLUDED ]: () =>
+		import(
+			/* webpackChunkName: "new-hosted-site-flow-user-included" */ './new-hosted-site-flow-user-included'
+		),
+
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "transferring-hosted-site-flow" */ './transferring-hosted-site-flow'
@@ -168,4 +175,16 @@ const siteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-export default { ...availableFlows, ...videoPressTvFlows, ...siteMigrationFlow };
+const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
+	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "hosted-site-migration-flow" */ '../declarative-flow/hosted-site-migration-flow'
+		),
+};
+
+export default {
+	...availableFlows,
+	...videoPressTvFlows,
+	...siteMigrationFlow,
+	...hostedSiteMigrationFlow,
+};
