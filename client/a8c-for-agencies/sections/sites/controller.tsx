@@ -24,7 +24,7 @@ function configureSitesContext( context: Context ) {
 			siteUrl={ siteUrl }
 			siteFeature={ siteFeature }
 			showPreviewPane={ context.sitePreviewPane }
-			showOnlyFavorites={ context.dashboardSitesQuery?.showOnlyFavorites }
+			showOnlyFavorites={ context.dashboardSitesQuery.filter.showOnlyFavorites }
 			path={ context.path }
 			searchQuery={ context.dashboardSitesQuery.searchQuery }
 			currentPage={ context.dashboardSitesQuery.currentPage }
@@ -83,7 +83,7 @@ export const dashboardSitesContext: Callback = ( context: Context, next ) => {
 		filter: {
 			issueTypes: issue_types,
 			siteTags: site_tags,
-			showOnlyFavorites: !! is_favorite,
+			showOnlyFavorites: is_favorite === '' || !! is_favorite,
 		},
 	};
 
