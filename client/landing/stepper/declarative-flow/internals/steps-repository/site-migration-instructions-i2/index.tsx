@@ -97,9 +97,9 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 		}
 	}, [ flow, setupError, siteId ] );
 
-	const recordInstructionsLinkClick = ( event, linkName: string ) => {
+	const recordInstructionsLinkClick = ( event, linkname: string ) => {
 		recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
-			linkName,
+			linkname,
 		} );
 	};
 
