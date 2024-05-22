@@ -779,7 +779,6 @@ class MasterbarLoggedIn extends Component {
 export default connect(
 	( state ) => {
 		const sectionGroup = getSectionGroup( state );
-		const sectionName = getSectionName( state );
 
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
@@ -794,20 +793,17 @@ export default connect(
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 			state,
 			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
+			sectionGroup
 		);
 		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
 			state,
 			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
+			sectionGroup
 		);
 		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 			state,
 			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
+			sectionGroup
 		);
 		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
