@@ -12,6 +12,7 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -287,6 +288,7 @@ export default function DIFMLanding( {
 } ) {
 	const requiredProductSlugs = [ PLAN_PREMIUM, WPCOM_DIFM_LITE, PLAN_BUSINESS ];
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const productCost = product?.cost;
@@ -394,6 +396,29 @@ export default function DIFMLanding( {
 					},
 				}
 		  );
+
+	const faqPlanCostOldCopy = translate(
+		'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and live chat support.',
+		{
+			args: {
+				displayCost,
+				planTitle: planTitle ?? '',
+				planCost,
+				storage: planStorageString,
+			},
+		}
+	);
+	const faqPlanCostNewCopy = translate(
+		'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and expert support from our team.',
+		{
+			args: {
+				displayCost,
+				planTitle: planTitle ?? '',
+				planCost,
+				storage: planStorageString,
+			},
+		}
+	);
 
 	return (
 		<>
@@ -511,17 +536,11 @@ export default function DIFMLanding( {
 						</FoldableFAQ>
 						<FoldableFAQ id="faq-2" question={ translate( 'How much does it cost?' ) }>
 							<p>
-								{ translate(
-									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and live chat support.',
-									{
-										args: {
-											displayCost,
-											planTitle: planTitle ?? '',
-											planCost,
-											storage: planStorageString,
-										},
-									}
-								) }
+								{ hasEnTranslation(
+									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and fast support from our expert team.'
+								)
+									? faqPlanCostNewCopy
+									: faqPlanCostOldCopy }
 							</p>
 						</FoldableFAQ>
 						{ isStoreFlow && (
