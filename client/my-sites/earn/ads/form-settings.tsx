@@ -32,6 +32,7 @@ type DisplayOptions = {
 	display_archive?: boolean;
 	enable_header_ad?: boolean;
 	second_belowpost?: boolean;
+	inline_enabled?: boolean;
 	sidebar?: boolean;
 };
 
@@ -252,6 +253,12 @@ const AdsFormSettings = () => {
 						disabled={ isDisabled }
 						onChange={ () => handleDisplayToggle( 'second_belowpost' ) }
 						label={ translate( 'Second ad below post' ) }
+					/>
+					<ToggleControl
+						checked={ !! settings.display_options?.inline_enabled }
+						disabled={ isDisabled }
+						onChange={ () => handleDisplayToggle( 'inline_enabled' ) }
+						label={ translate( 'Inline within post content' ) }
 					/>
 					{ ! siteIsJetpack && (
 						<ToggleControl
