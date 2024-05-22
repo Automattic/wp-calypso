@@ -1,5 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -18,30 +21,48 @@ import {
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
-import { ShoppingCartContext } from '../context';
+import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import ProductListing from './product-listing';
-import type { AssignLicenseProps } from '../types';
+import type { AssignLicenseProps, MarketplaceType } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
-export default function ProductsOverview( { siteId, suggestedProduct }: AssignLicenseProps ) {
+export default function ProductsOverview( {
+	siteId,
+	suggestedProduct,
+	purchaseType = 'regular',
+}: AssignLicenseProps ) {
 	const translate = useTranslate();
+
+	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
+	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
+	const [ marketplaceType, setMarketplaceType ] = useState< MarketplaceType >(
+		isAutomatedReferrals ? purchaseType : 'regular'
+	);
 
 	const {
 		selectedCartItems,
 		setSelectedCartItems,
+		setMarketplaceType: setCartMarketplaceType,
 		onRemoveCartItem,
 		showCart,
 		setShowCart,
 		toggleCart,
-	} = useShoppingCart();
+	} = useShoppingCart( marketplaceType );
 
 	const { isLoading } = useProductsQuery();
 
-	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
+	const toggleMarketplaceType = () => {
+		if ( ! isAutomatedReferrals ) {
+			return;
+		}
+		const nextType = marketplaceType === 'regular' ? 'referral' : 'regular';
+		setMarketplaceType( nextType );
+		setCartMarketplaceType( nextType );
+	};
 
 	const sites = useSelector( getSites );
 
@@ -92,7 +113,17 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 
 					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
-
+						{ isAutomatedReferrals && (
+							<div className="a4a-marketplace__toggle-marketplace-type">
+								<ToggleControl
+									onChange={ toggleMarketplaceType }
+									checked={ marketplaceType === 'referral' }
+									id="a4a-marketplace__toggle-marketplace-type"
+									label={ translate( 'Refer products' ) }
+								/>
+								<Gridicon icon="info-outline" size={ 16 } />
+							</div>
+						) }
 						<ShoppingCart
 							showCart={ showCart }
 							setShowCart={ setShowCart }
@@ -108,9 +139,11 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 			</LayoutTop>
 
 			<LayoutBody>
-				<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
-					<ProductListing selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
-				</ShoppingCartContext.Provider>
+				<MarketplaceTypeContext.Provider value={ { marketplaceType } }>
+					<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
+						<ProductListing selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+					</ShoppingCartContext.Provider>
+				</MarketplaceTypeContext.Provider>
 			</LayoutBody>
 		</Layout>
 	);
