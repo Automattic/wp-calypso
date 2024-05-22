@@ -3,7 +3,7 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import { DATAVIEWS_TABLE } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -72,27 +72,17 @@ export default function SitesDashboard() {
 		isError: fetchContactFailed,
 	} = useFetchMonitorVerifiedContacts( false, agencyId );
 
-	const [ agencyDashboardFilter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
-		issueTypes: [],
-		siteTags: [],
+	const agencyDashboardFilters: AgencyDashboardFilter = {
+		issueTypes: getSelectedFilters( dataViewsState.filters ).status,
+		siteTags: getSelectedFilters( dataViewsState.filters ).siteTags,
 		showOnlyFavorites: showOnlyFavorites || false,
-	} );
-
-	useEffect( () => {
-		const selectedFilters = getSelectedFilters( dataViewsState.filters );
-
-		setAgencyDashboardFilter( {
-			issueTypes: selectedFilters.status,
-			siteTags: selectedFilters.siteTags,
-			showOnlyFavorites: showOnlyFavorites || false,
-		} );
-	}, [ dataViewsState.filters, setAgencyDashboardFilter, showOnlyFavorites ] );
+	};
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
 		searchQuery: dataViewsState.search,
 		currentPage: dataViewsState.page,
-		filter: agencyDashboardFilter,
+		filter: agencyDashboardFilters,
 		sort: dataViewsState.sort,
 		perPage: dataViewsState.perPage,
 		agencyId,
