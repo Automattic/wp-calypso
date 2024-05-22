@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -66,6 +67,7 @@ export const JetpackSitesDataViews = ( {
 					selectedItem: site,
 					type: DATAVIEWS_LIST,
 				} ) );
+				page.show( `/sites/overview/${ site.url }` );
 			}
 		},
 		[ setDataViewsState ]

@@ -1,11 +1,10 @@
+import page from '@automattic/calypso-router';
 import { Button, Gridicon, Spinner } from '@automattic/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
-import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
 import SiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
@@ -36,16 +35,9 @@ const SitesDataViews = ( {
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
 
-	const openSitePreviewPane = useCallback(
-		( site: Site ) => {
-			setDataViewsState( ( prevState: DataViewsState ) => ( {
-				...prevState,
-				selectedItem: site,
-				type: DATAVIEWS_LIST,
-			} ) );
-		},
-		[ setDataViewsState ]
-	);
+	const openSitePreviewPane = useCallback( ( site: Site ) => {
+		page.show( `/sites/overview/${ site.url }` );
+	}, [] );
 
 	const renderField = useCallback(
 		( column: AllowedTypes, item: SiteInfo ) => {

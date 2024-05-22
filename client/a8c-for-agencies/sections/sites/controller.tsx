@@ -91,7 +91,7 @@ export const dashboardSitesContext: Callback = ( context: Context, next ) => {
 };
 
 export const sitePreviewPaneContext: Callback = ( context: Context, next ) => {
-	context.sitePreviewPane = true;
+	context.sitePreviewPane = !! context.params.siteUrl;
 	next();
 };
 
