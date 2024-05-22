@@ -71,6 +71,7 @@ export default function CreditCardNumberField( {
 					options={ {
 						style: stripeElementStyle,
 						disabled: isDisabled,
+						showIcon: true,
 					} }
 					onReady={ () => {
 						setIsStripeFullyLoaded( true );
