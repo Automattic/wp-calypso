@@ -69,9 +69,10 @@ const AdsFormSettings = () => {
 	);
 	const wordadsSettings = useSelector( ( state ) => getWordadsSettings( state, siteId ) );
 	const widgetsUrl = useSelector( ( state ) => getCustomizerUrl( state, siteId, 'widgets' ) );
-	const supportsInlineAds = useSelector( ( state ) =>
+	const isMinVersionForInlineAds = useSelector( ( state ) =>
 		isJetpackMinimumVersion( state, siteId, '13.5-a.1' )
 	);
+	const supportsInlineAds = ! siteIsJetpack || isMinVersionForInlineAds;
 
 	const isLoading = ! wordadsSettings || isSavingSettings;
 	const isWordAds = site?.options?.wordads;
