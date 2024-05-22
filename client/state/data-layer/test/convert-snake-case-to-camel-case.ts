@@ -55,7 +55,7 @@ describe( 'convertSnakeCaseToCamelCase', () => {
 		expect( foo.isDisabled[ 0 ].first_name ).toBeUndefined();
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-expect-error
-		expect( foo.isDisabled[ 0 ].first_name.second_name ).toBeUndefined();
+		expect( foo.isDisabled[ 0 ].firstName.second_name ).toBeUndefined();
 
 		expect( foo.isDisabled ).toBeDefined();
 		expect( foo.isDisabled[ 0 ].firstName ).toBeDefined();
