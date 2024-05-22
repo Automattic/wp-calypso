@@ -102,7 +102,7 @@ export function CommandMenuGroup() {
 		currentSiteId,
 		useSites,
 	} = useCommandPaletteContext();
-	const { commands, filterNotice, emptyListNotice, singleSiteMode } = useCommandPalette();
+	const { commands, filterNotice, emptyListNotice, inSiteContext } = useCommandPalette();
 	const { __ } = useI18n();
 
 	const sites = useSites();
@@ -116,7 +116,7 @@ export function CommandMenuGroup() {
 	const siteName = currentSite?.name ?? currentSite?.slug;
 
 	useEffect( () => {
-		if ( ! filterNotice && singleSiteMode ) {
+		if ( ! filterNotice && inSiteContext ) {
 			const sitesPath = currentRoute.startsWith( '/wp-admin' )
 				? 'https://wordpress.com/sites'
 				: '/sites/';
@@ -136,7 +136,7 @@ export function CommandMenuGroup() {
 			setFooterMessage( message );
 			return;
 		}
-	}, [ setFooterMessage, filterNotice, singleSiteMode, currentRoute, adminUrl, siteName ] );
+	}, [ setFooterMessage, filterNotice, inSiteContext, currentRoute, adminUrl, siteName, __ ] );
 
 	useEffect( () => {
 		setEmptyListNotice( emptyListNotice ?? '' );

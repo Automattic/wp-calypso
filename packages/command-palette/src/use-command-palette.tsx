@@ -137,7 +137,7 @@ export const useCommandPalette = (): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
-	singleSiteMode: boolean | undefined;
+	inSiteContext: boolean | undefined;
 } => {
 	const {
 		currentSiteId,
@@ -171,7 +171,7 @@ export const useCommandPalette = (): {
 	};
 
 	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
-	const singleSiteMode =
+	const inSiteContext =
 		currentSite && ( currentRoute.includes( ':site' ) || currentRoute.startsWith( '/wp-admin' ) );
 
 	// Logic for selected command (sites)
@@ -225,7 +225,7 @@ export const useCommandPalette = (): {
 			);
 		}
 
-		return { commands: sitesToPick ?? [], filterNotice, emptyListNotice, singleSiteMode };
+		return { commands: sitesToPick ?? [], filterNotice, emptyListNotice, inSiteContext };
 	}
 
 	// Logic for root commands
@@ -259,7 +259,7 @@ export const useCommandPalette = (): {
 	} );
 
 	// If we are on a current site context, filter and map the commands for single site use.
-	if ( singleSiteMode ) {
+	if ( inSiteContext ) {
 		sortedCommands = sortedCommands.filter( ( command ) =>
 			isCommandAvailableOnSite( command, currentSite, userCapabilities )
 		);
@@ -316,6 +316,6 @@ export const useCommandPalette = (): {
 		commands: finalSortedCommands,
 		filterNotice: undefined,
 		emptyListNotice: undefined,
-		singleSiteMode,
+		inSiteContext,
 	};
 };
