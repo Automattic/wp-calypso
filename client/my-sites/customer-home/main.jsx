@@ -29,7 +29,6 @@ import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
-import { isP2Site } from 'calypso/sites-dashboard/utils';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
@@ -81,7 +80,7 @@ const Home = ( {
 	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
 		getIsGlobalSiteViewEnabled( state, siteId )
 	);
-	const isP2 = isP2Site( site );
+	const isP2 = site.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
