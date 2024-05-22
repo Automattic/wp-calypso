@@ -766,9 +766,6 @@ export class EditorPage {
 		const editorParent = await this.editor.parent();
 		await this.editorToolbarComponent.switchToDraft();
 
-		// For mobiles, we need to dismiss the settings panel before we can click on publish
-		await this.closeSettings();
-
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		// Saves the draft
 		await Promise.race( [ this.editorToolbarComponent.clickPublish(), this.confirmUnpublish() ] );
