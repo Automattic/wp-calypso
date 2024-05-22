@@ -21,11 +21,11 @@ function configureSitesContext( context: Context ) {
 
 	context.primary = (
 		<SitesDashboardProvider
-			categoryInitialState={ category }
-			siteUrlInitialState={ siteUrl }
-			siteFeatureInitialState={ siteFeature }
-			hideListingInitialState={ hideListingInitialState }
-			showOnlyFavoritesInitialState={ context.dashboardSitesQuery?.showOnlyFavorites }
+			selectedCategory={ category }
+			siteUrl={ siteUrl }
+			siteFeature={ siteFeature }
+			hideListing={ hideListingInitialState }
+			showOnlyFavorites={ context.dashboardSitesQuery?.showOnlyFavorites }
 			path={ context.path }
 			searchQuery={ context.dashboardSitesQuery.searchQuery }
 			currentPage={ context.dashboardSitesQuery.currentPage }

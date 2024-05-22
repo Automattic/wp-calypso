@@ -10,11 +10,11 @@ import { filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
 
 interface Props {
-	showOnlyFavoritesInitialState?: boolean;
-	hideListingInitialState?: boolean;
-	categoryInitialState?: string;
-	siteUrlInitialState?: string;
-	siteFeatureInitialState?: string;
+	showOnlyFavorites?: boolean;
+	hideListing?: boolean;
+	selectedCategory: string;
+	siteUrl?: string;
+	siteFeature?: string;
 	searchQuery: string;
 	children: ReactNode;
 	path: string;
@@ -61,11 +61,11 @@ const buildFilters = ( { status, siteTags }: { status: string; siteTags: string 
 };
 
 export const SitesDashboardProvider = ( {
-	hideListingInitialState = false,
-	showOnlyFavoritesInitialState = false,
-	categoryInitialState,
-	siteUrlInitialState,
-	siteFeatureInitialState,
+	hideListing = false,
+	showOnlyFavorites = false,
+	selectedCategory,
+	siteUrl,
+	siteFeature,
 	children,
 	path,
 	searchQuery,
@@ -74,10 +74,6 @@ export const SitesDashboardProvider = ( {
 	sort,
 	featurePreview,
 }: Props ) => {
-	const [ hideListing, setHideListing ] = useState( hideListingInitialState );
-	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
-	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( siteFeatureInitialState );
-	const [ showOnlyFavorites, setShowOnlyFavorites ] = useState( showOnlyFavoritesInitialState );
 	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
 	const [ selectedSites, setSelectedSites ] = useState< Site[] >( [] );
 	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
@@ -110,18 +106,18 @@ export const SitesDashboardProvider = ( {
 	};
 
 	const sitesDashboardContextValue: SitesDashboardContextInterface = {
-		selectedCategory: selectedCategory,
-		setSelectedCategory: setSelectedCategory,
-		selectedSiteFeature: selectedSiteFeature,
-		setSelectedSiteFeature: setSelectedSiteFeature,
-		hideListing: hideListing,
-		setHideListing: setHideListing,
-		showOnlyFavorites: showOnlyFavorites,
-		setShowOnlyFavorites: setShowOnlyFavorites,
+		selectedCategory,
+		setSelectedCategory: () => {},
+		selectedSiteFeature: siteFeature,
+		setSelectedSiteFeature: () => {},
+		hideListing,
+		setHideListing: () => {},
+		showOnlyFavorites,
+		setShowOnlyFavorites: () => {},
 		path,
 		currentPage,
 		isBulkManagementActive,
-		initialSelectedSiteUrl: siteUrlInitialState,
+		initialSelectedSiteUrl: siteUrl,
 		setIsBulkManagementActive: handleSetBulkManagementActive,
 		selectedSites,
 		setSelectedSites,
