@@ -16,7 +16,7 @@ import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
-import DomainInformation from './domain-information';
+import { DomainSection } from './domain-section';
 import { GetReportForm } from './get-report-form';
 import HostingInformation from './hosting-information';
 import { LandingPageHeader } from './landing-page-header';
@@ -147,27 +147,14 @@ export default function SiteProfilerV2( props: Props ) {
 									hideTitle
 								/>
 							</MetricsSection>
-							<MetricsSection
-								name={ translate( 'Domain' ) }
-								title={ translate(
-									'Your domain {{success}}set up is good{{/success}}, but you could boost your site’s visibility and growth.',
-									{
-										components: {
-											success: <span className="success" />,
-										},
-									}
-								) }
-								subtitle={ translate( 'Optimize your domain' ) }
-								ref={ domainRef }
-							>
-								<DomainInformation
-									domain={ domain }
-									whois={ siteProfilerData.whois }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									urlData={ urlData }
-									hideTitle
-								/>
-							</MetricsSection>
+
+							<DomainSection
+								domain={ domain }
+								whois={ siteProfilerData.whois }
+								hostingProvider={ hostingProviderData?.hosting_provider }
+								urlData={ urlData }
+								domainRef={ domainRef }
+							/>
 						</>
 					) }
 				</LayoutBlock>
