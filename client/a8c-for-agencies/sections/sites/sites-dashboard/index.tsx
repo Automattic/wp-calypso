@@ -5,11 +5,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
-import {
-	DATAVIEWS_LIST,
-	DATAVIEWS_TABLE,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { DATAVIEWS_TABLE } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -27,10 +23,7 @@ import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/featu
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
-import {
-	AgencyDashboardFilter,
-	Site,
-} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { AgencyDashboardFilter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -59,13 +52,13 @@ export default function SitesDashboard() {
 	const {
 		dataViewsState,
 		setDataViewsState,
-		initialSelectedSiteUrl,
+		siteUrl,
 		selectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 		showOnlyFavorites,
-		hideListing,
-		setHideListing,
+		showPreviewPane,
+		closePreviewPane,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
@@ -107,38 +100,16 @@ export default function SitesDashboard() {
 	const noActiveSite = useNoActiveSite();
 
 	useEffect( () => {
-		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
+		if ( dataViewsState.selectedItem && ! siteUrl ) {
 			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
-			setHideListing( false );
-			return;
+			closePreviewPane();
 		}
 
-		if (
-			dataViewsState.selectedItem &&
-			dataViewsState.selectedItem.url === initialSelectedSiteUrl
-		) {
-			return;
-		}
-
-		if ( ! isLoading && ! isError && data && initialSelectedSiteUrl ) {
-			const site = data.sites.find( ( site: Site ) => site.url === initialSelectedSiteUrl );
-
-			setDataViewsState( ( prevState: DataViewsState ) => ( {
-				...prevState,
-				selectedItem: site,
-				type: DATAVIEWS_LIST,
-			} ) );
-		}
 		// Omitting sitesViewState to prevent infinite loop
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ data, isError, isLoading, initialSelectedSiteUrl, setDataViewsState, setHideListing ] );
+	}, [ data, siteUrl, setDataViewsState, closePreviewPane ] );
 
 	useEffect( () => {
-		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
-		if ( hideListing && ! dataViewsState.selectedItem ) {
-			return;
-		}
-
 		if ( dataViewsState.selectedItem ) {
 			dispatch( setSelectedSiteId( dataViewsState.selectedItem.blog_id ) );
 		}
@@ -169,15 +140,15 @@ export default function SitesDashboard() {
 		dataViewsState.page,
 		showOnlyFavorites,
 		dataViewsState.sort,
-		hideListing,
+		showPreviewPane,
 	] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( dataViewsState.selectedItem ) {
 			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
-			setHideListing( false );
+			closePreviewPane();
 		}
-	}, [ dataViewsState, setDataViewsState, setHideListing ] );
+	}, [ dataViewsState, setDataViewsState, closePreviewPane ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -223,7 +194,7 @@ export default function SitesDashboard() {
 			wide
 			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
 		>
-			{ ! hideListing && (
+			{ showPreviewPane && (
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
 						{ recentlyCreatedSite && (
