@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { UrlData } from 'calypso/blocks/import/types';
 import DomainInformation from 'calypso/site-profiler/components/domain-information';
@@ -15,6 +16,12 @@ interface DomainSectionProps {
 export const DomainSection: React.FC< DomainSectionProps > = ( props ) => {
 	const translate = useTranslate();
 	const { domain, whois, hostingProvider, urlData, domainRef } = props;
+	const showSubtitle = ! urlData?.platform_data?.is_wpcom;
+	const goToDomainsPage = () => {
+		if ( showSubtitle ) {
+			page( '/setup/domain-transfer' );
+		}
+	};
 
 	return (
 		<MetricsSection
@@ -27,7 +34,8 @@ export const DomainSection: React.FC< DomainSectionProps > = ( props ) => {
 					},
 				}
 			) }
-			subtitle={ translate( 'Optimize your domain' ) }
+			subtitle={ showSubtitle ? translate( 'Optimize your domain' ) : undefined }
+			subtitleOnClick={ goToDomainsPage }
 			ref={ domainRef }
 		>
 			<DomainInformation
