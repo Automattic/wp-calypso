@@ -1,4 +1,8 @@
-import { WPCOM_FEATURES_FULL_ACTIVITY_LOG, PLAN_PERSONAL } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+	PLAN_PERSONAL,
+	getPlan,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import classNames from 'classnames';
@@ -52,11 +56,12 @@ const ActivityLogV2: FunctionComponent = () => {
 	let upgradePlanNames = translate( 'Jetpack Personal or Jetpack Premium' );
 
 	let upsellURL;
-	if ( hasJetpackPartnerAccess && ! isA8CForAgencies() ) {
-		upsellURL = `/partner-portal/issue-license?site_id=${ siteId }`;
-	} else if ( ! isA8CForAgencies() && isSimple ) {
+	if ( ! isA8CForAgencies() && isSimple ) {
 		upsellURL = `https://wordpress.com/checkout/${ siteSlug }/${ PLAN_PERSONAL }`;
-		upgradePlanNames = 'Starter plan';
+		const upgradePlanName = getPlan( PLAN_PERSONAL )?.getTitle();
+		upgradePlanNames = upgradePlanName as string;
+	} else if ( hasJetpackPartnerAccess && ! isA8CForAgencies() ) {
+		upsellURL = `/partner-portal/issue-license?site_id=${ siteId }`;
 	} else if ( isA8CForAgencies() ) {
 		upsellURL = `/marketplace/products?site_id=${ siteId }`;
 	} else {
