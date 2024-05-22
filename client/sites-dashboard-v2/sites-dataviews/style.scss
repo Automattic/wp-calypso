@@ -33,16 +33,17 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+
+	&:hover,
+	&:hover:visited {
+		color: var(--color-link);
+	}
 }
 
 .sites-dataviews__site-wp-admin-url {
 	&:focus {
 		border-radius: 2px;
 		box-shadow: 0 0 0 2px var(--color-primary-light);
-	}
-
-	&:hover {
-		text-decoration: underline;
 	}
 
 	&:visited {

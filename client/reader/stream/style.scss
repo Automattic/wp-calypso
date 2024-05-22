@@ -788,9 +788,7 @@
 		.reader-tag-sidebar__recent-prompt-link {
 			display: block;
 			font-size: $font-body-small;
-			text-decoration: underline;
-			font-weight: 500;
-			color: var(--color-neutral-100);
+			color: var(--color-link);
 			margin-bottom: 12px;
 		}
 	}
