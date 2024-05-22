@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	FEATURE_SFTP,
@@ -26,7 +27,6 @@ import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -336,16 +336,14 @@ function useSubmenuItems( site: SiteExcerptData ) {
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
-	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
+	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP ) && ! site?.plan?.expired;
 	const displayUpsell = ! hasFeatureSFTP;
+	const shouldLinkToDevTools = ! hasFeatureSFTP && isEnabled( 'layout/dotcom-nav-redesign-v2' );
 	const submenuItems = useSubmenuItems( site );
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offset: -8,
 	} );
 	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
-	const currentRoute = useSelector( getCurrentRoute );
-	const hostingConfigUrl = getHostingConfigUrl( site.slug );
-	const shouldShowHostingConfigLink = currentRoute !== hostingConfigUrl;
 
 	if ( submenuItems.length === 0 ) {
 		return null;
@@ -362,7 +360,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 			/>
 			<MenuItemLink
 				info={
-					displayUpsell
+					! hasFeatureSFTP
 						? sprintf(
 								/* translators: %s - the plan's product name, such as Creator or Explorer. */
 								__( 'Requires a %s Plan' ),
@@ -370,34 +368,42 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 						  )
 						: undefined
 				}
+				href={ shouldLinkToDevTools ? `/dev-tools-promo/${ site.slug }` : undefined }
+				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_hosting_click' ) }
 			>
-				{ __( 'Hosting' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
+				{ shouldLinkToDevTools ? (
+					__( 'Dev Tools' )
+				) : (
+					<>
+						{ __( 'Hosting' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
+					</>
+				) }
 			</MenuItemLink>
-			<SubmenuPopover
-				{ ...submenuProps.submenu }
-				inline
-				focusOnMount={ displayUpsell ? false : 'firstElement' }
-			>
-				{ displayUpsell ? (
-					<UpsellMenuGroup>
-						<TrackComponentView
-							eventName="calypso_sites_dashboard_site_action_hosting_config_upsell_view"
-							eventProperties={ {
-								product_slug: site.plan?.product_slug,
-							} }
-						/>
-						{ sprintf(
-							/* translators: %s - the plan's product name, such as Creator or Explorer. */
-							__(
-								'Upgrade to the %s Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
-							),
-							upsellPlanName
-						) }
-						{ shouldShowHostingConfigLink && (
+			{ ! shouldLinkToDevTools && (
+				<SubmenuPopover
+					{ ...submenuProps.submenu }
+					inline
+					focusOnMount={ displayUpsell ? false : 'firstElement' }
+				>
+					{ displayUpsell ? (
+						<UpsellMenuGroup>
+							<TrackComponentView
+								eventName="calypso_sites_dashboard_site_action_hosting_config_upsell_view"
+								eventProperties={ {
+									product_slug: site.plan?.product_slug,
+								} }
+							/>
+							{ sprintf(
+								/* translators: %s - the plan's product name, such as Creator or Explorer. */
+								__(
+									'Upgrade to the %s Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
+								),
+								upsellPlanName
+							) }
 							<Button
 								compact
 								primary
-								href={ hostingConfigUrl }
+								href={ getHostingConfigUrl( site.slug ) }
 								onClick={ () =>
 									recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_upsell_click', {
 										product_slug: site.plan?.product_slug,
@@ -406,24 +412,27 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 							>
 								{ __( 'See full feature list' ) }
 							</Button>
-						) }
-					</UpsellMenuGroup>
-				) : (
-					submenuItems.map( ( item ) => (
-						<MenuItemLink
-							key={ item.label }
-							href={ item.href }
-							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_submenu_click', {
-									section: item.sectionName,
-								} )
-							}
-						>
-							{ item.label }
-						</MenuItemLink>
-					) )
-				) }
-			</SubmenuPopover>
+						</UpsellMenuGroup>
+					) : (
+						submenuItems.map( ( item ) => (
+							<MenuItemLink
+								key={ item.label }
+								href={ item.href }
+								onClick={ () =>
+									recordTracks(
+										'calypso_sites_dashboard_site_action_hosting_config_submenu_click',
+										{
+											section: item.sectionName,
+										}
+									)
+								}
+							>
+								{ item.label }
+							</MenuItemLink>
+						) )
+					) }
+				</SubmenuPopover>
+			) }
 		</div>
 	);
 }
