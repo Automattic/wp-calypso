@@ -10,7 +10,7 @@ import { useGetPostByEmail } from 'calypso/my-sites/site-settings/publishing-too
 import { useRegeneratePostByEmailMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-regenerate-post-by-email-mutation';
 import { useTogglePostByEmailMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-toggle-post-by-email';
 import { useDispatch, useSelector } from 'calypso/state';
-import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
+import { regeneratePostByEmail as jetpackRegeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
@@ -36,15 +36,22 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 		selectedSiteId,
 		siteIsJetpack,
 		siteIsAtomic,
-		regeneratingPostByEmail,
-		isActive,
+		jetpackRegeneratingPostByEmail,
+		jetpackPostByEmailIsActive,
 		moduleUnavailable,
 	} = useSelector( ( state ) => {
 		const selectedSiteId = getSelectedSiteId( state ) || 0;
 		const siteIsJetpack = isJetpackSite( state, selectedSiteId );
 		const siteIsAtomic = isSiteAutomatedTransfer( state, selectedSiteId );
-		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail( state, selectedSiteId );
-		const isActive = !! isJetpackModuleActive( state, selectedSiteId, moduleSlug );
+		const jetpackRegeneratingPostByEmail = isRegeneratingJetpackPostByEmail(
+			state,
+			selectedSiteId
+		);
+		const jetpackPostByEmailIsActive = !! isJetpackModuleActive(
+			state,
+			selectedSiteId,
+			moduleSlug
+		);
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 			state,
@@ -56,15 +63,15 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 			selectedSiteId,
 			siteIsJetpack,
 			siteIsAtomic,
-			regeneratingPostByEmail,
-			isActive,
+			jetpackRegeneratingPostByEmail,
+			jetpackPostByEmailIsActive,
 			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		};
 	} );
-	const { data: postByEmailSettings } = useGetPostByEmail( selectedSiteId );
-	const { mutate: switchPostByEmail, isPending: isPendingSwitch } =
+	const { data: simpleSitePostByEmailSettings } = useGetPostByEmail( selectedSiteId );
+	const { mutate: simpleSiteSwitchPostByEmail, isPending: isSimpleSitePendingSwitch } =
 		useTogglePostByEmailMutation( selectedSiteId );
-	const { mutate: regeneratePostByEmailSimple, isPending: isPendingRegenerate } =
+	const { mutate: simpleSiteRegeneratePostByEmail, isPending: isSimpleSitePendingRegenerate } =
 		useRegeneratePostByEmailMutation( selectedSiteId );
 
 	const translate = useTranslate();
@@ -75,7 +82,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 			return;
 		}
 
-		switchPostByEmail( checked, {
+		simpleSiteSwitchPostByEmail( checked, {
 			onSuccess: () => {
 				dispatch( successNotice( translate( 'Settings saved successfully!' ), noticeConfig ) );
 			},
@@ -91,12 +98,13 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 		if ( ! selectedSiteId ) {
 			return;
 		}
+
 		if ( siteIsJetpack ) {
-			dispatch( regeneratePostByEmail( selectedSiteId ) );
+			dispatch( jetpackRegeneratePostByEmail( selectedSiteId ) );
 			return;
 		}
 
-		regeneratePostByEmailSimple( undefined, {
+		simpleSiteRegeneratePostByEmail( undefined, {
 			onSuccess: () => {
 				dispatch( successNotice( translate( 'Address regenerated successfully!' ), noticeConfig ) );
 			},
@@ -111,8 +119,8 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	const email = address && address !== 'regenerate' ? address : '';
 	const labelClassName =
 		moduleUnavailable ||
-		regeneratingPostByEmail ||
-		( siteIsJetpack ? ! isActive : ! postByEmailSettings?.isEnabled )
+		jetpackRegeneratingPostByEmail ||
+		( siteIsJetpack ? ! jetpackPostByEmailIsActive : ! simpleSitePostByEmailSettings?.isEnabled )
 			? 'is-disabled'
 			: undefined;
 
@@ -139,8 +147,8 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 					/>
 				) : (
 					<ToggleControl
-						checked={ !! postByEmailSettings?.isEnabled }
-						disabled={ isPendingSwitch || isPendingRegenerate }
+						checked={ !! simpleSitePostByEmailSettings?.isEnabled }
+						disabled={ isSimpleSitePendingSwitch || isSimpleSitePendingRegenerate }
 						label={ translate( 'Post by Email' ) }
 						onChange={ handleSwitchForSimpleSite }
 					/>
@@ -153,23 +161,27 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 					<ClipboardButtonInput
 						className="publishing-tools__email-address"
 						disabled={
-							regeneratingPostByEmail ||
-							( siteIsJetpack ? ! isActive : ! postByEmailSettings?.isEnabled ) ||
+							jetpackRegeneratingPostByEmail ||
+							( siteIsJetpack
+								? ! jetpackPostByEmailIsActive
+								: ! simpleSitePostByEmailSettings?.isEnabled ) ||
 							moduleUnavailable
 						}
-						value={ siteIsJetpack ? email : postByEmailSettings?.email }
+						value={ siteIsJetpack ? email : simpleSitePostByEmailSettings?.email }
 					/>
 					<Button
 						onClick={ handleRegenerate }
 						disabled={
 							isFormPending ||
-							regeneratingPostByEmail ||
-							isPendingRegenerate ||
-							( siteIsJetpack ? ! isActive : ! postByEmailSettings?.isEnabled ) ||
+							jetpackRegeneratingPostByEmail ||
+							isSimpleSitePendingRegenerate ||
+							( siteIsJetpack
+								? ! jetpackPostByEmailIsActive
+								: ! simpleSitePostByEmailSettings?.isEnabled ) ||
 							!! moduleUnavailable
 						}
 					>
-						{ regeneratingPostByEmail
+						{ jetpackRegeneratingPostByEmail
 							? translate( 'Regenerating…' )
 							: translate( 'Regenerate address' ) }
 					</Button>
