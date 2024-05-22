@@ -80,7 +80,7 @@ const Home = ( {
 	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
 		getIsGlobalSiteViewEnabled( state, siteId )
 	);
-	const isP2 = site.options?.is_wpforteams_site;
+	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
