@@ -17,7 +17,12 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => 
 			} ),
 			{}
 		),
-		...( filter.showOnlyFavorites && { show_only_favorites: true } ),
+		...filter?.siteTags?.reduce( ( curr, acc ) => {
+			return {
+				...curr,
+				[ acc ]: true,
+			};
+		}, {} ),
 		...( filter.isNotMultisite && { not_multisite: true } ),
 		...( filter?.showOnlyFavorites && { show_only_favorites: true } ),
 	};
