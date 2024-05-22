@@ -17,6 +17,9 @@ export default function ( { path }: Props ) {
 		<Sidebar
 			path={ A4A_PURCHASES_LINK }
 			title={ translate( 'Marketplace' ) }
+			description={ translate(
+				'Choose from a variety of hosting, or à la carte products for your sites.'
+			) }
 			backButtonProps={ {
 				label: translate( 'Back to overview' ),
 				icon: chevronLeft,

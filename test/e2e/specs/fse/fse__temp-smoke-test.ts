@@ -70,15 +70,28 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+			// eCommerce plan sites attempt to load Calypso, but with
+			// third-party cookies disabled the fallback route to WP-Admin
+			// kicks in after some time.
+			await testAccount.authenticate( page, { url: /wp-admin/ } );
+		} else {
+			await testAccount.authenticate( page );
+		}
 	} );
 
 	it( 'Navigate to Full Site Editor', async function () {
 		fullSiteEditorPage = new FullSiteEditorPage( page );
 
-		// Explicitly doing sidebar navigation to ensure Calypso navigation is intact.
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Appearance', 'Editor' );
+		// eCommerce plan loads WP-Admin for home dashboard,
+		// so instead navigate straight to the FSE page.
+		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
+		} else {
+			// Explicitly doing sidebar navigation to ensure Calypso navigation is intact.
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Appearance', 'Editor' );
+		}
 	} );
 
 	it( 'Editor endpoint loads', async function () {

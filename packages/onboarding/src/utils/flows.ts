@@ -42,6 +42,7 @@ export const DOMAIN_TRANSFER = 'domain-transfer';
 export const GOOGLE_TRANSFER = 'google-transfer';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 export const REBLOGGING_FLOW = 'reblogging';
+export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
 
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
@@ -210,4 +211,8 @@ export const isVideoPressTVFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
 		flowName && [ VIDEOPRESS_TV_FLOW, VIDEOPRESS_TV_PURCHASE_FLOW ].includes( flowName )
 	);
+};
+
+export const isDomainForGravatarFlow = ( flowName: string | null | undefined ) => {
+	return Boolean( flowName && [ DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName ) );
 };

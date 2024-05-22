@@ -7,6 +7,7 @@ interface MetricsSectionProps {
 	name: string;
 	title: string | React.ReactNode;
 	subtitle?: string | React.ReactNode;
+	subtitleOnClick?: () => void;
 	children?: React.ReactNode;
 }
 
@@ -80,17 +81,17 @@ const Content = styled.div`
 
 export const MetricsSection = forwardRef< HTMLObjectElement, MetricsSectionProps >(
 	( props, ref: ForwardedRef< HTMLObjectElement > ) => {
-		const { name, title, subtitle, children } = props;
+		const { name, title, subtitle, children, subtitleOnClick } = props;
 
 		return (
 			<Container ref={ ref }>
 				<NameSpan>{ name }</NameSpan>
 				<Title>{ title }</Title>
 				{ subtitle && (
-					<>
-						<Subtitle>{ subtitle }</Subtitle>
+					<Subtitle onClick={ subtitleOnClick }>
+						{ subtitle }
 						<SubtitleIcon icon="chevron-right" size={ 18 } />
-					</>
+					</Subtitle>
 				) }
 
 				{ children && <Content>{ children }</Content> }

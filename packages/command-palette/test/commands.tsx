@@ -43,7 +43,7 @@ const expectedCommandsResults = {
 	disableEdgeCache: [ '/hosting-config/:site#edge', siteFilters.adminPublicAtomic ],
 	manageCacheSettings: [ '/hosting-config/:site#cache', siteFilters.adminAtomic ],
 	visitSite: [ 'https://:site' ],
-	openSiteDashboard: [ '/home/:site' ],
+	openSiteDashboard: [ '/wp-admin' ],
 	openHostingConfiguration: [ '/hosting-config/:site', siteFilters.adminP2SelfHosted ],
 	openPHPmyAdmin: [ '/hosting-config/:site#database-access', siteFilters.adminAtomic ],
 	openProfile: [ '/me' ],
