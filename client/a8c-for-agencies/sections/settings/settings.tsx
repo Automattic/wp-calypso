@@ -18,10 +18,10 @@ import AgencyProfile from './agency-profile';
 import { SETTINGS_AGENCY_PROFILE_TAB } from './constants';
 
 type Props = {
-	tab: string;
+	selectedTab: string;
 };
 
-export default function Settings( { tab }: Props ) {
+export default function Settings( { selectedTab }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const title = translate( 'Settings' );
@@ -37,24 +37,24 @@ export default function Settings( { tab }: Props ) {
 	// Build all the navigation items
 	const navItems = buildNavItems( {
 		items: Object.values( settingsTabs ),
-		selectedKey: tab,
+		selectedKey: selectedTab,
 		basePath: A4A_SETTINGS_LINK,
 		onItemClick: () => {
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_settings_click', {
-					status: tab,
+					status: selectedTab,
 				} )
 			);
 		},
 	} );
 
 	const selectedItemProps = {
-		selectedText: settingsTabs[ tab ].label,
+		selectedText: settingsTabs[ selectedTab ].label,
 	};
 
 	// Content tab switch
 	let tabContent = null;
-	switch ( tab ) {
+	switch ( selectedTab ) {
 		case SETTINGS_AGENCY_PROFILE_TAB:
 			tabContent = <AgencyProfile />;
 			break;
