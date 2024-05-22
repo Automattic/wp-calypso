@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Context, type Callback } from '@automattic/calypso-router';
 import {
 	dashboardSitesContext,
+	sitePreviewPaneContext,
 	sitesContext,
 } from 'calypso/a8c-for-agencies/sections/sites/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -52,6 +53,7 @@ export default function ( basePath: string ) {
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		sitePreviewPaneContext,
 		dashboardSitesContext,
 		sitesContext,
 		//wpcomAtomicTransfer( WPCOMScanUpsellPage ),
@@ -71,6 +73,7 @@ export default function ( basePath: string ) {
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		sitePreviewPaneContext,
 		dashboardSitesContext,
 		sitesContext,
 		//notFoundIfNotEnabled,
