@@ -141,7 +141,7 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
 					<FormSettingExplanation>
 						{ hasEnTranslation( 'Use WordPress.com’s native dashboard to manage your site.' )
 							? translate( 'Use WordPress.com’s native dashboard to manage your site.' )
-							: translate( 'The WordPress.com redesign for a better experience.' ) }
+							: translate( 'Use WordPress.com’s legacy dashboard to manage your site.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
 			</>
