@@ -406,9 +406,7 @@ class Layout extends Component {
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
-				{ this.props.isUnifiedSiteSidebarVisible && (
-					<QuerySiteAdminColor siteId={ this.props.siteId } />
-				) }
+				{ this.props.siteId && <QuerySiteAdminColor siteId={ this.props.siteId } /> }
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }
