@@ -97,12 +97,12 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 
 	const urlQueryParams = useQuery();
 
-	const shouldHideBack = () => {
-		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'wp-admin-importer' ].includes(
-			urlQueryParams.get( 'ref' ) || ''
-		);
+	const shouldHideBackButton = () => {
+		const ref = urlQueryParams.get( 'ref' ) || '';
+		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'wp-admin-importer' ].includes( ref );
+		const shouldHideBasedOnVariant = [ HOSTED_SITE_MIGRATION_FLOW ].includes( variantSlug || '' );
 
-		return variantSlug === HOSTED_SITE_MIGRATION_FLOW || isEntrepreneurSignup;
+		return shouldHideBasedOnRef || shouldHideBasedOnVariant;
 	};
 
 	return (
@@ -112,7 +112,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 				stepName="site-migration-identify"
 				flowName="site-migration"
 				className="import__onboarding-page"
-				hideBack={ shouldHideBack() }
+				hideBack={ shouldHideBackButton() }
 				hideSkip
 				hideFormattedHeader
 				goBack={ navigation.goBack }
