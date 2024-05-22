@@ -2,13 +2,13 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { modifierKeyIsActive } from '../helpers/input';
+import { recordTracksEvent } from '../helpers/stats';
 import { bumpStat } from '../rest-client/bump-stat';
 import { wpcom } from '../rest-client/wpcom';
 import actions from '../state/actions';
 import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
 import Gridicon from './gridicons';
-const { recordTracksEvent } = require( '../helpers/stats' );
 
 const KEY_U = 85;
 

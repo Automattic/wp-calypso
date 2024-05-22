@@ -1,4 +1,5 @@
 import superagent from 'superagent';
+// eslint-disable-next-line import/newline-after-import
 import { v4 as uuid } from 'uuid';
 const URL = require( 'url' );
 

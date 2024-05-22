@@ -9,6 +9,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 ```jsx
 import QueryBackupStagingSitesList from 'calypso/components/data/query-backup-staging-sites-list';
 import { useSelector } from 'calypso/state';
+
 export { isFetchingStagingSitesList } from 'calypso/state/rewind/selectors/is-fetching-staging-sites-list';
 export { hasFetchedStagingSitesList } from 'calypso/state/rewind/selectors/has-fetched-staging-sites-list';
 export { getBackupStagingSites } from 'calypso/state/rewind/selectors/get-backup-staging-sites';

@@ -10,6 +10,7 @@ For instance, to redirect `/foo/` to `/foo`:
 
 ```js
 import { normalize } from 'calypso/lib/route';
+
 page( '/foo/?', normalize, displayFoo );
 ```
 
@@ -17,6 +18,7 @@ Alternatively, to normalize all routes:
 
 ```js
 import { normalize } from 'calypso/lib/route';
+
 page( '*', normalize );
 ```
 

@@ -1,5 +1,5 @@
 import '@automattic/calypso-polyfills';
-import debug from 'debug';
+import debugFactory from 'debug';
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
@@ -8,8 +8,7 @@ import { receiveMessage, sendMessage } from './messaging';
 
 import '../panel/boot/stylesheets/style.scss';
 
-const logger = debug( 'notifications:standalone' );
-
+const debug = debugFactory( 'notifications:standalone' );
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
 const locale = match ? match[ 1 ] : 'en';
@@ -76,7 +75,7 @@ const NotesWrapper = ( { wpcom } ) => {
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
 
-	logger( 'wrapper state update', { isShowing, isVisible } );
+	debug( 'wrapper state update', { isShowing, isVisible } );
 
 	const refresh = () =>
 		setIsVisible( ( prevIsVisible ) => {
@@ -86,7 +85,7 @@ const NotesWrapper = ( { wpcom } ) => {
 	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
 
 	const handleMessages = ( { action, hidden, showing } ) => {
-		logger( 'message received', {
+		debug( 'message received', {
 			action,
 			hidden,
 			showing,

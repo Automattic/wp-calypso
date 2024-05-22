@@ -35,6 +35,7 @@ The `supportContext` is a combination of the `supportPostId` and `supportLink` f
 
 ```js
 import { localizeUrl } from '@automattic/i18n-utils';
+
 const contextLinks = {
 	// ...
 	purchases: {
