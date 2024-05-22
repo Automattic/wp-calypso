@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import classnames from 'classnames';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
@@ -20,7 +21,6 @@ import { GetReportForm } from './get-report-form';
 import HostingInformation from './hosting-information';
 import { LandingPageHeader } from './landing-page-header';
 import { MetricsSection } from './metrics-section';
-import './styles-v2.scss';
 import { ResultsHeader } from './results-header';
 import './styles-v2.scss';
 
@@ -95,6 +95,10 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 
+	// TODO: Get overall score from the API
+	// https://github.com/Automattic/dotcom-forge/issues/7298
+	const overallScore = false;
+
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
@@ -118,7 +122,14 @@ export default function SiteProfilerV2( props: Props ) {
 			) }
 			{ showResultScreen && (
 				<>
-					<LayoutBlock className="results-header-block bad" width="medium">
+					<LayoutBlock
+						className={ classnames(
+							'results-header-block',
+							{ bad: ! overallScore },
+							{ good: overallScore }
+						) }
+						width="medium"
+					>
 						{ showBasicMetrics && (
 							<ResultsHeader
 								domain={ domain }

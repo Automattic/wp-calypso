@@ -231,6 +231,13 @@
 				background-position-x: center;
 			}
 		}
+		&.good {
+			background: url(calypso/assets/images/site-profiler/background-results-good.svg) no-repeat right top;
+			// Huge screens and bigger
+			@media (min-width: $break-huge) {
+				background-position-x: center;
+			}
+		}
 	}
 
 	.hosting-intro-block {
