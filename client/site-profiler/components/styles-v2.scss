@@ -73,8 +73,10 @@
 
 	// Button style overrides necessary because of conflicting WPcom styles.
 	.button-action {
+		--color-button: #3858e9;
+		--color-button-60: #193de0;
 		color: #fff;
-		background: #3858e9;
+		background: var(--color-button);
 		border-radius: 4px;
 		font-size: 1rem;
 		font-weight: 500;
@@ -86,7 +88,7 @@
 		}
 
 		&.is-busy {
-			background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
+			background-image: linear-gradient(-45deg, var(--color-button) 28%, var(--color-button-60) 28%, var(--color-button-60) 72%, var(--color-button) 72%);
 		}
 	}
 
