@@ -7,6 +7,7 @@ import {
 	sitesContext,
 	needsSetupContext,
 	dashboardSitesContext,
+	sitePreviewPaneContext,
 } from './controller';
 import { FeatureRoutes as loadFeatureRoutes } from './features/routes';
 
@@ -35,6 +36,7 @@ export default function () {
 	page(
 		'/sites/:category/:siteUrl/:feature',
 		requireAccessContext,
+		sitePreviewPaneContext,
 		dashboardSitesContext,
 		sitesContext,
 		makeLayout,
@@ -43,6 +45,7 @@ export default function () {
 	page(
 		'/sites/:category/:siteUrl',
 		requireAccessContext,
+		sitePreviewPaneContext,
 		dashboardSitesContext,
 		sitesContext,
 		makeLayout,
@@ -51,6 +54,7 @@ export default function () {
 	page(
 		'/sites/:category',
 		requireAccessContext,
+		sitePreviewPaneContext,
 		dashboardSitesContext,
 		sitesContext,
 		makeLayout,
@@ -59,6 +63,7 @@ export default function () {
 	page(
 		'/sites',
 		requireAccessContext,
+		sitePreviewPaneContext,
 		dashboardSitesContext,
 		sitesContext,
 		makeLayout,

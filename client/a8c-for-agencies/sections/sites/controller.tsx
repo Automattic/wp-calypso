@@ -17,14 +17,13 @@ function configureSitesContext( context: Context ) {
 	const category = context.params.category || A4A_SITES_DASHBOARD_DEFAULT_CATEGORY;
 	const siteUrl = context.params.siteUrl;
 	const siteFeature = context.params.feature || A4A_SITES_DASHBOARD_DEFAULT_FEATURE;
-	const hideListingInitialState = !! siteUrl;
 
 	context.primary = (
 		<SitesDashboardProvider
 			selectedCategory={ category }
 			siteUrl={ siteUrl }
 			siteFeature={ siteFeature }
-			hideListing={ hideListingInitialState }
+			showPreviewPane={ context.sitePreviewPane }
 			showOnlyFavorites={ context.dashboardSitesQuery?.showOnlyFavorites }
 			path={ context.path }
 			searchQuery={ context.dashboardSitesQuery.searchQuery }
@@ -88,6 +87,11 @@ export const dashboardSitesContext: Callback = ( context: Context, next ) => {
 		},
 	};
 
+	next();
+};
+
+export const sitePreviewPaneContext: Callback = ( context: Context, next ) => {
+	context.sitePreviewPane = true;
 	next();
 };
 
