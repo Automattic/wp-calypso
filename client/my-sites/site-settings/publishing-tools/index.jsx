@@ -100,11 +100,10 @@ class PublishingTools extends Component {
 		const { translate, siteIsJetpack, isAtomic } = this.props;
 
 		const renderPressThis = config.isEnabled( 'press-this' ) && ! this.isMobile();
-		const renderPostByEmail = true; //TODO: previously `siteIsJetpack`, is any check needed going forward?
 		const renderPostByVoice =
 			config.isEnabled( 'settings/post-by-voice' ) && ! siteIsJetpack && ! isAtomic;
 
-		if ( ! renderPressThis && ! renderPostByVoice && ! renderPostByEmail ) {
+		if ( ! renderPressThis && ! renderPostByVoice ) {
 			return;
 		}
 
@@ -113,7 +112,7 @@ class PublishingTools extends Component {
 				<SettingsSectionHeader title={ translate( 'Publishing Tools' ) } />
 
 				{ renderPostByVoice && this.renderPostByVoiceModule() }
-				{ renderPostByEmail && this.renderPostByEmailModule() }
+				{ this.renderPostByEmailModule() }
 				{ renderPressThis && this.renderPressThisModule() }
 			</div>
 		);
