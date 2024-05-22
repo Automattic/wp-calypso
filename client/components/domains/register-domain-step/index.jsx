@@ -1757,6 +1757,7 @@ class RegisterDomainStep extends Component {
 		} = domainAvailability;
 
 		const { isSignupStep, includeOwnedDomainInSuggestions } = this.props;
+		const isGravatarFlow = this.props.flowName === 'domain-for-gravatar';
 
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
@@ -1770,7 +1771,7 @@ class RegisterDomainStep extends Component {
 		this.setState( {
 			showAvailabilityNotice: true,
 			availabilityError: error,
-			availabilityErrorData: errorData,
+			availabilityErrorData: isGravatarFlow ? { ...errorData, site: null } : errorData,
 			availabilityErrorDomain: domain,
 		} );
 	}
