@@ -26,16 +26,18 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 	return {
 		'higher-speed': {
 			title: translate( 'Higher speed' ),
-			description:
-				translate( '%(higherSpeedPercentage)d%% faster.', {
+			description: translate(
+				'WordPress.com is %(higherSpeedPercentage)d%% faster than the average of WordPress hosts.',
+				{
 					args: { higherSpeedPercentage },
-				} ) + '*',
+				}
+			),
 			icon: trendingUp,
 		},
 		'faster-response': {
 			title: translate( 'Faster response' ),
 			description: translate(
-				'%(fasterResponsePercentage)d%% of sites on WordPress.com have a fast response.',
+				'%(fasterResponsePercentage)d%% of sites on WordPress.com have a fast response according with Google recommendations.',
 				{
 					args: { fasterResponsePercentage },
 				}
@@ -44,13 +46,12 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		},
 		'higher-availability': {
 			title: translate( 'Higher availability' ),
-			description:
-				translate(
-					'WordPress.com has %(wpcomMinutesDowntime)d minutes downtime, versus %(otherHostsAverageDowntime)d minutes from other hosts per month.',
-					{
-						args: { wpcomMinutesDowntime, otherHostsAverageDowntime },
-					}
-				) + '*',
+			description: translate(
+				'WordPress.com has %(wpcomMinutesDowntime)d minutes downtime, versus %(otherHostsAverageDowntime)d minutes from other hosts per month.',
+				{
+					args: { wpcomMinutesDowntime, otherHostsAverageDowntime },
+				}
+			),
 			icon: chartBar,
 		},
 	};

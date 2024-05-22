@@ -84,7 +84,7 @@ export const UpgradePlanHostingDetails = () => {
 					<p className="import__upgrade-plan-hosting-details-header-main">{ headerMainText }</p>
 					<p className="import__upgrade-plan-hosting-details-header-subtext">
 						{ translate(
-							'We offer a proven %(boostPercentage)d% boost in Core Web Vitals—endorsed by data from Google.*',
+							'We offer a proven %(boostPercentage)d% boost in Core Web Vitals over other WordPress hosts—endorsed by data from Google.',
 							{
 								args: { boostPercentage },
 							}
@@ -93,9 +93,6 @@ export const UpgradePlanHostingDetails = () => {
 				</div>
 				<div className="import__upgrade-plan-hosting-details-list">
 					<ul>{ hostingDetailsItems }</ul>
-					<div className="import__upgrade-plan-hosting-details-asterisk">
-						<small>{ translate( '* Compared to the average WordPress hosts.' ) }</small>
-					</div>
 				</div>
 				{ isEnglishLocale && (
 					<div className="import__upgrade-plan-hosting-details-testimonials-container">
