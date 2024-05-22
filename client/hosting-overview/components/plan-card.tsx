@@ -198,14 +198,22 @@ const PlanCard: FC = () => {
 		}
 	};
 
+	const getPlanName = () => {
+		if ( isStaging ) {
+			return translate( 'Staging site' );
+		}
+		if ( isP2 ) {
+			return translate( 'P2+' );
+		}
+		return planName;
+	};
+
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
 			<HostingCard className="hosting-overview__plan">
 				<div className="hosting-overview__plan-card-header">
-					<h3 className="hosting-overview__plan-card-title">
-						{ isStaging ? translate( 'Staging site' ) : planName }
-					</h3>
+					<h3 className="hosting-overview__plan-card-title">{ getPlanName() }</h3>
 					{ renderManageButton() }
 				</div>
 				{ ! isStaging && ! isP2 && (
