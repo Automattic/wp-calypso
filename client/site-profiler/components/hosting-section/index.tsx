@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import HostingInformation from 'calypso/site-profiler/components/hosting-information';
 import { MetricsSection } from 'calypso/site-profiler/components/metrics-section';
+import { getTitleTranslateOptions } from 'calypso/site-profiler/utils/get-title-translate-options';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { DNS, HostingProvider } from 'calypso/data/site-profiler/types';
 
@@ -23,19 +24,11 @@ export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {
 				isWPcom
 					? translate(
 							'Your hosting {{success}}speed and uptime{{/success}} is excellent, providing a reliable and enjoyable user experience.',
-							{
-								components: {
-									success: <span className="success" />,
-								},
-							}
+							getTitleTranslateOptions()
 					  )
 					: translate(
 							'Struggles with hosting {{alert}}speed and uptime{{/alert}} deter visitors. A switch to WordPress.com could transform the user experience.',
-							{
-								components: {
-									alert: <span className="alert" />,
-								},
-							}
+							getTitleTranslateOptions()
 					  )
 			}
 			subtitle={ translate( 'Upgrade your hosting with WordPress.com' ) }
