@@ -10,7 +10,6 @@ import { useGetPostByEmail } from 'calypso/my-sites/site-settings/publishing-too
 import { useRegeneratePostByEmailMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-regenerate-post-by-email-mutation';
 import { useTogglePostByEmailMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-toggle-post-by-email';
 import { useDispatch, useSelector } from 'calypso/state';
-import { activateModule, deactivateModule } from 'calypso/state/jetpack/modules/actions';
 import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -71,18 +70,8 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const handleSwitch = ( checked: boolean ) => {
+	const handleSwitchForSimpleSite = ( checked: boolean ) => {
 		if ( ! selectedSiteId ) {
-			return;
-		}
-
-		if ( isJetpack ) {
-			if ( checked ) {
-				activateModule( selectedSiteId, moduleSlug );
-			} else {
-				deactivateModule( selectedSiteId, moduleSlug );
-			}
-
 			return;
 		}
 
@@ -102,11 +91,9 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 		if ( ! selectedSiteId ) {
 			return;
 		}
+
 		if ( isJetpack ) {
-			const regenerate = regeneratePostByEmail( selectedSiteId );
-
-			dispatch( regenerate );
-
+			dispatch( regeneratePostByEmail( selectedSiteId ) );
 			return;
 		}
 
@@ -156,7 +143,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 						checked={ !! postByEmailSettings?.isEnabled }
 						disabled={ isPendingSwitch || isPendingRegenerate }
 						label={ translate( 'Post by Email' ) }
-						onChange={ handleSwitch }
+						onChange={ handleSwitchForSimpleSite }
 					/>
 				) }
 
