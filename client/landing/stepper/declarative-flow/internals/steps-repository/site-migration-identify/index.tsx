@@ -96,8 +96,12 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 	);
 
 	const urlQueryParams = useQuery();
+
 	const shouldHideBack = () => {
-		const isEntrepreneurSignup = urlQueryParams.get( 'ref' ) === 'entrepreneur-signup';
+		const isEntrepreneurSignup = [ 'entrepreneur-signup', 'wp-admin-importer' ].includes(
+			urlQueryParams.get( 'ref' ) || ''
+		);
+
 		return variantSlug === HOSTED_SITE_MIGRATION_FLOW || isEntrepreneurSignup;
 	};
 
