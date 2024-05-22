@@ -139,7 +139,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 				/>
 				{ siteIsJetpack ? (
 					<JetpackModuleToggle
-						selectedSiteId={ selectedSiteId }
+						siteId={ selectedSiteId }
 						moduleSlug="post-by-email"
 						label={ translate( 'Publish posts by sending an email' ) }
 						disabled={ isFormPending || moduleUnavailable }
