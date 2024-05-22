@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { UrlData } from 'calypso/blocks/import/types';
 import DomainInformation from 'calypso/site-profiler/components/domain-information';
 import { MetricsSection } from 'calypso/site-profiler/components/metrics-section';
+import { getTitleTranslateOptions } from 'calypso/site-profiler/utils/get-title-translate-options';
 import type { HostingProvider, WhoIs } from 'calypso/data/site-profiler/types';
 
 interface DomainSectionProps {
@@ -16,9 +17,9 @@ interface DomainSectionProps {
 export const DomainSection: React.FC< DomainSectionProps > = ( props ) => {
 	const translate = useTranslate();
 	const { domain, whois, hostingProvider, urlData, domainRef } = props;
-	const showSubtitle = ! urlData?.platform_data?.is_wpcom;
+	const { is_wpcom: isWPcom } = urlData?.platform_data || {};
 	const goToDomainsPage = () => {
-		if ( showSubtitle ) {
+		if ( ! isWPcom ) {
 			page( '/setup/domain-transfer' );
 		}
 	};
@@ -26,15 +27,18 @@ export const DomainSection: React.FC< DomainSectionProps > = ( props ) => {
 	return (
 		<MetricsSection
 			name={ translate( 'Domain' ) }
-			title={ translate(
-				'Your domain {{success}}set up is good{{/success}}, but you could boost your site’s visibility and growth.',
-				{
-					components: {
-						success: <span className="success" />,
-					},
-				}
-			) }
-			subtitle={ showSubtitle ? translate( 'Optimize your domain' ) : undefined }
+			title={
+				isWPcom
+					? translate(
+							"Your domain {{success}}set up is excelent{{/success}}, contributing positively to your site's visibility and growth.",
+							getTitleTranslateOptions()
+					  )
+					: translate(
+							"Your domain {{success}}set up is good{{/success}}, but you could boost your site's visibility and growth.",
+							getTitleTranslateOptions()
+					  )
+			}
+			subtitle={ ! isWPcom ? translate( 'Optimize your domain' ) : undefined }
 			subtitleOnClick={ goToDomainsPage }
 			ref={ domainRef }
 		>
