@@ -40,6 +40,7 @@ type ThankYouDomainProductProps = {
 	isDomainOnly?: boolean;
 	siteSlug?: string | null;
 	currency?: string;
+	isGravatarDomain?: boolean;
 };
 
 export default function ThankYouDomainProduct( {
@@ -48,6 +49,7 @@ export default function ThankYouDomainProduct( {
 	isDomainOnly,
 	siteSlug,
 	currency,
+	isGravatarDomain,
 }: ThankYouDomainProductProps ) {
 	const translate = useTranslate();
 
@@ -82,6 +84,15 @@ export default function ThankYouDomainProduct( {
 				</Button>
 			</>
 		);
+
+		if ( isGravatarDomain ) {
+			manageDomainProps.href = 'https://gravatar.com/profile';
+			actions = (
+				<Button variant="primary" { ...manageDomainProps }>
+					{ translate( 'Manage domain at Gravatar' ) }
+				</Button>
+			);
+		}
 	} else {
 		actions = (
 			<Button variant={ isDomainOnly ? 'secondary' : 'primary' } href={ domainManagementRoot() }>

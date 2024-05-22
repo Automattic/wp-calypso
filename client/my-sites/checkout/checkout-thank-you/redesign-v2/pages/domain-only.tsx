@@ -62,14 +62,20 @@ function UpsellActions( {
 interface DomainOnlyThankYouProps {
 	purchases: ReceiptPurchase[];
 	receiptId: number;
+	gravatarDomain: string | undefined;
 }
 
-export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnlyThankYouProps ) {
+export default function DomainOnlyThankYou( {
+	purchases,
+	receiptId,
+	gravatarDomain,
+}: DomainOnlyThankYouProps ) {
 	const translate = useTranslate();
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 	const domainPurchases = purchases.filter( predicate );
 	const domainNames = domainPurchases.map( ( purchase ) => purchase?.meta );
 	const domainOnlySite = useSelector( ( state ) => getSite( state, domainPurchases[ 0 ]?.blogId ) );
+	const isGravatarDomain = domainNames.length === 1 && gravatarDomain === domainNames[ 0 ];
 
 	const upsellProps: ThankYouUpsellProps = {
 		title: translate( 'Professional email' ),
@@ -101,6 +107,7 @@ export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnly
 				key={ `domain-${ purchase.meta }` }
 				siteSlug={ domainOnlySite?.slug }
 				isDomainOnly
+				isGravatarDomain={ isGravatarDomain }
 			/>
 		);
 	} );
@@ -121,6 +128,7 @@ export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnly
 				products={ products }
 				footerDetails={ getDomainFooterDetails( 'domain-only' ) }
 				upsellProps={ upsellProps }
+				isGravatarDomain={ isGravatarDomain }
 			/>
 		</>
 	);
