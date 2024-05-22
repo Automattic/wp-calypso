@@ -6,9 +6,13 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import { useGetPostByEmail } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-get-post-by-email';
+import { useRegeneratePostByEmailMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-regenerate-post-by-email-mutation';
+import { useTogglePostByEmailMutation } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-toggle-post-by-email';
 import { useDispatch, useSelector } from 'calypso/state';
 import { activateModule, deactivateModule } from 'calypso/state/jetpack/modules/actions';
 import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
@@ -20,6 +24,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 type PostByEmailSettingProps = {
 	isFormPending: boolean;
 	address?: string;
+};
+
+const noticeConfig = {
+	duration: 4000,
 };
 
 const moduleSlug = 'post-by-email';
@@ -54,23 +62,73 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 			moduleIsUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		};
 	} );
+	const { data: postByEmailSettings } = useGetPostByEmail( selectedSiteId );
+	const { mutate: switchPostByEmail, isPending: isPendingSwitch } =
+		useTogglePostByEmailMutation( selectedSiteId );
+	const { mutate: regeneratePostByEmailSimple, isPending: isPendingRegenerate } =
+		useRegeneratePostByEmailMutation( selectedSiteId );
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const handleSwitch = ( checked: boolean ) => {
+		if ( ! selectedSiteId ) {
+			return;
+		}
+
+		if ( isJetpack ) {
+			if ( checked ) {
+				activateModule( selectedSiteId, moduleSlug );
+			} else {
+				deactivateModule( selectedSiteId, moduleSlug );
+			}
+
+			return;
+		}
+
+		switchPostByEmail( checked, {
+			onSuccess: () => {
+				dispatch( successNotice( translate( 'Settings saved successfully!' ), noticeConfig ) );
+			},
+			onError: () => {
+				dispatch(
+					errorNotice( translate( 'There was a problem saving your changes.' ), noticeConfig )
+				);
+			},
+		} );
+	};
 
 	const handleRegenerate = () => {
 		if ( ! selectedSiteId ) {
 			return;
 		}
+		if ( isJetpack ) {
+			const regenerate = regeneratePostByEmail( selectedSiteId );
 
-		const regenerate = regeneratePostByEmail( selectedSiteId );
+			dispatch( regenerate );
 
-		dispatch( regenerate );
+			return;
+		}
+
+		regeneratePostByEmailSimple( undefined, {
+			onSuccess: () => {
+				dispatch( successNotice( translate( 'Address regenerated successfully!' ), noticeConfig ) );
+			},
+			onError: () => {
+				dispatch(
+					errorNotice( translate( 'There was a problem regenerating the address.' ), noticeConfig )
+				);
+			},
+		} );
 	};
 
 	const email = address && address !== 'regenerate' ? address : '';
 	const labelClassName =
-		moduleUnavailable || regeneratingPostByEmail || ! active ? 'is-disabled' : undefined;
+		moduleUnavailable ||
+		regeneratingPostByEmail ||
+		( isJetpack ? ! active : ! postByEmailSettings?.isEnabled )
+			? 'is-disabled'
+			: undefined;
 
 	return (
 		<>
@@ -95,20 +153,10 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 					/>
 				) : (
 					<ToggleControl
-						checked={ active }
-						disabled={ isFormPending }
+						checked={ !! postByEmailSettings?.isEnabled }
+						disabled={ isPendingSwitch || isPendingRegenerate }
 						label={ translate( 'Post by Email' ) }
-						onChange={ ( checked ) => {
-							if ( ! selectedSiteId ) {
-								return;
-							}
-
-							if ( checked ) {
-								activateModule( selectedSiteId, moduleSlug );
-							} else {
-								deactivateModule( selectedSiteId, moduleSlug );
-							}
-						} }
+						onChange={ handleSwitch }
 					/>
 				) }
 
@@ -118,13 +166,21 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 					</FormLabel>
 					<ClipboardButtonInput
 						className="publishing-tools__email-address"
-						disabled={ regeneratingPostByEmail || ! active || moduleUnavailable }
-						value={ email }
+						disabled={
+							regeneratingPostByEmail ||
+							( isJetpack ? ! active : ! postByEmailSettings?.isEnabled ) ||
+							moduleUnavailable
+						}
+						value={ isJetpack ? email : postByEmailSettings?.email }
 					/>
 					<Button
 						onClick={ handleRegenerate }
 						disabled={
-							isFormPending || regeneratingPostByEmail || ! active || !! moduleUnavailable
+							isFormPending ||
+							regeneratingPostByEmail ||
+							isPendingRegenerate ||
+							( isJetpack ? ! active : ! postByEmailSettings?.isEnabled ) ||
+							!! moduleUnavailable
 						}
 					>
 						{ regeneratingPostByEmail
