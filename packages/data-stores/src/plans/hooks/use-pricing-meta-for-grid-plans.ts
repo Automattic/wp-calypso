@@ -106,11 +106,8 @@ const usePricingMetaForGridPlans = ( {
 							return addOn?.featureSlugs?.includes( selectedStorageOption );
 					  } )
 					: null;
-				const storageAddOnPrices = selectedStorageAddOn?.exceedsSiteStorageLimits
-					? null
-					: selectedStorageAddOn?.prices;
-				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
-				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
+				const storageAddOnPriceMonthly = selectedStorageAddOn?.prices?.monthlyPrice || 0;
+				const storageAddOnPriceYearly = selectedStorageAddOn?.prices?.yearlyPrice || 0;
 
 				/**
 				 * 0. No plan or sitePlan (when selected site exists): planSlug is for a priceless plan.
