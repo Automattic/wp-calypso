@@ -98,20 +98,19 @@ const usePricingMetaForGridPlans = ( {
 	} else {
 		planPrices = Object.fromEntries(
 			planSlugs.map( ( planSlug ) => {
-				const availableForPurchase = planAvailabilityForPurchase[ planSlug ];
-				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-				const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
-					return selectedStorageOption && addOn?.featureSlugs?.includes( selectedStorageOption );
-				} );
-				const storageAddOnPrices =
-					selectedStorageAddOn?.purchased || selectedStorageAddOn?.exceedsSiteStorageLimits
-						? null
-						: selectedStorageAddOn?.prices;
-				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
-				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
-
 				const plan = plans.data?.[ planSlug ];
 				const sitePlan = sitePlans.data?.[ planSlug ];
+				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
+				const selectedStorageAddOn = selectedStorageOption
+					? storageAddOns?.find( ( addOn ) => {
+							return addOn?.featureSlugs?.includes( selectedStorageOption );
+					  } )
+					: null;
+				const storageAddOnPrices = selectedStorageAddOn?.exceedsSiteStorageLimits
+					? null
+					: selectedStorageAddOn?.prices;
+				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
+				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
 
 				/**
 				 * 0. No plan or sitePlan (when selected site exists): planSlug is for a priceless plan.
@@ -176,7 +175,7 @@ const usePricingMetaForGridPlans = ( {
 				/**
 				 * 2. Original and Discounted prices for plan available for purchase.
 				 */
-				if ( availableForPurchase ) {
+				if ( planAvailabilityForPurchase[ planSlug ] ) {
 					const originalPrice = {
 						monthly: getTotalPrice( plan.pricing.originalPrice.monthly, storageAddOnPriceMonthly ),
 						full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
