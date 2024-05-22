@@ -99,7 +99,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 
 	const shouldHideBackButton = () => {
 		const ref = urlQueryParams.get( 'ref' ) || '';
-		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'wp-admin-importer' ].includes( ref );
+		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'calypso-importer' ].includes( ref );
 		const shouldHideBasedOnVariant = [ HOSTED_SITE_MIGRATION_FLOW ].includes( variantSlug || '' );
 
 		return shouldHideBasedOnRef || shouldHideBasedOnVariant;
