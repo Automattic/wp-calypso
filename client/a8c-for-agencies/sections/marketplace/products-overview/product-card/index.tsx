@@ -77,13 +77,13 @@ export default function ProductCard( props: Props ) {
 	}, [] );
 
 	const truncateDescription = ( description: any ) => {
-		if ( description.length <= 130 ) {
+		if ( description.length <= 84 ) {
 			return description;
 		}
 
-		const lastSpace = description.slice( 0, 128 ).lastIndexOf( ' ' );
+		const lastSpace = description.slice( 0, 82 ).lastIndexOf( ' ' );
 
-		return description.slice( 0, lastSpace > 0 ? lastSpace : 129 ) + '…';
+		return description.slice( 0, lastSpace > 0 ? lastSpace : 83 ) + '…';
 	};
 
 	const { description: productDescription } = useProductDescription( product.slug );
