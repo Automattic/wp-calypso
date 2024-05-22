@@ -22,6 +22,7 @@ import { ShoppingCartContext } from '../context';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import ProductListing from './product-listing';
+import ProductNavigation from './product-navigation';
 import type { AssignLicenseProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -76,7 +77,7 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 			withBorder
 			compact
 		>
-			<LayoutTop>
+			<LayoutTop withNavigation>
 				<LayoutHeader showStickyContent={ showStickyContent }>
 					<Breadcrumb
 						items={ [
@@ -105,6 +106,8 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 						/>
 					</Actions>
 				</LayoutHeader>
+
+				<ProductNavigation />
 			</LayoutTop>
 
 			<LayoutBody>

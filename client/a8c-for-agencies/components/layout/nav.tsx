@@ -15,6 +15,7 @@ type LayoutNavigationProps = {
 export type LayoutNavigationItemProps = {
 	key?: string;
 	label: string;
+	icon?: ReactNode;
 	compactCount?: boolean;
 	onClick?: () => void;
 	path?: string;
@@ -53,18 +54,23 @@ export function LayoutNavigationTabs( {
 }: LayoutNavigationTabsProps ) {
 	return (
 		<NavTabs selectedText={ selectedText } selectedCount={ selectedCount }>
-			{ items.map( ( { label, onClick, selected, count, path, compactCount = true } ) => (
-				<NavItem
-					key={ label.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase() }
-					compactCount={ compactCount }
-					count={ count }
-					path={ path }
-					onClick={ onClick }
-					selected={ selected }
-				>
-					{ label }
-				</NavItem>
-			) ) }
+			{ items.map(
+				( { key, icon, label, onClick, selected, count, path, compactCount = true } ) => (
+					<NavItem
+						key={ key ?? label.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase() }
+						compactCount={ compactCount }
+						count={ count }
+						path={ path }
+						onClick={ onClick }
+						selected={ selected }
+					>
+						<div className="content">
+							{ icon }
+							{ label }
+						</div>
+					</NavItem>
+				)
+			) }
 		</NavTabs>
 	);
 }
