@@ -80,7 +80,8 @@ function getConfig( {
 				},
 			}
 		),
-		overrideDestination: '/migrate/%SITE_SLUG%',
+		overrideDestination:
+			'/setup/site-migration?siteSlug=%SITE_SLUG%&siteId=%SITE_ID%&ref=wp-admin-importer',
 		weight: 1,
 	};
 
