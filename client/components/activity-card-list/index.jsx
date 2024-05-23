@@ -29,6 +29,7 @@ import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filte
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import VisibleDaysLimitUpsell from './visible-days-limit-upsell';
 
@@ -262,6 +263,7 @@ class ActivityCardList extends Component {
 			pageSize,
 			showPagination,
 			siteHasFullActivityLog,
+			isSimple,
 		} = this.props;
 
 		const visibleLimitCutoffDate = Number.isFinite( visibleDays )
@@ -298,7 +300,7 @@ class ActivityCardList extends Component {
 						total={ visibleLogs.length }
 					/>
 				) }
-				{ ! siteHasFullActivityLog && this.renderPlanUpsell( pageLogs ) }
+				{ ! siteHasFullActivityLog && isSimple && this.renderPlanUpsell( pageLogs ) }
 				{ this.renderLogs( pageLogs ) }
 				{ showLimitUpsell && (
 					<VisibleDaysLimitUpsell cardClassName="activity-card-list__primary-card-with-more" />
@@ -407,6 +409,7 @@ const mapStateToProps = ( state ) => {
 	const rewindPoliciesRequestStatus = getRewindPoliciesRequestStatus( state, siteId );
 
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
+	const isSimple = isSimpleSite( state, siteId );
 	const requestingSiteFeatures = isRequestingSiteFeatures( state, siteId );
 	const siteHasFullActivityLog =
 		siteId && siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG );
@@ -420,6 +423,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		userLocale,
 		isAtomic,
+		isSimple,
 		isRequestingSiteFeatures: requestingSiteFeatures,
 		siteHasFullActivityLog,
 	};
