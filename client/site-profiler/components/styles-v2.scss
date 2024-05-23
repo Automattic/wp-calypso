@@ -272,4 +272,25 @@
 	.domain-result-block::after {
 		height: 210px;
 	}
+
+	.metrics-insights-list .foldable-card {
+		background-color: #000;
+		box-shadow: none;
+		border-top: 1px solid var(--studio-gray-100);
+		color: var(--studio-gray-20);
+
+		&:last-child {
+			border-bottom: 1px solid var(--studio-gray-100);
+		}
+
+		&.is-expanded {
+			.foldable-card__content {
+				border-top: 1px solid var(--studio-gray-100);
+			}
+		}
+
+		.foldable-card__header {
+			padding: 8px 0;
+		}
+	}
 }

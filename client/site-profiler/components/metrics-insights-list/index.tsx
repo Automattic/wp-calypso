@@ -13,7 +13,8 @@ type Insight = {
 };
 
 const Container = styled.div`
-	font-family: 'SF Pro Text';
+	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 16px;
 	line-height: normal;
 	letter-spacing: -0.1px;
@@ -24,7 +25,8 @@ type InsightHeaderProps = {
 	children: React.ReactNode;
 };
 const InsightHeader = styled.div`
-	font-family: 'SF Pro Text';
+	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
+		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 16px;
 	filter: ${ ( props: InsightHeaderProps ) => ( props.locked ? 'blur(2px)' : 'none' ) };
 	user-select: ${ ( props: InsightHeaderProps ) => ( props.locked ? 'none' : 'auto' ) };
