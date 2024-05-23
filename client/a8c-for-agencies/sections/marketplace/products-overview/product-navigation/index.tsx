@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import LayoutNavigation, {
 	LayoutNavigationItemProps,
 	LayoutNavigationTabs,
+	buildNavItems,
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
@@ -58,22 +59,18 @@ export default function ProductNavigation( { selectedTab }: Props ) {
 			} );
 		}
 
-		return items.map( ( navItem ) => ( {
-			...navItem,
-			selected: navItem.key === selectedTab,
-			path:
-				navItem.key === PRODUCT_BRAND_FILTER_ALL
-					? A4A_MARKETPLACE_PRODUCTS_LINK
-					: `${ A4A_MARKETPLACE_PRODUCTS_LINK }/${ navItem.key }`,
-			onClick: () => {
+		return buildNavItems( {
+			items,
+			basePath: A4A_MARKETPLACE_PRODUCTS_LINK,
+			selectedKey: selectedTab ?? '',
+			onItemClick: () => {
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_product_brand_navigation_click', {
-						status: navItem.key,
+						status: selectedTab,
 					} )
 				);
 			},
-			children: navItem.label,
-		} ) );
+		} );
 	}, [ dispatch, selectedTab, totalJetpackProducts, totalWooCommerceProducts, translate ] );
 
 	const selectedItem = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
