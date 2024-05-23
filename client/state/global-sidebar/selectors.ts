@@ -4,39 +4,41 @@ import isScheduledUpdatesMultisiteRoute from 'calypso/state/selectors/is-schedul
 import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
-// Calypso pages for which we show the Global Site View.
-// Calypso pages not listed here will be shown in nav unification instead.
+// Calypso routes for which we show the Global Site Dashboard.
+// Calypso routes not listed here will be shown in nav unification instead.
 // See: pfsHM7-Dn-p2.
-const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [
-	'hosting',
-	'hosting-overview',
-	'github-deployments',
-	'site-monitoring',
-	'dev-tools-promo',
+const GLOBAL_SITE_DASHBOARD_ROUTES: string[] = [
+	'/overview/',
+	'/hosting-config/',
+	'/github-deployments/',
+	'/site-monitoring/',
+	'/dev-tools-promo/',
 ];
 
-function shouldShowGlobalSiteViewSection( siteId: number | null, sectionName: string ) {
+function isInRoute( state: AppState, routes: string[] ) {
+	return routes.some( ( route ) => state.route.path?.current?.startsWith( route ) );
+}
+
+function shouldShowGlobalSiteDashboard( state: AppState, siteId: number | null ) {
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
 		!! siteId &&
-		GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName )
+		isInRoute( state, GLOBAL_SITE_DASHBOARD_ROUTES )
 	);
 }
 
 export const getShouldShowGlobalSiteSidebar = (
 	state: AppState,
 	siteId: number | null,
-	sectionGroup: string,
-	sectionName: string
+	sectionGroup: string
 ) => {
-	return sectionGroup === 'sites' && shouldShowGlobalSiteViewSection( siteId, sectionName );
+	return sectionGroup === 'sites' && shouldShowGlobalSiteDashboard( state, siteId );
 };
 
 export const getShouldShowGlobalSidebar = (
 	state: AppState,
 	siteId: number,
-	sectionGroup: string,
-	sectionName: string
+	sectionGroup: string
 ) => {
 	const pluginsScheduledUpdates = isScheduledUpdatesMultisiteRoute( state );
 
@@ -45,48 +47,56 @@ export const getShouldShowGlobalSidebar = (
 		sectionGroup === 'reader' ||
 		sectionGroup === 'sites-dashboard' ||
 		( sectionGroup === 'sites' && ! siteId ) ||
-		( sectionGroup === 'sites' && sectionName === 'plugins' && pluginsScheduledUpdates ) ||
-		getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName )
+		( sectionGroup === 'sites' && pluginsScheduledUpdates ) ||
+		getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup )
 	);
 };
 
 export const getShouldShowCollapsedGlobalSidebar = (
 	state: AppState,
 	siteId: number,
-	sectionGroup: string,
-	sectionName: string
+	sectionGroup: string
 ) => {
-	const isAllowedRegion =
-		sectionGroup === 'sites-dashboard' || sectionGroup === 'sites' || sectionName === 'plugins';
-	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
-	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
-	const pluginsScheduledUpdatesEditMode =
-		state.route.path?.current?.includes( 'scheduled-updates/edit' ) ||
-		state.route.path?.current?.includes( 'scheduled-updates/create' );
-	const isBulkDomainsDashboard = state.route.path?.current === '/domains/manage';
+	if ( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		return false;
+	}
+
+	const isSitesDashboard = sectionGroup === 'sites-dashboard';
+	const isSiteDashboard = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup );
+
+	// A site is just clicked and the global sidebar is in collapsing animation.
+	const isSiteJustSelectedFromSitesDashboard =
+		isSitesDashboard &&
+		!! siteId &&
+		isInRoute( state, [
+			'/sites', // started collapsing when still in sites dashboard
+			...GLOBAL_SITE_DASHBOARD_ROUTES, // has just stopped collapsing when in one of the paths in site dashboard
+		] );
+
+	const isPluginsScheduledUpdatesEditMode =
+		! siteId &&
+		isInRoute( state, [ '/plugins/scheduled-updates/edit', '/plugins/scheduled-updates/create' ] );
+
+	const isBulkDomainsDashboard = isInRoute( state, [ '/domains/manage' ] );
 	const isSmallScreenDashboard =
-		( sectionGroup === 'sites-dashboard' || isBulkDomainsDashboard ) &&
-		isWithinBreakpoint( '<782px' );
+		( isSitesDashboard || isBulkDomainsDashboard ) && isWithinBreakpoint( '<782px' );
 
 	return (
-		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
-		isAllowedRegion &&
-		( siteSelected ||
-			siteLoaded ||
-			( ! siteId && pluginsScheduledUpdatesEditMode ) ||
-			isSmallScreenDashboard )
+		isSiteJustSelectedFromSitesDashboard ||
+		isSiteDashboard ||
+		isPluginsScheduledUpdatesEditMode ||
+		isSmallScreenDashboard
 	);
 };
 
 export const getShouldShowUnifiedSiteSidebar = (
 	state: AppState,
 	siteId: number,
-	sectionGroup: string,
-	sectionName: string
+	sectionGroup: string
 ) => {
 	return (
 		isGlobalSiteViewEnabled( state, siteId ) &&
 		sectionGroup === 'sites' &&
-		! shouldShowGlobalSiteViewSection( siteId, sectionName )
+		! shouldShowGlobalSiteDashboard( state, siteId )
 	);
 };

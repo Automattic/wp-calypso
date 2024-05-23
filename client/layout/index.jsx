@@ -490,23 +490,16 @@ export default withCurrentRoute(
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
-			state,
-			siteId,
-			sectionGroup,
-			sectionName
-		);
+		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
 		const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
 			state,
 			siteId,
-			sectionGroup,
-			sectionName
+			sectionGroup
 		);
 		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 			state,
 			siteId,
-			sectionGroup,
-			sectionName
+			sectionGroup
 		);
 		const noMasterbarForRoute =
 			isJetpackLogin ||
