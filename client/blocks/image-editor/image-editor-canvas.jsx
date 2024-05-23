@@ -17,6 +17,7 @@ import {
 import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import ImageEditorCrop from './image-editor-crop';
@@ -100,9 +101,9 @@ export class ImageEditorCanvas extends Component {
 	}
 
 	fetchImageBlob( src ) {
-		const { siteSlug } = this.props;
+		const { siteSlug, isJetpack } = this.props;
 		const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
-		const useProxy = filePath && isRelativeToSiteRoot;
+		const useProxy = ! isJetpack && filePath && isRelativeToSiteRoot;
 
 		if ( useProxy ) {
 			return getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, { query } );
@@ -295,6 +296,7 @@ export default connect(
 		const siteSlug = getSelectedSiteSlug( state );
 		const isPrivateAtomic =
 			isPrivateSite( state, siteId ) && isSiteAutomatedTransfer( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
 
 		const transform = getImageEditorTransform( state );
 		const { src, mimeType } = getImageEditorFileInfo( state );
@@ -305,6 +307,7 @@ export default connect(
 		return {
 			siteSlug,
 			isPrivateAtomic,
+			isJetpack,
 			src,
 			mimeType,
 			transform,
