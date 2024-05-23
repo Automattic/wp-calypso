@@ -67,6 +67,7 @@
 		"oauth": false,
 		"p2-enabled": false,
 		"purchases/new-payment-methods": true,
+		"realtime-site-count": true,
 		"site-indicator": false,
 		"subscriber-csv-upload": true,
 		"upgrades/redirect-payments": true,
