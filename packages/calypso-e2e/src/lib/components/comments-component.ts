@@ -87,6 +87,9 @@ export class CommentsComponent {
 		}
 
 		await this.page.getByText( comment ).scrollIntoViewIfNeeded();
+		// The first click opens a window to auto-log-in, the second click likes the comment.
+		await likeButton.waitFor();
+		await likeButton.click();
 		await likeButton.waitFor();
 		await likeButton.click();
 		await likedStatus.waitFor();
