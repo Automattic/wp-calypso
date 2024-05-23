@@ -43,7 +43,7 @@ export const referralsDashboardContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Referrals > Dashboard" path={ context.path } />
-			<div>Dashboard</div>
+			<ReferralsOverview isAutomatedReferral />
 		</>
 	);
 	context.secondary = <ReferralsSidebar path={ context.path } />;
