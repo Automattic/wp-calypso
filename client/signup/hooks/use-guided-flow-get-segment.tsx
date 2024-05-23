@@ -1,4 +1,4 @@
-const useGetSegment = ( intent: string, goals: string[] ): string => {
+const useGuidedFlowGetSegment = ( intent: string, goals: string[] ): string => {
 	// Handle the case when no goals are provided (n/a)
 	if ( intent === 'migrate-or-import-site' && goals.length === 0 ) {
 		return 'Migration';
@@ -29,6 +29,7 @@ const useGetSegment = ( intent: string, goals: string[] ): string => {
 			return 'Newsletter';
 		}
 		// Catch-all case for when none of the specific goals are met
+		// This will also account for "( ! DIFM && ! Sell ) = Consumer / Business" condition
 		return 'Consumer / Business';
 	}
 
@@ -36,4 +37,4 @@ const useGetSegment = ( intent: string, goals: string[] ): string => {
 	return 'Unrecognized';
 };
 
-export default useGetSegment;
+export default useGuidedFlowGetSegment;
