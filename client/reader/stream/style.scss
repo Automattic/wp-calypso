@@ -737,8 +737,8 @@
 		margin-bottom: 32px;
 
 		a {
-			font-weight: 500;
 			font-size: $font-body-small;
+			font-weight: 400;
 			line-height: 20px;
 		}
 	}
@@ -777,10 +777,7 @@
 	.reader-tag-sidebar-tags-page {
 		display: block;
 		font-size: $font-body-small;
-		text-decoration: underline;
-		font-weight: 500;
 		margin-bottom: 32px;
-		color: var(--color-neutral-100);
 	}
 
 	.reader-tag-sidebar__recent-prompts {
@@ -791,9 +788,7 @@
 		.reader-tag-sidebar__recent-prompt-link {
 			display: block;
 			font-size: $font-body-small;
-			text-decoration: underline;
-			font-weight: 500;
-			color: var(--color-neutral-100);
+			color: var(--color-link);
 			margin-bottom: 12px;
 		}
 	}

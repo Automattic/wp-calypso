@@ -21,6 +21,7 @@ type QuestionStepType = {
 	onContinue: () => void;
 	onSkip: () => void;
 	hideBack?: boolean;
+	headerAlign?: string;
 } & QuestionSelectionComponentProps;
 
 const QuestionStep = ( {
@@ -32,6 +33,7 @@ const QuestionStep = ( {
 	onSkip,
 	disabled,
 	hideBack,
+	headerAlign = 'center',
 }: QuestionStepType ) => {
 	const translate = useTranslate();
 	const flowPath = window.location.pathname;
@@ -48,7 +50,7 @@ const QuestionStep = ( {
 			goNext={ onSkip }
 			formattedHeader={
 				<FormattedHeader
-					align="center"
+					align={ headerAlign }
 					headerText={ question.headerText }
 					subHeaderText={ question.subHeaderText }
 				/>

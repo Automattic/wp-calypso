@@ -16,9 +16,11 @@ import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
+import { BasicMetrics } from './basic-metrics';
+import { DomainSection } from './domain-section';
 import { GetReportForm } from './get-report-form';
+import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
-import { MetricsSection } from './metrics-section';
 import './styles-v2.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
@@ -30,8 +32,8 @@ interface Props {
 
 export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain } = props;
+	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
-
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -109,7 +111,7 @@ export default function SiteProfilerV2( props: Props ) {
 	return (
 		<div id="site-profiler-v2">
 			{ ! showResultScreen && (
-				<LayoutBlock className="domain-analyzer-block" width="medium">
+				<LayoutBlock className="landing-page-header-block" width="medium">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<LandingPageHeader
 						domain={ domain }
@@ -124,19 +126,23 @@ export default function SiteProfilerV2( props: Props ) {
 			{ showResultScreen && (
 				<LayoutBlock width="medium">
 					{ siteProfilerData && (
-						<MetricsSection
-							name={ translate( 'Domain' ) }
-							title={ translate(
-								"Your domain {{success}}set up is good,{{/success}} but you could boost your site's visibility and growth.",
-								{
-									components: {
-										success: <span className="success" />,
-									},
-								}
-							) }
-							subtitle={ translate( 'Optimize your domain' ) }
-							ref={ domainRef }
-						></MetricsSection>
+						<>
+							{ showBasicMetrics && <BasicMetrics basicMetrics={ basicMetrics.basic } /> }
+							<HostingSection
+								dns={ siteProfilerData.dns }
+								urlData={ urlData }
+								hostingProvider={ hostingProviderData?.hosting_provider }
+								hostingRef={ hostingRef }
+							/>
+
+							<DomainSection
+								domain={ domain }
+								whois={ siteProfilerData.whois }
+								hostingProvider={ hostingProviderData?.hosting_provider }
+								urlData={ urlData }
+								domainRef={ domainRef }
+							/>
+						</>
 					) }
 				</LayoutBlock>
 			) }

@@ -197,6 +197,16 @@ export function generateFlows( {
 			onEnterFlow: onEnterOnboarding,
 		},
 		{
+			name: 'site-migration',
+			steps: [ 'domains' ],
+			destination: getSignupDestination,
+			description: 'Take users to the site migration flow from the domains step.',
+			lastModified: '2024-05-09',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+			onEnterFlow: onEnterOnboarding,
+		},
+		{
 			name: 'onboarding-2023-pricing-grid',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ userSocialStep, 'domains', 'emails', 'plans' ]
@@ -394,6 +404,16 @@ export function generateFlows( {
 			description: 'An experimental approach for WordPress.com/domains',
 			disallowResume: true,
 			lastModified: '2023-10-11',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'domain-for-gravatar',
+			steps: [ 'domain-only', 'site-or-domain', 'site-picker' ],
+			destination: getDomainSignupFlowDestination,
+			description: 'Checkout flow for domains on Gravatar',
+			disallowResume: true,
+			lastModified: '2024-05-07',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},

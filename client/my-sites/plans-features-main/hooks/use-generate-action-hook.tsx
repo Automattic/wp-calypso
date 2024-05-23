@@ -22,7 +22,7 @@ import { useSelector } from 'calypso/state';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
-import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
 import useGenerateActionCallback from './use-generate-action-callback';
@@ -50,11 +50,12 @@ function useGenerateActionHook( {
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
+	const currentPlanExpiryDate = Plans.useCurrentPlanExpiryDate( { siteId } );
+	const isPlanExpired = currentPlanExpiryDate
+		? currentPlanExpiryDate.getTime() < Date.now()
+		: false;
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
-	// TODO: confirm if `sitePlanSlug` is just the same as `currentPlan.slug`
-	const sitePlanSlug = useSelector( ( state: IAppState ) =>
-		siteId ? getSitePlanSlug( state, siteId ) : null
-	);
+	const sitePlanSlug = currentPlan?.planSlug;
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
 		siteId
@@ -296,7 +297,11 @@ function useGenerateActionHook( {
 			text = translate( 'View plan' );
 
 			if ( canUserManageCurrentPlan ) {
-				text = translate( 'Manage plan' );
+				if ( isPlanExpired ) {
+					text = translate( 'Renew plan' );
+				} else {
+					text = translate( 'Manage plan' );
+				}
 			} else if ( domainFromHomeUpsellFlow ) {
 				text = translate( 'Keep my plan', { context: 'verb' } );
 			}

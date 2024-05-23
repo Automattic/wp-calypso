@@ -39,12 +39,13 @@
 		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
 
-	&:hover {
-		text-decoration: underline;
-	}
-
 	&:visited {
 		color: var(--color-neutral-70);
+	}
+
+	&:hover,
+	&:hover:visited {
+		color: var(--color-link);
 	}
 
 	svg {

@@ -2126,8 +2126,9 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SECURITY_MALWARE ]: {
 		getSlug: () => FEATURE_SECURITY_MALWARE,
-		getTitle: () => i18n.translate( 'Managed malware protection' ),
-		getDescription: () => i18n.translate( 'Stay safe with automated malware scanning.' ),
+		getTitle: () => i18n.translate( 'Malware detection & removal' ),
+		getDescription: () =>
+			i18n.translate( 'Stay safe with automated malware scanning and removal.' ),
 	},
 	[ FEATURE_REAL_TIME_SECURITY_SCANS ]: {
 		getSlug: () => FEATURE_REAL_TIME_SECURITY_SCANS,

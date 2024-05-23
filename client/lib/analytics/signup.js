@@ -35,6 +35,7 @@ export const SIGNUP_DOMAIN_ORIGIN = {
 	FREE: 'free',
 	CUSTOM: 'custom',
 	NOT_SET: 'not-set',
+	SITE_MIGRATION: 'site-migration',
 };
 
 export function recordSignupComplete(

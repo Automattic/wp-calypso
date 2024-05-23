@@ -95,11 +95,16 @@ class PasswordlessSignupForm extends Component {
 
 		const { oauth2_client_id, oauth2_redirect, ref } = queryArgs;
 
+		// I'm not sure why passwordless signup form stopped respecting flowName from variationName param,
+		// see https://github.com/Automattic/wp-calypso/pull/67225 for more details.
+		// I'm going to add a temporary hack for entrepreneur flow.
+		const signup_flow_name = queryArgs.variationName === 'entrepreneur' ? 'entrepreneur' : flowName;
+
 		try {
 			const response = await wpcom.req.post( '/users/new', {
 				email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
 				is_passwordless: true,
-				signup_flow_name: flowName,
+				signup_flow_name: signup_flow_name,
 				validate: false,
 				locale: getLocaleSlug(),
 				client_id: config( 'wpcom_signup_id' ),

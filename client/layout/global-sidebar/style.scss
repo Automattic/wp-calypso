@@ -93,20 +93,6 @@ $brand-text: "SF Pro Text", $sans;
 			border-radius: 2px;
 		}
 
-		.sidebar__item-search {
-			justify-content: center;
-			align-items: center;
-			cursor: pointer;
-			svg {
-				fill: var(--color-sidebar-gridicon-fill);
-			}
-			&:hover {
-				svg {
-					fill: var(--color-sidebar-gridicon-hover-fill);
-				}
-			}
-		}
-
 		.sidebar__skip-navigation {
 			position: absolute;
 			left: -10000px;
@@ -281,7 +267,8 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__item-help,
 		.sidebar__footer-link,
-		.sidebar__footer-wpadmin {
+		.sidebar__footer-wpadmin,
+		.sidebar__item-search {
 			color: var(--color-sidebar-text);
 
 			svg path {
