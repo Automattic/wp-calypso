@@ -88,7 +88,8 @@ function getMessageForTermsOfServiceRecordUnknown(
 	const manageSubscriptionLink = `/purchases/subscriptions/${ siteSlug }`;
 
 	if ( doesTermsOfServiceRecordHaveDates( args ) ) {
-		const endDate = formatDate( args.subscription_end_of_promotion_date );
+		const promotionEndDate = formatDate( args.subscription_end_of_promotion_date );
+		const subscriptionEndDate = formatDate( args.subscription_expiry_date );
 		const numberOfDays = args.subscription_pre_renew_reminder_days || 7;
 		const renewalDate = formatDate( args.subscription_auto_renew_date );
 		const proratedRenewalDate = formatDate(
@@ -101,7 +102,16 @@ function getMessageForTermsOfServiceRecordUnknown(
 				args: {
 					productName,
 					startDate,
-					endDate,
+					endDate: promotionEndDate,
+				},
+			}
+		);
+		const renewalTermLengthText = translate(
+			'After you renew today, your %(productName)s subscription will last until %(endDate)s.',
+			{
+				args: {
+					productName,
+					endDate: subscriptionEndDate,
 				},
 			}
 		);
@@ -186,9 +196,12 @@ function getMessageForTermsOfServiceRecordUnknown(
 			return true;
 		} )();
 
+		const shouldShowRenewalTermText =
+			args.is_renewal && args.remaining_promotional_auto_renewals === 0;
+
 		return (
 			<>
-				{ termLengthText } { nextRenewalText }{ ' ' }
+				{ shouldShowRenewalTermText ? renewalTermLengthText : termLengthText } { nextRenewalText }{ ' ' }
 				{ shouldShowEndOfPromotionText && endOfPromotionChargeText }{ ' ' }
 				{ shouldShowRegularPriceNoticeText && regularPriceNoticeText } { taxesNotIncludedText }{ ' ' }
 				{ emailNoticesText }{ ' ' }
