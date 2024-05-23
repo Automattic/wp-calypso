@@ -1,5 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import classnames from 'classnames';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
@@ -21,6 +21,7 @@ import { DomainSection } from './domain-section';
 import { GetReportForm } from './get-report-form';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
+import { ResultsHeader } from './results-header';
 import './styles-v2.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
@@ -82,25 +83,21 @@ export default function SiteProfilerV2( props: Props ) {
 		isFetching: isFetchingBasicMetrics,
 	} = useUrlBasicMetricsQuery( url );
 
-	const showBasicMetrics =
-		basicMetrics &&
-		! isFetchingBasicMetrics &&
-		! errorBasicMetrics &&
-		isEnabled( 'site-profiler/metrics' );
+	const showBasicMetrics = basicMetrics && ! isFetchingBasicMetrics && ! errorBasicMetrics;
 
 	// TODO: Remove this debug statement once we have a better error handling mechanism
-	if ( isEnabled( 'site-profiler/metrics' ) && errorBasicMetrics ) {
+	if ( errorBasicMetrics ) {
 		debug(
 			`Error fetching basic metrics for domain ${ domain }: ${ errorBasicMetrics.message }`,
 			errorBasicMetrics
 		);
 	}
 
-	let showGetReportForm = false;
+	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 
-	if ( isEnabled( 'site-profiler/metrics' ) ) {
-		showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
-	}
+	// TODO: Get overall score from the API
+	// https://github.com/Automattic/dotcom-forge/issues/7298
+	const overallScore = false;
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
@@ -124,27 +121,45 @@ export default function SiteProfilerV2( props: Props ) {
 				</LayoutBlock>
 			) }
 			{ showResultScreen && (
-				<LayoutBlock width="medium">
-					{ siteProfilerData && (
-						<>
-							{ showBasicMetrics && <BasicMetrics basicMetrics={ basicMetrics.basic } /> }
-							<HostingSection
-								dns={ siteProfilerData.dns }
-								urlData={ urlData }
-								hostingProvider={ hostingProviderData?.hosting_provider }
-								hostingRef={ hostingRef }
-							/>
-
-							<DomainSection
+				<>
+					<LayoutBlock
+						className={ classnames(
+							'results-header-block',
+							{ poor: ! overallScore },
+							{ good: overallScore }
+						) }
+						width="medium"
+					>
+						{ showBasicMetrics && (
+							<ResultsHeader
 								domain={ domain }
-								whois={ siteProfilerData.whois }
-								hostingProvider={ hostingProviderData?.hosting_provider }
-								urlData={ urlData }
-								domainRef={ domainRef }
+								basicMetrics={ basicMetrics }
+								onGetReport={ () => setIsGetReportFormOpen( true ) }
 							/>
-						</>
-					) }
-				</LayoutBlock>
+						) }
+					</LayoutBlock>
+					<LayoutBlock width="medium">
+						{ siteProfilerData && (
+							<>
+								{ showBasicMetrics && <BasicMetrics basicMetrics={ basicMetrics.basic } /> }
+								<HostingSection
+									dns={ siteProfilerData.dns }
+									urlData={ urlData }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									hostingRef={ hostingRef }
+								/>
+
+								<DomainSection
+									domain={ domain }
+									whois={ siteProfilerData.whois }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									urlData={ urlData }
+									domainRef={ domainRef }
+								/>
+							</>
+						) }
+					</LayoutBlock>
+				</>
 			) }
 
 			<GetReportForm
