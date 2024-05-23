@@ -1,11 +1,11 @@
 import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { type BasicMetrics } from 'calypso/data/site-profiler/types';
 import './styles.scss';
+import { BasicMetricsResult } from 'calypso/data/site-profiler/types';
 
 type Props = {
 	domain: string;
-	basicMetrics: BasicMetrics;
+	basicMetrics: BasicMetricsResult;
 	onGetReport: () => void;
 };
 
@@ -22,7 +22,7 @@ function getDomainMessage() {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getTitleMessage( basicMetrics: BasicMetrics ) {
+function getTitleMessage( basicMetrics: BasicMetricsResult ) {
 	// TODO: Implement the functionality to get the correct title
 	// https://github.com/Automattic/dotcom-forge/issues/7298
 	return translate( 'Your site needs a boost. Let’s improve it.' );
