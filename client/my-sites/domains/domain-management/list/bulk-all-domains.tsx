@@ -170,6 +170,12 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				transition: none;
 			}
 
+			.search-component.domains-table-filter__search.is-open.has-focus {
+				border-color: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+				box-shadow: 0 0 0 0.5px
+					var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+			}
+
 			@media only screen and ( min-width: 782px ) {
 				.is-global-sidebar-visible {
 					header.navigation-header {
