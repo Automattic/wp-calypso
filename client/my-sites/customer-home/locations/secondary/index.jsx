@@ -9,6 +9,9 @@ import {
 	CARD_COMPONENTS,
 	PRIMARY_CARD_COMPONENTS,
 } from 'calypso/my-sites/customer-home/locations/card-components';
+import trackMyHomeCardImpression, {
+	CardLocation,
+} from 'calypso/my-sites/customer-home/track-my-home-card-impression';
 
 const getAdditionalPropsForCard = ( { card, siteId } ) => {
 	if ( card === SECTION_BLOGGING_PROMPT || card === SECTION_BLOGANUARY_BLOGGING_PROMPT ) {
@@ -41,21 +44,34 @@ const SecondaryCard = ( { card, siteId } ) => {
 	return null;
 };
 
-const Secondary = ( { cards, siteId } ) => {
+const Secondary = ( { cards, siteId, trackFirstCardAsPrimary = false } ) => {
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
+
+	let shouldTrackCardAsPrimary = trackFirstCardAsPrimary;
+
+	const trackMyHomeCardImpressionWithFlexibleLocation = ( card ) => {
+		const location = shouldTrackCardAsPrimary ? CardLocation.PRIMARY : CardLocation.SECONDARY;
+		shouldTrackCardAsPrimary = false;
+
+		trackMyHomeCardImpression( { card, location } );
+	};
 
 	return (
 		<>
 			{ cards.map( ( card, index ) => {
 				if ( Array.isArray( card ) && card.length > 0 ) {
+					const trackInnerCardImpression = ( innerCardIndex ) =>
+						trackMyHomeCardImpressionWithFlexibleLocation( card[ innerCardIndex ] );
+
 					return (
 						<DotPager
 							key={ 'my_home_secondary_pager_' + index }
 							className="secondary__customer-home-location-content"
 							showControlLabels="true"
 							hasDynamicHeight
+							onPageSelected={ trackInnerCardImpression }
 						>
 							{ card.map( ( innerCard, innerIndex ) => {
 								return (
@@ -69,6 +85,8 @@ const Secondary = ( { cards, siteId } ) => {
 						</DotPager>
 					);
 				}
+
+				trackMyHomeCardImpressionWithFlexibleLocation( card );
 
 				return (
 					<SecondaryCard
