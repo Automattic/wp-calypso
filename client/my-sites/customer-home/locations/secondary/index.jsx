@@ -1,4 +1,4 @@
-import { createElement } from 'react';
+import { createElement, useEffect } from 'react';
 import DotPager from 'calypso/components/dot-pager';
 import {
 	SECTION_BLOGGING_PROMPT,
@@ -45,10 +45,6 @@ const SecondaryCard = ( { card, siteId } ) => {
 };
 
 const Secondary = ( { cards, siteId, trackFirstCardAsPrimary = false } ) => {
-	if ( ! cards || ! cards.length ) {
-		return null;
-	}
-
 	let shouldTrackCardAsPrimary = trackFirstCardAsPrimary;
 
 	const trackMyHomeCardImpressionWithFlexibleLocation = ( card ) => {
@@ -57,6 +53,24 @@ const Secondary = ( { cards, siteId, trackFirstCardAsPrimary = false } ) => {
 
 		trackMyHomeCardImpression( { card, location } );
 	};
+
+	useEffect( () => {
+		if ( ! cards || ! cards.length ) {
+			return;
+		}
+
+		cards.forEach( ( card ) => {
+			if ( Array.isArray( card ) && card.length > 0 ) {
+				return;
+			}
+
+			trackMyHomeCardImpressionWithFlexibleLocation( card );
+		} );
+	}, [ cards ] );
+
+	if ( ! cards || ! cards.length ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -85,8 +99,6 @@ const Secondary = ( { cards, siteId, trackFirstCardAsPrimary = false } ) => {
 						</DotPager>
 					);
 				}
-
-				trackMyHomeCardImpressionWithFlexibleLocation( card );
 
 				return (
 					<SecondaryCard
