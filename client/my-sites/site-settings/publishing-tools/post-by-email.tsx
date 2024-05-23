@@ -32,42 +32,22 @@ const noticeConfig = {
 const moduleSlug = 'post-by-email';
 
 export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSettingProps ) => {
-	const {
-		selectedSiteId,
-		siteIsJetpack,
-		siteIsAtomic,
-		jetpackRegeneratingPostByEmail,
-		jetpackPostByEmailIsActive,
-		moduleUnavailable,
-	} = useSelector( ( state ) => {
-		const selectedSiteId = getSelectedSiteId( state ) || 0;
-		const siteIsJetpack = isJetpackSite( state, selectedSiteId );
-		const siteIsAtomic = isSiteAutomatedTransfer( state, selectedSiteId );
-		const jetpackRegeneratingPostByEmail = isRegeneratingJetpackPostByEmail(
-			state,
-			selectedSiteId
-		);
-		const jetpackPostByEmailIsActive = !! isJetpackModuleActive(
-			state,
-			selectedSiteId,
-			moduleSlug
-		);
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-			state,
-			selectedSiteId,
-			moduleSlug
-		);
-
-		return {
-			selectedSiteId,
-			siteIsJetpack,
-			siteIsAtomic,
-			jetpackRegeneratingPostByEmail,
-			jetpackPostByEmailIsActive,
-			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-		};
-	} );
+	const selectedSiteId = useSelector( getSelectedSiteId ) || 0;
+	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
+	const siteIsAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSiteId ) );
+	const jetpackRegeneratingPostByEmail = useSelector( ( state ) =>
+		isRegeneratingJetpackPostByEmail( state, selectedSiteId )
+	);
+	const jetpackPostByEmailIsActive = !! useSelector( ( state ) =>
+		isJetpackModuleActive( state, selectedSiteId, moduleSlug )
+	);
+	const siteInDevMode = useSelector( ( state ) =>
+		isJetpackSiteInDevelopmentMode( state, selectedSiteId )
+	);
+	const moduleUnavailableInDevMode = useSelector( ( state ) =>
+		isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, moduleSlug )
+	);
+	const moduleUnavailable = siteInDevMode && moduleUnavailableInDevMode;
 	const { data: simpleSitePostByEmailSettings } = useGetPostByEmail( selectedSiteId );
 	const { mutate: simpleSiteSwitchPostByEmail, isPending: isSimpleSitePendingSwitch } =
 		useTogglePostByEmailMutation( selectedSiteId );
