@@ -1,7 +1,7 @@
 import {
 	TrailMapVariantType,
 	getFeaturesList,
-	getPlanFeaturesGrouped,
+	getPlanFeaturesGroupedForComparisonGrid,
 	setTrailMapExperiment,
 } from '@automattic/calypso-products';
 import { ComparisonGrid, ComparisonGridExternalProps, useGridPlansForComparisonGrid } from '../..';
@@ -39,7 +39,7 @@ const ComponentWrapper = (
 			<ComparisonGrid
 				{ ...props }
 				gridPlans={ gridPlans }
-				featureGroupMap={ getPlanFeaturesGrouped() }
+				featureGroupMap={ getPlanFeaturesGroupedForComparisonGrid() }
 			/>
 		)
 	);
@@ -49,7 +49,7 @@ const defaultProps = {
 	allFeaturesList: getFeaturesList(),
 	coupon: undefined,
 	currentSitePlanSlug: undefined,
-	featureGroupMap: getPlanFeaturesGrouped(),
+	featureGroupMap: getPlanFeaturesGroupedForComparisonGrid(),
 	hideUnavailableFeatures: false,
 	intervalType: 'yearly',
 	isInAdmin: false,

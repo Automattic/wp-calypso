@@ -4,6 +4,7 @@ import {
 	isFreePlan,
 	type WPComStorageAddOnSlug,
 	type FeatureGroupSlug,
+	FEATURE_GROUP_STORAGE,
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import { useMemo } from '@wordpress/element';
@@ -76,8 +77,10 @@ const MobileView = ( {
 	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
 	const featureGroups = useMemo(
 		() =>
-			enableCategorisedFeatures ? ( Object.keys( featureGroupMap ) as FeatureGroupSlug[] ) : [],
-		[ enableCategorisedFeatures, featureGroupMap ]
+			Object.keys( featureGroupMap ).filter(
+				( key ) => FEATURE_GROUP_STORAGE !== key
+			) as FeatureGroupSlug[],
+		[ featureGroupMap ]
 	);
 
 	return renderedGridPlans
@@ -111,7 +114,7 @@ const MobileView = ( {
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
 					<PlanStorageOptions
-						renderedGridPlans={ [ gridPlan ] }
+						planSlug={ gridPlan.planSlug }
 						intervalType={ intervalType }
 						onStorageAddOnClick={ onStorageAddOnClick }
 						showUpgradeableStorage={ showUpgradeableStorage }
@@ -135,26 +138,14 @@ const MobileView = ( {
 						}
 					>
 						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
-						{ enableCategorisedFeatures ? (
-							featureGroups.map( ( featureGroupSlug ) => (
-								<div
-									className="plans-grid-next-features-grid__feature-group-row"
-									key={ featureGroupSlug }
-								>
-									<PlanFeaturesList
-										renderedGridPlans={ [ gridPlan ] }
-										selectedFeature={ selectedFeature }
-										paidDomainName={ paidDomainName }
-										hideUnavailableFeatures={ hideUnavailableFeatures }
-										generatedWPComSubdomain={ generatedWPComSubdomain }
-										isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-										featureGroupSlug={ featureGroupSlug }
-									/>
-								</div>
-							) )
-						) : (
-							<>
-								<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
+						{ ! enableCategorisedFeatures && (
+							<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
+						) }
+						{ featureGroups.map( ( featureGroupSlug ) => (
+							<div
+								className="plans-grid-next-features-grid__feature-group-row"
+								key={ featureGroupSlug }
+							>
 								<PlanFeaturesList
 									renderedGridPlans={ [ gridPlan ] }
 									selectedFeature={ selectedFeature }
@@ -162,9 +153,13 @@ const MobileView = ( {
 									hideUnavailableFeatures={ hideUnavailableFeatures }
 									generatedWPComSubdomain={ generatedWPComSubdomain }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+									featureGroupSlug={ featureGroupSlug }
+									intervalType={ intervalType }
+									onStorageAddOnClick={ onStorageAddOnClick }
+									showUpgradeableStorage={ showUpgradeableStorage }
 								/>
-							</>
-						) }
+							</div>
+						) ) }
 					</CardContainer>
 				</div>
 			);

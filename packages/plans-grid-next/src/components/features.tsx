@@ -24,11 +24,11 @@ const SubdomainSuggestion = styled.div`
 
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
-	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
-	isCustomDomainAllowedOnFreePlan: boolean;
+	generatedWPComSubdomain?: DataResponse< { domain_name: string } >;
+	isCustomDomainAllowedOnFreePlan?: boolean;
 } > = ( { paidDomainName, generatedWPComSubdomain, isCustomDomainAllowedOnFreePlan } ) => {
 	const translate = useTranslate();
-	const isLoading = generatedWPComSubdomain.isLoading;
+	const isLoading = generatedWPComSubdomain?.isLoading;
 	return (
 		<SubdomainSuggestion>
 			{ isLoading && <LoadingPlaceholder /> }
@@ -43,7 +43,7 @@ const FreePlanCustomDomainFeature: React.FC< {
 				) : (
 					<>
 						<div className="is-domain-name">{ paidDomainName }</div>
-						<div>{ generatedWPComSubdomain.result?.domain_name }</div>
+						<div>{ generatedWPComSubdomain?.result?.domain_name }</div>
 					</>
 				) ) }
 		</SubdomainSuggestion>
@@ -54,10 +54,10 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planSlug: string;
 	paidDomainName?: string;
-	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
+	generatedWPComSubdomain?: DataResponse< { domain_name: string } >;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
-	isCustomDomainAllowedOnFreePlan: boolean;
+	isCustomDomainAllowedOnFreePlan?: boolean;
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 } > = ( {

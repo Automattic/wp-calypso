@@ -11,10 +11,12 @@ import {
 	UrlFriendlyTermType,
 	isValidFeatureKey,
 	getFeaturesList,
-	getWooExpressFeaturesGrouped,
-	getPlanFeaturesGrouped,
 	isWooExpressPlan,
 	PLAN_ECOMMERCE,
+	getPlanFeaturesGroupedForFeaturesGrid,
+	getWooExpressFeaturesGroupedForComparisonGrid,
+	getPlanFeaturesGroupedForComparisonGrid,
+	getWooExpressFeaturesGroupedForFeaturesGrid,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -618,6 +620,9 @@ const PlansFeaturesMain = ( {
 		retargetViewPlans();
 	}, [] );
 
+	/**
+	 * TODO: `handleStorageAddOnClick` no longer necessary. Tracking can be done from the grid components directly.
+	 */
 	const handleStorageAddOnClick = useCallback(
 		( addOnSlug: WPComStorageAddOnSlug ) =>
 			recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
@@ -672,9 +677,13 @@ const PlansFeaturesMain = ( {
 	}, [ gridPlansForComparisonGrid ] );
 
 	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
-	const featureGroupMap = hasWooExpressFeatures
-		? getWooExpressFeaturesGrouped()
-		: getPlanFeaturesGrouped();
+	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
+		? getWooExpressFeaturesGroupedForComparisonGrid()
+		: getPlanFeaturesGroupedForComparisonGrid();
+
+	const featureGroupMapForFeaturesGrid = hasWooExpressFeatures
+		? getWooExpressFeaturesGroupedForFeaturesGrid()
+		: getPlanFeaturesGroupedForFeaturesGrid();
 
 	return (
 		<>
@@ -792,7 +801,7 @@ const PlansFeaturesMain = ( {
 										useAction={ useAction }
 										enableFeatureTooltips={ ! isTrailMapCopy }
 										enableCategorisedFeatures={ isTrailMapStructure }
-										featureGroupMap={ isTrailMapStructure ? featureGroupMap : undefined }
+										featureGroupMap={ featureGroupMapForFeaturesGrid }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -868,7 +877,7 @@ const PlansFeaturesMain = ( {
 														useCheckPlanAvailabilityForPurchase
 													}
 													enableFeatureTooltips={ ! isTrailMapCopy }
-													featureGroupMap={ featureGroupMap }
+													featureGroupMap={ featureGroupMapForComparisonGrid }
 													hideUnsupportedFeatures={ isTrailMapStructure }
 												/>
 											) }
