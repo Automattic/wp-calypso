@@ -115,7 +115,7 @@ export function GetReportForm( {
 					<div className="get-report-form__header">
 						<span className="description">
 							{ translate(
-								'To access a detailed report complete with insights and tailored recommendations for improving your site‘s performance, please provide your details below. We‘ll send you an exclusive link to view the full analysis, helping you make informed decisions for optimizing your site.'
+								'To access a detailed report complete with insights and tailored recommendations for improving your site\'s performance, please provide your details below. We\'ll send you an exclusive link to view the full analysis, helping you make informed decisions for optimizing your site.'
 							) }
 						</span>
 						<span>
