@@ -1,6 +1,7 @@
 import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 
 interface MetricsInsightProps {
 	insight?: Insight;
@@ -41,8 +42,9 @@ const InsightContent = styled.div`
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 	const { insight = {}, locked = false, onClick } = props;
+
 	const lockedInsights = useLockedInsights();
-	const randomInsight = getRandomItem( lockedInsights );
+	const [ randomInsight ] = useState( getRandomItem( lockedInsights ) );
 
 	const itemToRender = locked ? randomInsight : insight;
 
