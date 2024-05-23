@@ -1,8 +1,8 @@
 import classnames from 'classnames';
+import { PromptIcon } from 'calypso/components/command-palette/icon';
 import { useDispatch } from 'calypso/state';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import SidebarMenuItem from '../menu-item';
-import { PromptIcon } from './icon';
 
 export const SidebarSearch = ( { tooltip, onClick } ) => {
 	const dispatch = useDispatch();
