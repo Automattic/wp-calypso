@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 interface MetricsInsightProps {
 	insight?: Insight;
 	locked?: boolean;
+	onClick?: () => void;
 }
 
 type Insight = {
@@ -39,7 +40,7 @@ const InsightContent = styled.div`
 
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
-	const { insight = {}, locked = false } = props;
+	const { insight = {}, locked = false, onClick } = props;
 	const lockedInsights = useLockedInsights();
 	const randomInsight = getRandomItem( lockedInsights );
 
@@ -48,7 +49,11 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	return (
 		<Card
 			className="metrics-insight-item"
-			header={ <InsightHeader locked={ locked }>{ itemToRender.header }</InsightHeader> }
+			header={
+				<InsightHeader locked={ locked } onClick={ onClick }>
+					{ itemToRender.header }
+				</InsightHeader>
+			}
 			screenReaderText={ translate( 'More' ) }
 			compact
 			clickableHeader

@@ -158,7 +158,10 @@ export default function SiteProfilerV2( props: Props ) {
 									domainRef={ domainRef }
 								/>
 
-								<PerformanceSection performanceMetricsRef={ perfomanceMetricsRef } />
+								<PerformanceSection
+									performanceMetricsRef={ perfomanceMetricsRef }
+									setIsGetReportFormOpen={ setIsGetReportFormOpen }
+								/>
 							</>
 						) }
 					</LayoutBlock>

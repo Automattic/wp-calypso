@@ -4,11 +4,12 @@ import { MetricsInsight } from '../metrics-insight';
 
 interface PerformanceSectionProps {
 	performanceMetricsRef: React.RefObject< HTMLObjectElement >;
+	setIsGetReportFormOpen?: ( isOpen: boolean ) => void;
 }
 
 export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props ) => {
 	const translate = useTranslate();
-	const { performanceMetricsRef } = props;
+	const { performanceMetricsRef, setIsGetReportFormOpen } = props;
 
 	return (
 		<MetricsSection
@@ -38,7 +39,11 @@ export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props )
 			{ Array( 5 )
 				.fill( {} )
 				.map( ( _, index ) => (
-					<MetricsInsight key={ `locked-${ index }` } locked />
+					<MetricsInsight
+						key={ `locked-${ index }` }
+						locked
+						onClick={ () => setIsGetReportFormOpen?.( true ) }
+					/>
 				) ) }
 		</MetricsSection>
 	);
