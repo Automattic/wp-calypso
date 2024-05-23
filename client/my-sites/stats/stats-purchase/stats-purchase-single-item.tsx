@@ -193,6 +193,7 @@ const StatsCommercialPurchase = ( {
 			) }
 			{ isTierUpgradeSliderEnabled && (
 				<>
+					<p>Pick your Stats tier below:</p>
 					<StatsCommercialUpgradeSlider
 						currencyCode={ currencyCode }
 						analyticsEventName={ `${
