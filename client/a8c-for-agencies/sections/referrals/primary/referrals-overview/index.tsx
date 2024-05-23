@@ -1,6 +1,8 @@
 import { Button, WooLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
-import { plugins } from '@wordpress/icons';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { plugins, reusableBlock } from '@wordpress/icons';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
@@ -8,15 +10,23 @@ import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
+	LayoutHeaderActions as Actions,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_REFERRALS_BANK_DETAILS_LINK,
 	A4A_REFERRALS_COMMISSIONS_LINK,
+	A4A_MARKETPLACE_PRODUCTS_LINK,
+	A4A_REFERRALS_PAYMENT_SETTINGS,
+	A4A_REFERRALS_FAQ,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
+import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import WooCommerceLogo from 'calypso/components/woocommerce-logo';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -30,11 +40,20 @@ import ReferralsFooter from '../footer';
 
 import './style.scss';
 
-export default function ReferralsOverview() {
+export default function ReferralsOverview( {
+	isAutomatedReferral = false,
+}: {
+	isAutomatedReferral?: boolean;
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const title = translate( 'Referrals' );
+	const isDesktop = useDesktopBreakpoint();
+
+	const title =
+		isAutomatedReferral && isDesktop
+			? translate( 'Your referrals and commissions' )
+			: translate( 'Referrals' );
 
 	const onAddBankDetailsClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );
@@ -42,6 +61,10 @@ export default function ReferralsOverview() {
 
 	const onDownloadA4APluginClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_download_a4a_plugin_button_click' ) );
+	}, [ dispatch ] );
+
+	const onGetStartedClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' ) );
 	}, [ dispatch ] );
 
 	const { data, isFetching } = useGetTipaltiPayee();
@@ -83,16 +106,43 @@ export default function ReferralsOverview() {
 		}
 	}, [ dispatch, successNoticeSeen, accountStatus ] );
 
+	const makeAReferral = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' ) );
+	}, [ dispatch ] );
+
+	let bankAccountCTAText = hasPayeeAccount
+		? translate( 'Edit my bank details' )
+		: translate( 'Enter bank details' );
+
+	if ( isAutomatedReferral ) {
+		bankAccountCTAText = hasPayeeAccount
+			? translate( 'Edit my details' )
+			: translate( 'Add my details' );
+	}
+
+	const referProductsLink = `${ A4A_MARKETPLACE_PRODUCTS_LINK }?purchase-type=refer-products`;
+
 	return (
 		<Layout
-			className="referrals-layout"
+			className={ classNames( 'referrals-layout', {
+				'referrals-layout--automated': isAutomatedReferral,
+			} ) }
 			title={ title }
 			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
+			sidebarNavigation={ ! isAutomatedReferral && <MobileSidebarNavigation /> }
+			withBorder={ isAutomatedReferral }
 		>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title } </Title>
+					{ isAutomatedReferral && (
+						<Actions>
+							<MobileSidebarNavigation />
+							<Button primary href={ referProductsLink } onClick={ makeAReferral }>
+								{ translate( 'Make a referral' ) }
+							</Button>
+						</Actions>
+					) }
 				</LayoutHeader>
 			</LayoutTop>
 
@@ -106,27 +156,52 @@ export default function ReferralsOverview() {
 						</NoticeBanner>
 					</div>
 				) }
+				{ isAutomatedReferral && (
+					<div className="referrals-overview__section-icons">
+						<JetpackLogo className="jetpack-logo" size={ 24 } />
+						<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
+						<img src={ pressableIcon } alt="Pressable" />
+						<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
+					</div>
+				) }
 				<div className="referrals-overview__section-heading">
-					{ translate( 'Recommend our products. Earn up to a 50% commission.' ) } <br />
-					{ translate( ' No promo codes required.' ) }
+					{ isAutomatedReferral ? (
+						<>
+							{ translate( 'Recommend our products.' ) } <br />
+							{ translate( 'Earn up to a 50% commission.' ) }
+						</>
+					) : (
+						<>
+							{ translate( 'Recommend our products. Earn up to a 50% commission.' ) } <br />
+							{ translate( ' No promo codes required.' ) }
+						</>
+					) }
 				</div>
 
 				<div className="referrals-overview__section-subtitle">
-					<div>
-						{ translate(
-							'Make money on each product your clients buy from Automattic. They can buy WooCommerce extensions, tools from Jetpack, and hosting services from Pressable or WordPress.com'
-						) }
-					</div>
-					<div>
-						{ translate(
-							'You can also make money when people buy things on your clients’ websites using WooPayments. {{a}}How much can I earn?{{/a}}',
-							{
-								components: {
-									a: <a href={ A4A_REFERRALS_COMMISSIONS_LINK } />,
-								},
-							}
-						) }
-					</div>
+					{ isAutomatedReferral ? (
+						translate(
+							'Make money when your clients buy Automattic products, hosting, or use WooPayments. No promo codes needed.'
+						)
+					) : (
+						<>
+							<div>
+								{ translate(
+									'Make money on each product your clients buy from Automattic. They can buy WooCommerce extensions, tools from Jetpack, and hosting services from Pressable or WordPress.com'
+								) }
+							</div>
+							<div>
+								{ translate(
+									'You can also make money when people buy things on your clients’ websites using WooPayments. {{a}}How much can I earn?{{/a}}',
+									{
+										components: {
+											a: <a href={ A4A_REFERRALS_COMMISSIONS_LINK } />,
+										},
+									}
+								) }
+							</div>
+						</>
+					) }
 				</div>
 
 				<div className="referrals-overview__section-container">
@@ -139,19 +214,45 @@ export default function ReferralsOverview() {
 						</>
 					) : (
 						<>
-							<MigrationOffer />
-							<StepSection heading={ translate( 'How do I get started?' ) }>
+							{ ! isAutomatedReferral && <MigrationOffer /> }
+							<StepSection
+								heading={
+									isAutomatedReferral
+										? translate( 'How do I start?' )
+										: translate( 'How do I get started?' )
+								}
+							>
 								<StepSectionItem
+									isAutomatedReferral={ isAutomatedReferral }
 									icon={ tipaltiLogo }
-									heading={ translate( 'Enter your bank details so we can pay you commissions' ) }
-									description={ translate(
-										'Get paid seamlessly by adding your bank details and tax forms to Tipalti, our trusted and secure platform for commission payments.'
-									) }
+									heading={
+										isAutomatedReferral
+											? translate( 'Prepare to get paid' )
+											: translate( 'Enter your bank details so we can pay you commissions' )
+									}
+									description={
+										isAutomatedReferral
+											? translate( 'With {{a}}Tipalti ↗{{/a}}, our secure platform.', {
+													components: {
+														a: (
+															<a
+																className="referrals-overview__link"
+																href="https://tipalti.com/"
+																target="_blank"
+																rel="noopener noreferrer"
+															/>
+														),
+													},
+											  } )
+											: translate(
+													'Get paid seamlessly by adding your bank details and tax forms to Tipalti, our trusted and secure platform for commission payments.'
+											  )
+									}
 									buttonProps={ {
-										children: hasPayeeAccount
-											? translate( 'Edit my bank details' )
-											: translate( 'Enter bank details' ),
-										href: A4A_REFERRALS_BANK_DETAILS_LINK,
+										children: bankAccountCTAText,
+										href: isAutomatedReferral
+											? A4A_REFERRALS_PAYMENT_SETTINGS
+											: A4A_REFERRALS_BANK_DETAILS_LINK,
 										onClick: onAddBankDetailsClick,
 										primary: ! hasPayeeAccount,
 										compact: true,
@@ -166,47 +267,88 @@ export default function ReferralsOverview() {
 											: undefined
 									}
 								/>
+								{ isAutomatedReferral ? (
+									<StepSectionItem
+										iconClassName="referrals-overview__opacity-70-percent"
+										isAutomatedReferral
+										icon={ reusableBlock }
+										heading={ translate( 'Refer products and hosting' ) }
+										description={ translate( 'Receive up to a 50% commission.' ) }
+										buttonProps={ {
+											children: translate( 'Get started' ),
+											compact: true,
+											primary: hasPayeeAccount,
+											href: referProductsLink,
+											onClick: onGetStartedClick,
+										} }
+									/>
+								) : (
+									<StepSectionItem
+										iconClassName="referrals-overview__opacity-70-percent"
+										icon={ plugins }
+										heading={ translate( 'Verify your relationship with your clients' ) }
+										description={ translate(
+											'Install the A4A plugin on your clients’ sites. This shows you have a direct relationship with the client.'
+										) }
+										buttonProps={ {
+											children: translate( 'Download the plugin now' ),
+											compact: true,
+											href: A4A_DOWNLOAD_LINK_ON_GITHUB,
+											onClick: onDownloadA4APluginClick,
+										} }
+									/>
+								) }
 								<StepSectionItem
-									icon={ plugins }
-									heading={ translate( 'Verify your relationship with your clients' ) }
-									description={ translate(
-										'Install the A4A plugin on your clients’ sites. This shows you have a direct relationship with the client.'
-									) }
-									buttonProps={ {
-										children: translate( 'Download the plugin now' ),
-										compact: true,
-										href: A4A_DOWNLOAD_LINK_ON_GITHUB,
-										onClick: onDownloadA4APluginClick,
-									} }
-								/>
-								<StepSectionItem
+									isAutomatedReferral={ isAutomatedReferral }
 									className="referrals-overview__step-section-woo-payments"
 									icon={ <WooLogo /> }
-									heading={ translate( 'Install WooPayments on your clients’ online stores' ) }
-									description={
-										<>
-											{ translate(
-												'Receive a revenue share of 5 basis points (0.05%) on new WooPayments total payments volume (TPV) on clients’ sites.'
-											) }
-											<div>
-												<Button
-													borderless
-													href="https://woocommerce.com/payments/"
-													rel="noreferrer"
-													target="_blank"
-												>
-													{ translate( 'Learn about WooPayments' ) }
-												</Button>
-											</div>
-										</>
+									heading={
+										isAutomatedReferral
+											? translate( 'Install WooPayments' )
+											: translate( 'Install WooPayments on your clients’ online stores' )
 									}
+									description={
+										isAutomatedReferral
+											? translate( 'Receive a rev share of 0.05% per sale.' )
+											: translate(
+													'Receive a revenue share of 5 basis points (0.05%) on new WooPayments total payments volume (TPV) on clients’ sites.'
+											  )
+									}
+									buttonProps={ {
+										children: isAutomatedReferral
+											? translate( 'Learn how' )
+											: translate( 'Learn about WooPayments' ),
+										compact: isAutomatedReferral,
+										primary: isAutomatedReferral && hasPayeeAccount,
+										borderless: ! isAutomatedReferral,
+										href: 'https://woocommerce.com/payments/',
+										rel: 'noreferrer',
+										target: '_blank',
+									} }
 								/>
 							</StepSection>
+							{ isAutomatedReferral && (
+								<StepSection
+									className="referrals-overview__step-section-learn-more"
+									heading={ translate( 'Find out more about the program' ) }
+								>
+									<Button className="a8c-blue-link" borderless href={ A4A_REFERRALS_FAQ }>
+										{ translate( 'How much money will I make?' ) }
+									</Button>
+									<br />
+									{
+										// FIXME: Add link
+										<Button className="a8c-blue-link" borderless href="#">
+											{ translate( 'How does it work?' ) }
+										</Button>
+									}
+								</StepSection>
+							) }
 						</>
 					) }
 				</div>
 
-				{ ! isFetching && <ReferralsFooter /> }
+				{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
 			</LayoutBody>
 		</Layout>
 	);

@@ -19,6 +19,7 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -81,6 +82,7 @@ const BackupUpsellBody = () => {
 	);
 	const translate = useTranslate();
 	const postCheckoutUrl = window.location.pathname + window.location.search;
+	const checkoutHost = isJetpackCloud() ? 'https://wordpress.com' : '';
 	const isJetpack = useSelector( ( state ) => siteId && isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => siteId && isSiteWpcomAtomic( state, siteId ) );
 	const isWPcomSite = ! isJetpack || isAtomic;
@@ -136,7 +138,7 @@ const BackupUpsellBody = () => {
 								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
 							} ),
 							action: {
-								url: `/checkout/${ siteSlug }/business`,
+								url: `${ checkoutHost }/checkout/${ siteSlug }/business`,
 								onClick: onUpgradeClick,
 								selfTarget: true,
 							},
@@ -147,9 +149,12 @@ const BackupUpsellBody = () => {
 					<div className="backup__wpcom-ctas">
 						<Button
 							className="backup__wpcom-cta"
-							href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_t1_yearly`, {
-								redirect_to: postCheckoutUrl,
-							} ) }
+							href={ addQueryArgs(
+								`${ checkoutHost }/checkout/${ siteSlug }/jetpack_backup_t1_yearly`,
+								{
+									redirect_to: postCheckoutUrl,
+								}
+							) }
 							onClick={ onUpgradeClick }
 							primary
 						>
@@ -171,7 +176,7 @@ const BackupUpsellBody = () => {
 				</>
 			) }
 
-			{ isWPcomSite && <WhatIsJetpack /> }
+			{ ! isJetpackCloud() && isWPcomSite && <WhatIsJetpack /> }
 		</>
 	);
 };

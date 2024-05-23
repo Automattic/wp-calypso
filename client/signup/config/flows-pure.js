@@ -408,6 +408,16 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
+			name: 'domain-for-gravatar',
+			steps: [ 'domain-only', 'site-or-domain', 'site-picker' ],
+			destination: getDomainSignupFlowDestination,
+			description: 'Checkout flow for domains on Gravatar',
+			disallowResume: true,
+			lastModified: '2024-05-07',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
 			name: 'site-selected',
 			steps: [ 'plans-site-selected-legacy' ],
 			destination: getSignupDestination,

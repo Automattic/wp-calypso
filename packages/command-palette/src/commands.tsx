@@ -125,9 +125,11 @@ export function useCommands() {
 					let path;
 					if ( params.currentRoute.startsWith( '/wp-admin' ) ) {
 						path = `/switch-site?route=${ encodeURIComponent( params.currentRoute ) }`;
-					} else {
+					} else if ( params.currentRoute.includes( ':site' ) ) {
 						// On a global page, navigate to the dashboard, otherwise keep current route.
-						path = params.currentRoute.includes( ':site' ) ? params.currentRoute : '/home/:site';
+						path = params.currentRoute;
+					} else {
+						path = siteUsesWpAdminInterface( params.site ) ? '/wp-admin' : '/home/:site';
 					}
 					return commandNavigation( path )( params );
 				},
