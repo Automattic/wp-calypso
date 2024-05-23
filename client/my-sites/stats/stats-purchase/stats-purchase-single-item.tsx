@@ -121,16 +121,16 @@ function useLocalizedStrings( isCommercial: boolean ) {
 					context: 'Stats: Descriptive text in the commercial purchase flow',
 				}
 			),
-			continueButtonText: translate( 'Upgrade and continue' ),
+			continueButtonText: translate( 'Upgrade now and continue' ),
 		};
 	}
 
 	return {
 		pageTitle: translate( 'Simple yet powerful stats to grow your site' ),
 		infoText: translate(
-			"With Jetpack Stats, you don't need to be a data scientist to see how your site is performing. Get premium access to:"
+			'Jetpack Stats makes it easy to see how your site is doing. No data science skills needed. Start with a commercial license and get premium access to:'
 		),
-		continueButtonText: translate( 'Get started now' ),
+		continueButtonText: translate( 'Get Stats to grow my site' ),
 	};
 }
 
