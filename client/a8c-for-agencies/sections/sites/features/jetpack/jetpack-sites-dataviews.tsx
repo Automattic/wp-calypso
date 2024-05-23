@@ -435,7 +435,7 @@ export const JetpackSitesDataViews = ( {
 		actions: [],
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
-		onSelectionChange: ( [ site ] ) => openSitePreviewPane( site ),
+		onSelectionChange: ( [ item ]: SiteData[] ) => openSitePreviewPane( item.site.value ),
 	} );
 
 	// Actions: Pause Monitor, Resume Monitor, Custom Notification, Reset Notification
