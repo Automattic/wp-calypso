@@ -4,6 +4,7 @@ import { NEW_HOSTED_SITE_FLOW_USER_INCLUDED } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
+import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import {
 	setSignupCompleteSlug,
@@ -15,7 +16,7 @@ import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-us
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import { Flow, ProvidedDependencies } from './internals/types';
+import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
@@ -25,20 +26,11 @@ const hosting: Flow = {
 	isSignupFlow: true,
 	useSteps() {
 		return [
-			{ slug: 'user', asyncComponent: () => import( './internals/steps-repository/user' ) },
-			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
-			{
-				slug: 'trialAcknowledge',
-				asyncComponent: () => import( './internals/steps-repository/trial-acknowledge' ),
-			},
-			{
-				slug: 'createSite',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
+			STEPS.USER,
+			STEPS.PLANS,
+			STEPS.TRIAL_ACKNOWLEDGE,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
