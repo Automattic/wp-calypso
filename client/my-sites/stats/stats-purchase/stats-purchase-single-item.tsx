@@ -107,40 +107,30 @@ const StatsUpgradeInstructions = () => {
 function useLocalizedStrings( isCommercial: boolean ) {
 	const translate = useTranslate();
 
-	let pageTitle = '';
-	let infoText = '';
-	let continueButtonText = '';
-
 	// Page title, info text, and button text depend on isCommercial status.
-	// We maintain the old behaviour for pre-FLAGS_CHECKOUT_FLOWS_V2 cases.
-	if ( ! config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 ) ) {
-		pageTitle = translate( 'Jetpack Stats' );
-		infoText = translate( 'The most advanced stats Jetpack has to offer.' );
-		continueButtonText = translate( 'Purchase' );
-	} else {
-		pageTitle = isCommercial
-			? translate( 'Upgrade and continue using Jetpack Stats' )
-			: translate( 'Simple yet powerful stats to grow your site' );
-		infoText = isCommercial
-			? ( translate(
-					'To continue using Stats and access its newest premium features you need to get a commercial license. {{link}}Learn more about this update{{/link}}.',
-					{
-						comment: '{{link}} links to explainer post on Jetpack blog.',
-						components: {
-							link: (
-								<a href="https://jetpack.com/blog/updates-to-jetpack-stats-for-commercial-sites/" />
-							),
-						},
-						context: 'Stats: Descriptive text in the commercial purchase flow',
-					}
-			  ) as string )
-			: translate(
-					"With Jetpack Stats, you don't need to be a data scientist to see how your site is performing. Get premium access to:"
-			  );
-		continueButtonText = isCommercial
-			? translate( 'Upgrade and continue' )
-			: translate( 'Get started now' );
-	}
+	const pageTitle = isCommercial
+		? translate( 'Upgrade and continue using Jetpack Stats' )
+		: translate( 'Simple yet powerful stats to grow your site' );
+	const infoText = isCommercial
+		? ( translate(
+				'To continue using Stats and access its newest premium features you need to get a commercial license. {{link}}Learn more about this update{{/link}}.',
+				{
+					comment: '{{link}} links to explainer post on Jetpack blog.',
+					components: {
+						link: (
+							<a href="https://jetpack.com/blog/updates-to-jetpack-stats-for-commercial-sites/" />
+						),
+					},
+					context: 'Stats: Descriptive text in the commercial purchase flow',
+				}
+		  ) as string )
+		: translate(
+				"With Jetpack Stats, you don't need to be a data scientist to see how your site is performing. Get premium access to:"
+		  );
+	const continueButtonText = isCommercial
+		? translate( 'Upgrade and continue' )
+		: translate( 'Get started now' );
+
 	return { pageTitle, infoText, continueButtonText };
 }
 
