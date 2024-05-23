@@ -885,7 +885,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		if ( getTrailMapExperiment() === 'treatment_copy' ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 				FEATURE_20_PREMIUM_THEMES,
 				FEATURE_AD_FREE_EXPERIENCE,
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
@@ -905,7 +904,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_CDN,
 				FEATURE_POST_EDITS_HISTORY,
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
-				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_structure' ) {
@@ -921,13 +919,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_SMART_REDIRECTS,
 				FEATURE_ALWAYS_ONLINE,
 				FEATURE_FAST_DNS,
-				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			];
 		}
 		return [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
@@ -936,11 +932,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	},
 	get2023PlanComparisonFeatureOverride: () => {
 		if ( isTrailMapCopyVariant() ) {
-			return [
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-			];
+			return [ FEATURE_AD_FREE_EXPERIENCE, FEATURE_CUSTOM_DOMAIN ];
 		}
 
 		if ( getTrailMapExperiment() === 'treatment_structure' ) {
@@ -956,7 +948,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_SMART_REDIRECTS,
 				FEATURE_ALWAYS_ONLINE,
 				FEATURE_FAST_DNS,
-				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
 
@@ -964,7 +955,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		];
 	},
@@ -988,7 +978,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
-		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
@@ -1004,7 +993,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 		FEATURE_PAID_SUBSCRIBERS_JP,
 	],
@@ -1013,7 +1001,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
-		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
 	getBlogOnboardingHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
@@ -1024,7 +1011,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getCheckoutFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_PAID_SUBSCRIBERS_JP,
@@ -1629,7 +1615,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		);
 	},
 	getNewsletterSignupFeatures: () => [
-		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_STYLE_CUSTOMIZATION,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
@@ -1641,7 +1627,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_EMAILS,
 		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_REAL_TIME_ANALYTICS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	],
@@ -1653,7 +1639,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	},
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_VIDEOPRESS_JP,
@@ -1666,7 +1652,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_STYLE_CUSTOMIZATION,
-		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_WORDADS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
@@ -1705,12 +1691,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		if ( getTrailMapExperiment() === 'treatment_copy' ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_PRIORITY_24_7_SUPPORT,
 				FEATURE_48_PREMIUM_THEMES,
 				FEATURE_REAL_TIME_STATS,
 				FEATURE_STYLE_CUSTOMIZATION,
 				FEATURE_VIDEOPRESS_JP,
 				FEATURE_PAYMENT_TRANSACTION_FEES_4,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_copy_and_structure' ) {
@@ -1729,7 +1715,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_CDN,
 				FEATURE_POST_EDITS_HISTORY,
 				FEATURE_PAYMENT_TRANSACTION_FEES_4,
-				FEATURE_PRIORITY_24_7_SUPPORT,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_structure' ) {
@@ -1747,14 +1733,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_STYLE_CUSTOMIZATION,
 				FEATURE_WORDADS,
 				FEATURE_FAST_DNS,
-				FEATURE_PRIORITY_24_7_SUPPORT,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 				FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			];
 		}
 
 		return [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_WORDADS,
 			FEATURE_STYLE_CUSTOMIZATION,
@@ -1768,6 +1754,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_REAL_TIME_STATS,
 				FEATURE_STYLE_CUSTOMIZATION,
 				FEATURE_VIDEOPRESS_JP,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
 
@@ -1786,6 +1773,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_STYLE_CUSTOMIZATION,
 				FEATURE_WORDADS,
 				FEATURE_FAST_DNS,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
 
@@ -1793,7 +1781,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	},
 	getCheckoutFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_WORDADS,
 		FEATURE_STYLE_CUSTOMIZATION,
@@ -2042,10 +2030,10 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		}
 		return [
 			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_PRIORITY_24_7_SUPPORT,
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_BANDWIDTH,
 			FEATURE_UNLIMITED_TRAFFIC,
-			FEATURE_PRIORITY_24_7_SUPPORT,
 			FEATURE_GLOBAL_EDGE_CACHING,
 			FEATURE_BURST,
 			FEATURE_WAF_V2,
