@@ -453,7 +453,7 @@ const PlansFeaturesMain = ( {
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
 		selectedPlan,
-		currentPlan: { productSlug: currentPlan?.productSlug || PLAN_FREE },
+		currentPlan: { productSlug: currentPlan?.productSlug },
 	} );
 	// Make sure the plans for the default customer type can be purchased.
 	if ( _customerType === 'personal' && userCanUpgradeToPersonalPlan ) {
