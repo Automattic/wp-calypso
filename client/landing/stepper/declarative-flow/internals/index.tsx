@@ -11,6 +11,7 @@ import React, { useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -102,6 +103,7 @@ const useStepNavigationWithLogin = (
 		return {
 			...stepNavigation,
 			submit: () => {
+				recordSubmitStep( {}, '', flow.name, currentStepRoute, flow.variantSlug );
 				return stepNavigate( nextStep );
 			},
 		};
@@ -349,7 +351,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				{ flowSteps.map( ( step ) => (
 					<Route
 						key={ step.slug }
-						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }
+						path={ `/${ flowPath }/${ step.slug }` }
 						element={
 							<StepRoute
 								step={ step }
@@ -364,9 +366,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					path="*"
 					element={
 						<Navigate
-							to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${
-								window.location.search
-							}` }
+							to={ `/${ flowPath }/${ stepPaths[ 0 ] }${ window.location.search }` }
 							replace
 						/>
 					}
