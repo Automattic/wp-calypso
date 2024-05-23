@@ -224,7 +224,7 @@
 	.results-header-block {
 		position: relative;
 
-		&.bad {
+		&.poor {
 			background: url(calypso/assets/images/site-profiler/background-results-bad.svg) no-repeat right top;
 			// Huge screens and bigger
 			@media (min-width: $break-huge) {

@@ -125,7 +125,7 @@ export default function SiteProfilerV2( props: Props ) {
 					<LayoutBlock
 						className={ classnames(
 							'results-header-block',
-							{ bad: ! overallScore },
+							{ poor: ! overallScore },
 							{ good: overallScore }
 						) }
 						width="medium"
