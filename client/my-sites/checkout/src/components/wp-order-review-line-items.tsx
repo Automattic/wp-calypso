@@ -27,10 +27,9 @@ import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
-import { shouldReplacePlanSlug } from '../../utils';
+import { useFCCARestrictions } from '../../utils';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { CouponCostOverride, LineItemCostOverrides } from './cost-overrides-list';
 import { ItemVariationPicker } from './item-variation-picker';
@@ -323,7 +322,7 @@ function LineItemWrapper( {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	const userCountryCode = useSelector( getCurrentUserCountryCode );
+	const { shouldReplacePlan } = useFCCARestrictions();
 
 	const variants = useGetProductVariants( product, ( variant ) => {
 		// Only show term variants which are equal to or longer than the variant that
@@ -340,7 +339,7 @@ function LineItemWrapper( {
 			return true;
 		}
 
-		if ( shouldReplacePlanSlug( variant.productSlug, userCountryCode ) ) {
+		if ( shouldReplacePlan( variant.productSlug ) ) {
 			return false;
 		}
 		return variant.termIntervalInMonths >= initialVariantTerm;

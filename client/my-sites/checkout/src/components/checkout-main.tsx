@@ -19,12 +19,11 @@ import {
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { replacePlansSlug, shouldReplacePlanSlug } from '../../utils';
+import { useFCCARestrictions } from '../../utils';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
@@ -227,23 +226,24 @@ export default function CheckoutMain( {
 		addProductsToCart,
 	} = useShoppingCart( cartKey );
 
-	const userCountryCode = useSelector( getCurrentUserCountryCode );
+	const { shouldReplacePlan, getReplacedPlanSlug } = useFCCARestrictions();
 
 	useEffect( () => {
 		if ( ! isLoadingCart ) {
 			responseCart?.products?.forEach( ( item ) => {
-				if ( shouldReplacePlanSlug( item.product_slug, userCountryCode ) ) {
-					const newPlan = getPlan( replacePlansSlug[ item.product_slug ] );
+				if ( shouldReplacePlan( item.product_slug ) ) {
+					const replacedPlanSlug = getReplacedPlanSlug( item.product_slug );
+					const newPlan = getPlan( replacedPlanSlug );
 
 					replaceProductInCart( item.uuid, {
 						...item,
-						product_slug: replacePlansSlug[ item.product_slug ],
+						product_slug: replacedPlanSlug,
 						product_id: newPlan?.getProductId(),
 					} );
 				}
 			} );
 		}
-	}, [ isLoadingCart, responseCart, userCountryCode ] );
+	}, [ isLoadingCart, responseCart ] );
 	// For site-less checkouts, get the blog ID from the cart response
 	const updatedSiteId = isSiteless ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
