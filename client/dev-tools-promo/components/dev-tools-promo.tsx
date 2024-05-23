@@ -1,7 +1,10 @@
 import { FEATURE_SFTP } from '@automattic/calypso-products';
-import { Card } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Card, Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
+import { useState } from 'react';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
@@ -9,6 +12,7 @@ import isAutomatedTransferActive from 'calypso/state/automated-transfer/selector
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
@@ -31,8 +35,13 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 );
 
 const DevToolsPromo = () => {
+	const [ showEligibility, setShowEligibility ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) || '';
+	const { siteSlug, isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
+		siteSlug: getSiteSlug( state, siteId ) || '',
+		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
+		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
+	} ) );
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const pluginsLink = `https://wordpress.com/plugins/${ encodeURIComponent( siteSlug ) }`;
@@ -72,13 +81,18 @@ const DevToolsPromo = () => {
 		},
 	];
 
-	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
-	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const hasTransfer = useSelector(
 		( state ) => isAutomatedTransferActive( state, siteId as number ) ?? false
 	);
 	const showHostingActivationButton = canSiteGoAtomic;
+
+	const backUrl = `/hosting-config/${ siteSlug }`;
+
+	const transferInitiate = ( { geo_affinity = '' } ) => {
+		initiateThemeTransfer( siteId as number, null, '', geo_affinity, 'hosting' );
+		// page( `/setup/transferring-hosted-site/processing?siteId=${ siteId }` );
+	};
 
 	return (
 		<div className="dev-tools-promo">
@@ -98,14 +112,34 @@ const DevToolsPromo = () => {
 						  ) }
 				</p>
 				{ showHostingActivationButton ? (
-					<Button
-						variant="primary"
-						className="dev-tools-promo__button"
-						href={ upgradeLink }
-						disabled={ hasTransfer }
-					>
-						{ translate( 'Activate now' ) }
-					</Button>
+					<>
+						<Button
+							variant="primary"
+							className="dev-tools-promo__button"
+							onClick={ () => {
+								if ( showHostingActivationButton ) {
+									return setShowEligibility( true );
+								}
+							} }
+						>
+							{ translate( 'Activate now' ) }
+						</Button>
+
+						<Dialog
+							additionalClassNames="plugin-details-cta__dialog-content"
+							additionalOverlayClassNames="plugin-details-cta__modal-overlay"
+							isVisible={ showEligibility }
+							onClose={ () => setShowEligibility( false ) }
+							showCloseIcon
+						>
+							<EligibilityWarnings
+								className="hosting__activating-warnings"
+								onProceed={ transferInitiate }
+								backUrl={ backUrl }
+								showDataCenterPicker
+							/>
+						</Dialog>
+					</>
 				) : (
 					<>
 						<Button variant="secondary" className="dev-tools-promo__button" href={ pluginsLink }>
