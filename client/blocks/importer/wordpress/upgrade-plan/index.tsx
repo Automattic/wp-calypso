@@ -8,6 +8,7 @@ import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import UpgradePlanDetails from './upgrade-plan-details';
 
 import './style.scss';
@@ -30,6 +31,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
+	const fromUrl = useQuery().get( 'from' ) || '';
 	const {
 		site,
 		navigateToVerifyEmailStep,
@@ -70,6 +72,8 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 		const allEventProps = {
 			...trackingEventsProps,
+			from: fromUrl,
+			has_source_site: fromUrl !== '',
 			migration_trial_hidden: hideFreeMigrationTrial ? 'true' : 'false',
 		};
 
