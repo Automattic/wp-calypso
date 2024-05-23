@@ -11,6 +11,7 @@ type SurveyContainerProps = {
 	onChange: ( questionKey: string, value: string[] ) => void;
 	hideBackOnFirstPage?: boolean;
 	disabled?: boolean;
+	headerAlign?: string;
 };
 
 const SurveyContainer = ( {
@@ -23,6 +24,7 @@ const SurveyContainer = ( {
 	onChange,
 	hideBackOnFirstPage = true,
 	disabled,
+	headerAlign,
 }: SurveyContainerProps ) => {
 	const currentQuestion = questions[ currentPage - 1 ];
 	const hideBack = hideBackOnFirstPage && currentPage === 1;
@@ -41,6 +43,7 @@ const SurveyContainer = ( {
 			onSkip={ onSkip }
 			disabled={ disabled }
 			hideBack={ hideBack }
+			headerAlign={ headerAlign }
 		/>
 	);
 };
