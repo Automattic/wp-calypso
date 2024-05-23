@@ -337,12 +337,11 @@
 				}
 
 				li:has(.sites-dataview__site-error-span) {
-					padding: 8px;
 					border-bottom: 0;
 				}
 
 				li:has(.sites-dataview__site-error) {
-					padding: 0 10px 24px 0;
+					padding: 0 24px 24px;
 				}
 
 				.dataviews-view-list__fields {
