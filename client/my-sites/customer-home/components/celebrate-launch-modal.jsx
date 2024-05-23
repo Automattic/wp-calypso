@@ -3,11 +3,15 @@ import { Button, Modal } from '@wordpress/components';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import { isA4APurchase } from 'calypso/lib/purchases';
 import { omitUrlParams } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { fetchSitePurchases } from 'calypso/state/purchases/actions';
+import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 
 import './celebrate-launch-modal.scss';
 
@@ -16,17 +20,24 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	const translate = useTranslate();
 	const isPaidPlan = ! site?.plan?.is_free;
 	const isBilledMonthly = site?.plan?.product_slug?.includes( 'monthly' );
-
 	const transformedDomains = allDomains.map( createSiteDomainObject );
+	const [ isInitiallyLoaded, setIsInitiallyLoaded ] = useState( false );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardButtonEl = useRef( null );
 	const hasCustomDomain = Boolean(
 		transformedDomains.find( ( domain ) => ! domain.isWPCOMDomain )
 	);
+	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, site?.ID ) );
+	const purchases = useSelector( ( state ) => getSitePurchases( state, site?.ID ) );
+	const actualPlanPurchase = purchases.filter(
+		( purchase ) => purchase.productSlug === sitePlanSlug
+	);
+	const isA4ASite = isA4APurchase( actualPlanPurchase[ 0 ] );
+	const isLoading = useSelector( isFetchingSitePurchases );
 
 	useEffect( () => {
-		// remove the celebrateLaunch URL param without reloading the page as soon as the modal loads
-		// make sure the modal is shown only once
+		// Remove the celebrateLaunch URL param without reloading the page as soon as the modal loads
+		// Make sure the modal is shown only once
 		window.history.replaceState(
 			null,
 			'',
@@ -34,18 +45,28 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 		);
 
 		dispatch(
-			recordTracksEvent( `calypso_launchpad_celebration_modal_view`, {
+			recordTracksEvent( 'calypso_launchpad_celebration_modal_view', {
 				product_slug: site?.plan?.product_slug,
 			} )
 		);
 	}, [] );
+
+	useEffect( () => {
+		dispatch( fetchSitePurchases( site?.ID ) );
+	}, [ dispatch, site?.ID ] );
+
+	useEffect( () => {
+		if ( ! isLoading && ( ! isPaidPlan || purchases.length > 0 ) && ! isInitiallyLoaded ) {
+			setIsInitiallyLoaded( true );
+		}
+	}, [ isLoading, purchases, isPaidPlan ] );
 
 	function renderUpsellContent() {
 		let contentElement;
 		let buttonText;
 		let buttonHref;
 
-		if ( ! isPaidPlan && ! hasCustomDomain ) {
+		if ( ( ! isPaidPlan && ! hasCustomDomain ) || isA4ASite ) {
 			contentElement = (
 				<p>
 					{ translate(
@@ -66,7 +87,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 			);
 			buttonText = translate( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
-		} else if ( isPaidPlan && ! hasCustomDomain ) {
+		} else if ( isPaidPlan && ! hasCustomDomain && ! isA4ASite ) {
 			contentElement = (
 				<p>
 					{ translate(
@@ -90,7 +111,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 					href={ buttonHref }
 					onClick={ () =>
 						dispatch(
-							recordTracksEvent( `calypso_launchpad_celebration_modal_upsell_clicked`, {
+							recordTracksEvent( 'calypso_launchpad_celebration_modal_upsell_clicked', {
 								product_slug: site?.plan?.product_slug,
 							} )
 						)
@@ -100,6 +121,10 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 				</Button>
 			</div>
 		);
+	}
+
+	if ( ! isInitiallyLoaded ) {
+		return null;
 	}
 
 	return (
