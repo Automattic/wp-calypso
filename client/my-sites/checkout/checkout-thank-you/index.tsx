@@ -549,7 +549,13 @@ export class CheckoutThankYou extends Component<
 					/>
 				);
 			} else if ( isOnlyDomainPurchases( purchases ) ) {
-				pageContent = <DomainOnlyThankYou purchases={ purchases } receiptId={ receiptId } />;
+				pageContent = (
+					<DomainOnlyThankYou
+						purchases={ purchases }
+						receiptId={ receiptId }
+						isGravatarDomain={ false }
+					/>
+				);
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
 				pageContent = (
 					<PlanOnlyThankYou
