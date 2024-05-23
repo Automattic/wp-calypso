@@ -1,5 +1,6 @@
 import QuestionStep from './components/question-step';
-import { Answers, Question } from './types';
+import { QuestionTypeComponentMap } from './components/question-step-mapping';
+import { Answers, Question, QuestionConfiguration } from './types';
 
 type SurveyContainerProps = {
 	answers: Answers;
@@ -10,8 +11,12 @@ type SurveyContainerProps = {
 	onSkip: () => void;
 	onChange: ( questionKey: string, value: string[] ) => void;
 	hideBackOnFirstPage?: boolean;
+	hideContinue?: boolean;
+	hideSkip?: boolean;
 	disabled?: boolean;
 	headerAlign?: string;
+	questionConfiguration?: QuestionConfiguration;
+	questionTypeComponentMap?: QuestionTypeComponentMap;
 };
 
 const SurveyContainer = ( {
@@ -25,8 +30,11 @@ const SurveyContainer = ( {
 	hideBackOnFirstPage = true,
 	disabled,
 	headerAlign,
+	questionConfiguration = {},
+	questionTypeComponentMap,
 }: SurveyContainerProps ) => {
 	const currentQuestion = questions[ currentPage - 1 ];
+	const currentQuestionConfiguration = questionConfiguration?.[ currentQuestion.key ];
 	const hideBack = hideBackOnFirstPage && currentPage === 1;
 
 	if ( ! currentQuestion ) {
@@ -43,7 +51,10 @@ const SurveyContainer = ( {
 			onSkip={ onSkip }
 			disabled={ disabled }
 			hideBack={ hideBack }
+			hideContinue={ currentQuestionConfiguration?.hideContinue }
+			hideSkip={ currentQuestionConfiguration?.hideSkip }
 			headerAlign={ headerAlign }
+			questionTypeComponentMap={ questionTypeComponentMap }
 		/>
 	);
 };
