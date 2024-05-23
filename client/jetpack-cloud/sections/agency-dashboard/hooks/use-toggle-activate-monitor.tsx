@@ -35,7 +35,7 @@ export default function useToggleActivateMonitor(
 				dataViewsState.search,
 				dataViewsState.page,
 				{
-					issueTypes: getSelectedFilters( dataViewsState.filters ),
+					issueTypes: getSelectedFilters( dataViewsState.filters ).status,
 					showOnlyFavorites: showOnlyFavorites || false,
 				},
 				dataViewsState.sort,

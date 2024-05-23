@@ -16,12 +16,14 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 		s: search,
 		page: contextPage,
 		issue_types,
+		site_tags,
 		sort_field,
 		sort_direction,
 		origin,
 	} = context.query;
 	const filter = {
 		issueTypes: issue_types?.split( ',' ),
+		siteTags: site_tags?.split( ',' ),
 		showOnlyFavorites: context.params.filter === 'favorites',
 	};
 	const sort = {

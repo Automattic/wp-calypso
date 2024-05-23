@@ -16,6 +16,7 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE: SiteData[] = [
 	{
 		site: {
 			value: {
+				a4a_site_tags: [],
 				url: 'example.jetpack.com',
 				url_with_scheme: 'https://example.jetpack.com',
 				blogname: 'Example WordPress Site',

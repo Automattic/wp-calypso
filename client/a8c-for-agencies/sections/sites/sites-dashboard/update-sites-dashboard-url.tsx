@@ -1,5 +1,4 @@
 import { DataViewsFilter } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
@@ -16,7 +15,7 @@ const buildQueryString = ( {
 	sort,
 	showOnlyFavorites,
 }: {
-	filters: Filter[];
+	filters: DataViewsFilter[];
 	search: string;
 	currentPage: number;
 	sort: DashboardSortInterface;
@@ -43,7 +42,13 @@ const buildQueryString = ( {
 
 	if ( filters && filters.length > 0 ) {
 		const selectedFilters = getSelectedFilters( filters );
-		urlQuery.set( 'issue_types', selectedFilters.join( ',' ) );
+		if ( selectedFilters.status.length ) {
+			urlQuery.set( 'issue_types', selectedFilters.status.join( ',' ) );
+		}
+
+		if ( selectedFilters.siteTags.length ) {
+			urlQuery.set( 'site_tags', selectedFilters.siteTags.join( ',' ) );
+		}
 	}
 
 	if ( showOnlyFavorites ) {
@@ -57,7 +62,6 @@ const buildQueryString = ( {
 
 export const updateSitesDashboardUrl = ( {
 	category,
-	setCategory,
 	filters,
 	selectedSite,
 	selectedSiteFeature,
@@ -67,7 +71,6 @@ export const updateSitesDashboardUrl = ( {
 	showOnlyFavorites,
 }: {
 	category?: string;
-	setCategory: ( category: string ) => void;
 	filters: DataViewsFilter[];
 	selectedSite?: Site;
 	selectedSiteFeature?: string;
@@ -76,12 +79,6 @@ export const updateSitesDashboardUrl = ( {
 	sort: DashboardSortInterface;
 	showOnlyFavorites?: boolean;
 } ) => {
-	// We need a category in the URL if we have a selected site
-	if ( selectedSite && ! category ) {
-		setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
-		return;
-	}
-
 	const baseUrl = '/sites';
 	let url = baseUrl;
 	let shouldAddQueryArgs = true;

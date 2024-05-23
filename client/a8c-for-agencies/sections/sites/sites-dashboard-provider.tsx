@@ -1,4 +1,5 @@
-import { ReactNode, useEffect, useState } from 'react';
+import page from '@automattic/calypso-router';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -9,63 +10,100 @@ import {
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD, filtersMap } from './constants';
+import { filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
 
 interface Props {
-	showOnlyFavoritesInitialState?: boolean;
-	hideListingInitialState?: boolean;
-	categoryInitialState?: string;
-	siteUrlInitialState?: string;
-	siteFeatureInitialState?: string;
+	showOnlyFavorites?: boolean;
+	showPreviewPane?: boolean;
+	selectedCategory: string;
+	siteUrl?: string;
+	siteFeature?: string;
 	searchQuery: string;
 	children: ReactNode;
 	path: string;
-	issueTypes: string;
+	filters: {
+		status: string;
+		siteTags: string;
+	};
 	currentPage: number;
 	sort: DashboardSortInterface;
 	featurePreview?: ReactNode | null;
 }
 
-const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
-	const issueTypesArray = issueTypes?.split( ',' );
+const buildFilters = ( { status, siteTags }: { status: string; siteTags: string } ) => {
+	const statusArray = status?.split( ',' );
 
-	return (
-		issueTypesArray?.map( ( issueType ) => {
+	const statusFilter =
+		statusArray?.map( ( issueType ) => {
 			return {
 				field: 'status',
 				operator: 'in',
 				value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
 			};
-		} ) || []
-	);
+		} ) || [];
+
+	const siteTagsArray = siteTags?.split( ',' );
+	const siteTagsFilter =
+		siteTagsArray?.map( ( siteTag: string ) => {
+			return {
+				field: 'site_tags',
+				operator: 'in',
+				value:
+					[
+						{ value: 'game', label: 'Game' },
+						{ value: 'retro', label: 'Retro' },
+						{ value: 'some', label: 'Some' },
+						{ value: 'tags', label: 'Tags' },
+					].find( ( tagFilter ) => {
+						return tagFilter.value.toLowerCase() === siteTag?.toString().toLowerCase();
+					} )?.value || '',
+			};
+		} ) || [];
+
+	return [ ...statusFilter, ...siteTagsFilter ];
 };
 
 export const SitesDashboardProvider = ( {
-	hideListingInitialState = false,
-	showOnlyFavoritesInitialState = false,
-	categoryInitialState,
-	siteUrlInitialState,
-	siteFeatureInitialState,
+	showPreviewPane,
+	showOnlyFavorites = false,
+	selectedCategory,
+	siteUrl,
+	siteFeature,
 	children,
 	path,
 	searchQuery,
-	issueTypes,
+	filters,
 	currentPage,
 	sort,
 	featurePreview,
 }: Props ) => {
-	const [ hideListing, setHideListing ] = useState( hideListingInitialState );
-	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
-	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( siteFeatureInitialState );
-	const [ showOnlyFavorites, setShowOnlyFavorites ] = useState( showOnlyFavoritesInitialState );
 	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
 	const [ selectedSites, setSelectedSites ] = useState< Site[] >( [] );
 	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
 	const [ mostRecentConnectedSite, setMostRecentConnectedSite ] = useState< string | null >( null );
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
-	const [ initialSelectedSiteUrl, setInitialSelectedSiteUrl ] = useState( siteUrlInitialState );
 
+	const dataViewsFilters = useMemo( () => buildFilters( filters ), [ filters ] );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		page: currentPage,
+		search: searchQuery,
+		sort,
+		filters: dataViewsFilters,
+	} );
+
+	// Effects
+
+	// When the sidebar menu items are clicked
+	// The URL gets updated out of the SitesDashboardContext
+	// which causes the SitesDashboard not to refetch the sites
+	// Updating the dataViews state triggers the dashboard sites refetch
+	useEffect( () => {
+		setDataViewsState( ( prevState ) => ( { ...prevState } ) );
+	}, [ showOnlyFavorites ] );
+
+	// Callbacks
 	const handleSetBulkManagementActive = ( isActive: boolean ) => {
 		setIsBulkManagementActive( isActive );
 		if ( ! isActive ) {
@@ -81,60 +119,38 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
-	initialDataViewsState.sort.field = DEFAULT_SORT_FIELD;
-	initialDataViewsState.sort.direction = DEFAULT_SORT_DIRECTION;
-	initialDataViewsState.hiddenFields = [ 'status' ];
-
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
-		...initialDataViewsState,
-		page: currentPage,
-		search: searchQuery,
-		sort,
-		filters: buildFilters( { issueTypes } ),
-	} );
-
-	useEffect( () => {
-		setInitialSelectedSiteUrl( siteUrlInitialState );
-		if ( ! siteUrlInitialState ) {
-			setShowOnlyFavorites( showOnlyFavoritesInitialState );
-			setHideListing( false );
-		}
-
-		setDataViewsState( ( previousState ) => ( {
-			...previousState,
-			...( siteUrlInitialState
-				? {}
-				: {
-						filters: buildFilters( { issueTypes } ),
-				  } ),
-			...( siteUrlInitialState ? {} : { search: searchQuery } ),
-			...( siteUrlInitialState ? {} : { sort } ),
-			...( siteUrlInitialState ? {} : { selectedItem: undefined } ),
-			...( siteUrlInitialState ? {} : { type: DATAVIEWS_TABLE } ),
-		} ) );
-	}, [
-		setDataViewsState,
-		showOnlyFavoritesInitialState,
-		searchQuery,
-		sort,
-		issueTypes,
-		siteUrlInitialState,
-		setInitialSelectedSiteUrl,
-	] );
+	const onClosePreviewPane = () => {
+		setDataViewsState( {
+			...dataViewsState,
+			type: DATAVIEWS_TABLE,
+			selectedItem: undefined,
+		} );
+		page.show( `/sites` );
+	};
 
 	const sitesDashboardContextValue: SitesDashboardContextInterface = {
-		selectedCategory: selectedCategory,
-		setSelectedCategory: setSelectedCategory,
-		selectedSiteFeature: selectedSiteFeature,
-		setSelectedSiteFeature: setSelectedSiteFeature,
-		hideListing: hideListing,
-		setHideListing: setHideListing,
-		showOnlyFavorites: showOnlyFavorites,
-		setShowOnlyFavorites: setShowOnlyFavorites,
+		selectedCategory,
+		setSelectedCategory: ( category: string | undefined ) => {
+			if ( siteUrl ) {
+				page.show( `/sites/${ category }/${ siteUrl }` );
+			}
+
+			page.show( `/sites/${ category }` );
+		},
+		selectedSiteFeature: siteFeature,
+		setSelectedSiteFeature: ( feature: string | undefined ) => {
+			if ( feature ) {
+				page.show( `/sites/${ selectedCategory }/${ siteUrl }/${ feature || '' }` );
+			}
+		},
+		showPreviewPane,
+		closePreviewPane: onClosePreviewPane,
+		showOnlyFavorites,
+		setShowOnlyFavorites: () => {},
 		path,
 		currentPage,
 		isBulkManagementActive,
-		initialSelectedSiteUrl: initialSelectedSiteUrl,
+		siteUrl,
 		setIsBulkManagementActive: handleSetBulkManagementActive,
 		selectedSites,
 		setSelectedSites,
@@ -149,6 +165,7 @@ export const SitesDashboardProvider = ( {
 		setDataViewsState,
 		featurePreview,
 	};
+
 	return (
 		<SitesDashboardContext.Provider value={ sitesDashboardContextValue }>
 			{ children }

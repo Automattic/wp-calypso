@@ -14,13 +14,13 @@ export interface SitesDashboardContextInterface {
 	dataViewsState: DataViewsState;
 	setDataViewsState: React.Dispatch< React.SetStateAction< DataViewsState > >;
 
-	hideListing?: boolean;
-	setHideListing: ( hideListing: boolean ) => void;
+	showPreviewPane?: boolean;
+	closePreviewPane: () => void;
 
 	showOnlyFavorites?: boolean;
 	setShowOnlyFavorites: ( showOnlyFavorites: boolean ) => void;
 
-	initialSelectedSiteUrl?: string;
+	siteUrl?: string;
 	path: string;
 	currentPage: number;
 

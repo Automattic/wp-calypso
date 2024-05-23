@@ -38,7 +38,7 @@ export default function useUpdateMonitorSettings(
 				dataViewsState.search,
 				dataViewsState.page,
 				{
-					issueTypes: getSelectedFilters( dataViewsState.filters ),
+					issueTypes: getSelectedFilters( dataViewsState.filters ).status,
 					showOnlyFavorites: showOnlyFavorites || false,
 				},
 				dataViewsState.sort,

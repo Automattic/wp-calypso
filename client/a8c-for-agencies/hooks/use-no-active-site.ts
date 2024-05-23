@@ -11,6 +11,7 @@ export default function useNoActiveSite() {
 		currentPage: 1,
 		filter: {
 			issueTypes: [],
+			siteTags: [],
 			showOnlyFavorites: false,
 		},
 		sort: {

@@ -1,6 +1,10 @@
 import page from '@automattic/calypso-router';
 import { Context, type Callback } from '@automattic/calypso-router';
-import { sitesContext } from 'calypso/a8c-for-agencies/sections/sites/controller';
+import {
+	sitePreviewPaneContext,
+	dashboardSitesContext,
+	sitesContext,
+} from 'calypso/a8c-for-agencies/sections/sites/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { JETPACK_BACKUP_ID } from '../../features';
 import {
@@ -50,6 +54,7 @@ export default function ( basePath: string ) {
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		dashboardSitesContext,
 		sitesContext,
 		//wpcomAtomicTransfer( WPCOMUpsellPage ),
 		//notFoundIfNotEnabled,
@@ -67,6 +72,7 @@ export default function ( basePath: string ) {
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		dashboardSitesContext,
 		sitesContext,
 		//wpcomAtomicTransfer( WPCOMUpsellPage ),
 		//notFoundIfNotEnabled,
@@ -84,6 +90,8 @@ export default function ( basePath: string ) {
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		sitePreviewPaneContext,
+		dashboardSitesContext,
 		sitesContext,
 		//wpcomAtomicTransfer( WPCOMUpsellPage ),
 		//notFoundIfNotEnabled,
@@ -101,6 +109,8 @@ export default function ( basePath: string ) {
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		sitePreviewPaneContext,
+		dashboardSitesContext,
 		sitesContext,
 		//wpcomAtomicTransfer( WPCOMUpsellPage ),
 		//notFoundIfNotEnabled,
@@ -118,6 +128,8 @@ export default function ( basePath: string ) {
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		sitePreviewPaneContext,
+		dashboardSitesContext,
 		sitesContext,
 		//wpcomAtomicTransfer( WPCOMUpsellPage ),
 		//notFoundIfNotEnabled,
@@ -136,6 +148,8 @@ export default function ( basePath: string ) {
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		sitePreviewPaneContext,
+		dashboardSitesContext,
 		sitesContext,
 		//wpcomAtomicTransfer( WPCOMUpsellPage ),
 		//notFoundIfNotEnabled,

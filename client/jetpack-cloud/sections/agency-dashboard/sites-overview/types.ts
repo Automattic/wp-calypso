@@ -1,4 +1,5 @@
 import { TranslateResult } from 'i18n-calypso';
+import SiteTag from 'calypso/a8c-for-agencies/types/site-tag';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 // All types based on which the data is populated on the agency dashboard table rows
@@ -83,6 +84,7 @@ export interface BoostData {
 }
 
 export interface Site {
+	a4a_site_tags: SiteTag[];
 	sticker: string[];
 	blog_id: number;
 	blogname: string;
@@ -235,7 +237,11 @@ export interface DashboardOverviewContextInterface {
 	path: string;
 	search: string;
 	currentPage: number;
-	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
+	filter: {
+		issueTypes: Array< AgencyDashboardFilterOption >;
+		siteTags: any[];
+		showOnlyFavorites: boolean;
+	};
 	sort: DashboardSortInterface;
 	showSitesDashboardV2: boolean;
 }
@@ -280,6 +286,7 @@ export interface AgencyDashboardFilterMap {
 
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption >;
+	siteTags: string[];
 	showOnlyFavorites: boolean;
 	isNotMultisite?: boolean;
 };

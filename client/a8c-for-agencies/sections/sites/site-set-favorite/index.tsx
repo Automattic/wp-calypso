@@ -35,13 +35,15 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	const { dataViewsState, showOnlyFavorites, currentPage } = useContext( SitesDashboardContext );
 	const [ filter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
+		siteTags: [],
 		showOnlyFavorites: showOnlyFavorites || false,
 	} );
 	useEffect( () => {
 		const selectedFilters = getSelectedFilters( dataViewsState.filters );
 
 		setAgencyDashboardFilter( {
-			issueTypes: selectedFilters,
+			issueTypes: selectedFilters.status,
+			siteTags: selectedFilters.siteTags,
 			showOnlyFavorites: showOnlyFavorites || false,
 		} );
 	}, [ dataViewsState.filters, showOnlyFavorites ] );
