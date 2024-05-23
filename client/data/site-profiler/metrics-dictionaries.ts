@@ -15,15 +15,6 @@ export const BASIC_METRICS_UNITS: Record< Metrics, string > = {
 	inp: 'ms',
 };
 
-export const BASIC_METRICS_NAMES: Record< Metrics, string > = {
-	cls: 'Cumulative Layout Shift',
-	fid: 'First Input Delay',
-	lcp: 'Largest Contentful Paint',
-	fcp: 'First Contentful Paint',
-	ttfb: 'Time to First Byte',
-	inp: 'Interaction to Next Paint',
-};
-
 export const BASIC_METRICS_SCORES: Record< Metrics, [ number, number ] > = {
 	cls: [ 0.1, 0.25 ], // https://web.dev/articles/cls
 	fid: [ 100, 300 ], // https://web.dev/articles/fid

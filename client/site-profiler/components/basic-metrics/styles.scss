@@ -3,12 +3,12 @@
 
 .basic-metric-details {
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	grid-template-rows: repeat(3, 1fr);
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(2, 1fr);
 	grid-column-gap: 72px;
 	grid-row-gap: 72px;
 
-	@media (max-width: $break-small ) {
+	@media (max-width: $break-large ) {
 		grid-template-columns: 1fr;
 	}
 }
@@ -18,7 +18,8 @@
 	.basic-metrics__header {
 		padding-left: 28px;
 		padding-top: 12px;
-		padding-bottom: 12px;
+		padding-bottom: 8px;
+		margin-bottom: 24px;
 		border-left: 5px solid;
 
 		.basic-metrics__name {
@@ -60,11 +61,25 @@
 			}
 		}
 	}
+
+	h3 {
+		color: var(--studio-white);
+	}
+
+	h4 {
+		color: var(--studio-gray-20);
+	}
+
+	a {
+		color: var(--studio-white) !important;
+		font-weight: 500;
+	}
 }
 
 .basic-metrics__value {
 	font-family: "SF Pro Text", $sans;
-	font-size: $font-headline-large;
+	/* stylelint-disable-next-line */
+	font-size: 3.75rem;
 	font-style: normal;
 	font-weight: 400;
 	line-height: normal;
