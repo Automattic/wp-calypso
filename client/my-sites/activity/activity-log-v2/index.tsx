@@ -1,8 +1,4 @@
-import {
-	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
-	PLAN_PERSONAL,
-	getPlan,
-} from '@automattic/calypso-products';
+import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import classNames from 'classnames';
@@ -30,7 +26,6 @@ import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filte
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { FunctionComponent } from 'react';
 
@@ -41,8 +36,6 @@ const ActivityLogV2: FunctionComponent = () => {
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
-	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const { data: logs } = useActivityLogQuery( siteId, filter );
@@ -53,14 +46,9 @@ const ActivityLogV2: FunctionComponent = () => {
 		( state ) => siteId && siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG )
 	);
 	const settingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
-	let upgradePlanNames = translate( 'Jetpack Personal or Jetpack Premium' );
 
 	let upsellURL;
-	if ( ! isA8CForAgencies() && isSimple ) {
-		upsellURL = `https://wordpress.com/checkout/${ siteSlug }/${ PLAN_PERSONAL }`;
-		const upgradePlanName = getPlan( PLAN_PERSONAL )?.getTitle();
-		upgradePlanNames = upgradePlanName as string;
-	} else if ( hasJetpackPartnerAccess && ! isA8CForAgencies() ) {
+	if ( hasJetpackPartnerAccess && ! isA8CForAgencies() ) {
 		upsellURL = `/partner-portal/issue-license?site_id=${ siteId }`;
 	} else if ( isA8CForAgencies() ) {
 		upsellURL = `/marketplace/products?site_id=${ siteId }`;
@@ -107,14 +95,10 @@ const ActivityLogV2: FunctionComponent = () => {
 			headerText={ translate( 'Activity Log' ) }
 			bodyText={ preventWidows(
 				translate(
-					// translators: %(upgradePlanNames)s is the plan offered to upgrade to
-					'You currently have access to the 20 most recent events. Upgrade to %(upgradePlanNames)s ' +
-						'to unlock more powerful features. ' +
+					'You currently have access to the 20 most recent events. Upgrade to Jetpack ' +
+						'VaultPress Backup or Jetpack Security to unlock more powerful features. ' +
 						'You can access all site activity for the last 30 days and filter events ' +
-						'by type and date range to quickly find the information you need.',
-					{
-						args: { upgradePlanNames },
-					}
+						'by type and date range to quickly find the information you need.'
 				)
 			) }
 			buttonLink={ upsellURL }
