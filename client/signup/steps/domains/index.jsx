@@ -457,6 +457,35 @@ export class RenderDomainsStep extends Component {
 
 		this.props.setDesignType( this.getDesignType() );
 
+		// For the `domain-for-gravatar` flow, add an extra `is_gravatar_domain` property to the domain registration product,
+		// pre-select the "domain" choice in the "site or domain" step and skip the others, going straight to checkout
+		if ( this.props.flowName === 'domain-for-gravatar' ) {
+			const domainForGravatarItem = domainRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug,
+				extra: {
+					is_gravatar_domain: true,
+				},
+			} );
+
+			this.props.submitSignupStep(
+				{
+					stepName: 'site-or-domain',
+					domainItem: domainForGravatarItem,
+					designType: 'domain',
+					siteSlug: domainForGravatarItem.meta,
+					siteUrl,
+					isPurchasingItem: true,
+				},
+				{ designType: 'domain', domainItem: domainForGravatarItem, siteUrl }
+			);
+			this.props.submitSignupStep(
+				{ stepName: 'site-picker', wasSkipped: true },
+				{ themeSlugWithRepo: 'pub/twentysixteen' }
+			);
+			return;
+		}
+
 		if ( migrateSite ) {
 			this.props.goToNextStep( 'site-migration' );
 		} else {
@@ -587,12 +616,13 @@ export class RenderDomainsStep extends Component {
 	}
 
 	shouldHideDomainExplainer = () => {
-		return this.props.flowName === 'domain';
+		const { flowName } = this.props;
+		return [ 'domain', 'domain-for-gravatar' ].includes( flowName );
 	};
 
 	shouldHideUseYourDomain = () => {
 		const { flowName } = this.props;
-		return [ 'domain' ].includes( flowName );
+		return [ 'domain', 'domain-for-gravatar' ].includes( flowName );
 	};
 
 	shouldDisplayDomainOnlyExplainer = () => {
@@ -1398,6 +1428,9 @@ export class RenderDomainsStep extends Component {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
 		} else if ( ! previousStepBackUrl && 'domain-transfer' === flowName ) {
+			backUrl = null;
+			backLabelText = null;
+		} else if ( 'domain-for-gravatar' === flowName ) {
 			backUrl = null;
 			backLabelText = null;
 		} else if ( 'with-plugin' === flowName ) {

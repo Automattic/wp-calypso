@@ -25,16 +25,25 @@ import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import ProductListing from './product-listing';
-import type { AssignLicenseProps, MarketplaceType } from '../types';
+import ProductNavigation from './product-navigation';
+import type { MarketplaceType } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
+type Props = {
+	siteId?: string;
+	suggestedProduct?: string;
+	productBrand: string;
+	purchaseType?: MarketplaceType;
+};
+
 export default function ProductsOverview( {
 	siteId,
 	suggestedProduct,
+	productBrand,
 	purchaseType = 'regular',
-}: AssignLicenseProps ) {
+}: Props ) {
 	const translate = useTranslate();
 
 	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
@@ -97,7 +106,7 @@ export default function ProductsOverview( {
 			withBorder
 			compact
 		>
-			<LayoutTop>
+			<LayoutTop withNavigation>
 				<LayoutHeader showStickyContent={ showStickyContent }>
 					<Breadcrumb
 						items={ [
@@ -136,12 +145,18 @@ export default function ProductsOverview( {
 						/>
 					</Actions>
 				</LayoutHeader>
+
+				<ProductNavigation selectedTab={ productBrand } />
 			</LayoutTop>
 
 			<LayoutBody>
 				<MarketplaceTypeContext.Provider value={ { marketplaceType } }>
 					<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
-						<ProductListing selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+						<ProductListing
+							selectedSite={ selectedSite }
+							suggestedProduct={ suggestedProduct }
+							productBrand={ productBrand }
+						/>
 					</ShoppingCartContext.Provider>
 				</MarketplaceTypeContext.Provider>
 			</LayoutBody>

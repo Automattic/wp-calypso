@@ -123,7 +123,7 @@ const SitesDashboardV2 = ( {
 	} as DataViewsState;
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 
-	useSyncSelectedSite( dataViewsState );
+	useSyncSelectedSite( dataViewsState, setDataViewsState, selectedSite );
 
 	const { selectedSiteFeature, setSelectedSiteFeature } = useSyncSelectedSiteFeature( {
 		selectedSite,

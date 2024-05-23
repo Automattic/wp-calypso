@@ -107,7 +107,14 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		let feedbackInboxPage: FeedbackInboxPage;
 
 		beforeAll( async function () {
-			await testAccount.authenticate( page );
+			if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+				// eCommerce plan sites attempt to load Calypso, but with
+				// third-party cookies disabled the fallback route to WP-Admin
+				// kicks in after some time.
+				await testAccount.authenticate( page, { url: /wp-admin/ } );
+			} else {
+				await testAccount.authenticate( page );
+			}
 		} );
 
 		it( 'Navigate to the Jetpack Forms Inbox', async function () {

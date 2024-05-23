@@ -16,11 +16,11 @@ import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
-import DomainInformation from './domain-information';
+import { BasicMetrics } from './basic-metrics';
+import { DomainSection } from './domain-section';
 import { GetReportForm } from './get-report-form';
-import HostingInformation from './hosting-information';
+import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
-import { MetricsSection } from './metrics-section';
 import './styles-v2.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
@@ -127,47 +127,21 @@ export default function SiteProfilerV2( props: Props ) {
 				<LayoutBlock width="medium">
 					{ siteProfilerData && (
 						<>
-							<MetricsSection
-								name={ translate( 'Hosting' ) }
-								title={ translate(
-									'Struggles with hosting {{alert}}speed and uptime{{/alert}} deter visitors. A switch to WordPress.com could transform the user experience.',
-									{
-										components: {
-											alert: <span className="alert" />,
-										},
-									}
-								) }
-								subtitle={ translate( 'Upgrade your hosting with WordPress.com' ) }
-								ref={ hostingRef }
-							>
-								<HostingInformation
-									dns={ siteProfilerData.dns }
-									urlData={ urlData }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									hideTitle
-								/>
-							</MetricsSection>
-							<MetricsSection
-								name={ translate( 'Domain' ) }
-								title={ translate(
-									'Your domain {{success}}set up is good{{/success}}, but you could boost your site’s visibility and growth.',
-									{
-										components: {
-											success: <span className="success" />,
-										},
-									}
-								) }
-								subtitle={ translate( 'Optimize your domain' ) }
-								ref={ domainRef }
-							>
-								<DomainInformation
-									domain={ domain }
-									whois={ siteProfilerData.whois }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									urlData={ urlData }
-									hideTitle
-								/>
-							</MetricsSection>
+							{ showBasicMetrics && <BasicMetrics basicMetrics={ basicMetrics.basic } /> }
+							<HostingSection
+								dns={ siteProfilerData.dns }
+								urlData={ urlData }
+								hostingProvider={ hostingProviderData?.hosting_provider }
+								hostingRef={ hostingRef }
+							/>
+
+							<DomainSection
+								domain={ domain }
+								whois={ siteProfilerData.whois }
+								hostingProvider={ hostingProviderData?.hosting_provider }
+								urlData={ urlData }
+								domainRef={ domainRef }
+							/>
 						</>
 					) }
 				</LayoutBlock>

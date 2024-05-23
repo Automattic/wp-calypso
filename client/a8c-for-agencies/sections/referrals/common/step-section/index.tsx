@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React from 'react';
 
 import './style.scss';
@@ -6,11 +7,17 @@ interface StepSectionProps {
 	heading: string;
 	stepCount?: number;
 	children: React.ReactNode;
+	className?: string;
 }
 
-export default function StepSection( { stepCount, heading, children }: StepSectionProps ) {
+export default function StepSection( {
+	stepCount,
+	heading,
+	children,
+	className,
+}: StepSectionProps ) {
 	return (
-		<div className="step-section">
+		<div className={ classNames( 'step-section', className ) }>
 			<div className="step-section__header">
 				{ !! stepCount && <div className="step-section__step-count">{ stepCount }</div> }
 				<div className="step-section__step-heading">{ heading }</div>

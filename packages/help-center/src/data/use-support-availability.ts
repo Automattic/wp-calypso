@@ -3,6 +3,9 @@ import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { OtherSupportAvailability, ChatAvailability, EmailSupportStatus } from '../types';
 
+// Bump me to invalidate the cache.
+const VERSION = 1;
+
 type ResponseType< T extends 'CHAT' | 'OTHER' | 'EMAIL' > = T extends 'CHAT'
 	? ChatAvailability
 	: T extends 'EMAIL'
@@ -19,7 +22,7 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' | 
 	enabled = true
 ) {
 	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >( {
-		queryKey: [ 'support-availability', supportType ],
+		queryKey: [ 'support-availability', supportType, VERSION ],
 		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {

@@ -10,6 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import {
+	PRODUCT_BRAND_FILTER_ALL,
 	PRODUCT_FILTER_ALL,
 	PRODUCT_FILTER_PLANS,
 	PRODUCT_FILTER_PRESSABLE_PLANS,
@@ -29,6 +30,7 @@ type Props = {
 	selectedBundleSize?: number;
 	selectedSite?: SiteDetails | null;
 	selectedProductFilter?: string | null;
+	selectedProductBrandFilter?: string | null;
 	productSearchQuery?: string;
 	usePublicQuery?: boolean;
 };
@@ -129,6 +131,7 @@ export default function useProductAndPlans( {
 	selectedBundleSize = 1,
 	selectedSite,
 	selectedProductFilter = PRODUCT_FILTER_ALL,
+	selectedProductBrandFilter = PRODUCT_BRAND_FILTER_ALL,
 	productSearchQuery,
 	usePublicQuery = false,
 }: Props ) {
@@ -139,14 +142,20 @@ export default function useProductAndPlans( {
 	);
 
 	return useMemo( () => {
+		// List only products that matches the selected product brand filter.
+		const filteredProductBrand =
+			! selectedProductBrandFilter || selectedProductBrandFilter === PRODUCT_BRAND_FILTER_ALL
+				? data
+				: data?.filter( ( { slug } ) => slug.startsWith( selectedProductBrandFilter ) );
+
 		// List only products that is compatible with current bundle size.
 		const supportedProducts =
 			selectedBundleSize > 1
-				? data?.filter(
+				? filteredProductBrand?.filter(
 						( { supported_bundles } ) =>
 							supported_bundles?.some?.( ( { quantity } ) => selectedBundleSize === quantity )
 				  )
-				: data;
+				: filteredProductBrand;
 
 		// We pre-filter the list by current selected filter
 		let filteredProductsAndBundles = getProductsAndPlansByFilter(
@@ -199,12 +208,13 @@ export default function useProductAndPlans( {
 			suggestedProductSlugs,
 		};
 	}, [
-		addedPlanAndProducts,
+		selectedProductBrandFilter,
 		data,
-		isLoadingProducts,
 		selectedBundleSize,
-		productSearchQuery,
 		selectedProductFilter,
+		productSearchQuery,
 		selectedSite,
+		addedPlanAndProducts,
+		isLoadingProducts,
 	] );
 }

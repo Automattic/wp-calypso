@@ -86,6 +86,11 @@ interface Availability {
 
 export interface ChatAvailability {
 	locale: string;
+	/**
+	 * @deprecated
+	 *
+	 * DO NOT USE THIS VALUE. We no longer use eligibility checks for chat. All paid users are eligible for chat.
+	 */
 	is_user_eligible: boolean;
 	supportLevel:
 		| 'free'
