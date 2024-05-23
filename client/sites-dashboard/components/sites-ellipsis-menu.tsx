@@ -269,7 +269,8 @@ const SiteMenuGroup = styled( MenuGroup )( {
 
 const SiteDropdownMenu = styled( DropdownMenu )( {
 	'> .components-button': {
-		padding: 0,
+		padding: 8,
+		margin: -8,
 		minWidth: 0,
 		color: 'var( --color-text-subtle )',
 		height: 'auto',
