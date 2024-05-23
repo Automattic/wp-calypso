@@ -26,6 +26,8 @@
 	border-radius: 4px;
 	user-select: none;
 	cursor: pointer;
+	display: flex;
+	flex-direction: column;
 
 	@include break-xlarge {
 		padding: 1.75rem;
@@ -90,11 +92,23 @@
 	}
 }
 
+.product-card__buttons {
+	display: inline-flex;
+	gap: 1rem;
+	justify-content: center;
+	align-self: flex-start;
+	margin-block-start: auto;
+	padding-block-start: 1rem;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		.button {
+			padding: 4px;
+		}
+	}
+}
+
 .product-card__select-button {
 	display: block;
-	margin-block-start: 0.5rem;
-	max-width: 100%;
-	width: 100%;
 	justify-content: center;
 	text-align: center;
 	font-size: 1rem;
@@ -103,10 +117,7 @@
 		padding: 7px 12px;
 		font-size: 0.75rem;
 		font-weight: 600;
-		line-height: 1.1;
-		max-height: 36px;
-		min-width: 82px;
-		max-width: 82px;
+		height: 2rem;
 	}
 }
 
