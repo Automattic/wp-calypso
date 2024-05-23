@@ -109,18 +109,26 @@ export default withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
 			const siteId = getSelectedSiteId( state );
 			const siteDomain = getSiteDomain( state, siteId );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
 			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
 				state,
 				siteId,
-				sectionGroup
+				sectionGroup,
+				sectionName
 			);
 			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
 				siteId,
-				sectionGroup
+				sectionGroup,
+				sectionName
 			);
 			return {
 				siteDomain,

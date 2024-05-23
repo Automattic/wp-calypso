@@ -4,41 +4,52 @@ import isScheduledUpdatesMultisiteRoute from 'calypso/state/selectors/is-schedul
 import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
-// Calypso routes for which we show the Global Site Dashboard.
-// Calypso routes not listed here will be shown in nav unification instead.
+// Calypso pages (section name => route) for which we show the Global Site Dashboard.
+// Calypso pages not listed here will be shown in nav unification instead.
 // See: pfsHM7-Dn-p2.
-const GLOBAL_SITE_DASHBOARD_ROUTES: string[] = [
-	'/overview/',
-	'/hosting-config/',
-	'/github-deployments/',
-	'/site-monitoring/',
-	'/dev-tools-promo/',
-];
+const GLOBAL_SITE_DASHBOARD_ROUTES = {
+	'hosting-overview': '/overview/',
+	hosting: '/hosting-config/',
+	'github-deployments': '/github-deployments/',
+	'site-monitoring': '/site-monitoring/',
+	'dev-tools-promo': '/dev-tools-promo/',
+};
+
+function isInSection( sectionName: string, sectionNames: string[] ) {
+	return sectionNames.includes( sectionName );
+}
 
 function isInRoute( state: AppState, routes: string[] ) {
 	return routes.some( ( route ) => state.route.path?.current?.startsWith( route ) );
 }
 
-function shouldShowGlobalSiteDashboard( state: AppState, siteId: number | null ) {
+function shouldShowGlobalSiteDashboard(
+	state: AppState,
+	siteId: number | null,
+	sectionName: string
+) {
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
 		!! siteId &&
-		isInRoute( state, GLOBAL_SITE_DASHBOARD_ROUTES )
+		( isInSection( sectionName, Object.keys( GLOBAL_SITE_DASHBOARD_ROUTES ) ) ||
+			isInRoute( state, Object.values( GLOBAL_SITE_DASHBOARD_ROUTES ) ) )
 	);
 }
 
 export const getShouldShowGlobalSiteSidebar = (
 	state: AppState,
 	siteId: number | null,
-	sectionGroup: string
+	sectionGroup: string,
+	sectionName: string
 ) => {
-	return sectionGroup === 'sites' && shouldShowGlobalSiteDashboard( state, siteId );
+	return sectionGroup === 'sites' && shouldShowGlobalSiteDashboard( state, siteId, sectionName );
 };
 
 export const getShouldShowGlobalSidebar = (
 	state: AppState,
 	siteId: number,
-	sectionGroup: string
+	sectionGroup: string,
+	sectionName: string
 ) => {
 	const pluginsScheduledUpdates = isScheduledUpdatesMultisiteRoute( state );
 
@@ -48,21 +59,27 @@ export const getShouldShowGlobalSidebar = (
 		sectionGroup === 'sites-dashboard' ||
 		( sectionGroup === 'sites' && ! siteId ) ||
 		( sectionGroup === 'sites' && pluginsScheduledUpdates ) ||
-		getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup )
+		getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName )
 	);
 };
 
 export const getShouldShowCollapsedGlobalSidebar = (
 	state: AppState,
 	siteId: number,
-	sectionGroup: string
+	sectionGroup: string,
+	sectionName: string
 ) => {
 	if ( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 		return false;
 	}
 
 	const isSitesDashboard = sectionGroup === 'sites-dashboard';
-	const isSiteDashboard = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup );
+	const isSiteDashboard = getShouldShowGlobalSiteSidebar(
+		state,
+		siteId,
+		sectionGroup,
+		sectionName
+	);
 
 	// A site is just clicked and the global sidebar is in collapsing animation.
 	const isSiteJustSelectedFromSitesDashboard =
@@ -70,7 +87,7 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		!! siteId &&
 		isInRoute( state, [
 			'/sites', // started collapsing when still in sites dashboard
-			...GLOBAL_SITE_DASHBOARD_ROUTES, // has just stopped collapsing when in one of the paths in site dashboard
+			...Object.values( GLOBAL_SITE_DASHBOARD_ROUTES ), // has just stopped collapsing when in one of the paths in site dashboard
 		] );
 
 	const isPluginsScheduledUpdatesEditMode =
@@ -92,11 +109,12 @@ export const getShouldShowCollapsedGlobalSidebar = (
 export const getShouldShowUnifiedSiteSidebar = (
 	state: AppState,
 	siteId: number,
-	sectionGroup: string
+	sectionGroup: string,
+	sectionName: string
 ) => {
 	return (
 		isGlobalSiteViewEnabled( state, siteId ) &&
 		sectionGroup === 'sites' &&
-		! shouldShowGlobalSiteDashboard( state, siteId )
+		! shouldShowGlobalSiteDashboard( state, siteId, sectionName )
 	);
 };
