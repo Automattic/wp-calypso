@@ -24,6 +24,7 @@ import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/s
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { AllowedTypes, Site, SiteData } from '../../types';
+import type { MouseEvent, KeyboardEvent } from 'react';
 
 export const JetpackSitesDataViews = ( {
 	data,
@@ -364,10 +365,13 @@ export const JetpackSitesDataViews = ( {
 					return (
 						<>
 							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
+							{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
 							<div
 								className={ `sites-dataviews__actions ${
 									item.site.error ? 'sites-dataviews__actions-error' : ''
 								}` }
+								onClick={ ( e: MouseEvent ) => e.stopPropagation() }
+								onKeyDown={ ( e: KeyboardEvent ) => e.stopPropagation() }
 							>
 								<SiteActions
 									isLargeScreen={ isLargeScreen }
