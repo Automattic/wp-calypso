@@ -260,8 +260,10 @@ const StatsPersonalPurchase = ( {
 
 	return (
 		<>
-			<h1>{ translate( 'Name your price for Jetpack Stats' ) }</h1>
-			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
+			<h1>{ translate( 'Support Jetpack Stats and set your price' ) }</h1>
+			<p>
+				{ translate( 'Help Jetpack Stats with a non-commercial license and get these perks:' ) }
+			</p>
 			<PersonalPurchase
 				subscriptionValue={ subscriptionValue }
 				setSubscriptionValue={ setSubscriptionValue }
