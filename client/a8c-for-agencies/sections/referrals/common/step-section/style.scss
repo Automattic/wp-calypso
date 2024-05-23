@@ -33,6 +33,9 @@
 	}
 }
 
-.referrals-layout--automated .step-section .step-section__header .step-section__step-heading {
-	font-size: rem(16px);
+.referrals-layout--automated,
+.commission-overview__layout-automated {
+	.step-section .step-section__header .step-section__step-heading {
+		font-size: rem(16px);
+	}
 }
