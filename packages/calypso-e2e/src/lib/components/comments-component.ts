@@ -90,6 +90,7 @@ export class CommentsComponent {
 		// The first click opens a window to auto-log-in, the second click likes the comment.
 		await likeButton.waitFor();
 		await likeButton.click();
+		await this.page.waitForTimeout( 5 * 1000 );
 		await likeButton.waitFor();
 		await likeButton.click();
 		await likedStatus.waitFor();
