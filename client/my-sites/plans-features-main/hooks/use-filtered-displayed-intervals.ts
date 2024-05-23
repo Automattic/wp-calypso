@@ -7,6 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { useMemo } from 'react';
+import { useFCCARestrictions } from 'calypso/my-sites/checkout/utils';
 
 interface Props {
 	intent?: PlansIntent;
@@ -21,6 +22,9 @@ const useFilteredDisplayedIntervals = ( {
 	paidDomainName,
 	productSlug,
 }: Props ) => {
+	const { shouldReplacePlan } = useFCCARestrictions();
+	const is3yearlyRestricted = shouldReplacePlan();
+
 	return useMemo( () => {
 		let filteredIntervals = displayedIntervals;
 
@@ -48,8 +52,12 @@ const useFilteredDisplayedIntervals = ( {
 			}
 		}
 
+		if ( is3yearlyRestricted ) {
+			filteredIntervals = filteredIntervals.filter( ( item ) => item !== '3yearly' );
+		}
+
 		return filteredIntervals;
-	}, [ productSlug, displayedIntervals, intent, paidDomainName ] );
+	}, [ productSlug, displayedIntervals, intent, paidDomainName, is3yearlyRestricted ] );
 };
 
 export default useFilteredDisplayedIntervals;
