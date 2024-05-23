@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import SurveyContainer from 'calypso/components/survey-container';
+import { QuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
 import { Question, QuestionConfiguration } from 'calypso/components/survey-container/types';
 import {
 	useCachedAnswers,
@@ -8,7 +9,6 @@ import {
 	useSurveyStructureQuery,
 } from 'calypso/data/segmentaton-survey';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { QuestionComponentMap } from '../survey-container/components/question-step-mapping';
 import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-navigation';
 
 const SKIP_ANSWER_KEY = 'skip';
