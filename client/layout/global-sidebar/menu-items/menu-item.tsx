@@ -49,7 +49,8 @@ const SidebarMenuItem = forwardRef< HTMLButtonElement | HTMLAnchorElement, Props
 			return getShouldShowGlobalSiteSidebar(
 				state,
 				selectedSiteId,
-				currentSection !== false ? currentSection?.group ?? '' : ''
+				currentSection !== false ? currentSection?.group ?? '' : '',
+				currentSection !== false ? currentSection?.name ?? '' : ''
 			);
 		} );
 
