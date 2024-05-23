@@ -4,11 +4,11 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { anonIdCache } from 'calypso/data/segmentaton-survey';
-import { login } from 'calypso/lib/paths';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -59,10 +59,10 @@ const entrepreneurFlow: Flow = {
 				}
 			);
 
-			const loginUrl = login( {
-				locale,
+			const loginUrl = getLoginUrl( {
+				variationName: flowName,
 				redirectTo,
-				oauth2ClientId: queryParams.get( 'client_id' ) || undefined,
+				locale,
 			} );
 
 			return loginUrl;
