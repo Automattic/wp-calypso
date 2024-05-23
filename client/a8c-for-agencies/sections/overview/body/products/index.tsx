@@ -4,10 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Offering from 'calypso/a8c-for-agencies/components/offering';
 import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/types';
-import {
-	PRODUCT_BRAND_FILTER_JETPACK,
-	PRODUCT_BRAND_FILTER_WOOCOMMERCE,
-} from 'calypso/a8c-for-agencies/sections/marketplace/constants';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -52,7 +48,7 @@ const OverviewBodyProducts = () => {
 		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'jetpack' );
-			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }/${ PRODUCT_BRAND_FILTER_JETPACK }` );
+			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }#jetpack-plans` );
 		},
 	};
 
@@ -81,7 +77,7 @@ const OverviewBodyProducts = () => {
 		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'woocommerce' );
-			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }/${ PRODUCT_BRAND_FILTER_WOOCOMMERCE }` );
+			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }#woocommerce-extensions` );
 		},
 	};
 

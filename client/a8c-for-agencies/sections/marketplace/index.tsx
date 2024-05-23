@@ -25,7 +25,7 @@ import {
 export default function () {
 	page( A4A_MARKETPLACE_LINK, requireAccessContext, marketplaceContext, makeLayout, clientRender );
 	page(
-		`${ A4A_MARKETPLACE_PRODUCTS_LINK }/:brand?`,
+		A4A_MARKETPLACE_PRODUCTS_LINK,
 		requireAccessContext,
 		marketplaceProductsContext,
 		makeLayout,
