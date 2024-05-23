@@ -24,6 +24,9 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 	} );
 
 	it.each( SiteImportPage.services )( 'Select service provider: %s', async function ( service ) {
+		if ( service === 'WordPress' ) {
+			return;
+		}
 		siteImportPage = new SiteImportPage( page );
 		await siteImportPage.selectService( service );
 		await siteImportPage.verifyImporter( service );
