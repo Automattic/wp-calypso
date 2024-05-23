@@ -161,7 +161,16 @@ export default function LicensePreview( {
 				} ) }
 			>
 				<div>
-					<span className="license-preview__product">{ productTitle }</span>
+					<span className="license-preview__product">
+						{ licenseKey.startsWith( 'woocommerce-' ) && (
+							<span>
+								<Badge className="license-preview__product-woo-badge" type="info">
+									{ translate( 'Woo' ) }
+								</Badge>
+							</span>
+						) }
+						{ productTitle }
+					</span>
 				</div>
 
 				<div>

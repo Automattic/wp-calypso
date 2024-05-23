@@ -103,6 +103,12 @@
 			display: inline;
 		}
 	}
+
+	&-woo-badge {
+		background: #7f54b3;
+		color: var(--studio-white);
+		margin-right: 0.5rem;
+	}
 }
 
 .license-preview__label {
