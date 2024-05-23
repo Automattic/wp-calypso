@@ -201,6 +201,7 @@ const StatsCommercialPurchase = ( {
 						onSliderChange={ handleSliderChanged }
 					/>
 					<ButtonComponent
+						className="stats-purchase-flow__full-width-button"
 						variant="primary"
 						primary={ isWPCOMSite ? true : undefined }
 						onClick={ () =>
@@ -217,6 +218,9 @@ const StatsCommercialPurchase = ( {
 					>
 						{ continueButtonText }
 					</ButtonComponent>
+					<div className="stats-purchase-flow__footnotes">
+						<p>(*) 14-day money-back guarantee</p>
+					</div>
 				</>
 			) }
 		</>
