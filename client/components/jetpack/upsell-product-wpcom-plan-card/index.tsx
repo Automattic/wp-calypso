@@ -150,7 +150,7 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 	};
 
 	return (
-		<>
+		<div className="upsell-product-wpcom-plan-card">
 			<JetpackRnaActionCard
 				headerText={ displayName }
 				subHeaderText={ description }
@@ -162,7 +162,7 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 			>
 				{ renderProductCardBody() }
 			</JetpackRnaActionCard>
-		</>
+		</div>
 	);
 };
 

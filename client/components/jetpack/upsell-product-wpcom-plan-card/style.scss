@@ -2,7 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 
-.upsell-product-card {
+.upsell-product-wpcom-plan-card .upsell-product-card {
 	&__included {
 		margin: 24px 0 0;
 	}
@@ -70,10 +70,10 @@ main.main.upsell-switch__loading.is_jetpackcom {
 	max-width: 1040px;
 }
 
-.display-price.is-placeholder .plan-price {
+.upsell-product-wpcom-plan-card .display-price.is-placeholder .plan-price {
 	background: var(--studio-gray-5);
 }
 
-.display-price.is-placeholder .display-price__billing-time-frame {
+.upsell-product-wpcom-plan-card .display-price.is-placeholder .display-price__billing-time-frame {
 	background: var(--studio-gray-5);
 }
