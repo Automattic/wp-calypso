@@ -273,7 +273,7 @@
 		height: 210px;
 	}
 
-	.metrics-insights-list .foldable-card {
+	.metrics-insight-item.foldable-card {
 		background-color: #000;
 		box-shadow: none;
 		border-top: 1px solid var(--studio-gray-100);
@@ -289,8 +289,14 @@
 			}
 		}
 
+		&.is-disabled {
+			.foldable-card__header {
+				opacity: 1;
+			}
+		}
+
 		.foldable-card__header {
-			padding: 8px 0;
+			padding: 16px 0;
 		}
 	}
 }

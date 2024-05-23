@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import { MetricsInsightsList } from 'calypso/site-profiler/components/metrics-insights-list';
 import { MetricsSection } from 'calypso/site-profiler/components/metrics-section';
+import { MetricsInsight } from '../metrics-insight';
 
 interface PerformanceSectionProps {
 	performanceMetricsRef: React.RefObject< HTMLObjectElement >;
@@ -25,13 +25,21 @@ export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props )
 			subtitle={ translate( "Boost your site's performance" ) }
 			ref={ performanceMetricsRef }
 		>
-			<MetricsInsightsList
-				insights={ Array( 10 ).fill( {
+			{ Array( 2 )
+				.fill( {
 					header:
 						'Your site reveals first content slower than 76% of peers, affecting first impressions.',
 					description: 'This is how you can improve it',
-				} ) }
-			/>
+				} )
+				.map( ( insight, index ) => (
+					<MetricsInsight key={ `insight-${ index }` } insight={ insight } />
+				) ) }
+
+			{ Array( 5 )
+				.fill( {} )
+				.map( ( _, index ) => (
+					<MetricsInsight key={ `locked-${ index }` } locked />
+				) ) }
 		</MetricsSection>
 	);
 };
