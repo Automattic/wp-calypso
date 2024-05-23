@@ -8,7 +8,7 @@ import {
 	useSurveyStructureQuery,
 } from 'calypso/data/segmentaton-survey';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { QuestionTypeComponentMap } from '../survey-container/components/question-step-mapping';
+import { QuestionComponentMap } from '../survey-container/components/question-step-mapping';
 import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-navigation';
 
 const SKIP_ANSWER_KEY = 'skip';
@@ -19,7 +19,7 @@ type SegmentationSurveyProps = {
 	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void;
 	headerAlign?: string;
 	questionConfiguration?: QuestionConfiguration;
-	questionTypeComponentMap?: QuestionTypeComponentMap;
+	questionComponentMap?: QuestionComponentMap;
 };
 
 /**
@@ -36,7 +36,7 @@ const SegmentationSurvey = ( {
 	onNext,
 	headerAlign,
 	questionConfiguration,
-	questionTypeComponentMap,
+	questionComponentMap,
 }: SegmentationSurveyProps ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
 	const { mutateAsync, isPending } = useSaveAnswersMutation( { surveyKey } );
@@ -127,7 +127,7 @@ const SegmentationSurvey = ( {
 				disabled={ isPending }
 				headerAlign={ headerAlign }
 				questionConfiguration={ questionConfiguration }
-				questionTypeComponentMap={ questionTypeComponentMap }
+				questionComponentMap={ questionComponentMap }
 			/>
 		</>
 	);

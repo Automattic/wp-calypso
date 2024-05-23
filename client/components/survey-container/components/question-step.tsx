@@ -6,7 +6,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Question } from '../types';
 import './style.scss';
-import { QuestionTypeComponentMap, defaultQuestionComponentMap } from './question-step-mapping';
+import { QuestionComponentMap, defaultQuestionComponentMap } from './question-step-mapping';
 
 export type QuestionSelectionComponentProps = {
 	question: Question;
@@ -24,7 +24,7 @@ type QuestionStepType = {
 	hideContinue?: boolean;
 	hideSkip?: boolean;
 	headerAlign?: string;
-	questionTypeComponentMap?: QuestionTypeComponentMap;
+	questionComponentMap?: QuestionComponentMap;
 } & QuestionSelectionComponentProps;
 
 const QuestionStep = ( {
@@ -39,10 +39,10 @@ const QuestionStep = ( {
 	hideContinue,
 	hideSkip,
 	headerAlign = 'center',
-	questionTypeComponentMap = defaultQuestionComponentMap,
+	questionComponentMap = defaultQuestionComponentMap,
 }: QuestionStepType ) => {
 	const translate = useTranslate();
-	const SelectionComponent = questionTypeComponentMap[ question.type ];
+	const SelectionComponent = questionComponentMap[ question.type ];
 
 	return (
 		<StepContainer

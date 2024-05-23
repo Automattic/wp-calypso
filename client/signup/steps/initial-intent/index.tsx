@@ -59,7 +59,7 @@ export default function InitialIntentStep( props: Props ) {
 					surveyKey={ SURVEY_KEY }
 					onNext={ handleNext }
 					questionConfiguration={ QUESTION_CONFIGURATION }
-					questionTypeComponentMap={ flowQuestionComponentMap }
+					questionComponentMap={ flowQuestionComponentMap }
 				/>
 			}
 			align="center"
