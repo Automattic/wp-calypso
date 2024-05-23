@@ -7,10 +7,11 @@ import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import AsyncLoad from 'calypso/components/async-load';
+import { PromptIcon } from 'calypso/components/command-palette/icon';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
@@ -517,8 +518,8 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<Item
 				className="masterbar__item-menu"
-				icon="search"
-				tooltip={ this.props.translate( 'Jump to…' ) }
+				icon={ <PromptIcon /> }
+				tooltip={ this.props.translate( 'Command Palette' ) }
 				isActive={ this.props.isCommandPaletteOpen }
 				onClick={ handleClick }
 			/>
@@ -779,7 +780,6 @@ class MasterbarLoggedIn extends Component {
 export default connect(
 	( state ) => {
 		const sectionGroup = getSectionGroup( state );
-		const sectionName = getSectionName( state );
 
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
@@ -794,20 +794,17 @@ export default connect(
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 			state,
 			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
+			sectionGroup
 		);
 		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
 			state,
 			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
+			sectionGroup
 		);
 		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 			state,
 			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
+			sectionGroup
 		);
 		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {

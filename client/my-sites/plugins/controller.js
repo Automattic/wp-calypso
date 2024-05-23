@@ -234,8 +234,7 @@ export function scheduledUpdatesMultisite( context, next ) {
 	const isSidebarCollapsed = getShouldShowCollapsedGlobalSidebar(
 		state,
 		undefined,
-		context.section.group,
-		context.section.name
+		context.section.group
 	);
 
 	context.secondary = <PluginsSidebar path={ context.path } isCollapsed={ isSidebarCollapsed } />;

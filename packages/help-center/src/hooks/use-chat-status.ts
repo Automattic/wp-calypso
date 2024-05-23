@@ -15,7 +15,12 @@ export default function useChatStatus(
 	checkAgentAvailability = true
 ) {
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const isEligibleForChat = Boolean( chatStatus?.is_user_eligible );
+
+	// All users with a support level other than 'free' are eligible for chat.
+	// See: pdDR7T-1vN-p2
+	const isEligibleForChat = Boolean(
+		chatStatus?.supportLevel && chatStatus.supportLevel !== 'free'
+	);
 
 	const { data: supportActivity, isInitialLoading: isLoadingSupportActivity } =
 		useSupportActivity( isEligibleForChat );

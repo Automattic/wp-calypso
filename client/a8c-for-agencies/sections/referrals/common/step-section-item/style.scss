@@ -14,7 +14,6 @@
 
 	.step-section-item__icon {
 		display: none;
-		opacity: 0.7;
 
 		@include break-large {
 			display: block;
@@ -76,6 +75,8 @@
 
 	.badge {
 		white-space: nowrap;
+		position: relative;
+		top: -1px;
 	}
 
 	.badge--success {
@@ -97,5 +98,26 @@
 .step-section-item__content {
 	@include break-large {
 		max-width: 70%;
+	}
+}
+
+.referrals-layout--automated .step-section-item {
+	.step-section-item__button .button {
+		min-width: 120px;
+	}
+
+	.step-section-item__button {
+		@include break-large {
+			margin-block: auto;
+		}
+	}
+
+	.step-section-item__status.is-large-screen {
+		@include break-large {
+			display: inline-flex;
+			position: relative;
+			left: 4px;
+		}
+
 	}
 }

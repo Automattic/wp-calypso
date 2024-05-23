@@ -1029,3 +1029,7 @@ export const getDIFMTieredPurchaseDetails = (
 
 	return { extraPageCount, numberOfIncludedPages, formattedCostOfExtraPages, formattedOneTimeFee };
 };
+
+export function isA4APurchase( purchase?: Purchase ) {
+	return 'a4a_agency' === purchase?.partnerType;
+}

@@ -22,12 +22,18 @@ import { ShoppingCartContext } from '../context';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import ProductListing from './product-listing';
-import type { AssignLicenseProps } from '../types';
+import ProductNavigation from './product-navigation';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
-export default function ProductsOverview( { siteId, suggestedProduct }: AssignLicenseProps ) {
+type Props = {
+	siteId?: string;
+	suggestedProduct?: string;
+	productBrand: string;
+};
+
+export default function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 	const translate = useTranslate();
 
 	const {
@@ -76,7 +82,7 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 			withBorder
 			compact
 		>
-			<LayoutTop>
+			<LayoutTop withNavigation>
 				<LayoutHeader showStickyContent={ showStickyContent }>
 					<Breadcrumb
 						items={ [
@@ -105,11 +111,17 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 						/>
 					</Actions>
 				</LayoutHeader>
+
+				<ProductNavigation selectedTab={ productBrand } />
 			</LayoutTop>
 
 			<LayoutBody>
 				<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
-					<ProductListing selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+					<ProductListing
+						selectedSite={ selectedSite }
+						suggestedProduct={ suggestedProduct }
+						productBrand={ productBrand }
+					/>
 				</ShoppingCartContext.Provider>
 			</LayoutBody>
 		</Layout>

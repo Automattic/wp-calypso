@@ -1,6 +1,7 @@
 import { Spinner } from '@automattic/components';
+import { usePrevious } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import { ReactNode, useRef, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { DataViews } from 'calypso/components/dataviews';
 import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
@@ -54,6 +55,8 @@ export type ItemsDataViewsProps = {
 
 const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsProps ) => {
 	const translate = useTranslate();
+	const scrollContainerRef = useRef< HTMLElement >();
+	const previousDataViewsState = usePrevious( data.dataViewsState );
 
 	// Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
 	// todo: The DataViews v0.9 has the spinner support. Remove this once we upgrade the package.
@@ -77,6 +80,29 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 		// Render the SpinnerWrapper component inside the spinner wrapper
 		ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
 	}
+
+	useLayoutEffect( () => {
+		if (
+			! scrollContainerRef.current ||
+			previousDataViewsState?.type !== data.dataViewsState.type
+		) {
+			scrollContainerRef.current = document.querySelector(
+				'.dataviews-view-list, .dataviews-view-table-wrapper'
+			) as HTMLElement;
+		}
+
+		if ( ! previousDataViewsState?.selectedItem && data.dataViewsState.selectedItem ) {
+			window.setTimeout(
+				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
+				300
+			);
+			return;
+		}
+
+		if ( previousDataViewsState?.page !== data.dataViewsState.page ) {
+			scrollContainerRef.current?.scrollTo( 0, 0 );
+		}
+	}, [ data.dataViewsState.type, data.dataViewsState.page ] );
 
 	return (
 		<div className={ className }>
