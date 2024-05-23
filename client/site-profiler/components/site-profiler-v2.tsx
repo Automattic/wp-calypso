@@ -22,6 +22,7 @@ import { DomainSection } from './domain-section';
 import { GetReportForm } from './get-report-form';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
+import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
 import './styles-v2.scss';
 
@@ -36,6 +37,7 @@ export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain } = props;
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
+	const perfomanceMetricsRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -155,6 +157,8 @@ export default function SiteProfilerV2( props: Props ) {
 									urlData={ urlData }
 									domainRef={ domainRef }
 								/>
+
+								<PerformanceSection performanceMetricsRef={ perfomanceMetricsRef } />
 							</>
 						) }
 					</LayoutBlock>
