@@ -1,7 +1,7 @@
 import { useSupportAvailability } from '../data/use-support-availability';
 
 export function useShouldRenderEmailOption() {
-	const { data: supportAvailability, isFetching } = useSupportAvailability( 'EMAIL' );
+	const { data: supportAvailability, isFetching } = useSupportAvailability();
 
 	return {
 		isLoading: isFetching,
