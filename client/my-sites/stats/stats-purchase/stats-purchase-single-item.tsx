@@ -9,6 +9,7 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } from '../const';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
@@ -115,9 +116,7 @@ function useLocalizedStrings( isCommercial: boolean ) {
 				{
 					comment: '{{link}} links to explainer post on Jetpack blog.',
 					components: {
-						link: (
-							<a href="https://jetpack.com/blog/updates-to-jetpack-stats-for-commercial-sites/" />
-						),
+						link: <a href={ JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } />,
 					},
 					context: 'Stats: Descriptive text in the commercial purchase flow',
 				}
