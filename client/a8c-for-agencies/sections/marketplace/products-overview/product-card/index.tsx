@@ -146,10 +146,6 @@ export default function ProductCard( props: Props ) {
 								<div className="product-card__description">
 									{ truncateDescription( productDescription ) }
 								</div>
-
-								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
-									<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />
-								) }
 							</div>
 						</div>
 					</div>

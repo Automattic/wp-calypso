@@ -99,6 +99,12 @@
 	align-self: flex-start;
 	margin-block-start: auto;
 	padding-block-start: 1rem;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		.button {
+			padding: 4px;
+		}
+	}
 }
 
 .product-card__select-button {
