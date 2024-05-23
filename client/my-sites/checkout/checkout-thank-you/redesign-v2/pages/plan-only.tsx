@@ -104,7 +104,7 @@ const PlanOnlyThankYou = ( {
 			subtitle = translate( "With the plan sorted, it's time to start setting up your store." );
 			headerButtons = typeof siteAdminUrl === 'string' && (
 				<Button href={ siteAdminUrl } primary>
-					Create your store
+					{ translate( 'Create your store' ) }
 				</Button>
 			);
 		} else {
