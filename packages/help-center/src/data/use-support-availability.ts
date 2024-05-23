@@ -28,6 +28,6 @@ export function useSupportAvailability( enabled = true ) {
 		enabled,
 		refetchOnWindowFocus: false,
 		placeholderData: keepPreviousData,
-		staleTime: 6 * 60 * 60 * 1000, // 6 hours
+		staleTime: 120 * 1000, // 2 mins. It has to be short, because the user can change the plan to access support.
 	} );
 }
