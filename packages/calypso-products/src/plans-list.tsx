@@ -906,6 +906,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_CDN,
 				FEATURE_POST_EDITS_HISTORY,
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
+				FEATURE_HELP_CENTER_SUPPORT,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_structure' ) {
@@ -934,7 +935,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	},
 	get2023PlanComparisonFeatureOverride: () => {
 		if ( isTrailMapCopyVariant() ) {
-			return [ FEATURE_AD_FREE_EXPERIENCE, FEATURE_CUSTOM_DOMAIN ];
+			return [ FEATURE_AD_FREE_EXPERIENCE, FEATURE_CUSTOM_DOMAIN, FEATURE_HELP_CENTER_SUPPORT ];
 		}
 
 		if ( getTrailMapExperiment() === 'treatment_structure' ) {
