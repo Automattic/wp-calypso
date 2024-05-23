@@ -37,6 +37,7 @@ export const getWordadsSettings = createSelector(
 					display_archive: siteSettings.wordads_display_archive,
 					enable_header_ad: siteSettings.enable_header_ad,
 					second_belowpost: siteSettings.wordads_second_belowpost,
+					inline_enabled: siteSettings.wordads_inline_enabled,
 				},
 				ccpa_enabled: siteSettings.wordads_ccpa_enabled,
 				ccpa_privacy_policy_url: siteSettings.wordads_ccpa_privacy_policy_url,

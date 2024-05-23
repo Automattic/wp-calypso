@@ -1,3 +1,4 @@
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { __experimentalText as Text, CheckboxControl, SearchControl } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -55,17 +56,29 @@ export const ScheduleFormSites = ( props: Props ) => {
 						{ error }
 					</Text>
 				) }
-				<SearchControl
-					id="sites"
-					value={ searchTerm }
-					onChange={ ( s ) => setSearchTerm( s.trim() ) }
-					placeholder={ translate( 'Search sites' ) }
-				/>
+				{ !! sites.length && (
+					<SearchControl
+						id="sites"
+						value={ searchTerm }
+						onChange={ ( s ) => setSearchTerm( s.trim() ) }
+						placeholder={ translate( 'Search sites' ) }
+					/>
+				) }
 				{ ! sites.length && (
-					<Text className="info-msg">
-						You can only select sites with Creator plan. Please upgrade your site to enable this
-						feature.
-					</Text>
+					<p className="placeholder-info">
+						{ translate(
+							// Translators: %(planName)s is the plan - Business or Creator
+							'To select a site, please ensure it has a %(planName)s plan or higher.{{br/}}Upgrade your site to proceed.',
+							{
+								components: {
+									br: <br />,
+								},
+								args: {
+									planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+								},
+							}
+						) }
+					</p>
 				) }
 				<div className="checkbox-options-container checkbox-options-container__sites">
 					{ sites.map( ( site ) => (

@@ -76,6 +76,16 @@ export default function ProductCard( props: Props ) {
 		}
 	}, [] );
 
+	const truncateDescription = ( description: any ) => {
+		if ( description.length <= 84 ) {
+			return description;
+		}
+
+		const lastSpace = description.slice( 0, 82 ).lastIndexOf( ' ' );
+
+		return description.slice( 0, lastSpace > 0 ? lastSpace : 83 ) + '…';
+	};
+
 	const { description: productDescription } = useProductDescription( product.slug );
 
 	const onShowLightbox = useCallback(
@@ -133,7 +143,9 @@ export default function ProductCard( props: Props ) {
 									/>
 								</div>
 
-								<div className="product-card__description">{ productDescription }</div>
+								<div className="product-card__description">
+									{ truncateDescription( productDescription ) }
+								</div>
 
 								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
 									<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />

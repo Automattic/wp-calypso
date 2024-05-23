@@ -33,6 +33,7 @@ type WordAdSettings = {
 		display_page: boolean;
 		enable_header_ad: boolean;
 		second_belowpost: boolean;
+		inline_enabled: boolean;
 		sidebar: boolean;
 		display_archive: boolean;
 	};

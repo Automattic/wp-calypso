@@ -80,6 +80,7 @@ const Home = ( {
 	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
 		getIsGlobalSiteViewEnabled( state, siteId )
 	);
+	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
@@ -154,7 +155,7 @@ const Home = ( {
 			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 				{ isGlobalSiteViewEnabled ? translate( 'View site' ) : translate( 'Visit site' ) }
 			</Button>
-			{ config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && isAdmin && (
+			{ config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && isAdmin && ! isP2 && (
 				<Button primary href={ `/overview/${ site.slug }` }>
 					{ translate( 'Hosting Overview' ) }
 				</Button>

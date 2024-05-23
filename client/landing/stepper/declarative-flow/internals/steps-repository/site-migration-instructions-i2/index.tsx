@@ -97,6 +97,12 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 		}
 	}, [ flow, setupError, siteId ] );
 
+	const recordInstructionsLinkClick = ( linkname: string ) => {
+		recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
+			linkname,
+		} );
+	};
+
 	const stepContent = (
 		<div className="site-migration-instructions__content">
 			<ol className="site-migration-instructions__list">
@@ -110,6 +116,7 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 										href={ getPluginInstallationPage( fromUrl ) }
 										target="_blank"
 										rel="noreferrer"
+										onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
 									/>
 								),
 							},
@@ -127,6 +134,7 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 										target="_blank"
 										rel="noreferrer"
 										fallback={ <strong /> }
+										onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
 									/>
 								),
 								migrateButton: <DoNotTranslateIt value="Migrate" />,
