@@ -7,7 +7,7 @@ import { useState } from 'react';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import isAutomatedTransferActive from 'calypso/state/automated-transfer/selectors/is-automated-transfer-active';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -15,6 +15,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
+import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 
 type PromoCardProps = {
 	title: string;
@@ -88,9 +89,9 @@ const DevToolsPromo = () => {
 	const showHostingActivationButton = canSiteGoAtomic;
 
 	const backUrl = `/hosting-config/${ siteSlug }`;
-
+	const dispatch = useDispatch();
 	const transferInitiate = ( { geo_affinity = '' } ) => {
-		initiateThemeTransfer( siteId as number, null, '', geo_affinity, 'hosting' );
+		dispatch( initiateThemeTransfer( siteId as number, null, '', geo_affinity, 'hosting' ) );
 		// page( `/setup/transferring-hosted-site/processing?siteId=${ siteId }` );
 	};
 
@@ -137,6 +138,7 @@ const DevToolsPromo = () => {
 								onProceed={ transferInitiate }
 								backUrl={ backUrl }
 								showDataCenterPicker
+								standaloneProceed
 							/>
 						</Dialog>
 					</>
