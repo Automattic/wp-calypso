@@ -176,6 +176,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/trial-acknowledge' ),
 	},
 
+	USER: {
+		slug: 'user',
+		asyncComponent: () => import( './steps-repository/user' ),
+	},
+
 	VERIFY_EMAIL: {
 		slug: 'verifyEmail',
 		asyncComponent: () => import( './steps-repository/import-verify-email' ),

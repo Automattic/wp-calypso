@@ -96,6 +96,7 @@ export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 
 export type Flow = {
 	name: string;
+	usesLocalLogin?: boolean;
 	/**
 	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.
 	 */

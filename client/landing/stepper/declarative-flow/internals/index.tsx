@@ -11,6 +11,7 @@ import React, { useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
@@ -20,6 +21,7 @@ import {
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
 import { useQuery } from '../../hooks/use-query';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
@@ -30,8 +32,9 @@ import kebabCase from '../../utils/kebabCase';
 import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import { StepRoute, StepperLoader } from './components';
-import { AssertConditionState, Flow, StepperStep, StepProps } from './types';
+import { AssertConditionState } from './types';
 import './global.scss';
+import type { Flow, Navigate as StepNavigate, StepperStep, StepProps } from './types';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
 
 /**
@@ -43,6 +46,68 @@ export const getStepOldSlug = ( stepSlug: string ): string | undefined => {
 	};
 
 	return stepSlugMap[ stepSlug ];
+};
+
+const useFlowStepsWithLoginHandling = ( flow: Flow ) => {
+	const steps = flow.useSteps();
+	const isLoggedInUser = useSelector( isUserLoggedIn );
+
+	if ( ! flow.usesLocalLogin || isLoggedInUser ) {
+		return steps;
+	}
+
+	const userStepIndex = steps.findIndex( ( step ) => step.slug === STEPS.USER.slug );
+	if ( userStepIndex === 0 ) {
+		return steps;
+	}
+
+	if ( userStepIndex === -1 ) {
+		return [ STEPS.USER, ...steps ];
+	}
+
+	steps.splice( userStepIndex, 1 );
+
+	return [ STEPS.USER, ...steps ];
+};
+
+const useStepNavigationWithLogin = (
+	flow: Flow,
+	currentStepRoute: string,
+	stepNavigate: StepNavigate< StepperStep[] >,
+	stepPaths?: string[]
+): ReturnType< Flow[ 'useStepNavigation' ] > => {
+	const isLoggedInUser = useSelector( isUserLoggedIn );
+
+	const stepNavigation = flow.useStepNavigation( currentStepRoute, stepNavigate, stepPaths );
+
+	// TODO: General gap: flows shouldn't be calling recordSubmitStep().
+	// That logic should be somewhere at this level, and not in the flows, as I strongly suspect we
+	// have flows that don't call that function.
+
+	if (
+		! flow.usesLocalLogin ||
+		isLoggedInUser ||
+		currentStepRoute !== STEPS.USER.slug ||
+		! stepPaths
+	) {
+		return stepNavigation;
+	}
+
+	// If we can work out what the next step in the flow is, ensure the submit from the USER step
+	// navigates there.
+	const userStepIndex = stepPaths.indexOf( STEPS.USER.slug );
+	if ( userStepIndex > -1 && userStepIndex < stepPaths.length - 1 ) {
+		const nextStep = stepPaths[ userStepIndex + 1 ];
+
+		return {
+			...stepNavigation,
+			submit: () => {
+				return stepNavigate( nextStep );
+			},
+		};
+	}
+
+	return stepNavigation;
 };
 
 /**
@@ -58,7 +123,7 @@ export const getStepOldSlug = ( stepSlug: string ): string | undefined => {
 export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
-	const flowSteps = flow.useSteps();
+	const flowSteps = useFlowStepsWithLoginHandling( flow );
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
 		() =>
@@ -73,8 +138,17 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		[ flowSteps ]
 	);
 
+	const handleLoggedOutUsers = flow.usesLocalLogin ?? false;
+	const isLoggedInUser = useSelector( isUserLoggedIn );
+	const flowPath = flow.variantSlug ?? flow.name;
 	const location = useLocation();
-	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
+
+	const currentStepRouteFromLocation = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
+	// TODO: Should we even do this? It feels like a HACK.
+	// Also, should we use USER.slug explicitly, or just use stepPaths[0] to match the later logic for flow starts?
+	const currentStepRoute =
+		handleLoggedOutUsers && ! isLoggedInUser ? STEPS.USER.slug : currentStepRouteFromLocation;
+
 	const stepOldSlug = getStepOldSlug( currentStepRoute );
 	const { __ } = useI18n();
 	const navigate = useNavigate();
@@ -133,6 +207,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			return currentStepRoute === stepPaths[ 1 ];
 		}
 
+		if ( flow.usesLocalLogin && ! isLoggedInUser ) {
+			// TODO: this feels like it could be more nuanced
+			return true;
+		}
+
 		return currentStepRoute === stepPaths[ 0 ];
 	}, [ flow, currentStepRoute, ...stepPaths ] );
 
@@ -146,17 +225,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		} );
 
 		const _path = path.includes( '?' ) // does path contain search params
-			? generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }` )
-			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ window.location.search }` );
+			? generatePath( `/${ flowPath }/${ path }` )
+			: generatePath( `/${ flowPath }/${ path }${ window.location.search }` );
 
 		navigate( _path, { state: stepPaths } );
 	};
 
-	const stepNavigation = flow.useStepNavigation(
-		currentStepRoute,
-		_navigate,
-		flowSteps.map( ( step ) => step.slug )
-	);
+	const stepNavigation = useStepNavigationWithLogin( flow, currentStepRoute, _navigate, stepPaths );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect(
@@ -171,6 +246,20 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
+
+	useEffect( () => {
+		if (
+			isLoggedInUser ||
+			! flow.usesLocalLogin ||
+			[ '', STEPS.USER.slug ].includes( currentStepRouteFromLocation )
+		) {
+			return;
+		}
+
+		// If we're on some other step, and we need to log in, navigate to the user step.
+		// We could also navigate to the flow root, but that's less explicit as to what we want to happen.
+		_navigate( STEPS.USER.slug );
+	}, [ currentStepRouteFromLocation, flow.usesLocalLogin, isLoggedInUser ] );
 
 	// Get any flow-specific event props to include in the
 	// `calypso_signup_start` Tracks event triggerd in the effect below.

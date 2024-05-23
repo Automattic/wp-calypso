@@ -24,9 +24,10 @@ import './internals/new-hosted-site-flow.scss';
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	isSignupFlow: true,
+	usesLocalLogin: true,
 	useSteps() {
 		return [
-			STEPS.USER,
+			//STEPS.USER,
 			STEPS.PLANS,
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.SITE_CREATION_STEP,
@@ -54,9 +55,11 @@ const hosting: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
+				/*
 				case 'user': {
 					return navigate( 'plans' );
 				}
+				*/
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
 						.product_slug;
