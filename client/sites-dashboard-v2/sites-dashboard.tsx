@@ -123,7 +123,7 @@ const SitesDashboardV2 = ( {
 	} as DataViewsState;
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 
-	useSyncSelectedSite( dataViewsState );
+	useSyncSelectedSite( dataViewsState, setDataViewsState, selectedSite );
 
 	const { selectedSiteFeature, setSelectedSiteFeature } = useSyncSelectedSiteFeature( {
 		selectedSite,
@@ -132,11 +132,6 @@ const SitesDashboardV2 = ( {
 		featureToRouteMap: FEATURE_TO_ROUTE_MAP,
 		queryParamKeys: [ 'page', 'per-page', 'status', 'search' ],
 	} );
-
-	// If calypso state changes the selected site, ensure the dataViewsState is updated as well.
-	useEffect( () => {
-		setDataViewsState( ( prevState ) => ( { ...prevState, selectedItem: selectedSite } ) );
-	}, [ selectedSite, setDataViewsState ] );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
 	// initial mount.
