@@ -11,8 +11,6 @@ type SurveyContainerProps = {
 	onSkip: () => void;
 	onChange: ( questionKey: string, value: string[] ) => void;
 	hideBackOnFirstPage?: boolean;
-	hideContinue?: boolean;
-	hideSkip?: boolean;
 	disabled?: boolean;
 	headerAlign?: string;
 	questionConfiguration?: QuestionConfiguration;
