@@ -66,6 +66,7 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { useFCCARestrictions } from '../checkout/utils';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
@@ -462,12 +463,19 @@ const PlansFeaturesMain = ( {
 		_customerType = 'business';
 	}
 
-	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
+	let filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
 		productSlug: currentPlan?.productSlug,
 		displayedIntervals,
 		intent,
 		paidDomainName,
 	} );
+
+	const { shouldReplacePlan } = useFCCARestrictions();
+	if ( shouldReplacePlan() ) {
+		filteredDisplayedIntervals = filteredDisplayedIntervals.filter(
+			( item ) => item !== '3yearly'
+		);
+	}
 
 	const planTypeSelectorProps = useMemo( () => {
 		const props = {
