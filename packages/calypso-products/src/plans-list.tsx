@@ -429,7 +429,6 @@ import {
 	PLAN_BLUEHOST_CLOUD_MONTHLY,
 	PLAN_BLUEHOST_CLOUD_3Y,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-	EXPERT_SUPPORT_ALL_DAYS,
 	FEATURE_REAL_TIME_SECURITY_SCANS,
 	FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
 	FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
@@ -886,10 +885,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		if ( getTrailMapExperiment() === 'treatment_copy' ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 				FEATURE_20_PREMIUM_THEMES,
 				FEATURE_AD_FREE_EXPERIENCE,
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
-				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
 		if ( getTrailMapExperiment() === 'treatment_copy_and_structure' ) {
@@ -1706,6 +1705,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		if ( getTrailMapExperiment() === 'treatment_copy' ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
+				FEATURE_PRIORITY_24_7_SUPPORT,
 				FEATURE_48_PREMIUM_THEMES,
 				FEATURE_REAL_TIME_STATS,
 				FEATURE_STYLE_CUSTOMIZATION,
@@ -1786,7 +1786,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_STYLE_CUSTOMIZATION,
 				FEATURE_WORDADS,
 				FEATURE_FAST_DNS,
-				EXPERT_SUPPORT_ALL_DAYS,
 			];
 		}
 
