@@ -27,7 +27,7 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'higher-speed': {
 			title: translate( 'Higher speed' ),
 			description: translate(
-				'%(higherSpeedPercentage)d%% more sites on WordPress.com are fast compared to other WordPress hosts.',
+				'%(higherSpeedPercentage)d%% of sites on WordPress.com renders the largest image or text block visible in the viewport within 2500 milliseconds, in accordance with Google recommendations.',
 				{
 					args: { higherSpeedPercentage },
 				}
@@ -37,7 +37,7 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'faster-response': {
 			title: translate( 'Faster response' ),
 			description: translate(
-				'%(fastResponsePercentage)d%% of sites on WordPress.com respond fast, in accordance with Google recommendations.',
+				'%(fastResponsePercentage)d%% of sites on WordPress.com respond within 100 milliseconds on the first interaction, in accordance with Google recommendations.',
 				{
 					args: { fastResponsePercentage },
 				}
@@ -47,9 +47,13 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'higher-availability': {
 			title: translate( 'Higher availability' ),
 			description: translate(
-				'WordPress.com has %(wpcomMinutesDowntime)d minutes downtime, versus %(otherHostsAverageDowntime)d minutes from other WordPress hosts per month.',
+				'WordPress.com has %(wpcomMinutesDowntime)s downtime, compared to %(otherHostsAverageDowntime)d minutes per month for other WordPress hosts.',
 				{
-					args: { wpcomMinutesDowntime, otherHostsAverageDowntime },
+					args: {
+						wpcomMinutesDowntime:
+							0 === wpcomMinutesDowntime ? translate( 'zero' ) : wpcomMinutesDowntime,
+						otherHostsAverageDowntime,
+					},
 				}
 			),
 			icon: chartBar,
