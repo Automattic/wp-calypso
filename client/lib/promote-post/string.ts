@@ -132,7 +132,8 @@ const BlazePressStrings = () => {
 	translate( 'Search for locations' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
-	translate( 'If you have Blaze credits in your account, the credits will be used first before charging your card. If the Blaze Credit balance does not cover the entire order, any outstanding balance will be taken from your provided card.' );
+	translate( 'If you have Blaze Credit in your account, the credits will be used first before charging your card.' );
+	translate( 'If the Blaze Credit balance does not cover the entire order, any outstanding balance will be taken from your provided card.' );
 	translate( 'Could not retrieve countries. Please try again later.' );
 	translate( 'Error submitting payment. Please check payment information.' );
 	translate(
@@ -177,7 +178,7 @@ const BlazePressStrings = () => {
 	translate( 'Summary' );
 	translate( 'Preview' );
 	translate( 'Depending on the platform, the ad may look different from the preview.' );
-	translate( 'Credits will be automatically applied to your order when available. Any outstanding balance will be charged to your provided card.' );
+	translate( 'Any outstanding balance will be charged to your provided card.' );
 	translate( 'Estimated Impressions' );
 	translate( 'Max Budget' );
 	translate( 'Languages' );
