@@ -1,6 +1,6 @@
 export const STEPS = {
 	AI_SITE_PROMPT: {
-		slug: 'aiSitePrompt',
+		slug: 'loadingBigSky',
 		asyncComponent: () => import( './steps-repository/ai-site-prompt' ),
 	},
 

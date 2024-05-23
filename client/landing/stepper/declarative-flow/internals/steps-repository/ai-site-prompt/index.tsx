@@ -13,7 +13,7 @@ import './style.scss';
 
 const SiteIntent = Onboard.SiteIntent;
 
-const AISitePrompt: Step = function ( props ) {
+const LoadingBigSky: Step = function ( props ) {
 	const { goNext, goBack, submit } = props.navigation; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 	const { __ } = useI18n();
@@ -111,4 +111,4 @@ const AISitePrompt: Step = function ( props ) {
 	);
 };
 
-export default AISitePrompt;
+export default LoadingBigSky;

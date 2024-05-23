@@ -79,7 +79,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									title={ translate( 'Use AI' ) }
 									description={ translate( 'Try our AI site builder.' ) }
 									imageSrc={ themesIllustrationImage }
-									destination="aiSitePrompt"
+									destination="loadingBigSky"
 									onSelect={ handleSubmit }
 								/>
 							) }
