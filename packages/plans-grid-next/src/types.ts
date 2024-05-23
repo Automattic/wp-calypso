@@ -70,6 +70,7 @@ export type PlansIntent =
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
 	| 'plans-videopress'
+	| 'plans-guided'
 	| 'default';
 
 export interface PlanActionOverrides {

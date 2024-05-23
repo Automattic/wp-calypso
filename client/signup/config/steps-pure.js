@@ -405,6 +405,18 @@ export function generateSteps( {
 			},
 		},
 
+		'plans-guided': {
+			stepName: 'plans-guided',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'themeSlugWithRepo' ],
+			props: {
+				intent: 'plans-guided',
+			},
+		},
+
 		'mailbox-plan': {
 			stepName: 'mailbox-plan',
 			apiRequestFunction: addPlanToCart,
