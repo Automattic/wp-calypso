@@ -2690,12 +2690,12 @@ const FEATURES_LIST: FeatureList = {
 			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
 			i18n.hasTranslation( 'Fast support from our expert team' )
 				? i18n.translate( 'Fast support from our expert team' )
-				: i18n.translate( '24/7 expert support' ),
+				: i18n.translate( 'Expert support' ),
 		getDescription: () =>
 			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
 			i18n.hasTranslation( 'Prompt support from our expert, friendly Happiness team' )
 				? i18n.translate( 'Prompt support from our expert, friendly Happiness team' )
-				: i18n.translate( '24/7 expert support' ),
+				: i18n.translate( 'Expert support' ),
 	},
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
@@ -2703,12 +2703,12 @@ const FEATURES_LIST: FeatureList = {
 			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
 			i18n.hasTranslation( 'Priority 24/7 support from our expert team' )
 				? i18n.translate( 'Priority 24/7 support from our expert team' )
-				: i18n.translate( '24/7 expert support' ),
+				: i18n.translate( '24/7 priority support' ),
 		getDescription: () =>
 			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
 			i18n.hasTranslation( 'The fastest 24/7 support from our expert, friendly Happiness team' )
 				? i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' )
-				: i18n.translate( '24/7 expert support' ),
+				: i18n.translate( '24/7 priority support' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 
