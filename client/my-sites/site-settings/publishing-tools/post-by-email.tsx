@@ -1,6 +1,7 @@
 import { Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
+import clsx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -49,7 +50,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	);
 	const moduleUnavailable = siteInDevMode && moduleUnavailableInDevMode;
 	const { data: simpleSitePostByEmailSettings } = useGetPostByEmail( selectedSiteId );
-	const { mutate: simpleSiteSwitchPostByEmail, isPending: isSimpleSitePendingSwitch } =
+	const { mutate: simpleSiteTogglePostByEmail, isPending: isSimpleSitePendingToggle } =
 		useTogglePostByEmailMutation( selectedSiteId );
 	const { mutate: simpleSiteRegeneratePostByEmail, isPending: isSimpleSitePendingRegenerate } =
 		useRegeneratePostByEmailMutation( selectedSiteId );
@@ -57,12 +58,12 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const handleSwitchForSimpleSite = ( checked: boolean ) => {
+	const handleToggleForSimpleSite = ( checked: boolean ) => {
 		if ( ! selectedSiteId ) {
 			return;
 		}
 
-		simpleSiteSwitchPostByEmail( checked, {
+		simpleSiteTogglePostByEmail( checked, {
 			onSuccess: () => {
 				dispatch( successNotice( translate( 'Settings saved successfully!' ), noticeConfig ) );
 			},
@@ -100,8 +101,6 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	const isActive = siteIsJetpack
 		? jetpackPostByEmailIsActive
 		: simpleSitePostByEmailSettings?.isEnabled;
-	const labelClassName =
-		moduleUnavailable || jetpackRegeneratingPostByEmail || ! isActive ? 'is-disabled' : undefined;
 
 	return (
 		<>
@@ -127,14 +126,18 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 				) : (
 					<ToggleControl
 						checked={ !! simpleSitePostByEmailSettings?.isEnabled }
-						disabled={ isSimpleSitePendingSwitch || isSimpleSitePendingRegenerate }
+						disabled={ isSimpleSitePendingToggle || isSimpleSitePendingRegenerate }
 						label={ translate( 'Post by Email' ) }
-						onChange={ handleSwitchForSimpleSite }
+						onChange={ handleToggleForSimpleSite }
 					/>
 				) }
 
 				<div className="publishing-tools__module-settings site-settings__child-settings">
-					<FormLabel className={ labelClassName }>
+					<FormLabel
+						className={ clsx( {
+							'is-disabled': moduleUnavailable || jetpackRegeneratingPostByEmail || ! isActive,
+						} ) }
+					>
 						{ translate( 'Send your new posts to this email address:' ) }
 					</FormLabel>
 					<ClipboardButtonInput
