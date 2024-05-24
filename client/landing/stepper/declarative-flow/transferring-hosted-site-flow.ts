@@ -1,6 +1,7 @@
 import { TRANSFERRING_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { ONBOARD_STORE } from '../stores';
@@ -29,10 +30,13 @@ const transferringHostedSite: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
+		const exitTo = useQuery().get( 'to' ) || 'home';
 		const dispatch = useReduxDispatch();
 
 		const exitFlow = ( to: string ) => {
-			window.location.assign( to );
+			setTimeout( () => {
+				window.location.assign( to );
+			}, 500 );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -48,7 +52,7 @@ const transferringHostedSite: Flow = {
 
 					dispatch( requestAdminMenu( siteId ) );
 
-					return exitFlow( '/home/' + siteId );
+					return exitFlow( `/${ exitTo }/${ siteId }` );
 				}
 
 				case 'waitForAtomic': {
