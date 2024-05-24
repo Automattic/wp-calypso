@@ -233,7 +233,6 @@ const DotcomSitesDataViews = ( {
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
 		pagination: paginationInfo,
-		onSelectionChange: ( [ site ] ) => openSitePreviewPane( site ),
 	} );
 
 	// Update the itemData packet

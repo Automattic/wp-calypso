@@ -7,12 +7,21 @@ type Props = {
 };
 
 const ActionsField = ( { site }: Props ) => {
+	const handleClickOrKeyDown = ( event: MouseEvent | KeyboardEvent ) => {
+		const target = event.target as HTMLElement;
+
+		// We have to bypass the link to prevent the page from full-reload
+		if ( ! target.closest( 'a' ) ) {
+			event.stopPropagation();
+		}
+	};
+
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
 		<div
 			className="sites-dataviews__actions"
-			onClick={ ( e: MouseEvent ) => e.stopPropagation() }
-			onKeyDown={ ( e: KeyboardEvent ) => e.stopPropagation() }
+			onClick={ handleClickOrKeyDown }
+			onKeyDown={ handleClickOrKeyDown }
 		>
 			<SiteActions site={ site } />
 		</div>
