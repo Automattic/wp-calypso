@@ -7,7 +7,7 @@ import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { useTotalInvoiceValue } from '../../wpcom-overview/hooks/use-total-invoice-value';
 import ShoppingCartMenuItem from './item';
-import type { ShoppingCartItem } from '../../types';
+import type { MarketplaceType, ShoppingCartItem } from '../../types';
 
 import './style.scss';
 
@@ -16,14 +16,23 @@ type Props = {
 	onRemoveItem: ( item: ShoppingCartItem ) => void;
 	onCheckout: () => void;
 	items: ShoppingCartItem[];
+	marketplaceType?: MarketplaceType;
 };
 
-export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, items }: Props ) {
+export default function ShoppingCartMenu( {
+	onClose,
+	onCheckout,
+	onRemoveItem,
+	items,
+	marketplaceType = 'regular',
+}: Props ) {
 	const translate = useTranslate();
 
 	const userProducts = useSelector( getProductsList );
 	const { getTotalInvoiceValue } = useTotalInvoiceValue();
 	const { discountedCost } = getTotalInvoiceValue( userProducts, items );
+	// FIXME: we should update the magic numbers here with values when backend part is finished.
+	const commissionAmount = Math.floor( discountedCost * 0.5 );
 
 	return (
 		<Popover
@@ -59,13 +68,29 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 
 				<div className="shopping-cart__menu-footer">
 					<div className="shopping-cart__menu-total">
-						<span>{ translate( 'Total:' ) }</span>
+						<span>
+							{ marketplaceType === 'regular'
+								? translate( 'Total:' )
+								: translate( 'Total your client will pay:' ) }
+						</span>
 						<span>
 							{ translate( '%(total)s/mo', {
 								args: { total: formatCurrency( discountedCost, items[ 0 ]?.currency ?? 'USD' ) },
 							} ) }
 						</span>
 					</div>
+					{ marketplaceType === 'referral' && (
+						<div className="shopping-cart__menu-commission">
+							<span>{ translate( 'Your estimated commision:' ) }</span>
+							<span>
+								{ translate( '%(total)s/mo', {
+									args: {
+										total: formatCurrency( commissionAmount, items[ 0 ]?.currency ?? 'USD' ),
+									},
+								} ) }
+							</span>
+						</div>
+					) }
 
 					<Button
 						className="shopping-cart__menu-checkout-button"
