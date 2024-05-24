@@ -4,13 +4,12 @@ import SegmentationSurvey from 'calypso/components/segmentation-survey';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './styles.scss';
+import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from './constants';
 
 interface Props {
 	stepName: string;
 	goToNextStep: () => void;
 }
-
-const SURVEY_KEY = 'guided-onboarding-flow';
 
 export default function InitialIntentStep( props: Props ) {
 	const translate = useTranslate();
@@ -41,7 +40,12 @@ export default function InitialIntentStep( props: Props ) {
 			fallbackHeaderText={ headerText }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
-			stepContent={ <SegmentationSurvey surveyKey={ SURVEY_KEY } onNext={ handleNext } /> }
+			stepContent={
+				<SegmentationSurvey
+					surveyKey={ GUIDED_FLOW_SEGMENTATION_SURVEY_KEY }
+					onNext={ handleNext }
+				/>
+			}
 			align="center"
 			hideSkip
 			{ ...props }
