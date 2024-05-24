@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
 import { A4A_MARKETPLACE_HOSTING_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -18,17 +19,19 @@ export const marketplaceContext: Callback = () => {
 
 export const marketplaceProductsContext: Callback = ( context, next ) => {
 	const { site_id, product_slug, purchase_type } = context.query;
+	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
 	const productBrand = context.params.brand;
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	const purchaseType = purchase_type === 'referral' ? 'referral' : 'regular';
+	const purchaseType =
+		!! isAutomatedReferrals && purchase_type === 'referral' ? 'referral' : 'regular';
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Products" path={ context.path } />
 			<ProductsOverview
 				siteId={ site_id }
 				suggestedProduct={ product_slug }
-				purchaseType={ purchaseType }
+				defaultMarketplaceType={ purchaseType }
 				productBrand={ getValidBrand( productBrand ) }
 			/>
 		</>

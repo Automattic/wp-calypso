@@ -14,6 +14,7 @@ export interface ShoppingCartContext {
 
 export interface MarketplaceTypeContext {
 	marketplaceType: MarketplaceType;
+	setMarketplaceType: ( value: MarketplaceType ) => void;
 }
 
 export interface AssignLicenseProps {
