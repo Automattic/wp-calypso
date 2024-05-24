@@ -104,7 +104,7 @@ const StatsUpgradeInstructions = () => {
 	);
 };
 
-function useLocalizedStrings( isCommercial: boolean ) {
+const useLocalizedStrings = ( isCommercial: boolean ) => {
 	const translate = useTranslate();
 
 	// Page title, info text, and button text depend on isCommercial status of site.
@@ -132,7 +132,7 @@ function useLocalizedStrings( isCommercial: boolean ) {
 		),
 		continueButtonText: translate( 'Get Stats to grow my site' ),
 	};
-}
+};
 
 const StatsCommercialPurchase = ( {
 	siteId,
