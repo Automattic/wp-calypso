@@ -222,9 +222,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'dev-tools-promo',
-		paths: [ '/dev-tools-promo' ],
-		module: 'calypso/dev-tools-promo',
+		name: 'dev-tools',
+		paths: [ '/dev-tools' ],
+		module: 'calypso/dev-tools',
 		group: 'sites',
 	},
 	{

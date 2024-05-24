@@ -368,7 +368,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 						  )
 						: undefined
 				}
-				href={ shouldLinkToDevTools ? `/dev-tools-promo/${ site.slug }` : undefined }
+				href={ shouldLinkToDevTools ? `/dev-tools/${ site.slug }` : undefined }
 				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_hosting_click' ) }
 			>
 				{ shouldLinkToDevTools ? (

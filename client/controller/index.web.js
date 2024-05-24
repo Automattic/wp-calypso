@@ -246,7 +246,7 @@ export function redirectIfP2( context, next ) {
 }
 
 /**
- * Middleware to redirect a user to /dev-tools-promo if the site is not Atomic.
+ * Middleware to redirect a user to /dev-tools if the site is not Atomic.
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -257,7 +257,7 @@ export function redirectToDevToolsPromoIfNotAtomic( context, next ) {
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 
 	if ( config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && ! isAtomicSite ) {
-		return page.redirect( `/dev-tools-promo/${ site?.slug }` );
+		return page.redirect( `/dev-tools/${ site?.slug }` );
 	}
 
 	next();
