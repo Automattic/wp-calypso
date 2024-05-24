@@ -243,6 +243,7 @@ export default function ProductListing( {
 		return products.map( ( productOption ) =>
 			Array.isArray( productOption ) ? (
 				<MultiProductCard
+					asReferral={ isReferingProducts }
 					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
 					products={ productOption }
 					onSelectProduct={ onSelectOrReplaceProduct }
@@ -264,6 +265,7 @@ export default function ProductListing( {
 				/>
 			) : (
 				<ProductCard
+					asReferral={ isReferingProducts }
 					key={ productOption.slug }
 					product={ productOption }
 					onSelectProduct={ onSelectProduct }

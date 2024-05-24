@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
 	useProductDescription,
@@ -19,6 +19,7 @@ import { APIProductFamilyProduct } from '../../../../../state/partner-portal/typ
 import './style.scss';
 
 interface Props {
+	asReferral?: boolean;
 	product: APIProductFamilyProduct;
 	isSelected: boolean;
 	isDisabled?: boolean;
@@ -30,6 +31,7 @@ interface Props {
 
 export default function ProductCard( props: Props ) {
 	const {
+		asReferral,
 		product,
 		isSelected,
 		isDisabled,
@@ -114,6 +116,13 @@ export default function ProductCard( props: Props ) {
 		setShowLightbox( false );
 	}, [ resetParams ] );
 
+	const ctaLabel = useMemo( () => {
+		if ( asReferral ) {
+			return isSelected ? translate( 'Added to referral' ) : translate( 'Add to referral' );
+		}
+		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
+	}, [ asReferral, isSelected, translate ] );
+
 	return (
 		<>
 			<div
@@ -156,7 +165,7 @@ export default function ProductCard( props: Props ) {
 							tabIndex={ -1 }
 						>
 							{ isSelected && <Icon icon={ check } /> }
-							{ isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' ) }
+							{ ctaLabel }
 						</Button>
 						{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
 							<LicenseLightboxLink

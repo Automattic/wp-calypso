@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import {
@@ -21,6 +21,7 @@ import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import '../product-card/style.scss';
 
 interface Props {
+	asReferral?: boolean;
 	products: APIProductFamilyProduct[];
 	isSelected: boolean;
 	isDisabled?: boolean;
@@ -37,6 +38,7 @@ interface Props {
 
 export default function MultiProductCard( props: Props ) {
 	const {
+		asReferral,
 		products,
 		isSelected,
 		isDisabled,
@@ -147,6 +149,13 @@ export default function MultiProductCard( props: Props ) {
 		}
 	}, [ selectedOption ] );
 
+	const ctaLabel = useMemo( () => {
+		if ( asReferral ) {
+			return isSelected ? translate( 'Added to referral' ) : translate( 'Add to referral' );
+		}
+		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
+	}, [ asReferral, isSelected, translate ] );
+
 	return (
 		<>
 			<div
@@ -195,7 +204,7 @@ export default function MultiProductCard( props: Props ) {
 							tabIndex={ -1 }
 						>
 							{ isSelected && <Icon icon={ check } /> }
-							{ isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' ) }
+							{ ctaLabel }
 						</Button>
 						{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
 							<LicenseLightboxLink
