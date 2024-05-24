@@ -1,10 +1,10 @@
 const useGuidedFlowGetSegment = ( intent: string, goals: string[] ): string => {
 	// Handle the case when no goals are provided (n/a)
-	if ( intent === 'migrate-or-import-site' && goals.length === 0 ) {
+	if ( intent === 'migrate-or-import-site' && goals.includes( 'skip' ) ) {
 		return 'Migration';
 	}
 
-	if ( intent === 'client' && goals.length === 0 ) {
+	if ( intent === 'client' && goals.includes( 'skip' ) ) {
 		return 'Developer / Agency';
 	}
 
