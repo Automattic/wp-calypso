@@ -6,7 +6,6 @@ import { FormEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import wp from 'calypso/lib/wp';
 import * as validators from './validators';
 import './styles.scss';
 
@@ -31,7 +30,6 @@ export function GetMigrationForm( { domain, isOpen, onClose }: GetMigrationFormP
 	const [ notes, setNotes ] = useState( '' );
 	const [ isTermsChecked, setIsTermsChecked ] = useState( false );
 	const [ errors, setErrors ] = useState< Errors | null >( null );
-	const [ responseError, setResponseError ] = useState< string | null >( null );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ responseSuccess, setResponseSuccess ] = useState( false );
 
@@ -47,31 +45,6 @@ export function GetMigrationForm( { domain, isOpen, onClose }: GetMigrationFormP
 		}
 		setErrors( null );
 		setIsSubmitting( true );
-
-		let response = null;
-		try {
-			response = await wp.req.post(
-				{
-					path: '/site-profiler/lead',
-					apiNamespace: 'wpcom/v2',
-				},
-				{
-					name: formData.get( 'name' ),
-					email: formData.get( 'email' ),
-					url,
-					hash: token,
-				}
-			);
-		} catch ( error ) {
-			setResponseError( error instanceof Error ? error.message : String( error ) );
-			return;
-		} finally {
-			setIsSubmitting( false );
-		}
-		if ( response.success ) {
-			setResponseSuccess( true );
-		}
-
 		setResponseSuccess( true );
 	};
 
@@ -246,7 +219,6 @@ export function GetMigrationForm( { domain, isOpen, onClose }: GetMigrationFormP
 									{ translate( 'Request my free migration' ) }
 								</Button>
 							</div>
-							{ responseError && <FormInputValidation isError text={ responseError } /> }
 							{ responseSuccess && (
 								<FormInputValidation
 									isError={ false }

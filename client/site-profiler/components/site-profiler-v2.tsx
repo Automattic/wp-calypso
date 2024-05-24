@@ -38,7 +38,7 @@ export default function SiteProfilerV2( props: Props ) {
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
-	const [ isGetMigrationFormOpen, setIsGetMigrationFormOpen ] = useState( true );
+	const [ isGetMigrationFormOpen, setIsGetMigrationFormOpen ] = useState( false );
 
 	const {
 		domain,
