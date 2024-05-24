@@ -33,10 +33,6 @@ export default function InitialIntentStep( props: Props ) {
 			return `/setup/${ IMPORT_HOSTED_SITE_FLOW }`;
 		}
 
-		if ( _answerKeys.includes( 'client' ) ) {
-			// return `/setup/${ IMPORT_HOSTED_SITE_FLOW }`;
-		}
-
 		if ( _answerKeys.includes( 'newsletter' ) ) {
 			return `/setup/${ NEWSLETTER_FLOW }`;
 		}
@@ -60,6 +56,7 @@ export default function InitialIntentStep( props: Props ) {
 		const redirect = getRedirectForAnswers( _answerKeys );
 
 		if ( redirect ) {
+			recordCompleteEvent();
 			window.location.assign( redirect );
 		}
 
