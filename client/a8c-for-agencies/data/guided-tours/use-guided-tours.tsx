@@ -2,8 +2,6 @@ import { useMemo } from 'react';
 import useAddNewSiteTour from './tours/use-add-new-site-tour';
 import useSitesWalkthroughTour from './tours/use-sites-walkthrough-tour';
 
-export type TourId = 'sitesWalkthrough' | 'addSiteStep1';
-
 export default function useGuidedTours() {
 	const sitesWalkthrough = useSitesWalkthroughTour();
 	const addNewSite = useAddNewSiteTour();
