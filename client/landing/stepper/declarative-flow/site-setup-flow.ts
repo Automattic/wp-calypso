@@ -529,6 +529,10 @@ const siteSetupFlow: Flow = {
 					return navigate( `importList?siteSlug=${ siteSlug }` );
 
 				case 'importerWordpress':
+					if ( backToFlow ) {
+						return goToFlow( backToFlow );
+					}
+
 					if ( urlQueryParams.get( 'option' ) === 'content' ) {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
