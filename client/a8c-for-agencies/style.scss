@@ -197,6 +197,11 @@
 	.button.is-borderless {
 		background: none;
 		color: var(--color-accent-80);
+
+		&.a8c-blue-link {
+			color: var(--color-primary-50);
+			text-decoration: underline;
+		}
 	}
 
 	.split-button .button {

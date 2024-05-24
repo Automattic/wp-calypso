@@ -98,3 +98,7 @@ export interface UrlBasicMetricsQueryResponse {
 	advanced: Record< string, string >;
 	token: string;
 }
+
+export interface BasicMetricsResult extends Omit< UrlBasicMetricsQueryResponse, 'basic' > {
+	basic: BasicMetricsScored;
+}

@@ -278,12 +278,14 @@ class Layout extends Component {
 
 		if ( typeof document !== 'undefined' ) {
 			const classList = document.querySelector( 'body' ).classList;
+			const globalColorScheme = 'modern';
 
-			// We only want to apply the `modern` color scheme when the global sidebar is visible
-			if ( this.props.isGlobalSidebarVisible && nextColorScheme !== 'modern' ) {
-				// Remove the color scheme in case it was set before
-				classList.remove( `is-${ nextColorScheme }` );
-				nextColorScheme = 'modern';
+			if ( this.props.isGlobalSidebarVisible ) {
+				// Force the global color scheme when the global sidebar is visible.
+				nextColorScheme = globalColorScheme;
+			} else {
+				// Revert back to user's color scheme when the global sidebar is gone.
+				prevColorScheme = globalColorScheme;
 			}
 
 			classList.remove( `is-${ prevColorScheme }` );

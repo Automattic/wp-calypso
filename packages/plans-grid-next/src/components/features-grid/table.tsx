@@ -10,7 +10,6 @@ import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
 import PlanPrice from './plan-price';
-import PlanStorageOptions from './plan-storage-options';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import TopButtons from './top-buttons';
@@ -59,9 +58,8 @@ const Table = ( {
 	const translate = useTranslate();
 	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
 	const featureGroups = useMemo(
-		() =>
-			enableCategorisedFeatures ? ( Object.keys( featureGroupMap ) as FeatureGroupSlug[] ) : [],
-		[ enableCategorisedFeatures, featureGroupMap ]
+		() => Object.keys( featureGroupMap ) as FeatureGroupSlug[],
+		[ featureGroupMap ]
 	);
 	// Do not render the spotlight plan if it exists
 	const gridPlansWithoutSpotlight = useMemo(
@@ -147,65 +145,36 @@ const Table = ( {
 						options={ { isTableCell: true } }
 					/>
 				</tr>
-				{ enableCategorisedFeatures ? (
-					<>
-						<tr className="plans-grid-next-features-grid__feature-group-row is-first-feature-group-row">
-							<PlanStorageOptions
-								renderedGridPlans={ gridPlansWithoutSpotlight }
-								options={ { isTableCell: true } }
-								intervalType={ intervalType }
-								onStorageAddOnClick={ onStorageAddOnClick }
-								showUpgradeableStorage={ showUpgradeableStorage }
-							/>
-						</tr>
-						{ featureGroups.map( ( featureGroupSlug ) => (
-							<tr
-								className="plans-grid-next-features-grid__feature-group-row"
-								key={ featureGroupSlug }
-							>
-								<PlanFeaturesList
-									renderedGridPlans={ gridPlansWithoutSpotlight }
-									options={ { isTableCell: true } }
-									paidDomainName={ paidDomainName }
-									hideUnavailableFeatures={ hideUnavailableFeatures }
-									selectedFeature={ selectedFeature }
-									generatedWPComSubdomain={ generatedWPComSubdomain }
-									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-									featureGroupSlug={ featureGroupSlug }
-								/>
-							</tr>
-						) ) }
-					</>
-				) : (
-					<>
-						<tr>
-							<PreviousFeaturesIncludedTitle
-								renderedGridPlans={ gridPlansWithoutSpotlight }
-								options={ { isTableCell: true } }
-							/>
-						</tr>
-						<tr>
-							<PlanFeaturesList
-								renderedGridPlans={ gridPlansWithoutSpotlight }
-								options={ { isTableCell: true } }
-								paidDomainName={ paidDomainName }
-								hideUnavailableFeatures={ hideUnavailableFeatures }
-								selectedFeature={ selectedFeature }
-								generatedWPComSubdomain={ generatedWPComSubdomain }
-								isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-							/>
-						</tr>
-						<tr>
-							<PlanStorageOptions
-								renderedGridPlans={ gridPlansWithoutSpotlight }
-								options={ { isTableCell: true } }
-								intervalType={ intervalType }
-								onStorageAddOnClick={ onStorageAddOnClick }
-								showUpgradeableStorage={ showUpgradeableStorage }
-							/>
-						</tr>
-					</>
+				{ ! enableCategorisedFeatures && (
+					<tr>
+						<PreviousFeaturesIncludedTitle
+							renderedGridPlans={ gridPlansWithoutSpotlight }
+							options={ { isTableCell: true } }
+						/>
+					</tr>
 				) }
+				{ featureGroups.map( ( featureGroupSlug, featureGroupIndex ) => (
+					<tr
+						className={ classNames( 'plans-grid-next-features-grid__feature-group-row', {
+							'is-first-feature-group-row': featureGroupIndex === 0,
+						} ) }
+						key={ featureGroupSlug }
+					>
+						<PlanFeaturesList
+							renderedGridPlans={ gridPlansWithoutSpotlight }
+							options={ { isTableCell: true } }
+							paidDomainName={ paidDomainName }
+							hideUnavailableFeatures={ hideUnavailableFeatures }
+							selectedFeature={ selectedFeature }
+							generatedWPComSubdomain={ generatedWPComSubdomain }
+							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+							featureGroupSlug={ featureGroupSlug }
+							intervalType={ intervalType }
+							onStorageAddOnClick={ onStorageAddOnClick }
+							showUpgradeableStorage={ showUpgradeableStorage }
+						/>
+					</tr>
+				) ) }
 			</tbody>
 		</table>
 	);

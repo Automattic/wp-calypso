@@ -35,7 +35,14 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		if ( testAccount.accountName === 'jetpackAtomicEcommPlanUser' ) {
+			// eCommerce plan sites attempt to load Calypso, but with
+			// third-party cookies disabled the fallback route to WP-Admin
+			// kicks in after some time.
+			await testAccount.authenticate( page, { url: /wp-admin/ } );
+		} else {
+			await testAccount.authenticate( page );
+		}
 	} );
 
 	it( 'Navigate to Stats', async function () {

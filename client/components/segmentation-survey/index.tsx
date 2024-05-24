@@ -114,6 +114,7 @@ const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyPr
 				onSkip={ skipToNextPage }
 				onChange={ onChangeAnswer }
 				disabled={ isPending }
+				headerAlign="left"
 			/>
 		</>
 	);

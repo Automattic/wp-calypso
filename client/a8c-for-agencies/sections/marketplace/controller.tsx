@@ -6,6 +6,7 @@ import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import HostingOverview from './hosting-overview';
+import { getValidBrand } from './lib/product-brand';
 import PressableOverview from './pressable-overview';
 import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
@@ -16,12 +17,20 @@ export const marketplaceContext: Callback = () => {
 };
 
 export const marketplaceProductsContext: Callback = ( context, next ) => {
-	const { site_id, product_slug } = context.query;
+	const { site_id, product_slug, purchase_type } = context.query;
+	const productBrand = context.params.brand;
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : 'regular';
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Products" path={ context.path } />
-			<ProductsOverview siteId={ site_id } suggestedProduct={ product_slug } />
+			<ProductsOverview
+				siteId={ site_id }
+				suggestedProduct={ product_slug }
+				purchaseType={ purchaseType }
+				productBrand={ getValidBrand( productBrand ) }
+			/>
 		</>
 	);
 	next();

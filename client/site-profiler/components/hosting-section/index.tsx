@@ -27,7 +27,7 @@ export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {
 							getTitleTranslateOptions()
 					  )
 					: translate(
-							'Struggles with hosting {{alert}}speed and uptime{{/alert}} deter visitors. A switch to WordPress.com could transform the user experience.',
+							'Struggles with hosting {{poor}}speed and uptime{{/poor}} deter visitors. A switch to WordPress.com could transform the user experience.',
 							getTitleTranslateOptions()
 					  )
 			}

@@ -107,8 +107,22 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	// this pre-loads all the lazy steps down the flow.
 	useEffect( () => {
+		if ( siteSlugOrId && ! selectedSite ) {
+			// If this step depends on a selected site, only preload after we have the data.
+			// Otherwise, we're still waiting to render something meaningful, and we don't want to
+			// potentially slow that down by having the CPU busy initialising future steps.
+			return;
+		}
 		Promise.all( flowSteps.map( ( step ) => 'asyncComponent' in step && step.asyncComponent() ) );
-	}, stepPaths );
+		// Most flows sadly instantiate a new steps array on every call to `flow.useSteps()`,
+		// which means that we don't want to depend on `flowSteps` here, or this would end up
+		// running on every render. We thus depend on `flow` instead.
+		//
+		// This should be safe, because flows shouldn't return different lists of steps at
+		// different points. But even if they do, worst case scenario we only fail to preload
+		// some steps, and they'll simply be loaded later.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ flow, siteSlugOrId, selectedSite ] );
 
 	const isFlowStart = useCallback( () => {
 		if ( ! flow || ! stepPaths.length ) {
