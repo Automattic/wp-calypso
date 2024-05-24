@@ -9,7 +9,7 @@ import {
 import usePaymentMethod from '../../purchases/payment-methods/hooks/use-payment-method';
 import ShoppingCartIcon from './shopping-cart-icon';
 import ShoppingCartMenu from './shopping-cart-menu';
-import type { ShoppingCartItem } from '../types';
+import type { MarketplaceType, ShoppingCartItem } from '../types';
 
 import './style.scss';
 
@@ -20,6 +20,7 @@ type Props = {
 	showCart: boolean;
 	setShowCart: ( state: boolean ) => void;
 	toggleCart: () => void;
+	marketplaceType?: MarketplaceType;
 };
 
 export const CART_URL_HASH_FRAGMENT = '#cart';
@@ -31,6 +32,7 @@ export default function ShoppingCart( {
 	showCart,
 	setShowCart,
 	toggleCart,
+	marketplaceType = 'regular',
 }: Props ) {
 	const { paymentMethodRequired } = usePaymentMethod();
 
@@ -70,6 +72,7 @@ export default function ShoppingCart( {
 					items={ items }
 					onCheckout={ handleOnCheckout }
 					onRemoveItem={ onRemoveItem }
+					marketplaceType={ marketplaceType }
 				/>
 			) }
 		</div>

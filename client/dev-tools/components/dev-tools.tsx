@@ -15,7 +15,7 @@ type PromoCardProps = {
 };
 
 const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
-	<Card className="dev-tools-promo__card">
+	<Card className="dev-tools__card">
 		<CardHeading>{ title }</CardHeading>
 		<p>{ text }</p>
 		{ translate( '{{supportLink}}Learn more{{/supportLink}}', {
@@ -26,7 +26,7 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 	</Card>
 );
 
-const DevToolsPromo = () => {
+const DevTools = () => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) || '';
 
@@ -68,22 +68,22 @@ const DevToolsPromo = () => {
 		},
 	];
 	return (
-		<div className="dev-tools-promo">
-			<div className="dev-tools-promo__hero">
+		<div className="dev-tools">
+			<div className="dev-tools__hero">
 				<h1> { translate( 'Unlock all developer tools' ) }</h1>
 				<p>
 					{ translate(
 						'Upgrade to the Creator plan or higher to get access to all developer tools'
 					) }
 				</p>
-				<Button variant="secondary" className="dev-tools-promo__button" href={ pluginsLink }>
+				<Button variant="secondary" className="dev-tools__button" href={ pluginsLink }>
 					{ translate( 'Browse plugins' ) }
 				</Button>
-				<Button variant="primary" className="dev-tools-promo__button" href={ upgradeLink }>
+				<Button variant="primary" className="dev-tools__button" href={ upgradeLink }>
 					{ translate( 'Upgrade now' ) }
 				</Button>
 			</div>
-			<div className="dev-tools-promo__cards">
+			<div className="dev-tools__cards">
 				{ promoCards.map( ( card ) => (
 					<PromoCard
 						title={ card.title }
@@ -96,4 +96,4 @@ const DevToolsPromo = () => {
 	);
 };
 
-export default DevToolsPromo;
+export default DevTools;

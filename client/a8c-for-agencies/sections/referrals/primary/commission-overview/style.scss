@@ -54,3 +54,29 @@
 		padding: 0 24px 24px;
 	}
 }
+
+.commission-overview__layout-automated {
+	.a4a-layout__top-wrapper {
+		padding-block: 24px 0;
+	}
+
+	.commission-overview .commission-overview__section-container {
+		margin-block: 24px 0;
+	}
+}
+
+.commission-overview__section-heading {
+	font-size: rem(24px);
+	margin-block-end: 8px;
+	font-weight: 600;
+}
+.commission-overview__section-subtitle {
+	font-size: rem(14px);
+	font-weight: 400;
+	color: var(--color-neutral-50);
+}
+
+.a4a-overview-hosting__wp-logo {
+	fill: var(--color-primary-50);
+	margin: 0;
+}
