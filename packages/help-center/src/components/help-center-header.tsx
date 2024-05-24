@@ -34,7 +34,7 @@ const SupportModeTitle = () => {
 			return (
 				<>
 					<Icon icon={ commentContent } />
-					{ __( 'Start live chat', __i18n_text_domain__ ) }
+					{ __( 'Connect to our Happiness Engineers', __i18n_text_domain__ ) }
 				</>
 			);
 		case 'EMAIL': {
