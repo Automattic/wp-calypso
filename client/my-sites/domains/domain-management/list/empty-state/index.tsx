@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import page from '@automattic/calypso-router';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
@@ -9,12 +8,10 @@ export default function EmptyState() {
 
 	const handleClickUseMyDomain = () => {
 		recordTracksEvent( 'calypso_domain_management_list_empty_state_use_my_domain_click' );
-		page( '/setup/domain-transfer' );
 	};
 
 	const handleClickAddNewDomain = () => {
 		recordTracksEvent( 'calypso_domain_management_list_empty_state_add_new_domain_click' );
-		page( '/start/domain' );
 	};
 
 	return (
@@ -25,10 +22,20 @@ export default function EmptyState() {
 				) }
 			</Text>
 			<div className="domains-empty-state-actions">
-				<Button __next40pxDefaultSize variant="secondary" onClick={ handleClickUseMyDomain }>
+				<Button
+					__next40pxDefaultSize
+					variant="secondary"
+					href="/setup/domain-transfer"
+					onClick={ handleClickUseMyDomain }
+				>
 					{ translate( 'Transfer domain' ) }
 				</Button>
-				<Button __next40pxDefaultSize variant="primary" onClick={ handleClickAddNewDomain }>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					href="/start/domain"
+					onClick={ handleClickAddNewDomain }
+				>
 					{ translate( 'Find a domain' ) }
 				</Button>
 			</div>
