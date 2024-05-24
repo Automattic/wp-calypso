@@ -17,12 +17,12 @@ type Props = {
 
 function getIcon( urlData?: UrlData ) {
 	if ( urlData?.platform_data?.is_wpcom ) {
-		return <img src={ wpComSiteIcon } alt="WordPress.com site" />;
+		return <img src={ wpComSiteIcon } alt={ translate( 'WordPress.com site' ) } />;
 	}
-	return <img src={ nonWpComSiteIcon } alt="Non WordPress.com site" />;
+	return <img src={ nonWpComSiteIcon } alt={ translate( 'Non WordPress.com site' ) } />;
 }
 
-function getDomainMessage( urlData?: UrlData ) {
+function getIsWpComSiteMessage( urlData?: UrlData ) {
 	if ( urlData?.platform_data?.is_wpcom ) {
 		return translate( 'This site is hosted on WordPress.com' );
 	}
@@ -42,7 +42,7 @@ export const ResultsHeader = ( { domain, overallScore, urlData, onGetReport }: P
 			<div className="results-header--domain-container">
 				<span className="domain-title">{ domain }</span>
 				{ getIcon( urlData ) }
-				<span className="domain-message">{ getDomainMessage( urlData ) }</span>
+				<span className="domain-message">{ getIsWpComSiteMessage( urlData ) }</span>
 			</div>
 			<h1>{ getTitleMessage( overallScore ) }</h1>
 			<div className="results-header--button-container">
