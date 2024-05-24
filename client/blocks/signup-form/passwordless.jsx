@@ -73,6 +73,7 @@ class PasswordlessSignupForm extends Component {
 			password: '',
 		};
 		const { flowName, queryArgs = {} } = this.props;
+		const isDevAccount = queryArgs.ref === 'hosting-lp' || queryArgs.ref === 'developer-lp';
 
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
@@ -80,7 +81,7 @@ class PasswordlessSignupForm extends Component {
 			this.props.submitForm( {
 				email: this.state.email,
 				is_passwordless: true,
-				is_dev_account: queryArgs.ref === 'developer-lp',
+				is_dev_account: isDevAccount,
 			} );
 			return;
 		}
@@ -93,7 +94,7 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		const { oauth2_client_id, oauth2_redirect, ref } = queryArgs;
+		const { oauth2_client_id, oauth2_redirect } = queryArgs;
 
 		// I'm not sure why passwordless signup form stopped respecting flowName from variationName param,
 		// see https://github.com/Automattic/wp-calypso/pull/67225 for more details.
@@ -114,7 +115,7 @@ class PasswordlessSignupForm extends Component {
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
 				anon_id: getTracksAnonymousUserId(),
-				is_dev_account: ref === 'developer-lp',
+				is_dev_account: isDevAccount,
 				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
 			} );
 
