@@ -1,24 +1,31 @@
 import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import './styles.scss';
+import nonWpComSiteIcon from 'calypso/assets/images/site-profiler/non-wpcom-site.svg';
+import wpComSiteIcon from 'calypso/assets/images/site-profiler/wpcom-site.svg';
+import { UrlData } from 'calypso/blocks/import/types';
 import { isScoreGood } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { Scores } from 'calypso/data/site-profiler/types';
+
+import './styles.scss';
 
 type Props = {
 	domain: string;
 	overallScore: Scores;
+	urlData?: UrlData;
 	onGetReport: () => void;
 };
 
-function getIcon() {
-	// TODO: Implement the functionality to get the correct Icon
-	// https://github.com/Automattic/dotcom-forge/issues/7281
-	return <Gridicon icon="time" size={ 24 } />;
+function getIcon( urlData?: UrlData ) {
+	if ( urlData?.platform_data?.is_wpcom ) {
+		return <img src={ wpComSiteIcon } alt="WordPress.com site" />;
+	}
+	return <img src={ nonWpComSiteIcon } alt="Non WordPress.com site" />;
 }
 
-function getDomainMessage() {
-	// TODO: Implement the functionality to get the correct Domain message
-	// https://github.com/Automattic/dotcom-forge/issues/7281
+function getDomainMessage( urlData?: UrlData ) {
+	if ( urlData?.platform_data?.is_wpcom ) {
+		return translate( 'This site is hosted on WordPress.com' );
+	}
 	return translate( 'This site is not hosted on WordPress.com' );
 }
 
@@ -29,13 +36,13 @@ function getTitleMessage( overallScore: Scores ) {
 	return translate( 'Your site is a top performer! Keep it up.' );
 }
 
-export const ResultsHeader = ( { domain, overallScore, onGetReport }: Props ) => {
+export const ResultsHeader = ( { domain, overallScore, urlData, onGetReport }: Props ) => {
 	return (
 		<div className="results-header--container">
 			<div className="results-header--domain-container">
 				<span className="domain-title">{ domain }</span>
-				{ getIcon() }
-				<span className="domain-message">{ getDomainMessage() }</span>
+				{ getIcon( urlData ) }
+				<span className="domain-message">{ getDomainMessage( urlData ) }</span>
 			</div>
 			<h1>{ getTitleMessage( overallScore ) }</h1>
 			<div className="results-header--button-container">
