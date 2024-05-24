@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
-import A4ALogo, { LOGO_COLOR_SECONDARY_ALT } from '../a4a-logo';
+import A4ALogo from '../a4a-logo';
 import { A4A_SITES_CONNECT_URL_LINK } from '../sidebar-menu/lib/constants';
 import type { MutableRefObject } from 'react';
 
@@ -47,11 +47,7 @@ const AddNewSiteButton = ( {
 			href={ A4A_DOWNLOAD_LINK_ON_GITHUB }
 		>
 			<PopoverMenuItem onClick={ onClickA4APluginMenuItem } href={ A4A_DOWNLOAD_LINK_ON_GITHUB }>
-				<A4ALogo
-					className="gridicon"
-					size={ 18 }
-					colors={ { secondary: LOGO_COLOR_SECONDARY_ALT } }
-				/>
+				<A4ALogo className="gridicon" size={ 18 } />
 				<span>{ translate( 'Download A4A Plugin' ) }</span>
 			</PopoverMenuItem>
 
