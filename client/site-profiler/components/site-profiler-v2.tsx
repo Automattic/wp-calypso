@@ -148,6 +148,7 @@ export default function SiteProfilerV2( props: Props ) {
 									urlData={ urlData }
 									hostingProvider={ hostingProviderData?.hosting_provider }
 									hostingRef={ hostingRef }
+									openMigrationForm={ () => setIsGetMigrationFormOpen( true ) }
 								/>
 
 								<DomainSection

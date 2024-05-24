@@ -10,11 +10,12 @@ interface HostingSectionProps {
 	urlData?: UrlData;
 	hostingProvider?: HostingProvider;
 	hostingRef: React.RefObject< HTMLObjectElement >;
+	openMigrationForm?: () => void;
 }
 
 export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {
 	const translate = useTranslate();
-	const { dns = [], urlData, hostingProvider, hostingRef } = props;
+	const { dns = [], urlData, hostingProvider, hostingRef, openMigrationForm } = props;
 	const isWPcom = hostingProvider?.slug?.toLowerCase() === 'automattic';
 
 	return (
@@ -31,7 +32,8 @@ export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {
 							getTitleTranslateOptions()
 					  )
 			}
-			subtitle={ translate( 'Upgrade your hosting with WordPress.com' ) }
+			subtitle={ ! isWPcom ? translate( 'Upgrade your hosting with WordPress.com' ) : undefined }
+			subtitleOnClick={ openMigrationForm }
 			ref={ hostingRef }
 		>
 			<HostingInformation
