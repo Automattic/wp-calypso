@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
+import { MetricsInsight } from 'calypso/site-profiler/components/metrics-insight';
 import { MetricsSection } from 'calypso/site-profiler/components/metrics-section';
-import { MetricsInsight } from '../metrics-insight';
+import { getTitleTranslateOptions } from 'calypso/site-profiler/utils/get-title-translate-options';
 
 interface PerformanceSectionProps {
 	performanceMetricsRef: React.RefObject< HTMLObjectElement >;
@@ -15,13 +16,8 @@ export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props )
 		<MetricsSection
 			name={ translate( 'Performance Metrics' ) }
 			title={ translate(
-				"Your site {{success}}performs well{{/success}}, but there's always room to be faster and smoother for your visitors.",
-				{
-					components: {
-						success: <span className="success" />,
-						alert: <span className="alert" />,
-					},
-				}
+				"Your site {{good}}performs well{{/good}}, but there's always room to be faster and smoother for your visitors.",
+				getTitleTranslateOptions()
 			) }
 			subtitle={ translate( "Boost your site's performance" ) }
 			ref={ performanceMetricsRef }
