@@ -1,6 +1,6 @@
 export default function DevToolsIcon() {
 	return (
-		<span className="dev-tools-promo__icon" key="blogging-prompt__dev-tools-icon">
+		<span className="dev-tools__icon" key="blogging-prompt__dev-tools-icon">
 			<svg
 				fill="none"
 				height="20"
