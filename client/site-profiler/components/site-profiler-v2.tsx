@@ -19,6 +19,7 @@ import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { BasicMetrics } from './basic-metrics';
 import { DomainSection } from './domain-section';
+import { GetMigrationForm } from './get-migration-form';
 import { GetReportForm } from './get-report-form';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
@@ -37,6 +38,7 @@ export default function SiteProfilerV2( props: Props ) {
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
+	const [ isGetMigrationFormOpen, setIsGetMigrationFormOpen ] = useState( true );
 
 	const {
 		domain,
@@ -166,6 +168,11 @@ export default function SiteProfilerV2( props: Props ) {
 				token={ basicMetrics?.token }
 				isOpen={ showGetReportForm }
 				onClose={ () => setIsGetReportFormOpen( false ) }
+			/>
+			<GetMigrationForm
+				domain={ domain }
+				isOpen={ isGetMigrationFormOpen }
+				onClose={ () => setIsGetMigrationFormOpen( false ) }
 			/>
 		</div>
 	);
