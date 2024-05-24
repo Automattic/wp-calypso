@@ -26,6 +26,7 @@ import {
 	isA4AOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
+	isBlazeProOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -41,6 +42,7 @@ import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -74,6 +76,7 @@ const LayoutLoggedOut = ( {
 	isPartnerSignupStart,
 	isWooCoreProfilerFlow,
 	isWooPasswordless,
+	isBlazePro,
 	locale,
 	/* eslint-disable no-shadow */
 	clearLastActionRequiresLogin,
@@ -144,6 +147,7 @@ const LayoutLoggedOut = ( {
 		'is-magic-login': isMagicLogin,
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWooPasswordless,
+		'is-blaze-pro': isBlazePro,
 	};
 
 	let masterbar = null;
@@ -346,6 +350,7 @@ export default withCurrentRoute(
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&
+				! isBlazeProOAuth2Client( oauth2Client ) &&
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
 			const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 			const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
@@ -377,6 +382,7 @@ export default withCurrentRoute(
 				isPartnerSignupStart,
 				isWooCoreProfilerFlow,
 				isWooPasswordless: getIsWooPasswordless( state ),
+				isBlazePro: getIsBlazePro( state ),
 			};
 		},
 		{ clearLastActionRequiresLogin }
