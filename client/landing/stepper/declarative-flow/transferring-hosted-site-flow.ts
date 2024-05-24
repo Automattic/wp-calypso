@@ -34,9 +34,11 @@ const transferringHostedSite: Flow = {
 		const dispatch = useReduxDispatch();
 
 		const exitFlow = ( to: string ) => {
+			const timeoutDuration = to === 'home' ? 0 : 3000;
+
 			setTimeout( () => {
 				window.location.assign( to );
-			}, 500 );
+			}, timeoutDuration );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
