@@ -158,11 +158,12 @@ class SocialSignupForm extends Component {
 export default connect(
 	( state ) => {
 		const query = getCurrentQueryArguments( state );
+		const isDevAccount = query?.ref === 'hosting-lp' || query?.ref === 'developer-lp';
 
 		return {
 			currentRoute: getCurrentRoute( state ),
 			oauth2Client: getCurrentOAuth2Client( state ),
-			isDevAccount: query?.ref === 'developer-lp',
+			isDevAccount: isDevAccount,
 			isWoo:
 				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
 				isWooCommerceCoreProfilerFlow( state ),
