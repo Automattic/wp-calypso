@@ -259,6 +259,7 @@ const importHostedSiteFlow: Flow = {
 					// remove the siteSlug in case they want to change the
 					// destination site
 					urlQueryParams.delete( 'siteSlug' );
+					urlQueryParams.delete( 'from' );
 					return navigate( `import?${ urlQueryParams.toString() }` );
 
 				case 'verifyEmail':
