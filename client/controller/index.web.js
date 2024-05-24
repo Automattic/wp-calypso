@@ -216,7 +216,7 @@ export function redirectToDashboard( context ) {
 	const redirectUrl =
 		adminInterface === 'wp-admin'
 			? getSiteAdminUrl( state, site?.ID )
-			: getSiteHomeUrl( site, site?.ID );
+			: getSiteHomeUrl( state, site?.ID );
 
 	return navigate( redirectUrl );
 }
