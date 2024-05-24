@@ -27,7 +27,7 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'higher-speed': {
 			title: translate( 'Higher speed' ),
 			description: translate(
-				'WordPress.com has %(higherSpeedPercentage)d%% more sites that display fast compared to other WordPress hosts.',
+				'WordPress.com has %(higherSpeedPercentage)d%% more sites that load quickly compared to other WordPress hosts.',
 				{
 					args: { higherSpeedPercentage },
 				}
