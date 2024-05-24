@@ -71,6 +71,12 @@
 		max-width: 550px;
 	}
 
+	&.referrals-layout--full-width {
+		.a4a-layout__body-wrapper {
+			max-width: 100%;
+		}
+	}
+
 	.referrals-overview__step-section-woo-payments {
 		margin-block-end: 0;
 

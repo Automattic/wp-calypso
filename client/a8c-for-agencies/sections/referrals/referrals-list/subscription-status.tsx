@@ -31,7 +31,7 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 		if ( pendingStatuses.length === item.statuses.length ) {
 			return {
 				status: translate( 'Pending' ),
-				type: 'success',
+				type: 'warning',
 			};
 		}
 		return {
