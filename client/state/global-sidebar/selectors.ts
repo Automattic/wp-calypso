@@ -12,7 +12,7 @@ const GLOBAL_SITE_DASHBOARD_ROUTES = {
 	hosting: '/hosting-config/',
 	'github-deployments': '/github-deployments/',
 	'site-monitoring': '/site-monitoring/',
-	'dev-tools-promo': '/dev-tools-promo/',
+	'dev-tools': '/dev-tools/',
 };
 
 function isInSection( sectionName: string, sectionNames: string[] ) {

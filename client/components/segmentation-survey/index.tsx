@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import SurveyContainer from 'calypso/components/survey-container';
-import { Question } from 'calypso/components/survey-container/types';
+import { QuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
+import { Question, QuestionConfiguration } from 'calypso/components/survey-container/types';
 import {
 	useCachedAnswers,
 	useSaveAnswersMutation,
@@ -17,6 +18,9 @@ type SegmentationSurveyProps = {
 	onBack?: () => void;
 	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void;
 	skipNextNavigation?: ( questionKey: string, answerKeys: string[] ) => boolean;
+	headerAlign?: string;
+	questionConfiguration?: QuestionConfiguration;
+	questionComponentMap?: QuestionComponentMap;
 };
 
 /**
@@ -32,6 +36,9 @@ const SegmentationSurvey = ( {
 	onBack,
 	onNext,
 	skipNextNavigation,
+	headerAlign,
+	questionConfiguration,
+	questionComponentMap,
 }: SegmentationSurveyProps ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
 	const { mutateAsync, isPending } = useSaveAnswersMutation( { surveyKey } );
@@ -121,7 +128,9 @@ const SegmentationSurvey = ( {
 				onSkip={ skipToNextPage }
 				onChange={ onChangeAnswer }
 				disabled={ isPending }
-				headerAlign="left"
+				headerAlign={ headerAlign }
+				questionConfiguration={ questionConfiguration }
+				questionComponentMap={ questionComponentMap }
 			/>
 		</>
 	);

@@ -3,6 +3,8 @@ import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import SegmentationSurvey from 'calypso/components/segmentation-survey';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
+import { flowQuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
+import { QuestionConfiguration } from 'calypso/components/survey-container/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './styles.scss';
 
@@ -12,6 +14,17 @@ interface Props {
 }
 
 const SURVEY_KEY = 'guided-onboarding-flow';
+
+const QUESTION_CONFIGURATION: QuestionConfiguration = {
+	'what-brings-you-to-wordpress': {
+		hideContinue: true,
+		hideSkip: true,
+	},
+	'what-are-your-goals': {
+		hideContinue: false,
+		hideSkip: false,
+	},
+};
 
 export default function InitialIntentStep( props: Props ) {
 	const translate = useTranslate();
@@ -78,6 +91,8 @@ export default function InitialIntentStep( props: Props ) {
 					surveyKey={ SURVEY_KEY }
 					onNext={ handleNext }
 					skipNextNavigation={ skipNextNavigation }
+					questionConfiguration={ QUESTION_CONFIGURATION }
+					questionComponentMap={ flowQuestionComponentMap }
 				/>
 			}
 			align="center"
