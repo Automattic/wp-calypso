@@ -17,8 +17,8 @@ const higherSpeedPercentage = Math.round(
 
 const fastResponsePercentage = Math.round( cwvtechReportJson[ 'WordPress.com' ].goodFID * 100 );
 
-const wpcomMinutesDowntime = 0;
-const otherHostsAverageDowntime = 63;
+const wpcomPercentageUptime = '99.99';
+const otherHostsPercentageUptime = '99.85';
 
 export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 	const translate = useTranslate();
@@ -27,7 +27,7 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'higher-speed': {
 			title: translate( 'Higher speed' ),
 			description: translate(
-				'%(higherSpeedPercentage)d%% of sites on WordPress.com renders the largest image or text block visible in the viewport within 2500 milliseconds, in accordance with Google recommendations.',
+				'WordPress.com has %(higherSpeedPercentage)d%% more sites that display fast compared to other WordPress hosts.',
 				{
 					args: { higherSpeedPercentage },
 				}
@@ -37,7 +37,7 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'faster-response': {
 			title: translate( 'Faster response' ),
 			description: translate(
-				'%(fastResponsePercentage)d%% of sites on WordPress.com respond within 100 milliseconds on the first interaction, in accordance with Google recommendations.',
+				'%(fastResponsePercentage)d%% of sites on WordPress.com respond within 0.1 seconds on the first interaction.',
 				{
 					args: { fastResponsePercentage },
 				}
@@ -47,12 +47,11 @@ export const useDefaultHostingDetails = (): DefaultHostingDetails => {
 		'higher-availability': {
 			title: translate( 'Higher availability' ),
 			description: translate(
-				'WordPress.com has %(wpcomMinutesDowntime)s downtime, compared to %(otherHostsAverageDowntime)d minutes per month for other WordPress hosts.',
+				'WordPress.com boasts a %(wpcomPercentageUptime)s%% uptime, compared to %(otherHostsPercentageUptime)s%% uptime for other WordPress hosts.',
 				{
 					args: {
-						wpcomMinutesDowntime:
-							0 === wpcomMinutesDowntime ? translate( 'zero' ) : wpcomMinutesDowntime,
-						otherHostsAverageDowntime,
+						wpcomPercentageUptime,
+						otherHostsPercentageUptime,
 					},
 				}
 			),
