@@ -298,6 +298,9 @@ export default function ProductListing( {
 
 	const shouldShowResetButton = hasSelectedFilter( selectedFilters );
 
+	// FIXME: For now we hide the filtering until we complete the implementation. We will remove this flag later.
+	const hideFilter = true;
+
 	if ( isLoadingProducts ) {
 		return (
 			<div className="product-listing">
@@ -318,10 +321,12 @@ export default function ProductListing( {
 						onClick={ trackClickCallback( 'search' ) }
 					/>
 
-					<ProductFilter
-						selectedFilters={ selectedFilters }
-						setSelectedFilters={ setSelectedFilters }
-					/>
+					{ ! hideFilter && (
+						<ProductFilter
+							selectedFilters={ selectedFilters }
+							setSelectedFilters={ setSelectedFilters }
+						/>
+					) }
 
 					{ shouldShowResetButton && (
 						<Button
