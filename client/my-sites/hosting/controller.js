@@ -1,9 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_SFTP } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { createElement } from 'react';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -39,22 +37,14 @@ export async function handleHostingPanelRedirect( context, next ) {
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
-	const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 	const isJetpackNonAtomic = ! isAtomicSite && !! site?.jetpack;
 
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		// Go to the Dev Tools screen for Simple sites transferable to Atomic.
-		if ( ! isAtomicSite && hasSftpFeature ) {
-			context.page.replace( `/dev-tools-promo/${ site?.slug }` );
-			return;
-		}
-
 		if ( isJetpackNonAtomic ) {
 			context.page.replace( `/overview/${ site?.slug }` );
 			return;
 		}
-
 		next();
 		return;
 	}
