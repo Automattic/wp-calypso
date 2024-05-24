@@ -1,15 +1,28 @@
 export default function ReaderManageSubscriptionsIcon() {
 	return (
 		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 24 24"
-			className="gridicon gridicons-customize sidebar__menu-icon sidebar_svg-manage-subscriptions"
-			height="20"
+			className="sidebar__menu-icon sidebar_svg-subscriptions"
 			width="20"
+			height="20"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
 		>
-			<g>
-				<path d="M2 6c0-1.505.78-3.08 2-4 0 .845.69 2 2 2a3 3 0 013 3c0 .386-.079.752-.212 1.091a74.515 74.515 0 012.191 1.808l-2.08 2.08a75.852 75.852 0 01-1.808-2.191A2.977 2.977 0 016 10c-2.21 0-4-1.79-4-4zm12.152 6.848l1.341-1.341A4.446 4.446 0 0017.5 12 4.5 4.5 0 0022 7.5c0-.725-.188-1.401-.493-2.007L18 9l-2-2 3.507-3.507A4.446 4.446 0 0017.5 3 4.5 4.5 0 0013 7.5c0 .725.188 1.401.493 2.007L3 20l2 2 6.848-6.848a68.562 68.562 0 005.977 5.449l1.425 1.149 1.5-1.5-1.149-1.425a68.562 68.562 0 00-5.449-5.977z" />
-			</g>
+			<path
+				fill-rule="evenodd"
+				clip-rule="evenodd"
+				d="M15.5 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm0-1.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+				fill="#1E1E1E"
+			/>
+			<path
+				d="M13.25 17v-2a2.75 2.75 0 0 0-2.75-2.75h-4A2.75 2.75 0 0 0 3.75 15v2h1.5v-2c0-.69.56-1.25 1.25-1.25h4c.69 0 1.25.56 1.25 1.25v2h1.5ZM20.25 15v2h-1.5v-2c0-.69-.56-1.25-1.25-1.25H15v-1.5h2.5A2.75 2.75 0 0 1 20.25 15Z"
+				fill="#1E1E1E"
+			/>
+			<path
+				fill-rule="evenodd"
+				clip-rule="evenodd"
+				d="M11 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-1.5 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
+				fill="#1E1E1E"
+			/>
 		</svg>
 	);
 }
