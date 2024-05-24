@@ -76,9 +76,9 @@ export default function ProductListing( {
 	const {
 		filteredProductsAndBundles,
 		isLoadingProducts,
-		plans,
-		backupAddons,
-		products,
+		jetpackPlans,
+		jetpackBackupAddons,
+		jetpackProducts,
 		wooExtensions,
 		data,
 		suggestedProductSlugs,
@@ -86,6 +86,7 @@ export default function ProductListing( {
 		selectedSite,
 		selectedBundleSize: quantity,
 		selectedProductBrandFilter: productBrand,
+		selectedProductFilters: selectedFilters,
 		productSearchQuery,
 	} );
 
@@ -298,9 +299,6 @@ export default function ProductListing( {
 
 	const shouldShowResetButton = hasSelectedFilter( selectedFilters );
 
-	// FIXME: For now we hide the filtering until we complete the implementation. We will remove this flag later.
-	const hideFilter = true;
-
 	if ( isLoadingProducts ) {
 		return (
 			<div className="product-listing">
@@ -321,12 +319,10 @@ export default function ProductListing( {
 						onClick={ trackClickCallback( 'search' ) }
 					/>
 
-					{ ! hideFilter && (
-						<ProductFilter
-							selectedFilters={ selectedFilters }
-							setSelectedFilters={ setSelectedFilters }
-						/>
-					) }
+					<ProductFilter
+						selectedFilters={ selectedFilters }
+						setSelectedFilters={ setSelectedFilters }
+					/>
 
 					{ shouldShowResetButton && (
 						<Button
@@ -365,7 +361,7 @@ export default function ProductListing( {
 				</ListingSection>
 			) }
 
-			{ plans.length > 0 && (
+			{ jetpackPlans.length > 0 && (
 				<ListingSection
 					id="jetpack-plans"
 					icon={ <JetpackLogo size={ 26 } /> }
@@ -374,11 +370,11 @@ export default function ProductListing( {
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) } // FIXME: Add proper description for A4A
 				>
-					{ getProductCards( plans ) }
+					{ getProductCards( jetpackPlans ) }
 				</ListingSection>
 			) }
 
-			{ products.length > 0 && (
+			{ jetpackProducts.length > 0 && (
 				<ListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Products' ) }
@@ -386,11 +382,11 @@ export default function ProductListing( {
 						'Mix and match powerful security, performance, and growth tools for your sites.'
 					) }
 				>
-					{ getProductCards( products ) }
+					{ getProductCards( jetpackProducts ) }
 				</ListingSection>
 			) }
 
-			{ backupAddons.length > 0 && (
+			{ jetpackBackupAddons.length > 0 && (
 				<ListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
@@ -398,7 +394,7 @@ export default function ProductListing( {
 						'Add additional storage to your current VaultPress Backup plans.'
 					) }
 				>
-					{ getProductCards( backupAddons ) }
+					{ getProductCards( jetpackBackupAddons ) }
 				</ListingSection>
 			) }
 		</div>
