@@ -14,7 +14,12 @@ import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
 import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
-import { displaySiteUrl, isStagingSite, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
+import {
+	displaySiteUrl,
+	isNotAtomicJetpack,
+	isStagingSite,
+	MEDIA_QUERIES,
+} from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
@@ -75,7 +80,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
 
 	const onSiteClick = ( event: React.MouseEvent ) => {
-		if ( isAdmin && ! isP2Site ) {
+		if ( isAdmin && ! isP2Site && ! isNotAtomicJetpack( site ) ) {
 			openSitePreviewPane && openSitePreviewPane( site );
 		} else {
 			navigate( adminUrl );
