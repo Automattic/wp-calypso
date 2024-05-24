@@ -24,7 +24,7 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	const purchaseType =
-		!! isAutomatedReferrals && purchase_type === 'referral' ? 'referral' : 'regular';
+		isAutomatedReferrals && purchase_type === 'referral' ? 'referral' : 'regular';
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Products" path={ context.path } />
