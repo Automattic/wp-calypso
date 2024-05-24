@@ -75,16 +75,6 @@ const DotcomSitesDataViews = ( {
 		[ setDataViewsState ]
 	);
 
-	const handleSiteSelection = useCallback( ( site: SiteExcerptData ) => {
-		// It's a bit complicated to get the data of site from the redux store here,
-		// so triggering the site button click to handle the selection.
-		const selector = `.sites-dataviews__site[data-site-id="${ site.ID }"] .sites-dataviews__preview-trigger`;
-		const button = document.querySelector( selector ) as HTMLButtonElement;
-		if ( button ) {
-			button.click();
-		}
-	}, [] );
-
 	useEffect( () => {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
 		const handleRowClick = ( event: Event ) => {
@@ -243,7 +233,7 @@ const DotcomSitesDataViews = ( {
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
 		pagination: paginationInfo,
-		onSelectionChange: ( [ site ] ) => handleSiteSelection( site ),
+		onSelectionChange: ( [ site ] ) => openSitePreviewPane( site ),
 	} );
 
 	// Update the itemData packet

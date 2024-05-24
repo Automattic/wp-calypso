@@ -29,7 +29,7 @@ import {
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { hydrate, render } from './web-util.js';
@@ -205,6 +205,23 @@ export function redirectLoggedOutToSignup( context, next ) {
 }
 
 /**
+ * Middleware to redirect a user to the Dashboard.
+ * @param   {Object}   context Context object
+ * @returns {void}
+ */
+export function redirectToDashboard( context ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const adminInterface = getSiteOption( state, site?.ID, 'wpcom_admin_interface' );
+	const redirectUrl =
+		adminInterface === 'wp-admin'
+			? getSiteAdminUrl( state, site?.ID )
+			: getSiteHomeUrl( site, site?.ID );
+
+	return navigate( redirectUrl );
+}
+
+/**
  * Middleware to redirect a user if they don't have the appropriate capability.
  * @param   {string}   capability Capability to check
  * @returns {Function}            Middleware function
@@ -214,11 +231,9 @@ export function redirectIfCurrentUserCannot( capability ) {
 		const state = context.store.getState();
 		const site = getSelectedSite( state );
 		const currentUserCan = canCurrentUser( state, site?.ID, capability );
-		const adminInterface = getSiteOption( state, site?.ID, 'wpcom_admin_interface' );
-		const siteAdminUrl = getSiteAdminUrl( state, site?.ID );
 
 		if ( site && ! currentUserCan ) {
-			return navigate( adminInterface === 'wp-admin' ? siteAdminUrl : `/home/${ site.slug }` );
+			return redirectToDashboard( context );
 		}
 
 		next();
@@ -235,11 +250,28 @@ export function redirectIfP2( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	const isP2 = site?.options?.is_wpforteams_site;
-	const adminInterface = getSiteOption( state, site?.ID, 'wpcom_admin_interface' );
-	const siteAdminUrl = getSiteAdminUrl( state, site?.ID );
 
 	if ( isP2 ) {
-		return navigate( adminInterface === 'wp-admin' ? siteAdminUrl : `/home/${ site.slug }` );
+		return redirectToDashboard( context );
+	}
+
+	next();
+}
+
+/**
+ * Middleware to redirect a user if the site is a pure Jetpack site.
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectIfJetpackNonAtomic( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+	const isJetpackNonAtomic = ! isAtomicSite && !! site?.jetpack;
+
+	if ( isJetpackNonAtomic ) {
+		return redirectToDashboard( context );
 	}
 
 	next();

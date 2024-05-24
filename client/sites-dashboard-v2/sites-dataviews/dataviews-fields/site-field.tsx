@@ -89,7 +89,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	};
 
 	return (
-		<div className="sites-dataviews__site" data-site-id={ site.ID }>
+		<div className="sites-dataviews__site">
 			<SiteListTile
 				contentClassName={ classnames(
 					'sites-dataviews__site-name',
