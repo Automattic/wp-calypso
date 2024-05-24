@@ -34,7 +34,7 @@ const SupportModeTitle = () => {
 			return (
 				<>
 					<Icon icon={ commentContent } />
-					{ __( 'Start live chat', __i18n_text_domain__ ) }
+					{ __( 'Contact WordPress.com Support', __i18n_text_domain__ ) }
 				</>
 			);
 		case 'EMAIL': {
