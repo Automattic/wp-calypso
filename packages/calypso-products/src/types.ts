@@ -37,6 +37,8 @@ import {
 	FEATURE_GROUP_MANAGED_WP_HOSTING,
 	FEATURE_GROUP_ECOMMERCE,
 	FEATURE_GROUP_SUPPORT,
+	FEATURE_GROUP_STORAGE,
+	FEATURE_GROUP_ALL_FEATURES,
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
@@ -240,7 +242,9 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_PRODUCTS
 	| typeof FEATURE_GROUP_PAYMENTS
 	| typeof FEATURE_GROUP_MARKETING_EMAIL
-	| typeof FEATURE_GROUP_SHIPPING;
+	| typeof FEATURE_GROUP_SHIPPING
+	| typeof FEATURE_GROUP_STORAGE
+	| typeof FEATURE_GROUP_ALL_FEATURES;
 
 export interface FeatureFootnotes {
 	[ key: string ]: Feature[];
@@ -248,7 +252,7 @@ export interface FeatureFootnotes {
 
 export type FeatureGroup = {
 	slug: FeatureGroupSlug;
-	getTitle: () => string;
+	getTitle: () => string | null;
 	getFeatures: () => Feature[];
 	/**
 	 * This optionally returns an object containing footnotes and the features that should display the footnote.

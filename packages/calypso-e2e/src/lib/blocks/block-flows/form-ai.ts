@@ -40,15 +40,15 @@ export class FormAiFlow implements BlockFlow {
 		let aiInputParentLocator: Locator;
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			// On mobile, it's attached to the editor block toolbar, which is apart from the block DOM.
-			aiInputParentLocator = await context.editorPage.getEditorCanvas();
+			aiInputParentLocator = await context.editorPage.getEditorParent();
 		} else {
 			// On desktop, it's within the block DOM node.
 			aiInputParentLocator = context.addedBlockLocator;
 		}
 
-		const aiInputReadyLocator = aiInputParentLocator.getByRole( 'textbox', {
-			name: 'Ask Jetpack AI to create your form',
-		} );
+		const aiInputReadyLocator = aiInputParentLocator.getByPlaceholder(
+			'Ask Jetpack AI to create your form'
+		);
 		const aiInputBusyLocator = aiInputParentLocator.getByRole( 'textbox', {
 			name: 'Creating your form. Please wait a few moments.',
 			disabled: true,
