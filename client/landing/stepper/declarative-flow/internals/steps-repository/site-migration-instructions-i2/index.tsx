@@ -1,8 +1,9 @@
 import { captureException } from '@automattic/calypso-sentry';
+import { SiteDetails } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, type FC } from 'react';
+import React, { useEffect, type FC } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
@@ -49,11 +50,19 @@ const ContactSupportMessage = () => {
 	);
 };
 
-const SiteMigrationInstructions: Step = function ( { flow } ) {
+type SiteMigrationInstructionsProps = {
+	site: SiteDetails | null;
+	fromUrl: string;
+	onError: ( data: any ) => void;
+};
+
+export const SiteMigrationInstructions = function ( {
+	site,
+	fromUrl,
+	onError,
+}: SiteMigrationInstructionsProps ) {
 	const translate = useTranslate();
-	const site = useSite();
 	const siteId = site?.ID;
-	const fromUrl = useQuery().get( 'from' ) || '';
 	const {
 		detailedStatus,
 		migrationKey,
@@ -85,17 +94,9 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 
 	useEffect( () => {
 		if ( setupError ) {
-			captureException( setupError, {
-				tags: {
-					blog_id: siteId,
-					calypso_section: 'setup',
-					flow,
-					stepName: 'site-migration-instructions',
-					context: 'failed_to_prepare_site_for_migration',
-				},
-			} );
+			onError( { setupError } );
 		}
-	}, [ flow, setupError, siteId ] );
+	}, [ setupError, siteId ] );
 
 	const recordInstructionsLinkClick = ( linkname: string ) => {
 		recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
@@ -103,7 +104,7 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 		} );
 	};
 
-	const stepContent = (
+	return (
 		<div className="site-migration-instructions__content">
 			<ol className="site-migration-instructions__list">
 				<li>
@@ -215,6 +216,25 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 			{ showSupportMessage && <ContactSupportMessage /> }
 		</div>
 	);
+};
+
+const SiteMigrationInstructionsStep: Step = function ( { flow } ) {
+	const translate = useTranslate();
+	const site = useSite();
+	const siteId = site?.ID;
+	const fromUrl = useQuery().get( 'from' ) || '';
+
+	const onInstructionsError = ( data: any ) => {
+		captureException( data.setupError, {
+			tags: {
+				blog_id: siteId,
+				calypso_section: 'setup',
+				flow,
+				stepName: 'site-migration-instructions',
+				context: 'failed_to_prepare_site_for_migration',
+			},
+		} );
+	};
 
 	return (
 		<>
@@ -234,11 +254,17 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 						subHeaderAlign="center"
 					/>
 				}
-				stepContent={ stepContent }
+				stepContent={
+					<SiteMigrationInstructions
+						site={ site }
+						fromUrl={ fromUrl }
+						onError={ onInstructionsError }
+					/>
+				}
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</>
 	);
 };
 
-export default SiteMigrationInstructions;
+export default SiteMigrationInstructionsStep;
