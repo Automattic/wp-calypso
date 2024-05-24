@@ -1,15 +1,16 @@
 import { getQueryArg } from '@wordpress/url';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import { MarketplaceTypeContext } from '../context';
 import { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
-import { MarketplaceType, type ShoppingCartItem } from '../types';
+import { type ShoppingCartItem } from '../types';
 
 const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
 const SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL = 'referrals-shopping-card-selected-items';
 
-export default function useShoppingCart( currentType: MarketplaceType = 'regular' ) {
+export default function useShoppingCart() {
 	const [ selectedCartItems, setSelectedCartItems ] = useState< ShoppingCartItem[] >( [] );
-	const [ marketplaceType, setMarketplaceType ] = useState< MarketplaceType >( currentType );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
 
 	const [ showCart, setShowCart ] = useState( window.location.hash === CART_URL_HASH_FRAGMENT );
 
@@ -110,7 +111,6 @@ export default function useShoppingCart( currentType: MarketplaceType = 'regular
 	return {
 		selectedCartItems,
 		setSelectedCartItems: setAndCacheSelectedItems,
-		setMarketplaceType,
 		onRemoveCartItem,
 		onClearCart,
 		showCart,
