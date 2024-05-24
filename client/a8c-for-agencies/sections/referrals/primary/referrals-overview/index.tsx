@@ -2,7 +2,9 @@ import { Button } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -28,6 +30,8 @@ export default function ReferralsOverview( {
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -79,6 +83,8 @@ export default function ReferralsOverview( {
 					tipaltiData={ tipaltiData }
 					referrals={ referrals }
 					isLoading={ isLoading }
+					dataViewsState={ dataViewsState }
+					setDataViewsState={ setDataViewsState }
 				/>
 				{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
 			</LayoutBody>

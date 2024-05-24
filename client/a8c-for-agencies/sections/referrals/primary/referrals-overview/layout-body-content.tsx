@@ -4,6 +4,7 @@ import { plugins, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import {
 	A4A_REFERRALS_BANK_DETAILS_LINK,
 	A4A_REFERRALS_COMMISSIONS_LINK,
@@ -33,6 +34,8 @@ interface Props {
 	tipaltiData?: any;
 	referrals?: Referral[];
 	isLoading: boolean;
+	dataViewsState: DataViewsState;
+	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 }
 
 export default function LayoutBodyContent( {
@@ -40,6 +43,8 @@ export default function LayoutBodyContent( {
 	tipaltiData,
 	referrals,
 	isLoading,
+	dataViewsState,
+	setDataViewsState,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -103,7 +108,13 @@ export default function LayoutBodyContent( {
 	);
 
 	if ( isAutomatedReferral && referrals?.length ) {
-		return <ReferralList referrals={ referrals } />;
+		return (
+			<ReferralList
+				referrals={ referrals }
+				dataViewsState={ dataViewsState }
+				setDataViewsState={ setDataViewsState }
+			/>
+		);
 	}
 
 	return (

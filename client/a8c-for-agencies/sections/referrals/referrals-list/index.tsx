@@ -1,16 +1,18 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode } from 'react';
-import { DATAVIEWS_TABLE } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import { DataViews } from 'calypso/components/dataviews';
+import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import SubscriptionStatus from './subscription-status';
 import type { Referral } from '../types';
 
 interface Props {
 	referrals: Referral[];
+	dataViewsState: DataViewsState;
+	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 }
 
-export default function ReferralList( { referrals }: Props ) {
+export default function ReferralList( { referrals, dataViewsState, setDataViewsState }: Props ) {
 	const translate = useTranslate();
 
 	const fields = useMemo(
@@ -83,25 +85,20 @@ export default function ReferralList( { referrals }: Props ) {
 		[ translate ]
 	);
 	return (
-		<DataViews
-			data={ referrals }
-			paginationInfo={ { totalItems: 1, totalPages: 1 } }
-			fields={ fields }
-			view={ {
-				filters: [],
-				sort: {
-					field: '',
-					direction: 'asc',
+		<ItemsDataViews
+			data={ {
+				items: referrals,
+				pagination: {
+					totalItems: 1,
+					totalPages: 1,
 				},
-				type: DATAVIEWS_TABLE,
-				perPage: 1,
-				page: 1,
-				hiddenFields: [],
-				layout: {},
+				itemFieldId: 'ref',
+				searchLabel: translate( 'Search referrals' ),
+				fields: fields,
+				actions: [],
+				setDataViewsState: setDataViewsState,
+				dataViewsState: dataViewsState,
 			} }
-			search={ false } // TODO: Implement search
-			supportedLayouts={ [ 'table' ] }
-			actions={ [] }
 		/>
 	);
 }
