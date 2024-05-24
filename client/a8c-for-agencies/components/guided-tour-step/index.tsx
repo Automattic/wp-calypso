@@ -3,8 +3,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { GuidedTourContext } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
-import { TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
-import { A4A_ONBOARDING_TOURS_PREFERENCE_NAME } from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -17,24 +15,33 @@ import './style.scss';
 
 type Props = {
 	id: string;
-	tourId: TourId;
+	tourId: string;
 	context?: HTMLElement | null;
 	className?: string;
 	hideSteps?: boolean;
+	title?: JSX.Element;
+	description?: JSX.Element;
 };
 
 /**
  * Renders a single step in a guided tour.
  */
-export function GuidedTourStep( { id, tourId, context, hideSteps, className }: Props ) {
+export function GuidedTourStep( {
+	id,
+	tourId,
+	context,
+	hideSteps,
+	className,
+	title,
+	description,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { currentStep, currentStepCount, stepsCount, nextStep } = useContext( GuidedTourContext );
+	const { currentStep, currentStepCount, stepsCount, nextStep, preferenceNames, eventNames } =
+		useContext( GuidedTourContext );
 
-	const preference = useSelector( ( state ) =>
-		getPreference( state, A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ tourId ] )
-	);
+	const preference = useSelector( ( state ) => getPreference( state, preferenceNames[ tourId ] ) );
 	const hasFetched = !! useSelector( preferencesLastFetchedTimestamp );
 	const showTour = useMemo( () => {
 		return Boolean( hasFetched && ! preference?.dismiss && currentStep && currentStep.id === id );
@@ -47,13 +54,13 @@ export function GuidedTourStep( { id, tourId, context, hideSteps, className }: P
 	 */
 	const endTour = useCallback( () => {
 		dispatch(
-			savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ tourId ], {
+			savePreference( preferenceNames[ tourId ], {
 				...preference,
 				dismiss: true,
 			} )
 		);
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_end_tour', {
+			recordTracksEvent( eventNames.endTour, {
 				tour: id,
 			} )
 		);
@@ -63,7 +70,7 @@ export function GuidedTourStep( { id, tourId, context, hideSteps, className }: P
 	useEffect( () => {
 		if ( currentStepCount === 1 && showTour ) {
 			dispatch(
-				recordTracksEvent( 'calypso_a4a_start_tour', {
+				recordTracksEvent( eventNames.startTour, {
 					tour: id,
 				} )
 			);
@@ -96,8 +103,8 @@ export function GuidedTourStep( { id, tourId, context, hideSteps, className }: P
 			context={ context }
 			position={ currentStep.popoverPosition }
 		>
-			<h2 className="guided-tour__popover-heading">{ currentStep.title }</h2>
-			<p className="guided-tour__popover-description">{ currentStep.description }</p>
+			<h2 className="guided-tour__popover-heading">{ title ?? currentStep.title }</h2>
+			<p className="guided-tour__popover-description">{ description ?? currentStep.description }</p>
 			<div className="guided-tour__popover-footer">
 				<div>
 					{
@@ -123,7 +130,7 @@ export function GuidedTourStep( { id, tourId, context, hideSteps, className }: P
 							</Button>
 						) }
 						{ ! currentStep.nextStepOnTargetClick && (
-							<Button onClick={ nextStep }>
+							<Button className={ currentStep.classNames?.nextStepButton } onClick={ nextStep }>
 								{ currentStepCount === stepsCount ? lastTourLabel : translate( 'Next' ) }
 							</Button>
 						) }
