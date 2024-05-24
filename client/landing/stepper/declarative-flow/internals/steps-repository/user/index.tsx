@@ -1,4 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
+import { useTranslate } from 'i18n-calypso';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -14,6 +15,7 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const { submit } = navigation;
 	const socialService = getSocialServiceFromClientId( '' );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const translate = useTranslate();
 
 	if ( isLoggedIn ) {
 		submit?.();
@@ -21,7 +23,7 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 
 	return (
 		<>
-			<FormattedHeader align="center" headerText="Create your account" brandFont />
+			<FormattedHeader align="center" headerText={ translate( 'Create your account' ) } brandFont />
 			<SignupFormSocialFirst
 				step={ {} }
 				stepName={ stepName }

@@ -1,7 +1,7 @@
 import {
 	TrailMapVariantType,
 	getFeaturesList,
-	getPlanFeaturesGrouped,
+	getPlanFeaturesGroupedForFeaturesGrid,
 	setTrailMapExperiment,
 } from '@automattic/calypso-products';
 import {
@@ -54,7 +54,7 @@ const ComponentWrapper = (
 				gridPlanForSpotlight={
 					'gridPlanForSpotlight' in props ? props.gridPlanForSpotlight : gridPlanForSpotlight
 				}
-				featureGroupMap={ props.enableCategorisedFeatures ? getPlanFeaturesGrouped() : undefined }
+				featureGroupMap={ getPlanFeaturesGroupedForFeaturesGrid() }
 			/>
 		)
 	);

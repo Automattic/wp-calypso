@@ -11,7 +11,7 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import FilterSearch from '../../../../components/filter-search';
-import { ShoppingCartContext } from '../../context';
+import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import ListingSection from '../../listing-section';
 import MultiProductCard from '../multi-product-card';
@@ -40,14 +40,21 @@ export default function ProductListing( {
 	const dispatch = useDispatch();
 
 	const { selectedCartItems, setSelectedCartItems } = useContext( ShoppingCartContext );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const isReferingProducts = marketplaceType === 'referral';
 
 	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
 
 	const {
-		selectedSize: quantity,
+		selectedSize: selectedBundleSize,
 		availableSizes: availableBundleSizes,
 		setSelectedSize: setSelectedBundleSize,
 	} = useProductBundleSize();
+
+	const quantity = useMemo(
+		() => ( isReferingProducts ? 1 : selectedBundleSize ),
+		[ isReferingProducts, selectedBundleSize ]
+	);
 
 	const {
 		filteredProductsAndBundles,
@@ -289,7 +296,7 @@ export default function ProductListing( {
 					onClick={ trackClickCallback( 'search' ) }
 				/>
 
-				{ availableBundleSizes.length > 1 && (
+				{ ! isReferingProducts && availableBundleSizes.length > 1 && (
 					<VolumePriceSelector
 						selectedBundleSize={ quantity }
 						availableBundleSizes={ availableBundleSizes }

@@ -246,6 +246,24 @@ export function redirectIfP2( context, next ) {
 }
 
 /**
+ * Middleware to redirect a user to /dev-tools if the site is not Atomic.
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectToDevToolsPromoIfNotAtomic( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+
+	if ( config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && ! isAtomicSite ) {
+		return page.redirect( `/dev-tools/${ site?.slug }` );
+	}
+
+	next();
+}
+
+/**
  * Removes the locale parameter from the path, and redirects logged-in users to it.
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware

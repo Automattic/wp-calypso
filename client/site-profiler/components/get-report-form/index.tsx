@@ -109,13 +109,13 @@ export function GetReportForm( {
 		>
 			<div className="get-report-form__container">
 				<div className="get-report-form__title">
-					<span className="title">{ translate( 'Get full report' ) }</span>
+					<span className="title">{ translate( 'Full site report' ) }</span>
 				</div>
 				<div className="get-report-form__body">
 					<div className="get-report-form__header">
 						<span className="description">
 							{ translate(
-								'Enter your details below to receive the full report with detailed insights and recommendations for your site.'
+								"To access a detailed report complete with insights and tailored recommendations for improving your site's performance, please provide your details below. We'll send you an exclusive link to view the full analysis, helping you make informed decisions for optimizing your site."
 							) }
 						</span>
 						<span>
@@ -171,8 +171,7 @@ export function GetReportForm( {
 								busy={ isSubmitting }
 								disabled={ responseSuccess }
 							>
-								{ translate( 'Get my report' ) }
-								<Gridicon icon="product-downloadable" />
+								{ translate( 'Access full report' ) }
 							</Button>
 						</div>
 						{ responseError && <FormInputValidation isError text={ responseError } /> }

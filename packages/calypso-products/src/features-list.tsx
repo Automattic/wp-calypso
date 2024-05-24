@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import SupportIcon from './assets/images/support.svg';
@@ -336,6 +336,8 @@ import {
 	FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
 	FEATURE_WEB_SERVER_SETTINGS,
 	FEATURE_1_WEBSITE,
+	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+	FEATURE_PRIORITY_24_7_SUPPORT,
 } from './constants';
 import { getTrailMapExperiment, isTrailMapCopyVariant } from './experiments';
 import {
@@ -2681,6 +2683,32 @@ const FEATURES_LIST: FeatureList = {
 			),
 		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
+		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+		getTitle: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'Fast support from our expert team' )
+				? i18n.translate( 'Fast support from our expert team' )
+				: i18n.translate( 'Expert support' ),
+		getDescription: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'Prompt support from our expert, friendly Happiness team' )
+				? i18n.translate( 'Prompt support from our expert, friendly Happiness team' )
+				: i18n.translate( 'Expert support' ),
+	},
+	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
+		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
+		getTitle: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'Priority 24/7 support from our expert team' )
+				? i18n.translate( 'Priority 24/7 support from our expert team' )
+				: i18n.translate( '24/7 priority support' ),
+		getDescription: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'The fastest 24/7 support from our expert, friendly Happiness team' )
+				? i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' )
+				: i18n.translate( '24/7 priority support' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 

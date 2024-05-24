@@ -1,17 +1,19 @@
-import { WPComStorageAddOnSlug, isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
-import { useMemo } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import {
+	type PlanSlug,
+	WPComStorageAddOnSlug,
+	isWpcomEnterpriseGridPlan,
+} from '@automattic/calypso-products';
+import { usePlansGridContext } from '../../grid-context';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
-import { GridPlan } from '../../types';
 import { getStorageStringFromFeature } from '../../util';
-import PlanDivOrTdContainer from '../plan-div-td-container';
+import { PlanFeaturesItem } from '../item';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 
 type PlanStorageOptionsProps = {
 	intervalType: string;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	renderedGridPlans: GridPlan[];
 	showUpgradeableStorage: boolean;
+	planSlug: PlanSlug;
 	options?: {
 		isTableCell?: boolean;
 	};
@@ -20,65 +22,48 @@ type PlanStorageOptionsProps = {
 const PlanStorageOptions = ( {
 	intervalType,
 	onStorageAddOnClick,
+	planSlug,
 	options,
-	renderedGridPlans,
 	showUpgradeableStorage,
 }: PlanStorageOptionsProps ) => {
-	const translate = useTranslate();
+	const { gridPlansIndex } = usePlansGridContext();
+	const {
+		availableForPurchase,
+		features: { storageOptions },
+	} = gridPlansIndex[ planSlug ];
+	const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
+		intervalType,
+		showUpgradeableStorage,
+		storageOptions,
+	} );
 
-	/**
-	 * This is a pretty critical and fragile, as it filters out the enterprise plan.
-	 * If the plan sits anywhere else but the tail/end, it will most likely break the grid (render wrong parts at wrong places).
-	 */
-	const plansWithFeatures = useMemo( () => {
-		return renderedGridPlans.filter(
-			( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
+	const storageJSX =
+		canUpgradeStorageForPlan && availableForPurchase ? (
+			<StorageAddOnDropdown
+				planSlug={ planSlug }
+				onStorageAddOnClick={ onStorageAddOnClick }
+				storageOptions={ storageOptions }
+			/>
+		) : (
+			storageOptions.map( ( storageOption ) => {
+				if ( ! storageOption?.isAddOn ) {
+					return (
+						<div className="plan-features-2023-grid__storage-buttons" key={ planSlug }>
+							{ getStorageStringFromFeature( storageOption?.slug ) }
+						</div>
+					);
+				}
+			} )
 		);
-	}, [ renderedGridPlans ] );
 
-	return plansWithFeatures.map(
-		( { availableForPurchase, planSlug, features: { storageOptions } } ) => {
-			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
-				return null;
-			}
+	if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
+		return null;
+	}
 
-			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
-				intervalType,
-				showUpgradeableStorage,
-				storageOptions,
-			} );
-			const storageJSX =
-				canUpgradeStorageForPlan && availableForPurchase ? (
-					<StorageAddOnDropdown
-						planSlug={ planSlug }
-						onStorageAddOnClick={ onStorageAddOnClick }
-						storageOptions={ storageOptions }
-					/>
-				) : (
-					storageOptions.map( ( storageOption ) => {
-						if ( ! storageOption?.isAddOn ) {
-							return (
-								<div className="plan-features-2023-grid__storage-buttons" key={ planSlug }>
-									{ getStorageStringFromFeature( storageOption?.slug ) }
-								</div>
-							);
-						}
-					} )
-				);
-
-			return (
-				<PlanDivOrTdContainer
-					key={ planSlug }
-					className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
-					isTableCell={ options?.isTableCell }
-				>
-					<h2 className="plan-features-2023-grid__storage-title plans-grid-next-features-grid__feature-group-title">
-						{ translate( 'Storage' ) }
-					</h2>
-					{ storageJSX }
-				</PlanDivOrTdContainer>
-			);
-		}
+	return (
+		<div className="plan-features-2023-grid__storage">
+			<PlanFeaturesItem>{ storageJSX }</PlanFeaturesItem>
+		</div>
 	);
 };
 

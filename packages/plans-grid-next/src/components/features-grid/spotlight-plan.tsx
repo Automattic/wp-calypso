@@ -1,11 +1,16 @@
-import { WPComStorageAddOnSlug, getPlanClass, isFreePlan } from '@automattic/calypso-products';
+import {
+	FEATURE_GROUP_STORAGE,
+	WPComStorageAddOnSlug,
+	getPlanClass,
+	isFreePlan,
+} from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { GridPlan, PlanActionOverrides } from '../../types';
 import BillingTimeframes from './billing-timeframes';
+import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
 import PlanPrice from './plan-price';
-import PlanStorageOptions from './plan-storage-options';
 import PlanTagline from './plan-tagline';
 import TopButtons from './top-buttons';
 
@@ -57,8 +62,9 @@ const SpotlightPlan = ( {
 				/>
 			) }
 			{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
-			<PlanStorageOptions
+			<PlanFeaturesList
 				renderedGridPlans={ [ gridPlanForSpotlight ] }
+				featureGroupSlug={ FEATURE_GROUP_STORAGE }
 				intervalType={ intervalType }
 				onStorageAddOnClick={ onStorageAddOnClick }
 				showUpgradeableStorage={ showUpgradeableStorage }

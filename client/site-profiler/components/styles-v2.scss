@@ -2,6 +2,8 @@
 @import "@automattic/typography/styles/variables";
 
 #site-profiler-v2 {
+	--color-button: #3858e9;
+	--color-button-60: #193de0;
 	background: #000;
 	color: var(--studio-white);
 }
@@ -62,9 +64,10 @@
 
 	a,
 	button.is-link {
-		color: var(--studio-gray-20);
+		color: #fff;
 		text-decoration: underline;
 		font-size: 1rem;
+		font-size: 500;
 
 		&:hover {
 			color: var(--studio-gray-40);
@@ -74,7 +77,7 @@
 	// Button style overrides necessary because of conflicting WPcom styles.
 	.button-action {
 		color: #fff;
-		background: #3858e9;
+		background: var(--color-button);
 		border-radius: 4px;
 		font-size: 1rem;
 		font-weight: 500;
@@ -86,7 +89,7 @@
 		}
 
 		&.is-busy {
-			background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
+			background-image: linear-gradient(-45deg, var(--color-button) 28%, var(--color-button-60) 28%, var(--color-button-60) 72%, var(--color-button) 72%);
 		}
 	}
 
@@ -215,6 +218,25 @@
 			padding-top: 6rem;
 			padding-bottom: 130px;
 			background-size: 820px;
+		}
+	}
+
+	.results-header-block {
+		position: relative;
+
+		&.poor {
+			background: url(calypso/assets/images/site-profiler/background-results-bad.svg) no-repeat right top;
+			// Huge screens and bigger
+			@media (min-width: $break-huge) {
+				background-position-x: center;
+			}
+		}
+		&.good {
+			background: url(calypso/assets/images/site-profiler/background-results-good.svg) no-repeat right top;
+			// Huge screens and bigger
+			@media (min-width: $break-huge) {
+				background-position-x: center;
+			}
 		}
 	}
 

@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.dev-tools-promo__hero {
+.dev-tools__hero {
 	grid-column: 1 / -1;
 	text-align: center;
 	margin-bottom: 70px;
@@ -19,7 +19,7 @@
 		font-weight: 400;
 		font-size: rem(18px);
 	}
-	.dev-tools-promo__button {
+	.dev-tools__button {
 		margin: 0 5px;
 		padding: 10px 14px;
 		font-size: rem(14px);
@@ -27,7 +27,7 @@
 	}
 }
 
-.dev-tools-promo__cards {
+.dev-tools__cards {
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-column-gap: 16px;
@@ -39,7 +39,7 @@
 	}
 }
 
-.dev-tools-promo__card {
+.dev-tools__card {
 	border-radius: 4px;
 	border: 1px solid var(--studio-gray-5);
 	box-shadow: none;
