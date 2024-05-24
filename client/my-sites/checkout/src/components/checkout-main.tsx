@@ -1,4 +1,3 @@
-import { getPlan } from '@automattic/calypso-products';
 import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
@@ -8,7 +7,7 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useEffect, useMemo } from 'react';
+import { Fragment, useCallback, useMemo } from 'react';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
@@ -23,7 +22,6 @@ import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { useFCCARestrictions } from '../../utils';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
@@ -226,24 +224,6 @@ export default function CheckoutMain( {
 		addProductsToCart,
 	} = useShoppingCart( cartKey );
 
-	const { shouldReplacePlan, getReplacedPlanSlug } = useFCCARestrictions();
-
-	useEffect( () => {
-		if ( ! isLoadingCart ) {
-			responseCart?.products?.forEach( ( item ) => {
-				if ( shouldReplacePlan( item.product_slug ) ) {
-					const replacedPlanSlug = getReplacedPlanSlug( item.product_slug );
-					const newPlan = getPlan( replacedPlanSlug );
-
-					replaceProductInCart( item.uuid, {
-						...item,
-						product_slug: replacedPlanSlug,
-						product_id: newPlan?.getProductId(),
-					} );
-				}
-			} );
-		}
-	}, [ isLoadingCart, responseCart ] );
 	// For site-less checkouts, get the blog ID from the cart response
 	const updatedSiteId = isSiteless ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 

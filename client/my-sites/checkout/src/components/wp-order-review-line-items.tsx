@@ -322,7 +322,7 @@ function LineItemWrapper( {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	const { shouldReplacePlan } = useFCCARestrictions();
+	const { shouldRestrict3YearPlans } = useFCCARestrictions();
 
 	const variants = useGetProductVariants( product, ( variant ) => {
 		// Only show term variants which are equal to or longer than the variant that
@@ -339,7 +339,7 @@ function LineItemWrapper( {
 			return true;
 		}
 
-		if ( shouldReplacePlan( variant.productSlug ) ) {
+		if ( shouldRestrict3YearPlans( variant.productSlug ) ) {
 			return false;
 		}
 		return variant.termIntervalInMonths >= initialVariantTerm;

@@ -22,8 +22,8 @@ const useFilteredDisplayedIntervals = ( {
 	paidDomainName,
 	productSlug,
 }: Props ) => {
-	const { shouldReplacePlan } = useFCCARestrictions();
-	const is3yearlyRestricted = shouldReplacePlan();
+	const { shouldRestrict3YearPlans } = useFCCARestrictions();
+	const is3yearlyRestricted = shouldRestrict3YearPlans();
 
 	return useMemo( () => {
 		let filteredIntervals = displayedIntervals;

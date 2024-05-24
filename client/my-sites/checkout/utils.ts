@@ -1,8 +1,4 @@
 import {
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_PERSONAL_3_YEARS,
 	PLAN_PREMIUM_3_YEARS,
 	PLAN_BUSINESS_3_YEARS,
@@ -145,31 +141,28 @@ export function isContextJetpackSitelessCheckout( context: Context ): boolean {
  * current site and plan selected. It ensures that 3-year plans are replaced with their
  * respective 2-year versions for users in Germany.
  * @returns {Object} - An object containing two functions:
- *   - shouldReplacePlan: Determines if the current plan should be replaced based on FCCA restrictions.
- *   - getReplacedPlanSlug: Gets the replacement plan slug if applicable.
+ *   - shouldRestrict3YearPlans: Determines if 3-year plans are restricted on FCCA restrictions.
  */
 export const useFCCARestrictions = () => {
 	const userCountryCode = useSelector( getCurrentUserCountryCode );
 	const currentSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getCurrentPlan( state, currentSite?.ID ) );
 
-	const replacePlansSlug: { [ key: string ]: string } = {
-		[ PLAN_PERSONAL_3_YEARS ]: PLAN_PERSONAL_2_YEARS,
-		[ PLAN_PREMIUM_3_YEARS ]: PLAN_PREMIUM_2_YEARS,
-		[ PLAN_BUSINESS_3_YEARS ]: PLAN_BUSINESS_2_YEARS,
-		[ PLAN_ECOMMERCE_3_YEARS ]: PLAN_ECOMMERCE_2_YEARS,
-	};
+	const replaceablePlanSlugs: string[] = [
+		PLAN_PERSONAL_3_YEARS,
+		PLAN_PREMIUM_3_YEARS,
+		PLAN_BUSINESS_3_YEARS,
+		PLAN_ECOMMERCE_3_YEARS,
+	];
+
 	const isFCCACountry = (): boolean => {
 		return userCountryCode === 'DE';
 	};
 
-	const getReplacedPlanSlug = ( newPlanSlug: string ): string => {
-		return replacePlansSlug[ newPlanSlug ] || newPlanSlug;
-	};
 	const isReplaceablePlan = ( planSlug: string ): boolean => {
-		return getReplacedPlanSlug( planSlug ) !== planSlug;
+		return replaceablePlanSlugs.indexOf( planSlug ) !== -1;
 	};
-	const shouldReplacePlan = ( newPlanSlug?: string ): boolean => {
+	const shouldRestrict3YearPlans = ( newPlanSlug?: string ): boolean => {
 		return (
 			isFCCACountry() &&
 			// We should still allow the user to see the current plan.
@@ -178,7 +171,6 @@ export const useFCCARestrictions = () => {
 		);
 	};
 	return {
-		shouldReplacePlan,
-		getReplacedPlanSlug,
+		shouldRestrict3YearPlans,
 	};
 };
