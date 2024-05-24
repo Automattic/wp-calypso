@@ -133,6 +133,7 @@ export default function SiteProfilerV2( props: Props ) {
 							<ResultsHeader
 								domain={ domain }
 								overallScore={ overallScore }
+								urlData={ urlData }
 								onGetReport={ () => setIsGetReportFormOpen( true ) }
 							/>
 						) }
