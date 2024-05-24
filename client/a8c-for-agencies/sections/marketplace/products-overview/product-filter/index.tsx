@@ -71,12 +71,16 @@ export default function ProductFilter( { selectedFilters, setSelectedFilters }: 
 	} = useProductFilterOptions();
 
 	const updateFilter = ( type: string, filter: string ) => {
+		const record = selectedFilters[ type as keyof SelectedFilters ] as Record< string, boolean >;
+
+		const newFilters = {
+			...record,
+			[ filter ]: ! record[ filter ],
+		};
+
 		setSelectedFilters( {
 			...selectedFilters,
-			[ type ]: {
-				...selectedFilters[ type as keyof SelectedFilters ],
-				[ filter ]: ! selectedFilters[ type as keyof SelectedFilters ][ filter ],
-			},
+			[ type ]: newFilters,
 		} );
 	};
 

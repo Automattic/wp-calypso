@@ -7,6 +7,7 @@ import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-porta
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import {
 	PRODUCT_BRAND_FILTER_ALL,
+	PRODUCT_FILTER_KEY_BRAND,
 	PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
 	PRODUCT_TYPE_JETPACK_PLAN,
 	PRODUCT_TYPE_JETPACK_PRODUCT,
@@ -28,7 +29,6 @@ const MERGABLE_PRODUCTS = [ 'jetpack-backup' ];
 type Props = {
 	selectedBundleSize?: number;
 	selectedSite?: SiteDetails | null;
-	selectedProductBrandFilter?: string | null;
 	productSearchQuery?: string;
 	usePublicQuery?: boolean;
 	selectedProductFilters?: SelectedFilters;
@@ -82,7 +82,6 @@ const getDisplayableJetpackProducts = ( filteredProductsAndBundles: APIProductFa
 export default function useProductAndPlans( {
 	selectedBundleSize = 1,
 	selectedSite,
-	selectedProductBrandFilter = PRODUCT_BRAND_FILTER_ALL,
 	selectedProductFilters,
 	productSearchQuery,
 	usePublicQuery = false,
@@ -95,8 +94,12 @@ export default function useProductAndPlans( {
 
 	return useMemo( () => {
 		// List only products that matches the selected product brand filter.
+		const selectedProductBrandFilter = selectedProductFilters
+			? selectedProductFilters[ PRODUCT_FILTER_KEY_BRAND ] ?? PRODUCT_BRAND_FILTER_ALL
+			: PRODUCT_BRAND_FILTER_ALL;
+
 		let filteredProductsAndBundles =
-			! selectedProductBrandFilter || selectedProductBrandFilter === PRODUCT_BRAND_FILTER_ALL
+			selectedProductBrandFilter === PRODUCT_BRAND_FILTER_ALL
 				? data
 				: data?.filter( ( { slug } ) => slug.startsWith( selectedProductBrandFilter ) );
 
@@ -164,7 +167,6 @@ export default function useProductAndPlans( {
 			suggestedProductSlugs,
 		};
 	}, [
-		selectedProductBrandFilter,
 		data,
 		selectedProductFilters,
 		selectedBundleSize,

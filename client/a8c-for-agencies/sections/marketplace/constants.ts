@@ -13,6 +13,7 @@ export const PRODUCT_BRAND_FILTER_ALL = 'all';
 export const PRODUCT_BRAND_FILTER_WOOCOMMERCE = 'woocommerce';
 export const PRODUCT_BRAND_FILTER_JETPACK = 'jetpack';
 
+export const PRODUCT_FILTER_KEY_BRAND = 'brand';
 export const PRODUCT_FILTER_KEY_CATEGORIES = 'categories';
 export const PRODUCT_FILTER_KEY_TYPES = 'types';
 export const PRODUCT_FILTER_KEY_PRICES = 'prices';
