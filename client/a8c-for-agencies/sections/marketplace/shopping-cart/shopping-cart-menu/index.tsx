@@ -3,11 +3,13 @@ import { formatCurrency } from '@automattic/format-currency';
 import { Popover } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useContext } from 'react';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { MarketplaceTypeContext } from '../../context';
 import { useTotalInvoiceValue } from '../../wpcom-overview/hooks/use-total-invoice-value';
 import ShoppingCartMenuItem from './item';
-import type { MarketplaceType, ShoppingCartItem } from '../../types';
+import type { ShoppingCartItem } from '../../types';
 
 import './style.scss';
 
@@ -16,21 +18,15 @@ type Props = {
 	onRemoveItem: ( item: ShoppingCartItem ) => void;
 	onCheckout: () => void;
 	items: ShoppingCartItem[];
-	marketplaceType?: MarketplaceType;
 };
 
-export default function ShoppingCartMenu( {
-	onClose,
-	onCheckout,
-	onRemoveItem,
-	items,
-	marketplaceType = 'regular',
-}: Props ) {
+export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, items }: Props ) {
 	const translate = useTranslate();
 
 	const userProducts = useSelector( getProductsList );
 	const { getTotalInvoiceValue } = useTotalInvoiceValue();
 	const { discountedCost } = getTotalInvoiceValue( userProducts, items );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	// FIXME: we should update the magic numbers here with values when backend part is finished.
 	const commissionAmount = Math.floor( discountedCost * 0.5 );
 

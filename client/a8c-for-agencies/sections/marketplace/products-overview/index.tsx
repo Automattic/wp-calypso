@@ -132,7 +132,6 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 							onCheckout={ () => {
 								page( A4A_MARKETPLACE_CHECKOUT_LINK );
 							} }
-							marketplaceType={ marketplaceType }
 						/>
 					</Actions>
 				</LayoutHeader>
