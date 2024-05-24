@@ -252,14 +252,16 @@ const importHostedSiteFlow: Flow = {
 					urlQueryParams.delete( 'from' );
 					return navigate( `import?${ urlQueryParams.toString() }` );
 
-				case 'importReady':
 				case 'importReadyNot':
+					urlQueryParams.delete( 'siteSlug' );
+					urlQueryParams.delete( 'from' );
+					return navigate( `import?${ urlQueryParams.toString() }` );
+				case 'importReady':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
 					// remove the siteSlug in case they want to change the
 					// destination site
 					urlQueryParams.delete( 'siteSlug' );
-					urlQueryParams.delete( 'from' );
 					return navigate( `import?${ urlQueryParams.toString() }` );
 
 				case 'verifyEmail':
