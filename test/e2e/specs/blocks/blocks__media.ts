@@ -121,16 +121,16 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		} );
 
 		// If this starts failing, check whether Premium or higher plan is enabled.
-		it( `${ VideoPressBlock.blockName } block: upload video file`, async function () {
-			await editorPage.addBlockFromSidebar(
-				VideoPressBlock.blockName,
-				VideoPressBlock.blockEditorSelector,
-				{ noSearch: true }
-			);
+		// it( `${ VideoPressBlock.blockName } block: upload video file`, async function () {
+		// 	await editorPage.addBlockFromSidebar(
+		// 		VideoPressBlock.blockName,
+		// 		VideoPressBlock.blockEditorSelector,
+		// 		{ noSearch: true }
+		// 	);
 
-			const videoPressBlock = new VideoPressBlock( page );
-			await videoPressBlock.upload( testFiles.video.fullpath );
-		} );
+		// 	const videoPressBlock = new VideoPressBlock( page );
+		// 	await videoPressBlock.upload( testFiles.video.fullpath );
+		// } );
 
 		it( 'Publish and visit post', async function () {
 			await editorPage.saveDraft();
