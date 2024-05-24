@@ -28,6 +28,8 @@ export const useGetOdieStorage = ( key: OdieStorageKey ) => {
 				path: `/help-center/odie/history/last-chat-id`,
 			} as APIFetchOptions ).then( ( res ) => res[ storageKey ] );
 		},
+		// Give this further thought.
+		staleTime: 500, // 0.5 minute,
 	} );
 	return data;
 };
