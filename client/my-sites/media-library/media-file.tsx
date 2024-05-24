@@ -55,8 +55,9 @@ export default connect( ( state: IAppState, { src }: Pick< MediaFileProps, 'src'
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state ) as string;
 	const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
-	const isJetpack = isJetpackSite( state, siteId ?? 0, { treatAtomicAsJetpackSite: false } );
-	const useProxy = Boolean( ! isJetpack && filePath && isRelativeToSiteRoot );
+	const isJetpackNonAtomic =
+		siteId && isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
+	const useProxy = ! isJetpackNonAtomic && !! filePath && isRelativeToSiteRoot;
 
 	return {
 		query,
