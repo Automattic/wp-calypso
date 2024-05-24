@@ -2,8 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { mediaURLToProxyConfig } from 'calypso/lib/media/utils';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { IAppState } from 'calypso/state/types';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
@@ -55,10 +54,10 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 export default connect( ( state: IAppState, { src }: Pick< MediaFileProps, 'src' > ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state ) as string;
-	const isAtomic = !! isSiteAutomatedTransfer( state, siteId as number );
-	const isPrivate = !! isPrivateSite( state, siteId ?? 0 );
 	const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
-	const useProxy = Boolean( isAtomic && isPrivate && filePath && isRelativeToSiteRoot );
+	const isJetpackNonAtomic =
+		siteId && isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
+	const useProxy = ! isJetpackNonAtomic && !! filePath && isRelativeToSiteRoot;
 
 	return {
 		query,
