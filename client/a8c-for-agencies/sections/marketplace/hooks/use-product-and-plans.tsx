@@ -6,8 +6,6 @@ import { useSelector } from 'calypso/state';
 import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import {
-	PRODUCT_BRAND_FILTER_ALL,
-	PRODUCT_FILTER_KEY_BRAND,
 	PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
 	PRODUCT_TYPE_JETPACK_PLAN,
 	PRODUCT_TYPE_JETPACK_PRODUCT,
@@ -79,6 +77,17 @@ const getDisplayableJetpackProducts = ( filteredProductsAndBundles: APIProductFa
 	} ) as APIProductFamilyProduct[];
 };
 
+const getDisplayableWoocommerceExtensions = (
+	filteredProductsAndBundles: APIProductFamilyProduct[]
+) => {
+	const extensions = filterProductsAndPlansByType(
+		PRODUCT_TYPE_WOO_EXTENSION,
+		filteredProductsAndBundles
+	);
+
+	return extensions.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+};
+
 export default function useProductAndPlans( {
 	selectedBundleSize = 1,
 	selectedSite,
@@ -93,25 +102,7 @@ export default function useProductAndPlans( {
 	);
 
 	return useMemo( () => {
-		// List only products that matches the selected product brand filter.
-		const selectedProductBrandFilter = selectedProductFilters
-			? selectedProductFilters[ PRODUCT_FILTER_KEY_BRAND ] ?? PRODUCT_BRAND_FILTER_ALL
-			: PRODUCT_BRAND_FILTER_ALL;
-
-		let filteredProductsAndBundles =
-			selectedProductBrandFilter === PRODUCT_BRAND_FILTER_ALL
-				? data
-				: data?.filter( ( { slug } ) => slug.startsWith( selectedProductBrandFilter ) );
-
-		filteredProductsAndBundles = filteredProductsAndBundles ?? [];
-
-		// List only products that matches the selected product filters.
-		if ( selectedProductFilters && filteredProductsAndBundles ) {
-			filteredProductsAndBundles = filterProductsAndPlans(
-				selectedProductFilters,
-				filteredProductsAndBundles
-			);
-		}
+		let filteredProductsAndBundles = filterProductsAndPlans( data ?? [], selectedProductFilters );
 
 		// List only products that is compatible with current bundle size.
 		filteredProductsAndBundles =
@@ -152,10 +143,7 @@ export default function useProductAndPlans( {
 				PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
 				filteredProductsAndBundles
 			),
-			wooExtensions: filterProductsAndPlansByType(
-				PRODUCT_TYPE_WOO_EXTENSION,
-				filteredProductsAndBundles
-			),
+			wooExtensions: getDisplayableWoocommerceExtensions( filteredProductsAndBundles ),
 			pressablePlans: filterProductsAndPlansByType(
 				PRODUCT_TYPE_PRESSABLE_PLAN,
 				filteredProductsAndBundles
