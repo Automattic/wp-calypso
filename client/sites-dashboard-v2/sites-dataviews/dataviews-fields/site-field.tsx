@@ -129,7 +129,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						</>
 					) : (
 						<>
-							<div>
+							<div className="sites-dataviews__site-urls">
 								<a
 									className="sites-dataviews__site-url"
 									href={ siteUrl }
