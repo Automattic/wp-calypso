@@ -11,11 +11,11 @@ type DefaultHostingDetails = {
 	};
 };
 
-const higherSpeedPercentage = Math.round(
+const higherSpeedPercentage = Math.floor(
 	( cwvtechReportJson[ 'WordPress.com' ].goodLCP - cwvtechReportJson[ 'WordPress' ].goodLCP ) * 100
 );
 
-const fastResponsePercentage = Math.round( cwvtechReportJson[ 'WordPress.com' ].goodFID * 100 );
+const fastResponsePercentage = Math.floor( cwvtechReportJson[ 'WordPress.com' ].goodFID * 100 );
 
 const wpcomPercentageUptime = '99.99';
 const otherHostsPercentageUptime = '99.85';

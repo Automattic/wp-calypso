@@ -1,16 +1,16 @@
 {
 	"WordPress.com": {
 		"date": "Apr 2024",
-		"goodCWM": 0.6210015186,
-		"goodLCP": 0.7833214677,
-		"goodCLS": 0.8655190411,
-		"goodFID": 0.9784855011
+		"goodCWM": 0.6986159237,
+		"goodLCP": 0.8552837267,
+		"goodCLS": 0.7935010875,
+		"goodFID": 0.999276568
 	},
 	"WordPress": {
 		"date": "Apr 2024",
-		"goodCWM": 0.3831480878,
-		"goodLCP": 0.4794839633,
-		"goodCLS": 0.8137198938,
-		"goodFID": 0.9800055656
+		"goodCWM": 0.4361328649,
+		"goodLCP": 0.5927887881,
+		"goodCLS": 0.6945178409,
+		"goodFID": 0.999757466
 	}
 }
