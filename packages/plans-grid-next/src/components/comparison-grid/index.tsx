@@ -1,10 +1,8 @@
 import {
 	getPlanClass,
-	isWooExpressPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
-	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -741,9 +739,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
-	const hasWooExpressPlans = visibleGridPlans.some( ( { planSlug } ) =>
-		isWooExpressPlan( planSlug )
-	);
+
 	const { enableFeatureTooltips } = usePlansGridContext();
 
 	return (
@@ -775,20 +771,12 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						{ feature && (
 							<>
 								<Plans2023Tooltip
-									text={
-										enableFeatureTooltips
-											? feature.getDescription?.( {
-													planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
-											  } )
-											: undefined
-									}
+									text={ enableFeatureTooltips ? feature.getDescription?.() : undefined }
 									setActiveTooltipId={ setActiveTooltipId }
 									activeTooltipId={ activeTooltipId }
 									id={ tooltipId }
 								>
-									{ feature.getTitle( {
-										planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
-									} ) }
+									{ feature.getTitle() }
 									{ footnote && (
 										<FeatureFootnote>
 											<sup>{ footnote }</sup>
