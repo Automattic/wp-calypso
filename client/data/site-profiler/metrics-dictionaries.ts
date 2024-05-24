@@ -1,4 +1,4 @@
-import { Metrics, Scores } from './types';
+import { BasicMetricsScored, Metrics, Scores } from './types';
 
 export const SCORES: Record< string, Scores > = {
 	good: 'good',
@@ -40,4 +40,31 @@ export function getScore( metric: Metrics, value: number ): Scores {
 		return SCORES.poor;
 	}
 	return SCORES.needsImprovement;
+}
+
+/**
+ * Get the overall score of the site based on the scores of the basic metrics.
+ * It will return poor if more then 2 metrics are poor, good otherwise.
+ * Defaults to good if no metrics are provided.
+ * @param metrics A record of metrics with their scores
+ * @returns The overall score of the site
+ */
+export function getOveralScore( metrics?: BasicMetricsScored ): Scores {
+	if ( ! metrics ) {
+		return SCORES.good;
+	}
+
+	const poorMetrics = Object.values( metrics ).filter(
+		( metric ) => metric?.score === SCORES.poor
+	);
+	return poorMetrics.length > 2 ? SCORES.poor : SCORES.good;
+}
+
+/**
+ * Helper method that returns if the Score is good or false otherwise
+ * @param score The score to check
+ * @returns True if the score is good, false otherwise
+ */
+export function isScoreGood( score: Scores ): boolean {
+	return score === SCORES.good;
 }

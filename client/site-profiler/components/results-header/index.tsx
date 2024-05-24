@@ -1,11 +1,12 @@
 import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import './styles.scss';
-import { BasicMetricsResult } from 'calypso/data/site-profiler/types';
+import { isScoreGood } from 'calypso/data/site-profiler/metrics-dictionaries';
+import { Scores } from 'calypso/data/site-profiler/types';
 
 type Props = {
 	domain: string;
-	basicMetrics: BasicMetricsResult;
+	overallScore: Scores;
 	onGetReport: () => void;
 };
 
@@ -16,19 +17,19 @@ function getIcon() {
 }
 
 function getDomainMessage() {
-	// TODO: Implement the functionality to get the correct Icon
+	// TODO: Implement the functionality to get the correct Domain message
 	// https://github.com/Automattic/dotcom-forge/issues/7281
 	return translate( 'This site is not hosted on WordPress.com' );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getTitleMessage( basicMetrics: BasicMetricsResult ) {
-	// TODO: Implement the functionality to get the correct title
-	// https://github.com/Automattic/dotcom-forge/issues/7298
-	return translate( 'Your site needs a boost. Let’s improve it.' );
+function getTitleMessage( overallScore: Scores ) {
+	if ( ! isScoreGood( overallScore ) ) {
+		return translate( 'Your site needs a boost. Let’s improve it.' );
+	}
+	return translate( 'Your site is a top performer! Keep it up.' );
 }
 
-export const ResultsHeader = ( { domain, basicMetrics, onGetReport }: Props ) => {
+export const ResultsHeader = ( { domain, overallScore, onGetReport }: Props ) => {
 	return (
 		<div className="results-header--container">
 			<div className="results-header--domain-container">
@@ -36,7 +37,7 @@ export const ResultsHeader = ( { domain, basicMetrics, onGetReport }: Props ) =>
 				{ getIcon() }
 				<span className="domain-message">{ getDomainMessage() }</span>
 			</div>
-			<h1>{ getTitleMessage( basicMetrics ) }</h1>
+			<h1>{ getTitleMessage( overallScore ) }</h1>
 			<div className="results-header--button-container">
 				<Button onClick={ onGetReport }>
 					{ translate( 'Access full site report - It’s free' ) }
