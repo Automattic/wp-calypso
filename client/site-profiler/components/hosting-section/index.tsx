@@ -23,7 +23,7 @@ export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {
 			title={
 				isWPcom
 					? translate(
-							'Your hosting {{good}}speed and uptime{{/good}} is excellent, providing a reliable and enjoyable user experience.',
+							'Your hosting {{success}}speed and uptime is excellent{{/success}}, providing a reliable and enjoyable user experience.',
 							getTitleTranslateOptions()
 					  )
 					: translate(
