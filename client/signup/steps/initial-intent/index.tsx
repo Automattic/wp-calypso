@@ -57,7 +57,7 @@ export default function InitialIntentStep( props: Props ) {
 
 		if ( redirect ) {
 			recordCompleteEvent();
-			window.location.assign( redirect );
+			return window.location.assign( redirect );
 		}
 
 		if ( isLastQuestion ) {
