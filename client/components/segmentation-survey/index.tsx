@@ -16,6 +16,7 @@ type SegmentationSurveyProps = {
 	surveyKey: string;
 	onBack?: () => void;
 	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void;
+	skipNextNavigation?: ( questionKey: string, answerKeys: string[] ) => boolean;
 };
 
 /**
@@ -26,7 +27,12 @@ type SegmentationSurveyProps = {
  * @param {(questionKey: string, answerKeys: string[], isLastQuestion?: boolean) => void} [props.onNext] - A function that navigates to the next question/step.
  * @returns {React.ReactComponentElement}
  */
-const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyProps ) => {
+const SegmentationSurvey = ( {
+	surveyKey,
+	onBack,
+	onNext,
+	skipNextNavigation,
+}: SegmentationSurveyProps ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
 	const { mutateAsync, isPending } = useSaveAnswersMutation( { surveyKey } );
 	const { answers, setAnswers, clearAnswers } = useCachedAnswers( surveyKey );
@@ -95,6 +101,7 @@ const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyPr
 			answers,
 			questions,
 			surveyKey,
+			skipNextNavigation,
 		} );
 
 	if ( ! questions ) {
