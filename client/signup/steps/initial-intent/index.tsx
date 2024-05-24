@@ -18,7 +18,9 @@ export default function InitialIntentStep( props: Props ) {
 		'This will help us tailor your onboarding experience to your needs.'
 	);
 
-	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents( SURVEY_KEY );
+	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents(
+		GUIDED_FLOW_SEGMENTATION_SURVEY_KEY
+	);
 
 	// Record Tracks start event on component mount
 	useEffect( () => {
