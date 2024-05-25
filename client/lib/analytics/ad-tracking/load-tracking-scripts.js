@@ -64,7 +64,6 @@ function getTrackingScriptsToLoad() {
 
 	// The Gtag script needs to be loaded with an ID in the URL so we search for the first available one.
 	const enabledGtags = [
-		mayWeTrackByTracker( 'ga' ),
 		mayWeTrackByTracker( 'googleAds' ) && TRACKING_IDS.wpcomGoogleAdsGtag,
 		mayWeTrackByTracker( 'floodlight' ) && TRACKING_IDS.wpcomFloodlightGtag,
 	].filter( ( id ) => false !== id );
