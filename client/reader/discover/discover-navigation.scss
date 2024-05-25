@@ -2,7 +2,7 @@
 	margin: 0 auto;
 	max-width: 600px;
 	&.reader-dual-column {
-		max-width: 968px; // Max width of dual column reader stream.
+		max-width: 100%; // Max width of dual column reader stream.
 	}
 }
 
@@ -17,7 +17,7 @@
 	}
 
 	&.reader-dual-column {
-		max-width: 968px; // Max width of dual column reader stream.
+		max-width: 100%; // Max width of dual column reader stream.
 		margin-bottom: 0;
 	}
 	@media only screen and (max-width: 660px) {

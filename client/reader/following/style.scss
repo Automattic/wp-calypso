@@ -3,7 +3,7 @@
 	max-width: 600px;
 	padding: 0;
 	&.reader-dual-column {
-		max-width: 968px; // Max width of dual column reader stream.
+		max-width: 100%; // Max width of dual column reader stream.
 	}
 
 	.navigation-header__main {

@@ -8,7 +8,7 @@
 	max-width: 600px;
 
 	&.reader-two-column {
-		max-width: 968px;
+		max-width: 100%;
 
 		.reader__content,
 		.tag-stream__header {
@@ -605,7 +605,8 @@
 	display: flex;
 	flex-wrap: nowrap;
 	gap: 80px;
-	justify-content: flex-start;
+	justify-content: left;
+	padding-left: 64px;
 }
 
 .reader__content {

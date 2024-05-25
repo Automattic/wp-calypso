@@ -54,14 +54,17 @@ body.is-section-reader:not(.is-reader-full-post) {
 .is-reader-page .following.main,
 .is-reader-page .tag-stream__main.main,
 .is-reader-page .search-stream__with-sites.main {
-	margin: 0 auto;
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 16px 0;
-	}
+	margin: 0;
 }
 
 .is-reader-page .reader-full-post__story-content {
 	margin-top: 0;
+}
+
+.is-section-reader .stream__top-header {
+	padding: 12px 64px 0 64px;
+	border-block-end: 1px solid var(--color-border-secondary);
+	margin-bottom: 24px;
 }
 
 .reader__content {
