@@ -1,7 +1,11 @@
-.site-details {
-	padding: 1rem 3rem;
+.site-details .card.is-compact {
+	padding: 1rem;
 }
 
-.site-details__section-header {
-	margin: 1rem 0;
+.site-details .components-form-token-field__input-container {
+	border: 1px solid var(--color-border-subtle);
+}
+
+.site-details__section {
+	margin-bottom: 2rem;
 }

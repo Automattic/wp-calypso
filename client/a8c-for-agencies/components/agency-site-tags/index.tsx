@@ -1,64 +1,24 @@
-import { Button, Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { KeyboardEvent, useState } from 'react';
-import AgencySiteTag from 'calypso/a8c-for-agencies/components/agency-site-tag';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import './style.scss';
+import { FormTokenField } from '@wordpress/components';
+import { translate } from 'i18n-calypso';
+import useUpdateSiteTagsMutation from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/hooks/use-update-site-tags-mutation';
 
 interface Props {
+	siteId: number;
 	tags: string[];
-	isLoading: boolean;
-	onAddTags: ( newTags: string[] ) => void;
-	onRemoveTag: ( removeTag: string ) => void;
 }
 
-export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTag }: Props ) {
-	const translate = useTranslate();
-	const [ tagsInput, setTagsInput ] = useState( '' );
+export default function AgencySiteTags( { siteId, tags }: Props ) {
+	const tagsMutation = useUpdateSiteTagsMutation();
 
-	const handleAddTags = () => {
-		onAddTags( tagsInput.split( ',' ).map( ( s ) => s.trim() ) );
-		setTagsInput( '' );
-	};
-
-	const handleEnterKeyPress = ( event: KeyboardEvent ) => {
-		if ( event.key === 'Enter' ) {
-			event.preventDefault();
-			onAddTags( tagsInput.split( ',' ).map( ( s ) => s.trim() ) );
-			setTagsInput( '' );
-		}
+	const onChange = ( newTags: string[] ) => {
+		tagsMutation.mutate( { siteId, tags: newTags } );
 	};
 
 	return (
-		<div className="agency-site-tags">
-			<Card className="agency-site-tags__controls">
-				<FormTextInput
-					disabled={ isLoading }
-					className="agency-site-tags__input"
-					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
-						setTagsInput( e.target.value )
-					}
-					onKeyDown={ handleEnterKeyPress }
-					value={ tagsInput }
-					placeholder={ translate( 'Add tags here (separate by commas)' ) }
-				/>
-				<Button
-					primary
-					compact
-					busy={ isLoading }
-					onClick={ handleAddTags }
-					className="agency-site-tags__button"
-				>
-					{ translate( 'Add' ) }
-				</Button>
-			</Card>
-			<Card tagName="ul" className="agency-site-tags__list">
-				{ tags.map( ( tag ) => (
-					<li>
-						<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
-					</li>
-				) ) }
-			</Card>
-		</div>
+		<FormTokenField
+			label={ translate( 'Add new tag' ) }
+			value={ tags }
+			onChange={ ( items ) => onChange( items as string[] ) }
+		/>
 	);
 }
