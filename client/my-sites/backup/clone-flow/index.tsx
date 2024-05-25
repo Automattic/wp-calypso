@@ -27,7 +27,6 @@ import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getBackupStagingSites from 'calypso/state/rewind/selectors/get-backup-staging-sites';
 import hasFetchedStagingSitesList from 'calypso/state/rewind/selectors/has-fetched-staging-sites-list';
 import isFetchingStagingSitesList from 'calypso/state/rewind/selectors/is-fetching-staging-sites-list';
-import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
@@ -120,10 +119,12 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		return '';
 	};
 
-	const inProgressRewindStatus = useSelector( ( state ) => {
-		return getInProgressRewindStatus( state, restoreSiteId, backupPeriod );
-	} );
-	const { message, percent, currentEntry, status } = useSelector( ( state ) => {
+	const {
+		message,
+		percent,
+		currentEntry,
+		status: inProgressRewindStatus,
+	} = useSelector( ( state ) => {
 		return getRestoreProgress( state, restoreSiteId ) || ( {} as RestoreProgress );
 	} );
 
@@ -451,7 +452,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					} ) }
 				</h3>
 				<ProgressBar
-					isReady={ 'running' === status }
+					isReady={ 'running' === inProgressRewindStatus }
 					initializationMessage={ translate( 'Initializing the copy process' ) }
 					message={ message }
 					entry={ currentEntry }
