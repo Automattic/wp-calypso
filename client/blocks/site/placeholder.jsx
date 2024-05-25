@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
 import { Component } from 'react';
+
 const debug = debugFactory( 'calypso:my-sites:site' );
 
 export default class extends Component {

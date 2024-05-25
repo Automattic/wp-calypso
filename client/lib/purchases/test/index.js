@@ -13,6 +13,7 @@ import {
 	shouldRenderMonthlyRenewalOption,
 } from '../index';
 import data from './data';
+
 const {
 	DOMAIN_PURCHASE,
 	DOMAIN_PURCHASE_PENDING_TRANSFER,

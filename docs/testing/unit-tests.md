@@ -182,6 +182,7 @@ For instance, in Calypso, we use the ['config'](https://github.com/Automattic/wp
 ```javascript
 // bilbo.js
 import config from '@automattic/calypso-config';
+
 export const isBilboVisible = () => ( config.isEnabled( 'the-ring' ) ? false : true );
 ```
 

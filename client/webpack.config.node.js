@@ -13,8 +13,9 @@ const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identi
 const { packagesInMonorepo } = require( '../build-tools/lib/monorepo' );
 const ExternalModulesWriter = require( './server/bundler/external-modules' );
 const config = require( './server/config' );
-const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
+
+const bundleEnv = config( 'env' );
 
 /**
  * Internal variables

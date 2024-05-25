@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import './style.scss';
+
 function P2StepWrapper( {
 	flowName,
 	stepName,

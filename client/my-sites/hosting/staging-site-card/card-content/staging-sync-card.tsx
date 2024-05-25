@@ -19,6 +19,7 @@ import { ConfirmationModal } from '../confirmation-modal';
 import SyncOptionsPanel, { CheckboxOptionItem } from '../sync-options-panel';
 import { useCheckSyncStatus } from '../use-site-sync-status';
 import { StagingSiteSyncLoadingBarCardContent } from './staging-site-sync-loading-bar-card-content';
+
 const stagingSiteSyncSuccess = 'staging-site-sync-success';
 
 const STAGING_SYNC_JETPACK_ERROR_CODES = [

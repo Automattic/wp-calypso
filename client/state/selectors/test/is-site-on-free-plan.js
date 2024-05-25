@@ -2,6 +2,7 @@ import { PLAN_BUSINESS, PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso
 import deepFreeze from 'deep-freeze';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import isSiteOnFreePlan from '../is-site-on-free-plan';
+
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getCurrentPlan: jest.fn(),
 } ) );

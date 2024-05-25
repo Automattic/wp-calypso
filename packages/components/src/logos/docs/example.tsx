@@ -12,6 +12,7 @@ import VIPLogo from '../vip-logo';
 import WooLogo from '../woo-logo';
 
 import './style.scss';
+
 export default function ProductLogoExample() {
 	return (
 		<div className="example-container">

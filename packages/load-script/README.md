@@ -8,6 +8,7 @@ WARNING: external scripts might break the entire application in unpredictable wa
 
 ```js
 import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
+
 loadScript(
 	REMOTE_SCRIPT_URL,
 	function ( error ) {

@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+
 export default function PartnerLogoIonos() {
 	const translate = useTranslate();
 	return (

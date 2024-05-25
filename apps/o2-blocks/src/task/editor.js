@@ -14,6 +14,7 @@ import classnames from 'classnames';
 import moment from 'moment';
 
 import './editor.scss';
+
 const name = 'a8c/task';
 
 const edit = ( { attributes, setAttributes, mergeBlocks, onReplace, className } ) => {

@@ -6,6 +6,7 @@ import { COURSE_SLUGS } from 'calypso/data/courses';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import EducationalContent from '../educational-content';
+
 export const EDUCATION_EARN = 'home-education-earn';
 
 const EducationEarn = ( { siteSlug } ) => {

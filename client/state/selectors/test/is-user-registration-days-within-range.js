@@ -1,6 +1,7 @@
 import { when } from 'jest-when';
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 import isUserRegistrationDaysWithinRange from '../is-user-registration-days-within-range';
+
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserDate: jest.fn(),
 } ) );

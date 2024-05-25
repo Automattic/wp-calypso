@@ -9,6 +9,7 @@ const makeDir = require( 'make-dir' );
 
 const state = require( './lib/state' );
 const config = require( './lib/config' );
+
 const appData = path.join( app.getPath( 'appData' ), config.appPathName );
 
 // Initialize log path prior to requiring any modules that log
@@ -55,6 +56,7 @@ if ( Settings.isDebug() ) {
  * This has to come after the DEBUG_* variables
  */
 const log = require( './lib/logger' )( 'desktop:boot' );
+
 log.info( `Booting ${ config.appPathName + ' v' + config.version }` );
 log.info( `App Path: ${ app.getAppPath() }` );
 log.info( `App Data: ${ app.getPath( 'userData' ) }` );

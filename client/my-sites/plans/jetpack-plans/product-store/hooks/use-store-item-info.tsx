@@ -40,6 +40,7 @@ import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
 import { useShoppingCartTracker } from './use-shopping-cart-tracker';
+
 const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
 
 const getIsExternal = ( item: SelectorProduct ) =>

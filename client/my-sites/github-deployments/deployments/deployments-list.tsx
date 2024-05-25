@@ -7,6 +7,7 @@ import { NoResults } from './no-results';
 import { CodeDeploymentData } from './use-code-deployments-query';
 
 import './styles.scss';
+
 interface GitHubDeploymentsListProps {
 	deployments: CodeDeploymentData[];
 }

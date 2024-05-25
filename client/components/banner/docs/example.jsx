@@ -1,5 +1,6 @@
 import { ListTile, Gridicon } from '@automattic/components';
 import Banner from 'calypso/components/banner';
+
 const icons = [ 'custom-post-type', 'cloud', 'layout' ];
 
 const BannerExample = () => (

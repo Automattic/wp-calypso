@@ -8,6 +8,7 @@ Create a `Users` instance from WPCOM
 
 ```js
 const wpcom = require( 'wpcom' )( '<your-token>' );
+
 const suggestions = wpcom.users().suggest( '<site-id>' );
 ```
 

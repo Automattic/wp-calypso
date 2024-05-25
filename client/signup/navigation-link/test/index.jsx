@@ -1,8 +1,8 @@
 /** @jest-environment jsdom */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import * as signupUtils from 'calypso/signup/utils';
 import { NavigationLink } from '../';
-const signupUtils = require( 'calypso/signup/utils' );
 
 jest.mock( 'calypso/signup/utils', () => ( {
 	getStepUrl: jest.fn(),

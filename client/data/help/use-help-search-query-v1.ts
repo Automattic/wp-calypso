@@ -4,6 +4,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LinksForSection } from '@automattic/data-stores';
+
 export const useHelpSearchQuery = (
 	search: string,
 	queryOptions: Record< string, unknown > = {}

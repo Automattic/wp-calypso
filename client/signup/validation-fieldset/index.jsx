@@ -5,6 +5,7 @@ import { values } from 'lodash';
 import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import './style.scss';
+
 const debug = debugFactory( 'calypso:validate-fieldset' );
 
 export default class ValidationFieldset extends Component {

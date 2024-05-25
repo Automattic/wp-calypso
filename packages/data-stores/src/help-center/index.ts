@@ -6,6 +6,7 @@ import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as selectors from './selectors';
+
 export type { State };
 
 let isRegistered = false;

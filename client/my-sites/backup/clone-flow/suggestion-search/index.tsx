@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import SuggestionSearch from 'calypso/components/suggestion-search';
 import { APIRewindStagingSiteInfo } from 'calypso/state/rewind/staging/types';
 import './style.scss';
+
 interface Props {
 	loading: boolean;
 	siteSuggestions: APIRewindStagingSiteInfo[];

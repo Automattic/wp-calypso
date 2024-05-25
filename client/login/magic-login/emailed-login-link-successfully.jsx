@@ -21,6 +21,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { withEnhancers } from 'calypso/state/utils';
 import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
+
 class EmailedLoginLinkSuccessfully extends Component {
 	static propTypes = {
 		locale: PropTypes.string.isRequired,

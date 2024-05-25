@@ -473,6 +473,7 @@ module.exports = {
 				groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
 			},
 		],
+		'import/newline-after-import': [ 'error' ],
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'warn',

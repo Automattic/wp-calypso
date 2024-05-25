@@ -2,6 +2,7 @@ import { memo } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import useIsRunningInWpAdmin from '../../hooks/use-is-running-in-wpadmin';
+
 interface Props {
 	balance?: string;
 }

@@ -41,6 +41,7 @@ import WooBanner from './components/woo-banner';
 import useIsRunningInWpAdmin from './hooks/use-is-running-in-wpadmin';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
+
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
 const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 export type TabType = ( typeof TAB_OPTIONS )[ number ];

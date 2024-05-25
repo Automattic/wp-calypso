@@ -8,6 +8,7 @@ Server-side and client-side code can retrieve a config value by invoking the `co
 
 ```js
 import config from '@automattic/calypso-config';
+
 console.log( config( 'redirect_uri' ) );
 ```
 

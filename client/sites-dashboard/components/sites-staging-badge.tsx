@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
+
 interface SitesStagingBadgeProps {
 	secondary?: boolean;
 }

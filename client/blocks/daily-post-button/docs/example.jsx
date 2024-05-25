@@ -1,4 +1,5 @@
 import DailyPostButton from 'calypso/blocks/daily-post-button';
+
 const DailyPostButtonExample = () => {
 	return (
 		<div className="design-assets__group">
