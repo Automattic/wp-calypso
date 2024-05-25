@@ -133,12 +133,11 @@ export async function login( context, next ) {
 }
 
 export function magicLogin( context, next ) {
-	const { path } = context;
-
 	if ( isUserLoggedIn( context.store.getState() ) ) {
 		return login( context, next );
 	}
 
+	const { path } = context;
 	context.primary = <MagicLogin path={ path } />;
 
 	next();
@@ -159,6 +158,10 @@ function getHandleEmailedLinkFormComponent( flow ) {
 }
 
 export function magicLoginUse( context, next ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		return login( context, next );
+	}
+
 	/**
 	 * Pull the query arguments out of the URL & into the state.
 	 * It unclutters the address bar & will keep tokens out of tracking pixels.
