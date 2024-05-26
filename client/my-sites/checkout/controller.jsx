@@ -88,6 +88,7 @@ function sitelessCheckout( context, next, extraProps ) {
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const { productSlug: product, purchaseId } = context.params;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
+	const { fromSiteSlug, sitelessCheckoutType } = extraProps;
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
 
@@ -98,6 +99,12 @@ function sitelessCheckout( context, next, extraProps ) {
 		const translate = useTranslate();
 		return <DocumentHead title={ translate( 'Checkout' ) } />;
 	};
+
+	if ( sitelessCheckoutType === 'jetpack' && ! isLoggedOut && fromSiteSlug ) {
+		// If the user is logged in and checkout has a site, redirect to the regular checkout page
+		page( context.path.replace( '/checkout/jetpack', `/checkout/${ extraProps.fromSiteSlug }` ) );
+		return;
+	}
 
 	context.primary = (
 		<>
