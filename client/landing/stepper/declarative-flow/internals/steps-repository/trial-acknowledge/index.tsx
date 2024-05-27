@@ -1,6 +1,11 @@
-import { StepContainer, isNewHostedSiteCreationFlow } from '@automattic/onboarding';
+import {
+	StepContainer,
+	isNewHostedSiteCreationFlow,
+	isEntrepreneurSignupFlow,
+} from '@automattic/onboarding';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { EntrepreneurTrialAcknowledge } from './entrepreneur-trial-acknowledge';
 import { HostingTrialAcknowledge } from './hosting-trial-acknowledge';
 import { MigrationTrialAcknowledge } from './migration-trial-acknowledge';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -12,6 +17,16 @@ const TrialAcknowledge: Step = function TrialAcknowledge( { navigation, flow, st
 	useSaveHostingFlowPathStep( flow, `/setup/${ flow }/${ stepName }` );
 
 	const getStepContent = () => {
+		if ( isEntrepreneurSignupFlow( flow ) ) {
+			return (
+				<EntrepreneurTrialAcknowledge
+					flow={ flow }
+					navigation={ navigation }
+					stepName={ stepName }
+				/>
+			);
+		}
+
 		if ( isNewHostedSiteCreationFlow( flow ) ) {
 			return (
 				<HostingTrialAcknowledge flow={ flow } navigation={ navigation } stepName={ stepName } />

@@ -27,6 +27,7 @@ const entrepreneurFlow: Flow = {
 			// Replacing the `segmentation-survey` slug with `start` as having the
 			// word `survey` in the address bar might discourage users from continuing.
 			{ ...STEPS.SEGMENTATION_SURVEY, ...{ slug: SEGMENTATION_SURVEY_SLUG } },
+			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.WAIT_FOR_ATOMIC,
@@ -53,7 +54,7 @@ const entrepreneurFlow: Flow = {
 			const queryParams = new URLSearchParams();
 
 			const redirectTo = addQueryArgs(
-				`${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/create-site`,
+				`${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/trialAcknowledge`,
 				{
 					...Object.fromEntries( queryParams ),
 				}
@@ -68,6 +69,12 @@ const entrepreneurFlow: Flow = {
 			return loginUrl;
 		};
 
+		const goBack = () => {
+			if ( currentStep === STEPS.TRIAL_ACKNOWLEDGE.slug ) {
+				navigate( SEGMENTATION_SURVEY_SLUG + '#2' );
+			}
+		};
+
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, '' /* intent */, flowName, currentStep );
 
@@ -76,12 +83,16 @@ const entrepreneurFlow: Flow = {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
 
 					if ( userIsLoggedIn ) {
-						return navigate( STEPS.SITE_CREATION_STEP.slug );
+						return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
 					}
 
 					// Redirect user to the sign-in/sign-up page before site creation.
 					const entrepreneurLoginUrl = getEntrepreneurLoginUrl();
 					return window.location.replace( entrepreneurLoginUrl );
+				}
+
+				case STEPS.TRIAL_ACKNOWLEDGE.slug: {
+					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
@@ -141,7 +152,7 @@ const entrepreneurFlow: Flow = {
 			return providedDependencies;
 		}
 
-		return { submit };
+		return { goBack, submit };
 	},
 
 	useSideEffect() {
