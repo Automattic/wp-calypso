@@ -122,9 +122,7 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
 						/>
 					</FormLabel>
 					<FormSettingExplanation>
-						{ hasEnTranslation( 'Use WP-Admin to manage your site.' )
-							? translate( 'Use WP-Admin to manage your site.' )
-							: translate( 'The classic WP-Admin WordPress interface.' ) }
+						{ translate( 'Use WP-Admin to manage your site.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset>
