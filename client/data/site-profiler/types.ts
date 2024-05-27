@@ -99,6 +99,17 @@ export interface UrlBasicMetricsQueryResponse {
 	token: string;
 }
 
+export interface UrlPerformanceMetricsQueryResponse {
+	webtestpage_org: {
+		report: {
+			audits: {
+				health: object;
+				performance: object;
+			};
+		};
+	};
+}
+
 export interface BasicMetricsResult extends Omit< UrlBasicMetricsQueryResponse, 'basic' > {
 	basic: BasicMetricsScored;
 }
