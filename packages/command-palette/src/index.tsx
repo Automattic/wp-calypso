@@ -137,6 +137,7 @@ export function CommandMenuGroup() {
 			setFooterMessage( message );
 			return;
 		}
+		setFooterMessage( filterNotice ?? '' );
 	}, [ setFooterMessage, filterNotice, inSiteContext, currentRoute, adminUrl, siteName, __ ] );
 
 	useEffect( () => {
