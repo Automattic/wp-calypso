@@ -48,11 +48,6 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 		);
 
 		if ( proceedWithNavigation ) {
-			// For custom navigation, we need to clear the answers before the last question
-			if ( ! isLastQuestion ) {
-				clearAnswers();
-			}
-
 			recordCompleteEvent();
 			navigation.submit?.( providedDependencies );
 		}

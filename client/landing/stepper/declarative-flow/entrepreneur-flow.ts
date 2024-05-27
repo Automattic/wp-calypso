@@ -48,6 +48,7 @@ const entrepreneurFlow: Flow = {
 
 		const locale = useFlowLocale();
 		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
+		const { clearAnswers } = useCachedAnswers( ENTREPRENEUR_TRIAL_SURVEY_KEY );
 
 		const getEntrepreneurLoginUrl = () => {
 			const redirectTo = `${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/trialAcknowledge${ window.location.search }`;
@@ -84,6 +85,9 @@ const entrepreneurFlow: Flow = {
 				}
 
 				case STEPS.TRIAL_ACKNOWLEDGE.slug: {
+					// After the trial acknowledge step, the answers from the segmentation survey are cleared.
+					clearAnswers();
+
 					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}
 
