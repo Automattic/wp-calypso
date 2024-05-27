@@ -29,7 +29,6 @@ import { isSamePlan } from '../../lib/is-same-plan';
 import { UseGridPlansParams, UseGridPlansType } from './types';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import { useGetGuidedFlowPlanTypes } from './use-segment-based-plans';
 import type { HiddenPlans, PlansIntent } from '../../types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -98,15 +97,9 @@ const usePlanTypesWithIntent = ( {
 	siteId,
 	hiddenPlans: { hideEnterprisePlan } = {},
 	isSubdomainNotGenerated = false,
-	segmentationAnswers = {},
 }: Pick<
 	UseGridPlansParams,
-	| 'intent'
-	| 'selectedPlan'
-	| 'siteId'
-	| 'hiddenPlans'
-	| 'isSubdomainNotGenerated'
-	| 'segmentationAnswers'
+	'intent' | 'selectedPlan' | 'siteId' | 'hiddenPlans' | 'isSubdomainNotGenerated'
 > ): string[] => {
 	const { planSlug: sitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
 	const isEnterpriseAvailable = ! hideEnterprisePlan;
@@ -131,8 +124,6 @@ const usePlanTypesWithIntent = ( {
 		TYPE_WOOEXPRESS_MEDIUM,
 		TYPE_P2_PLUS,
 	];
-
-	const guidedFlowPlanTypes = useGetGuidedFlowPlanTypes( segmentationAnswers );
 
 	let planTypes;
 	switch ( intent ) {
@@ -192,9 +183,6 @@ const usePlanTypesWithIntent = ( {
 		case 'plans-videopress':
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
-		case 'plans-guided':
-			planTypes = guidedFlowPlanTypes;
-			break;
 		default:
 			planTypes = availablePlanTypes;
 	}
@@ -225,7 +213,6 @@ const useGridPlans: UseGridPlansType = ( {
 	siteId,
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
-	segmentationAnswers,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -238,7 +225,6 @@ const useGridPlans: UseGridPlansType = ( {
 			siteId,
 			hiddenPlans,
 			isSubdomainNotGenerated,
-			segmentationAnswers,
 		} ),
 		term,
 		intent,
@@ -250,7 +236,6 @@ const useGridPlans: UseGridPlansType = ( {
 			siteId,
 			hiddenPlans,
 			isSubdomainNotGenerated,
-			segmentationAnswers,
 		} ),
 		term,
 		intent,

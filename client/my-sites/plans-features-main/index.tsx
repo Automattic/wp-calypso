@@ -51,7 +51,6 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
-import useSurveyAnswersQuery from 'calypso/data/segmentaton-survey/queries/use-survey-answers-query';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -60,7 +59,6 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from 'calypso/signup/steps/initial-intent/constants';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -293,8 +291,8 @@ const PlansFeaturesMain = ( {
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
-
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
+
 	useEffect( () => {
 		if ( intentFromSiteMeta.processing ) {
 			return;
@@ -380,10 +378,6 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
-	const { data: segmentationAnswers, isFetching: isLoadingSurveyAnswers } = useSurveyAnswersQuery( {
-		surveyKey: GUIDED_FLOW_SEGMENTATION_SURVEY_KEY,
-	} );
-
 	// The hook is introduced temporarily to alter the value dynamically according to the ExPlat variant loaded.
 	// Once the experiment concludes, we will clean it up and simply use the prop value.
 	// For more details, please refer to peP6yB-23n-p2
@@ -408,7 +402,6 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		segmentationAnswers,
 	} );
 
 	let highlightLabelOverrides: { [ K in PlanSlug ]?: TranslateResult } | undefined;
@@ -438,7 +431,6 @@ const PlansFeaturesMain = ( {
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		highlightLabelOverrides,
-		segmentationAnswers,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -653,8 +645,7 @@ const PlansFeaturesMain = ( {
 			! gridPlansForFeaturesGrid ||
 			! gridPlansForComparisonGrid ||
 			isExperimentLoading ||
-			isTrailMapExperimentLoading ||
-			isLoadingSurveyAnswers
+			isTrailMapExperimentLoading
 	);
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
