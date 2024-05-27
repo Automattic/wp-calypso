@@ -5,15 +5,23 @@ export type ShoppingCartItem = APIProductFamilyProduct & {
 	siteUrls?: string[];
 };
 
+export type MarketplaceType = 'referral' | 'regular';
+
 export interface ShoppingCartContext {
 	selectedCartItems: ShoppingCartItem[];
 	setSelectedCartItems: ( items: ShoppingCartItem[] ) => void;
+}
+
+export interface MarketplaceTypeContext {
+	marketplaceType: MarketplaceType;
+	setMarketplaceType: ( value: MarketplaceType ) => void;
 }
 
 export interface AssignLicenseProps {
 	siteId?: string;
 	suggestedProduct?: string;
 	quantity?: number;
+	purchaseType?: MarketplaceType;
 }
 
 export type HostingType = 'pressable-hosting' | 'wpcom-hosting';

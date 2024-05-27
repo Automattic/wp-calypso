@@ -5,8 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Question } from '../types';
-import getQuestionStepProps from './hooks/get-question-step-props';
 import './style.scss';
+import { QuestionComponentMap, defaultQuestionComponentMap } from './question-step-mapping';
 
 export type QuestionSelectionComponentProps = {
 	question: Question;
@@ -21,6 +21,10 @@ type QuestionStepType = {
 	onContinue: () => void;
 	onSkip: () => void;
 	hideBack?: boolean;
+	hideContinue?: boolean;
+	hideSkip?: boolean;
+	headerAlign?: string;
+	questionComponentMap?: QuestionComponentMap;
 } & QuestionSelectionComponentProps;
 
 const QuestionStep = ( {
@@ -32,13 +36,13 @@ const QuestionStep = ( {
 	onSkip,
 	disabled,
 	hideBack,
+	hideContinue,
+	hideSkip,
+	headerAlign = 'center',
+	questionComponentMap = defaultQuestionComponentMap,
 }: QuestionStepType ) => {
 	const translate = useTranslate();
-	const flowPath = window.location.pathname;
-	const { questionTypeComponentMapping, shouldHideContinueButton, shouldHideSkipButton } =
-		getQuestionStepProps( question, flowPath );
-
-	const SelectionComponent = questionTypeComponentMapping[ question.type ];
+	const SelectionComponent = questionComponentMap[ question.type ];
 
 	return (
 		<StepContainer
@@ -48,7 +52,7 @@ const QuestionStep = ( {
 			goNext={ onSkip }
 			formattedHeader={
 				<FormattedHeader
-					align="center"
+					align={ headerAlign }
 					headerText={ question.headerText }
 					subHeaderText={ question.subHeaderText }
 				/>
@@ -63,7 +67,7 @@ const QuestionStep = ( {
 						disabled={ disabled }
 						onContinue={ onContinue }
 					/>
-					{ ! shouldHideContinueButton && (
+					{ ! hideContinue && (
 						<Button
 							className="question-step__continue-button"
 							onClick={ onContinue }
@@ -75,7 +79,7 @@ const QuestionStep = ( {
 					) }
 				</div>
 			}
-			hideSkip={ shouldHideSkipButton }
+			hideSkip={ hideSkip }
 			skipLabelText={ translate( 'Skip' ) }
 			recordTracksEvent={ recordTracksEvent }
 		/>

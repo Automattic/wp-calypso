@@ -26,6 +26,7 @@ export interface UseGridPlansParams {
 	 * Provide a map of plan slug keyed strings to display as the highlight label on top of each plan.
 	 */
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	segmentationAnswers?: { [ key: string ]: string[] };
 }
 
 export type UseGridPlansType = (

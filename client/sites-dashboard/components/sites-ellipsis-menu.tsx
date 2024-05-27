@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	FEATURE_SFTP,
@@ -335,8 +336,9 @@ function useSubmenuItems( site: SiteExcerptData ) {
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
-	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
+	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP ) && ! site?.plan?.expired;
 	const displayUpsell = ! hasFeatureSFTP;
+	const shouldLinkToDevTools = ! hasFeatureSFTP && isEnabled( 'layout/dotcom-nav-redesign-v2' );
 	const submenuItems = useSubmenuItems( site );
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offset: -8,
@@ -358,7 +360,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 			/>
 			<MenuItemLink
 				info={
-					displayUpsell
+					! hasFeatureSFTP
 						? sprintf(
 								/* translators: %s - the plan's product name, such as Creator or Explorer. */
 								__( 'Requires a %s Plan' ),
@@ -366,58 +368,71 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 						  )
 						: undefined
 				}
+				href={ shouldLinkToDevTools ? `/dev-tools/${ site.slug }` : undefined }
+				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_hosting_click' ) }
 			>
-				{ __( 'Hosting' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
-			</MenuItemLink>
-			<SubmenuPopover
-				{ ...submenuProps.submenu }
-				inline
-				focusOnMount={ displayUpsell ? false : 'firstElement' }
-			>
-				{ displayUpsell ? (
-					<UpsellMenuGroup>
-						<TrackComponentView
-							eventName="calypso_sites_dashboard_site_action_hosting_config_upsell_view"
-							eventProperties={ {
-								product_slug: site.plan?.product_slug,
-							} }
-						/>
-						{ sprintf(
-							/* translators: %s - the plan's product name, such as Creator or Explorer. */
-							__(
-								'Upgrade to the %s Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
-							),
-							upsellPlanName
-						) }
-						<Button
-							compact
-							primary
-							href={ getHostingConfigUrl( site.slug ) }
-							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_upsell_click', {
-									product_slug: site.plan?.product_slug,
-								} )
-							}
-						>
-							{ __( 'See full feature list' ) }
-						</Button>
-					</UpsellMenuGroup>
+				{ shouldLinkToDevTools ? (
+					__( 'Dev Tools' )
 				) : (
-					submenuItems.map( ( item ) => (
-						<MenuItemLink
-							key={ item.label }
-							href={ item.href }
-							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_submenu_click', {
-									section: item.sectionName,
-								} )
-							}
-						>
-							{ item.label }
-						</MenuItemLink>
-					) )
+					<>
+						{ __( 'Hosting' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
+					</>
 				) }
-			</SubmenuPopover>
+			</MenuItemLink>
+			{ ! shouldLinkToDevTools && (
+				<SubmenuPopover
+					{ ...submenuProps.submenu }
+					inline
+					focusOnMount={ displayUpsell ? false : 'firstElement' }
+				>
+					{ displayUpsell ? (
+						<UpsellMenuGroup>
+							<TrackComponentView
+								eventName="calypso_sites_dashboard_site_action_hosting_config_upsell_view"
+								eventProperties={ {
+									product_slug: site.plan?.product_slug,
+								} }
+							/>
+							{ sprintf(
+								/* translators: %s - the plan's product name, such as Creator or Explorer. */
+								__(
+									'Upgrade to the %s Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
+								),
+								upsellPlanName
+							) }
+							<Button
+								compact
+								primary
+								href={ getHostingConfigUrl( site.slug ) }
+								onClick={ () =>
+									recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_upsell_click', {
+										product_slug: site.plan?.product_slug,
+									} )
+								}
+							>
+								{ __( 'See full feature list' ) }
+							</Button>
+						</UpsellMenuGroup>
+					) : (
+						submenuItems.map( ( item ) => (
+							<MenuItemLink
+								key={ item.label }
+								href={ item.href }
+								onClick={ () =>
+									recordTracks(
+										'calypso_sites_dashboard_site_action_hosting_config_submenu_click',
+										{
+											section: item.sectionName,
+										}
+									)
+								}
+							>
+								{ item.label }
+							</MenuItemLink>
+						) )
+					) }
+				</SubmenuPopover>
+			) }
 		</div>
 	);
 }

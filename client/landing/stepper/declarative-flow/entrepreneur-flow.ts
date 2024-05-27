@@ -1,6 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { anonIdCache } from 'calypso/data/segmentaton-survey';
 import { useSelector } from 'calypso/state';
@@ -49,26 +50,22 @@ const entrepreneurFlow: Flow = {
 		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
 
 		const getEntrepreneurLoginUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
+			const queryParams = new URLSearchParams();
 
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				`/setup/entrepreneur/create-site` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
+			const redirectTo = addQueryArgs(
+				`${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/create-site`,
+				{
+					...Object.fromEntries( queryParams ),
+				}
+			);
 
 			const loginUrl = getLoginUrl( {
 				variationName: flowName,
-				redirectTo: redirectTarget,
+				redirectTo,
 				locale,
 			} );
 
-			const flags = new URLSearchParams( window.location.search ).get( 'flags' );
-			return loginUrl + ( flags ? `&flags=${ flags }` : '' );
+			return loginUrl;
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {

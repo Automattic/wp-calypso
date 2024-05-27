@@ -76,6 +76,16 @@ export default function ProductCard( props: Props ) {
 		}
 	}, [] );
 
+	const truncateDescription = ( description: any ) => {
+		if ( description.length <= 84 ) {
+			return description;
+		}
+
+		const lastSpace = description.slice( 0, 82 ).lastIndexOf( ' ' );
+
+		return description.slice( 0, lastSpace > 0 ? lastSpace : 83 ) + '…';
+	};
+
 	const { description: productDescription } = useProductDescription( product.slug );
 
 	const onShowLightbox = useCallback(
@@ -133,22 +143,28 @@ export default function ProductCard( props: Props ) {
 									/>
 								</div>
 
-								<div className="product-card__description">{ productDescription }</div>
-
-								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
-									<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />
-								) }
+								<div className="product-card__description">
+									{ truncateDescription( productDescription ) }
+								</div>
 							</div>
-
-							<Button
-								className="product-card__select-button"
-								primary={ ! isSelected }
-								tabIndex={ -1 }
-							>
-								{ isSelected && <Icon icon={ check } /> }
-								{ isSelected ? translate( 'Added' ) : translate( 'Add to cart' ) }
-							</Button>
 						</div>
+					</div>
+					<div className="product-card__buttons">
+						<Button
+							className="product-card__select-button"
+							primary={ ! isSelected }
+							tabIndex={ -1 }
+						>
+							{ isSelected && <Icon icon={ check } /> }
+							{ isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' ) }
+						</Button>
+						{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
+							<LicenseLightboxLink
+								customText={ translate( 'View details' ) }
+								productName={ productTitle }
+								onClick={ onShowLightbox }
+							/>
+						) }
 					</div>
 				</div>
 			</div>

@@ -1,5 +1,4 @@
 export { getAvailableProductsList } from './get-available-products-list';
-export { getPlanPrice } from './get-plan-price';
 export { getProductBySlug } from './get-product-by-slug';
 export { getProductCost } from './get-product-cost';
 export { getProductIntroductoryOffer } from './get-product-introductory-offer';

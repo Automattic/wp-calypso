@@ -70,6 +70,7 @@ export type PlansIntent =
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
 	| 'plans-videopress'
+	| 'plans-guided'
 	| 'default';
 
 export interface PlanActionOverrides {
@@ -191,17 +192,13 @@ export type GridContextProps = {
 	children: React.ReactNode;
 	coupon?: string;
 	enableFeatureTooltips?: boolean;
-	/**
-	 * `enableCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
-	 * for rendering features with categories based on available/associated feature group map.
-	 */
-	enableCategorisedFeatures?: boolean;
-	/**
-	 * `featureGroupMap` is relevant for rendering features with categories.
-	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `enableCategorisedFeatures` is set).
-	 */
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
+	/**
+	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.
+	 * It is only used for showing "Everything in [previous] plus".
+	 */
+	enableCategorisedFeatures?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

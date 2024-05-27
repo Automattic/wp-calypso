@@ -45,8 +45,9 @@ import {
 	WOO_EXPRESS_PLANS,
 } from './constants';
 import {
-	resolvePlansGridFeatureGroups,
-	resolveWooExpressFeaturesGrouped,
+	resolveFeatureGroupsForComparisonGrid,
+	resolveFeatureGroupsForFeaturesGrid,
+	resolveWooExpressFeatureGroupsForComparisonGrid,
 } from './feature-group-plan-map';
 import { FEATURES_LIST } from './features-list';
 import { PLANS_LIST } from './plans-list';
@@ -77,12 +78,21 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
-export function getPlanFeaturesGrouped(): Partial< FeatureGroupMap > {
-	return resolvePlansGridFeatureGroups();
+export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForFeaturesGrid();
 }
 
-export function getWooExpressFeaturesGrouped(): Partial< FeatureGroupMap > {
-	return resolveWooExpressFeaturesGrouped();
+export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForComparisonGrid();
+}
+
+export function getWooExpressFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	// Same as getPlanFeaturesGroupedForFeaturesGrid() for now
+	return getPlanFeaturesGroupedForFeaturesGrid();
+}
+
+export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
+	return resolveWooExpressFeatureGroupsForComparisonGrid();
 }
 
 export function getPlansSlugs(): string[] {

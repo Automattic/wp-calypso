@@ -222,9 +222,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'dev-tools-promo',
-		paths: [ '/dev-tools-promo' ],
-		module: 'calypso/dev-tools-promo',
+		name: 'dev-tools',
+		paths: [ '/dev-tools' ],
+		module: 'calypso/dev-tools',
 		group: 'sites',
 	},
 	{
@@ -783,7 +783,15 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-referrals',
-		paths: [ '/referrals', '/referrals/bank-details', '/referrals/commissions' ],
+		paths: [
+			'/referrals',
+			'/referrals/bank-details',
+			'/referrals/commissions',
+			// FIXME: Remove the above 2 items when automated referral is enabled
+			'/referrals/dashboard',
+			'/referrals/payment-settings',
+			'/referrals/faq',
+		],
 		module: 'calypso/a8c-for-agencies/sections/referrals',
 		group: 'a8c-for-agencies',
 	},

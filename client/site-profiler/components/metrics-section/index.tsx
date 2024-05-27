@@ -7,6 +7,7 @@ interface MetricsSectionProps {
 	name: string;
 	title: string | React.ReactNode;
 	subtitle?: string | React.ReactNode;
+	subtitleOnClick?: () => void;
 	children?: React.ReactNode;
 }
 
@@ -39,14 +40,14 @@ const Title = styled.div`
 		line-height: 100%;
 		letter-spacing: -1.5px;
 
-		&.success {
+		&.good {
 			background: linear-gradient( 270deg, #349f4b 49.73%, #3858e9 100% );
 			background-clip: text;
 			-webkit-background-clip: text;
 			-webkit-text-fill-color: transparent;
 		}
 
-		&.alert {
+		&.poor {
 			background: linear-gradient( 270deg, #d63638 10.23%, #5200ff 100% );
 			background-clip: text;
 			-webkit-background-clip: text;
@@ -80,17 +81,17 @@ const Content = styled.div`
 
 export const MetricsSection = forwardRef< HTMLObjectElement, MetricsSectionProps >(
 	( props, ref: ForwardedRef< HTMLObjectElement > ) => {
-		const { name, title, subtitle, children } = props;
+		const { name, title, subtitle, children, subtitleOnClick } = props;
 
 		return (
 			<Container ref={ ref }>
 				<NameSpan>{ name }</NameSpan>
 				<Title>{ title }</Title>
 				{ subtitle && (
-					<>
-						<Subtitle>{ subtitle }</Subtitle>
+					<Subtitle onClick={ subtitleOnClick }>
+						{ subtitle }
 						<SubtitleIcon icon="chevron-right" size={ 18 } />
-					</>
+					</Subtitle>
 				) }
 
 				{ children && <Content>{ children }</Content> }

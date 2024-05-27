@@ -1,10 +1,10 @@
 import page, { Context as PageJSContext } from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, render as clientRender, redirectIfP2 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
-import { DOTCOM_DEVELOPER_TOOLS_PROMO } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+import { DOTCOM_DEVELOPER_TOOLS } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { devToolsPromo } from './controller';
+import { devTools } from './controller';
 
 const redirectForNonSimpleSite = ( context: PageJSContext, next: () => void ) => {
 	const state = context.store.getState();
@@ -16,14 +16,15 @@ const redirectForNonSimpleSite = ( context: PageJSContext, next: () => void ) =>
 };
 
 export default function () {
-	page( '/dev-tools-promo', siteSelection, sites, makeLayout, clientRender );
+	page( '/dev-tools', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/dev-tools-promo/:site',
+		'/dev-tools/:site',
 		siteSelection,
 		navigation,
 		redirectForNonSimpleSite,
-		devToolsPromo,
-		siteDashboard( DOTCOM_DEVELOPER_TOOLS_PROMO ),
+		redirectIfP2,
+		devTools,
+		siteDashboard( DOTCOM_DEVELOPER_TOOLS ),
 		makeLayout,
 		clientRender
 	);

@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import SurveyContainer from 'calypso/components/survey-container';
-import { Question } from 'calypso/components/survey-container/types';
+import { QuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
+import { Question, QuestionConfiguration } from 'calypso/components/survey-container/types';
 import {
 	useCachedAnswers,
 	useSaveAnswersMutation,
@@ -16,6 +17,9 @@ type SegmentationSurveyProps = {
 	surveyKey: string;
 	onBack?: () => void;
 	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void;
+	headerAlign?: string;
+	questionConfiguration?: QuestionConfiguration;
+	questionComponentMap?: QuestionComponentMap;
 };
 
 /**
@@ -26,7 +30,14 @@ type SegmentationSurveyProps = {
  * @param {(questionKey: string, answerKeys: string[], isLastQuestion?: boolean) => void} [props.onNext] - A function that navigates to the next question/step.
  * @returns {React.ReactComponentElement}
  */
-const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyProps ) => {
+const SegmentationSurvey = ( {
+	surveyKey,
+	onBack,
+	onNext,
+	headerAlign,
+	questionConfiguration,
+	questionComponentMap,
+}: SegmentationSurveyProps ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
 	const { mutateAsync, isPending } = useSaveAnswersMutation( { surveyKey } );
 	const { answers, setAnswers, clearAnswers } = useCachedAnswers( surveyKey );
@@ -114,6 +125,9 @@ const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyPr
 				onSkip={ skipToNextPage }
 				onChange={ onChangeAnswer }
 				disabled={ isPending }
+				headerAlign={ headerAlign }
+				questionConfiguration={ questionConfiguration }
+				questionComponentMap={ questionComponentMap }
 			/>
 		</>
 	);

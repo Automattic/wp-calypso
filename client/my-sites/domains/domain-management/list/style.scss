@@ -175,9 +175,20 @@
 				margin-inline: 64px;
 			}
 		}
-		> table {
+
+		table {
 			@include break-huge {
-				padding-inline: 64px;
+				grid-template-columns: 100px 2fr 1fr 1fr auto auto auto auto;
+
+				th:last-child,
+				td:last-child {
+					padding: 0 64px 0 0;
+				}
+
+				th:first-child,
+				td:first-child {
+					padding: 0 0 0 72px;
+				}
 			}
 		}
 

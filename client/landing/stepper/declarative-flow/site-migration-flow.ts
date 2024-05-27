@@ -90,6 +90,7 @@ const siteMigration: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
+		const { siteId } = useSiteData();
 		const variantSlug = this.variantSlug;
 		const flowPath = variantSlug ?? flowName;
 		const siteCount =
@@ -110,8 +111,8 @@ const siteMigration: Flow = {
 
 		// Call triggerGuidesForStep for the current step
 		useEffect( () => {
-			triggerGuidesForStep( flowName, currentStep );
-		}, [ flowName, currentStep ] );
+			triggerGuidesForStep( flowName, currentStep, siteId );
+		}, [ flowName, currentStep, siteId ] );
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -281,10 +282,8 @@ const siteMigration: Flow = {
 						const destination = addQueryArgs(
 							{
 								siteSlug,
+								from: fromQueryParam,
 								siteId,
-								// don't use from query param if the user takes the migration deal.
-								// This is to avoid the user being redirected to the wrong page after checkout.
-								...( ! providedDependencies?.userAcceptedDeal ? { from: fromQueryParam } : {} ),
 							},
 							`/setup/${ flowPath }/${ redirectAfterCheckout }`
 						);

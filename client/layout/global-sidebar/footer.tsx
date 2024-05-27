@@ -50,8 +50,10 @@ export const GlobalSidebarFooter: FC< {
 				<>
 					<SidebarSearch
 						tooltip={
-							hasEnTranslation( 'Search (%(shortcut)s)' )
-								? translate( 'Search (%(shortcut)s)', { args: { shortcut: searchShortcut } } )
+							hasEnTranslation( 'Command Palette (%(shortcut)s)' )
+								? translate( 'Command Palette (%(shortcut)s)', {
+										args: { shortcut: searchShortcut },
+								  } )
 								: translate( 'Jump to…' )
 						}
 						onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.SEARCH_CLICK ) }
@@ -60,7 +62,6 @@ export const GlobalSidebarFooter: FC< {
 						className="sidebar__item-notifications"
 						tooltip={ translate( 'Notifications' ) }
 						onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.NOTIFICATION_CLICK ) }
-						translate={ translate }
 					/>
 				</>
 			) }

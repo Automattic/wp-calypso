@@ -2,6 +2,8 @@
 @import "@automattic/typography/styles/variables";
 
 #site-profiler-v2 {
+	--color-button: #3858e9;
+	--color-button-60: #193de0;
 	background: #000;
 	color: var(--studio-white);
 }
@@ -21,7 +23,7 @@
 		font-family: "SF Pro Text", $sans;
 		color: var(--studio-white);
 		/* stylelint-disable-next-line */
-		font-size: 4.375rem;
+		font-size: 6rem;
 		line-height: 1;
 		margin-bottom: 1rem;
 
@@ -51,25 +53,31 @@
 
 	p {
 		font-family: "SF Pro Text", $sans;
-		font-size: 1rem;
+		/* stylelint-disable-next-line */
+		font-size: 1.125rem;
 		color: var(--studio-white);
+
+		@media (max-width: $break-small) {
+			font-size: 1rem;
+		}
 	}
 
 	a,
 	button.is-link {
-		color: var(--wp-admin-theme-color);
+		color: #fff;
 		text-decoration: underline;
 		font-size: 1rem;
+		font-size: 500;
 
 		&:hover {
-			color: var(--wp-admin-theme-color-darker-20);
+			color: var(--studio-gray-40);
 		}
 	}
 
 	// Button style overrides necessary because of conflicting WPcom styles.
 	.button-action {
 		color: #fff;
-		background: #3858e9;
+		background: var(--color-button);
 		border-radius: 4px;
 		font-size: 1rem;
 		font-weight: 500;
@@ -81,13 +89,14 @@
 		}
 
 		&.is-busy {
-			background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
+			background-image: linear-gradient(-45deg, var(--color-button) 28%, var(--color-button-60) 28%, var(--color-button-60) 72%, var(--color-button) 72%);
 		}
 	}
 
 	.result-list {
 		margin: 0;
 		list-style: none;
+		line-height: normal;
 
 		ul {
 			margin: 0;
@@ -96,13 +105,13 @@
 
 		& > li {
 			display: flex;
-			padding: 1rem 0;
-			border-top: solid 1px var(--studio-gray-5);
+			padding: 1.5rem 0;
+			border-top: solid 1px var(--studio-gray-100);
 			gap: 2rem;
 			overflow-x: scroll;
 
-			&:first-child {
-				border: none;
+			&:last-child {
+				border-bottom: solid 1px var(--studio-gray-100);
 			}
 
 			&.redacted {
@@ -114,7 +123,7 @@
 
 			.name {
 				min-width: 200px;
-				text-transform: uppercase;
+				text-transform: none;
 			}
 
 			@media (max-width: $break-small) {
@@ -151,6 +160,11 @@
 
 		.col {
 			max-width: 300px;
+			line-height: 20px;
+		}
+
+		div:not(:first-child) {
+			color: var(--studio-gray-20);
 		}
 	}
 
@@ -185,10 +199,44 @@
 		margin-right: 0.25rem;
 	}
 
-	.domain-analyzer-block {
+	.landing-page-header-block {
+		position: relative;
 		padding-top: 10rem;
+
+
+		background: url(calypso/assets/images/site-profiler/background-landing-header.svg) no-repeat left bottom;
+		padding-bottom: 240px;
+
+		// Huge screens and bigger
+		@media (min-width: $break-huge) {
+			background-position-x: center;
+		}
+
+
+		// Small screens
 		@media (max-width: $break-small ) {
 			padding-top: 6rem;
+			padding-bottom: 130px;
+			background-size: 820px;
+		}
+	}
+
+	.results-header-block {
+		position: relative;
+
+		&.poor {
+			background: url(calypso/assets/images/site-profiler/background-results-bad.svg) no-repeat right top;
+			// Huge screens and bigger
+			@media (min-width: $break-huge) {
+				background-position-x: center;
+			}
+		}
+		&.good {
+			background: url(calypso/assets/images/site-profiler/background-results-good.svg) no-repeat right top;
+			// Huge screens and bigger
+			@media (min-width: $break-huge) {
+				background-position-x: center;
+			}
 		}
 	}
 
@@ -220,6 +268,7 @@
 			height: 365px;
 		}
 	}
+
 	.domain-result-block::after {
 		height: 210px;
 	}

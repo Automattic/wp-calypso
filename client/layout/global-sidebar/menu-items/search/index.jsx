@@ -1,5 +1,5 @@
-import { Icon, search } from '@wordpress/icons';
 import classnames from 'classnames';
+import { PromptIcon } from 'calypso/components/command-palette/icon';
 import { useDispatch } from 'calypso/state';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import SidebarMenuItem from '../menu-item';
@@ -19,7 +19,7 @@ export const SidebarSearch = ( { tooltip, onClick } ) => {
 				} ) }
 				tooltip={ tooltip }
 				tooltipPlacement="top"
-				icon={ <Icon icon={ search } size={ 28 } /> }
+				icon={ <PromptIcon /> }
 			/>
 		</>
 	);

@@ -11,14 +11,16 @@ import {
 	UrlFriendlyTermType,
 	isValidFeatureKey,
 	getFeaturesList,
-	getWooExpressFeaturesGrouped,
-	getPlanFeaturesGrouped,
 	isWooExpressPlan,
 	PLAN_ECOMMERCE,
+	getPlanFeaturesGroupedForFeaturesGrid,
+	getWooExpressFeaturesGroupedForComparisonGrid,
+	getPlanFeaturesGroupedForComparisonGrid,
+	getWooExpressFeaturesGroupedForFeaturesGrid,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
-import { WpcomPlansUI, Plans, AddOns } from '@automattic/data-stores';
+import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -49,6 +51,7 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
+import useSurveyAnswersQuery from 'calypso/data/segmentaton-survey/queries/use-survey-answers-query';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -57,13 +60,14 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
+import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from 'calypso/signup/steps/initial-intent/constants';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
@@ -228,13 +232,12 @@ const PlansFeaturesMain = ( {
 	const translate = useTranslate();
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
+
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
-	const sitePlanSlug = useSelector( ( state: IAppState ) =>
-		siteId ? getSitePlanSlug( state, siteId ) : null
-	);
+	const sitePlanSlug = currentPlan?.productSlug;
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
@@ -377,6 +380,10 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
+	const { data: segmentationAnswers, isFetching: isLoadingSurveyAnswers } = useSurveyAnswersQuery( {
+		surveyKey: GUIDED_FLOW_SEGMENTATION_SURVEY_KEY,
+	} );
+
 	// The hook is introduced temporarily to alter the value dynamically according to the ExPlat variant loaded.
 	// Once the experiment concludes, we will clean it up and simply use the prop value.
 	// For more details, please refer to peP6yB-23n-p2
@@ -401,6 +408,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		segmentationAnswers,
 	} );
 
 	let highlightLabelOverrides: { [ K in PlanSlug ]?: TranslateResult } | undefined;
@@ -430,6 +438,7 @@ const PlansFeaturesMain = ( {
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		highlightLabelOverrides,
+		segmentationAnswers,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -619,6 +628,9 @@ const PlansFeaturesMain = ( {
 		retargetViewPlans();
 	}, [] );
 
+	/**
+	 * TODO: `handleStorageAddOnClick` no longer necessary. Tracking can be done from the grid components directly.
+	 */
 	const handleStorageAddOnClick = useCallback(
 		( addOnSlug: WPComStorageAddOnSlug ) =>
 			recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
@@ -641,7 +653,8 @@ const PlansFeaturesMain = ( {
 			! gridPlansForFeaturesGrid ||
 			! gridPlansForComparisonGrid ||
 			isExperimentLoading ||
-			isTrailMapExperimentLoading
+			isTrailMapExperimentLoading ||
+			isLoadingSurveyAnswers
 	);
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
@@ -673,9 +686,13 @@ const PlansFeaturesMain = ( {
 	}, [ gridPlansForComparisonGrid ] );
 
 	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
-	const featureGroupMap = hasWooExpressFeatures
-		? getWooExpressFeaturesGrouped()
-		: getPlanFeaturesGrouped();
+	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
+		? getWooExpressFeaturesGroupedForComparisonGrid()
+		: getPlanFeaturesGroupedForComparisonGrid();
+
+	const featureGroupMapForFeaturesGrid = hasWooExpressFeatures
+		? getWooExpressFeaturesGroupedForFeaturesGrid()
+		: getPlanFeaturesGroupedForFeaturesGrid();
 
 	return (
 		<>
@@ -793,7 +810,7 @@ const PlansFeaturesMain = ( {
 										useAction={ useAction }
 										enableFeatureTooltips={ ! isTrailMapCopy }
 										enableCategorisedFeatures={ isTrailMapStructure }
-										featureGroupMap={ isTrailMapStructure ? featureGroupMap : undefined }
+										featureGroupMap={ featureGroupMapForFeaturesGrid }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -869,7 +886,7 @@ const PlansFeaturesMain = ( {
 														useCheckPlanAvailabilityForPurchase
 													}
 													enableFeatureTooltips={ ! isTrailMapCopy }
-													featureGroupMap={ featureGroupMap }
+													featureGroupMap={ featureGroupMapForComparisonGrid }
 													hideUnsupportedFeatures={ isTrailMapStructure }
 												/>
 											) }

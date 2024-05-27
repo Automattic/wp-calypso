@@ -1,4 +1,6 @@
 import { FoldableCard } from '@automattic/components';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -17,14 +19,27 @@ import ReferralsFooter from '../footer';
 
 import './style.scss';
 
-export default function CommissionOverview() {
+export default function CommissionOverview( {
+	isAutomatedReferral,
+}: {
+	isAutomatedReferral?: boolean;
+} ) {
 	const translate = useTranslate();
+	const isDesktop = useDesktopBreakpoint();
 
-	const title = translate( 'Referrals - Commission details and terms' );
+	const automatedReferralTitle = isDesktop
+		? translate( 'Your referrals and commissions - FAQ' )
+		: translate( 'FAQ' );
+
+	const title = isAutomatedReferral
+		? automatedReferralTitle
+		: translate( 'Referrals - Commission details and terms' );
 
 	return (
 		<Layout
-			className="commission-overview"
+			className={ classNames( 'commission-overview', {
+				'commission-overview__layout-automated': isAutomatedReferral,
+			} ) }
 			title={ title }
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
@@ -33,14 +48,36 @@ export default function CommissionOverview() {
 				<LayoutHeader>
 					<Breadcrumb
 						items={ [
-							{ label: translate( 'Referrals' ), href: A4A_REFERRALS_LINK },
-							{ label: translate( 'Commission details and terms' ) },
+							{
+								label:
+									isAutomatedReferral && isDesktop
+										? translate( 'Your referrals and commissions' )
+										: translate( 'Referrals' ),
+								href: A4A_REFERRALS_LINK,
+							},
+							{
+								label: isAutomatedReferral
+									? translate( 'FAQ' )
+									: translate( 'Commission details and terms' ),
+							},
 						] }
 					/>
 				</LayoutHeader>
 			</LayoutTop>
 
 			<LayoutBody>
+				{ isAutomatedReferral && (
+					<>
+						<div className="commission-overview__section-heading">
+							{ translate( 'Referrals and commissions Frequently Asked Questions (FAQ)' ) }
+						</div>
+						<div className="commission-overview__section-subtitle">
+							{ translate(
+								'A list of frequently asked questions and answers related to referrals and commissions.'
+							) }
+						</div>
+					</>
+				) }
 				<div className="commission-overview__section-container">
 					<StepSection heading={ translate( 'How much can I earn?' ) }>
 						<FoldableCard
