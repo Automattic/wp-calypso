@@ -79,7 +79,11 @@ const StatsBenefitsCommercial = () => {
 				<li>{ translate( 'GDPR compliance' ) }</li>
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'Priority support' ) }</li>
-				<li>{ translate( 'Commercial use' ) }</li>
+				<li>
+					{ translate( '{{strong}}Commercial use{{/strong}}', {
+						components: { strong: <strong /> },
+					} ) }
+				</li>
 				<li>
 					{ translate( 'UTM tracking' ) }
 					<Icon

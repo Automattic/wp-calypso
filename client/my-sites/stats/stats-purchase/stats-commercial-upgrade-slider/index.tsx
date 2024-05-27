@@ -21,10 +21,10 @@ function useTranslatedStrings() {
 	const limits = translate( 'Monthly views limit', {
 		comment: 'Heading for Stats Upgrade slider. The monthly views limit.',
 	} ) as string;
-	const price = translate( 'You pay', {
+	const price = translate( "You'll pay", {
 		comment: 'Heading for Stats Upgrade slider. The monthly price.',
 	} ) as string;
-	const strategy = translate( 'Price per month, billed yearly', {
+	const strategy = translate( 'Price per month, billed yearly*', {
 		comment: 'Stats Upgrade slider message. The billing strategy.',
 	} ) as string;
 
