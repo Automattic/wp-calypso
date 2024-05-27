@@ -16,7 +16,7 @@
 		width: 100%;
 
 		.masterbar__login-back-link {
-			margin-top: -10px;
+			display: flex;
 			font-weight: 500;
 
 			@media ( max-width: $break-mobile ) {
@@ -69,7 +69,7 @@
 			width: 100%;
 
 			.masterbar__login-back-link {
-				margin-top: -10px;
+				// margin-top: -10px;
 				font-weight: 500;
 
 				@media ( max-width: $break-mobile ) {
@@ -83,11 +83,21 @@
 		width: 100%;
 	}
 
-	.masterbar__blaze-pro-nav-item button.masterbar__login-back-link {
-		color: var(--studio-gray-100);
-		display: flex;
-		font-weight: 500;
-		padding: 0;
+	.masterbar__blaze-pro-nav-item {
+		height: 32px;
+
+		button.masterbar__login-back-link {
+			color: var(--studio-gray-100);
+			display: flex;
+			font-weight: 500;
+			height: 32px;
+			padding: 0;
+		}
+
+		.masterbar__blaze-pro-link img {
+			height: 32px;
+			width: 32px;
+		}
 	}
 
 	&.is-section-signup .layout__content,
@@ -116,9 +126,11 @@
 		width: 360px;
 
 		h3 {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
 			font-size: 2rem;
 			font-weight: 700;
 			line-height: 40px;
+			margin-bottom: 16px; // For 2FA screen
 		}
 	}
 
@@ -233,6 +245,12 @@
 		box-shadow: none;
 	}
 
+	p.verification-code-form__help-text {
+		font-size: 1.25rem;
+		font-weight: 500;
+		text-align: center;
+	}
+
 	// Sign Up styles
 
 	.auth-form__social .auth-form__social-buttons-container {
@@ -280,6 +298,10 @@
 					font-size: 2rem;
 					font-weight: 700;
 					line-height: 40px;
+
+					@media (min-width: 661px) {
+						margin-bottom: 24px;
+					}
 				}
 
 				.formatted-header__subtitle {
@@ -335,7 +357,8 @@
 	// Log in Styles
 
 	.card.login__form,
-	.signup-form .logged-out-form {
+	.signup-form .logged-out-form,
+	.two-factor-authentication__verification-code-form-wrapper {
 		box-shadow: none;
 
 		.form-label {
@@ -354,15 +377,26 @@
 			&:focus-within,
 			&:hover {
 				border-color: var(--color-orange);
-				box-shadow: none;
+				box-shadow: none !important;
+				outline: none !important;
 			}
 		}
+	}
 
+	&.layout.is-white-login,
+	.card.login__form,
+	.signup-form .logged-out-form,
+	.two-factor-authentication__verification-code-form-wrapper {
+		.login .button.is-primary,
 		.form-button {
 			background: var(--color-orange);
 			border-color: var(--color-orange);
 			border-radius: 4px;
 		}
+	}
+
+	.signup-form .signup-form__input.form-text-input {
+		margin-bottom: 12px;
 	}
 
 	.login__header-subtitle {
@@ -373,6 +407,12 @@
 		a,
 		a:visited {
 			color: var(--color-orange);
+		}
+	}
+
+	&.two-factor-auth-enabled {
+		.login__header-subtitle {
+			display: none;
 		}
 	}
 

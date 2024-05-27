@@ -686,7 +686,7 @@ class Login extends Component {
 			headerText = preventWidows( translate( 'Log in to your existing account' ) );
 		}
 
-		if ( isWhiteLogin ) {
+		if ( isWhiteLogin && ! isBlazeProOAuth2Client( oauth2Client ) ) {
 			preHeader = (
 				<div className="login__form-gutenboarding-wordpress-logo">
 					<svg

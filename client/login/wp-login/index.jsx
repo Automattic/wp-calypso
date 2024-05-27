@@ -581,11 +581,22 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate, isFromMigrationPlugin, isGravPoweredClient, isWoo, isWhiteLogin } =
-			this.props;
+		const {
+			locale,
+			translate,
+			isFromMigrationPlugin,
+			isGravPoweredClient,
+			isWoo,
+			isBlazePro,
+			isWhiteLogin,
+		} = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		const isSocialFirst =
-			config.isEnabled( 'login/social-first' ) && isWhiteLogin && ! isGravPoweredClient && ! isWoo;
+			config.isEnabled( 'login/social-first' ) &&
+			isWhiteLogin &&
+			! isGravPoweredClient &&
+			! isWoo &&
+			! isBlazePro;
 
 		return (
 			<div>

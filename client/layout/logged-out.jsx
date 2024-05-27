@@ -32,7 +32,7 @@ import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
 	getCurrentOAuth2Client,
@@ -78,6 +78,7 @@ const LayoutLoggedOut = ( {
 	isWooPasswordless,
 	isBlazePro,
 	locale,
+	twoFactorEnabled,
 	/* eslint-disable no-shadow */
 	clearLastActionRequiresLogin,
 } ) => {
@@ -148,6 +149,7 @@ const LayoutLoggedOut = ( {
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWooPasswordless,
 		'is-blaze-pro': isBlazePro,
+		'two-factor-auth-enabled': twoFactorEnabled,
 	};
 
 	let masterbar = null;
@@ -324,6 +326,7 @@ export default withCurrentRoute(
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 			const redirectToOriginal = getRedirectToOriginal( state ) || '';
+			const isBlazePro = getIsBlazePro( state );
 			const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get(
 				'client_id'
 			);
@@ -343,7 +346,7 @@ export default withCurrentRoute(
 				isGravPoweredClient;
 			const noMasterbarForRoute =
 				isJetpackLogin ||
-				( isWhiteLogin && ! isPartnerSignup ) ||
+				( isWhiteLogin && ! isPartnerSignup && ! isBlazePro ) ||
 				isJetpackWooDnaFlow ||
 				isP2Login ||
 				isInvitationURL;
@@ -360,6 +363,7 @@ export default withCurrentRoute(
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
 				noMasterbarForRoute;
+			const twoFactorEnabled = isTwoFactorEnabled( state );
 
 			return {
 				isJetpackLogin,
@@ -383,6 +387,7 @@ export default withCurrentRoute(
 				isWooCoreProfilerFlow,
 				isWooPasswordless: getIsWooPasswordless( state ),
 				isBlazePro: getIsBlazePro( state ),
+				twoFactorEnabled,
 			};
 		},
 		{ clearLastActionRequiresLogin }
