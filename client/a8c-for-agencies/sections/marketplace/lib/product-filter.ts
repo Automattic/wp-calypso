@@ -11,9 +11,7 @@ export type SelectedFilters = {
 };
 
 export function hasSelectedFilter( selectedFilters: SelectedFilters ) {
-	return Object.keys( selectedFilters ).some( ( key ) => {
-		return Object.values( selectedFilters[ key as keyof SelectedFilters ] ).some(
-			( selected ) => selected
-		);
+	return Object.values( selectedFilters ).some( ( filter ) => {
+		return Object.values( filter ).some( ( selected ) => selected );
 	} );
 }
