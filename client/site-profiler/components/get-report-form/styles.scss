@@ -1,4 +1,8 @@
+
+@import "@automattic/typography/styles/variables";
+
 .get-report-form__wrapper {
+	font-family: "SF Pro Text", $sans;
 	color: #000;
 	position: fixed;
 	bottom: 0;
@@ -73,6 +77,25 @@
 	& fieldset {
 		flex-basis: 300px;
 		margin-bottom: 0;
+
+	}
+	label {
+		/* stylelint-disable-next-line scales/font-weights */
+		font-weight: 300;
+		font-size: 0.875rem;
+		color: var(--studio-gray-100);
+	}
+	.form-text-input.get-report-form__form-name,
+	.form-text-input.get-report-form__form-email {
+		color: var(--studio-gray-100);
+	}
+
+	& .get-report-form__form-name.form-text-input:active,
+	& .get-report-form__form-email.form-text-input:active,
+	& .get-report-form__form-name.form-text-input:focus,
+	& .get-report-form__form-email.form-text-input:focus {
+		border-color: var(--studio-blue-50);
+		box-shadow: 0 0 0 2px #68b3e8;
 	}
 }
 
@@ -86,12 +109,25 @@
 	justify-content: space-between;
 	& fieldset {
 		margin-bottom: 0;
-		flex-basis: 735px;
+		flex-basis: 745px;
 	}
 	.terms-checkbox {
-		color: #000;
+		color: var(--studio-gray-100);
 		font-size: 0.75rem;
 		line-height: 1.5;
+		.components-flex.components-h-stack {
+			align-items: center;
+			gap: 10px;
+		}
+
+		.components-checkbox-control__input {
+			width: 28px;
+			height: 28px;
+			&:focus {
+				border-color: var(--studio-blue-50);
+				box-shadow: 0 0 0 2px #68b3e8;
+			}
+		}
 	}
 	.submit-button {
 		background-color: var(--color-button);

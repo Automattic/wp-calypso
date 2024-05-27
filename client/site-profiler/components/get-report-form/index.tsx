@@ -138,7 +138,7 @@ export function GetReportForm( {
 								{ errors?.name && <FormInputValidation isError text={ errors.name } /> }
 							</FormFieldset>
 							<FormFieldset>
-								<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
+								<FormLabel htmlFor="email">{ translate( 'Email address' ) }</FormLabel>
 								<FormTextInput
 									name="email"
 									className="get-report-form__form-email"
