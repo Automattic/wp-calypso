@@ -6,3 +6,10 @@ div.commands-command-menu {
 	width: min(100% - 32px, 640px);
 	max-width: 640px;
 }
+
+.command-palette__footer-all-sites:focus,
+.command-palette__footer-current-site:focus {
+	outline: thin dotted;
+	color: var(--studio-gray-50);
+	text-decoration: none;
+}
