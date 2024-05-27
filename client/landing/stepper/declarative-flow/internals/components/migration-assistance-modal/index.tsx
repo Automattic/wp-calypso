@@ -3,6 +3,7 @@ import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import { setMigrationAssistanceAccepted } from 'calypso/blocks/importer/wordpress/utils';
+import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import './style.scss';
 
 const EVENT_NAMES = {
@@ -20,6 +21,8 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 ) => {
 	const translate = useTranslate();
 	const importSiteHostName = props.migrateFrom || translate( 'your site' );
+	const { data: urlData, isLoading } = useAnalyzeUrlQuery( importSiteHostName, true );
+	const shouldShowModal = ! isLoading && urlData?.platform === 'wordpress';
 
 	const logEvent = ( acceptedDeal: boolean = false ) => {
 		const eventName = acceptedDeal ? EVENT_NAMES.accepted : EVENT_NAMES.declined;
@@ -41,10 +44,17 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 	};
 
 	useEffect( () => {
+		if ( ! shouldShowModal ) {
+			return;
+		}
 		recordTracksEvent( 'calypso_migration_assistance_modal_loaded', {
 			user_site: importSiteHostName,
 		} );
-	}, [ importSiteHostName ] );
+	}, [ importSiteHostName, shouldShowModal ] );
+
+	if ( ! shouldShowModal ) {
+		return;
+	}
 
 	return (
 		<ConfirmModal
