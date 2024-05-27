@@ -81,7 +81,7 @@ const DevTools = () => {
 	];
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
-	const showHostingActivationButton = canSiteGoAtomic;
+	const showActivationButton = canSiteGoAtomic;
 	const backUrl = `/hosting-config/${ siteSlug }`;
 	const dispatch = useDispatch();
 	const transferInitiate = ( siteId: number, { geo_affinity = '' } = {} ) => {
@@ -94,12 +94,12 @@ const DevTools = () => {
 		<div className="dev-tools">
 			<div className="dev-tools__hero">
 				<h1>
-					{ showHostingActivationButton
-						? translate( 'Activate hosting configuration' )
+					{ showActivationButton
+						? translate( 'Activate all developer tools' )
 						: translate( 'Unlock all developer tools' ) }
 				</h1>
 				<p>
-					{ showHostingActivationButton
+					{ showActivationButton
 						? translate(
 								'Your plan includes all the developer tools listed below. Click "Activate Now" to begin.'
 						  )
@@ -107,13 +107,13 @@ const DevTools = () => {
 								'Upgrade to the Creator plan or higher to get access to all developer tools'
 						  ) }
 				</p>
-				{ showHostingActivationButton ? (
+				{ showActivationButton ? (
 					<>
 						<Button
 							variant="primary"
 							className="dev-tools__button"
 							onClick={ () => {
-								if ( showHostingActivationButton ) {
+								if ( showActivationButton ) {
 									return setShowEligibility( true );
 								}
 							} }
