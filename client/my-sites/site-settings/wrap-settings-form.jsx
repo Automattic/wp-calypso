@@ -200,7 +200,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 						break;
 					case 'jetpack_subscribe_overlay_enabled':
 						trackTracksEvent( 'calypso_settings_subscription_overlay_updated', {
-							value: fields.sm_enabled,
+							value: fields.jetpack_subscribe_overlay_enabled,
 							path,
 						} );
 						break;
