@@ -97,7 +97,12 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 		} );
 	};
 
-	const email = address && address !== 'regenerate' ? address : '';
+	let email;
+	if (siteIsJetpack) {
+		email = address && address !== 'regenerate' ? address : '';
+	} else {
+		email = simpleSitePostByEmailSettings?.email;
+	}
 	const isActive = siteIsJetpack
 		? jetpackPostByEmailIsActive
 		: simpleSitePostByEmailSettings?.isEnabled;
@@ -149,7 +154,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 					<ClipboardButtonInput
 						className="publishing-tools__email-address"
 						disabled={ isDisabledForBothFlows }
-						value={ siteIsJetpack ? email : simpleSitePostByEmailSettings?.email }
+						value={ email }
 					/>
 					<Button onClick={ handleRegenerate } disabled={ isDisabledForBothFlows }>
 						{ jetpackRegeneratingPostByEmail
