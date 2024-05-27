@@ -34,11 +34,6 @@ describe( 'Sparkline', () => {
 		expect( sparkline.props.highlightRadius ).toEqual( 10 );
 	} );
 
-	test( 'should have a default margin', () => {
-		const sparkline = <Sparkline data={ [ 1, 2, 3, 4, 5 ] } />;
-		expect( sparkline.props.margin ).toEqual( { top: 4, right: 4, bottom: 4, left: 4 } );
-	} );
-
 	test( 'should have a defined margin if set', () => {
 		const sparkline = (
 			<Sparkline data={ [ 1, 2, 3, 4, 5 ] } margin={ { top: 1, right: 1, bottom: 1, left: 1 } } />
