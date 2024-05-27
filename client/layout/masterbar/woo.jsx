@@ -28,7 +28,7 @@ const WooOauthMasterbar = () => {
 			// Validate the URL and get it back as a string.
 			const homeURL = new URL( nextURL.searchParams.get( 'home_url' ) ).toString();
 			// add the extensions page path.
-			const finalRedirectURL = `${ homeURL }/wp-admin/admin.php?page=wc-admin&tab=my-subscriptions&path=%2Fextensions`;
+			const finalRedirectURL = `${ homeURL }wp-admin/admin.php?page=wc-admin&tab=my-subscriptions&path=%2Fextensions`;
 			window.location = finalRedirectURL;
 		} catch {
 			goBack();
