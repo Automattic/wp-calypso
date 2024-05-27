@@ -83,18 +83,18 @@ export const EntrepreneurTrialAcknowledgement = ( {
 				)
 				.map( ( feature ) => feature.getTitle() as string ) }
 			subtitle={ sprintf(
-				/* translators: the planName could be "Pro" or "Business" or "Entrepreneur" */
+				/* translators: thhe planName could be "Pro", "Business", "Hosting" or "Entrepreneur"; the trialDuration could be 7 or 14. */
 				__(
-					'Give the %(planName)s plan a try with the 14-day free trial, and create your site without costs'
+					'Give the %(planName)s plan a try with the %(trialDuration)d-day free trial, and create your site without costs'
 				),
-				{ planName: plan?.getTitle() }
+				{ planName: plan?.getTitle(), trialDuration: 14 }
 			) }
 			supportingCopy={ sprintf(
-				/* translators: the planName could be "Pro" or "Business" or "Entrepreneur" */
+				/* translators: the planName could be "Pro", "Business", "Hosting" or "Entrepreneur"; the trialDuration could be 7 or 14. */
 				__(
-					'The 14-day trial includes every feature in the %(planName)s plan with a few exceptions. To enjoy all the features without limits, upgrade to the paid plan at any time before your trial ends.'
+					'The %(trialDuration)d-day trial includes every feature in the %(planName)s plan with a few exceptions. To enjoy all the features without limits, upgrade to the paid plan at any time before your trial ends.'
 				),
-				{ planName: plan?.getTitle() }
+				{ planName: plan?.getTitle(), trialDuration: 14 }
 			) }
 			callToAction={
 				<CallToAction onStartTrialClick={ onStartTrialClick } CTAButtonState={ CTAButtonState } />
@@ -118,13 +118,14 @@ function EmailVerification( {
 		<SubTitle>
 			<p>
 				{ sprintf(
-					/* translators: plan name, and the email address of the account */
+					/* translators: plan name, and the email address of the account. the trial duration could be 7 or 14. */
 					__(
-						'To start your %(planName)s plan 14-day trial, verify your email address by clicking the link we sent to %(email)s.'
+						'To start your %(planName)s plan %(trialDuration)d-day trial, verify your email address by clicking the link we sent to %(email)s.'
 					),
 					{
 						planName: plan?.getTitle(),
 						email: email,
+						trialDuration: 14,
 					}
 				) }
 				<Button
