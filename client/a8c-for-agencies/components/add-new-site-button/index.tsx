@@ -8,6 +8,8 @@ import A4ALogo from '../a4a-logo';
 import { A4A_SITES_CONNECT_URL_LINK } from '../sidebar-menu/lib/constants';
 import type { MutableRefObject } from 'react';
 
+import './style.scss';
+
 type Props = {
 	showMainButtonLabel?: boolean;
 	className?: string;
@@ -47,7 +49,7 @@ const AddNewSiteButton = ( {
 			href={ A4A_DOWNLOAD_LINK_ON_GITHUB }
 		>
 			<PopoverMenuItem onClick={ onClickA4APluginMenuItem } href={ A4A_DOWNLOAD_LINK_ON_GITHUB }>
-				<A4ALogo className="gridicon" size={ 18 } />
+				<A4ALogo className="a4a-logo gridicon" size={ 18 } />
 				<span>{ translate( 'Download A4A Plugin' ) }</span>
 			</PopoverMenuItem>
 
