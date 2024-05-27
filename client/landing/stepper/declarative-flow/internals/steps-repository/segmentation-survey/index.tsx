@@ -65,6 +65,7 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 				onBack={ navigation.goBack }
 				onNext={ handleNext }
 				headerAlign="left"
+				clearAnswersOnLastQuestion={ false }
 			/>
 		</Main>
 	);
