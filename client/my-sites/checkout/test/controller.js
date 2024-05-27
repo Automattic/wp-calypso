@@ -9,8 +9,9 @@ import {
 } from '@automattic/calypso-products';
 import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
+import addQueryArgs from 'calypso/lib/url/add-query-args';
 import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrade/constants';
-import { redirectJetpackLegacyPlans } from '../controller';
+import { checkout, redirectJetpackLegacyPlans } from '../controller';
 import * as utils from '../utils';
 
 jest.mock( '@automattic/calypso-router' );
@@ -65,5 +66,57 @@ describe( 'redirectJetpackLegacyPlans', () => {
 
 		expect( spy ).toHaveBeenCalledWith( redirectUrl );
 		expect( next ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'checkout', () => {
+	let pageSpy;
+	let next;
+
+	const query = {
+		site: 'example.com',
+		redirect_to: encodeURIComponent( 'http://example.com/wp-admin/admin.php?page=my-jetpack' ),
+		source: 'my-jetpack',
+	};
+
+	const context = {
+		store: mockStore( {
+			currentUser: {
+				id: null,
+			},
+			ui: {
+				selectedSiteId: null,
+			},
+		} ),
+		query,
+		params: {},
+		path: addQueryArgs( query, `/checkout/123123/jetpack_backup_t1_yearly` ),
+		pathname: '/checkout/123123/jetpack_backup_t1_yearly',
+	};
+
+	beforeEach( () => {
+		pageSpy = jest.spyOn( page, 'default' );
+		next = jest.fn();
+	} );
+
+	afterEach( () => {
+		pageSpy.mockRestore();
+		next.mockRestore();
+	} );
+
+	it( 'should redirect to siteless checkout if user is not logged in', () => {
+		const redirectUrl = addQueryArgs(
+			{
+				connect_after_checkout: true,
+				from_site_slug: context.query.site,
+				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
+			},
+			context.path.replace( /checkout\/\d+\//, 'checkout/jetpack/' )
+		);
+
+		checkout( context, next );
+
+		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
+		expect( next ).toHaveBeenCalled();
 	} );
 } );
