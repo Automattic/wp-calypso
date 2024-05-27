@@ -7,11 +7,9 @@ describe( 'convertSnakeCaseToCamelCase', () => {
 			isEnabled: true,
 		} );
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'is_disabled' does not exist on type '{ isDisabled: boolean; isEnabled: boolean; }'.
 		expect( foo.is_disabled ).toBeUndefined();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'qqq' does not exist on type '{ isDisabled: boolean; isEnabled: boolean; }'.
 		expect( foo.qqq ).toBeUndefined();
 
 		expect( foo.isDisabled ).toBe( true );
@@ -25,11 +23,9 @@ describe( 'convertSnakeCaseToCamelCase', () => {
 			},
 		} );
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'is_disabled' does not exist on type '{ isDisabled: { firstName: boolean; }; }'.
 		expect( foo.is_disabled ).toBeUndefined();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'isDisabled.first_name' does not exist on type '{ isDisabled: { firstName: boolean; }; }'.
 		expect( foo.isDisabled.first_name ).toBeUndefined();
 
 		expect( foo.isDisabled ).toBeDefined();
@@ -47,14 +43,11 @@ describe( 'convertSnakeCaseToCamelCase', () => {
 			],
 		} );
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'is_disabled' does not exist on type '{ isDisabled: { firstName: { secondName: boolean; }; }[]; }'.
 		expect( foo.is_disabled ).toBeUndefined();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'isDisabled[0].first_name' does not exist on type '{ isDisabled: { firstName: { secondName: boolean; }; }[]; }'.
 		expect( foo.isDisabled[ 0 ].first_name ).toBeUndefined();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'isDisabled[0].firstName.second_name' does not exist on type '{ isDisabled: { firstName: { secondName: boolean; }; }[]; }'.
 		expect( foo.isDisabled[ 0 ].firstName.second_name ).toBeUndefined();
 
 		expect( foo.isDisabled ).toBeDefined();
@@ -67,8 +60,7 @@ describe( 'convertSnakeCaseToCamelCase', () => {
 			numbers_list: [ 1, 2, 3 ],
 		} );
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'numbers_list' does not exist on type '{ numbersList: number[]; }'.
 		expect( foo.numbers_list ).toBeUndefined();
 
 		expect( foo.numbersList ).toEqual( [ 1, 2, 3 ] );
@@ -85,14 +77,11 @@ describe( 'convertSnakeCaseToCamelCase', () => {
 			},
 		} );
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'level_one' does not exist on type '{ levelOne: { levelTwo: { levelThree: { someValue: string; }; }; }'.
 		expect( foo.level_one ).toBeUndefined();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'levelOne.level_two' does not exist on type '{ levelOne: { levelTwo: { levelThree: { someValue: string; }; }; }'.
 		expect( foo.levelOne.level_two ).toBeUndefined();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'levelOne.levelTwo.level_three' does not exist on type '{ levelOne: { levelTwo: { levelThree: { someValue: string; }; }; }'.
 		expect( foo.levelOne.levelTwo.level_three ).toBeUndefined();
 
 		expect( foo.levelOne ).toBeDefined();
@@ -112,20 +101,15 @@ describe( 'convertSnakeCaseToCamelCase', () => {
 			},
 		} );
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'string_value' does not exist on type '{ stringValue: string; numberValue: number; booleanValue: boolean; arrayValue: { nestedKey: string; }[]; nestedObject: { anotherKey: string; }; }'.
 		expect( foo.string_value ).toBeUndefined();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'number_value' does not exist on type '{ stringValue: string; numberValue: number; booleanValue: boolean; arrayValue: { nestedKey: string; }[]; nestedObject: { anotherKey: string; }; }'.
 		expect( foo.number_value ).toBeUndefined();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'boolean_value' does not exist on type '{ stringValue: string; numberValue: number; booleanValue: boolean; arrayValue: { nestedKey: string; }[]; nestedObject: { anotherKey: string; }; }'.
 		expect( foo.boolean_value ).toBeUndefined();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'array_value' does not exist on type '{ stringValue: string; numberValue: number; booleanValue: boolean; arrayValue: { nestedKey: string; }[]; nestedObject: { anotherKey: string; }; }'.
 		expect( foo.array_value ).toBeUndefined();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
+		// @ts-expect-error Property 'nested_object' does not exist on type '{ stringValue: string; numberValue: number; booleanValue: boolean; arrayValue: { nestedKey: string; }[]; nestedObject: { anotherKey: string; }; }'.
 		expect( foo.nested_object ).toBeUndefined();
 
 		expect( foo.stringValue ).toBe( 'hello' );
