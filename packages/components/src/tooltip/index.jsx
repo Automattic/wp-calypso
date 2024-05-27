@@ -5,29 +5,40 @@ import Popover from '../popover';
 
 import './style.scss';
 
-function Tooltip( { showDelay = 100, position = 'top', hideArrow = false, isVisible, ...props } ) {
+function Tooltip( {
+	showDelay = 100,
+	showOnMobile = false,
+	position = 'top',
+	hideArrow = false,
+	isVisible,
+	className,
+	autoPosition,
+	context,
+	id,
+	children,
+} ) {
 	const isMobile = useMobileBreakpoint();
 
-	if ( ! props.showOnMobile && isMobile ) {
+	if ( ! showOnMobile && isMobile ) {
 		return null;
 	}
 
-	const classes = classnames( [ 'tooltip', props.className ], {
-		[ `is-${ props.status }` ]: props.status,
+	const classes = classnames( [ 'tooltip', className ], {
+		[ `is-${ status }` ]: status,
 	} );
 
 	return (
 		<Popover
-			autoPosition={ props.autoPosition }
+			autoPosition={ autoPosition }
 			className={ classes }
-			context={ props.context }
-			id={ props.id }
+			context={ context }
+			id={ id }
 			isVisible={ isVisible }
 			position={ position }
 			showDelay={ showDelay }
 			hideArrow={ hideArrow ?? true }
 		>
-			{ props.children }
+			{ children }
 		</Popover>
 	);
 }

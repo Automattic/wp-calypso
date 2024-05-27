@@ -18,7 +18,7 @@ function CommentButton( {
 	target = null,
 	icon = null,
 	defaultLabel,
-	...props
+	size,
 } ) {
 	const showLabel = commentCount > 0 || defaultLabel;
 	const label = commentCount || defaultLabel;
@@ -35,7 +35,7 @@ function CommentButton( {
 			},
 			( prop ) => prop === null
 		),
-		icon || <Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
+		icon || <Gridicon icon="comment" size={ size } className="comment-button__icon" />,
 		<span className="comment-button__label">
 			{ showLabel && <span className="comment-button__label-count">{ label }</span> }
 		</span>
