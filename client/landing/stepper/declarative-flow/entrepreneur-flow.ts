@@ -66,7 +66,7 @@ const entrepreneurFlow: Flow = {
 
 		const goBack = () => {
 			if ( currentStep === STEPS.TRIAL_ACKNOWLEDGE.slug ) {
-				navigate( SEGMENTATION_SURVEY_SLUG + '#2' );
+				navigate( SEGMENTATION_SURVEY_SLUG + ( isMigrationFlow ? '#1' : lastQuestionPath ) );
 			}
 		};
 
