@@ -29,6 +29,8 @@ export default function ItemPreviewPaneHeader( {
 	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
 	const size = isLargerThan960px ? 64 : 50;
 
+	const isSiteData = itemData?.isSiteData ?? true;
+
 	const focusRef = useRef< HTMLButtonElement >( null );
 
 	// Use useEffect to set the focus when the component mounts
