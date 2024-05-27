@@ -291,8 +291,8 @@ const PlansFeaturesMain = ( {
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
-	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 
+	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 	useEffect( () => {
 		if ( intentFromSiteMeta.processing ) {
 			return;
