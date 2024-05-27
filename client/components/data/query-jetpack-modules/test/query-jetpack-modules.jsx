@@ -20,36 +20,37 @@ jest.mock( 'calypso/state/jetpack/modules/actions', () => ( {
 	fetchModuleList: () => mockFetchModuleList(),
 } ) );
 
-describe( 'fetchModuleList', () => {
-	test( "Ensure we're NOT calling fetchModuleList for simple sites", async () => {
-		const mockStore = configureStore( middlewares );
-		const siteId = 1;
-		const store = mockStore( {
-			currentUser: {
-				id: 1,
-				user: {
-					had_hosting_trial: false,
-				},
-			},
-			sites: {
-				items: {
-					[ siteId ]: {
-						ID: siteId,
-						options: {
-							is_wpcom_atomic: false,
-						},
+let isWpcomAtomic = false;
+const siteId = 1;
+const mockStore = configureStore( middlewares );
+
+function getStore() {
+	return mockStore( {
+		currentUser: {
+			id: 1,
+		},
+		sites: {
+			items: {
+				[ siteId ]: {
+					ID: siteId,
+					options: {
+						is_wpcom_atomic: isWpcomAtomic,
 					},
 				},
 			},
-			jetpack: {
-				modules: {
-					fetching: false,
-				},
+		},
+		jetpack: {
+			modules: {
+				fetching: false,
 			},
-		} );
+		},
+	} );
+}
 
+describe( 'fetchModuleList', () => {
+	test( "Ensure we're NOT calling fetchModuleList for simple sites", async () => {
 		render(
-			<Provider store={ store }>
+			<Provider store={ getStore() }>
 				<QueryJetpackModules siteId={ siteId } />
 			</Provider>
 		);
@@ -58,34 +59,10 @@ describe( 'fetchModuleList', () => {
 	} );
 
 	test( "Ensure we're calling fetchModuleList only for atomic sites", async () => {
-		const mockStore = configureStore( middlewares );
-		const siteId = 1;
-		const store = mockStore( {
-			currentUser: {
-				id: 1,
-				user: {
-					had_hosting_trial: false,
-				},
-			},
-			sites: {
-				items: {
-					[ siteId ]: {
-						ID: siteId,
-						options: {
-							is_wpcom_atomic: true,
-						},
-					},
-				},
-			},
-			jetpack: {
-				modules: {
-					fetching: false,
-				},
-			},
-		} );
+		isWpcomAtomic = true;
 
 		render(
-			<Provider store={ store }>
+			<Provider store={ getStore() }>
 				<QueryJetpackModules siteId={ siteId } />
 			</Provider>
 		);
