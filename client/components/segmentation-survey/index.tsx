@@ -95,9 +95,11 @@ const SegmentationSurvey = ( {
 
 	const onSkip = useCallback(
 		async ( currentQuestion: Question ) => {
+			// Clear the answer for the current question and save the skip answer.
+			onChangeAnswer( currentQuestion.key, [] );
 			await handleSave( currentQuestion, [ SKIP_ANSWER_KEY ] );
 		},
-		[ handleSave ]
+		[ handleSave, onChangeAnswer ]
 	);
 
 	const { currentPage, currentQuestion, backToPreviousPage, continueToNextPage, skipToNextPage } =
