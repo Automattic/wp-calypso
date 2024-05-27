@@ -1,4 +1,4 @@
-import { JetpackLogo, WooLogo } from '@automattic/components';
+import { Button, JetpackLogo, WooLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -11,11 +11,18 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import FilterSearch from '../../../../components/filter-search';
+import {
+	PRODUCT_FILTER_KEY_CATEGORIES,
+	PRODUCT_FILTER_KEY_PRICES,
+	PRODUCT_FILTER_KEY_TYPES,
+} from '../../constants';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
+import { SelectedFilters, hasSelectedFilter } from '../../lib/product-filter';
 import ListingSection from '../../listing-section';
 import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
+import ProductFilter from '../product-filter';
 import { getSupportedBundleSizes, useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
 import VolumePriceSelector from './volume-price-selector';
@@ -31,6 +38,12 @@ interface ProductListingProps {
 	productBrand: string;
 }
 
+export const DEFAULT_SELECTED_FILTERS = {
+	[ PRODUCT_FILTER_KEY_CATEGORIES ]: {},
+	[ PRODUCT_FILTER_KEY_TYPES ]: {},
+	[ PRODUCT_FILTER_KEY_PRICES ]: {},
+};
+
 export default function ProductListing( {
 	selectedSite,
 	suggestedProduct,
@@ -44,6 +57,10 @@ export default function ProductListing( {
 	const isReferingProducts = marketplaceType === 'referral';
 
 	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
+
+	const [ selectedFilters, setSelectedFilters ] = useState< SelectedFilters >( {
+		...DEFAULT_SELECTED_FILTERS,
+	} );
 
 	const {
 		selectedSize: selectedBundleSize,
@@ -279,6 +296,11 @@ export default function ProductListing( {
 		);
 	};
 
+	const shouldShowResetButton = hasSelectedFilter( selectedFilters );
+
+	// FIXME: For now we hide the filtering until we complete the implementation. We will remove this flag later.
+	const hideFilter = true;
+
 	if ( isLoadingProducts ) {
 		return (
 			<div className="product-listing">
@@ -292,11 +314,34 @@ export default function ProductListing( {
 			<QueryProductsList currency="USD" />
 
 			<div className="product-listing__actions">
-				<FilterSearch
-					label={ translate( 'Search plans, products, add-ons, and extensions' ) }
-					onSearch={ onProductSearch }
-					onClick={ trackClickCallback( 'search' ) }
-				/>
+				<div className="product-listing__actions-search-and-filter">
+					<FilterSearch
+						label={ translate( 'Search' ) }
+						onSearch={ onProductSearch }
+						onClick={ trackClickCallback( 'search' ) }
+					/>
+
+					{ ! hideFilter && (
+						<ProductFilter
+							selectedFilters={ selectedFilters }
+							setSelectedFilters={ setSelectedFilters }
+						/>
+					) }
+
+					{ shouldShowResetButton && (
+						<Button
+							className="product-listing__reset-filter-button"
+							plain
+							onClick={ () =>
+								setSelectedFilters( {
+									...DEFAULT_SELECTED_FILTERS,
+								} )
+							}
+						>
+							{ translate( 'Reset filter' ) }
+						</Button>
+					) }
+				</div>
 
 				{ ! isReferingProducts && availableBundleSizes.length > 1 && (
 					<VolumePriceSelector
