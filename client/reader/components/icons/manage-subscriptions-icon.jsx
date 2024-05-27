@@ -1,28 +1,25 @@
 export default function ReaderManageSubscriptionsIcon() {
 	return (
 		<svg
-			className="sidebar__menu-icon sidebar_svg-subscriptions"
+			className="sidebar__menu-icon sidebar_svg-manage-subscriptions"
 			width="20"
 			height="20"
+			viewBox="0 0 20 20"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 		>
+			<circle cx="6.25" cy="7.375" r="2" stroke="#A2AAB2" strokeWidth="1.5" />
 			<path
-				fill-rule="evenodd"
-				clip-rule="evenodd"
-				d="M15.5 11a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm0-1.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-				fill="#1E1E1E"
+				d="M1.875 16.125V13.9375C1.875 12.7294 2.85438 11.75 4.0625 11.75H8.4375C9.64562 11.75 10.625 12.7294 10.625 13.9375V16.125"
+				stroke="#A2AAB2"
+				strokeWidth="1.5"
 			/>
 			<path
-				d="M13.25 17v-2a2.75 2.75 0 0 0-2.75-2.75h-4A2.75 2.75 0 0 0 3.75 15v2h1.5v-2c0-.69.56-1.25 1.25-1.25h4c.69 0 1.25.56 1.25 1.25v2h1.5ZM20.25 15v2h-1.5v-2c0-.69-.56-1.25-1.25-1.25H15v-1.5h2.5A2.75 2.75 0 0 1 20.25 15Z"
-				fill="#1E1E1E"
+				d="M13.75 11.75H15.9375C17.1456 11.75 18.125 12.7294 18.125 13.9375V16.125"
+				stroke="#A2AAB2"
+				strokeWidth="1.5"
 			/>
-			<path
-				fill-rule="evenodd"
-				clip-rule="evenodd"
-				d="M11 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-1.5 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
-				fill="#1E1E1E"
-			/>
+			<circle cx="14.375" cy="7.375" r="2" stroke="#A2AAB2" strokeWidth="1.5" />
 		</svg>
 	);
 }
