@@ -1,7 +1,6 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { anonIdCache } from 'calypso/data/segmentaton-survey';
 import { useSelector } from 'calypso/state';
@@ -51,14 +50,7 @@ const entrepreneurFlow: Flow = {
 		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
 
 		const getEntrepreneurLoginUrl = () => {
-			const queryParams = new URLSearchParams();
-
-			const redirectTo = addQueryArgs(
-				`${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/trialAcknowledge`,
-				{
-					...Object.fromEntries( queryParams ),
-				}
-			);
+			const redirectTo = `${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/trialAcknowledge${ window.location.search }`;
 
 			const loginUrl = getLoginUrl( {
 				variationName: flowName,
