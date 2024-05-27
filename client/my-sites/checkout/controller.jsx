@@ -1,4 +1,9 @@
-import { isJetpackLegacyItem, isJetpackLegacyTermUpgrade } from '@automattic/calypso-products';
+import {
+	isJetpackLegacyItem,
+	isJetpackLegacyTermUpgrade,
+	isJetpackPlanSlug,
+	isJetpackProductSlug,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -157,6 +162,9 @@ export function checkout( context, next ) {
 		if ( isJetpackCheckout ) {
 			return true;
 		}
+		if ( context.query.source === 'my-jetpack' ) {
+			return true;
+		}
 		if ( isGiftPurchase ) {
 			return true;
 		}
@@ -174,6 +182,19 @@ export function checkout( context, next ) {
 	}
 
 	const product = getProductSlugFromContext( context );
+
+	if ( ( isJetpackPlanSlug( product ) || isJetpackProductSlug( product ) ) && isLoggedOut ) {
+		// Redirect to the siteless checkout page
+		const redirectUrl = addQueryArgs(
+			{
+				connect_after_checkout: true,
+				from_site_slug: context.query.site,
+				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
+			},
+			context.path.replace( /checkout\/\d+\//, 'checkout/jetpack/' )
+		);
+		page( redirectUrl );
+	}
 
 	if ( 'thank-you' === product ) {
 		return;

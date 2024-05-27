@@ -147,7 +147,10 @@ export const redirectInvalidLanguage = ( context, next ) => {
 
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) ) {
+	const isLoggedIn = isUserLoggedIn( state );
+
+	// If the user is logged in - or logged out but coming from My Jetpack - continue
+	if ( isLoggedIn || ( ! isLoggedIn && context.query?.source === 'my-jetpack' ) ) {
 		next();
 		return;
 	}

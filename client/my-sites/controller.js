@@ -537,6 +537,14 @@ export function siteSelection( context, next ) {
 		'1' === context.query?.unlinked && context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i );
 
 	const shouldRenderNoSites = ! context.section.enableNoSites && ! isUnlinkedCheckout;
+	const isFromMyJetpackLoggedOut = context.query?.source === 'my-jetpack' && ! currentUser;
+
+	// Immediately continue if the user is logged out and coming from My Jetpack
+	// so it gets picked up by the checkout middleware and redirects to logged-out checkout
+	if ( isFromMyJetpackLoggedOut ) {
+		next();
+		return;
+	}
 
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 && shouldRenderNoSites ) {
