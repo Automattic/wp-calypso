@@ -29,11 +29,7 @@ import {
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import {
-	isCrowdsignalOAuth2Client,
-	isWooOAuth2Client,
-	isA4AOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -651,15 +647,10 @@ export class LoginForm extends Component {
 
 	getSignupUrl() {
 		const { oauth2Client, currentQuery, currentRoute, pathname, locale } = this.props;
-		const signupUrl = this.props.signupUrl
+
+		return this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
 			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
-
-		const delimiter = signupUrl.includes( '?' ) ? '&' : '?';
-
-		return isA4AOAuth2Client( this.props.oauth2Client )
-			? signupUrl + delimiter + 'ref=a4a_signup'
-			: signupUrl;
 	}
 
 	handleMagicLoginClick = ( origin ) => {
