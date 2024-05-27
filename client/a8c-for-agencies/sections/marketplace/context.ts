@@ -16,4 +16,7 @@ export const MarketplaceTypeContext = createContext< MarketplaceTypeContextInter
 	setMarketplaceType: () => {
 		return undefined;
 	},
+	toggleMarketplaceType: () => {
+		return undefined;
+	},
 } );
