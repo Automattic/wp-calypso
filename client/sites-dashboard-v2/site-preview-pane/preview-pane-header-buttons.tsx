@@ -14,7 +14,7 @@ type Props = {
 };
 
 const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane, itemData }: Props ) => {
-	const adminButtonRef = useRef();
+	const adminButtonRef = useRef< HTMLButtonElement | null >( null );
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
 	const { __ } = useI18n();
 

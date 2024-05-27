@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useCallback, useMemo, useState } from 'react';
 
-type TourStep = {
+export type TourStep = {
 	id: string;
 	popoverPosition: string;
 	title: string;

@@ -19,8 +19,8 @@ type Props = {
 	context?: HTMLElement | null;
 	className?: string;
 	hideSteps?: boolean;
-	title?: JSX.Element;
-	description?: JSX.Element;
+	title?: JSX.Element | string;
+	description?: JSX.Element | string;
 };
 
 /**
