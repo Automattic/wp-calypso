@@ -98,7 +98,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	};
 
 	let email;
-	if (siteIsJetpack) {
+	if ( siteIsJetpack ) {
 		email = address && address !== 'regenerate' ? address : '';
 	} else {
 		email = simpleSitePostByEmailSettings?.email;
