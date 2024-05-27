@@ -1,5 +1,14 @@
 import config from '@automattic/calypso-config';
-import { category, currencyDollar, home, moveTo, reusableBlock, tag, cog } from '@wordpress/icons';
+import {
+	category,
+	currencyDollar,
+	home,
+	moveTo,
+	reusableBlock,
+	tag,
+	cog,
+	commentAuthorAvatar,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
@@ -122,7 +131,7 @@ const useMainMenuItems = ( path: string ) => {
 			...( isSectionNameEnabled( 'a8c-for-agencies-partner-directory' )
 				? [
 						{
-							icon: cog,
+							icon: commentAuthorAvatar,
 							path: '/dashboard',
 							link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 							title: translate( 'Partner Directory' ),
