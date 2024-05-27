@@ -2,7 +2,7 @@ import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useState } from 'react';
-import { anonIdCache } from 'calypso/data/segmentaton-survey';
+import { anonIdCache, useCachedAnswers } from 'calypso/data/segmentaton-survey';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../hooks/use-flow-locale';
@@ -11,6 +11,7 @@ import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
+import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from './internals/steps-repository/segmentation-survey';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -48,6 +49,7 @@ const entrepreneurFlow: Flow = {
 
 		const locale = useFlowLocale();
 		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
+		const [ lastQuestionPath, setlastQuestionPath ] = useState( '#2' );
 		const { clearAnswers } = useCachedAnswers( ENTREPRENEUR_TRIAL_SURVEY_KEY );
 
 		const getEntrepreneurLoginUrl = () => {
@@ -74,6 +76,10 @@ const entrepreneurFlow: Flow = {
 			switch ( currentStep ) {
 				case SEGMENTATION_SURVEY_SLUG: {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
+
+					if ( providedDependencies.lastQuestionPath ) {
+						setlastQuestionPath( providedDependencies.lastQuestionPath as string );
+					}
 
 					if ( userIsLoggedIn ) {
 						return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
