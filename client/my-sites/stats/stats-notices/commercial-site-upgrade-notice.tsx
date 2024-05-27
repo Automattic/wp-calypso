@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { trackStatsAnalyticsEvent } from '../utils';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
@@ -42,6 +43,11 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 					'jetpack_odyssey_stats_commercial_site_upgrade_notice_support_button_clicked'
 			  )
 			: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_support_button_clicked' );
+
+		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
+			type: 'notice',
+		} );
+
 		// Allow some time for the event to be recorded before redirecting.
 		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
 	};

@@ -1,3 +1,5 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
@@ -32,3 +34,22 @@ export function getPathWithUpdatedQueryString( query = {}, path = page.current )
 
 	return `${ pathname }?${ updatedSearchString }`;
 }
+
+/**
+ * Add analytics event.
+ * @param {*} eventName Analytics event name, automatically prefixed with 'jetpack_odyssey' or 'calypso'
+ * @param {*} properties Analytics properties
+ * @param {*} redirectURL If passed, redirect to the URL after 250ms
+ */
+export const trackStatsAnalyticsEvent = ( eventName, properties, redirectURL = null ) => {
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	// publish an event
+	const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+	recordTracksEvent( `${ event_from }_${ eventName }`, properties );
+
+	// redirect to the Purchase page
+	if ( redirectURL ) {
+		setTimeout( () => page( redirectURL ), 250 );
+	}
+};

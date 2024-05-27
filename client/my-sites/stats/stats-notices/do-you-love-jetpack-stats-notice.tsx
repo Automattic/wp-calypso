@@ -12,6 +12,7 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE } from '../constants';
+import { trackStatsAnalyticsEvent } from '../utils';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = (
@@ -66,6 +67,11 @@ const DoYouLoveJetpackStatsNotice = ( {
 			: recordTracksEvent(
 					'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
 			  );
+
+		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
+			type: 'notice-love-stats',
+		} );
+
 		// Allow some time for the event to be recorded before redirecting.
 		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats, hasFreeStats ) ), 250 );
 	};
