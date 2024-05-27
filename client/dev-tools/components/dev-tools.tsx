@@ -35,6 +35,7 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 
 const DevTools = () => {
 	const [ showEligibility, setShowEligibility ] = useState( false );
+	const [ isActivating, setIsActivating ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
 	const { siteSlug, isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
 		siteSlug: getSiteSlug( state, siteId ) || '',
@@ -82,12 +83,22 @@ const DevTools = () => {
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
-	const backUrl = `/hosting-config/${ siteSlug }`;
+	const backUrl = `/hosting-config/${ siteId }`;
 	const dispatch = useDispatch();
 	const transferInitiate = ( siteId: number, { geo_affinity = '' } = {} ) => {
-		dispatch( initiateThemeTransfer( siteId, null, '', geo_affinity, 'hosting' ) ).then( () => {
-			page( `/setup/transferring-hosted-site?siteId=${ siteId }&to=hosting-config` );
-		} );
+		setIsActivating( true );
+		dispatch( initiateThemeTransfer( siteId, null, '', geo_affinity, 'hosting' ) )
+			.then( () => {
+				const params = new URLSearchParams( {
+					siteId: String( siteId ),
+					redirect_to: backUrl,
+					feature: FEATURE_SFTP,
+				} );
+				page( `/setup/transferring-hosted-site?${ params }` );
+			} )
+			.catch( () => {
+				setIsActivating( false );
+			} );
 	};
 
 	return (
@@ -134,6 +145,8 @@ const DevTools = () => {
 								backUrl={ backUrl }
 								showDataCenterPicker
 								standaloneProceed
+								currentContext="dev-tools"
+								disableContinueButton={ isActivating }
 							/>
 						</Dialog>
 					</>

@@ -14,6 +14,11 @@ import { createSiteFeaturesObject } from './assembler';
 
 const debug = debugFactory( 'calypso:site-features:actions' );
 
+export const requestSiteFeatures = ( siteId ) =>
+	wpcom.req
+		.get( `/sites/${ siteId }/features` )
+		.then( ( data ) => createSiteFeaturesObject( data ) );
+
 /**
  * Fetches features for the given site.
  * @param {number} siteId identifier of the site
@@ -26,10 +31,10 @@ export function fetchSiteFeatures( siteId ) {
 			siteId,
 		} );
 
-		return wpcom.req
-			.get( `/sites/${ siteId }/features` )
-			.then( ( data ) => {
-				dispatch( fetchSiteFeaturesCompleted( siteId, data ) );
+		return requestSiteFeatures( siteId )
+			.then( ( features ) => {
+				dispatch( fetchSiteFeaturesCompleted( siteId, features ) );
+				return features;
 			} )
 			.catch( ( error ) => {
 				debug( 'Fetching site features failed: ', error );
@@ -91,13 +96,13 @@ function fetchJetpackSitesFeaturesReceive( features ) {
  * Returns an action object to be used in signalling that an object containing
  * the features for a given site have been received.
  * @param {number} siteId - identifier of the site
- * @param {Object} features - list of features received from the API
+ * @param {Object} features - the features of the site.
  * @returns {Object} the corresponding action object
  */
 export function fetchSiteFeaturesCompleted( siteId, features ) {
 	return {
 		type: SITE_FEATURES_FETCH_COMPLETED,
 		siteId,
-		features: createSiteFeaturesObject( features ),
+		features,
 	};
 }
