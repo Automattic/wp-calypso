@@ -6,13 +6,13 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import './suggestion-list.scss';
 
 const UserMentionsSuggestionList = ( {
-	onClick,
-	onClose,
-	popoverContext,
-	popoverPosition,
-	query,
-	selectedSuggestionId,
-	suggestions,
+	onClick = () => {},
+	onClose = () => {},
+	popoverContext = {},
+	popoverPosition = null,
+	query = '',
+	selectedSuggestionId = 0,
+	suggestions = [],
 } ) => (
 	<PopoverMenu
 		className="user-mentions__suggestions"
@@ -54,16 +54,6 @@ UserMentionsSuggestionList.propTypes = {
 	} ),
 	selectedSuggestionId: PropTypes.number,
 	suggestions: PropTypes.array,
-};
-
-UserMentionsSuggestionList.defaultProps = {
-	onClick: () => {},
-	onClose: () => {},
-	query: '',
-	popoverContext: {},
-	popoverPosition: null,
-	selectedSuggestionId: 0,
-	suggestions: [],
 };
 
 export default UserMentionsSuggestionList;

@@ -42,7 +42,7 @@ function getSubtitle( filter, translate ) {
 	);
 }
 
-export const MediaLibraryUpgradeNudge = ( { translate, filter, site } ) => (
+export const MediaLibraryUpgradeNudge = ( { translate, filter = 'video', site } ) => (
 	<div className="media-library__videopress-nudge-container">
 		<ListPlanPromo site={ site } filter={ filter }>
 			<UpsellNudge
@@ -65,10 +65,6 @@ MediaLibraryUpgradeNudge.propTypes = {
 	site: PropTypes.object,
 	translate: PropTypes.func,
 	filter: PropTypes.string,
-};
-
-MediaLibraryUpgradeNudge.defaultProps = {
-	filter: 'video',
 };
 
 export default localize( MediaLibraryUpgradeNudge );

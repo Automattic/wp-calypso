@@ -18,10 +18,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Sso = ( {
 	isAtomic,
-	fields,
+	fields = {},
 	handleAutosavingToggle,
-	isRequestingSettings,
-	isSavingSettings,
+	isRequestingSettings = true,
+	isSavingSettings = false,
 	selectedSiteId,
 	ssoModuleActive,
 	ssoModuleUnavailable,
@@ -111,12 +111,6 @@ const Sso = ( {
 				) }
 		</>
 	);
-};
-
-Sso.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-	fields: {},
 };
 
 Sso.propTypes = {

@@ -13,8 +13,14 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 import './style.scss';
 
-const ReaderPostActions = ( props ) => {
-	const { post, site, onCommentClick, iconSize, className, fullPost } = props;
+const ReaderPostActions = ( {
+	iconSize = 20,
+	post,
+	site,
+	onCommentClick,
+	className,
+	fullPost,
+} ) => {
 	const translate = useTranslate();
 	const hasSites = !! useSelector( getPrimarySiteId );
 
@@ -97,12 +103,6 @@ ReaderPostActions.propTypes = {
 	iconSize: PropTypes.number,
 	visitUrl: PropTypes.string,
 	fullPost: PropTypes.bool,
-};
-
-ReaderPostActions.defaultProps = {
-	showFollow: true,
-	showVisit: false,
-	iconSize: 20,
 };
 
 export default localize( ReaderPostActions );

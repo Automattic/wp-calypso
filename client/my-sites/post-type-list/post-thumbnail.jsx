@@ -10,7 +10,7 @@ import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-curren
 
 const noop = () => {};
 
-function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
+function PostTypeListPostThumbnail( { onClick = noop, thumbnail, postLink } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {
 		'has-image': !! thumbnail,
 	} );
@@ -35,10 +35,6 @@ PostTypeListPostThumbnail.propTypes = {
 	onClick: PropTypes.func,
 	thumbnail: PropTypes.string,
 	postUrl: PropTypes.string,
-};
-
-PostTypeListPostThumbnail.defaultProps = {
-	onClick: noop,
 };
 
 export default connect( ( state, ownProps ) => {

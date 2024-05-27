@@ -10,9 +10,16 @@ import './style.scss';
 
 const noop = () => {};
 
-function CommentButton( props ) {
-	const { commentCount, href, onClick, tagName, target, icon, defaultLabel } = props;
-
+function CommentButton( {
+	commentCount = 0,
+	href = null,
+	onClick = noop,
+	tagName = 'li',
+	target = null,
+	icon = null,
+	defaultLabel,
+	...props
+} ) {
 	const showLabel = commentCount > 0 || defaultLabel;
 	const label = commentCount || defaultLabel;
 
@@ -45,18 +52,6 @@ CommentButton.propTypes = {
 	tagName: PropTypes.string,
 	target: PropTypes.string,
 	icon: PropTypes.object,
-};
-
-CommentButton.defaultProps = {
-	commentCount: 0,
-	href: null,
-	onClick: noop,
-	post: {},
-	showLabel: true,
-	size: 24,
-	tagName: 'li',
-	target: null,
-	icon: null,
 };
 
 const mapStateToProps = ( state, ownProps ) => {

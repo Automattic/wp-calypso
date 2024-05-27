@@ -5,7 +5,7 @@ import Popover from '../popover';
 
 import './style.scss';
 
-function Tooltip( props ) {
+function Tooltip( { showDelay = 100, position = 'top', hideArrow = false, isVisible, ...props } ) {
 	const isMobile = useMobileBreakpoint();
 
 	if ( ! props.showOnMobile && isMobile ) {
@@ -22,10 +22,10 @@ function Tooltip( props ) {
 			className={ classes }
 			context={ props.context }
 			id={ props.id }
-			isVisible={ props.isVisible }
-			position={ props.position }
-			showDelay={ props.showDelay }
-			hideArrow={ props.hideArrow ?? true }
+			isVisible={ isVisible }
+			position={ position }
+			showDelay={ showDelay }
+			hideArrow={ hideArrow ?? true }
 		>
 			{ props.children }
 		</Popover>
@@ -44,13 +44,6 @@ Tooltip.propTypes = {
 	hideArrow: PropTypes.bool,
 	children: PropTypes.node,
 	context: PropTypes.any,
-};
-
-Tooltip.defaultProps = {
-	showDelay: 100,
-	position: 'top',
-	showOnMobile: false,
-	hideArrow: false,
 };
 
 export default Tooltip;

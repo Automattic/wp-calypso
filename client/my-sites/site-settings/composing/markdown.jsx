@@ -6,10 +6,10 @@ import PropTypes from 'prop-types';
 import SupportInfo from 'calypso/components/support-info';
 
 const Markdown = ( {
-	fields,
+	fields = {},
 	handleToggle,
-	isRequestingSettings,
-	isSavingSettings,
+	isRequestingSettings = true,
+	isSavingSettings = false,
 	isAtomic,
 	siteIsJetpack,
 } ) => {
@@ -36,12 +36,6 @@ const Markdown = ( {
 			/>
 		</Card>
 	);
-};
-
-Markdown.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-	fields: {},
 };
 
 Markdown.propTypes = {

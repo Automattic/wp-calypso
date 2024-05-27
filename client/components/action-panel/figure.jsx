@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-const ActionPanelFigure = ( { inlineBodyText, align, children } ) => {
+const ActionPanelFigure = ( { inlineBodyText = false, align, children } ) => {
 	const figureClasses = classNames( {
 		'action-panel__figure': true,
 		[ `align-${ 'left' === align ? 'left' : 'right' }` ]: true,
@@ -13,10 +13,6 @@ const ActionPanelFigure = ( { inlineBodyText, align, children } ) => {
 
 ActionPanelFigure.propTypes = {
 	inlineBodyText: PropTypes.bool, // above `480px` does figure align with body text (below title)
-};
-
-ActionPanelFigure.defaultProps = {
-	inlineBodyText: false,
 };
 
 export default ActionPanelFigure;

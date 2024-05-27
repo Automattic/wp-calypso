@@ -11,8 +11,7 @@ import toggleInfo from '../toggle-info';
 
 import './style.scss';
 
-export const StatsPostLikes = ( props ) => {
-	const { countLikes, postId, postType, siteId } = props;
+export const StatsPostLikes = ( { postType = 'post', countLikes, postId, siteId } ) => {
 	// Prevent loading for postId `0`
 	const isLoading = !! postId && countLikes === null;
 	const classes = {
@@ -28,10 +27,6 @@ export const StatsPostLikes = ( props ) => {
 			</div>
 		</Card>
 	);
-};
-
-StatsPostLikes.defaultProps = {
-	postType: 'post',
 };
 
 const connectComponent = connect( ( state, { siteId, postId } ) => {

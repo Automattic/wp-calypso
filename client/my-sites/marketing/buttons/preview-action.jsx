@@ -3,8 +3,13 @@ import classNames from 'classnames';
 import { omit, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 
-const SharingButtonsPreviewAction = ( props ) => {
-	const { active, position, icon, children } = props;
+const SharingButtonsPreviewAction = ( {
+	active = true,
+	position = 'top-left',
+	icon,
+	children,
+	...props
+} ) => {
 	const classes = classNames( 'sharing-buttons-preview-action', {
 		'is-active': active,
 		'is-top': startsWith( position, 'top' ),
@@ -30,12 +35,6 @@ SharingButtonsPreviewAction.propTypes = {
 	position: PropTypes.oneOf( [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ] ),
 	icon: PropTypes.string,
 	onClick: PropTypes.func,
-};
-
-SharingButtonsPreviewAction.defaultProps = {
-	active: true,
-	position: 'top-left',
-	onClick: () => {},
 };
 
 export default SharingButtonsPreviewAction;

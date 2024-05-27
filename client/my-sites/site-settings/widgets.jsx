@@ -8,7 +8,7 @@ import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-t
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-function Widgets( { isSavingSettings, isRequestingSettings, isAtomic, translate } ) {
+function Widgets( { isSavingSettings = false, isRequestingSettings = true, isAtomic, translate } ) {
 	const isFormPending = isRequestingSettings || isSavingSettings;
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
@@ -59,11 +59,6 @@ function Widgets( { isSavingSettings, isRequestingSettings, isAtomic, translate 
 		</>
 	);
 }
-
-Widgets.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-};
 
 Widgets.propTypes = {
 	isSavingSettings: PropTypes.bool,

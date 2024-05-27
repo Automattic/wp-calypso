@@ -21,7 +21,11 @@ import PostActionsEllipsisMenuTrash from './trash';
 import PostActionsEllipsisMenuView from './view';
 import './style.scss';
 
-export default function PostActionsEllipsisMenu( { globalId, includeDefaultActions, children } ) {
+export default function PostActionsEllipsisMenu( {
+	globalId,
+	includeDefaultActions = true,
+	children,
+} ) {
 	let actions = [];
 
 	const keyValue = globalId;
@@ -76,8 +80,4 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 PostActionsEllipsisMenu.propTypes = {
 	globalId: PropTypes.string,
 	includeDefaultActions: PropTypes.bool,
-};
-
-PostActionsEllipsisMenu.defaultProps = {
-	includeDefaultActions: true,
 };

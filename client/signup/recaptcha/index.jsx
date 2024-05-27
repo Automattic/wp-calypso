@@ -6,7 +6,7 @@ import { initGoogleRecaptcha } from 'calypso/lib/analytics/recaptcha';
 import './style.scss';
 import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
 
-function Recaptcha( { badgePosition } ) {
+function Recaptcha( { badgePosition = 'bottomright' } ) {
 	const { setRecaptchaClientId } = useDispatch( CHECKOUT_STORE ) ?? {};
 	useEffect( () => {
 		initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
@@ -25,10 +25,6 @@ function Recaptcha( { badgePosition } ) {
 
 Recaptcha.propTypes = {
 	badgePosition: PropTypes.string,
-};
-
-Recaptcha.defaultProps = {
-	badgePosition: 'bottomright',
 };
 
 export default memo( Recaptcha );

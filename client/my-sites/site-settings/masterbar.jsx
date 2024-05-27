@@ -12,8 +12,8 @@ import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-s
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Masterbar = ( {
-	isRequestingSettings,
-	isSavingSettings,
+	isRequestingSettings = true,
+	isSavingSettings = false,
 	selectedSiteId,
 	masterbarModuleUnavailable,
 	translate,
@@ -48,11 +48,6 @@ const Masterbar = ( {
 			</Card>
 		</div>
 	);
-};
-
-Masterbar.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
 };
 
 Masterbar.propTypes = {

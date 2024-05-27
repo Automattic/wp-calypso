@@ -8,7 +8,12 @@ import './comment-approve-action.scss';
 
 const noop = () => {};
 
-const CommentApproveAction = ( { translate, status, approveComment, unapproveComment } ) => {
+const CommentApproveAction = ( {
+	translate,
+	status,
+	approveComment = noop,
+	unapproveComment = noop,
+} ) => {
 	const isApproved = status === 'approved';
 	const buttonStyle = classnames( 'comments__comment-actions-approve', {
 		'is-approved': isApproved,
@@ -29,11 +34,6 @@ CommentApproveAction.propTypes = {
 	approveComment: PropTypes.func,
 	unapproveComment: PropTypes.func,
 	status: PropTypes.string.isRequired,
-};
-
-CommentApproveAction.defaultProps = {
-	approveComment: noop,
-	unapproveComment: noop,
 };
 
 export default localize( CommentApproveAction );

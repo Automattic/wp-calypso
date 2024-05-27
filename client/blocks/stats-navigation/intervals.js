@@ -7,17 +7,16 @@ import { intervals } from './constants';
 
 import './intervals.scss';
 
-const Intervals = ( props ) => {
-	const {
-		selected,
-		pathTemplate,
-		className,
-		standalone,
-		compact = true,
-		intervalValues = intervals,
-		onChange,
-		icon,
-	} = props;
+const Intervals = ( {
+	selected,
+	pathTemplate,
+	className,
+	standalone = false,
+	compact = true,
+	intervalValues = intervals,
+	onChange,
+	icon,
+} ) => {
 	const classes = classnames( 'stats-navigation__intervals', className, {
 		'is-standalone': standalone,
 	} );
@@ -50,10 +49,6 @@ Intervals.propTypes = {
 	intervalValues: PropTypes.array,
 	onChange: PropTypes.func,
 	icon: PropTypes.object,
-};
-
-Intervals.defaultProps = {
-	standalone: false,
 };
 
 export default localize( Intervals );

@@ -26,8 +26,13 @@ function useRenderedShortcode( siteId, shortcode ) {
 	return requestState.result;
 }
 
-const Shortcode = ( props ) => {
-	const { siteId, className, children, filterRenderResult = ( result ) => result } = props;
+const Shortcode = ( {
+	siteId,
+	className,
+	children,
+	filterRenderResult = ( result ) => result,
+	...props
+} ) => {
 	const shortcode = useRenderedShortcode( siteId, children );
 
 	const classes = classNames( 'shortcode', className );
@@ -51,10 +56,6 @@ Shortcode.propTypes = {
 	filterRenderResult: PropTypes.func.isRequired,
 	className: PropTypes.string,
 	allowSameOrigin: PropTypes.bool,
-};
-
-Shortcode.defaultProps = {
-	allowSameOrigin: false,
 };
 
 export default Shortcode;

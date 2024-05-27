@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-const SharingServiceExample = ( { image, label, single } ) => (
+const SharingServiceExample = ( { image, label, single = false } ) => (
 	<div className={ classNames( 'sharing-service-example', { 'is-single': single } ) }>
 		{ image ? (
 			<div className="service-example__screenshot">
@@ -19,10 +19,6 @@ SharingServiceExample.propTypes = {
 	} ),
 	label: PropTypes.node,
 	single: PropTypes.bool,
-};
-
-SharingServiceExample.defaultProps = {
-	single: false,
 };
 
 export default SharingServiceExample;

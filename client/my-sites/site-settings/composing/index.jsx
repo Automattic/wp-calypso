@@ -12,11 +12,11 @@ const Composing = ( {
 	isAtomic,
 	siteIsJetpack,
 	eventTracker,
-	fields,
+	fields = {},
 	handleSelect,
 	handleToggle,
-	isRequestingSettings,
-	isSavingSettings,
+	isRequestingSettings = true,
+	isSavingSettings = false,
 	onChangeField,
 	updateFields,
 	handleSubmitForm,
@@ -72,12 +72,6 @@ const Composing = ( {
 		/>
 	</>
 );
-
-Composing.defaultProps = {
-	fields: {},
-	isRequestingSettings: true,
-	isSavingSettings: false,
-};
 
 Composing.propTypes = {
 	isAtomic: PropTypes.bool,

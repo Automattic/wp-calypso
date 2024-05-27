@@ -42,10 +42,10 @@ const serviceWarningLevelToNoticeStatus = ( level ) => {
 
 const SharingServicesGroup = ( {
 	type,
-	isFetching,
-	services,
+	isFetching = false,
+	services = [],
 	title,
-	expandedService,
+	expandedService = '',
 	isJetpack,
 	isPublicizeActive,
 	fetchServices,
@@ -155,12 +155,6 @@ SharingServicesGroup.propTypes = {
 	title: PropTypes.node.isRequired,
 	type: PropTypes.string.isRequired,
 	expandedService: PropTypes.string,
-};
-
-SharingServicesGroup.defaultProps = {
-	isFetching: false,
-	services: [],
-	expandedService: '',
 };
 
 const mapStateToProps = ( state, { type } ) => {

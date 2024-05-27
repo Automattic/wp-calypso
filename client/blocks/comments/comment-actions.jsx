@@ -21,7 +21,7 @@ const CommentActions = ( {
 	handleReply,
 	onReplyCancel,
 	showReadMore,
-	onReadMore,
+	onReadMore = noop,
 	onLikeToggle,
 } ) => {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
@@ -78,10 +78,6 @@ const CommentActions = ( {
 			/>
 		</div>
 	);
-};
-
-CommentActions.defaultProps = {
-	onReadMore: noop,
 };
 
 export default localize( CommentActions );

@@ -14,10 +14,10 @@ import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-s
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const Subscriptions = ( {
-	fields,
+	fields = {},
 	handleAutosavingToggle,
-	isRequestingSettings,
-	isSavingSettings,
+	isRequestingSettings = true,
+	isSavingSettings = false,
 	moduleUnavailable,
 	selectedSiteId,
 	selectedSiteSlug,
@@ -84,12 +84,6 @@ const Subscriptions = ( {
 			</CompactCard>
 		</div>
 	);
-};
-
-Subscriptions.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-	fields: {},
 };
 
 Subscriptions.propTypes = {

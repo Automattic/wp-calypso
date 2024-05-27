@@ -6,12 +6,12 @@ import UploadButton from './video-editor-upload-button';
 const noop = () => {};
 
 const VideoEditorControls = ( {
-	isPosterUpdating,
-	isVideoLoading,
+	isPosterUpdating = false,
+	isVideoLoading = true,
 	onCancel,
-	onSelectFrame,
-	onUploadImage,
-	onUploadImageClick,
+	onSelectFrame = noop,
+	onUploadImage = noop,
+	onUploadImageClick = noop,
 	translate,
 } ) => {
 	return (
@@ -51,14 +51,6 @@ VideoEditorControls.propTypes = {
 	onSelectFrame: PropTypes.func,
 	onUploadImage: PropTypes.func,
 	onUploadImageClick: PropTypes.func,
-};
-
-VideoEditorControls.defaultProps = {
-	isPosterUpdating: false,
-	isVideoLoading: true,
-	onSelectFrame: noop,
-	onUploadImage: noop,
-	onUploadImageClick: noop,
 };
 
 export default localize( VideoEditorControls );

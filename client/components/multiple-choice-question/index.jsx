@@ -19,14 +19,14 @@ const shuffleAnswers = memoize(
 );
 
 const MultipleChoiceQuestion = ( {
-	disabled,
+	disabled = false,
 	answers,
 	name,
 	onAnswerChange,
 	question,
-	selectedAnswerId,
-	selectedAnswerText,
-	shouldShuffleAnswers,
+	selectedAnswerId = null,
+	selectedAnswerText = '',
+	shouldShuffleAnswers = true,
 } ) => {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( selectedAnswerId );
 	const shuffledAnswers = shouldShuffleAnswers ? shuffleAnswers( answers ) : answers;
@@ -76,13 +76,6 @@ MultipleChoiceQuestion.propTypes = {
 	selectedAnswerId: PropTypes.string,
 	selectedAnswerText: PropTypes.string,
 	shouldShuffleAnswers: PropTypes.bool,
-};
-
-MultipleChoiceQuestion.defaultProps = {
-	disabled: false,
-	selectedAnswerId: null,
-	selectedAnswerText: '',
-	shouldShuffleAnswers: true,
 };
 
 export default MultipleChoiceQuestion;

@@ -4,7 +4,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 
 import './style.scss';
 
-function JetpackHeader( { className } ) {
+function JetpackHeader( { className = '' } ) {
 	const classes = classNames( 'jetpack-header', className );
 
 	return (
@@ -16,10 +16,6 @@ function JetpackHeader( { className } ) {
 
 JetpackHeader.propTypes = {
 	className: PropTypes.string,
-};
-
-JetpackHeader.defaultProps = {
-	className: '',
 };
 
 export default JetpackHeader;

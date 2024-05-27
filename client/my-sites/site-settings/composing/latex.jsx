@@ -12,8 +12,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function Latex( {
 	isAtomic,
-	isRequestingSettings,
-	isSavingSettings,
+	isRequestingSettings = true,
+	isSavingSettings = false,
 	moduleUnavailable,
 	selectedSiteId,
 	translate,
@@ -43,11 +43,6 @@ function Latex( {
 		</Card>
 	);
 }
-
-Latex.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-};
 
 Latex.propTypes = {
 	isSavingSettings: PropTypes.bool,

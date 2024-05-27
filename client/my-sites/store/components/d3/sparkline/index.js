@@ -6,12 +6,17 @@ import PropTypes from 'prop-types';
 import D3Base from '../base';
 
 const Sparkline = ( {
-	aspectRatio,
+	aspectRatio = 4.5,
 	className,
 	data,
 	highlightIndex,
-	highlightRadius,
-	margin,
+	highlightRadius = 3.5,
+	margin = {
+		top: 4,
+		right: 4,
+		bottom: 4,
+		left: 4,
+	},
 	maxHeight,
 } ) => {
 	function drawSparkline( svg, params ) {
@@ -71,17 +76,6 @@ Sparkline.propTypes = {
 	highlightRadius: PropTypes.number,
 	margin: PropTypes.object,
 	maxHeight: PropTypes.number,
-};
-
-Sparkline.defaultProps = {
-	aspectRatio: 4.5,
-	highlightRadius: 3.5,
-	margin: {
-		top: 4,
-		right: 4,
-		bottom: 4,
-		left: 4,
-	},
 };
 
 export default Sparkline;

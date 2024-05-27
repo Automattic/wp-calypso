@@ -4,7 +4,15 @@ import classNames from 'classnames';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
-function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, record } ) {
+function DnsRecordsListItem( {
+	type,
+	name,
+	value,
+	actions,
+	disabled = false,
+	isHeader = false,
+	record,
+} ) {
 	let key = 0;
 	const menu = actions && (
 		<EllipsisMenu
@@ -56,11 +64,5 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 		</div>
 	);
 }
-
-DnsRecordsListItem.defaultProps = {
-	isHeader: false,
-	disabled: false,
-	showSupportInfo: true,
-};
 
 export default DnsRecordsListItem;

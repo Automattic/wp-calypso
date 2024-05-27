@@ -98,10 +98,10 @@ export const RelatedPostsSetting = ( {
 };
 
 const RelatedPostsSection = ( {
-	fields,
+	fields = {},
 	handleToggle,
-	isRequestingSettings,
-	isSavingSettings,
+	isRequestingSettings = true,
+	isSavingSettings = false,
 } ) => {
 	const translate = useTranslate();
 	return (
@@ -119,12 +119,6 @@ const RelatedPostsSection = ( {
 			</Card>
 		</div>
 	);
-};
-
-RelatedPostsSection.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-	fields: {},
 };
 
 RelatedPostsSection.propTypes = {

@@ -20,9 +20,9 @@ function ThemeEnhancements( {
 	siteIsJetpack,
 	handleAutosavingToggle,
 	handleAutosavingRadio,
-	isSavingSettings,
-	isRequestingSettings,
-	fields,
+	isSavingSettings = false,
+	isRequestingSettings = true,
+	fields = {},
 	customizeUrl,
 	siteId,
 	isFSEActive,
@@ -142,12 +142,6 @@ function ThemeEnhancements( {
 		</div>
 	);
 }
-
-ThemeEnhancements.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-	fields: {},
-};
 
 ThemeEnhancements.propTypes = {
 	isAtomic: PropTypes.bool,

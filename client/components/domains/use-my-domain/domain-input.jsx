@@ -16,12 +16,12 @@ import './style.scss';
 function UseMyDomainInput( {
 	baseClassName,
 	domainName,
-	isBusy,
+	isBusy = false,
 	isSignupStep,
 	onChange,
 	onClear,
 	onNext,
-	shouldSetFocus,
+	shouldSetFocus = false,
 	validationError,
 } ) {
 	const domainNameInput = useRef( null );
@@ -122,11 +122,6 @@ UseMyDomainInput.propTypes = {
 	onNext: PropTypes.func.isRequired,
 	shouldSetFocus: PropTypes.bool,
 	validationError: PropTypes.node,
-};
-
-UseMyDomainInput.defaultProps = {
-	isBusy: false,
-	shouldSetFocus: false,
 };
 
 export default connect()( UseMyDomainInput );

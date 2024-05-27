@@ -8,11 +8,11 @@ import usePostFormatsQuery from 'calypso/data/post-formats/use-post-formats-quer
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const DefaultPostFormat = ( {
-	fields,
+	fields = {},
 	onChangeField,
 	eventTracker,
-	isRequestingSettings,
-	isSavingSettings,
+	isRequestingSettings = true,
+	isSavingSettings = false,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const { data } = usePostFormatsQuery( siteId );
@@ -39,12 +39,6 @@ const DefaultPostFormat = ( {
 			</FormSelect>
 		</FormFieldset>
 	);
-};
-
-DefaultPostFormat.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-	fields: {},
 };
 
 DefaultPostFormat.propTypes = {

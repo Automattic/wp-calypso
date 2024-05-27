@@ -9,7 +9,7 @@ const noop = () => {};
 const ExpandableSidebarHeading = ( {
 	title,
 	count,
-	onClick,
+	onClick = noop,
 	icon,
 	customIcon,
 	materialIcon,
@@ -57,10 +57,6 @@ ExpandableSidebarHeading.propTypes = {
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
 	hideExpandableIcon: PropTypes.bool,
-};
-
-ExpandableSidebarHeading.defaultProps = {
-	onClick: noop,
 };
 
 export default ExpandableSidebarHeading;

@@ -11,8 +11,8 @@ import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-s
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function Shortcodes( {
-	isRequestingSettings,
-	isSavingSettings,
+	isRequestingSettings = true,
+	isSavingSettings = false,
 	moduleUnavailable,
 	selectedSiteId,
 	translate,
@@ -41,11 +41,6 @@ function Shortcodes( {
 		</Card>
 	);
 }
-
-Shortcodes.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-};
 
 Shortcodes.propTypes = {
 	isAtomic: PropTypes.bool,

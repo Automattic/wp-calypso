@@ -5,7 +5,14 @@ import formatNumberCompact from './format-number-compact';
 
 import './style.scss';
 
-export const Count = ( { count, compact, numberFormat, forwardRef, primary, ...rest } ) => {
+export const Count = ( {
+	count,
+	compact = false,
+	numberFormat,
+	forwardRef,
+	primary = false,
+	...rest
+} ) => {
 	// Omit props passed from the `localize` higher-order component that we don't need.
 	const { translate, moment, ...inheritProps } = rest;
 
@@ -26,11 +33,6 @@ Count.propTypes = {
 	primary: PropTypes.bool,
 	compact: PropTypes.bool,
 	refProp: PropTypes.oneOfType( [ PropTypes.func, PropTypes.shape( { current: PropTypes.any } ) ] ),
-};
-
-Count.defaultProps = {
-	primary: false,
-	compact: false,
 };
 
 export default localize( Count );

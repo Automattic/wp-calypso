@@ -6,7 +6,13 @@ import Image from 'calypso/components/image';
 
 import './account-dialog-account.scss';
 
-const AccountDialogAccount = ( { account, conflicting, onChange, selected, defaultIcon } ) => {
+const AccountDialogAccount = ( {
+	account,
+	conflicting = false,
+	onChange = () => {},
+	selected = false,
+	defaultIcon,
+} ) => {
 	const classes = classNames( 'account-dialog-account', {
 		'is-connected': account.isConnected,
 		'is-conflict': conflicting,
@@ -55,13 +61,6 @@ AccountDialogAccount.propTypes = {
 	selected: PropTypes.bool,
 	conflicting: PropTypes.bool,
 	onChange: PropTypes.func,
-};
-
-AccountDialogAccount.defaultProps = {
-	conflicting: false,
-	connected: false,
-	onChange: () => {},
-	selected: false,
 };
 
 export default AccountDialogAccount;

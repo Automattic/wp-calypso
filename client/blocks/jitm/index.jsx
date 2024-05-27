@@ -133,9 +133,16 @@ function useDevTool( { currentSite }, dispatch ) {
 	}, [ currentSite?.ID ] );
 }
 
-export function JITM( props ) {
-	const { jitm, isFetching, currentSite, messagePath, searchQuery, isJetpack, jitmPlaceholder } =
-		props;
+export function JITM( {
+	isFetching = false,
+	jitm,
+	currentSite,
+	messagePath,
+	searchQuery,
+	isJetpack,
+	jitmPlaceholder,
+	...props
+} ) {
 	const dispatch = useDispatch();
 
 	useDevTool( props, dispatch );
@@ -174,11 +181,6 @@ JITM.propTypes = {
 	searchQuery: PropTypes.string,
 	jitmPlaceholder: PropTypes.node,
 	isFetching: PropTypes.bool,
-};
-
-JITM.defaultProps = {
-	template: 'default',
-	isFetching: false,
 };
 
 const mapStateToProps = ( state, { messagePath } ) => {

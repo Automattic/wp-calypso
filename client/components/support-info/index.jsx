@@ -20,9 +20,9 @@ function makePrivacyLink( privacyLink, link ) {
 function SupportInfo( {
 	children = <></>,
 	text = '',
-	link,
+	link = '',
 	position,
-	privacyLink,
+	privacyLink = true,
 	popoverClassName = '',
 } ) {
 	const translate = useTranslate();
@@ -55,12 +55,6 @@ function SupportInfo( {
 		</div>
 	);
 }
-
-SupportInfo.defaultProps = {
-	text: '',
-	link: '',
-	privacyLink: true,
-};
 
 SupportInfo.propTypes = {
 	text: PropTypes.string,
