@@ -42,7 +42,9 @@ const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane, itemData }:
 				) }
 				description={ sprintf(
 					// translators: %s is the label of the admin
-					__( 'Navigate seamlessly between your site management panel and %s with just one click' ),
+					__(
+						'Navigate seamlessly between your site management panel and %s with just one click.'
+					),
 					adminLabel
 				) }
 			/>
