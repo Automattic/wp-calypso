@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -23,43 +23,56 @@ type Props = {
 	selectedSection: string;
 };
 
+interface Section {
+	content: ReactNode;
+	breadcrumbItems: BreadcrumbItem[];
+}
+
 export default function PartnerDirectory( { selectedSection }: Props ) {
 	const translate = useTranslate();
 	const title = translate( 'Partner Directory' );
 
-	const section: { content: ReactNode | undefined; breadcrumbItems: BreadcrumbItem[] } = {
-		content: <Dashboard />,
-		breadcrumbItems: [
-			{
-				label: translate( 'Partner Directory' ),
-				href: A4A_PARTNER_DIRECTORY_LINK,
-			},
-		],
-	};
+	// Define the sub-menu sections
+	const sections: { [ slug: string ]: Section } = useMemo( () => {
+		const sections: { [ slug: string ]: Section } = {};
 
-	switch ( selectedSection ) {
-		case PARTNER_DIRECTORY_DASHBOARD_SLUG:
-			section.content = <Dashboard />;
-			break;
-		case PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG:
-			section.content = <AgencyDetails />;
-			section.breadcrumbItems.push( {
-				label: translate( 'Agency Details' ),
-				href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
-			} );
-			break;
-		case PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG:
-			section.content = <AgencyExpertise />;
-			section.breadcrumbItems.push( {
-				label: translate( 'Agency Details' ),
-				href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
-			} );
-			section.breadcrumbItems.push( {
-				label: translate( 'Agency Expertise' ),
-				href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }`,
-			} );
-			break;
-	}
+		sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ] = {
+			content: <Dashboard />,
+			breadcrumbItems: [
+				{
+					label: translate( 'Partner Directory' ),
+					href: A4A_PARTNER_DIRECTORY_LINK,
+				},
+			],
+		};
+
+		sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] = {
+			content: <AgencyDetails />,
+			breadcrumbItems: [
+				...sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ].breadcrumbItems,
+				{
+					label: translate( 'Agency Details' ),
+					href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
+				},
+			],
+		};
+
+		sections[ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG ] = {
+			content: <AgencyExpertise />,
+			breadcrumbItems: [
+				...sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ].breadcrumbItems,
+				{
+					label: translate( 'Agency Expertise' ),
+					href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }`,
+				},
+			],
+		};
+
+		return sections;
+	}, [ translate ] );
+
+	// Set the selected section
+	const section: Section = sections[ selectedSection ];
 
 	return (
 		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
