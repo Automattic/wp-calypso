@@ -71,6 +71,11 @@ export type PlansIntent =
 	| 'plans-business-trial'
 	| 'plans-videopress'
 	| 'plans-guided'
+	| 'plans-segment-developer-or-agency'
+	| 'plans-segment-merchant'
+	| 'plans-segment-blogger'
+	| 'plans-segment-nonprofit'
+	| 'plans-segment-consumer-or-business'
 	| 'default';
 
 export interface PlanActionOverrides {

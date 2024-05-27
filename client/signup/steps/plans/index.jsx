@@ -14,9 +14,7 @@ import Notice from 'calypso/components/notice';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
-import { UseQuery } from 'calypso/lib/query-in-class-component/use-query-component';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
-import { getSegmentedIntent } from 'calypso/my-sites/plans/hooks/get-segmented-intent';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
@@ -128,47 +126,34 @@ export class PlansStep extends Component {
 		return (
 			<div>
 				{ errorDisplay }
-				<UseQuery
-					options={ {
-						queryKey: [ 'segmented-intents3' ],
-						queryFn: getSegmentedIntent,
-						enabled: true,
-						staleTime: 0,
-					} }
-				>
-					{ ( { data: segmentedIntent } ) => (
-						<>
-							<PlansFeaturesMain
-								paidDomainName={ paidDomainName }
-								freeSubdomain={ freeWPComSubdomain }
-								siteTitle={ siteTitle }
-								signupFlowUserName={ username }
-								siteId={ selectedSite?.ID }
-								isCustomDomainAllowedOnFreePlan={ this.props.isCustomDomainAllowedOnFreePlan }
-								isInSignup
-								isLaunchPage={ isLaunchPage }
-								intervalType={ intervalType }
-								displayedIntervals={ this.props.displayedIntervals }
-								onUpgradeClick={ ( cartItems ) => this.onSelectPlan( cartItems ) }
-								customerType={ this.getCustomerType() }
-								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
-								deemphasizeFreePlan={ deemphasizeFreePlan }
-								plansWithScroll={ this.state.isDesktop }
-								intent={ segmentedIntent || intent }
-								flowName={ flowName }
-								hideFreePlan={ hideFreePlan }
-								hidePersonalPlan={ this.props.hidePersonalPlan }
-								hidePremiumPlan={ this.props.hidePremiumPlan }
-								hideEcommercePlan={ this.shouldHideEcommercePlan() }
-								hideEnterprisePlan={ this.props.hideEnterprisePlan }
-								removePaidDomain={ this.removePaidDomain }
-								setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
-								coupon={ coupon }
-								showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
-							/>
-						</>
-					) }
-				</UseQuery>
+				<PlansFeaturesMain
+					paidDomainName={ paidDomainName }
+					freeSubdomain={ freeWPComSubdomain }
+					siteTitle={ siteTitle }
+					signupFlowUserName={ username }
+					siteId={ selectedSite?.ID }
+					isCustomDomainAllowedOnFreePlan={ this.props.isCustomDomainAllowedOnFreePlan }
+					isInSignup
+					isLaunchPage={ isLaunchPage }
+					intervalType={ intervalType }
+					displayedIntervals={ this.props.displayedIntervals }
+					onUpgradeClick={ ( cartItems ) => this.onSelectPlan( cartItems ) }
+					customerType={ this.getCustomerType() }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
+					deemphasizeFreePlan={ deemphasizeFreePlan }
+					plansWithScroll={ this.state.isDesktop }
+					intent={ intent }
+					flowName={ flowName }
+					hideFreePlan={ hideFreePlan }
+					hidePersonalPlan={ this.props.hidePersonalPlan }
+					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hideEcommercePlan={ this.shouldHideEcommercePlan() }
+					hideEnterprisePlan={ this.props.hideEnterprisePlan }
+					removePaidDomain={ this.removePaidDomain }
+					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
+					coupon={ coupon }
+					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
+				/>
 			</div>
 		);
 	}

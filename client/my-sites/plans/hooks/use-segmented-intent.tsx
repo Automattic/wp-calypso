@@ -1,26 +1,23 @@
-import wpcom from 'calypso/lib/wp';
+import useSurveyAnswersQuery from 'calypso/data/segmentaton-survey/queries/use-survey-answers-query';
 import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from 'calypso/signup/steps/initial-intent/constants';
 
-export async function getSegmentedIntent() {
-	const response = await wpcom.req.get( {
-		path: `/segmentation-survey/answers?survey_key=${ GUIDED_FLOW_SEGMENTATION_SURVEY_KEY }`,
-		apiNamespace: 'wpcom/v2',
-	} );
+export function useSegmentedIntent() {
+	const { data } = useSurveyAnswersQuery( { surveyKey: GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } );
 
-	const goals = response[ 0 ]?.answers[ 'what-are-your-goals' ];
-	const intent = response[ 0 ]?.answers[ 'what-brings-you-to-wordpress' ];
+	const goals = data?.[ 'what-are-your-goals' ];
+	const intent = data?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
 	if ( ! intent || ! goals ) {
 		return null;
 	}
 
-	// Handle the case when no goals are provided (n/a)
+	// Return null (show all plans) for migration flow.
 	if ( intent === 'migrate-or-import-site' && goals.includes( 'skip' ) ) {
-		return 'plans-intent-migration';
+		return null;
 	}
 
 	if ( intent === 'client' && goals.includes( 'skip' ) ) {
-		return 'plans-intent-developer-or-agency';
+		return 'plans-segment-developer-or-agency';
 	}
 
 	// Handle different cases when intent is 'Create for self'
@@ -29,23 +26,25 @@ export async function getSegmentedIntent() {
 			return null;
 		}
 		if ( goals.includes( 'difm' ) ) {
-			return 'plans-intent-difm'; // Do it for me
+			// Return null (show all plans) for DIFM (do it for me) flow.
+			return null;
 		}
 		if ( goals.includes( 'sell' ) && ! goals.includes( 'difm' ) ) {
-			return 'plans-intent-merchant';
+			return 'plans-segment-merchant';
 		}
 		if ( goals.includes( 'blog' ) ) {
-			return 'plans-intent-blogger';
+			return 'plans-segment-blogger';
 		}
 		if ( goals.includes( 'educational-or-nonprofit' ) ) {
-			return 'plans-intent-nonprofit';
+			return 'plans-segment-nonprofit';
 		}
 		if ( goals.includes( 'newsletter' ) ) {
-			return 'plans-intent-newsletter';
+			// Return null (show all plans) for newsletter flow.
+			return null;
 		}
 		// Catch-all case for when none of the specific goals are met
 		// This will also account for "( ! DIFM && ! Sell ) = Consumer / Business" condition
-		return 'plans-intent-consumer-or-business';
+		return 'plans-segment-consumer-or-business';
 	}
 
 	// Default return if no conditions are met

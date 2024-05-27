@@ -6,26 +6,26 @@ type SurveyAnswersQueryParams = {
 	surveyKey: string;
 };
 
-type SurveyAnswersResponse = {
-	question_key: string;
-	answer_keys: string[];
-}[];
+export type SurveyAnswersResponse = Array< {
+	blog_id: number;
+	answers: Answers;
+} >;
 
 const mapSurveyAnswers = ( response: SurveyAnswersResponse ): Answers =>
-	response.reduce( ( acc, { question_key, answer_keys } ) => {
-		return { ...acc, [ question_key ]: answer_keys };
+	response.reduce( ( acc, { answers } ) => {
+		return { ...acc, ...answers };
 	}, {} );
 
 const useSurveyAnswersQuery = ( { surveyKey }: SurveyAnswersQueryParams ) => {
 	return useQuery( {
-		queryKey: [ 'survey-answers', surveyKey ],
-		queryFn: () => {
-			return wpcom.req.get( {
+		queryKey: [ 'survey-answerssss', surveyKey ],
+		queryFn: () =>
+			wpcom.req.get( {
 				path: `/segmentation-survey/answers?survey_key=${ surveyKey }`,
 				apiNamespace: 'wpcom/v2',
-			} );
-		},
+			} ),
 		enabled: !! surveyKey,
+		staleTime: 0,
 		select: mapSurveyAnswers,
 	} );
 };

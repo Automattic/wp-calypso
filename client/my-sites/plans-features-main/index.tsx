@@ -56,6 +56,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { useSegmentedIntent } from 'calypso/my-sites/plans/hooks/use-segmented-intent';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
@@ -291,9 +292,13 @@ const PlansFeaturesMain = ( {
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
+	const intentFromSegmentationSurvey = useSegmentedIntent();
 
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 	useEffect( () => {
+		if ( intentFromProps === 'plans-guided' && intentFromSegmentationSurvey ) {
+			return setIntent( intentFromSegmentationSurvey );
+		}
 		if ( intentFromSiteMeta.processing ) {
 			return;
 		}
