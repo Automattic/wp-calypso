@@ -4,13 +4,18 @@ import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PartnerDirectorySideBar from '../../components/sidebar-menu/partner-directory';
 import {
-	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
+	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
+	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
 } from './constants';
 import PartnerDirectory from './partner-directory';
 
 export const partnerDirectoryDashboardContext: Callback = ( context, next ) => {
-	const validSections = [ PARTNER_DIRECTORY_DASHBOARD_SLUG, PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ];
+	const validSections = [
+		PARTNER_DIRECTORY_DASHBOARD_SLUG,
+		PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
+		PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
+	];
 
 	const selectedSection = context.params.section ?? PARTNER_DIRECTORY_DASHBOARD_SLUG;
 
