@@ -101,6 +101,12 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	const isActive = siteIsJetpack
 		? jetpackPostByEmailIsActive
 		: simpleSitePostByEmailSettings?.isEnabled;
+	const isDisabledForBothFlows =
+		isFormPending ||
+		jetpackRegeneratingPostByEmail ||
+		isSimpleSitePendingRegenerate ||
+		! isActive ||
+		!! moduleUnavailable;
 
 	return (
 		<>
@@ -126,7 +132,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 				) : (
 					<ToggleControl
 						checked={ !! simpleSitePostByEmailSettings?.isEnabled }
-						disabled={ isSimpleSitePendingToggle || isSimpleSitePendingRegenerate }
+						disabled={ isFormPending || isSimpleSitePendingToggle || isSimpleSitePendingRegenerate }
 						label={ translate( 'Post by Email' ) }
 						onChange={ handleToggleForSimpleSite }
 					/>
@@ -135,26 +141,17 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 				<div className="publishing-tools__module-settings site-settings__child-settings">
 					<FormLabel
 						className={ clsx( {
-							'is-disabled': moduleUnavailable || jetpackRegeneratingPostByEmail || ! isActive,
+							'is-disabled': isDisabledForBothFlows,
 						} ) }
 					>
 						{ translate( 'Send your new posts to this email address:' ) }
 					</FormLabel>
 					<ClipboardButtonInput
 						className="publishing-tools__email-address"
-						disabled={ jetpackRegeneratingPostByEmail || ! isActive || moduleUnavailable }
+						disabled={ isDisabledForBothFlows }
 						value={ siteIsJetpack ? email : simpleSitePostByEmailSettings?.email }
 					/>
-					<Button
-						onClick={ handleRegenerate }
-						disabled={
-							isFormPending ||
-							jetpackRegeneratingPostByEmail ||
-							isSimpleSitePendingRegenerate ||
-							! isActive ||
-							!! moduleUnavailable
-						}
-					>
+					<Button onClick={ handleRegenerate } disabled={ isDisabledForBothFlows }>
 						{ jetpackRegeneratingPostByEmail
 							? translate( 'Regenerating…' )
 							: translate( 'Regenerate address' ) }
