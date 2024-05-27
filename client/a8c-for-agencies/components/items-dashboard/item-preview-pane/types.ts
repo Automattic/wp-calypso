@@ -19,13 +19,14 @@ export interface FeatureTabInterface {
 
 export interface ItemData {
 	title: string;
-	subtitle: string;
+	subtitle: string | React.ReactNode;
 	url?: string;
 	icon?: string;
 	color?: string;
 	blogId?: number;
 	isDotcomSite?: boolean;
 	adminUrl?: string;
+	isSiteData?: boolean;
 }
 
 export interface PreviewPaneProps {

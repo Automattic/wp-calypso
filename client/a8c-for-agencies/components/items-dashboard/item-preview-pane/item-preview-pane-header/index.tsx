@@ -29,6 +29,8 @@ export default function ItemPreviewPaneHeader( {
 	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
 	const size = isLargerThan960px ? 64 : 50;
 
+	const isSiteData = itemData?.isSiteData ?? true;
+
 	const focusRef = useRef< HTMLButtonElement >( null );
 
 	// Use useEffect to set the focus when the component mounts
@@ -44,32 +46,38 @@ export default function ItemPreviewPaneHeader( {
 	return (
 		<div className={ classNames( 'item-preview__header', className ) }>
 			<div className="item-preview__header-content">
-				<SiteFavicon
-					blogId={ itemData.blogId }
-					fallback={ siteIconFallback }
-					color={ itemData.color }
-					className="item-preview__header-favicon"
-					size={ size }
-				/>
+				{ isSiteData && (
+					<SiteFavicon
+						blogId={ itemData.blogId }
+						fallback={ siteIconFallback }
+						color={ itemData.color }
+						className="item-preview__header-favicon"
+						size={ size }
+					/>
+				) }
 				<div className="item-preview__header-info">
 					<div className="item-preview__header-title-summary">
 						<div className="item-preview__header-title">{ itemData.title }</div>
 						<div className="item-preview__header-summary">
-							<Button
-								variant="link"
-								className="item-preview__header-summary-link"
-								href={ itemData.url }
-								target="_blank"
-							>
-								<span>
-									{ itemData.subtitle }
-									<Icon
-										className="sidebar-v2__external-icon"
-										icon={ external }
-										size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
-									/>
-								</span>
-							</Button>
+							{ isSiteData ? (
+								<Button
+									variant="link"
+									className="item-preview__header-summary-link"
+									href={ itemData.url }
+									target="_blank"
+								>
+									<span>
+										{ itemData.subtitle }
+										<Icon
+											className="sidebar-v2__external-icon"
+											icon={ external }
+											size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
+										/>
+									</span>
+								</Button>
+							) : (
+								itemData.subtitle
+							) }
 						</div>
 					</div>
 					<div className="item-preview__header-actions">

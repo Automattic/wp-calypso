@@ -1,6 +1,8 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+$data-view-border-color: #f1f1f1;
+
 .referrals-overview__section-notice {
 	margin-block-end: 48px;
 }
@@ -103,6 +105,58 @@
 	&.main.a4a-layout.is-with-border .a4a-layout__top-wrapper:not(.has-navigation) {
 		padding-block-start: 24px;
 		padding-block-end: 0;
+	}
+
+	&.main.a4a-layout {
+		@include break-large {
+			background: inherit;
+		}
+	}
+
+	&.referrals-layout--has-selected {
+		ul.dataviews-view-list {
+			margin: 0;
+			list-style: none;
+		}
+
+		li:not(.section-nav-tab) {
+			margin-inline: -24px;
+			padding: 16px 24px;
+			border-bottom: 1px solid $data-view-border-color;
+		}
+
+		.dataviews-view-list__item .components-flex {
+			gap: 0;
+		}
+
+		.dataviews-filters__view-actions {
+			border-bottom: 1px solid $data-view-border-color;
+			margin-inline-start: -24px;
+			padding-inline: 24px;
+			padding-block-end: 16px;
+			margin-block-end: 0;
+		}
+
+		.a4a-layout__top-wrapper > *,
+		.a4a-layout__body > * {
+			padding-inline: 24px;
+		}
+
+		.referrals-layout__column {
+			flex: unset;
+			height: 100%;
+			transition: all 0.2s;
+			width: 400px;
+			display: none;
+
+			@include break-large {
+				display: block;
+			}
+		}
+
+		.a4a-layout__header-actions a.button {
+			text-wrap: nowrap;
+		}
 	}
 }
 
