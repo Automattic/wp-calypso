@@ -185,24 +185,25 @@ export default function MultiProductCard( props: Props ) {
 								</div>
 
 								<div className="product-card__description">{ productDescription }</div>
-
-								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
-									<LicenseLightboxLink
-										productName={ getProductShortTitle( product ) }
-										onClick={ onShowLightbox }
-									/>
-								) }
 							</div>
-
-							<Button
-								className="product-card__select-button"
-								primary={ ! isSelected }
-								tabIndex={ -1 }
-							>
-								{ isSelected && <Icon icon={ check } /> }
-								{ isSelected ? translate( 'Added' ) : translate( 'Add to cart' ) }
-							</Button>
 						</div>
+					</div>
+					<div className="product-card__buttons">
+						<Button
+							className="product-card__select-button"
+							primary={ ! isSelected }
+							tabIndex={ -1 }
+						>
+							{ isSelected && <Icon icon={ check } /> }
+							{ isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' ) }
+						</Button>
+						{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
+							<LicenseLightboxLink
+								customText={ translate( 'View details' ) }
+								productName={ getProductShortTitle( product ) }
+								onClick={ onShowLightbox }
+							/>
+						) }
 					</div>
 				</div>
 			</div>
