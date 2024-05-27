@@ -176,7 +176,7 @@
 	}
 
 	.sites-overview__content {
-		margin-top: 35px;
+		margin-top: 11px;
 	}
 
 	@media (max-width: $break-wide) {
@@ -411,7 +411,7 @@
 
 // Styles for site preview pane.
 .wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
-	.dev-tools-promo__icon {
+	.dev-tools__icon {
 		display: inline-block;
 		height: 18px;
 		vertical-align: top;
@@ -512,17 +512,47 @@
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout {
 	.a4a-layout-column__container {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+
 		.dataviews-wrapper {
+			display: flex;
+			height: 100%;
+			overflow: hidden;
 			position: relative;
 
 			.dataviews-pagination {
 				margin: 0;
 				position: relative;
 				width: 100%;
+			}
+		}
+	}
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout.preview-hidden {
+	@media (min-width: $break-xhuge) {
+		div.a4a-layout__viewport {
+			margin: 0 auto;
+			max-width: 1400px;
+			box-sizing: border-box;
+		}
+		.dataviews-wrapper {
+			margin: 0 auto;
+			max-width: 1400px;
+			box-sizing: border-box;
+		}
+	}
+
+	.a4a-layout-column__container {
+		.dataviews-wrapper {
+			.dataviews-pagination {
 				@include break-large {
 					padding-left: 26px;
 					padding-right: 26px;
 				}
+
 				@include break-huge {
 					padding-left: 64px;
 					padding-right: 64px;
@@ -564,8 +594,7 @@
 		}
 
 		.dataviews-wrapper {
-			display: flex;
-			height: 100%;
+			width: 100%;
 
 			> * {
 				flex-grow: 1;
@@ -604,15 +633,5 @@
 	// Prevent the content pushed out via translateX(100%) creating a scrollbar
 	&.focus-sidebar .layout__content .layout__primary {
 		overflow-x: hidden;
-	}
-}
-
-.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper,
-.wpcom-site div.is-section-plugins:not(.has-no-masterbar) .main.a4a-layout.sites-dashboard .dataviews-view-table-wrapper {
-	max-height: calc(100vh - 276px); /* 276px is the size of all the height above and below the dataviews-view-table-wrapper */
-
-	// With 48px padding.
-	@media ( min-width: 601px ) {
-		max-height: calc(100vh - 324px); /* 324px is the size of all the height above and below the dataviews-view-table-wrapper */
 	}
 }

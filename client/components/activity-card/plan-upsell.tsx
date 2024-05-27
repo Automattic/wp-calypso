@@ -1,0 +1,80 @@
+import { Card, Gridicon } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import * as React from 'react';
+import ActivityActor from 'calypso/components/activity-card/activity-actor';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useSelector } from 'calypso/state';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { Activity } from './types';
+
+import './style.scss';
+
+type OwnProps = {
+	className?: string;
+	summarize?: boolean;
+	shareable?: boolean;
+	activity: Activity;
+	availableActions?: Array< string >;
+	onClickClone?: ( period: string ) => void;
+};
+
+type Props = OwnProps & {
+	upsellPlanName: string;
+};
+
+const PlanUpsellCard: React.FC< Props > = ( { upsellPlanName } ) => {
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
+	const currentDateDisplay = applySiteOffset( Date.now(), { gmtOffset, timezone } ).format( 'LT' );
+	const translate = useTranslate();
+
+	return (
+		<div className="activity-card-list__date-group-upsell">
+			<div className="activity-card-list__date-group-date">Past</div>
+			<div className="activity-card-list__date-group-content">
+				<div className="activity-card-list__secondary-card-with-more activity-card">
+					<div className="activity-card__header">
+						<div className="activity-card__time">
+							<Gridicon icon="cog" className="activity-card__time-icon" />
+							<div className="activity-card__time-text">{ currentDateDisplay }</div>
+						</div>
+					</div>
+					<Card>
+						<ActivityActor actorName="WordPress" actorType="Application" />
+						<div className="activity-card__activity-description">Description</div>
+						<div className="activity-card__activity-title">Title</div>
+						<div className="activity-card__activity-overlay">
+							<div className="activity-card__activity-overlay-content">
+								<div className="activity-card__activity-overlay-lock">
+									<Gridicon icon="lock" />
+								</div>
+								<p className="activity-card__activity-overlay-text">
+									{ translate(
+										'Upgrade to %(planName)s plan or higher to unlock more powerful features.',
+										{
+											args: {
+												planName: upsellPlanName,
+											},
+											comment: '%(planName)s is the name of the selected plan.',
+										}
+									) }
+								</p>
+								<button
+									type="button"
+									className="button activity-card__activity-overlay-button is-primary"
+								>
+									{ translate( 'Upgrade' ) }
+								</button>
+							</div>
+						</div>
+					</Card>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default PlanUpsellCard;

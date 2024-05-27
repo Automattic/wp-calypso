@@ -1,9 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import classnames from 'classnames';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { getOveralScore, isScoreGood } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -16,15 +17,13 @@ import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
-// import { AdvancedMetrics } from './advanced-metrics';
-// import { BasicMetrics } from './basic-metrics';
-import DomainAnalyzer from './domain-analyzer';
-// import DomainInformation from './domain-information';
+import { BasicMetrics } from './basic-metrics';
+import { DomainSection } from './domain-section';
 import { GetReportForm } from './get-report-form';
-// import HeadingInformation from './heading-information';
-// import HostingInformation from './hosting-information';
-// import HostingIntro from './hosting-intro';
-// import { MetricsMenu } from './metrics-menu';
+import { HostingSection } from './hosting-section';
+import { LandingPageHeader } from './landing-page-header';
+import { PerformanceSection } from './performance-section';
+import { ResultsHeader } from './results-header';
 import './styles-v2.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
@@ -36,9 +35,9 @@ interface Props {
 
 export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain } = props;
-	// const basicMetricsRef = useRef( null );
-	// const performanceMetricsRef = useRef( null );
-	// const healthScoresRef = useRef( null );
+	const hostingRef = useRef( null );
+	const domainRef = useRef( null );
+	const perfomanceMetricsRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -87,25 +86,19 @@ export default function SiteProfilerV2( props: Props ) {
 		isFetching: isFetchingBasicMetrics,
 	} = useUrlBasicMetricsQuery( url );
 
-	const showBasicMetrics =
-		basicMetrics &&
-		! isFetchingBasicMetrics &&
-		! errorBasicMetrics &&
-		isEnabled( 'site-profiler/metrics' );
+	const showBasicMetrics = basicMetrics && ! isFetchingBasicMetrics && ! errorBasicMetrics;
 
 	// TODO: Remove this debug statement once we have a better error handling mechanism
-	if ( isEnabled( 'site-profiler/metrics' ) && errorBasicMetrics ) {
+	if ( errorBasicMetrics ) {
 		debug(
 			`Error fetching basic metrics for domain ${ domain }: ${ errorBasicMetrics.message }`,
 			errorBasicMetrics
 		);
 	}
 
-	let showGetReportForm = false;
+	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 
-	if ( isEnabled( 'site-profiler/metrics' ) ) {
-		showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
-	}
+	const overallScore = getOveralScore( basicMetrics?.basic );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
@@ -116,9 +109,9 @@ export default function SiteProfilerV2( props: Props ) {
 	return (
 		<div id="site-profiler-v2">
 			{ ! showResultScreen && (
-				<LayoutBlock width="medium">
+				<LayoutBlock className="landing-page-header-block" width="medium">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
-					<DomainAnalyzer
+					<LandingPageHeader
 						domain={ domain }
 						isDomainValid={ isDomainValid }
 						isBusy={ isFetchingSP }
@@ -129,9 +122,51 @@ export default function SiteProfilerV2( props: Props ) {
 				</LayoutBlock>
 			) }
 			{ showResultScreen && (
-				<LayoutBlock width="medium">
-					<h1>Results Placeholder</h1>{ ' ' }
-				</LayoutBlock>
+				<>
+					<LayoutBlock
+						className={ classnames(
+							'results-header-block',
+							{ poor: ! isScoreGood( overallScore ) },
+							{ good: isScoreGood( overallScore ) }
+						) }
+						width="medium"
+					>
+						{ showBasicMetrics && (
+							<ResultsHeader
+								domain={ domain }
+								overallScore={ overallScore }
+								urlData={ urlData }
+								onGetReport={ () => setIsGetReportFormOpen( true ) }
+							/>
+						) }
+					</LayoutBlock>
+					<LayoutBlock width="medium">
+						{ siteProfilerData && (
+							<>
+								{ showBasicMetrics && <BasicMetrics basicMetrics={ basicMetrics.basic } /> }
+								<HostingSection
+									dns={ siteProfilerData.dns }
+									urlData={ urlData }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									hostingRef={ hostingRef }
+								/>
+
+								<DomainSection
+									domain={ domain }
+									whois={ siteProfilerData.whois }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									urlData={ urlData }
+									domainRef={ domainRef }
+								/>
+
+								<PerformanceSection
+									performanceMetricsRef={ perfomanceMetricsRef }
+									setIsGetReportFormOpen={ setIsGetReportFormOpen }
+								/>
+							</>
+						) }
+					</LayoutBlock>
+				</>
 			) }
 
 			<GetReportForm

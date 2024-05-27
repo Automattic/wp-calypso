@@ -11,14 +11,16 @@ import {
 	UrlFriendlyTermType,
 	isValidFeatureKey,
 	getFeaturesList,
-	getWooExpressFeaturesGrouped,
-	getPlanFeaturesGrouped,
 	isWooExpressPlan,
 	PLAN_ECOMMERCE,
+	getPlanFeaturesGroupedForFeaturesGrid,
+	getWooExpressFeaturesGroupedForComparisonGrid,
+	getPlanFeaturesGroupedForComparisonGrid,
+	getWooExpressFeaturesGroupedForFeaturesGrid,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
-import { WpcomPlansUI, Plans, AddOns } from '@automattic/data-stores';
+import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -63,7 +65,7 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
@@ -228,13 +230,12 @@ const PlansFeaturesMain = ( {
 	const translate = useTranslate();
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
+
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
-	const sitePlanSlug = useSelector( ( state: IAppState ) =>
-		siteId ? getSitePlanSlug( state, siteId ) : null
-	);
+	const sitePlanSlug = currentPlan?.productSlug;
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
@@ -619,6 +620,9 @@ const PlansFeaturesMain = ( {
 		retargetViewPlans();
 	}, [] );
 
+	/**
+	 * TODO: `handleStorageAddOnClick` no longer necessary. Tracking can be done from the grid components directly.
+	 */
 	const handleStorageAddOnClick = useCallback(
 		( addOnSlug: WPComStorageAddOnSlug ) =>
 			recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
@@ -673,9 +677,13 @@ const PlansFeaturesMain = ( {
 	}, [ gridPlansForComparisonGrid ] );
 
 	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
-	const featureGroupMap = hasWooExpressFeatures
-		? getWooExpressFeaturesGrouped()
-		: getPlanFeaturesGrouped();
+	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
+		? getWooExpressFeaturesGroupedForComparisonGrid()
+		: getPlanFeaturesGroupedForComparisonGrid();
+
+	const featureGroupMapForFeaturesGrid = hasWooExpressFeatures
+		? getWooExpressFeaturesGroupedForFeaturesGrid()
+		: getPlanFeaturesGroupedForFeaturesGrid();
 
 	return (
 		<>
@@ -793,7 +801,7 @@ const PlansFeaturesMain = ( {
 										useAction={ useAction }
 										enableFeatureTooltips={ ! isTrailMapCopy }
 										enableCategorisedFeatures={ isTrailMapStructure }
-										featureGroupMap={ isTrailMapStructure ? featureGroupMap : undefined }
+										featureGroupMap={ featureGroupMapForFeaturesGrid }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -869,7 +877,7 @@ const PlansFeaturesMain = ( {
 														useCheckPlanAvailabilityForPurchase
 													}
 													enableFeatureTooltips={ ! isTrailMapCopy }
-													featureGroupMap={ featureGroupMap }
+													featureGroupMap={ featureGroupMapForComparisonGrid }
 													hideUnsupportedFeatures={ isTrailMapStructure }
 												/>
 											) }

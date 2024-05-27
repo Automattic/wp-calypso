@@ -14,8 +14,11 @@ export default function useChatStatus(
 	group: MessagingGroup = 'wpcom_messaging',
 	checkAgentAvailability = true
 ) {
-	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const isEligibleForChat = Boolean( chatStatus?.is_user_eligible );
+	const { data: chatStatus } = useSupportAvailability();
+
+	// All paying customers are eligible for chat.
+	// See: pdDR7T-1vN-p2
+	const isEligibleForChat = Boolean( chatStatus?.is_paying_customer );
 
 	const { data: supportActivity, isInitialLoading: isLoadingSupportActivity } =
 		useSupportActivity( isEligibleForChat );

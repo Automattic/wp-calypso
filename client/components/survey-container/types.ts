@@ -23,3 +23,11 @@ export type Question = {
 };
 
 export type Answers = Record< string, string[] >;
+
+export type QuestionConfiguration = Record<
+	string,
+	{
+		hideContinue?: boolean;
+		hideSkip?: boolean;
+	}
+>;

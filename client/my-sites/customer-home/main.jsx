@@ -36,7 +36,7 @@ import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
-import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getRequest from 'calypso/state/selectors/get-request';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
@@ -44,11 +44,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
-import {
-	isSiteOnWooExpressEcommerceTrial,
-	isSiteOnWooExpress,
-	isRequestingSitePlans as isFetchingSitePlans,
-} from 'calypso/state/sites/plans/selectors';
+import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
@@ -56,11 +52,7 @@ import {
 	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedPurchase,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
 import './style.scss';
@@ -75,11 +67,11 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
-	isSiteWooExpress,
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
 	handleVerifyIcannEmail,
+	isAdmin,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
@@ -88,6 +80,7 @@ const Home = ( {
 	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
 		getIsGlobalSiteViewEnabled( state, siteId )
 	);
+	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
@@ -111,10 +104,6 @@ const Home = ( {
 	} );
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
-
-	const isRequestingSitePlans = useSelector( isFetchingSitePlans );
-	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
-	const purchase = useSelector( getSelectedPurchase );
 
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
@@ -151,18 +140,12 @@ const Home = ( {
 		);
 	}
 
-	// While fetching all the data, show placeholder.
-	// After fetching all the data:
-	//  - For eCommerce & eCommerce trial, don't show placeholder.
-	//  - For Woo Express Trial, Essential & Performance, show placeholder while redirecting to WooCommerce Home (search for `wc-admin` under customer-home/controller.jsx).
+	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
+	// while doing the redirection.
 	if (
 		isSiteWooExpressEcommerceTrial &&
 		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
-		( fetchingJetpackModules || ssoModuleActive ) &&
-		( isRequestingSitePlans ||
-			isRequestingSitePurchases ||
-			isSiteWooExpress ||
-			purchase?.isWooExpressTrial )
+		( fetchingJetpackModules || ssoModuleActive )
 	) {
 		return <WooCommerceHomePlaceholder />;
 	}
@@ -172,7 +155,7 @@ const Home = ( {
 			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 				{ isGlobalSiteViewEnabled ? translate( 'View site' ) : translate( 'Visit site' ) }
 			</Button>
-			{ config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && (
+			{ config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && isAdmin && ! isP2 && (
 				<Button primary href={ `/overview/${ site.slug }` }>
 					{ translate( 'Hosting Overview' ) }
 				</Button>
@@ -333,11 +316,11 @@ const mapStateToProps = ( state ) => {
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
-		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 		isSiteWooExpressEcommerceTrial: isSiteOnWooExpressEcommerceTrial( state, siteId ),
 		ssoModuleActive: !! isJetpackModuleActive( state, siteId, 'sso' ),
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
+		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 };
 

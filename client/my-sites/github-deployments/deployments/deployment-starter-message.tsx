@@ -43,7 +43,7 @@ export const DeploymentStarterMessage = ( { deployment }: DeploymentStarterMessa
 	};
 
 	return (
-		<td colSpan={ 4 }>
+		<td colSpan={ 4 } className="deployment-message">
 			<i css={ { color: 'var(--Gray-Gray-40, #50575E)' } }>
 				{ deployment.is_automated
 					? sprintf(

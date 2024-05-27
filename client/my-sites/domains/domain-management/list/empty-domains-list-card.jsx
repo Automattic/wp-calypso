@@ -75,7 +75,9 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
 		secondaryAction = translate( 'I have a domain' );
-		secondaryActionURL = domainUseMyDomain( selectedSite.slug );
+		secondaryActionURL = domainUseMyDomain( selectedSite.slug, {
+			redirectTo: `/domains/manage/${ selectedSite.slug }`,
+		} );
 		contentType = 'free_domain_credit';
 	}
 

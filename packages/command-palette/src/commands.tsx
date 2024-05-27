@@ -125,9 +125,11 @@ export function useCommands() {
 					let path;
 					if ( params.currentRoute.startsWith( '/wp-admin' ) ) {
 						path = `/switch-site?route=${ encodeURIComponent( params.currentRoute ) }`;
-					} else {
+					} else if ( params.currentRoute.includes( ':site' ) ) {
 						// On a global page, navigate to the dashboard, otherwise keep current route.
-						path = params.currentRoute.includes( ':site' ) ? params.currentRoute : '/home/:site';
+						path = params.currentRoute;
+					} else {
+						path = siteUsesWpAdminInterface( params.site ) ? '/wp-admin' : '/home/:site';
 					}
 					return commandNavigation( path )( params );
 				},
@@ -236,7 +238,10 @@ export function useCommands() {
 			openSiteDashboard: {
 				name: 'openSiteDashboard',
 				label: __( 'Open site dashboard', __i18n_text_domain__ ),
-				callback: commandNavigation( '/home/:site' ),
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site ) ? '/wp-admin' : '/home/:site'
+					)( params ),
 				searchLabel: [
 					_x(
 						'open site dashboard',

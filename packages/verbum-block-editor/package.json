@@ -25,6 +25,7 @@
 	"scripts": {
 		"clean": "",
 		"build": "NODE_ENV=production yarn dev && yarn translate",
+		"upload": "yarn build && rsync -ahz --exclude='.*' dist/ wpcom-sandbox:/home/wpcom/public_html/widgets.wp.com/verbum-block-editor",
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/verbum-block-editor",
 		"watch": "tsc --build ./tsconfig.json --watch",

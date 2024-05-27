@@ -150,11 +150,24 @@
 		color: var(--studio-gray-70);
 	}
 
+	li.trigger-highlight {
+		animation: trigger-highlight 500ms ease-out;
+	}
+
 	&:not(.jetpack-product-info__faq-list) li {
 		background: url(../../../assets/images/jetpack/jetpack-green-checkmark.svg) no-repeat 0 2px;
 		padding-left: 20px;
 		background-size: 14px;
 		background-position-y: 5px;
+	}
+}
+
+@keyframes trigger-highlight {
+	0% {
+		background-color: var(--studio-yellow-5);
+	}
+	100% {
+		background-color: initial;
 	}
 }
 

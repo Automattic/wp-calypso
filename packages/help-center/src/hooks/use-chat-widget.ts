@@ -57,6 +57,8 @@ export default function useChatWidget(
 					window.zE( 'messenger:set', 'conversationFields', [
 						{ id: ZENDESK_SOURCE_URL_TICKET_FIELD_ID, value: window.location.href },
 					] );
+				} else {
+					throw new Error( 'Zendesk chat widget not loaded' );
 				}
 			} )
 			.catch( () => {

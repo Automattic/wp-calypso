@@ -1,60 +1,209 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { translate } from 'i18n-calypso';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef } from 'react';
 import { BASIC_METRICS_UNITS, SCORES } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { calculateMetricsSectionScrollOffset } from 'calypso/site-profiler/utils/calculate-metrics-section-scroll-offset';
-import type {
-	BasicMetricsScored,
-	BasicMetricsScoredList,
-	Scores,
-} from 'calypso/data/site-profiler/types';
+import type { BasicMetricsScored, Metrics, Scores } from 'calypso/data/site-profiler/types';
 import './styles.scss';
 
 const Container = styled.div`
 	scroll-margin-top: ${ calculateMetricsSectionScrollOffset }px;
 `;
 
+const SubtitleIcon = styled( Gridicon )`
+	transform: translate( 0, 3px );
+	margin-left: 8px;
+`;
+
 function getIcon( score: Scores ) {
 	switch ( score ) {
 		case SCORES.good:
-			return 'thumbs-up';
+			return 'checkmark';
 		case SCORES.poor:
-			return 'notice';
+			return 'info-outline';
 		default:
 			return 'info-outline';
 	}
 }
+
+type BasicMetricProps = {
+	metric: Metrics;
+	basicMetrics: BasicMetricsScored;
+	name: string;
+	positiveHeading: string;
+	negativeHeading: string;
+	positiveSubheading: string;
+	negativeSubheading: string;
+	url: string;
+	urlText: string;
+};
+
+export const BasicMetric = ( {
+	metric,
+	basicMetrics,
+	name,
+	positiveHeading,
+	negativeHeading,
+	positiveSubheading,
+	negativeSubheading,
+	url,
+	urlText,
+}: BasicMetricProps ) => {
+	const { value, score } = basicMetrics[ metric ];
+	const showMetric = value !== undefined && value !== null;
+	const isPositiveScore = score === SCORES.good;
+
+	return (
+		showMetric && (
+			<div className="basic-metrics__card">
+				<div className={ classNames( 'basic-metrics__header', score ) }>
+					<div className="basic-metrics__name">
+						<Gridicon size={ 18 } icon={ getIcon( score ) } />
+						{ name }
+					</div>
+					<div className="basic-metrics__value">
+						{ value }
+						{ BASIC_METRICS_UNITS[ metric ] }
+					</div>
+				</div>
+				<h3>{ isPositiveScore ? positiveHeading : negativeHeading }</h3>
+				<h4>{ isPositiveScore ? positiveSubheading : negativeSubheading }</h4>
+				<a href={ url }>
+					{ urlText }
+					<SubtitleIcon icon="chevron-right" size={ 18 } />
+				</a>
+			</div>
+		)
+	);
+};
 
 export const BasicMetrics = forwardRef(
 	(
 		{ basicMetrics }: { basicMetrics: BasicMetricsScored },
 		ref: ForwardedRef< HTMLObjectElement >
 	) => {
+		const translate = useTranslate();
+
 		return (
 			<Container className="basic-metrics" ref={ ref }>
-				<h3>{ translate( 'Basic Performance Metrics' ) }</h3>
-				<ul className="basic-metric-details result-list">
-					{ ( Object.entries( basicMetrics ) as BasicMetricsScoredList ).map( ( metric ) => {
-						const [ key, metricScored ] = metric;
-						const showMetric = metricScored.value !== undefined && metricScored.value !== null;
-
-						return (
-							showMetric && (
-								<li key={ key }>
-									<div className="name">
-										<a href={ `https://web.dev/articles/${ key }` }>{ key }</a>
-									</div>
-									<div className="basic-metrics__values">{ metricScored.value }</div>
-									<div className="basic-metrics__unit">{ BASIC_METRICS_UNITS[ key ] }</div>
-									<div className={ metricScored.score }>
-										<Gridicon icon={ getIcon( metricScored.score ) } />
-									</div>
-								</li>
-							)
-						);
-					} ) }
-				</ul>
+				<div className="basic-metric-details result-list">
+					<BasicMetric
+						metric="cls"
+						basicMetrics={ basicMetrics }
+						name={ translate( 'Cumulative Layout Shift' ) }
+						positiveHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						negativeHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						positiveSubheading={ translate(
+							'WordPress.com’s optimized themes can reduce layout shifts, providing a more stable and enjoyable experience.'
+						) }
+						negativeSubheading={ translate(
+							'WordPress.com’s optimized themes can reduce layout shifts, providing a more stable and enjoyable experience.'
+						) }
+						url="https://wordpress.com/start/"
+						urlText={ translate( 'Stabilize with us' ) }
+					/>
+					<BasicMetric
+						metric="fid"
+						basicMetrics={ basicMetrics }
+						name={ translate( 'First Input Delay' ) }
+						positiveHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						negativeHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						positiveSubheading={ translate(
+							'WordPress.com’s optimized themes can reduce layout shifts, providing a more stable and enjoyable experience.'
+						) }
+						negativeSubheading={ translate(
+							'WordPress.com’s optimized themes can reduce layout shifts, providing a more stable and enjoyable experience.'
+						) }
+						url="https://wordpress.com/start/"
+						urlText={ translate( 'Stabilize with us' ) }
+					/>
+					<BasicMetric
+						metric="lcp"
+						basicMetrics={ basicMetrics }
+						name={ translate( 'Largest Contentful Paint' ) }
+						positiveHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						negativeHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						positiveSubheading={ translate(
+							'WordPress.com’s efficient resource management ensures faster responses to user actions.'
+						) }
+						negativeSubheading={ translate(
+							'WordPress.com’s efficient resource management ensures faster responses to user actions.'
+						) }
+						url="https://wordpress.com/start/"
+						urlText={ translate( 'Boost interactivity' ) }
+					/>
+					<BasicMetric
+						metric="fcp"
+						basicMetrics={ basicMetrics }
+						name={ translate( 'First Contentful Paint' ) }
+						positiveHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						negativeHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						positiveSubheading={ translate(
+							'Maintain this performance by using best practices for layout stability, ensuring content remains stable as it loads.'
+						) }
+						negativeSubheading={ translate(
+							'Maintain this performance by using best practices for layout stability, ensuring content remains stable as it loads.'
+						) }
+						url="https://wordpress.com/start/"
+						urlText={ translate( 'Keep layout stable' ) }
+					/>
+					<BasicMetric
+						metric="ttfb"
+						basicMetrics={ basicMetrics }
+						name={ translate( 'Time to First Byte' ) }
+						positiveHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						negativeHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						positiveSubheading={ translate(
+							'WordPress.com’s optimized themes can reduce layout shifts, providing a more stable and enjoyable experience.'
+						) }
+						negativeSubheading={ translate(
+							'WordPress.com’s optimized themes can reduce layout shifts, providing a more stable and enjoyable experience.'
+						) }
+						url="https://wordpress.com/themes/"
+						urlText={ translate( 'Load faster with us' ) }
+					/>
+					<BasicMetric
+						metric="inp"
+						basicMetrics={ basicMetrics }
+						name={ translate( 'Interaction to Next Paint' ) }
+						positiveHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						negativeHeading={ translate(
+							'Your site experiences more layout shifts than most, frustrating users and leading to higher bounce rates.'
+						) }
+						positiveSubheading={ translate(
+							'WordPress.com’s efficient content management ensures quicker load times and better engagement.'
+						) }
+						negativeSubheading={ translate(
+							'WordPress.com’s efficient content management ensures quicker load times and better engagement.'
+						) }
+						url="https://wordpress.com/themes/"
+						urlText={ translate( 'Load faster with us' ) }
+					/>
+				</div>
 			</Container>
 		);
 	}

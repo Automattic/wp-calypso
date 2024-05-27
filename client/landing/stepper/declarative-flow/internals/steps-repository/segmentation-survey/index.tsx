@@ -64,6 +64,7 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 				surveyKey={ SURVEY_KEY }
 				onBack={ navigation.goBack }
 				onNext={ handleNext }
+				headerAlign="left"
 			/>
 		</Main>
 	);

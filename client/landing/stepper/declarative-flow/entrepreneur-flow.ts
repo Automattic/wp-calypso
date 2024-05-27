@@ -26,6 +26,7 @@ const entrepreneurFlow: Flow = {
 			// Replacing the `segmentation-survey` slug with `start` as having the
 			// word `survey` in the address bar might discourage users from continuing.
 			{ ...STEPS.SEGMENTATION_SURVEY, ...{ slug: SEGMENTATION_SURVEY_SLUG } },
+			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.WAIT_FOR_ATOMIC,
@@ -49,26 +50,21 @@ const entrepreneurFlow: Flow = {
 		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
 
 		const getEntrepreneurLoginUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
-
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				`/setup/entrepreneur/create-site` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
+			const redirectTo = `${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/trialAcknowledge${ window.location.search }`;
 
 			const loginUrl = getLoginUrl( {
 				variationName: flowName,
-				redirectTo: redirectTarget,
+				redirectTo,
 				locale,
 			} );
 
-			const flags = new URLSearchParams( window.location.search ).get( 'flags' );
-			return loginUrl + ( flags ? `&flags=${ flags }` : '' );
+			return loginUrl;
+		};
+
+		const goBack = () => {
+			if ( currentStep === STEPS.TRIAL_ACKNOWLEDGE.slug ) {
+				navigate( SEGMENTATION_SURVEY_SLUG + '#2' );
+			}
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -79,12 +75,16 @@ const entrepreneurFlow: Flow = {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
 
 					if ( userIsLoggedIn ) {
-						return navigate( STEPS.SITE_CREATION_STEP.slug );
+						return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
 					}
 
 					// Redirect user to the sign-in/sign-up page before site creation.
 					const entrepreneurLoginUrl = getEntrepreneurLoginUrl();
 					return window.location.replace( entrepreneurLoginUrl );
+				}
+
+				case STEPS.TRIAL_ACKNOWLEDGE.slug: {
+					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
@@ -144,7 +144,7 @@ const entrepreneurFlow: Flow = {
 			return providedDependencies;
 		}
 
-		return { submit };
+		return { goBack, submit };
 	},
 
 	useSideEffect() {

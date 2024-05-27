@@ -54,6 +54,10 @@
 		text-align: end;
 	}
 
+	.dataviews-view-table-wrapper {
+		overflow: auto;
+	}
+
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -101,8 +105,6 @@
 	}
 
 	@media (max-width: $break-large) {
-		height: calc(100vh - 120px); /* Matches the offset defined in PR #65520 */
-
 		.section-nav__mobile-header {
 			padding: 13px;
 		}
@@ -225,9 +227,8 @@
 		}
 
 		.dataviews-view-table-wrapper {
+			flex: 1;
 			overflow-y: auto;
-			// Without masterbar
-			max-height: calc(100vh - 285px); /* 285px is the size of all the height above and below the dataviews-view-table-wrapper */
 
 			table {
 				width: 100%;
@@ -241,12 +242,6 @@
 				display: none;
 			}
 
-		}
-	}
-
-	@media (max-width: 600px) {
-		.dataviews-view-table-wrapper {
-			max-height: calc(100vh - 323px); /* 323px is the size of all the height above and below the dataviews-view-table-wrapper */
 		}
 	}
 
@@ -272,14 +267,6 @@
 	}
 
 	@media (min-width: $break-large) {
-		&.sites-dashboard__layout {
-			.dataviews-view-table-wrapper {
-				overflow-y: auto;
-				min-height: calc(100vh - 277px); /* Set min-height to prevent the table from shrinking when there are few rows. */
-				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
-			}
-		}
-
 		&.sites-dashboard__layout:not(.preview-hidden) {
 			.sites-overview {
 				padding: 0;
@@ -509,26 +496,18 @@
 			}
 		}
 
-		@media (min-width: $break-xhuge) {
-			div.a4a-layout__viewport {
-				margin: 0 auto;
-				max-width: 1400px;
-				box-sizing: border-box;
-			}
-			.dataviews-wrapper {
-				margin: 0 auto;
-				max-width: 1400px;
-				box-sizing: border-box;
-			}
-		}
-
 		.sites-overview {
+			height: 100%;
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
 			background: var(--color-light-backdrop);
 
 			.sites-overview__content {
+				display: flex;
+				flex: 1;
+				height: 100%;
+				overflow: hidden;
 				margin-top: 24px;
 			}
 		}
@@ -553,7 +532,7 @@
 			width: auto;
 			transition: flex-grow 0.2s;
 			background: var(--color-light-backdrop);
-			max-height: calc(100vh - 32px);
+			max-height: calc(100vh - 32px - var(--masterbar-height));
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 			.preview-pane__navigation {
 				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);

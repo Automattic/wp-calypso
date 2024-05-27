@@ -418,7 +418,7 @@ export interface ResponseCartProduct {
 	 * The override_code is a string that identifies the reason for the override.
 	 * When displaying the reason to the customer, use the human_readable_reason.
 	 */
-	cost_overrides?: ResponseCartCostOverride[];
+	cost_overrides: ResponseCartCostOverride[];
 
 	/**
 	 * If set, is used to transform the usage/quantity of units used to derive the number of units
@@ -525,6 +525,8 @@ export interface ResponseCartCostOverride {
 	old_subtotal_integer: number;
 	override_code: string;
 	does_override_original_cost: boolean;
+	percentage: number;
+	first_unit_only: boolean;
 }
 
 export type IntroductoryOfferUnit = 'day' | 'week' | 'month' | 'year' | 'indefinite';

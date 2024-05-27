@@ -103,7 +103,7 @@ const PersonalPurchase = ( {
 		: translate( 'Get Jetpack Stats' );
 
 	if ( isNewPurchaseFlowEnabled ) {
-		continueButtonText = translate( 'Contribute and continue' );
+		continueButtonText = translate( 'Contribute now and continue' );
 	}
 	const { refetch: refetchNotices } = useNoticeVisibilityQuery( siteId, 'focus_jetpack_purchase' );
 	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
@@ -257,6 +257,7 @@ const PersonalPurchase = ( {
 
 			{ subscriptionValue === 0 ? (
 				<ButtonComponent
+					className="stats-purchase-page__full-width"
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
 					disabled={
@@ -271,6 +272,7 @@ const PersonalPurchase = ( {
 			) : (
 				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
 					<ButtonComponent
+						className="stats-purchase-page__full-width"
 						variant="primary"
 						primary={ isWPCOMSite ? true : undefined }
 						onClick={ handleCheckoutRedirect }
@@ -280,6 +282,7 @@ const PersonalPurchase = ( {
 
 					{ isNewPurchaseFlowEnabled && (
 						<ButtonComponent
+							className="stats-purchase-page__full-width"
 							variant="secondary"
 							isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
 							busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />
@@ -329,7 +332,7 @@ function StatsBenefitsListing( {
 					</li>
 				) }
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-					{ translate( 'No UTM tracking' ) }
+					{ translate( 'No UTM tracking for your marketing campaigns' ) }
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No access to upcoming advanced features' ) }

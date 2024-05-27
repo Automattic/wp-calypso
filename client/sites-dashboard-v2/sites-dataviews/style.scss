@@ -25,26 +25,30 @@
 	font-size: rem(14px);
 }
 
+.sites-dataviews__site-urls {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
 .sites-dataviews__site-url,
 .sites-dataviews__site-wp-admin-url {
 	color: var(--color-neutral-70);
 	font-size: rem(14px);
 	font-weight: 400;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
 
 	&:focus {
 		border-radius: 2px;
 		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
 
-	&:hover {
-		text-decoration: underline;
-	}
-
 	&:visited {
 		color: var(--color-neutral-70);
+	}
+
+	&:hover,
+	&:hover:visited {
+		color: var(--color-link);
 	}
 
 	svg {
@@ -87,10 +91,6 @@
 			margin-right: 0 !important;
 		}
 	}
-}
-
-.sites-overview__content:has(.dataviews-pagination) {
-	padding-bottom: 32px !important;
 }
 
 .main.sites-dashboard.sites-dashboard__layout:has(.dataviews-pagination) {

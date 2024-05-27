@@ -32,7 +32,9 @@ const ImporterWordpress: Step = function ( props ) {
 						stepNavigator?.goToCheckoutPage?.( WPImportOption.EVERYTHING, {
 							redirect_to: `/setup/${ encodeURIComponent(
 								props.flow
-							) }/migrateMessage?siteSlug=${ encodeURIComponent( siteSlug || '' ) }`,
+							) }/migrateMessage?from=${ encodeURIComponent(
+								migrateFrom || ''
+							) }&siteSlug=${ encodeURIComponent( siteSlug || '' ) }`,
 						} );
 					} }
 					migrateFrom={ migrateFrom }

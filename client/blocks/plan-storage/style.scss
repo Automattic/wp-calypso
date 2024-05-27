@@ -1,5 +1,8 @@
 .plan-storage {
 	display: flex;
+	&:visited {
+		color: var(--studio-gray-80);
+	}
 }
 
 .plan-storage__bar {
