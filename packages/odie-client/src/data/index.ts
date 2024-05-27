@@ -29,7 +29,7 @@ export const useGetOdieStorage = ( key: OdieStorageKey ) => {
 			} as APIFetchOptions ).then( ( res ) => res[ storageKey ] );
 		},
 		// Give this further thought.
-		staleTime: 500, // 0.5 minute,
+		staleTime: 30 * 1000, // 30 seconds.
 	} );
 	return data;
 };
