@@ -4,7 +4,6 @@ import wpcom from 'calypso/lib/wp';
 
 type SurveyAnswersQueryParams = {
 	surveyKey: string;
-	enabled?: boolean;
 };
 
 type SurveyAnswersResponse = {
