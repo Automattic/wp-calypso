@@ -17,7 +17,7 @@ const mapSurveyAnswers = ( response: SurveyAnswersResponse ): Answers =>
 		return { ...acc, [ question_key ]: answer_keys };
 	}, {} );
 
-const useSurveyAnswersQuery = ( { surveyKey, enabled = true }: SurveyAnswersQueryParams ) => {
+const useSurveyAnswersQuery = ( { surveyKey }: SurveyAnswersQueryParams ) => {
 	return useQuery( {
 		queryKey: [ 'survey-answers', surveyKey ],
 		queryFn: () => {
@@ -26,7 +26,7 @@ const useSurveyAnswersQuery = ( { surveyKey, enabled = true }: SurveyAnswersQuer
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		enabled: !! surveyKey && enabled,
+		enabled: !! surveyKey,
 		select: mapSurveyAnswers,
 	} );
 };
