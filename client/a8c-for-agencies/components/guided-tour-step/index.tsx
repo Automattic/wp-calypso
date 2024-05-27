@@ -48,6 +48,7 @@ export function GuidedTourStep( {
 	}, [ currentStep, hasFetched, id, preference?.dismiss ] );
 
 	const lastTourLabel = stepsCount === 1 ? translate( 'Got it' ) : translate( 'Done' );
+	const isLastStep = currentStepCount === stepsCount;
 
 	/**
 	 * Dismiss all steps in the tour.
@@ -57,6 +58,8 @@ export function GuidedTourStep( {
 			savePreference( preferenceNames[ tourId ], {
 				...preference,
 				dismiss: true,
+				// Save the dismissed timestamp so we can show the new steps that are added after it in the future.
+				timestamp: Date.now(),
 			} )
 		);
 		dispatch(
@@ -65,6 +68,13 @@ export function GuidedTourStep( {
 			} )
 		);
 	}, [ dispatch, tourId, preference, id ] );
+
+	const completeStep = () => {
+		nextStep( currentStep );
+		if ( isLastStep ) {
+			endTour();
+		}
+	};
 
 	// Record an event when the tour starts
 	useEffect( () => {
@@ -80,16 +90,16 @@ export function GuidedTourStep( {
 	// Add a click event listener to the context element if the step requires it
 	useEffect( () => {
 		if ( currentStep && currentStep.nextStepOnTargetClick && context ) {
-			( context as HTMLElement ).addEventListener( 'click', nextStep );
+			( context as HTMLElement ).addEventListener( 'click', completeStep );
 		}
 
 		// Cleanup function to remove the event listener on unmount
 		return () => {
 			if ( context ) {
-				( context as HTMLElement ).removeEventListener( 'click', nextStep );
+				( context as HTMLElement ).removeEventListener( 'click', completeStep );
 			}
 		};
-	}, [ nextStep, currentStep, context ] );
+	}, [ completeStep, currentStep, context ] );
 
 	// Do not render unless this is the current step in the active tour.
 	if ( ! currentStep || id !== currentStep.id ) {
@@ -120,9 +130,7 @@ export function GuidedTourStep( {
 				</div>
 				<div className="guided-tour__popover-footer-right-content">
 					<>
-						{ ( ( ! currentStep.nextStepOnTargetClick &&
-							stepsCount > 1 &&
-							currentStepCount < stepsCount ) ||
+						{ ( ( ! currentStep.nextStepOnTargetClick && stepsCount > 1 && ! isLastStep ) ||
 							currentStep.forceShowSkipButton ) && (
 							// Show the skip button if there are multiple steps and we're not on the last step, unless we explicitly choose to add them
 							<Button borderless onClick={ endTour }>
@@ -130,8 +138,8 @@ export function GuidedTourStep( {
 							</Button>
 						) }
 						{ ! currentStep.nextStepOnTargetClick && (
-							<Button className={ currentStep.classNames?.nextStepButton } onClick={ nextStep }>
-								{ currentStepCount === stepsCount ? lastTourLabel : translate( 'Next' ) }
+							<Button className={ currentStep.classNames?.nextStepButton } onClick={ completeStep }>
+								{ isLastStep ? lastTourLabel : translate( 'Next' ) }
 							</Button>
 						) }
 					</>

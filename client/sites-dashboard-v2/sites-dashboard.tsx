@@ -16,7 +16,7 @@ import {
 	initialDataViewsState,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
+import { MainLayout } from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
@@ -238,7 +238,7 @@ const SitesDashboardV2 = ( {
 	const isNarrowView = false;
 
 	return (
-		<Layout
+		<MainLayout
 			className={ classNames(
 				'sites-dashboard',
 				'sites-dashboard__layout',
@@ -289,7 +289,7 @@ const SitesDashboardV2 = ( {
 					<GuidedTour defaultTourId="siteManagementTour" />
 				</GuidedTourContextProvider>
 			) }
-		</Layout>
+		</MainLayout>
 	);
 };
 

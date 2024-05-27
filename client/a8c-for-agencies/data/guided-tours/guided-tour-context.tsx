@@ -18,7 +18,7 @@ type GuidedTourContextType = {
 	currentStep: TourStep | null;
 	currentStepCount: number;
 	stepsCount: number;
-	nextStep: () => void;
+	nextStep: ( completedStep: TourStep | null ) => void;
 	preferenceNames: Record< string, string >;
 	eventNames: Record< string, string >;
 };
@@ -96,11 +96,11 @@ export const GuidedTourContextProvider = ( {
 	/**
 	 * Proceed to the next available step in the active tour.
 	 */
-	const nextStep = useCallback( () => {
-		if ( currentStep ) {
-			setCompletedSteps( ( currentSteps ) => [ ...currentSteps, currentStep.id ] );
+	const nextStep = useCallback( ( completedStep: TourStep | null ) => {
+		if ( completedStep ) {
+			setCompletedSteps( ( currentSteps ) => [ ...currentSteps, completedStep.id ] );
 		}
-	}, [ currentStep ] );
+	}, [] );
 
 	const contextValue = useMemo(
 		() => ( {

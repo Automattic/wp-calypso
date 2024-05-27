@@ -22,7 +22,7 @@ type Props = {
 	compact?: boolean;
 };
 
-export default function Layout( {
+export function MainLayout( {
 	children,
 	className,
 	title,
@@ -38,6 +38,24 @@ export default function Layout( {
 		? 'a4a-layout-with-columns__container'
 		: 'a4a-layout__container';
 
+	return (
+		<Main
+			className={ classNames( 'a4a-layout', className, {
+				'is-with-border': withBorder,
+				'is-compact': compact,
+			} ) }
+			fullWidthLayout={ wide }
+			wideLayout={ ! wide } // When we set to full width, we want to set this to false.
+		>
+			<DocumentHead title={ title } />
+			{ sidebarNavigation }
+
+			<div className={ layoutContainerClassname }>{ children }</div>
+		</Main>
+	);
+}
+
+export default function Layout( props: Props ) {
 	const guidedTours = useGuidedTours();
 
 	return (
@@ -46,19 +64,7 @@ export default function Layout( {
 			preferenceNames={ A4A_ONBOARDING_TOURS_PREFERENCE_NAME }
 			eventNames={ A4A_ONBOARDING_TOURS_EVENT_NAMES }
 		>
-			<Main
-				className={ classNames( 'a4a-layout', className, {
-					'is-with-border': withBorder,
-					'is-compact': compact,
-				} ) }
-				fullWidthLayout={ wide }
-				wideLayout={ ! wide } // When we set to full width, we want to set this to false.
-			>
-				<DocumentHead title={ title } />
-				{ sidebarNavigation }
-
-				<div className={ layoutContainerClassname }>{ children }</div>
-			</Main>
+			<MainLayout { ...props } />
 		</GuidedTourContextProvider>
 	);
 }
