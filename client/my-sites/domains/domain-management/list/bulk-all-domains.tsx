@@ -182,7 +182,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					header.navigation-header {
 						padding-top: 24px;
 						padding-inline: 16px;
-						border-block-end: 1px solid var( --studio-gray-0 );
+						border-block-end: 1px solid var( --color-border-secondary );
 					}
 					.layout__primary > main {
 						background: var( --color-surface );
