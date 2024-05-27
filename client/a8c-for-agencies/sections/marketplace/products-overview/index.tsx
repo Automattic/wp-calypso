@@ -42,7 +42,7 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 
 	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
-	const { marketplaceType, setMarketplaceType } = useContext( MarketplaceTypeContext );
+	const { marketplaceType, toggleMarketplaceType } = useContext( MarketplaceTypeContext );
 
 	const {
 		selectedCartItems,
@@ -54,14 +54,6 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 	} = useShoppingCart();
 
 	const { isLoading } = useProductsQuery();
-
-	const toggleMarketplaceType = () => {
-		if ( ! isAutomatedReferrals ) {
-			return;
-		}
-		const nextType = marketplaceType === 'regular' ? 'referral' : 'regular';
-		setMarketplaceType( nextType );
-	};
 
 	const sites = useSelector( getSites );
 

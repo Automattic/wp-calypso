@@ -31,6 +31,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingOverview from '../common/hosting-overview';
 import HostingOverviewFeatures from '../common/hosting-overview-features';
+import withMarketplaceType from '../hoc/with-marketplace-type';
 import useProductAndPlans from '../hooks/use-product-and-plans';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getWPCOMCreatorPlan } from '../lib/hosting';
@@ -42,7 +43,7 @@ import WPCOMPlanCard from './wpcom-card';
 
 import './style.scss';
 
-export default function WpcomOverview() {
+function WpcomOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -234,3 +235,5 @@ export default function WpcomOverview() {
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( WpcomOverview );
