@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 
@@ -17,6 +18,17 @@ function makePrivacyLink( privacyLink, link ) {
 	return null;
 }
 
+/**
+ * Renders a support information component.
+ * @param {Object} props - The component props.
+ * @param {React.ReactNode} [props.children] - The child elements to be rendered inside the component.
+ * @param {string} [props.text] - The text to be displayed in the component.
+ * @param {string} [props.link] - The link URL to be displayed in the "Learn more" section.
+ * @param {string} [props.position] - The position of the popover (default: 'left').
+ * @param {boolean|string} [props.privacyLink] -Boolean whether to display the privacy link. Or the link itself.
+ * @param {string} [props.popoverClassName] - The CSS class name for the popover.
+ * @returns {React.ReactNode} The rendered support information component.
+ */
 function SupportInfo( {
 	children = <></>,
 	text = '',

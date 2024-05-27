@@ -465,7 +465,6 @@ export default function DIFMLanding( {
 			) }
 			<Wrapper>
 				<ContentSection>
-					{ /* @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component */ }
 					<Header
 						brandFont
 						align="left"

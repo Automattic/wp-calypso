@@ -1,10 +1,29 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import React from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
-
+/**
+ * FormattedHeader component
+ * @param {Object} props The props
+ * @param {boolean} [props.brandFont] Whether to use the brand font
+ * @param {string} [props.id] The ID of the component
+ * @param {React.ReactNode} [props.headerText] The header text
+ * @param {React.ReactNode} [props.subHeaderText] The subheader text
+ * @param {React.ReactNode} [props.tooltipText] The tooltip text
+ * @param {string} [props.className] The CSS class name
+ * @param {boolean} [props.compactOnMobile] Whether to compact on mobile
+ * @param {string} [props.align] The alignment of the component
+ * @param {string|null} [props.subHeaderAlign] The alignment of the subheader
+ * @param {boolean} [props.isSecondary] Whether it is a secondary header
+ * @param {boolean} [props.hasScreenOptions] Whether it has screen options
+ * @param {React.ElementType} [props.subHeaderAs] The subheader element type
+ * @param {React.ReactNode} [props.children] The children elements
+ * @param {React.ReactNode} [props.screenReader] The screen reader text
+ * @returns {React.ReactNode} the header
+ */
 function FormattedHeader( {
 	brandFont = false,
 	id = '',

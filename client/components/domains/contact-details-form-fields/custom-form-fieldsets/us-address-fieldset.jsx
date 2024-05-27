@@ -3,11 +3,9 @@ import PropTypes from 'prop-types';
 import { StateSelect, Input } from 'calypso/my-sites/domains/components/form';
 import { getStateLabelText, getPostCodeLabelText, STATE_SELECT_TEXT } from './utils';
 
-const noop = () => {};
-
 const UsAddressFieldset = ( {
 	countryCode = 'US',
-	getFieldProps = noop,
+	getFieldProps,
 	arePostalCodesSupported = true,
 	contactDetailsErrors,
 	translate,
@@ -22,7 +20,7 @@ const UsAddressFieldset = ( {
 				label={ getStateLabelText( countryCode ) }
 				countryCode={ countryCode }
 				selectText={ STATE_SELECT_TEXT[ countryCode ] }
-				{ ...getFieldProps( 'state', {
+				{ ...getFieldProps?.( 'state', {
 					needsChildRef: true,
 					customErrorMessage: contactDetailsErrors?.state,
 				} ) }
@@ -30,7 +28,7 @@ const UsAddressFieldset = ( {
 			{ arePostalCodesSupported && (
 				<Input
 					label={ getPostCodeLabelText( countryCode ) }
-					{ ...getFieldProps( 'postal-code', {
+					{ ...getFieldProps?.( 'postal-code', {
 						customErrorMessage: contactDetailsErrors?.postalCode,
 					} ) }
 				/>

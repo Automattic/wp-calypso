@@ -2,10 +2,8 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Input } from 'calypso/my-sites/domains/components/form';
 
-const noop = () => {};
-
 const EuAddressFieldset = ( {
-	getFieldProps = noop,
+	getFieldProps,
 	arePostalCodesSupported = true,
 	translate,
 	contactDetailsErrors,
@@ -15,14 +13,14 @@ const EuAddressFieldset = ( {
 			{ arePostalCodesSupported && (
 				<Input
 					label={ translate( 'Postal Code' ) }
-					{ ...getFieldProps( 'postal-code', {
+					{ ...getFieldProps?.( 'postal-code', {
 						customErrorMessage: contactDetailsErrors?.postalCode,
 					} ) }
 				/>
 			) }
 			<Input
 				label={ translate( 'City' ) }
-				{ ...getFieldProps( 'city', { customErrorMessage: contactDetailsErrors?.city } ) }
+				{ ...getFieldProps?.( 'city', { customErrorMessage: contactDetailsErrors?.city } ) }
 			/>
 		</div>
 	);

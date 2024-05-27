@@ -410,7 +410,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 										productName,
 									},
 								}
-							)
+							) as string
 						}
 						align="center"
 						isSecondary
