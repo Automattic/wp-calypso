@@ -7,6 +7,9 @@ import {
 	A4A_LICENSES_LINK,
 	A4A_PAYMENT_METHODS_LINK,
 	A4A_PURCHASES_LINK,
+	A4A_UNASSIGNED_LICENSES_LINK,
+	A4A_ASSIGNED_LICENSES_LINK,
+	A4A_REVOKED_LICENSES_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -23,6 +26,11 @@ const usePurchasesMenuItems = ( path: string ) => {
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Purchases / Licenses',
 					},
+					secondaryLinks: [
+						A4A_UNASSIGNED_LICENSES_LINK,
+						A4A_ASSIGNED_LICENSES_LINK,
+						A4A_REVOKED_LICENSES_LINK,
+					],
 				},
 				path
 			),

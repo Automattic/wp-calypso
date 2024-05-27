@@ -11,6 +11,7 @@ import {
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { SETTINGS_AGENCY_PROFILE_TAB } from 'calypso/a8c-for-agencies/sections/settings/constants';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import {
 	A4A_MARKETPLACE_LINK,
@@ -147,6 +148,7 @@ const useMainMenuItems = ( path: string ) => {
 							icon: cog,
 							path: '/',
 							link: A4A_SETTINGS_LINK,
+							secondaryLinks: [ `${ A4A_SETTINGS_LINK }/${ SETTINGS_AGENCY_PROFILE_TAB }` ],
 							title: translate( 'Settings' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Settings',
