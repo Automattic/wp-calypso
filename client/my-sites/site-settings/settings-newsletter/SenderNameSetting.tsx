@@ -1,5 +1,6 @@
 import { FormLabel, FormInputValidation } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { ChangeEvent } from 'react';
 import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -43,7 +44,7 @@ export const SenderNameSetting = ( {
 				name="jetpack_subscriptions_from_name"
 				id="jetpack_subscriptions_from_name"
 				value={ value }
-				onChange={ ( event ) => {
+				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
 					return updateFields( { jetpack_subscriptions_from_name: event.target.value } );
 				} }
 				disabled={ disabled }
