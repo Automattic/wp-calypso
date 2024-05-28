@@ -555,9 +555,11 @@ $button-padding: 8px 32px;
 	display: block;
 	margin: 12px 0;
 
-	.components-button + button.components-button {
-		width: 100%;
-		margin-bottom: 12px;
+	.components-button {
+		&.is-full-width {
+			margin: 12px 0;
+			width: 100%;
+		}
 	}
 }
 
