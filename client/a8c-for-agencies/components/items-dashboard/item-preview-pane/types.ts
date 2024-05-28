@@ -26,7 +26,7 @@ export interface ItemData {
 	blogId?: number;
 	isDotcomSite?: boolean;
 	adminUrl?: string;
-	isSiteData?: boolean;
+	withIcon?: boolean;
 }
 
 export interface PreviewPaneProps {

@@ -63,7 +63,7 @@ export default function ReferralsOverview( {
 		<Layout
 			className={ classNames( 'referrals-layout', {
 				'referrals-layout--automated': isAutomatedReferral,
-				'referrals-layout--full-width': isAutomatedReferral && ( isLoading || hasReferrals ),
+				'referrals-layout--full-width': isAutomatedReferral && hasReferrals,
 				'referrals-layout--has-selected': selectedItem,
 			} ) }
 			title={ title }

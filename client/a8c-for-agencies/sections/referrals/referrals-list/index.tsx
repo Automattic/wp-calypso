@@ -124,9 +124,6 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 					totalItems: 1,
 					totalPages: 1,
 				},
-				getItemId: ( item: any ) => {
-					return item.id;
-				},
 				searchLabel: translate( 'Search referrals' ),
 				fields: fields,
 				actions: [],

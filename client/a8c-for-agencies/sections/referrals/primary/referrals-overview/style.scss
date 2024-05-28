@@ -195,3 +195,9 @@ $data-view-border-color: #f1f1f1;
 		color: var(--color-accent-100);
 	}
 }
+
+// FIXME: This is a temporary fix to make the referral layout columns the same height
+.main.a4a-layout-column.referrals-layout__column {
+	height: auto;
+	overflow-y: scroll;
+}

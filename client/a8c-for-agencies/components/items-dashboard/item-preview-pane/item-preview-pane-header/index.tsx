@@ -29,8 +29,6 @@ export default function ItemPreviewPaneHeader( {
 	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
 	const size = isLargerThan960px ? 64 : 50;
 
-	const isSiteData = itemData?.isSiteData ?? true;
-
 	const focusRef = useRef< HTMLButtonElement >( null );
 
 	// Use useEffect to set the focus when the component mounts
@@ -46,7 +44,7 @@ export default function ItemPreviewPaneHeader( {
 	return (
 		<div className={ classNames( 'item-preview__header', className ) }>
 			<div className="item-preview__header-content">
-				{ isSiteData && (
+				{ !! itemData?.withIcon && (
 					<SiteFavicon
 						blogId={ itemData.blogId }
 						fallback={ siteIconFallback }
@@ -59,7 +57,7 @@ export default function ItemPreviewPaneHeader( {
 					<div className="item-preview__header-title-summary">
 						<div className="item-preview__header-title">{ itemData.title }</div>
 						<div className="item-preview__header-summary">
-							{ isSiteData ? (
+							{ itemData?.url ? (
 								<Button
 									variant="link"
 									className="item-preview__header-summary-link"

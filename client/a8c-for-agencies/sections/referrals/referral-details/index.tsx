@@ -21,7 +21,7 @@ const REFERRAL_ACITIVTY_ID = 'referral-activity';
 export default function ReferralDetails( { referral, closeSitePreviewPane }: Props ) {
 	const translate = useTranslate();
 
-	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( REFERRAL_PURCHASES_ID );
+	const [ selectedReferralTab, setSelectedReferralTab ] = useState( REFERRAL_PURCHASES_ID );
 
 	const itemData: ItemData = {
 		title: referral.client_email,
@@ -38,7 +38,7 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 				} ) }
 			</div>
 		),
-		isSiteData: false,
+		withIcon: false,
 	};
 
 	const features = useMemo(
@@ -47,28 +47,28 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 				REFERRAL_PURCHASES_ID,
 				translate( 'Purchases' ),
 				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
+				selectedReferralTab,
+				setSelectedReferralTab,
 				'Purchases tab content'
 			),
 			createFeaturePreview(
 				REFERRAL_COMMISSIONS_ID,
 				translate( 'Commissions' ),
 				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
+				selectedReferralTab,
+				setSelectedReferralTab,
 				'Commissions tab content'
 			),
 			createFeaturePreview(
 				REFERRAL_ACITIVTY_ID,
 				translate( 'Activity' ),
 				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
+				selectedReferralTab,
+				setSelectedReferralTab,
 				'Activity tab content'
 			),
 		],
-		[ selectedSiteFeature, setSelectedSiteFeature, translate ]
+		[ selectedReferralTab, setSelectedReferralTab, translate ]
 	);
 
 	return (
