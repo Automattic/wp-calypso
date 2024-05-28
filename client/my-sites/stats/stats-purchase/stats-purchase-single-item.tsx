@@ -104,13 +104,16 @@ const StatsUpgradeInstructions = () => {
 	);
 };
 
+// TODO: Fix for full-width buttons.
+// See continueButtonText below.
+
 const useLocalizedStrings = ( isCommercial: boolean ) => {
 	const translate = useTranslate();
 
 	// Page title, info text, and button text depend on isCommercial status of site.
 	if ( isCommercial ) {
 		return {
-			pageTitle: translate( 'Upgrade and continue using Jetpack Stats' ),
+			pageTitle: translate( 'Upgrade and continue using Jetpack Stats ABC' ),
 			infoText: translate(
 				'To continue using Stats and access its newest premium features you need to get a commercial license. {{link}}Learn more about this update{{/link}}.',
 				{
