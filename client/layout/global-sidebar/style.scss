@@ -271,7 +271,8 @@ $brand-text: "SF Pro Text", $sans;
 		.sidebar__item-search {
 			color: var(--color-sidebar-text);
 
-			svg path {
+			svg path,
+			svg rect {
 				fill: var(--color-sidebar-gridicon-fill);
 			}
 
@@ -279,7 +280,8 @@ $brand-text: "SF Pro Text", $sans;
 				color: var(--color-sidebar-menu-hover-text);
 				text-decoration: none;
 
-				svg path {
+				svg path,
+				svg rect {
 					fill: var(--color-sidebar-menu-hover-text);
 				}
 			}
