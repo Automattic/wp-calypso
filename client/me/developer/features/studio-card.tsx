@@ -22,7 +22,7 @@ export const StudioCard = () => {
 			</div>
 			<div className="developer-features-list__item-learn-more">
 				<a
-					id="github-deployments"
+					id="studio"
 					href={ localizeUrl( 'https://developer.wordpress.com/studio/' ) }
 					target="_blank"
 					rel="noopener noreferrer"
