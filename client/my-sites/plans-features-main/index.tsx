@@ -292,13 +292,18 @@ const PlansFeaturesMain = ( {
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
-	const intentFromSegmentationSurvey = useSegmentedIntent();
-
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
+
+	const intentFromSegmentationSurvey = useSegmentedIntent(
+		intentFromProps === 'plans-guided',
+		intent
+	);
+
 	useEffect( () => {
-		if ( intentFromProps === 'plans-guided' && intentFromSegmentationSurvey ) {
+		if ( intentFromProps === 'plans-guided' ) {
 			return setIntent( intentFromSegmentationSurvey );
 		}
+
 		if ( intentFromSiteMeta.processing ) {
 			return;
 		}
@@ -322,6 +327,7 @@ const PlansFeaturesMain = ( {
 		planFromUpsells,
 		forceDefaultPlans,
 		intentFromSiteMeta.processing,
+		intentFromSegmentationSurvey,
 	] );
 
 	const showEscapeHatch =

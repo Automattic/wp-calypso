@@ -4,6 +4,7 @@ import wpcom from 'calypso/lib/wp';
 
 type SurveyAnswersQueryParams = {
 	surveyKey: string;
+	enabled?: boolean;
 };
 
 export type SurveyAnswersResponse = Array< {
@@ -16,7 +17,7 @@ const mapSurveyAnswers = ( response: SurveyAnswersResponse ): Answers =>
 		return { ...acc, ...answers };
 	}, {} );
 
-const useSurveyAnswersQuery = ( { surveyKey }: SurveyAnswersQueryParams ) => {
+const useSurveyAnswersQuery = ( { surveyKey, enabled = true }: SurveyAnswersQueryParams ) => {
 	return useQuery( {
 		queryKey: [ 'survey-answers', surveyKey ],
 		queryFn: () =>
@@ -24,7 +25,7 @@ const useSurveyAnswersQuery = ( { surveyKey }: SurveyAnswersQueryParams ) => {
 				path: `/segmentation-survey/answers?survey_key=${ surveyKey }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		enabled: !! surveyKey,
+		enabled: enabled && !! surveyKey,
 		staleTime: 0,
 		select: mapSurveyAnswers,
 	} );
