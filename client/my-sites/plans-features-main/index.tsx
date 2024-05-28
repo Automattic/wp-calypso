@@ -294,7 +294,7 @@ const PlansFeaturesMain = ( {
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 
-	const intentFromSegmentationSurvey = useSegmentedIntent(
+	const { segment: intentFromSegmentationSurvey, isFetchingSegment } = useSegmentedIntent(
 		intentFromProps === 'plans-guided',
 		siteId ?? 0,
 		intent
@@ -660,6 +660,7 @@ const PlansFeaturesMain = ( {
 			isTrailMapExperimentLoading
 	);
 	const isPlansGridReady =
+		! isFetchingSegment &&
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
 		! resolvedDeemphasizeFreePlan.isLoading;

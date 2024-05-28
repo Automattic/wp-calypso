@@ -13,8 +13,8 @@ export function useSegmentedIntent(
 	enabled = false,
 	blogId = 0,
 	fallback: PlansIntent = 'plans-default-wpcom'
-): PlansIntent {
-	const { data } = useSurveyAnswersQuery( {
+): { segment: PlansIntent; isFetchingSegment: boolean } {
+	const { isFetching, data } = useSurveyAnswersQuery( {
 		surveyKey: GUIDED_FLOW_SEGMENTATION_SURVEY_KEY,
 		enabled,
 	} );
@@ -23,16 +23,16 @@ export function useSegmentedIntent(
 	const surveyedIntent = data?.[ blogId ]?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
 	if ( ! enabled || ! surveyedIntent || ! surveyedGoals ) {
-		return fallback;
+		return { segment: fallback, isFetchingSegment: isFetching };
 	}
 
 	// Return default wpcom plans for migration flow.
 	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals.includes( 'skip' ) ) {
-		return fallback;
+		return { segment: fallback, isFetchingSegment: isFetching };
 	}
 
 	if ( surveyedIntent === 'client' ) {
-		return 'plans-segment-developer-or-agency';
+		return { segment: 'plans-segment-developer-or-agency', isFetchingSegment: isFetching };
 	}
 
 	// Handle different cases when intent is 'Create for self'
@@ -43,22 +43,22 @@ export function useSegmentedIntent(
 			surveyedGoals.includes( 'newsletter' ) ||
 			surveyedGoals.includes( 'difm' )
 		) {
-			return fallback;
+			return { segment: fallback, isFetchingSegment: isFetching };
 		}
 		if ( surveyedGoals.includes( 'sell' ) && ! surveyedGoals.includes( 'difm' ) ) {
-			return 'plans-segment-merchant';
+			return { segment: 'plans-segment-merchant', isFetchingSegment: isFetching };
 		}
 		if ( surveyedGoals.includes( 'blog' ) ) {
-			return 'plans-segment-blogger';
+			return { segment: 'plans-segment-blogger', isFetchingSegment: isFetching };
 		}
 		if ( surveyedGoals.includes( 'educational-or-nonprofit' ) ) {
-			return 'plans-segment-nonprofit';
+			return { segment: 'plans-segment-nonprofit', isFetchingSegment: isFetching };
 		}
 		// Catch-all case for when none of the specific goals are met
 		// This will also account for "( ! DIFM && ! Sell ) = Consumer / Business" condition
-		return 'plans-segment-consumer-or-business';
+		return { segment: 'plans-segment-consumer-or-business', isFetchingSegment: isFetching };
 	}
 
 	// Default return if no conditions are met
-	return fallback;
+	return { segment: fallback, isFetchingSegment: isFetching };
 }
