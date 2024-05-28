@@ -83,7 +83,7 @@ const DevTools = () => {
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
-	const backUrl = `/hosting-config/${ siteId }`;
+	const redirectUrl = `/hosting-config/${ siteId }`;
 	const dispatch = useDispatch();
 	const transferInitiate = ( siteId: number, { geo_affinity = '' } = {} ) => {
 		setIsActivating( true );
@@ -91,7 +91,7 @@ const DevTools = () => {
 			.then( () => {
 				const params = new URLSearchParams( {
 					siteId: String( siteId ),
-					redirect_to: backUrl,
+					redirect_to: redirectUrl,
 					feature: FEATURE_SFTP,
 				} );
 				page( `/setup/transferring-hosted-site?${ params }` );
@@ -100,6 +100,11 @@ const DevTools = () => {
 				setIsActivating( false );
 			} );
 	};
+
+	if ( isSiteAtomic && hasSftpFeature ) {
+		page.replace( redirectUrl );
+		return;
+	}
 
 	return (
 		<div className="dev-tools">
@@ -142,7 +147,7 @@ const DevTools = () => {
 							<EligibilityWarnings
 								className="hosting__activating-warnings"
 								onProceed={ () => transferInitiate( siteId as number ) }
-								backUrl={ backUrl }
+								backUrl={ redirectUrl }
 								showDataCenterPicker
 								standaloneProceed
 								currentContext="dev-tools"

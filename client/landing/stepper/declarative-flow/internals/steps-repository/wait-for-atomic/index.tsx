@@ -86,9 +86,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		const totalTimeout = 1000 * 300;
 		const maxFinishTime = startTime + totalTimeout;
 
-		// Poll for transfer status
-		let stopPollingTransfer = false;
-		while ( ! stopPollingTransfer ) {
+		while ( true ) {
 			await wait( 3000 );
 			await requestLatestAtomicTransfer( siteId );
 			const transfer = getSiteLatestAtomicTransfer( siteId );
@@ -114,7 +112,9 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 				throw new Error( 'transfer timeout' );
 			}
 
-			stopPollingTransfer = transferStatus === transferStates.COMPLETED;
+			if ( transferStatus === transferStates.COMPLETED ) {
+				break;
+			}
 		}
 	};
 
@@ -125,17 +125,26 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 			return;
 		}
 
-		let stopPollingSiteFeatures = false;
-		while ( ! stopPollingSiteFeatures ) {
-			await wait( 1000 );
+		while ( true ) {
 			const siteFeatures = await reduxDispatch( fetchSiteFeatures( siteId ) );
-			stopPollingSiteFeatures = siteFeatures?.active?.indexOf?.( feature ) >= 0;
+			if ( siteFeatures?.active?.indexOf?.( feature ) >= 0 ) {
+				break;
+			}
+
+			await wait( 1000 );
 		}
 	};
 
 	// Request the latest site data to ensure the value of the `is_wpcom_atomic` is true.
 	const waitForLatestSiteData = async () => {
-		await reduxDispatch( requestSite( siteId ) );
+		while ( true ) {
+			const site = await reduxDispatch( requestSite( siteId ) );
+			if ( site?.options.is_wpcom_atomic ) {
+				break;
+			}
+
+			await wait( 1000 );
+		}
 	};
 
 	useEffect( () => {
