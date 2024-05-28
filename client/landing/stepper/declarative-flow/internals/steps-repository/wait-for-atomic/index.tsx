@@ -12,7 +12,7 @@ import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
-import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect, SiteDetails } from '@automattic/data-stores';
 
 export interface FailureInfo {
 	type: string;
@@ -144,7 +144,9 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		}
 
 		while ( true ) {
-			const siteFeatures = await reduxDispatch( fetchSiteFeatures( siteId ) );
+			const siteFeatures = await reduxDispatch< Promise< { active: string[] } > >(
+				fetchSiteFeatures( siteId )
+			);
 			if ( siteFeatures?.active?.indexOf?.( feature ) >= 0 ) {
 				break;
 			}
@@ -156,7 +158,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 	// Request the latest site data to ensure the value of the `is_wpcom_atomic` and `manage_options` are true.
 	const waitForLatestSiteData = async () => {
 		while ( true ) {
-			const site = await reduxDispatch( requestSite( siteId ) );
+			const site = await reduxDispatch< SiteDetails >( requestSite( siteId ) );
 			if ( site?.options?.is_wpcom_atomic && site?.capabilities?.manage_options ) {
 				break;
 			}

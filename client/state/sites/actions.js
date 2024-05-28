@@ -107,7 +107,7 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  * @param {number|string} siteFragment Site ID or slug
- * @returns {Function}              Action thunk
+ * @returns {import('redux-thunk').ThunkAction} Action thunk
  */
 export function requestSite( siteFragment ) {
 	function doRequest( forceWpcom ) {
