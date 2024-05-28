@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { Icon, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -100,6 +101,26 @@ export default function PlanSelectionFilter( {
 
 	return (
 		<section className={ wrapperClass }>
+			{ !! existingPlan && (
+				<div className="pressable-overview-plan-selection__filter-owned-plan">
+					<div className="badge">
+						<Icon icon={ info } size={ 24 } />
+
+						<span>
+							{ translate( 'You own {{b}}%(planName)s plan{{/b}}', {
+								args: {
+									planName: existingPlan.name,
+								},
+								components: {
+									b: <strong />,
+								},
+								comment: '%(planName)s is the name of the Pressable plan the user owns.',
+							} ) }
+						</span>
+					</div>
+				</div>
+			) }
+
 			<div className="pressable-overview-plan-selection__filter-type">
 				<p className="pressable-overview-plan-selection__filter-label">
 					{ translate( 'Filter by:' ) }
