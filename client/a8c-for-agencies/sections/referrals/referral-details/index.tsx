@@ -4,6 +4,7 @@ import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import SubscriptionStatus from '../referrals-list/subscription-status';
+import ReferralCommissions from './commissions';
 import type { Referral } from '../types';
 import type { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 
@@ -57,7 +58,7 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 				true,
 				selectedReferralTab,
 				setSelectedReferralTab,
-				'Commissions tab content'
+				<ReferralCommissions referral={ referral } />
 			),
 			createFeaturePreview(
 				REFERRAL_ACITIVTY_ID,
@@ -68,7 +69,7 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 				'Activity tab content'
 			),
 		],
-		[ selectedReferralTab, setSelectedReferralTab, translate ]
+		[ referral, selectedReferralTab, translate ]
 	);
 
 	return (
