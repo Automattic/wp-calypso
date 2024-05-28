@@ -7,7 +7,7 @@ interface InsightHeaderProps {
 
 export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 	const { data } = props;
-	const title = data.description ?? '';
+	const title = data.title ?? '';
 	const value = data.displayValue ?? '';
 
 	return (

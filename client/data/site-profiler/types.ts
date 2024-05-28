@@ -117,6 +117,7 @@ export interface PerformanceMetricsDataQueryResponse {
 
 export interface PerformanceMetricsItemQueryResponse {
 	id: string;
+	title?: string;
 	description?: string;
 	displayValue?: string;
 	details?: PerformanceMetricsDetailsQueryResponse;
