@@ -81,6 +81,11 @@
 		}
 	}
 
+	.sites-a8c-for-agencies-banner-container {
+		display: flex;
+		justify-content: center;
+	}
+
 	.sites-a8c-for-agencies-banner {
 		margin-inline: 16px;
 
@@ -97,6 +102,8 @@
 
 		@include break-huge {
 			margin-inline: 64px;
+			width: 100%;
+			max-width: 1400px;
 		}
 	}
 
