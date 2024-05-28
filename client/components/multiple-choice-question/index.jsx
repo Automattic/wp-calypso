@@ -19,10 +19,6 @@ const shuffleAnswers = memoize(
 );
 
 /**
- * @typedef {import('react').ReactNode} ReactNode
- */
-
-/**
  * Renders a multiple choice question component.
  * @param {Object} props - The component props.
  * @param {boolean} [props.disabled] - Whether the question is disabled or not.
@@ -33,7 +29,7 @@ const shuffleAnswers = memoize(
  * @param {string|undefined} [props.selectedAnswerId] - The ID of the selected answer.
  * @param {string} [props.selectedAnswerText] - The text of the selected answer.
  * @param {boolean} [props.shouldShuffleAnswers] - Whether to shuffle the answer options or not.
- * @returns {ReactNode} The rendered MultipleChoiceQuestion component.
+ * @returns {import('react').ReactNode} The rendered MultipleChoiceQuestion component.
  */
 const MultipleChoiceQuestion = ( {
 	disabled = false,

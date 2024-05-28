@@ -18,19 +18,16 @@ function makePrivacyLink( privacyLink, link ) {
 }
 
 /**
- * @typedef {import('react')} React
- */
-
-/**
  * Renders a support information component.
+ * @typedef {import('react').ReactNode} ReactNode
  * @param {Object} props The component props.
- * @param {React.ReactNode} [props.children] The child elements to be rendered inside the component.
+ * @param {ReactNode} [props.children] The child elements to be rendered inside the component.
  * @param {string} [props.text] The text to be displayed in the component.
  * @param {string} [props.link] The link URL to be displayed in the "Learn more" section.
  * @param {string} [props.position] The position of the popover (default: 'left').
  * @param {boolean|string} [props.privacyLink] Boolean whether to display the privacy link. Or the link itself.
  * @param {string} [props.popoverClassName] The CSS class name for the popover.
- * @returns {React.ReactNode} The rendered support information component.
+ * @returns {ReactNode} The rendered support information component.
  */
 function SupportInfo( {
 	children = <></>,

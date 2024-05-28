@@ -97,10 +97,6 @@ const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 const defaultAvailableActions = [ 'rewind', 'download' ];
 
 /**
- * @typedef {import('react').ReactNode} ReactNode
- */
-
-/**
  * Renders the action buttons for the daily backup status.
  * @param {Object} props - The component props.
  * @param {string|null} props.rewindId - The ID of the rewind.
@@ -109,7 +105,7 @@ const defaultAvailableActions = [ 'rewind', 'download' ];
  * @param {boolean} [props.hasWarnings] - Whether there are warnings.
  * @param {Array<string>} [props.availableActions] - The available actions.
  * @param {Function} [props.onClickClone] - The click handler for the clone button.
- * @returns {ReactNode} The rendered component.
+ * @returns {import('react').ReactNode} The rendered component.
  */
 const ActionButtons = ( {
 	rewindId = null,

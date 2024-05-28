@@ -6,11 +6,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 import './style.scss';
 
 /**
- * @typedef {import('react')} React
- */
-
-/**
  * FormattedHeader component
+ * @typedef {import('react')} React
  * @param {Object} props The props
  * @param {boolean} [props.brandFont] Whether to use the brand font
  * @param {string} [props.id] The ID of the component
