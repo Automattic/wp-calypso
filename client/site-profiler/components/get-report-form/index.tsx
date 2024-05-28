@@ -107,83 +107,102 @@ export function GetReportForm( {
 				'get-report-form__wrapper--hidden': ! isOpen,
 			} ) }
 		>
-			<div className="get-report-form__container">
-				<div className="get-report-form__title">
-					<span className="title">{ translate( 'Full site report' ) }</span>
+			{ ! responseSuccess && (
+				<div className="get-report-form__container">
+					<div className="get-report-form__title">
+						<span className="title">{ translate( 'Full site report' ) }</span>
+					</div>
+					<div className="get-report-form__body">
+						<div className="get-report-form__header">
+							<span className="description">
+								{ translate(
+									"To access a detailed report complete with insights and tailored recommendations for improving your site's performance, please provide your details below. We'll send you an exclusive link to view the full analysis, helping you make informed decisions for optimizing your site."
+								) }
+							</span>
+						</div>
+						<form className="get-report-form__form" onSubmit={ handleSubmit }>
+							<div className="get-report-form__form-body">
+								<FormFieldset>
+									<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
+									<FormTextInput
+										name="name"
+										className="get-report-form__form-name"
+										label={ translate( 'Name' ) }
+										value={ name }
+										isError={ !! errors?.name }
+										onChange={ handleNameChange }
+									/>
+
+									{ errors?.name && <FormInputValidation isError text={ errors.name } /> }
+								</FormFieldset>
+								<FormFieldset>
+									<FormLabel htmlFor="email">{ translate( 'Email address' ) }</FormLabel>
+									<FormTextInput
+										name="email"
+										className="get-report-form__form-email"
+										label={ translate( 'Email' ) }
+										value={ email }
+										isError={ !! errors?.email }
+										onChange={ handleEmailChange }
+									/>
+									{ errors?.email && <FormInputValidation isError text={ errors.email } /> }
+								</FormFieldset>
+							</div>
+							<div className="get-report-form__form-footer">
+								<FormFieldset>
+									<CheckboxControl
+										name="termsAccepted"
+										className="terms-checkbox"
+										checked={ isTermsChecked }
+										onChange={ handleTermsChange }
+										label={ translate(
+											`By submitting your details, you agree to WordPress.com‘s Privacy Policy and Terms of Service. You also consent to receiving occasional updates and offers. You can unsubscribe from these communications at any time through the instructions.`
+										) }
+									/>
+									{ errors?.termsAccepted && (
+										<FormInputValidation isError text={ errors.termsAccepted } />
+									) }
+								</FormFieldset>
+								<Button
+									type="submit"
+									className="submit-button"
+									busy={ isSubmitting }
+									disabled={ responseSuccess }
+								>
+									{ translate( 'Access full report' ) }
+								</Button>
+							</div>
+							{ responseError && <FormInputValidation isError text={ responseError } /> }
+							{ responseSuccess && (
+								<FormInputValidation
+									isError={ false }
+									text="Success! An email with the report link will be sent shortly"
+								/>
+							) }
+						</form>
+					</div>
+					<span>
+						<Gridicon icon="chevron-down" size={ 36 } onClick={ onClose } />
+					</span>
 				</div>
-				<div className="get-report-form__body">
-					<div className="get-report-form__header">
+			) }
+			{ responseSuccess && (
+				<div className="get-report-form__container">
+					<div className="get-report-form__title">
+						<span className="title">{ translate( 'Full site report' ) }</span>
+					</div>
+					<div className="get-report-form__header get-report-form__body">
 						<span className="description">
 							{ translate(
-								"To access a detailed report complete with insights and tailored recommendations for improving your site's performance, please provide your details below. We'll send you an exclusive link to view the full analysis, helping you make informed decisions for optimizing your site."
+								'Your request for a full site report has been received. Check your email for an exclusive link to view the detailed analysis.'
 							) }
 						</span>
 					</div>
-					<form className="get-report-form__form" onSubmit={ handleSubmit }>
-						<div className="get-report-form__form-body">
-							<FormFieldset>
-								<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
-								<FormTextInput
-									name="name"
-									className="get-report-form__form-name"
-									label={ translate( 'Name' ) }
-									value={ name }
-									isError={ !! errors?.name }
-									onChange={ handleNameChange }
-								/>
-
-								{ errors?.name && <FormInputValidation isError text={ errors.name } /> }
-							</FormFieldset>
-							<FormFieldset>
-								<FormLabel htmlFor="email">{ translate( 'Email address' ) }</FormLabel>
-								<FormTextInput
-									name="email"
-									className="get-report-form__form-email"
-									label={ translate( 'Email' ) }
-									value={ email }
-									isError={ !! errors?.email }
-									onChange={ handleEmailChange }
-								/>
-								{ errors?.email && <FormInputValidation isError text={ errors.email } /> }
-							</FormFieldset>
-						</div>
-						<div className="get-report-form__form-footer">
-							<FormFieldset>
-								<CheckboxControl
-									name="termsAccepted"
-									className="terms-checkbox"
-									checked={ isTermsChecked }
-									onChange={ handleTermsChange }
-									label={ translate(
-										`By submitting your details, you agree to WordPress.com‘s Privacy Policy and Terms of Service. You also consent to receiving occasional updates and offers. You can unsubscribe from these communications at any time through the instructions.`
-									) }
-								/>
-								{ errors?.termsAccepted && (
-									<FormInputValidation isError text={ errors.termsAccepted } />
-								) }
-							</FormFieldset>
-							<Button
-								type="submit"
-								className="submit-button"
-								busy={ isSubmitting }
-								disabled={ responseSuccess }
-							>
-								{ translate( 'Access full report' ) }
-							</Button>
-						</div>
-						{ responseError && <FormInputValidation isError text={ responseError } /> }
-						{ responseSuccess && (
-							<FormInputValidation
-								isError={ false }
-								text="Success! An email with the report link will be sent shortly"
-							/>
-						) }
-					</form>
+					<span>
+						<Gridicon icon="chevron-down" size={ 36 } onClick={ onClose } />
+					</span>
 				</div>
-				<span>
-					<Gridicon icon="chevron-down" size={ 36 } onClick={ onClose } />
-				</span>
-			</div>
+			) }
 		</div>
 	);
 }
