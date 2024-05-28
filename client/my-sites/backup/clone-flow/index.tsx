@@ -1,6 +1,6 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -76,6 +76,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const [ backupPeriod, setBackupPeriod ] = useState< string >( '' );
 	const [ backupDisplayDate, setBackupDisplayDate ] = useState< string >( '' );
 	const [ showCredentialForm, setShowCredentialForm ] = useState< boolean >( false );
+	const [ restoreId, setRestoreId ] = useState< number | null >( null );
 
 	const activityLogPath = '/activity-log/' + siteSlug;
 	const refreshBackups = useCallback(
@@ -105,6 +106,32 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const cloneRoleCredentials = useSelector( ( state ) => {
 		return getJetpackCredentials( state, siteId, cloneDestination );
 	} );
+
+	useEffect( () => {
+		// Here we are updating the restoreId any time the user requests a new restore and only if the restoreId
+		// has changed to avoid unnecessary re-renders.
+		// This is necessary because the restoreId is used to query the restore progress in the
+		// QueryRewindRestoreStatus component.
+		if ( userHasRequestedRestore ) {
+			if ( isCloneToStaging && stagingSiteRewindState.rewind?.restoreId ) {
+				const newRestoreId = stagingSiteRewindState.rewind.restoreId;
+				if ( restoreId !== newRestoreId ) {
+					setRestoreId( newRestoreId );
+				}
+			} else if ( ! isCloneToStaging && rewindState.rewind?.restoreId ) {
+				const newRestoreId = rewindState.rewind.restoreId;
+				if ( restoreId !== newRestoreId ) {
+					setRestoreId( newRestoreId );
+				}
+			}
+		}
+	}, [
+		isCloneToStaging,
+		rewindState,
+		stagingSiteRewindState,
+		restoreId,
+		userHasRequestedRestore,
+	] );
 
 	const getUrlFromCreds = () => {
 		if ( ! cloneRoleCredentials ) {
@@ -245,11 +272,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	);
 
 	const loading = rewindState.state === 'uninitialized';
-
-	const restoreId =
-		( isCloneToStaging
-			? stagingSiteRewindState.rewind?.restoreId
-			: rewindState.rewind?.restoreId ) || null;
 
 	const disableClone = false;
 
@@ -435,7 +457,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	const renderInProgress = () => (
 		<>
-			<QueryRewindRestoreStatus siteId={ restoreSiteId } restoreId={ restoreId } />
 			<Card>
 				<div className="clone-flow__progress-header">
 					<img
@@ -579,6 +600,9 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					<QueryRewindBackups siteId={ siteId } />
 					<QueryRewindState siteId={ siteId } />
 					<QueryBackupStagingSitesList siteId={ siteId } />
+					{ restoreId && isInProgress && (
+						<QueryRewindRestoreStatus siteId={ restoreSiteId } restoreId={ restoreId } />
+					) }
 					{ render() }
 				</div>
 			</Main>
