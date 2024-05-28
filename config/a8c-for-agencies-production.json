@@ -30,6 +30,7 @@
 		"ad-tracking": true,
 		"a8c-for-agencies": true,
 		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
+		"cookie-banner": true,
 		"oauth": true,
 		"a4a-logged-out-signup": true
 	},
