@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { omit } from 'lodash';
 import wpcom from 'calypso/lib/wp';
@@ -89,7 +89,13 @@ export function requestSites() {
 				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 			} )
 			.then( ( response ) => {
-				dispatch( receiveSites( response.sites ) );
+				dispatch(
+					receiveSites(
+						isEnabled( 'jetpack/manage-simple-sites' )
+							? response.sites.filter( ( site ) => ! site?.options?.is_wpforteams_site )
+							: response.sites
+					)
+				);
 				dispatch( {
 					type: SITES_REQUEST_SUCCESS,
 				} );
