@@ -547,7 +547,10 @@ $button-padding: 8px 32px;
 	}
 
 	.components-button + button.components-button {
-		margin-left: 12px;
+		// margin-left: 12px;
+		margin: 12px 0;
+		width: 100%;
+		display: block;
 	}
 }
 
