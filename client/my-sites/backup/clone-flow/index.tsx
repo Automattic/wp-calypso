@@ -435,6 +435,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	const renderInProgress = () => (
 		<>
+			<QueryRewindRestoreStatus siteId={ restoreSiteId } restoreId={ restoreId } />
 			<Card>
 				<div className="clone-flow__progress-header">
 					<img
@@ -578,9 +579,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					<QueryRewindBackups siteId={ siteId } />
 					<QueryRewindState siteId={ siteId } />
 					<QueryBackupStagingSitesList siteId={ siteId } />
-					{ restoreId && 'running' === inProgressRewindStatus && (
-						<QueryRewindRestoreStatus siteId={ restoreSiteId } restoreId={ restoreId } />
-					) }
 					{ render() }
 				</div>
 			</Main>
