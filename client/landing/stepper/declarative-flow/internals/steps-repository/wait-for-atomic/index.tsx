@@ -153,11 +153,11 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		}
 	};
 
-	// Request the latest site data to ensure the value of the `is_wpcom_atomic` is true.
+	// Request the latest site data to ensure the value of the `is_wpcom_atomic` and `manage_options` are true.
 	const waitForLatestSiteData = async () => {
 		while ( true ) {
 			const site = await reduxDispatch( requestSite( siteId ) );
-			if ( site?.options.is_wpcom_atomic ) {
+			if ( site?.options?.is_wpcom_atomic && site?.capabilities?.manage_options ) {
 				break;
 			}
 
