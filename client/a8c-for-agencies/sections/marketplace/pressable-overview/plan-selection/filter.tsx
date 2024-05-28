@@ -24,7 +24,7 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
 
-	const { existingPlan, isFetching: isFetchingExistingPlan } = useExistingPressablePlan( {
+	const { existingPlan } = useExistingPressablePlan( {
 		plans,
 	} );
 
