@@ -279,13 +279,49 @@
 		border-top: 1px solid var(--studio-gray-100);
 		color: var(--studio-gray-20);
 
+		.foldable-card__secondary {
+			display: none;
+		}
+
+		.foldable-card__main {
+			padding-right: 50px;
+
+			a {
+				color: var(--studio-gray-40);
+
+				&:hover {
+					color: #fff;
+				}
+			}
+
+			.value {
+				color: var(--studio-red-30);
+			}
+		}
+
+		&.is-expanded .foldable-card__main {
+			color: #fff;
+
+			a {
+				color: #fff;
+
+				&:hover {
+					color: var(--studio-gray-40);
+				}
+			}
+
+			.value {
+				color: var(--studio-red-50);
+			}
+		}
+
 		&:last-child {
 			border-bottom: 1px solid var(--studio-gray-100);
 		}
 
 		&.is-expanded {
 			.foldable-card__content {
-				border-top: 1px solid var(--studio-gray-100);
+				border-top: none;
 			}
 		}
 
@@ -297,6 +333,13 @@
 
 		.foldable-card__header {
 			padding: 16px 0;
+		}
+
+		p {
+			display: inline;
+			font-size: inherit;
+			color: inherit;
+			margin-bottom: inherit;
 		}
 	}
 }

@@ -1,7 +1,7 @@
 import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 interface MetricsInsightProps {
 	insight?: Insight;
@@ -10,8 +10,8 @@ interface MetricsInsightProps {
 }
 
 type Insight = {
-	header?: string;
-	description?: string;
+	header?: ReactNode;
+	description?: ReactNode;
 };
 
 const Card = styled( FoldableCard )`
@@ -36,7 +36,7 @@ const InsightHeader = styled.div`
 `;
 
 const InsightContent = styled.div`
-	padding: 24px;
+	padding: 24px 0;
 `;
 
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
