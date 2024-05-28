@@ -16,7 +16,6 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
-import isRegeneratingJetpackPostByEmail from 'calypso/state/selectors/is-regenerating-jetpack-post-by-email';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -36,9 +35,6 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	const selectedSiteId = useSelector( getSelectedSiteId ) || 0;
 	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const siteIsAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSiteId ) );
-	const jetpackRegeneratingPostByEmail = useSelector( ( state ) =>
-		isRegeneratingJetpackPostByEmail( state, selectedSiteId )
-	);
 	const jetpackPostByEmailIsActive = !! useSelector( ( state ) =>
 		isJetpackModuleActive( state, selectedSiteId, moduleSlug )
 	);
@@ -157,9 +153,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 						value={ email }
 					/>
 					<Button onClick={ handleRegenerate } disabled={ isDisabledControls }>
-						{ jetpackRegeneratingPostByEmail
-							? translate( 'Regenerating…' )
-							: translate( 'Regenerate address' ) }
+						Regenerate address
 					</Button>
 				</div>
 			</FormFieldset>
