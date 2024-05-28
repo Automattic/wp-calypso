@@ -29,7 +29,7 @@ export function useSegmentedIntent(
 		return fallback;
 	}
 
-	if ( surveyedIntent === 'client' && surveyedGoals.includes( 'skip' ) ) {
+	if ( surveyedIntent === 'client' ) {
 		return 'plans-segment-developer-or-agency';
 	}
 
