@@ -40,11 +40,10 @@ function ContinueAsUser( {
 	currentUser,
 	redirectUrlFromQuery,
 	onChangeAccount,
-	redirectPath = '',
+	redirectPath,
 	isSignUpFlow,
 	isWooOAuth2Client,
 	isWooPasswordless,
-	onContinue,
 } ) {
 	const translate = useTranslate();
 	const { url: validatedRedirectUrlFromQuery, loading: validatingQueryURL } =
@@ -165,19 +164,13 @@ function ContinueAsUser( {
 		<div className="continue-as-user">
 			<div className="continue-as-user__user-info">
 				{ gravatarLink }
-				{ onContinue ? (
-					<Button busy={ isLoading } primary onClick={ onContinue }>
-						{ translate( 'Continue' ) }
-					</Button>
-				) : (
-					<Button
-						busy={ isLoading }
-						primary
-						href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
-					>
-						{ translate( 'Continue' ) }
-					</Button>
-				) }
+				<Button
+					busy={ isLoading }
+					primary
+					href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
+				>
+					{ translate( 'Continue' ) }
+				</Button>
 			</div>
 			<div className="continue-as-user__not-you">{ notYouText }</div>
 		</div>
