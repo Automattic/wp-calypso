@@ -1,4 +1,4 @@
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo } from '@wordpress/element';
@@ -82,12 +82,12 @@ export const StorageAddOnDropdown = ( {
 	const { gridPlansIndex, siteId } = usePlansGridContext();
 	const {
 		pricing: { currencyCode },
-		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const storageAddOnPrices = useMemo(
-		() => storageAddOnsForPlan?.map( ( addOn ) => addOn?.prices?.monthlyPrice ?? 0 ),
-		[ storageAddOnsForPlan ]
+		() => storageAddOns?.map( ( addOn ) => addOn?.prices?.monthlyPrice ?? 0 ),
+		[ storageAddOns ]
 	);
 	const isLargeCurrency = useIsLargeCurrency( {
 		prices: storageAddOnPrices,
@@ -101,7 +101,7 @@ export const StorageAddOnDropdown = ( {
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 
 	useEffect( () => {
-		if ( storageAddOnsForPlan && defaultStorageOption && ! selectedStorageOptionForPlan ) {
+		if ( storageAddOns && defaultStorageOption && ! selectedStorageOptionForPlan ) {
 			setSelectedStorageOptionForPlan( {
 				addOnSlug: defaultStorageOption,
 				planSlug,
@@ -116,7 +116,7 @@ export const StorageAddOnDropdown = ( {
 			name: (
 				<StorageAddOnOption
 					planSlug={ planSlug }
-					price={ getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug ) }
+					price={ getStorageOptionPrice( storageAddOns, storageOption.slug ) }
 					storageFeature={ storageOption.slug }
 				/>
 			),
@@ -126,7 +126,7 @@ export const StorageAddOnDropdown = ( {
 	const selectedOptionKey = selectedStorageOptionForPlan
 		? selectedStorageOptionForPlan
 		: defaultStorageOption;
-	const selectedOptionPrice = getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey );
+	const selectedOptionPrice = getStorageOptionPrice( storageAddOns, selectedOptionKey );
 
 	const selectedOption = {
 		key: selectedOptionKey,

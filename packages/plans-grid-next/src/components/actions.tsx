@@ -6,7 +6,7 @@ import {
 	PLAN_FREE,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
@@ -70,7 +70,6 @@ const PlanFeatures2023GridActions = ( {
 		pricing: { billingPeriod, currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
 		cartItemForPlan,
-		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 	const currentPlanBillingPeriod = currentSitePlanSlug
 		? gridPlansIndex[ currentSitePlanSlug ]?.pricing.billingPeriod
@@ -79,7 +78,7 @@ const PlanFeatures2023GridActions = ( {
 		gridPlans: visibleGridPlans,
 	} );
 	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
-
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const selectedStorageAddOn = useSelectedStorageAddOn( {
 		planSlug,
 	} );
@@ -133,11 +132,11 @@ const PlanFeatures2023GridActions = ( {
 		[ planSlug ]
 	);
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
-	const canPurchaseStorageAddOns = storageAddOnsForPlan?.some(
+	const canPurchaseStorageAddOns = storageAddOns?.some(
 		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
 	);
 
-	const storageAddOnCheckoutHref = storageAddOnsForPlan?.find(
+	const storageAddOnCheckoutHref = storageAddOns?.find(
 		( addOn ) =>
 			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
 	)?.checkoutLink;
@@ -163,7 +162,7 @@ const PlanFeatures2023GridActions = ( {
 
 	if (
 		( isFreePlan( planSlug ) ||
-			( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
+			( storageAddOns && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
 		isP2FreePlan( planSlug ) &&
 		current
 	) {
