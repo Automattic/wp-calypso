@@ -1,9 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { useUrlPerformanceMetricsQuery } from 'calypso/data/site-profiler/use-url-performance-metrics-query';
 import { MetricsInsight } from 'calypso/site-profiler/components/metrics-insight';
+import { InsightContent } from 'calypso/site-profiler/components/metrics-insight/insight-content';
+import { InsightHeader } from 'calypso/site-profiler/components/metrics-insight/insight-header';
 import { MetricsSection } from 'calypso/site-profiler/components/metrics-section';
 import { getTitleTranslateOptions } from 'calypso/site-profiler/utils/get-title-translate-options';
-import { InsightHeader } from '../metrics-insight/insight-header';
 
 interface PerformanceSectionProps {
 	url?: string;
@@ -33,7 +34,7 @@ export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props )
 					key={ `insight-${ metric.id }` }
 					insight={ {
 						header: <InsightHeader data={ metric } />,
-						description: 'This is how you can improve it',
+						description: <InsightContent data={ metric } />,
 					} }
 				/>
 			) ) }
