@@ -556,11 +556,12 @@ $button-padding: 8px 32px;
 
 .stats-purchase-wizard__actions {
 	display: block;
-	margin: 12px 0;
+	// margin: 12px 0;
 
 	.components-button {
 		&.is-full-width {
-			margin: 12px 0;
+			// margin: 12px 0;
+			display: block;
 			width: 100%;
 		}
 	}
