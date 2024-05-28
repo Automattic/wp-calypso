@@ -7,7 +7,7 @@ import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice, FormInputValidation } from '@automattic/components';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import { useGetOdieStorage } from '@automattic/odie-client';
+import { useGetOdieStorage, useSetOdieStorage } from '@automattic/odie-client';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
@@ -91,6 +91,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	}, [] );
 
 	const wapuuChatId = useGetOdieStorage( 'chat_id' );
+	const setWapuuChatId = useSetOdieStorage( 'chat_id' );
 
 	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
@@ -180,6 +181,8 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 							message: '',
 							siteUrl: currentSite?.URL,
 							onError: () => setHasSubmittingError( true ),
+							// Reset Odie chat after passing to support
+							onSuccess: () => setWapuuChatId( null ),
 						} );
 					} }
 				>
