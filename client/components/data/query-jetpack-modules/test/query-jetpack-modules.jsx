@@ -21,6 +21,7 @@ jest.mock( 'calypso/state/jetpack/modules/actions', () => ( {
 } ) );
 
 let isWpcomAtomic = false;
+let isJetpack = false;
 const siteId = 1;
 const mockStore = configureStore( middlewares );
 
@@ -36,6 +37,7 @@ function getStore() {
 					options: {
 						is_wpcom_atomic: isWpcomAtomic,
 					},
+					jetpack: isJetpack,
 				},
 			},
 		},
@@ -49,6 +51,9 @@ function getStore() {
 
 describe( 'fetchModuleList', () => {
 	test( "Ensure we're NOT calling fetchModuleList for simple sites", async () => {
+		isWpcomAtomic = false;
+		isJetpack = false;
+
 		render(
 			<Provider store={ getStore() }>
 				<QueryJetpackModules siteId={ siteId } />
@@ -58,8 +63,9 @@ describe( 'fetchModuleList', () => {
 		expect( mockFetchModuleList ).not.toHaveBeenCalled();
 	} );
 
-	test( "Ensure we're calling fetchModuleList only for atomic sites", async () => {
+	test( "Ensure we're calling fetchModuleList for Atomic sites", async () => {
 		isWpcomAtomic = true;
+		isJetpack = false;
 
 		render(
 			<Provider store={ getStore() }>
@@ -68,5 +74,18 @@ describe( 'fetchModuleList', () => {
 		);
 
 		expect( mockFetchModuleList ).toHaveBeenCalled();
+	} );
+
+	test( "Ensure we're calling fetchModuleList for Jetpack Non Atomic sites", async () => {
+		isWpcomAtomic = false;
+		isJetpack = true;
+
+		render(
+			<Provider store={ getStore() }>
+				<QueryJetpackModules siteId={ siteId } />
+			</Provider>
+		);
+
+		expect( mockFetchModuleList ).toHaveBeenCalledTimes( 2 );
 	} );
 } );
