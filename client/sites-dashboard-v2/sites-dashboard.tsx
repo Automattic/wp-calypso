@@ -278,7 +278,6 @@ const SitesDashboardV2 = ( {
 								'As you’re managing multiple sites, Automattic for Agencies offers you efficient multisite management, volume discounts on hosting products, and up to 50% revenue share for migrating sites and referring products.'
 							) }
 							dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
-							dismissTemporary
 							horizontal
 							href="https://agencies.automattic.com"
 							title={ translate( 'Streamlined multisite agency hosting' ) }
