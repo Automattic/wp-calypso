@@ -18,14 +18,16 @@
 
 	.site-actions__actions-small-screen {
 		position: unset;
-		margin-left: 10px;
-		margin-right: 10px;
+		/** Increase the click area */
+		padding: 10px;
+		margin: -10px 0;
 	}
 
 	.site-actions__actions-large-screen {
 		display: block;
-		margin-left: 10px;
-		margin-right: 10px;
+		/** Increase the click area */
+		padding: 10px;
+		margin: -10px 0;
 	}
 
 	@media ( min-width: $break-large ) {

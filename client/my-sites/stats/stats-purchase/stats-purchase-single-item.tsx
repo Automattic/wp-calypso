@@ -254,9 +254,12 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		const queryFrom = isOdysseyStats ? '&from=jetpack-my-jetpack' : '';
 		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
 
-		page( `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection` );
+		page(
+			`/stats/purchase/${ siteSlug }?productType=commercial${ queryFrom }&flags=stats/type-detection`
+		);
 	};
 
 	return (
