@@ -33,10 +33,18 @@ const isUrl = ( url: string ) => {
 
 /**
  * Run the URL against the available embed patterns to determine if the URL is embeddable.
- * @param url URL to check
+ * @param node Node containing the URL
  * @returns true if the URL is an embeddable URL, false otherwise
  */
-function isEmbedUrl( url: string ): boolean {
+function isEmbedUrl( node: any ): boolean {
+	const url = new URL( node.textContent );
+
+	// Workaround for 'x.com' being blocked by the embed block
+	if ( url.host === 'x.com' ) {
+		url.host = 'twitter.com';
+		node.textContent = url.toString();
+	}
+
 	const embedRegexes = ( embed as EmbedBlock ).settings.variations
 		.flatMap(
 			( variation: { patterns: RegExp[]; name: string } ) =>
@@ -44,7 +52,7 @@ function isEmbedUrl( url: string ): boolean {
 		)
 		.filter( Boolean );
 
-	return embedRegexes.some( ( regex: RegExp ) => regex.test( url ) );
+	return embedRegexes.some( ( regex: RegExp ) => regex.test( url.toString() ) );
 }
 
 /**
@@ -104,7 +112,7 @@ export const loadBlocksWithCustomizations = () => {
 					{
 						type: 'raw',
 						isMatch: ( node: HTMLElement ) =>
-							node.nodeName === 'P' && node.textContent && isEmbedUrl( node.textContent ),
+							node.nodeName === 'P' && node.textContent && isEmbedUrl( node ),
 						transform: ( node: HTMLElement ) =>
 							createBlock( 'core/embed', { url: node.textContent } ),
 					},
@@ -115,7 +123,7 @@ export const loadBlocksWithCustomizations = () => {
 							node.nodeName === 'P' &&
 							node.textContent &&
 							isUrl( node.textContent ) &&
-							! isEmbedUrl( node.textContent ),
+							! isEmbedUrl( node ),
 						transform: ( node: HTMLElement ) => {
 							const providedUrl = node.textContent && new URL( node.textContent );
 							const content =
