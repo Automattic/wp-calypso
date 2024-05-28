@@ -15,7 +15,6 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
-import { TaxNotCalculatedLineItem } from './wp-checkout-order-summary';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div`
@@ -71,6 +70,25 @@ const TotalPrice = styled.div`
 	font-size: 14px;
 	padding-top: 16px;
 `;
+
+const TaxNotCalculatedLineItemWrapper = styled.div`
+	font-size: 14px;
+	text-wrap: pretty;
+	line-height: 1em;
+	color: ${ ( { theme } ) => theme.colors.textColorLight };
+	margin-bottom: 8px;
+`;
+
+export function TaxNotCalculatedLineItem() {
+	const translate = useTranslate();
+	return (
+		<TaxNotCalculatedLineItemWrapper>
+			{ translate( 'Tax: to be calculated', {
+				textOnly: true,
+			} ) }
+		</TaxNotCalculatedLineItemWrapper>
+	);
+}
 
 export default function BeforeSubmitCheckoutHeader() {
 	const cartKey = useCartKey();

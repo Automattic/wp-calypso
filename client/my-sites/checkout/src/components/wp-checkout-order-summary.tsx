@@ -172,7 +172,7 @@ const TaxNotCalculatedLineItemWrapper = styled.div`
 	line-height: 1em;
 `;
 
-export function TaxNotCalculatedLineItem() {
+function TaxNotCalculatedLineItem() {
 	const translate = useTranslate();
 	return (
 		<TaxNotCalculatedLineItemWrapper>
