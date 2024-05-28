@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { MetricsInsightsList } from 'calypso/site-profiler/components/metrics-insights-list';
 import { MetricsSection } from 'calypso/site-profiler/components/metrics-section';
 
 interface AdvancedMetricsProps {
@@ -26,15 +25,7 @@ export const AdvancedMetrics: React.FC< AdvancedMetricsProps > = ( props ) => {
 				) }
 				subtitle={ translate( "Boost your site's performance" ) }
 				ref={ performanceMetricsRef }
-			>
-				<MetricsInsightsList
-					insights={ Array( 10 ).fill( {
-						header:
-							'Your site reveals first content slower than 76% of peers, affecting first impressions.',
-						description: 'This is how you can improve it',
-					} ) }
-				/>
-			</MetricsSection>
+			></MetricsSection>
 			<MetricsSection
 				name={ translate( 'Health Scores' ) }
 				title={ translate(
@@ -48,9 +39,7 @@ export const AdvancedMetrics: React.FC< AdvancedMetricsProps > = ( props ) => {
 				) }
 				subtitle={ translate( "Optimize your site's health" ) }
 				ref={ healthScoresRef }
-			>
-				<MetricsInsightsList locked />
-			</MetricsSection>
+			></MetricsSection>
 		</>
 	);
 };

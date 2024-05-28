@@ -34,7 +34,7 @@ const useGuidedFlowGetSegment = ( intent: string, goals: string[] ): string => {
 	}
 
 	// Default return if no conditions are met
-	return 'Unrecognized';
+	return 'Unknown';
 };
 
 export default useGuidedFlowGetSegment;

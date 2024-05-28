@@ -239,10 +239,11 @@ const siteMigration: Flow = {
 							addQueryArgs(
 								{
 									siteSlug,
-									siteId,
+									from: fromQueryParam ?? '',
+									option: 'content',
 									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
 								},
-								'/setup/site-setup/importList'
+								`/setup/site-setup/importerWordpress`
 							)
 						);
 					}

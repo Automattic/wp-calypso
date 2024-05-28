@@ -20,6 +20,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingOverview from '../common/hosting-overview';
+import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import PressableOverviewFeatures from './footer';
@@ -27,7 +28,7 @@ import PressableOverviewPlanSelection from './plan-selection';
 
 import './style.scss';
 
-export default function PressableOverview() {
+function PressableOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -131,3 +132,5 @@ export default function PressableOverview() {
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( PressableOverview );

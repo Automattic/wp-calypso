@@ -134,6 +134,7 @@ export class UserStep extends Component {
 		subHeaderText: PropTypes.string,
 		isSocialSignupEnabled: PropTypes.bool,
 		initialContext: PropTypes.object,
+		isA4ASignup: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -367,12 +368,17 @@ export class UserStep extends Component {
 		} else if ( data.queryArgs.redirect_to ) {
 			dependencies.redirect = data.queryArgs.redirect_to;
 		}
+		const userData = {
+			...data.userData,
+			...( this.props.isA4ASignup && { is_dev_account: true } ),
+		};
 		this.props.submitSignupStep(
 			{
 				flowName,
 				stepName,
 				oauth2Signup,
 				...data,
+				userData,
 			},
 			dependencies
 		);
@@ -749,6 +755,7 @@ const ConnectedUser = connect(
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
 			isWooPasswordless: getIsWooPasswordless( state ),
+			isA4ASignup: isA4AOAuth2Client( getCurrentOAuth2Client( state ) ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};
