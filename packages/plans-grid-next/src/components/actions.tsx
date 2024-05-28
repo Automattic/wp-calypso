@@ -14,7 +14,6 @@ import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
-import useSelectedStorageAddOn from '../hooks/data-store/use-selected-storage-add-on';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
@@ -79,8 +78,14 @@ const PlanFeatures2023GridActions = ( {
 	} );
 	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
-	const selectedStorageAddOn = useSelectedStorageAddOn( {
-		planSlug,
+	const selectedStorageOptionForPlan = useSelect(
+		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
+		[ planSlug ]
+	);
+	const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
+		return selectedStorageOptionForPlan && addOn
+			? addOn.featureSlugs?.includes( selectedStorageOptionForPlan )
+			: false;
 	} );
 
 	const priceString = formatCurrency(
@@ -127,10 +132,6 @@ const PlanFeatures2023GridActions = ( {
 	const busy = isFreePlan( planSlug ) && status === 'blocked';
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
-	const selectedStorageOptionForPlan = useSelect(
-		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
-		[ planSlug ]
-	);
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 	const canPurchaseStorageAddOns = storageAddOns?.some(
 		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
