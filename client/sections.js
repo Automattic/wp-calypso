@@ -539,6 +539,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'migrate-guru',
+		paths: [ '/migrate-guru' ],
+		module: 'calypso/my-sites/migrate',
+		group: 'sites',
+	},
+	{
 		name: 'devdocs',
 		paths: [ '/devdocs' ],
 		module: 'calypso/devdocs',

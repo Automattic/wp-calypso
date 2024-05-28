@@ -2,8 +2,43 @@ import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, redirectWithoutSite, sites, siteSelection } from 'calypso/my-sites/controller';
 import { migrateSite, setSiteSelectionHeader, setStep } from 'calypso/my-sites/migrate/controller';
+import { AnalyzerStep, InstructionsStep, MigrateGuruFlow } from './migrate-guru-flow';
 
 export default function () {
+	page(
+		'/migrate-guru',
+		setSiteSelectionHeader,
+		siteSelection,
+		navigation,
+		sites,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/migrate-guru/:site_id',
+		siteSelection,
+		navigation,
+		( context, next ) => {
+			context.primary = <AnalyzerStep />;
+			next();
+		},
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/migrate-guru/instructions/:site_id',
+		siteSelection,
+		navigation,
+		( context, next ) => {
+			context.primary = <InstructionsStep />;
+			next();
+		},
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		'/migrate',
 		setSiteSelectionHeader,
