@@ -13,26 +13,26 @@ $summary-nav-swap-width: 661px;
 
 	@include navigation-segment-control-buttons( "auto" );
 
-	@media ( min-width: 1160px ) {
+	@media (min-width: 1160px) {
 		flex-wrap: wrap;
 		flex-direction: row-reverse;
 	}
 
-	@media ( max-width: 1160px ) {
+	@media (max-width: 1160px) {
 		&:not(.stats-summary-nav--with-button) {
 			display: block;
 		}
 	}
 
-	@media ( min-width: $break-medium ) and ( max-width: 1160px ) {
+	@media (min-width: $break-medium) and (max-width: 1160px) {
 		padding-bottom: 24px;
 	}
 
-	@media ( min-width: $summary-nav-swap-width ) and ( max-width: $break-medium ) {
+	@media (min-width: $summary-nav-swap-width) and (max-width: $break-medium) {
 		padding: $summary-medium-padding;
 	}
 
-	@media ( max-width: $summary-nav-swap-width ) {
+	@media (max-width: $summary-nav-swap-width) {
 		padding: 0;
 		border-bottom: $summary-small-border;
 	}
@@ -52,11 +52,11 @@ $summary-nav-swap-width: 661px;
 		flex-direction: row;
 		border-bottom: 0;
 
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			padding: $summary-medium-padding;
 		}
 
-		@media ( max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			padding: $summary-small-padding;
 			display: block;
 		}
@@ -66,15 +66,15 @@ $summary-nav-swap-width: 661px;
 .stats-summary-nav__header {
 	@include section-header-with-siblings;
 
-	@media ( min-width: $summary-nav-swap-width ) and  ( max-width: $break-medium ) {
+	@media (min-width: $summary-nav-swap-width) and  (max-width: $break-medium) {
 		padding: 0;
 	}
 
-	@media ( max-width: $summary-nav-swap-width ) {
+	@media (max-width: $summary-nav-swap-width) {
 		padding: $summary-medium-padding;
 	}
 
-	@media ( max-width: $break-small ) {
+	@media (max-width: $break-small) {
 		padding: $summary-small-padding;
 	}
 
@@ -109,11 +109,11 @@ $summary-nav-swap-width: 661px;
 		vertical-align: middle;
 	}
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		padding: $summary-medium-padding;
 	}
 
-	@media ( max-width: $break-small ) {
+	@media (max-width: $break-small) {
 		padding: $summary-small-padding;
 	}
 }

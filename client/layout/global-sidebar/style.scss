@@ -453,7 +453,7 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-@media ( min-width: 661px ) {
+@media (min-width: 661px) {
 	.is-global-sidebar-collapsed {
 		.global-sidebar {
 			.sidebar__header,
@@ -488,7 +488,7 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-@media ( max-width: 660px ) {
+@media (max-width: 660px) {
 	.global-sidebar .tooltip:hover::after {
 		display: none;
 	}

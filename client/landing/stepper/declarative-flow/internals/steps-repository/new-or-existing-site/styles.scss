@@ -88,17 +88,17 @@
 
 			.step-container__content {
 				min-height: auto;
-				@media (max-width: $break-mobile ) {
+				@media (max-width: $break-mobile) {
 					width: 100%;
 				}
 
 				.select-items__item {
 					.select-items__item-icon {
-						@media (min-width: $break-mobile ) {
+						@media (min-width: $break-mobile) {
 							top: 32px;
 						}
 					}
-					@media (min-width: $break-small ) {
+					@media (min-width: $break-small) {
 						width: 456px;
 					}
 					.select-items__item-info-wrapper {
@@ -109,7 +109,7 @@
 						}
 					}
 					button.select-items__item-button {
-						@media (max-width: $break-mobile ) {
+						@media (max-width: $break-mobile) {
 							width: 279px;
 						}
 					}
