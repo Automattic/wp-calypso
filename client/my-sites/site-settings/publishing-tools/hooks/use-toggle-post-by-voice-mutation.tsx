@@ -3,8 +3,8 @@ import wpcom from 'calypso/lib/wp';
 import {
 	getCachePostByVoiceKey,
 	getPostByVoicePath,
-	parsePostByVoiceResponse,
 } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-get-post-by-voice';
+import { convertSnakeCaseToCamelCase } from 'calypso/state/data-layer/convert-snake-case-to-camel-case';
 import type {
 	PostByVoice,
 	PostByVoiceResponse,
@@ -22,7 +22,7 @@ export const useTogglePostByVoiceMutation = ( siteId: number | null ) => {
 				apiNamespace: 'wpcom/v2',
 			} );
 
-			return parsePostByVoiceResponse( response );
+			return convertSnakeCaseToCamelCase( response );
 		},
 		onMutate: async ( value: boolean ) => {
 			await queryClient.cancelQueries( {
