@@ -1,11 +1,12 @@
 import { formatCurrency } from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	TermsOfServiceRecord,
 	TermsOfServiceRecordArgsRenewal,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import { EDIT_PAYMENT_DETAILS } from '@automattic/urls';
+import { hasTranslation } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -67,6 +68,7 @@ function MessageForTermsOfServiceRecordUnknown( {
 	currency: string;
 } ): ReactNode {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const args = termsOfServiceRecord.args;
 	if ( ! args ) {
 		return null;
@@ -111,6 +113,11 @@ function MessageForTermsOfServiceRecordUnknown( {
 				},
 			}
 		);
+		const isRenewalTermLengthTextTranslated =
+			isEnglishLocale ||
+			hasTranslation(
+				'After you renew today, your %(productName)s subscription will last until %(endDate)s.'
+			);
 		const renewalTermLengthText = translate(
 			'After you renew today, your %(productName)s subscription will last until %(endDate)s.',
 			{
@@ -202,7 +209,9 @@ function MessageForTermsOfServiceRecordUnknown( {
 		} )();
 
 		const shouldShowRenewalTermText =
-			args.is_renewal && args.remaining_promotional_auto_renewals === 0;
+			isRenewalTermLengthTextTranslated &&
+			args.is_renewal &&
+			args.remaining_promotional_auto_renewals === 0;
 
 		return (
 			<>
