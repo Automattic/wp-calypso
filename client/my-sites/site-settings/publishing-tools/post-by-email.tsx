@@ -107,12 +107,10 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	const isActive = siteIsJetpack
 		? jetpackPostByEmailIsActive
 		: simpleSitePostByEmailSettings?.isEnabled;
-	const isDisabledForBothFlows =
-		isFormPending ||
-		jetpackRegeneratingPostByEmail ||
-		isSimpleSitePendingRegenerate ||
-		! isActive ||
-		!! moduleUnavailable;
+	const isJetpackDisabled = isFormPending || moduleUnavailable;
+	const isSimpleSiteDisabled =
+		isFormPending || isSimpleSitePendingToggle || isSimpleSitePendingRegenerate;
+	const isDisabledControls = ! isActive || isJetpackDisabled || isSimpleSiteDisabled;
 	const toggleLabel = translate( 'Publish posts by sending an email' );
 
 	return (
@@ -134,12 +132,12 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 						siteId={ selectedSiteId }
 						moduleSlug="post-by-email"
 						label={ toggleLabel }
-						disabled={ isFormPending || moduleUnavailable }
+						disabled={ isJetpackDisabled }
 					/>
 				) : (
 					<ToggleControl
 						checked={ !! simpleSitePostByEmailSettings?.isEnabled }
-						disabled={ isFormPending || isSimpleSitePendingToggle || isSimpleSitePendingRegenerate }
+						disabled={ isSimpleSiteDisabled }
 						label={ toggleLabel }
 						onChange={ handleToggleForSimpleSite }
 					/>
@@ -148,17 +146,17 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 				<div className="publishing-tools__module-settings site-settings__child-settings">
 					<FormLabel
 						className={ clsx( {
-							'is-disabled': isDisabledForBothFlows,
+							'is-disabled': isDisabledControls,
 						} ) }
 					>
 						{ translate( 'Send your new posts to this email address:' ) }
 					</FormLabel>
 					<ClipboardButtonInput
 						className="publishing-tools__email-address"
-						disabled={ isDisabledForBothFlows }
+						disabled={ isDisabledControls }
 						value={ email }
 					/>
-					<Button onClick={ handleRegenerate } disabled={ isDisabledForBothFlows }>
+					<Button onClick={ handleRegenerate } disabled={ isDisabledControls }>
 						{ jetpackRegeneratingPostByEmail
 							? translate( 'Regenerating…' )
 							: translate( 'Regenerate address' ) }
