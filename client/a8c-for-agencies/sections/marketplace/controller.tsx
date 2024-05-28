@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
 import { A4A_MARKETPLACE_HOSTING_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -19,12 +18,10 @@ export const marketplaceContext: Callback = () => {
 
 export const marketplaceProductsContext: Callback = ( context, next ) => {
 	const { site_id, product_slug, purchase_type } = context.query;
-	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
 	const productBrand = context.params.brand;
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	const purchaseType =
-		isAutomatedReferrals && purchase_type === 'referral' ? 'referral' : 'regular';
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Products" path={ context.path } />
@@ -40,33 +37,40 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 };
 
 export const marketplaceHostingContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			<HostingOverview />
+			<HostingOverview defaultMarketplaceType={ purchaseType } />
 		</>
 	);
 	next();
 };
 
 export const marketplacePressableContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting > Pressable" path={ context.path } />
-			<PressableOverview />
+			<PressableOverview defaultMarketplaceType={ purchaseType } />
 		</>
 	);
 	next();
 };
 
 export const marketplaceWpcomContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting > WordPress.com" path={ context.path } />
-			<WpcomOverview />
+			<WpcomOverview defaultMarketplaceType={ purchaseType } />
 		</>
 	);
 	next();
