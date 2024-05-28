@@ -187,9 +187,21 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 				section: sectionName,
 			} );
 
+			let message = '';
+			const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
+			const escapedSiteUrl = encodeURIComponent( currentSite?.URL || '' );
+
+			if ( wapuuChatId ) {
+				message += `Support request started with <strong>Wapuu</strong><br />Wapuu Chat: <a href="https://mc.a8c.com/odie/odie-chat.php?chat_id=${ escapedWapuuChatId }">${ escapedWapuuChatId }</a><br />`;
+			}
+
+			if ( currentSite?.URL ) {
+				message += `Site: ${ escapedSiteUrl }<br />`;
+			}
+
 			openChatWidget( {
-				aiChatId: wapuuChatId,
-				message: `Support request started with <strong>Wapuu</strong><br>Site: ${ currentSite?.URL }<br />Wapuu Chat: <a href="https://mc.a8c.com/odie/odie-chat.php?chat_id=${ wapuuChatId }">${ wapuuChatId }</a>`,
+				aiChatId: escapedWapuuChatId,
+				message: message,
 				siteUrl: currentSite?.URL,
 				onError: () => setHasSubmittingError( true ),
 				// Reset Odie chat after passing to support
