@@ -23,6 +23,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
+import { isContextSourceMyJetpack } from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getImmediateLoginEmail,
@@ -149,8 +150,9 @@ export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
 	const isLoggedIn = isUserLoggedIn( state );
 
-	// If the user is logged in - or logged out but coming from My Jetpack - continue
-	if ( isLoggedIn || ( ! isLoggedIn && context.query?.source === 'my-jetpack' ) ) {
+	// we don't need to redirect users coming from my-jetpack that are not logged in
+	// see pbNhbs-ag3-p2
+	if ( isLoggedIn || ( ! isLoggedIn && isContextSourceMyJetpack( context ) ) ) {
 		next();
 		return;
 	}

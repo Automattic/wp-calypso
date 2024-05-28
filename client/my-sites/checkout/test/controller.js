@@ -15,7 +15,15 @@ import { checkout, redirectJetpackLegacyPlans } from '../controller';
 import * as utils from '../utils';
 
 jest.mock( '@automattic/calypso-router' );
-jest.mock( '../utils' );
+jest.mock( '../utils', () => {
+	const originalModule = jest.requireActual( '../utils' );
+
+	return {
+		__esModule: true,
+		...originalModule,
+		getProductSlugFromContext: jest.fn(),
+	};
+} );
 
 const mockStore = configureStore();
 

@@ -50,7 +50,11 @@ import UpsellNudge, {
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
-import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
+import {
+	getProductSlugFromContext,
+	isContextJetpackSitelessCheckout,
+	isContextSourceMyJetpack,
+} from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -162,9 +166,11 @@ export function checkout( context, next ) {
 		if ( isJetpackCheckout ) {
 			return true;
 		}
-		if ( context.query.source === 'my-jetpack' ) {
+
+		if ( isContextSourceMyJetpack( context ) ) {
 			return true;
 		}
+
 		if ( isGiftPurchase ) {
 			return true;
 		}
