@@ -104,17 +104,38 @@ describe( 'checkout', () => {
 		next.mockRestore();
 	} );
 
-	it( 'should redirect to siteless checkout if user is not logged in', () => {
+	it( 'should redirect checkout with site id to siteless checkout if user is not logged in', () => {
 		const redirectUrl = addQueryArgs(
 			{
 				connect_after_checkout: true,
 				from_site_slug: context.query.site,
 				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
 			},
-			context.path.replace( /checkout\/\d+\//, 'checkout/jetpack/' )
+			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
 		);
 
 		checkout( context, next );
+
+		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'should redirect checkout with site slug to siteless checkout if user is not logged in', () => {
+		const contextWithSiteSlug = {
+			...context,
+			path: addQueryArgs( query, `/checkout/example.com/jetpack_backup_t1_yearly` ),
+			pathname: '/checkout/example.com/jetpack_backup_t1_yearly',
+		};
+		const redirectUrl = addQueryArgs(
+			{
+				connect_after_checkout: true,
+				from_site_slug: context.query.site,
+				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
+			},
+			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
+		);
+
+		checkout( contextWithSiteSlug, next );
 
 		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
 		expect( next ).toHaveBeenCalled();

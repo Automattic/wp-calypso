@@ -191,7 +191,7 @@ export function checkout( context, next ) {
 				from_site_slug: context.query.site,
 				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
 			},
-			context.path.replace( /checkout\/\d+\//, 'checkout/jetpack/' )
+			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
 		);
 		page( redirectUrl );
 	}
