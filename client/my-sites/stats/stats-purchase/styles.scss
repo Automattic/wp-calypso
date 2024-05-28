@@ -545,27 +545,15 @@ $button-padding: 8px 32px;
 		line-height: 40px;
 		margin-bottom: 24px;
 	}
-
-	.components-button + button.components-button {
-		margin-left: 12px;
-	}
 }
 
 .stats-purchase-wizard__actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 12px;
 
-	margin: 12px 0;
-
-	.components-button + button.components-button {
-		margin: 0;
-	}
-
-	button {
-		@media (max-width: $break-small) {
+	.components-button {
+		&.is-full-width {
+			display: block;
 			width: 100%;
-			justify-content: center;
+			margin-bottom: 12px;
 		}
 	}
 }

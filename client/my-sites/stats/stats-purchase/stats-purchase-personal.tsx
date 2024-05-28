@@ -272,7 +272,7 @@ const PersonalPurchase = ( {
 			) : (
 				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
 					<ButtonComponent
-						className="stats-purchase-page__full-width"
+						className="is-full-width"
 						variant="primary"
 						primary={ isWPCOMSite ? true : undefined }
 						onClick={ handleCheckoutRedirect }
@@ -282,7 +282,7 @@ const PersonalPurchase = ( {
 
 					{ isNewPurchaseFlowEnabled && (
 						<ButtonComponent
-							className="stats-purchase-page__full-width"
+							className="is-full-width"
 							variant="secondary"
 							isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
 							busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />
