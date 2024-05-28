@@ -10,6 +10,7 @@ type SegmentationSurveyNavigationProps = {
 	surveyKey: string;
 	questions?: Question[];
 	answers: Answers;
+	skipNextNavigation?: ( currentQuestionKey: string, answers: string[] ) => boolean;
 };
 
 const useSegmentationSurveyNavigation = ( {
@@ -19,6 +20,7 @@ const useSegmentationSurveyNavigation = ( {
 	surveyKey,
 	questions,
 	answers,
+	skipNextNavigation,
 }: SegmentationSurveyNavigationProps ) => {
 	const { recordBackEvent, recordContinueEvent, recordSkipEvent } =
 		useSegmentationSurveyTracksEvents( surveyKey );
@@ -79,6 +81,11 @@ const useSegmentationSurveyNavigation = ( {
 		recordContinueEvent( currentQuestion, answers );
 
 		await onContinue?.( currentQuestion );
+
+		if ( skipNextNavigation?.( currentQuestion.key, answers?.[ currentQuestion.key ] ) ) {
+			return;
+		}
+
 		nextPage();
 	}, [ answers, currentQuestion, nextPage, onContinue, recordContinueEvent, skipToNextPage ] );
 
