@@ -129,7 +129,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		while ( ! stopPollingSiteFeatures ) {
 			await wait( 1000 );
 			const siteFeatures = await reduxDispatch( fetchSiteFeatures( siteId ) );
-			stopPollingSiteFeatures = siteFeatures.active.indexOf( feature ) >= 0;
+			stopPollingSiteFeatures = siteFeatures?.active?.indexOf( feature ) >= 0;
 		}
 	};
 

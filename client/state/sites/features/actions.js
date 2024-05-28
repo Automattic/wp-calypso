@@ -14,11 +14,6 @@ import { createSiteFeaturesObject } from './assembler';
 
 const debug = debugFactory( 'calypso:site-features:actions' );
 
-export const requestSiteFeatures = ( siteId ) =>
-	wpcom.req
-		.get( `/sites/${ siteId }/features` )
-		.then( ( data ) => createSiteFeaturesObject( data ) );
-
 /**
  * Fetches features for the given site.
  * @param {number} siteId identifier of the site
@@ -31,7 +26,8 @@ export function fetchSiteFeatures( siteId ) {
 			siteId,
 		} );
 
-		return requestSiteFeatures( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/features` )
 			.then( ( features ) => {
 				dispatch( fetchSiteFeaturesCompleted( siteId, features ) );
 				return features;
@@ -103,6 +99,6 @@ export function fetchSiteFeaturesCompleted( siteId, features ) {
 	return {
 		type: SITE_FEATURES_FETCH_COMPLETED,
 		siteId,
-		features,
+		features: createSiteFeaturesObject( features ),
 	};
 }
