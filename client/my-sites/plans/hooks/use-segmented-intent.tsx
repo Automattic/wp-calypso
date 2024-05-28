@@ -22,7 +22,11 @@ export function useSegmentedIntent(
 	const surveyedGoals = data?.[ blogId ]?.[ 'what-are-your-goals' ];
 	const surveyedIntent = data?.[ blogId ]?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
-	if ( ! enabled || ! surveyedIntent || ! surveyedGoals ) {
+	if ( ! enabled ) {
+		return { segment: fallback, isFetchingSegment: false };
+	}
+
+	if ( ! surveyedIntent || ! surveyedGoals ) {
 		return { segment: fallback, isFetchingSegment: isFetching };
 	}
 
