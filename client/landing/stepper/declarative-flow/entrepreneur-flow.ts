@@ -49,7 +49,7 @@ const entrepreneurFlow: Flow = {
 
 		const locale = useFlowLocale();
 		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
-		const [ lastQuestionPath, setlastQuestionPath ] = useState( '#2' );
+		const [ lastQuestionPath, setlastQuestionPath ] = useState( '#1' );
 		const { clearAnswers } = useCachedAnswers( ENTREPRENEUR_TRIAL_SURVEY_KEY );
 
 		const getEntrepreneurLoginUrl = () => {
@@ -66,7 +66,7 @@ const entrepreneurFlow: Flow = {
 
 		const goBack = () => {
 			if ( currentStep === STEPS.TRIAL_ACKNOWLEDGE.slug ) {
-				navigate( SEGMENTATION_SURVEY_SLUG + ( isMigrationFlow ? '#1' : lastQuestionPath ) );
+				navigate( SEGMENTATION_SURVEY_SLUG + lastQuestionPath );
 			}
 		};
 
