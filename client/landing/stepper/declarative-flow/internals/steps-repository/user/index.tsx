@@ -1,16 +1,15 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { useRef } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
-import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
 import { useSelector } from 'calypso/state';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Step } from '../../types';
 
@@ -22,25 +21,15 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const isStepSubmittedOnce = useRef( false );
+
+	useEffect( () => {
+		if ( ! isLoggedIn ) {
+			dispatch( fetchCurrentUser() as unknown as AnyAction );
+		}
+	}, [ dispatch, isLoggedIn ] );
 
 	if ( isLoggedIn ) {
-		if ( isStepSubmittedOnce.current ) {
-			return (
-				<ContinueAsUser
-					onContinue={ () => submit?.() }
-					onChangeAccount={ () => {
-						dispatch( redirectToLogout( window.location.href ) as unknown as AnyAction );
-					} }
-					isSignUpFlow
-					isWooOAuth2Client={ false }
-				/>
-			);
-		}
-		isStepSubmittedOnce.current = true;
 		submit?.();
-	} else {
-		isStepSubmittedOnce.current = false;
 	}
 
 	return (
@@ -50,12 +39,14 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 				step={ {} }
 				stepName={ stepName }
 				flowName={ flow }
-				goToNextStep={ () => submit?.() }
+				goToNextStep={ () => {
+					dispatch( fetchCurrentUser() as unknown as AnyAction );
+					submit?.();
+				} }
 				logInUrl={ login( {
 					signupUrl: window.location.pathname + window.location.search,
 				} ) }
 				handleSocialResponse={ () => {
-					isStepSubmittedOnce.current = true;
 					submit?.();
 				} }
 				socialService={ socialService ?? '' }
