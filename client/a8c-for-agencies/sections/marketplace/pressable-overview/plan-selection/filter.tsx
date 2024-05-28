@@ -7,7 +7,6 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { FILTER_TYPE_INSTALL, FILTER_TYPE_VISITS } from '../constants';
-import useExistingPressablePlan from '../hooks/use-existing-pressable-plan';
 import getPressablePlan from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
 import { FilterType } from '../types';
@@ -15,18 +14,22 @@ import { FilterType } from '../types';
 type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	plans: APIProductFamilyProduct[];
+	existingPlan?: APIProductFamilyProduct | null;
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
+	isLoading?: boolean;
 };
 
-export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan }: Props ) {
+export default function PlanSelectionFilter( {
+	selectedPlan,
+	plans,
+	onSelectPlan,
+	existingPlan,
+	isLoading,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
-
-	const { existingPlan } = useExistingPressablePlan( {
-		plans,
-	} );
 
 	const options = useMemo(
 		() => [
@@ -85,6 +88,15 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 	const minimum = existingPlan
 		? options.findIndex( ( { value } ) => value === existingPlan.slug ) + 1
 		: 0;
+
+	if ( isLoading ) {
+		return (
+			<div className="pressable-overview-plan-selection__filter is-placeholder">
+				<div className="pressable-overview-plan-selection__filter-type"></div>
+				<div className="pressable-overview-plan-selection__filter-slider"></div>
+			</div>
+		);
+	}
 
 	return (
 		<section className={ wrapperClass }>

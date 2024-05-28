@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function useExistingPressablePlan( { plans }: Props ) {
-	const { data, isSuccess: isReady, isFetching } = useFetchLicenseCounts();
+	const { data, isSuccess: isReady } = useFetchLicenseCounts();
 
 	return useMemo( () => {
 		const pressablePlans = Object.keys( data?.products ?? {} ).filter( ( slug ) =>
@@ -21,7 +21,6 @@ export default function useExistingPressablePlan( { plans }: Props ) {
 		return {
 			existingPlan: plans.find( ( plan ) => plan.slug === existingPlan ) ?? null,
 			isReady,
-			isFetching,
 		};
-	}, [ data?.products, isReady, isFetching, plans ] );
+	}, [ data?.products, isReady, plans ] );
 }
