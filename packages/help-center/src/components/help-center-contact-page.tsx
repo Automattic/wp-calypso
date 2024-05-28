@@ -4,10 +4,11 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice, FormInputValidation } from '@automattic/components';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import { useGetOdieStorage } from '@automattic/odie-client';
+import { useGetOdieStorage, useSetOdieStorage } from '@automattic/odie-client';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
@@ -32,6 +33,7 @@ import {
 import { Mail } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
+import type { HelpCenterSite } from '@automattic/data-stores';
 
 type ContactOption = 'chat' | 'email';
 const generateContactOnClickEvent = (
@@ -84,13 +86,14 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	);
 
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
-
+	const sectionName = useSelector( getSectionName );
 	const currentSite = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.getSite();
 	}, [] );
 
 	const wapuuChatId = useGetOdieStorage( 'chat_id' );
+	const setWapuuChatId = useSetOdieStorage( 'chat_id' );
 
 	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
@@ -169,20 +172,46 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	};
 
 	const renderChatOption = () => {
+		const productSlug = ( currentSite as HelpCenterSite )?.plan?.product_slug;
+		const plan = getPlan( productSlug );
+		const productId = plan?.getProductId();
+
+		const handleOnClick = () => {
+			contactOptionsEventMap.chat();
+
+			recordTracksEvent( 'calypso_help_live_chat_begin', {
+				site_plan_product_id: productId,
+				is_automated_transfer: currentSite?.is_wpcom_atomic,
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+			} );
+
+			let message = '';
+			const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
+			const escapedSiteUrl = encodeURIComponent( currentSite?.URL || '' );
+
+			if ( wapuuChatId ) {
+				message += `Support request started with <strong>Wapuu</strong><br />Wapuu Chat: <a href="https://mc.a8c.com/odie/odie-chat.php?chat_id=${ escapedWapuuChatId }">${ escapedWapuuChatId }</a><br />`;
+			}
+
+			if ( currentSite?.URL ) {
+				message += `Site: ${ escapedSiteUrl }<br />`;
+			}
+
+			openChatWidget( {
+				aiChatId: escapedWapuuChatId,
+				message: message,
+				siteUrl: escapedSiteUrl,
+				onError: () => setHasSubmittingError( true ),
+				// Reset Odie chat after passing to support
+				onSuccess: () => setWapuuChatId( null ),
+			} );
+		};
+
 		return (
 			<div>
-				<button
-					disabled={ isOpeningChatWidget }
-					onClick={ () => {
-						contactOptionsEventMap.chat();
-						openChatWidget( {
-							aiChatId: wapuuChatId,
-							message: '',
-							siteUrl: currentSite?.URL,
-							onError: () => setHasSubmittingError( true ),
-						} );
-					} }
-				>
+				<button disabled={ isOpeningChatWidget } onClick={ handleOnClick }>
 					<div className="help-center-contact-page__box chat" role="button" tabIndex={ 0 }>
 						<div className="help-center-contact-page__box-icon">
 							<Icon icon={ comment } />
