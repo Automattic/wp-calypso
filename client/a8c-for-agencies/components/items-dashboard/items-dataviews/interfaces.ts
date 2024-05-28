@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 export interface ItemsDataViewsType< T > {
 	items: T[] | undefined;
 	pagination: DataViewsPaginationInfo;
+	search?: boolean;
 	searchLabel?: string;
 	fields: DataViewsColumn[];
 	actions?: DataViewsAction[];
