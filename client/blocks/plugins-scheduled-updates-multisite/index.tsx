@@ -1,7 +1,7 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { MainLayout } from 'calypso/a8c-for-agencies/components/layout';
+import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import { useLoadScheduleFromId } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-load-schedule-from-id';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -47,7 +47,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 
 	return (
 		<MultisitePluginUpdateManagerContextProvider>
-			<MainLayout title={ title } wide>
+			<Layout title={ title } wide disableGuidedTour>
 				{ context === 'create' || context === 'edit' ? (
 					<LayoutColumn className="scheduled-updates-list-compact">
 						<ScheduleList
@@ -81,7 +81,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 						}
 					} )() }
 				</LayoutColumn>
-			</MainLayout>
+			</Layout>
 		</MultisitePluginUpdateManagerContextProvider>
 	);
 };

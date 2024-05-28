@@ -22,7 +22,7 @@ type Props = {
 	compact?: boolean;
 };
 
-export function MainLayout( {
+function MainLayout( {
 	children,
 	className,
 	title,
@@ -55,8 +55,15 @@ export function MainLayout( {
 	);
 }
 
-export default function Layout( props: Props ) {
+export default function Layout( {
+	disableGuidedTour = false,
+	...props
+}: Props & { disableGuidedTour?: boolean } ) {
 	const guidedTours = useGuidedTours();
+
+	if ( disableGuidedTour ) {
+		return <MainLayout { ...props } />;
+	}
 
 	return (
 		<GuidedTourContextProvider
