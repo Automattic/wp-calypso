@@ -32,7 +32,6 @@ export default function useDefaultStorageOption( {
 	);
 
 	return (
-		matchingAddOn?.slug ||
-		storageOptions?.find( ( storageOption ) => ! storageOption.isAddOn )?.slug
+		matchingAddOn?.slug || storageOptions.find( ( storageOption ) => ! storageOption.isAddOn )?.slug
 	);
 }

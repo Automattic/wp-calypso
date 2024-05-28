@@ -101,12 +101,13 @@ export const StorageAddOnDropdown = ( {
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 
 	useEffect( () => {
-		if ( storageAddOns && defaultStorageOption && ! selectedStorageOptionForPlan ) {
-			setSelectedStorageOptionForPlan( {
-				addOnSlug: defaultStorageOption,
-				planSlug,
-				siteId,
-			} );
+		if ( ! selectedStorageOptionForPlan ) {
+			defaultStorageOption &&
+				setSelectedStorageOptionForPlan( {
+					addOnSlug: defaultStorageOption,
+					planSlug,
+					siteId,
+				} );
 		}
 	}, [] );
 
@@ -123,18 +124,15 @@ export const StorageAddOnDropdown = ( {
 		};
 	} );
 
-	const selectedOptionKey = selectedStorageOptionForPlan
-		? selectedStorageOptionForPlan
-		: defaultStorageOption;
-	const selectedOptionPrice = getStorageOptionPrice( storageAddOns, selectedOptionKey );
+	const selectedOptionPrice = getStorageOptionPrice( storageAddOns, selectedStorageOptionForPlan );
 
 	const selectedOption = {
-		key: selectedOptionKey,
+		key: selectedStorageOptionForPlan,
 		name: (
 			<StorageAddOnOption
 				planSlug={ planSlug }
 				price={ selectedOptionPrice }
-				storageFeature={ selectedOptionKey }
+				storageFeature={ selectedStorageOptionForPlan }
 				isLargeCurrency={ isLargeCurrency }
 				priceOnSeparateLine={ priceOnSeparateLine }
 			/>
