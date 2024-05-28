@@ -1439,6 +1439,8 @@ export class RenderDomainsStep extends Component {
 		} else if ( isWithThemeFlow( flowName ) ) {
 			backUrl = '/themes';
 			backLabelText = translate( 'Back to themes' );
+		} else if ( 'plans-first' === flowName ) {
+			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
