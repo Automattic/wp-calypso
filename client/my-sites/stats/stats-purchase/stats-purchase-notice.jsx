@@ -23,7 +23,7 @@ const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked' );
 
 	trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
-		type: 'summary_screen',
+		type: 'summary-screen',
 	} );
 
 	setTimeout( () => page( upgradeUrl ), 250 );

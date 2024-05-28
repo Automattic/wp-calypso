@@ -45,7 +45,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 			: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_support_button_clicked' );
 
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
-			type: 'notice',
+			type: 'notice-commercial',
 		} );
 
 		// Allow some time for the event to be recorded before redirecting.
