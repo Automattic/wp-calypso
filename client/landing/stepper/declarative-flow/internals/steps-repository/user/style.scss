@@ -1,5 +1,8 @@
 @import "calypso/signup/style.scss";
-
+body.is-section-stepper .step-route {
+	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
+}
 
 .step-container.user {
 	display: flex;
