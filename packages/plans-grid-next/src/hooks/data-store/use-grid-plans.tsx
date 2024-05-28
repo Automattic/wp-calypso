@@ -131,6 +131,7 @@ const usePlanTypesWithIntent = ( {
 		case 'plans-segment-merchant':
 		case 'plans-segment-developer-or-agency':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ];
+			break;
 		case 'plans-segment-blogger':
 		case 'plans-segment-nonprofit':
 			planTypes = [
@@ -141,8 +142,10 @@ const usePlanTypesWithIntent = ( {
 				TYPE_ECOMMERCE,
 				TYPE_ENTERPRISE_GRID_WPCOM,
 			];
+			break;
 		case 'plans-segment-consumer-or-business':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			break;
 		/* END: Guided signup intents. END */
 		case 'plans-woocommerce':
 			planTypes = [ TYPE_WOOEXPRESS_SMALL, TYPE_WOOEXPRESS_MEDIUM ];

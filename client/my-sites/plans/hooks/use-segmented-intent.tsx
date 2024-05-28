@@ -17,39 +17,39 @@ export function useSegmentedIntent(
 		enabled,
 	} );
 
-	const goals = data?.[ 'what-are-your-goals' ];
+	const surveyedGoals = data?.[ 'what-are-your-goals' ];
 	const surveyedIntent = data?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
-	if ( ! enabled || ! surveyedIntent || ! goals ) {
+	if ( ! enabled || ! surveyedIntent || ! surveyedGoals ) {
 		return fallback;
 	}
 
 	// Return default wpcom plans for migration flow.
-	if ( surveyedIntent === 'migrate-or-import-site' && goals.includes( 'skip' ) ) {
+	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals.includes( 'skip' ) ) {
 		return fallback;
 	}
 
-	if ( surveyedIntent === 'client' && goals.includes( 'skip' ) ) {
+	if ( surveyedIntent === 'client' && surveyedGoals.includes( 'skip' ) ) {
 		return 'plans-segment-developer-or-agency';
 	}
 
 	// Handle different cases when intent is 'Create for self'
 	if ( surveyedIntent === 'myself-business-or-friend' ) {
 		if (
-			goals.length === 0 ||
-			goals.includes( 'skip' ) ||
-			goals.includes( 'newsletter' ) ||
-			goals.includes( 'difm' )
+			surveyedGoals.length === 0 ||
+			surveyedGoals.includes( 'skip' ) ||
+			surveyedGoals.includes( 'newsletter' ) ||
+			surveyedGoals.includes( 'difm' )
 		) {
 			return fallback;
 		}
-		if ( goals.includes( 'sell' ) && ! goals.includes( 'difm' ) ) {
+		if ( surveyedGoals.includes( 'sell' ) && ! surveyedGoals.includes( 'difm' ) ) {
 			return 'plans-segment-merchant';
 		}
-		if ( goals.includes( 'blog' ) ) {
+		if ( surveyedGoals.includes( 'blog' ) ) {
 			return 'plans-segment-blogger';
 		}
-		if ( goals.includes( 'educational-or-nonprofit' ) ) {
+		if ( surveyedGoals.includes( 'educational-or-nonprofit' ) ) {
 			return 'plans-segment-nonprofit';
 		}
 		// Catch-all case for when none of the specific goals are met
