@@ -6,6 +6,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { PostByEmailSetting } from 'calypso/my-sites/site-settings/publishing-tools/post-by-email';
+import { PostByVoiceSetting } from 'calypso/my-sites/site-settings/publishing-tools/post-by-voice';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -16,8 +18,6 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PressThis from '../press-this';
-import { PostByEmailSetting } from './post-by-email';
-import { PostByVoiceSetting } from './post-by-voice';
 
 import './style.scss';
 
@@ -111,8 +111,8 @@ class PublishingTools extends Component {
 			<div>
 				<SettingsSectionHeader title={ translate( 'Publishing Tools' ) } />
 
-				{ renderPostByVoice && this.renderPostByVoiceModule() }
 				{ this.renderPostByEmailModule() }
+				{ renderPostByVoice && this.renderPostByVoiceModule() }
 				{ renderPressThis && this.renderPressThisModule() }
 			</div>
 		);

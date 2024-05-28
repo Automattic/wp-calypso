@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import {
-	getCachePostByEmailKey,
+	getPostByEmailKeyQueryKey,
 	getPostByEmailPath,
 	parsePostByEmailResponse,
 } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-get-post-by-email';
@@ -12,7 +12,7 @@ import type {
 
 export const useTogglePostByEmailMutation = ( siteId: number | null ) => {
 	const queryClient = useQueryClient();
-	const queryKey = getCachePostByEmailKey( siteId );
+	const queryKey = getPostByEmailKeyQueryKey( siteId );
 
 	return useMutation( {
 		mutationFn: async ( shouldEnable: boolean ) => {

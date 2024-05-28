@@ -7,7 +7,7 @@ import type {
 
 export const getPostByEmailPath = ( siteId: number | null ) => `/sites/${ siteId }/post-by-email`;
 
-export const getCachePostByEmailKey = ( siteId: number | null ) => [
+export const getPostByEmailKeyQueryKey = ( siteId: number | null ) => [
 	'sites',
 	siteId,
 	'post-by-email',
@@ -20,7 +20,7 @@ export const parsePostByEmailResponse = ( data: PostByEmailResponse ): PostByEma
 
 export const useGetPostByEmail = ( siteId: number | null ) => {
 	return useQuery< PostByEmail >( {
-		queryKey: getCachePostByEmailKey( siteId ),
+		queryKey: getPostByEmailKeyQueryKey( siteId ),
 		queryFn: async () => {
 			const response: PostByEmailResponse = await wpcom.req.get( {
 				path: getPostByEmailPath( siteId ),

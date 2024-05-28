@@ -49,6 +49,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 		isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, moduleSlug )
 	);
 	const moduleUnavailable = siteInDevMode && moduleUnavailableInDevMode;
+
 	const { data: simpleSitePostByEmailSettings } = useGetPostByEmail( selectedSiteId );
 	const { mutate: simpleSiteTogglePostByEmail, isPending: isSimpleSitePendingToggle } =
 		useTogglePostByEmailMutation( selectedSiteId );
@@ -112,6 +113,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 		isSimpleSitePendingRegenerate ||
 		! isActive ||
 		!! moduleUnavailable;
+	const toggleLabel = translate( 'Publish posts by sending an email' );
 
 	return (
 		<>
@@ -131,14 +133,14 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }
 						moduleSlug="post-by-email"
-						label={ translate( 'Publish posts by sending an email' ) }
+						label={ toggleLabel }
 						disabled={ isFormPending || moduleUnavailable }
 					/>
 				) : (
 					<ToggleControl
 						checked={ !! simpleSitePostByEmailSettings?.isEnabled }
 						disabled={ isFormPending || isSimpleSitePendingToggle || isSimpleSitePendingRegenerate }
-						label={ translate( 'Post by Email' ) }
+						label={ toggleLabel }
 						onChange={ handleToggleForSimpleSite }
 					/>
 				) }
