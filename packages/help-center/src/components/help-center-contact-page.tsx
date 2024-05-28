@@ -202,7 +202,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 			openChatWidget( {
 				aiChatId: escapedWapuuChatId,
 				message: message,
-				siteUrl: currentSite?.URL,
+				siteUrl: escapedSiteUrl,
 				onError: () => setHasSubmittingError( true ),
 				// Reset Odie chat after passing to support
 				onSuccess: () => setWapuuChatId( null ),
