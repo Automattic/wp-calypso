@@ -19,6 +19,7 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -203,8 +204,15 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
-			this.props;
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			translate,
+			hasInitializedSitesBackUrl,
+			steps,
+			userSiteCount,
+		} = this.props;
 
 		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
@@ -213,10 +221,13 @@ export class PlansStep extends Component {
 
 		let backUrl;
 		let backLabelText;
+		let hideBack = false;
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
 			backLabelText = translate( 'Back to sites' );
+			// Hide the back button if the user has no sites or is logged out.
+			hideBack = ! userSiteCount;
 		}
 
 		let queryParams;
@@ -249,6 +260,7 @@ export class PlansStep extends Component {
 		return (
 			<>
 				<StepWrapper
+					hideBack={ hideBack }
 					flowName={ flowName }
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
@@ -335,6 +347,7 @@ export default connect(
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+		userSiteCount: getCurrentUserSiteCount( state ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );
