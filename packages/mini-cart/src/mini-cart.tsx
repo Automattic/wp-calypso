@@ -81,13 +81,14 @@ const HiddenText = styled.span`
 const TaxNotCalculatedLineItemWrapper = styled.div`
 	font-size: 12px;
 	text-wrap: pretty;
+	line-height: 1em;
 `;
 
 function TaxNotCalculatedLineItem() {
 	const { __ } = useI18n();
 	return (
 		<TaxNotCalculatedLineItemWrapper>
-			{ __( 'Taxes may be added once billing information is provided' ) }
+			{ __( 'Tax: to be calculated' ) }
 		</TaxNotCalculatedLineItemWrapper>
 	);
 }
