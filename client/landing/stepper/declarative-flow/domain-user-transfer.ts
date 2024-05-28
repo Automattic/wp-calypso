@@ -17,7 +17,10 @@ import DomainContactInfo from './internals/steps-repository/domain-contact-info'
 
 const domainUserTransfer: Flow = {
 	name: 'domain-user-transfer',
-	isSignupFlow: false,
+	trackingConfig: {
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
+	},
 	useSteps() {
 		return [ { slug: 'domain-contact-info', component: DomainContactInfo } ];
 	},

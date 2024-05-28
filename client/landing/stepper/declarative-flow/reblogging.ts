@@ -20,7 +20,10 @@ const reblogging: Flow = {
 	get title() {
 		return translate( 'Reblogging' );
 	},
-	isSignupFlow: true,
+	trackingConfig: {
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
+	},
 	useSteps() {
 		return [
 			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },

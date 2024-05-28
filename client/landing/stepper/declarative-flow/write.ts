@@ -26,7 +26,10 @@ const write: Flow = {
 	get title() {
 		return translate( 'Write' );
 	},
-	isSignupFlow: false,
+	trackingConfig: {
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
+	},
 	useSteps() {
 		return [
 			{ slug: 'launchpad', component: LaunchPad },

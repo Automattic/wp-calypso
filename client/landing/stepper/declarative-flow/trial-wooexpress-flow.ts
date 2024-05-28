@@ -19,7 +19,10 @@ import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-sto
 
 const wooexpress: Flow = {
 	name: 'wooexpress',
-	isSignupFlow: true,
+	trackingConfig: {
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
+	},
 
 	useSteps() {
 		return [

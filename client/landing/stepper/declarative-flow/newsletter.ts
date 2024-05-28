@@ -26,7 +26,10 @@ const newsletter: Flow = {
 	get title() {
 		return translate( 'Newsletter' );
 	},
-	isSignupFlow: true,
+	trackingConfig: {
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
+	},
 	useSteps() {
 		const query = useQuery();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';

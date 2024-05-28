@@ -94,6 +94,30 @@ export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 	navigate: Navigate< FlowSteps >
 ) => void;
 
+// Tracking Config
+type TrackingConfig = {
+	/**
+	 * Should signup start be tracked at the start of the flow, Provide wnnnCan provide either a boolean or callback that resolves to a boolean.
+	 * The callback will inject some key parameters.
+	 */
+	useIsSignupStartTracked: () => boolean;
+
+	/**
+	 * Should signup complete be tracked at the end of the flow
+	 */
+	useIsSignupCompleteTracked: () => boolean;
+
+	/**
+	 * Supply additional event props to the `calypso_signup_start` event
+	 */
+	useSignupStartEventProps?: () => Record< string, string | number >;
+
+	/**
+	 * Supply additional event props to the `calypso_signup_complete` event
+	 */
+	useSignupCompleteEventProps?: () => Record< string, string | number >;
+};
+
 export type Flow = {
 	name: string;
 	/**
@@ -102,11 +126,6 @@ export type Flow = {
 	variantSlug?: string;
 	title?: string;
 	classnames?: string | [ string ];
-	/**
-	 * Required flag to indicate if the flow is a signup flow.
-	 */
-	isSignupFlow: boolean;
-	useSignupStartEventProps?: () => Record< string, string | number >;
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;
@@ -114,6 +133,7 @@ export type Flow = {
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
+	trackingConfig?: TrackingConfig;
 };
 
 export type StepProps = {

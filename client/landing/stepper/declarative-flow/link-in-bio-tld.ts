@@ -30,7 +30,10 @@ const linkInBio: Flow = {
 	get title() {
 		return translate( 'Link in Bio' );
 	},
-	isSignupFlow: true,
+	trackingConfig: {
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
+	},
 	useSteps() {
 		return [
 			{ slug: 'domains', component: DomainsStep },

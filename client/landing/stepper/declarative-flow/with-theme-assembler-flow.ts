@@ -18,7 +18,10 @@ const SiteIntent = Onboard.SiteIntent;
 
 const withThemeAssemblerFlow: Flow = {
 	name: WITH_THEME_ASSEMBLER_FLOW,
-	isSignupFlow: false,
+	trackingConfig: {
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
+	},
 	useSideEffect() {
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),

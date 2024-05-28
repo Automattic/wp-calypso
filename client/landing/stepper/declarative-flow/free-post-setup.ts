@@ -11,7 +11,10 @@ const freePostSetup: Flow = {
 	get title() {
 		return translate( 'Free' );
 	},
-	isSignupFlow: false,
+	trackingConfig: {
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
+	},
 	useSteps() {
 		return [ STEPS.FREE_POST_SETUP ];
 	},

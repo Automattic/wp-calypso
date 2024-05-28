@@ -47,14 +47,17 @@ function getPlanFromRecurType( recurType: string ) {
 
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
-	isSignupFlow: true,
-	useSignupStartEventProps() {
-		const recur = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
-			[]
-		);
+	trackingConfig: {
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
+		useSignupStartEventProps() {
+			const recur = useSelect(
+				( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+				[]
+			);
 
-		return { recur };
+			return { recur };
+		},
 	},
 	useSteps() {
 		return [

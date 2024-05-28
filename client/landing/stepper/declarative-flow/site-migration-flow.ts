@@ -24,7 +24,10 @@ const FLOW_NAME = 'site-migration';
 
 const siteMigration: Flow = {
 	name: FLOW_NAME,
-	isSignupFlow: false,
+	trackingConfig: {
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
+	},
 
 	useSteps() {
 		const baseSteps = [

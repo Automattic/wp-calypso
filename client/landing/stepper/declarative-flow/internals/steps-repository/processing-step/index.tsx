@@ -25,7 +25,7 @@ import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
-import type { StepProps } from '../../types';
+import type { Flow, StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 interface ProcessingStepProps extends StepProps {
@@ -43,6 +43,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
 	const [ destinationState, setDestinationState ] = useState( {} );
+	const [ flowDefinition, setFlowDefinition ] = useState< Flow >();
 
 	const recordSignupComplete = useRecordSignupComplete( flow );
 
@@ -73,6 +74,12 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const captureFlowException = useCaptureFlowException( props.flow, 'ProcessingStep' );
 
 	useEffect( () => {
+		availableFlows[ flow ]().then( ( flowExport ) => {
+			setFlowDefinition( flowExport.default );
+		} );
+	}, [ flow ] );
+
+	useEffect( () => {
 		( async () => {
 			if ( typeof action === 'function' ) {
 				try {
@@ -97,16 +104,15 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
 
+	const isSignupCompleteTracked = flowDefinition?.trackingConfig?.useIsSignupCompleteTracked?.();
+	const signupStartEventProps = flowDefinition?.trackingConfig?.useSignupStartEventProps?.();
+
 	// When the hasActionSuccessfullyRun flag turns on, run submit() and fire the sign-up completion event.
 	useEffect( () => {
 		if ( hasActionSuccessfullyRun ) {
 			// We should only trigger signup completion for signup flows, so check if we have one.
-			if ( availableFlows[ flow ] ) {
-				availableFlows[ flow ]().then( ( flowExport ) => {
-					if ( flowExport.default.isSignupFlow ) {
-						recordSignupComplete();
-					}
-				} );
+			if ( isSignupCompleteTracked ) {
+				recordSignupComplete( signupStartEventProps );
 			}
 
 			if ( isNewSiteMigrationFlow( flow ) ) {
@@ -119,7 +125,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		}
 		// A change in submit() doesn't cause this effect to rerun.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasActionSuccessfullyRun, recordSignupComplete, flow ] );
+	}, [ hasActionSuccessfullyRun, recordSignupComplete, flowDefinition ] );
 
 	const getSubtitle = () => {
 		return props.subtitle || loadingMessages[ currentMessageIndex ]?.subtitle;

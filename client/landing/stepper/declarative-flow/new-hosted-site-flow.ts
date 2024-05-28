@@ -10,6 +10,7 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
@@ -22,7 +23,13 @@ import './internals/new-hosted-site-flow.scss';
 
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
-	isSignupFlow: true,
+	trackingConfig: {
+		useIsSignupStartTracked: () => {
+			const userLoggedIn = useSelector( isUserLoggedIn );
+			return userLoggedIn;
+		},
+		useIsSignupCompleteTracked: () => true,
+	},
 	useSteps() {
 		return [
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },

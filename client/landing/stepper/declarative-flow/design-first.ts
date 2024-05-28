@@ -25,7 +25,10 @@ const designFirst: Flow = {
 	get title() {
 		return translate( 'Blog' );
 	},
-	isSignupFlow: true,
+	trackingConfig: {
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
+	},
 	useSteps() {
 		return [
 			{

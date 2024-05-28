@@ -25,7 +25,10 @@ const videopressTvPurchase: Flow = {
 	get title() {
 		return translate( 'VideoPress TV' );
 	},
-	isSignupFlow: false,
+	trackingConfig: {
+		isSignupStartTracked: false,
+		isSignupCompleteTracked: false,
+	},
 	useSteps() {
 		return [
 			{ slug: 'processing', component: ProcessingStep },

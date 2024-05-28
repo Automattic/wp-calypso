@@ -31,8 +31,9 @@ import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import { StepRoute, StepperLoader } from './components';
 import { AssertConditionState, Flow, StepperStep, StepProps } from './types';
-import './global.scss';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
+
+import './global.scss';
 
 /**
  * This can be used when renaming a step. Simply add a map entry with the new step slug and the old step slug and Stepper will fire `calypso_signup_step_start` events for both slugs. This ensures that funnels with the old slug will still work.
@@ -172,15 +173,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
 
-	// Get any flow-specific event props to include in the
-	// `calypso_signup_start` Tracks event triggerd in the effect below.
-	const signupStartEventProps = flow.useSignupStartEventProps?.() ?? {};
+	const isSignupStartTracked = flow.trackingConfig?.useIsSignupStartTracked?.();
+	const signupEventProps = flow.trackingConfig?.useSignupStartEventProps?.();
 
 	useEffect( () => {
-		if ( flow.isSignupFlow && isFlowStart() ) {
-			recordSignupStart( flow.name, ref, signupStartEventProps );
+		if ( isSignupStartTracked && isFlowStart() ) {
+			recordSignupStart( flow.name, ref, signupEventProps );
 		}
-	}, [ flow, ref, isFlowStart ] );
+	}, [ flow, ref, isFlowStart, isSignupStartTracked, signupEventProps ] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed

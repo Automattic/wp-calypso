@@ -32,7 +32,10 @@ const free: Flow = {
 	get title() {
 		return translate( 'Free' );
 	},
-	isSignupFlow: true,
+	trackingConfig: {
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
+	},
 	useSteps() {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 

@@ -22,7 +22,10 @@ const FLOW_NAME = MIGRATION_SIGNUP_FLOW;
 
 const migrationSignup: Flow = {
 	name: FLOW_NAME,
-	isSignupFlow: true,
+	trackingConfig: {
+		isSignupStartTracked: true,
+		isSignupCompleteTracked: true,
+	},
 
 	useSteps() {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
