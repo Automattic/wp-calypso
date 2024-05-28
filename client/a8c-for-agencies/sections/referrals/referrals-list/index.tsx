@@ -117,19 +117,21 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 	);
 
 	return (
-		<ItemsDataViews
-			data={ {
-				items: referrals,
-				pagination: {
-					totalItems: 1,
-					totalPages: 1,
-				},
-				searchLabel: translate( 'Search referrals' ),
-				fields: fields,
-				actions: [],
-				setDataViewsState: setDataViewsState,
-				dataViewsState: dataViewsState,
-			} }
-		/>
+		<div className="redesigned-a8c-table">
+			<ItemsDataViews
+				data={ {
+					items: referrals,
+					pagination: {
+						totalItems: 1,
+						totalPages: 1,
+					},
+					searchLabel: translate( 'Search referrals' ),
+					fields: fields,
+					actions: [],
+					setDataViewsState: setDataViewsState,
+					dataViewsState: dataViewsState,
+				} }
+			/>
+		</div>
 	);
 }
