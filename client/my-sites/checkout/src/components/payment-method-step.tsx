@@ -9,11 +9,13 @@ import {
 	getSubtotalWithoutDiscounts,
 	getTotalDiscountsWithoutCredits,
 	filterAndGroupCostOverridesForDisplay,
+	isBillingInfoEmpty,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
+import { TaxNotCalculatedLineItem } from './wp-checkout-order-summary';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div`
@@ -67,7 +69,7 @@ const NonTotalPrices = styled.div`
 `;
 const TotalPrice = styled.div`
 	font-size: 14px;
-	padding: 16px 0;
+	padding-top: 16px;
 `;
 
 export default function BeforeSubmitCheckoutHeader() {
@@ -89,6 +91,7 @@ export default function BeforeSubmitCheckoutHeader() {
 		} ),
 	};
 
+	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
 	const subTotalLineItemWithoutCoupon: LineItemType = {
 		id: 'subtotal-without-coupon',
@@ -108,7 +111,6 @@ export default function BeforeSubmitCheckoutHeader() {
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
-
 			<WPOrderReviewSection>
 				<NonTotalPrices>
 					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
@@ -125,6 +127,7 @@ export default function BeforeSubmitCheckoutHeader() {
 				<TotalPrice>
 					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
 				</TotalPrice>
+				{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
 			</WPOrderReviewSection>
 		</>
 	);

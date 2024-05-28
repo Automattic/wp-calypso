@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { translate, useTranslate } from 'i18n-calypso';
+import { getContactDetailsType } from './get-contact-details-type';
 import { getIntroductoryOfferIntervalDisplay } from './introductory-offer';
 import type { LineItemType } from './types';
 import type {
@@ -21,8 +22,10 @@ export function getTotalLineItemFromCart( cart: ResponseCart ): LineItemType {
 	return {
 		id: 'total',
 		type: 'total',
-		// translators: The label of the total line item in checkout
-		label: String( translate( 'Total' ) ),
+		label: translate( 'Total', {
+			context: 'The label of the total line item in checkout',
+			textOnly: true,
+		} ),
 		formattedAmount: formatCurrency( cart.total_cost_integer, cart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
@@ -648,4 +651,18 @@ export function isOverrideCodeIntroductoryOffer( overrideCode: string ): boolean
 			return true;
 	}
 	return false;
+}
+
+/**
+ * True if the billing/contact info is not filled in on a shopping cart (and it
+ * needs to be filled in).
+ */
+export function isBillingInfoEmpty( responseCart: ResponseCart ): boolean {
+	if ( getContactDetailsType( responseCart ) === 'none' ) {
+		return false;
+	}
+	if ( responseCart.tax.location.country_code ) {
+		return false;
+	}
+	return true;
 }

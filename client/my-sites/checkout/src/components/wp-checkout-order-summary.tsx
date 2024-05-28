@@ -34,6 +34,7 @@ import {
 } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
+	isBillingInfoEmpty,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
@@ -164,6 +165,24 @@ export function CheckoutSummaryFeaturedList( {
 		</>
 	);
 }
+
+const TaxNotCalculatedLineItemWrapper = styled.div`
+	margin-top: 8px;
+	font-size: 12px;
+	text-wrap: pretty;
+`;
+
+export function TaxNotCalculatedLineItem() {
+	const translate = useTranslate();
+	return (
+		<TaxNotCalculatedLineItemWrapper>
+			{ translate( 'Taxes may be added once billing information is provided', {
+				textOnly: true,
+			} ) }
+		</TaxNotCalculatedLineItemWrapper>
+	);
+}
+
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -201,11 +220,17 @@ function CheckoutSummaryPriceList() {
 				</CheckoutSubtotalSection>
 
 				<CheckoutSummaryTotal>
-					<span className="wp-checkout-order-summary__label">{ translate( 'Total' ) }</span>
+					<span className="wp-checkout-order-summary__label">
+						{ translate( 'Total', {
+							context: 'The label of the total line item in checkout',
+							textOnly: true,
+						} ) }
+					</span>
 					<span className="wp-checkout-order-summary__total-price">
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
+				{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
