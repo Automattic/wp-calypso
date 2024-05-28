@@ -9,6 +9,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
@@ -79,6 +80,23 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 				code: failureInfo.code,
 			},
 		} );
+	};
+
+	const waitForInitiateTransfer = async () => {
+		const initiateTransferContext = searchParams.get( 'initiate_transfer_context' );
+		if ( ! initiateTransferContext ) {
+			return;
+		}
+
+		await reduxDispatch(
+			initiateThemeTransfer(
+				siteId,
+				null,
+				'',
+				searchParams.get( 'initiate_transfer_geo_affinity' ) || '',
+				initiateTransferContext
+			)
+		);
 	};
 
 	const waitForTransfer = async () => {
@@ -153,6 +171,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		}
 
 		setPendingAction( async () => {
+			await waitForInitiateTransfer();
 			await waitForTransfer();
 			await waitForFeature();
 			await waitForLatestSiteData();

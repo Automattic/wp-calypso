@@ -7,11 +7,10 @@ import { useState } from 'react';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
@@ -35,7 +34,6 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 
 const DevTools = () => {
 	const [ showEligibility, setShowEligibility ] = useState( false );
-	const [ isActivating, setIsActivating ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
 	const { siteSlug, isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
 		siteSlug: getSiteSlug( state, siteId ) || '',
@@ -84,21 +82,15 @@ const DevTools = () => {
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
 	const redirectUrl = `/hosting-config/${ siteId }`;
-	const dispatch = useDispatch();
-	const transferInitiate = ( siteId: number, { geo_affinity = '' } = {} ) => {
-		setIsActivating( true );
-		dispatch( initiateThemeTransfer( siteId, null, '', geo_affinity, 'hosting' ) )
-			.then( () => {
-				const params = new URLSearchParams( {
-					siteId: String( siteId ),
-					redirect_to: redirectUrl,
-					feature: FEATURE_SFTP,
-				} );
-				page( `/setup/transferring-hosted-site?${ params }` );
-			} )
-			.catch( () => {
-				setIsActivating( false );
-			} );
+	const handleTransfer = ( options: { geo_affinity?: string } ) => {
+		const params = new URLSearchParams( {
+			siteId: String( siteId ),
+			redirect_to: redirectUrl,
+			feature: FEATURE_SFTP,
+			initiate_transfer_context: 'hosting',
+			initiate_transfer_geo_affinity: options.geo_affinity || '',
+		} );
+		page( `/setup/transferring-hosted-site?${ params }` );
 	};
 
 	if ( isSiteAtomic && hasSftpFeature ) {
@@ -146,12 +138,11 @@ const DevTools = () => {
 						>
 							<EligibilityWarnings
 								className="hosting__activating-warnings"
-								onProceed={ () => transferInitiate( siteId as number ) }
+								onProceed={ handleTransfer }
 								backUrl={ redirectUrl }
 								showDataCenterPicker
 								standaloneProceed
 								currentContext="dev-tools"
-								disableContinueButton={ isActivating }
 							/>
 						</Dialog>
 					</>
