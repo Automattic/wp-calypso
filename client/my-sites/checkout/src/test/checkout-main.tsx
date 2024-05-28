@@ -120,7 +120,7 @@ describe( 'CheckoutMain', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
-				.getAllByLabelText( 'Estimated total' )
+				.getAllByLabelText( 'Total' )
 				.map( ( element ) => expect( element ).toHaveTextContent( 'R$156' ) );
 		} );
 	} );
