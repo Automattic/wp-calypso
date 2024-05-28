@@ -552,21 +552,12 @@ $button-padding: 8px 32px;
 }
 
 .stats-purchase-wizard__actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 12px;
-
+	display: block;
 	margin: 12px 0;
 
 	.components-button + button.components-button {
-		margin: 0;
-	}
-
-	button {
-		@media (max-width: $break-small) {
-			width: 100%;
-			justify-content: center;
-		}
+		width: 100%;
+		margin-bottom: 12px;
 	}
 }
 

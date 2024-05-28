@@ -271,29 +271,23 @@ const PersonalPurchase = ( {
 				</ButtonComponent>
 			) : (
 				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
-					<div className="stats-purchase-page__full-width-block">
-						<ButtonComponent
-							className="stats-purchase-page__full-width"
-							variant="primary"
-							primary={ isWPCOMSite ? true : undefined }
-							onClick={ handleCheckoutRedirect }
-						>
-							{ continueButtonText }
-						</ButtonComponent>
-					</div>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ handleCheckoutRedirect }
+					>
+						{ continueButtonText }
+					</ButtonComponent>
 
 					{ isNewPurchaseFlowEnabled && (
-						<div className="stats-purchase-page__full-width-block">
-							<ButtonComponent
-								className="stats-purchase-page__full-width"
-								variant="secondary"
-								isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
-								busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />
-								onClick={ handleCheckoutPostponed }
-							>
-								{ translate( 'I will do it later' ) }
-							</ButtonComponent>
-						</div>
+						<ButtonComponent
+							variant="secondary"
+							isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
+							busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />
+							onClick={ handleCheckoutPostponed }
+						>
+							{ translate( 'I will do it later' ) }
+						</ButtonComponent>
 					) }
 				</div>
 			) }
