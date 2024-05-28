@@ -167,16 +167,16 @@ export function CheckoutSummaryFeaturedList( {
 }
 
 const TaxNotCalculatedLineItemWrapper = styled.div`
-	margin-top: 8px;
-	font-size: 12px;
+	font-size: 14px;
 	text-wrap: pretty;
+	line-height: 1em;
 `;
 
 export function TaxNotCalculatedLineItem() {
 	const translate = useTranslate();
 	return (
 		<TaxNotCalculatedLineItemWrapper>
-			{ translate( 'Taxes may be added once billing information is provided', {
+			{ translate( 'Tax: to be calculated', {
 				textOnly: true,
 			} ) }
 		</TaxNotCalculatedLineItemWrapper>
@@ -211,6 +211,7 @@ function CheckoutSummaryPriceList() {
 							<span>{ taxLineItem.formattedAmount }</span>
 						</CheckoutSummaryLineItem>
 					) ) }
+					{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
 					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
 						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
 							<span>{ creditsLineItem.label }</span>
@@ -230,7 +231,6 @@ function CheckoutSummaryPriceList() {
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-				{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
