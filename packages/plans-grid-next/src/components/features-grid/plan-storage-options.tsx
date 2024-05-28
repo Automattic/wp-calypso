@@ -27,11 +27,7 @@ const PlanStorageOptions = ( {
 	showUpgradeableStorage,
 }: PlanStorageOptionsProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
-	const {
-		availableForPurchase,
-		features: { storageOptions },
-		current,
-	} = gridPlansIndex[ planSlug ];
+	const { availableForPurchase, current } = gridPlansIndex[ planSlug ];
 	const getAvailableStorageOptions = useGetAvailableStorageOptions();
 
 	if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -60,7 +56,7 @@ const PlanStorageOptions = ( {
 			storageOptions={ availableStorageOptions }
 		/>
 	) : (
-		storageOptions.map( ( storageOption ) => {
+		availableStorageOptions.map( ( storageOption ) => {
 			if ( ! storageOption?.isAddOn ) {
 				return <PlanStorageLabel storageOption={ storageOption } planSlug={ planSlug } />;
 			}

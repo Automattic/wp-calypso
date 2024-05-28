@@ -564,7 +564,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	 * TODO: Consider centralising `canUpgradeStorageForPlan` behind `availableStorageOptions`
 	 */
 	const availableStorageOptions = useGetAvailableStorageOptions()( {
-		storageOptions: gridPlan.features.storageOptions,
+		planSlug,
 	} );
 	/**
 	 * The current plan is not marked as `availableForPurchase`, hence check on `current`.
@@ -585,7 +585,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			priceOnSeparateLine
 		/>
 	) : (
-		gridPlan.features.storageOptions.map( ( storageOption ) => {
+		availableStorageOptions.map( ( storageOption ) => {
 			if ( ! storageOption?.isAddOn ) {
 				return <PlanStorageLabel storageOption={ storageOption } planSlug={ planSlug } />;
 			}
