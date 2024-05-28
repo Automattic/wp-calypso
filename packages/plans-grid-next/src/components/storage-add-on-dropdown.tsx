@@ -98,10 +98,7 @@ export const StorageAddOnDropdown = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
 		[ planSlug ]
 	);
-	const defaultStorageOption = useDefaultStorageOption( {
-		storageOptions,
-		storageAddOnsForPlan,
-	} );
+	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 
 	useEffect( () => {
 		if ( storageAddOnsForPlan && defaultStorageOption && ! selectedStorageOptionForPlan ) {

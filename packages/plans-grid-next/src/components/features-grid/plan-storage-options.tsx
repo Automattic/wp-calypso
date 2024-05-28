@@ -41,7 +41,7 @@ const PlanStorageOptions = ( {
 	/**
 	 * TODO: Consider centralising `canUpgradeStorageForPlan` behind `availableStorageOptions`
 	 */
-	const availableStorageOptions = getAvailableStorageOptions( { storageOptions } );
+	const availableStorageOptions = getAvailableStorageOptions( { planSlug } );
 	/**
 	 * The current plan is not marked as `availableForPurchase`, hence check on `current`.
 	 */

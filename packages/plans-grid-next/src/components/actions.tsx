@@ -57,7 +57,6 @@ const PlanFeatures2023GridActions = ( {
 	isStuck,
 	isInSignup,
 	isMonthlyPlan,
-	storageOptions,
 }: PlanFeaturesActionsButtonProps ) => {
 	const translate = useTranslate();
 	const {
@@ -83,8 +82,6 @@ const PlanFeatures2023GridActions = ( {
 
 	const selectedStorageAddOn = useSelectedStorageAddOn( {
 		planSlug,
-		selectedSiteId: siteId,
-		storageAddOnsForPlan,
 	} );
 
 	const priceString = formatCurrency(
@@ -135,10 +132,7 @@ const PlanFeatures2023GridActions = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
 		[ planSlug ]
 	);
-	const defaultStorageOption = useDefaultStorageOption( {
-		storageOptions,
-		storageAddOnsForPlan,
-	} );
+	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 	const canPurchaseStorageAddOns = storageAddOnsForPlan?.some(
 		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
 	);

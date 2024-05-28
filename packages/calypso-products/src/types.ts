@@ -39,6 +39,12 @@ import {
 	FEATURE_GROUP_SUPPORT,
 	FEATURE_GROUP_STORAGE,
 	FEATURE_GROUP_ALL_FEATURES,
+	FEATURE_1GB_STORAGE,
+	FEATURE_3GB_STORAGE,
+	FEATURE_6GB_STORAGE,
+	FEATURE_13GB_STORAGE,
+	FEATURE_50GB_STORAGE,
+	FEATURE_200GB_STORAGE,
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
@@ -82,8 +88,18 @@ const WPCOM_STORAGE_ADD_ONS = < const >[
 	FEATURE_100GB_STORAGE_ADD_ON,
 ];
 
+const WPCOM_PLAN_STORAGE_FEATURES = < const >[
+	FEATURE_1GB_STORAGE,
+	FEATURE_3GB_STORAGE,
+	FEATURE_6GB_STORAGE,
+	FEATURE_13GB_STORAGE,
+	FEATURE_50GB_STORAGE,
+	FEATURE_200GB_STORAGE,
+];
+
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
 export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
+export type WPComPlanStorageFeatureSlug = ( typeof WPCOM_PLAN_STORAGE_FEATURES )[ number ];
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
 export type WPComStorageAddOnSlug = ( typeof WPCOM_STORAGE_ADD_ONS )[ number ];
 // WPCOM Space Upgrade Products
@@ -266,7 +282,7 @@ export type FeatureGroup = {
 export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 
 export type StorageOption = {
-	slug: string;
+	slug: WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	// Determines if the storage option is an add-on that can be purchased. There are a mixture of patterns
 	// to identify add-ons for now, and we're temporarily adding one more
 	isAddOn: boolean;

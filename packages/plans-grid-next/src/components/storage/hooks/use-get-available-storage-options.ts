@@ -1,10 +1,10 @@
-import { StorageOption } from '@automattic/calypso-products';
+import { PlanSlug } from '@automattic/calypso-products';
 import { AddOns, Site } from '@automattic/data-stores';
 import { useCallback } from '@wordpress/element';
 import { usePlansGridContext } from '../../../grid-context';
 
 interface CallbackProps {
-	storageOptions: StorageOption[];
+	planSlug: PlanSlug;
 }
 
 /**
@@ -14,7 +14,7 @@ interface CallbackProps {
  *   - storage option being allowed for purchase only once (cannot repurchase same add-on on any site)
  */
 const useGetAvailableStorageOptions = () => {
-	const { siteId } = usePlansGridContext();
+	const { siteId, gridPlansIndex } = usePlansGridContext();
 	const siteMediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
 	const currentMaxStorage = siteMediaStorage.data?.maxStorageBytes
 		? siteMediaStorage.data.maxStorageBytes / Math.pow( 1024, 3 )
@@ -23,7 +23,11 @@ const useGetAvailableStorageOptions = () => {
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 
 	return useCallback(
-		( { storageOptions }: CallbackProps ) => {
+		( { planSlug }: CallbackProps ) => {
+			const {
+				features: { storageOptions },
+			} = gridPlansIndex[ planSlug ];
+
 			return storageOptions.filter( ( storageOption ) => {
 				const storageAddOn = storageAddOns.find(
 					( addOn ) =>
@@ -38,7 +42,7 @@ const useGetAvailableStorageOptions = () => {
 					: ! storageOption.isAddOn;
 			} );
 		},
-		[ availableStorageUpgrade, storageAddOns ]
+		[ availableStorageUpgrade, gridPlansIndex, storageAddOns ]
 	);
 };
 
