@@ -47,7 +47,7 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
 	pageTitle,
 	useJetpackGoogleAnalytics = false,
 	useAkismetGoogleAnalytics = false,
-	useA4AGoogleAnalytics = false
+	useA8CForAgenciesGoogleAnalytics = false
 ) {
 	gaDebug(
 		'Recording Page View ~ [URL: ' +
@@ -58,8 +58,8 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
 			useJetpackGoogleAnalytics +
 			'] [useAksiemtGoogleAnalytics: ' +
 			useAkismetGoogleAnalytics +
-			'] [useA4AGoogleAnalytics: ' +
-			useA4AGoogleAnalytics +
+			'] [useA8CForAgenciesGoogleAnalytics: ' +
+			useA8CForAgenciesGoogleAnalytics +
 			']'
 	);
 
@@ -68,7 +68,7 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
 		pageTitle,
 		useJetpackGoogleAnalytics,
 		useAkismetGoogleAnalytics,
-		useA4AGoogleAnalytics
+		useA8CForAgenciesGoogleAnalytics
 	);
 } );
 

@@ -24,7 +24,7 @@ export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) 
 			pageTitle,
 			options?.useJetpackGoogleAnalytics,
 			options?.useAkismetGoogleAnalytics,
-			options?.useA4AGoogleAnalytics
+			options?.useA8CForAgenciesGoogleAnalytics
 		);
 		referRecordPageView();
 		saveImpactAffiliateClickId();
@@ -44,7 +44,7 @@ async function safeGoogleAnalyticsPageView(
 	pageTitle,
 	useJetpackGoogleAnalytics = false,
 	useAkismetGoogleAnalytics = false,
-	useA4AGoogleAnalytics = false
+	useA8CForAgenciesGoogleAnalytics = false
 ) {
 	await refreshCountryCodeCookieGdpr();
 	gaRecordPageView(
@@ -52,6 +52,6 @@ async function safeGoogleAnalyticsPageView(
 		pageTitle,
 		useJetpackGoogleAnalytics,
 		useAkismetGoogleAnalytics,
-		useA4AGoogleAnalytics
+		useA8CForAgenciesGoogleAnalytics
 	);
 }

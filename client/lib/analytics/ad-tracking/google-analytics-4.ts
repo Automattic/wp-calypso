@@ -12,14 +12,14 @@ export enum Ga4PropertyGtag {
 	JETPACK,
 	WPCOM,
 	AKISMET,
-	A4A,
+	A8C_FOR_AGENCIES,
 }
 
 export const ga4Properties: { [ env in Ga4PropertyGtag ]: string } = {
 	[ Ga4PropertyGtag.WPCOM ]: TRACKING_IDS.wpcomGoogleGA4Gtag,
 	[ Ga4PropertyGtag.JETPACK ]: TRACKING_IDS.jetpackGoogleGA4Gtag,
 	[ Ga4PropertyGtag.AKISMET ]: TRACKING_IDS.akismetGoogleGA4Gtag,
-	[ Ga4PropertyGtag.A4A ]: TRACKING_IDS.a4aGoogleGA4GTag,
+	[ Ga4PropertyGtag.A8C_FOR_AGENCIES ]: TRACKING_IDS.a8cForAgenciesGA4Gtag,
 };
 
 export function setup( params: Gtag.ConfigParams ) {
@@ -32,7 +32,7 @@ export function setup( params: Gtag.ConfigParams ) {
 		window.gtag( 'config', TRACKING_IDS.akismetGoogleGA4Gtag, params );
 	}
 	if ( isA8CForAgencies() ) {
-		window.gtag( 'config', TRACKING_IDS.a4aGoogleGA4GTag, params );
+		window.gtag( 'config', TRACKING_IDS.a8cForAgenciesGA4Gtag, params );
 	}
 }
 
