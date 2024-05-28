@@ -65,6 +65,10 @@ const useSegmentationSurveyNavigation = ( {
 		recordSkipEvent( currentQuestion );
 
 		await onSkip?.( currentQuestion );
+		if ( skipNextNavigation?.( currentQuestion.key, answers?.[ currentQuestion.key ] ) ) {
+			return;
+		}
+
 		nextPage();
 	}, [ currentQuestion, nextPage, onSkip, recordSkipEvent ] );
 

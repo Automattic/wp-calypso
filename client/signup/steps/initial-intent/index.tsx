@@ -18,7 +18,8 @@ const SURVEY_KEY = 'guided-onboarding-flow';
 const QUESTION_CONFIGURATION: QuestionConfiguration = {
 	'what-brings-you-to-wordpress': {
 		hideContinue: true,
-		hideSkip: true,
+		hideSkip: false,
+		exitOnSkip: true,
 	},
 	'what-are-your-goals': {
 		hideContinue: false,
@@ -61,8 +62,17 @@ export default function InitialIntentStep( props: Props ) {
 		return '';
 	};
 
+	const shouldExitOnSkip = ( _questionKey: string, _answerKeys: string[] ) => {
+		return Boolean(
+			QUESTION_CONFIGURATION[ _questionKey ].exitOnSkip && _answerKeys.includes( 'skip' )
+		);
+	};
+
 	const skipNextNavigation = ( _questionKey: string, _answerKeys: string[] ) => {
-		return Boolean( getRedirectForAnswers( _answerKeys ) );
+		return (
+			Boolean( getRedirectForAnswers( _answerKeys ) ) ||
+			shouldExitOnSkip( _questionKey, _answerKeys )
+		);
 	};
 
 	const handleNext = ( _questionKey: string, _answerKeys: string[], isLastQuestion?: boolean ) => {
@@ -73,7 +83,7 @@ export default function InitialIntentStep( props: Props ) {
 			return window.location.assign( redirect );
 		}
 
-		if ( isLastQuestion ) {
+		if ( isLastQuestion || shouldExitOnSkip( _questionKey, _answerKeys ) ) {
 			recordCompleteEvent();
 			props.goToNextStep();
 		}
