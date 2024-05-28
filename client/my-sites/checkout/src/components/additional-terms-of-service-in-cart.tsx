@@ -7,7 +7,8 @@ import {
 } from '@automattic/shopping-cart';
 import { EDIT_PAYMENT_DETAILS } from '@automattic/urls';
 import debugFactory from 'debug';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
@@ -16,7 +17,6 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-service' );
 
 export default function AdditionalTermsOfServiceInCart() {
-	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -28,11 +28,12 @@ export default function AdditionalTermsOfServiceInCart() {
 	return (
 		<>
 			{ responseCart.terms_of_service.map( ( termsOfServiceRecord ) => {
-				const message = getMessageForTermsOfServiceRecord(
-					termsOfServiceRecord,
-					translate,
-					siteSlug,
-					responseCart.currency
+				const message = (
+					<MessageForTermsOfServiceRecord
+						termsOfServiceRecord={ termsOfServiceRecord }
+						siteSlug={ siteSlug }
+						currency={ responseCart.currency }
+					/>
 				);
 
 				if ( ! message ) {
@@ -56,15 +57,19 @@ function formatDate( isoDate: string ): string {
 	} );
 }
 
-function getMessageForTermsOfServiceRecordUnknown(
-	termsOfServiceRecord: TermsOfServiceRecord,
-	translate: ReturnType< typeof useTranslate >,
-	siteSlug: string | null,
-	currency: string
-): TranslateResult {
+function MessageForTermsOfServiceRecordUnknown( {
+	termsOfServiceRecord,
+	siteSlug,
+	currency,
+}: {
+	termsOfServiceRecord: TermsOfServiceRecord;
+	siteSlug: string | null;
+	currency: string;
+} ): ReactNode {
+	const translate = useTranslate();
 	const args = termsOfServiceRecord.args;
 	if ( ! args ) {
-		return '';
+		return null;
 	}
 
 	const productName = args.product_name + ( args.product_meta ? ` (${ args.product_meta })` : '' );
@@ -224,26 +229,30 @@ function getMessageForTermsOfServiceRecordUnknown(
 	);
 }
 
-function getMessageForTermsOfServiceRecord(
-	termsOfServiceRecord: TermsOfServiceRecord,
-	translate: ReturnType< typeof useTranslate >,
-	siteSlug: string | null,
-	currency: string
-): TranslateResult {
+function MessageForTermsOfServiceRecord( {
+	termsOfServiceRecord,
+	siteSlug,
+	currency,
+}: {
+	termsOfServiceRecord: TermsOfServiceRecord;
+	siteSlug: string | null;
+	currency: string;
+} ) {
 	switch ( termsOfServiceRecord.code ) {
 		case 'terms_for_bundled_trial_unknown_payment_method':
-			return getMessageForTermsOfServiceRecordUnknown(
-				termsOfServiceRecord,
-				translate,
-				siteSlug,
-				currency
+			return (
+				<MessageForTermsOfServiceRecordUnknown
+					termsOfServiceRecord={ termsOfServiceRecord }
+					siteSlug={ siteSlug }
+					currency={ currency }
+				/>
 			);
 		default:
 			debug(
 				`Unknown terms of service code: ${ termsOfServiceRecord.code }`,
 				termsOfServiceRecord
 			);
-			return '';
+			return null;
 	}
 }
 
