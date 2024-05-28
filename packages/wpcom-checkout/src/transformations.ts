@@ -22,10 +22,8 @@ export function getTotalLineItemFromCart( cart: ResponseCart ): LineItemType {
 	return {
 		id: 'total',
 		type: 'total',
-		label: translate( 'Total', {
-			context: 'The label of the total line item in checkout',
-			textOnly: true,
-		} ),
+		// translators: The label of the total line item in checkout
+		label: String( translate( 'Total' ) ),
 		formattedAmount: formatCurrency( cart.total_cost_integer, cart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,

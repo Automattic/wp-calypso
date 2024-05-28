@@ -109,7 +109,6 @@ export default function BeforeSubmitCheckoutHeader() {
 		} ),
 	};
 
-	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
 	const subTotalLineItemWithoutCoupon: LineItemType = {
 		id: 'subtotal-without-coupon',
