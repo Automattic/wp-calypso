@@ -9,6 +9,7 @@ import useSurveyAnswersQuery from '../use-survey-answers-query';
 
 const mockResponse = [
 	{
+		blog_id: 22222,
 		answers: {
 			question_key_1: [ 'answer_key_1', 'answer_key_2' ],
 			question_key_2: [ 'answer_key_3' ],
@@ -75,8 +76,10 @@ describe( 'useSurveyAnswersQuery', () => {
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
 		expect( result.current.data ).toEqual( {
-			question_key_1: [ 'answer_key_1', 'answer_key_2' ],
-			question_key_2: [ 'answer_key_3' ],
+			22222: {
+				question_key_1: [ 'answer_key_1', 'answer_key_2' ],
+				question_key_2: [ 'answer_key_3' ],
+			},
 		} );
 	} );
 } );

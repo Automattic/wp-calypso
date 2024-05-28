@@ -5,11 +5,13 @@ import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from 'calypso/signup/steps/initia
 /**
  * Returns the segmented intent based on the survey answers.
  * @param enabled whether the survey answers should be fetched.
+ * @param blogId the blogId we want the answers from. Answers are mapped to sites (can be zero when a site does not exist yet).
  * @param fallback the default intent to return if the survey answers are not available or the query is disabled.
  * @returns the segmented intent
  */
 export function useSegmentedIntent(
 	enabled = false,
+	blogId = 0,
 	fallback: PlansIntent = 'plans-default-wpcom'
 ): PlansIntent {
 	const { data } = useSurveyAnswersQuery( {
@@ -17,8 +19,8 @@ export function useSegmentedIntent(
 		enabled,
 	} );
 
-	const surveyedGoals = data?.[ 'what-are-your-goals' ];
-	const surveyedIntent = data?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
+	const surveyedGoals = data?.[ blogId ]?.[ 'what-are-your-goals' ];
+	const surveyedIntent = data?.[ blogId ]?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
 	if ( ! enabled || ! surveyedIntent || ! surveyedGoals ) {
 		return fallback;

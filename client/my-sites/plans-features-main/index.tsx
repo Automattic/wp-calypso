@@ -296,6 +296,7 @@ const PlansFeaturesMain = ( {
 
 	const intentFromSegmentationSurvey = useSegmentedIntent(
 		intentFromProps === 'plans-guided',
+		siteId ?? 0,
 		intent
 	);
 

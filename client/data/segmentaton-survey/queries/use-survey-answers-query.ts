@@ -12,10 +12,14 @@ export type SurveyAnswersResponse = Array< {
 	answers: Answers;
 } >;
 
-const mapSurveyAnswers = ( response: SurveyAnswersResponse ): Answers =>
-	response.reduce( ( acc, { answers } ) => {
-		return { ...acc, ...answers };
-	}, {} );
+const mapSurveyAnswers = ( response: SurveyAnswersResponse ): Record< string, Answers > =>
+	response.reduce(
+		( acc, { answers, blog_id } ) => {
+			acc[ blog_id ] = answers;
+			return acc;
+		},
+		{} as Record< string, Answers >
+	);
 
 const useSurveyAnswersQuery = ( { surveyKey, enabled = true }: SurveyAnswersQueryParams ) => {
 	return useQuery( {
