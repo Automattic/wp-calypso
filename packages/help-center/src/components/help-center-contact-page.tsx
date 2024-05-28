@@ -188,7 +188,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 			} );
 
 			openChatWidget( {
-				aiChatId: `wapuuChatId`,
+				aiChatId: wapuuChatId,
 				message: `Support request started with <strong>Wapuu</strong><br>Site: ${ currentSite?.URL }<br />Wapuu Chat: <a href="https://mc.a8c.com/odie/odie-chat.php?chat_id=${ wapuuChatId }">${ wapuuChatId }</a>`,
 				siteUrl: currentSite?.URL,
 				onError: () => setHasSubmittingError( true ),
