@@ -1,3 +1,4 @@
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
@@ -18,20 +19,17 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 	<Card className="dev-tools__card">
 		<CardHeading>{ title }</CardHeading>
 		<p>{ text }</p>
-		{ translate( '{{supportLink}}Learn more{{/supportLink}}', {
-			components: {
-				supportLink: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
-			},
-		} ) }
+		<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
 	</Card>
 );
 
 const DevTools = () => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) || '';
+	const encodedSiteSlug = encodeURIComponent( siteSlug );
 
-	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
-	const pluginsLink = `https://wordpress.com/plugins/${ encodeURIComponent( siteSlug ) }`;
+	const upgradeLink = `/checkout/${ encodedSiteSlug }/business?redirect_to=/dev-tools/${ encodedSiteSlug }`;
+	const pluginsLink = `/plugins/${ encodedSiteSlug }`;
 	const promoCards = [
 		{
 			title: translate( 'Hosting Configuration' ),
@@ -72,9 +70,9 @@ const DevTools = () => {
 			<div className="dev-tools__hero">
 				<h1> { translate( 'Unlock all developer tools' ) }</h1>
 				<p>
-					{ translate(
-						'Upgrade to the Creator plan or higher to get access to all developer tools'
-					) }
+					{ translate( 'Upgrade to the %(planName)s plan to access all developer tools', {
+						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+					} ) }
 				</p>
 				<Button variant="secondary" className="dev-tools__button" href={ pluginsLink }>
 					{ translate( 'Browse plugins' ) }
