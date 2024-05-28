@@ -1,6 +1,7 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { omit } from 'lodash';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
@@ -91,8 +92,9 @@ export function requestSites() {
 			.then( ( response ) => {
 				dispatch(
 					receiveSites(
-						isEnabled( 'jetpack/manage-simple-sites' )
-							? response.sites.filter( ( site ) => ! site?.options?.is_wpforteams_site )
+						isEnabled( 'jetpack/manage-simple-sites' ) && isJetpackCloud()
+							? // Filter out P2 sites for Jetpack Cloud that has the feature enabled
+							  response.sites.filter( ( site ) => ! site?.options?.is_wpforteams_site )
 							: response.sites
 					)
 				);
