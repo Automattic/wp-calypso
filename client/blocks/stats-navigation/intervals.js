@@ -10,15 +10,15 @@ import './intervals.scss';
 
 /**
  * Renders the intervals component.
- * @param {Object} props - The component props.
- * @param {string} props.selected - The selected interval value.
- * @param {string} props.pathTemplate - The path template for each interval.
- * @param {string} [props.className] - The additional class name for the component.
- * @param {boolean} [props.standalone] - Whether the component is standalone.
- * @param {boolean} [props.compact] - Whether the component is compact.
- * @param {Array} [props.intervalValues] - The array of interval values.
- * @param {Function} [props.onChange] - The function to handle interval change.
- * @param {Object} [props.icon] - The icon object.
+ * @param {Object} props The component props.
+ * @param {string} props.selected The selected interval value.
+ * @param {string} props.pathTemplate The path template for each interval.
+ * @param {string} [props.className] The additional class name for the component.
+ * @param {boolean} [props.standalone] Whether the component is standalone.
+ * @param {boolean} [props.compact] Whether the component is compact.
+ * @param {Array} [props.intervalValues] The array of interval values.
+ * @param {Function} [props.onChange] The function to handle interval change.
+ * @param {Object} [props.icon] The icon object.
  * @returns {React.ReactNode} The rendered intervals component.
  */
 const Intervals = ( {

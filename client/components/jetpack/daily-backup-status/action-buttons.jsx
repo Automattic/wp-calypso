@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
@@ -98,6 +97,10 @@ const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 const defaultAvailableActions = [ 'rewind', 'download' ];
 
 /**
+ * @typedef {import('react').ReactNode} ReactNode
+ */
+
+/**
  * Renders the action buttons for the daily backup status.
  * @param {Object} props - The component props.
  * @param {string|null} props.rewindId - The ID of the rewind.
@@ -106,7 +109,7 @@ const defaultAvailableActions = [ 'rewind', 'download' ];
  * @param {boolean} [props.hasWarnings] - Whether there are warnings.
  * @param {Array<string>} [props.availableActions] - The available actions.
  * @param {Function} [props.onClickClone] - The click handler for the clone button.
- * @returns {React.ReactNode} The rendered component.
+ * @returns {ReactNode} The rendered component.
  */
 const ActionButtons = ( {
 	rewindId = null,

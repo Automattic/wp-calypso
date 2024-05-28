@@ -1,10 +1,14 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
+
+/**
+ * @typedef {import('react')} React
+ */
+
 /**
  * FormattedHeader component
  * @param {Object} props The props

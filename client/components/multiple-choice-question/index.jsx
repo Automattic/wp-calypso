@@ -18,13 +18,30 @@ const shuffleAnswers = memoize(
 			.join( '-' )
 );
 
+/**
+ * @typedef {import('react').ReactNode} ReactNode
+ */
+
+/**
+ * Renders a multiple choice question component.
+ * @param {Object} props - The component props.
+ * @param {boolean} [props.disabled] - Whether the question is disabled or not.
+ * @param {Array} props.answers - The array of answer options for the question.
+ * @param {string} props.name - The name of the question.
+ * @param {Function} props.onAnswerChange - The callback function to handle answer changes.
+ * @param {string} props.question - The question text.
+ * @param {string|undefined} [props.selectedAnswerId] - The ID of the selected answer.
+ * @param {string} [props.selectedAnswerText] - The text of the selected answer.
+ * @param {boolean} [props.shouldShuffleAnswers] - Whether to shuffle the answer options or not.
+ * @returns {ReactNode} The rendered MultipleChoiceQuestion component.
+ */
 const MultipleChoiceQuestion = ( {
 	disabled = false,
 	answers,
 	name,
 	onAnswerChange,
 	question,
-	selectedAnswerId,
+	selectedAnswerId = null,
 	selectedAnswerText = '',
 	shouldShuffleAnswers = true,
 } ) => {

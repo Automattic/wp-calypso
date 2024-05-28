@@ -141,6 +141,7 @@ export function JITM( {
 	searchQuery,
 	isJetpack,
 	jitmPlaceholder,
+	template = 'default',
 	...props
 } ) {
 	const dispatch = useDispatch();
@@ -166,7 +167,7 @@ export function JITM( {
 			/>
 			{ isFetching && jitmPlaceholder }
 			{ jitm &&
-				renderTemplate( jitm.template || props.template, {
+				renderTemplate( jitm.template || template, {
 					...jitm,
 					...getEventHandlers( props, dispatch ),
 					currentSite,
