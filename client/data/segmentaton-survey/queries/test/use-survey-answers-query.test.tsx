@@ -9,12 +9,10 @@ import useSurveyAnswersQuery from '../use-survey-answers-query';
 
 const mockResponse = [
 	{
-		question_key: 'question_key_1',
-		answer_keys: [ 'answer_key_1', 'answer_key_2' ],
-	},
-	{
-		question_key: 'question_key_2',
-		answer_keys: [ 'answer_key_3' ],
+		answers: {
+			question_key_1: [ 'answer_key_1', 'answer_key_2' ],
+			question_key_2: [ 'answer_key_3' ],
+		},
 	},
 ];
 
