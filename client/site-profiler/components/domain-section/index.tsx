@@ -30,11 +30,11 @@ export const DomainSection: React.FC< DomainSectionProps > = ( props ) => {
 			title={
 				isWPcom
 					? translate(
-							"Your domain {{good}}set up is excelent{{/good}}, contributing positively to your site's visibility and growth.",
+							"Your domain {{good}}setup is excellent{{/good}}, contributing positively to your site's visibility and growth.",
 							getTitleTranslateOptions()
 					  )
 					: translate(
-							"Your domain {{good}}set up is good{{/good}}, but you could boost your site's visibility and growth.",
+							"Your domain {{good}}setup is good{{/good}}, but you could boost your site's visibility and growth.",
 							getTitleTranslateOptions()
 					  )
 			}
