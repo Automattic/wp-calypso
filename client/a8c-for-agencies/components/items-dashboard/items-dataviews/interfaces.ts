@@ -10,6 +10,7 @@ export interface ItemsDataViewsType< T > {
 	itemFieldId?: string; // The field path to get the item id. Examples `id` or `site.blog_id`
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 	dataViewsState: DataViewsState;
+	onSelectionChange?: ( item: T[] ) => void;
 }
 
 export interface DataViewsColumn {
