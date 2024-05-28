@@ -17,6 +17,7 @@ type SegmentationSurveyProps = {
 	surveyKey: string;
 	onBack?: () => void;
 	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void;
+	skipNextNavigation?: ( questionKey: string, answerKeys: string[] ) => boolean;
 	headerAlign?: string;
 	questionConfiguration?: QuestionConfiguration;
 	questionComponentMap?: QuestionComponentMap;
@@ -34,6 +35,7 @@ const SegmentationSurvey = ( {
 	surveyKey,
 	onBack,
 	onNext,
+	skipNextNavigation,
 	headerAlign,
 	questionConfiguration,
 	questionComponentMap,
@@ -106,6 +108,7 @@ const SegmentationSurvey = ( {
 			answers,
 			questions,
 			surveyKey,
+			skipNextNavigation,
 		} );
 
 	if ( ! questions ) {

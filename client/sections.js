@@ -808,6 +808,12 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		name: 'a8c-for-agencies-partner-directory',
+		paths: [ '/partner-directory' ],
+		module: 'calypso/a8c-for-agencies/sections/partner-directory',
+		group: 'a8c-for-agencies',
+	},
+	{
 		name: 'a8c-for-agencies-signup',
 		paths: [ '/signup', '/signup/finish', '/signup/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/signup',

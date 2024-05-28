@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Spinner, Gridicon } from '@automattic/components';
+import { Spinner } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useTranslate } from 'i18n-calypso';
+import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
+import { useRtl, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { GlobalSidebarHeader } from 'calypso/layout/global-sidebar/header';
@@ -29,6 +30,7 @@ const GlobalSidebar = ( {
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
 	const isDesktop = useBreakpoint( '>=782px' );
+	const isRtl = useRtl();
 	const previousRoute = useSelector( getPreviousRoute );
 	const section = useSelector( getSection );
 	const [ previousLink, setPreviousLink ] = useState( '' );
@@ -79,7 +81,7 @@ const GlobalSidebar = ( {
 					{ requireBackLink && (
 						<div className="sidebar__back-link">
 							<a href={ sidebarBackLinkHref } onClick={ handleBackLinkClick }>
-								<Gridicon icon="chevron-left" size={ 24 } />
+								<Icon icon={ isRtl ? chevronRight : chevronLeft } size={ 24 } />
 							</a>
 							<span className="sidebar__site-title">{ siteTitle || translate( 'Back' ) }</span>
 						</div>

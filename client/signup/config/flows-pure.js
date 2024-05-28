@@ -197,6 +197,17 @@ export function generateFlows( {
 			onEnterFlow: onEnterOnboarding,
 		},
 		{
+			name: 'plans-first',
+			steps: [ 'plans', 'domains', userSocialStep ],
+			destination: getSignupDestination,
+			description: 'Plans first signup flow',
+			lastModified: '2024-05-24',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
+			hideProgressIndicator: true,
+		},
+		{
 			name: 'site-migration',
 			steps: [ 'domains' ],
 			destination: getSignupDestination,
