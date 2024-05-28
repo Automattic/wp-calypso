@@ -591,8 +591,10 @@ $button-padding: 8px 32px;
 }
 
 .stats-purchase-page__full-width {
-	display: block;
-	width: 100%;
+	.components-button {
+		display: block;
+		width: 100%;
+	}
 }
 
 .stats-purchase-page__footnotes {
