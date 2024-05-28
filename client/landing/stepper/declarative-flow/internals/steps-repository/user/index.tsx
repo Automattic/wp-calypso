@@ -1,4 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -63,6 +64,8 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 };
 
 const UserStep: Step = function UserStep( props ) {
+	const translate = useTranslate();
+
 	return (
 		<StepContainer
 			stepName="user"
@@ -72,11 +75,21 @@ const UserStep: Step = function UserStep( props ) {
 			isHorizontalLayout={ false }
 			isWideLayout={ false }
 			isFullLayout
-			hideFormattedHeader
 			isLargeSkipLayout={ false }
-			hideBack={ false }
+			hideBack
 			stepContent={ <StepContent { ...props } /> }
 			recordTracksEvent={ recordTracksEvent }
+			customizedActionButtons={
+				<Button
+					className="step-wrapper__navigation-link forward"
+					href={ login( {
+						signupUrl: window.location.pathname + window.location.search,
+					} ) }
+					variant="link"
+				>
+					<span>{ translate( 'Log in' ) }</span>
+				</Button>
+			}
 		/>
 	);
 };
