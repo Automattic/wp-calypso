@@ -7,6 +7,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { FILTER_TYPE_INSTALL, FILTER_TYPE_VISITS } from '../constants';
+import useExistingPressablePlan from '../hooks/use-existing-pressable-plan';
 import getPressablePlan from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
 import { FilterType } from '../types';
@@ -22,6 +23,10 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 	const dispatch = useDispatch();
 
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
+
+	const { existingPlan, isFetching: isFetchingExistingPlan } = useExistingPressablePlan( {
+		plans,
+	} );
 
 	const options = useMemo(
 		() => [
@@ -77,6 +82,10 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 		'pressable-overview-plan-selection__filter'
 	);
 
+	const minimum = existingPlan
+		? options.findIndex( ( { value } ) => value === existingPlan.slug ) + 1
+		: 0;
+
 	return (
 		<section className={ wrapperClass }>
 			<div className="pressable-overview-plan-selection__filter-type">
@@ -104,7 +113,12 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 				</div>
 			</div>
 
-			<A4ASlider value={ selectedOption } onChange={ onSelectOption } options={ options } />
+			<A4ASlider
+				value={ selectedOption }
+				onChange={ onSelectOption }
+				options={ options }
+				minimum={ minimum }
+			/>
 		</section>
 	);
 }
