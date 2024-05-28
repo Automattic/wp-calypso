@@ -81,6 +81,7 @@ export const redirectInvalidLanguage = () => {};
 export const redirectLoggedOut = () => {};
 export const redirectLoggedOutToSignup = () => {};
 export const redirectToDashboard = () => {};
+export const redirectLoggedOutIfNotFromMyJetpack = () => {};
 export const redirectWithoutLocaleParamIfLoggedIn = () => {};
 export const redirectIfCurrentUserCannot = () => {};
 export const redirectIfP2 = () => {};

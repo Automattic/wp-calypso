@@ -148,11 +148,8 @@ export const redirectInvalidLanguage = ( context, next ) => {
 
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
-	const isLoggedIn = isUserLoggedIn( state );
 
-	// we don't need to redirect users coming from my-jetpack that are not logged in
-	// see pbNhbs-ag3-p2
-	if ( isLoggedIn || ( ! isLoggedIn && isContextSourceMyJetpack( context ) ) ) {
+	if ( isUserLoggedIn( state ) ) {
 		next();
 		return;
 	}
@@ -207,6 +204,24 @@ export function redirectLoggedOutToSignup( context, next ) {
 	}
 
 	return page.redirect( createAccountUrl( { redirectTo: context.path, ref: 'reader-lp' } ) );
+}
+
+/**
+ * Middleware to redirect logged out users if they are not coming from My Jetpack
+ * @see pbNhbs-ag3-p2
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectLoggedOutIfNotFromMyJetpack( context, next ) {
+	const state = context.store.getState();
+
+	if ( ! isUserLoggedIn( state ) && isContextSourceMyJetpack( context ) ) {
+		next();
+		return;
+	}
+
+	redirectLoggedOut( context, next );
 }
 
 /**
