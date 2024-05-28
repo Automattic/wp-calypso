@@ -18,7 +18,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Sso = ( {
 	isAtomic,
-	fields = {},
+	fields,
 	handleAutosavingToggle,
 	isRequestingSettings = true,
 	isSavingSettings = false,
@@ -66,7 +66,7 @@ const Sso = ( {
 
 						<div className="sso__module-settings site-settings__child-settings">
 							<ToggleControl
-								checked={ !! fields.jetpack_sso_match_by_email }
+								checked={ !! fields?.jetpack_sso_match_by_email }
 								disabled={
 									isRequestingSettings ||
 									isSavingSettings ||
@@ -78,7 +78,7 @@ const Sso = ( {
 							/>
 
 							<ToggleControl
-								checked={ !! fields.jetpack_sso_require_two_step }
+								checked={ !! fields?.jetpack_sso_require_two_step }
 								disabled={
 									isRequestingSettings ||
 									isSavingSettings ||

@@ -7,7 +7,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 
 import './style.scss';
 
-export default function ConnectDomainStepClipboardButton( { baseClassName, classes = [], text } ) {
+export default function ConnectDomainStepClipboardButton( { baseClassName, classes, text } ) {
 	const { __ } = useI18n();
 	const [ copiedText, setCopiedText ] = useState( false );
 	const copied = () => setCopiedText( true );

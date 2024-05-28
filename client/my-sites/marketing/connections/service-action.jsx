@@ -13,8 +13,8 @@ const SharingServiceAction = ( {
 	isConnecting = false,
 	isDisconnecting = false,
 	isRefreshing = false,
-	onAction = () => {},
-	removableConnections = [],
+	onAction,
+	removableConnections,
 	service,
 	status = 'unknown',
 	translate,
@@ -29,7 +29,7 @@ const SharingServiceAction = ( {
 	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
 	const onClick = ( event ) => {
 		event.stopPropagation();
-		onAction();
+		onAction?.();
 	};
 
 	if ( 'unknown' === status ) {
@@ -47,7 +47,7 @@ const SharingServiceAction = ( {
 			context: 'Sharing: Publicize connect pending button label',
 		} );
 	} else if ( 'connected' === status || 'must-disconnect' === status ) {
-		if ( removableConnections.length > 1 ) {
+		if ( removableConnections?.length > 1 ) {
 			label = translate( 'Disconnect All', {
 				context: 'Sharing: Publicize disconnect button label',
 			} );
@@ -63,7 +63,7 @@ const SharingServiceAction = ( {
 		label = translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
 	}
 
-	if ( 'google_plus' === service.ID && 1 > removableConnections.length ) {
+	if ( 'google_plus' === service.ID && 1 > removableConnections?.length ) {
 		label = translate( 'Unavailable', {
 			context: 'Sharing: Publicize connect unavailable button label',
 		} );
@@ -115,12 +115,12 @@ const SharingServiceAction = ( {
 				scary={ warning }
 				compact
 				onClick={
-					[ 'connected', 'must-disconnect' ].includes( status ) && removableConnections.length >= 1
+					[ 'connected', 'must-disconnect' ].includes( status ) && removableConnections?.length >= 1
 						? onClick
 						: null
 				}
 			>
-				{ isExpanded && removableConnections.length === 0 ? (
+				{ isExpanded && removableConnections?.length === 0 ? (
 					<>
 						<Gridicon icon="cross-small" size={ 16 } />
 						<span>{ translate( 'Cancel' ) }</span>

@@ -5,14 +5,16 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
 import './suggestion-list.scss';
 
+const defaultContext = {};
+
 const UserMentionsSuggestionList = ( {
-	onClick = () => {},
-	onClose = () => {},
-	popoverContext = {},
+	onClick,
+	onClose,
+	popoverContext = defaultContext,
 	popoverPosition = null,
 	query = '',
 	selectedSuggestionId = 0,
-	suggestions = [],
+	suggestions,
 } ) => (
 	<PopoverMenu
 		className="user-mentions__suggestions"
@@ -24,12 +26,12 @@ const UserMentionsSuggestionList = ( {
 		onClose={ onClose }
 		customPosition={ popoverPosition }
 	>
-		{ suggestions.map( ( suggestion ) => (
+		{ suggestions?.map( ( suggestion ) => (
 			<PopoverMenuItem
 				className="user-mentions__suggestion"
 				key={ suggestion.ID }
 				isSelected={ suggestion.ID === selectedSuggestionId }
-				onClick={ () => onClick( suggestion ) }
+				onClick={ () => onClick?.( suggestion ) }
 			>
 				<UserMentionsSuggestion
 					avatarUrl={ suggestion.image_URL }

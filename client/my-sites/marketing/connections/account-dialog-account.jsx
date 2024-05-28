@@ -9,7 +9,7 @@ import './account-dialog-account.scss';
 const AccountDialogAccount = ( {
 	account,
 	conflicting = false,
-	onChange = () => {},
+	onChange,
 	selected = false,
 	defaultIcon,
 } ) => {

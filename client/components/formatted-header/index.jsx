@@ -30,7 +30,7 @@ function FormattedHeader( {
 	headerText,
 	subHeaderText = '',
 	tooltipText = '',
-	className = '',
+	className,
 	compactOnMobile = false,
 	align = 'center',
 	subHeaderAlign = null,

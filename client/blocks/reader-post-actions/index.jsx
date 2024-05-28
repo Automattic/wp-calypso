@@ -99,7 +99,6 @@ ReaderPostActions.propTypes = {
 	post: PropTypes.object.isRequired,
 	site: PropTypes.object,
 	onCommentClick: PropTypes.func,
-	showFollow: PropTypes.bool,
 	iconSize: PropTypes.number,
 	visitUrl: PropTypes.string,
 	fullPost: PropTypes.bool,

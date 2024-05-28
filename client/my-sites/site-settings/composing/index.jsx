@@ -12,7 +12,7 @@ const Composing = ( {
 	isAtomic,
 	siteIsJetpack,
 	eventTracker,
-	fields = {},
+	fields,
 	handleSelect,
 	handleToggle,
 	isRequestingSettings = true,

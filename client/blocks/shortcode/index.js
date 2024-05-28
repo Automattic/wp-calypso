@@ -55,7 +55,6 @@ Shortcode.propTypes = {
 	children: PropTypes.string.isRequired,
 	filterRenderResult: PropTypes.func.isRequired,
 	className: PropTypes.string,
-	allowSameOrigin: PropTypes.bool,
 };
 
 export default Shortcode;

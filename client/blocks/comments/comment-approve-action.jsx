@@ -6,14 +6,7 @@ import PropTypes from 'prop-types';
 
 import './comment-approve-action.scss';
 
-const noop = () => {};
-
-const CommentApproveAction = ( {
-	translate,
-	status,
-	approveComment = noop,
-	unapproveComment = noop,
-} ) => {
+const CommentApproveAction = ( { translate, status, approveComment, unapproveComment } ) => {
 	const isApproved = status === 'approved';
 	const buttonStyle = classnames( 'comments__comment-actions-approve', {
 		'is-approved': isApproved,

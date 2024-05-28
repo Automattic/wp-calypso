@@ -47,7 +47,6 @@ CommentButton.propTypes = {
 	defaultLabel: PropTypes.string,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
-	post: PropTypes.object,
 	showLabel: PropTypes.bool,
 	tagName: PropTypes.string,
 	target: PropTypes.string,

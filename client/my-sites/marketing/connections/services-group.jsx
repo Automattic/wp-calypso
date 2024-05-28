@@ -40,10 +40,12 @@ const serviceWarningLevelToNoticeStatus = ( level ) => {
 	}
 };
 
+const emptyArray = [];
+
 const SharingServicesGroup = ( {
 	type,
 	isFetching = false,
-	services = [],
+	services = emptyArray,
 	title,
 	expandedService = '',
 	isJetpack,

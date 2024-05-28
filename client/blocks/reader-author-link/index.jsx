@@ -6,16 +6,14 @@ import * as stats from 'calypso/reader/stats';
 
 import './style.scss';
 
-const noop = () => {};
-
-const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick = noop } ) => {
+const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick } ) => {
 	const recordAuthorClick = () => {
 		stats.recordAction( 'click_author' );
 		stats.recordGaEvent( 'Clicked Author Link' );
 		if ( post ) {
 			stats.recordTrackForPost( 'calypso_reader_author_link_clicked', post );
 		}
-		onClick();
+		onClick?.();
 	};
 
 	if ( ! siteUrl ) {

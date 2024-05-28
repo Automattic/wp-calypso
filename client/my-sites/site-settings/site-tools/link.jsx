@@ -2,9 +2,7 @@ import { CompactCard } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-const noop = () => {};
-
-const SiteToolsLink = ( { description, href, isWarning = false, onClick = noop, title } ) => {
+const SiteToolsLink = ( { description, href, isWarning = false, onClick, title } ) => {
 	const titleClasses = classNames( 'site-tools__section-title', {
 		'is-warning': isWarning,
 	} );

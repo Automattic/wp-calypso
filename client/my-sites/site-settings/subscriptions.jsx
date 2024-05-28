@@ -14,7 +14,7 @@ import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-s
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const Subscriptions = ( {
-	fields = {},
+	fields,
 	handleAutosavingToggle,
 	isRequestingSettings = true,
 	isSavingSettings = false,
@@ -51,7 +51,7 @@ const Subscriptions = ( {
 
 					<div className="subscriptions__module-settings site-settings__child-settings">
 						<ToggleControl
-							checked={ !! fields.stb_enabled }
+							checked={ !! fields?.stb_enabled }
 							disabled={
 								isRequestingSettings ||
 								isSavingSettings ||
@@ -63,7 +63,7 @@ const Subscriptions = ( {
 						/>
 
 						<ToggleControl
-							checked={ !! fields.stc_enabled }
+							checked={ !! fields?.stc_enabled }
 							disabled={
 								isRequestingSettings ||
 								isSavingSettings ||

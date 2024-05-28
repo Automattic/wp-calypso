@@ -8,7 +8,7 @@ import usePostFormatsQuery from 'calypso/data/post-formats/use-post-formats-quer
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const DefaultPostFormat = ( {
-	fields = {},
+	fields,
 	onChangeField,
 	eventTracker,
 	isRequestingSettings = true,
@@ -24,7 +24,7 @@ const DefaultPostFormat = ( {
 			<FormSelect
 				name="default_post_format"
 				id="default_post_format"
-				value={ fields.default_post_format }
+				value={ fields?.default_post_format }
 				onChange={ onChangeField( 'default_post_format' ) }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onClick={ eventTracker( 'Selected Default Post Format' ) }

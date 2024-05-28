@@ -2,12 +2,7 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
-const SharingServiceConnectedAccounts = ( {
-	children,
-	connect = () => {},
-	service,
-	translate,
-} ) => {
+const SharingServiceConnectedAccounts = ( { children, connect, service, translate } ) => {
 	const allowMultipleAccounts = [ 'instagram-basic-display', 'p2_github' ];
 	const doesNotAllowMultipleAccounts = [ 'google_plus', 'mastodon' ];
 	const shouldShowConnectButton =

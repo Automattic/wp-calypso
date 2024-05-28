@@ -95,6 +95,8 @@ const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 	);
 };
 
+const defaultAvailableActions = [ 'rewind', 'download' ];
+
 /**
  * Renders the action buttons for the daily backup status.
  * @param {Object} props - The component props.
@@ -109,9 +111,9 @@ const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 const ActionButtons = ( {
 	rewindId = null,
 	disabled = false,
-	isMultiSite = false | null,
+	isMultiSite = false,
 	hasWarnings = false,
-	availableActions = [ 'rewind', 'download' ],
+	availableActions = defaultAvailableActions,
 	onClickClone = () => {},
 } ) => (
 	<>

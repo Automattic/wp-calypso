@@ -117,7 +117,7 @@ const BackupSuccessful = ( {
 			) }
 			<ActionButtons
 				rewindId={ actionableRewindId }
-				isMultiSite={ isMultiSite }
+				isMultiSite={ !! isMultiSite }
 				hasWarnings={ hasWarnings }
 				availableActions={ availableActions }
 				onClickClone={ onClickClone }

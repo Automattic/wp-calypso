@@ -9,8 +9,6 @@ import CommentLikeButtonContainer from './comment-likes';
 
 import './comment-actions.scss';
 
-const noop = () => {};
-
 const CommentActions = ( {
 	post,
 	comment,
@@ -21,7 +19,7 @@ const CommentActions = ( {
 	handleReply,
 	onReplyCancel,
 	showReadMore,
-	onReadMore = noop,
+	onReadMore,
 	onLikeToggle,
 } ) => {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;

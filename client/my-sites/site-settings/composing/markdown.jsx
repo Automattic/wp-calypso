@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import SupportInfo from 'calypso/components/support-info';
 
 const Markdown = ( {
-	fields = {},
+	fields,
 	handleToggle,
 	isRequestingSettings = true,
 	isSavingSettings = false,
@@ -29,7 +29,7 @@ const Markdown = ( {
 				privacyLink={ siteIsJetpack && ! isAtomic }
 			/>
 			<ToggleControl
-				checked={ !! fields.wpcom_publish_posts_with_markdown }
+				checked={ !! fields?.wpcom_publish_posts_with_markdown }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleToggle( 'wpcom_publish_posts_with_markdown' ) }
 				label={ translate( 'Write posts or pages in plain text Markdown syntax.' ) }

@@ -7,10 +7,7 @@ import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { getEditorPath } from 'calypso/state/editor/selectors';
 import { getNormalizedPost } from 'calypso/state/posts/selectors';
 import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
-
-const noop = () => {};
-
-function PostTypeListPostThumbnail( { onClick = noop, thumbnail, postLink } ) {
+function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {
 		'has-image': !! thumbnail,
 	} );

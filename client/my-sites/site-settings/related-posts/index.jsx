@@ -22,7 +22,7 @@ export const RelatedPostsSetting = ( {
 	return (
 		<FormFieldset>
 			<ToggleControl
-				checked={ !! fields.jetpack_relatedposts_enabled }
+				checked={ !! fields?.jetpack_relatedposts_enabled }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleToggle( 'jetpack_relatedposts_enabled' ) }
 				label={ translate( 'Show related content after posts' ) }
@@ -30,33 +30,33 @@ export const RelatedPostsSetting = ( {
 
 			<div className="related-posts__module-settings site-settings__child-settings">
 				<ToggleControl
-					checked={ !! fields.jetpack_relatedposts_show_headline }
+					checked={ !! fields?.jetpack_relatedposts_show_headline }
 					disabled={
-						isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
+						isRequestingSettings || isSavingSettings || ! fields?.jetpack_relatedposts_enabled
 					}
 					onChange={ handleToggle( 'jetpack_relatedposts_show_headline' ) }
 					label={ translate( 'Highlight related content with a heading' ) }
 				/>
 				<ToggleControl
-					checked={ !! fields.jetpack_relatedposts_show_thumbnails }
+					checked={ !! fields?.jetpack_relatedposts_show_thumbnails }
 					disabled={
-						isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
+						isRequestingSettings || isSavingSettings || ! fields?.jetpack_relatedposts_enabled
 					}
 					onChange={ handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }
 					label={ translate( 'Show a thumbnail image where available' ) }
 				/>
 				<ToggleControl
-					checked={ !! fields.jetpack_relatedposts_show_date }
+					checked={ !! fields?.jetpack_relatedposts_show_date }
 					disabled={
-						isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
+						isRequestingSettings || isSavingSettings || ! fields?.jetpack_relatedposts_enabled
 					}
 					onChange={ handleToggle( 'jetpack_relatedposts_show_date' ) }
 					label={ translate( 'Show post publish date' ) }
 				/>
 				<ToggleControl
-					checked={ !! fields.jetpack_relatedposts_show_context }
+					checked={ !! fields?.jetpack_relatedposts_show_context }
 					disabled={
-						isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
+						isRequestingSettings || isSavingSettings || ! fields?.jetpack_relatedposts_enabled
 					}
 					onChange={ handleToggle( 'jetpack_relatedposts_show_context' ) }
 					label={ translate( 'Show post category or tags' ) }
@@ -86,19 +86,19 @@ export const RelatedPostsSetting = ( {
 				) }
 			</FormSettingExplanation>
 			<RelatedContentPreview
-				showContext={ fields.jetpack_relatedposts_show_context }
-				showDate={ fields.jetpack_relatedposts_show_date }
-				showHeadline={ fields.jetpack_relatedposts_show_headline }
-				showThumbnails={ fields.jetpack_relatedposts_show_thumbnails }
-				dateFormat={ fields.date_format }
-				timezoneString={ fields.timezone_string }
+				showContext={ fields?.jetpack_relatedposts_show_context }
+				showDate={ fields?.jetpack_relatedposts_show_date }
+				showHeadline={ fields?.jetpack_relatedposts_show_headline }
+				showThumbnails={ fields?.jetpack_relatedposts_show_thumbnails }
+				dateFormat={ fields?.date_format }
+				timezoneString={ fields?.timezone_string }
 			/>
 		</FormFieldset>
 	);
 };
 
 const RelatedPostsSection = ( {
-	fields = {},
+	fields,
 	handleToggle,
 	isRequestingSettings = true,
 	isSavingSettings = false,

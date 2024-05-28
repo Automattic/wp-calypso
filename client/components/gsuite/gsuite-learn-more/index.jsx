@@ -6,9 +6,7 @@ import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 import './style.scss';
 
-const noop = () => {};
-
-const GSuiteLearnMore = ( { onLearnMoreClick = noop, productSlug } ) => {
+const GSuiteLearnMore = ( { onLearnMoreClick, productSlug } ) => {
 	const translate = useTranslate();
 
 	return (

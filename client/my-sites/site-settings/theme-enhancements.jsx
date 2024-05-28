@@ -22,7 +22,7 @@ function ThemeEnhancements( {
 	handleAutosavingRadio,
 	isSavingSettings = false,
 	isRequestingSettings = true,
-	fields = {},
+	fields,
 	customizeUrl,
 	siteId,
 	isFSEActive,
@@ -30,7 +30,7 @@ function ThemeEnhancements( {
 } ) {
 	const isFormPending = isRequestingSettings || isSavingSettings;
 	const translate = useTranslate();
-	const blockedByFooter = 'footer' === get( fields, 'infinite_scroll_blocked' );
+	const blockedByFooter = 'footer' === fields?.infinite_scroll_blocked;
 	const name = 'infinite_scroll';
 
 	function RadioOptions() {
@@ -49,7 +49,7 @@ function ThemeEnhancements( {
 							<FormRadio
 								name={ name }
 								value={ value }
-								checked={ value === fields[ name ] }
+								checked={ value === fields?.[ name ] }
 								onChange={ handleAutosavingRadio( name, value ) }
 								disabled={ isFormPending }
 								label={ label }
@@ -118,7 +118,7 @@ function ThemeEnhancements( {
 						privacyLink={ false }
 					/>
 					<ToggleControl
-						checked={ !! fields[ name ] }
+						checked={ !! fields?.[ name ] }
 						disabled={ isFormPending || blockedByFooter }
 						onChange={ handleAutosavingToggle( name ) }
 						label={ translate(
