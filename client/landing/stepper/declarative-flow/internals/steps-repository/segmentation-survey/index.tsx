@@ -15,14 +15,16 @@ type NavigationDecision = {
 	providedDependencies: ProvidedDependencies;
 };
 
+const checkMigrationAnswer = ( questionKey: string, answerKeys: string[] ): boolean =>
+	questionKey === WHAT_WOULD_YOU_LIKE_TO_DO_QUESTION_KEY &&
+	answerKeys.includes( MIGRATE_MY_STORE_ANSWER_KEY );
+
 const useShouldNavigate = () => {
 	const hash = useHash();
 
 	const shouldNavigate = useCallback(
 		( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ): NavigationDecision => {
-			const isMigrationFlow =
-				questionKey === WHAT_WOULD_YOU_LIKE_TO_DO_QUESTION_KEY &&
-				answerKeys.includes( MIGRATE_MY_STORE_ANSWER_KEY );
+			const isMigrationFlow = checkMigrationAnswer( questionKey, answerKeys );
 
 			const proceedWithNavigation = isLastQuestion || isMigrationFlow;
 			const providedDependencies: ProvidedDependencies = { isMigrationFlow };
@@ -79,6 +81,7 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 				onNext={ handleNext }
 				headerAlign="left"
 				clearAnswersOnLastQuestion={ false }
+				skipNextNavigation={ checkMigrationAnswer }
 			/>
 		</Main>
 	);
