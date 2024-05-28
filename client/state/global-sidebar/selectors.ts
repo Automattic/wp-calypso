@@ -1,6 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import isScheduledUpdatesMultisiteRoute from 'calypso/state/selectors/is-scheduled-updates-multisite-route';
+import isScheduledUpdatesMultisiteRoute, {
+	isScheduledUpdatesMultisiteCreateRoute,
+	isScheduledUpdatesMultisiteEditRoute,
+} from 'calypso/state/selectors/is-scheduled-updates-multisite-route';
 import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -91,8 +94,8 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		] );
 
 	const isPluginsScheduledUpdatesEditMode =
-		! siteId &&
-		isInRoute( state, [ '/plugins/scheduled-updates/edit', '/plugins/scheduled-updates/create' ] );
+		isScheduledUpdatesMultisiteCreateRoute( state ) ||
+		isScheduledUpdatesMultisiteEditRoute( state );
 
 	const isBulkDomainsDashboard = isInRoute( state, [ '/domains/manage' ] );
 	const isSmallScreenDashboard =
@@ -113,8 +116,12 @@ export const getShouldShowUnifiedSiteSidebar = (
 	sectionName: string
 ) => {
 	return (
-		isGlobalSiteViewEnabled( state, siteId ) &&
-		sectionGroup === 'sites' &&
-		! shouldShowGlobalSiteDashboard( state, siteId, sectionName )
+		( isGlobalSiteViewEnabled( state, siteId ) &&
+			sectionGroup === 'sites' &&
+			sectionName !== 'plugins' &&
+			! shouldShowGlobalSiteDashboard( state, siteId, sectionName ) ) ||
+		( isGlobalSiteViewEnabled( state, siteId ) &&
+			sectionName === 'plugins' &&
+			! isScheduledUpdatesMultisiteRoute( state ) )
 	);
 };
