@@ -55,15 +55,8 @@ function MainLayout( {
 	);
 }
 
-export default function Layout( {
-	disableGuidedTour = false,
-	...props
-}: Props & { disableGuidedTour?: boolean } ) {
+function MainLayoutWithGuidedTour( { ...props }: Props ) {
 	const guidedTours = useGuidedTours();
-
-	if ( disableGuidedTour ) {
-		return <MainLayout { ...props } />;
-	}
 
 	return (
 		<GuidedTourContextProvider
@@ -74,4 +67,15 @@ export default function Layout( {
 			<MainLayout { ...props } />
 		</GuidedTourContextProvider>
 	);
+}
+
+export default function Layout( {
+	disableGuidedTour = false,
+	...props
+}: Props & { disableGuidedTour?: boolean } ) {
+	if ( disableGuidedTour ) {
+		return <MainLayout { ...props } />;
+	}
+
+	return <MainLayoutWithGuidedTour { ...props } />;
 }
