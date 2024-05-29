@@ -12,10 +12,18 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 
 	return (
 		<>
-			<Markdown>{ title }</Markdown>
+			<Markdown
+				components={ {
+					code( props ) {
+						return <span className="value">{ props.children }</span>;
+					},
+				} }
+			>
+				{ title }
+			</Markdown>
 			{ value && (
 				<span>
-					- <span className="value"> { value }</span>
+					&nbsp;&minus;&nbsp;<span className="value"> { value }</span>
 				</span>
 			) }
 		</>
