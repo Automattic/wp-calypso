@@ -203,7 +203,7 @@ const StatsCommercialPurchase = ( {
 					/>
 					<div className="stats-purchase-wizard__actions">
 						<ButtonComponent
-							className="is-full-width"
+							className="stats-purchase-page__full-width-button"
 							variant="primary"
 							primary={ isWPCOMSite ? true : undefined }
 							onClick={ () =>
