@@ -41,7 +41,7 @@ export const MigrationBanner = () => {
 
 	return (
 		<LayoutBlock width="medium">
-			<Heading>{ translate( 'Want to see how much better your site could be? ' ) }</Heading>
+			<Heading>{ translate( 'Want to see how much better your site could be?' ) }</Heading>
 			<Description>
 				{ translate( 'Migrate for free and get access to our advanced performance tools.' ) }
 				<Link onClick={ onMigrateSite }>
