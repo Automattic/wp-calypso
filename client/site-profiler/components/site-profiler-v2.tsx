@@ -147,6 +147,7 @@ export default function SiteProfilerV2( props: Props ) {
 							<>
 								{ showBasicMetrics && <BasicMetrics basicMetrics={ basicMetrics.basic } /> }
 								<HostingSection
+									domain={ domain }
 									dns={ siteProfilerData.dns }
 									urlData={ urlData }
 									hostingProvider={ hostingProviderData?.hosting_provider }
