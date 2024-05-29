@@ -1208,10 +1208,14 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		const { blogname } = this.props.authQuery;
+		const { blogname, from } = this.props.authQuery;
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				<Disclaimer siteName={ decodeEntities( blogname ) } companyName={ this.getCompanyName() } />
+				<Disclaimer
+					siteName={ decodeEntities( blogname ) }
+					companyName={ this.getCompanyName() }
+					from={ from }
+				/>
 				<Button
 					primary
 					disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }

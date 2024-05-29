@@ -17,7 +17,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 	};
 
 	render() {
-		const { companyName = 'WordPress.com', siteName, translate } = this.props;
+		const { companyName = 'WordPress.com', siteName, from, translate } = this.props;
 
 		const detailsLink = (
 			<a
@@ -30,12 +30,13 @@ class JetpackConnectDisclaimer extends PureComponent {
 		);
 
 		const text =
-			this.props.from === 'my-jetpack'
+			from === 'my-jetpack'
 				? translate(
 						'By clicking {{strong}}Approve{{/strong}}, you agree to {{detailsLink}}sync your site‘s data{{/detailsLink}} with us.',
 						{
 							components: {
 								strong: <strong />,
+								detailsLink,
 							},
 						}
 				  )
