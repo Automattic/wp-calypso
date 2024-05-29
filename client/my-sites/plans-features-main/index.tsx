@@ -296,7 +296,7 @@ const PlansFeaturesMain = ( {
 
 	const { segment: intentFromSegmentationSurvey, isFetchingSegment } = useSegmentedIntent(
 		intentFromProps === 'plans-guided',
-		siteId ?? 0,
+		siteId,
 		intent
 	);
 

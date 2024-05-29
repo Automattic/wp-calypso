@@ -11,13 +11,16 @@ import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from 'calypso/signup/steps/initia
  */
 export function useSegmentedIntent(
 	enabled = false,
-	blogId = 0,
+	blogId: number | null | undefined,
 	fallback: PlansIntent = 'plans-default-wpcom'
 ): { segment: PlansIntent; isFetchingSegment: boolean } {
 	const { isFetching, data } = useSurveyAnswersQuery( {
 		surveyKey: GUIDED_FLOW_SEGMENTATION_SURVEY_KEY,
 		enabled,
 	} );
+
+	// The survey API uses blog_id = 0 when the site is unknown.
+	blogId = blogId || 0;
 
 	const surveyedGoals = data?.[ blogId ]?.[ 'what-are-your-goals' ];
 	const surveyedIntent = data?.[ blogId ]?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
