@@ -1074,6 +1074,7 @@ export function useCommands() {
 					_x( 'edit user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
 					_x( 'remove user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
 					_x( 'update user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
+					'wp user', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
@@ -1091,6 +1092,7 @@ export function useCommands() {
 					_x( 'add new user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
 					_x( 'create user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
 					_x( 'invite user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
+					'wp user create', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
