@@ -21,11 +21,6 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 			requireBackLink
 			backLinkHref="/sites"
 		>
-			<p className="sidebar__description">
-				{ translate(
-					'Streamline your workflow with scheduled updates, timed to suit your needs.'
-				) }
-			</p>
 			<SidebarMenu>
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
