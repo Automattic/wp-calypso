@@ -109,6 +109,7 @@ export function useCommands() {
 					_x( 'view my sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
 					_x( 'manage sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
 					_x( 'sites dashboard', 'Keyword for the View my sites command', __i18n_text_domain__ ),
+					'wp site', // WP-CLI command
 				].join( ' ' ),
 				icon: wordpressIcon,
 			},
@@ -464,6 +465,7 @@ export function useCommands() {
 				searchLabel: [
 					_x( 'add new site', 'Keyword for the Add new site command', __i18n_text_domain__ ),
 					_x( 'create site', 'Keyword for the Add new site command', __i18n_text_domain__ ),
+					'wp site create', // WP-CLI command
 				].join( ' ' ),
 				context: [ '/sites' ],
 				icon: plusIcon,
