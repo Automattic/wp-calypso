@@ -328,7 +328,6 @@ const PlansFeaturesMain = ( {
 		forceDefaultPlans,
 		intentFromSiteMeta.processing,
 		intentFromSegmentationSurvey,
-		flowName,
 	] );
 
 	const showEscapeHatch =
