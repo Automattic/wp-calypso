@@ -77,6 +77,34 @@ const DevTools = () => {
 			),
 			supportContext: 'github-deployments',
 		},
+		{
+			title: translate( 'Theme File Editor' ),
+			text: translate(
+				'Unlock access to the theme file editor, a powerful way to edit the individual CSS and PHP files of your theme.'
+			),
+			supportContext: 'theme-file-editor',
+		},
+		{
+			title: translate( 'Plugin File Editor' ),
+			text: translate(
+				'Unlock the plugin file editor and make changes to any of your plugins’ individual PHP files.'
+			),
+			supportContext: 'use-your-pluginsuse-the-plugin-file-editor-advanced',
+		},
+		{
+			title: translate( 'Unlock Permalinks' ),
+			text: translate(
+				'Upgrade your plan to create a custom URL structure for your permalinks and archives. Clear, informative URLs improve the aesthetics, usability, and forward-compatibility of your links.'
+			),
+			supportContext: 'change-the-permalink-structure',
+		},
+		{
+			title: translate( 'Set a Privacy Policy page' ),
+			text: translate(
+				'Create a Privacy Policy page for your site—keeping it compliant with regional requirements and making your visitors and customers aware of the details.'
+			),
+			supportContext: 'privacy-settings-tool',
+		},
 	];
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;

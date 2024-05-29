@@ -357,6 +357,22 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/hosting-configuration/',
 		post_id: 160841,
 	},
+	'theme-file-editor': {
+		link: 'https://wordpress.com/support/themes/#theme-file-editor-advanced',
+		post_id: 2278,
+	},
+	'use-the-plugin-file-editor-advanced': {
+		link: 'https://wordpress.com/support/plugins/use-your-plugins/#use-the-plugin-file-editor-advanced',
+		post_id: 206930,
+	},
+	'change-the-permalink-structure': {
+		link: 'https://wordpress.com/support/change-the-permalink-structure/',
+		post_id: 366520,
+	},
+	'privacy-settings-tool': {
+		link: 'https://wordpress.com/support/how-to-create-legal-pages/#privacy-settings-tool',
+		post_id: 173927,
+	},
 };
 
 export default contextLinks;
