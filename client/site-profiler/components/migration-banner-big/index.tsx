@@ -13,36 +13,43 @@ const StyledLayoutBlock = styled( LayoutBlock )`
 	&:before {
 		content: '';
 		position: absolute;
+		right: 0;
+		bottom: 0;
 		width: 100%;
 		height: 100%;
-		background: url( ${ siteProfilerBackground } ) no-repeat right bottom;
+		background: url( ${ siteProfilerBackground } ) no-repeat right top;
 		transform: scaleY( -1 );
 		z-index: -1;
 	}
-	&.migration-banner-big h1 {
-		font-size: 60px;
+
+	&.l-block {
+		padding-bottom: 200px;
 	}
 `;
-
 const StyledWPCOMLogo = styled.img`
 	margin-bottom: 30px;
 	filter: brightness( 0 ) saturate( 100% ) invert( 56% ) sepia( 96% ) saturate( 6609% )
 		hue-rotate( 225deg ) brightness( 95% ) contrast( 93% );
 `;
-const Heading = styled.h2`
-	&#migration-banner-heading {
-		font-size: 60px;
-	}
+const Heading = styled.div`
+	font-size: 60px;
+	line-height: 50px;
+	margin-bottom: 15px;
 `;
 const Description = styled.div`
 	margin-bottom: 60px;
 	color: var( --studio-gray-20 );
 	font-size: 16px;
 `;
-
 const StyledButton = styled( Button )`
-	&.migration-banner-button {
-		padding: 10px 24px;
+	background-color: var( --color-button );
+	border: none;
+	color: #fff;
+	padding: 10px 24px;
+
+	&:hover {
+		color: #fff;
+		background-color: var( --color-button-60 );
 	}
 `;
 
@@ -57,7 +64,7 @@ export const MigrationBannerBig = () => {
 	const translate = useTranslate();
 
 	return (
-		<StyledLayoutBlock className="migration-banner-big" width="medium">
+		<StyledLayoutBlock width="medium">
 			<StyledWPCOMLogo src={ WPCOMLogo } />
 			<Heading>{ translate( 'Boost your site performance' ) }</Heading>
 			<Description>
@@ -70,7 +77,7 @@ export const MigrationBannerBig = () => {
 					}
 				) }
 			</Description>
-			<StyledButton className="migration-banner-button button-action" onClick={ onMigrateSite }>
+			<StyledButton onClick={ onMigrateSite }>
 				{ translate( 'Start your free migration' ) }
 			</StyledButton>
 		</StyledLayoutBlock>
