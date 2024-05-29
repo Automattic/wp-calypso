@@ -103,11 +103,24 @@ export const PostByEmailSetting = ( { emailAddress }: PostByEmailSettingProps ) 
 
 		simpleSiteRegeneratePostByEmail( undefined, {
 			onSuccess: () => {
-				dispatch( successNotice( translate( 'Address regenerated successfully!' ), noticeConfig ) );
+				dispatch(
+					successNotice(
+						translate( 'Address regenerated successfully!', {
+							comment: 'Notice text after regenerating the Post by Email email address',
+						} ),
+						noticeConfig
+					)
+				);
 			},
 			onError: () => {
 				dispatch(
-					errorNotice( translate( 'There was a problem regenerating the address.' ), noticeConfig )
+					errorNotice(
+						translate( 'There was a problem regenerating the address.', {
+							comment:
+								'Notice text when there was an error regenerating the Post by Email email address',
+						} ),
+						noticeConfig
+					)
 				);
 			},
 		} );
