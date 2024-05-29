@@ -33,7 +33,7 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 );
 
 const DevTools = () => {
-	const { searchParams } = new URL( document.location );
+	const { searchParams } = new URL( document.location.toString() );
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
