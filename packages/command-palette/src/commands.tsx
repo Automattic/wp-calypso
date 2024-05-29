@@ -994,6 +994,7 @@ export function useCommands() {
 					_x( 'install plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
 					_x( 'delete plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
 					_x( 'update plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+					'wp plugin', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
@@ -1012,6 +1013,7 @@ export function useCommands() {
 					_x( 'install plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
 					_x( 'add plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
 					_x( 'upload plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
+					'wp plugin install', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
