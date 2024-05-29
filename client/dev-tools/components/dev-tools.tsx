@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SFTP } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Dialog } from '@automattic/components';
@@ -43,7 +44,7 @@ const DevTools = () => {
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const pluginsLink = `https://wordpress.com/plugins/${ encodeURIComponent( siteSlug ) }`;
-	const promoCards = [
+	let promoCards = [
 		{
 			title: translate( 'Hosting Configuration' ),
 			text: translate(
@@ -77,35 +78,41 @@ const DevTools = () => {
 			),
 			supportContext: 'github-deployments',
 		},
-		{
-			title: translate( 'Theme File Editor' ),
-			text: translate(
-				'Unlock access to the theme file editor, a powerful way to edit the individual CSS and PHP files of your theme.'
-			),
-			supportContext: 'theme-file-editor',
-		},
-		{
-			title: translate( 'Plugin File Editor' ),
-			text: translate(
-				'Unlock the plugin file editor and make changes to any of your plugins’ individual PHP files.'
-			),
-			supportContext: 'use-the-plugin-file-editor-advanced',
-		},
-		{
-			title: translate( 'Unlock Permalinks' ),
-			text: translate(
-				'Upgrade your plan to create a custom URL structure for your permalinks and archives. Clear, informative URLs improve the aesthetics, usability, and forward-compatibility of your links.'
-			),
-			supportContext: 'change-the-permalink-structure',
-		},
-		{
-			title: translate( 'Set a Privacy Policy page' ),
-			text: translate(
-				'Create a Privacy Policy page for your site—keeping it compliant with regional requirements and making your visitors and customers aware of the details.'
-			),
-			supportContext: 'privacy-settings-tool',
-		},
 	];
+
+	const isSimpleClassic = isEnabled( 'layout/wpcom-admin-interface' );
+	if ( isSimpleClassic ) {
+		promoCards = [
+			{
+				title: translate( 'Theme File Editor' ),
+				text: translate(
+					'Unlock access to the theme file editor, a powerful way to edit the individual CSS and PHP files of your theme.'
+				),
+				supportContext: 'theme-file-editor',
+			},
+			{
+				title: translate( 'Plugin File Editor' ),
+				text: translate(
+					'Unlock the plugin file editor and make changes to any of your plugins’ individual PHP files.'
+				),
+				supportContext: 'use-the-plugin-file-editor-advanced',
+			},
+			{
+				title: translate( 'Unlock Permalinks' ),
+				text: translate(
+					'Upgrade your plan to create a custom URL structure for your permalinks and archives. Clear, informative URLs improve the aesthetics, usability, and forward-compatibility of your links.'
+				),
+				supportContext: 'change-the-permalink-structure',
+			},
+			{
+				title: translate( 'Set a Privacy Policy page' ),
+				text: translate(
+					'Create a Privacy Policy page for your site—keeping it compliant with regional requirements and making your visitors and customers aware of the details.'
+				),
+				supportContext: 'privacy-settings-tool',
+			},
+		];
+	}
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
@@ -120,6 +127,16 @@ const DevTools = () => {
 		} );
 		page( `/setup/transferring-hosted-site?${ params }` );
 	};
+	const heading = isSimpleClassic
+		? translate( 'Activate all developer tools and settings' )
+		: translate( 'Activate all developer tools' );
+	const description = isSimpleClassic
+		? translate(
+				'Your plan includes the developer tools and settings listed below and much more. Click "Activate Now" to begin.'
+		  )
+		: translate(
+				'Your plan includes all the developer tools listed below. Click "Activate Now" to begin.'
+		  );
 
 	if ( isSiteAtomic && hasSftpFeature ) {
 		page.replace( redirectUrl );
@@ -129,16 +146,10 @@ const DevTools = () => {
 	return (
 		<div className="dev-tools">
 			<div className="dev-tools__hero">
-				<h1>
-					{ showActivationButton
-						? translate( 'Activate all developer tools' )
-						: translate( 'Unlock all developer tools' ) }
-				</h1>
+				<h1>{ showActivationButton ? heading : translate( 'Unlock all developer tools' ) }</h1>
 				<p>
 					{ showActivationButton
-						? translate(
-								'Your plan includes all the developer tools listed below. Click "Activate Now" to begin.'
-						  )
+						? description
 						: translate(
 								'Upgrade to the Creator plan or higher to get access to all developer tools'
 						  ) }
