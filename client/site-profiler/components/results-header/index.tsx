@@ -9,7 +9,7 @@ import './styles.scss';
 
 type Props = {
 	domain: string;
-	overallScore: PerformanceCategories;
+	performanceCategory: PerformanceCategories;
 	urlData?: UrlData;
 	onGetReport: () => void;
 };
@@ -28,20 +28,20 @@ function getIsWpComSiteMessage( urlData?: UrlData ) {
 	return translate( 'This site is not hosted on WordPress.com' );
 }
 
-function getTitleMessage( overallScore: PerformanceCategories ) {
-	if ( overallScore === 'non-wpcom-low-performer' ) {
+function getTitleMessage( performanceCategory: PerformanceCategories ) {
+	if ( performanceCategory === 'non-wpcom-low-performer' ) {
 		return translate( 'Boost needed! Improve your site with us.' );
 	}
-	if ( overallScore === 'non-wpcom-high-performer' ) {
+	if ( performanceCategory === 'non-wpcom-high-performer' ) {
 		return translate( 'Good, but you can make it even better.' );
 	}
-	if ( overallScore === 'wpcom-high-performer' ) {
+	if ( performanceCategory === 'wpcom-high-performer' ) {
 		return translate( 'Your site is a top performer! Keep it up.' );
 	}
 	return translate( 'Room for growth! Let’s optimize your site.' );
 }
 
-export const ResultsHeader = ( { domain, overallScore, urlData, onGetReport }: Props ) => {
+export const ResultsHeader = ( { domain, performanceCategory, urlData, onGetReport }: Props ) => {
 	return (
 		<div className="results-header--container">
 			<div className="results-header--domain-container">
@@ -49,7 +49,7 @@ export const ResultsHeader = ( { domain, overallScore, urlData, onGetReport }: P
 				{ getIcon( urlData ) }
 				<span className="domain-message">{ getIsWpComSiteMessage( urlData ) }</span>
 			</div>
-			<h1>{ getTitleMessage( overallScore ) }</h1>
+			<h1>{ getTitleMessage( performanceCategory ) }</h1>
 			<div className="results-header--button-container">
 				<Button onClick={ onGetReport }>
 					{ translate( 'Access full site report - It’s free' ) }

@@ -98,7 +98,7 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 
-	const overallScore = getPerformanceCategory( basicMetrics?.basic, urlData );
+	const performanceCategory = getPerformanceCategory( basicMetrics?.basic, urlData );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
@@ -126,15 +126,15 @@ export default function SiteProfilerV2( props: Props ) {
 					<LayoutBlock
 						className={ classnames(
 							'results-header-block',
-							{ poor: overallScore === 'non-wpcom-low-performer' },
-							{ good: overallScore !== 'non-wpcom-low-performer' }
+							{ poor: performanceCategory === 'non-wpcom-low-performer' },
+							{ good: performanceCategory !== 'non-wpcom-low-performer' }
 						) }
 						width="medium"
 					>
 						{ showBasicMetrics && (
 							<ResultsHeader
 								domain={ domain }
-								overallScore={ overallScore }
+								performanceCategory={ performanceCategory }
 								urlData={ urlData }
 								onGetReport={ () => setIsGetReportFormOpen( true ) }
 							/>

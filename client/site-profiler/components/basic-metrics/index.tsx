@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef } from 'react';
-import { BASIC_METRICS_UNITS, SCORES } from 'calypso/data/site-profiler/metrics-dictionaries';
+import { BASIC_METRICS_UNITS } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { calculateMetricsSectionScrollOffset } from 'calypso/site-profiler/utils/calculate-metrics-section-scroll-offset';
 import type { BasicMetricsScored, Metrics, Scores } from 'calypso/data/site-profiler/types';
 import './styles.scss';
@@ -19,9 +19,9 @@ const SubtitleIcon = styled( Gridicon )`
 
 function getIcon( score: Scores ) {
 	switch ( score ) {
-		case SCORES.good:
+		case 'good':
 			return 'checkmark';
-		case SCORES.poor:
+		case 'poor':
 			return 'info-outline';
 		default:
 			return 'info-outline';
@@ -53,7 +53,7 @@ export const BasicMetric = ( {
 }: BasicMetricProps ) => {
 	const { value, score } = basicMetrics[ metric ];
 	const showMetric = value !== undefined && value !== null;
-	const isPositiveScore = score === SCORES.good;
+	const isPositiveScore = score === 'good';
 
 	return (
 		showMetric && (
