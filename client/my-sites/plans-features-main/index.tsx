@@ -304,21 +304,24 @@ const PlansFeaturesMain = ( {
 			return;
 		}
 
-		// TODO: plans from upsell takes precedence for setting intent right now
-		// - this is currently set to the default wpcom set until we have updated tailored features for all plans
-		// - at which point, we'll inject the upsell plan to the tailored plans mix instead
-		if ( 'plans-default-wpcom' !== intent && forceDefaultPlans ) {
-			setIntent( 'plans-default-wpcom' );
-		} else if ( ! intent ) {
-			setIntent(
-				planFromUpsells
-					? 'plans-default-wpcom'
-					: intentFromSegmentationSurvey ||
-							intentFromProps ||
-							intentFromSiteMeta.intent ||
-							'plans-default-wpcom'
-			);
+		if ( planFromUpsells ) {
+			// TODO: plans from upsell takes precedence for setting intent right now
+			// - this is currently set to the default wpcom set until we have updated tailored features for all plans
+			// - at which point, we'll inject the upsell plan to the tailored plans mix instead
+			return setIntent( 'plans-default-wpcom' );
 		}
+
+		if ( forceDefaultPlans ) {
+			return setIntent( 'plans-default-wpcom' );
+		}
+
+		const nextIntent =
+			intentFromSegmentationSurvey ||
+			intentFromProps ||
+			intentFromSiteMeta.intent ||
+			'plans-default-wpcom';
+
+		setIntent( nextIntent );
 	}, [
 		intent,
 		intentFromProps,
