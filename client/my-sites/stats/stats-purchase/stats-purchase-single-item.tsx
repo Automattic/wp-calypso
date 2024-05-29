@@ -478,7 +478,9 @@ function StatsCommercialFlowOptOutForm( {
 					},
 				}
 		  )
-		: translate( 'To use a non-commercial license you must agree to the following:' );
+		: translate(
+				'For non-commercial use, get started with a non-commercial license, including an optional contribution. Please agree to the following terms:'
+		  );
 
 	return (
 		<>
