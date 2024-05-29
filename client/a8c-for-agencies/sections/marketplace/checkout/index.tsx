@@ -156,7 +156,7 @@ function Checkout() {
 						/>
 
 						{ isAutomatedReferrals ? (
-							<RequestClientPayment />
+							<RequestClientPayment checkoutItems={ checkoutItems } />
 						) : (
 							<div className="checkout__aside-actions">
 								<Button
