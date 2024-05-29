@@ -11,7 +11,15 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 
 	return (
 		<div className="metrics-insigh-content">
-			<Markdown>{ description }</Markdown>
+			<Markdown
+				components={ {
+					a( props ) {
+						return <a target="_blank" { ...props } />;
+					},
+				} }
+			>
+				{ description }
+			</Markdown>
 		</div>
 	);
 };
