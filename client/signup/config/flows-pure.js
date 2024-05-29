@@ -696,7 +696,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'guided',
-			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans-guided' ],
+			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Choose what brings them to WordPress.com',
 			lastModified: '2024-05-15',

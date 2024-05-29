@@ -405,15 +405,6 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-guided': {
-			stepName: 'plans-guided',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-		},
-
 		'mailbox-plan': {
 			stepName: 'mailbox-plan',
 			apiRequestFunction: addPlanToCart,
