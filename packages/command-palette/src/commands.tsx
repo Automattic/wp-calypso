@@ -250,6 +250,7 @@ export function useCommands() {
 					),
 					_x( 'admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
 					_x( 'wp-admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
+					'wp admin', // WP-CLI command
 				].join( ' ' ),
 				context: [ '/sites' ],
 				siteSelector: true,
