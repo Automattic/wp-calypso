@@ -822,6 +822,7 @@ export function useCommands() {
 					_x( 'add new post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
 					_x( 'create post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
 					_x( 'write post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
+					'wp post create', // WP-CLI command
 				].join( ' ' ),
 				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
 				callback: ( params ) =>
@@ -839,6 +840,7 @@ export function useCommands() {
 				searchLabel: [
 					_x( 'manage posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
 					_x( 'edit posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
+					'wp post', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
