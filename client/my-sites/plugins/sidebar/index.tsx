@@ -25,8 +25,8 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
 					link="/plugins"
-					label={ translate( 'Plugins' ) }
-					tooltip={ isCollapsed && translate( 'Plugins' ) }
+					label={ translate( 'Marketplace' ) }
+					tooltip={ isCollapsed && translate( 'Marketplace' ) }
 					selected={
 						path.startsWith( '/plugins' ) && ! path.startsWith( '/plugins/scheduled-updates' )
 					}
