@@ -20,6 +20,8 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
+import './style.scss';
+
 const UploadPluginButton = ( { isMobile, siteSlug, hasUploadPlugins } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -166,6 +168,7 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 
 	return (
 		<NavigationHeader
+			className="plugins-navigation-header"
 			navigationItems={ breadcrumbs }
 			compactBreadcrumb={ isMobile }
 			ref={ navigationHeaderRef }
