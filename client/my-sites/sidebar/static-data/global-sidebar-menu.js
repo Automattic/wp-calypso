@@ -49,7 +49,7 @@ export default function globalSidebarMenu() {
 			title: translate( 'Plugins' ),
 			navigationLabel: translate( 'Plugins' ),
 			type: 'menu-item',
-			url: '/plugins/',
+			url: '/plugins',
 			forceChevronIcon: true,
 		} );
 
