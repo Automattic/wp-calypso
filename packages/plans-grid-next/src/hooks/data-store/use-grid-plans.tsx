@@ -128,12 +128,12 @@ const usePlanTypesWithIntent = ( {
 	let planTypes;
 	switch ( intent ) {
 		/* START: Guided Signup intents. See: pdDR7T-1xi-p2 */
-		case 'plans-segment-merchant':
-		case 'plans-segment-developer-or-agency':
+		case 'plans-guided-segment-merchant':
+		case 'plans-guided-segment-developer-or-agency':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ];
 			break;
-		case 'plans-segment-blogger':
-		case 'plans-segment-nonprofit':
+		case 'plans-guided-segment-blogger':
+		case 'plans-guided-segment-nonprofit':
 			planTypes = [
 				TYPE_FREE,
 				TYPE_PERSONAL,
@@ -143,7 +143,7 @@ const usePlanTypesWithIntent = ( {
 				TYPE_ENTERPRISE_GRID_WPCOM,
 			];
 			break;
-		case 'plans-segment-consumer-or-business':
+		case 'plans-guided-segment-consumer-or-business':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
 		/* END: Guided signup intents. END */

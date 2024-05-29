@@ -295,13 +295,13 @@ const PlansFeaturesMain = ( {
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 
 	const { segment: intentFromSegmentationSurvey, isFetchingSegment } = useSegmentedIntent(
-		intentFromProps === 'plans-guided',
+		flowName === 'guided',
 		siteId,
 		intent
 	);
 
 	useEffect( () => {
-		if ( intentFromProps === 'plans-guided' ) {
+		if ( flowName === 'guided' ) {
 			return setIntent( intentFromSegmentationSurvey );
 		}
 

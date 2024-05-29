@@ -70,12 +70,11 @@ export type PlansIntent =
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
 	| 'plans-videopress'
-	| 'plans-guided'
-	| 'plans-segment-developer-or-agency'
-	| 'plans-segment-merchant'
-	| 'plans-segment-blogger'
-	| 'plans-segment-nonprofit'
-	| 'plans-segment-consumer-or-business'
+	| 'plans-guided-segment-developer-or-agency'
+	| 'plans-guided-segment-merchant'
+	| 'plans-guided-segment-blogger'
+	| 'plans-guided-segment-nonprofit'
+	| 'plans-guided-segment-consumer-or-business'
 	| 'default';
 
 export interface PlanActionOverrides {
