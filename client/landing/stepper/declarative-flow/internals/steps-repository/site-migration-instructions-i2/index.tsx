@@ -9,7 +9,6 @@ import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-pr
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { logToLogstash } from 'calypso/lib/logstash';
 import { MaybeLink } from '../site-migration-instructions/maybe-link';
 import { ShowHideInput } from '../site-migration-instructions/show-hide-input';
 import { PendingActions } from './pending-actions';
@@ -88,21 +87,10 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 		if ( setupError ) {
 			const logError = setupError as unknown as { path: string; message: string };
 
-			logToLogstash( {
-				feature: 'calypso_client',
-				message: setupError?.message,
-				blog_id: siteId,
-				properties: {
-					env: process.env.NODE_ENV,
-					type: 'calypso_failed_to_prepare_site_for_migration',
-					site: siteId,
-					path: logError?.path,
-				},
-			} );
-
 			captureException( setupError, {
 				extra: {
 					message: logError?.message,
+					path: logError?.path,
 				},
 				tags: {
 					blog_id: siteId,
