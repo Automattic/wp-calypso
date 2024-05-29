@@ -315,6 +315,16 @@
 			}
 		}
 
+		.foldable-card__content {
+			a {
+				color: var(--studio-gray-40);
+
+				&:hover {
+					color: #fff;
+				}
+			}
+		}
+
 		&:last-child {
 			border-bottom: 1px solid var(--studio-gray-100);
 		}
