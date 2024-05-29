@@ -65,7 +65,7 @@ describe( 'fetchModuleList', () => {
 
 	test( "Ensure we're calling fetchModuleList for Atomic sites", async () => {
 		isWpcomAtomic = true;
-		isJetpack = false;
+		isJetpack = true;
 
 		render(
 			<Provider store={ getStore() }>
