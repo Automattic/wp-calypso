@@ -78,7 +78,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			target_site_slug: targetSite.slug,
 			is_migrate_from_wp: isMigrateFromWp,
 			is_trial: isTrial,
-			has_source_site: sourceSiteSlug !== '',
 		};
 	}, [ sourceSiteId, sourceSiteUrl, targetSite.ID, targetSite.slug, isMigrateFromWp, isTrial ] );
 

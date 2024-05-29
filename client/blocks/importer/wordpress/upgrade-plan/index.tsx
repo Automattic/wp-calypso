@@ -23,7 +23,6 @@ interface Props {
 	onCtaClick: () => void;
 	onContentOnlyClick?: () => void;
 	trackingEventsProps?: Record< string, unknown >;
-	migrateFrom?: string | null;
 	hideFreeMigrationTrialForNonVerifiedEmail?: boolean;
 }
 
