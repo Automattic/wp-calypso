@@ -294,17 +294,13 @@ const PlansFeaturesMain = ( {
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 
-	const { segment: intentFromSegmentationSurvey, isFetchingSegment } = useSegmentedIntent(
+	const { segment: intentFromSegmentationSurvey, isLoadingSegment } = useSegmentedIntent(
 		flowName === 'guided',
 		siteId,
 		intent
 	);
 
 	useEffect( () => {
-		if ( flowName === 'guided' ) {
-			return setIntent( intentFromSegmentationSurvey );
-		}
-
 		if ( intentFromSiteMeta.processing ) {
 			return;
 		}
@@ -318,7 +314,10 @@ const PlansFeaturesMain = ( {
 			setIntent(
 				planFromUpsells
 					? 'plans-default-wpcom'
-					: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom'
+					: intentFromSegmentationSurvey ||
+							intentFromProps ||
+							intentFromSiteMeta.intent ||
+							'plans-default-wpcom'
 			);
 		}
 	}, [
@@ -661,7 +660,7 @@ const PlansFeaturesMain = ( {
 			isTrailMapExperimentLoading
 	);
 	const isPlansGridReady =
-		! isFetchingSegment &&
+		! isLoadingSegment &&
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
 		! resolvedDeemphasizeFreePlan.isLoading;

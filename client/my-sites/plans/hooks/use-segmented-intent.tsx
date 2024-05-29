@@ -14,8 +14,8 @@ export function useSegmentedIntent(
 	enabled = false,
 	blogId: number | null | undefined,
 	fallback: PlansIntent | undefined
-): { segment: PlansIntent | undefined; isFetchingSegment: boolean } {
-	const { isFetching, data } = useSurveyAnswersQuery( {
+): { segment: PlansIntent | undefined; isLoadingSegment: boolean } {
+	const { isLoading, data } = useSurveyAnswersQuery( {
 		surveyKey: GUIDED_FLOW_SEGMENTATION_SURVEY_KEY,
 		enabled,
 	} );
@@ -27,20 +27,20 @@ export function useSegmentedIntent(
 	const surveyedIntent = data?.[ blogId ]?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
 	if ( ! enabled ) {
-		return { segment: fallback, isFetchingSegment: false };
+		return { segment: fallback, isLoadingSegment: false };
 	}
 
 	if ( ! surveyedIntent || ! surveyedGoals ) {
-		return { segment: fallback, isFetchingSegment: isFetching };
+		return { segment: fallback, isLoadingSegment: isLoading };
 	}
 
 	// Return default wpcom plans for migration flow.
 	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals.includes( SKIP_ANSWER_KEY ) ) {
-		return { segment: fallback, isFetchingSegment: isFetching };
+		return { segment: fallback, isLoadingSegment: isLoading };
 	}
 
 	if ( surveyedIntent === 'client' ) {
-		return { segment: 'plans-guided-segment-developer-or-agency', isFetchingSegment: isFetching };
+		return { segment: 'plans-guided-segment-developer-or-agency', isLoadingSegment: isLoading };
 	}
 
 	// Handle different cases when intent is 'Create for self'
@@ -51,22 +51,22 @@ export function useSegmentedIntent(
 			surveyedGoals.includes( 'newsletter' ) ||
 			surveyedGoals.includes( 'difm' )
 		) {
-			return { segment: fallback, isFetchingSegment: isFetching };
+			return { segment: fallback, isLoadingSegment: isLoading };
 		}
 		if ( surveyedGoals.includes( 'sell' ) && ! surveyedGoals.includes( 'difm' ) ) {
-			return { segment: 'plans-guided-segment-merchant', isFetchingSegment: isFetching };
+			return { segment: 'plans-guided-segment-merchant', isLoadingSegment: isLoading };
 		}
 		if ( surveyedGoals.includes( 'blog' ) ) {
-			return { segment: 'plans-guided-segment-blogger', isFetchingSegment: isFetching };
+			return { segment: 'plans-guided-segment-blogger', isLoadingSegment: isLoading };
 		}
 		if ( surveyedGoals.includes( 'educational-or-nonprofit' ) ) {
-			return { segment: 'plans-guided-segment-nonprofit', isFetchingSegment: isFetching };
+			return { segment: 'plans-guided-segment-nonprofit', isLoadingSegment: isLoading };
 		}
 		// Catch-all case for when none of the specific goals are met
 		// This will also account for "( ! DIFM && ! Sell ) = Consumer / Business" condition
-		return { segment: 'plans-guided-segment-consumer-or-business', isFetchingSegment: isFetching };
+		return { segment: 'plans-guided-segment-consumer-or-business', isLoadingSegment: isLoading };
 	}
 
 	// Default return if no conditions are met
-	return { segment: fallback, isFetchingSegment: isFetching };
+	return { segment: fallback, isLoadingSegment: isLoading };
 }

@@ -412,9 +412,6 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
-			props: {
-				intent: 'plans-guided',
-			},
 		},
 
 		'mailbox-plan': {
