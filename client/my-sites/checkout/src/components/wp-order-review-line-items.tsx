@@ -29,7 +29,6 @@ import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/produ
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useFCCARestrictions } from '../../utils';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { CouponCostOverride, LineItemCostOverrides } from './cost-overrides-list';
 import { ItemVariationPicker } from './item-variation-picker';
@@ -322,8 +321,6 @@ function LineItemWrapper( {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	const { shouldRestrict3YearPlans } = useFCCARestrictions();
-
 	const variants = useGetProductVariants( product, ( variant ) => {
 		// Only show term variants which are equal to or longer than the variant that
 		// was in the cart when checkout finished loading (not necessarily the
@@ -339,9 +336,6 @@ function LineItemWrapper( {
 			return true;
 		}
 
-		if ( shouldRestrict3YearPlans( variant.productSlug ) ) {
-			return false;
-		}
 		return variant.termIntervalInMonths >= initialVariantTerm;
 	} );
 

@@ -7,7 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { useMemo } from 'react';
-import { useFCCARestrictions } from 'calypso/my-sites/checkout/utils';
+import { useFCCARestrictions } from './use-fcca-restrictions';
 
 interface Props {
 	intent?: PlansIntent;
