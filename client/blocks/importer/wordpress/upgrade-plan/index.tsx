@@ -72,7 +72,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 		const allEventProps = {
 			...trackingEventsProps,
-			from: fromUrl,
+			...( fromUrl !== '' ? { from: fromUrl } : {} ),
 			has_source_site: fromUrl !== '',
 			migration_trial_hidden: hideFreeMigrationTrial ? 'true' : 'false',
 		};
