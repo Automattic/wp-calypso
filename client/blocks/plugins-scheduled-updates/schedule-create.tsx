@@ -6,6 +6,7 @@ import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { Banner } from 'calypso/components/banner';
+import { scrollToTop } from '../plugin-scheduled-updates-common/utils';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useCreateMonitor } from './hooks/use-create-monitor';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
@@ -53,6 +54,7 @@ export const ScheduleCreate = ( props: Props ) => {
 
 		createMonitor();
 		setSyncError( '' );
+		scrollToTop();
 
 		return onNavBack && onNavBack();
 	};
