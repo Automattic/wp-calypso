@@ -140,7 +140,7 @@ describe( 'UpgradePlan', () => {
 		await waitFor( () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_site_migration_upgrade_plan_screen',
-				{ has_source_site: false, migration_trial_hidden: 'false' }
+				{ migration_trial_hidden: 'false' }
 			);
 		} );
 	} );
@@ -162,11 +162,7 @@ describe( 'UpgradePlan', () => {
 		await waitFor( () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_site_migration_upgrade_plan_screen',
-				{
-					has_source_site: false,
-					migration_trial_hidden: 'false',
-					...customEventProps,
-				}
+				{ migration_trial_hidden: 'false', ...customEventProps }
 			);
 		} );
 	} );
@@ -204,7 +200,7 @@ describe( 'UpgradePlan', () => {
 		await waitFor( () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_site_migration_upgrade_plan_screen',
-				{ has_source_site: false, migration_trial_hidden: 'true' }
+				{ migration_trial_hidden: 'true' }
 			);
 		} );
 	} );

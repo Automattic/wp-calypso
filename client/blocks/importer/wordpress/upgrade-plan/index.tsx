@@ -42,7 +42,6 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		onFreeTrialClick: handleFreeTrialClick,
 		isBusy,
 		trackingEventsProps,
-		migrateFrom = '',
 		hideFreeMigrationTrialForNonVerifiedEmail = false,
 	} = props;
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
@@ -72,8 +71,6 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 		const allEventProps = {
 			...trackingEventsProps,
-			...( migrateFrom !== '' ? { from: migrateFrom } : {} ),
-			has_source_site: migrateFrom !== '',
 			migration_trial_hidden: hideFreeMigrationTrial ? 'true' : 'false',
 		};
 
