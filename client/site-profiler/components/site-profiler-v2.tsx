@@ -36,7 +36,7 @@ interface Props {
 }
 
 export default function SiteProfilerV2( props: Props ) {
-	const { routerDomain } = props;
+	const { routerDomain, hash } = props;
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const perfomanceMetricsRef = useRef( null );
@@ -162,6 +162,8 @@ export default function SiteProfilerV2( props: Props ) {
 								/>
 
 								<PerformanceSection
+									url={ url }
+									hash={ hash ?? basicMetrics?.token }
 									performanceMetricsRef={ perfomanceMetricsRef }
 									setIsGetReportFormOpen={ setIsGetReportFormOpen }
 								/>

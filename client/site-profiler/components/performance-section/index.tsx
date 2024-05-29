@@ -1,16 +1,22 @@
 import { useTranslate } from 'i18n-calypso';
+import { useUrlPerformanceMetricsQuery } from 'calypso/data/site-profiler/use-url-performance-metrics-query';
 import { MetricsInsight } from 'calypso/site-profiler/components/metrics-insight';
 import { MetricsSection } from 'calypso/site-profiler/components/metrics-section';
 import { getTitleTranslateOptions } from 'calypso/site-profiler/utils/get-title-translate-options';
+import { InsightHeader } from '../metrics-insight/insight-header';
 
 interface PerformanceSectionProps {
+	url?: string;
+	hash?: string;
 	performanceMetricsRef: React.RefObject< HTMLObjectElement >;
 	setIsGetReportFormOpen?: ( isOpen: boolean ) => void;
 }
 
 export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props ) => {
 	const translate = useTranslate();
-	const { performanceMetricsRef, setIsGetReportFormOpen } = props;
+	const { url, hash, performanceMetricsRef, setIsGetReportFormOpen } = props;
+	const { data } = useUrlPerformanceMetricsQuery( url, hash );
+	const performanceData = data?.performance?.diagnostic ?? {};
 
 	return (
 		<MetricsSection
@@ -22,15 +28,15 @@ export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props )
 			subtitle={ translate( "Boost your site's performance" ) }
 			ref={ performanceMetricsRef }
 		>
-			{ Array( 2 )
-				.fill( {
-					header:
-						'Your site reveals first content slower than 76% of peers, affecting first impressions.',
-					description: 'This is how you can improve it',
-				} )
-				.map( ( insight, index ) => (
-					<MetricsInsight key={ `insight-${ index }` } insight={ insight } />
-				) ) }
+			{ Object.values( performanceData ).map( ( metric ) => (
+				<MetricsInsight
+					key={ `insight-${ metric.id }` }
+					insight={ {
+						header: <InsightHeader data={ metric } />,
+						description: 'This is how you can improve it',
+					} }
+				/>
+			) ) }
 
 			{ Array( 5 )
 				.fill( {} )
