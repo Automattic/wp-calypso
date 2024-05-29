@@ -40,7 +40,6 @@ export function createReceiptObject(
 		currency: data.currency,
 		priceInteger: data.price_integer,
 		priceFloat: data.price_float,
-		isGravatarDomain: Boolean( data.is_gravatar_domain ),
 		purchases: purchases.map( ( purchase ) => {
 			return {
 				delayedProvisioning: Boolean( purchase.delayed_provisioning ),

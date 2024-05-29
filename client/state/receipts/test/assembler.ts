@@ -10,7 +10,6 @@ const rawReceiptEndpointReceipt: RawReceiptData = {
 	price_float: 100,
 	price_integer: 10000,
 	currency: 'USD',
-	is_gravatar_domain: false,
 	purchases: [
 		{
 			user_email: '',
@@ -73,7 +72,6 @@ const standardAssembledReceipt: ReceiptData = {
 	failedPurchases: [],
 	priceFloat: 100,
 	priceInteger: 10000,
-	isGravatarDomain: false,
 	purchases: [
 		{
 			delayedProvisioning: false,

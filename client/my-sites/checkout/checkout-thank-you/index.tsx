@@ -553,7 +553,7 @@ export class CheckoutThankYou extends Component<
 					<DomainOnlyThankYou
 						purchases={ purchases }
 						receiptId={ receiptId }
-						isGravatarDomain={ !! this.props.receipt.data?.isGravatarDomain }
+						isGravatarDomain={ false }
 					/>
 				);
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
