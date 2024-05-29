@@ -502,10 +502,18 @@ function setUpCSP( req, res, next ) {
 			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
+			'use.typekit.net',
 			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
-		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
+		'style-src': [
+			"'self'",
+			'*.wp.com',
+			'https://fonts.googleapis.com',
+			'use.typekit.net',
+			// per https://helpx.adobe.com/ca/fonts/using/content-security-policy.html
+			"'unsafe-inline'",
+		],
 		'form-action': [ "'self'" ],
 		'object-src': [ "'none'" ],
 		'img-src': [
@@ -518,6 +526,7 @@ function setUpCSP( req, res, next ) {
 			'https://amplifypixel.outbrain.com',
 			'https://img.youtube.com',
 			'localhost:8888',
+			'p.typekit.net',
 		],
 		'frame-src': [
 			"'self'",
@@ -529,6 +538,7 @@ function setUpCSP( req, res, next ) {
 			"'self'",
 			'*.wp.com',
 			'https://fonts.gstatic.com',
+			'use.typekit.net',
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
