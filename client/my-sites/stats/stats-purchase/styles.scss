@@ -188,6 +188,13 @@ $button-padding: 8px 32px;
 		box-sizing: border-box;
 		flex: 2 2 auto;
 
+		p {
+			width: 36em;
+			@media (max-width: $break-medium) {
+				width: unset;
+			}
+		}
+
 		@media (max-width: $break-medium) {
 			padding: 32px 24px;
 		}
