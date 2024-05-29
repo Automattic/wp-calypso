@@ -534,12 +534,24 @@ body.has-global-sidebar .is-global-sidebar-visible.is-support-session {
 
 	&::after {
 		background-color: var(--studio-orange);
+		border-radius: 0 0 2px 2px;
 		color: #fff;
-		content: "Support Session";
-		font-size: 10px;  /* stylelint-disable-line declaration-property-unit-allowed-list */
+		content: "Support session";
+		font-size: $font-body-extra-small;
 		left: 50%;
-		padding: 0 24px;
+		padding: 4px 16px;
 		top: 0;
 		transform: translateX(-50%);
+	}
+
+	&.is-support-session-expired {
+		&::before {
+			border: 8px solid var(--studio-red);
+		}
+
+		&::after {
+			background-color: var(--studio-red);
+			content: "This support session has expired";
+		}
 	}
 }

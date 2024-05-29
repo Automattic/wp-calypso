@@ -5,3 +5,7 @@ import 'calypso/state/support/init';
 export function isSupportSession( { support } ) {
 	return support === SESSION_ACTIVE || support === SESSION_EXPIRED;
 }
+
+export function isSupportSessionExpired( { support } ) {
+	return support === SESSION_EXPIRED;
+}
