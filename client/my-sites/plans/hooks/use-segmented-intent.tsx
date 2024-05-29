@@ -1,4 +1,5 @@
 import { PlansIntent } from '@automattic/plans-grid-next';
+import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey';
 import useSurveyAnswersQuery from 'calypso/data/segmentaton-survey/queries/use-survey-answers-query';
 import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from 'calypso/signup/steps/initial-intent/constants';
 
@@ -34,7 +35,7 @@ export function useSegmentedIntent(
 	}
 
 	// Return default wpcom plans for migration flow.
-	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals.includes( 'skip' ) ) {
+	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals.includes( SKIP_ANSWER_KEY ) ) {
 		return { segment: fallback, isFetchingSegment: isFetching };
 	}
 
@@ -46,7 +47,7 @@ export function useSegmentedIntent(
 	if ( surveyedIntent === 'myself-business-or-friend' ) {
 		if (
 			surveyedGoals.length === 0 ||
-			surveyedGoals.includes( 'skip' ) ||
+			surveyedGoals.includes( SKIP_ANSWER_KEY ) ||
 			surveyedGoals.includes( 'newsletter' ) ||
 			surveyedGoals.includes( 'difm' )
 		) {
