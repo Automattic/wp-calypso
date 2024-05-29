@@ -323,6 +323,41 @@
 					color: #fff;
 				}
 			}
+
+			.metrics-insight-detailed-content {
+				margin-top: 42px;
+
+				table {
+					table-layout: fixed;
+					width: 100%;
+
+					thead {
+						background: var(--studio-gray-80);
+					}
+
+					th,
+					td {
+						padding: 24px 30px;
+						word-break: break-word;
+						font-size: $font-body-small;
+					}
+
+					tbody {
+						background: var(--studio-gray-90);
+					}
+
+					pre {
+						background: none;
+						padding: 14px 0 0;
+						margin-bottom: 0;
+					}
+
+					$blueberry-color: #3858e9;
+					code {
+						color: $blueberry-color;
+					}
+				}
+			}
 		}
 
 		&:last-child {
@@ -332,6 +367,7 @@
 		&.is-expanded {
 			.foldable-card__content {
 				border-top: none;
+				max-height: none;
 			}
 		}
 
