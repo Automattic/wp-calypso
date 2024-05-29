@@ -78,6 +78,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				navigateToVerifyEmailStep={ () => {
 					navigation.submit?.( { verifyEmail: true } );
 				} }
+				migrateFrom={ migrateFrom }
 				hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
 			/>
 		</>

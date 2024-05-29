@@ -8,7 +8,6 @@ import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import UpgradePlanDetails from './upgrade-plan-details';
 
 import './style.scss';
@@ -24,6 +23,7 @@ interface Props {
 	onCtaClick: () => void;
 	onContentOnlyClick?: () => void;
 	trackingEventsProps?: Record< string, unknown >;
+	migrateFrom?: string | null;
 	hideFreeMigrationTrialForNonVerifiedEmail?: boolean;
 }
 
@@ -31,7 +31,6 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
-	const fromUrl = useQuery().get( 'from' ) || '';
 	const {
 		site,
 		navigateToVerifyEmailStep,
@@ -43,6 +42,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		onFreeTrialClick: handleFreeTrialClick,
 		isBusy,
 		trackingEventsProps,
+		migrateFrom = '',
 		hideFreeMigrationTrialForNonVerifiedEmail = false,
 	} = props;
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
@@ -72,8 +72,8 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 		const allEventProps = {
 			...trackingEventsProps,
-			...( fromUrl !== '' ? { from: fromUrl } : {} ),
-			has_source_site: fromUrl !== '',
+			...( migrateFrom !== '' ? { from: migrateFrom } : {} ),
+			has_source_site: migrateFrom !== '',
 			migration_trial_hidden: hideFreeMigrationTrial ? 'true' : 'false',
 		};
 
