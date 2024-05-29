@@ -36,6 +36,7 @@ export interface RawReceiptData {
 	price_integer: number;
 	currency: string;
 	purchases: Purchase[] | undefined | false;
+	is_gravatar_domain: boolean;
 }
 
 export interface ReceiptData {
@@ -46,6 +47,7 @@ export interface ReceiptData {
 	priceInteger: number;
 	purchases: ReceiptPurchase[];
 	failedPurchases: FailedReceiptPurchase[];
+	isGravatarDomain: boolean;
 }
 
 export interface ReceiptState {
