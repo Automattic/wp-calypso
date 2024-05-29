@@ -543,15 +543,4 @@ body.has-global-sidebar .is-global-sidebar-visible.is-support-session {
 		top: 0;
 		transform: translateX(-50%);
 	}
-
-	&.is-support-session-expired {
-		&::before {
-			border: 8px solid var(--studio-red);
-		}
-
-		&::after {
-			background-color: var(--studio-red);
-			content: "This support session has expired";
-		}
-	}
 }

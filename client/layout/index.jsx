@@ -47,7 +47,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { isSupportSession, isSupportSessionExpired } from 'calypso/state/support/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
 	getSelectedSiteId,
@@ -205,7 +205,6 @@ class Layout extends Component {
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
 		isSupportSession: PropTypes.bool,
-		isSupportSessionExpired: PropTypes.bool,
 		isOffline: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
@@ -341,7 +340,6 @@ class Layout extends Component {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
-			'is-support-session-expired': this.props.isSupportSessionExpired,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden || globalSidebarDesktop,
 			'is-logged-in': this.props.isLoggedIn,
@@ -570,7 +568,6 @@ export default withCurrentRoute(
 			wccomFrom,
 			isLoggedIn: isUserLoggedIn( state ),
 			isSupportSession: isSupportSession( state ),
-			isSupportSessionExpired: isSupportSessionExpired( state ),
 			sectionGroup,
 			sectionName,
 			sectionJitmPath,
