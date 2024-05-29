@@ -70,7 +70,6 @@ body.is-section-plugins {
 	}
 
 	.is-section-plugins.is-global-sidebar-collapsed {
-		.sidebar__description,
 		.sidebar__back-link .sidebar__site-title {
 			display: none;
 		}
@@ -129,6 +128,20 @@ body.is-section-plugins {
 
 			@include breakpoint-deprecated( "<660px" ) {
 				padding: 1rem 0;
+			}
+		}
+
+		.plugins-update-manager-multisite__header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			flex-wrap: nowrap;
+			gap: 16px;
+
+			p {
+				margin-bottom: 0;
+				font-size: 0.875rem;
+				color: var(--color-neutral-60);
 			}
 		}
 
