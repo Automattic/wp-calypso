@@ -13,7 +13,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
-import { URL } from '../../types';
 
 type PromoCardProps = {
 	title: string;
