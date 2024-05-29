@@ -863,6 +863,7 @@ export function useCommands() {
 						'Keyword for the View media uploads command',
 						__i18n_text_domain__
 					),
+					'wp media', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
