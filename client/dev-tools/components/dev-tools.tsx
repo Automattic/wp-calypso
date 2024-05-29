@@ -37,6 +37,7 @@ const DevTools = () => {
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
+	const redirectUrl = searchParams.get( 'redirect_to' ) ?? `/hosting-config/${ siteId }`;
 	const { siteSlug, isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
 		siteSlug: getSiteSlug( state, siteId ) || '',
 		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
@@ -83,7 +84,6 @@ const DevTools = () => {
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
-	const redirectUrl = `/hosting-config/${ siteId }`;
 	const handleTransfer = ( options: { geo_affinity?: string } ) => {
 		const params = new URLSearchParams( {
 			siteId: String( siteId ),
