@@ -4,7 +4,7 @@ import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getOveralScore, isScoreGood } from 'calypso/data/site-profiler/metrics-dictionaries';
+import { getPerformanceCategory } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -98,7 +98,7 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 
-	const overallScore = getOveralScore( basicMetrics?.basic );
+	const overallScore = getPerformanceCategory( basicMetrics?.basic, urlData );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
@@ -126,8 +126,8 @@ export default function SiteProfilerV2( props: Props ) {
 					<LayoutBlock
 						className={ classnames(
 							'results-header-block',
-							{ poor: ! isScoreGood( overallScore ) },
-							{ good: isScoreGood( overallScore ) }
+							{ poor: overallScore === 'non-wpcom-low-performer' },
+							{ good: overallScore !== 'non-wpcom-low-performer' }
 						) }
 						width="medium"
 					>

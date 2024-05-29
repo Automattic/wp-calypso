@@ -3,14 +3,13 @@ import { translate } from 'i18n-calypso';
 import nonWpComSiteIcon from 'calypso/assets/images/site-profiler/non-wpcom-site.svg';
 import wpComSiteIcon from 'calypso/assets/images/site-profiler/wpcom-site.svg';
 import { UrlData } from 'calypso/blocks/import/types';
-import { isScoreGood } from 'calypso/data/site-profiler/metrics-dictionaries';
-import { Scores } from 'calypso/data/site-profiler/types';
+import { PerformanceCategories } from 'calypso/data/site-profiler/types';
 
 import './styles.scss';
 
 type Props = {
 	domain: string;
-	overallScore: Scores;
+	overallScore: PerformanceCategories;
 	urlData?: UrlData;
 	onGetReport: () => void;
 };
@@ -29,11 +28,17 @@ function getIsWpComSiteMessage( urlData?: UrlData ) {
 	return translate( 'This site is not hosted on WordPress.com' );
 }
 
-function getTitleMessage( overallScore: Scores ) {
-	if ( ! isScoreGood( overallScore ) ) {
-		return translate( 'Your site needs a boost. Let’s improve it.' );
+function getTitleMessage( overallScore: PerformanceCategories ) {
+	if ( overallScore === 'non-wpcom-low-performer' ) {
+		return translate( 'Boost needed! Improve your site with us.' );
 	}
-	return translate( 'Your site is a top performer! Keep it up.' );
+	if ( overallScore === 'non-wpcom-high-performer' ) {
+		return translate( 'Good, but you can make it even better.' );
+	}
+	if ( overallScore === 'wpcom-high-performer' ) {
+		return translate( 'Your site is a top performer! Keep it up.' );
+	}
+	return translate( 'Room for growth! Let’s optimize your site.' );
 }
 
 export const ResultsHeader = ( { domain, overallScore, urlData, onGetReport }: Props ) => {
