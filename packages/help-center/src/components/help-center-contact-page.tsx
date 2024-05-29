@@ -189,20 +189,19 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 			let message = '';
 			const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
-			const escapedSiteUrl = encodeURIComponent( currentSite?.URL || '' );
 
 			if ( wapuuChatId ) {
 				message += `Support request started with <strong>Wapuu</strong><br />Wapuu Chat: <a href="https://mc.a8c.com/odie/odie-chat.php?chat_id=${ escapedWapuuChatId }">${ escapedWapuuChatId }</a><br />`;
 			}
 
 			if ( currentSite?.URL ) {
-				message += `Site: ${ escapedSiteUrl }<br />`;
+				message += `Site: ${ encodeURIComponent( currentSite?.URL || '' ) }<br />`;
 			}
 
 			openChatWidget( {
 				aiChatId: escapedWapuuChatId,
 				message: message,
-				siteUrl: escapedSiteUrl,
+				siteUrl: currentSite?.URL,
 				onError: () => setHasSubmittingError( true ),
 				// Reset Odie chat after passing to support
 				onSuccess: () => setWapuuChatId( null ),
