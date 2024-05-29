@@ -481,6 +481,7 @@ export function useCommands() {
 					_x( 'profile', 'Keyword for the Open account settings command', __i18n_text_domain__ ),
 					_x( 'email', 'Keyword for the Open account settings command', __i18n_text_domain__ ),
 					_x( 'language', 'Keyword for the Open account settings command', __i18n_text_domain__ ),
+					'wp language', // WP-CLI command
 				].join( ' ' ),
 				icon: profileIcon,
 			},
