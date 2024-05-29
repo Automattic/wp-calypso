@@ -180,9 +180,7 @@ export function GetReportForm( {
 						) }
 					</form>
 				</div>
-				<span>
-					<Gridicon icon="chevron-down" size={ 36 } onClick={ onClose } />
-				</span>
+				<Gridicon icon="chevron-down" size={ 36 } onClick={ onClose } />
 			</div>
 		</div>
 	);

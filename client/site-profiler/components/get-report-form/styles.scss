@@ -26,6 +26,7 @@
 .get-report-form__container {
 	box-sizing: border-box;
 	padding: 3rem 0;
+	position: relative;
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
@@ -41,8 +42,14 @@
 	}
 
 	.gridicon {
+		position: absolute;
+		right: 0;
 		cursor: pointer;
 		color: var(--color-button);
+	}
+
+	.form-input-validation {
+		position: absolute;
 	}
 }
 .get-report-form__title {
@@ -62,6 +69,7 @@
 .get-report-form__header {
 	display: flex;
 	gap: 36px;
+	margin-right: 40px;
 	justify-content: space-between;
 
 	.description {
@@ -122,7 +130,10 @@
 	justify-content: space-between;
 	& fieldset {
 		margin-bottom: 0;
-		flex-basis: 815px;
+		flex-basis: 755px;
+		@media (max-width: $break-wide) {
+			margin-bottom: 20px;
+		}
 	}
 	.terms-checkbox {
 		--checkbox-input-size: 28px;
