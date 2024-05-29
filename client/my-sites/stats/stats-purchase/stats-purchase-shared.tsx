@@ -227,7 +227,7 @@ const StatsSingleItemCard = ( { children }: { children: React.ReactNode } ) => {
 		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
 			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
-					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>{ children }</div>
+					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--single` }>{ children }</div>
 				</div>
 			</Card>
 		</div>

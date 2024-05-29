@@ -182,6 +182,16 @@ $button-padding: 8px 32px;
 		}
 	}
 
+	.stats-purchase-wizard__card-inner--single {
+		padding: 64px;
+		box-sizing: border-box;
+		flex: 2 2 auto;
+
+		@media (max-width: $break-medium) {
+			padding: 32px 24px;
+		}
+	}
+
 	.stats-purchase-wizard__card-inner--left {
 		padding: 64px;
 		box-sizing: border-box;
