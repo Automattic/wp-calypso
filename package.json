@@ -243,7 +243,7 @@
 		"@testing-library/jest-dom": "^6.4.5",
 		"@types/gtag.js": "^0.0.19",
 		"@types/superagent": "^4.1.24",
-		"@types/wordpress__blocks": "^12.5.13",
+		"@types/wordpress__blocks": "^12.5.14",
 		"@typescript-eslint/eslint-plugin": "^6.21.0",
 		"@typescript-eslint/parser": "^6.21.0",
 		"@wordpress/eslint-plugin": "^18.1.0",

@@ -22,6 +22,8 @@ import { DomainSection } from './domain-section';
 import { GetReportForm } from './get-report-form';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
+import { MigrationBanner } from './migration-banner';
+import { MigrationBannerBig } from './migration-banner-big';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
 import './styles-v2.scss';
@@ -34,7 +36,7 @@ interface Props {
 }
 
 export default function SiteProfilerV2( props: Props ) {
-	const { routerDomain } = props;
+	const { routerDomain, hash } = props;
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const perfomanceMetricsRef = useRef( null );
@@ -160,15 +162,18 @@ export default function SiteProfilerV2( props: Props ) {
 								/>
 
 								<PerformanceSection
+									url={ url }
+									hash={ hash ?? basicMetrics?.token }
 									performanceMetricsRef={ perfomanceMetricsRef }
 									setIsGetReportFormOpen={ setIsGetReportFormOpen }
 								/>
 							</>
 						) }
 					</LayoutBlock>
+					<MigrationBannerBig />
 				</>
 			) }
-
+			{ ! showResultScreen && <MigrationBanner /> }
 			<GetReportForm
 				url={ basicMetrics?.final_url }
 				token={ basicMetrics?.token }
