@@ -1,7 +1,8 @@
 import { IMPORT_HOSTED_SITE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import SegmentationSurvey, { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey';
+import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey/constants';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import { flowQuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
 import { QuestionConfiguration } from 'calypso/components/survey-container/types';
