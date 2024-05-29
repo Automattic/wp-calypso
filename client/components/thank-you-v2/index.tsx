@@ -13,10 +13,12 @@ interface ThankYouV2Props {
 	products?: React.ReactElement | React.ReactElement[];
 	footerDetails?: ThankYouFooterDetailProps[];
 	upsellProps?: ThankYouUpsellProps;
+	isGravatarDomain?: boolean;
 }
 
 export default function ThankYouV2( props: ThankYouV2Props ) {
-	const { title, subtitle, headerButtons, products, footerDetails, upsellProps } = props;
+	const { title, subtitle, headerButtons, products, footerDetails, upsellProps, isGravatarDomain } =
+		props;
 
 	return (
 		<div className="thank-you">
@@ -26,9 +28,9 @@ export default function ThankYouV2( props: ThankYouV2Props ) {
 
 			{ products && <div className="thank-you__products">{ products }</div> }
 
-			{ footerDetails && <ThankYouFooter details={ footerDetails } /> }
+			{ footerDetails && ! isGravatarDomain && <ThankYouFooter details={ footerDetails } /> }
 
-			{ upsellProps && <ThankYouUpsell { ...upsellProps } /> }
+			{ upsellProps && ! isGravatarDomain && <ThankYouUpsell { ...upsellProps } /> }
 		</div>
 	);
 }
