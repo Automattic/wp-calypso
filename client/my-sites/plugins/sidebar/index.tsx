@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
+import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
 import { SidebarIconCalendar } from './icons';
 import './style.scss';
 
@@ -26,6 +27,16 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 				) }
 			</p>
 			<SidebarMenu>
+				<SidebarItem
+					className="sidebar__menu-item--plugins"
+					link="/plugins"
+					label={ translate( 'Plugins' ) }
+					tooltip={ isCollapsed && translate( 'Plugins' ) }
+					selected={
+						path.startsWith( '/plugins' ) && ! path.startsWith( '/plugins/scheduled-updates' )
+					}
+					customIcon={ <SidebarIconPlugins /> }
+				/>
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
 					link="/plugins/scheduled-updates"
