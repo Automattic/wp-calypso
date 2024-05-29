@@ -51,6 +51,7 @@ type SubscribersPageContextProps = {
 	siteId: number | null;
 	isLoading: boolean;
 	pages?: number;
+	isOwnerSubscribed: boolean;
 };
 
 const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
@@ -193,10 +194,11 @@ export const SubscribersPageProvider = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const { total, per_page, subscribers } = subscribersQueryResult.data || {
+	const { total, per_page, subscribers, is_owner_subscribed } = subscribersQueryResult.data || {
 		total: 0,
 		per_page: DEFAULT_PER_PAGE,
 		subscribers: [],
+		is_owner_subscribed: false,
 	};
 
 	// If we receive a different perPage value from the query, update the state
@@ -230,6 +232,7 @@ export const SubscribersPageProvider = ( {
 				siteId,
 				isLoading: subscribersQueryResult.isLoading,
 				pages,
+				isOwnerSubscribed: is_owner_subscribed,
 			} }
 		>
 			{ children }
