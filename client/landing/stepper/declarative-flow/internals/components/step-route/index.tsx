@@ -1,13 +1,13 @@
 import { isAnyHostingFlow } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useEffect } from 'react';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { getAssemblerSource } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-design';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
+import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
+import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -20,7 +20,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
 import VideoPressIntroBackground from '../../steps-repository/intro/videopress-intro-background';
 import type { Flow, StepperStep } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
 
 type StepRouteProps = {
 	step: StepperStep;
@@ -41,15 +40,8 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 	const isRequestingSelectedSite = useSelector(
 		( state ) => site && isRequestingSite( state, siteSlugOrId )
 	);
-
-	const intent = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-		[]
-	);
-	const design = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-		[]
-	);
+	const intent = useIntent();
+	const design = useSelectedDesign();
 
 	// Short-circuit this if the site slug or ID is not available.
 	const hasRequestedSelectedSite = siteSlugOrId
