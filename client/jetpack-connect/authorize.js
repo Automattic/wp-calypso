@@ -1056,6 +1056,7 @@ export class JetpackAuthorize extends Component {
 							<Disclaimer
 								siteName={ decodeEntities( authQuery.blogname ) }
 								companyName={ this.getCompanyName() }
+								from={ authQuery.from }
 							/>
 							<div className="jetpack-connect__jetpack-logo-wrapper">
 								<JetpackLogo monochrome size={ 18 } />{ ' ' }

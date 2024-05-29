@@ -9,10 +9,11 @@ class JetpackConnectDisclaimer extends PureComponent {
 	static propTypes = {
 		companyName: PropTypes.string,
 		siteName: PropTypes.string.isRequired,
+		from: PropTypes.string,
 	};
 
 	handleClickDisclaimer = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
+		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click', { ...this.props } );
 	};
 
 	render() {
@@ -28,18 +29,28 @@ class JetpackConnectDisclaimer extends PureComponent {
 			/>
 		);
 
-		const text = translate(
-			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between %(companyName)s and %(siteName)s.',
-			{
-				components: {
-					detailsLink,
-				},
-				args: {
-					companyName,
-					siteName,
-				},
-			}
-		);
+		const text =
+			this.props.from === 'my-jetpack'
+				? translate(
+						'By clicking {{strong}}Approve{{/strong}}, you agree to {{detailsLink}}sync your site‘s data{{/detailsLink}} with us.',
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
+				  )
+				: translate(
+						'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between %(companyName)s and %(siteName)s.',
+						{
+							components: {
+								detailsLink,
+							},
+							args: {
+								companyName,
+								siteName,
+							},
+						}
+				  );
 
 		return <p className="jetpack-connect__tos-link">{ text }</p>;
 	}
