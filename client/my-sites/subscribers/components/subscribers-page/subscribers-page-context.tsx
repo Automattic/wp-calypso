@@ -7,16 +7,11 @@ import { useDebounce } from 'use-debounce';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import useManySubsSite from '../../hooks/use-many-subs-site';
-import {
-	useSubscriberCountQuery,
-	useSubscriberDetailsQuery,
-	useSubscribersQuery,
-} from '../../queries';
+import { useSubscriberCountQuery, useSubscribersQuery } from '../../queries';
 import { migrateSubscribers } from './migrate-subscribers-query';
 
 type SubscribersPageProviderProps = {
@@ -124,13 +119,8 @@ export const SubscribersPageProvider = ( {
 
 	// Current user is not included in the subscribers list, so we need to remove from the total
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId );
-	const userId = useSelector( getCurrentUserId ) ?? undefined;
-	const { data: isCurrentUserSubscribed } = useSubscriberDetailsQuery( siteId, undefined, userId );
 
-	const grandTotal =
-		isCurrentUserSubscribed && subscribersTotals?.email_subscribers
-			? subscribersTotals.email_subscribers - 1
-			: subscribersTotals?.email_subscribers ?? 0;
+	const grandTotal = subscribersTotals?.email_subscribers ?? 0;
 
 	const { pageChangeCallback } = usePagination(
 		pageNumber,
