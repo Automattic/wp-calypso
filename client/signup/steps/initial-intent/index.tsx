@@ -1,7 +1,7 @@
 import { IMPORT_HOSTED_SITE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import SegmentationSurvey, { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import { flowQuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
 import { QuestionConfiguration } from 'calypso/components/survey-container/types';
@@ -64,7 +64,7 @@ export default function InitialIntentStep( props: Props ) {
 
 	const shouldExitOnSkip = ( _questionKey: string, _answerKeys: string[] ) => {
 		return Boolean(
-			QUESTION_CONFIGURATION[ _questionKey ].exitOnSkip && _answerKeys.includes( 'skip' )
+			QUESTION_CONFIGURATION[ _questionKey ].exitOnSkip && _answerKeys.includes( SKIP_ANSWER_KEY )
 		);
 	};
 

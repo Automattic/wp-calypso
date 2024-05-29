@@ -11,7 +11,7 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-navigation';
 
-const SKIP_ANSWER_KEY = 'skip';
+export const SKIP_ANSWER_KEY = 'skip';
 
 type SegmentationSurveyProps = {
 	surveyKey: string;
