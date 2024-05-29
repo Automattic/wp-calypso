@@ -145,6 +145,7 @@ export function useCommands() {
 					_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
 					_x( 'help center', 'Keyword for the Get help command', __i18n_text_domain__ ),
 					_x( 'send feedback', 'Keyword for the Get help command', __i18n_text_domain__ ),
+					'wp help', // WP-CLI command
 				].join( ' ' ),
 				icon: helpIcon,
 			},
