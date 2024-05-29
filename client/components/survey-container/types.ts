@@ -29,5 +29,6 @@ export type QuestionConfiguration = Record<
 	{
 		hideContinue?: boolean;
 		hideSkip?: boolean;
+		exitOnSkip?: boolean;
 	}
 >;

@@ -256,23 +256,23 @@ const PersonalPurchase = ( {
 			) }
 
 			{ subscriptionValue === 0 ? (
-				<ButtonComponent
-					className="stats-purchase-page__full-width"
-					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
-					disabled={
-						! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
-					}
-					onClick={ () =>
-						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
-					}
-				>
-					{ translate( 'Continue with Jetpack Stats for free' ) }
-				</ButtonComponent>
+				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						disabled={
+							! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
+						}
+						onClick={ () =>
+							gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
+						}
+					>
+						{ translate( 'Continue with Jetpack Stats for free' ) }
+					</ButtonComponent>
+				</div>
 			) : (
 				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
 					<ButtonComponent
-						className="stats-purchase-page__full-width"
 						variant="primary"
 						primary={ isWPCOMSite ? true : undefined }
 						onClick={ handleCheckoutRedirect }
@@ -282,7 +282,6 @@ const PersonalPurchase = ( {
 
 					{ isNewPurchaseFlowEnabled && (
 						<ButtonComponent
-							className="stats-purchase-page__full-width"
 							variant="secondary"
 							isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
 							busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />

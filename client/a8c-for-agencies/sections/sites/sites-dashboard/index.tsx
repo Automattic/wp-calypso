@@ -21,7 +21,6 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { type TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
@@ -242,7 +241,7 @@ export default function SitesDashboard() {
 					</LayoutTop>
 
 					<SiteNotifications />
-					{ tourId && <GuidedTour defaultTourId={ tourId as TourId } /> }
+					{ tourId && <GuidedTour defaultTourId={ tourId } /> }
 
 					<DashboardDataContext.Provider
 						value={ {

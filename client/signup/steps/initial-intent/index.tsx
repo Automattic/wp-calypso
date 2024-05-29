@@ -1,7 +1,7 @@
 import { IMPORT_HOSTED_SITE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import SegmentationSurvey, { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import { flowQuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
 import { QuestionConfiguration } from 'calypso/components/survey-container/types';
@@ -19,7 +19,8 @@ const SURVEY_KEY = 'guided-onboarding-flow';
 const QUESTION_CONFIGURATION: QuestionConfiguration = {
 	'what-brings-you-to-wordpress': {
 		hideContinue: true,
-		hideSkip: true,
+		hideSkip: false,
+		exitOnSkip: true,
 	},
 	'what-are-your-goals': {
 		hideContinue: false,
@@ -64,8 +65,17 @@ export default function InitialIntentStep( props: Props ) {
 		return '';
 	};
 
+	const shouldExitOnSkip = ( _questionKey: string, _answerKeys: string[] ) => {
+		return Boolean(
+			QUESTION_CONFIGURATION[ _questionKey ].exitOnSkip && _answerKeys.includes( SKIP_ANSWER_KEY )
+		);
+	};
+
 	const skipNextNavigation = ( _questionKey: string, _answerKeys: string[] ) => {
-		return Boolean( getRedirectForAnswers( _answerKeys ) );
+		return (
+			Boolean( getRedirectForAnswers( _answerKeys ) ) ||
+			shouldExitOnSkip( _questionKey, _answerKeys )
+		);
 	};
 
 	const handleNext = ( _questionKey: string, _answerKeys: string[], isLastQuestion?: boolean ) => {
@@ -76,7 +86,7 @@ export default function InitialIntentStep( props: Props ) {
 			return window.location.assign( redirect );
 		}
 
-		if ( isLastQuestion ) {
+		if ( isLastQuestion || shouldExitOnSkip( _questionKey, _answerKeys ) ) {
 			recordCompleteEvent();
 			props.goToNextStep();
 		}

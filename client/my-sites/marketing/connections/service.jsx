@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Notice from 'calypso/components/notice';
 import SocialLogo from 'calypso/components/social-logo';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices/actions';
@@ -604,7 +605,7 @@ export class SharingService extends Component {
 											icon
 											iconSize={ 14 }
 											href={ localizeUrl(
-												this.props.isJetpack
+												this.props.isJetpack || isJetpackCloud()
 													? 'https://jetpack.com/2023/04/29/the-end-of-twitter-auto-sharing/'
 													: 'https://wordpress.com/blog/2023/04/29/why-twitter-auto-sharing-is-coming-to-an-end/'
 											) }

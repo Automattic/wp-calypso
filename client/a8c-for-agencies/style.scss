@@ -435,3 +435,17 @@ html {
 		border: none;
 	}
 }
+
+.redesigned-a8c-table {
+	thead .dataviews-view-table__row th {
+		font-size: 0.75rem;
+		font-weight: 500;
+		line-height: 20px;
+		color: var(--color-accent-80);
+	}
+
+	.dataviews-view-table tr td:first-child,
+	.dataviews-view-table tr th:first-child {
+		padding-inline-start: 16px;
+	}
+}

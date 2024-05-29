@@ -46,6 +46,7 @@ const CallToAction = ( { onStartTrialClick, CTAButtonState }: TrialAcknowledgePr
 				<EmailVerification isSending={ isSending } email={ email } resendEmail={ resendEmail } />
 			) }
 			<NextButton
+				className="entrepreneur-trial-acknowledge__cta"
 				isBusy={ CTAButtonState?.isBusy ?? false }
 				onClick={ startTrial }
 				disabled={ ( ! isVerified || CTAButtonState?.disabled ) ?? false }
