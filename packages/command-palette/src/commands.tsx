@@ -310,6 +310,8 @@ export function useCommands() {
 						'Keyword for the Open hosting configuration command',
 						__i18n_text_domain__
 					),
+					'wp cli', // WP-CLI command
+					'wp db', // WP-CLI command
 				].join( ' ' ),
 				context: [ '/sites' ],
 				siteSelector: true,
