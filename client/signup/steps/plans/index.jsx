@@ -122,7 +122,6 @@ export class PlansStep extends Component {
 		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
 			freeWPComSubdomain = siteUrl;
 		}
-
 		return (
 			<div>
 				{ errorDisplay }
@@ -300,7 +299,6 @@ PlansStep.propTypes = {
 		'plans-jetpack-app',
 		'plans-import',
 		'plans-paid-media',
-		'plans-guided',
 		'default',
 	] ),
 };
