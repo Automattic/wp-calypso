@@ -201,24 +201,25 @@ const StatsCommercialPurchase = ( {
 						}_stats_purchase_commercial_slider_clicked` }
 						onSliderChange={ handleSliderChanged }
 					/>
-					<ButtonComponent
-						className="stats-purchase-page__full-width"
-						variant="primary"
-						primary={ isWPCOMSite ? true : undefined }
-						onClick={ () =>
-							gotoCheckoutPage( {
-								from,
-								type: 'commercial',
-								siteSlug,
-								adminUrl,
-								redirectUri,
-								price: undefined,
-								quantity: purchaseTierQuantity,
-							} )
-						}
-					>
-						{ continueButtonText }
-					</ButtonComponent>
+					<div className="stats-purchase-wizard__actions">
+						<ButtonComponent
+							variant="primary"
+							primary={ isWPCOMSite ? true : undefined }
+							onClick={ () =>
+								gotoCheckoutPage( {
+									from,
+									type: 'commercial',
+									siteSlug,
+									adminUrl,
+									redirectUri,
+									price: undefined,
+									quantity: purchaseTierQuantity,
+								} )
+							}
+						>
+							{ continueButtonText }
+						</ButtonComponent>
+					</div>
 					<div className="stats-purchase-page__footnotes">
 						<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>
 					</div>

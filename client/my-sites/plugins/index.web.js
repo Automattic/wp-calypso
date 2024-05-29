@@ -25,6 +25,7 @@ import {
 	navigationIfLoggedIn,
 	maybeRedirectLoggedOut,
 	redirectStagingSites,
+	renderPluginsSidebar,
 } from './controller';
 import { plans, upload } from './controller-logged-in';
 
@@ -62,6 +63,7 @@ export default function ( router ) {
 		siteSelection,
 		navigationIfLoggedIn,
 		redirectTrialSites,
+		renderPluginsSidebar,
 		browsePlugins,
 		makeLayout,
 		clientRender
@@ -96,6 +98,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigationIfLoggedIn,
+		renderPluginsSidebar,
 		browsePlugins,
 		makeLayout,
 		clientRender
@@ -124,6 +127,7 @@ export default function ( router ) {
 		siteSelection,
 		navigation,
 		redirectTrialSites,
+		renderPluginsSidebar,
 		plugins,
 		makeLayout,
 		clientRender
@@ -138,6 +142,7 @@ export default function ( router ) {
 		navigation,
 		redirectTrialSites,
 		jetpackCanUpdate,
+		renderPluginsSidebar,
 		plugins,
 		makeLayout,
 		clientRender
@@ -152,6 +157,7 @@ export default function ( router ) {
 			],
 			redirectLoggedOut,
 			navigation,
+			renderPluginsSidebar,
 			scheduledUpdatesMultisite,
 			makeLayout,
 			clientRender
@@ -184,6 +190,7 @@ export default function ( router ) {
 		siteSelection,
 		navigationIfLoggedIn,
 		redirectTrialSites,
+		renderPluginsSidebar,
 		relatedPlugins,
 		makeLayout,
 		clientRender
@@ -210,6 +217,7 @@ export default function ( router ) {
 		siteSelection,
 		navigationIfLoggedIn,
 		redirectTrialSites,
+		renderPluginsSidebar,
 		browsePluginsOrPlugin,
 		makeLayout,
 		clientRender

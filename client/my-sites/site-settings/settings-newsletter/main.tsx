@@ -19,6 +19,7 @@ import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
 import { ReplyToSetting } from './ReplyToSetting';
 import { SubscribeModalOnCommentSetting } from './SubscribeModalOnCommentSetting';
 import { SubscribeModalSetting } from './SubscribeModalSetting';
+import { SubscribeOverlaySetting } from './SubscribeOverlaySetting';
 import { SubscribePostEndSetting } from './SubscribePostEndSetting';
 import { SubscriberLoginNavigationSetting } from './SubscriberLoginNavigationSetting';
 import { NewsletterCategoriesSection } from './newsletter-categories-section';
@@ -39,6 +40,7 @@ type Fields = {
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	jetpack_subscriptions_reply_to?: string;
 	sm_enabled?: boolean;
+	jetpack_subscribe_overlay_enabled?: boolean;
 	jetpack_subscriptions_subscribe_post_end_enabled?: boolean;
 	jetpack_subscriptions_login_navigation_enabled?: boolean;
 	jetpack_verbum_subscription_modal?: boolean;
@@ -57,6 +59,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_subscription_emails_use_excerpt,
 		jetpack_subscriptions_reply_to,
 		sm_enabled,
+		jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
@@ -70,6 +73,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		jetpack_subscriptions_reply_to: jetpack_subscriptions_reply_to || '',
 		sm_enabled: !! sm_enabled,
+		jetpack_subscribe_overlay_enabled: !! jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled:
 			!! jetpack_subscriptions_subscribe_post_end_enabled,
 		jetpack_subscriptions_login_navigation_enabled:
@@ -106,6 +110,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		jetpack_subscriptions_reply_to,
 		subscription_options,
 		sm_enabled,
+		jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
@@ -167,6 +172,11 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					handleToggle={ handleToggle }
 					value={ sm_enabled }
+				/>
+				<SubscribeOverlaySetting
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ jetpack_subscribe_overlay_enabled }
 				/>
 				{ shouldShowSubscriptionOnCommentModule && (
 					<SubscribeModalOnCommentSetting

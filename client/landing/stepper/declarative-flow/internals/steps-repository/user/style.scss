@@ -1,13 +1,36 @@
 @import "calypso/signup/style.scss";
+body.is-section-stepper .step-route {
+	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
+}
 
 
-.step-container.user {
+.step-route.user {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	min-height: calc(100vh - 96px);
 	margin: 48px 0 0;
+
+	a.step-wrapper__navigation-link {
+		color: #1d2327;
+		font-family: "SF Pro Text", sans-serif;
+		font-size: 0.875rem;
+		font-style: normal;
+		font-weight: 500;
+		line-height: 20px;
+		text-underline-offset: 5px;
+		margin-left: auto;
+	}
+
+	.signup-header .wordpress-logo {
+		position: absolute;
+		inset-inline-start: 20px;
+		inset-block-start: 20px;
+		fill: var(--color-text);
+		transform-origin: 0 0;
+	}
 	.formatted-header__title {
 		line-height: 3.25;
 		font-size: 2rem;

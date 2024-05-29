@@ -6,13 +6,13 @@ import {
 	type PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { getContactDetailsType } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useState, useMemo, useEffect, type PropsWithChildren } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCreditCard, type StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/src/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
-import getContactDetailsType from 'calypso/my-sites/checkout/src/lib/get-contact-details-type';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
