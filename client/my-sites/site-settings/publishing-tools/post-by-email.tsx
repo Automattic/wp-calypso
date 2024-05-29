@@ -3,6 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SupportInfo from 'calypso/components/support-info';
@@ -52,6 +53,26 @@ export const PostByEmailSetting = ( { emailAddress }: PostByEmailSettingProps ) 
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	// The first time Post by Email is enabled for a Jetpack site, we need to also trigger an email
+	// address regeneration
+	useEffect( () => {
+		if ( ! siteIsJetpack || moduleUnavailable ) {
+			return;
+		}
+
+		if ( jetpackPostByEmailIsActive && ! emailAddress && ! jetpackRegeneratingPostByEmail ) {
+			dispatch( jetpackRegeneratePostByEmail( selectedSiteId ) );
+		}
+	}, [
+		dispatch,
+		emailAddress,
+		jetpackPostByEmailIsActive,
+		jetpackRegeneratingPostByEmail,
+		moduleUnavailable,
+		selectedSiteId,
+		siteIsJetpack,
+	] );
 
 	const handleToggleForSimpleSite = ( checked: boolean ) => {
 		if ( ! selectedSiteId ) {
