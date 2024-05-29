@@ -59,13 +59,15 @@ body.is-section-plugins {
 	}
 
 	.is-logged-in main:not(.a4a-layout):not(.a4a-layout-column) {
-		@include break-small {
-			padding-left: 1rem;
-			padding-right: 1rem;
-		}
-		@include break-small {
-			padding-left: 2rem;
-			padding-right: 2rem;
+		.plugins-browser__content-wrapper {
+			@include break-small {
+				padding-left: 1rem;
+				padding-right: 1rem;
+			}
+			@include break-small {
+				padding-left: 2rem;
+				padding-right: 2rem;
+			}
 		}
 	}
 

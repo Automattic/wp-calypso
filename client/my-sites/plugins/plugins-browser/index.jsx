@@ -163,39 +163,41 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 			{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
-			<SearchBoxHeader
-				searchRef={ searchRef }
-				categoriesRef={ categoriesRef }
-				stickySearchBoxRef={ searchHeaderRef }
-				isSticky={ isAboveElement }
-				searchTerm={ search }
-				isSearching={ isFetchingPluginsBySearchTerm }
-				title={
-					'en' === locale || hasTranslation( 'Flex your site’s features with plugins' )
-						? __( 'Flex your site’s features with plugins' )
-						: __( 'Plugins you need to get your projects done' )
-				}
-				subtitle={
-					! isLoggedIn &&
-					( 'en' === locale ||
-						hasTranslation(
-							'Add new functionality and integrations to your site with thousands of plugins.'
-						) ) &&
-					__( 'Add new functionality and integrations to your site with thousands of plugins.' )
-				}
-				searchTerms={ searchTerms }
-				renderTitleInH1={ ! category }
-			/>
+			<div className="plugins-browser__content-wrapper">
+				<SearchBoxHeader
+					searchRef={ searchRef }
+					categoriesRef={ categoriesRef }
+					stickySearchBoxRef={ searchHeaderRef }
+					isSticky={ isAboveElement }
+					searchTerm={ search }
+					isSearching={ isFetchingPluginsBySearchTerm }
+					title={
+						'en' === locale || hasTranslation( 'Flex your site’s features with plugins' )
+							? __( 'Flex your site’s features with plugins' )
+							: __( 'Plugins you need to get your projects done' )
+					}
+					subtitle={
+						! isLoggedIn &&
+						( 'en' === locale ||
+							hasTranslation(
+								'Add new functionality and integrations to your site with thousands of plugins.'
+							) ) &&
+						__( 'Add new functionality and integrations to your site with thousands of plugins.' )
+					}
+					searchTerms={ searchTerms }
+					renderTitleInH1={ ! category }
+				/>
 
-			<div ref={ categoriesRef }>
-				<Categories selected={ category } noSelection={ search ? true : false } />
-			</div>
-			<div className="plugins-browser__main-container">{ renderList() }</div>
-			{ ! category && ! search && (
-				<div className="plugins-browser__marketplace-footer">
-					<MarketplaceFooter />
+				<div ref={ categoriesRef }>
+					<Categories selected={ category } noSelection={ search ? true : false } />
 				</div>
-			) }
+				<div className="plugins-browser__main-container">{ renderList() }</div>
+				{ ! category && ! search && (
+					<div className="plugins-browser__marketplace-footer">
+						<MarketplaceFooter />
+					</div>
+				) }
+			</div>
 		</MainComponent>
 	);
 };
