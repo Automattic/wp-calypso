@@ -171,7 +171,7 @@ export default function SiteProfilerV2( props: Props ) {
 					<MigrationBannerBig />
 				</>
 			) }
-			<MigrationBanner />
+			{ ! showResultScreen && <MigrationBanner /> }
 			<GetReportForm
 				url={ basicMetrics?.final_url }
 				token={ basicMetrics?.token }

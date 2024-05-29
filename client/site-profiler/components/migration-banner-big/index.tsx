@@ -3,12 +3,12 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
 import siteProfilerBackground from 'calypso/assets/images/site-profiler/background-results-good.svg';
 import { LayoutBlock } from 'calypso/site-profiler/components/layout';
 
 const StyledLayoutBlock = styled( LayoutBlock )`
 	position: relative;
-	overflow: hidden;
 	z-index: 0;
 	&:before {
 		content: '';
@@ -19,9 +19,17 @@ const StyledLayoutBlock = styled( LayoutBlock )`
 		transform: scaleY( -1 );
 		z-index: -1;
 	}
+	&.migration-banner-big h1 {
+		font-size: 60px;
+	}
 `;
 
-const Heading = styled.h1`
+const StyledWPCOMLogo = styled.img`
+	margin-bottom: 30px;
+	filter: brightness( 0 ) saturate( 100% ) invert( 56% ) sepia( 96% ) saturate( 6609% )
+		hue-rotate( 225deg ) brightness( 95% ) contrast( 93% );
+`;
+const Heading = styled.h2`
 	&#migration-banner-heading {
 		font-size: 60px;
 	}
@@ -49,10 +57,9 @@ export const MigrationBannerBig = () => {
 	const translate = useTranslate();
 
 	return (
-		<StyledLayoutBlock width="medium">
-			<Heading id="migration-banner-heading">
-				{ translate( 'Boost your site performance' ) }
-			</Heading>
+		<StyledLayoutBlock className="migration-banner-big" width="medium">
+			<StyledWPCOMLogo src={ WPCOMLogo } />
+			<Heading>{ translate( 'Boost your site performance' ) }</Heading>
 			<Description>
 				{ translate(
 					"Experience top-tier speed and reliability on WordPress.com.{{br/}}It's time to give your site the platform it deserves.",
