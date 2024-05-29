@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
+import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
 import { SidebarIconCalendar } from './icons';
 import './style.scss';
 
@@ -20,12 +21,17 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 			requireBackLink
 			backLinkHref="/sites"
 		>
-			<p className="sidebar__description">
-				{ translate(
-					'Streamline your workflow with scheduled updates, timed to suit your needs.'
-				) }
-			</p>
 			<SidebarMenu>
+				<SidebarItem
+					className="sidebar__menu-item--plugins"
+					link="/plugins"
+					label={ translate( 'Marketplace' ) }
+					tooltip={ isCollapsed && translate( 'Marketplace' ) }
+					selected={
+						path.startsWith( '/plugins' ) && ! path.startsWith( '/plugins/scheduled-updates' )
+					}
+					customIcon={ <SidebarIconPlugins /> }
+				/>
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
 					link="/plugins/scheduled-updates"
