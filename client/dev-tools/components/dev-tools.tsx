@@ -89,7 +89,7 @@ const DevTools = () => {
 			text: translate(
 				'Unlock the plugin file editor and make changes to any of your plugins’ individual PHP files.'
 			),
-			supportContext: 'use-your-pluginsuse-the-plugin-file-editor-advanced',
+			supportContext: 'use-the-plugin-file-editor-advanced',
 		},
 		{
 			title: translate( 'Unlock Permalinks' ),
