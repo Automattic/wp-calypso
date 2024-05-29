@@ -1151,10 +1151,26 @@ export function useCommands() {
 			import: {
 				name: 'import',
 				label: __( 'Import content to the site', __i18n_text_domain__ ),
-				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
-				callback: commandNavigation( '/import/:site' ),
+				searchLabel: 'wp import', // WP-CLI command
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/import.php' : '/import/:site'
+					)( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to import content', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				icon: downloadIcon,
+			},
+			export: {
+				name: 'export',
+				label: __( 'Export content from the site', __i18n_text_domain__ ),
+				searchLabel: 'wp export', // WP-CLI command
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/export.php' : '/export/:site'
+					)( params ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to export content from', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				icon: downloadIcon,
 			},
