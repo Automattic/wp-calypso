@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import { Notice } from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains.ts';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
@@ -228,14 +229,23 @@ export const WpcomFediverseSettingsSection = ( { siteId, needsBorders = true } )
 				/>
 				{ isPrivate && (
 					<Notice status="is-warning" translate={ translate } isCompact>
-						{ translate(
-							'You cannot enter the fediverse until your site is publicly launched. {{link}}Review Privacy settings{{/link}}.',
-							{
-								components: {
-									link: <a href={ `/settings/general/${ domain }` } />,
-								},
-							}
-						) }
+						{ isJetpackCloud()
+							? translate(
+									'You cannot enter the fediverse until your site is publicly launched. {{link}}Review Privacy settings on WordPress.com{{/link}}.',
+									{
+										components: {
+											link: <a href={ `https://wordpress.com/settings/general/${ domain }` } />,
+										},
+									}
+							  )
+							: translate(
+									'You cannot enter the fediverse until your site is publicly launched. {{link}}Review Privacy settings{{/link}}.',
+									{
+										components: {
+											link: <a href={ `/settings/general/${ domain }` } />,
+										},
+									}
+							  ) }
 					</Notice>
 				) }
 			</Wrapper>
