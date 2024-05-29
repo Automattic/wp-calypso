@@ -85,7 +85,7 @@ function WpcomOverview() {
 	}, [ creatorPlan, isLicenseCountsReady, licenseCounts?.products ] );
 
 	// For referral mode we only display 1 option.
-	const dispalyQuantity = referralMode ? 1 : ( selectedTier.value as number ) - ownedPlans;
+	const displayQuantity = referralMode ? 1 : ( selectedTier.value as number ) - ownedPlans;
 	const displayDiscount = referralMode ? options[ 0 ].discount : selectedTier.discount;
 
 	const onclickMoreInfo = useCallback( () => {
@@ -185,7 +185,7 @@ function WpcomOverview() {
 				{ creatorPlan && (
 					<WPCOMPlanCard
 						plan={ creatorPlan }
-						quantity={ dispalyQuantity } // We only calculate the difference between the selected tier and the owned plans
+						quantity={ displayQuantity } // We only calculate the difference between the selected tier and the owned plans
 						discount={ displayDiscount }
 						onSelect={ onAddToCart }
 						isLoading={ ! isLicenseCountsReady }
