@@ -6,7 +6,11 @@ function getOffsetTop( element: HTMLElement, container?: HTMLElement ): number {
 	const offset = element.offsetTop;
 
 	if ( container ) {
-		return element.getBoundingClientRect().top - container.getBoundingClientRect().top;
+		return (
+			container.scrollTop +
+			element.getBoundingClientRect().top -
+			container.getBoundingClientRect().top
+		);
 	}
 
 	if ( element.offsetParent ) {
