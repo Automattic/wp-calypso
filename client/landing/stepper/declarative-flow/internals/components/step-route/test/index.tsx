@@ -15,11 +15,16 @@ import {
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import {
+	getSignupCompleteFlowNameAndClear,
+	getSignupCompleteStepNameAndClear,
+} from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StepRoute from '../';
 import { NavigationControls } from '../../../types';
 
+jest.mock( 'calypso/signup/storageUtils' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start' );
 jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
@@ -82,6 +87,7 @@ const render = ( { step } ) => {
 describe( 'StepRoute', () => {
 	// we need to save the original object for later to not affect tests from other files
 	const originalLocation = window.location;
+
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
 			value: { ...originalLocation, assign: jest.fn() },
@@ -148,8 +154,13 @@ describe( 'StepRoute', () => {
 			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
 
-		it.todo( 'skips tracking when the step is re-entered', () => {
-			// This test is missing implementation
+		it( 'skips tracking when the step is re-entered', () => {
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
+
+			render( { step: RegularStep } );
+
+			expect( recordStepStart ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
