@@ -243,6 +243,13 @@
 	@media only screen and ( min-width: 782px ) {
 		--masterbar-height: 46px;
 	}
+
+	.button[disabled],
+	.button:disabled,
+	.button.disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
 }
 
 // New navigation will not include a masterbar
