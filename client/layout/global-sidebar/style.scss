@@ -250,19 +250,21 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__footer-language-switcher {
 			align-items: center;
-			color: var(--studio-gray-5);
+			color: var(--color-sidebar-text);
 			cursor: pointer;
 			display: flex;
+			font-size: $font-body-extra-small;
 			height: 32px;
 			gap: 6px;
+			line-height: 32px;
 			padding: 6px;
 			justify-content: center;
 			margin-inline-start: auto;
-		}
 
-
-		&:has(.sidebar__footer-language-switcher) {
-			background: var(--studio-orange);
+			svg {
+				height: 20px;
+				width: 20px;
+			}
 		}
 
 		.sidebar__item-help,
@@ -474,6 +476,14 @@ $brand-text: "SF Pro Text", $sans;
 				}
 			}
 
+			.sidebar__footer {
+				.sidebar__footer-language-switcher {
+					font-size: 0;
+					gap: 0;
+					margin-inline-start: unset;
+				}
+			}
+
 			.sidebar__body {
 				overflow-y: visible;
 				.sidebar__menu-item-parent .sidebar__menu-link {
@@ -503,4 +513,34 @@ body.has-global-sidebar .help-center .components-card.help-center__container.is-
 
 body.has-global-sidebar.has-global-sidebar-collapsed .help-center .components-card.help-center__container.is-desktop {
 	left: 82px;
+}
+
+body.has-global-sidebar .is-global-sidebar-visible.is-support-session {
+	&::before,
+	&::after {
+		content: "";
+		pointer-events: none;
+		position: fixed;
+		z-index: z-index("root", ".layout__secondary") + 1;
+	}
+
+	&::before {
+		border: 8px solid var(--studio-orange);
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	}
+
+	&::after {
+		background-color: var(--studio-orange);
+		border-radius: 0 0 2px 2px;
+		color: #fff;
+		content: "Support session";
+		font-size: $font-body-extra-small;
+		left: 50%;
+		padding: 4px 16px;
+		top: 0;
+		transform: translateX(-50%);
+	}
 }
