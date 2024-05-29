@@ -169,5 +169,7 @@ describe( 'StepRoute', () => {
 			expect( recordStepStart ).not.toHaveBeenCalled();
 			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
+
+		it.todo( 'skips when there is no site slug or ID', () => {} );
 	} );
 } );

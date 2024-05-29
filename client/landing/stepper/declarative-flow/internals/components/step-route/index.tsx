@@ -28,6 +28,7 @@ type StepRouteProps = {
 	renderStep: ( step: StepperStep ) => JSX.Element | null;
 };
 
+//TODO: Check we can move RenderStep function to here and remove the renderStep prop
 const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
 	const loginUrl = useLoginUrlForFlow( { flow } );
@@ -36,6 +37,8 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 
 	// Ensure that the selected site is fetched, if available. This is used for event tracking purposes.
 	// See https://github.com/Automattic/wp-calypso/pull/82981.
+
+	// TODO: Check if it is duplicated with the useSiteData hook
 	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
 	const isRequestingSelectedSite = useSelector(
 		( state ) => site && isRequestingSite( state, siteSlugOrId )
@@ -56,6 +59,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 		window.location.assign( loginUrl );
 	}, [ step, loginUrl, userIsLoggedIn ] );
 
+	//TODO: Move this logic to a separate hook
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
 		if ( ! hasRequestedSelectedSite ) {
@@ -109,6 +113,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 		return null;
 	}
 
+	//TODO: Extract the layout logics to another component;
 	return (
 		<div
 			className={ classnames(
