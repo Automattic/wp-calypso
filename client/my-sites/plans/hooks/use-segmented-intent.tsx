@@ -1,7 +1,7 @@
-import { PlansIntent } from '@automattic/plans-grid-next';
 import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey';
 import useSurveyAnswersQuery from 'calypso/data/segmentaton-survey/queries/use-survey-answers-query';
 import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from 'calypso/signup/steps/initial-intent/constants';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 
 /**
  * Returns the segmented intent based on the survey answers.
