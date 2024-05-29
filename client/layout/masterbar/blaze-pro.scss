@@ -246,7 +246,7 @@
 	}
 
 	p.verification-code-form__help-text {
-		font-size: 1.25rem;
+		font-size: rem(18px);
 		font-weight: 500;
 		text-align: center;
 	}
@@ -305,7 +305,7 @@
 				}
 
 				.formatted-header__subtitle {
-					font-size: 1.25rem;
+					font-size: rem(18px);
 					font-weight: 500;
 					line-height: 25px;
 					margin-bottom: 0;
@@ -348,7 +348,7 @@
 
 		a.logged-out-form__link-item,
 		span {
-			font-size: 1.25rem;
+			font-size: rem(18px);
 			font-weight: 500;
 			line-height: 25px;
 		}
@@ -388,7 +388,9 @@
 	.signup-form .logged-out-form,
 	.two-factor-authentication__verification-code-form-wrapper {
 		.login .button.is-primary,
+		.login .button.is-primary:hover,
 		.form-button {
+			color: var(--color-white);
 			background: var(--color-orange);
 			border-color: var(--color-orange);
 			border-radius: 4px;
@@ -400,7 +402,7 @@
 	}
 
 	.login__header-subtitle {
-		font-size: 1.25rem;
+		font-size: rem(18px);
 		font-weight: 500;
 		line-height: 25px;
 
@@ -473,7 +475,7 @@
 
 		.login__lost-password-link {
 			color: var(--color-orange);
-			font-size: 1.25rem;
+			font-size: rem(18px);
 			line-height: 24px;
 		}
 	}
