@@ -210,6 +210,7 @@ export function useCommands() {
 						'Keyword for the Manage cache settings command',
 						__i18n_text_domain__
 					),
+					'wp cache', // WP-CLI command
 				].join( ' ' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage cache settings', __i18n_text_domain__ ),
