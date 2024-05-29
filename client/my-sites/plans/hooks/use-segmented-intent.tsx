@@ -7,14 +7,12 @@ import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from 'calypso/signup/steps/initia
  * Returns the segmented intent based on the survey answers.
  * @param enabled whether the survey answers should be fetched.
  * @param blogId the blogId we want the answers from. Answers are mapped to sites (can be zero when a site does not exist yet).
- * @param fallback the default intent to return if the survey answers are not available or the query is disabled.
  * @returns the segmented intent
  */
 export function useSegmentedIntent(
 	enabled = false,
-	blogId: number | null | undefined,
-	fallback: PlansIntent | undefined
-): { segment: PlansIntent | undefined; isLoadingSegment: boolean } {
+	blogId: number | null | undefined
+): { segment?: PlansIntent | undefined; isLoadingSegment: boolean } {
 	const { isLoading, data } = useSurveyAnswersQuery( {
 		surveyKey: GUIDED_FLOW_SEGMENTATION_SURVEY_KEY,
 		enabled,
@@ -27,16 +25,16 @@ export function useSegmentedIntent(
 	const surveyedIntent = data?.[ blogId ]?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
 	if ( ! enabled ) {
-		return { segment: fallback, isLoadingSegment: false };
+		return { isLoadingSegment: false };
 	}
 
 	if ( ! surveyedIntent || ! surveyedGoals ) {
-		return { segment: fallback, isLoadingSegment: isLoading };
+		return { isLoadingSegment: isLoading };
 	}
 
 	// Return default wpcom plans for migration flow.
 	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals.includes( SKIP_ANSWER_KEY ) ) {
-		return { segment: fallback, isLoadingSegment: isLoading };
+		return { isLoadingSegment: isLoading };
 	}
 
 	if ( surveyedIntent === 'client' ) {
@@ -51,7 +49,7 @@ export function useSegmentedIntent(
 			surveyedGoals.includes( 'newsletter' ) ||
 			surveyedGoals.includes( 'difm' )
 		) {
-			return { segment: fallback, isLoadingSegment: isLoading };
+			return { isLoadingSegment: isLoading };
 		}
 		if ( surveyedGoals.includes( 'sell' ) && ! surveyedGoals.includes( 'difm' ) ) {
 			return { segment: 'plans-guided-segment-merchant', isLoadingSegment: isLoading };
@@ -68,5 +66,5 @@ export function useSegmentedIntent(
 	}
 
 	// Default return if no conditions are met
-	return { segment: fallback, isLoadingSegment: isLoading };
+	return { isLoadingSegment: isLoading };
 }

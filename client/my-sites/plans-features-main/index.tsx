@@ -296,8 +296,7 @@ const PlansFeaturesMain = ( {
 
 	const { segment: intentFromSegmentationSurvey, isLoadingSegment } = useSegmentedIntent(
 		flowName === 'guided',
-		siteId,
-		intent
+		siteId
 	);
 
 	useEffect( () => {
