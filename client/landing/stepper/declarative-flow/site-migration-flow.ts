@@ -28,7 +28,7 @@ const siteMigration: Flow = {
 
 	useSteps() {
 		const baseSteps = [
-			STEPS.SITE_MIGRATION_IDENTIFY,
+			{ ...STEPS.SITE_MIGRATION_IDENTIFY, requiresLoggedInUser: true },
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
