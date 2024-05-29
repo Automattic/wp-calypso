@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteData } from '../hooks/use-site-data';
@@ -28,7 +29,7 @@ const siteMigration: Flow = {
 
 	useSteps() {
 		const baseSteps = [
-			{ ...STEPS.SITE_MIGRATION_IDENTIFY, requiresLoggedInUser: true },
+			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
@@ -41,7 +42,7 @@ const siteMigration: Flow = {
 			? [ STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
 			: [];
 
-		return [ ...baseSteps, ...hostedVariantSteps ];
+		return stepsWithRequiredLogin( [ ...baseSteps, ...hostedVariantSteps ] );
 	},
 
 	useAssertConditions(): AssertConditionResult {
