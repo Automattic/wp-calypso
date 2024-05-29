@@ -36,7 +36,7 @@ const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
+	const { requestLatestAtomicTransfer, fetchSite } = useDispatch( SITE_STORE );
 	const site = useSite();
 
 	let siteId = site?.ID as number;
@@ -45,7 +45,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		siteId = data?.siteId as number;
 	}
 
-	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
+	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError, getSite } = useSelect(
 		( select ) => select( SITE_STORE ) as SiteSelect,
 		[]
 	);
@@ -81,9 +81,9 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		}
 
 		setPendingAction( async () => {
-			const startTime = new Date().getTime();
-			const totalTimeout = 1000 * 300;
-			const maxFinishTime = startTime + totalTimeout;
+			let startTime = new Date().getTime();
+			let totalTimeout = 1000 * 300;
+			let maxFinishTime = startTime + totalTimeout;
 
 			// Poll for transfer status
 			let stopPollingTransfer = false;
@@ -115,6 +115,30 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 				}
 
 				stopPollingTransfer = transferStatus === transferStates.COMPLETED;
+			}
+
+			// Sometimes the transfer is completed but the site capabilities are still out of date.
+			// Because Calypso will need these capabilities as soon as this flow is complete, we need to wait until they've been correctly synced.
+			// We know the user is the owner of `siteId` because they've just transferred it, so we can wait for `manage_options`.
+			// Automattic/dotcom-forge#7464
+			let stopPollingForCapabilities = false;
+
+			// We have a shorter timeout while waiting for capabilities and we don't return an error if we hit the timeout.
+			// It's not so critical if we don't have the capabilities immediately compared to the site transfer not being complete.
+			startTime = new Date().getTime();
+			totalTimeout = 1000 * 10;
+			maxFinishTime = startTime + totalTimeout;
+
+			while ( ! stopPollingForCapabilities ) {
+				if ( maxFinishTime < new Date().getTime() ) {
+					break;
+				}
+
+				await wait( 500 );
+				await fetchSite( siteId );
+
+				const fetchedSite = getSite( siteId );
+				stopPollingForCapabilities = Boolean( fetchedSite?.capabilities?.manage_options );
 			}
 
 			return { finishedWaitingForAtomic: true, siteId, siteSlug: data?.siteSlug };
