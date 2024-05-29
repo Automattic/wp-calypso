@@ -20,8 +20,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 type PostByEmailSettingProps = {
-	isFormPending: boolean;
-	address?: string;
+	emailAddress?: string;
 };
 
 const noticeConfig = {
@@ -30,9 +29,10 @@ const noticeConfig = {
 
 const moduleSlug = 'post-by-email';
 
-export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSettingProps ) => {
+export const PostByEmailSetting = ( { emailAddress }: PostByEmailSettingProps ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) || 0;
 	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
+	const jetpackRegeneratingPostByEmail = siteIsJetpack && emailAddress === 'regenerate';
 	const jetpackPostByEmailIsActive = !! useSelector( ( state ) =>
 		isJetpackModuleActive( state, selectedSiteId, moduleSlug )
 	);
@@ -94,7 +94,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 
 	let email;
 	if ( siteIsJetpack ) {
-		email = address && address !== 'regenerate' ? address : '';
+		email = emailAddress === 'regenerate' ? '' : emailAddress;
 	} else {
 		email = simpleSitePostByEmailSettings?.email;
 	}
@@ -102,9 +102,8 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	const isActive = siteIsJetpack
 		? jetpackPostByEmailIsActive
 		: simpleSitePostByEmailSettings?.isEnabled;
-	const isJetpackDisabled = isFormPending || moduleUnavailable;
-	const isSimpleSiteDisabled =
-		isFormPending || isSimpleSitePendingToggle || isSimpleSitePendingRegenerate;
+	const isJetpackDisabled = jetpackRegeneratingPostByEmail || moduleUnavailable;
+	const isSimpleSiteDisabled = isSimpleSitePendingToggle || isSimpleSitePendingRegenerate;
 	const isDisabledControls = ! isActive || isJetpackDisabled || isSimpleSiteDisabled;
 
 	const toggleLabel = translate( 'Publish posts by sending an email' );
