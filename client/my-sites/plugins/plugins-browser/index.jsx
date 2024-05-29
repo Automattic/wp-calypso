@@ -160,10 +160,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 					search={ search }
 				/>
 			) }
-			{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
-				<JetpackConnectionHealthBanner siteId={ siteId } />
-			) }
 			<div className="plugins-browser__content-wrapper">
+				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
+					<JetpackConnectionHealthBanner siteId={ siteId } />
+				) }
 				<SearchBoxHeader
 					searchRef={ searchRef }
 					categoriesRef={ categoriesRef }
