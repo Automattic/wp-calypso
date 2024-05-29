@@ -4,6 +4,7 @@ import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { getOveralScore, isScoreGood } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -21,6 +22,7 @@ import { DomainSection } from './domain-section';
 import { GetReportForm } from './get-report-form';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
+import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
 import './styles-v2.scss';
 
@@ -35,6 +37,7 @@ export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain } = props;
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
+	const perfomanceMetricsRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -95,9 +98,7 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 
-	// TODO: Get overall score from the API
-	// https://github.com/Automattic/dotcom-forge/issues/7298
-	const overallScore = false;
+	const overallScore = getOveralScore( basicMetrics?.basic );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
@@ -125,15 +126,16 @@ export default function SiteProfilerV2( props: Props ) {
 					<LayoutBlock
 						className={ classnames(
 							'results-header-block',
-							{ poor: ! overallScore },
-							{ good: overallScore }
+							{ poor: ! isScoreGood( overallScore ) },
+							{ good: isScoreGood( overallScore ) }
 						) }
 						width="medium"
 					>
 						{ showBasicMetrics && (
 							<ResultsHeader
 								domain={ domain }
-								basicMetrics={ basicMetrics }
+								overallScore={ overallScore }
+								urlData={ urlData }
 								onGetReport={ () => setIsGetReportFormOpen( true ) }
 							/>
 						) }
@@ -155,6 +157,11 @@ export default function SiteProfilerV2( props: Props ) {
 									hostingProvider={ hostingProviderData?.hosting_provider }
 									urlData={ urlData }
 									domainRef={ domainRef }
+								/>
+
+								<PerformanceSection
+									performanceMetricsRef={ perfomanceMetricsRef }
+									setIsGetReportFormOpen={ setIsGetReportFormOpen }
 								/>
 							</>
 						) }

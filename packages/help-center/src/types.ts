@@ -92,6 +92,7 @@ export interface ChatAvailability {
 	 * DO NOT USE THIS VALUE. We no longer use eligibility checks for chat. All paid users are eligible for chat.
 	 */
 	is_user_eligible: boolean;
+	is_paying_customer: boolean;
 	supportLevel:
 		| 'free'
 		| 'personal'
@@ -108,12 +109,7 @@ export interface ChatAvailability {
 	is_presales_chat_open: boolean;
 	is_precancellation_chat_open: boolean;
 	wapuu_assistant_enabled: boolean;
-}
-
-export interface OtherSupportAvailability {
-	is_user_eligible_for_upwork: boolean;
-	is_user_eligible_for_tickets: boolean;
-	is_user_eligible_for_chat: boolean;
+	force_email_contact_form: boolean;
 }
 
 export interface EmailSupportStatus {

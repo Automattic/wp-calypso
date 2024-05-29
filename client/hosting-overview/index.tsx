@@ -3,7 +3,9 @@ import {
 	makeLayout,
 	render as clientRender,
 	redirectIfCurrentUserCannot,
+	redirectToDevToolsPromoIfNotAtomic,
 	redirectIfP2,
+	redirectIfJetpackNonAtomic,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { handleHostingPanelRedirect } from 'calypso/my-sites/hosting/controller';
@@ -23,6 +25,7 @@ export default function () {
 		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		redirectIfP2,
+		redirectIfJetpackNonAtomic,
 		navigation,
 		hostingOverview,
 		siteDashboard( DOTCOM_OVERVIEW ),
@@ -39,6 +42,7 @@ export default function () {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
+		redirectToDevToolsPromoIfNotAtomic,
 		handleHostingPanelRedirect,
 		hostingConfiguration,
 		siteDashboard( DOTCOM_HOSTING_CONFIG ),
@@ -53,6 +57,7 @@ export default function () {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
+		redirectToDevToolsPromoIfNotAtomic,
 		handleHostingPanelRedirect,
 		hostingActivate,
 		siteDashboard( DOTCOM_HOSTING_CONFIG ),

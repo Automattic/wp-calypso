@@ -86,11 +86,7 @@ function ContinueAsUser( {
 		  } );
 
 	const gravatarLink = (
-		<a
-			style={ { pointerEvents: isLoading ? 'none' : 'auto' } }
-			href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
-			className="continue-as-user__gravatar-link"
-		>
+		<div className="continue-as-user__gravatar-content">
 			<Gravatar
 				user={ currentUser }
 				className="continue-as-user__gravatar"
@@ -99,7 +95,7 @@ function ContinueAsUser( {
 			/>
 			<div className="continue-as-user__username">{ userName }</div>
 			<div className="continue-as-user__email">{ currentUser.email }</div>
-		</a>
+		</div>
 	);
 
 	if ( isWooOAuth2Client ) {

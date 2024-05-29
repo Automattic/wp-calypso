@@ -90,3 +90,29 @@ p.product-listing__description {
 		min-width: 430px;
 	}
 }
+
+.product-listing__actions-search-and-filter {
+	display: flex;
+	gap: 8px;
+}
+
+.product-listing__reset-filter-button {
+	white-space: nowrap;
+	max-height: 36px;
+	font-size: rem(13px);
+	cursor: pointer;
+	color: var(--color-primary-60);
+	padding: 8px 12px;
+	border-radius: 4px;
+
+	&:focus-visible {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		outline: 3px solid transparent;
+	}
+
+	&:hover {
+		box-shadow: inset 0 0 0 1px var(--color-neutral-20);
+		color: var(--color-accent-60);
+		background: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+	}
+}

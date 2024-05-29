@@ -43,7 +43,8 @@ export const useSetOdieStorage = ( key: OdieStorageKey ) => {
 					apiVersion: 'v2',
 					apiNamespace: 'wpcom/v2',
 					method: 'PUT',
-					body: { calypso_preferences: { [ storageKey ]: value } },
+					// Empty string is a way to delete the value.
+					body: { calypso_preferences: { [ storageKey ]: value ?? '' } },
 				} );
 			}
 			return apiFetch< { calypso_preferences: Record< string, string > } >( {
@@ -55,7 +56,7 @@ export const useSetOdieStorage = ( key: OdieStorageKey ) => {
 		},
 		onSuccess: ( response ) => {
 			client.setQueryData( [ storageKey ], () => {
-				return response.calypso_preferences[ storageKey ];
+				return response.calypso_preferences[ storageKey ] ?? '';
 			} );
 		},
 	} );

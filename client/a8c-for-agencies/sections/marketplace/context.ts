@@ -13,4 +13,10 @@ export const ShoppingCartContext = createContext< ShoppingCartContextInterface >
 
 export const MarketplaceTypeContext = createContext< MarketplaceTypeContextInterface >( {
 	marketplaceType: 'regular',
+	setMarketplaceType: () => {
+		return undefined;
+	},
+	toggleMarketplaceType: () => {
+		return undefined;
+	},
 } );

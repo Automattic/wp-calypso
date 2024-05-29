@@ -96,10 +96,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 		if ( ! isUnifiedSiteSidebarVisible ) {
 			return false;
 		}
-		return (
-			( item?.parent === 'jetpack' && item?.url?.startsWith( 'https://jetpack.com' ) ) ||
-			( item?.parent === 'wpcom-hosting-menu' && item?.url?.startsWith( '/overview/' ) )
-		);
+		return item?.parent === 'jetpack' && item?.url?.startsWith( 'https://jetpack.com' );
 	};
 
 	return (

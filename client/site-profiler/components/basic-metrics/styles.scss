@@ -38,10 +38,10 @@
 		}
 
 		&.good {
-			border-color: #359f4c;
+			border-color: var(--studio-green-30);
 
 			.basic-metrics__name svg {
-				color: #359f4c;
+				color: var(--studio-green-30);
 			}
 
 			.basic-metrics__value {
@@ -50,10 +50,10 @@
 		}
 
 		&.poor {
-			border-color: #d63638;
+			border-color: var(--studio-red-50);
 
 			.basic-metrics__name svg {
-				color: #d63638;
+				color: var(--studio-red-50);
 			}
 
 			.basic-metrics__value {

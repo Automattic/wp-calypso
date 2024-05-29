@@ -1,15 +1,17 @@
 import { HelpCenter } from '@automattic/data-stores';
+import { HelpIcon } from '@automattic/help-center';
 import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
-import { Icon, help } from '@wordpress/icons';
 import classnames from 'classnames';
+import { useRef } from 'react';
 import SidebarMenuItem from '../menu-item';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const SidebarHelpCenter = ( { tooltip, onClick } ) => {
+	const helpIconRef = useRef();
 	const helpCenterVisible = useDateStoreSelect(
 		( select ) => select( HELP_CENTER_STORE ).isHelpCenterShown(),
 		[]
@@ -30,7 +32,7 @@ const SidebarHelpCenter = ( { tooltip, onClick } ) => {
 				} ) }
 				tooltip={ tooltip }
 				tooltipPlacement="top"
-				icon={ <Icon icon={ help } size={ 28 } /> }
+				icon={ <HelpIcon ref={ helpIconRef } /> }
 			/>
 		</>
 	);

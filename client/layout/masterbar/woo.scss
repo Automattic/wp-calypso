@@ -505,7 +505,7 @@ $breakpoint-mobile: 660px;
 			max-width: 472px;
 		}
 
-		.continue-as-user__gravatar-link {
+		.continue-as-user__gravatar-content {
 			pointer-events: auto;
 			display: grid;
 			grid-template-columns: 56px 1fr;
@@ -532,13 +532,9 @@ $breakpoint-mobile: 660px;
 				font-size: 1rem;
 				font-weight: 600;
 				line-height: 24px;
-				color: var(--color-gray-100);
+				color: var(--color-text);
 				grid-area: username;
 				margin-top: 0;
-
-				&:hover {
-					color: var(--color-gray-100);
-				}
 			}
 
 			.continue-as-user__email {
@@ -1495,7 +1491,7 @@ $breakpoint-mobile: 660px;
 			}
 
 
-			.continue-as-user__gravatar-link {
+			.continue-as-user__gravatar-content {
 				display: flex;
 				flex-direction: column;
 				margin: 0 0 8px;

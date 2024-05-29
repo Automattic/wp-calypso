@@ -1,9 +1,8 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
-import { anonIdCache } from 'calypso/data/segmentaton-survey';
+import { anonIdCache, useCachedAnswers } from 'calypso/data/segmentaton-survey';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../hooks/use-flow-locale';
@@ -12,6 +11,7 @@ import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
+import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from './internals/steps-repository/segmentation-survey';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -27,6 +27,7 @@ const entrepreneurFlow: Flow = {
 			// Replacing the `segmentation-survey` slug with `start` as having the
 			// word `survey` in the address bar might discourage users from continuing.
 			{ ...STEPS.SEGMENTATION_SURVEY, ...{ slug: SEGMENTATION_SURVEY_SLUG } },
+			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.WAIT_FOR_ATOMIC,
@@ -48,16 +49,11 @@ const entrepreneurFlow: Flow = {
 
 		const locale = useFlowLocale();
 		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
+		const [ lastQuestionPath, setlastQuestionPath ] = useState( '#1' );
+		const { clearAnswers } = useCachedAnswers( ENTREPRENEUR_TRIAL_SURVEY_KEY );
 
 		const getEntrepreneurLoginUrl = () => {
-			const queryParams = new URLSearchParams();
-
-			const redirectTo = addQueryArgs(
-				`${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/create-site`,
-				{
-					...Object.fromEntries( queryParams ),
-				}
-			);
+			const redirectTo = `${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/trialAcknowledge${ window.location.search }`;
 
 			const loginUrl = getLoginUrl( {
 				variationName: flowName,
@@ -68,6 +64,12 @@ const entrepreneurFlow: Flow = {
 			return loginUrl;
 		};
 
+		const goBack = () => {
+			if ( currentStep === STEPS.TRIAL_ACKNOWLEDGE.slug ) {
+				navigate( SEGMENTATION_SURVEY_SLUG + lastQuestionPath );
+			}
+		};
+
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, '' /* intent */, flowName, currentStep );
 
@@ -75,13 +77,24 @@ const entrepreneurFlow: Flow = {
 				case SEGMENTATION_SURVEY_SLUG: {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
 
+					if ( providedDependencies.lastQuestionPath ) {
+						setlastQuestionPath( providedDependencies.lastQuestionPath as string );
+					}
+
 					if ( userIsLoggedIn ) {
-						return navigate( STEPS.SITE_CREATION_STEP.slug );
+						return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
 					}
 
 					// Redirect user to the sign-in/sign-up page before site creation.
 					const entrepreneurLoginUrl = getEntrepreneurLoginUrl();
 					return window.location.replace( entrepreneurLoginUrl );
+				}
+
+				case STEPS.TRIAL_ACKNOWLEDGE.slug: {
+					// After the trial acknowledge step, the answers from the segmentation survey are cleared.
+					clearAnswers();
+
+					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
@@ -141,7 +154,7 @@ const entrepreneurFlow: Flow = {
 			return providedDependencies;
 		}
 
-		return { submit };
+		return { goBack, submit };
 	},
 
 	useSideEffect() {

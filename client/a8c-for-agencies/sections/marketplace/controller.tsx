@@ -21,14 +21,14 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 	const productBrand = context.params.brand;
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	const purchaseType = purchase_type === 'referral' ? 'referral' : 'regular';
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Products" path={ context.path } />
 			<ProductsOverview
 				siteId={ site_id }
 				suggestedProduct={ product_slug }
-				purchaseType={ purchaseType }
+				defaultMarketplaceType={ purchaseType }
 				productBrand={ getValidBrand( productBrand ) }
 			/>
 		</>
@@ -37,33 +37,40 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 };
 
 export const marketplaceHostingContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			<HostingOverview />
+			<HostingOverview defaultMarketplaceType={ purchaseType } />
 		</>
 	);
 	next();
 };
 
 export const marketplacePressableContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting > Pressable" path={ context.path } />
-			<PressableOverview />
+			<PressableOverview defaultMarketplaceType={ purchaseType } />
 		</>
 	);
 	next();
 };
 
 export const marketplaceWpcomContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting > WordPress.com" path={ context.path } />
-			<WpcomOverview />
+			<WpcomOverview defaultMarketplaceType={ purchaseType } />
 		</>
 	);
 	next();
