@@ -927,6 +927,7 @@ export function useCommands() {
 					_x( 'manage comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
 					_x( 'edit comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
 					_x( 'delete comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
+					'wp comment', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
