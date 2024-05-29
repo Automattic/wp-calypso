@@ -957,6 +957,7 @@ export function useCommands() {
 					_x( 'activate theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 					_x( 'install theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 					_x( 'delete theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
+					'wp theme', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
