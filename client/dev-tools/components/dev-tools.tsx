@@ -4,7 +4,6 @@ import { Card, Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -14,6 +13,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
+import { URL } from '../../types';
 
 type PromoCardProps = {
 	title: string;
@@ -34,7 +34,7 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 );
 
 const DevTools = () => {
-	const [ searchParams ] = useSearchParams();
+	const { searchParams } = new URL( document.location );
 	const showActivationModal = searchParams.get( 'activate' );
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
