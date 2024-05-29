@@ -1,7 +1,7 @@
 import { Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
-import clsx from 'classnames';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -16,7 +16,6 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -34,7 +33,6 @@ const moduleSlug = 'post-by-email';
 export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSettingProps ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) || 0;
 	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
-	const siteIsAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSiteId ) );
 	const jetpackPostByEmailIsActive = !! useSelector( ( state ) =>
 		isJetpackModuleActive( state, selectedSiteId, moduleSlug )
 	);
@@ -100,6 +98,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	} else {
 		email = simpleSitePostByEmailSettings?.email;
 	}
+
 	const isActive = siteIsJetpack
 		? jetpackPostByEmailIsActive
 		: simpleSitePostByEmailSettings?.isEnabled;
@@ -107,6 +106,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 	const isSimpleSiteDisabled =
 		isFormPending || isSimpleSitePendingToggle || isSimpleSitePendingRegenerate;
 	const isDisabledControls = ! isActive || isJetpackDisabled || isSimpleSiteDisabled;
+
 	const toggleLabel = translate( 'Publish posts by sending an email' );
 
 	return (
@@ -117,16 +117,17 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 						'Allows you to publish new posts by sending an email to a special address.'
 					) }
 					link={
-						siteIsAtomic
+						! siteIsJetpack
 							? localizeUrl( 'https://wordpress.com/support/post-by-email/' )
 							: 'https://jetpack.com/support/post-by-email/'
 					}
-					privacyLink={ ! siteIsAtomic }
+					privacyLink={ siteIsJetpack }
 				/>
+
 				{ siteIsJetpack ? (
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }
-						moduleSlug="post-by-email"
+						moduleSlug={ moduleSlug }
 						label={ toggleLabel }
 						disabled={ isJetpackDisabled }
 					/>
@@ -141,7 +142,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 
 				<div className="publishing-tools__module-settings site-settings__child-settings">
 					<FormLabel
-						className={ clsx( {
+						className={ classNames( {
 							'is-disabled': isDisabledControls,
 						} ) }
 					>
@@ -153,7 +154,7 @@ export const PostByEmailSetting = ( { isFormPending, address }: PostByEmailSetti
 						value={ email }
 					/>
 					<Button onClick={ handleRegenerate } disabled={ isDisabledControls }>
-						Regenerate address
+						{ translate( 'Regenerate address' ) }
 					</Button>
 				</div>
 			</FormFieldset>
