@@ -147,5 +147,9 @@ describe( 'StepRoute', () => {
 			expect( recordStepStart ).not.toHaveBeenCalled();
 			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
+
+		it.todo( 'skips tracking when the step is re-entered', () => {
+			// This test is missing implementation
+		} );
 	} );
 } );
