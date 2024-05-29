@@ -52,6 +52,7 @@ export function generateFlows( {
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
+	getEntrepreneurFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
@@ -701,6 +702,17 @@ export function generateFlows( {
 			description: 'Choose what brings them to WordPress.com',
 			lastModified: '2024-05-15',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'entrepreneur',
+			steps: [ userSocialStep ],
+			destination: getEntrepreneurFlowDestination,
+			description: 'Entrepreneur Trial signup flow that goes through the trialAcknowledge step',
+			lastModified: '2024-05-29',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 			hideProgressIndicator: true,
 		},
 	];

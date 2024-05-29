@@ -244,6 +244,10 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 	return `/setup/${ stepperHostingFlow }`;
 }
 
+function getEntrepreneurFlowDestination() {
+	return `/setup/entrepreneur/trialAcknowledge`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -259,6 +263,7 @@ const flows = generateFlows( {
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
 	getHostingFlowDestination,
+	getEntrepreneurFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
