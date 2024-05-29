@@ -26,6 +26,7 @@ import {
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	isNewsletterOrLinkInBioFlow,
 	isAnyHostingFlow,
@@ -41,7 +42,7 @@ import {
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { getAcceptedAssistedFreeMigration } from 'calypso/blocks/importer/wordpress/utils';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
@@ -524,7 +525,7 @@ export function CheckoutSummaryFeaturesList( props: {
 			) }
 
 			{ ( ! hasPlanInCart || hasDomainTransferProduct ) && (
-				<CheckoutSummaryChatIfAvailable
+				<CheckoutSummarySupportIfAvailable
 					siteId={ siteId }
 					hasDomainTransferInCart={ hasDomainTransferProduct }
 				/>
@@ -739,11 +740,12 @@ function CheckoutSummaryPlanFeatures( props: {
 	);
 }
 
-function CheckoutSummaryChatIfAvailable( props: {
+function CheckoutSummarySupportIfAvailable( props: {
 	siteId: number | undefined;
 	hasDomainTransferInCart: boolean;
 } ) {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const currentPlan = useSelector( ( state ) =>
 		props.siteId ? getCurrentPlan( state, props.siteId ) : undefined
@@ -751,7 +753,7 @@ function CheckoutSummaryChatIfAvailable( props: {
 
 	const currentPlanSlug = currentPlan?.productSlug;
 
-	const isChatAvailable =
+	const isSupportAvailable =
 		props.hasDomainTransferInCart ||
 		( currentPlanSlug &&
 			( isWpComPremiumPlan( currentPlanSlug ) ||
@@ -759,10 +761,23 @@ function CheckoutSummaryChatIfAvailable( props: {
 				isWpComEcommercePlan( currentPlanSlug ) ) &&
 			! isMonthly( currentPlanSlug ) );
 
-	if ( ! isChatAvailable ) {
+	if ( ! isSupportAvailable ) {
 		return null;
 	}
 
+	if (
+		isEnglishLocale ||
+		( i18n.hasTranslation( 'Fast support' ) && i18n.hasTranslation( 'Priority 24/7 support' ) )
+	) {
+		return (
+			<CheckoutSummaryFeaturesListItem>
+				<WPCheckoutCheckIcon id="annual-live-chat" />
+				{ isWpComPremiumPlan( currentPlanSlug )
+					? translate( 'Fast support' )
+					: translate( 'Priority 24/7 support' ) }
+			</CheckoutSummaryFeaturesListItem>
+		);
+	}
 	return (
 		<CheckoutSummaryFeaturesListItem>
 			<WPCheckoutCheckIcon id="annual-live-chat" />
@@ -781,6 +796,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 	) => void;
 } ) {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const productSlug = props.plan?.product_slug;
 	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	if ( ! productSlug || ! isWpComPlan( productSlug ) ) {
@@ -808,7 +824,17 @@ function CheckoutSummaryAnnualUpsell( props: {
 						{ translate( 'Free domain for one year' ) }
 					</CheckoutSummaryFeaturesListItem>
 				) }
-				{ ! isWpComPersonalPlan( productSlug ) && (
+				{ ! isWpComPersonalPlan( productSlug ) &&
+				( isEnglishLocale ||
+					( i18n.hasTranslation( 'Fast support' ) &&
+						i18n.hasTranslation( 'Priority 24/7 support' ) ) ) ? (
+					<CheckoutSummaryFeaturesListItem isSupported={ false }>
+						<WPCheckoutCheckIcon id="annual-live-chat" />
+						{ isWpComPremiumPlan( productSlug )
+							? translate( 'Fast support' )
+							: translate( 'Priority 24/7 support' ) }
+					</CheckoutSummaryFeaturesListItem>
+				) : (
 					<CheckoutSummaryFeaturesListItem isSupported={ false }>
 						<WPCheckoutCheckIcon id="annual-live-chat" />
 						{ translate( 'Live chat support' ) }
