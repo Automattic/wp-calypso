@@ -118,9 +118,6 @@ export function GetReportForm( {
 								"To access a detailed report complete with insights and tailored recommendations for improving your site's performance, please provide your details below. We'll send you an exclusive link to view the full analysis, helping you make informed decisions for optimizing your site."
 							) }
 						</span>
-						<span>
-							<Gridicon icon="chevron-down" onClick={ onClose } />
-						</span>
 					</div>
 					<form className="get-report-form__form" onSubmit={ handleSubmit }>
 						<div className="get-report-form__form-body">
@@ -138,7 +135,7 @@ export function GetReportForm( {
 								{ errors?.name && <FormInputValidation isError text={ errors.name } /> }
 							</FormFieldset>
 							<FormFieldset>
-								<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
+								<FormLabel htmlFor="email">{ translate( 'Email address' ) }</FormLabel>
 								<FormTextInput
 									name="email"
 									className="get-report-form__form-email"
@@ -183,6 +180,7 @@ export function GetReportForm( {
 						) }
 					</form>
 				</div>
+				<Gridicon icon="chevron-down" size={ 36 } onClick={ onClose } />
 			</div>
 		</div>
 	);
