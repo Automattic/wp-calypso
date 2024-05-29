@@ -22,6 +22,7 @@ import { DomainSection } from './domain-section';
 import { GetReportForm } from './get-report-form';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
+import { MigrationBanner } from './migration-banner';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
 import './styles-v2.scss';
@@ -168,7 +169,7 @@ export default function SiteProfilerV2( props: Props ) {
 					</LayoutBlock>
 				</>
 			) }
-
+			<MigrationBanner />
 			<GetReportForm
 				url={ basicMetrics?.final_url }
 				token={ basicMetrics?.token }
