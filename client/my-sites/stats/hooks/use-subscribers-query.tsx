@@ -14,7 +14,7 @@ export interface SubscribersData {
 	date?: string;
 	unit?: string;
 	data?: {
-		[ key: string ]: number | null;
+		[ key: string ]: string | number | null;
 	}[];
 }
 
@@ -31,6 +31,7 @@ function querySubscribers(
 		unit: period,
 		quantity,
 		date: formattedDate,
+		stat_fields: 'subscribers,subscribers_paid',
 	};
 
 	return wpcom.req.get(
@@ -52,12 +53,17 @@ function selectSubscribers( payload: SubscriberPayload ): SubscribersData {
 		date: payload.date,
 		unit: payload.unit,
 		data: payload.data.map( ( dataSet ) => {
-			return {
-				[ payload.fields[ 0 ] ]:
-					payload.unit !== 'week' ? dataSet[ 0 ] : dataSet[ 0 ].replaceAll( 'W', '-' ),
-				[ payload.fields[ 1 ] ]: dataSet[ 1 ],
-				[ payload.fields[ 2 ] ]: dataSet[ 2 ],
-			};
+			const eachDateData = {} as { [ key: string ]: string | number };
+			payload.fields.forEach( ( field, i ) => {
+				if ( i === 0 ) {
+					eachDateData[ field ] =
+						payload.unit !== 'week' ? dataSet[ 0 ] : dataSet[ 0 ].replaceAll( 'W', '-' );
+				} else {
+					eachDateData[ field ] = dataSet[ i ];
+				}
+			} );
+
+			return eachDateData;
 		} ),
 	};
 }

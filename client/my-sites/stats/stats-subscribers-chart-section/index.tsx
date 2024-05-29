@@ -20,6 +20,7 @@ interface SubscribersData {
 	period: PeriodType;
 	subscribers: number;
 	subscribers_change: number;
+	subscribers_paid: number;
 }
 
 interface SubscribersDataResult {
@@ -45,11 +46,17 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	// but uPlot expects descending in its deafult configuration.
 	const x: number[] = data.map( ( point ) => Number( new Date( point.period ) ) / 1000 ).reverse();
 	// Reserve null values for points with no data.
-	const y: Array< number | null > = data
+	const y1: Array< number | null > = data
 		.map( ( point ) => ( point.subscribers === null ? null : Number( point.subscribers ) ) )
 		.reverse();
+	// Add second line for paid subscribers to the chart.
+	const y2: Array< number | null > = data
+		.map( ( point ) =>
+			point.subscribers_paid === null ? null : Number( point.subscribers_paid )
+		)
+		.reverse();
 
-	return [ x, y ];
+	return [ x, y1, y2 ];
 }
 
 export default function SubscribersChartSection( {
