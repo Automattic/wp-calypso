@@ -549,13 +549,10 @@ $button-padding: 8px 32px;
 }
 
 .stats-purchase-wizard__actions {
-
 	.components-button {
-		&.stats-purchase-page__full-width-button {
-			display: block;
-			width: 100%;
-			margin-bottom: 12px;
-		}
+		display: block;
+		width: 100%;
+		margin-bottom: 12px;
 	}
 }
 
