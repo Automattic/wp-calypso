@@ -391,6 +391,11 @@ export function maybeRedirectLoggedOut( context, next ) {
 export function renderPluginsSidebar( context, next ) {
 	const state = context.store.getState();
 	const siteUrl = getSiteFragment( context.path );
+
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+	}
+
 	if ( ! siteUrl ) {
 		context.secondary = (
 			<PluginsSidebar
