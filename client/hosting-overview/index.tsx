@@ -5,6 +5,7 @@ import {
 	redirectIfCurrentUserCannot,
 	redirectToDevToolsPromoIfNotAtomic,
 	redirectIfP2,
+	redirectIfJetpackNonAtomic,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { handleHostingPanelRedirect } from 'calypso/my-sites/hosting/controller';
@@ -24,6 +25,7 @@ export default function () {
 		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		redirectIfP2,
+		redirectIfJetpackNonAtomic,
 		navigation,
 		hostingOverview,
 		siteDashboard( DOTCOM_OVERVIEW ),

@@ -1,3 +1,4 @@
+import { IMPORT_HOSTED_SITE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import SegmentationSurvey from 'calypso/components/segmentation-survey';
@@ -40,7 +41,38 @@ export default function InitialIntentStep( props: Props ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
+	const getRedirectForAnswers = ( _answerKeys: string[] ): string => {
+		if ( _answerKeys.includes( 'migrate-or-import-site' ) ) {
+			return `/setup/${ IMPORT_HOSTED_SITE_FLOW }`;
+		}
+
+		if ( _answerKeys.includes( 'newsletter' ) ) {
+			return `/setup/${ NEWSLETTER_FLOW }`;
+		}
+
+		if ( _answerKeys.includes( 'sell' ) && _answerKeys.includes( 'difm' ) ) {
+			return '/start/do-it-for-me-store';
+		}
+
+		if ( _answerKeys.includes( 'difm' ) ) {
+			return '/start/do-it-for-me';
+		}
+
+		return '';
+	};
+
+	const skipNextNavigation = ( _questionKey: string, _answerKeys: string[] ) => {
+		return Boolean( getRedirectForAnswers( _answerKeys ) );
+	};
+
 	const handleNext = ( _questionKey: string, _answerKeys: string[], isLastQuestion?: boolean ) => {
+		const redirect = getRedirectForAnswers( _answerKeys );
+
+		if ( redirect ) {
+			recordCompleteEvent();
+			return window.location.assign( redirect );
+		}
+
 		if ( isLastQuestion ) {
 			recordCompleteEvent();
 			props.goToNextStep();
@@ -58,6 +90,7 @@ export default function InitialIntentStep( props: Props ) {
 				<SegmentationSurvey
 					surveyKey={ SURVEY_KEY }
 					onNext={ handleNext }
+					skipNextNavigation={ skipNextNavigation }
 					questionConfiguration={ QUESTION_CONFIGURATION }
 					questionComponentMap={ flowQuestionComponentMap }
 				/>

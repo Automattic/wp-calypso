@@ -1,5 +1,14 @@
 import config from '@automattic/calypso-config';
-import { category, currencyDollar, home, moveTo, reusableBlock, tag, cog } from '@wordpress/icons';
+import {
+	category,
+	currencyDollar,
+	home,
+	moveTo,
+	reusableBlock,
+	tag,
+	cog,
+	commentAuthorAvatar,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
@@ -13,6 +22,7 @@ import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MIGRATIONS_LINK,
 	A4A_SETTINGS_LINK,
+	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_REFERRALS_DASHBOARD,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
@@ -114,6 +124,19 @@ const useMainMenuItems = ( path: string ) => {
 							title: translate( 'Migrations' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Migrations',
+							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-partner-directory' )
+				? [
+						{
+							icon: commentAuthorAvatar,
+							path: '/dashboard',
+							link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+							title: translate( 'Partner Directory' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Partner Directory',
 							},
 						},
 				  ]

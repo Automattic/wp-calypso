@@ -16,12 +16,14 @@ const ICON_SIZE_REGULAR = 24;
 interface Props {
 	closeItemPreviewPane?: () => void;
 	itemData: ItemData;
+	isPreviewLoaded: boolean;
 	className?: string;
 	extraProps?: ItemPreviewPaneHeaderExtraProps;
 }
 
 export default function ItemPreviewPaneHeader( {
 	itemData,
+	isPreviewLoaded,
 	closeItemPreviewPane,
 	className,
 	extraProps,
@@ -44,52 +46,60 @@ export default function ItemPreviewPaneHeader( {
 	return (
 		<div className={ classNames( 'item-preview__header', className ) }>
 			<div className="item-preview__header-content">
-				<SiteFavicon
-					blogId={ itemData.blogId }
-					fallback={ siteIconFallback }
-					color={ itemData.color }
-					className="item-preview__header-favicon"
-					size={ size }
-				/>
+				{ !! itemData?.withIcon && (
+					<SiteFavicon
+						blogId={ itemData.blogId }
+						fallback={ siteIconFallback }
+						color={ itemData.color }
+						className="item-preview__header-favicon"
+						size={ size }
+					/>
+				) }
 				<div className="item-preview__header-info">
 					<div className="item-preview__header-title-summary">
 						<div className="item-preview__header-title">{ itemData.title }</div>
 						<div className="item-preview__header-summary">
-							<Button
-								variant="link"
-								className="item-preview__header-summary-link"
-								href={ itemData.url }
-								target="_blank"
-							>
-								<span>
-									{ itemData.subtitle }
-									<Icon
-										className="sidebar-v2__external-icon"
-										icon={ external }
-										size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
-									/>
-								</span>
-							</Button>
+							{ itemData?.url ? (
+								<Button
+									variant="link"
+									className="item-preview__header-summary-link"
+									href={ itemData.url }
+									target="_blank"
+								>
+									<span>
+										{ itemData.subtitle }
+										<Icon
+											className="sidebar-v2__external-icon"
+											icon={ external }
+											size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
+										/>
+									</span>
+								</Button>
+							) : (
+								itemData.subtitle
+							) }
 						</div>
 					</div>
-					<div className="item-preview__header-actions">
-						{ extraProps?.headerButtons ? (
-							<extraProps.headerButtons
-								focusRef={ focusRef }
-								itemData={ itemData }
-								closeSitePreviewPane={ closeItemPreviewPane || ( () => {} ) }
-							/>
-						) : (
-							<Button
-								onClick={ closeItemPreviewPane }
-								className="item-preview__close-preview"
-								aria-label={ translate( 'Close Preview' ) }
-								ref={ focusRef }
-							>
-								<Gridicon icon="cross" size={ ICON_SIZE_REGULAR } />
-							</Button>
-						) }
-					</div>
+					{ isPreviewLoaded && (
+						<div className="item-preview__header-actions">
+							{ extraProps?.headerButtons ? (
+								<extraProps.headerButtons
+									focusRef={ focusRef }
+									itemData={ itemData }
+									closeSitePreviewPane={ closeItemPreviewPane || ( () => {} ) }
+								/>
+							) : (
+								<Button
+									onClick={ closeItemPreviewPane }
+									className="item-preview__close-preview"
+									aria-label={ translate( 'Close Preview' ) }
+									ref={ focusRef }
+								>
+									<Gridicon icon="cross" size={ ICON_SIZE_REGULAR } />
+								</Button>
+							) }
+						</div>
+					) }
 				</div>
 			</div>
 		</div>

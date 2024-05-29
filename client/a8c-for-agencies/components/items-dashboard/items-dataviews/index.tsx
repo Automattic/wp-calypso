@@ -111,7 +111,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				paginationInfo={ data.pagination }
 				fields={ data.fields }
 				view={ data.dataViewsState }
-				search
+				search={ data?.enableSearch ?? true }
 				searchLabel={ data.searchLabel ?? translate( 'Search' ) }
 				getItemId={
 					data.getItemId ??
@@ -121,6 +121,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 						return item.id;
 					} )
 				}
+				onSelectionChange={ data.onSelectionChange }
 				onChangeView={ data.setDataViewsState }
 				supportedLayouts={ [ 'table' ] }
 				actions={ data.actions }

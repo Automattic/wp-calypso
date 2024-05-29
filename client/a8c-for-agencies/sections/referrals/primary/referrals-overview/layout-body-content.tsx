@@ -111,7 +111,7 @@ export default function LayoutBodyContent( {
 	if ( isAutomatedReferral && referrals?.length ) {
 		return (
 			<>
-				<ConsolidatedViews referrals={ referrals } />
+				{ ! dataViewsState.selectedItem && <ConsolidatedViews referrals={ referrals } /> }
 				<ReferralList
 					referrals={ referrals }
 					dataViewsState={ dataViewsState }
