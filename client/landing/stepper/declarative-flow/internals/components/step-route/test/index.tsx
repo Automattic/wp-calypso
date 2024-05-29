@@ -70,7 +70,7 @@ const fakeRenderStep = ( step: AsyncStepperStep ) => {
 		/>
 	);
 };
-const render = ( { step } ) => {
+const render = ( { step, renderStep = fakeRenderStep } ) => {
 	return renderWithProvider(
 		<MemoryRouter>
 			<Suspense fallback={ null }>
@@ -78,7 +78,7 @@ const render = ( { step } ) => {
 					step={ step }
 					flow={ FakeFlow }
 					showWooLogo={ false }
-					renderStep={ fakeRenderStep }
+					renderStep={ renderStep }
 				/>
 			</Suspense>
 		</MemoryRouter>
@@ -161,6 +161,13 @@ describe( 'StepRoute', () => {
 			render( { step: RegularStep } );
 
 			expect( recordStepStart ).not.toHaveBeenCalled();
+		} );
+
+		it( 'skips trackings when the renderStep returns null', () => {
+			render( { step: RegularStep, renderStep: () => null } );
+
+			expect( recordStepStart ).not.toHaveBeenCalled();
+			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

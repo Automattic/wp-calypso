@@ -31,7 +31,7 @@ type StepRouteProps = {
 const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
 	const loginUrl = useLoginUrlForFlow( { flow } );
-
+	const stepContent = renderStep( step );
 	const { site, siteSlugOrId } = useSiteData();
 
 	// Ensure that the selected site is fetched, if available. This is used for event tracking purposes.
@@ -67,8 +67,13 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 			return;
 		}
 
+		if ( ! stepContent ) {
+			return;
+		}
+
 		const signupCompleteFlowName = getSignupCompleteFlowNameAndClear();
 		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
+
 		const isReEnteringStep =
 			signupCompleteFlowName === flow.name && signupCompleteStepName === step.slug;
 
@@ -80,6 +85,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 			} );
 
 			const stepOldSlug = getStepOldSlug( step.slug );
+
 			if ( stepOldSlug ) {
 				recordStepStart( flow.name, kebabCase( stepOldSlug ), {
 					intent,
@@ -102,8 +108,6 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 	if ( step.requiresLoggedInUser && ! userIsLoggedIn ) {
 		return null;
 	}
-
-	const stepContent = renderStep( step );
 
 	return (
 		<div
