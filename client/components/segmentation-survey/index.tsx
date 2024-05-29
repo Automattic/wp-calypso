@@ -21,6 +21,7 @@ type SegmentationSurveyProps = {
 	headerAlign?: string;
 	questionConfiguration?: QuestionConfiguration;
 	questionComponentMap?: QuestionComponentMap;
+	clearAnswersOnLastQuestion?: boolean;
 };
 
 /**
@@ -29,6 +30,10 @@ type SegmentationSurveyProps = {
  * @param {string} props.surveyKey - The key of the survey to render.
  * @param {() => void} [props.onBack] - A function that navigates to the previous step.
  * @param {(questionKey: string, answerKeys: string[], isLastQuestion?: boolean) => void} [props.onNext] - A function that navigates to the next question/step.
+ * @param {string} [props.headerAlign] - The alignment of the header text.
+ * @param {QuestionConfiguration} [props.questionConfiguration] - The configuration for the questions.
+ * @param {QuestionComponentMap} [props.questionComponentMap] - A map of question types to components.
+ * @param {boolean} [props.clearAnswersOnLastQuestion] - Whether to clear the answers after the last question.
  * @returns {React.ReactComponentElement}
  */
 const SegmentationSurvey = ( {
@@ -39,6 +44,7 @@ const SegmentationSurvey = ( {
 	headerAlign,
 	questionConfiguration,
 	questionComponentMap,
+	clearAnswersOnLastQuestion = true,
 }: SegmentationSurveyProps ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
 	const { mutateAsync, isPending } = useSaveAnswersMutation( { surveyKey } );
@@ -62,7 +68,7 @@ const SegmentationSurvey = ( {
 
 				const isLastQuestion = questions?.[ questions.length - 1 ].key === currentQuestion.key;
 
-				if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
+				if ( clearAnswersOnLastQuestion && isLastQuestion ) {
 					clearAnswers();
 				}
 
@@ -78,7 +84,7 @@ const SegmentationSurvey = ( {
 				} );
 			}
 		},
-		[ clearAnswers, mutateAsync, onNext, questions, surveyKey ]
+		[ clearAnswers, clearAnswersOnLastQuestion, mutateAsync, onNext, questions, surveyKey ]
 	);
 
 	const onContinue = useCallback(
@@ -95,9 +101,11 @@ const SegmentationSurvey = ( {
 
 	const onSkip = useCallback(
 		async ( currentQuestion: Question ) => {
+			// Clear the answer for the current question and save the skip answer.
+			onChangeAnswer( currentQuestion.key, [] );
 			await handleSave( currentQuestion, [ SKIP_ANSWER_KEY ] );
 		},
-		[ handleSave ]
+		[ handleSave, onChangeAnswer ]
 	);
 
 	const { currentPage, currentQuestion, backToPreviousPage, continueToNextPage, skipToNextPage } =
