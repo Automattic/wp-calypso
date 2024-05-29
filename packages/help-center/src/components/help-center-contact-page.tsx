@@ -4,16 +4,20 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Spinner, GMClosureNotice } from '@automattic/components';
+import { getPlan } from '@automattic/calypso-products';
+import { Spinner, GMClosureNotice, FormInputValidation } from '@automattic/components';
+import { HelpCenterSelect } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
+import { useGetOdieStorage, useSetOdieStorage } from '@automattic/odie-client';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -21,19 +25,15 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from '..';
 import {
 	useChatStatus,
+	useChatWidget,
 	useShouldRenderEmailOption,
 	useStillNeedHelpURL,
 	useZendeskMessaging,
 } from '../hooks';
 import { Mail } from '../icons';
+import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
-
-const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
-	if ( active ) {
-		return <Link { ...props } />;
-	}
-	return <span { ...props }></span>;
-};
+import type { HelpCenterSite } from '@automattic/data-stores';
 
 type ContactOption = 'chat' | 'email';
 const generateContactOnClickEvent = (
@@ -82,6 +82,21 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	useZendeskMessaging(
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats,
+		isEligibleForChat || hasActiveChats
+	);
+
+	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
+	const sectionName = useSelector( getSectionName );
+	const currentSite = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return helpCenterSelect.getSite();
+	}, [] );
+
+	const wapuuChatId = useGetOdieStorage( 'chat_id' );
+	const setWapuuChatId = useSetOdieStorage( 'chat_id' );
+
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
+		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats
 	);
 
@@ -142,13 +157,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		);
 	}
 
-	// Create URLSearchParams for chat
-	const chatUrlSearchParams = new URLSearchParams( {
-		mode: 'CHAT',
-		wapuuFlow: hideHeaders.toString(),
-	} );
-	const chatUrl = `/contact-form?${ chatUrlSearchParams.toString() }`;
-
 	// Create URLSearchParams for email
 	const emailUrlSearchParams = new URLSearchParams( {
 		mode: 'EMAIL',
@@ -164,9 +172,46 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	};
 
 	const renderChatOption = () => {
+		const productSlug = ( currentSite as HelpCenterSite )?.plan?.product_slug;
+		const plan = getPlan( productSlug );
+		const productId = plan?.getProductId();
+
+		const handleOnClick = () => {
+			contactOptionsEventMap.chat();
+
+			recordTracksEvent( 'calypso_help_live_chat_begin', {
+				site_plan_product_id: productId,
+				is_automated_transfer: currentSite?.is_wpcom_atomic,
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+			} );
+
+			let message = '';
+			const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
+			const escapedSiteUrl = encodeURIComponent( currentSite?.URL || '' );
+
+			if ( wapuuChatId ) {
+				message += `Support request started with <strong>Wapuu</strong><br />Wapuu Chat: <a href="https://mc.a8c.com/odie/odie-chat.php?chat_id=${ escapedWapuuChatId }">${ escapedWapuuChatId }</a><br />`;
+			}
+
+			if ( currentSite?.URL ) {
+				message += `Site: ${ escapedSiteUrl }<br />`;
+			}
+
+			openChatWidget( {
+				aiChatId: escapedWapuuChatId,
+				message: message,
+				siteUrl: escapedSiteUrl,
+				onError: () => setHasSubmittingError( true ),
+				// Reset Odie chat after passing to support
+				onSuccess: () => setWapuuChatId( null ),
+			} );
+		};
+
 		return (
 			<div>
-				<ConditionalLink active to={ chatUrl } onClick={ contactOptionsEventMap[ 'chat' ] }>
+				<button disabled={ isOpeningChatWidget } onClick={ handleOnClick }>
 					<div className="help-center-contact-page__box chat" role="button" tabIndex={ 0 }>
 						<div className="help-center-contact-page__box-icon">
 							<Icon icon={ comment } />
@@ -176,7 +221,13 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 							<p>{ __( 'Our Happiness team will get back to you soon', __i18n_text_domain__ ) }</p>
 						</div>
 					</div>
-				</ConditionalLink>
+				</button>
+				{ hasSubmittingError && (
+					<FormInputValidation
+						isError
+						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+					/>
+				) }
 			</div>
 		);
 	};

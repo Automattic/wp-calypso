@@ -1,20 +1,22 @@
 import {
+	isDomainRegistration,
+	isDomainTransfer,
 	isGoogleWorkspaceExtraLicence,
 	isGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
 } from '@automattic/calypso-products';
-import { doesPurchaseHaveFullCredits, type ContactDetailsType } from '@automattic/wpcom-checkout';
-import {
-	hasDomainRegistration,
-	hasTransferProduct,
-	hasOnlyRenewalItems,
-} from 'calypso/lib/cart-values/cart-items';
+import { isWpComProductRenewal } from './is-wpcom-product-renewal';
+import { doesPurchaseHaveFullCredits } from './transformations';
+import type { ContactDetailsType } from './types';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-export default function getContactDetailsType( responseCart: ResponseCart ): ContactDetailsType {
-	const hasDomainProduct =
-		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
-	const hasOnlyRenewals = hasOnlyRenewalItems( responseCart );
+export function getContactDetailsType( responseCart: ResponseCart ): ContactDetailsType {
+	const hasDomainRegistration = responseCart.products.some( isDomainRegistration );
+	const hasTransferProduct = responseCart.products.some( isDomainTransfer );
+	const hasDomainProduct = hasDomainRegistration || hasTransferProduct;
+	const hasOnlyRenewals = responseCart.products.every(
+		( item ) => isWpComProductRenewal( item ) || item.product_slug === 'wordpress-com-credits'
+	);
 
 	if ( hasDomainProduct && ! hasOnlyRenewals ) {
 		return 'domain';

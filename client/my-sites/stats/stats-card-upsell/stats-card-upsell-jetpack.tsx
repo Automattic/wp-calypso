@@ -14,6 +14,7 @@ import {
 	STATS_FEATURE_UTM_STATS,
 	STATS_TYPE_DEVICE_STATS,
 } from '../constants';
+import { trackStatsAnalyticsEvent } from '../utils';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 import { Props } from './';
 
@@ -68,6 +69,10 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 		// publish an event
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_${ tracksEvent }` );
+		// publish new unified upgrade event
+		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
+			type: statType,
+		} );
 
 		// redirect to the Purchase page
 		setTimeout( () => page( `/stats/purchase/${ siteSlug }?${ queryParams.toString() }` ), 250 );

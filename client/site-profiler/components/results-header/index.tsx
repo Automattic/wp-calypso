@@ -1,42 +1,50 @@
 import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import nonWpComSiteIcon from 'calypso/assets/images/site-profiler/non-wpcom-site.svg';
+import wpComSiteIcon from 'calypso/assets/images/site-profiler/wpcom-site.svg';
+import { UrlData } from 'calypso/blocks/import/types';
+import { isScoreGood } from 'calypso/data/site-profiler/metrics-dictionaries';
+import { Scores } from 'calypso/data/site-profiler/types';
+
 import './styles.scss';
-import { BasicMetricsResult } from 'calypso/data/site-profiler/types';
 
 type Props = {
 	domain: string;
-	basicMetrics: BasicMetricsResult;
+	overallScore: Scores;
+	urlData?: UrlData;
 	onGetReport: () => void;
 };
 
-function getIcon() {
-	// TODO: Implement the functionality to get the correct Icon
-	// https://github.com/Automattic/dotcom-forge/issues/7281
-	return <Gridicon icon="time" size={ 24 } />;
+function getIcon( urlData?: UrlData ) {
+	if ( urlData?.platform_data?.is_wpcom ) {
+		return <img src={ wpComSiteIcon } alt={ translate( 'WordPress.com site' ) } />;
+	}
+	return <img src={ nonWpComSiteIcon } alt={ translate( 'Non WordPress.com site' ) } />;
 }
 
-function getDomainMessage() {
-	// TODO: Implement the functionality to get the correct Icon
-	// https://github.com/Automattic/dotcom-forge/issues/7281
+function getIsWpComSiteMessage( urlData?: UrlData ) {
+	if ( urlData?.platform_data?.is_wpcom ) {
+		return translate( 'This site is hosted on WordPress.com' );
+	}
 	return translate( 'This site is not hosted on WordPress.com' );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getTitleMessage( basicMetrics: BasicMetricsResult ) {
-	// TODO: Implement the functionality to get the correct title
-	// https://github.com/Automattic/dotcom-forge/issues/7298
-	return translate( 'Your site needs a boost. Let’s improve it.' );
+function getTitleMessage( overallScore: Scores ) {
+	if ( ! isScoreGood( overallScore ) ) {
+		return translate( 'Your site needs a boost. Let’s improve it.' );
+	}
+	return translate( 'Your site is a top performer! Keep it up.' );
 }
 
-export const ResultsHeader = ( { domain, basicMetrics, onGetReport }: Props ) => {
+export const ResultsHeader = ( { domain, overallScore, urlData, onGetReport }: Props ) => {
 	return (
 		<div className="results-header--container">
 			<div className="results-header--domain-container">
 				<span className="domain-title">{ domain }</span>
-				{ getIcon() }
-				<span className="domain-message">{ getDomainMessage() }</span>
+				{ getIcon( urlData ) }
+				<span className="domain-message">{ getIsWpComSiteMessage( urlData ) }</span>
 			</div>
-			<h1>{ getTitleMessage( basicMetrics ) }</h1>
+			<h1>{ getTitleMessage( overallScore ) }</h1>
 			<div className="results-header--button-container">
 				<Button onClick={ onGetReport }>
 					{ translate( 'Access full site report - It’s free' ) }

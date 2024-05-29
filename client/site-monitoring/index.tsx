@@ -1,6 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	redirectToDevToolsPromoIfNotAtomic,
+} from 'calypso/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible, siteMetrics } from 'calypso/my-sites/site-monitoring/controller';
 import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
@@ -22,6 +26,7 @@ export default function () {
 		page(
 			'/site-monitoring/:site',
 			siteSelection,
+			redirectToDevToolsPromoIfNotAtomic,
 			redirectHomeIfIneligible,
 			navigation,
 			siteMonitoringOverview,
@@ -32,6 +37,7 @@ export default function () {
 		page(
 			'/site-monitoring/:site/php',
 			siteSelection,
+			redirectToDevToolsPromoIfNotAtomic,
 			redirectHomeIfIneligible,
 			navigation,
 			siteMonitoringPhpLogs,
@@ -42,6 +48,7 @@ export default function () {
 		page(
 			'/site-monitoring/:site/web',
 			siteSelection,
+			redirectToDevToolsPromoIfNotAtomic,
 			redirectHomeIfIneligible,
 			navigation,
 			siteMonitoringServerLogs,
@@ -53,6 +60,7 @@ export default function () {
 		page(
 			'/site-monitoring/:siteId/:tab(php|web)?',
 			siteSelection,
+			redirectToDevToolsPromoIfNotAtomic,
 			redirectHomeIfIneligible,
 			navigation,
 			siteMetrics,

@@ -1,5 +1,4 @@
 import React from 'react';
-import { TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
 
 export interface FeaturePreviewInterface {
 	id: string;
@@ -19,13 +18,14 @@ export interface FeatureTabInterface {
 
 export interface ItemData {
 	title: string;
-	subtitle: string;
+	subtitle: string | React.ReactNode;
 	url?: string;
 	icon?: string;
 	color?: string;
 	blogId?: number;
 	isDotcomSite?: boolean;
 	adminUrl?: string;
+	withIcon?: boolean;
 }
 
 export interface PreviewPaneProps {
@@ -36,7 +36,7 @@ export interface PreviewPaneProps {
 	className?: string;
 	isSmallScreen?: boolean;
 	hasError?: boolean;
-	addTourDetails?: { id: string; tourId: TourId };
+	addTourDetails?: { id: string; tourId: string };
 	itemPreviewPaneHeaderExtraProps?: ItemPreviewPaneHeaderExtraProps;
 }
 

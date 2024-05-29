@@ -2,13 +2,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { canCurrentUser } from '../../state/selectors/can-current-user';
 import { GitHubDeploymentCreation } from './deployment-creation';
 import { GitHubDeploymentManagement } from './deployment-management';
 import { DeploymentRunsLogs } from './deployment-run-logs';

@@ -171,17 +171,23 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				transition: none;
 			}
 
+			.search-component.domains-table-filter__search.is-open.has-focus {
+				border-color: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+				box-shadow: 0 0 0 0.5px
+					var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+			}
+
 			@media only screen and ( min-width: 782px ) {
 				.is-global-sidebar-visible {
 					header.navigation-header {
 						padding-top: 24px;
 						padding-inline: 16px;
-						border-block-end: 1px solid var( --studio-gray-0 );
+						border-block-end: 1px solid var( --color-border-secondary );
 					}
 					.layout__primary > main {
 						background: var( --color-surface );
 						border-radius: 8px;
-						box-shadow: none;
+						box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
 						height: calc( 100vh - 32px );
 						overflow: hidden;
 						max-width: none;

@@ -1,4 +1,3 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { getQueryArg } from '@wordpress/url';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import {
@@ -16,24 +15,21 @@ const calcPercentageDifferenceFromThreshold = ( value: number, threshold: number
 };
 
 export const useGetUpgradePlanSiteMetrics = () => {
-	const isEnglishLocale = useIsEnglishLocale();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	const { data: siteMetricData, isFetching } = useUrlBasicMetricsQuery( importSiteQueryParam );
 
 	let lcpPercentageDifference = 0;
 	let fidPercentageDifference = 0;
 
-	if ( isEnglishLocale ) {
-		lcpPercentageDifference = calcPercentageDifferenceFromThreshold(
-			siteMetricData?.basic?.lcp?.value ?? 0,
-			upgradePlanSiteMetricsLcpThreshold
-		);
+	lcpPercentageDifference = calcPercentageDifferenceFromThreshold(
+		siteMetricData?.basic?.lcp?.value ?? 0,
+		upgradePlanSiteMetricsLcpThreshold
+	);
 
-		fidPercentageDifference = calcPercentageDifferenceFromThreshold(
-			siteMetricData?.basic?.fid?.value ?? 0,
-			upgradePlanSiteMetricsFidThreshold
-		);
-	}
+	fidPercentageDifference = calcPercentageDifferenceFromThreshold(
+		siteMetricData?.basic?.fid?.value ?? 0,
+		upgradePlanSiteMetricsFidThreshold
+	);
 
 	return {
 		isFetching,

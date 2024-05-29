@@ -222,9 +222,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'dev-tools-promo',
-		paths: [ '/dev-tools-promo' ],
-		module: 'calypso/dev-tools-promo',
+		name: 'dev-tools',
+		paths: [ '/dev-tools' ],
+		module: 'calypso/dev-tools',
 		group: 'sites',
 	},
 	{
@@ -805,6 +805,12 @@ const sections = [
 		name: 'a8c-for-agencies-settings',
 		paths: [ '/settings' ],
 		module: 'calypso/a8c-for-agencies/sections/settings',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-partner-directory',
+		paths: [ '/partner-directory' ],
+		module: 'calypso/a8c-for-agencies/sections/partner-directory',
 		group: 'a8c-for-agencies',
 	},
 	{
