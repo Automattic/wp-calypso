@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { close, Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -64,7 +63,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 
 	const [ , setNavigationTitle ] = useState< string | null >( null );
 
-	const { component, title, showClose } = {
+	const { component, title } = {
 		logs: {
 			component: (
 				<ScheduleLogs
@@ -74,7 +73,6 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 				/>
 			),
 			title: translate( 'Scheduled Updates Logs' ),
-			showClose: true,
 		},
 		list: {
 			component: (
@@ -150,11 +148,6 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 									</Button>
 								) }
 							</>
-						) }
-						{ showClose && (
-							<Button onClick={ onNavBack }>
-								<Icon icon={ close } />
-							</Button>
 						) }
 					</div>
 				</div>
