@@ -71,7 +71,6 @@ import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
-import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
 import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
@@ -215,7 +214,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
-	deemphasizeFreePlan: deemphasizeFreePlanFromProps,
+	deemphasizeFreePlan,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -377,9 +376,6 @@ const PlansFeaturesMain = ( {
 		hideEcommercePlan,
 		hideEnterprisePlan,
 	};
-
-	const deemphasizeFreePlan =
-		useDeemphasizeFreePlan( flowName, paidDomainName ) || deemphasizeFreePlanFromProps;
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
