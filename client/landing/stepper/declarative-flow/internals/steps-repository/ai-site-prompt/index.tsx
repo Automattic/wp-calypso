@@ -1,4 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
+import { getAssemblerDesign } from '@automattic/design-picker';
 import { resolveSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, FormEvent } from 'react';
@@ -16,8 +17,9 @@ const LoadingBigSky: Step = function () {
 	const { __ } = useI18n();
 
 	const { siteSlug, siteId, site } = useSiteData();
-	const { setStaticHomepageOnSite, setIntentOnSite } = useDispatch( SITE_STORE );
+	const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } = useDispatch( SITE_STORE );
 	const hasStaticHomepage = site?.options?.show_on_front === 'page' && site?.options?.page_on_front;
+	const assemblerThemeActive = site?.options?.theme_slug === 'pub/assembler';
 
 	const exitFlow = async ( selectedSiteId: string, selectedSiteSlug: string ) => {
 		if ( ! selectedSiteId || ! selectedSiteSlug ) {
@@ -27,6 +29,11 @@ const LoadingBigSky: Step = function () {
 		const pendingActions = [
 			resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
 		];
+
+		// Set the Assembler theme on the site.
+		if ( ! assemblerThemeActive ) {
+			pendingActions.push( setDesignOnSite( selectedSiteSlug, getAssemblerDesign() ) );
+		}
 
 		// Create a new home page if one is not set yet.
 		if ( ! hasStaticHomepage ) {
