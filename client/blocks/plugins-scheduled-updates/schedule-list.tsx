@@ -1,3 +1,4 @@
+import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	__experimentalText as Text,
@@ -37,7 +38,7 @@ interface Props {
 export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const isSmallScreen = useBreakpoint( '<660px' );
+	const isDesktopScreen = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { isEligibleForFeature, loading: isEligibleForFeatureLoading } = useIsEligibleForFeature();
 	const { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading } =
 		useSiteHasEligiblePlugins();
@@ -112,7 +113,7 @@ export const ScheduleList = ( props: Props ) => {
 			>
 				{ translate( 'Are you sure you want to delete this schedule?' ) }
 			</ConfirmDialog>
-			<Card className="plugins-update-manager">
+			<Card className="plugins-update-manager schedule-list--card__single-site">
 				<CardHeader size="extraSmall">
 					<div className="ch-placeholder">
 						{ onNavBack && (
@@ -143,7 +144,7 @@ export const ScheduleList = ( props: Props ) => {
 						schedules.length > 0 &&
 						canCreateSchedules && (
 							<>
-								{ isSmallScreen ? (
+								{ ! isDesktopScreen ? (
 									<ScheduleListCards
 										onRemoveClick={ openRemoveDialog }
 										onEditClick={ onEditSchedule }
