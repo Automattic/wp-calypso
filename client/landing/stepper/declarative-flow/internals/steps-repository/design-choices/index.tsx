@@ -2,6 +2,7 @@ import {
 	getAssemblerDesign,
 	themesIllustrationImage,
 	assemblerIllustrationImage,
+	hiBigSky,
 } from '@automattic/design-picker';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -76,9 +77,9 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 							/>
 							{ isBigSkyEligible && (
 								<DesignChoice
-									title={ translate( 'Use AI' ) }
+									title={ translate( 'Use Big Sky' ) }
 									description={ translate( 'Try our AI site builder.' ) }
-									imageSrc={ themesIllustrationImage }
+									imageSrc={ hiBigSky }
 									destination="loadingBigSky"
 									onSelect={ handleSubmit }
 								/>
