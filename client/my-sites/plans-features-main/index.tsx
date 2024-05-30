@@ -378,11 +378,8 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
-	// The hook is introduced temporarily to alter the value dynamically according to the ExPlat variant loaded.
-	// Once the experiment concludes, we will clean it up and simply use the prop value.
-	// For more details, please refer to peP6yB-23n-p2
-	const resolvedDeemphasizeFreePlan = useDeemphasizeFreePlan( flowName, paidDomainName );
-	const deemphasizeFreePlan = deemphasizeFreePlanFromProps || resolvedDeemphasizeFreePlan.result;
+	const deemphasizeFreePlan =
+		useDeemphasizeFreePlan( flowName, paidDomainName ) || deemphasizeFreePlanFromProps;
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
