@@ -19,7 +19,7 @@ export const LoadingScreen = () => {
 		<LayoutBlock className="landing-page-header-block" width="medium">
 			<div className="landing-page-loading-screen">
 				<h2>{ translate( "Crunching your site's numbers…" ) }</h2>
-				<Progress value={ 50 } total={ 100 } />
+				<Progress value={ 20 } total={ 100 } />
 			</div>
 		</LayoutBlock>
 	);

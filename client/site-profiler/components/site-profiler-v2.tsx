@@ -9,6 +9,7 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
+import { useUrlPerformanceMetricsQuery } from 'calypso/data/site-profiler/use-url-performance-metrics-query';
 import { LayoutBlock } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
@@ -24,6 +25,7 @@ import { GetReportForm } from './get-report-form';
 import { HealthSection } from './health-section';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
+import { LoadingScreen } from './loading-screen';
 import { MigrationBannerBig } from './migration-banner-big';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
@@ -106,6 +108,8 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const performanceCategory = getPerformanceCategory( basicMetrics?.basic, urlData );
 
+	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery( url, basicMetrics?.token );
+
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
@@ -129,7 +133,8 @@ export default function SiteProfilerV2( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-			{ showResultScreen && (
+			{ showResultScreen && ! performanceMetrics && <LoadingScreen /> }
+			{ showResultScreen && performanceMetrics && (
 				<>
 					<LayoutBlock
 						className={ classnames(
