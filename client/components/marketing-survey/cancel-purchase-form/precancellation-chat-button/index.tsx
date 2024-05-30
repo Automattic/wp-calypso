@@ -59,7 +59,7 @@ const PrecancellationChatButton: FC< Props > = ( {
 			onClick={ handleClick }
 		>
 			{ icon && <MaterialIcon icon={ icon } /> }
-			{ __( 'Need help? Chat with us' ) }
+			{ __( 'Need help? Contact us' ) }
 		</ChatButton>
 	);
 };

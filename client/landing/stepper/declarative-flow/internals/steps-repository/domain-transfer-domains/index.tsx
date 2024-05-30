@@ -55,7 +55,7 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 					withHelpCenter={ false }
 				>
 					<MaterialIcon icon="chat_bubble" />
-					{ __( 'Need help? Chat with us' ) }
+					{ __( 'Need help? Contact us' ) }
 				</ChatButton>
 			}
 		/>

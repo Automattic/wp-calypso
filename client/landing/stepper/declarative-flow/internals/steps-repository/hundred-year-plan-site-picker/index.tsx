@@ -185,7 +185,7 @@ const ConfirmationModal = ( {
 					</List>
 					<Footer>
 						<HelpLink>
-							{ translate( 'Need help? {{ChatLink}}Chat with us{{/ChatLink}}', {
+							{ translate( 'Need help? {{ChatLink}}Contact us{{/ChatLink}}', {
 								components: {
 									ChatLink: <Button variant="link" onClick={ openChat } />,
 								},
