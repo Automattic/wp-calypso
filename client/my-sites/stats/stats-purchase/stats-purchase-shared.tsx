@@ -61,6 +61,8 @@ const StatsBenefitsCommercial = () => {
 	const overageInfoIconRef = useRef( null );
 	const trackingInfoIconRef = useRef( null );
 	const commercialInfoIconRef = useRef( null );
+	const customDateRangesInfoIconRef = useRef( null );
+	const deviceAttributesInfoIconRef = useRef( null );
 	const [ spikeInfoShow, setSpikeInfoShow ] = useState( false );
 	const handleSpikePopoverOpen = () => setSpikeInfoShow( true );
 	const handleSpikePopoverClose = () => setSpikeInfoShow( false );
@@ -73,6 +75,12 @@ const StatsBenefitsCommercial = () => {
 	const [ commercialInfoShow, setCommercialInfoShow ] = useState( false );
 	const handleCommercialUsePopoverOpen = () => setCommercialInfoShow( true );
 	const handleCommercialUsePopoverClose = () => setCommercialInfoShow( false );
+	const [ customDateRangesInfoShow, setCustomDateRangesInfoShow ] = useState( false );
+	const handleCustomDatesPopoverOpen = () => setCustomDateRangesInfoShow( true );
+	const handleCustomDatesPopoverClose = () => setCustomDateRangesInfoShow( false );
+	const [ deviceAttributesInfoShow, setDeviceAttributesInfoShow ] = useState( false );
+	const handleDeviceAttributesPopoverOpen = () => setDeviceAttributesInfoShow( true );
+	const handleDeviceAttributesPopoverClose = () => setDeviceAttributesInfoShow( false );
 
 	return (
 		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
@@ -92,6 +100,24 @@ const StatsBenefitsCommercial = () => {
 						ref={ commercialInfoIconRef }
 						onMouseEnter={ handleCommercialUsePopoverOpen }
 						onMouseLeave={ handleCommercialUsePopoverClose }
+					/>
+				</li>
+				<li>
+					{ translate( 'Custom date ranges' ) }
+					<Icon
+						icon={ info }
+						ref={ customDateRangesInfoIconRef }
+						onMouseEnter={ handleCustomDatesPopoverOpen }
+						onMouseLeave={ handleCustomDatesPopoverClose }
+					/>
+				</li>
+				<li>
+					{ translate( 'View device attributes' ) }
+					<Icon
+						icon={ info }
+						ref={ deviceAttributesInfoIconRef }
+						onMouseEnter={ handleDeviceAttributesPopoverOpen }
+						onMouseLeave={ handleDeviceAttributesPopoverClose }
 					/>
 				</li>
 				<li>
@@ -165,7 +191,29 @@ const StatsBenefitsCommercial = () => {
 				className="stats-purchase__info-popover"
 			>
 				<div className="stats-purchase__info-popover-content">
-					{ translate( 'Sites with any commercial activity require a commercial-use license.' ) }
+					{ translate(
+						'Your Stats license will be valid for commercial use. Any site with commercial activity requires a commercial-use license.'
+					) }
+				</div>
+			</Popover>
+			<Popover
+				position="right"
+				isVisible={ customDateRangesInfoShow }
+				context={ customDateRangesInfoIconRef.current }
+				className="stats-purchase__info-popover"
+			>
+				<div className="stats-purchase__info-popover-content">
+					{ translate( 'Select custom date ranges when inspecting your site traffic.' ) }
+				</div>
+			</Popover>
+			<Popover
+				position="right"
+				isVisible={ deviceAttributesInfoShow }
+				context={ deviceAttributesInfoIconRef.current }
+				className="stats-purchase__info-popover"
+			>
+				<div className="stats-purchase__info-popover-content">
+					{ translate( 'Get detailed devices stats for your site visitors.' ) }
 				</div>
 			</Popover>
 		</div>
