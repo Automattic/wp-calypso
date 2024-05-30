@@ -25,7 +25,6 @@ const AddNewSiteButton = ( {
 	className,
 	popoverContext,
 	onToggleMenu,
-	onClickAddNewSite,
 	onClickA4APluginMenuItem,
 	onClickUrlMenuItem,
 }: Props ): JSX.Element => {
@@ -45,8 +44,7 @@ const AddNewSiteButton = ( {
 			label={ showMainButtonLabel ? translate( 'Add new site' ) : undefined }
 			toggleIcon={ showMainButtonLabel ? undefined : 'plus' }
 			onToggle={ onToggleMenu }
-			onClick={ onClickAddNewSite }
-			href={ A4A_DOWNLOAD_LINK_ON_GITHUB }
+			disableMain
 		>
 			<PopoverMenuItem onClick={ onClickA4APluginMenuItem } href={ A4A_DOWNLOAD_LINK_ON_GITHUB }>
 				<A4ALogo className="a4a-logo gridicon" size={ 18 } />
