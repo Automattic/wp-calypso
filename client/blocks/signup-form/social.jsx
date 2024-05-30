@@ -158,7 +158,8 @@ class SocialSignupForm extends Component {
 export default connect(
 	( state ) => {
 		const query = getCurrentQueryArguments( state );
-		const isDevAccount = query?.ref === 'hosting-lp' || query?.ref === 'developer-lp';
+		const isDevAccount =
+			query?.ref === 'hosting-lp' || query?.ref === 'developer-lp' || query?.ref === 'a4a_signup';
 
 		return {
 			currentRoute: getCurrentRoute( state ),
