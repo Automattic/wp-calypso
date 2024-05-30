@@ -26,13 +26,21 @@ const GuideModal = ( { onClose, steps }: GuideModalProps ) => {
 	}
 
 	const isLastStep = step === steps.length - 1;
+	const isFirstStep = step === 0;
 
 	const nextStep = () => {
 		if ( isLastStep ) {
 			onClose();
 			return;
 		}
-		setStep( ( prev ) => ( prev + 1 ) % steps.length );
+		setStep( ( prev ) => prev + 1 );
+	};
+
+	const prevStep = () => {
+		if ( isFirstStep ) {
+			return;
+		}
+		setStep( ( prev ) => prev - 1 );
 	};
 
 	return (
@@ -57,6 +65,11 @@ const GuideModal = ( { onClose, steps }: GuideModalProps ) => {
 						<p>{ steps[ step ].description }</p>
 					</div>
 					<div className="guide-modal__footer">
+						{ ! isFirstStep && (
+							<Button borderless onClick={ prevStep } className="guide-modal__back-button">
+								{ translate( 'Back' ) }
+							</Button>
+						) }
 						<Button primary onClick={ nextStep } className="guide-modal__next-button">
 							{ isLastStep ? translate( 'Done' ) : translate( 'Next' ) }
 						</Button>
