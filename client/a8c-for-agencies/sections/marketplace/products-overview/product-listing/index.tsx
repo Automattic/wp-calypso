@@ -17,6 +17,7 @@ import ListingSection from '../../listing-section';
 import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
 import ProductFilter from '../product-filter';
+import EmptyResultMessage from './empty-result-message';
 import { getSupportedBundleSizes, useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSelectedProductFilters from './hooks/use-selected-product-filters';
 import useSubmitForm from './hooks/use-submit-form';
@@ -80,6 +81,8 @@ export default function ProductListing( {
 		selectedProductFilters: selectedFilters,
 		productSearchQuery,
 	} );
+
+	const isEmptyList = ! filteredProductsAndBundles.length;
 
 	// Create a ref for `filteredProductsAndBundles` to prevent unnecessary re-renders caused by the `useEffect` hook.
 	const filteredProductsAndBundlesRef = useRef( filteredProductsAndBundles );
@@ -328,6 +331,12 @@ export default function ProductListing( {
 					/>
 				) }
 			</div>
+
+			{ isEmptyList && (
+				<div className="product-listing">
+					<EmptyResultMessage />
+				</div>
+			) }
 
 			{ wooExtensions.length > 0 && (
 				<ListingSection
