@@ -70,6 +70,7 @@ export default function InitialIntentStep( props: Props ) {
 
 	const skipNextNavigation = ( _questionKey: string, _answerKeys: string[] ) => {
 		return (
+			_answerKeys.includes( 'client' ) ||
 			Boolean( getRedirectForAnswers( _answerKeys ) ) ||
 			shouldExitOnSkip( _questionKey, _answerKeys )
 		);
@@ -83,7 +84,11 @@ export default function InitialIntentStep( props: Props ) {
 			return window.location.assign( redirect );
 		}
 
-		if ( isLastQuestion || shouldExitOnSkip( _questionKey, _answerKeys ) ) {
+		if (
+			_answerKeys.includes( 'client' ) ||
+			isLastQuestion ||
+			shouldExitOnSkip( _questionKey, _answerKeys )
+		) {
 			recordCompleteEvent();
 			props.goToNextStep();
 		}

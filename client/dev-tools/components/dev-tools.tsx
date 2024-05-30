@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Card, Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -37,6 +37,8 @@ const DevTools = () => {
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
+	// The ref is required to persist the value of redirect_to after renders
+	const redirectUrl = useRef( searchParams.get( 'redirect_to' ) ?? `/hosting-config/${ siteId }` );
 	const { siteSlug, isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
 		siteSlug: getSiteSlug( state, siteId ) || '',
 		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
@@ -83,11 +85,10 @@ const DevTools = () => {
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
-	const redirectUrl = `/hosting-config/${ siteId }`;
 	const handleTransfer = ( options: { geo_affinity?: string } ) => {
 		const params = new URLSearchParams( {
 			siteId: String( siteId ),
-			redirect_to: redirectUrl,
+			redirect_to: redirectUrl.current,
 			feature: FEATURE_SFTP,
 			initiate_transfer_context: 'hosting',
 			initiate_transfer_geo_affinity: options.geo_affinity || '',
@@ -96,7 +97,7 @@ const DevTools = () => {
 	};
 
 	if ( isSiteAtomic && hasSftpFeature ) {
-		page.replace( redirectUrl );
+		page.replace( redirectUrl.current );
 		return;
 	}
 
@@ -141,7 +142,7 @@ const DevTools = () => {
 							<EligibilityWarnings
 								className="hosting__activating-warnings"
 								onProceed={ handleTransfer }
-								backUrl={ redirectUrl }
+								backUrl={ redirectUrl.current }
 								showDataCenterPicker
 								standaloneProceed
 								currentContext="dev-tools"

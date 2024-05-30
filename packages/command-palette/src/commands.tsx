@@ -116,6 +116,7 @@ export function useCommands() {
 					_x( 'view my sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
 					_x( 'manage sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
 					_x( 'sites dashboard', 'Keyword for the View my sites command', __i18n_text_domain__ ),
+					'wp site', // WP-CLI command
 				].join( ' ' ),
 				icon: wordpressIcon,
 			},
@@ -152,6 +153,7 @@ export function useCommands() {
 					_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
 					_x( 'help center', 'Keyword for the Get help command', __i18n_text_domain__ ),
 					_x( 'send feedback', 'Keyword for the Get help command', __i18n_text_domain__ ),
+					'wp help', // WP-CLI command
 				].join( ' ' ),
 				icon: helpIcon,
 			},
@@ -217,6 +219,7 @@ export function useCommands() {
 						'Keyword for the Manage cache settings command',
 						__i18n_text_domain__
 					),
+					'wp cache', // WP-CLI command
 				].join( ' ' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage cache settings', __i18n_text_domain__ ),
@@ -257,6 +260,7 @@ export function useCommands() {
 					),
 					_x( 'admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
 					_x( 'wp-admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
+					'wp admin', // WP-CLI command
 				].join( ' ' ),
 				context: [ '/sites' ],
 				siteSelector: true,
@@ -315,6 +319,8 @@ export function useCommands() {
 						'Keyword for the Open hosting configuration command',
 						__i18n_text_domain__
 					),
+					'wp cli', // WP-CLI command
+					'wp db', // WP-CLI command
 				].join( ' ' ),
 				context: [ '/sites' ],
 				siteSelector: true,
@@ -466,6 +472,7 @@ export function useCommands() {
 				searchLabel: [
 					_x( 'add new site', 'Keyword for the Add new site command', __i18n_text_domain__ ),
 					_x( 'create site', 'Keyword for the Add new site command', __i18n_text_domain__ ),
+					'wp site create', // WP-CLI command
 				].join( ' ' ),
 				context: [ '/sites' ],
 				icon: plusIcon,
@@ -483,6 +490,7 @@ export function useCommands() {
 					_x( 'profile', 'Keyword for the Open account settings command', __i18n_text_domain__ ),
 					_x( 'email', 'Keyword for the Open account settings command', __i18n_text_domain__ ),
 					_x( 'language', 'Keyword for the Open account settings command', __i18n_text_domain__ ),
+					'wp language', // WP-CLI command
 				].join( ' ' ),
 				icon: profileIcon,
 			},
@@ -865,6 +873,7 @@ export function useCommands() {
 					_x( 'add new post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
 					_x( 'create post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
 					_x( 'write post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
+					'wp post create', // WP-CLI command
 				].join( ' ' ),
 				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
 				callback: ( params ) =>
@@ -882,6 +891,7 @@ export function useCommands() {
 				searchLabel: [
 					_x( 'manage posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
 					_x( 'edit posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
+					'wp post', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
@@ -966,6 +976,7 @@ export function useCommands() {
 						'Keyword for the View media uploads command',
 						__i18n_text_domain__
 					),
+					'wp media', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
@@ -1034,6 +1045,7 @@ export function useCommands() {
 					_x( 'manage comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
 					_x( 'edit comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
 					_x( 'delete comments', 'Keyword for the Manage comments command', __i18n_text_domain__ ),
+					'wp comment', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
@@ -1054,6 +1066,7 @@ export function useCommands() {
 					_x( 'activate theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 					_x( 'install theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 					_x( 'delete theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
+					'wp theme', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
@@ -1110,6 +1123,7 @@ export function useCommands() {
 					_x( 'install plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
 					_x( 'delete plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
 					_x( 'update plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+					'wp plugin', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
@@ -1128,6 +1142,7 @@ export function useCommands() {
 					_x( 'install plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
 					_x( 'add plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
 					_x( 'upload plugin', 'Keyword for the Install plugin command', __i18n_text_domain__ ),
+					'wp plugin install', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
@@ -1201,6 +1216,7 @@ export function useCommands() {
 					_x( 'edit user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
 					_x( 'remove user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
 					_x( 'update user', 'Keyword for the Manage users command', __i18n_text_domain__ ),
+					'wp user', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
@@ -1218,6 +1234,7 @@ export function useCommands() {
 					_x( 'add new user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
 					_x( 'create user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
 					_x( 'invite user', 'Keyword for the Add new user command', __i18n_text_domain__ ),
+					'wp user create', // WP-CLI command
 				].join( ' ' ),
 				callback: ( params ) =>
 					commandNavigation(
@@ -1288,10 +1305,26 @@ export function useCommands() {
 			import: {
 				name: 'import',
 				label: __( 'Import content to the site', __i18n_text_domain__ ),
-				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
-				callback: commandNavigation( '/import/:site' ),
+				searchLabel: 'wp import', // WP-CLI command
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/import.php' : '/import/:site'
+					)( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to import content', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				icon: downloadIcon,
+			},
+			export: {
+				name: 'export',
+				label: __( 'Export content from the site', __i18n_text_domain__ ),
+				searchLabel: 'wp export', // WP-CLI command
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/export.php' : '/export/:site'
+					)( params ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to export content from', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				icon: downloadIcon,
 			},
