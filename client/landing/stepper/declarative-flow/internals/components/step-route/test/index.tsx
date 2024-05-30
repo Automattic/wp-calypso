@@ -8,7 +8,6 @@ import React, { FC, Suspense } from 'react';
 import { MemoryRouter } from 'react-router';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import {
-	AsyncStepperStep,
 	Flow,
 	StepperStep,
 	StepProps,
@@ -56,7 +55,7 @@ const FakeFlow: Flow = {
 	isSignupFlow: false,
 };
 
-const fakeRenderStep = ( step: AsyncStepperStep ) => {
+const fakeRenderStep = ( step: StepperStep ) => {
 	const StepComponent = FakeStep;
 	const navigationControls = {} as NavigationControls;
 	const stepData = {} as any;
@@ -71,6 +70,7 @@ const fakeRenderStep = ( step: AsyncStepperStep ) => {
 		/>
 	);
 };
+
 const render = ( { step, renderStep = fakeRenderStep } ) => {
 	return renderWithProvider(
 		<MemoryRouter
@@ -88,6 +88,7 @@ const render = ( { step, renderStep = fakeRenderStep } ) => {
 		</MemoryRouter>
 	);
 };
+
 describe( 'StepRoute', () => {
 	// we need to save the original object for later to not affect tests from other files
 	const originalLocation = window.location;
