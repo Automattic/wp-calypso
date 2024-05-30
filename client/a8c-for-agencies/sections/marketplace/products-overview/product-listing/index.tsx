@@ -303,7 +303,7 @@ export default function ProductListing( {
 			<div className="product-listing__actions">
 				<div className="product-listing__actions-search-and-filter">
 					<FilterSearch
-						label={ translate( 'Search' ) }
+						label={ translate( 'Search products' ) }
 						onSearch={ onProductSearch }
 						onClick={ trackClickCallback( 'search' ) }
 					/>
