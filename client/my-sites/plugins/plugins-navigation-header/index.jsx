@@ -171,7 +171,7 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 			navigationItems={ breadcrumbs }
 			compactBreadcrumb={ isMobile }
 			ref={ navigationHeaderRef }
-			title={ translate( 'Plugins' ) }
+			title={ translate( 'Plugins marketplace' ) }
 		>
 			<ManageButton
 				shouldShowManageButton={ shouldShowManageButton }
