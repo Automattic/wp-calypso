@@ -225,10 +225,19 @@ class DeleteSite extends Component {
 						) }
 					</p>
 					<p>
-						{ translate(
+						{ getLocaleSlug().startsWith( 'en' ) ||
+						i18n.hasTranslation(
 							"If you're unsure about what deletion means or have any other questions, " +
-								'please chat with someone from our support team before proceeding.'
-						) }
+								'please contact our support team before proceeding.'
+						)
+							? translate(
+									"If you're unsure about what deletion means or have any other questions, " +
+										'please contact our support team before proceeding.'
+							  )
+							: translate(
+									"If you're unsure about what deletion means or have any other questions, " +
+										'please chat with someone from our support team before proceeding.'
+							  ) }
 					</p>
 					<p>
 						<a

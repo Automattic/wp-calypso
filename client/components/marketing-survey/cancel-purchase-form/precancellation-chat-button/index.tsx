@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import { MaterialIcon } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import ChatButton from 'calypso/components/chat-button';
@@ -27,6 +28,7 @@ const PrecancellationChatButton: FC< Props > = ( {
 	className,
 } ) => {
 	const { __ } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 	const siteUrl =
 		useSelector( ( state ) => getSiteUrl( state, purchase.siteId ) ) || 'Unknown site';
 
@@ -59,7 +61,9 @@ const PrecancellationChatButton: FC< Props > = ( {
 			onClick={ handleClick }
 		>
 			{ icon && <MaterialIcon icon={ icon } /> }
-			{ __( 'Need help? Chat with us' ) }
+			{ hasEnTranslation( 'Need help? Contact us' )
+				? __( 'Need help? Contact us' )
+				: __( 'Need help? Chat with us' ) }
 		</ChatButton>
 	);
 };
