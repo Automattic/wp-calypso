@@ -2,7 +2,7 @@ import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { resolveSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, FormEvent } from 'react';
+import { useEffect, FormEvent, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -15,7 +15,7 @@ const SiteIntent = Onboard.SiteIntent;
 
 const LoadingBigSky: Step = function () {
 	const { __ } = useI18n();
-
+	const [ isError, setError ] = useState( false );
 	const { siteSlug, siteId, site } = useSiteData();
 	const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } = useDispatch( SITE_STORE );
 	const hasStaticHomepage = site?.options?.show_on_front === 'page' && site?.options?.page_on_front;
@@ -32,14 +32,14 @@ const LoadingBigSky: Step = function () {
 
 		// Set the Assembler theme on the site.
 		if ( ! assemblerThemeActive ) {
-			pendingActions.push( setDesignOnSite( selectedSiteSlug, getAssemblerDesign() ) );
+			setDesignOnSite( selectedSiteSlug, getAssemblerDesign() );
 		}
 
 		// Create a new home page if one is not set yet.
 		if ( ! hasStaticHomepage ) {
 			pendingActions.push(
 				wpcomRequest( {
-					path: '/sites/' + selectedSiteId + '/pages',
+					path: '/sites/' + selectedSiteId + '/pagess',
 					method: 'POST',
 					apiNamespace: 'wp/v2',
 					body: {
@@ -50,21 +50,21 @@ const LoadingBigSky: Step = function () {
 			);
 		}
 
-		Promise.all( pendingActions ).then( ( results ) => {
+		try {
+			const results = await Promise.all( pendingActions );
 			const siteURL = results[ 0 ].URL;
 
 			if ( ! hasStaticHomepage ) {
 				const homePagePostId = results[ 1 ].id;
-				setStaticHomepageOnSite( selectedSiteId, homePagePostId ).then( () => {
-					window.location.replace(
-						`${ siteURL }/wp-admin/site-editor.php?canvas=edit&postType=page&postId=${ homePagePostId }`
-					);
-				} );
-			} else {
-				window.location.replace( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` );
+				await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
 			}
-			return Promise.resolve();
-		} );
+
+			window.location.replace( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( 'An error occurred:', error );
+			setError( true );
+		}
 	};
 
 	const onSubmit = async ( event: FormEvent ) => {
@@ -74,6 +74,9 @@ const LoadingBigSky: Step = function () {
 	};
 
 	useEffect( () => {
+		if ( isError ) {
+			return;
+		}
 		const syntheticEvent = {
 			preventDefault: () => {},
 			target: {
@@ -81,14 +84,19 @@ const LoadingBigSky: Step = function () {
 			},
 		} as unknown as FormEvent;
 		onSubmit( syntheticEvent );
-	}, [] );
+	}, [ isError ] );
 
 	function LaunchingBigSky() {
 		return (
 			<div className="processing-step__container">
 				<div className="processing-step">
 					<h1 className="processing-step__progress-step">{ __( 'Launching Big Sky' ) }</h1>
-					<LoadingEllipsis />
+					{ ! isError && <LoadingEllipsis /> }
+					{ isError && (
+						<p className="processing-step__error">
+							{ __( 'Something unexpected happened. Please go back and try again.' ) }
+						</p>
+					) }
 				</div>
 			</div>
 		);
