@@ -99,6 +99,20 @@ export interface UrlBasicMetricsQueryResponse {
 	token: string;
 }
 
+export interface UrlSecurityMetricsQueryResponse {
+	wpscan: {
+		report: {
+			audits: {
+				pass: Record< string, PerformanceMetricsItemQueryResponse >;
+				fail: Record< string, PerformanceMetricsItemQueryResponse >;
+				truncated: boolean;
+			};
+			ovc: number;
+		};
+		errors: Record< string, Array< string > >;
+	};
+}
+
 export interface UrlPerformanceMetricsQueryResponse {
 	webtestpage_org: {
 		report: {

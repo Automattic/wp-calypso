@@ -1,8 +1,8 @@
-import { AdvancedMetricsDetailsQueryResponse } from 'calypso/data/site-profiler/types';
+import { PerformanceMetricsDetailsQueryResponse } from 'calypso/data/site-profiler/types';
 import { InsightTable } from './insight-table';
 
 export interface InsightDetailedContentProps {
-	data: AdvancedMetricsDetailsQueryResponse;
+	data: PerformanceMetricsDetailsQueryResponse;
 }
 
 export const InsightDetailedContent: React.FC< InsightDetailedContentProps > = ( props ) => {

@@ -1,8 +1,8 @@
 import Markdown from 'react-markdown';
-import { AdvancedMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 
 interface InsightHeaderProps {
-	data: AdvancedMetricsItemQueryResponse;
+	data: PerformanceMetricsItemQueryResponse;
 }
 
 export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
