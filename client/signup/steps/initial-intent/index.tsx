@@ -96,7 +96,6 @@ export default function InitialIntentStep( props: Props ) {
 		const newAnswers = { [ _questionKey ]: _answerKeys };
 
 		submitSignupStep(
-			// Pass the flowName as well to restrict answers to the current flow and keep the plan's grid unaffected in other flows.
 			{ flowName, stepName },
 			{ segmentationSurveyAnswers: { ...currentAnswers, ...newAnswers } }
 		);
