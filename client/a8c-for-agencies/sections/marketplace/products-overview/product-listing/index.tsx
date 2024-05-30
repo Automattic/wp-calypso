@@ -1,4 +1,4 @@
-import { Button, JetpackLogo, WooLogo } from '@automattic/components';
+import { JetpackLogo, WooLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -54,12 +54,9 @@ export default function ProductListing( {
 		setSelectedSize: setSelectedBundleSize,
 	} = useProductBundleSize();
 
-	const {
-		selectedFilters,
-		setSelectedFilters,
-		resetFilters,
-		hasSelected: shouldShowResetButton,
-	} = useSelectedProductFilters( { productBrand } );
+	const { selectedFilters, setSelectedFilters, resetFilters } = useSelectedProductFilters( {
+		productBrand,
+	} );
 
 	const quantity = useMemo(
 		() => ( isReferingProducts ? 1 : selectedBundleSize ),
@@ -314,13 +311,8 @@ export default function ProductListing( {
 					<ProductFilter
 						selectedFilters={ selectedFilters }
 						setSelectedFilters={ setSelectedFilters }
+						resetFilters={ resetFilters }
 					/>
-
-					{ shouldShowResetButton && (
-						<Button className="product-listing__reset-filter-button" plain onClick={ resetFilters }>
-							{ translate( 'Reset filter' ) }
-						</Button>
-					) }
 				</div>
 
 				{ ! isReferingProducts && availableBundleSizes.length > 1 && (

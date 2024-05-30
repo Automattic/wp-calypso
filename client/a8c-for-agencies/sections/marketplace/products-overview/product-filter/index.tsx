@@ -1,4 +1,4 @@
-import { SubmenuPopover, useSubmenuPopoverProps } from '@automattic/components';
+import { Button, SubmenuPopover, useSubmenuPopoverProps } from '@automattic/components';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { Icon, chevronRight, funnel, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -8,7 +8,7 @@ import {
 	PRODUCT_FILTER_KEY_PRICES,
 	PRODUCT_FILTER_KEY_TYPES,
 } from '../../constants';
-import { SelectedFilters } from '../../lib/product-filter';
+import { SelectedFilters, hasSelectedFilter } from '../../lib/product-filter';
 import useOnScreen from './hooks/use-on-screen';
 import useProductFilterOptions from './hooks/use-product-filter-options';
 
@@ -54,9 +54,14 @@ export function ProductFilterItem( {
 type Props = {
 	selectedFilters: SelectedFilters;
 	setSelectedFilters: ( selectedFilters: SelectedFilters ) => void;
+	resetFilters: () => void;
 };
 
-export default function ProductFilter( { selectedFilters, setSelectedFilters }: Props ) {
+export default function ProductFilter( {
+	selectedFilters,
+	setSelectedFilters,
+	resetFilters,
+}: Props ) {
 	const translate = useTranslate();
 
 	const [ openDropdown, setOpenDropdown ] = useState< boolean >( false );
@@ -91,39 +96,51 @@ export default function ProductFilter( { selectedFilters, setSelectedFilters }: 
 		}
 	}, [ isVisible, openDropdown ] );
 
+	const hasSelections = hasSelectedFilter( selectedFilters );
+
 	return (
-		<div ref={ ref }>
-			<DropdownMenu
-				className="product-filter"
-				label={ translate( 'Filter' ) }
-				icon={ funnel }
-				variant="product-filter"
-				open={ openDropdown }
-				onToggle={ () => setOpenDropdown( ! openDropdown ) }
-			>
-				{ () => (
-					<MenuGroup className="product-filter__group">
-						<ProductFilterItem
-							label={ translate( 'Category' ) }
-							options={ categories }
-							selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] }
-							onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_CATEGORIES, option ) }
-						/>
-						<ProductFilterItem
-							label={ translate( 'Type' ) }
-							options={ types }
-							selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] }
-							onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_TYPES, option ) }
-						/>
-						<ProductFilterItem
-							label={ translate( 'Price' ) }
-							options={ prices }
-							selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_PRICES ] }
-							onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_PRICES, option ) }
-						/>
-					</MenuGroup>
-				) }
-			</DropdownMenu>
+		<div className="product-filter-container">
+			<div ref={ ref }>
+				<DropdownMenu
+					className="product-filter"
+					label={ translate( 'Filter' ) }
+					icon={ funnel }
+					variant="product-filter"
+					open={ openDropdown }
+					onToggle={ () => setOpenDropdown( ! openDropdown ) }
+				>
+					{ () => (
+						<MenuGroup className="product-filter__group">
+							<ProductFilterItem
+								label={ translate( 'Category' ) }
+								options={ categories }
+								selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] }
+								onOptionClick={ ( option ) =>
+									updateFilter( PRODUCT_FILTER_KEY_CATEGORIES, option )
+								}
+							/>
+							<ProductFilterItem
+								label={ translate( 'Type' ) }
+								options={ types }
+								selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] }
+								onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_TYPES, option ) }
+							/>
+							<ProductFilterItem
+								label={ translate( 'Price' ) }
+								options={ prices }
+								selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_PRICES ] }
+								onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_PRICES, option ) }
+							/>
+						</MenuGroup>
+					) }
+				</DropdownMenu>
+			</div>
+
+			{ hasSelections && (
+				<Button className="product-filter-button" plain onClick={ resetFilters }>
+					{ translate( 'Reset filter' ) }
+				</Button>
+			) }
 		</div>
 	);
 }
