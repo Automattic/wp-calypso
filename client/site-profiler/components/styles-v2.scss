@@ -207,12 +207,6 @@
 		background: url(calypso/assets/images/site-profiler/background-landing-header.svg) no-repeat left bottom;
 		padding-bottom: 240px;
 
-		// Huge screens and bigger
-		@media (min-width: $break-huge) {
-			background-position-x: center;
-		}
-
-
 		// Small screens
 		@media (max-width: $break-small ) {
 			padding-top: 6rem;
@@ -226,17 +220,9 @@
 
 		&.poor {
 			background: url(calypso/assets/images/site-profiler/background-results-bad.svg) no-repeat right top;
-			// Huge screens and bigger
-			@media (min-width: $break-huge) {
-				background-position-x: center;
-			}
 		}
 		&.good {
 			background: url(calypso/assets/images/site-profiler/background-results-good.svg) no-repeat right top;
-			// Huge screens and bigger
-			@media (min-width: $break-huge) {
-				background-position-x: center;
-			}
 		}
 	}
 
