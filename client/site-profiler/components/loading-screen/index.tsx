@@ -14,6 +14,13 @@ const Progress = styled( ProgressBar )`
 export const LoadingScreen = () => {
 	const translate = useTranslate();
 
+	const progressHeadings = [
+		translate( "Crunching your site's numbers…" ),
+		translate( 'Analyzing speed metrics…' ),
+		translate( 'Comparing with top sites…' ),
+		translate( 'Finalizing your report…' ),
+	];
+
 	const [ progress, setProgress ] = useState( 0 );
 
 	const interval = setInterval( () => {
@@ -29,7 +36,7 @@ export const LoadingScreen = () => {
 	return (
 		<LayoutBlock className="landing-page-header-block" width="medium">
 			<div className="landing-page-loading-screen">
-				<h2>{ translate( "Crunching your site's numbers…" ) }</h2>
+				<h2>{ progressHeadings[ Math.floor( ( progress / 100 ) * progressHeadings.length ) ] }</h2>
 				<Progress value={ progress } total={ 100 } />
 			</div>
 		</LayoutBlock>
