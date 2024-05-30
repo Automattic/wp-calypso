@@ -14,6 +14,7 @@ import {
 	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_DEVELOPER_TOOLS,
+	DOTCOM_STAGING_SITE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 
@@ -99,6 +100,14 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
 				__( 'GitHub Deployments' ),
+				isAtomicSite && ! isPlanExpired,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				selectedSiteFeaturePreview
+			),
+			createFeaturePreview(
+				DOTCOM_STAGING_SITE,
+				__( 'Staging Site' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,

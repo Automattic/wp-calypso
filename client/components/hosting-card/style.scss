@@ -8,6 +8,10 @@
 	border-radius: 4px;
 	box-shadow: none;
 	font-family: $font-sf-pro-text;
+
+	&.is-borderless {
+		border: none;
+	}
 }
 
 h3.hosting-card__title {

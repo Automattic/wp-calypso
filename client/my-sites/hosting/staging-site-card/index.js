@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -56,6 +57,7 @@ export const StagingSiteCard = ( {
 	isJetpack,
 	isPossibleJetpackConnectionProblem,
 	dispatch,
+	isBorderless,
 } ) => {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
@@ -517,7 +519,7 @@ export const StagingSiteCard = ( {
 	}
 
 	return (
-		<CardContentWrapper>
+		<CardContentWrapper className={ classnames( { 'is-borderless': isBorderless } ) }>
 			{ isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
