@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -115,42 +114,32 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 					subtitle={ translate(
 						'Streamline your workflow with scheduled updates, timed to suit your needs.'
 					) }
-				/>
-				<div
-					className={ classnames(
-						'plugins-update-manager__header',
-						context !== 'list' ? 'no-border' : null
-					) }
 				>
-					<div className="buttons">
-						{ context === 'list' && (
-							<>
-								{ onNotificationManagement && (
-									<Button
-										__next40pxDefaultSize
-										variant="secondary"
-										onClick={ onNotificationManagement }
-									>
-										{ translate( 'Notification settings' ) }
-									</Button>
-								) }
+					{ context === 'list' && (
+						<>
+							{ onNotificationManagement && (
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									onClick={ onNotificationManagement }
+								>
+									{ translate( 'Notification settings' ) }
+								</Button>
+							) }
 
-								{ onCreateNewSchedule && ! hideCreateButton && (
-									<Button
-										__next40pxDefaultSize
-										variant={
-											canCreateSchedules && siteHasEligiblePlugins ? 'primary' : 'secondary'
-										}
-										onClick={ onCreateNewSchedule }
-										disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
-									>
-										{ translate( 'New Schedule' ) }
-									</Button>
-								) }
-							</>
-						) }
-					</div>
-				</div>
+							{ onCreateNewSchedule && ! hideCreateButton && (
+								<Button
+									__next40pxDefaultSize
+									variant={ canCreateSchedules && siteHasEligiblePlugins ? 'primary' : 'secondary' }
+									onClick={ onCreateNewSchedule }
+									disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
+								>
+									{ translate( 'New Schedule' ) }
+								</Button>
+							) }
+						</>
+					) }
+				</NavigationHeader>
 				<ScheduledUpdatesGate siteId={ siteId as number }>{ component }</ScheduledUpdatesGate>
 			</MainComponent>
 		</PluginUpdateManagerContextProvider>
