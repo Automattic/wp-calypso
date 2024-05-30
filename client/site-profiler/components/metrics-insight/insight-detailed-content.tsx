@@ -12,5 +12,11 @@ export const InsightDetailedContent: React.FC< InsightDetailedContentProps > = (
 		return <InsightTable { ...props } />;
 	}
 
+	if ( data.type === 'list' ) {
+		const tables = data.items ?? [];
+
+		return tables.map( ( item, index ) => <InsightTable key={ index } data={ item as any } /> );
+	}
+
 	return null;
 };

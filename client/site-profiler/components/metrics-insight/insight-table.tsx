@@ -3,7 +3,7 @@ import Markdown from 'react-markdown';
 import { PerformanceMetricsDetailsQueryResponse } from 'calypso/data/site-profiler/types';
 
 export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryResponse } ) {
-	const { headings = [], items = [] } = data;
+	const { headings = [], items = [] } = data ?? {};
 
 	return (
 		<table>
@@ -15,11 +15,11 @@ export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryRe
 				</tr>
 			</thead>
 			<tbody>
-				{ items.map( ( row, index ) => (
+				{ items.map( ( item, index ) => (
 					<tr key={ `tr-${ index }` }>
 						{ headings.map( ( heading ) => (
 							<td>
-								<Cell data={ row[ heading.key ] } headingValueType={ heading.valueType } />
+								<Cell data={ item[ heading.key ] } headingValueType={ heading.valueType } />
 							</td>
 						) ) }
 					</tr>
