@@ -4,6 +4,10 @@
 .plugins-navigation-header.navigation-header {
 	padding-inline: 16px;
 
+	.navigation-header__main {
+		align-items: center;
+	}
+
 	@include break-medium {
 		border-block-end: 1px solid var(--color-border-secondary);
 	}
