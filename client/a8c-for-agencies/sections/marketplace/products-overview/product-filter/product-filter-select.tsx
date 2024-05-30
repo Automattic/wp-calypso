@@ -1,9 +1,10 @@
 import { Button } from '@automattic/components';
 import { Icon, check, chevronDown } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import useOnScreen from './hooks/use-on-screen';
 
 type Props = {
 	label: string;
@@ -14,6 +15,7 @@ type Props = {
 
 export function ProductFilterSelect( { label, options, selectedOptions, onOptionClick }: Props ) {
 	const buttonRef = useRef< HTMLButtonElement | null >( null );
+	const isVisible = useOnScreen( buttonRef );
 
 	const [ openDropdown, setOpenDropdown ] = useState< boolean >( false );
 
@@ -30,8 +32,15 @@ export function ProductFilterSelect( { label, options, selectedOptions, onOption
 			'%(filterLabel)s is the filter label and %(filterCount)d is the number of selected filters',
 	} );
 
+	useEffect( () => {
+		// Dropdown doesn't play well with our layout when scrolling. We need to close it when the Select button is not visible to avoid overlapping issues.
+		if ( openDropdown && ! isVisible ) {
+			setOpenDropdown( false );
+		}
+	}, [ isVisible, openDropdown ] );
+
 	return (
-		<>
+		<div className="product-filter-select">
 			<Button
 				ref={ buttonRef }
 				className="product-filter-button"
@@ -58,6 +67,6 @@ export function ProductFilterSelect( { label, options, selectedOptions, onOption
 					</PopoverMenuItem>
 				) ) }
 			</PopoverMenu>
-		</>
+		</div>
 	);
 }

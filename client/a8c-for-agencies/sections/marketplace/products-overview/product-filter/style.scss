@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .product-filter {
 	max-height: 33px;
 	max-width: 33px;
@@ -65,5 +68,13 @@
 		color: var(--color-accent-60);
 		fill: var(--color-accent-60);
 		background: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+	}
+}
+
+.product-filter-select {
+	display: none;
+
+	@include break-wide {
+		display: block;
 	}
 }
