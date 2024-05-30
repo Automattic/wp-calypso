@@ -23,7 +23,9 @@ import {
 	plus as plusIcon,
 	postComments as postCommentsIcon,
 	reusableBlock as cacheIcon,
+	search as searchIcon,
 	seen as seenIcon,
+	shield as antiSpamIcon,
 	replace as switchIcon,
 	settings as settingsIcon,
 	tool as toolIcon,
@@ -624,6 +626,28 @@ export function useCommands() {
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to open Jetpack Stats', __i18n_text_domain__ ),
 				icon: statsIcon,
+			},
+			openJetpackSearch: {
+				name: 'openJetpackSearch',
+				label: __( 'Open Jetpack Search', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=jetpack-search' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open Jetpack Search', __i18n_text_domain__ ),
+				filterP2: true,
+				icon: searchIcon,
+			},
+			openJetpackAkismet: {
+				name: 'openJetpackAkismet',
+				label: __( 'Open Jetpack Akismet Anti-spam', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=akismet-key-config' ),
+				siteSelector: true,
+				siteSelectorLabel: __(
+					'Select site to open Jetpack Akismet Anti-spam',
+					__i18n_text_domain__
+				),
+				filterP2: true,
+				filterSelfHosted: true,
+				icon: antiSpamIcon,
 			},
 			openActivityLog: {
 				name: 'openActivityLog',
