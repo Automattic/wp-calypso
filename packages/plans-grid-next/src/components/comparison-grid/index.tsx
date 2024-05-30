@@ -299,25 +299,6 @@ const PlanSelector = styled.header`
 	}
 `;
 
-const StorageButton = styled.div`
-	background: #f2f2f2;
-	border-radius: 5px;
-	padding: 4px 0;
-	width: -moz-fit-content;
-	width: fit-content;
-	text-align: center;
-	font-size: 0.75rem;
-	font-weight: 400;
-	line-height: 20px;
-	color: var( --studio-gray-90 );
-	min-width: 64px;
-	margin-top: 10px;
-
-	${ plansGridMediumLarge( css`
-		margin-top: 0;
-	` ) }
-`;
-
 const FeatureFootnotes = styled.div`
 	ol {
 		margin: 2em 0 0 1em;
@@ -611,11 +592,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	) : (
 		gridPlan.features.storageOptions.map( ( storageOption ) => {
 			if ( ! storageOption?.isAddOn ) {
-				return (
-					<StorageButton>
-						<PlanStorageLabel storageOption={ storageOption } planSlug={ planSlug } />
-					</StorageButton>
-				);
+				return <PlanStorageLabel storageOption={ storageOption } planSlug={ planSlug } />;
 			}
 		} )
 	);
