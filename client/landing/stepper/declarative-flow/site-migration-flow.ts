@@ -11,7 +11,6 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { useStartUrl } from '../hooks/use-start-url';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -47,21 +46,7 @@ const siteMigration: Flow = {
 
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-		const startUrl = useStartUrl( this.variantSlug ?? FLOW_NAME );
-
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 		const { isOwner } = useIsSiteOwner();
-
-		useEffect( () => {
-			if ( ! userIsLoggedIn ) {
-				const logInUrl = startUrl;
-				window.location.assign( logInUrl );
-			}
-		}, [ startUrl, userIsLoggedIn ] );
 
 		useEffect( () => {
 			if ( isOwner === false ) {
@@ -69,24 +54,16 @@ const siteMigration: Flow = {
 			}
 		}, [ isOwner ] );
 
-		if ( ! userIsLoggedIn ) {
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'site-migration requires a logged in user',
-			};
-
-			return result;
-		}
-
 		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
 			window.location.assign( '/start' );
-			result = {
+
+			return {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup did not provide the site slug or site id it is configured to.',
 			};
 		}
 
-		return result;
+		return { state: AssertConditionState.SUCCESS };
 	},
 
 	useStepNavigation( currentStep, navigate ) {

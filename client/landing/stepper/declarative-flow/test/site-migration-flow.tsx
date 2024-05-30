@@ -54,19 +54,6 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	describe( 'useAssertConditions', () => {
-		it( 'redirects the user to the login page when they are not logged in', () => {
-			( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
-
-			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
-			runUseAssertionCondition( {
-				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-			} );
-
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/start/account/user-social?variationName=site-migration&toStepper=true&redirect_to=/setup/site-migration`
-			);
-		} );
-
 		it( 'redirects the user to the start page when there is not siteSlug and SiteID', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
 
