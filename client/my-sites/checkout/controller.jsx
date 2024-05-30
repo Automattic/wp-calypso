@@ -157,7 +157,6 @@ export function checkout( context, next ) {
 		if ( isJetpackCheckout ) {
 			return true;
 		}
-
 		if ( isGiftPurchase ) {
 			return true;
 		}
