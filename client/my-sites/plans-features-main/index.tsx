@@ -644,10 +644,7 @@ const PlansFeaturesMain = ( {
 			isExperimentLoading ||
 			isTrailMapExperimentLoading
 	);
-	const isPlansGridReady =
-		! isLoadingGridPlans &&
-		! resolvedSubdomainName.isLoading &&
-		! resolvedDeemphasizeFreePlan.isLoading;
+	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
