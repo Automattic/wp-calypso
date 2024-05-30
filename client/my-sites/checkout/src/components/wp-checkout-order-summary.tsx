@@ -765,13 +765,13 @@ function CheckoutSummarySupportIfAvailable( props: {
 		return null;
 	}
 
-	if ( hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority 24/7 support' ) ) {
+	if ( hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority support 24/7' ) ) {
 		return (
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon id="annual-live-chat" />
 				{ isWpComPremiumPlan( currentPlanSlug )
 					? translate( 'Fast support' )
-					: translate( 'Priority 24/7 support' ) }
+					: translate( 'Priority support 24/7' ) }
 			</CheckoutSummaryFeaturesListItem>
 		);
 	}
@@ -821,13 +821,13 @@ function CheckoutSummaryAnnualUpsell( props: {
 						{ translate( 'Free domain for one year' ) }
 					</CheckoutSummaryFeaturesListItem>
 				) }
-				{ hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority 24/7 support' )
+				{ hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority support 24/7' )
 					? ! isWpComPersonalPlan( productSlug ) && (
 							<CheckoutSummaryFeaturesListItem isSupported={ false }>
 								<WPCheckoutCheckIcon id="annual-live-chat" />
 								{ isWpComPremiumPlan( productSlug )
 									? translate( 'Fast support' )
-									: translate( 'Priority 24/7 support' ) }
+									: translate( 'Priority support 24/7' ) }
 							</CheckoutSummaryFeaturesListItem>
 					  )
 					: ! isWpComPersonalPlan( productSlug ) && (
