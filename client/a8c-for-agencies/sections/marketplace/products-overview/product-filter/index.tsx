@@ -1,6 +1,6 @@
-import { Button, SubmenuPopover, useSubmenuPopoverProps } from '@automattic/components';
-import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
-import { Icon, chevronRight, funnel, check } from '@wordpress/icons';
+import { Button } from '@automattic/components';
+import { DropdownMenu, MenuGroup } from '@wordpress/components';
+import { funnel } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -8,48 +8,17 @@ import {
 	PRODUCT_FILTER_KEY_PRICES,
 	PRODUCT_FILTER_KEY_TYPES,
 } from '../../constants';
-import { SelectedFilters, hasSelectedFilter } from '../../lib/product-filter';
+import {
+	SelectedFilters,
+	hasSelectedFilter,
+	hasSelectedFilterByType,
+} from '../../lib/product-filter';
 import useOnScreen from './hooks/use-on-screen';
 import useProductFilterOptions from './hooks/use-product-filter-options';
+import { ProductFilterItem } from './product-filter-item';
+import { ProductFilterSelect } from './product-filter-select';
 
 import './style.scss';
-
-type ProductFilterItemProps = {
-	label: string;
-	options: { key: string; label: string }[];
-	selectedOptions: { [ key: string ]: boolean };
-	onOptionClick?: ( option: string ) => void;
-};
-
-export function ProductFilterItem( {
-	label,
-	options,
-	selectedOptions,
-	onOptionClick,
-}: ProductFilterItemProps ) {
-	const submenu = useSubmenuPopoverProps< HTMLDivElement >( {
-		flip: false,
-	} );
-
-	return (
-		<div { ...submenu.parent }>
-			<MenuItem icon={ chevronRight }>{ label }</MenuItem>
-			<SubmenuPopover { ...submenu.submenu } className="components-popover is-product-filter">
-				<MenuGroup className="product-filter__group">
-					{ options.map( ( option ) => (
-						<MenuItem key={ option.key } onClick={ () => onOptionClick?.( option.key ) }>
-							<Icon
-								icon={ check }
-								style={ { visibility: selectedOptions[ option.key ] ? 'visible' : 'hidden' } } // We need to hide the check icon but still keep the space for it
-							/>
-							{ option.label }
-						</MenuItem>
-					) ) }
-				</MenuGroup>
-			</SubmenuPopover>
-		</div>
-	);
-}
 
 type Props = {
 	selectedFilters: SelectedFilters;
@@ -135,6 +104,33 @@ export default function ProductFilter( {
 					) }
 				</DropdownMenu>
 			</div>
+
+			{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] ) && (
+				<ProductFilterSelect
+					label={ translate( 'Category' ) }
+					options={ categories }
+					selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] }
+					onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_CATEGORIES, option ) }
+				/>
+			) }
+
+			{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] ) && (
+				<ProductFilterSelect
+					label={ translate( 'Type' ) }
+					options={ types }
+					selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] }
+					onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_TYPES, option ) }
+				/>
+			) }
+
+			{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_PRICES ] ) && (
+				<ProductFilterSelect
+					label={ translate( 'Price' ) }
+					options={ prices }
+					selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_PRICES ] }
+					onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_PRICES, option ) }
+				/>
+			) }
 
 			{ hasSelections && (
 				<Button className="product-filter-button" plain onClick={ resetFilters }>
