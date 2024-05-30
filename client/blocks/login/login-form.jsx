@@ -61,7 +61,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -224,8 +223,7 @@ export class LoginForm extends Component {
 		return (
 			socialAccountIsLinking ||
 			( hasAccountTypeLoaded && isRegularAccount( accountType ) ) ||
-			( this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless ) ||
-			this.props.isBlazePro
+			( this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless )
 		);
 	}
 
@@ -246,8 +244,7 @@ export class LoginForm extends Component {
 			isSendingEmail ||
 			( ! socialAccountIsLinking &&
 				! hasAccountTypeLoaded &&
-				! ( this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless ) &&
-				! this.props.isBlazePro )
+				! ( this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless ) )
 		);
 	}
 
@@ -284,12 +281,8 @@ export class LoginForm extends Component {
 		const isWooAndNotPartnerSignup =
 			this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless;
 
-		// Skip this step if we're in the ( ( Woo and not the partner ) or BlazePro ) signup flows, and hasAccountTypeLoaded.
-		if (
-			! isWooAndNotPartnerSignup &&
-			! this.props.hasAccountTypeLoaded &&
-			! this.props.isBlazePro
-		) {
+		// Skip this step if we're in the Woo and not the partner signup flow, and hasAccountTypeLoaded.
+		if ( ! isWooAndNotPartnerSignup && ! this.props.hasAccountTypeLoaded ) {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
 			// the DOM as a workaround.
@@ -588,7 +581,7 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your email or username' );
 		}
 
-		if ( this.props.isWooCoreProfilerFlow || this.props.isBlazePro ) {
+		if ( this.props.isWooCoreProfilerFlow ) {
 			return this.props.translate( 'Your email address' );
 		}
 
@@ -740,7 +733,6 @@ export class LoginForm extends Component {
 			isWooPasswordless,
 			isPartnerSignup,
 			isWooCoreProfilerFlow,
-			isBlazePro,
 			hideSignupLink,
 			isSignupExistingAccount,
 			isSendingEmail,
@@ -818,7 +810,6 @@ export class LoginForm extends Component {
 				className={ classNames( {
 					'is-social-first': isSocialFirst,
 					'is-woo-passwordless': isWooPasswordless,
-					'is-blaze-pro': isBlazePro,
 				} ) }
 				onSubmit={ this.onSubmitForm }
 				method="post"
@@ -986,7 +977,7 @@ export class LoginForm extends Component {
 						</div>
 					</div>
 
-					{ ! isBlazePro && <p className="login__form-terms">{ socialToS }</p> }
+					<p className="login__form-terms">{ socialToS }</p>
 					{ isWoo && ! isPartnerSignup && ! isWooPasswordless && this.renderLostPasswordLink() }
 					<div className="login__form-action">
 						<FormsButton
@@ -1078,7 +1069,6 @@ export default connect(
 			wccomFrom: getWccomFrom( state ),
 			currentQuery: getCurrentQueryArguments( state ),
 			isWooPasswordless: getIsWooPasswordless( state ),
-			isBlazePro: getIsBlazePro( state ),
 		};
 	},
 	{
