@@ -5,7 +5,7 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const StagingSite = () => {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) ?? 0;
 	const isWpcomStagingSite = useSelector( ( state ) =>
 		isSiteWpcomStaging( state, selectedSiteId )
 	);

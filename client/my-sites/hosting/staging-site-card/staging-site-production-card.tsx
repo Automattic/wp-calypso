@@ -72,7 +72,7 @@ const SyncActionsContainer = styled( ActionButtons )( {
 } );
 
 type CardProps = {
-	disabled: boolean;
+	disabled?: boolean;
 	siteId: number;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
 	isBorderless?: boolean;

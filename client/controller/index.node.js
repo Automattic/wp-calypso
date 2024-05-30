@@ -82,7 +82,8 @@ export const redirectLoggedOut = () => {};
 export const redirectLoggedOutToSignup = () => {};
 export const redirectToDashboard = () => {};
 export const redirectWithoutLocaleParamIfLoggedIn = () => {};
-export const redirectIfCurrentUserCannot = () => {};
+// eslint-disable-next-line no-unused-vars
+export const redirectIfCurrentUserCannot = ( capability ) => () => {};
 export const redirectIfP2 = () => {};
 export const redirectIfJetpackNonAtomic = () => {};
 export const redirectToDevToolsPromoIfNotAtomic = () => {};

@@ -50,7 +50,7 @@ const stagingSiteDeleteFailureNoticeId = 'staging-site-remove-failure';
 
 export const StagingSiteCard = ( {
 	currentUserId,
-	disabled,
+	disabled = false,
 	siteId,
 	siteOwnerId,
 	translate,
