@@ -4,33 +4,28 @@ import wpcom from 'calypso/lib/wp';
 
 type SurveyAnswersQueryParams = {
 	surveyKey: string;
-	enabled?: boolean;
 };
 
-export type SurveyAnswersResponse = Array< {
-	blog_id: number;
-	answers: Answers;
-} >;
+type SurveyAnswersResponse = {
+	question_key: string;
+	answer_keys: string[];
+}[];
 
-const mapSurveyAnswers = ( response: SurveyAnswersResponse ): Record< string, Answers > =>
-	response.reduce(
-		( acc, { answers, blog_id } ) => {
-			acc[ blog_id ] = answers;
-			return acc;
-		},
-		{} as Record< string, Answers >
-	);
+const mapSurveyAnswers = ( response: SurveyAnswersResponse ): Answers =>
+	response.reduce( ( acc, { question_key, answer_keys } ) => {
+		return { ...acc, [ question_key ]: answer_keys };
+	}, {} );
 
-const useSurveyAnswersQuery = ( { surveyKey, enabled = true }: SurveyAnswersQueryParams ) => {
+const useSurveyAnswersQuery = ( { surveyKey }: SurveyAnswersQueryParams ) => {
 	return useQuery( {
 		queryKey: [ 'survey-answers', surveyKey ],
-		queryFn: () =>
-			wpcom.req.get( {
+		queryFn: () => {
+			return wpcom.req.get( {
 				path: `/segmentation-survey/answers?survey_key=${ surveyKey }`,
 				apiNamespace: 'wpcom/v2',
-			} ),
-		enabled: enabled && !! surveyKey,
-		staleTime: 0,
+			} );
+		},
+		enabled: !! surveyKey,
 		select: mapSurveyAnswers,
 	} );
 };
