@@ -93,11 +93,11 @@ export function getCopies(
 
 	// TODO: Add the rest of the metrics
 	return {
-		cls,
-		lcp: cls,
-		fcp: cls,
-		fid: cls,
-		inp: cls,
 		ttfb: cls,
+		fcp: cls,
+		lcp: cls,
+		inp: cls,
+		cls,
+		fid: cls,
 	};
 }
