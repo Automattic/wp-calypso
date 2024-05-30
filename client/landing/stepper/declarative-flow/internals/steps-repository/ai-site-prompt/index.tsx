@@ -39,7 +39,7 @@ const LoadingBigSky: Step = function () {
 		if ( ! hasStaticHomepage ) {
 			pendingActions.push(
 				wpcomRequest( {
-					path: '/sites/' + selectedSiteId + '/pagess',
+					path: '/sites/' + selectedSiteId + '/pages',
 					method: 'POST',
 					apiNamespace: 'wp/v2',
 					body: {
