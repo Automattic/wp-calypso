@@ -11,6 +11,7 @@ import './styles.scss';
 import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from './constants';
 
 interface Props {
+	flowName: string;
 	stepName: string;
 	goToNextStep: () => void;
 	submitSignupStep: ( step: any, deps: any ) => void;
@@ -37,7 +38,7 @@ const QUESTION_CONFIGURATION: QuestionConfiguration = {
 };
 
 export default function InitialIntentStep( props: Props ) {
-	const { submitSignupStep, stepName, signupDependencies } = props;
+	const { submitSignupStep, stepName, signupDependencies, flowName } = props;
 	const currentAnswers = signupDependencies.segmentationSurveyAnswers || {};
 	const translate = useTranslate();
 	const headerText = translate( 'What brings you to WordPress.com?' );
@@ -94,7 +95,8 @@ export default function InitialIntentStep( props: Props ) {
 		const newAnswers = { [ _questionKey ]: _answerKeys };
 
 		submitSignupStep(
-			{ stepName },
+			// Pass the flowName as well to restrict answers to the current flow and keep the plan's grid unaffected in other flows.
+			{ flowName, stepName },
 			{ segmentationSurveyAnswers: { ...currentAnswers, ...newAnswers } }
 		);
 
