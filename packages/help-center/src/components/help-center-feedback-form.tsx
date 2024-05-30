@@ -6,8 +6,9 @@ import './help-center-feedback-form.scss';
 interface HelpCenterFeedbackFormProps {
 	postId: number;
 	blogId?: string | null;
+	slug?: string;
 }
-const HelpCenterFeedbackForm = ( { postId, blogId }: HelpCenterFeedbackFormProps ) => {
+const HelpCenterFeedbackForm = ( { postId, blogId, slug }: HelpCenterFeedbackFormProps ) => {
 	const { __ } = useI18n();
 	const [ startedFeedback, setStartedFeedback ] = useState< boolean | null >( null );
 	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
@@ -50,7 +51,7 @@ const HelpCenterFeedbackForm = ( { postId, blogId }: HelpCenterFeedbackFormProps
 				// This is the URL of the feedback form,
 				// `answerValue` is either 1 or 2 and it is used to skip the first question since we are already asking it here.
 				// it is necessary to help crowd signal to `skip` ( display none with css ) the first question and save the correct value.
-				src={ `https://wordpressdotcom.survey.fm/helpcenter-articles-feedback?q_1_choice=${ answerValue }&postId=${ postId }&blogId=${ blogId }` }
+				src={ `https://wordpressdotcom.survey.fm/helpcenter-articles-feedback?q_1_choice=${ answerValue }&guide=${ slug }&postId=${ postId }&blogId=${ blogId }` }
 			></iframe>
 		</>
 	);

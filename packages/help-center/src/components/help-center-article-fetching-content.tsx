@@ -72,6 +72,7 @@ const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetching
 				isLoading={ isLoading }
 				postId={ postId }
 				blogId={ blogId }
+				slug={ post?.slug }
 			/>
 		</>
 	);
