@@ -66,8 +66,6 @@ const LoadingBigSky: Step = function () {
 		exitFlow( siteId.toString(), siteSlug );
 	};
 
-	// TODO: this is a hack to trigger the onSubmit function on mount. There's probably a cleaner way.
-	// TODO: handle cases of landing on this page via a "back" navigation in the browser. Ideally it should go back to the previous step.
 	useEffect( () => {
 		const syntheticEvent = {
 			preventDefault: () => {},
