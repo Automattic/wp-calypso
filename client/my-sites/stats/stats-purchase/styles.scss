@@ -181,6 +181,12 @@ $button-padding: 8px 32px;
 			font-weight: 700;
 			line-height: 40px;
 		}
+
+		a {
+			color: var(--studio-black);
+			text-decoration: underline;
+			font-weight: bolder;
+		}
 	}
 
 	.stats-purchase-wizard__card-inner--single {
