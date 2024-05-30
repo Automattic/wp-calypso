@@ -19,6 +19,7 @@ import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isA4AOAuth2Client,
+	isBlazeProOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -273,6 +274,8 @@ export class UserStep extends Component {
 						},
 					}
 				);
+			} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+				subHeaderText = translate( 'To get started create a new account with WordPress.com.' );
 			} else {
 				subHeaderText = translate(
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
@@ -523,6 +526,14 @@ export class UserStep extends Component {
 			);
 		}
 
+		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+			return translate( 'Welcome to %(clientTitle)s', {
+				args: { clientTitle: oauth2Client.title },
+				comment:
+					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
+			} );
+		}
+
 		if ( flowName === 'wpcc' && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
 				args: { clientTitle: oauth2Client.title },
@@ -584,6 +595,10 @@ export class UserStep extends Component {
 			isSocialSignupEnabled = true;
 		}
 
+		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+			isSocialSignupEnabled = false;
+		}
+
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
 		if ( isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
 			const clientId = hashObject.client_id;
@@ -614,7 +629,10 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
+					displayUsernameInput={ ! isBlazeProOAuth2Client( oauth2Client ) }
+					shouldDisplayUserExistsError={
+						! isWooOAuth2Client( oauth2Client ) && ! isBlazeProOAuth2Client( oauth2Client )
+					}
 					isSocialFirst={ this.props.isSocialFirst }
 					labelText={ this.props.isWooPasswordless ? this.props.translate( 'Your email' ) : null }
 				/>

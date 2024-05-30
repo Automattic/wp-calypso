@@ -39,7 +39,7 @@ export const getTwoFactorPushToken = ( state ) => state.login.twoFactorAuth?.pus
  * @param  {Object}   state  Global state tree
  * @returns {boolean}        Whether 2FA is enabled
  */
-export const isTwoFactorEnabled = ( state ) => state.login.twoFactorAuth != null;
+export const isTwoFactorEnabled = ( state ) => state?.login?.twoFactorAuth != null;
 
 /**
  * Returns the error for a request to authenticate 2FA.
