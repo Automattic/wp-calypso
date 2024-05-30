@@ -32,9 +32,10 @@
 	&:hover:not(:disabled) {
 		border: none;
 		box-shadow: none;
-		background: var(--wp-components-color-accent);
-		color: var(--color-text-inverted);
-		fill: var(--color-text-inverted);
+	}
+
+	&:hover:not(:disabled) {
+		background-color: var(--color-neutral-0);
 	}
 }
 
