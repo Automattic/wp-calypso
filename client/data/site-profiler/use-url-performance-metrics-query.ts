@@ -3,7 +3,7 @@ import wp from 'calypso/lib/wp';
 import { UrlPerformanceMetricsQueryResponse } from './types';
 
 function mapResult( response: UrlPerformanceMetricsQueryResponse ) {
-	return response.webtestpage_org.report.audits;
+	return response.webtestpage_org.report;
 }
 
 export const useUrlPerformanceMetricsQuery = ( url?: string, hash?: string ) => {

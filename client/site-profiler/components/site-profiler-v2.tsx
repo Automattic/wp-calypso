@@ -163,8 +163,9 @@ export default function SiteProfilerV2( props: Props ) {
 								/>
 
 								<PerformanceSection
-									url={ url }
+									url={ basicMetrics?.final_url }
 									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
 									performanceMetricsRef={ perfomanceMetricsRef }
 									setIsGetReportFormOpen={ setIsGetReportFormOpen }
 								/>

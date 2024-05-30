@@ -106,6 +106,7 @@ export interface UrlPerformanceMetricsQueryResponse {
 				health: PerformanceMetricsDataQueryResponse;
 				performance: PerformanceMetricsDataQueryResponse;
 			};
+			performance: number;
 		};
 	};
 }
@@ -113,6 +114,7 @@ export interface UrlPerformanceMetricsQueryResponse {
 export interface PerformanceMetricsDataQueryResponse {
 	diagnostic: Record< string, PerformanceMetricsItemQueryResponse >;
 	pass: Record< string, PerformanceMetricsItemQueryResponse >;
+	truncated: boolean;
 }
 
 export interface PerformanceMetricsItemQueryResponse {
