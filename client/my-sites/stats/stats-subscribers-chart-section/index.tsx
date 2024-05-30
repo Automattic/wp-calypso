@@ -39,7 +39,10 @@ interface QuantityDefaultType {
 export type PeriodType = 'day' | 'week' | 'month' | 'year';
 
 // New Subscriber Stats
-function transformData( data: SubscribersData[] ): uPlot.AlignedData {
+function transformData(
+	data: SubscribersData[],
+	hasAddedPaidSubscriptionProduct: boolean
+): uPlot.AlignedData {
 	// Transform the data into the format required by uPlot.
 	//
 	// Note that the incoming data is ordered ascending (newest to oldest)
@@ -49,14 +52,19 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	const y1: Array< number | null > = data
 		.map( ( point ) => ( point.subscribers === null ? null : Number( point.subscribers ) ) )
 		.reverse();
-	// Add second line for paid subscribers to the chart.
-	const y2: Array< number | null > = data
-		.map( ( point ) =>
-			point.subscribers_paid === null ? null : Number( point.subscribers_paid )
-		)
-		.reverse();
 
-	return [ x, y1, y2 ];
+	// Add a second line for paid subscribers to the chart when users have added a paid subscription product.
+	if ( hasAddedPaidSubscriptionProduct ) {
+		const y2: Array< number | null > = data
+			.map( ( point ) =>
+				point.subscribers_paid === null ? null : Number( point.subscribers_paid )
+			)
+			.reverse();
+
+		return [ x, y1, y2 ];
+	}
+
+	return [ x, y1 ];
 }
 
 export default function SubscribersChartSection( {
@@ -113,7 +121,9 @@ export default function SubscribersChartSection( {
 		}
 	}, [ status, isError ] );
 
-	const chartData = transformData( data?.data || [] );
+	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
+	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
+	const chartData = transformData( data?.data || [], hasAddedPaidSubscriptionProduct );
 
 	const subscribers = {
 		label: 'Subscribers',
