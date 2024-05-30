@@ -28,6 +28,7 @@ const SurveyFlowCard = ( {
 	useEffect( () => {
 		if ( submitted ) {
 			onContinue?.();
+			setSubmitted( false );
 		}
 	}, [ submitted, onContinue ] );
 
