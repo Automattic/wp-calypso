@@ -3,6 +3,12 @@
 
 $brand-display: "SF Pro Display", sans-serif;
 
+.plugins-update-manager:not(.plugins-update-manager-multisite) {
+	.empty-state {
+		max-width: 80%;
+	}
+}
+
 .plugins-update-manager,
 .plugins-update-manager-multisite {
 	@media screen and (max-width: $break-small) {
@@ -71,6 +77,11 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		p {
 			text-align: center;
+		}
+
+		button {
+			display: flex;
+			margin: auto;
 		}
 	}
 
