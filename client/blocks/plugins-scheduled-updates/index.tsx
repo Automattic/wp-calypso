@@ -111,7 +111,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		<PluginUpdateManagerContextProvider siteSlug={ siteSlug }>
 			<DocumentHead title={ title } />
 			{ ! isSitePlansLoaded && <QuerySitePlans siteId={ siteId } /> }
-			<MainComponent wideLayout>
+			<MainComponent wideLayout className="plugins-update-manager">
 				<NavigationHeader
 					className="plugins-update-manager-header"
 					navigationItems={ [] }
