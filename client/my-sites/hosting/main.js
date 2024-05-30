@@ -24,6 +24,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { useCodeDeploymentsQuery } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
@@ -95,12 +96,17 @@ const MainCards = ( {
 	siteId,
 	siteSlug,
 } ) => {
+	const { data, isLoading } = useCodeDeploymentsQuery( siteId );
+	const isCodeDeploymentsUnused = ! isLoading && ! data.length;
+
 	const mainCards = [
-		{
-			feature: 'github-deployments',
-			content: <GitHubDeploymentsCard />,
-			type: 'advanced',
-		},
+		isCodeDeploymentsUnused
+			? {
+					feature: 'github-deployments',
+					content: <GitHubDeploymentsCard />,
+					type: 'advanced',
+			  }
+			: null,
 		{
 			feature: 'sftp',
 			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
@@ -188,12 +194,17 @@ const AllCards = ( {
 	siteId,
 	siteSlug,
 } ) => {
+	const { data, isLoading } = useCodeDeploymentsQuery( siteId );
+	const isCodeDeploymentsUnused = ! isLoading && ! data.length;
+
 	const allCards = [
-		{
-			feature: 'github-deployments',
-			content: <GitHubDeploymentsCard />,
-			type: 'advanced',
-		},
+		isCodeDeploymentsUnused
+			? {
+					feature: 'github-deployments',
+					content: <GitHubDeploymentsCard />,
+					type: 'advanced',
+			  }
+			: null,
 		{
 			feature: 'sftp',
 			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
