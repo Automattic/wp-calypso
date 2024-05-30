@@ -36,7 +36,6 @@
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0oHFYHpzmHGpuUAXZ6ygDAFxM4XkRArRsET0orrofmsynkd9DhFaOGEsDZ3RC4f8mgI0zhEyN000X8i0Mqx",
 	"dsp_widget_js_src": "https://dsp.wp.com/widget.js",
-	"blaze_pro_back_link": "https://dsp-pro-client.production.ingress.dca.tumblr.net/app",
 	"advertising_dashboard_path_prefix": "/advertising",
 	"zendesk_presales_chat_key": false,
 	"zendesk_presales_chat_key_akismet": false,
