@@ -50,6 +50,8 @@ class JetpackConnectDisclaimer extends PureComponent {
 								companyName,
 								siteName,
 							},
+							comment:
+								'`companyName` is the site domain receiving the data (typically WordPress.com), and `siteName` is the site domain sharing the data.',
 						}
 				  );
 
