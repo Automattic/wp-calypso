@@ -1370,6 +1370,16 @@ export function useCommands() {
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				icon: settingsIcon,
 			},
+			manageSettingsMedia: {
+				name: 'manageSettingsMedia',
+				label: __( 'Manage media settings', __i18n_text_domain__ ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: commandNavigation( '/wp-admin/options-media.php' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage media settings', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				icon: settingsIcon,
+			},
 			manageSettingsNewsletter: {
 				name: 'manageSettingsNewsletter',
 				label: __( 'Manage newsletter settings', __i18n_text_domain__ ),
