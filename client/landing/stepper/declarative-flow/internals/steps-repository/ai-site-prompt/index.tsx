@@ -49,12 +49,12 @@ const LoadingBigSky: Step = function () {
 			if ( ! hasStaticHomepage ) {
 				const homePagePostId = results[ 1 ].id;
 				setStaticHomepageOnSite( selectedSiteId, homePagePostId ).then( () => {
-					window.location.assign(
+					window.location.replace(
 						`${ siteURL }/wp-admin/site-editor.php?canvas=edit&postType=page&postId=${ homePagePostId }`
 					);
 				} );
 			} else {
-				window.location.assign( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` );
+				window.location.replace( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` );
 			}
 			return Promise.resolve();
 		} );
