@@ -245,7 +245,7 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 }
 
 function getEntrepreneurFlowDestination() {
-	return `/setup/entrepreneur/trialAcknowledge`;
+	return '/setup/entrepreneur/trialAcknowledge';
 }
 
 const flows = generateFlows( {
