@@ -94,7 +94,6 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		edit: {
 			component: <ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />,
 			title: translate( 'Edit schedule' ),
-			showClose: true,
 		},
 		notifications: {
 			component: <NotificationSettings onNavBack={ onNavBack } />,
