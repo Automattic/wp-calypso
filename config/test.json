@@ -109,7 +109,6 @@
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
-		"settings/post-by-voice": true,
 		"settings/security/monitor": true,
 		"signup/social": true,
 		"signup/social-first": true,

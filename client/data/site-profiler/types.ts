@@ -103,11 +103,32 @@ export interface UrlPerformanceMetricsQueryResponse {
 	webtestpage_org: {
 		report: {
 			audits: {
-				health: object;
-				performance: object;
+				health: PerformanceMetricsDataQueryResponse;
+				performance: PerformanceMetricsDataQueryResponse;
 			};
 		};
 	};
+}
+
+export interface PerformanceMetricsDataQueryResponse {
+	diagnostic: Record< string, PerformanceMetricsItemQueryResponse >;
+	pass: Record< string, PerformanceMetricsItemQueryResponse >;
+}
+
+export interface PerformanceMetricsItemQueryResponse {
+	id: string;
+	title?: string;
+	description?: string;
+	displayValue?: string;
+	details?: PerformanceMetricsDetailsQueryResponse;
+}
+
+export interface PerformanceMetricsDetailsQueryResponse {
+	type: 'table' | 'opportunity' | 'list';
+	headings?: Array< { key: string; label: string; valueType: string } >;
+	items?: Array< {
+		[ key: string ]: string | number | { [ key: string ]: any };
+	} >;
 }
 
 export interface BasicMetricsResult extends Omit< UrlBasicMetricsQueryResponse, 'basic' > {

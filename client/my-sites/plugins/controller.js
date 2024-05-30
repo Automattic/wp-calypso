@@ -192,8 +192,6 @@ export function scheduledUpdates( context, next ) {
 }
 
 export function scheduledUpdatesMultisite( context, next ) {
-	const state = context.store.getState();
-
 	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/` );
 	const goToScheduleEdit = ( id ) => page.show( `/plugins/scheduled-updates/edit/${ id }` );
 	const goToScheduleLogs = ( id, siteSlug ) =>
@@ -230,15 +228,6 @@ export function scheduledUpdatesMultisite( context, next ) {
 			} );
 			break;
 	}
-
-	const isSidebarCollapsed = getShouldShowCollapsedGlobalSidebar(
-		state,
-		undefined,
-		context.section.group,
-		context.section.name
-	);
-
-	context.secondary = <PluginsSidebar path={ context.path } isCollapsed={ isSidebarCollapsed } />;
 
 	next();
 }
@@ -396,5 +385,30 @@ export function maybeRedirectLoggedOut( context, next ) {
 	if ( siteFragment ) {
 		return redirectLoggedOut( context, next );
 	}
+	next();
+}
+
+export function renderPluginsSidebar( context, next ) {
+	const state = context.store.getState();
+	const siteUrl = getSiteFragment( context.path );
+
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+	}
+
+	if ( ! siteUrl ) {
+		context.secondary = (
+			<PluginsSidebar
+				path={ context.path }
+				isCollapsed={ getShouldShowCollapsedGlobalSidebar(
+					state,
+					undefined,
+					context.section.group,
+					context.section.name
+				) }
+			/>
+		);
+	}
+
 	next();
 }

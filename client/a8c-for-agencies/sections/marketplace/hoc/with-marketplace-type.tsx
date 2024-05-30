@@ -7,7 +7,9 @@ type ContextProps = {
 	defaultMarketplaceType?: MarketplaceType;
 };
 
-const MARKETPLACE_TYPE_SESSION_STORAGE_KEY = 'marketplace-type';
+export const MARKETPLACE_TYPE_SESSION_STORAGE_KEY = 'marketplace-type';
+export const MARKETPLACE_TYPE_REFERRAL = 'referral';
+export const MARKETPLACE_TYPE_REGULAR = 'regular';
 
 function withMarketplaceType< T >(
 	WrappedComponent: ComponentType< T & ContextProps >
@@ -17,9 +19,9 @@ function withMarketplaceType< T >(
 		const usedMarketplaceType =
 			props.defaultMarketplaceType ??
 			( sessionStorage.getItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY ) as MarketplaceType ) ??
-			'regular';
+			MARKETPLACE_TYPE_REGULAR;
 
-		const defaultType = isAutomatedReferrals ? usedMarketplaceType : 'regular';
+		const defaultType = isAutomatedReferrals ? usedMarketplaceType : MARKETPLACE_TYPE_REGULAR;
 		const [ marketplaceType, setMarketplaceType ] = useState( defaultType );
 
 		const updateMarketplaceType = ( type: MarketplaceType ) => {
@@ -31,7 +33,10 @@ function withMarketplaceType< T >(
 			if ( ! isAutomatedReferrals ) {
 				return;
 			}
-			const nextType = marketplaceType === 'regular' ? 'referral' : 'regular';
+			const nextType =
+				marketplaceType === MARKETPLACE_TYPE_REGULAR
+					? MARKETPLACE_TYPE_REFERRAL
+					: MARKETPLACE_TYPE_REGULAR;
 			updateMarketplaceType( nextType );
 		};
 

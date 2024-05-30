@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { Icon, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -14,10 +15,18 @@ import { FilterType } from '../types';
 type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	plans: APIProductFamilyProduct[];
+	existingPlan?: APIProductFamilyProduct | null;
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
+	isLoading?: boolean;
 };
 
-export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan }: Props ) {
+export default function PlanSelectionFilter( {
+	selectedPlan,
+	plans,
+	onSelectPlan,
+	existingPlan,
+	isLoading,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -77,8 +86,41 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 		'pressable-overview-plan-selection__filter'
 	);
 
+	const minimum = existingPlan
+		? options.findIndex( ( { value } ) => value === existingPlan.slug ) + 1
+		: 0;
+
+	if ( isLoading ) {
+		return (
+			<div className="pressable-overview-plan-selection__filter is-placeholder">
+				<div className="pressable-overview-plan-selection__filter-type"></div>
+				<div className="pressable-overview-plan-selection__filter-slider"></div>
+			</div>
+		);
+	}
+
 	return (
 		<section className={ wrapperClass }>
+			{ !! existingPlan && (
+				<div className="pressable-overview-plan-selection__filter-owned-plan">
+					<div className="badge">
+						<Icon icon={ info } size={ 24 } />
+
+						<span>
+							{ translate( 'You own {{b}}%(planName)s plan{{/b}}', {
+								args: {
+									planName: existingPlan.name,
+								},
+								components: {
+									b: <strong />,
+								},
+								comment: '%(planName)s is the name of the Pressable plan the user owns.',
+							} ) }
+						</span>
+					</div>
+				</div>
+			) }
+
 			<div className="pressable-overview-plan-selection__filter-type">
 				<p className="pressable-overview-plan-selection__filter-label">
 					{ translate( 'Filter by:' ) }
@@ -104,7 +146,12 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 				</div>
 			</div>
 
-			<A4ASlider value={ selectedOption } onChange={ onSelectOption } options={ options } />
+			<A4ASlider
+				value={ selectedOption }
+				onChange={ onSelectOption }
+				options={ options }
+				minimum={ minimum }
+			/>
 		</section>
 	);
 }

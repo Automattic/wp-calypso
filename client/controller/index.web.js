@@ -48,7 +48,7 @@ import { hydrate, render } from './web-util.js';
 export { setLocaleMiddleware, setSectionMiddleware } from './shared.js';
 export { hydrate, render } from './web-util.js';
 
-const PLAN_NAME_EXPERIMENT = 'wpcom_plan_name_change_starter_to_beginner_v5';
+const PLAN_NAME_EXPERIMENT = 'wpcom_plan_name_change_personal_premium_v1';
 export const ProviderWrappedLayout = ( {
 	store,
 	queryClient,

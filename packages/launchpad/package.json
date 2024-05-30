@@ -47,7 +47,7 @@
 		"@storybook/cli": "^7.6.19",
 		"@storybook/react": "^7.6.19",
 		"msw": "^2.1.7",
-		"msw-storybook-addon": "2.0.0-beta.1",
+		"msw-storybook-addon": "2.0.2",
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
