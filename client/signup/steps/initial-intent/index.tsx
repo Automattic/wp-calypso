@@ -13,6 +13,13 @@ import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from './constants';
 interface Props {
 	stepName: string;
 	goToNextStep: () => void;
+	submitSignupStep: ( step: any, deps: any ) => void;
+	signupDependencies: Record<
+		string,
+		{
+			segmentationSurveyAnswers: Record< string, string[] >;
+		}
+	>;
 }
 
 const SURVEY_KEY = 'guided-onboarding-flow';
@@ -30,6 +37,8 @@ const QUESTION_CONFIGURATION: QuestionConfiguration = {
 };
 
 export default function InitialIntentStep( props: Props ) {
+	const { submitSignupStep, stepName, signupDependencies } = props;
+	const currentAnswers = signupDependencies.segmentationSurveyAnswers || {};
 	const translate = useTranslate();
 	const headerText = translate( 'What brings you to WordPress.com?' );
 	const subHeaderText = translate(
@@ -81,6 +90,13 @@ export default function InitialIntentStep( props: Props ) {
 
 	const handleNext = ( _questionKey: string, _answerKeys: string[], isLastQuestion?: boolean ) => {
 		const redirect = getRedirectForAnswers( _answerKeys );
+
+		const newAnswers = { [ _questionKey ]: _answerKeys };
+
+		submitSignupStep(
+			{ stepName },
+			{ segmentationSurveyAnswers: { ...currentAnswers, ...newAnswers } }
+		);
 
 		if ( redirect ) {
 			recordCompleteEvent();

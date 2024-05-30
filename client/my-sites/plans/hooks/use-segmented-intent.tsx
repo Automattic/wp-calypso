@@ -1,44 +1,21 @@
 import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey/constants';
-import useSurveyAnswersQuery from 'calypso/data/segmentaton-survey/queries/use-survey-answers-query';
-import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from 'calypso/signup/steps/initial-intent/constants';
-import type { PlansIntent } from '@automattic/plans-grid-next';
 
-/**
- * Returns the segmented intent based on the survey answers.
- * @param enabled whether the survey answers should be fetched.
- * @param blogId the blogId we want the answers from. Answers are mapped to sites (can be zero when a site does not exist yet).
- * @returns the segmented intent
- */
-export function useSegmentedIntent(
-	enabled = false,
-	blogId: number | null | undefined
-): { segment?: PlansIntent | undefined; isLoadingSegment: boolean } {
-	const { isLoading, data } = useSurveyAnswersQuery( {
-		surveyKey: GUIDED_FLOW_SEGMENTATION_SURVEY_KEY,
-		enabled,
-	} );
+type SurveyData = {
+	'what-are-your-goals': string[];
+	'what-brings-you-to-wordpress': string[];
+};
 
-	// The survey API uses blog_id = 0 when the site is unknown.
-	blogId = blogId || 0;
-
-	const surveyedGoals = data?.[ blogId ]?.[ 'what-are-your-goals' ];
-	const surveyedIntent = data?.[ blogId ]?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
-
-	if ( ! enabled ) {
-		return { isLoadingSegment: false };
-	}
-
-	if ( ! surveyedIntent || ! surveyedGoals ) {
-		return { isLoadingSegment: isLoading };
-	}
+export function getSegmentedIntent( answers: SurveyData ): string | undefined {
+	const surveyedGoals = answers[ 'what-are-your-goals' ];
+	const surveyedIntent = answers[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
 	// Return default wpcom plans for migration flow.
 	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals.includes( SKIP_ANSWER_KEY ) ) {
-		return { isLoadingSegment: isLoading };
+		return undefined;
 	}
 
 	if ( surveyedIntent === 'client' ) {
-		return { segment: 'plans-guided-segment-developer-or-agency', isLoadingSegment: isLoading };
+		return 'plans-guided-segment-developer-or-agency';
 	}
 
 	// Handle different cases when intent is 'Create for self'
@@ -49,22 +26,22 @@ export function useSegmentedIntent(
 			surveyedGoals.includes( 'newsletter' ) ||
 			surveyedGoals.includes( 'difm' )
 		) {
-			return { isLoadingSegment: isLoading };
+			return undefined;
 		}
 		if ( surveyedGoals.includes( 'sell' ) && ! surveyedGoals.includes( 'difm' ) ) {
-			return { segment: 'plans-guided-segment-merchant', isLoadingSegment: isLoading };
+			return 'plans-guided-segment-merchant';
 		}
 		if ( surveyedGoals.includes( 'blog' ) ) {
-			return { segment: 'plans-guided-segment-blogger', isLoadingSegment: isLoading };
+			return 'plans-guided-segment-blogger';
 		}
 		if ( surveyedGoals.includes( 'educational-or-nonprofit' ) ) {
-			return { segment: 'plans-guided-segment-nonprofit', isLoadingSegment: isLoading };
+			return 'plans-guided-segment-nonprofit';
 		}
 		// Catch-all case for when none of the specific goals are met
 		// This will also account for "( ! DIFM && ! Sell ) = Consumer / Business" condition
-		return { segment: 'plans-guided-segment-consumer-or-business', isLoadingSegment: isLoading };
+		return 'plans-guided-segment-consumer-or-business';
 	}
 
 	// Default return if no conditions are met
-	return { isLoadingSegment: isLoading };
+	return undefined;
 }

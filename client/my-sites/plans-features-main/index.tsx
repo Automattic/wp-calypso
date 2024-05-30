@@ -56,7 +56,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { useSegmentedIntent } from 'calypso/my-sites/plans/hooks/use-segmented-intent';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
@@ -293,34 +292,23 @@ const PlansFeaturesMain = ( {
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
 
-	const { segment: intentFromSegmentationSurvey, isLoadingSegment } = useSegmentedIntent(
-		flowName === 'guided',
-		siteId
-	);
-
 	useEffect( () => {
 		if ( intentFromSiteMeta.processing ) {
 			return;
 		}
 
-		if ( planFromUpsells ) {
-			// TODO: plans from upsell takes precedence for setting intent right now
-			// - this is currently set to the default wpcom set until we have updated tailored features for all plans
-			// - at which point, we'll inject the upsell plan to the tailored plans mix instead
-			return setIntent( 'plans-default-wpcom' );
+		// TODO: plans from upsell takes precedence for setting intent right now
+		// - this is currently set to the default wpcom set until we have updated tailored features for all plans
+		// - at which point, we'll inject the upsell plan to the tailored plans mix instead
+		if ( 'plans-default-wpcom' !== intent && forceDefaultPlans ) {
+			setIntent( 'plans-default-wpcom' );
+		} else if ( ! intent ) {
+			setIntent(
+				planFromUpsells
+					? 'plans-default-wpcom'
+					: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom'
+			);
 		}
-
-		if ( forceDefaultPlans ) {
-			return setIntent( 'plans-default-wpcom' );
-		}
-
-		const nextIntent =
-			intentFromProps ||
-			intentFromSegmentationSurvey ||
-			intentFromSiteMeta.intent ||
-			'plans-default-wpcom';
-
-		setIntent( nextIntent );
 	}, [
 		intent,
 		intentFromProps,
@@ -328,7 +316,6 @@ const PlansFeaturesMain = ( {
 		planFromUpsells,
 		forceDefaultPlans,
 		intentFromSiteMeta.processing,
-		intentFromSegmentationSurvey,
 	] );
 
 	const showEscapeHatch =
@@ -653,8 +640,7 @@ const PlansFeaturesMain = ( {
 			isExperimentLoading ||
 			isTrailMapExperimentLoading
 	);
-	const isPlansGridReady =
-		! isLoadingSegment && ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
+	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
