@@ -134,7 +134,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	}
 
 	return (
-		<MainComponent wideLayout isLoggedOut={ ! isLoggedIn }>
+		<MainComponent className="plugins-browser" wideLayout isLoggedOut={ ! isLoggedIn }>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />

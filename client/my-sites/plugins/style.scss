@@ -59,7 +59,8 @@ body.is-section-plugins {
 	}
 
 	.is-logged-in main:not(.a4a-layout):not(.a4a-layout-column) {
-		.plugins-browser__content-wrapper {
+		&:not(.plugins-browser),
+		&.plugins-browser .plugins-browser__content-wrapper {
 			@include break-small {
 				padding-left: 1rem;
 				padding-right: 1rem;
