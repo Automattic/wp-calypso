@@ -35,11 +35,19 @@ export default function HostingList( { selectedSite }: Props ) {
 
 	const wpcomOptions = wpcomBulkOptions( wpcomProducts?.discounts?.tiers );
 
-	const hasPressablePlan = useMemo( () => {
+	const pressableOwnership = useMemo( () => {
 		// Agencies can have pressable through A4A Licenses or via Pressable itself
-		return (
-			!! activeAgency?.third_party?.pressable && activeAgency?.third_party?.pressable?.pressable_id
-		);
+		const hasPressablePlan = !! activeAgency?.third_party?.pressable?.pressable_id;
+
+		if ( ! hasPressablePlan ) {
+			return 'none';
+		}
+
+		// If the agency has a regular Pressable plan (not brought through A4A marketplace), A4A id is null.
+		const hasRegularPressablePlan =
+			hasPressablePlan && activeAgency?.third_party?.pressable?.a4a_id === null;
+
+		return hasRegularPressablePlan ? 'regular' : 'agency';
 	}, [ activeAgency ] );
 
 	const { isLoadingProducts, pressablePlans, wpcomPlans } = useProductAndPlans( {
@@ -126,7 +134,7 @@ export default function HostingList( { selectedSite }: Props ) {
 				{ cheapestPressablePlan && (
 					<HostingCard
 						plan={ cheapestPressablePlan }
-						pressableOwnership={ !! hasPressablePlan }
+						pressableOwnership={ pressableOwnership }
 						highestDiscountPercentage={ highestDiscountPressable }
 						{ ...hostingCardPriceHeightProps }
 					/>
