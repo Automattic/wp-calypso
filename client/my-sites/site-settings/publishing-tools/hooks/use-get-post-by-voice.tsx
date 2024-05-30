@@ -8,7 +8,7 @@ import type {
 
 export const getPostByVoicePath = ( siteId: number | null ) => `/sites/${ siteId }/post-by-voice`;
 
-export const getCachePostByVoiceKey = ( siteId: number | null ) => [
+export const getPostByVoiceQueryKey = ( siteId: number | null ) => [
 	'sites',
 	siteId,
 	'post-by-voice',
@@ -16,7 +16,7 @@ export const getCachePostByVoiceKey = ( siteId: number | null ) => [
 
 export const useGetPostByVoice = ( siteId: number | null ) => {
 	return useQuery< PostByVoice >( {
-		queryKey: getCachePostByVoiceKey( siteId ),
+		queryKey: getPostByVoiceQueryKey( siteId ),
 		queryFn: async () => {
 			const response: PostByVoiceResponse = await wpcom.req.get( {
 				path: getPostByVoicePath( siteId ),

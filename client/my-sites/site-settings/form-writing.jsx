@@ -113,11 +113,10 @@ class SiteSettingsFormWriting extends Component {
 				) }
 
 				<PublishingTools
-					isAtomic={ isAtomic }
-					onSubmitForm={ handleSubmitForm }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
+					isAtomic={ isAtomic }
+					siteId={ siteId }
+					siteIsJetpack={ siteIsJetpack }
 				/>
 			</form>
 		);

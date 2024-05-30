@@ -119,7 +119,6 @@
 		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/newsletter-settings-page": true,
-		"settings/post-by-voice": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": false,
 		"signup/design-picker-preview-colors": true,

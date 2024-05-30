@@ -2,3 +2,22 @@
 	fill: var(--color-primary-50);
 	margin: 0;
 }
+
+.a4a-overview-pressable-offering-header-title {
+	.badge {
+		margin-left: 12px;
+	}
+
+	.badge--success {
+		background: var(--studio-green-5);
+		color: var(--studio-green-50);
+	}
+	.badge--warning {
+		background: var(--studio-yellow-5);
+		color: var(--studio-yellow-70);
+	}
+	.badge--error {
+		background: var(--studio-red-5);
+		color: var(--studio-red-70);
+	}
+}

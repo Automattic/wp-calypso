@@ -17,11 +17,15 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
+	MARKETPLACE_TYPE_REFERRAL,
+} from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
-import { REFER_PRODUCTS_LINK } from '../../lib/constants';
 import ReferralDetails from '../../referral-details';
 import ReferralsFooter from '../footer';
 import LayoutBodyContent from './layout-body-content';
@@ -52,6 +56,7 @@ export default function ReferralsOverview( {
 	const hasReferrals = !! referrals?.length;
 
 	const makeAReferral = useCallback( () => {
+		sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REFERRAL );
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' ) );
 	}, [ dispatch ] );
 
@@ -78,7 +83,7 @@ export default function ReferralsOverview( {
 						{ isAutomatedReferral && (
 							<Actions>
 								<MobileSidebarNavigation />
-								<Button primary href={ REFER_PRODUCTS_LINK } onClick={ makeAReferral }>
+								<Button primary href={ A4A_MARKETPLACE_PRODUCTS_LINK } onClick={ makeAReferral }>
 									{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
 								</Button>
 							</Actions>

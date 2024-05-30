@@ -1,5 +1,5 @@
+import { PromptIcon } from '@automattic/command-palette';
 import classnames from 'classnames';
-import { PromptIcon } from 'calypso/components/command-palette/icon';
 import { useDispatch } from 'calypso/state';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import SidebarMenuItem from '../menu-item';
