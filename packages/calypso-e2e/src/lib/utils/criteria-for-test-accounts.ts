@@ -75,12 +75,12 @@ const defaultCriteria: FeatureCriteria[] = [
 		accountName: 'siteEditorAtomicSiteEdgeUser',
 	},
 	{
-		gutenberg: 'stable',
+		gutenberg: 'edge',
 		siteType: 'atomic',
 		accountName: 'gutenbergAtomicSiteUser',
 	},
 	{
-		gutenberg: 'edge',
+		gutenberg: 'stable',
 		siteType: 'atomic',
 		accountName: 'gutenbergAtomicSiteEdgeUser',
 	},
