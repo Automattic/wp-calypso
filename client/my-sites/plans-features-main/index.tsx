@@ -316,8 +316,8 @@ const PlansFeaturesMain = ( {
 		}
 
 		const nextIntent =
-			intentFromSegmentationSurvey ||
 			intentFromProps ||
+			intentFromSegmentationSurvey ||
 			intentFromSiteMeta.intent ||
 			'plans-default-wpcom';
 
