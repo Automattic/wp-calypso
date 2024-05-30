@@ -49,6 +49,15 @@ function Cell( {
 						</pre>
 					</div>
 				);
+
+			case 'code':
+				return (
+					<div>
+						<pre>
+							<code>{ data?.value }</code>
+						</pre>
+					</div>
+				);
 			case 'numeric':
 				return getFormattedNumber( data.value );
 			case 'url':

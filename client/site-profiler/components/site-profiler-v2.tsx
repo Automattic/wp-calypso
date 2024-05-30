@@ -20,6 +20,7 @@ import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { BasicMetrics } from './basic-metrics';
 import { DomainSection } from './domain-section';
 import { GetReportForm } from './get-report-form';
+import { HealthSection } from './health-section';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
 import { MigrationBanner } from './migration-banner';
@@ -40,6 +41,7 @@ export default function SiteProfilerV2( props: Props ) {
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const perfomanceMetricsRef = useRef( null );
+	const healthMetricsRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -167,6 +169,14 @@ export default function SiteProfilerV2( props: Props ) {
 									hash={ hash ?? basicMetrics?.token }
 									hostingProvider={ hostingProviderData?.hosting_provider }
 									performanceMetricsRef={ perfomanceMetricsRef }
+									setIsGetReportFormOpen={ setIsGetReportFormOpen }
+								/>
+
+								<HealthSection
+									url={ basicMetrics?.final_url }
+									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									healthMetricsRef={ healthMetricsRef }
 									setIsGetReportFormOpen={ setIsGetReportFormOpen }
 								/>
 							</>

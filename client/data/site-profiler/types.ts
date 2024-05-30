@@ -107,6 +107,7 @@ export interface UrlPerformanceMetricsQueryResponse {
 				performance: PerformanceMetricsDataQueryResponse;
 			};
 			performance: number;
+			overall_score: number;
 		};
 	};
 }

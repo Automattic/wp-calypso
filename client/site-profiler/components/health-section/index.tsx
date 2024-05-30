@@ -9,66 +9,66 @@ import { InsightHeader } from 'calypso/site-profiler/components/metrics-insight/
 import { MetricsSection } from 'calypso/site-profiler/components/metrics-section';
 import { getTitleTranslateOptions } from 'calypso/site-profiler/utils/get-title-translate-options';
 
-interface PerformanceSectionProps {
+interface HealthSectionProps {
 	url?: string;
 	hash?: string;
 	hostingProvider?: HostingProvider;
-	performanceMetricsRef: React.RefObject< HTMLObjectElement >;
+	healthMetricsRef: React.RefObject< HTMLObjectElement >;
 	setIsGetReportFormOpen?: ( isOpen: boolean ) => void;
 }
 
-const PERFORMANCE_THRESHOLD = 0.9;
+const OVERALL_SCORE_THRESHOLD = 0.8;
 
-export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props ) => {
+export const HealthSection: React.FC< HealthSectionProps > = ( props ) => {
 	const translate = useTranslate();
-	const { url, hash, hostingProvider, performanceMetricsRef, setIsGetReportFormOpen } = props;
+	const { url, hash, hostingProvider, healthMetricsRef, setIsGetReportFormOpen } = props;
 	const { data } = useUrlPerformanceMetricsQuery( url, hash );
-	const { truncated, diagnostic: performanceData = {} } = data?.audits.performance ?? {};
+	const { truncated, diagnostic: healthData = {} } = data?.audits.health ?? {};
 
 	const isWPcom = hostingProvider?.slug?.toLowerCase() === 'automattic';
 
-	const performanceScore = data?.performance ?? 0;
-	const isPerformanceGood = performanceScore >= PERFORMANCE_THRESHOLD;
+	const healthScore = data?.overall_score ?? 0;
+	const isHealthGood = healthScore >= OVERALL_SCORE_THRESHOLD;
 
 	const title = useMemo( () => {
-		if ( ! isPerformanceGood && ! isWPcom ) {
+		if ( ! isHealthGood && ! isWPcom ) {
 			return translate(
-				"Your site's performance could be better. Migrate to WordPress.com for significant improvements in {{poor}}speed and reliability.{{/poor}}",
+				"Your site's health scores need attention to prevent {{poor}}low performance{{/poor}}. Improve with WordPress.com's tools for better performance.”",
 				getTitleTranslateOptions()
 			);
 		}
 
-		if ( isPerformanceGood && ! isWPcom ) {
+		if ( isHealthGood && ! isWPcom ) {
 			return translate(
-				"Your site {{good}}performs well{{/good}}, but there's room for improvement. Migrate to WordPress.com for even better performance.",
+				"Your site's {{good}}health scores are strong{{/good}}, but there's room for improvement. Optimize further with WordPress.com's tools.",
 				getTitleTranslateOptions()
 			);
 		}
 
-		if ( isPerformanceGood && isWPcom ) {
+		if ( isHealthGood && isWPcom ) {
 			return translate(
-				"Your site's {{good}}performance is outstanding{{/good}}. Keep up the great work and explore advanced features to stay ahead.",
+				"Your site's {{good}}health scores are strong{{/good}}, indicating well-maintained performance and user experience. Keep monitoring and optimizing for the best results.",
 				getTitleTranslateOptions()
 			);
 		}
 
 		return translate(
-			'Your site performs well, but there are {{poor}}areas for improvement{{/poor}}.',
+			"Your site's health scores are decent, but critical areas need attention to prevent {{poor}}low performance{{/poor}} and ensure stability",
 			getTitleTranslateOptions()
 		);
-	}, [ isPerformanceGood, isWPcom, translate ] );
+	}, [ isHealthGood, isWPcom, translate ] );
 
 	return (
 		<MetricsSection
-			name={ translate( 'Performance Metrics' ) }
+			name={ translate( 'Health Scores' ) }
 			title={ title }
-			subtitle={ ! isWPcom ? translate( "Boost your site's performance" ) : null }
+			subtitle={ ! isWPcom ? translate( 'Boost Site Health Now' ) : null }
 			subtitleOnClick={ () =>
 				page( `/setup/hosted-site-migration?ref=site-profiler&from=${ url }` )
 			}
-			ref={ performanceMetricsRef }
+			ref={ healthMetricsRef }
 		>
-			{ Object.values( performanceData ).map( ( metric ) => (
+			{ Object.values( healthData ).map( ( metric ) => (
 				<MetricsInsight
 					key={ `insight-${ metric.id }` }
 					insight={ {
