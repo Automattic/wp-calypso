@@ -83,7 +83,7 @@ export const ScheduleCreate = ( props: Props ) => {
 					} }
 				/>
 			) }
-			<Card>
+			<Card className="plugins-update-manager">
 				<CardHeader size="extraSmall">
 					<div className="ch-placeholder">
 						{ onNavBack && (

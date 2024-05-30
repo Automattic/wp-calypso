@@ -6,6 +6,9 @@
 }
 
 .plugins-update-manager {
+	&.components-card {
+		margin-bottom: 1rem;
+	}
 
 	.ch-placeholder {
 		min-width: 60px;
