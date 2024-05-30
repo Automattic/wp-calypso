@@ -99,7 +99,6 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		notifications: {
 			component: <NotificationSettings onNavBack={ onNavBack } />,
 			title: translate( 'Notification settings' ),
-			showClose: true,
 		},
 	}[ context ];
 
