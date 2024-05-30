@@ -592,11 +592,11 @@ export class UserStep extends Component {
 				socialServiceResponse = hashObject;
 			}
 		}
-
 		return (
 			<>
 				<SignupForm
 					{ ...omit( this.props, [ 'translate' ] ) }
+					step={ this.props.step }
 					email={ this.props.queryObject?.email_address || '' }
 					redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
 					disabled={ this.userCreationStarted() }
