@@ -93,9 +93,7 @@ class FileImporter extends PureComponent {
 			 *
 			 * This is used for the new Migration logic for the moment.
 			 */
-			cardProps.href = overrideDestination
-				.replace( '%SITE_SLUG%', site.slug )
-				.replace( '%SITE_ID%', site.ID );
+			cardProps.href = overrideDestination.replace( '%SITE_SLUG%', site.slug );
 			cardProps.onClick = this.handleClick.bind( this, false );
 		}
 
