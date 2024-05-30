@@ -6,71 +6,55 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useSiteData } from '../../../../hooks/use-site-data';
-import useAIAssembler from '../pattern-assembler/hooks/use-ai-assembler';
 import type { Step } from '../../types';
 
 import './style.scss';
 
 const SiteIntent = Onboard.SiteIntent;
 
-const LoadingBigSky: Step = function ( props ) {
-	const { goNext, goBack, submit } = props.navigation; // eslint-disable-line @typescript-eslint/no-unused-vars
-
+const LoadingBigSky: Step = function () {
 	const { __ } = useI18n();
 
-	const [ callAIAssembler, setPrompt, prompt, loading ] = useAIAssembler(); // eslint-disable-line @typescript-eslint/no-unused-vars
-
-	const { siteSlug, siteId } = useSiteData();
-	const { saveSiteSettings, setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
-		useDispatch( SITE_STORE );
+	const { siteSlug, siteId, site } = useSiteData();
+	const { setStaticHomepageOnSite, setIntentOnSite } = useDispatch( SITE_STORE );
+	const hasStaticHomepage = site?.options?.show_on_front === 'page' && site?.options?.page_on_front;
 
 	const exitFlow = async ( selectedSiteId: string, selectedSiteSlug: string ) => {
-		// console.log( selectedSiteId, selectedSiteSlug );
 		if ( ! selectedSiteId || ! selectedSiteSlug ) {
 			return;
 		}
-
-		saveSiteSettings( selectedSiteId, {
-			wpcom_ai_site_prompt: prompt,
-		} );
 
 		const pendingActions = [
 			resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
 		];
 
-		// TODO: Query if we are indeed missing home page before creating new one.
-		// Create the homepage.
-		pendingActions.push(
-			wpcomRequest( {
-				path: '/sites/' + selectedSiteId + '/pages',
-				method: 'POST',
-				apiNamespace: 'wp/v2',
-				body: {
-					title: 'Home',
-					status: 'publish',
-				},
-			} )
-		);
-
-		// Set the assembler theme
-		// This was throwing an error for me, but I left this in here:
-		// ThemeNotFoundError: The specified theme was not found.
-		pendingActions.push(
-			setDesignOnSite( selectedSiteSlug, {
-				theme: 'assembler',
-			} )
-		);
+		if ( ! hasStaticHomepage ) {
+			pendingActions.push(
+				wpcomRequest( {
+					path: '/sites/' + selectedSiteId + '/pages',
+					method: 'POST',
+					apiNamespace: 'wp/v2',
+					body: {
+						title: 'Home',
+						status: 'publish',
+					},
+				} )
+			);
+		}
 
 		Promise.all( pendingActions ).then( ( results ) => {
-			// URL is in the results from the first promise.
 			const siteURL = results[ 0 ].URL;
-			const homePagePostId = results[ 1 ].id;
-			// This will redirect and we will never resolve.
-			setStaticHomepageOnSite( selectedSiteId, homePagePostId ).then( () =>
-				window.location.assign(
-					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&postType=page&postId=${ homePagePostId }`
-				)
-			);
+
+			if ( ! hasStaticHomepage ) {
+				const homePagePostId = results[ 1 ].id;
+				setStaticHomepageOnSite( selectedSiteId, homePagePostId ).then( () => {
+					window.location.assign(
+						`${ siteURL }/wp-admin/site-editor.php?canvas=edit&postType=page&postId=${ homePagePostId }`
+					);
+				} );
+			} else {
+				window.location.assign( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` );
+			}
 			return Promise.resolve();
 		} );
 	};

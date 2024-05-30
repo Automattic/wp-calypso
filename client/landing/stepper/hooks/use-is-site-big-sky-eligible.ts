@@ -17,8 +17,12 @@ export function useIsBigSkyEligible(): boolean | null {
 	const validGoals = [ 'other', 'promote' ];
 
 	const configEnabled = config.isEnabled( 'calypso/ai-assembler' );
+	if ( ! configEnabled ) {
+		return false;
+	}
+
 	const hasValidGoal = goals.every( ( value ) => validGoals.includes( value ) );
 	const isEligiblePlan = isPremiumPlan( productSlug );
 
-	return configEnabled && isEligiblePlan && hasValidGoal && ! isNarrowView;
+	return isEligiblePlan && hasValidGoal && ! isNarrowView;
 }
