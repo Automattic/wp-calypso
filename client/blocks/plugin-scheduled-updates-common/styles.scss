@@ -98,7 +98,8 @@ $brand-display: "SF Pro Display", sans-serif;
 			padding: 0.5rem 0.125rem;
 			vertical-align: middle;
 
-			&.last-update {
+			&.last-update,
+			&.next-update {
 				min-width: 200px;
 			}
 
@@ -116,17 +117,23 @@ $brand-display: "SF Pro Display", sans-serif;
 			}
 
 			&.name {
-				width: 300px;
+				min-width: 150px;
 			}
 
 			&.sites {
-				width: 80px;
+				min-width: 80px;
 			}
 
 			&.menu {
 				text-align: center;
 			}
 		}
+
+	}
+
+	.schedule-list--card .components-card__body,
+	.plugins-update-manager-multisite-table-container {
+		overflow-x: scroll;
 	}
 
 	.schedule-form {

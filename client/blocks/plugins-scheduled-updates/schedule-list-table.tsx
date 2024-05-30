@@ -80,7 +80,7 @@ export const ScheduleListTable = ( props: Props ) => {
 
 							{ ! schedule.last_run_status && ! schedule.last_run_timestamp && '-' }
 						</td>
-						<td>{ prepareDateTime( schedule.timestamp ) }</td>
+						<td className="next-update">{ prepareDateTime( schedule.timestamp ) }</td>
 						<td>
 							{
 								{
