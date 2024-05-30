@@ -8,7 +8,6 @@ import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useLocalizedPlugins, useServerEffect } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -173,14 +172,6 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 			compactBreadcrumb={ isMobile }
 			ref={ navigationHeaderRef }
 			title={ translate( 'Plugins' ) }
-			subtitle={ translate(
-				'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-				{
-					components: {
-						learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
-					},
-				}
-			) }
 		>
 			<ManageButton
 				shouldShowManageButton={ shouldShowManageButton }
