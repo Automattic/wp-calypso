@@ -2,6 +2,7 @@ import { JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import { SiteCapabilities } from '@automattic/data-stores';
 import {
 	alignJustify as acitvityLogIcon,
+	atSymbol as emailIcon,
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
@@ -563,6 +564,26 @@ export function useCommands() {
 				filterNotice: __( 'Only listing sites with DNS management available.' ),
 				emptyListNotice: __( 'No sites with DNS management available.' ),
 				icon: domainsIcon,
+			},
+			manageEmails: {
+				name: 'manageEmails',
+				label: __( 'Manage emails', __i18n_text_domain__ ),
+				callback: commandNavigation( '/email/:site' ),
+				searchLabel: [
+					_x( 'access email', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+					_x( 'access emails', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+					_x( 'set up email', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+					_x( 'set up emails', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+					_x( 'manage email', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+					_x( 'manage emails', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage emails', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				filterP2: true,
+				filterStaging: true,
+				filterSelfHosted: true,
+				icon: emailIcon,
 			},
 			copySshConnectionString: {
 				name: 'copySshConnectionString',
