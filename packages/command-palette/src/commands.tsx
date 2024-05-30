@@ -18,6 +18,7 @@ import {
 	key as keyIcon,
 	layout as siteEditorIcon,
 	media as mediaIcon,
+	megaphone as marketingIcon,
 	page as pageIcon,
 	payment as creditCardIcon,
 	people as peopleIcon,
@@ -1404,6 +1405,23 @@ export function useCommands() {
 				siteSelectorLabel: __( 'Select site to manage podcast settings', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				icon: settingsIcon,
+			},
+			openMarketingTools: {
+				name: 'openMarketingTools',
+				label: __( 'Open marketing tools', __i18n_text_domain__ ),
+				callback: commandNavigation( '/marketing/:site' ),
+				searchLabel: [
+					_x(
+						'access marketing tools',
+						'Keyword for the Open marketing tools command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open marketing tools', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				filterP2: true,
+				icon: marketingIcon,
 			},
 		} ),
 		[ __, _x, siteFilters ]
