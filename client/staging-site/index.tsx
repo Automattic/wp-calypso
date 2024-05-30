@@ -5,9 +5,10 @@ import {
 	redirectIfCurrentUserCannot,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { handleHostingPanelRedirect, renderStagingSite } from 'calypso/my-sites/hosting/controller';
+import { handleHostingPanelRedirect } from 'calypso/my-sites/hosting/controller';
 import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
 import { DOTCOM_STAGING_SITE } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+import { renderStagingSite } from './controller';
 
 export default function () {
 	page( '/staging-site', siteSelection, sites, makeLayout, clientRender );
