@@ -132,7 +132,7 @@ const SocialAuthenticationForm = ( {
 
 						<GithubSocialButton
 							socialServiceResponse={ socialService === 'github' ? socialServiceResponse : null }
-							redirectUri={ getRedirectUri( 'github' ) }
+							redirectUri={ isLogin ? getRedirectUri( 'github' ) : window?.location?.pathname }
 							responseHandler={ handleGitHubResponse }
 							onClick={ () => {
 								trackLoginAndRememberRedirect( 'github' );
