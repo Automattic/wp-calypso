@@ -622,6 +622,10 @@ class SignupForm extends Component {
 		} );
 	}
 
+	displayUsernameInput() {
+		return this.props.displayUsernameInput && ! this.props.isBlazePro;
+	}
+
 	formFields() {
 		const isEmailValid =
 			! this.props.disableEmailInput && formState.isFieldValid( this.state.form, 'email' );
@@ -691,7 +695,7 @@ class SignupForm extends Component {
 					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
 				) }
 
-				{ this.props.displayUsernameInput && (
+				{ this.displayUsernameInput() && (
 					<>
 						<FormLabel htmlFor="username">
 							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooCoreProfilerFlow )
