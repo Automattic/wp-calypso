@@ -5,6 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import MainComponent from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScheduledUpdatesGate from 'calypso/components/scheduled-updates/scheduled-updates-gate';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -60,7 +62,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		} );
 	}, [ context, siteSlug ] );
 
-	const [ navigationTitle, setNavigationTitle ] = useState< string | null >( null );
+	const [ , setNavigationTitle ] = useState< string | null >( null );
 
 	const { component, title, showClose } = {
 		logs: {
@@ -88,7 +90,6 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		create: {
 			component: <ScheduleCreate onNavBack={ onNavBack } />,
 			title: translate( 'New schedule' ),
-			showClose: true,
 		},
 		edit: {
 			component: <ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />,
@@ -110,14 +111,21 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		<PluginUpdateManagerContextProvider siteSlug={ siteSlug }>
 			<DocumentHead title={ title } />
 			{ ! isSitePlansLoaded && <QuerySitePlans siteId={ siteId } /> }
-			<div className="plugins-update-manager">
+			<MainComponent wideLayout>
+				<NavigationHeader
+					className="plugins-update-manager-header"
+					navigationItems={ [] }
+					title={ translate( 'Plugin Update Manager' ) }
+					subtitle={ translate(
+						'Streamline your workflow with scheduled updates, timed to suit your needs.'
+					) }
+				/>
 				<div
 					className={ classnames(
 						'plugins-update-manager__header',
 						context !== 'list' ? 'no-border' : null
 					) }
 				>
-					<h1>{ navigationTitle }</h1>
 					<div className="buttons">
 						{ context === 'list' && (
 							<>
@@ -153,7 +161,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 					</div>
 				</div>
 				<ScheduledUpdatesGate siteId={ siteId as number }>{ component }</ScheduledUpdatesGate>
-			</div>
+			</MainComponent>
 		</PluginUpdateManagerContextProvider>
 	);
 };
