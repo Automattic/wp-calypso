@@ -516,31 +516,15 @@ body.has-global-sidebar.has-global-sidebar-collapsed .help-center .components-ca
 }
 
 body.has-global-sidebar .is-global-sidebar-visible.is-support-session {
-	&::before,
-	&::after {
+	&::before {
+		border: 2px solid var(--studio-orange);
+		bottom: 0;
 		content: "";
+		left: 0;
 		pointer-events: none;
 		position: fixed;
-		z-index: z-index("root", ".layout__secondary") + 1;
-	}
-
-	&::before {
-		border: 8px solid var(--studio-orange);
-		left: 0;
 		right: 0;
 		top: 0;
-		bottom: 0;
-	}
-
-	&::after {
-		background-color: var(--studio-orange);
-		border-radius: 0 0 2px 2px;
-		color: #fff;
-		content: "Support session";
-		font-size: $font-body-extra-small;
-		left: 50%;
-		padding: 4px 16px;
-		top: 0;
-		transform: translateX(-50%);
+		z-index: z-index("root", ".layout__secondary") + 1;
 	}
 }
