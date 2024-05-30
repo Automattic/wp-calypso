@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import useSubscribersOverview from 'calypso/my-sites/stats/hooks/use-subscribers-overview';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import './style.scss';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 
@@ -114,6 +115,11 @@ export default function SubscribersHighlightSection( { siteId }: { siteId: numbe
 		comment: 'Heading for Subscribers page highlights section',
 	} );
 
+	const isJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, {
+			treatAtomicAsJetpackSite: false,
+		} )
+	);
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	// Check if the site has any paid subscription products added.
@@ -122,8 +128,8 @@ export default function SubscribersHighlightSection( { siteId }: { siteId: numbe
 
 	// Odyssey Stats doesn't support the membership API endpoint yet.
 	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
-	const isPaidSubscriptionProductsLoading = ! isOdysseyStats && ! products;
-	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
+	const isPaidSubscriptionProductsLoading = ! isJetpackNotAtomic && ! products;
+	const hasAddedPaidSubscriptionProduct = ! isJetpackNotAtomic && products && products.length > 0;
 
 	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
