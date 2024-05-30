@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { __experimentalHStack as HStack, Modal, TextHighlight } from '@wordpress/components';
 import { useDebounce } from '@wordpress/compose';
-import { chevronLeft as backIcon, Icon, search as inputIcon } from '@wordpress/icons';
+import { chevronLeft as backIcon, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
@@ -13,6 +13,7 @@ import {
 	CommandPaletteContextProvider,
 	useCommandPaletteContext,
 } from './context';
+import { PromptIcon } from './icons/prompt';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { useCommandPalette } from './use-command-palette';
 import { siteUsesWpAdminInterface } from './utils';
@@ -448,7 +449,7 @@ const CommandPalette = ( {
 									<Icon icon={ backIcon } />
 								</BackButton>
 							) : (
-								<Icon icon={ inputIcon } />
+								<PromptIcon />
 							) }
 							<CommandInput />
 						</div>
@@ -469,3 +470,4 @@ const CommandPalette = ( {
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './commands';
 export { useCommands } from './commands';
+export { PromptIcon } from './icons/prompt';
