@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import { SiteCapabilities } from '@automattic/data-stores';
 import {
@@ -7,6 +8,7 @@ import {
 	brush as brushIcon,
 	category as categoryIcon,
 	chartBar as statsIcon,
+	cloud as hostingIcon,
 	code as codeIcon,
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
@@ -267,6 +269,20 @@ export function useCommands() {
 				siteSelectorLabel: __( 'Select site to open dashboard', __i18n_text_domain__ ),
 				icon: dashboardIcon,
 			},
+			...( isEnabled( 'layout/dotcom-nav-redesign-v2' ) && {
+				openHostingOverview: {
+					name: 'openHostingOverview',
+					label: __( 'Open hosting overview', __i18n_text_domain__ ),
+					callback: commandNavigation( '/overview/:site' ),
+					context: [ '/sites' ],
+					siteSelector: true,
+					siteSelectorLabel: __( 'Select site to open hosting overview', __i18n_text_domain__ ),
+					capability: SiteCapabilities.MANAGE_OPTIONS,
+					filterP2: true,
+					filterSelfHosted: true,
+					icon: hostingIcon,
+				},
+			} ),
 			openHostingConfiguration: {
 				name: 'openHostingConfiguration',
 				label: __( 'Open hosting configuration', __i18n_text_domain__ ),
