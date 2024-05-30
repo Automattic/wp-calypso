@@ -3,6 +3,7 @@
  */
 
 import { waitFor } from '@testing-library/react';
+import { addQueryArgs } from '@wordpress/url';
 import React, { FC, Suspense } from 'react';
 import { MemoryRouter } from 'react-router';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
@@ -72,7 +73,10 @@ const fakeRenderStep = ( step: AsyncStepperStep ) => {
 };
 const render = ( { step, renderStep = fakeRenderStep } ) => {
 	return renderWithProvider(
-		<MemoryRouter>
+		<MemoryRouter
+			basename="/setup"
+			initialEntries={ [ '/setup/some-flow/some-step-slug?param=example.com' ] }
+		>
 			<Suspense fallback={ null }>
 				<StepRoute
 					step={ step }
@@ -116,7 +120,11 @@ describe( 'StepRoute', () => {
 
 			await waitFor( () =>
 				expect( window.location.assign ).toHaveBeenCalledWith(
-					'/start/account/user-social?variationName=some-flow&redirect_to=%2F&toStepper=true'
+					addQueryArgs( '/start/account/user-social', {
+						variationName: 'some-flow',
+						redirect_to: '/setup/some-flow/some-step-slug?param=example.com',
+						toStepper: 'true',
+					} )
 				)
 			);
 		} );
@@ -169,7 +177,5 @@ describe( 'StepRoute', () => {
 			expect( recordStepStart ).not.toHaveBeenCalled();
 			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
-
-		it.todo( 'skips when there is no site slug or ID', () => {} );
 	} );
 } );

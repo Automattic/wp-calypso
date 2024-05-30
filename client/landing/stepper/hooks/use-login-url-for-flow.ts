@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import { useLocation } from 'react-router';
+import { useHref, useLocation } from 'react-router';
 import { useLoginUrl } from '../utils/path';
 import { useFlowLocale } from './use-flow-locale';
 import { useSiteData } from './use-site-data';
@@ -13,8 +13,9 @@ export function useLoginUrlForFlow( { flow }: UseLoginUrlForFlowProps ): string 
 	const locale = useFlowLocale();
 	const location = useLocation();
 	const { siteId, siteSlug } = useSiteData();
+	const path = useHref( location.pathname );
 
-	const redirectTo = addQueryArgs( location.pathname, {
+	const redirectTo = addQueryArgs( path, {
 		...( locale && locale !== 'en' ? { locale } : {} ),
 		...( siteId ? { siteId } : {} ),
 		...( siteSlug ? { siteSlug } : {} ),
