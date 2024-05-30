@@ -106,6 +106,8 @@ export default function SiteProfilerV2( props: Props ) {
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
 
+	const isWpCom = !! urlData?.platform_data?.is_wpcom;
+
 	return (
 		<div id="site-profiler-v2">
 			{ ! showResultScreen && (
@@ -143,7 +145,13 @@ export default function SiteProfilerV2( props: Props ) {
 					<LayoutBlock width="medium">
 						{ siteProfilerData && (
 							<>
-								{ showBasicMetrics && <BasicMetrics basicMetrics={ basicMetrics.basic } /> }
+								{ showBasicMetrics && (
+									<BasicMetrics
+										basicMetrics={ basicMetrics.basic }
+										domain={ domain }
+										isWpCom={ isWpCom }
+									/>
+								) }
 								<HostingSection
 									dns={ siteProfilerData.dns }
 									urlData={ urlData }
