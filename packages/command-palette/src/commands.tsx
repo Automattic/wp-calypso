@@ -5,6 +5,7 @@ import {
 	atSymbol as emailIcon,
 	backup as backupIcon,
 	brush as brushIcon,
+	category as categoryIcon,
 	chartBar as statsIcon,
 	code as codeIcon,
 	commentAuthorAvatar as profileIcon,
@@ -28,6 +29,7 @@ import {
 	shield as antiSpamIcon,
 	replace as switchIcon,
 	settings as settingsIcon,
+	tag as tagsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
 } from '@wordpress/icons';
@@ -887,6 +889,66 @@ export function useCommands() {
 				siteSelectorLabel: __( 'Select site to manage posts', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_POSTS,
 				icon: editIcon,
+			},
+			manageCategories: {
+				name: 'manageCategories',
+				label: __( 'Manage categories', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'manage categories',
+						'Keyword for the Manage categories command',
+						__i18n_text_domain__
+					),
+					_x(
+						'manage category',
+						'Keyword for the Manage categories command',
+						__i18n_text_domain__
+					),
+					_x(
+						'edit categories',
+						'Keyword for the Manage categories command',
+						__i18n_text_domain__
+					),
+					_x( 'edit category', 'Keyword for the Manage categories command', __i18n_text_domain__ ),
+					_x( 'add categories', 'Keyword for the Manage categories command', __i18n_text_domain__ ),
+					_x( 'add category', 'Keyword for the Manage categories command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site )
+							? '/wp-admin/edit-tags.php?taxonomy=category'
+							: '/settings/taxonomies/category/:site'
+					)( params ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage categories', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_CATEGORIES,
+				filterSelfHosted: true,
+				icon: categoryIcon,
+			},
+			manageTags: {
+				name: 'manageTags',
+				label: __( 'Manage tags', __i18n_text_domain__ ),
+				searchLabel: [
+					_x( 'manage tags', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+					_x( 'manage tag', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+					_x( 'edit tags', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+					_x( 'edit tag', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+					_x( 'add tags', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+					_x( 'add tag', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site )
+							? '/wp-admin/edit-tags.php?taxonomy=post_tag'
+							: '/settings/taxonomies/post_tag/:site'
+					)( params ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage tags', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_CATEGORIES,
+				filterSelfHosted: true,
+				icon: tagsIcon,
 			},
 			viewMediaUploads: {
 				name: 'viewMediaUploads',
