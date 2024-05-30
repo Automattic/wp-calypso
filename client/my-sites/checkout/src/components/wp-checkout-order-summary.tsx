@@ -26,7 +26,7 @@ import {
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	isNewsletterOrLinkInBioFlow,
 	isAnyHostingFlow,
@@ -42,7 +42,7 @@ import {
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { getAcceptedAssistedFreeMigration } from 'calypso/blocks/importer/wordpress/utils';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
@@ -745,7 +745,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 	hasDomainTransferInCart: boolean;
 } ) {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const currentPlan = useSelector( ( state ) =>
 		props.siteId ? getCurrentPlan( state, props.siteId ) : undefined
@@ -765,10 +765,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 		return null;
 	}
 
-	if (
-		isEnglishLocale ||
-		( i18n.hasTranslation( 'Fast support' ) && i18n.hasTranslation( 'Priority 24/7 support' ) )
-	) {
+	if ( hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority 24/7 support' ) ) {
 		return (
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon id="annual-live-chat" />
@@ -796,7 +793,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 	) => void;
 } ) {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
+	const hasEnTranslation = useHasEnTranslation();
 	const productSlug = props.plan?.product_slug;
 	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	if ( ! productSlug || ! isWpComPlan( productSlug ) ) {
@@ -824,22 +821,21 @@ function CheckoutSummaryAnnualUpsell( props: {
 						{ translate( 'Free domain for one year' ) }
 					</CheckoutSummaryFeaturesListItem>
 				) }
-				{ ! isWpComPersonalPlan( productSlug ) &&
-				( isEnglishLocale ||
-					( i18n.hasTranslation( 'Fast support' ) &&
-						i18n.hasTranslation( 'Priority 24/7 support' ) ) ) ? (
-					<CheckoutSummaryFeaturesListItem isSupported={ false }>
-						<WPCheckoutCheckIcon id="annual-live-chat" />
-						{ isWpComPremiumPlan( productSlug )
-							? translate( 'Fast support' )
-							: translate( 'Priority 24/7 support' ) }
-					</CheckoutSummaryFeaturesListItem>
-				) : (
-					<CheckoutSummaryFeaturesListItem isSupported={ false }>
-						<WPCheckoutCheckIcon id="annual-live-chat" />
-						{ translate( 'Live chat support' ) }
-					</CheckoutSummaryFeaturesListItem>
-				) }
+				{ hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority 24/7 support' )
+					? ! isWpComPersonalPlan( productSlug ) && (
+							<CheckoutSummaryFeaturesListItem isSupported={ false }>
+								<WPCheckoutCheckIcon id="annual-live-chat" />
+								{ isWpComPremiumPlan( productSlug )
+									? translate( 'Fast support' )
+									: translate( 'Priority 24/7 support' ) }
+							</CheckoutSummaryFeaturesListItem>
+					  )
+					: ! isWpComPersonalPlan( productSlug ) && (
+							<CheckoutSummaryFeaturesListItem isSupported={ false }>
+								<WPCheckoutCheckIcon id="annual-live-chat" />
+								{ translate( 'Live chat support' ) }
+							</CheckoutSummaryFeaturesListItem>
+					  ) }
 			</CheckoutSummaryFeaturesListWrapper>
 			<SwitchToAnnualPlan plan={ props.plan } onChangeSelection={ props.onChangeSelection } />
 		</CheckoutSummaryFeaturesUpsell>
