@@ -48,7 +48,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 
 	const customTracksEventProps = {
 		from: migrateFrom,
-		has_source_site: migrateFrom !== '',
+		has_source_site: migrateFrom !== '' && migrateFrom !== null,
 	};
 
 	const stepContent = (
