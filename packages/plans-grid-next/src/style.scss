@@ -326,12 +326,6 @@ $mobile-card-max-width: 440px;
 			padding-bottom: 23px;
 		}
 
-		&.plan-features-2023-grid__storage {
-			padding-top: 0;
-			padding-bottom: 32px;
-			width: 205px;
-		}
-
 		.plan-features-2023-grid__header-title {
 			margin-top: 24px;
 		}
@@ -1097,5 +1091,13 @@ $mobile-card-max-width: 440px;
 		@include plans-grid-medium-large {
 			margin-top: 0;
 		}
+	}
+}
+
+.plan-features-2023-grid__storage {
+	.plan-features-2023-grid__plan-spotlight & {
+		padding-top: 0;
+		padding-bottom: 32px;
+		max-width: $table-cell-max-width;
 	}
 }
