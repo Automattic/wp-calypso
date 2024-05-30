@@ -28,6 +28,7 @@ const LoadingBigSky: Step = function () {
 			resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
 		];
 
+		// Create a new home page if one is not set yet.
 		if ( ! hasStaticHomepage ) {
 			pendingActions.push(
 				wpcomRequest( {
@@ -65,6 +66,8 @@ const LoadingBigSky: Step = function () {
 		exitFlow( siteId.toString(), siteSlug );
 	};
 
+	// TODO: this is a hack to trigger the onSubmit function on mount. There's probably a cleaner way.
+	// TODO: handle cases of landing on this page via a "back" navigation in the browser. Ideally it should go back to the previous step.
 	useEffect( () => {
 		const syntheticEvent = {
 			preventDefault: () => {},
