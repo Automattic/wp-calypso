@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import React, { useState } from 'react';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 import './help-center-feedback-form.scss';
@@ -43,6 +44,16 @@ const HelpCenterFeedbackForm = ( { postId, blogId, slug }: HelpCenterFeedbackFor
 		</>
 	);
 
+	const feedbackFormUrl = addQueryArgs(
+		'https://wordpressdotcom.survey.fm/helpcenter-articles-feedback',
+		{
+			q_1_choice: answerValue,
+			guide: slug,
+			postId,
+			blogId,
+		}
+	);
+
 	const FeedbackTextArea = () => (
 		<>
 			<p>{ __( 'How we can improve?' ) }</p>
@@ -51,7 +62,7 @@ const HelpCenterFeedbackForm = ( { postId, blogId, slug }: HelpCenterFeedbackFor
 				// This is the URL of the feedback form,
 				// `answerValue` is either 1 or 2 and it is used to skip the first question since we are already asking it here.
 				// it is necessary to help crowd signal to `skip` ( display none with css ) the first question and save the correct value.
-				src={ `https://wordpressdotcom.survey.fm/helpcenter-articles-feedback?q_1_choice=${ answerValue }&guide=${ slug }&postId=${ postId }&blogId=${ blogId }` }
+				src={ feedbackFormUrl }
 			></iframe>
 		</>
 	);
