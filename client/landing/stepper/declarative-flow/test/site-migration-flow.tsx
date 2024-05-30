@@ -307,7 +307,7 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	describe( 'goBack', () => {
-		it( 'stays on the same step with showModal:true', async () => {
+		it( 'backs to the identify step', async () => {
 			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationGoBack( {
@@ -315,7 +315,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&showModal=true`,
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );

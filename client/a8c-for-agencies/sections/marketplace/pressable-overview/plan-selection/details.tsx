@@ -16,9 +16,10 @@ import getPressableShortName from '../lib/get-pressable-short-name';
 type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	onSelectPlan: () => void;
+	isLoading?: boolean;
 };
 
-export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Props ) {
+export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLoading }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -38,6 +39,15 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 	}, [ dispatch ] );
 
 	const PRESSABLE_CONTACT_LINK = 'https://pressable.com/request-demo';
+
+	if ( isLoading ) {
+		return (
+			<section className="pressable-overview-plan-selection__details is-loader">
+				<div className="pressable-overview-plan-selection__details-card"></div>
+				<div className="pressable-overview-plan-selection__details-card is-aside"></div>
+			</section>
+		);
+	}
 
 	return (
 		<section className="pressable-overview-plan-selection__details">

@@ -108,3 +108,13 @@
 .a4a-slider__marker-sub {
 	color: var(--color-success);
 }
+
+.a4a-slider__input-disabled-area {
+	min-height: 6px;
+	width: 0;
+	background-color: var(--color-primary-0);
+	position: absolute;
+	top: 22px;
+	left: -1px;
+	border-radius: 4px 0 0 4px;
+}

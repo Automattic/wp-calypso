@@ -224,6 +224,10 @@ const WebServerSettingsCard = ( {
 				label: '8.2',
 				value: '8.2',
 			},
+			{
+				label: '8.3',
+				value: '8.3',
+			},
 		];
 	};
 

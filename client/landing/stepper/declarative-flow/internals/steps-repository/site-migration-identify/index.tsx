@@ -81,6 +81,7 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 
 const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 	const siteSlug = useSiteSlug();
+	const translate = useTranslate();
 
 	const handleSubmit = useCallback(
 		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
@@ -107,7 +108,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 
 	return (
 		<>
-			<DocumentHead title="Site migration instructions" />
+			<DocumentHead title={ translate( 'Import your site content' ) } />
 			<StepContainer
 				stepName="site-migration-identify"
 				flowName="site-migration"

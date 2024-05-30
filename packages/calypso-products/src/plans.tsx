@@ -7,20 +7,29 @@ import { getPlansListExperiment } from './experiments';
  */
 
 export const getPlanPersonalTitle = () =>
-	getPlansListExperiment( 'wpcom_plan_name_change_starter_to_beginner_v5' ) === 'treatment'
-		? // translators: Beginner is a plan name
-		  i18n.translate( 'Beginner' )
+	getPlansListExperiment( 'wpcom_plan_name_change_personal_premium_v1' ) === 'treatment'
+		? // translators: Personal is a plan name
+		  i18n.translate( 'Personal' )
 		: // translators: Starter is a plan name
 		  i18n.translate( 'Starter' );
 
 export const getPlanPremiumTitle = () =>
-	// translators: Explorer is a plan name
-	i18n.translate( 'Explorer' );
+	getPlansListExperiment( 'wpcom_plan_name_change_personal_premium_v1' ) === 'treatment'
+		? // translators: Premium is a plan name
+		  i18n.translate( 'Premium' )
+		: // translators: Explorer is a plan name
+		  i18n.translate( 'Explorer' );
 
 export const getPlanBusinessTitle = () =>
-	// translators: Creator is a plan name
-	i18n.translate( 'Creator' );
+	getPlansListExperiment( 'wpcom_plan_name_change_personal_premium_v1' ) === 'treatment'
+		? // translators: Business is a plan name
+		  i18n.translate( 'Business' )
+		: // translators: Creator is a plan name
+		  i18n.translate( 'Creator' );
 
 export const getPlanEcommerceTitle = () =>
-	// translators: Entrepreneur is a plan name
-	i18n.translate( 'Entrepreneur' );
+	getPlansListExperiment( 'wpcom_plan_name_change_personal_premium_v1' ) === 'treatment'
+		? // translators: Commerce is a plan name
+		  i18n.translate( 'Commerce' )
+		: // translators: Entrepreneur is a plan name
+		  i18n.translate( 'Entrepreneur' );

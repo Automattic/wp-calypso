@@ -10,7 +10,7 @@ export const GitHubDeploymentCard = () => {
 	const handleClickLink = useHandleClickLink();
 
 	return (
-		<Card className="developer-features-list__item developer-features-list__item--full">
+		<Card className="developer-features-list__item">
 			<div className="developer-features-list__item-tag">{ translate( 'New' ) }</div>
 			<div className="developer-features-list__item-title">
 				{ translate( 'GitHub Deployments' ) }

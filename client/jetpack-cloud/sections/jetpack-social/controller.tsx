@@ -7,6 +7,7 @@ import {
 	isJetpackSite,
 	isJetpackModuleActive,
 	isJetpackConnectionPluginActive,
+	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectionsPage from './connections';
@@ -17,6 +18,7 @@ export const connections: Callback = ( context, next ) => {
 	const { dispatch } = store;
 	const state = store.getState();
 	const site = getSelectedSite( state );
+	const isSimple = isSimpleSite( state, site?.ID );
 	const isJetpack = site?.ID && isJetpackSite( state, site.ID );
 	const isPublicizeActive = site?.ID && isJetpackModuleActive( state, site.ID, 'publicize' );
 
@@ -28,7 +30,7 @@ export const connections: Callback = ( context, next ) => {
 		);
 	}
 
-	if ( isJetpack || isPublicizeActive ) {
+	if ( isJetpack || isPublicizeActive || isSimple ) {
 		context.primary = <ConnectionsPage />;
 	} else {
 		context.primary = (
