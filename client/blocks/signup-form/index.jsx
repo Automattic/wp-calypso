@@ -58,7 +58,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -1061,7 +1060,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, translate, isWoo, isBlazePro } = this.props;
+		const { flowName, translate, isWoo } = this.props;
 
 		if ( this.props.isP2Flow ) {
 			return (
@@ -1078,19 +1077,6 @@ class SignupForm extends Component {
 
 		if ( isWoo ) {
 			return null;
-		}
-
-		if ( isBlazePro ) {
-			return (
-				<div className="signup-form__p2-footer-link">
-					<LoggedOutFormLinks>
-						<span>{ this.props.translate( 'Already have an account?' ) }&nbsp;</span>
-						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ this.props.translate( 'Log in here' ) }
-						</LoggedOutFormLinkItem>
-					</LoggedOutFormLinks>
-				</div>
-			);
 		}
 
 		return (
@@ -1406,7 +1392,6 @@ export default connect(
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
-			isBlazePro: getIsBlazePro( state ),
 		};
 	},
 	{
