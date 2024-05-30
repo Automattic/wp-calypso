@@ -97,7 +97,7 @@ const MainCards = ( {
 	siteSlug,
 } ) => {
 	const { data, isLoading } = useCodeDeploymentsQuery( siteId );
-	const isCodeDeploymentsUnused = ! isLoading && ! data.length;
+	const isCodeDeploymentsUnused = ! isLoading && data && ! data.length;
 
 	const mainCards = [
 		isCodeDeploymentsUnused
@@ -195,7 +195,7 @@ const AllCards = ( {
 	siteSlug,
 } ) => {
 	const { data, isLoading } = useCodeDeploymentsQuery( siteId );
-	const isCodeDeploymentsUnused = ! isLoading && ! data.length;
+	const isCodeDeploymentsUnused = ! isLoading && data && ! data.length;
 
 	const allCards = [
 		isCodeDeploymentsUnused
