@@ -6,8 +6,8 @@ type SurveyData = {
 };
 
 export function getSegmentedIntent( answers: SurveyData ): string | undefined {
-	const surveyedGoals = answers[ 'what-are-your-goals' ];
-	const surveyedIntent = answers[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
+	const surveyedGoals = answers?.[ 'what-are-your-goals' ];
+	const surveyedIntent = answers?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
 	// Return default wpcom plans for migration flow.
 	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals.includes( SKIP_ANSWER_KEY ) ) {
