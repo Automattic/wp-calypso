@@ -629,7 +629,6 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					displayUsernameInput={ ! isBlazeProOAuth2Client( oauth2Client ) }
 					shouldDisplayUserExistsError={
 						! isWooOAuth2Client( oauth2Client ) && ! isBlazeProOAuth2Client( oauth2Client )
 					}
