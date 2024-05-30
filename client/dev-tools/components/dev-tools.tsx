@@ -37,6 +37,7 @@ const DevTools = () => {
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
+	// The ref is required to persist the value of redirect_to after renders
 	const redirectUrl = useRef( searchParams.get( 'redirect_to' ) ?? `/hosting-config/${ siteId }` );
 	const { siteSlug, isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
 		siteSlug: getSiteSlug( state, siteId ) || '',
