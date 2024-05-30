@@ -79,7 +79,11 @@ const StatsBenefitsCommercial = () => {
 				<li>{ translate( 'GDPR compliance' ) }</li>
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'Priority support' ) }</li>
-				<li>{ translate( 'Commercial use' ) }</li>
+				<li>
+					{ translate( '{{strong}}Commercial use{{/strong}}', {
+						components: { strong: <strong /> },
+					} ) }
+				</li>
 				<li>
 					{ translate( 'UTM tracking' ) }
 					<Icon
@@ -223,7 +227,7 @@ const StatsSingleItemCard = ( { children }: { children: React.ReactNode } ) => {
 		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
 			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
-					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>{ children }</div>
+					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--single` }>{ children }</div>
 				</div>
 			</Card>
 		</div>

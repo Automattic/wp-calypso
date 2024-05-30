@@ -73,7 +73,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 		// Add border around everything
 		overflow: hidden;
 		min-height: 100vh;
-		@media only screen and (min-width: 782px) {
+		@media only screen and ( min-width: 782px ) {
 			padding: 16px 16px 16px calc(var(--sidebar-width-max)) !important;
 		}
 		.layout_primary > div {
@@ -89,7 +89,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 		padding-top: 16px;
 	}
 
-	@media only screen and (max-width: 600px) {
+	@media only screen and ( max-width: 600px ) {
 		.navigation-header__main {
 			justify-content: normal;
 			align-items: center;
@@ -99,7 +99,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 		}
 	}
 
-	@media only screen and (max-width: 781px) {
+	@media only screen and ( max-width: 781px ) {
 		.layout__primary > div {
 			background: var(--color-surface);
 			margin: 0;
@@ -111,11 +111,11 @@ body.is-section-reader:not(.is-reader-full-post) {
 	.is-discover-stream {
 		header.navigation-header.discover-stream-header {
 			padding: 0;
-			@media only screen and (max-width: 600px) {
+			@media only screen and ( max-width: 600px ) {
 				padding: 0 24px;
 			}
 		}
-		@media only screen and (max-width: 660px) {
+		@media only screen and ( max-width: 660px ) {
 			.discover-stream-navigation {
 				margin-left: 0;
 				margin-right: 0;
@@ -225,8 +225,9 @@ body.is-section-reader:not(.is-reader-full-post) {
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
-				fill: var(--color-sidebar-gridicon-hover-fill);
-				g {
+				fill: var(--color-sidebar-menu-hover-background);
+				circle,
+				path {
 					stroke: var(--color-sidebar-gridicon-hover-fill);
 				}
 			}
@@ -273,8 +274,9 @@ body.is-section-reader:not(.is-reader-full-post) {
 			}
 		}
 		.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
-			fill: var(--color-sidebar-gridicon-fill);
-			g {
+			fill: var(--color-sidebar-background);
+			circle,
+			path {
 				stroke: var(--color-sidebar-gridicon-fill);
 			}
 		}
@@ -324,8 +326,9 @@ body.is-section-reader:not(.is-reader-full-post) {
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
-				fill: var(--color-sidebar-gridicon-selected-fill);
-				g {
+				fill: var(--color-sidebar-menu-hover-background);
+				circle,
+				path {
 					stroke: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}

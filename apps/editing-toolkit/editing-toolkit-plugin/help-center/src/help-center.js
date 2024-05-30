@@ -14,14 +14,6 @@ import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
 import useActionHooks from './use-action-hooks';
 
-// Implement PinnedItems to avoid importing @wordpress/interface.
-// Because @wordpress/interface depends on @wordpress/preferences which is not always available outside the editor,
-// causing the script to not be enqueued due to the missing dependency.
-// check https://github.com/Automattic/wp-calypso/pull/74122 for more details.
-function PinnedItems( { scope, ...props } ) {
-	return <Fill name={ `PinnedItems/${ scope }` } { ...props } />;
-}
-
 function HelpCenterContent() {
 	const [ helpIconRef, setHelpIconRef ] = useState();
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
@@ -74,13 +66,7 @@ function HelpCenterContent() {
 
 	return (
 		<>
-			{ isDesktop && showHelpIcon && (
-				<>
-					<PinnedItems scope="core/edit-post">{ content }</PinnedItems>
-					<PinnedItems scope="core/edit-site">{ content }</PinnedItems>
-					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
-				</>
-			) }
+			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter handleClose={ closeCallback } />
 		</>
 	);

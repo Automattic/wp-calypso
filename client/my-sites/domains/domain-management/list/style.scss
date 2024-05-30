@@ -150,8 +150,13 @@
 				padding-inline: 64px;
 			}
 			@include break-xhuge {
-				margin: 0 auto;
-				max-width: 1400px;
+				max-width: 100%;
+
+				.navigation-header__main {
+					max-width: 1400px;
+					margin: 0 auto;
+					padding-inline: 64px;
+				}
 			}
 		}
 	}

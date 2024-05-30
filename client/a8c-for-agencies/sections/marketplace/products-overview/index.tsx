@@ -5,7 +5,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -22,11 +22,11 @@ import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-prod
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
+import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import ProductListing from './product-listing';
 import ProductNavigation from './product-navigation';
-import type { MarketplaceType } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -35,43 +35,25 @@ type Props = {
 	siteId?: string;
 	suggestedProduct?: string;
 	productBrand: string;
-	purchaseType?: MarketplaceType;
 };
 
-export default function ProductsOverview( {
-	siteId,
-	suggestedProduct,
-	productBrand,
-	purchaseType = 'regular',
-}: Props ) {
+function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 	const translate = useTranslate();
 
 	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
-	const [ marketplaceType, setMarketplaceType ] = useState< MarketplaceType >(
-		isAutomatedReferrals ? purchaseType : 'regular'
-	);
+	const { marketplaceType, toggleMarketplaceType } = useContext( MarketplaceTypeContext );
 
 	const {
 		selectedCartItems,
 		setSelectedCartItems,
-		setMarketplaceType: setCartMarketplaceType,
 		onRemoveCartItem,
 		showCart,
 		setShowCart,
 		toggleCart,
-	} = useShoppingCart( marketplaceType );
+	} = useShoppingCart();
 
 	const { isLoading } = useProductsQuery();
-
-	const toggleMarketplaceType = () => {
-		if ( ! isAutomatedReferrals ) {
-			return;
-		}
-		const nextType = marketplaceType === 'regular' ? 'referral' : 'regular';
-		setMarketplaceType( nextType );
-		setCartMarketplaceType( nextType );
-	};
 
 	const sites = useSelector( getSites );
 
@@ -150,16 +132,16 @@ export default function ProductsOverview( {
 			</LayoutTop>
 
 			<LayoutBody>
-				<MarketplaceTypeContext.Provider value={ { marketplaceType } }>
-					<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
-						<ProductListing
-							selectedSite={ selectedSite }
-							suggestedProduct={ suggestedProduct }
-							productBrand={ productBrand }
-						/>
-					</ShoppingCartContext.Provider>
-				</MarketplaceTypeContext.Provider>
+				<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
+					<ProductListing
+						selectedSite={ selectedSite }
+						suggestedProduct={ suggestedProduct }
+						productBrand={ productBrand }
+					/>
+				</ShoppingCartContext.Provider>
 			</LayoutBody>
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( ProductsOverview );

@@ -58,6 +58,7 @@ $brand-text: "SF Pro Text", $sans;
 		--color-sidebar-gridicon-selected-fill: var(--color-sidebar-menu-selected-text);
 		--color-sidebar-tooltip-background: var(--color-sidebar-menu-hover-background);
 		--color-sidebar-tooltip-text: var(--color-sidebar-menu-hover-text);
+		--color-masterbar-unread-dot-background: #e65054;
 	}
 
 	.is-global-sidebar-collapsed {
@@ -560,12 +561,6 @@ $font-size: rem(14px);
 
 	/* stylelint-disable-next-line no-duplicate-selectors */
 	.is-unified-site-sidebar-visible {
-		.current-site__notices {
-			max-width: 220px;
-			margin-left: auto;
-			margin-right: auto;
-		}
-
 		.upsell-nudge.banner.card.is-compact {
 			margin-top: 0;
 			padding: 8px;
@@ -1113,6 +1108,16 @@ $font-size: rem(14px);
 		.is-unified-site-sidebar-visible {
 			.upsell-nudge.banner.card.is-compact {
 				margin-top: 8px;
+
+				.banner__content {
+					flex-direction: row;
+					flex-wrap: nowrap;
+				}
+
+				.banner__info,
+				.banner__action {
+					width: auto;
+				}
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import { convertSnakeCaseToCamelCase } from 'calypso/state/data-layer/convert-snake-case-to-camel-case';
 import type {
 	PostByVoice,
 	PostByVoiceResponse,
@@ -7,27 +8,22 @@ import type {
 
 export const getPostByVoicePath = ( siteId: number | null ) => `/sites/${ siteId }/post-by-voice`;
 
-export const getCachePostByVoiceKey = ( siteId: number | null ) => [
+export const getPostByVoiceQueryKey = ( siteId: number | null ) => [
 	'sites',
 	siteId,
 	'post-by-voice',
 ];
 
-export const parsePostByVoiceResponse = ( data: PostByVoiceResponse ): PostByVoice => ( {
-	isEnabled: data.is_enabled,
-	code: data.code,
-} );
-
 export const useGetPostByVoice = ( siteId: number | null ) => {
 	return useQuery< PostByVoice >( {
-		queryKey: getCachePostByVoiceKey( siteId ),
+		queryKey: getPostByVoiceQueryKey( siteId ),
 		queryFn: async () => {
 			const response: PostByVoiceResponse = await wpcom.req.get( {
 				path: getPostByVoicePath( siteId ),
 				apiNamespace: 'wpcom/v2',
 			} );
 
-			return parsePostByVoiceResponse( response );
+			return convertSnakeCaseToCamelCase( response );
 		},
 		enabled: !! siteId,
 	} );

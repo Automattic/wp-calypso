@@ -18,11 +18,12 @@ import { debounce } from '@wordpress/compose';
 import { Icon, external, check } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import SimpleList from '../../common/simple-list';
+import { MarketplaceTypeContext } from '../../context';
 import { getHostingLogo, getHostingPageUrl } from '../../lib/hosting';
 import useHostingDescription from '../hooks/use-hosting-description';
 
@@ -30,7 +31,7 @@ import './style.scss';
 
 type Props = {
 	plan: APIProductFamilyProduct;
-	pressableOwnership?: boolean;
+	pressableOwnership?: 'regular' | 'agency' | 'none';
 	highestDiscountPercentage?: number;
 	className?: string;
 	/** The minimum height for the pricing section. */
@@ -41,7 +42,7 @@ type Props = {
 
 export default function HostingCard( {
 	plan,
-	pressableOwnership,
+	pressableOwnership = 'none',
 	highestDiscountPercentage,
 	className,
 	minPriceHeight,
@@ -62,6 +63,9 @@ export default function HostingCard( {
 
 	const priceRef = useRef< HTMLDivElement >( null );
 	const tooltip = useRef< HTMLDivElement >( null );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	const shouldShowDiscount = !! highestDiscountPercentage && marketplaceType !== 'referral';
 
 	const onExploreClick = useCallback( () => {
 		dispatch(
@@ -96,6 +100,22 @@ export default function HostingCard( {
 		return translate( 'USD' );
 	}, [ plan.price_interval, translate ] );
 
+	const exploreButtonText = useMemo( () => {
+		return marketplaceType === 'referral'
+			? translate( 'Explore %(hosting)s', {
+					args: {
+						hosting: name,
+					},
+					comment: '%(hosting)s is the name of the hosting provider.',
+			  } )
+			: translate( 'Explore %(hosting)s plans', {
+					args: {
+						hosting: name,
+					},
+					comment: '%(hosting)s is the name of the hosting provider.',
+			  } );
+	}, [ marketplaceType, name, translate ] );
+
 	// Call `setPriceHeight` when the component mounts and when the window is resized,
 	// to keep the height of the card consistent with others.
 	useEffect( () => {
@@ -116,7 +136,7 @@ export default function HostingCard( {
 	}, [ setPriceHeight ] );
 
 	const exploreButton = useMemo( () => {
-		if ( pressableOwnership ) {
+		if ( pressableOwnership === 'regular' ) {
 			return (
 				<Button
 					className="hosting-card__pressable-dashboard-button"
@@ -124,7 +144,7 @@ export default function HostingCard( {
 					rel="norefferer nooppener"
 					href={ pressableUrl }
 				>
-					{ translate( 'Go to Pressable Dashboard' ) }
+					{ translate( 'Manage in your Pressable account' ) }
 					<Icon icon={ external } size={ 18 } />
 				</Button>
 			);
@@ -153,22 +173,24 @@ export default function HostingCard( {
 				onClick={ onExploreClick }
 				primary
 			>
-				{ translate( 'Explore %(hosting)s plans', {
-					args: {
-						hosting: name,
-					},
-					comment: '%(hosting)s is the name of the hosting provider.',
-				} ) }
+				{ exploreButtonText }
 			</Button>
 		);
-	}, [ name, onExploreClick, onVipDemoClick, plan.family_slug, pressableOwnership, translate ] );
+	}, [
+		onExploreClick,
+		onVipDemoClick,
+		plan.family_slug,
+		pressableOwnership,
+		exploreButtonText,
+		translate,
+	] );
 
 	return (
 		<div className={ classNames( 'hosting-card', className ) }>
 			<div className="hosting-card__section">
 				<div className="hosting-card__heading">{ heading }</div>
 
-				{ pressableOwnership && (
+				{ pressableOwnership !== 'none' && (
 					<>
 						{
 							// Show the check icon and tooltip only on desktop
@@ -233,7 +255,7 @@ export default function HostingCard( {
 							</div>
 							<div className="hosting-card__price-interval">{ priceIntervalDescription }</div>
 						</div>
-						{ highestDiscountPercentage ? (
+						{ shouldShowDiscount ? (
 							<div className="hosting-card__price-discount">
 								{ translate( 'Volume savings up to %(highestDiscountPercentage)s%', {
 									args: { highestDiscountPercentage: Math.trunc( highestDiscountPercentage ) },

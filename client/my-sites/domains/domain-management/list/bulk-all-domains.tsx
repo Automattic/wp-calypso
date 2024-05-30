@@ -17,6 +17,7 @@ import {
 	fetchSite,
 	fetchSiteDomains,
 } from '../domains-table-fetch-functions';
+import EmptyState from './empty-state';
 import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
@@ -29,7 +30,7 @@ interface BulkAllDomainsProps {
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
-	const { domains, isLoading } = useDomainsTable( fetchAllDomains );
+	const { domains = [], isFetched, isLoading } = useDomainsTable( fetchAllDomains );
 	const translate = useTranslate();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 	const sitesDashboardGlobalStyles = css`
@@ -170,17 +171,23 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				transition: none;
 			}
 
+			.search-component.domains-table-filter__search.is-open.has-focus {
+				border-color: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+				box-shadow: 0 0 0 0.5px
+					var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+			}
+
 			@media only screen and ( min-width: 782px ) {
 				.is-global-sidebar-visible {
 					header.navigation-header {
 						padding-top: 24px;
 						padding-inline: 16px;
-						border-block-end: 1px solid var( --studio-gray-0 );
+						border-block-end: 1px solid var( --color-border-secondary );
 					}
 					.layout__primary > main {
 						background: var( --color-surface );
 						border-radius: 8px;
-						box-shadow: none;
+						box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
 						height: calc( 100vh - 32px );
 						overflow: hidden;
 						max-width: none;
@@ -299,8 +306,10 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		),
 	};
 
-	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" allDomainsList /> ];
-
+	const isDomainsEmpty = isFetched && domains.length === 0;
+	const buttons = ! isDomainsEmpty
+		? [ <OptionsDomainButton key="breadcrumb_button_1" allDomainsList /> ]
+		: [];
 	const purchaseActions = usePurchaseActions();
 
 	return (
@@ -310,23 +319,32 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			<Main>
 				<DocumentHead title={ translate( 'Domains' ) } />
 				<BodySectionCssClass
-					bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page', 'is-bulk-all-domains-page' ] }
+					bodyClass={ [
+						'edit__body-white',
+						'is-bulk-domains-page',
+						'is-bulk-all-domains-page',
+						...( isDomainsEmpty ? [ 'is-bulk-all-domains-page--is-empty' ] : [] ),
+					] }
 				/>
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-				{ ! isLoading && <GoogleDomainOwnerBanner /> }
-				<DomainsTable
-					isLoadingDomains={ isLoading }
-					domains={ domains }
-					isAllSitesView
-					domainStatusPurchaseActions={ purchaseActions }
-					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
-					fetchAllDomains={ fetchAllDomains }
-					fetchSite={ fetchSite }
-					fetchSiteDomains={ fetchSiteDomains }
-					createBulkAction={ createBulkAction }
-					fetchBulkActionStatus={ fetchBulkActionStatus }
-					deleteBulkActionStatus={ deleteBulkActionStatus }
-				/>
+				{ ! isLoading && ! isDomainsEmpty && <GoogleDomainOwnerBanner /> }
+				{ ! isDomainsEmpty ? (
+					<DomainsTable
+						isLoadingDomains={ isLoading }
+						domains={ domains }
+						isAllSitesView
+						domainStatusPurchaseActions={ purchaseActions }
+						currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
+						fetchAllDomains={ fetchAllDomains }
+						fetchSite={ fetchSite }
+						fetchSiteDomains={ fetchSiteDomains }
+						createBulkAction={ createBulkAction }
+						fetchBulkActionStatus={ fetchBulkActionStatus }
+						deleteBulkActionStatus={ deleteBulkActionStatus }
+					/>
+				) : (
+					<EmptyState />
+				) }
 			</Main>
 		</>
 	);

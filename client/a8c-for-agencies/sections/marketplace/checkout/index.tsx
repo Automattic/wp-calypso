@@ -1,8 +1,9 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useContext } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -17,18 +18,24 @@ import {
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
+import { MarketplaceTypeContext } from '../context';
+import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
 import useProductsBySlug from '../hooks/use-products-by-slug';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
 import PricingSummary from './pricing-summary';
 import ProductInfo from './product-info';
+import RequestClientPayment from './request-client-payment';
 import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
 
-export default function Checkout() {
+function Checkout() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const isAutomatedReferrals = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
 	const { selectedCartItems, onRemoveCartItem, onClearCart } = useShoppingCart();
 	const sites = useSelector( getSites );
@@ -96,10 +103,12 @@ export default function Checkout() {
 		page( A4A_SITES_LINK );
 	}, [ dispatch ] );
 
+	const title = isAutomatedReferrals ? translate( 'Referral checkout' ) : translate( 'Checkout' );
+
 	return (
 		<Layout
 			className="checkout"
-			title={ translate( 'Checkout' ) }
+			title={ title }
 			wide
 			withBorder
 			compact
@@ -114,7 +123,7 @@ export default function Checkout() {
 								href: A4A_MARKETPLACE_LINK,
 							},
 							{
-								label: translate( 'Checkout' ),
+								label: title,
 							},
 						] }
 					/>
@@ -124,7 +133,7 @@ export default function Checkout() {
 			<LayoutBody>
 				<div className="checkout__container">
 					<div className="checkout__main">
-						<h1 className="checkout__main-title">{ translate( 'Checkout' ) }</h1>
+						<h1 className="checkout__main-title">{ title }</h1>
 
 						<div className="checkout__main-list">
 							{ checkoutItems.map( ( items ) => (
@@ -135,39 +144,50 @@ export default function Checkout() {
 							) ) }
 						</div>
 					</div>
-					<div className="checkout__aside">
+					<div
+						className={ classNames( 'checkout__aside', {
+							'checkout__aside--referral': isAutomatedReferrals,
+						} ) }
+					>
 						<PricingSummary
 							items={ checkoutItems }
 							onRemoveItem={ siteId ? undefined : onRemoveItem }
+							isAutomatedReferrals={ isAutomatedReferrals }
 						/>
 
-						<div className="checkout__aside-actions">
-							<Button
-								primary
-								onClick={ onCheckout }
-								disabled={ ! checkoutItems.length || ! isReady }
-								busy={ ! isReady }
-							>
-								{ translate( 'Purchase' ) }
-							</Button>
+						{ isAutomatedReferrals ? (
+							<RequestClientPayment checkoutItems={ checkoutItems } />
+						) : (
+							<div className="checkout__aside-actions">
+								<Button
+									primary
+									onClick={ onCheckout }
+									disabled={ ! checkoutItems.length || ! isReady }
+									busy={ ! isReady }
+								>
+									{ translate( 'Purchase' ) }
+								</Button>
 
-							{ siteId ? (
-								<Button onClick={ cancelPurchase }>{ translate( 'Cancel' ) }</Button>
-							) : (
-								<>
-									<Button onClick={ onContinueShopping }>
-										{ translate( 'Continue shopping' ) }
-									</Button>
+								{ siteId ? (
+									<Button onClick={ cancelPurchase }>{ translate( 'Cancel' ) }</Button>
+								) : (
+									<>
+										<Button onClick={ onContinueShopping }>
+											{ translate( 'Continue shopping' ) }
+										</Button>
 
-									<Button borderless onClick={ onEmptyCart }>
-										{ translate( 'Empty cart' ) }
-									</Button>
-								</>
-							) }
-						</div>
+										<Button borderless onClick={ onEmptyCart }>
+											{ translate( 'Empty cart' ) }
+										</Button>
+									</>
+								) }
+							</div>
+						) }
 					</div>
 				</div>
 			</LayoutBody>
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( Checkout );

@@ -202,7 +202,10 @@ const WebServerSettingsCard = ( {
 				disabled: true, // EOL 6th December, 2021
 			},
 			{
-				label: '7.4',
+				label: translate( '%s (deprecated)', {
+					args: '7.4',
+					comment: 'PHP Version for a version switcher',
+				} ),
 				value: '7.4',
 			},
 			{
@@ -221,6 +224,10 @@ const WebServerSettingsCard = ( {
 				label: '8.2',
 				value: '8.2',
 			},
+			{
+				label: '8.3',
+				value: '8.3',
+			},
 		];
 	};
 
@@ -233,7 +240,6 @@ const WebServerSettingsCard = ( {
 			disabled || ! selectedPhpVersion || selectedPhpVersion === phpVersion;
 		const selectedPhpVersionValue =
 			selectedPhpVersion || phpVersion || ( disabled && recommendedValue );
-
 		return (
 			<FormFieldset>
 				<FormLabel>{ translate( 'PHP version' ) }</FormLabel>

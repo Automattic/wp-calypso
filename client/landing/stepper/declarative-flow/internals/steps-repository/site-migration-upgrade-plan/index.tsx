@@ -46,6 +46,11 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 		} );
 	};
 
+	const customTracksEventProps = {
+		from: migrateFrom,
+		has_source_site: migrateFrom !== '',
+	};
+
 	const stepContent = (
 		<>
 			{ showMigrationModal && (
@@ -79,6 +84,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 					navigation.submit?.( { verifyEmail: true } );
 				} }
 				hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
+				trackingEventsProps={ customTracksEventProps }
 			/>
 		</>
 	);

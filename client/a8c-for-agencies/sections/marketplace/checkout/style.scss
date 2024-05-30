@@ -22,12 +22,10 @@
 	flex-direction: column;
 	align-items: stretch;
 
-
 	@include break-large {
 		flex-direction: row;
 		height: 100%;
 	}
-
 }
 
 .checkout__main {
@@ -58,6 +56,10 @@
 		max-width: 443px;
 		padding: 128px 48px;
 		background: var(--color-neutral-0);
+	}
+
+	&.checkout__aside--referral {
+		padding-block-start: 64px;
 	}
 }
 
@@ -139,6 +141,10 @@
 		text-decoration: underline;
 		color: var(--color-black);
 	}
+
+	&.margin-top {
+		margin-block-start: 16px;
+	}
 }
 
 .checkout__aside-actions {
@@ -219,4 +225,8 @@
 		font-weight: 400;
 		margin-block: 4px 0;
 	}
+}
+
+.checkout__client-referral-form {
+	padding-block-start: 48px;
 }

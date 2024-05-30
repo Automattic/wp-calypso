@@ -250,19 +250,21 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__footer-language-switcher {
 			align-items: center;
-			color: var(--studio-gray-5);
+			color: var(--color-sidebar-text);
 			cursor: pointer;
 			display: flex;
+			font-size: $font-body-extra-small;
 			height: 32px;
 			gap: 6px;
+			line-height: 32px;
 			padding: 6px;
 			justify-content: center;
 			margin-inline-start: auto;
-		}
 
-
-		&:has(.sidebar__footer-language-switcher) {
-			background: var(--studio-orange);
+			svg {
+				height: 20px;
+				width: 20px;
+			}
 		}
 
 		.sidebar__item-help,
@@ -271,7 +273,8 @@ $brand-text: "SF Pro Text", $sans;
 		.sidebar__item-search {
 			color: var(--color-sidebar-text);
 
-			svg path {
+			svg path,
+			svg rect {
 				fill: var(--color-sidebar-gridicon-fill);
 			}
 
@@ -279,7 +282,8 @@ $brand-text: "SF Pro Text", $sans;
 				color: var(--color-sidebar-menu-hover-text);
 				text-decoration: none;
 
-				svg path {
+				svg path,
+				svg rect {
 					fill: var(--color-sidebar-menu-hover-text);
 				}
 			}
@@ -342,8 +346,10 @@ $brand-text: "SF Pro Text", $sans;
 			color: var(--nav-link);
 			text-decoration: none;
 			align-items: center;
+			display: inline-flex;
 			padding: 9px;
 			border-radius: 4px;
+
 			&:hover {
 				background-color: var(--color-sidebar-menu-hover-background);
 			}
@@ -470,6 +476,14 @@ $brand-text: "SF Pro Text", $sans;
 				}
 			}
 
+			.sidebar__footer {
+				.sidebar__footer-language-switcher {
+					font-size: 0;
+					gap: 0;
+					margin-inline-start: unset;
+				}
+			}
+
 			.sidebar__body {
 				overflow-y: visible;
 				.sidebar__menu-item-parent .sidebar__menu-link {
@@ -499,4 +513,18 @@ body.has-global-sidebar .help-center .components-card.help-center__container.is-
 
 body.has-global-sidebar.has-global-sidebar-collapsed .help-center .components-card.help-center__container.is-desktop {
 	left: 82px;
+}
+
+body.has-global-sidebar .is-global-sidebar-visible.is-support-session {
+	&::before {
+		border: 2px solid var(--studio-orange);
+		bottom: 0;
+		content: "";
+		left: 0;
+		pointer-events: none;
+		position: fixed;
+		right: 0;
+		top: 0;
+		z-index: z-index("root", ".layout__secondary") + 1;
+	}
 }

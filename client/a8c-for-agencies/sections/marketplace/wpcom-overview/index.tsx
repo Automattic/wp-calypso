@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
 import {
 	Icon,
 	blockMeta,
@@ -11,7 +13,7 @@ import {
 	external,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -31,6 +33,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingOverview from '../common/hosting-overview';
 import HostingOverviewFeatures from '../common/hosting-overview-features';
+import { MarketplaceTypeContext } from '../context';
+import withMarketplaceType from '../hoc/with-marketplace-type';
 import useProductAndPlans from '../hooks/use-product-and-plans';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getWPCOMCreatorPlan } from '../lib/hosting';
@@ -42,9 +46,13 @@ import WPCOMPlanCard from './wpcom-card';
 
 import './style.scss';
 
-export default function WpcomOverview() {
+function WpcomOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
+	const { marketplaceType, toggleMarketplaceType } = useContext( MarketplaceTypeContext );
+	const referralMode = marketplaceType === 'referral';
 
 	const {
 		selectedCartItems,
@@ -76,6 +84,10 @@ export default function WpcomOverview() {
 		}
 	}, [ creatorPlan, isLicenseCountsReady, licenseCounts?.products ] );
 
+	// For referral mode we only display 1 option.
+	const displayQuantity = referralMode ? 1 : ( selectedTier.value as number ) - ownedPlans;
+	const displayDiscount = referralMode ? options[ 0 ].discount : selectedTier.discount;
+
 	const onclickMoreInfo = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_hosting_wpcom_view_all_features_click' )
@@ -106,7 +118,6 @@ export default function WpcomOverview() {
 			wide
 			withBorder
 			compact
-			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<LayoutTop>
 				<LayoutHeader>
@@ -126,7 +137,19 @@ export default function WpcomOverview() {
 						] }
 					/>
 
-					<Actions>
+					<Actions className="a4a-marketplace__header-actions">
+						<MobileSidebarNavigation />
+						{ isAutomatedReferrals && (
+							<div className="a4a-marketplace__toggle-marketplace-type">
+								<ToggleControl
+									onChange={ toggleMarketplaceType }
+									checked={ marketplaceType === 'referral' }
+									id="a4a-marketplace__toggle-marketplace-type"
+									label={ translate( 'Refer products' ) }
+								/>
+								<Gridicon icon="info-outline" size={ 16 } />
+							</div>
+						) }
 						<ShoppingCart
 							showCart={ showCart }
 							setShowCart={ setShowCart }
@@ -150,18 +173,20 @@ export default function WpcomOverview() {
 					) }
 				/>
 
-				<WPCOMBulkSelector
-					selectedTier={ selectedTier }
-					onSelectTier={ onSelectTier }
-					ownedPlans={ ownedPlans }
-					isLoading={ ! isLicenseCountsReady }
-				/>
+				{ ! referralMode && (
+					<WPCOMBulkSelector
+						selectedTier={ selectedTier }
+						onSelectTier={ onSelectTier }
+						ownedPlans={ ownedPlans }
+						isLoading={ ! isLicenseCountsReady }
+					/>
+				) }
 
 				{ creatorPlan && (
 					<WPCOMPlanCard
 						plan={ creatorPlan }
-						quantity={ ( selectedTier.value as number ) - ownedPlans } // We only calculate the difference between the selected tier and the owned plans
-						discount={ selectedTier.discount }
+						quantity={ displayQuantity } // We only calculate the difference between the selected tier and the owned plans
+						discount={ displayDiscount }
 						onSelect={ onAddToCart }
 						isLoading={ ! isLicenseCountsReady }
 					/>
@@ -234,3 +259,5 @@ export default function WpcomOverview() {
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( WpcomOverview );

@@ -1,7 +1,10 @@
+import { IMPORT_HOSTED_SITE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import SegmentationSurvey, { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
+import { flowQuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
+import { QuestionConfiguration } from 'calypso/components/survey-container/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './styles.scss';
 
@@ -11,6 +14,18 @@ interface Props {
 }
 
 const SURVEY_KEY = 'guided-onboarding-flow';
+
+const QUESTION_CONFIGURATION: QuestionConfiguration = {
+	'what-brings-you-to-wordpress': {
+		hideContinue: true,
+		hideSkip: false,
+		exitOnSkip: true,
+	},
+	'what-are-your-goals': {
+		hideContinue: false,
+		hideSkip: false,
+	},
+};
 
 export default function InitialIntentStep( props: Props ) {
 	const translate = useTranslate();
@@ -27,8 +42,53 @@ export default function InitialIntentStep( props: Props ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
+	const getRedirectForAnswers = ( _answerKeys: string[] ): string => {
+		if ( _answerKeys.includes( 'migrate-or-import-site' ) ) {
+			return `/setup/${ IMPORT_HOSTED_SITE_FLOW }`;
+		}
+
+		if ( _answerKeys.includes( 'newsletter' ) ) {
+			return `/setup/${ NEWSLETTER_FLOW }`;
+		}
+
+		if ( _answerKeys.includes( 'sell' ) && _answerKeys.includes( 'difm' ) ) {
+			return '/start/do-it-for-me-store';
+		}
+
+		if ( _answerKeys.includes( 'difm' ) ) {
+			return '/start/do-it-for-me';
+		}
+
+		return '';
+	};
+
+	const shouldExitOnSkip = ( _questionKey: string, _answerKeys: string[] ) => {
+		return Boolean(
+			QUESTION_CONFIGURATION[ _questionKey ].exitOnSkip && _answerKeys.includes( SKIP_ANSWER_KEY )
+		);
+	};
+
+	const skipNextNavigation = ( _questionKey: string, _answerKeys: string[] ) => {
+		return (
+			_answerKeys.includes( 'client' ) ||
+			Boolean( getRedirectForAnswers( _answerKeys ) ) ||
+			shouldExitOnSkip( _questionKey, _answerKeys )
+		);
+	};
+
 	const handleNext = ( _questionKey: string, _answerKeys: string[], isLastQuestion?: boolean ) => {
-		if ( isLastQuestion ) {
+		const redirect = getRedirectForAnswers( _answerKeys );
+
+		if ( redirect ) {
+			recordCompleteEvent();
+			return window.location.assign( redirect );
+		}
+
+		if (
+			_answerKeys.includes( 'client' ) ||
+			isLastQuestion ||
+			shouldExitOnSkip( _questionKey, _answerKeys )
+		) {
 			recordCompleteEvent();
 			props.goToNextStep();
 		}
@@ -41,7 +101,15 @@ export default function InitialIntentStep( props: Props ) {
 			fallbackHeaderText={ headerText }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
-			stepContent={ <SegmentationSurvey surveyKey={ SURVEY_KEY } onNext={ handleNext } /> }
+			stepContent={
+				<SegmentationSurvey
+					surveyKey={ SURVEY_KEY }
+					onNext={ handleNext }
+					skipNextNavigation={ skipNextNavigation }
+					questionConfiguration={ QUESTION_CONFIGURATION }
+					questionComponentMap={ flowQuestionComponentMap }
+				/>
+			}
 			align="center"
 			hideSkip
 			{ ...props }

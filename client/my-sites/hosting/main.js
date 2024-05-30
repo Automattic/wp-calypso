@@ -410,7 +410,17 @@ const Hosting = ( props ) => {
 				'hosting--is-two-columns': isEnabled( 'layout/dotcom-nav-redesign-v2' ),
 			} ) }
 		>
-			{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
+			{ ! isLoadingSftpData && (
+				<ScrollToAnchorOnMount
+					offset={ HEADING_OFFSET }
+					timeout={ 250 }
+					container={
+						isEnabled( 'layout/dotcom-nav-redesign-v2' )
+							? document.querySelector( '.item-preview__content' )
+							: undefined
+					}
+				/>
+			) }
 			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
 			<DocumentHead title={ translate( 'Hosting' ) } />
 			<NavigationHeader

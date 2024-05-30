@@ -23,13 +23,15 @@ function useExperimentForTrailMap( { flowName, isInSignup, intent }: Params ): {
 	isTrailMapStructure: boolean;
 } {
 	const [ isLoading, assignment ] = useExperiment(
-		'calypso_signup_onboarding_plans_trail_map_feature_grid_v2',
+		'calypso_signup_onboarding_plans_trail_map_feature_grid_v3',
 		{
 			isEligible: flowName === 'onboarding' || ( ! isInSignup && intent === 'plans-default-wpcom' ),
 		}
 	);
 
-	let variant = ( assignment?.variationName ?? 'control' ) as VariantType;
+	let variant = (
+		assignment?.variationName === 'treatment' ? 'treatment_copy_and_structure' : 'control'
+	) as VariantType;
 
 	if ( config.isEnabled( 'onboarding/trail-map-feature-grid-copy' ) ) {
 		variant = 'treatment_copy';

@@ -80,9 +80,12 @@ export const redirectWithoutLocaleParamInFrontIfLoggedIn = () => {};
 export const redirectInvalidLanguage = () => {};
 export const redirectLoggedOut = () => {};
 export const redirectLoggedOutToSignup = () => {};
+export const redirectToDashboard = () => {};
 export const redirectWithoutLocaleParamIfLoggedIn = () => {};
 export const redirectIfCurrentUserCannot = () => {};
 export const redirectIfP2 = () => {};
+export const redirectIfJetpackNonAtomic = () => {};
+export const redirectToDevToolsPromoIfNotAtomic = () => {};
 // eslint-disable-next-line no-unused-vars
 export const render = ( context ) => {};
 export const ProviderWrappedLayout = () => null;

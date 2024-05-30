@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import SurveyContainer from 'calypso/components/survey-container';
-import { Question } from 'calypso/components/survey-container/types';
+import { QuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
+import { Question, QuestionConfiguration } from 'calypso/components/survey-container/types';
 import {
 	useCachedAnswers,
 	useSaveAnswersMutation,
@@ -10,12 +11,17 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-navigation';
 
-const SKIP_ANSWER_KEY = 'skip';
+export const SKIP_ANSWER_KEY = 'skip';
 
 type SegmentationSurveyProps = {
 	surveyKey: string;
 	onBack?: () => void;
 	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void;
+	skipNextNavigation?: ( questionKey: string, answerKeys: string[] ) => boolean;
+	headerAlign?: string;
+	questionConfiguration?: QuestionConfiguration;
+	questionComponentMap?: QuestionComponentMap;
+	clearAnswersOnLastQuestion?: boolean;
 };
 
 /**
@@ -24,9 +30,22 @@ type SegmentationSurveyProps = {
  * @param {string} props.surveyKey - The key of the survey to render.
  * @param {() => void} [props.onBack] - A function that navigates to the previous step.
  * @param {(questionKey: string, answerKeys: string[], isLastQuestion?: boolean) => void} [props.onNext] - A function that navigates to the next question/step.
+ * @param {string} [props.headerAlign] - The alignment of the header text.
+ * @param {QuestionConfiguration} [props.questionConfiguration] - The configuration for the questions.
+ * @param {QuestionComponentMap} [props.questionComponentMap] - A map of question types to components.
+ * @param {boolean} [props.clearAnswersOnLastQuestion] - Whether to clear the answers after the last question.
  * @returns {React.ReactComponentElement}
  */
-const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyProps ) => {
+const SegmentationSurvey = ( {
+	surveyKey,
+	onBack,
+	onNext,
+	skipNextNavigation,
+	headerAlign,
+	questionConfiguration,
+	questionComponentMap,
+	clearAnswersOnLastQuestion = true,
+}: SegmentationSurveyProps ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
 	const { mutateAsync, isPending } = useSaveAnswersMutation( { surveyKey } );
 	const { answers, setAnswers, clearAnswers } = useCachedAnswers( surveyKey );
@@ -49,7 +68,7 @@ const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyPr
 
 				const isLastQuestion = questions?.[ questions.length - 1 ].key === currentQuestion.key;
 
-				if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
+				if ( clearAnswersOnLastQuestion && isLastQuestion ) {
 					clearAnswers();
 				}
 
@@ -65,7 +84,7 @@ const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyPr
 				} );
 			}
 		},
-		[ clearAnswers, mutateAsync, onNext, questions, surveyKey ]
+		[ clearAnswers, clearAnswersOnLastQuestion, mutateAsync, onNext, questions, surveyKey ]
 	);
 
 	const onContinue = useCallback(
@@ -82,9 +101,10 @@ const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyPr
 
 	const onSkip = useCallback(
 		async ( currentQuestion: Question ) => {
+			onChangeAnswer( currentQuestion.key, [ SKIP_ANSWER_KEY ] );
 			await handleSave( currentQuestion, [ SKIP_ANSWER_KEY ] );
 		},
-		[ handleSave ]
+		[ handleSave, onChangeAnswer ]
 	);
 
 	const { currentPage, currentQuestion, backToPreviousPage, continueToNextPage, skipToNextPage } =
@@ -95,6 +115,7 @@ const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyPr
 			answers,
 			questions,
 			surveyKey,
+			skipNextNavigation,
 		} );
 
 	if ( ! questions ) {
@@ -114,7 +135,9 @@ const SegmentationSurvey = ( { surveyKey, onBack, onNext }: SegmentationSurveyPr
 				onSkip={ skipToNextPage }
 				onChange={ onChangeAnswer }
 				disabled={ isPending }
-				headerAlign="left"
+				headerAlign={ headerAlign }
+				questionConfiguration={ questionConfiguration }
+				questionComponentMap={ questionComponentMap }
 			/>
 		</>
 	);
