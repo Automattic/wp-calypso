@@ -44,7 +44,6 @@ function ContinueAsUser( {
 	isSignUpFlow,
 	isWooOAuth2Client,
 	isWooPasswordless,
-	isBlazeProOAuth2Client,
 } ) {
 	const translate = useTranslate();
 	const { url: validatedRedirectUrlFromQuery, loading: validatingQueryURL } =
@@ -153,36 +152,6 @@ function ContinueAsUser( {
 						} ) } ${ userName }` }
 					</Button>
 				</div>
-			</div>
-		);
-	}
-
-	if ( isBlazeProOAuth2Client ) {
-		return (
-			<div className="continue-as-user">
-				<div className="continue-as-user__user-info">
-					{ gravatarLink }
-					<div className="continue-as-user__not-you">
-						<button
-							type="button"
-							id="loginAsAnotherUser"
-							className="continue-as-user__change-user-link"
-							onClick={ onChangeAccount }
-						>
-							{ translate( 'Sign in as a different user' ) }
-						</button>
-					</div>
-				</div>
-				<Button
-					primary
-					busy={ isLoading }
-					className="continue-as-user__continue-button"
-					href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
-				>
-					{ `${ translate( 'Continue as', {
-						context: 'Continue as an existing WordPress.com user',
-					} ) } ${ userName }` }
-				</Button>
 			</div>
 		);
 	}

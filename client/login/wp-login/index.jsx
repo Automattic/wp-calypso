@@ -42,7 +42,6 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
@@ -439,14 +438,13 @@ export class Login extends Component {
 			isWooPasswordless,
 			isPartnerSignup,
 			isWoo,
-			isBlazePro,
 		} = this.props;
 
 		if ( isGravPoweredLoginPage ) {
 			return this.renderGravPoweredLoginBlockFooter();
 		}
 
-		if ( ( isWooPasswordless || isBlazePro ) && isLoginView ) {
+		if ( isWooPasswordless && isLoginView ) {
 			return (
 				<>
 					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />
@@ -472,7 +470,6 @@ export class Login extends Component {
 			! isJetpackMagicLinkSignUpFlow &&
 			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
 			! ( isWoo && ! isPartnerSignup ) &&
-			! isBlazePro &&
 			! isWooCoreProfilerFlow;
 
 		if ( shouldRenderFooter ) {
@@ -581,22 +578,11 @@ export class Login extends Component {
 	}
 
 	render() {
-		const {
-			locale,
-			translate,
-			isFromMigrationPlugin,
-			isGravPoweredClient,
-			isWoo,
-			isBlazePro,
-			isWhiteLogin,
-		} = this.props;
+		const { locale, translate, isFromMigrationPlugin, isGravPoweredClient, isWoo, isWhiteLogin } =
+			this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		const isSocialFirst =
-			config.isEnabled( 'login/social-first' ) &&
-			isWhiteLogin &&
-			! isGravPoweredClient &&
-			! isWoo &&
-			! isBlazePro;
+			config.isEnabled( 'login/social-first' ) && isWhiteLogin && ! isGravPoweredClient && ! isWoo;
 
 		return (
 			<div>
@@ -651,7 +637,6 @@ export default connect(
 			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ),
 			isWooPasswordless: getIsWooPasswordless( state ),
-			isBlazePro: getIsBlazePro( state ),
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),
