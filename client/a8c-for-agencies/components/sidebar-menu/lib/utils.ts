@@ -1,6 +1,3 @@
-import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
-import { A4A_SITES_LINK } from './constants';
-
 type MenuItemProps = {
 	id?: string;
 	icon: JSX.Element;
@@ -11,19 +8,18 @@ type MenuItemProps = {
 	isExternalLink?: boolean;
 	isSelected?: boolean;
 	trackEventProps?: { [ key: string ]: string };
+	secondaryLinks?: string[];
 };
 
 export const createItem = ( props: MenuItemProps, path: string ) => {
-	const linkMatches = props.link.startsWith( A4A_SITES_LINK )
-		? props.link === path
-		: itemLinkMatches( props.link, path );
-
-	// Use props.isSelected if defined, otherwise fallback to the linkMatches condition
-	const isSelected = typeof props.isSelected !== 'undefined' ? props.isSelected : linkMatches;
+	if ( typeof props.isSelected === 'undefined' ) {
+		// If isSelected is not provided, determine it based on the path
+		props.isSelected =
+			props.link === path || ( props.secondaryLinks && props.secondaryLinks.includes( path ) );
+	}
 
 	return {
 		...props,
 		trackEventName: 'calypso_a4a_sidebar_menu_click',
-		isSelected,
 	};
 };
