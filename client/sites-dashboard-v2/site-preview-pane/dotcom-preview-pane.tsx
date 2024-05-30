@@ -65,8 +65,8 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_HOSTING_CONFIG,
-				__( 'Hosting Config' ),
+				DOTCOM_GITHUB_DEPLOYMENTS,
+				__( 'Deployments' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
@@ -89,16 +89,16 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_GITHUB_DEPLOYMENTS,
-				__( 'GitHub Deployments' ),
+				DOTCOM_STAGING_SITE,
+				__( 'Staging Site' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_STAGING_SITE,
-				__( 'Staging Site' ),
+				DOTCOM_HOSTING_CONFIG,
+				__( 'Server Config' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,

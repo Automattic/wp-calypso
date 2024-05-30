@@ -51,13 +51,6 @@ const DevTools = () => {
 	const pluginsLink = `https://wordpress.com/plugins/${ encodeURIComponent( siteSlug ) }`;
 	const promoCards = [
 		{
-			title: translate( 'Hosting Configuration' ),
-			text: translate(
-				"Access your site's database and tailor your server settings to your specific needs."
-			),
-			supportContext: 'hosting-configuration',
-		},
-		{
 			title: translate( 'Monitoring' ),
 			text: translate(
 				"Proactively monitor your site's performance, including requests per minute and average response time."
@@ -82,6 +75,13 @@ const DevTools = () => {
 				'Automate updates from GitHub to streamline workflows, reduce errors, and enable faster deployments.'
 			),
 			supportContext: 'github-deployments',
+		},
+		{
+			title: translate( 'Server Configuration' ),
+			text: translate(
+				"Access your site's database and tailor your server settings to your specific needs."
+			),
+			supportContext: 'hosting-configuration',
 		},
 	];
 
