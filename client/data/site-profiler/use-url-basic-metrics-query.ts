@@ -31,7 +31,7 @@ export const useUrlBasicMetricsQuery = ( url?: string ) => {
 					path: '/site-profiler/metrics/basic',
 					apiNamespace: 'wpcom/v2',
 				},
-				{ url }
+				{ url, advanced: '1' }
 			),
 		select: mapScores,
 		meta: {
