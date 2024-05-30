@@ -124,7 +124,9 @@ export interface PerformanceMetricsItemQueryResponse {
 }
 
 export interface PerformanceMetricsDetailsQueryResponse {
-	type: 'table' | 'oppurtunity' | 'list';
+	type: 'table' | 'opportunity' | 'list';
+	headings?: Array< { key: string; label: string; valueType: string } >;
+	items?: Array< { [ key: string ]: string | number | { [ key: string ]: any } } >;
 }
 
 export interface BasicMetricsResult extends Omit< UrlBasicMetricsQueryResponse, 'basic' > {
