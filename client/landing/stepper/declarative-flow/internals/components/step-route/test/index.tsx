@@ -31,13 +31,13 @@ jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
 jest.mock( 'calypso/landing/stepper/hooks/use-selected-design' );
 jest.mock( 'calypso/lib/analytics/page-view' );
 
-const RegularStep: StepperStep = {
+const regularStep: StepperStep = {
 	slug: 'some-step-slug',
 	asyncComponent: jest.fn(), // For the purpose of this test, we don't need to render the using lazy strategy
 };
 
-const RequiresLoginStep: StepperStep = {
-	...RegularStep,
+const requiresLoginStep: StepperStep = {
+	...regularStep,
 	requiresLoggedInUser: true,
 };
 
@@ -45,9 +45,9 @@ const FakeStep: FC< StepProps > = () => {
 	return <div>Step Content</div>;
 };
 
-const FakeFlow: Flow = {
+const fakeFlow: Flow = {
 	name: 'some-flow',
-	useSteps: () => [ RegularStep ],
+	useSteps: () => [ regularStep ],
 	useStepNavigation: () => ( {
 		submit: () => {},
 	} ),
@@ -63,8 +63,8 @@ const fakeRenderStep = ( step: StepperStep ) => {
 	return (
 		<StepComponent
 			navigation={ navigationControls }
-			flow={ FakeFlow.name }
-			variantSlug={ FakeFlow.variantSlug }
+			flow={ fakeFlow.name }
+			variantSlug={ fakeFlow.variantSlug }
 			stepName={ step.slug }
 			data={ stepData }
 		/>
@@ -85,7 +85,7 @@ const render = ( { step, renderStep = fakeRenderStep }: RenderProps ) => {
 			<Suspense fallback={ null }>
 				<StepRoute
 					step={ step }
-					flow={ FakeFlow }
+					flow={ fakeFlow }
 					showWooLogo={ false }
 					renderStep={ renderStep }
 				/>
@@ -115,20 +115,20 @@ describe( 'StepRoute', () => {
 	} );
 
 	it( 'renders the step content', async () => {
-		const { getByText } = render( { step: RegularStep } );
+		const { getByText } = render( { step: regularStep } );
 
 		expect( getByText( 'Step Content' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the step content when renderStep() returns null', async () => {
-		const { queryByText } = render( { step: RegularStep, renderStep: () => null } );
+		const { queryByText } = render( { step: regularStep, renderStep: () => null } );
 
 		expect( queryByText( 'Step Content' ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'requiresLoggedInUser', () => {
 		it( 'redirects users to the login page if the step requires a logged in user', async () => {
-			render( { step: RequiresLoginStep } );
+			render( { step: requiresLoginStep } );
 
 			await waitFor( () =>
 				expect( window.location.assign ).toHaveBeenCalledWith(
@@ -143,7 +143,7 @@ describe( 'StepRoute', () => {
 
 		it( 'renders the step content if the user is logged in', async () => {
 			( isUserLoggedIn as jest.Mock ).mockReturnValue( true );
-			const { getByText } = render( { step: RequiresLoginStep } );
+			const { getByText } = render( { step: requiresLoginStep } );
 
 			await waitFor( () => expect( getByText( 'Step Content' ) ).toBeInTheDocument() );
 		} );
@@ -151,13 +151,13 @@ describe( 'StepRoute', () => {
 
 	describe( 'tracking', () => {
 		it( 'records a page view when the step is rendered', async () => {
-			render( { step: RegularStep } );
+			render( { step: regularStep } );
 
 			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug' );
 		} );
 
 		it( 'records recordStepStart when the step is rendered', async () => {
-			render( { step: RegularStep } );
+			render( { step: regularStep } );
 
 			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
 				intent: 'build',
@@ -168,7 +168,7 @@ describe( 'StepRoute', () => {
 
 		it( 'does not record start and page view when the login is required and the user is not logged in', async () => {
 			( isUserLoggedIn as jest.Mock ).mockReturnValue( false );
-			render( { step: RequiresLoginStep } );
+			render( { step: requiresLoginStep } );
 
 			expect( recordStepStart ).not.toHaveBeenCalled();
 			expect( recordPageView ).not.toHaveBeenCalled();
@@ -178,13 +178,13 @@ describe( 'StepRoute', () => {
 			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
 
-			render( { step: RegularStep } );
+			render( { step: regularStep } );
 
 			expect( recordStepStart ).not.toHaveBeenCalled();
 		} );
 
 		it( 'skips trackings when the renderStep returns null', () => {
-			render( { step: RegularStep, renderStep: () => null } );
+			render( { step: regularStep, renderStep: () => null } );
 
 			expect( recordStepStart ).not.toHaveBeenCalled();
 			expect( recordPageView ).not.toHaveBeenCalled();
