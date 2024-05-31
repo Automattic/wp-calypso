@@ -46,7 +46,7 @@ const getClientAPIParams = (): {
 	};
 };
 
-export const useQueryClient = () => {
+export const useAgencyQueryClient = () => {
 	const dispatch = useDispatch() as Dispatch< any >;
 	const hasFetched = useSelector( hasFetchedClient );
 
@@ -59,8 +59,8 @@ export const useQueryClient = () => {
 	}, [ hasFetched, dispatch, agencyId, clientId ] );
 };
 
-export default function QueryClient() {
-	useQueryClient();
+export default function QueryAgencyClient() {
+	useAgencyQueryClient();
 
 	return null;
 }

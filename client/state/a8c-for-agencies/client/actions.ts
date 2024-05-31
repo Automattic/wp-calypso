@@ -41,7 +41,7 @@ export function receiveClient( client: Client ): AgencyThunkAction {
 
 export function receiveClientError( error: APIError ) {
 	return (
-		dispatch: ( arg0: {
+		dispatch: ( action: {
 			type: string;
 			error?: { status: number; code: string; message: string };
 			notice?: NoticeActionOptions;
