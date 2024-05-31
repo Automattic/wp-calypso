@@ -3,13 +3,13 @@ import { Modal } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import privateSiteGraphic from 'calypso/assets/images/a8c-for-agencies/referral-step-background.png';
 
 import './style.scss';
 
 type GuideModalStep = {
 	title?: string;
 	description?: string;
+	preview?: React.ReactNode;
 };
 
 export type GuideModalProps = {
@@ -46,9 +46,7 @@ const GuideModal = ( { onClose, steps }: GuideModalProps ) => {
 	return (
 		<Modal onRequestClose={ onClose } className="guide-modal__wrapper" __experimentalHideHeader>
 			<div className="guide-modal__content">
-				<div className="guide-modal__header">
-					<img src={ privateSiteGraphic } alt="Refer Products" className="guide-modal__image" />
-				</div>
+				<div className="guide-modal__header">{ steps[ step ].preview }</div>
 				<div className="guide-modal__main">
 					<div className="guide-modal__body">
 						<div className="guide-modal__pagination-dots">
