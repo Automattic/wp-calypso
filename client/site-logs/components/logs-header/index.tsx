@@ -10,11 +10,11 @@ export function LogsHeader( { logType }: { logType: string } ) {
 	const options = [
 		{
 			value: 'php',
-			label: translate( 'PHP error logs' ),
+			label: translate( 'PHP error' ),
 		},
 		{
 			value: 'web',
-			label: translate( 'HTTP request logs' ),
+			label: translate( 'Web server' ),
 		},
 	];
 

@@ -18,7 +18,7 @@ export function phpErrorLogs( context: PageJSContext, next: () => void ) {
 export function httpRequestLogs( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<>
-			<PageViewTracker path="/site-logs/:site/web" title="HTTP Request Logs" />
+			<PageViewTracker path="/site-logs/:site/web" title="Web Server Logs" />
 			<LogsHeader logType="web" />
 			<LogsTab logType="web" />
 		</>
