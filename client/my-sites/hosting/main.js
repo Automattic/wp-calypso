@@ -186,14 +186,7 @@ const SidebarCards = ( { isBasicHostingDisabled } ) => {
 	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
 };
 
-const AllCards = ( {
-	hasStagingSitesFeature,
-	isAdvancedHostingDisabled,
-	isBasicHostingDisabled,
-	isWpcomStagingSite,
-	siteId,
-	siteSlug,
-} ) => {
+const AllCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, siteId, siteSlug } ) => {
 	const { data, isLoading } = useCodeDeploymentsQuery( siteId );
 	const isCodeDeploymentsUnused = ! isLoading && data && ! data.length;
 
@@ -215,22 +208,6 @@ const AllCards = ( {
 			content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
 			type: 'advanced',
 		},
-		! isWpcomStagingSite && hasStagingSitesFeature
-			? {
-					feature: 'staging-site',
-					content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
-					type: 'advanced',
-			  }
-			: null,
-		isWpcomStagingSite && siteId
-			? {
-					feature: 'staging-production-site',
-					content: (
-						<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
-					),
-					type: 'advanced',
-			  }
-			: null,
 		{
 			feature: 'web-server-settings',
 			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
@@ -250,15 +227,6 @@ const AllCards = ( {
 			feature: 'wp-admin',
 			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
 			type: 'basic',
-		},
-		{
-			feature: 'site-backup',
-			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
-			type: 'basic',
-		},
-		{
-			feature: 'support',
-			content: <SupportCard />,
 		},
 	].filter( ( card ) => card !== null );
 
@@ -373,11 +341,9 @@ const Hosting = ( props ) => {
 					<Layout className="hosting__layout">
 						{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) ? (
 							<AllCards
-								hasStagingSitesFeature={ hasStagingSitesFeature }
 								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
 								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
-								isWpcomStagingSite={ isWpcomStagingSite }
 								siteId={ siteId }
 								siteSlug={ siteSlug }
 							/>
@@ -433,10 +399,20 @@ const Hosting = ( props ) => {
 				/>
 			) }
 			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
-			<DocumentHead title={ translate( 'Hosting' ) } />
+			<DocumentHead
+				title={
+					isEnabled( 'layout/dotcom-nav-redesign-v2' )
+						? translate( 'Server Config' )
+						: translate( 'Hosting' )
+				}
+			/>
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Hosting Config' ) }
+				title={
+					isEnabled( 'layout/dotcom-nav-redesign-v2' )
+						? translate( 'Server Config' )
+						: translate( 'Hosting Config' )
+				}
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
 			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (
