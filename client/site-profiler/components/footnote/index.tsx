@@ -10,7 +10,7 @@ const StyledLayoutBlock = styled( LayoutBlock )`
 		gap: 90px;
 		justify-content: space-between;
 
-		@media ( max-width: $break-wide ) {
+		@media ( max-width: 980px ) {
 			flex-direction: column;
 			gap: 30px;
 		}
