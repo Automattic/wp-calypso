@@ -108,4 +108,21 @@
 		padding-bottom: 85%;
 		@include placeholder( --studio-gray-5 );
 	}
+
+	&__secondary-cta {
+		display: none;
+
+		@include break-medium {
+			display: block;
+			align-self: center;
+			margin-left: 28px;
+
+			a,
+			a:active,
+			a:focus,
+			a:visited {
+				color: var(--studio-gray-80);
+			}
+		}
+	}
 }

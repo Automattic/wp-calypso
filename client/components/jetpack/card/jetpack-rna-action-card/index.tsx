@@ -17,6 +17,8 @@ interface RnaActionCardProps {
 	cardImage?: string;
 	cardImageAlt?: string;
 	isPlaceholder?: boolean;
+	secondaryCtaURL?: string;
+	secondaryCtaLabel?: string;
 }
 
 const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
@@ -29,6 +31,8 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 	cardImage = DefaultImage,
 	cardImageAlt,
 	isPlaceholder,
+	secondaryCtaURL,
+	secondaryCtaLabel,
 } ) => {
 	const translate = useTranslate();
 	return (
@@ -59,6 +63,11 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 					>
 						{ ctaButtonLabel }
 					</Button>
+					{ secondaryCtaURL ? (
+						<div className="jetpack-rna-action-card__secondary-cta">
+							<a href={ secondaryCtaURL }>{ secondaryCtaLabel || translate( 'Learn more' ) }</a>
+						</div>
+					) : null }
 				</div>
 			</div>
 			<div className="jetpack-rna-action-card__footer">
