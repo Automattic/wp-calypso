@@ -311,17 +311,10 @@ export class EditorToolbarComponent {
 	async openSettings( target: EditorToolbarSettingsButton ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		let headerSettingsClassname;
-		if ( ! envVariables.TEST_ON_ATOMIC || ! envVariables.COBLOCKS_EDGE ) {
-			headerSettingsClassname = '.editor-header__settings';
-		} else {
-			headerSettingsClassname = '.edit-post-header__settings';
-		}
-
 		// To support i18n tests.
 		const translatedTargetName = await this.translateFromPage( target );
 		const button = editorParent
-			.locator( headerSettingsClassname )
+			.locator( '.editor-header__settings, .edit-post-header__settings' )
 			.getByLabel( translatedTargetName );
 
 		if ( await this.targetIsOpen( button ) ) {
