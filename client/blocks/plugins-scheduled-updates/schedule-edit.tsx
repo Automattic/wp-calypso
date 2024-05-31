@@ -13,6 +13,7 @@ import { info, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { scrollToTop } from '../plugin-scheduled-updates-common/utils';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -62,6 +63,7 @@ export const ScheduleEdit = ( props: Props ) => {
 		} );
 
 		setSyncError( '' );
+		scrollToTop();
 
 		return onNavBack && onNavBack();
 	};
