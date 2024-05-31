@@ -120,7 +120,7 @@ describe( 'StepRoute', () => {
 		expect( getByText( 'Step Content' ) ).toBeInTheDocument();
 	} );
 
-	it( 'doesnt the step content when render step returns null', async () => {
+	it( 'does not render the step content when renderStep() returns null', async () => {
 		const { queryByText } = render( { step: RegularStep, renderStep: () => null } );
 
 		expect( queryByText( 'Step Content' ) ).not.toBeInTheDocument();
