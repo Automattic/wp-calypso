@@ -47,12 +47,16 @@ const siteMigration: Flow = {
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
 		const { isOwner } = useIsSiteOwner();
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 
 		useEffect( () => {
-			if ( isOwner === false ) {
+			if ( isOwner === false && userIsLoggedIn ) {
 				window.location.assign( '/start' );
 			}
-		}, [ isOwner ] );
+		}, [ isOwner, userIsLoggedIn ] );
 
 		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
 			window.location.assign( '/start' );
