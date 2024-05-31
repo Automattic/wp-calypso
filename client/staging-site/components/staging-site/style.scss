@@ -14,11 +14,10 @@
 		}
 	}
 
-	.card-heading {
-		.gridicon.gridicons-science {
-			width: 24px;
-			height: 24px;
-			margin-bottom: 4px;
-		}
+	> svg.gridicon.gridicons-science {
+		width: 24px;
+		height: 24px;
+		margin-inline-end: 8px;
+		margin-bottom: 4px;
 	}
 }
