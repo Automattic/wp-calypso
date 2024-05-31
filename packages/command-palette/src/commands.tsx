@@ -1077,6 +1077,16 @@ export function useCommands() {
 				siteType: SiteType.JETPACK,
 				icon: pluginsIcon,
 			},
+			manageScheduledUpdates: {
+				name: 'manageScheduledUpdates',
+				label: __( 'Manage scheduled plugins updates', __i18n_text_domain__ ),
+				callback: commandNavigation( '/plugins/scheduled-updates/:site' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage scheduled updates', __i18n_text_domain__ ),
+				siteType: SiteType.ATOMIC,
+				capability: SiteCapabilities.ACTIVATE_PLUGINS,
+				icon: pluginsIcon,
+			},
 			changePlan: {
 				name: 'changePlan',
 				label: __( 'Change site plan', __i18n_text_domain__ ),
