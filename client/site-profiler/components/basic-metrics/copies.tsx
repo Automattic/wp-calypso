@@ -305,7 +305,7 @@ export function getCopies(
 			poor: {
 				diagnostic: translate(
 					'Your site’s TTFB is %(value)fms, longer than most sites. Aim for less than 600ms for better performance.',
-					{ args: { value: basicMetrics?.ttf?.value } }
+					{ args: { value: basicMetrics?.ttfb?.value } }
 				),
 				solution: translate(
 					'Connect with a Happiness Engineer to reduce TTFB and improve server response time'
