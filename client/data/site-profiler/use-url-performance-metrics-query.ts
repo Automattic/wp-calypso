@@ -8,7 +8,7 @@ function mapResult( response: UrlPerformanceMetricsQueryResponse ) {
 
 export const useUrlPerformanceMetricsQuery = ( url?: string, hash?: string ) => {
 	return useQuery( {
-		queryKey: [ 'url-', url, hash ],
+		queryKey: [ 'url', 'performance', url, hash ],
 		queryFn: () =>
 			wp.req.get(
 				{
