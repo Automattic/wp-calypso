@@ -51,6 +51,13 @@ const DevTools = () => {
 	const pluginsLink = `https://wordpress.com/plugins/${ encodeURIComponent( siteSlug ) }`;
 	const promoCards = [
 		{
+			title: translate( 'Deployments' ),
+			text: translate(
+				'Automate updates from GitHub to streamline workflows, reduce errors, and enable faster deployments.'
+			),
+			supportContext: 'github-deployments',
+		},
+		{
 			title: translate( 'Monitoring' ),
 			text: translate(
 				"Proactively monitor your site's performance, including requests per minute and average response time."
@@ -68,13 +75,6 @@ const DevTools = () => {
 				'Gain full visibility into server activity, helping you manage traffic and spot security issues early.'
 			),
 			supportContext: 'site-monitoring-logs',
-		},
-		{
-			title: translate( 'GitHub Deployments' ),
-			text: translate(
-				'Automate updates from GitHub to streamline workflows, reduce errors, and enable faster deployments.'
-			),
-			supportContext: 'github-deployments',
 		},
 		{
 			title: translate( 'Server Configuration' ),
