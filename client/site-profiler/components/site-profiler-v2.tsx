@@ -21,11 +21,13 @@ import { BasicMetrics } from './basic-metrics';
 import { DomainSection } from './domain-section';
 import { FootNote } from './footnote';
 import { GetReportForm } from './get-report-form';
+import { HealthSection } from './health-section';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
 import { MigrationBannerBig } from './migration-banner-big';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
+import { SecuritySection } from './security-section';
 import './styles-v2.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
@@ -40,6 +42,8 @@ export default function SiteProfilerV2( props: Props ) {
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const perfomanceMetricsRef = useRef( null );
+	const healthMetricsRef = useRef( null );
+	const securityMetricsRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -171,9 +175,26 @@ export default function SiteProfilerV2( props: Props ) {
 								/>
 
 								<PerformanceSection
-									url={ url }
+									url={ basicMetrics?.final_url }
 									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
 									performanceMetricsRef={ perfomanceMetricsRef }
+									setIsGetReportFormOpen={ setIsGetReportFormOpen }
+								/>
+
+								<HealthSection
+									url={ basicMetrics?.final_url }
+									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									healthMetricsRef={ healthMetricsRef }
+									setIsGetReportFormOpen={ setIsGetReportFormOpen }
+								/>
+
+								<SecuritySection
+									url={ basicMetrics?.final_url }
+									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									securityMetricsRef={ securityMetricsRef }
 									setIsGetReportFormOpen={ setIsGetReportFormOpen }
 								/>
 							</>

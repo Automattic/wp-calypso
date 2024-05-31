@@ -99,6 +99,20 @@ export interface UrlBasicMetricsQueryResponse {
 	token: string;
 }
 
+export interface UrlSecurityMetricsQueryResponse {
+	wpscan: {
+		report: {
+			audits: {
+				pass: Record< string, PerformanceMetricsItemQueryResponse >;
+				fail: Record< string, PerformanceMetricsItemQueryResponse >;
+				truncated: boolean;
+			};
+			ovc: number;
+		};
+		errors: Record< string, Array< string > >;
+	};
+}
+
 export interface UrlPerformanceMetricsQueryResponse {
 	webtestpage_org: {
 		report: {
@@ -106,6 +120,8 @@ export interface UrlPerformanceMetricsQueryResponse {
 				health: PerformanceMetricsDataQueryResponse;
 				performance: PerformanceMetricsDataQueryResponse;
 			};
+			performance: number;
+			overall_score: number;
 		};
 	};
 }
@@ -113,6 +129,7 @@ export interface UrlPerformanceMetricsQueryResponse {
 export interface PerformanceMetricsDataQueryResponse {
 	diagnostic: Record< string, PerformanceMetricsItemQueryResponse >;
 	pass: Record< string, PerformanceMetricsItemQueryResponse >;
+	truncated: boolean;
 }
 
 export interface PerformanceMetricsItemQueryResponse {
