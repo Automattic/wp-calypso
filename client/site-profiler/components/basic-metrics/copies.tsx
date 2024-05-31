@@ -320,52 +320,52 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s INP is %(value)fms, providing smooth interactions. Great job on maintaining quick responses!',
+					{ args: { value: basicMetrics?.inp?.value } }
 				),
 				solution: translate(
-					'Migrate to WordPress.com for tools to reduce CLS and stabilize your layout.”'
+					'Migrate to WordPress.com to sustain and further enhance your site’s interaction speed.'
 				),
-				cta: translate( 'Migrate for stability' ),
+				cta: translate( 'Improve INP speed' ),
 				url: migrateUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Excellent job maintaining low shifts!',
+					'Your site’s INP is %(value)fms, higher than average. Aim for less than 100ms for smoother interactions.',
 					{
 						args: {
-							value: basicMetrics?.cls?.value,
+							value: basicMetrics?.inp?.value,
 						},
 					}
 				),
 				solution: translate(
-					'Migrate to WordPress.com to maintain this stability and further enhance your site’s layout performance.'
+					'Migrate to WordPress.com for tools to optimize INP and interaction speed.'
 				),
-				cta: translate( 'Enhance stability' ),
+				cta: translate( 'Improve INP speed' ),
 				url: migrateUrl,
 			},
 		},
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Great job maintaining low shifts.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s INP is %(value)fms, providing smooth interactions. Excellent performance, keep it up!',
+					{ args: { value: basicMetrics?.inp?.value } }
 				),
 				solution: translate(
-					'Keep up the good work! Continue using best practices to maintain your site’s stability.'
+					'Keep refining interactive elements to sustain this high level of performance and user satisfaction.'
 				),
-				cta: translate( 'Explore Advanced Tips' ),
+				cta: translate( 'Refine interactions' ),
 				url: supportUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s INP is %(value)fms, higher than average. Aim for less than 100ms for smoother interactions.',
+					{ args: { value: basicMetrics?.inp?.value } }
 				),
 				solution: translate(
-					'Connect with a Happiness Engineer to reduce CLS and ensure a more stable layout for your users.'
+					'Connect with a Happiness Engineer to optimize INP and improve interaction speed.'
 				),
-				cta: translate( 'Improve layout stability' ),
+				cta: translate( 'Improve Interaction Speed' ),
 				url: supportUrl,
 			},
 		},
