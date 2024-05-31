@@ -716,6 +716,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'staging-site',
+		paths: [ '/staging-site' ],
+		module: 'calypso/staging-site',
+		group: 'sites',
+	},
+	{
 		name: 'a8c-for-agencies',
 		paths: [ '/' ],
 		module: 'calypso/a8c-for-agencies',
