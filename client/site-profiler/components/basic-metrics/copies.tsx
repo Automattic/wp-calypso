@@ -40,18 +40,18 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
+					'Your site’s CLS is %(value)f, ensuring a stable layout. Excellent job maintaining low shifts!',
 					{ args: { value: basicMetrics?.cls?.value } }
 				),
 				solution: translate(
-					'Migrate to WordPress.com for tools to reduce CLS and stabilize your layout.”'
+					'Migrate to WordPress.com to maintain this stability and further enhance your site’s layout performance.'
 				),
-				cta: translate( 'Migrate for stability' ),
+				cta: translate( 'Enhance stability' ),
 				url: migrateUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Excellent job maintaining low shifts!',
+					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
 					{
 						args: {
 							value: basicMetrics?.cls?.value,
@@ -59,9 +59,9 @@ export function getCopies(
 					}
 				),
 				solution: translate(
-					'Migrate to WordPress.com to maintain this stability and further enhance your site’s layout performance.'
+					'Migrate to WordPress.com for tools to reduce CLS and stabilize your layout.'
 				),
-				cta: translate( 'Enhance stability' ),
+				cta: translate( 'Migrate for stability' ),
 				url: migrateUrl,
 			},
 		},
