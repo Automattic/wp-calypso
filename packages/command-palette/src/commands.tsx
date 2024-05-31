@@ -72,6 +72,7 @@ export interface Command {
 	filterNotice?: string;
 	emptyListNotice?: string;
 	alwaysUseSiteSelector?: boolean;
+	adminInterface?: 'calypso' | 'wp-admin';
 }
 
 export function useCommands() {
@@ -391,6 +392,19 @@ export function useCommands() {
 						</g>
 					</svg>
 				),
+			},
+			openMyJetpack: {
+				name: 'openMyJetpack',
+				label: __( 'Open My Jetpack', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=my-jetpack' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open My Jetpack', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				siteType: SiteType.JETPACK,
+				adminInterface: 'wp-admin',
+				filterNotice: __( 'Only listing sites with My Jetpack available.' ),
+				emptyListNotice: __( 'No sites with My Jetpack available.' ),
+				icon: <JetpackLogo size={ 18 } />,
 			},
 			openJetpackSettings: {
 				name: 'openJetpackSettings',
