@@ -8,9 +8,9 @@ interface InsightTreeProps {
 
 export const InsightTree: React.FC< InsightTreeProps > = ( { data } ) => {
 	const translate = useTranslate();
-	const { chains } = data ?? {};
+	const chains: { [ key: string ]: any } = data?.chains ?? {};
 
-	return Object.keys( chains ).map( ( item, index ) => {
+	return Object.keys( chains ).map( ( item: string, index ) => {
 		const request = chains[ item ];
 		const children = chains[ item ][ 'children' ];
 

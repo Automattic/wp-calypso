@@ -25,7 +25,9 @@ export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryRe
 								</td>
 							) ) }
 						</tr>
-						{ item.subItems && <SubRows items={ item.subItems?.items } headings={ headings } /> }
+						{ item.subItems && typeof item.subItems === 'object' && (
+							<SubRows items={ item.subItems?.items } headings={ headings } />
+						) }
 					</>
 				) ) }
 			</tbody>
