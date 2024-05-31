@@ -77,6 +77,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 							/>
 							{ isBigSkyEligible && (
 								<DesignChoice
+									className="design-choices__try-big-sky"
 									title={ translate( 'Try Big Sky' ) }
 									description={ translate( 'The AI website builder for WordPress.' ) }
 									imageSrc={ hiBigSky }
