@@ -1,7 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, Gridicon } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
+import { Button } from '@automattic/components';
 import {
 	Icon,
 	blockMeta,
@@ -33,6 +31,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingOverview from '../common/hosting-overview';
 import HostingOverviewFeatures from '../common/hosting-overview-features';
+import ReferralToggle from '../common/referral-toggle';
 import { MarketplaceTypeContext } from '../context';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useProductAndPlans from '../hooks/use-product-and-plans';
@@ -50,8 +49,7 @@ function WpcomOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
-	const { marketplaceType, toggleMarketplaceType } = useContext( MarketplaceTypeContext );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const referralMode = marketplaceType === 'referral';
 
 	const {
@@ -139,17 +137,7 @@ function WpcomOverview() {
 
 					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
-						{ isAutomatedReferrals && (
-							<div className="a4a-marketplace__toggle-marketplace-type">
-								<ToggleControl
-									onChange={ toggleMarketplaceType }
-									checked={ marketplaceType === 'referral' }
-									id="a4a-marketplace__toggle-marketplace-type"
-									label={ translate( 'Refer products' ) }
-								/>
-								<Gridicon icon="info-outline" size={ 16 } />
-							</div>
-						) }
+						<ReferralToggle />
 						<ShoppingCart
 							showCart={ showCart }
 							setShowCart={ setShowCart }

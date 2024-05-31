@@ -20,6 +20,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingOverview from '../common/hosting-overview';
+import ReferralToggle from '../common/referral-toggle';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
@@ -86,8 +87,9 @@ function PressableOverview() {
 						] }
 					/>
 
-					<Actions>
+					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
+						<ReferralToggle />
 						<ShoppingCart
 							showCart={ showCart }
 							setShowCart={ setShowCart }

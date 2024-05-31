@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import { MarketplaceTypeContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import useExistingPressablePlan from '../hooks/use-existing-pressable-plan';
 import PlanSelectionDetails from './details';
@@ -16,7 +17,10 @@ type Props = {
 export default function PressableOverviewPlanSelection( { onAddToCart }: Props ) {
 	const dispatch = useDispatch();
 
-	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const referralMode = marketplaceType === 'referral';
+
+	const [ stateSelectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
 
 	const onSelectPlan = useCallback(
 		( plan: APIProductFamilyProduct | null ) => {
@@ -29,6 +33,8 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 		selectedSite: null,
 		productSearchQuery: '',
 	} );
+
+	const selectedPlan = referralMode ? pressablePlans[ 0 ] : stateSelectedPlan;
 
 	const { existingPlan, isReady: isExistingPlanFetched } = useExistingPressablePlan( {
 		plans: pressablePlans,
@@ -53,13 +59,15 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 
 	return (
 		<div className="pressable-overview-plan-selection">
-			<PlanSelectionFilter
-				selectedPlan={ selectedPlan }
-				plans={ pressablePlans }
-				onSelectPlan={ onSelectPlan }
-				existingPlan={ existingPlan }
-				isLoading={ ! isExistingPlanFetched }
-			/>
+			{ ! referralMode && (
+				<PlanSelectionFilter
+					selectedPlan={ selectedPlan }
+					plans={ pressablePlans }
+					onSelectPlan={ onSelectPlan }
+					existingPlan={ existingPlan }
+					isLoading={ ! isExistingPlanFetched }
+				/>
+			) }
 
 			<PlanSelectionDetails
 				selectedPlan={ selectedPlan }
