@@ -19,10 +19,10 @@ import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { BasicMetrics } from './basic-metrics';
 import { DomainSection } from './domain-section';
+import { FootNote } from './footnote';
 import { GetReportForm } from './get-report-form';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
-import { MigrationBanner } from './migration-banner';
 import { MigrationBannerBig } from './migration-banner-big';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
@@ -173,7 +173,7 @@ export default function SiteProfilerV2( props: Props ) {
 					<MigrationBannerBig />
 				</>
 			) }
-			{ ! showResultScreen && <MigrationBanner /> }
+			<FootNote />
 			<GetReportForm
 				url={ basicMetrics?.final_url }
 				token={ basicMetrics?.token }
