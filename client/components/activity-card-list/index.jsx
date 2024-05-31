@@ -168,6 +168,7 @@ class ActivityCardList extends Component {
 			availableActions,
 			onClickClone,
 			siteSlug,
+			siteHasFullActivityLog,
 		} = this.props;
 
 		const today = ( applySiteOffset ?? moment )();
@@ -189,9 +190,13 @@ class ActivityCardList extends Component {
 				<>
 					<EmptyContent
 						title={ translate( 'No matching events found.' ) }
-						line={ translate( 'Try adjusting your date range or activity type filters' ) }
-						action={ translate( 'Remove all filters' ) }
-						actionURL={ '/activity-log/' + siteSlug }
+						line={
+							siteHasFullActivityLog
+								? translate( 'Try adjusting your date range or activity type filters' )
+								: null
+						}
+						action={ siteHasFullActivityLog ? translate( 'Remove all filters' ) : null }
+						actionURL={ siteHasFullActivityLog ? '/activity-log/' + siteSlug : null }
 					/>
 				</>
 			);
