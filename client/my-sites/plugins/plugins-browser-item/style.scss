@@ -19,8 +19,8 @@
 	}
 
 	.plugin-icon {
-		width: 47px;
-		height: 47px;
+		width: 44px;
+		height: 44px;
 		margin-right: 0;
 
 		&.is-placeholder {
@@ -79,8 +79,8 @@
 
 	&.compact {
 		.plugin-icon {
-			width: 40px;
-			height: 40px;
+			width: 44px;
+			height: 44px;
 			margin-right: 16px;
 		}
 
@@ -90,12 +90,13 @@
 
 		.plugins-browser-item__title {
 			margin-top: -3px;
-			font-size: $font-body-small;
+			font-size: $font-body;
 			margin-left: 0;
 		}
 
 		.plugins-browser-item__description {
-			font-size: $font-body-extra-small;
+			display: block;
+			font-size: $font-body-small;
 			margin: 0;
 			text-overflow: ellipsis;
 			white-space: nowrap;
