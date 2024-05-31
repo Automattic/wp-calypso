@@ -117,7 +117,13 @@ describe( 'StepRoute', () => {
 	it( 'renders the step content', async () => {
 		const { getByText } = render( { step: RegularStep } );
 
-		await waitFor( () => expect( getByText( 'Step Content' ) ).toBeInTheDocument() );
+		expect( getByText( 'Step Content' ) ).toBeInTheDocument();
+	} );
+
+	it( 'doesnt the step content when render step returns null', async () => {
+		const { queryByText } = render( { step: RegularStep, renderStep: () => null } );
+
+		expect( queryByText( 'Step Content' ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'requiresLoggedInUser', () => {
