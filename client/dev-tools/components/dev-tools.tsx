@@ -38,13 +38,17 @@ const DevTools = () => {
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
-	// The ref is required to persist the value of redirect_to after renders
-	const redirectUrl = useRef( searchParams.get( 'redirect_to' ) ?? `/hosting-config/${ siteId }` );
 	const { siteSlug, isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
 		siteSlug: getSiteSlug( state, siteId ) || '',
 		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
 		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
 	} ) );
+	// The ref is required to persist the value of redirect_to after renders
+	const redirectUrl = useRef(
+		searchParams.get( 'redirect_to' ) ?? hasSftpFeature
+			? `/hosting-config/${ siteId }`
+			: `/overview/${ siteId }`
+	);
 	const hasEnTranslation = useHasEnTranslation();
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
@@ -98,7 +102,7 @@ const DevTools = () => {
 		page( `/setup/transferring-hosted-site?${ params }` );
 	};
 
-	if ( isSiteAtomic && hasSftpFeature ) {
+	if ( isSiteAtomic ) {
 		page.replace( redirectUrl.current );
 		return;
 	}
