@@ -33,7 +33,7 @@ export const HealthSection: React.FC< HealthSectionProps > = ( props ) => {
 	const title = useMemo( () => {
 		if ( ! isHealthGood && ! isWPcom ) {
 			return translate(
-				"Your site's health scores need attention to prevent {{poor}}low performance{{/poor}}. Improve with WordPress.com's tools for better performance.”",
+				"Your site's health scores need attention to prevent {{poor}}low performance{{/poor}}. Improve with WordPress.com's tools for better performance.",
 				getTitleTranslateOptions()
 			);
 		}
