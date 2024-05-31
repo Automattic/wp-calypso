@@ -187,7 +187,7 @@ export const SiteLogsToolbar = ( {
 				{ logType === 'web' && (
 					<>
 						<div className="site-logs-toolbar-filter-element">
-							<label htmlFor="site-logs-request-type">{ translate( 'Request Type' ) }</label>
+							<label htmlFor="site-logs-request-type">{ translate( 'Request type' ) }</label>
 							<SelectDropdown
 								id="site-logs-request-type"
 								className="site-logs-toolbar-filter-request-type"

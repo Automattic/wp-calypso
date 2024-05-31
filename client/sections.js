@@ -705,8 +705,14 @@ const sections = [
 	},
 	{
 		name: 'site-monitoring',
-		paths: [ '/site-monitoring', '/site-logs' ],
+		paths: [ '/site-monitoring' ],
 		module: 'calypso/site-monitoring',
+		group: 'sites',
+	},
+	{
+		name: 'site-logs',
+		paths: [ '/site-logs' ],
+		module: 'calypso/site-logs',
 		group: 'sites',
 	},
 	{
