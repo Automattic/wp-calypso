@@ -152,52 +152,52 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s FCP is %(value)fs, providing a fast initial load. Great job on maintaining quick content display!',
+					{ args: { value: basicMetrics?.fcp?.value } }
 				),
 				solution: translate(
-					'Migrate to WordPress.com for tools to reduce CLS and stabilize your layout.”'
+					'Migrate to WordPress.com to sustain this speed and further enhance your initial content load times.'
 				),
-				cta: translate( 'Migrate for stability' ),
+				cta: translate( 'Improve FCP speed' ),
 				url: migrateUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Excellent job maintaining low shifts!',
+					'Your site’s FCP is %(value)fs, slower than average. Aim for under 2s to improve user experience.',
 					{
 						args: {
-							value: basicMetrics?.cls?.value,
+							value: basicMetrics?.fcp?.value,
 						},
 					}
 				),
 				solution: translate(
-					'Migrate to WordPress.com to maintain this stability and further enhance your site’s layout performance.'
+					'Migrate to WordPress.com for tools to reduce FCP and speed up content load.'
 				),
-				cta: translate( 'Enhance stability' ),
+				cta: translate( 'Boost Content Load' ),
 				url: migrateUrl,
 			},
 		},
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Great job maintaining low shifts.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s FCP is %(value)fs, providing a fast initial load. Excellent job maintaining quick content delivery!',
+					{ args: { value: basicMetrics?.fcp?.value } }
 				),
 				solution: translate(
-					'Keep up the good work! Continue using best practices to maintain your site’s stability.'
+					'Continue optimizing your content delivery to consistently maintain this fast load time and performance.'
 				),
-				cta: translate( 'Explore Advanced Tips' ),
+				cta: translate( 'Maintain fast responses' ),
 				url: supportUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s FCP is %(value)fs, slower than average. Aim for under 2s to improve user experience.',
+					{ args: { value: basicMetrics?.fcp?.value } }
 				),
 				solution: translate(
-					'Connect with a Happiness Engineer to reduce CLS and ensure a more stable layout for your users.'
+					'Connect with a Happiness Engineer to reduce FCP and speed up initial content load.'
 				),
-				cta: translate( 'Improve layout stability' ),
+				cta: translate( 'Speed up content load' ),
 				url: supportUrl,
 			},
 		},
