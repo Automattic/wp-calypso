@@ -126,6 +126,10 @@
 		@include break-large {
 			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
+
+		@include break-wide {
+			width: calc(33% - 10px); // 3 column grid with 20px gutter
+		}
 	}
 
 	&.incompatible {
