@@ -7,11 +7,6 @@ import { addQueryArgs } from '@wordpress/url';
 import React, { FC, Suspense } from 'react';
 import { MemoryRouter } from 'react-router';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
-import {
-	Flow,
-	StepperStep,
-	StepProps,
-} from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -22,7 +17,12 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StepRoute from '../';
-import { NavigationControls } from '../../../types';
+import type { NavigationControls } from '../../../types';
+import type {
+	Flow,
+	StepperStep,
+	StepProps,
+} from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 jest.mock( 'calypso/signup/storageUtils' );
 jest.mock( 'calypso/state/current-user/selectors' );
