@@ -1,4 +1,4 @@
-import { ACCOUNT_FLOW, HOSTING_LP_FLOW } from '@automattic/onboarding';
+import { ACCOUNT_FLOW, HOSTING_LP_FLOW, ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -35,6 +35,7 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 			break;
 		case ACCOUNT_FLOW:
 		case HOSTING_LP_FLOW:
+		case ENTREPRENEUR_FLOW:
 			steps = [ { title: __( 'Creating your account' ) } ];
 			break;
 		case 'setup-site':
