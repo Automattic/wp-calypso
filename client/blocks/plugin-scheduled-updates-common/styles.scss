@@ -3,6 +3,12 @@
 
 $brand-display: "SF Pro Display", sans-serif;
 
+.plugins-update-manager:not(.plugins-update-manager-multisite) {
+	.empty-state {
+		max-width: 80%;
+	}
+}
+
 .plugins-update-manager,
 .plugins-update-manager-multisite {
 	@media screen and (max-width: $break-small) {
@@ -72,6 +78,11 @@ $brand-display: "SF Pro Display", sans-serif;
 		p {
 			text-align: center;
 		}
+
+		button {
+			display: flex;
+			margin: auto;
+		}
 	}
 
 	&-table {
@@ -98,8 +109,9 @@ $brand-display: "SF Pro Display", sans-serif;
 			padding: 0.5rem 0.125rem;
 			vertical-align: middle;
 
-			&.last-update {
-				min-width: 200px;
+			&.last-update,
+			&.next-update {
+				min-width: 210px;
 			}
 
 			.badge-component {
@@ -116,17 +128,23 @@ $brand-display: "SF Pro Display", sans-serif;
 			}
 
 			&.name {
-				width: 300px;
+				min-width: 180px;
 			}
 
 			&.sites {
-				width: 80px;
+				min-width: 80px;
 			}
 
 			&.menu {
 				text-align: center;
 			}
 		}
+
+	}
+
+	.plugins-update-manager-multisite-table-container,
+	.schedule-list--card__single-site .components-card__body {
+		overflow-x: auto;
 	}
 
 	.schedule-form {

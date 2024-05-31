@@ -1,8 +1,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { useMutationState } from '@tanstack/react-query';
-import { __experimentalText as Text, Button, Icon } from '@wordpress/components';
-import { info } from '@wordpress/icons';
+import {
+	__experimentalText as Text,
+	Button,
+	Icon,
+	Card,
+	CardHeader,
+	CardBody,
+	CardFooter,
+} from '@wordpress/components';
+import { info, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { Banner } from 'calypso/components/banner';
@@ -75,26 +83,41 @@ export const ScheduleCreate = ( props: Props ) => {
 					} }
 				/>
 			) }
-
-			<ScheduleForm onSyncSuccess={ onSyncSuccess } onSyncError={ setSyncError } />
-
-			<Button
-				form="schedule"
-				type="submit"
-				variant={ canCreateSchedules ? 'primary' : 'secondary' }
-				disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
-				isBusy={ isBusy }
-				className="schedule-form-button"
-			>
-				{ translate( 'Create' ) }
-			</Button>
-			{ ( ( ! canCreateSchedules && eligibilityCheckErrors?.length ) || syncError ) && (
-				<Text as="p" className="validation-msg">
-					<Icon className="icon-info" icon={ info } size={ 16 } />
-					{ ( eligibilityCheckErrors?.length && eligibilityCheckErrors[ 0 ].message ) || '' }
-					{ syncError }
-				</Text>
-			) }
+			<Card className="plugins-update-manager">
+				<CardHeader size="extraSmall">
+					<div className="ch-placeholder">
+						{ onNavBack && (
+							<Button icon={ arrowLeft } onClick={ onNavBack }>
+								{ translate( 'Back' ) }
+							</Button>
+						) }
+					</div>
+					<Text>{ translate( 'New Schedule' ) }</Text>
+					<div className="ch-placeholder"></div>
+				</CardHeader>
+				<CardBody>
+					<ScheduleForm onSyncSuccess={ onSyncSuccess } onSyncError={ setSyncError } />
+				</CardBody>
+				<CardFooter>
+					<Button
+						form="schedule"
+						type="submit"
+						variant={ canCreateSchedules ? 'primary' : 'secondary' }
+						disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
+						isBusy={ isBusy }
+						className="schedule-form-button"
+					>
+						{ translate( 'Create' ) }
+					</Button>
+					{ ( ( ! canCreateSchedules && eligibilityCheckErrors?.length ) || syncError ) && (
+						<Text as="p" className="validation-msg">
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+							{ ( eligibilityCheckErrors?.length && eligibilityCheckErrors[ 0 ].message ) || '' }
+							{ syncError }
+						</Text>
+					) }
+				</CardFooter>
+			</Card>
 		</>
 	);
 };
