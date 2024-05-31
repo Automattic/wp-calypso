@@ -126,6 +126,7 @@ export interface UrlPerformanceMetricsQueryResponse {
 			performance: number;
 			overall_score: number;
 		};
+		status: string;
 	};
 }
 
