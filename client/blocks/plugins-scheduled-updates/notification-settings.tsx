@@ -82,7 +82,7 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 	}, [ formValues, updateNotificationSettings ] );
 
 	return (
-		<Card>
+		<Card className="plugins-update-manager">
 			<CardHeader size="extraSmall">
 				<div className="ch-placeholder">
 					{ onNavBack && (
