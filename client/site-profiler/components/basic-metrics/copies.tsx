@@ -208,52 +208,52 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s LCP is %(value)fs, loading main content quickly. Well done on maintaining fast load times!',
+					{ args: { value: basicMetrics?.lcp?.value } }
 				),
 				solution: translate(
-					'Migrate to WordPress.com for tools to reduce CLS and stabilize your layout.”'
+					'Migrate to WordPress.com to achieve even faster LCP and enhance your site’s overall performance.'
 				),
-				cta: translate( 'Migrate for stability' ),
+				cta: translate( 'Optimize main load' ),
 				url: migrateUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Excellent job maintaining low shifts!',
+					'Your site’s LCP is %(value)fs, slower than typical sites. Aim for under 2.5s for better performance.',
 					{
 						args: {
-							value: basicMetrics?.cls?.value,
+							value: basicMetrics?.lcp?.value,
 						},
 					}
 				),
 				solution: translate(
-					'Migrate to WordPress.com to maintain this stability and further enhance your site’s layout performance.'
+					'Migrate to WordPress.com for optimized LCP and faster main content load.'
 				),
-				cta: translate( 'Enhance stability' ),
+				cta: translate( 'Improve Main Load' ),
 				url: migrateUrl,
 			},
 		},
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Great job maintaining low shifts.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s LCP is %(value)fs, loading main content quickly. Excellent job maintaining fast content display!',
+					{ args: { value: basicMetrics?.lcp?.value } }
 				),
 				solution: translate(
-					'Keep up the good work! Continue using best practices to maintain your site’s stability.'
+					'Keep optimizing images and elements to consistently maintain swift load times and performance.'
 				),
-				cta: translate( 'Explore Advanced Tips' ),
+				cta: translate( 'Optimize further' ),
 				url: supportUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s LCP is %(value)fs, slower than typical sites. Aim for under 2.5s for better performance.',
+					{ args: { value: basicMetrics?.lcp?.value } }
 				),
 				solution: translate(
-					'Connect with a Happiness Engineer to reduce CLS and ensure a more stable layout for your users.'
+					'Connect with a Happiness Engineer to optimize LCP and enhance main content load speed.'
 				),
-				cta: translate( 'Improve layout stability' ),
+				cta: translate( 'Boost main content load' ),
 				url: supportUrl,
 			},
 		},
