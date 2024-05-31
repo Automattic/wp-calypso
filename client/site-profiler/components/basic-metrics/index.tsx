@@ -55,7 +55,7 @@ export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetric
 					</div>
 				</div>
 				<h3>{ isPositiveScore ? copies.good.diagnostic : copies.poor.diagnostic }</h3>
-				<h4>{ isPositiveScore ? copies.good.diagnostic : copies.poor.diagnostic }</h4>
+				<h4>{ isPositiveScore ? copies.good.solution : copies.poor.solution }</h4>
 				<a href={ isPositiveScore ? copies.good.url : copies.poor.url }>
 					{ isPositiveScore ? copies.good.cta : copies.poor.cta }
 					<SubtitleIcon icon="chevron-right" size={ 18 } />
