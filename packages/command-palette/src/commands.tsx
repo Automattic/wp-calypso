@@ -27,6 +27,7 @@ import {
 	seen as seenIcon,
 	replace as switchIcon,
 	settings as settingsIcon,
+	starHalf as ratingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
 } from '@wordpress/icons';
@@ -981,6 +982,20 @@ export function useCommands() {
 				filterP2: true,
 				filterSelfHosted: true,
 				icon: crowdsignalIcon,
+			},
+			viewPostRatings: {
+				name: 'viewPostRatings',
+				label: __( 'View post ratings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x( 'feedback', 'Keyword for the View post ratings command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=ratings' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open Crowdsignal', __i18n_text_domain__ ),
+				capability: SiteCapabilities.EDIT_POSTS,
+				filterP2: true,
+				filterSelfHosted: true,
+				icon: ratingsIcon,
 			},
 			manageThemes: {
 				name: 'manageThemes',
