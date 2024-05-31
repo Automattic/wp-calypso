@@ -1,5 +1,4 @@
-import { UrlData } from 'calypso/blocks/import/types';
-import { BasicMetricsScored, Metrics, PerformanceCategories, Scores } from './types';
+import { Metrics, PerformanceCategories, PerformanceReport, Scores } from './types';
 
 export const BASIC_METRICS_UNITS: Record< Metrics, string > = {
 	cls: '',
@@ -38,19 +37,17 @@ export function getScore( metric: Metrics, value: number ): Scores {
 }
 
 /**
- * Get the overall score of the site based on the scores of the basic metrics.
- * It will return poor if more then 2 metrics are poor, good otherwise.
- * Defaults to good if no metrics are provided.
+ * Get the overall score of the site based on the advanced performance
+ * report. If the performance is greater than 0.9, the score is good,
  * @param metrics A record of metrics with their scores
  * @returns The overall score of the site
  */
-function getOveralScore( metrics?: BasicMetricsScored ): Scores {
+function getOveralScore( metrics?: PerformanceReport ): Scores {
 	if ( ! metrics ) {
 		return 'good';
 	}
 
-	const poorMetrics = Object.values( metrics ).filter( ( metric ) => metric?.score === 'poor' );
-	return poorMetrics.length > 2 ? 'poor' : 'good';
+	return metrics.performance >= 0.9 ? 'good' : 'poor';
 }
 
 /**
@@ -62,18 +59,15 @@ function isScoreGood( score: Scores ): boolean {
 	return score === 'good';
 }
 
-export function getPerformanceCategory(
-	metrics?: BasicMetricsScored,
-	urlData?: UrlData
-): PerformanceCategories {
+export function getPerformanceCategory( metrics?: PerformanceReport ): PerformanceCategories {
 	const overallScore = getOveralScore( metrics );
-	if ( isScoreGood( overallScore ) && urlData?.platform_data?.is_wpcom ) {
+	if ( isScoreGood( overallScore ) && metrics?.is_wpcom ) {
 		return 'wpcom-high-performer';
 	}
-	if ( isScoreGood( overallScore ) && ! urlData?.platform_data?.is_wpcom ) {
+	if ( isScoreGood( overallScore ) && ! metrics?.is_wpcom ) {
 		return 'non-wpcom-high-performer';
 	}
-	if ( ! isScoreGood( overallScore ) && urlData?.platform_data?.is_wpcom ) {
+	if ( ! isScoreGood( overallScore ) && metrics?.is_wpcom ) {
 		return 'wpcom-low-performer';
 	}
 	return 'non-wpcom-low-performer';

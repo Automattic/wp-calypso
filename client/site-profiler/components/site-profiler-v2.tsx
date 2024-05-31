@@ -107,12 +107,12 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 
-	const performanceCategory = getPerformanceCategory( basicMetrics?.basic, urlData );
-
 	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery(
 		basicMetrics?.final_url,
 		basicMetrics?.token
 	);
+
+	const performanceCategory = getPerformanceCategory( performanceMetrics );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
@@ -120,7 +120,7 @@ export default function SiteProfilerV2( props: Props ) {
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
 
-	const isWpCom = !! urlData?.platform_data?.is_wpcom;
+	const isWpCom = !! performanceMetrics?.is_wpcom;
 
 	return (
 		<div id="site-profiler-v2">
@@ -152,7 +152,7 @@ export default function SiteProfilerV2( props: Props ) {
 							<ResultsHeader
 								domain={ domain }
 								performanceCategory={ performanceCategory }
-								urlData={ urlData }
+								isWpCom={ isWpCom }
 								onGetReport={ () => setIsGetReportFormOpen( true ) }
 							/>
 						) }
