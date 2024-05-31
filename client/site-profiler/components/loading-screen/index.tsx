@@ -23,21 +23,21 @@ export const LoadingScreen = () => {
 
 	const [ progress, setProgress ] = useState( 0 );
 
-	const interval = setInterval( () => {
-		setProgress( progress + 20 );
-	}, 1000 );
-
 	useEffect( () => {
-		if ( progress >= 100 ) {
-			clearInterval( interval );
-		}
-	}, [ progress, interval ] );
+		setTimeout( () => {
+			if ( progress >= 100 ) {
+				setProgress( 0 );
+			} else {
+				setProgress( progress + 10 );
+			}
+		}, 1000 );
+	}, [ progress ] );
 
 	return (
 		<LayoutBlock className="landing-page-header-block" width="medium">
 			<div className="landing-page-loading-screen">
-				<h2>{ progressHeadings[ Math.floor( ( progress / 100 ) * progressHeadings.length ) ] }</h2>
-				<Progress value={ progress } total={ 100 } />
+				<h2>{ progressHeadings[ Math.floor( ( progress / 101 ) * progressHeadings.length ) ] }</h2>
+				<Progress value={ progress } total={ 100 } canGoBackwards />
 			</div>
 		</LayoutBlock>
 	);
