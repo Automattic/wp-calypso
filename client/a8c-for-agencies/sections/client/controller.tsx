@@ -2,6 +2,7 @@ import { type Callback } from '@automattic/calypso-router';
 import SidebarPlaceholder from 'calypso/a8c-for-agencies/components/sidebar-placeholder';
 import ClientSidebar from '../../components/sidebar-menu/client';
 import ClientLanding from './client-landing';
+import SubscriptionsList from './primary/subscriptions-list';
 
 export const clientContext: Callback = ( context, next ) => {
 	context.secondary = <ClientSidebar path={ context.path } />;
@@ -15,7 +16,7 @@ export const clientLandingContext: Callback = ( context, next ) => {
 };
 
 export const clientSubscriptionsContext: Callback = ( context, next ) => {
-	context.primary = <div>Subscriptions</div>;
+	context.primary = <SubscriptionsList />;
 	context.secondary = <ClientSidebar path={ context.path } />;
 	next();
 };

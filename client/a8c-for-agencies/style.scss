@@ -547,8 +547,16 @@ html {
 		color: var(--color-accent-80);
 	}
 
-	.dataviews-view-table tr td:first-child,
-	.dataviews-view-table tr th:first-child {
-		padding-inline-start: 16px;
+	.dataviews-view-table tr {
+		td,
+		th {
+			&:first-child {
+				padding-inline-start: 16px;
+			}
+			&:last-child {
+				text-align: right;
+				padding-inline-end: 16px;
+			}
+		}
 	}
 }
