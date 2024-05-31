@@ -94,7 +94,10 @@ export type BasicMetricsScoredList = [ Metrics, { value: number; score: Scores }
 
 export interface UrlBasicMetricsQueryResponse {
 	final_url: string;
-	basic: BasicMetrics;
+	basic: {
+		data: BasicMetrics;
+		success: boolean;
+	};
 	advanced: Record< string, string >;
 	token: string;
 }

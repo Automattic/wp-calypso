@@ -94,7 +94,8 @@ export default function SiteProfilerV2( props: Props ) {
 		isFetching: isFetchingBasicMetrics,
 	} = useUrlBasicMetricsQuery( url );
 
-	const showBasicMetrics = basicMetrics && ! isFetchingBasicMetrics && ! errorBasicMetrics;
+	const showBasicMetrics =
+		basicMetrics && basicMetrics.success && ! isFetchingBasicMetrics && ! errorBasicMetrics;
 
 	// TODO: Remove this debug statement once we have a better error handling mechanism
 	if ( errorBasicMetrics ) {
@@ -108,7 +109,10 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const performanceCategory = getPerformanceCategory( basicMetrics?.basic, urlData );
 
-	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery( url, basicMetrics?.token );
+	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery(
+		basicMetrics?.final_url,
+		basicMetrics?.token
+	);
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
