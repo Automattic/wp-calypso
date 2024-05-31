@@ -9,8 +9,16 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import './styles.scss';
 
 interface Props {
+	flowName: string;
 	stepName: string;
 	goToNextStep: () => void;
+	submitSignupStep: ( step: any, deps: any ) => void;
+	signupDependencies: Record<
+		string,
+		{
+			segmentationSurveyAnswers: Record< string, string[] >;
+		}
+	>;
 }
 
 const SURVEY_KEY = 'guided-onboarding-flow';
@@ -28,6 +36,8 @@ const QUESTION_CONFIGURATION: QuestionConfiguration = {
 };
 
 export default function InitialIntentStep( props: Props ) {
+	const { submitSignupStep, stepName, signupDependencies, flowName } = props;
+	const currentAnswers = signupDependencies.segmentationSurveyAnswers || {};
 	const translate = useTranslate();
 	const headerText = translate( 'What brings you to WordPress.com?' );
 	const subHeaderText = translate(
@@ -41,6 +51,50 @@ export default function InitialIntentStep( props: Props ) {
 		recordStartEvent();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
+
+	const getSegment = ( _answers: Record< string, string > ) => {
+		if ( _answers[ 'what-brings-you-to-wordpress' ]?.includes( 'migrate-or-import-site' ) ) {
+			return 'migrate';
+		}
+
+		if ( _answers[ 'what-brings-you-to-wordpress' ]?.includes( 'client' ) ) {
+			return 'developer';
+		}
+
+		if ( _answers[ 'what-brings-you-to-wordpress' ]?.includes( 'myself-business-or-friend' ) ) {
+			if ( _answers[ 'what-are-your-goals' ]?.includes( 'skip' ) ) {
+				return 'unknown';
+			}
+
+			if ( _answers[ 'what-are-your-goals' ]?.includes( 'difm' ) ) {
+				return 'difm';
+			}
+
+			if ( _answers[ 'what-are-your-goals' ]?.includes( 'educational-or-nonprofit' ) ) {
+				return 'nonprofit';
+			}
+
+			if ( _answers[ 'what-are-your-goals' ]?.includes( 'newsletter' ) ) {
+				return 'newsletter';
+			}
+
+			if (
+				_answers[ 'what-are-your-goals' ]?.includes( 'sell' ) &&
+				! _answers[ 'what-are-your-goals' ]?.includes( 'difm' )
+			) {
+				return 'merchant';
+			}
+
+			if (
+				! _answers[ 'what-are-your-goals' ]?.includes( 'sell' ) &&
+				! _answers[ 'what-are-your-goals' ]?.includes( 'difm' )
+			) {
+				return 'consumer-or-business';
+			}
+		}
+
+		return 'unknown';
+	};
 
 	const getRedirectForAnswers = ( _answerKeys: string[] ): string => {
 		if ( _answerKeys.includes( 'migrate-or-import-site' ) ) {
@@ -78,6 +132,18 @@ export default function InitialIntentStep( props: Props ) {
 
 	const handleNext = ( _questionKey: string, _answerKeys: string[], isLastQuestion?: boolean ) => {
 		const redirect = getRedirectForAnswers( _answerKeys );
+
+		const newAnswers = { [ _questionKey ]: _answerKeys };
+
+		const updatedAnswers = { ...currentAnswers, ...newAnswers };
+
+		submitSignupStep(
+			{ flowName, stepName },
+			{
+				segmentationSurveyAnswers: updatedAnswers,
+				onboardingSegment: getSegment( updatedAnswers ),
+			}
+		);
 
 		if ( redirect ) {
 			recordCompleteEvent();
