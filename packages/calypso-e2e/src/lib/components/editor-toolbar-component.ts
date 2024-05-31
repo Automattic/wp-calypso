@@ -312,7 +312,7 @@ export class EditorToolbarComponent {
 		const editorParent = await this.editor.parent();
 
 		let headerSettingsClassname;
-		if ( ! envVariables.TEST_ON_ATOMIC ) {
+		if ( ! envVariables.TEST_ON_ATOMIC || ! envVariables.COBLOCKS_EDGE ) {
 			headerSettingsClassname = '.editor-header__settings';
 		} else {
 			headerSettingsClassname = '.edit-post-header__settings';
