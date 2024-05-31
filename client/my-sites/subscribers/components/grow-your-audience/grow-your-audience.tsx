@@ -129,7 +129,7 @@ const GrowYourAudience = () => {
 							title={ translate( 'Start earning' ) }
 							tracksEventCta="earn"
 							ctaLabel={ translate( 'Learn more' ) }
-							url={ `https://wordpress.com/earn/${ selectedSiteSlug ?? '' }` }
+							url={ `/monetize/${ selectedSiteSlug ?? '' }` }
 						/>
 						<GrowYourAudienceCard
 							icon={ people }
