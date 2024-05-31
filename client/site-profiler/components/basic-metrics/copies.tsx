@@ -264,52 +264,52 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s TTFB is %(value)fms, offering fast server response. Excellent job on maintaining quick response!',
+					{ args: { value: basicMetrics?.ttfb?.value } }
 				),
 				solution: translate(
-					'Migrate to WordPress.com for tools to reduce CLS and stabilize your layout.”'
+					'Migrate to WordPress.com to sustain this speed and further enhance your server response times.'
 				),
-				cta: translate( 'Migrate for stability' ),
+				cta: translate( 'Enhance server speed' ),
 				url: migrateUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Excellent job maintaining low shifts!',
+					'Your site’s TTFB is %(value)fms, longer than most sites. Aim for less than 600ms for better performance.',
 					{
 						args: {
-							value: basicMetrics?.cls?.value,
+							value: basicMetrics?.ttfb?.value,
 						},
 					}
 				),
 				solution: translate(
-					'Migrate to WordPress.com to maintain this stability and further enhance your site’s layout performance.'
+					'Migrate to WordPress.com for faster TTFB and improved server response.'
 				),
-				cta: translate( 'Enhance stability' ),
+				cta: translate( 'Enhance server speed' ),
 				url: migrateUrl,
 			},
 		},
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Great job maintaining low shifts.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s TTFB is %(value)fms, offering fast server response. Excellent job on maintaining quick server performance!',
+					{ args: { value: basicMetrics?.ttfb?.value } }
 				),
 				solution: translate(
-					'Keep up the good work! Continue using best practices to maintain your site’s stability.'
+					'Continue monitoring server performance to consistently maintain these quick response times and efficiency.'
 				),
-				cta: translate( 'Explore Advanced Tips' ),
+				cta: translate( 'Monitor performance' ),
 				url: supportUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					'Your site’s TTFB is %(value)fms, longer than most sites. Aim for less than 600ms for better performance.',
+					{ args: { value: basicMetrics?.ttf?.value } }
 				),
 				solution: translate(
-					'Connect with a Happiness Engineer to reduce CLS and ensure a more stable layout for your users.'
+					'Connect with a Happiness Engineer to reduce TTFB and improve server response time'
 				),
-				cta: translate( 'Improve layout stability' ),
+				cta: translate( 'Enhance Server Response' ),
 				url: supportUrl,
 			},
 		},
