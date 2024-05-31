@@ -1,6 +1,7 @@
-import { FEATURE_SFTP } from '@automattic/calypso-products';
+import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Dialog } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -42,6 +43,7 @@ const DevTools = () => {
 		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
 		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
 	} ) );
+	const hasEnTranslation = useHasEnTranslation();
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const pluginsLink = `https://wordpress.com/plugins/${ encodeURIComponent( siteSlug ) }`;
@@ -100,6 +102,19 @@ const DevTools = () => {
 		return;
 	}
 
+	const upgradeCtaCopy = hasEnTranslation(
+		'Upgrade to the %(planName)s plan or higher to get access to all developer tools'
+	)
+		? translate(
+				'Upgrade to the %(planName)s plan or higher to get access to all developer tools',
+				{
+					args: {
+						planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+					},
+				}
+		  )
+		: translate( 'Upgrade to the Creator plan or higher to get access to all developer tools' );
+
 	return (
 		<div className="dev-tools">
 			<div className="dev-tools__hero">
@@ -113,9 +128,7 @@ const DevTools = () => {
 						? translate(
 								'Your plan includes all the developer tools listed below. Click "Activate Now" to begin.'
 						  )
-						: translate(
-								'Upgrade to the Creator plan or higher to get access to all developer tools'
-						  ) }
+						: upgradeCtaCopy }
 				</p>
 				{ showActivationButton ? (
 					<>

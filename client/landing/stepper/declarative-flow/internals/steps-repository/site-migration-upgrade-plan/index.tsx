@@ -4,6 +4,7 @@ import {
 	getPlan,
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
@@ -21,6 +22,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const queryParams = useQuery();
 	const hideFreeMigrationTrialForNonVerifiedEmail =
 		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? true;
@@ -96,9 +98,22 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 					<FormattedHeader
 						id="site-migration-instructions-header"
 						headerText={ translate( 'Take your site to the next level' ) }
-						subHeaderText={ translate(
-							'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
-						) }
+						subHeaderText={
+							hasEnTranslation(
+								'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.'
+							)
+								? translate(
+										'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.',
+										{
+											args: {
+												planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+											},
+										}
+								  )
+								: translate(
+										'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
+								  )
+						}
 						align="center"
 						subHeaderAlign="center"
 					/>
