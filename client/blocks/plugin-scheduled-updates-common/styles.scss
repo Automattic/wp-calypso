@@ -144,7 +144,7 @@ $brand-display: "SF Pro Display", sans-serif;
 
 	.plugins-update-manager-multisite-table-container,
 	.schedule-list--card__single-site .components-card__body {
-		overflow-x: scroll;
+		overflow-x: auto;
 	}
 
 	.schedule-form {
