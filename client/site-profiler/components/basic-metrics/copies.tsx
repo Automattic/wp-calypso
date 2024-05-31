@@ -148,7 +148,7 @@ export function getCopies(
 	};
 
 	const fcp: CopiesProps = {
-		title: translate( 'Cumulative Layout Shift (CLS)' ),
+		title: translate( 'First Contentful Paint (FCP)' ),
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
@@ -204,7 +204,7 @@ export function getCopies(
 	};
 
 	const lcp: CopiesProps = {
-		title: translate( 'Cumulative Layout Shift (CLS)' ),
+		title: translate( 'Largest Contentful Paint (LCP)' ),
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
@@ -260,7 +260,7 @@ export function getCopies(
 	};
 
 	const ttfb: CopiesProps = {
-		title: translate( 'Cumulative Layout Shift (CLS)' ),
+		title: translate( 'Time to First Byte (TTFB)' ),
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
@@ -316,7 +316,7 @@ export function getCopies(
 	};
 
 	const inp: CopiesProps = {
-		title: translate( 'Cumulative Layout Shift (CLS)' ),
+		title: translate( 'Interaction to Next Paint (INP)' ),
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
