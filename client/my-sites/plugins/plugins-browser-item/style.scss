@@ -62,7 +62,7 @@
 	}
 
 	.plugins-browser-item__description {
-		margin: 16px 0;
+		margin: 24px 0;
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-small;
 		font-weight: 400;
@@ -151,7 +151,7 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	padding: 29px 30px 24px;
+	padding: 24px;
 	box-sizing: border-box;
 	border: 1px solid var(--studio-gray-5);
 	border-radius: 5px; /* stylelint-disable-line scales/radii */
@@ -184,13 +184,14 @@
 .plugins-browser-item__author {
 	color: var(--studio-gray-60);
 	font-family: "SF Pro Text", $sans;
-	font-size: $font-body-extra-small;
+	font-weight: 500;
+	font-size: $font-body-small;
 	line-height: 20px;
 	padding-bottom: 6px;
 }
 
 .plugins-browser-item__author-name {
-	color: var(--studio-blue-50);
+	color: var(--color-link);
 }
 
 .plugins-browser-item__last-updated,
@@ -224,10 +225,10 @@
 
 .plugins-browser-item__pricing,
 .plugins-browser-item__installed {
-	font-size: $font-body-extra-small;
+	font-size: $font-body-small;
 	font-weight: 500;
 	line-height: 20px;
-	color: $studio-black;
+	color: var(--studio-gray-80);
 }
 
 .plugins-browser-item__active {
@@ -289,10 +290,10 @@
 
 .plugins-browser-item__period,
 .plugins-browser-item__requires-plan-upgrade {
-	color: var(--studio-gray-60);
+	color: var(--studio-gray-50);
 	font-family: "SF Pro Text", $sans;
 	font-weight: 400;
-	font-size: $font-body-extra-small;
+	font-size: $font-body-small;
 }
 
 .plugins-browser-item__requires-plan-upgrade {
