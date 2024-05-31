@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { useEffect } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -9,20 +9,17 @@ import VideoPressIntroBackground from '../../steps-repository/intro/videopress-i
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
 import type { Flow, StepperStep } from '../../types';
 
-type StepRouteProps = {
+interface StepRouteProps extends PropsWithChildren {
 	step: StepperStep;
 	flow: Flow;
 	showWooLogo: boolean;
-	renderStep: ( step: StepperStep ) => JSX.Element | null;
-};
+}
 
-//TODO: Check we can move RenderStep function to here and remove the renderStep prop
-const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) => {
+const StepRoute = ( { step, flow, showWooLogo, children }: StepRouteProps ) => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
 	const loginUrl = useLoginUrlForFlow( { flow } );
-	const stepContent = renderStep( step );
 	const shouldRedirectToLogin = step.requiresLoggedInUser && ! userIsLoggedIn;
-	const shouldSkipRender = shouldRedirectToLogin || ! stepContent;
+	const shouldSkipRender = shouldRedirectToLogin || ! children;
 
 	useStepRouteTracking( {
 		flowName: flow.name,
@@ -51,8 +48,8 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 			) }
 		>
 			{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
-			{ stepContent && <SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } /> }
-			{ stepContent }
+			{ children && <SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } /> }
+			{ children }
 		</div>
 	);
 };

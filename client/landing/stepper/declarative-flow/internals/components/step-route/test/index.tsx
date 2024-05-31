@@ -4,7 +4,7 @@
 
 import { waitFor } from '@testing-library/react';
 import { addQueryArgs } from '@wordpress/url';
-import React, { FC, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { MemoryRouter } from 'react-router';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
@@ -17,12 +17,7 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StepRoute from '../';
-import type { NavigationControls } from '../../../types';
-import type {
-	Flow,
-	StepperStep,
-	StepProps,
-} from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { Flow, StepperStep } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 jest.mock( 'calypso/signup/storageUtils' );
 jest.mock( 'calypso/state/current-user/selectors' );
@@ -41,7 +36,7 @@ const requiresLoginStep: StepperStep = {
 	requiresLoggedInUser: true,
 };
 
-const FakeStep: FC< StepProps > = () => {
+const FakeStep = () => {
 	return <div>Step Content</div>;
 };
 
@@ -55,40 +50,21 @@ const fakeFlow: Flow = {
 	isSignupFlow: false,
 };
 
-const fakeRenderStep = ( step: StepperStep ) => {
-	const StepComponent = FakeStep;
-	const navigationControls = {} as NavigationControls;
-	const stepData = {} as any;
-
-	return (
-		<StepComponent
-			navigation={ navigationControls }
-			flow={ fakeFlow.name }
-			variantSlug={ fakeFlow.variantSlug }
-			stepName={ step.slug }
-			data={ stepData }
-		/>
-	);
-};
-
 interface RenderProps {
 	step: StepperStep;
-	renderStep?: ( step: StepperStep ) => JSX.Element | null;
+	children?: React.ReactNode | null;
 }
 
-const render = ( { step, renderStep = fakeRenderStep }: RenderProps ) => {
+const render = ( { step, children = <FakeStep /> }: RenderProps ) => {
 	return renderWithProvider(
 		<MemoryRouter
 			basename="/setup"
 			initialEntries={ [ '/setup/some-flow/some-step-slug?param=example.com' ] }
 		>
 			<Suspense fallback={ null }>
-				<StepRoute
-					step={ step }
-					flow={ fakeFlow }
-					showWooLogo={ false }
-					renderStep={ renderStep }
-				/>
+				<StepRoute step={ step } flow={ fakeFlow } showWooLogo={ false }>
+					{ children }
+				</StepRoute>
 			</Suspense>
 		</MemoryRouter>
 	);
@@ -121,7 +97,7 @@ describe( 'StepRoute', () => {
 	} );
 
 	it( 'does not render the step content when renderStep() returns null', async () => {
-		const { queryByText } = render( { step: regularStep, renderStep: () => null } );
+		const { queryByText } = render( { step: regularStep, children: null } );
 
 		expect( queryByText( 'Step Content' ) ).not.toBeInTheDocument();
 	} );
@@ -184,7 +160,7 @@ describe( 'StepRoute', () => {
 		} );
 
 		it( 'skips trackings when the renderStep returns null', () => {
-			render( { step: regularStep, renderStep: () => null } );
+			render( { step: regularStep, children: null } );
 
 			expect( recordStepStart ).not.toHaveBeenCalled();
 			expect( recordPageView ).not.toHaveBeenCalled();

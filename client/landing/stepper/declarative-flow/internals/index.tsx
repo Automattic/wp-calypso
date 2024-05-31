@@ -193,12 +193,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 						key={ step.slug }
 						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }
 						element={
-							<StepRoute
-								step={ step }
-								flow={ flow }
-								showWooLogo={ isWooExpressFlow( flow.name ) }
-								renderStep={ renderStep }
-							/>
+							<StepRoute step={ step } flow={ flow } showWooLogo={ isWooExpressFlow( flow.name ) }>
+								{ renderStep( step ) }
+							</StepRoute>
 						}
 					/>
 				) ) }
