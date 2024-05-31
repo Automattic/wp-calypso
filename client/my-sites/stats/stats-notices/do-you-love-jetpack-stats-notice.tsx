@@ -1,8 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -33,6 +34,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 	isOdysseyStats,
 }: StatsNoticeProps ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const isWPCOMPaidStatsFlow =
 		isEnabled( 'stats/paid-wpcom-v2' ) && isWPCOMSite && ! isOdysseyStats;
@@ -104,10 +106,22 @@ const DoYouLoveJetpackStatsNotice = ( {
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
-	const description = isWPCOMPaidStatsFlow
+	const paidStatsRemoveHardcoding = hasEnTranslation(
+		'Finesse your scaling-up strategy with detailed insights and data. Upgrade to a %s plan for a richer understanding and smarter decision-making.'
+	)
 		? translate(
-				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to an Explorer plan for a richer understanding and smarter decision-making.'
+				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to a %s plan for a richer understanding and smarter decision-making.',
+				{
+					args: {
+						planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
+					},
+				}
 		  )
+		: translate(
+				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to an Explorer plan for a richer understanding and smarter decision-making.'
+		  );
+	const description = isWPCOMPaidStatsFlow
+		? paidStatsRemoveHardcoding
 		: translate( 'Upgrade to support future development and stop the upgrade banners.' );
 
 	const CTAText = isWPCOMPaidStatsFlow ? translate( 'Upgrade' ) : translate( 'Upgrade my Stats' );
