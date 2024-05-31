@@ -70,6 +70,11 @@ body.is-section-plugins {
 				padding-right: 2rem;
 			}
 		}
+
+		.plugins-browser__content-wrapper {
+			margin: auto;
+			max-width: 1040px;
+		}
 	}
 
 	.is-section-plugins.is-global-sidebar-collapsed {

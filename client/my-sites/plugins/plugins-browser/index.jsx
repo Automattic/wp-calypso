@@ -1,5 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -134,7 +135,13 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	}
 
 	return (
-		<MainComponent className="plugins-browser" wideLayout isLoggedOut={ ! isLoggedIn }>
+		<MainComponent
+			className={ classNames( 'plugins-browser', {
+				'plugins-browser--site-view': !! selectedSite,
+			} ) }
+			wideLayout
+			isLoggedOut={ ! isLoggedIn }
+		>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
