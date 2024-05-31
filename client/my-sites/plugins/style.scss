@@ -62,16 +62,13 @@ body.is-section-plugins {
 		&:not(.plugins-browser),
 		&.plugins-browser .plugins-browser__content-wrapper {
 			@include break-small {
-				padding-left: 1rem;
-				padding-right: 1rem;
-			}
-			@include break-small {
 				padding-left: 2rem;
 				padding-right: 2rem;
 			}
 		}
 
-		.plugins-browser__content-wrapper {
+		&.plugins-browser--site-view .plugins-browser__content-wrapper {
+			box-sizing: border-box;
 			margin: auto;
 			max-width: 1040px;
 		}

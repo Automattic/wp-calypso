@@ -32,3 +32,27 @@
 		line-height: 1.2;
 	}
 }
+
+.is-logged-in main:not(.a4a-layout):not(.a4a-layout-column).plugins-browser--site-view {
+	.plugins-navigation-header.navigation-header {
+		padding-inline: 0;
+
+		> div {
+			box-sizing: border-box;
+			margin: auto;
+			max-width: 1040px;
+
+			@include break-small {
+				padding-left: 2rem;
+				padding-right: 2rem;
+			}
+
+		}
+
+		@include break-xhuge {
+			.navigation-header__main {
+				padding-inline: 0;
+			}
+		}
+	}
+}
