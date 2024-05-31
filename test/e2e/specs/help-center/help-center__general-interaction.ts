@@ -2,10 +2,75 @@
  * @group calypso-pr
  */
 
-import { SupportComponent, TestAccount } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { SupportComponent, TestAccount, TestAccountName } from '@automattic/calypso-e2e';
+import { Browser, Frame, Page } from 'playwright';
 
 declare const browser: Browser;
+
+/** Tests to ensure the Help Center is open and visible in Calypso and the Editor */
+describe.each( [
+	{ accountName: 'defaultUser' as TestAccountName },
+	{ accountName: 'atomicUser' as TestAccountName },
+] )( 'Help Center: Verify Help Center is accessible', function ( { accountName } ) {
+	let page: Page;
+	let supportComponent: SupportComponent;
+
+	beforeAll( async function () {
+		page = await browser.newPage();
+
+		const testAccount = new TestAccount( accountName );
+		await testAccount.authenticate( page, { waitUntilStable: true } );
+
+		supportComponent = new SupportComponent( page );
+	} );
+
+	describe( 'Verify Help Center is opened and visible in Calypso', function () {
+		it( 'Verify Help Center is initally closed', async function () {
+			expect( await page.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
+		} );
+
+		it( 'Open Help Center', async function () {
+			await supportComponent.openPopover();
+		} );
+
+		it( 'Verify Help Center is opened', async function () {
+			expect( await page.locator( '.help-center__container' ).isVisible() );
+		} );
+	} );
+
+	describe( 'Verify Help Center is opened and visible in Editor', function () {
+		let selectedFrame: Frame;
+
+		beforeAll( async function () {
+			const frames = page.frames();
+			for ( let i = 0; i < frames.length; ++i ) {
+				if ( frames[ i ].url().includes( 'calypsoify' ) ) {
+					selectedFrame = frames[ i ];
+				}
+			}
+		} );
+
+		it( 'Verify Help Center is initally closed', async function () {
+			expect( await selectedFrame?.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
+		} );
+
+		it( 'Open Help Center', async function () {
+			const testAccount = new TestAccount( accountName );
+			const postURL = `http://wordpress.com/post/${ testAccount.getSiteURL( {
+				protocol: false,
+			} ) }`;
+			await page.goto( postURL, {
+				waitUntil: 'networkidle',
+			} );
+		} );
+
+		it( 'Verify Help Center is opened', async function () {
+			await selectedFrame?.$eval( 'button.help-center', ( el ) => ( el as HTMLElement ).click() );
+			expect( await selectedFrame?.locator( '.help-center__container' ).isVisible() );
+			page.close();
+		} );
+	} );
+} );
 
 /**
  * Tests interaction with the Help Centre, simulating a user
