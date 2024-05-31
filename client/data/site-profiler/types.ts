@@ -148,11 +148,12 @@ export interface PerformanceMetricsItemQueryResponse {
 }
 
 export interface PerformanceMetricsDetailsQueryResponse {
-	type: 'table' | 'opportunity' | 'list';
+	type: 'table' | 'opportunity' | 'list' | 'criticalrequestchain';
 	headings?: Array< { key: string; label: string; valueType: string } >;
 	items?: Array< {
 		[ key: string ]: string | number | { [ key: string ]: any };
 	} >;
+	chains?: Array< { [ key: string ]: any } >;
 }
 
 export interface BasicMetricsResult extends Omit< UrlBasicMetricsQueryResponse, 'basic' > {
