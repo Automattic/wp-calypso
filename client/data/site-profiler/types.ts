@@ -116,16 +116,19 @@ export interface UrlSecurityMetricsQueryResponse {
 	};
 }
 
+export interface PerformanceReport {
+	audits: {
+		health: PerformanceMetricsDataQueryResponse;
+		performance: PerformanceMetricsDataQueryResponse;
+	};
+	performance: number;
+	overall_score: number;
+	is_wpcom: boolean;
+}
+
 export interface UrlPerformanceMetricsQueryResponse {
 	webtestpage_org: {
-		report: {
-			audits: {
-				health: PerformanceMetricsDataQueryResponse;
-				performance: PerformanceMetricsDataQueryResponse;
-			};
-			performance: number;
-			overall_score: number;
-		};
+		report: PerformanceReport;
 		status: string;
 	};
 }
