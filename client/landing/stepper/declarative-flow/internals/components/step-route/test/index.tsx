@@ -71,7 +71,12 @@ const fakeRenderStep = ( step: StepperStep ) => {
 	);
 };
 
-const render = ( { step, renderStep = fakeRenderStep } ) => {
+interface RenderProps {
+	step: StepperStep;
+	renderStep?: ( step: StepperStep ) => JSX.Element | null;
+}
+
+const render = ( { step, renderStep = fakeRenderStep }: RenderProps ) => {
 	return renderWithProvider(
 		<MemoryRouter
 			basename="/setup"
