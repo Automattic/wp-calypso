@@ -72,7 +72,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// See https://github.com/Automattic/wp-calypso/pull/82981.
 	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
 
-	// TODO: Check if it we still need to check the selected site to preload the steps.
 	// this pre-loads all the lazy steps down the flow.
 	useEffect( () => {
 		if ( siteSlugOrId && ! selectedSite ) {
