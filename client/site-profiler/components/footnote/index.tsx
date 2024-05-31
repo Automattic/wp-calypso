@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -45,11 +44,11 @@ const LinkIcon = styled( Gridicon )`
 	margin-left: 8px;
 `;
 
-const onMigrateSite = () => {
+const onLearnMoreClick = () => {
 	recordTracksEvent( 'calypso_site_profiler_cta', {
-		cta_name: 'migrateSiteBanner',
+		cta_name: 'crux_learn_more',
 	} );
-	page( `/setup/hosted-site-migration?ref=site-profiler` );
+	window.open( 'https://developer.chrome.com/docs/crux', '_blank' );
 };
 
 export const FootNote = () => {
@@ -69,7 +68,7 @@ export const FootNote = () => {
 					) }
 				</li>
 			</Description>
-			<Link onClick={ onMigrateSite }>
+			<Link onClick={ onLearnMoreClick }>
 				{ translate( 'Learn more about the Chrome UX Report' ) }
 				<LinkIcon icon="external" size={ 20 } />
 			</Link>
