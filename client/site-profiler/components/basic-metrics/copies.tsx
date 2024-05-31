@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ReactNode } from 'react';
 import type { BasicMetricsScored, Metrics, Scores } from 'calypso/data/site-profiler/types';
 import type { I18N } from 'i18n-calypso';
@@ -33,7 +34,7 @@ export function getCopies(
 	domain: string
 ): CopiesReturnValue {
 	const migrateUrl = `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }`;
-	const supportUrl = '/support';
+	const supportUrl = localizeUrl( 'https://wordpress.com/support' );
 
 	const cls: CopiesProps = {
 		title: translate( 'Cumulative Layout Shift (CLS)' ),
