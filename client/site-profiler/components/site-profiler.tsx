@@ -17,7 +17,6 @@ import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-an
 import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { AdvancedMetrics } from './advanced-metrics';
-import { BasicMetrics } from './basic-metrics';
 import DomainAnalyzer from './domain-analyzer';
 import DomainInformation from './domain-information';
 import { GetReportForm } from './get-report-form';
@@ -171,7 +170,6 @@ export default function SiteProfiler( props: Props ) {
 								healthScoresRef={ healthScoresRef }
 								onCTAClick={ () => setIsGetReportFormOpen( true ) }
 							/>
-							<BasicMetrics ref={ basicMetricsRef } basicMetrics={ basicMetrics.basic } />
 							<AdvancedMetrics
 								performanceMetricsRef={ performanceMetricsRef }
 								healthScoresRef={ healthScoresRef }

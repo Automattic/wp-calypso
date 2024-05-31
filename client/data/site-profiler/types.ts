@@ -134,3 +134,9 @@ export interface PerformanceMetricsDetailsQueryResponse {
 export interface BasicMetricsResult extends Omit< UrlBasicMetricsQueryResponse, 'basic' > {
 	basic: BasicMetricsScored;
 }
+
+export type PerformanceCategories =
+	| 'wpcom-low-performer'
+	| 'wpcom-high-performer'
+	| 'non-wpcom-low-performer'
+	| 'non-wpcom-high-performer';
