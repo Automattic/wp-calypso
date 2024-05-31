@@ -1,9 +1,4 @@
 export const STEPS = {
-	AI_SITE_PROMPT: {
-		slug: 'loadingBigSky',
-		asyncComponent: () => import( './steps-repository/ai-site-prompt' ),
-	},
-
 	BLOGGER_STARTING_POINT: {
 		slug: 'bloggerStartingPoint',
 		asyncComponent: () => import( './steps-repository/blogger-starting-point' ),
@@ -130,6 +125,11 @@ export const STEPS = {
 	NEW_OR_EXISTING_SITE: {
 		slug: 'new-or-existing-site',
 		asyncComponent: () => import( './steps-repository/new-or-existing-site' ),
+	},
+
+	LAUNCH_BIG_SKY: {
+		slug: 'launch-big-sky',
+		asyncComponent: () => import( './steps-repository/launch-big-sky' ),
 	},
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },

@@ -42,7 +42,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 			destination: kebabCase( destination ),
 		} );
 
-		if ( destination === 'pattern-assembler' || destination === 'loadingBigSky' ) {
+		if ( destination === 'pattern-assembler' || destination === 'launch-big-sky' ) {
 			setSelectedDesign( getAssemblerDesign() );
 		}
 
@@ -80,7 +80,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									title={ translate( 'Use Big Sky' ) }
 									description={ translate( 'Try our AI site builder.' ) }
 									imageSrc={ hiBigSky }
-									destination="loadingBigSky"
+									destination="launch-big-sky"
 									onSelect={ handleSubmit }
 								/>
 							) }

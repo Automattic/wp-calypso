@@ -1,114 +1,108 @@
-import { Onboard } from '@automattic/data-stores';
-import { getAssemblerDesign } from '@automattic/design-picker';
-import { resolveSelect, useDispatch } from '@wordpress/data';
+import { StepContainer, NextButton } from '@automattic/onboarding';
+import styled from '@emotion/styled';
+import { TextareaControl } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, FormEvent, useState } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
+import { FormEvent } from 'react';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
-import { useSiteData } from '../../../../hooks/use-site-data';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import useAIAssembler from '../pattern-assembler/hooks/use-ai-assembler';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
-const SiteIntent = Onboard.SiteIntent;
+const ActionSection = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	flex-wrap: wrap;
+	margin-top: 40px;
 
-const LoadingBigSky: Step = function () {
+	@media ( max-width: 320px ) {
+		align-items: center;
+	}
+`;
+
+const StyledNextButton = styled( NextButton )`
+	@media ( max-width: 320px ) {
+		width: 100%;
+		margin-bottom: 20px;
+	}
+`;
+
+const AISitePrompt: Step = function ( props ) {
+	const { goNext, goBack, submit } = props.navigation; // eslint-disable-line @typescript-eslint/no-unused-vars
+
 	const { __ } = useI18n();
-	const [ isError, setError ] = useState( false );
-	const { siteSlug, siteId, site } = useSiteData();
-	const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } = useDispatch( SITE_STORE );
-	const hasStaticHomepage = site?.options?.show_on_front === 'page' && site?.options?.page_on_front;
-	const assemblerThemeActive = site?.options?.theme_slug === 'pub/assembler';
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 
-	const exitFlow = async ( selectedSiteId: string, selectedSiteSlug: string ) => {
-		if ( ! selectedSiteId || ! selectedSiteSlug ) {
-			return;
-		}
-
-		const pendingActions = [
-			resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
-		];
-
-		// Set the Assembler theme on the site.
-		if ( ! assemblerThemeActive ) {
-			setDesignOnSite( selectedSiteSlug, getAssemblerDesign() );
-		}
-
-		// Create a new home page if one is not set yet.
-		if ( ! hasStaticHomepage ) {
-			pendingActions.push(
-				wpcomRequest( {
-					path: '/sites/' + selectedSiteId + '/pages',
-					method: 'POST',
-					apiNamespace: 'wp/v2',
-					body: {
-						title: 'Home',
-						status: 'publish',
-					},
-				} )
-			);
-		}
-
-		try {
-			const results = await Promise.all( pendingActions );
-			const siteURL = results[ 0 ].URL;
-
-			if ( ! hasStaticHomepage ) {
-				const homePagePostId = results[ 1 ].id;
-				await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
-			}
-
-			window.location.replace( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` );
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'An error occurred:', error );
-			setError( true );
-		}
-	};
+	const [ callAIAssembler, setPrompt, prompt, loading ] = useAIAssembler();
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
-		exitFlow( siteId.toString(), siteSlug );
+		callAIAssembler()
+			?.then( () => submit?.( { aiSitePrompt: prompt } ) )
+			?.catch( () => goNext?.() );
 	};
 
-	useEffect( () => {
-		if ( isError ) {
-			return;
-		}
-		const syntheticEvent = {
-			preventDefault: () => {},
-			target: {
-				elements: {},
-			},
-		} as unknown as FormEvent;
-		onSubmit( syntheticEvent );
-	}, [ isError ] );
-
-	function LaunchingBigSky() {
+	function getContent() {
 		return (
-			<div className="processing-step__container">
-				<div className="processing-step">
-					<h1 className="processing-step__progress-step">{ __( 'Launching Big Sky' ) }</h1>
-					{ ! isError && <LoadingEllipsis /> }
-					{ isError && (
-						<p className="processing-step__error">
-							{ __( 'Something unexpected happened. Please go back and try again.' ) }
-						</p>
-					) }
+			<>
+				<div className="site-prompt__instructions-container">
+					<form onSubmit={ onSubmit }>
+						<TextareaControl
+							help={ __( 'Sharing more detail here will help AI understand your intent better.' ) }
+							value={ prompt }
+							onChange={ ( value ) => setPrompt( value ) }
+							disabled={ loading }
+						/>
+
+						<ActionSection>
+							{ loading && <LoadingEllipsis /> }
+							{ ! loading && (
+								<StyledNextButton type="submit" disabled={ loading || prompt.length < 16 }>
+									{ __( 'Continue' ) }
+								</StyledNextButton>
+							) }
+						</ActionSection>
+					</form>
 				</div>
-			</div>
+			</>
 		);
 	}
 
 	return (
 		<div className="site-prompt__signup is-woocommerce-install">
 			<div className="site-prompt__is-store-address">
-				<LaunchingBigSky />
+				<StepContainer
+					stepName="site-prompt"
+					className={ `is-step-${ intent }` }
+					skipButtonAlign="top"
+					hideBack
+					goNext={ goNext }
+					isHorizontalLayout
+					formattedHeader={
+						<FormattedHeader
+							id="site-prompt-header"
+							headerText={ __( 'Tell us a bit about your web site or business.' ) }
+							subHeaderText={ __(
+								'We will create a home page template for you based on best practices for sites like yours.'
+							) }
+							align="left"
+						/>
+					}
+					stepContent={ getContent() }
+					recordTracksEvent={ recordTracksEvent }
+				/>
 			</div>
 		</div>
 	);
 };
 
-export default LoadingBigSky;
+export default AISitePrompt;
