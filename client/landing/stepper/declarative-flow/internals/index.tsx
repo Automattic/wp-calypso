@@ -153,7 +153,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		state: AssertConditionState.SUCCESS,
 	};
 
-	//TODO: Move it to step route
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:

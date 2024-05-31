@@ -40,7 +40,6 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 		return null;
 	}
 
-	//TODO: Extract the layout logics to another component;
 	return (
 		<div
 			className={ classnames(
