@@ -11,7 +11,7 @@ import { getScore } from './metrics-dictionaries';
 function mapScores( response: UrlBasicMetricsQueryResponse ) {
 	const { basic } = response;
 
-	let basicMetricsScored;
+	let basicMetricsScored = {} as BasicMetricsScored;
 	if ( basic.success ) {
 		basicMetricsScored = ( Object.entries( basic.data ) as BasicMetricsList ).reduce(
 			( acc, [ key, value ] ) => {
