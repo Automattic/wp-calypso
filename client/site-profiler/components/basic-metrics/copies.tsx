@@ -152,7 +152,7 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s FCP is %(value)fs, providing a fast initial load. Great job on maintaining quick content display!',
+					'Your site’s FCP is %(value)fms, providing a fast initial load. Great job on maintaining quick content display!',
 					{ args: { value: basicMetrics?.fcp?.value } }
 				),
 				solution: translate(
@@ -163,7 +163,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s FCP is %(value)fs, slower than average. Aim for under 2s to improve user experience.',
+					'Your site’s FCP is %(value)fms, slower than average. Aim for under 2s to improve user experience.',
 					{
 						args: {
 							value: basicMetrics?.fcp?.value,
@@ -180,7 +180,7 @@ export function getCopies(
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s FCP is %(value)fs, providing a fast initial load. Excellent job maintaining quick content delivery!',
+					'Your site’s FCP is %(value)fms, providing a fast initial load. Excellent job maintaining quick content delivery!',
 					{ args: { value: basicMetrics?.fcp?.value } }
 				),
 				solution: translate(
@@ -191,7 +191,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s FCP is %(value)fs, slower than average. Aim for under 2s to improve user experience.',
+					'Your site’s FCP is %(value)fms, slower than average. Aim for under 2s to improve user experience.',
 					{ args: { value: basicMetrics?.fcp?.value } }
 				),
 				solution: translate(
@@ -208,7 +208,7 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s LCP is %(value)fs, loading main content quickly. Well done on maintaining fast load times!',
+					'Your site’s LCP is %(value)fms, loading main content quickly. Well done on maintaining fast load times!',
 					{ args: { value: basicMetrics?.lcp?.value } }
 				),
 				solution: translate(
@@ -219,7 +219,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s LCP is %(value)fs, slower than typical sites. Aim for under 2.5s for better performance.',
+					'Your site’s LCP is %(value)fms, slower than typical sites. Aim for under 2.5s for better performance.',
 					{
 						args: {
 							value: basicMetrics?.lcp?.value,
@@ -236,7 +236,7 @@ export function getCopies(
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s LCP is %(value)fs, loading main content quickly. Excellent job maintaining fast content display!',
+					'Your site’s LCP is %(value)fms, loading main content quickly. Excellent job maintaining fast content display!',
 					{ args: { value: basicMetrics?.lcp?.value } }
 				),
 				solution: translate(
@@ -247,7 +247,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s LCP is %(value)fs, slower than typical sites. Aim for under 2.5s for better performance.',
+					'Your site’s LCP is %(value)fms, slower than typical sites. Aim for under 2.5s for better performance.',
 					{ args: { value: basicMetrics?.lcp?.value } }
 				),
 				solution: translate(
