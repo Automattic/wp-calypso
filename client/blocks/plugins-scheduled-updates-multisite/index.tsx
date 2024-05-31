@@ -53,6 +53,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 						<ScheduleList
 							compact
 							previewMode="card"
+							showSubtitle={ false }
 							showNewScheduleBtn={ context === 'edit' }
 							selectedScheduleId={ selectedSchedule?.schedule_id }
 							onCreateNewSchedule={ onCreateNewSchedule }
