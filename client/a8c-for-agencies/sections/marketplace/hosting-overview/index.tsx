@@ -13,11 +13,13 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import ReferralToggle from '../common/referral-toggle';
+import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import HostingList from './hosting-list';
 
-export default function Hosting() {
+function Hosting() {
 	const translate = useTranslate();
 
 	const { selectedCartItems, onRemoveCartItem, showCart, setShowCart, toggleCart } =
@@ -45,8 +47,9 @@ export default function Hosting() {
 						] }
 					/>
 
-					<Actions>
+					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
+						<ReferralToggle />
 						<ShoppingCart
 							showCart={ showCart }
 							setShowCart={ setShowCart }
@@ -67,3 +70,5 @@ export default function Hosting() {
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( Hosting );

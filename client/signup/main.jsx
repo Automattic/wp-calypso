@@ -40,7 +40,11 @@ import {
 	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
-import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isWooOAuth2Client,
+	isGravatarOAuth2Client,
+	isBlazeProOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
@@ -71,6 +75,7 @@ import {
 	getSitePlanName,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import BlazeProSignupProcessingScreen from './blaze-pro-processing-screen';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
@@ -796,6 +801,10 @@ class Signup extends Component {
 					isDestinationSetupSiteFlow={ destination.startsWith( '/setup' ) }
 				/>
 			);
+		}
+
+		if ( isBlazeProOAuth2Client( this.props.oauth2Client ) ) {
+			return <BlazeProSignupProcessingScreen />;
 		}
 
 		return <SignupProcessingScreen flowName={ this.props.flowName } />;

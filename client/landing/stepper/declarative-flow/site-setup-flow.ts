@@ -84,6 +84,7 @@ const siteSetupFlow: Flow = {
 			STEPS.IMPORTER_MEDIUM,
 			STEPS.IMPORTER_SQUARESPACE,
 			STEPS.IMPORTER_WORDPRESS,
+			STEPS.LAUNCH_BIG_SKY,
 			STEPS.VERIFY_EMAIL,
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.PROCESSING,
@@ -529,6 +530,10 @@ const siteSetupFlow: Flow = {
 					return navigate( `importList?siteSlug=${ siteSlug }` );
 
 				case 'importerWordpress':
+					if ( backToFlow ) {
+						return goToFlow( backToFlow );
+					}
+
 					if ( urlQueryParams.get( 'option' ) === 'content' ) {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}

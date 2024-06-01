@@ -143,7 +143,7 @@ const ChatButton: FC< Props > = ( {
 			primary={ primary }
 			borderless={ borderless }
 			onClick={ handleClick }
-			title={ __( 'Support Chat' ) }
+			title={ __( 'Contact us' ) }
 		>
 			{ getChildren() }
 		</Button>

@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey';
 import { Answers, Question } from 'calypso/components/survey-container/types';
 import { useHash } from 'calypso/landing/stepper/hooks/use-hash';
 import useSegmentationSurveyTracksEvents from './use-segmentation-survey-tracks-events';
@@ -10,6 +11,7 @@ type SegmentationSurveyNavigationProps = {
 	surveyKey: string;
 	questions?: Question[];
 	answers: Answers;
+	skipNextNavigation?: ( currentQuestionKey: string, answers: string[] ) => boolean;
 };
 
 const useSegmentationSurveyNavigation = ( {
@@ -19,6 +21,7 @@ const useSegmentationSurveyNavigation = ( {
 	surveyKey,
 	questions,
 	answers,
+	skipNextNavigation,
 }: SegmentationSurveyNavigationProps ) => {
 	const { recordBackEvent, recordContinueEvent, recordSkipEvent } =
 		useSegmentationSurveyTracksEvents( surveyKey );
@@ -63,6 +66,10 @@ const useSegmentationSurveyNavigation = ( {
 		recordSkipEvent( currentQuestion );
 
 		await onSkip?.( currentQuestion );
+		if ( skipNextNavigation?.( currentQuestion.key, [ SKIP_ANSWER_KEY ] ) ) {
+			return;
+		}
+
 		nextPage();
 	}, [ currentQuestion, nextPage, onSkip, recordSkipEvent ] );
 
@@ -79,6 +86,11 @@ const useSegmentationSurveyNavigation = ( {
 		recordContinueEvent( currentQuestion, answers );
 
 		await onContinue?.( currentQuestion );
+
+		if ( skipNextNavigation?.( currentQuestion.key, answers?.[ currentQuestion.key ] ) ) {
+			return;
+		}
+
 		nextPage();
 	}, [ answers, currentQuestion, nextPage, onContinue, recordContinueEvent, skipToNextPage ] );
 

@@ -54,7 +54,7 @@ body.is-section-plugins {
 			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			height: calc(100vh - 32px);
 			max-width: none;
-			overflow-y: scroll;
+			overflow-y: auto;
 		}
 	}
 
@@ -70,14 +70,13 @@ body.is-section-plugins {
 	}
 
 	.is-section-plugins.is-global-sidebar-collapsed {
-		.sidebar__description,
 		.sidebar__back-link .sidebar__site-title {
 			display: none;
 		}
 	}
 
 	.a4a-layout-column {
-		overflow: scroll;
+		overflow: auto;
 	}
 
 	.a4a-layout-column.scheduled-updates-list-compact {
@@ -129,6 +128,20 @@ body.is-section-plugins {
 
 			@include breakpoint-deprecated( "<660px" ) {
 				padding: 1rem 0;
+			}
+		}
+
+		.plugins-update-manager-multisite__header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			flex-wrap: nowrap;
+			gap: 16px;
+
+			p {
+				margin-bottom: 0;
+				font-size: 0.875rem;
+				color: var(--color-neutral-60);
 			}
 		}
 

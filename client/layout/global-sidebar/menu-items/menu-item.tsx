@@ -10,8 +10,8 @@ interface Props {
 	url?: string;
 	tipTarget?: string;
 	onClick: () => void;
-	tooltip: string;
-	tooltipPlacement: 'bottom' | 'top' | 'right';
+	tooltip?: string;
+	tooltipPlacement?: 'bottom' | 'top' | 'right';
 	icon?: ReactNode;
 	className: string;
 	isActive?: boolean;

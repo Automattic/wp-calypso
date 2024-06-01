@@ -46,6 +46,7 @@ const CallToAction = ( { onStartTrialClick, CTAButtonState }: TrialAcknowledgePr
 				<EmailVerification isSending={ isSending } email={ email } resendEmail={ resendEmail } />
 			) }
 			<NextButton
+				className="entrepreneur-trial-acknowledge__cta"
 				isBusy={ CTAButtonState?.isBusy ?? false }
 				onClick={ startTrial }
 				disabled={ ( ! isVerified || CTAButtonState?.disabled ) ?? false }
@@ -83,7 +84,7 @@ export const EntrepreneurTrialAcknowledgement = ( {
 				)
 				.map( ( feature ) => feature.getTitle() as string ) }
 			subtitle={ sprintf(
-				/* translators: thhe planName could be "Pro", "Business", "Hosting" or "Entrepreneur"; the trialDuration could be 7 or 14. */
+				/* translators: the planName could be "Pro", "Business", "Hosting" or "Entrepreneur"; the trialDuration could be 7 or 14. */
 				__(
 					'Give the %(planName)s plan a try with the %(trialDuration)d-day free trial, and create your site without costs'
 				),

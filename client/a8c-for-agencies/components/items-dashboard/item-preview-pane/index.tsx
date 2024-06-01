@@ -83,6 +83,7 @@ export default function ItemPreviewPane( {
 			<ItemPreviewPaneHeader
 				closeItemPreviewPane={ closeItemPreviewPane }
 				itemData={ itemData }
+				isPreviewLoaded={ !! selectedFeature.preview }
 				extraProps={ itemPreviewPaneHeaderExtraProps }
 			/>
 			<div ref={ setNavRef }>

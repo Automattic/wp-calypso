@@ -469,3 +469,4 @@ const CommandPalette = ( {
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './commands';
 export { useCommands } from './commands';
+export { PromptIcon } from './icons/prompt';

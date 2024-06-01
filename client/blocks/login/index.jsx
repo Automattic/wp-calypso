@@ -22,6 +22,7 @@ import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
 	isWooOAuth2Client,
+	isBlazeProOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -200,6 +201,7 @@ class Login extends Component {
 			twoFactorEnabled,
 			loginEmailAddress,
 			isWoo,
+			isBlazePro,
 			isPartnerSignup,
 		} = this.props;
 
@@ -207,8 +209,8 @@ class Login extends Component {
 			! twoStepNonce &&
 			! socialConnect &&
 			! privateSite &&
-			// Show the continue as user flow WooCommerce but not other OAuth2 clients
-			! ( oauth2Client && ! ( isWoo && ! isPartnerSignup ) ) &&
+			// Show the continue as user flow WooCommerce and BlazePro but not for other OAuth2 clients
+			! ( oauth2Client && ! ( isWoo && ! isPartnerSignup ) && ! isBlazePro ) &&
 			! isJetpackWooCommerceFlow &&
 			! isJetpack &&
 			! fromSite &&
@@ -568,6 +570,33 @@ class Login extends Component {
 					);
 				}
 			}
+
+			if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+				headerText = <h3>{ translate( 'Log in to your BlazePro account' ) }</h3>;
+				const poweredByWpCom = (
+					<>
+						{ translate( 'Log in with your WordPress.com account.' ) }
+						<br />
+					</>
+				);
+
+				postHeader = (
+					<p className="login__header-subtitle">
+						{ poweredByWpCom }
+						{ translate( "Don't have an account? {{signupLink}}Sign up here{{/signupLink}}", {
+							components: { signupLink },
+						} ) }
+					</p>
+				);
+
+				if ( this.showContinueAsUser() ) {
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate( 'Select the account you’d like to use' ) }
+						</p>
+					);
+				}
+			}
 		} else if ( isWooCoreProfilerFlow ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow;
 			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
@@ -657,7 +686,7 @@ class Login extends Component {
 			headerText = preventWidows( translate( 'Log in to your existing account' ) );
 		}
 
-		if ( isWhiteLogin ) {
+		if ( isWhiteLogin && ! isBlazeProOAuth2Client( oauth2Client ) ) {
 			preHeader = (
 				<div className="login__form-gutenboarding-wordpress-logo">
 					<svg
@@ -784,6 +813,7 @@ class Login extends Component {
 			handleUsernameChange,
 			signupUrl,
 			isWoo,
+			isBlazePro,
 			translate,
 			isPartnerSignup,
 			action,
@@ -841,6 +871,7 @@ class Login extends Component {
 						isBrowserSupported={ this.state.isBrowserSupported }
 						isJetpack={ isJetpack }
 						isWoo={ isWoo }
+						isBlazePro={ isBlazePro }
 						isPartnerSignup={ isPartnerSignup }
 						twoFactorAuthType={ twoFactorAuthType }
 						twoFactorNotificationSent={ twoFactorNotificationSent }
@@ -906,6 +937,32 @@ class Login extends Component {
 					</div>
 				);
 			}
+			if ( isBlazePro ) {
+				return (
+					<div className="login__body login__body--continue-as-user">
+						<ContinueAsUser
+							onChangeAccount={ this.handleContinueAsAnotherUser }
+							isBlazeProOAuth2Client={ isBlazePro }
+						/>
+						<LoginForm
+							disableAutoFocus={ disableAutoFocus }
+							onSuccess={ this.handleValidLogin }
+							privateSite={ privateSite }
+							socialService={ socialService }
+							socialServiceResponse={ socialServiceResponse }
+							domain={ domain }
+							isP2Login={ isP2Login }
+							locale={ locale }
+							userEmail={ userEmail }
+							handleUsernameChange={ handleUsernameChange }
+							signupUrl={ signupUrl }
+							showSocialLoginFormOnly
+							sendMagicLoginLink={ this.sendMagicLoginLink }
+							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
+						/>
+					</div>
+				);
+			}
 
 			// someone is already logged in, offer to proceed to the app without a new login
 			return <ContinueAsUser onChangeAccount={ this.handleContinueAsAnotherUser } />;
@@ -924,7 +981,7 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
-				hideSignupLink={ isGravPoweredLoginPage }
+				hideSignupLink={ isGravPoweredLoginPage || isBlazePro }
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
@@ -1005,6 +1062,7 @@ export default connect(
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
 		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+		isBlazePro: isBlazeProOAuth2Client( getCurrentOAuth2Client( state ) ),
 		isSignupExistingAccount: !! (
 			getInitialQueryArguments( state )?.is_signup_existing_account ||
 			getCurrentQueryArguments( state )?.is_signup_existing_account

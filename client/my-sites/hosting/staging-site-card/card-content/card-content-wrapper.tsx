@@ -1,12 +1,18 @@
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, PropsWithChildren } from 'react';
+import { FunctionComponent, ReactNode } from 'react';
 import { HostingCard } from 'calypso/components/hosting-card';
 
-export const CardContentWrapper: FunctionComponent< PropsWithChildren > = ( { children } ) => {
+interface Props {
+	children: ReactNode;
+	className?: string;
+}
+
+export const CardContentWrapper: FunctionComponent< Props > = ( { children, className } ) => {
 	const translate = useTranslate();
 	return (
 		<HostingCard
-			className="staging-site-card"
+			className={ classnames( 'staging-site-card', className ) }
 			headingId="staging-site"
 			title={ translate( 'Staging site' ) }
 		>
