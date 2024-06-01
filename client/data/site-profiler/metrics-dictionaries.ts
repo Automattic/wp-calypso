@@ -1,10 +1,4 @@
-import { BasicMetricsScored, Metrics, Scores } from './types';
-
-export const SCORES: Record< string, Scores > = {
-	good: 'good',
-	needsImprovement: 'needs-improvement',
-	poor: 'poor',
-};
+import { Metrics, PerformanceCategories, PerformanceReport, Scores } from './types';
 
 export const BASIC_METRICS_UNITS: Record< Metrics, string > = {
 	cls: '',
@@ -34,30 +28,26 @@ export const BASIC_METRICS_SCORES: Record< Metrics, [ number, number ] > = {
 export function getScore( metric: Metrics, value: number ): Scores {
 	const [ good, poor ] = BASIC_METRICS_SCORES[ metric ];
 	if ( value <= good ) {
-		return SCORES.good;
+		return 'good';
 	}
 	if ( value > poor ) {
-		return SCORES.poor;
+		return 'poor';
 	}
-	return SCORES.needsImprovement;
+	return 'needs-improvement';
 }
 
 /**
- * Get the overall score of the site based on the scores of the basic metrics.
- * It will return poor if more then 2 metrics are poor, good otherwise.
- * Defaults to good if no metrics are provided.
+ * Get the overall score of the site based on the advanced performance
+ * report. If the performance is greater than 0.9, the score is good,
  * @param metrics A record of metrics with their scores
  * @returns The overall score of the site
  */
-export function getOveralScore( metrics?: BasicMetricsScored ): Scores {
+function getOveralScore( metrics?: PerformanceReport ): Scores {
 	if ( ! metrics ) {
-		return SCORES.good;
+		return 'good';
 	}
 
-	const poorMetrics = Object.values( metrics ).filter(
-		( metric ) => metric?.score === SCORES.poor
-	);
-	return poorMetrics.length > 2 ? SCORES.poor : SCORES.good;
+	return metrics.performance >= 0.9 ? 'good' : 'poor';
 }
 
 /**
@@ -65,6 +55,20 @@ export function getOveralScore( metrics?: BasicMetricsScored ): Scores {
  * @param score The score to check
  * @returns True if the score is good, false otherwise
  */
-export function isScoreGood( score: Scores ): boolean {
-	return score === SCORES.good;
+function isScoreGood( score: Scores ): boolean {
+	return score === 'good';
+}
+
+export function getPerformanceCategory( metrics?: PerformanceReport ): PerformanceCategories {
+	const overallScore = getOveralScore( metrics );
+	if ( isScoreGood( overallScore ) && metrics?.is_wpcom ) {
+		return 'wpcom-high-performer';
+	}
+	if ( isScoreGood( overallScore ) && ! metrics?.is_wpcom ) {
+		return 'non-wpcom-high-performer';
+	}
+	if ( ! isScoreGood( overallScore ) && metrics?.is_wpcom ) {
+		return 'wpcom-low-performer';
+	}
+	return 'non-wpcom-low-performer';
 }

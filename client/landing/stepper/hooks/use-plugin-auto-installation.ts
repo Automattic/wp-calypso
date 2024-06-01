@@ -20,8 +20,8 @@ interface SiteMigrationStatus {
 }
 
 type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
-const DEFAULT_RETRY = process.env.NODE_ENV !== 'production' ? 1 : 10;
-const DEFAULT_RETRY_DELAY = process.env.NODE_ENV !== 'production' ? 300 : 2000;
+const DEFAULT_RETRY = process.env.NODE_ENV !== 'production' ? 1 : 15;
+const DEFAULT_RETRY_DELAY = process.env.NODE_ENV !== 'production' ? 300 : 3000;
 
 const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
 	wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {

@@ -19,8 +19,8 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getIntervalType } from './util';
@@ -95,7 +95,7 @@ export class PlansStep extends Component {
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
-			deemphasizeFreePlan,
+			deemphasizeFreePlan: deemphasizeFreePlanFromProps,
 			hideFreePlan,
 			isLaunchPage,
 			selectedSite,
@@ -122,6 +122,12 @@ export class PlansStep extends Component {
 		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
 			freeWPComSubdomain = siteUrl;
 		}
+
+		// De-emphasize the Free plan as a CTA link on the main onboarding flow when a paid domain is picked.
+		// More context can be found in p2-p5uIfZ-f5p
+		const deemphasizeFreePlan =
+			( flowName === 'onboarding' && paidDomainName != null ) || deemphasizeFreePlanFromProps;
+
 		return (
 			<div>
 				{ errorDisplay }
@@ -328,7 +334,7 @@ export default connect(
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
-		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+		hasInitializedSitesBackUrl: getCurrentUserSiteCount( state ) ? '/sites/' : false,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

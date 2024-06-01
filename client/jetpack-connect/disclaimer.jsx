@@ -9,14 +9,15 @@ class JetpackConnectDisclaimer extends PureComponent {
 	static propTypes = {
 		companyName: PropTypes.string,
 		siteName: PropTypes.string.isRequired,
+		from: PropTypes.string,
 	};
 
 	handleClickDisclaimer = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
+		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click', { ...this.props } );
 	};
 
 	render() {
-		const { companyName = 'WordPress.com', siteName, translate } = this.props;
+		const { companyName = 'WordPress.com', siteName, from, translate } = this.props;
 
 		const detailsLink = (
 			<a
@@ -28,18 +29,31 @@ class JetpackConnectDisclaimer extends PureComponent {
 			/>
 		);
 
-		const text = translate(
-			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between %(companyName)s and %(siteName)s.',
-			{
-				components: {
-					detailsLink,
-				},
-				args: {
-					companyName,
-					siteName,
-				},
-			}
-		);
+		const text =
+			from === 'my-jetpack'
+				? translate(
+						'By clicking {{strong}}Approve{{/strong}}, you agree to {{detailsLink}}sync your site‘s data{{/detailsLink}} with us.',
+						{
+							components: {
+								strong: <strong />,
+								detailsLink,
+							},
+						}
+				  )
+				: translate(
+						'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between %(companyName)s and %(siteName)s.',
+						{
+							components: {
+								detailsLink,
+							},
+							args: {
+								companyName,
+								siteName,
+							},
+							comment:
+								'`companyName` is the site domain receiving the data (typically WordPress.com), and `siteName` is the site domain sharing the data.',
+						}
+				  );
 
 		return <p className="jetpack-connect__tos-link">{ text }</p>;
 	}

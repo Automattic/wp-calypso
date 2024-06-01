@@ -71,7 +71,6 @@ import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
-import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
 import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
@@ -215,7 +214,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
-	deemphasizeFreePlan: deemphasizeFreePlanFromProps,
+	deemphasizeFreePlan,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -377,12 +376,6 @@ const PlansFeaturesMain = ( {
 		hideEcommercePlan,
 		hideEnterprisePlan,
 	};
-
-	// The hook is introduced temporarily to alter the value dynamically according to the ExPlat variant loaded.
-	// Once the experiment concludes, we will clean it up and simply use the prop value.
-	// For more details, please refer to peP6yB-23n-p2
-	const resolvedDeemphasizeFreePlan = useDeemphasizeFreePlan( flowName, paidDomainName );
-	const deemphasizeFreePlan = deemphasizeFreePlanFromProps || resolvedDeemphasizeFreePlan.result;
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
@@ -647,10 +640,7 @@ const PlansFeaturesMain = ( {
 			isExperimentLoading ||
 			isTrailMapExperimentLoading
 	);
-	const isPlansGridReady =
-		! isLoadingGridPlans &&
-		! resolvedSubdomainName.isLoading &&
-		! resolvedDeemphasizeFreePlan.isLoading;
+	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;

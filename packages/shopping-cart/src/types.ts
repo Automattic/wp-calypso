@@ -830,6 +830,20 @@ export interface TermsOfServiceRecordArgsBase {
 	 * This price is an integer in the currency's smallest unit.
 	 */
 	maybe_prorated_regular_renewal_price_integer: number;
+
+	/**
+	 * True if the product in the cart which has these terms is a manual renewal
+	 * (as opposed to a new purchase or a quantity upgrade).
+	 */
+	is_renewal: boolean;
+
+	/**
+	 * The number of auto-renewals after the current purchase completes which
+	 * will be affected by the promotional pricing. If the product is affected by
+	 * a prorated introductory offer, then the auto-renewal where the user will
+	 * be charged the prorated price is not counted by this number.
+	 */
+	remaining_promotional_auto_renewals: number;
 }
 
 export interface TermsOfServiceRecordArgsRenewal extends TermsOfServiceRecordArgsBase {

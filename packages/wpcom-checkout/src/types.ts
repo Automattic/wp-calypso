@@ -16,6 +16,7 @@ export type WPCOMTransactionEndpointResponseSuccess = {
 	price_integer: number;
 	price_float: number;
 	currency: string;
+	is_gravatar_domain: boolean;
 };
 
 export type WPCOMTransactionEndpointResponseFailed = {
@@ -31,6 +32,7 @@ export type WPCOMTransactionEndpointResponseFailed = {
 	price_integer: number;
 	price_float: number;
 	currency: string;
+	is_gravatar_domain: boolean;
 };
 
 export type WPCOMTransactionEndpointResponseRedirect = {

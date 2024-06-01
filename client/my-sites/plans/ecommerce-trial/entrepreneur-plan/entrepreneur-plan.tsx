@@ -3,6 +3,7 @@ import {
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
+	getPlan,
 	getPlans,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -196,11 +197,25 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 			<Card>
 				<div className="plan-wrapper">
 					<div className="plan-description">
-						<h3 className="entrepreneur-trial-plan__plan-title">{ translate( 'Entrepreneur' ) }</h3>
+						<h3 className="entrepreneur-trial-plan__plan-title">
+							{ getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '' }
+						</h3>
 						<p className="card-text">
-							{ translate(
-								"Secure the full benefits of the Entrepreneur plan. Purchase today and maximize your store's potential!"
-							) }
+							{ isEnglish ||
+							hasTranslation(
+								"Secure the full benefits of the %(planName)s plan. Purchase today and maximize your store's potential!"
+							)
+								? translate(
+										"Secure the full benefits of the %(planName)s plan. Purchase today and maximize your store's potential!",
+										{
+											args: {
+												planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+											},
+										}
+								  )
+								: translate(
+										"Secure the full benefits of the Entrepreneur plan. Purchase today and maximize your store's potential!"
+								  ) }
 						</p>
 					</div>
 					<div className="price-block">

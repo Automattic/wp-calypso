@@ -440,6 +440,10 @@ function mergeProps(
 			? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 			: FEATURE_INSTALL_PLUGINS;
 		ctaName = 'calypso-plugin-details-eligibility-upgrade-nudge';
+	} else if ( ownProps.currentContext === 'dev-tools' ) {
+		context = ownProps.currentContext;
+		feature = FEATURE_SFTP;
+		ctaName = 'calypso-dev-tools-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins-upload';
 		feature = FEATURE_UPLOAD_PLUGINS;
