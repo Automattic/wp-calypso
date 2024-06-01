@@ -1,6 +1,7 @@
-import { FEATURE_SFTP } from '@automattic/calypso-products';
+import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Dialog } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
@@ -37,23 +38,28 @@ const DevTools = () => {
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
-	// The ref is required to persist the value of redirect_to after renders
-	const redirectUrl = useRef( searchParams.get( 'redirect_to' ) ?? `/hosting-config/${ siteId }` );
 	const { siteSlug, isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
 		siteSlug: getSiteSlug( state, siteId ) || '',
 		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
 		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
 	} ) );
+	// The ref is required to persist the value of redirect_to after renders
+	const redirectUrl = useRef(
+		searchParams.get( 'redirect_to' ) ?? hasSftpFeature
+			? `/hosting-config/${ siteId }`
+			: `/overview/${ siteId }`
+	);
+	const hasEnTranslation = useHasEnTranslation();
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const pluginsLink = `https://wordpress.com/plugins/${ encodeURIComponent( siteSlug ) }`;
 	const promoCards = [
 		{
-			title: translate( 'Hosting Configuration' ),
+			title: translate( 'Deployments' ),
 			text: translate(
-				"Access your site's database and tailor your server settings to your specific needs."
+				'Automate updates from GitHub to streamline workflows, reduce errors, and enable faster deployments.'
 			),
-			supportContext: 'hosting-configuration',
+			supportContext: 'github-deployments',
 		},
 		{
 			title: translate( 'Monitoring' ),
@@ -75,11 +81,11 @@ const DevTools = () => {
 			supportContext: 'site-monitoring-logs',
 		},
 		{
-			title: translate( 'GitHub Deployments' ),
+			title: translate( 'Server Configuration' ),
 			text: translate(
-				'Automate updates from GitHub to streamline workflows, reduce errors, and enable faster deployments.'
+				"Access your site's database and tailor your server settings to your specific needs."
 			),
-			supportContext: 'github-deployments',
+			supportContext: 'hosting-configuration',
 		},
 	];
 
@@ -96,10 +102,23 @@ const DevTools = () => {
 		page( `/setup/transferring-hosted-site?${ params }` );
 	};
 
-	if ( isSiteAtomic && hasSftpFeature ) {
+	if ( isSiteAtomic ) {
 		page.replace( redirectUrl.current );
 		return;
 	}
+
+	const upgradeCtaCopy = hasEnTranslation(
+		'Upgrade to the %(planName)s plan or higher to get access to all developer tools'
+	)
+		? translate(
+				'Upgrade to the %(planName)s plan or higher to get access to all developer tools',
+				{
+					args: {
+						planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+					},
+				}
+		  )
+		: translate( 'Upgrade to the Creator plan or higher to get access to all developer tools' );
 
 	return (
 		<div className="dev-tools">
@@ -114,9 +133,7 @@ const DevTools = () => {
 						? translate(
 								'Your plan includes all the developer tools listed below. Click "Activate Now" to begin.'
 						  )
-						: translate(
-								'Upgrade to the Creator plan or higher to get access to all developer tools'
-						  ) }
+						: upgradeCtaCopy }
 				</p>
 				{ showActivationButton ? (
 					<>

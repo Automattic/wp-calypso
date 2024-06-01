@@ -4,7 +4,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { BellIcon } from 'calypso/layout/global-sidebar/menu-items/notifications/icon';
+import { setUnseenCount } from 'calypso/state/notifications/actions';
 import getUnseenCount from 'calypso/state/selectors/get-notification-unseen-count';
+import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import MasterbarItem from '../item';
@@ -18,12 +20,15 @@ class MasterbarItemNotifications extends Component {
 		tooltip: TranslatableString,
 		//connected
 		isNotificationsOpen: PropTypes.bool,
+		hasUnseenNotifications: PropTypes.bool,
 		unseenCount: PropTypes.number,
 	};
 
 	state = {
 		animationState: 0,
-		newNote: this.props.unseenCount > 0,
+		// unseenCount is null on initial load, so we use hasUnseenNotifications which checks user
+		// data as well.
+		newNote: this.props.hasUnseenNotifications,
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -33,6 +38,9 @@ class MasterbarItemNotifications extends Component {
 
 		if ( ! prevProps.isNotificationsOpen && this.props.isNotificationsOpen ) {
 			this.setNotesIndicator( 0 );
+			// Ensure we setUnseenCount when opening notes panel. The panel only calls this on
+			// APP_RENDER_NOTES which is not consistently called when opening the panel.
+			this.props.setUnseenCount( 0 );
 		}
 	}
 
@@ -102,10 +110,12 @@ const mapStateToProps = ( state ) => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
 		unseenCount: getUnseenCount( state ),
+		hasUnseenNotifications: hasUnseenNotifications( state ),
 	};
 };
 const mapDispatchToProps = {
 	toggleNotificationsPanel,
+	setUnseenCount,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );

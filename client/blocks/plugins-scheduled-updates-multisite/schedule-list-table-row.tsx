@@ -66,7 +66,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 				<td className="last-update">
 					<ScheduleListLastRunStatus schedule={ schedule } />
 				</td>
-				<td>{ prepareDateTime( schedule.timestamp ) }</td>
+				<td className="next-update">{ prepareDateTime( schedule.timestamp ) }</td>
 
 				<td>
 					{

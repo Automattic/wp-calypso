@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import page, { type Callback } from '@automattic/calypso-router';
+import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
@@ -8,16 +8,8 @@ import {
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible, siteMetrics } from 'calypso/my-sites/site-monitoring/controller';
 import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
-import {
-	DOTCOM_MONITORING,
-	DOTCOM_PHP_LOGS,
-	DOTCOM_SERVER_LOGS,
-} from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
-import {
-	siteMonitoringOverview,
-	siteMonitoringPhpLogs,
-	siteMonitoringServerLogs,
-} from './controller';
+import { DOTCOM_MONITORING } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+import { siteMonitoring } from './controller';
 
 export default function () {
 	page( '/site-monitoring', siteSelection, sites, makeLayout, clientRender );
@@ -29,30 +21,8 @@ export default function () {
 			redirectToDevToolsPromoIfNotAtomic,
 			redirectHomeIfIneligible,
 			navigation,
-			siteMonitoringOverview,
+			siteMonitoring,
 			siteDashboard( DOTCOM_MONITORING ),
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/site-monitoring/:site/php',
-			siteSelection,
-			redirectToDevToolsPromoIfNotAtomic,
-			redirectHomeIfIneligible,
-			navigation,
-			siteMonitoringPhpLogs,
-			siteDashboard( DOTCOM_PHP_LOGS ),
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/site-monitoring/:site/web',
-			siteSelection,
-			redirectToDevToolsPromoIfNotAtomic,
-			redirectHomeIfIneligible,
-			navigation,
-			siteMonitoringServerLogs,
-			siteDashboard( DOTCOM_SERVER_LOGS ),
 			makeLayout,
 			clientRender
 		);
@@ -68,16 +38,4 @@ export default function () {
 			clientRender
 		);
 	}
-
-	// Legacy redirect for Site Logs.
-	const redirectSiteLogsToMonitoring: Callback = ( context ) => {
-		if ( context.params?.siteId ) {
-			context.page.replace( `/site-monitoring/${ context.params.siteId }` );
-		} else {
-			context.page.replace( `/site-monitoring` );
-		}
-		return;
-	};
-	page( '/site-logs', redirectSiteLogsToMonitoring );
-	page( '/site-logs/:siteId', redirectSiteLogsToMonitoring );
 }

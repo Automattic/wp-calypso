@@ -142,10 +142,12 @@ const PlanFeatures2023GridActions = ( {
 	const canPurchaseStorageAddOns = storageAddOnsForPlan?.some(
 		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
 	);
+
 	const storageAddOnCheckoutHref = storageAddOnsForPlan?.find(
 		( addOn ) =>
 			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
 	)?.checkoutLink;
+
 	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
 
 	let actionButton = (

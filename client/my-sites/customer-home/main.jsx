@@ -130,6 +130,12 @@ const Home = ( {
 		}
 	}, [ emailDnsDiagnostics ] );
 
+	const isFirstSecondaryCardInPrimaryLocation =
+		Array.isArray( layout?.primary ) &&
+		layout.primary.length === 0 &&
+		Array.isArray( layout?.secondary ) &&
+		layout.secondary.length > 0;
+
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return (
@@ -280,7 +286,11 @@ const Home = ( {
 					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
-							<Secondary cards={ layout?.secondary } siteId={ siteId } />
+							<Secondary
+								cards={ layout?.secondary }
+								siteId={ siteId }
+								trackFirstCardAsPrimary={ isFirstSecondaryCardInPrimaryLocation }
+							/>
 						</div>
 						<div className="customer-home__layout-col customer-home__layout-col-right">
 							<Tertiary cards={ layout?.tertiary } />

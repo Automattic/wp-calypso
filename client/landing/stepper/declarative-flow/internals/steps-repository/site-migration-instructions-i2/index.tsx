@@ -85,7 +85,13 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 
 	useEffect( () => {
 		if ( setupError ) {
+			const logError = setupError as unknown as { path: string; message: string };
+
 			captureException( setupError, {
+				extra: {
+					message: logError?.message,
+					path: logError?.path,
+				},
 				tags: {
 					blog_id: siteId,
 					calypso_section: 'setup',

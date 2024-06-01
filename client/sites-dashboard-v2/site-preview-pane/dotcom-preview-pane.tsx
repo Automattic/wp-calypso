@@ -10,10 +10,10 @@ import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
-	DOTCOM_PHP_LOGS,
-	DOTCOM_SERVER_LOGS,
+	DOTCOM_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_DEVELOPER_TOOLS,
+	DOTCOM_STAGING_SITE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 
@@ -65,8 +65,8 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_HOSTING_CONFIG,
-				__( 'Hosting Config' ),
+				DOTCOM_GITHUB_DEPLOYMENTS,
+				__( 'Deployments' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
@@ -81,24 +81,24 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_PHP_LOGS,
-				__( 'PHP Logs' ),
+				DOTCOM_LOGS,
+				__( 'Logs' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_SERVER_LOGS,
-				__( 'Server Logs' ),
+				DOTCOM_STAGING_SITE,
+				__( 'Staging Site' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_GITHUB_DEPLOYMENTS,
-				__( 'GitHub Deployments' ),
+				DOTCOM_HOSTING_CONFIG,
+				__( 'Server Config' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,

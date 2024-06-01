@@ -33,7 +33,7 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 
 /* Remove padding on the left for the first item in the row */
 .site-logs-table tr td:first-child {
-	padding-left: 0;
+	padding-inline-start: 0 !important;
 }
 
 /* Remove padding on the right for the last item in the row */

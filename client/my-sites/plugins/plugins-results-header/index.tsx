@@ -19,7 +19,7 @@ export default function PluginsResultsHeader( {
 	subtitle: TranslateResult;
 	browseAllLink?: string;
 	resultCount?: string;
-	className: string;
+	className?: string;
 	listName?: string;
 } ) {
 	const { __ } = useI18n();
