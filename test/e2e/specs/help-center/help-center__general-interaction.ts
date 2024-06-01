@@ -25,7 +25,7 @@ describe.each( [
 	} );
 
 	describe( 'Verify Help Center is opened and visible in Calypso', function () {
-		it( 'Verify Help Center is initally closed', async function () {
+		it( 'Verify Help Center is initially closed', async function () {
 			expect( await page.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
 		} );
 
@@ -50,7 +50,7 @@ describe.each( [
 			}
 		} );
 
-		it( 'Verify Help Center is initally closed', async function () {
+		it( 'Verify Help Center is initially closed', async function () {
 			expect( await selectedFrame?.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
 		} );
 
