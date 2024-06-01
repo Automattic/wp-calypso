@@ -1,6 +1,7 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { getLocaleSlug, translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import InfoPopover from 'calypso/components/info-popover';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { NoSearchResults } from 'calypso/my-sites/subscribers/components/no-search-results';
@@ -11,7 +12,7 @@ import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subs
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isSimpleSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
 import { useRecordSearch } from '../../tracks';
 import { GrowYourAudience } from '../grow-your-audience';
 import './style.scss';
@@ -32,6 +33,7 @@ const SubscriberListContainer = ( {
 	const {
 		grandTotal,
 		total,
+		socialTotal,
 		perPage,
 		page,
 		pageChangeCallback,
@@ -43,6 +45,7 @@ const SubscriberListContainer = ( {
 	} = useSubscribersPage();
 	useRecordSearch();
 
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
@@ -73,12 +76,42 @@ const SubscriberListContainer = ( {
 							}` }
 							title={
 								total > 1000
-									? formatNumber( total, getLocaleSlug() || undefined, { notation: 'standard' } )
+									? formatNumber( socialTotal, getLocaleSlug() || undefined, {
+											notation: 'standard',
+									  } )
 									: undefined
 							}
 						>
 							{ formatNumber( total, getLocaleSlug() || undefined ) }
 						</span>
+						{ socialTotal > 0 && (
+							<div>
+								<span className="subscriber-list-container__social-count">
+									{ translate(
+										'You also have %(socialTotal)s social follower.',
+										'You also have %(socialTotal)s social followers.',
+										{
+											count: socialTotal,
+											args: {
+												socialTotal: formatNumber( socialTotal, getLocaleSlug() || undefined ),
+											},
+										}
+									) }
+								</span>
+								<InfoPopover position="top right" iconSize={ 14 }>
+									<span>
+										{ translate(
+											'Social followers receive your posts on social media via {{a}}auto-sharing{{/a}}.',
+											{
+												components: {
+													a: <a href={ '/marketing/connections/' + siteSlug } />,
+												},
+											}
+										) }
+									</span>
+								</InfoPopover>
+							</div>
+						) }
 					</div>
 
 					<SubscriberListActionsBar />
