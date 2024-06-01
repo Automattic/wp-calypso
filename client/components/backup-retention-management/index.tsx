@@ -273,6 +273,10 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 		updateRetentionRequestStatus,
 	] );
 
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_storage_retention_view' ) );
+	}, [ dispatch ] );
+
 	const updateSettingsButton = (
 		<Button primary onClick={ handleUpdateRetention } disabled={ disableFormSubmission }>
 			{ updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ? (
