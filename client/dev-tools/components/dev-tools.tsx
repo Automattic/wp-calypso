@@ -1,11 +1,11 @@
 import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Dialog } from '@automattic/components';
-import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Banner from 'calypso/components/banner';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
@@ -108,26 +108,21 @@ const DevTools = () => {
 						? translate( 'Activate all developer tools' )
 						: translate( 'Unlock all developer tools' ) }
 				</h1>
-				<p>
-					{ showActivationButton
-						? translate(
-								'Your plan includes all the developer tools listed below. Click "Activate Now" to begin.'
-						  )
-						: null }
-				</p>
 				{ showActivationButton ? (
 					<>
-						<Button
-							variant="primary"
-							className="dev-tools__button"
+						<Banner
+							title={ translate( 'Activate developer tools to begin.' ) }
+							description={ translate(
+								'Your plan includes all the developer tools listed below.'
+							) }
+							callToAction={ translate( 'Activate now' ) }
 							onClick={ () => {
 								if ( showActivationButton ) {
 									return setShowEligibility( true );
 								}
 							} }
-						>
-							{ translate( 'Activate now' ) }
-						</Button>
+							disableHref
+						/>
 
 						<Dialog
 							additionalClassNames="plugin-details-cta__dialog-content"
