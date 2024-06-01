@@ -83,6 +83,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/export-your-media-library',
 		post_id: 278472,
 	},
+	'front-page': {
+		link: 'https://wordpress.com/support/pages/front-page/',
+		post_id: 1698,
+	},
 	followers: {
 		link: 'https://wordpress.com/support/followers/',
 		post_id: 5444,
