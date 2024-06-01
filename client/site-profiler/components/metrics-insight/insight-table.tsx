@@ -20,13 +20,17 @@ export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryRe
 					<>
 						<tr key={ `tr-${ index }` }>
 							{ headings.map( ( heading ) => (
-								<td>
+								<td key={ `td-${ index }-${ heading.key }` }>
 									<Cell data={ item[ heading.key ] } headingValueType={ heading.valueType } />
 								</td>
 							) ) }
 						</tr>
 						{ item.subItems && typeof item.subItems === 'object' && (
-							<SubRows items={ item.subItems?.items } headings={ headings } />
+							<SubRows
+								items={ item.subItems?.items }
+								headings={ headings }
+								key={ `subrows-${ index }` }
+							/>
 						) }
 					</>
 				) ) }
@@ -38,11 +42,11 @@ export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryRe
 function SubRows( { items, headings }: { items: any[]; headings: any[] } ) {
 	return items.map( ( subItem, subIndex ) => (
 		<tr key={ `sub-${ subIndex }` } className="sub">
-			{ headings.map( ( heading ) => {
+			{ headings.map( ( heading, index ) => {
 				const { subItemsHeading } = heading;
 
 				return (
-					<td>
+					<td key={ `subrow-${ index }` }>
 						<Cell
 							data={ subItem[ subItemsHeading?.key ] }
 							headingValueType={ subItemsHeading?.valueType }
@@ -90,8 +94,10 @@ function Cell( {
 				if ( data?.location ) {
 					return `${ data.location.url }:${ data.location.line }:${ data.location.column }`;
 				}
-				return data?.url || data;
+				return data?.url;
 		}
+
+		return data?.value;
 	}
 
 	if ( typeof data === 'string' || typeof data === 'number' ) {
