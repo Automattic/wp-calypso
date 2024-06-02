@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import Markdown from 'react-markdown';
 import { PerformanceMetricsDetailsQueryResponse } from 'calypso/data/site-profiler/types';
+import { getFormattedNumber, getFormattedSize } from 'calypso/site-profiler/utils/formatting-data';
 
 export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryResponse } ) {
 	const { headings = [], items = [] } = data ?? {};
@@ -16,17 +17,45 @@ export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryRe
 			</thead>
 			<tbody>
 				{ items.map( ( item, index ) => (
-					<tr key={ `tr-${ index }` }>
-						{ headings.map( ( heading ) => (
-							<td>
-								<Cell data={ item[ heading.key ] } headingValueType={ heading.valueType } />
-							</td>
-						) ) }
-					</tr>
+					<>
+						<tr key={ `tr-${ index }` }>
+							{ headings.map( ( heading ) => (
+								<td key={ `td-${ index }-${ heading.key }` }>
+									<Cell data={ item[ heading.key ] } headingValueType={ heading.valueType } />
+								</td>
+							) ) }
+						</tr>
+						{ item.subItems && typeof item.subItems === 'object' && (
+							<SubRows
+								items={ item.subItems?.items }
+								headings={ headings }
+								key={ `subrows-${ index }` }
+							/>
+						) }
+					</>
 				) ) }
 			</tbody>
 		</table>
 	);
+}
+
+function SubRows( { items, headings }: { items: any[]; headings: any[] } ) {
+	return items.map( ( subItem, subIndex ) => (
+		<tr key={ `sub-${ subIndex }` } className="sub">
+			{ headings.map( ( heading, index ) => {
+				const { subItemsHeading } = heading;
+
+				return (
+					<td key={ `subrow-${ index }` }>
+						<Cell
+							data={ subItem[ subItemsHeading?.key ] }
+							headingValueType={ subItemsHeading?.valueType }
+						/>
+					</td>
+				);
+			} ) }
+		</tr>
+	) );
 }
 
 function Cell( {
@@ -65,8 +94,10 @@ function Cell( {
 				if ( data?.location ) {
 					return `${ data.location.url }:${ data.location.line }:${ data.location.column }`;
 				}
-				return data?.url || data;
+				return data?.url;
 		}
+
+		return data?.value;
 	}
 
 	if ( typeof data === 'string' || typeof data === 'number' ) {
@@ -82,24 +113,15 @@ function Cell( {
 			case 'link':
 				return <Markdown>{ data.toString() }</Markdown>;
 			case 'score':
-				<span className={ `score ${ Number( data ) > 6 ? 'dangerous' : 'alert' } ` }>
-					{ data }
-				</span>;
+				return (
+					<span className={ `score ${ Number( data ) > 6 ? 'dangerous' : 'alert' } ` }>
+						{ data }
+					</span>
+				);
 			default:
 				return data;
 		}
 	}
 
 	return data;
-}
-
-function getFormattedNumber( value: number | string, dec = 2 ) {
-	return Number( Number( value ?? 0 ).toFixed( dec ) );
-}
-
-function getFormattedSize( size: number ) {
-	const i = size === 0 ? 0 : Math.floor( Math.log( size ) / Math.log( 1024 ) );
-	return (
-		+( size / Math.pow( 1024, i ) ).toFixed( 2 ) * 1 + ' ' + [ 'B', 'kB', 'MB', 'GB', 'TB' ][ i ]
-	);
 }
