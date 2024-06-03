@@ -90,14 +90,18 @@ export function requestSites() {
 				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 			} )
 			.then( ( response ) => {
-				dispatch(
-					receiveSites(
-						isEnabled( 'jetpack/manage-simple-sites' ) && isJetpackCloud()
-							? // Filter out P2 sites for Jetpack Cloud that has the feature enabled
-							  response.sites.filter( ( site ) => ! site?.options?.is_wpforteams_site )
-							: response.sites
-					)
-				);
+				const jetpackCloudSites = response.sites.filter( ( site ) => {
+					// Filter Jetpack Cloud sites to exclude P2 sites by default.
+					const isP2 = site?.options?.is_wpforteams_site;
+					let filterCondition = ! isP2;
+					// Filter out simple sites if feature flag is not enabled.
+					if ( ! isEnabled( 'jetpack/manage-simple-sites' ) ) {
+						const isSimple = ! site?.jetpack && ! site?.is_wpcom_atomic;
+						filterCondition = ! isP2 && ! isSimple;
+					}
+					return filterCondition;
+				} );
+				dispatch( receiveSites( isJetpackCloud() ? jetpackCloudSites : response.sites ) );
 				dispatch( {
 					type: SITES_REQUEST_SUCCESS,
 				} );

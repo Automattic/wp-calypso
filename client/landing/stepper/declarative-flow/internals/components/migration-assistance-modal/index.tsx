@@ -1,4 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
@@ -46,6 +48,8 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 		} );
 	}, [ importSiteHostName ] );
 
+	const hasEnTranslation = useHasEnTranslation();
+
 	return (
 		<ConfirmModal
 			compact={ false }
@@ -56,14 +60,27 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 			onConfirm={ acceptMigrationAssistance }
 		>
 			<p>
-				{ translate(
-					`Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.`,
-					{
-						args: {
-							importSiteHostName,
-						},
-					}
-				) }
+				{ hasEnTranslation(
+					'Subscribe to the %(planName)s plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.'
+				)
+					? // translators: %(planName)s is a plan name. E.g. Commerce plan.
+					  translate(
+							'Subscribe to the %(planName)s plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.',
+							{
+								args: {
+									importSiteHostName,
+									planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+								},
+							}
+					  )
+					: translate(
+							`Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.`,
+							{
+								args: {
+									importSiteHostName,
+								},
+							}
+					  ) }
 			</p>
 			<p>
 				{ translate(

@@ -1,10 +1,10 @@
 import { Button } from '@wordpress/components';
-import { close, Icon } from '@wordpress/icons';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import MainComponent from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScheduledUpdatesGate from 'calypso/components/scheduled-updates/scheduled-updates-gate';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -60,9 +60,9 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		} );
 	}, [ context, siteSlug ] );
 
-	const [ navigationTitle, setNavigationTitle ] = useState< string | null >( null );
+	const [ , setNavigationTitle ] = useState< string | null >( null );
 
-	const { component, title, showClose } = {
+	const { component, title } = {
 		logs: {
 			component: (
 				<ScheduleLogs
@@ -72,7 +72,6 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 				/>
 			),
 			title: translate( 'Scheduled Updates Logs' ),
-			showClose: true,
 		},
 		list: {
 			component: (
@@ -88,17 +87,14 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		create: {
 			component: <ScheduleCreate onNavBack={ onNavBack } />,
 			title: translate( 'New schedule' ),
-			showClose: true,
 		},
 		edit: {
 			component: <ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />,
 			title: translate( 'Edit schedule' ),
-			showClose: true,
 		},
 		notifications: {
 			component: <NotificationSettings onNavBack={ onNavBack } />,
 			title: translate( 'Notification settings' ),
-			showClose: true,
 		},
 	}[ context ];
 
@@ -110,50 +106,42 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		<PluginUpdateManagerContextProvider siteSlug={ siteSlug }>
 			<DocumentHead title={ title } />
 			{ ! isSitePlansLoaded && <QuerySitePlans siteId={ siteId } /> }
-			<div className="plugins-update-manager">
-				<div
-					className={ classnames(
-						'plugins-update-manager__header',
-						context !== 'list' ? 'no-border' : null
+			<MainComponent wideLayout className="plugins-update-manager">
+				<NavigationHeader
+					className="plugins-update-manager-header"
+					navigationItems={ [] }
+					title={ translate( 'Plugin Update Manager' ) }
+					subtitle={ translate(
+						'Streamline your workflow with scheduled updates, timed to suit your needs.'
 					) }
 				>
-					<h1>{ navigationTitle }</h1>
-					<div className="buttons">
-						{ context === 'list' && (
-							<>
-								{ onNotificationManagement && (
-									<Button
-										__next40pxDefaultSize
-										variant="secondary"
-										onClick={ onNotificationManagement }
-									>
-										{ translate( 'Notification settings' ) }
-									</Button>
-								) }
+					{ context === 'list' && (
+						<>
+							{ onNotificationManagement && (
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									onClick={ onNotificationManagement }
+								>
+									{ translate( 'Notification settings' ) }
+								</Button>
+							) }
 
-								{ onCreateNewSchedule && ! hideCreateButton && (
-									<Button
-										__next40pxDefaultSize
-										variant={
-											canCreateSchedules && siteHasEligiblePlugins ? 'primary' : 'secondary'
-										}
-										onClick={ onCreateNewSchedule }
-										disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
-									>
-										{ translate( 'New Schedule' ) }
-									</Button>
-								) }
-							</>
-						) }
-						{ showClose && (
-							<Button onClick={ onNavBack }>
-								<Icon icon={ close } />
-							</Button>
-						) }
-					</div>
-				</div>
+							{ onCreateNewSchedule && ! hideCreateButton && (
+								<Button
+									__next40pxDefaultSize
+									variant={ canCreateSchedules && siteHasEligiblePlugins ? 'primary' : 'secondary' }
+									onClick={ onCreateNewSchedule }
+									disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
+								>
+									{ translate( 'New Schedule' ) }
+								</Button>
+							) }
+						</>
+					) }
+				</NavigationHeader>
 				<ScheduledUpdatesGate siteId={ siteId as number }>{ component }</ScheduledUpdatesGate>
-			</div>
+			</MainComponent>
 		</PluginUpdateManagerContextProvider>
 	);
 };

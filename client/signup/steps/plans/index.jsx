@@ -20,8 +20,8 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getIntervalType } from './util';
@@ -340,7 +340,7 @@ export default connect(
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
-		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+		hasInitializedSitesBackUrl: getCurrentUserSiteCount( state ) ? '/sites/' : false,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

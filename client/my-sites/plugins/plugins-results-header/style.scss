@@ -7,16 +7,17 @@
 	column-gap: 12px;
 
 	.plugins-results-header__titles {
-		margin-bottom: 6px; // +18 from elements = 24 gap
-
 		.plugins-results-header__title {
-			@extend .wp-brand-font;
-			font-size: $font-title-medium;
+			font-size: $font-body;
 			font-weight: 500;
+			line-height: 24px;
 		}
 
 		.plugins-results-header__subtitle {
+			margin-top: 6.5px;
 			font-size: $font-body-small;
+			line-height: 20px;
+			color: var(--studio-gray-80);
 		}
 	}
 
@@ -26,7 +27,6 @@
 		align-items: center;
 		justify-content: space-between;
 		margin-top: auto;
-		margin-bottom: 6px; // +20 from elements = 26 gap
 
 		.plugins-results-header__action {
 			font-size: $font-body-small;

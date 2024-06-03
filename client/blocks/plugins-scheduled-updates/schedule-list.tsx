@@ -1,5 +1,15 @@
+import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { __experimentalConfirmDialog as ConfirmDialog, Spinner } from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	__experimentalConfirmDialog as ConfirmDialog,
+	Spinner,
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+} from '@wordpress/components';
+import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
@@ -20,6 +30,7 @@ import { ScheduleListTable } from './schedule-list-table';
 
 interface Props {
 	siteId: number | null;
+	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
 	onShowLogs: ( id: string ) => void;
@@ -27,12 +38,12 @@ interface Props {
 export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const isSmallScreen = useBreakpoint( '<660px' );
+	const isDesktopScreen = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { isEligibleForFeature, loading: isEligibleForFeatureLoading } = useIsEligibleForFeature();
 	const { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading } =
 		useSiteHasEligiblePlugins();
 
-	const { siteId, onCreateNewSchedule, onEditSchedule, onShowLogs } = props;
+	const { siteId, onNavBack, onCreateNewSchedule, onEditSchedule, onShowLogs } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
 
@@ -102,40 +113,54 @@ export const ScheduleList = ( props: Props ) => {
 			>
 				{ translate( 'Are you sure you want to delete this schedule?' ) }
 			</ConfirmDialog>
-
-			{ schedules.length === 0 && isLoading && <Spinner /> }
-			{ ! isLoading && showScheduleListEmpty && (
-				<ScheduleListEmpty
-					pluginsUrl={
-						isGlobalSiteViewEnabled
-							? `${ siteAdminUrl }plugin-install.php`
-							: `/plugins/${ siteSlug }`
-					}
-					onCreateNewSchedule={ onCreateNewSchedule }
-					canCreateSchedules={ canCreateSchedules }
-				/>
-			) }
-			{ isFetched &&
-				! isLoadingCanCreateSchedules &&
-				siteHasEligiblePlugins &&
-				schedules.length > 0 &&
-				canCreateSchedules && (
-					<>
-						{ isSmallScreen ? (
-							<ScheduleListCards
-								onRemoveClick={ openRemoveDialog }
-								onEditClick={ onEditSchedule }
-								onShowLogs={ onShowLogs }
-							/>
-						) : (
-							<ScheduleListTable
-								onRemoveClick={ openRemoveDialog }
-								onEditClick={ onEditSchedule }
-								onShowLogs={ onShowLogs }
-							/>
+			<Card className="plugins-update-manager schedule-list--card__single-site">
+				<CardHeader size="extraSmall">
+					<div className="ch-placeholder">
+						{ onNavBack && (
+							<Button icon={ arrowLeft } onClick={ onNavBack }>
+								{ translate( 'Back' ) }
+							</Button>
 						) }
-					</>
-				) }
+					</div>
+					<Text>{ translate( 'Schedules' ) }</Text>
+					<div className="ch-placeholder"></div>
+				</CardHeader>
+				<CardBody>
+					{ schedules.length === 0 && isLoading && <Spinner /> }
+					{ ! isLoading && showScheduleListEmpty && (
+						<ScheduleListEmpty
+							pluginsUrl={
+								isGlobalSiteViewEnabled
+									? `${ siteAdminUrl }plugin-install.php`
+									: `/plugins/${ siteSlug }`
+							}
+							onCreateNewSchedule={ onCreateNewSchedule }
+							canCreateSchedules={ canCreateSchedules }
+						/>
+					) }
+					{ isFetched &&
+						! isLoadingCanCreateSchedules &&
+						siteHasEligiblePlugins &&
+						schedules.length > 0 &&
+						canCreateSchedules && (
+							<>
+								{ ! isDesktopScreen ? (
+									<ScheduleListCards
+										onRemoveClick={ openRemoveDialog }
+										onEditClick={ onEditSchedule }
+										onShowLogs={ onShowLogs }
+									/>
+								) : (
+									<ScheduleListTable
+										onRemoveClick={ openRemoveDialog }
+										onEditClick={ onEditSchedule }
+										onShowLogs={ onShowLogs }
+									/>
+								) }
+							</>
+						) }
+				</CardBody>
+			</Card>
 		</>
 	);
 };

@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { setPlansListExperiment } from '@automattic/calypso-products';
+import {
+	isJetpackPlanSlug,
+	isJetpackProductSlug,
+	setPlansListExperiment,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localStorageExperimentAssignmentKey } from '@automattic/explat-client/src/internal/experiment-assignment-store';
 import localStorage from '@automattic/explat-client/src/internal/local-storage';
@@ -22,7 +26,11 @@ import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
-import { getSiteFragment } from 'calypso/lib/route';
+import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
+import {
+	getProductSlugFromContext,
+	isContextSourceMyJetpack,
+} from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getImmediateLoginEmail,
@@ -147,6 +155,7 @@ export const redirectInvalidLanguage = ( context, next ) => {
 
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
+
 	if ( isUserLoggedIn( state ) ) {
 		next();
 		return;
@@ -202,6 +211,35 @@ export function redirectLoggedOutToSignup( context, next ) {
 	}
 
 	return page.redirect( createAccountUrl( { redirectTo: context.path, ref: 'reader-lp' } ) );
+}
+
+/**
+ * Middleware to redirect users coming from My Jetpack when necessary
+ * @see pbNhbs-ag3-p2
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectMyJetpack( context, next ) {
+	const state = context.store.getState();
+	const product = getProductSlugFromContext( context );
+	const isJetpackProduct = isJetpackPlanSlug( product ) || isJetpackProductSlug( product );
+
+	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isContextSourceMyJetpack( context ) ) {
+		// Redirect to the siteless checkout page
+		const redirectUrl = addQueryArgs(
+			{
+				connect_after_checkout: true,
+				from_site_slug: context.query.site,
+				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
+			},
+			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
+		);
+		page( redirectUrl );
+		return;
+	}
+
+	next();
 }
 
 /**

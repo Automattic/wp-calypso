@@ -94,25 +94,49 @@ export type BasicMetricsScoredList = [ Metrics, { value: number; score: Scores }
 
 export interface UrlBasicMetricsQueryResponse {
 	final_url: string;
-	basic: BasicMetrics;
+	basic: {
+		data: BasicMetrics;
+		success: boolean;
+	};
 	advanced: Record< string, string >;
 	token: string;
 }
 
-export interface UrlPerformanceMetricsQueryResponse {
-	webtestpage_org: {
+export interface UrlSecurityMetricsQueryResponse {
+	wpscan: {
 		report: {
 			audits: {
-				health: PerformanceMetricsDataQueryResponse;
-				performance: PerformanceMetricsDataQueryResponse;
+				pass: Record< string, PerformanceMetricsItemQueryResponse >;
+				fail: Record< string, PerformanceMetricsItemQueryResponse >;
+				truncated: boolean;
 			};
+			ovc: number;
 		};
+		errors: Record< string, Array< string > >;
+	};
+}
+
+export interface PerformanceReport {
+	audits: {
+		health: PerformanceMetricsDataQueryResponse;
+		performance: PerformanceMetricsDataQueryResponse;
+	};
+	performance: number;
+	overall_score: number;
+	is_wpcom: boolean;
+}
+
+export interface UrlPerformanceMetricsQueryResponse {
+	webtestpage_org: {
+		report: PerformanceReport;
+		status: string;
 	};
 }
 
 export interface PerformanceMetricsDataQueryResponse {
 	diagnostic: Record< string, PerformanceMetricsItemQueryResponse >;
 	pass: Record< string, PerformanceMetricsItemQueryResponse >;
+	truncated: boolean;
 }
 
 export interface PerformanceMetricsItemQueryResponse {
@@ -124,9 +148,20 @@ export interface PerformanceMetricsItemQueryResponse {
 }
 
 export interface PerformanceMetricsDetailsQueryResponse {
-	type: 'table' | 'oppurtunity' | 'list';
+	type: 'table' | 'opportunity' | 'list' | 'criticalrequestchain';
+	headings?: Array< { key: string; label: string; valueType: string } >;
+	items?: Array< {
+		[ key: string ]: string | number | { [ key: string ]: any };
+	} >;
+	chains?: Array< { [ key: string ]: any } >;
 }
 
 export interface BasicMetricsResult extends Omit< UrlBasicMetricsQueryResponse, 'basic' > {
 	basic: BasicMetricsScored;
 }
+
+export type PerformanceCategories =
+	| 'wpcom-low-performer'
+	| 'wpcom-high-performer'
+	| 'non-wpcom-low-performer'
+	| 'non-wpcom-high-performer';

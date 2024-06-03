@@ -126,7 +126,7 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 	}
 
 	return {
-		pageTitle: translate( 'Simple yet powerful stats to grow your site' ),
+		pageTitle: translate( 'Simple, yet powerful stats to grow your site' ),
 		infoText: translate(
 			'Jetpack Stats makes it easy to see how your site is doing. No data science skills needed. Start with a commercial license and get premium access to:'
 		),

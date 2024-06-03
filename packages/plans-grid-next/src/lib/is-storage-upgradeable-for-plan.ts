@@ -15,4 +15,7 @@ export const isStorageUpgradeableForPlan = ( {
 	intervalType: string;
 	showUpgradeableStorage: boolean;
 	storageOptions: StorageOption[];
-} ) => storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
+} ) =>
+	storageOptions.find( ( option ) => option.isAddOn ) &&
+	intervalType === 'yearly' &&
+	showUpgradeableStorage;

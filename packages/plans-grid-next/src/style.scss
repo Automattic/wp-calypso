@@ -326,12 +326,6 @@ $mobile-card-max-width: 440px;
 			padding-bottom: 23px;
 		}
 
-		&.plan-features-2023-grid__storage {
-			padding-top: 0;
-			padding-bottom: 32px;
-			width: 205px;
-		}
-
 		.plan-features-2023-grid__header-title {
 			margin-top: 24px;
 		}
@@ -459,19 +453,6 @@ $mobile-card-max-width: 440px;
 			margin: 0;
 			top: 14px;
 		}
-	}
-}
-
-.storage-add-on-dropdown__offset-price-container {
-	width: 100%;
-	margin-top: 8px;
-	text-align: left;
-
-	.storage-add-on-dropdown__offset-price {
-		color: var(--studio-green-50);
-
-		font-size: 0.75rem;
-		font-weight: 500;
 	}
 }
 
@@ -628,19 +609,11 @@ $mobile-card-max-width: 440px;
 			padding: 24px 0 6px 20px;
 		}
 
-		.plan-features-2023-grid__storage {
-			.plan-features-2023-grid__storage-buttons {
-				background: #f2f2f2;
-				/* stylelint-disable-next-line */
-				border-radius: 5px;
-				padding: 4px 0;
-				width: fit-content;
-				text-align: center;
-				font-size: $font-body-extra-small;
-				font-weight: 400;
-				line-height: 20px;
-				color: var(--studio-gray-90);
-				min-width: 64px;
+		&.plan-features-2023-grid__storage {
+			padding: 24px 20px 38px 20px;
+
+			.plan-features-2023-grid__storage-title {
+				margin-bottom: 10px;
 			}
 		}
 
@@ -1054,5 +1027,77 @@ $mobile-card-max-width: 440px;
 				line-height: 16px;
 			}
 		}
+	}
+}
+
+/**
+ * Storage Add-On Dropdown parts
+ */
+
+.plans-grid-next-plan-storage-label__container {
+	display: flex;
+	gap: 5px;
+	flex-direction: column;
+	align-items: baseline;
+
+	&.is-row {
+		flex-direction: row;
+	}
+
+	/**
+	 * Comparison grid overrides
+	 * - always render as column/wrapped
+	 */
+	.plans-grid-next-comparison-grid & {
+		flex-direction: column;
+		align-items: center;
+	}
+}
+
+.plans-grid-next-plan-storage-label__offset-price {
+	color: var(--studio-green-50);
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+}
+
+.storage-add-on-dropdown__offset-price-container {
+	width: 100%;
+	margin-top: 8px;
+	text-align: left;
+
+	.storage-add-on-dropdown__offset-price {
+		color: var(--studio-green-50);
+		font-size: $font-body-extra-small;
+		font-weight: 500;
+	}
+}
+
+.plan-features-2023-grid__storage-buttons {
+	background: #f2f2f2;
+	color: var(--studio-gray-90);
+	/* stylelint-disable-next-line */
+	border-radius: 5px;
+	padding: 4px 0;
+	text-align: center;
+	font-size: $font-body-extra-small;
+	font-weight: 400;
+	line-height: 20px;
+	width: fit-content;
+	min-width: 64px;
+
+	.plans-grid-next-comparison-grid & {
+		margin-top: 10px;
+
+		@include plans-grid-medium-large {
+			margin-top: 0;
+		}
+	}
+}
+
+.plan-features-2023-grid__storage {
+	.plan-features-2023-grid__plan-spotlight & {
+		padding-top: 0;
+		padding-bottom: 32px;
+		max-width: $table-cell-max-width;
 	}
 }

@@ -16,45 +16,47 @@ export const ScheduleListTable = ( props: Props ) => {
 	const translate = useTranslate();
 
 	return (
-		<table className="plugins-update-manager-multisite-table">
-			<thead>
-				<tr>
-					<th className="expand"></th>
-					<th>{ translate( 'Name' ) }</th>
-					<th>{ translate( 'Sites' ) }</th>
-					<th>{ translate( 'Last update' ) }</th>
-					<th>{ translate( 'Next update' ) }</th>
-					<th>{ translate( 'Frequency' ) }</th>
-					<th>{ translate( 'Plugins' ) }</th>
-					<th>{ translate( 'Active' ) }</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				{ schedules.map( ( schedule ) => (
-					<ScheduleListTableRow
-						schedule={ schedule }
-						onEditClick={ onEditClick }
-						onRemoveClick={ onRemoveClick }
-						onLogsClick={ onLogsClick }
-						key={ schedule.id }
-					/>
-				) ) }
-
-				{ schedules.length === 0 && (
+		<div className="plugins-update-manager-multisite-table-container">
+			<table className="plugins-update-manager-multisite-table">
+				<thead>
 					<tr>
-						<td colSpan={ 9 }>
-							<div className="empty-state empty-state__center">
-								<p>
-									{ translate(
-										"Oops! We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
-									) }
-								</p>
-							</div>
-						</td>
+						<th className="expand"></th>
+						<th>{ translate( 'Name' ) }</th>
+						<th>{ translate( 'Sites' ) }</th>
+						<th>{ translate( 'Last update' ) }</th>
+						<th>{ translate( 'Next update' ) }</th>
+						<th>{ translate( 'Frequency' ) }</th>
+						<th>{ translate( 'Plugins' ) }</th>
+						<th>{ translate( 'Active' ) }</th>
+						<th></th>
 					</tr>
-				) }
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					{ schedules.map( ( schedule ) => (
+						<ScheduleListTableRow
+							schedule={ schedule }
+							onEditClick={ onEditClick }
+							onRemoveClick={ onRemoveClick }
+							onLogsClick={ onLogsClick }
+							key={ schedule.id }
+						/>
+					) ) }
+
+					{ schedules.length === 0 && (
+						<tr>
+							<td colSpan={ 9 }>
+								<div className="empty-state empty-state__center">
+									<p>
+										{ translate(
+											"Oops! We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
+										) }
+									</p>
+								</div>
+							</td>
+						</tr>
+					) }
+				</tbody>
+			</table>
+		</div>
 	);
 };

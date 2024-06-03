@@ -41,7 +41,7 @@ const PressableOffering = () => {
 			<img src={ pressableIcon } alt="Pressable" />
 			<div className="a4a-overview-pressable-offering-header-title">
 				<h3 className="a4a-offering-item__title">
-					{ translate( 'Pressale' ) }
+					{ translate( 'Pressable' ) }
 					{ isPressableRegular && (
 						<Badge type="success">{ translate( "You're signed up!" ) }</Badge>
 					) }
