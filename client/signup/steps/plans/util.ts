@@ -25,7 +25,7 @@ export const getIntervalType = ( path?: string ): SupportedIntervalTypes => {
 
 export const shouldBasePlansOnSegment = (
 	flowName: string,
-	trailMapExperimentVariant: 'control' | 'treatment_guided' | 'treatment_survey_only'
+	trailMapExperimentVariant: undefined | 'control' | 'treatment_guided' | 'treatment_survey_only'
 ): boolean => {
 	return flowName === 'guided' && trailMapExperimentVariant === 'treatment_guided';
 };

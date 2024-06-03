@@ -247,8 +247,6 @@ export default {
 
 		// See: 1113-gh-Automattic/experimentation-platform for details.
 		const isGuidedFlow = flowName === 'guided';
-		// Default to `control` variant because it doesn't change anything.
-		initialContext.trailMapExperimentVariant = 'control';
 		if ( isGuidedFlow && ( ! userLoggedIn || ( userLoggedIn && isNewUser ) ) ) {
 			const bigSkyExperiment = await loadExperimentAssignment(
 				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
