@@ -245,6 +245,22 @@ export default {
 				experiment.variationName === 'treatment_scrambled';
 		}
 
+		// See: 1113-gh-Automattic/experimentation-platform for details.
+		const isGuidedFlow = flowName === 'guided';
+		// Default to `control` variant because it doesn't change anything.
+		initialContext.trailMapExperimentVariant = 'control';
+		if ( isGuidedFlow && ( ! userLoggedIn || ( userLoggedIn && isNewUser ) ) ) {
+			const bigSkyExperiment = await loadExperimentAssignment(
+				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
+			);
+			const trailMapExperiment = await loadExperimentAssignment(
+				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
+			);
+			if ( bigSkyExperiment.variationName === 'trailmap' ) {
+				initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
+			}
+		}
+
 		if (
 			config.isEnabled( 'onboarding/new-user-survey' ) ||
 			config.isEnabled( 'onboarding/new-user-survey-scrambled' )

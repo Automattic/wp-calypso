@@ -1217,6 +1217,13 @@ export function excludeSurveyStepIfInactive( stepName, defaultDependencies, next
 	}
 }
 
+export function excludeSegmentSurveyStepIfInactive( stepName, _, nextProps ) {
+	if ( nextProps.initialContext?.trailMapExperimentVariant === 'control' ) {
+		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+		flows.excludeStep( stepName );
+	}
+}
+
 export function excludeStepIfProfileComplete( stepName, defaultDependencies, nextProps ) {
 	if ( includes( flows.excludedSteps, stepName ) ) {
 		return;
