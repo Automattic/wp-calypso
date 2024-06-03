@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -43,7 +43,7 @@ class PostExcerptLink extends Component {
 				<span className="post-excerpt-only-site-name">{ this.props.siteName || '(untitled)' }</span>
 			</a>
 		);
-		const classes = classNames( {
+		const classes = clsx( {
 			'post-excerpt-link': true,
 			'is-showing-notice': this.state.isShowingNotice,
 		} );

@@ -1,5 +1,5 @@
 import { Gridicon, MaterialIcon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
@@ -36,7 +36,7 @@ const VerticalNavItemEnhanced = ( {
 	path,
 	text,
 } ) => {
-	const classes = classnames( 'vertical-nav-item-enhanced', className, { disabled } );
+	const classes = clsx( 'vertical-nav-item-enhanced', className, { disabled } );
 
 	return (
 		<VerticalNavItem

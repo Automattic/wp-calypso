@@ -3,12 +3,13 @@ import { useState } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import { UpgradePlanHostingTestimonials } from './constants';
+import cwvtechReportJson from './cwvtech-report.json';
 import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
 import { Skeleton } from './skeleton';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
@@ -72,10 +73,15 @@ export const UpgradePlanHostingDetails = () => {
 		);
 	}
 
+	const boostPercentage = Math.round(
+		( cwvtechReportJson[ 'WordPress.com' ].goodCWM - cwvtechReportJson[ 'WordPress' ].goodCWM ) *
+			100
+	);
+
 	return (
 		<div className="import__upgrade-plan-hosting-details">
 			<div
-				className={ classNames( 'import__upgrade-plan-hosting-details-card-container', {
+				className={ clsx( 'import__upgrade-plan-hosting-details-card-container', {
 					'import__upgrade-plan-hosting-details-card-container--without-identified-host':
 						! shouldDisplayHostIdentificationMessage,
 				} ) }
@@ -83,7 +89,12 @@ export const UpgradePlanHostingDetails = () => {
 				<div className="import__upgrade-plan-hosting-details-header">
 					<p className="import__upgrade-plan-hosting-details-header-main">{ headerMainText }</p>
 					<p className="import__upgrade-plan-hosting-details-header-subtext">
-						{ translate( 'Check our performance, compared to the average WordPress host' ) }
+						{ translate(
+							'Google data shows that %(boostPercentage)d%% more WordPress.com sites have good Core Web Vitals as compared to other WordPress hosts.',
+							{
+								args: { boostPercentage },
+							}
+						) }
 					</p>
 				</div>
 				<div className="import__upgrade-plan-hosting-details-list">

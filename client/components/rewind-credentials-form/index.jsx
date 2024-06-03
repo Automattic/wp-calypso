@@ -2,7 +2,7 @@
  * External dependendies
  */
 import { Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -250,7 +250,7 @@ export class RewindCredentialsForm extends Component {
 							borderless
 							disabled={ formIsSubmitting }
 							onClick={ this.toggleAdvancedSettings }
-							className={ classNames( 'rewind-credentials-form__advanced-button', {
+							className={ clsx( 'rewind-credentials-form__advanced-button', {
 								'is-expanded': showAdvancedSettings,
 							} ) }
 						>
@@ -260,7 +260,7 @@ export class RewindCredentialsForm extends Component {
 					) }
 					{ ( showAdvancedSettings || requirePath ) && (
 						<div
-							className={ classNames( {
+							className={ clsx( {
 								'rewind-credentials-form__advanced-settings': ! requirePath,
 							} ) }
 						>

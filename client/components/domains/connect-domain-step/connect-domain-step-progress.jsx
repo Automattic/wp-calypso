@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 
@@ -19,12 +19,12 @@ export default function ConnectDomainStepProgress( { baseClassName, steps, pageS
 
 					const stepCompleted = 0 === currentStepNumber || currentStepNumber > stepNumber;
 
-					const stepNumberClasses = classNames( baseClassName + '__progress-number', {
+					const stepNumberClasses = clsx( baseClassName + '__progress-number', {
 						'current-step': currentStepNumber === stepNumber,
 						'completed-step': stepCompleted,
 					} );
 
-					const stepNameClasses = classNames( baseClassName + '__progress-step-name', {
+					const stepNameClasses = clsx( baseClassName + '__progress-step-name', {
 						'current-step': currentStepNumber === stepNumber,
 					} );
 

@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -53,7 +53,7 @@ export default function SiteTableExpand( { index, setExpanded, isExpanded, siteI
 
 	return (
 		<td
-			className={ classNames( 'site-table__actions site-table__expand-row', {
+			className={ clsx( 'site-table__actions site-table__expand-row', {
 				'site-table__td-without-border-bottom': isExpanded,
 			} ) }
 		>

@@ -1,5 +1,5 @@
 import { ComboboxControl, Disabled } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
@@ -12,7 +12,7 @@ export default function SearchableDropdown( props: Props ) {
 
 	return (
 		<div
-			className={ classNames( 'searchable-dropdown', {
+			className={ clsx( 'searchable-dropdown', {
 				'is-disabled': disabled,
 			} ) }
 		>

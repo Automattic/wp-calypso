@@ -1,5 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
@@ -30,7 +30,7 @@ const NoSitesMessage = ( {
 
 	return (
 		<EmptyContent
-			className={ classNames( 'no-sites-message', {
+			className={ clsx( 'no-sites-message', {
 				'no-sites-message--no-illustration': illustration === false,
 			} ) }
 			title={

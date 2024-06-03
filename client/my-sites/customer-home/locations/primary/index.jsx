@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { createElement, useEffect, useRef } from 'react';
 import DotPager from 'calypso/components/dot-pager';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -40,7 +40,7 @@ const Primary = ( { cards } ) => {
 
 	return (
 		<DotPager
-			className={ classnames( 'primary__customer-home-location-content', {
+			className={ clsx( 'primary__customer-home-location-content', {
 				'primary__is-urgent': isUrgent,
 			} ) }
 			showControlLabels="true"

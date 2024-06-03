@@ -120,7 +120,8 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	const upgradeCtaCopy = hasEnTranslation(
 		'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.'
 	)
-		? translate(
+		? // translators: %(planName)s is a plan name. E.g. Commerce plan.
+		  translate(
 				'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.',
 				{
 					args: {

@@ -1,5 +1,5 @@
 import { Badge, CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import ExternalLink from 'calypso/components/external-link';
@@ -47,7 +47,7 @@ const MailboxListHeader = ( { accountType = null, children, isPlaceholder = fals
 };
 
 const MailboxListItem = ( { children, isError = false, isPlaceholder, hasNoEmails } ) => {
-	const className = classNames( 'email-plan-mailboxes-list__mailbox-list-item', {
+	const className = clsx( 'email-plan-mailboxes-list__mailbox-list-item', {
 		'is-placeholder': isPlaceholder,
 		'no-emails': hasNoEmails,
 	} );

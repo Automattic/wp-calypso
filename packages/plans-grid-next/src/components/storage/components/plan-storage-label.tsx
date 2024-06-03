@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
@@ -45,7 +45,7 @@ const PlanStorageLabel = ( { storageOption, planSlug }: Props ) => {
 		currencyCode: currencyCode ?? 'USD',
 	} );
 
-	const containerClasses = classNames( 'plans-grid-next-plan-storage-label__container', {
+	const containerClasses = clsx( 'plans-grid-next-plan-storage-label__container', {
 		'is-row': ! isLargeCurrency,
 	} );
 

@@ -1,5 +1,5 @@
 import { Icon, info, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import { Gridicon } from '../..';
 
@@ -33,7 +33,7 @@ const FormInputValidation: React.FC< Props > = ( {
 	id,
 	children,
 } ) => {
-	const classes = classNames( className, {
+	const classes = clsx( className, {
 		'form-input-validation': true,
 		'is-warning': isWarning,
 		'is-error': isError,

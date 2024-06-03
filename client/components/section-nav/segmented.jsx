@@ -1,5 +1,5 @@
 import { SegmentedControl } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Children, Component } from 'react';
 
@@ -16,7 +16,7 @@ class NavSegmented extends Component {
 	};
 
 	render() {
-		const segmentedClassName = classNames( 'section-nav-group', 'section-nav__segmented', {
+		const segmentedClassName = clsx( 'section-nav-group', 'section-nav__segmented', {
 			'has-siblings': this.props.hasSiblingControls,
 		} );
 

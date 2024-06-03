@@ -2,7 +2,7 @@ import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
@@ -237,7 +237,7 @@ const LayoutLoggedOut = ( {
 	const bodyClass = [ 'font-smoothing-antialiased' ];
 
 	return (
-		<div className={ classNames( 'layout', classes ) }>
+		<div className={ clsx( 'layout', classes ) }>
 			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			<div className="layout__header-section">

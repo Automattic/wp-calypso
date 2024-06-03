@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import cx from 'classnames';
+import cx from 'clsx';
 import { useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { useMarketingMessage } from './use-marketing-message';
