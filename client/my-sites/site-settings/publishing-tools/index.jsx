@@ -53,12 +53,7 @@ class PublishingTools extends Component {
 		const { translate, siteIsJetpack, isAtomic } = this.props;
 
 		const renderPressThis = config.isEnabled( 'press-this' ) && ! this.isMobile();
-		const renderPostByVoice =
-			config.isEnabled( 'settings/post-by-voice' ) && ! siteIsJetpack && ! isAtomic;
-
-		if ( ! renderPressThis && ! renderPostByVoice ) {
-			return;
-		}
+		const renderPostByVoice = ! siteIsJetpack && ! isAtomic;
 
 		return (
 			<div>

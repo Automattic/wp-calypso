@@ -589,6 +589,7 @@ __metadata:
   resolution: "@automattic/command-palette@workspace:packages/command-palette"
   dependencies:
     "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"

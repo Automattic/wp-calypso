@@ -8,7 +8,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import useGetDisplayDate from '../use-get-display-date';
 import BackupTips from './backup-tips';
@@ -25,9 +26,11 @@ const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, last
 	const justCompletedDisplayDate = getDisplayDate( justCompletedBackupDate, false );
 	const lastBackupDisplayDate = getDisplayDate( lastBackupDate, false );
 
+	const dispatch = useDispatch();
 	useEffect( () => {
 		recordLogRocketEvent( 'calypso_jetpack_backup_just_completed' );
-	}, [] );
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_just_completed' ) );
+	}, [ dispatch ] );
 
 	return (
 		<>

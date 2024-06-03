@@ -54,7 +54,7 @@ body.is-section-plugins {
 			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			height: calc(100vh - 32px);
 			max-width: none;
-			overflow-y: scroll;
+			overflow-y: auto;
 		}
 	}
 
@@ -76,7 +76,7 @@ body.is-section-plugins {
 	}
 
 	.a4a-layout-column {
-		overflow: scroll;
+		overflow: auto;
 	}
 
 	.a4a-layout-column.scheduled-updates-list-compact {
