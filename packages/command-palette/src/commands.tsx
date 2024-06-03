@@ -1121,15 +1121,15 @@ export function useCommands() {
 				filterSelfHosted: true,
 				icon: crowdsignalIcon,
 			},
-			viewPostRatings: {
-				name: 'viewPostRatings',
-				label: __( 'View post ratings', __i18n_text_domain__ ),
+			viewRatings: {
+				name: 'viewRatings',
+				label: __( 'View ratings', __i18n_text_domain__ ),
 				searchLabel: [
-					_x( 'feedback', 'Keyword for the View post ratings command', __i18n_text_domain__ ),
+					_x( 'feedback', 'Keyword for the View ratings command', __i18n_text_domain__ ),
 				].join( ' ' ),
 				callback: commandNavigation( '/wp-admin/admin.php?page=ratings' ),
 				siteSelector: true,
-				siteSelectorLabel: __( 'Select site to open Crowdsignal', __i18n_text_domain__ ),
+				siteSelectorLabel: __( 'Select site to view ratings', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_POSTS,
 				filterP2: true,
 				filterSelfHosted: true,
