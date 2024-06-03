@@ -1486,11 +1486,11 @@ export function useCommands() {
 			},
 			manageSettingsPermalinks: {
 				name: 'manageSettingsPermalinks',
-				label: __( 'Manage permalinks settings', __i18n_text_domain__ ),
+				label: __( 'Manage permalink settings', __i18n_text_domain__ ),
 				context: [ '/settings', '/wp-admin/options-' ],
 				callback: commandNavigation( '/wp-admin/options-permalink.php' ),
 				siteSelector: true,
-				siteSelectorLabel: __( 'Select site to manage permalinks settings', __i18n_text_domain__ ),
+				siteSelectorLabel: __( 'Select site to manage permalink settings', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
 				icon: settingsIcon,
 			},
