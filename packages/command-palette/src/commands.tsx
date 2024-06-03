@@ -1472,6 +1472,16 @@ export function useCommands() {
 				filterP2: true,
 				icon: settingsIcon,
 			},
+			manageSettingsPermalinks: {
+				name: 'manageSettingsPermalinks',
+				label: __( 'Manage permalinks settings', __i18n_text_domain__ ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: commandNavigation( '/wp-admin/options-permalink.php' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage permalinks settings', __i18n_text_domain__ ),
+				...siteFilters.hostingEnabled,
+				icon: settingsIcon,
+			},
 			openMarketingTools: {
 				name: 'openMarketingTools',
 				label: __( 'Open marketing tools', __i18n_text_domain__ ),
