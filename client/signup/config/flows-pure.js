@@ -253,9 +253,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
-				domains: {
-					useAlternateDomainMessaging: true,
-				},
 				plans: {
 					isCustomDomainAllowedOnFreePlan: true,
 					deemphasizeFreePlan: true,
