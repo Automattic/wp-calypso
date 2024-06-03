@@ -1,5 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -61,7 +61,7 @@ class BlogPostsPage extends Component {
 			>
 				<div className="blog-posts-page__details">
 					<div
-						className={ classNames( {
+						className={ clsx( {
 							'blog-posts-page__info': true,
 						} ) }
 					>

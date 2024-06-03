@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Icon, starEmpty } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/sections/overview/sidebar/contact-support';
@@ -79,7 +79,7 @@ const A4ASidebar = ( {
 	}, [] );
 
 	return (
-		<Sidebar className={ classNames( 'a4a-sidebar', className ) }>
+		<Sidebar className={ clsx( 'a4a-sidebar', className ) }>
 			<SidebarHeader withProfileDropdown={ ! withUserProfileFooter } />
 
 			<SidebarMain>

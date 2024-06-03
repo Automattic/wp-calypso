@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -271,7 +271,7 @@ export class ImageEditorCanvas extends Component {
 			maxHeight: 85 / heightRatio + '%',
 		};
 
-		const canvasClasses = classNames( 'image-editor__canvas', {
+		const canvasClasses = clsx( 'image-editor__canvas', {
 			'is-placeholder': ! isImageLoaded,
 		} );
 

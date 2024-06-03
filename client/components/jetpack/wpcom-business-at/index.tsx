@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useState, useCallback, useEffect } from 'react';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
@@ -249,7 +249,7 @@ export default function WPCOMBusinessAT() {
 						isPrimary: true,
 					},
 				] }
-				className={ classNames(
+				className={ clsx(
 					'wpcom-business-at__dialog',
 					'eligibility-warnings',
 					'eligibility-warnings--without-title',

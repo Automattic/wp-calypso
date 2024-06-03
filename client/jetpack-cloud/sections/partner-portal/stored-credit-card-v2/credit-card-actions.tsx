@@ -1,5 +1,5 @@
 import { Gridicon, Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -54,7 +54,7 @@ export default function CreditCardActions( {
 					.filter( ( action ) => action.isEnabled )
 					.map( ( action ) => (
 						<PopoverMenuItem
-							className={ classNames( action.className ) }
+							className={ clsx( action.className ) }
 							key={ action.name }
 							onClick={ action.onClick }
 						>

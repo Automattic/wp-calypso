@@ -1,5 +1,5 @@
 import { Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { url, isItemBeingUploaded } from 'calypso/lib/media/utils';
@@ -42,7 +42,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		//    from the server to the client.
 		// - `is-blob` when the image is shown using local `blob` data.
 
-		const classes = classNames(
+		const classes = clsx(
 			this.props.className,
 			'is-image',
 			{ 'is-uploading': uploading },
@@ -53,7 +53,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		// A fake image element is added behind the preloading image
 		// in order to improve the UX between the states that an image could have,
 		// for instance when the image is restored.
-		const fakeClasses = classNames(
+		const fakeClasses = clsx(
 			this.props.className,
 			'is-image',
 			'is-fake',

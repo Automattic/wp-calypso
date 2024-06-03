@@ -43,7 +43,7 @@
 		"@wordpress/i18n": "^5.0.0",
 		"@wordpress/icons": "^10.0.0",
 		"@wordpress/primitives": "^4.0.0",
-		"classnames": "^2.3.2",
+		"clsx": "^2.1.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-draggable": "^4.4.4"

@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useContext } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -145,7 +145,7 @@ function Checkout() {
 						</div>
 					</div>
 					<div
-						className={ classNames( 'checkout__aside', {
+						className={ clsx( 'checkout__aside', {
 							'checkout__aside--referral': isAutomatedReferrals,
 						} ) }
 					>

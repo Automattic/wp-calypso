@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -181,7 +181,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 
 	return (
 		<Layout
-			className={ classNames( 'assign-license' ) }
+			className={ clsx( 'assign-license' ) }
 			title={ title }
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
@@ -259,7 +259,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 						);
 					} ) }
 					{ data?.sites.length === 0 && (
-						<div className={ classNames( 'card', 'assign-license__sites-no-results' ) }>
+						<div className={ clsx( 'card', 'assign-license__sites-no-results' ) }>
 							{ translate( 'No results' ) }
 						</div>
 					) }

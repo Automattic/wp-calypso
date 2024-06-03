@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import {
@@ -66,7 +66,7 @@ export default function ReferralsOverview( {
 
 	return (
 		<Layout
-			className={ classNames( 'referrals-layout', {
+			className={ clsx( 'referrals-layout', {
 				'referrals-layout--automated': isAutomatedReferral,
 				'referrals-layout--full-width': isAutomatedReferral && hasReferrals,
 				'referrals-layout--has-selected': selectedItem,

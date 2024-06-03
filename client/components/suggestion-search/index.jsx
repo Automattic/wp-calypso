@@ -1,5 +1,5 @@
 import { Suggestions, Gridicon, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -124,7 +124,7 @@ class SuggestionSearch extends Component {
 		const icon = isSearching ? <Spinner /> : <Gridicon icon="search" />;
 
 		return (
-			<div className={ classNames( 'suggestion-search', className ) }>
+			<div className={ clsx( 'suggestion-search', className ) }>
 				{ showIcon && icon }
 				<FormTextInput
 					id={ id }

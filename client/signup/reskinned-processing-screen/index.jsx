@@ -1,7 +1,7 @@
 import { ACCOUNT_FLOW, HOSTING_LP_FLOW, ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -116,7 +116,7 @@ export default function ReskinnedProcessingScreen( props ) {
 
 	return (
 		<div
-			className={ classnames( 'reskinned-processing-screen', {
+			className={ clsx( 'reskinned-processing-screen', {
 				'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
 			} ) }
 		>

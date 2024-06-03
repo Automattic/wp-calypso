@@ -4,7 +4,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
@@ -330,7 +330,7 @@ class ActivityCardList extends Component {
 			<div className="activity-card-list__loading-placeholder">
 				{ showPagination && (
 					<div
-						className={ classNames( 'activity-card-list__pagination-top', {
+						className={ clsx( 'activity-card-list__pagination-top', {
 							'is-compact': isBreakpointActive,
 						} ) }
 					/>
@@ -363,7 +363,7 @@ class ActivityCardList extends Component {
 				</div>
 				{ showPagination && (
 					<div
-						className={ classNames( 'activity-card-list__pagination-bottom', {
+						className={ clsx( 'activity-card-list__pagination-bottom', {
 							'is-compact': isBreakpointActive,
 						} ) }
 					/>

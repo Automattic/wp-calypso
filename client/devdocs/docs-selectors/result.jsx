@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { filter, findLast } from 'lodash';
 import PropTypes from 'prop-types';
 import DocsSelectorsParamType from './param-type';
@@ -7,7 +7,7 @@ import DocsSelectorsParamType from './param-type';
 export default function DocsSelectorsResult( { url, name, description, tags, expanded } ) {
 	const paramTags = filter( tags, { title: 'param' } );
 	const returnTag = findLast( tags, { title: 'return' } );
-	const classes = classnames( 'docs-selectors__result', {
+	const classes = clsx( 'docs-selectors__result', {
 		'is-expanded': expanded,
 	} );
 

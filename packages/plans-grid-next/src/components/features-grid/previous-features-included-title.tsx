@@ -4,7 +4,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { GridPlan } from '../../types';
 import PlanDivOrTdContainer from '../plan-div-td-container';
@@ -46,7 +46,7 @@ const PreviousFeaturesIncludedTitle = ( {
 			translate( 'Everything in %(planShortName)s, plus:', {
 				args: { planShortName: previousProductName },
 			} );
-		const classes = classNames( 'plan-features-2023-grid__common-title', getPlanClass( planSlug ) );
+		const classes = clsx( 'plan-features-2023-grid__common-title', getPlanClass( planSlug ) );
 
 		return (
 			<PlanDivOrTdContainer

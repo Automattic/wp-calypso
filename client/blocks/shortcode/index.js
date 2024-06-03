@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
@@ -30,7 +30,7 @@ const Shortcode = ( props ) => {
 	const { siteId, className, children, filterRenderResult = ( result ) => result } = props;
 	const shortcode = useRenderedShortcode( siteId, children );
 
-	const classes = classNames( 'shortcode', className );
+	const classes = clsx( 'shortcode', className );
 	let filteredShortcode = {};
 	if ( shortcode ) {
 		shortcode.body = shortcode.result;

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
@@ -57,7 +57,7 @@ const StatsPostDetailMonths = ( props ) => {
 			for ( let j = 1; j <= 12; j++ ) {
 				const hasData = year.months[ j ] || 0 === year.months[ j ];
 
-				const cellClass = classNames( {
+				const cellClass = clsx( {
 					'highest-count': 0 !== highest && year.months[ j ] === highest,
 					'has-no-data': ! hasData,
 				} );
@@ -86,7 +86,7 @@ const StatsPostDetailMonths = ( props ) => {
 	}
 
 	return (
-		<div className={ classNames( 'is-detail-months', classes ) }>
+		<div className={ clsx( 'is-detail-months', classes ) }>
 			<QueryPostStats siteId={ siteId } postId={ postId } />
 			<QueryPosts siteId={ siteId } postId={ postId } />
 			<StatsModulePlaceholder isLoading={ isLoading } />

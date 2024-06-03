@@ -1,6 +1,6 @@
 import { Popover, Button } from '@wordpress/components';
 import { info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { FunctionComponent, useState } from 'react';
 import * as React from 'react';
 
@@ -50,7 +50,7 @@ const InfoTooltip: FunctionComponent< Props > = ( {
 			{ showTooltip && (
 				<Popover
 					id={ id }
-					className={ classnames( 'info-tooltip__content', className ) }
+					className={ clsx( 'info-tooltip__content', className ) }
 					onClose={ handleClose }
 					position={ position }
 					noArrow={ noArrow }

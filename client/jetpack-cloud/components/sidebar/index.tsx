@@ -1,5 +1,5 @@
 import { Icon, starEmpty } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
@@ -87,7 +87,7 @@ const JetpackCloudSidebar = ( {
 	}, [ dispatch ] );
 
 	return (
-		<Sidebar className={ classNames( 'jetpack-cloud-sidebar', className ) }>
+		<Sidebar className={ clsx( 'jetpack-cloud-sidebar', className ) }>
 			<SidebarHeader forceAllSitesView={ isJetpackManage } />
 
 			<SidebarMain>

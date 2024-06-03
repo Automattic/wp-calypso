@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, isValidElement } from 'react';
@@ -121,7 +121,7 @@ export class Notice extends Component {
 			translate,
 			isReskinned,
 		} = this.props;
-		const classes = classnames( 'notice', status, className, {
+		const classes = clsx( 'notice', status, className, {
 			'is-compact': isCompact,
 			'is-loading': isLoading,
 			'is-dismissable': showDismiss,
