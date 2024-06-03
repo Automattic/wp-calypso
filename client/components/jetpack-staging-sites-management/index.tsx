@@ -47,6 +47,11 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 	const toggleStagingFlag = useCallback( () => {
 		setStagingToggle( ! stagingToggle );
 		dispatch( requestUpdateBackupStagingFlag( siteId, ! isStaging ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_setup_staging_site_toggle', {
+				toggle: ! isStaging,
+			} )
+		);
 	}, [ dispatch, isStaging, siteId, stagingToggle ] );
 
 	const stagingIcon = (
