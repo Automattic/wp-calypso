@@ -1363,6 +1363,43 @@ export function useCommands() {
 			manageSettingsGeneral: {
 				name: 'manageSettingsGeneral',
 				label: __( 'Manage general settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'change site title',
+						'Keyword for the Manage general settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change tagline',
+						'Keyword for the Manage general settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change site icon',
+						'Keyword for the Manage general settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change site language',
+						'Keyword for the Manage general settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change timezone',
+						'Keyword for the Manage general settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change date format',
+						'Keyword for the Manage general settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change time format',
+						'Keyword for the Manage general settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				context: [ '/settings', '/wp-admin/options-' ],
 				callback: ( params ) =>
 					commandNavigation(
@@ -1378,6 +1415,33 @@ export function useCommands() {
 			manageSettingsWriting: {
 				name: 'manageSettingsWriting',
 				label: __( 'Manage writing settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'change default post category',
+						'Keyword for the Manage writing settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change default post format',
+						'Keyword for the Manage writing settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'configure post via email',
+						'Keyword for the Manage writing settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'enable custom content types',
+						'Keyword for the Manage writing settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'enable CPTs',
+						'Keyword for the Manage writing settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				context: [ '/settings', '/wp-admin/options-' ],
 				callback: ( params ) =>
 					commandNavigation(
@@ -1393,6 +1457,33 @@ export function useCommands() {
 			manageSettingsReading: {
 				name: 'manageSettingsReading',
 				label: __( 'Manage reading settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'change homepage behavior',
+						'Keyword for the Manage reading settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change blog pagination',
+						'Keyword for the Manage reading settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change feed content',
+						'Keyword for the Manage reading settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change site visibility',
+						'Keyword for the Manage reading settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'manage related posts settings',
+						'Keyword for the Manage reading settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				context: [ '/settings', '/wp-admin/options-' ],
 				callback: ( params ) =>
 					commandNavigation(
@@ -1408,6 +1499,28 @@ export function useCommands() {
 			manageSettingsDiscussion: {
 				name: 'manageSettingsDiscussion',
 				label: __( 'Manage discussion settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'manage default post settings',
+						'Keyword for the Manage discussion settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'manage comment settings',
+						'Keyword for the Manage discussion settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'manage email notifications',
+						'Keyword for the Manage discussion settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'manage avatar settings',
+						'Keyword for the Manage discussion settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				context: [ '/settings', '/wp-admin/options-' ],
 				callback: ( params ) =>
 					commandNavigation(
@@ -1423,6 +1536,23 @@ export function useCommands() {
 			manageSettingsMedia: {
 				name: 'manageSettingsMedia',
 				label: __( 'Manage media settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'set max image size',
+						'Keyword for the Manage media settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'set maximum image dimensions',
+						'Keyword for the Manage media settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'manage image gallery settings',
+						'Keyword for the Manage media settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				context: [ '/settings', '/wp-admin/options-' ],
 				callback: commandNavigation( '/wp-admin/options-media.php' ),
 				siteSelector: true,
