@@ -252,7 +252,7 @@ export default {
 				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
 			);
 			const trailMapExperiment = await loadExperimentAssignment(
-				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
+				'explat_test_calypso_signup_onboarding_trailmap_guided_flow'
 			);
 			if ( bigSkyExperiment.variationName === 'trailmap' ) {
 				initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
