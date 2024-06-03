@@ -110,7 +110,8 @@ const DevTools = () => {
 	const upgradeCtaCopy = hasEnTranslation(
 		'Upgrade to the %(planName)s plan or higher to get access to all developer tools'
 	)
-		? translate(
+		? // translators: %(planName)s is a plan name. E.g. Business plan.
+		  translate(
 				'Upgrade to the %(planName)s plan or higher to get access to all developer tools',
 				{
 					args: {
