@@ -13,6 +13,7 @@ import {
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
 	commentReplyLink as formResponsesIcon,
+	currencyDollar as earnIcon,
 	download as downloadIcon,
 	edit as editIcon,
 	globe as domainsIcon,
@@ -1541,6 +1542,71 @@ export function useCommands() {
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				filterP2: true,
 				icon: marketingIcon,
+			},
+			openMonetizationTools: {
+				name: 'openMonetizationTools',
+				label: __( 'Open monetization tools', __i18n_text_domain__ ),
+				callback: ( params ) =>
+					commandNavigation(
+						`${
+							params.site?.is_wpcom_atomic && siteUsesWpAdminInterface( params.site )
+								? 'https://jetpack.com/redirect/?source=calypso-monetize&site='
+								: '/earn/'
+						}:site`
+					)( params ),
+				searchLabel: [
+					_x(
+						'access monetization tools',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'earn money',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'collect payments',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'receive donations',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'create subscriber-only content',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'set up paid newsletter',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'collect PayPal payments',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'earn ad revenue',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'refer a friend',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open monetization tools', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				filterP2: true,
+				filterSelfHosted: true,
+				icon: earnIcon,
 			},
 		} ),
 		[ __, _x, siteFilters ]
