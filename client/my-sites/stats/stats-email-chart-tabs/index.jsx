@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -82,7 +82,7 @@ class StatModuleChartTabs extends Component {
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
-			<div className={ classNames( ...classes ) }>
+			<div className={ clsx( ...classes ) }>
 				<Legend
 					activeCharts={ this.props.activeLegend }
 					activeTab={ this.props.activeTab }

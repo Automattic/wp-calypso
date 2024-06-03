@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useState, useEffect, useRef } from 'react';
 
@@ -169,7 +169,7 @@ const MShotsImage = ( {
 		...( scrollable ? scrollableStyles : {} ),
 	};
 
-	const className = classnames(
+	const className = clsx(
 		'mshots-image__container',
 		scrollable && 'hover-scroll',
 		visible ? 'mshots-image-visible' : 'mshots-image__loader'

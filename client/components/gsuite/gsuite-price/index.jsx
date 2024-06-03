@@ -1,5 +1,5 @@
 import { Badge } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { getAnnualPrice, getMonthlyPrice } from 'calypso/lib/gsuite';
@@ -56,7 +56,7 @@ const GSuitePrice = ( { currencyCode, product } ) => {
 			</h4>
 
 			<h5
-				className={ classNames( {
+				className={ clsx( {
 					'gsuite-price__annual-price': true,
 					discounted: isDiscounted,
 				} ) }

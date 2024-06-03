@@ -1,6 +1,6 @@
 import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
 import { Spinner } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
@@ -268,7 +268,7 @@ export const SiteMonitoringLineChart = ( {
 	}
 
 	return (
-		<HostingCard className={ classnames( classes ) } title={ title }>
+		<HostingCard className={ clsx( classes ) } title={ title }>
 			<HostingCardDescription>{ subtitle }</HostingCardDescription>
 			<div ref={ uplotContainer }>
 				{ isLoading && <Spinner /> }

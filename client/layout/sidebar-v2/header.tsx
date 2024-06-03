@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 type Props = {
 	children: React.ReactNode;
@@ -6,5 +6,5 @@ type Props = {
 };
 
 export const SidebarV2Header = ( { children, className }: Props ) => {
-	return <div className={ classNames( 'sidebar-v2__header', className ) }>{ children }</div>;
+	return <div className={ clsx( 'sidebar-v2__header', className ) }>{ children }</div>;
 };

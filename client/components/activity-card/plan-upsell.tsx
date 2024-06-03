@@ -2,11 +2,12 @@ import { Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import ActivityActor from 'calypso/components/activity-card/activity-actor';
+import Button from 'calypso/components/forms/form-button';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { useSelector } from 'calypso/state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { Activity } from './types';
 
 import './style.scss';
@@ -26,6 +27,7 @@ type Props = OwnProps & {
 
 const PlanUpsellCard: React.FC< Props > = ( { upsellPlanName } ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const currentDateDisplay = applySiteOffset( Date.now(), { gmtOffset, timezone } ).format( 'LT' );
@@ -62,12 +64,13 @@ const PlanUpsellCard: React.FC< Props > = ( { upsellPlanName } ) => {
 										}
 									) }
 								</p>
-								<button
+								<Button
 									type="button"
 									className="button activity-card__activity-overlay-button is-primary"
+									href={ `https://wordpress.com/plans/${ siteSlug }` }
 								>
 									{ translate( 'Upgrade' ) }
-								</button>
+								</Button>
 							</div>
 						</div>
 					</Card>

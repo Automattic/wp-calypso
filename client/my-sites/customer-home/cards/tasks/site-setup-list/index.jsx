@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Card, Spinner } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate, useRtl } from 'i18n-calypso';
 import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -242,7 +242,7 @@ const SiteSetupList = ( {
 	};
 
 	return (
-		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
+		<Card className={ clsx( 'site-setup-list', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
 			{ ! useAccordionLayout && (
 				<CurrentTaskItem

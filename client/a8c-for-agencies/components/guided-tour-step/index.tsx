@@ -1,5 +1,5 @@
 import { Button, Popover } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { GuidedTourContext } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
@@ -109,7 +109,7 @@ export function GuidedTourStep( {
 	return (
 		<Popover
 			isVisible={ showTour }
-			className={ classNames( className, 'guided-tour__popover' ) }
+			className={ clsx( className, 'guided-tour__popover' ) }
 			context={ context }
 			position={ currentStep.popoverPosition }
 		>

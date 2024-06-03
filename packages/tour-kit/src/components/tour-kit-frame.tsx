@@ -3,7 +3,7 @@
  */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useEffect, useState, useCallback, useMemo, useRef } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { usePopper } from 'react-popper';
 /**
  * Internal Dependencies
@@ -210,7 +210,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		}
 	}, [ config.options?.effects?.autoScroll, referenceElement ] );
 
-	const classes = classnames(
+	const classes = clsx(
 		'tour-kit-frame',
 		isMobile ? 'is-mobile' : 'is-desktop',
 		{ 'is-visible': tourReady },

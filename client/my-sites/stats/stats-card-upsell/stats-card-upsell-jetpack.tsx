@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -85,7 +85,7 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 			copyText={ copyText }
 			buttonComponent={
 				<Button
-					className={ classNames( {
+					className={ clsx( {
 						[ 'jetpack-emerald-button' ]: ! isWPCOMSite,
 					} ) }
 					onClick={ onClick }

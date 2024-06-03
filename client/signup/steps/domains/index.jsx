@@ -4,7 +4,7 @@ import { Spinner } from '@automattic/components';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -952,7 +952,7 @@ export class RenderDomainsStep extends Component {
 
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div
-				className={ classNames( 'domains__domain-side-content', {
+				className={ clsx( 'domains__domain-side-content', {
 					'fade-out':
 						shouldUseMultipleDomainsInCart( flowName ) &&
 						( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ),

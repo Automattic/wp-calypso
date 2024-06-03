@@ -1,7 +1,7 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { __experimentalText as Text, CheckboxControl, SearchControl } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, Fragment, useCallback, useState } from 'react';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -49,7 +49,7 @@ export const ScheduleFormSites = ( props: Props ) => {
 	return (
 		<div className="form-field">
 			<label htmlFor="sites">{ translate( 'Select sites' ) }</label>
-			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
+			<div className={ clsx( { 'form-control-container': borderWrapper } ) }>
 				{ ( ( showError && error ) || ( fieldTouched && error ) ) && (
 					<Text className="validation-msg">
 						<Icon className="icon-info" icon={ info } size={ 16 } />

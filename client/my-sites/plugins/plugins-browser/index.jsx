@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -136,7 +136,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 
 	return (
 		<MainComponent
-			className={ classNames( 'plugins-browser', {
+			className={ clsx( 'plugins-browser', {
 				'plugins-browser--site-view': !! selectedSite,
 			} ) }
 			wideLayout

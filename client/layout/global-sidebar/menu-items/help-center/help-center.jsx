@@ -4,7 +4,7 @@ import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useRef } from 'react';
 import SidebarMenuItem from '../menu-item';
 
@@ -27,7 +27,7 @@ const SidebarHelpCenter = ( { tooltip, onClick } ) => {
 		<>
 			<SidebarMenuItem
 				onClick={ handleToggleHelpCenter }
-				className={ classnames( 'sidebar__item-help', {
+				className={ clsx( 'sidebar__item-help', {
 					'is-active': helpCenterVisible,
 				} ) }
 				tooltip={ tooltip }

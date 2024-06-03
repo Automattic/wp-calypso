@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -299,7 +299,7 @@ export default function SitesDashboardV2() {
 
 	return (
 		<div
-			className={ classNames(
+			className={ clsx(
 				'sites-dashboard__layout',
 				! sitesViewState.selectedSite && 'preview-hidden'
 			) }

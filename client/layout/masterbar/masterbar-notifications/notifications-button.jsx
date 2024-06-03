@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -83,7 +83,7 @@ class MasterbarItemNotifications extends Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'masterbar-notifications', {
+		const classes = clsx( this.props.className, 'masterbar-notifications', {
 			'is-active':
 				this.props.isNotificationsOpen || window.location.pathname === '/read/notifications',
 			'has-unread': this.state.newNote,

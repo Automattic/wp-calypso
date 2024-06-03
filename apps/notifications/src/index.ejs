@@ -7,16 +7,13 @@
 	<title>Notifications</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<meta name="mobile-web-app-capable" content="yes">
-	<meta name="node-platform" content="<%= htmlWebpackPlugin.options.nodePlatform %>">
-	<meta name="node-version" content="<%= htmlWebpackPlugin.options.nodeVersion %>">
-	<meta name="git-describe" content="<%= htmlWebpackPlugin.options.gitDescribe %>">
-    <% htmlWebpackPlugin.files.css.forEach( function( style ) { if ( style.includes( 'rtl' ) && htmlWebpackPlugin.options.isRTL ) { %><link rel="stylesheet" href="<%= style %>"><% } else if ( ! ( style.includes( 'rtl' ) || htmlWebpackPlugin.options.isRTL ) ) { %><link rel="stylesheet" href="<%= style %>"><% } } ) %>
+  <%= htmlWebpackPlugin.tags.headTags.filter( ( tag ) => tag.tagName !== 'link' || htmlWebpackPlugin.options.includeStyle( tag.attributes.href ) ) %>
 </head>
 
 <body class="wpnc">
 	<div class="wpnc__main"></div>
 	<script charset="UTF-8" src="https://stats.wp.com/w.js?67"></script>
-	<% htmlWebpackPlugin.files.js.forEach( function( script ) { %><script charset="UTF-8" src="<%= script %>"></script><% } ) %>
+	<%= htmlWebpackPlugin.tags.bodyTags %>
 </body>
 
 </html>

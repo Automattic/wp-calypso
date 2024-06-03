@@ -1,5 +1,5 @@
 import { getPlanClass, PlanSlug } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { usePlansGridContext } from '../grid-context';
 import PlanPill from './shared/plan-pill';
 
@@ -9,7 +9,7 @@ const PopularBadge: React.FunctionComponent< {
 	additionalClassName?: string;
 } > = ( { isInSignup, planSlug, additionalClassName } ) => {
 	const { gridPlansIndex } = usePlansGridContext();
-	const classes = classNames(
+	const classes = clsx(
 		'plan-features-2023-grid__popular-badge',
 		getPlanClass( planSlug ),
 		additionalClassName
