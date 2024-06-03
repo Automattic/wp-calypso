@@ -23,6 +23,8 @@ const GlobalSidebar = ( {
 	path = '',
 	...props
 } ) => {
+	const urlSearchParams = new URLSearchParams( window.location.search );
+	const urlFrom = urlSearchParams.get( 'from' ) || '';
 	const wrapperRef = useRef( null );
 	const bodyRef = useRef( null );
 	const menuItems = useSiteMenuItems();
@@ -71,7 +73,7 @@ const GlobalSidebar = ( {
 	}
 
 	const { requireBackLink, siteTitle, backLinkHref, ...sidebarProps } = props;
-	const sidebarBackLinkHref = backLinkHref || previousLink || '/sites';
+	const sidebarBackLinkHref = urlFrom || backLinkHref || previousLink || '/sites';
 
 	return (
 		<div className="global-sidebar" ref={ wrapperRef }>
