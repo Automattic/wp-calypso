@@ -168,7 +168,7 @@ class MagicLogin extends Component {
 		};
 
 		let linkBack = translate( 'Enter a password instead' );
-		if ( query?.username_only ) {
+		if ( query?.username_only === 'true' ) {
 			linkBack = translate( 'Use username and password instead' );
 		}
 
