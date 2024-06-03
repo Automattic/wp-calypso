@@ -58,27 +58,25 @@ function getAvailabilityNotice(
 			);
 			break;
 		case domainAvailability.REGISTERED_SAME_SITE:
-			if ( site ) {
-				message = translate(
-					'{{strong}}%(domain)s{{/strong}} is already registered on this site. {{a}}Are you trying to make this the primary address for your site?{{/a}}',
-					{
-						args: { domain },
-						components: {
-							strong: <strong />,
-							a: (
-								<SetAsPrimaryLink
-									domainName={ domain }
-									siteIdOrSlug={ site }
-									additionalProperties={ {
-										clickOrigin: 'use-a-domain-i-own',
-									} }
-									onSuccess={ () => page( domainManagementList( domain ) ) }
-								/>
-							),
-						},
-					}
-				);
-			}
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already registered on this site. {{a}}Are you trying to make this the primary address for your site?{{/a}}',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: (
+							<SetAsPrimaryLink
+								domainName={ domain }
+								siteIdOrSlug={ site }
+								additionalProperties={ {
+									clickOrigin: 'use-a-domain-i-own',
+								} }
+								onSuccess={ () => page( domainManagementList( domain ) ) }
+							/>
+						),
+					},
+				}
+			);
 			break;
 		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
 			if ( site ) {
