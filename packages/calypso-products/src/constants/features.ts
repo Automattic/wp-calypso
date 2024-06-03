@@ -56,7 +56,6 @@ export const FEATURE_200GB_STORAGE = '200gb-storage';
 export const FEATURE_LEGACY_STORAGE_200GB = 'upload-space-200gb';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
-export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS = 'live-chat-support-all-days';
 export const EXPERT_SUPPORT_ALL_DAYS = 'expert-support-all-days';
 export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
