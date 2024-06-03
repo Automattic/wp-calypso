@@ -168,7 +168,7 @@ export default function SiteProfilerV2( props: Props ) {
 									/>
 								) }
 								<HostingSection
-									domain={ domain }
+									url={ basicMetrics?.final_url }
 									dns={ siteProfilerData.dns }
 									urlData={ urlData }
 									hostingProvider={ hostingProviderData?.hosting_provider }
@@ -209,7 +209,7 @@ export default function SiteProfilerV2( props: Props ) {
 							</>
 						) }
 					</LayoutBlock>
-					<MigrationBannerBig />
+					<MigrationBannerBig url={ basicMetrics?.final_url } />
 				</>
 			) }
 			<FootNote />
