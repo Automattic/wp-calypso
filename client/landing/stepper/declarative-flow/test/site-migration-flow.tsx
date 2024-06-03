@@ -6,7 +6,7 @@ import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selector
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
+import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
@@ -18,7 +18,7 @@ const originalLocation = window.location;
 
 jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
-jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
+jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
 jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
 	triggerGuidesForStep: jest.fn(),
 } ) );
@@ -37,8 +37,8 @@ describe( 'Site Migration Flow', () => {
 	beforeEach( () => {
 		( window.location.assign as jest.Mock ).mockClear();
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
-		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
-			isAdmin: true,
+		( useIsSiteOwner as jest.Mock ).mockReturnValue( {
+			isOwner: true,
 		} );
 
 		const apiBaseUrl = 'https://public-api.wordpress.com';
@@ -78,9 +78,9 @@ describe( 'Site Migration Flow', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
 		} );
 
-		it( 'redirects the user to the start page when the user is not the site admin', () => {
+		it( 'redirects the user to the start page when the user is not the site owner', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
-			( useIsSiteAdmin as jest.Mock ).mockReturnValue( { isAdmin: false } );
+			( useIsSiteOwner as jest.Mock ).mockReturnValue( { isOwner: false } );
 
 			runUseAssertionCondition( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
