@@ -9,6 +9,7 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
+import { useUrlPerformanceMetricsQuery } from 'calypso/data/site-profiler/use-url-performance-metrics-query';
 import { LayoutBlock } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
@@ -19,13 +20,16 @@ import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { BasicMetrics } from './basic-metrics';
 import { DomainSection } from './domain-section';
+import { FootNote } from './footnote';
 import { GetReportForm } from './get-report-form';
+import { HealthSection } from './health-section';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
-import { MigrationBanner } from './migration-banner';
+import { LoadingScreen } from './loading-screen';
 import { MigrationBannerBig } from './migration-banner-big';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
+import { SecuritySection } from './security-section';
 import './styles-v2.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
@@ -40,6 +44,8 @@ export default function SiteProfilerV2( props: Props ) {
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const perfomanceMetricsRef = useRef( null );
+	const healthMetricsRef = useRef( null );
+	const securityMetricsRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -88,7 +94,8 @@ export default function SiteProfilerV2( props: Props ) {
 		isFetching: isFetchingBasicMetrics,
 	} = useUrlBasicMetricsQuery( url );
 
-	const showBasicMetrics = basicMetrics && ! isFetchingBasicMetrics && ! errorBasicMetrics;
+	const showBasicMetrics =
+		basicMetrics && basicMetrics.success && ! isFetchingBasicMetrics && ! errorBasicMetrics;
 
 	// TODO: Remove this debug statement once we have a better error handling mechanism
 	if ( errorBasicMetrics ) {
@@ -100,7 +107,12 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 
-	const performanceCategory = getPerformanceCategory( basicMetrics?.basic, urlData );
+	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery(
+		basicMetrics?.final_url,
+		basicMetrics?.token
+	);
+
+	const performanceCategory = getPerformanceCategory( performanceMetrics );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
@@ -108,7 +120,7 @@ export default function SiteProfilerV2( props: Props ) {
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
 
-	const isWpCom = !! urlData?.platform_data?.is_wpcom;
+	const isWpCom = !! performanceMetrics?.is_wpcom;
 
 	return (
 		<div id="site-profiler-v2">
@@ -125,7 +137,8 @@ export default function SiteProfilerV2( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-			{ showResultScreen && (
+			{ showResultScreen && ! performanceMetrics && <LoadingScreen /> }
+			{ showResultScreen && performanceMetrics && (
 				<>
 					<LayoutBlock
 						className={ classnames(
@@ -139,7 +152,7 @@ export default function SiteProfilerV2( props: Props ) {
 							<ResultsHeader
 								domain={ domain }
 								performanceCategory={ performanceCategory }
-								urlData={ urlData }
+								isWpCom={ isWpCom }
 								onGetReport={ () => setIsGetReportFormOpen( true ) }
 							/>
 						) }
@@ -171,9 +184,26 @@ export default function SiteProfilerV2( props: Props ) {
 								/>
 
 								<PerformanceSection
-									url={ url }
+									url={ basicMetrics?.final_url }
 									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
 									performanceMetricsRef={ perfomanceMetricsRef }
+									setIsGetReportFormOpen={ setIsGetReportFormOpen }
+								/>
+
+								<HealthSection
+									url={ basicMetrics?.final_url }
+									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									healthMetricsRef={ healthMetricsRef }
+									setIsGetReportFormOpen={ setIsGetReportFormOpen }
+								/>
+
+								<SecuritySection
+									url={ basicMetrics?.final_url }
+									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									securityMetricsRef={ securityMetricsRef }
 									setIsGetReportFormOpen={ setIsGetReportFormOpen }
 								/>
 							</>
@@ -182,7 +212,7 @@ export default function SiteProfilerV2( props: Props ) {
 					<MigrationBannerBig />
 				</>
 			) }
-			{ ! showResultScreen && <MigrationBanner /> }
+			<FootNote />
 			<GetReportForm
 				url={ basicMetrics?.final_url }
 				token={ basicMetrics?.token }
