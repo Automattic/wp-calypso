@@ -105,7 +105,10 @@ function Cell( {
 			case 'ms':
 			case 'timespanMs':
 				// TODO: Implement a better visualization for ms values. Ex:  '1.2s' instead of '1200ms'
-				return translate( '%(ms)sms', { args: { ms: getFormattedNumber( data ) } } );
+				return translate( '%(ms)dms', {
+					comment: 'value to be displayed in milliseconds',
+					args: { ms: getFormattedNumber( data ) },
+				} );
 			case 'bytes':
 				return getFormattedSize( Number( data ) || 0 );
 			case 'numeric':
