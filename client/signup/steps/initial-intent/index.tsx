@@ -5,6 +5,7 @@ import SegmentationSurvey, { SKIP_ANSWER_KEY } from 'calypso/components/segmenta
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import { flowQuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
 import { QuestionConfiguration } from 'calypso/components/survey-container/types';
+import useGuidedFlowGetSegment from 'calypso/signup/hooks/use-guided-flow-get-segment';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './styles.scss';
 
@@ -13,12 +14,10 @@ interface Props {
 	stepName: string;
 	goToNextStep: () => void;
 	submitSignupStep: ( step: any, deps: any ) => void;
-	signupDependencies: Record<
-		string,
-		{
-			segmentationSurveyAnswers: Record< string, string[] >;
-		}
-	>;
+	signupDependencies: {
+		segmentationSurveyAnswers: Record< string, string[] >;
+		onboardingSegment: string;
+	};
 }
 
 const SURVEY_KEY = 'guided-onboarding-flow';
@@ -45,56 +44,13 @@ export default function InitialIntentStep( props: Props ) {
 	);
 
 	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents( SURVEY_KEY );
+	const segment = useGuidedFlowGetSegment( currentAnswers );
 
 	// Record Tracks start event on component mount
 	useEffect( () => {
 		recordStartEvent();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
-
-	const getSegment = ( _answers: Record< string, string > ) => {
-		if ( _answers[ 'what-brings-you-to-wordpress' ]?.includes( 'migrate-or-import-site' ) ) {
-			return 'migrate';
-		}
-
-		if ( _answers[ 'what-brings-you-to-wordpress' ]?.includes( 'client' ) ) {
-			return 'developer';
-		}
-
-		if ( _answers[ 'what-brings-you-to-wordpress' ]?.includes( 'myself-business-or-friend' ) ) {
-			if ( _answers[ 'what-are-your-goals' ]?.includes( 'skip' ) ) {
-				return 'unknown';
-			}
-
-			if ( _answers[ 'what-are-your-goals' ]?.includes( 'difm' ) ) {
-				return 'difm';
-			}
-
-			if ( _answers[ 'what-are-your-goals' ]?.includes( 'educational-or-nonprofit' ) ) {
-				return 'nonprofit';
-			}
-
-			if ( _answers[ 'what-are-your-goals' ]?.includes( 'newsletter' ) ) {
-				return 'newsletter';
-			}
-
-			if (
-				_answers[ 'what-are-your-goals' ]?.includes( 'sell' ) &&
-				! _answers[ 'what-are-your-goals' ]?.includes( 'difm' )
-			) {
-				return 'merchant';
-			}
-
-			if (
-				! _answers[ 'what-are-your-goals' ]?.includes( 'sell' ) &&
-				! _answers[ 'what-are-your-goals' ]?.includes( 'difm' )
-			) {
-				return 'consumer-or-business';
-			}
-		}
-
-		return 'unknown';
-	};
 
 	const getRedirectForAnswers = ( _answerKeys: string[] ): string => {
 		if ( _answerKeys.includes( 'migrate-or-import-site' ) ) {
@@ -141,7 +97,7 @@ export default function InitialIntentStep( props: Props ) {
 			{ flowName, stepName },
 			{
 				segmentationSurveyAnswers: updatedAnswers,
-				onboardingSegment: getSegment( updatedAnswers ),
+				onboardingSegment: segment,
 			}
 		);
 
