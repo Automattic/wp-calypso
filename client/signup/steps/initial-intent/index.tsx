@@ -6,25 +6,22 @@ import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey/constant
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import { flowQuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
 import { QuestionConfiguration } from 'calypso/components/survey-container/types';
-import useGuidedFlowGetSegment from 'calypso/signup/hooks/use-guided-flow-get-segment';
+import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import './styles.scss';
 import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from './constants';
+import { SurveyData } from './types';
+import './styles.scss';
 
 interface Props {
 	flowName: string;
 	stepName: string;
 	goToNextStep: () => void;
 	submitSignupStep: ( step: any, deps: any ) => void;
-	signupDependencies: Record<
-		string,
-		{
-			segmentationSurveyAnswers: Record< string, string[] >;
-		}
-	>;
+	signupDependencies: {
+		segmentationSurveyAnswers: SurveyData;
+		onboardingSegment: string;
+	};
 }
-
-const SURVEY_KEY = 'guided-onboarding-flow';
 
 const QUESTION_CONFIGURATION: QuestionConfiguration = {
 	'what-brings-you-to-wordpress': {
@@ -50,6 +47,8 @@ export default function InitialIntentStep( props: Props ) {
 	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents(
 		GUIDED_FLOW_SEGMENTATION_SURVEY_KEY
 	);
+
+	const { segment } = getSegmentedIntent( currentAnswers );
 
 	// Record Tracks start event on component mount
 	useEffect( () => {
@@ -98,7 +97,10 @@ export default function InitialIntentStep( props: Props ) {
 
 		submitSignupStep(
 			{ flowName, stepName },
-			{ segmentationSurveyAnswers: { ...currentAnswers, ...newAnswers } }
+			{
+				segmentationSurveyAnswers: { ...currentAnswers, ...newAnswers },
+				onboardingSegment: segment,
+			}
 		);
 
 		if ( redirect ) {
@@ -125,7 +127,7 @@ export default function InitialIntentStep( props: Props ) {
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={
 				<SegmentationSurvey
-					surveyKey={ SURVEY_KEY }
+					surveyKey={ GUIDED_FLOW_SEGMENTATION_SURVEY_KEY }
 					onNext={ handleNext }
 					skipNextNavigation={ skipNextNavigation }
 					questionConfiguration={ QUESTION_CONFIGURATION }
