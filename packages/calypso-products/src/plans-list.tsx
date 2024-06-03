@@ -972,17 +972,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	],
-	getNewsletterDescription: () =>
-		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' ) ||
-		i18n.hasTranslation(
-			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with fast support to help get everything just right.'
-		)
-			? i18n.translate(
-					'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with fast support to help get everything just right.'
-			  )
-			: i18n.translate(
-					'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
-			  ),
+
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
@@ -994,17 +984,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UNLIMITED_EMAILS,
 		FEATURE_AD_FREE_EXPERIENCE,
 	],
-	getLinkInBioDescription: () =>
-		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' ) ||
-		i18n.hasTranslation(
-			'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with fast support to help get your site just right.'
-		)
-			? i18n.translate(
-					'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with fast support to help get your site just right.'
-			  )
-			: i18n.translate(
-					'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with email support to help get your site just right.'
-			  ),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
@@ -1646,12 +1625,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_REAL_TIME_ANALYTICS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	],
-	getLinkInBioDescription: function () {
-		return i18n.translate(
-			'Take your site further, faster. Get everything included in %(planName)s, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics and 24/7 expert support.',
-			{ args: { planName: this.getTitle() } }
-		) as string;
-	},
+
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
