@@ -1563,7 +1563,6 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/format-currency": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@emotion/react": "npm:11.11.1"

@@ -9,9 +9,5 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [
-		{ "path": "../data-stores" },
-		{ "path": "../onboarding" },
-		{ "path": "../viewport" }
-	]
+	"references": [ { "path": "../data-stores" }, { "path": "../viewport" } ]
 }
