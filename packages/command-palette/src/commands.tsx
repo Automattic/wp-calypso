@@ -1482,6 +1482,16 @@ export function useCommands() {
 				...siteFilters.hostingEnabled,
 				icon: settingsIcon,
 			},
+			manageSettingsPrivacy: {
+				name: 'manageSettingsPrivacy',
+				label: __( 'Manage privacy settings', __i18n_text_domain__ ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: commandNavigation( '/wp-admin/options-privacy.php' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage privacy settings', __i18n_text_domain__ ),
+				...siteFilters.hostingEnabled,
+				icon: settingsIcon,
+			},
 			openMarketingTools: {
 				name: 'openMarketingTools',
 				label: __( 'Open marketing tools', __i18n_text_domain__ ),
