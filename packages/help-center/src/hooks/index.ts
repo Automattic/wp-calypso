@@ -1,5 +1,4 @@
 export { useContactFormTitle } from './use-contact-form-title';
-export { useShouldRenderChatOption } from './use-should-render-chat-option';
 export { useShouldRenderEmailOption } from './use-should-render-email-option';
 export { useStillNeedHelpURL } from './use-still-need-help-url';
 export { default as useMessagingAuth } from './use-messaging-auth';
