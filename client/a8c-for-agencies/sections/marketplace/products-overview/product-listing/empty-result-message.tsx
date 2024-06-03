@@ -7,7 +7,7 @@ export default function EmptyResultMessage() {
 	return (
 		<Card className="product-listing__empty-result-message">
 			<div className="product-listing__empty-result-message-heading">
-				{ translate( 'Sorry, no result found.' ) }
+				{ translate( 'Sorry, no results found.' ) }
 			</div>
 
 			<div className="product-listing__empty-result-message-description">
