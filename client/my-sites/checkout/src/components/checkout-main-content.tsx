@@ -233,9 +233,6 @@ function CheckoutSidebarNudge( {
 	addItemToCart,
 	areThereDomainProductsInCart,
 }: {
-	siteId: number | undefined;
-	formStatus: FormStatus;
-	changeSelection: OnChangeItemVariant;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	areThereDomainProductsInCart: boolean;
 } ) {
@@ -558,9 +555,6 @@ export default function CheckoutMainContent( {
 									showFeaturesList
 								/>
 								<CheckoutSidebarNudge
-									siteId={ siteId }
-									formStatus={ formStatus }
-									changeSelection={ changeSelection }
 									addItemToCart={ addItemToCart }
 									areThereDomainProductsInCart={ areThereDomainProductsInCart }
 								/>
