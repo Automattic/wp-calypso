@@ -1,5 +1,5 @@
 import { useCallback } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import FlowCard from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/flow-card';
 import { Option } from '../types';
@@ -28,12 +28,13 @@ const SurveyFlowCard = ( {
 	useEffect( () => {
 		if ( submitted ) {
 			onContinue?.();
+			setSubmitted( false );
 		}
 	}, [ submitted, onContinue ] );
 
 	return (
 		<div
-			className={ classNames( 'question-flow-cards', {
+			className={ clsx( 'question-flow-cards', {
 				'is-disabled': disabled,
 			} ) }
 		>

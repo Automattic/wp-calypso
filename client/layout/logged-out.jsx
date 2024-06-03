@@ -2,7 +2,7 @@ import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
@@ -26,12 +26,13 @@ import {
 	isA4AOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
+	isBlazeProOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
 	getCurrentOAuth2Client,
@@ -41,6 +42,7 @@ import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -74,7 +76,9 @@ const LayoutLoggedOut = ( {
 	isPartnerSignupStart,
 	isWooCoreProfilerFlow,
 	isWooPasswordless,
+	isBlazePro,
 	locale,
+	twoFactorEnabled,
 	/* eslint-disable no-shadow */
 	clearLastActionRequiresLogin,
 } ) => {
@@ -144,6 +148,8 @@ const LayoutLoggedOut = ( {
 		'is-magic-login': isMagicLogin,
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWooPasswordless,
+		'is-blaze-pro': isBlazePro,
+		'two-factor-auth-enabled': twoFactorEnabled,
 	};
 
 	let masterbar = null;
@@ -231,7 +237,7 @@ const LayoutLoggedOut = ( {
 	const bodyClass = [ 'font-smoothing-antialiased' ];
 
 	return (
-		<div className={ classNames( 'layout', classes ) }>
+		<div className={ clsx( 'layout', classes ) }>
 			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			<div className="layout__header-section">
@@ -320,6 +326,7 @@ export default withCurrentRoute(
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 			const redirectToOriginal = getRedirectToOriginal( state ) || '';
+			const isBlazePro = getIsBlazePro( state );
 			const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get(
 				'client_id'
 			);
@@ -339,13 +346,14 @@ export default withCurrentRoute(
 				isGravPoweredClient;
 			const noMasterbarForRoute =
 				isJetpackLogin ||
-				( isWhiteLogin && ! isPartnerSignup ) ||
+				( isWhiteLogin && ! isPartnerSignup && ! isBlazePro ) ||
 				isJetpackWooDnaFlow ||
 				isP2Login ||
 				isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
 				! isWooOAuth2Client( oauth2Client ) &&
+				! isBlazeProOAuth2Client( oauth2Client ) &&
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
 			const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 			const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
@@ -355,6 +363,7 @@ export default withCurrentRoute(
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
 				noMasterbarForRoute;
+			const twoFactorEnabled = isTwoFactorEnabled( state );
 
 			return {
 				isJetpackLogin,
@@ -377,6 +386,8 @@ export default withCurrentRoute(
 				isPartnerSignupStart,
 				isWooCoreProfilerFlow,
 				isWooPasswordless: getIsWooPasswordless( state ),
+				isBlazePro: getIsBlazePro( state ),
+				twoFactorEnabled,
 			};
 		},
 		{ clearLastActionRequiresLogin }

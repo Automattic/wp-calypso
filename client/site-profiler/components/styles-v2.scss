@@ -1,5 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
 
 #site-profiler-v2 {
 	--color-button: #3858e9;
@@ -20,7 +20,7 @@
 .is-section-site-profiler .main #site-profiler-v2 {
 
 	h1 {
-		font-family: "SF Pro Text", $sans;
+		font-family: $font-sf-pro-text;
 		color: var(--studio-white);
 		/* stylelint-disable-next-line */
 		font-size: 6rem;
@@ -33,7 +33,7 @@
 	}
 
 	h2 {
-		font-family: "SF Pro Text", $sans;
+		font-family: $font-sf-pro-text;
 		/* stylelint-disable-next-line */
 		font-size: 2.5rem;
 		line-height: 1.15;
@@ -41,7 +41,7 @@
 	}
 
 	h3 {
-		font-family: "SF Pro Text", $sans;
+		font-family: $font-sf-pro-text;
 		font-size: 1.75rem;
 		line-height: 1.15;
 		margin-bottom: 1rem;
@@ -52,7 +52,7 @@
 	}
 
 	p {
-		font-family: "SF Pro Text", $sans;
+		font-family: $font-sf-pro-text;
 		/* stylelint-disable-next-line */
 		font-size: 1.125rem;
 		color: var(--studio-white);
@@ -67,7 +67,7 @@
 		color: #fff;
 		text-decoration: underline;
 		font-size: 1rem;
-		font-size: 500;
+		font-weight: 500;
 
 		&:hover {
 			color: var(--studio-gray-40);
@@ -207,12 +207,6 @@
 		background: url(calypso/assets/images/site-profiler/background-landing-header.svg) no-repeat left bottom;
 		padding-bottom: 240px;
 
-		// Huge screens and bigger
-		@media (min-width: $break-huge) {
-			background-position-x: center;
-		}
-
-
 		// Small screens
 		@media (max-width: $break-small ) {
 			padding-top: 6rem;
@@ -226,17 +220,9 @@
 
 		&.poor {
 			background: url(calypso/assets/images/site-profiler/background-results-bad.svg) no-repeat right top;
-			// Huge screens and bigger
-			@media (min-width: $break-huge) {
-				background-position-x: center;
-			}
 		}
 		&.good {
 			background: url(calypso/assets/images/site-profiler/background-results-good.svg) no-repeat right top;
-			// Huge screens and bigger
-			@media (min-width: $break-huge) {
-				background-position-x: center;
-			}
 		}
 	}
 
@@ -279,13 +265,185 @@
 		border-top: 1px solid var(--studio-gray-100);
 		color: var(--studio-gray-20);
 
+		.foldable-card__secondary {
+			display: none;
+		}
+
+		.foldable-card__main {
+			padding-right: 50px;
+
+			a {
+				color: var(--studio-gray-40);
+
+				&:hover {
+					color: #fff;
+				}
+			}
+
+			.value {
+				color: var(--studio-red-30);
+			}
+		}
+
+		&.is-expanded .foldable-card__main {
+			color: #fff;
+
+			a {
+				color: #fff;
+
+				&:hover {
+					color: var(--studio-gray-40);
+				}
+			}
+
+			.value {
+				color: var(--studio-red-50);
+			}
+		}
+
+		.foldable-card__content {
+			a {
+				color: var(--studio-gray-40);
+
+				&:hover {
+					color: #fff;
+				}
+			}
+
+			.metrics-insight-detailed-content {
+				margin-top: 42px;
+
+				table {
+					table-layout: fixed;
+					width: 100%;
+
+					thead {
+						background: var(--studio-gray-80);
+					}
+
+					th,
+					td {
+						padding: 24px 30px;
+						word-break: break-word;
+						font-size: $font-body-small;
+					}
+
+					tr.sub {
+						padding-left: 40px;
+						background: var(--studio-gray-70);
+					}
+
+					tbody {
+						background: var(--studio-gray-90);
+					}
+
+					pre {
+						background: none;
+						padding: 14px 0 0;
+						margin-bottom: 0;
+					}
+
+					$blueberry-color: #3858e9;
+					code {
+						color: $blueberry-color;
+					}
+
+					.score {
+						font-weight: bold;
+						display: inline-block;
+						width: 40px;
+						height: 25px;
+						line-height: 25px;
+						text-align: center;
+						border-radius: 4px;
+
+						&.dangerous {
+							color: var(--studio-red-60);
+							background: var(--studio-red-10);
+						}
+
+						&.alert {
+							color: var(--studio-yellow-60);
+							background: var(--studio-yellow-10);
+						}
+					}
+				}
+
+				.tree {
+					--spacing: 1.5rem;
+					--radius: 10px; /* stylelint-disable-line scales/radii */
+					margin: 0;
+					padding: 0;
+
+					li {
+						margin: 0;
+						display: block;
+						position: relative;
+						padding-left: calc(2 * var(--spacing) - var(--radius) - 2px);
+						line-height: 30px;
+					}
+
+					ul {
+						margin-left: calc(var(--radius) - var(--spacing));
+						padding-left: 0;
+
+						li {
+							border-left: 2px solid #ddd;
+
+							&:last-child {
+								border-color: transparent;
+							}
+
+							&::before {
+								content: "";
+								display: block;
+								position: absolute;
+								top: calc(var(--spacing) / -2);
+								left: -2px;
+								width: calc(var(--spacing) + 2px);
+								height: calc(var(--spacing) + 1px);
+								border: solid #ddd;
+								border-width: 0 0 2px 2px;
+							}
+						}
+					}
+
+					summary {
+						display: block;
+						cursor: pointer;
+
+						&::marker,
+						&::-webkit-details-marker {
+							display: none;
+						}
+
+						&:focus {
+							outline: none;
+						}
+
+						&:focus-visible {
+							outline: 1px dotted #000;
+						}
+
+						&::before {
+							z-index: 1;
+						}
+					}
+					details[open] > summary::before {
+						background-position: calc(-2 * var(--radius)) 0;
+					}
+				}
+			}
+		}
+
 		&:last-child {
 			border-bottom: 1px solid var(--studio-gray-100);
 		}
 
 		&.is-expanded {
 			.foldable-card__content {
-				border-top: 1px solid var(--studio-gray-100);
+				border-top: none;
+				max-height: none;
 			}
 		}
 
@@ -297,6 +455,13 @@
 
 		.foldable-card__header {
 			padding: 16px 0;
+		}
+
+		p {
+			display: inline;
+			font-size: inherit;
+			color: inherit;
+			margin-bottom: inherit;
 		}
 	}
 }

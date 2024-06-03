@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import {
-	getCachePostByVoiceKey,
+	getPostByVoiceQueryKey,
 	getPostByVoicePath,
 } from 'calypso/my-sites/site-settings/publishing-tools/hooks/use-get-post-by-voice';
 import type {
@@ -11,7 +11,7 @@ import type {
 
 export const useRegeneratePostByVoiceMutation = ( siteId: number | null ) => {
 	const queryClient = useQueryClient();
-	const queryKey = getCachePostByVoiceKey( siteId );
+	const queryKey = getPostByVoiceQueryKey( siteId );
 
 	return useMutation( {
 		mutationFn: async () => {

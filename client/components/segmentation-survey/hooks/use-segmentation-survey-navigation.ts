@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey/constants';
 import { Answers, Question } from 'calypso/components/survey-container/types';
 import { useHash } from 'calypso/landing/stepper/hooks/use-hash';
 import useSegmentationSurveyTracksEvents from './use-segmentation-survey-tracks-events';
@@ -65,6 +66,10 @@ const useSegmentationSurveyNavigation = ( {
 		recordSkipEvent( currentQuestion );
 
 		await onSkip?.( currentQuestion );
+		if ( skipNextNavigation?.( currentQuestion.key, [ SKIP_ANSWER_KEY ] ) ) {
+			return;
+		}
+
 		nextPage();
 	}, [ currentQuestion, nextPage, onSkip, recordSkipEvent ] );
 

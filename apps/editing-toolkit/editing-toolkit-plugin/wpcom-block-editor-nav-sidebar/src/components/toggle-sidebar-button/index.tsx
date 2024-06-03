@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { store } from '../../store';
 import SiteIcon from '../site-icon';
 import './style.scss';
@@ -20,7 +20,7 @@ export default function ToggleSidebarButton() {
 		<Button
 			label={ __( 'Block editor sidebar', 'full-site-editing' ) }
 			showTooltip
-			className={ classnames(
+			className={ clsx(
 				'edit-post-fullscreen-mode-close',
 				'wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button',
 				'has-icon',

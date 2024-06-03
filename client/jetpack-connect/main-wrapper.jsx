@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -45,7 +45,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 		const isWooDna = wooDnaConfig && wooDnaConfig.isWooDnaFlow();
 
-		const wrapperClassName = classNames( 'jetpack-connect__main', {
+		const wrapperClassName = clsx( 'jetpack-connect__main', {
 			'is-wide': isWide,
 			'is-woocommerce': isWooOnboarding || isWooDna || isWooCoreProfiler,
 			'is-woocommerce-core-profiler-flow': isWooCoreProfiler,
@@ -58,7 +58,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		const darkColorScheme = false;
 
 		return (
-			<Main className={ classNames( className, wrapperClassName ) }>
+			<Main className={ clsx( className, wrapperClassName ) }>
 				<DocumentHead
 					title={ pageTitle || translate( 'Jetpack Connect' ) }
 					skipTitleFormatting={ Boolean( pageTitle ) }

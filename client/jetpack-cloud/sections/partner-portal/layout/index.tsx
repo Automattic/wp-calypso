@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -23,7 +23,7 @@ export default function Layout( {
 }: Props ) {
 	return (
 		<Main
-			className={ classNames( 'partner-portal-layout', className, {
+			className={ clsx( 'partner-portal-layout', className, {
 				'is-with-border': withBorder,
 			} ) }
 			fullWidthLayout={ wide }

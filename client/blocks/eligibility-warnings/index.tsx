@@ -11,7 +11,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import { useState } from 'react';
@@ -92,7 +92,7 @@ export const EligibilityWarnings = ( {
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
-	const classes = classNames(
+	const classes = clsx(
 		'eligibility-warnings',
 		{
 			'eligibility-warnings__placeholder': isPlaceholder,
@@ -440,6 +440,10 @@ function mergeProps(
 			? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 			: FEATURE_INSTALL_PLUGINS;
 		ctaName = 'calypso-plugin-details-eligibility-upgrade-nudge';
+	} else if ( ownProps.currentContext === 'dev-tools' ) {
+		context = ownProps.currentContext;
+		feature = FEATURE_SFTP;
+		ctaName = 'calypso-dev-tools-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins-upload';
 		feature = FEATURE_UPLOAD_PLUGINS;

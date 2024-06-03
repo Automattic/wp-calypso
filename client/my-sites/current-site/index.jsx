@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -66,7 +66,7 @@ class CurrentSite extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 			return (
 				<Card
-					className={ classnames( 'current-site', {
+					className={ clsx( 'current-site', {
 						'is-no-sites': hasNoSites,
 						'is-loading': ! this.props.hasAllSitesList,
 					} ) }

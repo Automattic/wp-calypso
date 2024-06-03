@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
@@ -9,6 +9,7 @@ import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-por
 import { SelectedLicenseProp } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/types';
 import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
+import { MarketplaceTypeContext } from '../../context';
 
 export const useGetProductPricingInfo = () => {
 	const { data } = useProductsQuery( false, true );
@@ -20,14 +21,19 @@ export const useGetProductPricingInfo = () => {
 		[ wpcomProducts?.discounts?.tiers ]
 	);
 	const { data: licenseCounts, isSuccess: isLicenseCountsReady } = useFetchLicenseCounts();
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const { wpcomPlans } = useProductAndPlans( {} );
 	const creatorPlan = getWPCOMCreatorPlan( wpcomPlans );
 	const ownedPlans = useMemo( () => {
+		// We don't count ownded plans when referring products
+		if ( marketplaceType === 'referral' ) {
+			return 0;
+		}
 		if ( isLicenseCountsReady && creatorPlan ) {
 			const productStats = licenseCounts?.products?.[ creatorPlan.slug ];
 			return productStats?.not_revoked || 0;
 		}
-	}, [ creatorPlan, isLicenseCountsReady, licenseCounts?.products ] );
+	}, [ creatorPlan, isLicenseCountsReady, licenseCounts?.products, marketplaceType ] );
 
 	const getProductPricingInfo = (
 		userProducts: Record< string, ProductListItem >,

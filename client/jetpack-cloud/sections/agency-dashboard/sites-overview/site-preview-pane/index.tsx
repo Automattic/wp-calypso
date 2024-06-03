@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -84,7 +84,7 @@ export default function SitePreviewPane( {
 	} );
 
 	return (
-		<div className={ classNames( 'site-preview__pane', className ) }>
+		<div className={ clsx( 'site-preview__pane', className ) }>
 			<SitePreviewPaneHeader site={ site } closeSitePreviewPane={ closeSitePreviewPane } />
 			<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
 				{ navItems && navItems.length > 0 && canDisplayNavTabs ? (

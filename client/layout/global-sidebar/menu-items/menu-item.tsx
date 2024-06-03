@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useRef, forwardRef, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
@@ -10,8 +10,8 @@ interface Props {
 	url?: string;
 	tipTarget?: string;
 	onClick: () => void;
-	tooltip: string;
-	tooltipPlacement: 'bottom' | 'top' | 'right';
+	tooltip?: string;
+	tooltipPlacement?: 'bottom' | 'top' | 'right';
 	icon?: ReactNode;
 	className: string;
 	isActive?: boolean;
@@ -65,7 +65,7 @@ const SidebarMenuItem = forwardRef< HTMLButtonElement | HTMLAnchorElement, Props
 			return <Fragment>{ icon && <>{ icon }</> }</Fragment>;
 		};
 
-		const itemClasses = classNames( 'sidebar__item', className, {
+		const itemClasses = clsx( 'sidebar__item', className, {
 			'is-active': isActive,
 			'has-unseen': hasUnseen,
 			'sidebar__item--always-show-content': alwaysShowContent,

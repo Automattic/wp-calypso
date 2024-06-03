@@ -1,7 +1,7 @@
 import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 interface MetricsInsightProps {
 	insight?: Insight;
@@ -10,8 +10,8 @@ interface MetricsInsightProps {
 }
 
 type Insight = {
-	header?: string;
-	description?: string;
+	header?: ReactNode;
+	description?: ReactNode;
 };
 
 const Card = styled( FoldableCard )`
@@ -22,21 +22,26 @@ const Card = styled( FoldableCard )`
 	letter-spacing: -0.1px;
 `;
 
-type InsightHeaderProps = {
+type Header = {
 	locked: boolean;
 	children: React.ReactNode;
 };
 
-const InsightHeader = styled.div`
+const Header = styled.div`
 	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
 		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 16px;
-	filter: ${ ( props: InsightHeaderProps ) => ( props.locked ? 'blur(3px)' : 'none' ) };
-	user-select: ${ ( props: InsightHeaderProps ) => ( props.locked ? 'none' : 'auto' ) };
+	filter: ${ ( props: Header ) => ( props.locked ? 'blur(3px)' : 'none' ) };
+	user-select: ${ ( props: Header ) => ( props.locked ? 'none' : 'auto' ) };
+	display: flex;
+
+	span {
+		display: inline-block;
+	}
 `;
 
-const InsightContent = styled.div`
-	padding: 24px;
+const Content = styled.div`
+	padding: 8px 0 24px;
 `;
 
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
@@ -52,9 +57,9 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		<Card
 			className="metrics-insight-item"
 			header={
-				<InsightHeader locked={ locked } onClick={ onClick }>
+				<Header locked={ locked } onClick={ onClick }>
 					{ itemToRender.header }
-				</InsightHeader>
+				</Header>
 			}
 			screenReaderText={ translate( 'More' ) }
 			compact
@@ -64,7 +69,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 			icon={ locked ? 'lock' : 'chevron-down' }
 			iconSize={ 18 }
 		>
-			<InsightContent>{ itemToRender.description }</InsightContent>
+			<Content>{ itemToRender.description }</Content>
 		</Card>
 	);
 };

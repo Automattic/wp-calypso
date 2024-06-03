@@ -5,6 +5,7 @@ import {
 	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { trackStatsAnalyticsEvent } from '../utils';
 
 const setUrlParam = ( url: URL, paramName: string, paramValue?: string | null ): void => {
 	if ( paramValue === null || paramValue === undefined || paramValue === '' ) {
@@ -166,7 +167,13 @@ const gotoCheckoutPage = ( {
 			break;
 	}
 
+	// Keeping the event for data continuity
 	recordTracksEvent( `calypso_stats_${ eventName }_purchase_button_clicked` );
+	// Add parameters to the event
+	trackStatsAnalyticsEvent( `stats_purchase_button_clicked`, {
+		type,
+		quantity,
+	} );
 
 	const redirectUrl = getRedirectUrl( { from, type, adminUrl, redirectUri, siteSlug } );
 	const checkoutBackUrl = getCheckoutBackUrl( { from, adminUrl, siteSlug } );

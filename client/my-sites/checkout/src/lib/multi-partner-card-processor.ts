@@ -5,13 +5,13 @@ import {
 	makeErrorResponse,
 	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
+import { getContactDetailsType } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/payment-method-selector/assignment-processor-functions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { logStashEvent, recordTransactionBeginAnalytics } from '../lib/analytics';
 import existingCardProcessor from './existing-card-processor';
-import getContactDetailsType from './get-contact-details-type';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import {

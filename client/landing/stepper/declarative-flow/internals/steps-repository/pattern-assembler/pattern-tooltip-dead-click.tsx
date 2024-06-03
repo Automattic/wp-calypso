@@ -1,5 +1,5 @@
 import { Popover } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef } from 'react';
 import './pattern-tooltip-dead-click.scss';
@@ -69,7 +69,7 @@ const PatternTooltipDeadClick = ( { targetRef, isVisible }: Props ) => {
 			variant="unstyled"
 		>
 			<div
-				className={ classnames( 'pattern-assembler__tooltip-dead-click-content', {
+				className={ clsx( 'pattern-assembler__tooltip-dead-click-content', {
 					'pattern-assembler__tooltip-dead-click-content--visible': isVisible,
 				} ) }
 				ref={ ref }

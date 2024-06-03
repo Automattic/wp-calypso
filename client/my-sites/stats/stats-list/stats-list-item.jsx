@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Icon, moreHorizontalMobile, tag, file, chevronDown } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -127,7 +127,7 @@ class StatsListItem extends Component {
 		const data = this.props.data;
 		const moduleName = titlecase( this.props.moduleName );
 		const actionMenu = data.actionMenu;
-		const actionClassSet = classNames( 'module-content-list-item-actions', {
+		const actionClassSet = clsx( 'module-content-list-item-actions', {
 			collapsed: actionMenu && ! this.state.disabled,
 		} );
 
@@ -211,7 +211,7 @@ class StatsListItem extends Component {
 			labelData = [ data ];
 		}
 
-		const wrapperClassSet = classNames( {
+		const wrapperClassSet = clsx( {
 			'module-content-list-item-label-section': labelData.length > 1,
 		} );
 		const label = labelData.map( function ( labelItem, i ) {
@@ -241,7 +241,7 @@ class StatsListItem extends Component {
 
 				icon = (
 					<span className="stats-list__icon">
-						<img alt="" src={ labelItem.icon } className={ classNames( iconClassSetOptions ) } />
+						<img alt="" src={ labelItem.icon } className={ clsx( iconClassSetOptions ) } />
 					</span>
 				);
 			}
@@ -360,7 +360,7 @@ class StatsListItem extends Component {
 			mobileActionToggle = (
 				<button
 					onClick={ this.actionMenuClick }
-					className={ classNames( toggleOptions ) }
+					className={ clsx( toggleOptions ) }
 					title={ this.props.translate( 'Show Actions', {
 						context: 'Label for hidden menu in a list on the Stats page.',
 					} ) }
@@ -371,7 +371,7 @@ class StatsListItem extends Component {
 			rightClassOptions[ 'is-expanded' ] = this.state.actionMenuOpen;
 		}
 
-		const groupClassName = classNames( groupClassOptions );
+		const groupClassName = clsx( groupClassOptions );
 
 		return (
 			<li key={ this.key } data-group={ this.key } className={ groupClassName }>
@@ -383,7 +383,7 @@ class StatsListItem extends Component {
 					tabIndex="0"
 					role="button"
 				>
-					<span className={ classNames( rightClassOptions ) }>
+					<span className={ clsx( rightClassOptions ) }>
 						{ mobileActionToggle }
 						{ actions }
 						<span className="stats-list__module-content-list-item-value">

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { map } from 'lodash';
 import { Fragment } from 'react';
 
@@ -63,7 +63,7 @@ const MarkedLines = ( { context } ) => {
 					return (
 						<div
 							key={ lineNumber }
-							className={ classNames( 'marked-lines__line-number', {
+							className={ clsx( 'marked-lines__line-number', {
 								'marked-lines__marked-line': hasMarks,
 							} ) }
 						>
@@ -83,7 +83,7 @@ const MarkedLines = ( { context } ) => {
 					return (
 						<div
 							key={ lineNumber }
-							className={ classNames( 'marked-lines__line', {
+							className={ clsx( 'marked-lines__line', {
 								'marked-lines__marked-line': hasMarks,
 							} ) }
 						>

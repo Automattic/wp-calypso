@@ -1,6 +1,6 @@
 import { PricingSlider, RenderThumbFunction, Popover } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState, useRef } from 'react';
 import './styles.scss';
 
@@ -37,7 +37,7 @@ function TierUpgradeSlider( {
 	onSliderChange,
 	marks,
 }: TierUpgradeSliderProps ) {
-	const componentClassNames = classNames( 'tier-upgrade-slider', className );
+	const componentClassNames = clsx( 'tier-upgrade-slider', className );
 
 	const handleRenderThumb = ( ( props ) => {
 		const thumbSVG = (

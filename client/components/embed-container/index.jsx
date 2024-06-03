@@ -1,5 +1,5 @@
 import { loadScript } from '@automattic/load-script';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { filter, forEach } from 'lodash';
 import { PureComponent } from 'react';
@@ -245,7 +245,7 @@ function embedCarousel( domNode ) {
 						return (
 							<div
 								key={ index }
-								className={ classNames( 'carousel-slide', item?.className ) }
+								className={ clsx( 'carousel-slide', item?.className ) }
 								// eslint-disable-next-line react/no-danger
 								dangerouslySetInnerHTML={ { __html: item?.innerHTML } }
 							/>

@@ -5,7 +5,7 @@ import { useDebounce } from '@wordpress/compose';
 import { chevronLeft as backIcon, Icon, search as inputIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { cleanForSlug } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -172,7 +172,7 @@ export function CommandMenuGroup() {
 					>
 						<HStack
 							alignment="left"
-							className={ classnames( 'commands-command-menu__item', {
+							className={ clsx( 'commands-command-menu__item', {
 								'has-icon': command.icon || command.image,
 							} ) }
 						>
@@ -469,3 +469,4 @@ const CommandPalette = ( {
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './commands';
 export { useCommands } from './commands';
+export { PromptIcon } from './icons/prompt';

@@ -1,6 +1,6 @@
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -21,7 +21,7 @@ class StoreMoveNoticeView extends Component {
 		const { site } = this.props;
 
 		return (
-			<Card className={ classNames( 'dashboard__store-move-notice', 'store-removed' ) }>
+			<Card className={ clsx( 'dashboard__store-move-notice', 'store-removed' ) }>
 				<img src={ megaphoneImage } alt="" />
 				<h1>{ translate( 'Find all of your business features in WooCommerce' ) }</h1>
 				<p>

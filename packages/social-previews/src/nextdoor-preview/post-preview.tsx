@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import cx from 'classnames';
+import cx from 'clsx';
 import {
 	baseDomain,
 	formatNextdoorDate,

@@ -3,7 +3,7 @@ import { HelpCenter } from '@automattic/data-stores';
 import { useChatStatus, useChatWidget } from '@automattic/help-center/src/hooks';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import type { MessagingGroup } from '@automattic/help-center/src/hooks/use-messaging-availability';
 import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
 import type { FC } from 'react';
@@ -123,7 +123,7 @@ const ChatButton: FC< Props > = ( {
 		}
 	};
 
-	const classes = classnames( 'chat-button', className );
+	const classes = clsx( 'chat-button', className );
 
 	if ( ! shouldShowChatButton() ) {
 		return null;
@@ -143,7 +143,7 @@ const ChatButton: FC< Props > = ( {
 			primary={ primary }
 			borderless={ borderless }
 			onClick={ handleClick }
-			title={ __( 'Support Chat' ) }
+			title={ __( 'Contact us' ) }
 		>
 			{ getChildren() }
 		</Button>

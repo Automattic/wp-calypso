@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -58,6 +58,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -543,7 +544,7 @@ class SignupForm extends Component {
 	globalNotice( notice, status ) {
 		return (
 			<Notice
-				className={ classNames( 'signup-form__notice', {
+				className={ clsx( 'signup-form__notice', {
 					'signup-form__span-columns': this.isHorizontal(),
 				} ) }
 				showDismiss={ false }
@@ -621,6 +622,10 @@ class SignupForm extends Component {
 		} );
 	}
 
+	displayUsernameInput() {
+		return this.props.displayUsernameInput && ! this.props.isBlazePro;
+	}
+
 	formFields() {
 		const isEmailValid =
 			! this.props.disableEmailInput && formState.isFieldValid( this.state.form, 'email' );
@@ -690,7 +695,7 @@ class SignupForm extends Component {
 					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
 				) }
 
-				{ this.props.displayUsernameInput && (
+				{ this.displayUsernameInput() && (
 					<>
 						<FormLabel htmlFor="username">
 							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooCoreProfilerFlow )
@@ -1041,7 +1046,7 @@ class SignupForm extends Component {
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
 				{ this.termsOfServiceLink() }
 				<FormButton
-					className={ classNames(
+					className={ clsx(
 						'signup-form__submit',
 						variationName && `${ variationName }-signup-form`
 					) }
@@ -1060,7 +1065,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, translate, isWoo } = this.props;
+		const { flowName, translate, isWoo, isBlazePro } = this.props;
 
 		if ( this.props.isP2Flow ) {
 			return (
@@ -1077,6 +1082,19 @@ class SignupForm extends Component {
 
 		if ( isWoo ) {
 			return null;
+		}
+
+		if ( isBlazePro ) {
+			return (
+				<div className="signup-form__p2-footer-link">
+					<LoggedOutFormLinks>
+						<span>{ this.props.translate( 'Already have an account?' ) }&nbsp;</span>
+						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
+							{ this.props.translate( 'Log in here' ) }
+						</LoggedOutFormLinkItem>
+					</LoggedOutFormLinks>
+				</div>
+			);
 		}
 
 		return (
@@ -1158,7 +1176,7 @@ class SignupForm extends Component {
 
 		if ( this.props.isJetpackWooCommerceFlow || this.props.isJetpackWooDnaFlow ) {
 			return (
-				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
+				<div className={ clsx( 'signup-form__woocommerce', this.props.className ) }>
 					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate>
 						{ this.props.formHeader && (
 							<header className="signup-form__header">{ this.props.formHeader }</header>
@@ -1264,7 +1282,7 @@ class SignupForm extends Component {
 
 			return (
 				<div
-					className={ classNames( 'signup-form', this.props.className, {
+					className={ clsx( 'signup-form', this.props.className, {
 						'is-horizontal': this.isHorizontal(),
 					} ) }
 				>
@@ -1328,7 +1346,7 @@ class SignupForm extends Component {
 
 		return (
 			<div
-				className={ classNames( 'signup-form', this.props.className, {
+				className={ clsx( 'signup-form', this.props.className, {
 					'is-horizontal': this.isHorizontal(),
 				} ) }
 			>
@@ -1392,6 +1410,7 @@ export default connect(
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
+			isBlazePro: getIsBlazePro( state ),
 		};
 	},
 	{

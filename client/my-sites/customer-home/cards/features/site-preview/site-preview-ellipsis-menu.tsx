@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -15,7 +15,7 @@ export const SitePreviewEllipsisMenu = () => {
 	const moreButtonRef = useRef( null );
 	const [ isShowingPopover, setIsShowingPopover ] = useState( false );
 
-	const classes = classNames( 'home-site-preview__ellipses-button', {
+	const classes = clsx( 'home-site-preview__ellipses-button', {
 		'is-open': isShowingPopover,
 	} );
 	const selectedSite = useSelector( getSelectedSite );

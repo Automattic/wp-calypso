@@ -1,5 +1,5 @@
 import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ComponentSwapper from '../component-swapper';
 import CountComparisonCard from './count-comparison-card';
@@ -104,7 +104,7 @@ export default function AnnualHighlightCards( {
 	);
 
 	return (
-		<div className={ classNames( 'highlight-cards', className ?? null ) }>
+		<div className={ clsx( 'highlight-cards', className ?? null ) }>
 			<div className="highlight-year-navigation">
 				{ header }
 				{ navigation }

@@ -1,14 +1,15 @@
 import page from '@automattic/calypso-router';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getOveralScore, isScoreGood } from 'calypso/data/site-profiler/metrics-dictionaries';
+import { getPerformanceCategory } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
+import { useUrlPerformanceMetricsQuery } from 'calypso/data/site-profiler/use-url-performance-metrics-query';
 import { LayoutBlock } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
@@ -19,11 +20,16 @@ import { getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { BasicMetrics } from './basic-metrics';
 import { DomainSection } from './domain-section';
+import { FootNote } from './footnote';
 import { GetReportForm } from './get-report-form';
+import { HealthSection } from './health-section';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
+import { LoadingScreen } from './loading-screen';
+import { MigrationBannerBig } from './migration-banner-big';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
+import { SecuritySection } from './security-section';
 import './styles-v2.scss';
 
 const debug = debugFactory( 'apps:site-profiler' );
@@ -34,10 +40,12 @@ interface Props {
 }
 
 export default function SiteProfilerV2( props: Props ) {
-	const { routerDomain } = props;
+	const { routerDomain, hash } = props;
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const perfomanceMetricsRef = useRef( null );
+	const healthMetricsRef = useRef( null );
+	const securityMetricsRef = useRef( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -86,7 +94,8 @@ export default function SiteProfilerV2( props: Props ) {
 		isFetching: isFetchingBasicMetrics,
 	} = useUrlBasicMetricsQuery( url );
 
-	const showBasicMetrics = basicMetrics && ! isFetchingBasicMetrics && ! errorBasicMetrics;
+	const showBasicMetrics =
+		basicMetrics && basicMetrics.success && ! isFetchingBasicMetrics && ! errorBasicMetrics;
 
 	// TODO: Remove this debug statement once we have a better error handling mechanism
 	if ( errorBasicMetrics ) {
@@ -98,13 +107,20 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
 
-	const overallScore = getOveralScore( basicMetrics?.basic );
+	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery(
+		basicMetrics?.final_url,
+		basicMetrics?.token
+	);
+
+	const performanceCategory = getPerformanceCategory( performanceMetrics );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
+
+	const isWpCom = !! performanceMetrics?.is_wpcom;
 
 	return (
 		<div id="site-profiler-v2">
@@ -121,21 +137,22 @@ export default function SiteProfilerV2( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-			{ showResultScreen && (
+			{ showResultScreen && ! performanceMetrics && <LoadingScreen /> }
+			{ showResultScreen && performanceMetrics && (
 				<>
 					<LayoutBlock
-						className={ classnames(
+						className={ clsx(
 							'results-header-block',
-							{ poor: ! isScoreGood( overallScore ) },
-							{ good: isScoreGood( overallScore ) }
+							{ poor: performanceCategory === 'non-wpcom-low-performer' },
+							{ good: performanceCategory !== 'non-wpcom-low-performer' }
 						) }
 						width="medium"
 					>
 						{ showBasicMetrics && (
 							<ResultsHeader
 								domain={ domain }
-								overallScore={ overallScore }
-								urlData={ urlData }
+								performanceCategory={ performanceCategory }
+								isWpCom={ isWpCom }
 								onGetReport={ () => setIsGetReportFormOpen( true ) }
 							/>
 						) }
@@ -143,8 +160,15 @@ export default function SiteProfilerV2( props: Props ) {
 					<LayoutBlock width="medium">
 						{ siteProfilerData && (
 							<>
-								{ showBasicMetrics && <BasicMetrics basicMetrics={ basicMetrics.basic } /> }
+								{ showBasicMetrics && (
+									<BasicMetrics
+										basicMetrics={ basicMetrics.basic }
+										domain={ domain }
+										isWpCom={ isWpCom }
+									/>
+								) }
 								<HostingSection
+									domain={ domain }
 									dns={ siteProfilerData.dns }
 									urlData={ urlData }
 									hostingProvider={ hostingProviderData?.hosting_provider }
@@ -160,15 +184,35 @@ export default function SiteProfilerV2( props: Props ) {
 								/>
 
 								<PerformanceSection
+									url={ basicMetrics?.final_url }
+									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
 									performanceMetricsRef={ perfomanceMetricsRef }
+									setIsGetReportFormOpen={ setIsGetReportFormOpen }
+								/>
+
+								<HealthSection
+									url={ basicMetrics?.final_url }
+									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									healthMetricsRef={ healthMetricsRef }
+									setIsGetReportFormOpen={ setIsGetReportFormOpen }
+								/>
+
+								<SecuritySection
+									url={ basicMetrics?.final_url }
+									hash={ hash ?? basicMetrics?.token }
+									hostingProvider={ hostingProviderData?.hosting_provider }
+									securityMetricsRef={ securityMetricsRef }
 									setIsGetReportFormOpen={ setIsGetReportFormOpen }
 								/>
 							</>
 						) }
 					</LayoutBlock>
+					<MigrationBannerBig />
 				</>
 			) }
-
+			<FootNote />
 			<GetReportForm
 				url={ basicMetrics?.final_url }
 				token={ basicMetrics?.token }

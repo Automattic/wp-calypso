@@ -7,7 +7,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 import InfoTooltip from '../info-tooltip';
 import WrappingComponent from './suggestion-item-wrapper';
@@ -130,7 +130,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 			ref={ buttonRef }
 			type={ type }
 			key={ domainName }
-			className={ classnames(
+			className={ clsx(
 				'domain-picker__suggestion-item',
 				{
 					'is-free': isFree,
@@ -148,7 +148,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 					<Spinner />
 				) : (
 					<span
-						className={ classnames( 'domain-picker__suggestion-radio-circle', {
+						className={ clsx( 'domain-picker__suggestion-radio-circle', {
 							'is-checked': selected,
 							'is-unavailable': isUnavailable,
 						} ) }
@@ -157,7 +157,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 			<div className="domain-picker__suggestion-item-name">
 				<div className="domain-picker__suggestion-item-name-inner">
 					<span
-						className={ classnames( 'domain-picker__domain-wrapper', {
+						className={ clsx( 'domain-picker__domain-wrapper', {
 							'with-margin': ! ( hstsRequired || isDotGayNoticeRequired ),
 						} ) }
 					>
@@ -216,7 +216,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 				) }
 			</div>
 			<div
-				className={ classnames( 'domain-picker__price', {
+				className={ clsx( 'domain-picker__price', {
 					'is-paid': ! isFree,
 				} ) }
 			>
@@ -253,7 +253,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 						<Button
 							ref={ buttonRef }
 							variant="secondary"
-							className={ classnames( 'domain-picker__suggestion-select-button', {
+							className={ clsx( 'domain-picker__suggestion-select-button', {
 								'is-selected': selected && ! isUnavailable,
 							} ) }
 							disabled={ isUnavailable }

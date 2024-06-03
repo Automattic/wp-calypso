@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 import Confetti from '../confetti';
 
@@ -18,7 +18,7 @@ const Hooray: React.FunctionComponent< Props > = ( {
 } ) => {
 	return (
 		<div
-			className={ classnames(
+			className={ clsx(
 				`onboarding-hooray`,
 				{ 'onboarding-hooray__animate': animate },
 				className

@@ -112,6 +112,10 @@
 			min-height: 140px;
 		}
 	}
+
+	iframe[name="editor-canvas"] {
+		background-color: inherit;
+	}
 }
 
 
