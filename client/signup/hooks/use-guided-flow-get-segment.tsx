@@ -1,40 +1,43 @@
-const useGuidedFlowGetSegment = ( intent: string, goals: string[] ): string => {
+const useGuidedFlowGetSegment = ( updatedAnswers: Record< string, string[] > ): string => {
+	const intent = updatedAnswers?.[ 'what-brings-you-to-wordpress' ] || [];
+	const goals = updatedAnswers?.[ 'what-are-your-goals' ] || [];
+
 	// Handle the case when no goals are provided (n/a)
-	if ( intent === 'migrate-or-import-site' && goals.length === 0 ) {
-		return 'Migration';
+	if ( intent?.includes( 'migrate-or-import-site' ) && goals?.length === 0 ) {
+		return 'migration';
 	}
 
-	if ( intent === 'client' && goals.length === 0 ) {
-		return 'Developer / Agency';
+	if ( intent?.includes( 'client' ) && goals?.length === 0 ) {
+		return 'developer-or-agency';
 	}
 
 	// Handle different cases when intent is 'Create for self'
-	if ( intent === 'myself-business-or-friend' ) {
-		if ( goals.length === 0 ) {
-			return 'Unknown';
+	if ( intent?.includes( 'myself-business-or-friend' ) ) {
+		if ( goals?.length === 0 ) {
+			return 'unknown';
 		}
-		if ( goals.includes( 'difm' ) ) {
-			return 'DIFM'; // Do it for me
+		if ( goals?.includes( 'difm' ) ) {
+			return 'difm'; // Do it for me
 		}
-		if ( goals.includes( 'sell' ) && ! goals.includes( 'difm' ) ) {
-			return 'Merchant';
+		if ( goals?.includes( 'sell' ) && ! goals?.includes( 'difm' ) ) {
+			return 'merchant';
 		}
-		if ( goals.includes( 'blog' ) ) {
-			return 'Blogger';
+		if ( goals?.includes( 'blog' ) ) {
+			return 'blogger';
 		}
-		if ( goals.includes( 'educational-or-nonprofit' ) ) {
-			return 'Nonprofit';
+		if ( goals?.includes( 'educational-or-nonprofit' ) ) {
+			return 'nonprofit';
 		}
-		if ( goals.includes( 'newsletter' ) ) {
-			return 'Newsletter';
+		if ( goals?.includes( 'newsletter' ) ) {
+			return 'newsletter';
 		}
 		// Catch-all case for when none of the specific goals are met
 		// This will also account for "( ! DIFM && ! Sell ) = Consumer / Business" condition
-		return 'Consumer / Business';
+		return 'consumer-or-business';
 	}
 
 	// Default return if no conditions are met
-	return 'Unknown';
+	return 'unknown';
 };
 
 export default useGuidedFlowGetSegment;
