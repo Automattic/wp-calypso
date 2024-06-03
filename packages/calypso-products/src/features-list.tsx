@@ -53,7 +53,6 @@ import {
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
 	FEATURE_ECOMMERCE_MARKETING,
-	FEATURE_EMAIL_SUPPORT,
 	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FILTERING_V2,
 	FEATURE_FREE_BLOG_DOMAIN,
@@ -1985,16 +1984,6 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 		getDescription: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
-	},
-
-	[ FEATURE_EMAIL_SUPPORT ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Email support' )
-				: i18n.translate( 'Unlimited customer support via email' ),
-		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
 	[ FEATURE_SUPPORT_EMAIL ]: {
 		getSlug: () => FEATURE_SUPPORT_EMAIL,
