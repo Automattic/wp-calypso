@@ -46,7 +46,7 @@ export const SubscribeNavigationSetting = ( {
 			disabled={ disabled }
 			label={
 				<>
-					{ translate( 'Add the Subscribe block to the navigation.' ) }{ ' ' }
+					{ translate( 'Add the Subscribe Block to the navigation.' ) }{ ' ' }
 					<ExternalLink href={ getEditUrl() } onClick={ onEditClick }>
 						{ translate( 'Preview and edit' ) }
 					</ExternalLink>
