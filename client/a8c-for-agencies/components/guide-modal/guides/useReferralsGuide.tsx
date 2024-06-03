@@ -33,7 +33,6 @@ function useReferralsGuide() {
 						poster={ step2 }
 						muted
 						autoPlay
-						loop
 					/>
 				),
 			},
@@ -50,7 +49,6 @@ function useReferralsGuide() {
 						muted
 						poster={ step3 }
 						autoPlay
-						loop
 					/>
 				),
 			},
@@ -67,7 +65,6 @@ function useReferralsGuide() {
 						muted
 						poster={ step4 }
 						autoPlay
-						loop
 					/>
 				),
 			},
