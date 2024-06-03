@@ -3,7 +3,6 @@ import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automatti
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
-import SupportIcon from './assets/images/support.svg';
 import Theme2Image from './assets/images/theme-2.jpg';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
@@ -182,7 +181,6 @@ import {
 	FEATURE_ALWAYS_ONLINE,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
-	FEATURE_SUPPORT_EMAIL,
 	FEATURE_DESIGN_TOOLS,
 	FEATURE_PREMIUM_THEMES,
 	FEATURE_WORDADS,
@@ -1984,18 +1982,6 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 		getDescription: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
-	},
-	[ FEATURE_SUPPORT_EMAIL ]: {
-		getSlug: () => FEATURE_SUPPORT_EMAIL,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Email support' )
-				: i18n.translate( 'Support via email' ),
-		getIcon: () => <img src={ SupportIcon } alt={ i18n.translate( 'Customer support' ) } />,
-		getAlternativeTitle: () => i18n.translate( 'Customer support' ),
-		getCompareTitle: () => i18n.translate( 'Unlimited support via emails.' ),
-		getDescription: () =>
-			i18n.translate( 'Fast, friendly, expert WordPress help, whenever you need it.' ),
 	},
 	[ FEATURE_DESIGN_TOOLS ]: {
 		getSlug: () => FEATURE_DESIGN_TOOLS,
