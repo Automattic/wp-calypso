@@ -1,20 +1,19 @@
-.search-box-header {
+.search-categories {
 	display: flex;
-	flex-direction: column;
 	align-items: center;
 
 	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
 
-	.search-box-header__search {
+	.search-categories__search {
 		margin-top: 24px;
 		display: flex;
 		flex-direction: row;
 		width: 100%;
 		justify-content: center;
 
-		.search-box-header__searchbox {
+		.search-categories__searchbox {
 			max-width: 504px;
 			width: 100%;
 
@@ -79,62 +78,13 @@
 		}
 	}
 
-	.search-box-header__sticky-ref {
+	.search-categories__sticky-ref {
 		padding-bottom: 48px;
-	}
-
-	.search-box-header__recommended-searches {
-		margin-top: 24px;
-
-		.search-box-header__recommended-searches-title {
-			color: var(--studio-gray-50);
-			font-size: $font-body-small;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 22px;
-			text-align: center;
-
-		}
-
-		.search-box-header__recommended-searches-list {
-			margin-top: 12px;
-			text-align: center;
-
-			.search-box-header__recommended-searches-list-item {
-				&::after {
-					content: ",";
-					display: inline-block;
-					width: 0;
-					margin-right: 0.5em;
-				}
-				&:last-child::after {
-					content: none;
-				}
-
-				&:hover:not(.search-box-header__recommended-searches-list-item-selected) {
-					color: var(--color-link);
-					cursor: pointer;
-				}
-
-				&:focus {
-					outline: none;
-				}
-
-				&:not(.search-box-header__recommended-searches-list-item-selected) {
-					text-decoration: underline;
-				}
-
-				color: var(--studio-gray-100);
-				font-size: $font-body-small;
-				line-height: 22px;
-				text-align: center;
-			}
-		}
 	}
 }
 
-.search-box-header.fixed-top {
-	.search-box-header__search {
+.search-categories.fixed-top {
+	.search-categories__search {
 		@media ( min-width: 783px ) {
 			margin-top: 0;
 			position: fixed;
@@ -156,28 +106,23 @@
 
 	}
 
-	.search-box-header__recommended-searches-title {
-		@media ( min-width: 783px ) {
-			margin-top: calc(52px + 24px);
-		}
-	}
 }
 
-main.is-logged-out .search-box-header {
+main.is-logged-out .search-categories {
 	align-items: flex-start;
 	margin-bottom: 7px;
 	margin-top: -15px;
 
-	&.fixed-top .search-box-header__search {
+	&.fixed-top .search-categories__search {
 		justify-content: center;
 		background: #e5f4ff;
 	}
 
-	.search-box-header__search {
+	.search-categories__search {
 		justify-content: flex-start;
 		margin-top: 17px;
 
-		.search-box-header__searchbox .search-component {
+		.search-categories__searchbox .search-component {
 			margin-left: 0;
 			height: 55px;
 			max-width: 450px;

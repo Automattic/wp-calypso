@@ -54,7 +54,7 @@ const SearchBox: FC< {
 		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
 
 	return (
-		<div className="search-box-header__searchbox">
+		<div className="search-categories__searchbox">
 			<Search
 				ref={ searchBoxRef }
 				pinned={ isMobile }
@@ -105,8 +105,8 @@ const SearchCategories: FC< {
 	}, [ searchRef, searchTerm ] );
 
 	return (
-		<div className={ classNames( 'search-box-header', { 'fixed-top': isSticky } ) }>
-			<div className="search-box-header__search">
+		<div className={ classNames( 'search-categories', { 'fixed-top': isSticky } ) }>
+			<div className="search-categories__search">
 				<SearchBox
 					isMobile={ false }
 					isSearching={ isSearching }
@@ -121,7 +121,7 @@ const SearchCategories: FC< {
 				<Categories selected={ category } noSelection={ searchTerm ? true : false } />
 			</div>
 
-			<div className="search-box-header__sticky-ref" ref={ stickySearchBoxRef }></div>
+			<div className="search-categories__sticky-ref" ref={ stickySearchBoxRef }></div>
 		</div>
 	);
 };
