@@ -522,7 +522,7 @@ export function CheckoutSummaryFeaturesList( props: {
 			{ ! hasPlanInCart && hasEmailInCart && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-support-email" />
-					{ translate( '24/7 support via email' ) }
+					{ translate( 'Fast support' ) }
 				</CheckoutSummaryFeaturesListItem>
 			) }
 
