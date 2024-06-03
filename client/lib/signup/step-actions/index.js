@@ -196,9 +196,10 @@ export const getNewSiteParams = ( {
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: launchAsComingSoon,
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
-			...( setDevAccount && { set_dev_account: setDevAccount } ),
-			...( siteGoals && { site_goals: siteGoals } ),
-			...( onboardingSegment && { onboarding_segment: onboardingSegment } ),
+			...( flowToCheck === 'guided' && setDevAccount && { set_dev_account: setDevAccount } ),
+			...( flowToCheck === 'guided' && siteGoals && { site_goals: siteGoals } ),
+			...( flowToCheck === 'guided' &&
+				onboardingSegment && { onboarding_segment: onboardingSegment } ),
 		},
 		validate: false,
 	};
