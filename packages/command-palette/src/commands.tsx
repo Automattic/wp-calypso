@@ -1608,6 +1608,40 @@ export function useCommands() {
 				filterSelfHosted: true,
 				icon: earnIcon,
 			},
+			openThemeFileEditor: {
+				name: 'openThemeFileEditor',
+				label: __( 'Open theme file editor', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/theme-editor.php' ),
+				searchLabel: [
+					_x(
+						'edit theme',
+						'Keyword for the Open theme file editor command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open theme file editor', __i18n_text_domain__ ),
+				siteType: SiteType.ATOMIC,
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				icon: brushIcon,
+			},
+			openPluginFileEditor: {
+				name: 'openPluginFileEditor',
+				label: __( 'Open plugin file editor', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/plugin-editor.php' ),
+				searchLabel: [
+					_x(
+						'edit plugins',
+						'Keyword for the Open plugin file editor command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open plugin file editor', __i18n_text_domain__ ),
+				siteType: SiteType.ATOMIC,
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				icon: pluginsIcon,
+			},
 		} ),
 		[ __, _x, siteFilters ]
 	);
