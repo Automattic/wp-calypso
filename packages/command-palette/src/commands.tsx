@@ -12,11 +12,14 @@ import {
 	code as codeIcon,
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
+	commentReplyLink as formResponsesIcon,
+	currencyDollar as earnIcon,
 	download as downloadIcon,
 	edit as editIcon,
 	globe as domainsIcon,
 	help as helpIcon,
 	home as dashboardIcon,
+	inbox as crowdsignalIcon,
 	key as keyIcon,
 	layout as siteEditorIcon,
 	media as mediaIcon,
@@ -33,6 +36,7 @@ import {
 	shield as antiSpamIcon,
 	replace as switchIcon,
 	settings as settingsIcon,
+	starHalf as ratingsIcon,
 	tag as tagsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
@@ -81,6 +85,7 @@ export interface Command {
 	filterNotice?: string;
 	emptyListNotice?: string;
 	alwaysUseSiteSelector?: boolean;
+	adminInterface?: 'calypso' | 'wp-admin';
 }
 
 export function useCommands() {
@@ -420,6 +425,31 @@ export function useCommands() {
 						</g>
 					</svg>
 				),
+			},
+			openMyJetpack: {
+				name: 'openMyJetpack',
+				label: __( 'Open My Jetpack', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'discover Jetpack products',
+						'Keyword for the Open My Jetpack command',
+						__i18n_text_domain__
+					),
+					_x(
+						'manage Jetpack products',
+						'Keyword for the Open My Jetpack command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=my-jetpack' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open My Jetpack', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				siteType: SiteType.JETPACK,
+				adminInterface: 'wp-admin',
+				filterNotice: __( 'Only listing sites with My Jetpack available.' ),
+				emptyListNotice: __( 'No sites with My Jetpack available.' ),
+				icon: <JetpackLogo size={ 18 } />,
 			},
 			openJetpackSettings: {
 				name: 'openJetpackSettings',
@@ -1074,6 +1104,82 @@ export function useCommands() {
 				capability: SiteCapabilities.MODERATE_COMMENTS,
 				icon: postCommentsIcon,
 			},
+			viewFormResponses: {
+				name: 'viewFormResponses',
+				label: __( 'View form responses', __i18n_text_domain__ ),
+				searchLabel: [
+					_x( 'feedback', 'Keyword for the View form responses command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				callback: commandNavigation( '/wp-admin/edit.php?post_type=feedback' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to view form responses', __i18n_text_domain__ ),
+				capability: SiteCapabilities.EDIT_PAGES,
+				filterP2: true,
+				icon: formResponsesIcon,
+			},
+			openCrowdsignal: {
+				name: 'openCrowdsignal',
+				label: __( 'Open Crowdsignal', __i18n_text_domain__ ),
+				searchLabel: [
+					_x( 'create poll', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create survey', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create feedback', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create NPS', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create voting', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create applause', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x(
+						'view poll results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+					_x(
+						'view survey results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+					_x(
+						'view feedback results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+					_x(
+						'view NPS results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+					_x(
+						'view voting results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+					_x(
+						'view applause results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=polls' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open Crowdsignal', __i18n_text_domain__ ),
+				capability: SiteCapabilities.EDIT_POSTS,
+				filterP2: true,
+				filterSelfHosted: true,
+				icon: crowdsignalIcon,
+			},
+			viewRatings: {
+				name: 'viewRatings',
+				label: __( 'View ratings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x( 'feedback', 'Keyword for the View ratings command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=ratings' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to view ratings', __i18n_text_domain__ ),
+				capability: SiteCapabilities.EDIT_POSTS,
+				filterP2: true,
+				filterSelfHosted: true,
+				icon: ratingsIcon,
+			},
 			manageThemes: {
 				name: 'manageThemes',
 				label: __( 'Manage themes', __i18n_text_domain__ ),
@@ -1170,6 +1276,31 @@ export function useCommands() {
 				siteSelectorLabel: __( 'Select site to install plugin', __i18n_text_domain__ ),
 				capability: SiteCapabilities.ACTIVATE_PLUGINS,
 				siteType: SiteType.JETPACK,
+				icon: pluginsIcon,
+			},
+			manageScheduledUpdates: {
+				name: 'manageScheduledUpdates',
+				label: __( 'Manage scheduled plugin updates', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'add plugin schedule',
+						'Keyword for the Manage scheduled plugin updates command',
+						__i18n_text_domain__
+					),
+					_x(
+						'add scheduled update',
+						'Keyword for the Manage scheduled plugin updates command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				callback: commandNavigation( '/plugins/scheduled-updates/:site' ),
+				siteSelector: true,
+				siteSelectorLabel: __(
+					'Select site to manage scheduled plugin updates',
+					__i18n_text_domain__
+				),
+				siteType: SiteType.ATOMIC,
+				capability: SiteCapabilities.ACTIVATE_PLUGINS,
 				icon: pluginsIcon,
 			},
 			changePlan: {
@@ -1471,6 +1602,105 @@ export function useCommands() {
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				filterP2: true,
 				icon: marketingIcon,
+			},
+			openMonetizationTools: {
+				name: 'openMonetizationTools',
+				label: __( 'Open monetization tools', __i18n_text_domain__ ),
+				callback: ( params ) =>
+					commandNavigation(
+						`${
+							params.site?.is_wpcom_atomic && siteUsesWpAdminInterface( params.site )
+								? 'https://jetpack.com/redirect/?source=calypso-monetize&site='
+								: '/earn/'
+						}:site`
+					)( params ),
+				searchLabel: [
+					_x(
+						'access monetization tools',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'earn money',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'collect payments',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'receive donations',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'create subscriber-only content',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'set up paid newsletter',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'collect PayPal payments',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'earn ad revenue',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+					_x(
+						'refer a friend',
+						'Keyword for the Open monetization tools command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open monetization tools', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				filterP2: true,
+				filterSelfHosted: true,
+				icon: earnIcon,
+			},
+			openThemeFileEditor: {
+				name: 'openThemeFileEditor',
+				label: __( 'Open theme file editor', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/theme-editor.php' ),
+				searchLabel: [
+					_x(
+						'edit theme',
+						'Keyword for the Open theme file editor command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open theme file editor', __i18n_text_domain__ ),
+				siteType: SiteType.ATOMIC,
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				icon: brushIcon,
+			},
+			openPluginFileEditor: {
+				name: 'openPluginFileEditor',
+				label: __( 'Open plugin file editor', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/plugin-editor.php' ),
+				searchLabel: [
+					_x(
+						'edit plugins',
+						'Keyword for the Open plugin file editor command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open plugin file editor', __i18n_text_domain__ ),
+				siteType: SiteType.ATOMIC,
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				icon: pluginsIcon,
 			},
 		} ),
 		[ __, _x, siteFilters ]
