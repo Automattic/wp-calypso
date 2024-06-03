@@ -1459,6 +1459,18 @@ export function useCommands() {
 			manageSettingsPerformance: {
 				name: 'manageSettingsPerformance',
 				label: __( 'Manage performance settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'improve site performance',
+						'Keyword for the Manage performance settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'optimize load times',
+						'Keyword for the Manage performance settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				context: [ '/settings', '/wp-admin/options-' ],
 				callback: ( params ) =>
 					commandNavigation(
@@ -1485,6 +1497,23 @@ export function useCommands() {
 			manageSettingsPrivacy: {
 				name: 'manageSettingsPrivacy',
 				label: __( 'Manage privacy settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'create privacy policy page',
+						'Keyword for the Manage privacy settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change privacy policy page',
+						'Keyword for the Manage privacy settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'edit privacy policy page',
+						'Keyword for the Manage privacy settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				context: [ '/settings', '/wp-admin/options-' ],
 				callback: commandNavigation( '/wp-admin/options-privacy.php' ),
 				siteSelector: true,
@@ -1495,6 +1524,13 @@ export function useCommands() {
 			manageSettingsCrowdsignal: {
 				name: 'manageSettingsCrowdsignal',
 				label: __( 'Manage Crowdsignal settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'change Crowdsignal API key',
+						'Keyword for the Manage Crowdsignal settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				context: [ '/settings', '/wp-admin/options-' ],
 				callback: commandNavigation( '/wp-admin/options-general.php?page=crowdsignal-settings' ),
 				siteSelector: true,
@@ -1502,16 +1538,25 @@ export function useCommands() {
 				...siteFilters.hostingEnabled,
 				icon: settingsIcon,
 			},
-			manageSettingsRatings: {
-				name: 'manageSettingsRatings',
-				label: __( 'Manage post ratings settings', __i18n_text_domain__ ),
+			manageSettingsRating: {
+				name: 'manageSettingsRating',
+				label: __( 'Manage rating settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'show ratings',
+						'Keyword for the Manage ratings settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change ratings position',
+						'Keyword for the Manage ratings settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				context: [ '/settings', '/wp-admin/options-' ],
 				callback: commandNavigation( '/wp-admin/options-general.php?page=ratingsettings' ),
 				siteSelector: true,
-				siteSelectorLabel: __(
-					'Select site to manage post ratings settings',
-					__i18n_text_domain__
-				),
+				siteSelectorLabel: __( 'Select site to manage rating settings', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
 				icon: settingsIcon,
 			},
