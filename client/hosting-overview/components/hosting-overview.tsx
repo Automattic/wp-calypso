@@ -18,9 +18,9 @@ import './style.scss';
 const HostingOverview: FC = () => {
 	const site = useSelector( getSelectedSite );
 	const isJetpackNotAtomic = site && isNotAtomicJetpack( site );
-	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, site?.ID ?? null ) );
+	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, site?.ID || -1 ) );
 	const hasAtomicFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID ?? null, WPCOM_FEATURES_ATOMIC )
+		siteHasFeature( state, site?.ID || -1, WPCOM_FEATURES_ATOMIC )
 	);
 
 	const subtitle = isJetpackNotAtomic
