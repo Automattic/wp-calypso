@@ -66,7 +66,7 @@ function HelpCenterContent() {
 
 	return (
 		<>
-			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/coresss">{ content }</Fill> }
+			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter handleClose={ closeCallback } />
 		</>
 	);
