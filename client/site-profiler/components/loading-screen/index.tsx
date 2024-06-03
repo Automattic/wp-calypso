@@ -35,16 +35,16 @@ export const LoadingScreen = () => {
 			if ( progress >= 100 ) {
 				setProgress( 0 );
 			} else {
-				setProgress( progress + 3 );
+				setProgress( progress + ( 100 - progress ) / 5 );
 			}
-		}, 1000 );
+		}, 3000 );
 	}, [ progress ] );
 
 	return (
 		<LayoutBlock className="landing-page-header-block" width="medium">
 			<StyledLoadingScreen>
 				<h2>{ progressHeadings[ Math.floor( ( progress / 101 ) * progressHeadings.length ) ] }</h2>
-				<Progress value={ progress } total={ 100 } canGoBackwards />
+				<Progress value={ progress } total={ 100 } />
 			</StyledLoadingScreen>
 		</LayoutBlock>
 	);
