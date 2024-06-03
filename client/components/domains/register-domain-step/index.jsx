@@ -5,7 +5,7 @@ import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/compone
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -468,11 +468,11 @@ class RegisterDomainStep extends Component {
 			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData )
 			: {};
 
-		const containerDivClassName = classNames( 'register-domain-step', {
+		const containerDivClassName = clsx( 'register-domain-step', {
 			'register-domain-step__signup': this.props.isSignupStep,
 		} );
 
-		const searchBoxClassName = classNames( 'register-domain-step__search', {
+		const searchBoxClassName = clsx( 'register-domain-step__search', {
 			'register-domain-step__search-domain-step': this.props.isSignupStep,
 		} );
 
@@ -697,7 +697,7 @@ class RegisterDomainStep extends Component {
 			return null;
 		}
 
-		const className = classNames( 'register-domain-step__next-page', {
+		const className = clsx( 'register-domain-step__next-page', {
 			'register-domain-step__next-page--is-loading': isLoading,
 		} );
 		return (

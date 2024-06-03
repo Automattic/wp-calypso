@@ -1,6 +1,6 @@
 import { captureException } from '@automattic/calypso-sentry';
 import { StepContainer } from '@automattic/onboarding';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, type FC } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -165,7 +165,7 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 
 				{ showCopyIntoNewSite && (
 					<li
-						className={ classNames( 'fade-in', {
+						className={ clsx( 'fade-in', {
 							active: showCopyIntoNewSite,
 						} ) }
 					>
@@ -185,7 +185,7 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 				) }
 				{ showFallback && (
 					<li
-						className={ classNames( 'fade-in', {
+						className={ clsx( 'fade-in', {
 							active: showFallback,
 						} ) }
 					>
@@ -212,7 +212,7 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 			</ol>
 			{ showFallback ||
 				( showCopyIntoNewSite && (
-					<p className={ classNames( 'fade-in', { active: true } ) }>
+					<p className={ clsx( 'fade-in', { active: true } ) }>
 						{ translate(
 							'And you are done! When the migration finishes, Migrate Guru will send you an email.'
 						) }

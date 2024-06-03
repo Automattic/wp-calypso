@@ -1,5 +1,5 @@
 import { Tooltip } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {
 	Children,
 	cloneElement,
@@ -31,7 +31,7 @@ export const PatternLibraryToggleOption = forwardRef<
 		<Tooltip text={ tooltipText } { ...{ style: { maxWidth: '200px', top: '3px' } } }>
 			<LocalizedLink
 				{ ...props }
-				className={ classNames( 'pattern-library__toggle-option', className ) }
+				className={ clsx( 'pattern-library__toggle-option', className ) }
 				href={ href }
 				onClick={ () => {
 					onClick?.( value );
@@ -94,7 +94,7 @@ export function PatternLibraryToggle( {
 	}, [ selected ] );
 
 	return (
-		<div className={ classNames( 'pattern-library__toggle', className ) } ref={ wrapperRef }>
+		<div className={ clsx( 'pattern-library__toggle', className ) } ref={ wrapperRef }>
 			{ Children.map( children, ( child, index ) =>
 				cloneElement< PatternLibraryToggleOptionProps >( child, {
 					children: (
@@ -105,7 +105,7 @@ export function PatternLibraryToggle( {
 							{ child.props.children }
 						</>
 					),
-					className: classNames( child.props.className, {
+					className: clsx( child.props.className, {
 						'is-active': child.props.value === selected,
 					} ),
 					onClick( value ) {

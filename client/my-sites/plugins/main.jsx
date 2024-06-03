@@ -7,7 +7,7 @@ import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { capitalize, find, flow, isEmpty } from 'lodash';
 import { Component } from 'react';
@@ -502,7 +502,7 @@ export class PluginsMain extends Component {
 						</NavigationHeader>
 					) }
 					<div
-						className={ classNames( 'plugins__top-container', {
+						className={ clsx( 'plugins__top-container', {
 							'plugins__top-container-jc': isJetpackCloud,
 						} ) }
 					>
@@ -544,7 +544,7 @@ export class PluginsMain extends Component {
 						</div>
 					</div>
 					<div
-						className={ classNames( 'plugins__main-content', {
+						className={ clsx( 'plugins__main-content', {
 							'plugins__main-content-jc': isJetpackCloud,
 						} ) }
 					>

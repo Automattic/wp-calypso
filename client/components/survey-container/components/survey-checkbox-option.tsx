@@ -1,5 +1,5 @@
 import { CheckboxControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Question, Option } from '../types';
 
 type SurveyCheckboxOptionProps = {
@@ -34,7 +34,7 @@ const SurveyCheckboxOption = ( {
 
 	return (
 		<div
-			className={ classNames( 'question-options__option-control', {
+			className={ clsx( 'question-options__option-control', {
 				checked: isSelected,
 				disabled,
 			} ) }

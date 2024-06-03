@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import PieChart from 'calypso/components/pie-chart';
@@ -149,7 +149,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 
 		return (
 			<StatsCard
-				className={ classNames( className, 'stats-module__card', path ) }
+				className={ clsx( className, 'stats-module__card', path ) }
 				title={ devicesStrings.title }
 				titleURL=""
 				metricLabel=""
@@ -189,7 +189,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	return (
 		// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
 		<StatsListCard
-			className={ classNames( className, 'stats-module__card', path ) }
+			className={ clsx( className, 'stats-module__card', path ) }
 			moduleType={ path }
 			data={ data }
 			title={ devicesStrings.title }

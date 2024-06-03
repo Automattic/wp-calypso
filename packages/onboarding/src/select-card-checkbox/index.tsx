@@ -1,6 +1,6 @@
 import { CheckboxControl } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import './style.scss';
 
 type SelectCardCheckboxProps = {
@@ -21,7 +21,7 @@ const SelectCardCheckbox = ( {
 
 	return (
 		<div
-			className={ classNames( 'select-card-checkbox__container', className, {
+			className={ clsx( 'select-card-checkbox__container', className, {
 				'is-checked': checked,
 			} ) }
 			onClick={ () => onChange( ! checked ) }

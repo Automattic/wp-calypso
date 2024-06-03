@@ -4,7 +4,7 @@ import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -52,14 +52,14 @@ export const UpgradePlanDetails = ( props: Props ) => {
 				<ButtonGroup>
 					<Button
 						borderless
-						className={ classnames( { selected: selectedPlan === PLAN_BUSINESS_MONTHLY } ) }
+						className={ clsx( { selected: selectedPlan === PLAN_BUSINESS_MONTHLY } ) }
 						onClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
 					>
 						{ __( 'Pay monthly' ) }
 					</Button>
 					<Button
 						borderless
-						className={ classnames( { selected: selectedPlan === PLAN_BUSINESS } ) }
+						className={ clsx( { selected: selectedPlan === PLAN_BUSINESS } ) }
 						onClick={ () => setSelectedPlan( PLAN_BUSINESS ) }
 					>
 						{ __( 'Pay annually' ) }

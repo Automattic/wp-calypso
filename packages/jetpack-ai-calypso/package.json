@@ -67,7 +67,7 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"classnames": "^2.3.2",
+		"clsx": "^2.1.1",
 		"debug": "^4.3.4"
 	}
 }

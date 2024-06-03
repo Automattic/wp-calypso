@@ -1,4 +1,4 @@
-import clsx from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';

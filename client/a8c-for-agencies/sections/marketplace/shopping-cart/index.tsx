@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Badge, Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
@@ -48,7 +48,7 @@ export default function ShoppingCart( {
 				<Icon className="shopping-cart__button-icon" icon={ <ShoppingCartIcon /> } />
 
 				<Badge
-					className={ classNames( 'shopping-cart__button-badge', {
+					className={ clsx( 'shopping-cart__button-badge', {
 						'is-hidden': ! items.length,
 					} ) }
 					type="error"

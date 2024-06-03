@@ -6,7 +6,7 @@ import {
 	FlexItem,
 } from '@wordpress/components';
 import { check, Icon, info, rotateRight } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect } from 'react';
 import { useScheduledUpdatesVerifyPathQuery } from 'calypso/data/plugins/use-scheduled-updates-verify-path-query';
@@ -115,7 +115,7 @@ export function ScheduleFormPaths( props: Props ) {
 					)
 				}
 			</Text>
-			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
+			<div className={ clsx( { 'form-control-container': borderWrapper } ) }>
 				<Text className="info-msg">Website URL paths</Text>
 
 				<div className="paths">
@@ -169,7 +169,7 @@ export function ScheduleFormPaths( props: Props ) {
 							</FlexItem>
 							<FlexItem>
 								<Button
-									className={ classnames( { 'is-verifying': isVerifying } ) }
+									className={ clsx( { 'is-verifying': isVerifying } ) }
 									icon={ isVerifying ? rotateRight : null }
 									disabled={ isVerifying }
 									variant="secondary"

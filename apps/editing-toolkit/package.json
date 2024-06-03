@@ -103,7 +103,7 @@
 		"@wordpress/server-side-render": "^5.0.0",
 		"@wordpress/url": "^4.0.0",
 		"calypso": "workspace:^",
-		"classnames": "^2.3.2",
+		"clsx": "^2.1.1",
 		"eslint": "^8.57.0",
 		"jest": "^29.7.0",
 		"lodash": "^4.17.21",

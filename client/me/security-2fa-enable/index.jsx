@@ -1,5 +1,5 @@
 import { FormLabel } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -182,7 +182,7 @@ class Security2faEnable extends Component {
 	};
 
 	renderQRCode = () => {
-		const qrClasses = classNames( 'security-2fa-enable__qr-code', {
+		const qrClasses = clsx( 'security-2fa-enable__qr-code', {
 			'is-placeholder': ! this.state.otpAuthUri,
 		} );
 

@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { Modal } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import privateSiteGraphic from 'calypso/assets/images/a8c-for-agencies/referral-step-background.png';
@@ -55,7 +55,7 @@ const GuideModal = ( { onClose, steps }: GuideModalProps ) => {
 							{ steps.map( ( _, index ) => (
 								<span
 									key={ index }
-									className={ classNames( 'guide-modal__pagination-dot', {
+									className={ clsx( 'guide-modal__pagination-dot', {
 										active: step === index,
 									} ) }
 								></span>

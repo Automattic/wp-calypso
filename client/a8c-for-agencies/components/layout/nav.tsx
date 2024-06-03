@@ -1,5 +1,5 @@
 import { Count } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -84,7 +84,7 @@ export default function LayoutNavigation( {
 	return (
 		<div className="a4a-layout__navigation-wrapper">
 			<SectionNav
-				className={ classNames( 'a4a-layout__navigation', className ) }
+				className={ clsx( 'a4a-layout__navigation', className ) }
 				applyUpdatedStyles
 				selectedText={
 					<span>

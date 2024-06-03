@@ -1,7 +1,7 @@
 import { Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
@@ -175,7 +175,7 @@ export const PostByEmailSetting = ( { emailAddress }: PostByEmailSettingProps ) 
 
 				<div className="publishing-tools__module-settings site-settings__child-settings">
 					<FormLabel
-						className={ classNames( {
+						className={ clsx( {
 							'is-disabled': isDisabledControls,
 						} ) }
 					>

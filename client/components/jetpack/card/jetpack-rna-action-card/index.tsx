@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import UpsellBackgroundImage from 'calypso/assets/images/jetpack/rna-card-bg.png';
@@ -33,7 +33,7 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 	const translate = useTranslate();
 	return (
 		<div
-			className={ classNames( 'jetpack-rna-action-card', {
+			className={ clsx( 'jetpack-rna-action-card', {
 				'is-placeholder': isPlaceholder,
 			} ) }
 			{ ...( ! isPlaceholder && {

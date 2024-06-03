@@ -1,11 +1,11 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import './link-item.scss';
 
 export default function LoggedOutFormLinkItem( props ) {
 	return (
-		<a { ...props } className={ classnames( 'logged-out-form__link-item', props.className ) }>
+		<a { ...props } className={ clsx( 'logged-out-form__link-item', props.className ) }>
 			{ props.children }
 		</a>
 	);

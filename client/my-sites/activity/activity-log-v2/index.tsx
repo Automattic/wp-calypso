@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import ActivityCardList from 'calypso/components/activity-card-list';
@@ -112,7 +112,7 @@ const ActivityLogV2: FunctionComponent = () => {
 
 	return (
 		<Main
-			className={ classNames( 'activity-log-v2', {
+			className={ clsx( 'activity-log-v2', {
 				wordpressdotcom: ! ( isJetpackCloud() || isA8CForAgencies() ),
 			} ) }
 			wideLayout={ ! ( isJetpackCloud() || isA8CForAgencies() ) }
