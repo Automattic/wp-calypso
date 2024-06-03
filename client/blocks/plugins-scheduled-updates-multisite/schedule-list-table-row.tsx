@@ -70,7 +70,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 					<ScheduleListLastRunStatus schedule={ schedule } showStatusText={ isWideScreen } />
 				</td>
 				<td className="next-update">
-					{ prepareDateTime( schedule.timestamp, ! isWideScreen && 'M d,' ) }
+					{ prepareDateTime( schedule.timestamp, ! isWideScreen ? 'M d,' : undefined ) }
 				</td>
 
 				<td className="frequency">
