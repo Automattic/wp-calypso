@@ -1502,6 +1502,19 @@ export function useCommands() {
 				...siteFilters.hostingEnabled,
 				icon: settingsIcon,
 			},
+			manageSettingsRatings: {
+				name: 'manageSettingsRatings',
+				label: __( 'Manage post ratings settings', __i18n_text_domain__ ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: commandNavigation( '/wp-admin/options-general.php?page=ratingsettings' ),
+				siteSelector: true,
+				siteSelectorLabel: __(
+					'Select site to manage post ratings settings',
+					__i18n_text_domain__
+				),
+				...siteFilters.hostingEnabled,
+				icon: settingsIcon,
+			},
 			openMarketingTools: {
 				name: 'openMarketingTools',
 				label: __( 'Open marketing tools', __i18n_text_domain__ ),
