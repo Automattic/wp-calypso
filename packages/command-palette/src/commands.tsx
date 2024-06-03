@@ -1479,7 +1479,7 @@ export function useCommands() {
 							: '/settings/performance/:site'
 					)( params ),
 				siteSelector: true,
-				siteSelectorLabel: __( 'Select site to manage podcast settings', __i18n_text_domain__ ),
+				siteSelectorLabel: __( 'Select site to manage performance settings', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				filterP2: true,
 				icon: settingsIcon,
