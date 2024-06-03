@@ -161,7 +161,6 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 				cardImage={ upsellImageUrl }
 				cardImageAlt={ upsellImageAlt }
 				secondaryCtaURL={ secondaryCtaURL }
-				secondaryCtaLabel={ translate( 'See all plans' ) }
 			>
 				{ renderProductCardBody() }
 			</JetpackRnaActionCard>

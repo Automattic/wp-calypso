@@ -118,10 +118,15 @@
 			margin-left: 28px;
 
 			a,
-			a:active,
-			a:focus,
 			a:visited {
 				color: var(--studio-gray-80);
+			}
+
+			a:hover,
+			a:focus,
+			a:active,
+			a.is_active {
+				color: var(--studio-jetpack-green-50);
 			}
 		}
 	}
