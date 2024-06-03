@@ -1,10 +1,14 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import { SiteCapabilities } from '@automattic/data-stores';
 import {
 	alignJustify as acitvityLogIcon,
+	atSymbol as emailIcon,
 	backup as backupIcon,
 	brush as brushIcon,
+	category as categoryIcon,
 	chartBar as statsIcon,
+	cloud as hostingIcon,
 	code as codeIcon,
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
@@ -14,7 +18,9 @@ import {
 	help as helpIcon,
 	home as dashboardIcon,
 	key as keyIcon,
+	layout as siteEditorIcon,
 	media as mediaIcon,
+	megaphone as marketingIcon,
 	page as pageIcon,
 	payment as creditCardIcon,
 	people as peopleIcon,
@@ -22,9 +28,12 @@ import {
 	plus as plusIcon,
 	postComments as postCommentsIcon,
 	reusableBlock as cacheIcon,
+	search as searchIcon,
 	seen as seenIcon,
+	shield as antiSpamIcon,
 	replace as switchIcon,
 	settings as settingsIcon,
+	tag as tagsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
 } from '@wordpress/icons';
@@ -260,6 +269,20 @@ export function useCommands() {
 				siteSelectorLabel: __( 'Select site to open dashboard', __i18n_text_domain__ ),
 				icon: dashboardIcon,
 			},
+			...( isEnabled( 'layout/dotcom-nav-redesign-v2' ) && {
+				openHostingOverview: {
+					name: 'openHostingOverview',
+					label: __( 'Open hosting overview', __i18n_text_domain__ ),
+					callback: commandNavigation( '/overview/:site' ),
+					context: [ '/sites' ],
+					siteSelector: true,
+					siteSelectorLabel: __( 'Select site to open hosting overview', __i18n_text_domain__ ),
+					capability: SiteCapabilities.MANAGE_OPTIONS,
+					filterP2: true,
+					filterSelfHosted: true,
+					icon: hostingIcon,
+				},
+			} ),
 			openHostingConfiguration: {
 				name: 'openHostingConfiguration',
 				label: __( 'Open hosting configuration', __i18n_text_domain__ ),
@@ -572,6 +595,26 @@ export function useCommands() {
 				emptyListNotice: __( 'No sites with DNS management available.' ),
 				icon: domainsIcon,
 			},
+			manageEmails: {
+				name: 'manageEmails',
+				label: __( 'Manage emails', __i18n_text_domain__ ),
+				callback: commandNavigation( '/email/:site' ),
+				searchLabel: [
+					_x( 'access email', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+					_x( 'access emails', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+					_x( 'set up email', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+					_x( 'set up emails', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+					_x( 'manage email', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+					_x( 'manage emails', 'Keyword for the Manage emails command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage emails', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				filterP2: true,
+				filterStaging: true,
+				filterSelfHosted: true,
+				icon: emailIcon,
+			},
 			copySshConnectionString: {
 				name: 'copySshConnectionString',
 				label: __( 'Copy SSH connection string', __i18n_text_domain__ ),
@@ -611,6 +654,28 @@ export function useCommands() {
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to open Jetpack Stats', __i18n_text_domain__ ),
 				icon: statsIcon,
+			},
+			openJetpackSearch: {
+				name: 'openJetpackSearch',
+				label: __( 'Open Jetpack Search', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=jetpack-search' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open Jetpack Search', __i18n_text_domain__ ),
+				filterP2: true,
+				icon: searchIcon,
+			},
+			openJetpackAkismet: {
+				name: 'openJetpackAkismet',
+				label: __( 'Open Jetpack Akismet Anti-spam', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=akismet-key-config' ),
+				siteSelector: true,
+				siteSelectorLabel: __(
+					'Select site to open Jetpack Akismet Anti-spam',
+					__i18n_text_domain__
+				),
+				filterP2: true,
+				filterSelfHosted: true,
+				icon: antiSpamIcon,
 			},
 			openActivityLog: {
 				name: 'openActivityLog',
@@ -853,6 +918,66 @@ export function useCommands() {
 				capability: SiteCapabilities.EDIT_POSTS,
 				icon: editIcon,
 			},
+			manageCategories: {
+				name: 'manageCategories',
+				label: __( 'Manage categories', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'manage categories',
+						'Keyword for the Manage categories command',
+						__i18n_text_domain__
+					),
+					_x(
+						'manage category',
+						'Keyword for the Manage categories command',
+						__i18n_text_domain__
+					),
+					_x(
+						'edit categories',
+						'Keyword for the Manage categories command',
+						__i18n_text_domain__
+					),
+					_x( 'edit category', 'Keyword for the Manage categories command', __i18n_text_domain__ ),
+					_x( 'add categories', 'Keyword for the Manage categories command', __i18n_text_domain__ ),
+					_x( 'add category', 'Keyword for the Manage categories command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site )
+							? '/wp-admin/edit-tags.php?taxonomy=category'
+							: '/settings/taxonomies/category/:site'
+					)( params ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage categories', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_CATEGORIES,
+				filterSelfHosted: true,
+				icon: categoryIcon,
+			},
+			manageTags: {
+				name: 'manageTags',
+				label: __( 'Manage tags', __i18n_text_domain__ ),
+				searchLabel: [
+					_x( 'manage tags', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+					_x( 'manage tag', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+					_x( 'edit tags', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+					_x( 'edit tag', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+					_x( 'add tags', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+					_x( 'add tag', 'Keyword for the Manage tags command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site )
+							? '/wp-admin/edit-tags.php?taxonomy=post_tag'
+							: '/settings/taxonomies/post_tag/:site'
+					)( params ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage tags', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_CATEGORIES,
+				filterSelfHosted: true,
+				icon: tagsIcon,
+			},
 			viewMediaUploads: {
 				name: 'viewMediaUploads',
 				label: __( 'View media uploads', __i18n_text_domain__ ),
@@ -989,6 +1114,21 @@ export function useCommands() {
 				siteType: SiteType.JETPACK,
 				icon: brushIcon,
 			},
+			openSiteEditor: {
+				name: 'openSiteEditor',
+				label: __( 'Open site editor', __i18n_text_domain__ ),
+				searchLabel: [
+					_x( 'customize site', 'Keyword for the Open site editor command', __i18n_text_domain__ ),
+					_x( 'edit site', 'Keyword for the Open site editor command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				callback: commandNavigation( '/wp-admin/site-editor.php' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open site editor', __i18n_text_domain__ ),
+				capability: SiteCapabilities.EDIT_THEME_OPTIONS,
+				filterP2: true,
+				filterSelfHosted: true,
+				icon: siteEditorIcon,
+			},
 			managePlugins: {
 				name: 'managePlugins',
 				label: __( 'Manage plugins', __i18n_text_domain__ ),
@@ -1059,6 +1199,24 @@ export function useCommands() {
 				callback: commandNavigation( '/plans/my-plan/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage your plan', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				filterP2: true,
+				filterStaging: true,
+				icon: creditCardIcon,
+			},
+			manageAddOns: {
+				name: 'manageAddOns',
+				label: __( 'Manage add-ons', __i18n_text_domain__ ),
+				searchLabel: [
+					_x( 'addons', 'Keyword for the Buy add-ons command', __i18n_text_domain__ ),
+					_x( 'manage addons', 'Keyword for the Buy add-ons command', __i18n_text_domain__ ),
+					_x( 'buy add-ons', 'Keyword for the Buy add-ons command', __i18n_text_domain__ ),
+					_x( 'add extensions', 'Keyword for the Buy add-ons command', __i18n_text_domain__ ),
+					_x( 'expand plan', 'Keyword for the Buy add-ons command', __i18n_text_domain__ ),
+				].join( ' ' ),
+				callback: commandNavigation( '/add-ons/:site' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage add-ons', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				filterP2: true,
 				filterStaging: true,
@@ -1262,6 +1420,16 @@ export function useCommands() {
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				icon: settingsIcon,
 			},
+			manageSettingsMedia: {
+				name: 'manageSettingsMedia',
+				label: __( 'Manage media settings', __i18n_text_domain__ ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: commandNavigation( '/wp-admin/options-media.php' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage media settings', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				icon: settingsIcon,
+			},
 			manageSettingsNewsletter: {
 				name: 'manageSettingsNewsletter',
 				label: __( 'Manage newsletter settings', __i18n_text_domain__ ),
@@ -1286,6 +1454,23 @@ export function useCommands() {
 				siteSelectorLabel: __( 'Select site to manage podcast settings', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				icon: settingsIcon,
+			},
+			openMarketingTools: {
+				name: 'openMarketingTools',
+				label: __( 'Open marketing tools', __i18n_text_domain__ ),
+				callback: commandNavigation( '/marketing/:site' ),
+				searchLabel: [
+					_x(
+						'access marketing tools',
+						'Keyword for the Open marketing tools command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to open marketing tools', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				filterP2: true,
+				icon: marketingIcon,
 			},
 		} ),
 		[ __, _x, siteFilters ]
