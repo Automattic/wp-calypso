@@ -13,7 +13,7 @@ import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -126,7 +126,7 @@ const WooExpressPlansPage = ( {
 		<>
 			<BodySectionCssClass bodyClass={ [ 'is-woo-express-plan' ] } />
 			<Card
-				className={ classNames(
+				className={ clsx(
 					'woo-express-plans-page__price-card',
 					'woo-express-plans-page__price-card-for-grid'
 				) }

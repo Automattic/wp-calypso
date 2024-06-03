@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -131,7 +131,7 @@ export default function ProductCard( props: Props ) {
 				role="button"
 				tabIndex={ 0 }
 				aria-disabled={ isDisabled }
-				className={ classNames( {
+				className={ clsx( {
 					'product-card': true,
 					selected: isSelected,
 					disabled: isDisabled,

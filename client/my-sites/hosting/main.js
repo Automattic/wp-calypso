@@ -6,7 +6,7 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Fragment, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
@@ -383,7 +383,7 @@ const Hosting = ( props ) => {
 	return (
 		<Main
 			wideLayout
-			className={ classnames( 'hosting', {
+			className={ clsx( 'hosting', {
 				'hosting--is-two-columns': isEnabled( 'layout/dotcom-nav-redesign-v2' ),
 			} ) }
 		>

@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { CompactCard, SegmentedControl } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { trim, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
@@ -142,9 +142,9 @@ class SearchStream extends React.Component {
 			comment: 'A sort order, showing the most recent posts first.',
 		} );
 
-		const searchStreamResultsClasses = classnames( 'search-stream__results', 'is-two-columns' );
+		const searchStreamResultsClasses = clsx( 'search-stream__results', 'is-two-columns' );
 
-		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
+		const singleColumnResultsClasses = clsx( 'search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
 		const suggestionList = flatMap( suggestions, ( suggestion ) => [

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
@@ -281,7 +281,7 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const classes = classNames( 'plans plans-step', {
+		const classes = clsx( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': false,
 			'is-extra-wide-layout': true,

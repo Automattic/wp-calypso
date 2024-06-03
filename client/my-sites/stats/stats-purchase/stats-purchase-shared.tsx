@@ -3,7 +3,7 @@ import { Popover } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { Card } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
@@ -269,7 +269,7 @@ const StatsSingleItemPagePurchaseFrame = ( {
 }: StatsSingleItemPagePurchaseFrameProps ) => {
 	const useNewPreviewImage = config.isEnabled( 'stats/checkout-flows-v2' );
 	return (
-		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
+		<div className={ clsx( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
 			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>{ children }</div>
@@ -292,7 +292,7 @@ const StatsSingleItemPagePurchaseFrame = ( {
 
 const StatsSingleItemCard = ( { children }: { children: React.ReactNode } ) => {
 	return (
-		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
+		<div className={ clsx( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
 			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--single` }>{ children }</div>

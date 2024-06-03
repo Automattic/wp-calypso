@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -28,12 +28,12 @@ class SegmentedControlItem extends Component {
 	};
 
 	render() {
-		const itemClassName = classNames( {
+		const itemClassName = clsx( {
 			'segmented-control__item': true,
 			'is-selected': this.props.selected,
 		} );
 
-		const linkClassName = classNames( 'segmented-control__link', {
+		const linkClassName = clsx( 'segmented-control__link', {
 			[ `item-index-${ this.props.index }` ]: this.props.index != null,
 		} );
 

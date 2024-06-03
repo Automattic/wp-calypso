@@ -1,6 +1,6 @@
 import { Button, Badge } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import StatusBadge from './status-badge';
 import type { TranslateResult } from 'i18n-calypso';
@@ -43,8 +43,8 @@ export default function StepSectionItem( {
 	);
 
 	return (
-		<div className={ classNames( 'step-section-item', className ) }>
-			<div className={ classNames( 'step-section-item__icon', iconClassName ) }>
+		<div className={ clsx( 'step-section-item', className ) }>
+			<div className={ clsx( 'step-section-item__icon', iconClassName ) }>
 				<Icon
 					className="sidebar__menu-icon"
 					style={ { fill: 'currentcolor' } }

@@ -1,6 +1,6 @@
 import { NextButton, SelectItems } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React, { useEffect, useRef, useState } from 'react';
 import illustrationImg from 'calypso/assets/images/onboarding/import-2.svg';
 import ActionCard from 'calypso/components/action-card';
@@ -87,7 +87,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	return (
-		<div className={ classnames( 'import-layout', 'content-chooser' ) }>
+		<div className={ clsx( 'import-layout', 'content-chooser' ) }>
 			<div className="import-layout__column">
 				<FormattedHeader
 					align="left"
@@ -101,7 +101,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 			<div className="import-layout__column">
 				<div>
 					<ActionCard
-						classNames={ classnames( 'list__importer-option', {
+						classNames={ clsx( 'list__importer-option', {
 							'is-disabled': ! hasOriginSiteJetpackConnected,
 						} ) }
 						headerText={ __( 'Everything' ) }
@@ -138,7 +138,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 					) }
 					<hr />
 					<ActionCard
-						classNames={ classnames( 'list__importer-option', { 'is-disabled': false } ) }
+						classNames={ clsx( 'list__importer-option', { 'is-disabled': false } ) }
 						headerText={ __( 'Content only' ) }
 						mainText={ __( 'Import posts, pages, comments, and media.' ) }
 					>

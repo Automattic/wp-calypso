@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -78,7 +78,7 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 
 	return (
 		<Layout
-			className={ classNames( 'products-overview' ) }
+			className={ clsx( 'products-overview' ) }
 			title={ translate( 'Product Marketplace' ) }
 			wide
 			withBorder

@@ -1,6 +1,6 @@
 import { alert } from '@automattic/components/src/icons';
 import { Icon, warning, info, check, closeSmall } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import './style.scss';
 
@@ -58,7 +58,7 @@ const NoticeBanner: React.FC< NoticeBannerProps > = ( {
 	hideCloseButton,
 	onClose,
 } ) => {
-	const classes = classNames( 'notice-banner', `is-${ level }` );
+	const classes = clsx( 'notice-banner', `is-${ level }` );
 
 	return (
 		<div className={ classes }>

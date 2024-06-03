@@ -1,4 +1,4 @@
-import clsx from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'calypso/types';
 import { ScheduleListCard } from './schedule-list-card';

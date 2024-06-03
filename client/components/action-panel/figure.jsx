@@ -1,8 +1,8 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 const ActionPanelFigure = ( { inlineBodyText, align, children } ) => {
-	const figureClasses = classNames( {
+	const figureClasses = clsx( {
 		'action-panel__figure': true,
 		[ `align-${ 'left' === align ? 'left' : 'right' }` ]: true,
 		'is-inline-body-text': inlineBodyText,

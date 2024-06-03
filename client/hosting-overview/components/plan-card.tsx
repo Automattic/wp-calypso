@@ -3,7 +3,7 @@ import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
@@ -110,7 +110,7 @@ const PricingSection: FC = () => {
 				/>
 			) : (
 				<div
-					className={ classNames( 'hosting-overview__plan-info', {
+					className={ clsx( 'hosting-overview__plan-info', {
 						'is-expired': site?.plan?.expired,
 					} ) }
 				>
@@ -170,7 +170,7 @@ const PlanCard: FC = () => {
 		if ( isFreePlan ) {
 			return (
 				<Button
-					className={ classNames(
+					className={ clsx(
 						'hosting-overview__link-button',
 						'hosting-overview__mobile-hidden-link-button'
 					) }
@@ -184,7 +184,7 @@ const PlanCard: FC = () => {
 		if ( isOwner ) {
 			return (
 				<Button
-					className={ classNames(
+					className={ clsx(
 						'hosting-overview__link-button',
 						'hosting-overview__mobile-hidden-link-button'
 					) }

@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Badge, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -176,7 +176,7 @@ const PluginsBrowserListElement = ( props ) => {
 		return <Placeholder variant={ variant } />;
 	}
 
-	const classNames = classnames( 'plugins-browser-item', variant, {
+	const classNames = clsx( 'plugins-browser-item', variant, {
 		incompatible: isIncompatiblePlugin || isIncompatibleBackupPlugin,
 	} );
 
@@ -411,7 +411,7 @@ function InstalledInOrPricing( {
 
 function Placeholder( { variant } ) {
 	return (
-		<li className={ classnames( 'plugins-browser-item is-placeholder', variant ) }>
+		<li className={ clsx( 'plugins-browser-item is-placeholder', variant ) }>
 			<span className="plugins-browser-item__link">
 				<div className="plugins-browser-item__info">
 					<PluginIcon isPlaceholder />

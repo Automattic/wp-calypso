@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -212,9 +212,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless 
 	}
 
 	return (
-		<ProductionCard
-			className={ classnames( 'staging-site-card', { 'is-borderless': isBorderless } ) }
-		>
+		<ProductionCard className={ clsx( 'staging-site-card', { 'is-borderless': isBorderless } ) }>
 			{
 				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
 				<ProductionCardIcon icon="science" size={ 32 } />

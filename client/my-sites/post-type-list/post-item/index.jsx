@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -110,14 +110,14 @@ class PostItem extends Component {
 		const isTrashed = post && 'trash' === post.status;
 		const enabledPostLink = isPlaceholder || isTrashed ? null : postUrl;
 
-		const panelClasses = classnames( 'post-item__panel', className, {
+		const panelClasses = clsx( 'post-item__panel', className, {
 			'is-untitled': ! title,
 			'is-placeholder': isPlaceholder,
 		} );
 
 		const isAuthorVisible = this.hasMultipleUsers() && post && post.author;
 
-		const rootClasses = classnames( 'post-item', {
+		const rootClasses = clsx( 'post-item', {
 			'is-expanded': !! hasExpandedContent,
 		} );
 

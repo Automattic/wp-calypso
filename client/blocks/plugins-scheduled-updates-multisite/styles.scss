@@ -3,6 +3,10 @@
 $brand-display: "SF Pro Display", sans-serif;
 
 .plugins-update-manager-multisite {
+	@media screen and (max-width: $break-medium) {
+		margin: 1rem;
+	}
+
 	&.plugins-update-manager-multisite-edit,
 	&.plugins-update-manager-multisite-create {
 		h1 {

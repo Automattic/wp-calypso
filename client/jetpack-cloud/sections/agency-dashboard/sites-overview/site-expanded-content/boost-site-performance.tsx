@@ -1,6 +1,6 @@
 import { Button, Gridicon, Tooltip } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useMemo } from 'react';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -132,7 +132,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 								<InProgressIcon />
 							) : (
 								<div
-									className={ classNames(
+									className={ clsx(
 										'site-expanded-content__card-content-score',
 										getBoostRatingClass( overallScore )
 									) }

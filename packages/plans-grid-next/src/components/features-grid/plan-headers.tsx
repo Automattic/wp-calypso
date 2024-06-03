@@ -1,5 +1,5 @@
 import { getPlanClass } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { GridPlan } from '../../types';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 
@@ -12,7 +12,7 @@ type PlanHeadersProps = {
 
 const PlanHeaders = ( { options, renderedGridPlans }: PlanHeadersProps ) => {
 	return renderedGridPlans.map( ( { planSlug, planTitle } ) => {
-		const headerClasses = classNames( 'plan-features-2023-grid__header', getPlanClass( planSlug ) );
+		const headerClasses = clsx( 'plan-features-2023-grid__header', getPlanClass( planSlug ) );
 
 		return (
 			<PlanDivOrTdContainer

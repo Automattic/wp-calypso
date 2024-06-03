@@ -1,6 +1,6 @@
 import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
@@ -122,7 +122,7 @@ class Profile extends Component {
 						</FormFieldset>
 
 						<FormFieldset
-							className={ classnames( {
+							className={ clsx( {
 								'profile__gravatar-fieldset-is-loading': this.props.isFetchingUserSettings,
 							} ) }
 						>

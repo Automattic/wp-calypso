@@ -39,7 +39,7 @@
 		"@wordpress/icons": "^10.0.0",
 		"@wordpress/react-i18n": "^4.0.0",
 		"canvas-confetti": "^1.6.0",
-		"classnames": "^2.3.2",
+		"clsx": "^2.1.1",
 		"gridicons": "^3.4.2",
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
