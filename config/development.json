@@ -214,7 +214,6 @@
 		"stats/tier-upgrade-slider": true,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
-		"onboarding/new-migration-flow": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
