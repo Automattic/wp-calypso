@@ -23,8 +23,6 @@ const GlobalSidebar = ( {
 	path = '',
 	...props
 } ) => {
-	const urlSearchParams = new URLSearchParams( window.location.search );
-	const urlFrom = urlSearchParams.get( 'from' ) || '';
 	const wrapperRef = useRef( null );
 	const bodyRef = useRef( null );
 	const menuItems = useSiteMenuItems();
@@ -46,6 +44,14 @@ const GlobalSidebar = ( {
 
 	const handleBackLinkClick = () => {
 		recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_BACK_CLICK, { path } );
+	};
+
+	const getBackLinkFromURL = () => {
+		const searchParams = new URLSearchParams( window.location.search );
+		const url = searchParams.get( 'from' ) || '';
+
+		// Only accept internal links for security purposes.
+		return url.startsWith( '/' ) ? url : '';
 	};
 
 	useEffect( () => {
@@ -73,7 +79,7 @@ const GlobalSidebar = ( {
 	}
 
 	const { requireBackLink, siteTitle, backLinkHref, ...sidebarProps } = props;
-	const sidebarBackLinkHref = urlFrom || backLinkHref || previousLink || '/sites';
+	const sidebarBackLinkHref = getBackLinkFromURL() || backLinkHref || previousLink || '/sites';
 
 	return (
 		<div className="global-sidebar" ref={ wrapperRef }>
