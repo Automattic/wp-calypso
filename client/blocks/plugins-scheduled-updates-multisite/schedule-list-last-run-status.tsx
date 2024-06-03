@@ -76,7 +76,10 @@ export function ScheduleListLastRunStatus( { schedule, site, onLogsClick }: Prop
 		return (
 			<>
 				<Badge type="failure" />
-				{ translate( 'Errors on %d sites', { args: [ failureCount ] } ) }
+				{ translate( 'Errors on %d site', 'Errors on %d sites', {
+					count: failureCount,
+					args: [ failureCount ],
+				} ) }
 			</>
 		);
 	}
