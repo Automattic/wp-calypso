@@ -56,7 +56,7 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 	const ctaButtonURL: string = `https://wordpress.com/checkout/${ selectedSiteSlug }/${ planSlug }?redirect_to=${ encodeURIComponent(
 		window.location.href
 	) }`;
-	const secondaryCtaURL: string = `https://wordpress.com/plans/${ selectedSiteSlug }) }`;
+	const secondaryCtaURL: string = `https://wordpress.com/plans/${ selectedSiteSlug }`;
 	const isFetchingPrices: boolean = ! siteProduct;
 	const originalPrice: number = siteProduct?.cost_smallest_unit ?? 0;
 	const displayPrice: number = siteProduct?.cost / 12 ?? 0;
