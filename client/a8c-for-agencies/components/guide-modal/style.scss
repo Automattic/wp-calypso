@@ -20,6 +20,11 @@
 	text-align: center;
 	margin-bottom: 20px;
 	height: 48%;
+
+	// FIXME: remove this after proper video aspect ratio added
+	video {
+		margin-block-start: -20px;
+	}
 }
 
 .guide-modal__main {
