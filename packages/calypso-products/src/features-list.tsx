@@ -52,7 +52,6 @@ import {
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
 	FEATURE_ECOMMERCE_MARKETING,
-	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FILTERING_V2,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
@@ -612,12 +611,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
 	},
 
-	[ FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
-		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
-	},
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
 		getSlug: () => FEATURE_FREE_THEMES_SIGNUP,
 		getTitle: () => i18n.translate( 'Dozens of free themes' ),

@@ -94,7 +94,6 @@ export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customizat
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
 export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
 export const FEATURE_FREE_BLOG_DOMAIN = 'free-blog-domain';
-export const FEATURE_EMAIL_SUPPORT_SIGNUP = 'email-support-signup';
 export const FEATURE_MONETISE = 'monetise-your-site';
 export const FEATURE_EARN_AD = 'earn-ad-revenue';
 export const FEATURE_WP_SUBDOMAIN_SIGNUP = 'wordpress-subdomain-signup';
