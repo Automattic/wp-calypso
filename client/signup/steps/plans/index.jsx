@@ -24,7 +24,7 @@ import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getIntervalType } from './util';
+import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -102,6 +102,7 @@ export class PlansStep extends Component {
 			selectedSite,
 			intent,
 			flowName,
+			initialContext,
 		} = this.props;
 
 		const intervalType = getIntervalType( this.props.path );
@@ -120,8 +121,12 @@ export class PlansStep extends Component {
 		const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
 			signupDependencies;
 
-		const surveyedIntent =
-			flowName === 'guided' ? getSegmentedIntent( segmentationSurveyAnswers ) : undefined;
+		const surveyedIntent = shouldBasePlansOnSegment(
+			flowName,
+			initialContext.trailMapExperimentVariant
+		)
+			? getSegmentedIntent( segmentationSurveyAnswers )
+			: undefined;
 
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
