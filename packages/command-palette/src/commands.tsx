@@ -13,6 +13,7 @@ import {
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
 	commentReplyLink as formResponsesIcon,
+	connection as siteHealthIcon,
 	currencyDollar as earnIcon,
 	download as downloadIcon,
 	edit as editIcon,
@@ -1586,6 +1587,110 @@ export function useCommands() {
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				icon: settingsIcon,
 			},
+			manageSettingsPerformance: {
+				name: 'manageSettingsPerformance',
+				label: __( 'Manage performance settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'improve site performance',
+						'Keyword for the Manage performance settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'optimize load times',
+						'Keyword for the Manage performance settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: ( params ) =>
+					commandNavigation(
+						params.site?.is_wpcom_atomic && siteUsesWpAdminInterface( params.site )
+							? '/wp-admin/options-general.php?page=page-optimize'
+							: '/settings/performance/:site'
+					)( params ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage performance settings', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				filterP2: true,
+				icon: settingsIcon,
+			},
+			manageSettingsPermalinks: {
+				name: 'manageSettingsPermalinks',
+				label: __( 'Manage permalink settings', __i18n_text_domain__ ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: commandNavigation( '/wp-admin/options-permalink.php' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage permalink settings', __i18n_text_domain__ ),
+				...siteFilters.hostingEnabled,
+				icon: settingsIcon,
+			},
+			manageSettingsPrivacy: {
+				name: 'manageSettingsPrivacy',
+				label: __( 'Manage privacy settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'create privacy policy page',
+						'Keyword for the Manage privacy settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change privacy policy page',
+						'Keyword for the Manage privacy settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'edit privacy policy page',
+						'Keyword for the Manage privacy settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: commandNavigation( '/wp-admin/options-privacy.php' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage privacy settings', __i18n_text_domain__ ),
+				...siteFilters.hostingEnabled,
+				icon: settingsIcon,
+			},
+			manageSettingsCrowdsignal: {
+				name: 'manageSettingsCrowdsignal',
+				label: __( 'Manage Crowdsignal settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'change Crowdsignal API key',
+						'Keyword for the Manage Crowdsignal settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: commandNavigation( '/wp-admin/options-general.php?page=crowdsignal-settings' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage Crowdsignal settings', __i18n_text_domain__ ),
+				...siteFilters.hostingEnabled,
+				icon: settingsIcon,
+			},
+			manageSettingsRating: {
+				name: 'manageSettingsRating',
+				label: __( 'Manage rating settings', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'show ratings',
+						'Keyword for the Manage ratings settings command',
+						__i18n_text_domain__
+					),
+					_x(
+						'change ratings position',
+						'Keyword for the Manage ratings settings command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: commandNavigation( '/wp-admin/options-general.php?page=ratingsettings' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage rating settings', __i18n_text_domain__ ),
+				...siteFilters.hostingEnabled,
+				icon: settingsIcon,
+			},
 			openMarketingTools: {
 				name: 'openMarketingTools',
 				label: __( 'Open marketing tools', __i18n_text_domain__ ),
@@ -1701,6 +1806,33 @@ export function useCommands() {
 				siteType: SiteType.ATOMIC,
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				icon: pluginsIcon,
+			},
+			checkSiteHealth: {
+				name: 'checkSiteHealth',
+				label: __( 'Check site health', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/site-health.php' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to check site health', __i18n_text_domain__ ),
+				...siteFilters.hostingEnabled,
+				icon: siteHealthIcon,
+			},
+			exportPersonalData: {
+				name: 'exportPersonalData',
+				label: __( 'Export personal data', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/export-personal-data.php' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to export personal data', __i18n_text_domain__ ),
+				...siteFilters.hostingEnabled,
+				icon: peopleIcon,
+			},
+			erasePersonalData: {
+				name: 'erasePersonalData',
+				label: __( 'Erase personal data', __i18n_text_domain__ ),
+				callback: commandNavigation( '/wp-admin/erase-personal-data.php' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to erase personal data', __i18n_text_domain__ ),
+				...siteFilters.hostingEnabled,
+				icon: peopleIcon,
 			},
 		} ),
 		[ __, _x, siteFilters ]
