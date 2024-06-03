@@ -51,6 +51,7 @@ const siteMigration: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+		const flowPath = this.variantSlug ?? FLOW_NAME;
 
 		useEffect( () => {
 			if ( isOwner === false && userIsLoggedIn ) {
@@ -58,12 +59,28 @@ const siteMigration: Flow = {
 			}
 		}, [ isOwner, userIsLoggedIn ] );
 
-		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
-			window.location.assign( '/start' );
+		useEffect( () => {
+			// We don't need to do anything if the user isn't logged in.
+			if ( ! userIsLoggedIn ) {
+				return;
+			}
 
+			// If we have  site slug or ID, no need to do anything.
+			if ( siteSlug || siteId ) {
+				return;
+			}
+
+			if ( isHostedSiteMigrationFlow( flowPath ) ) {
+				return;
+			}
+
+			window.location.assign( '/start' );
+		}, [ flowPath, siteId, siteSlug, userIsLoggedIn ] );
+
+		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
 			return {
 				state: AssertConditionState.FAILURE,
-				message: 'site-setup did not provide the site slug or site id it is configured to.',
+				message: 'site-migration does not have the site slug or site id.',
 			};
 		}
 
