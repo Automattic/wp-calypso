@@ -1,23 +1,27 @@
 import { IMPORT_HOSTED_SITE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import SegmentationSurvey, { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey';
+import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey/constants';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import { flowQuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
 import { QuestionConfiguration } from 'calypso/components/survey-container/types';
 import useGuidedFlowGetSegment from 'calypso/signup/hooks/use-guided-flow-get-segment';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './styles.scss';
+import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from './constants';
 
 interface Props {
 	flowName: string;
 	stepName: string;
 	goToNextStep: () => void;
 	submitSignupStep: ( step: any, deps: any ) => void;
-	signupDependencies: {
-		segmentationSurveyAnswers: Record< string, string[] >;
-		onboardingSegment: string;
-	};
+	signupDependencies: Record<
+		string,
+		{
+			segmentationSurveyAnswers: Record< string, string[] >;
+		}
+	>;
 }
 
 const SURVEY_KEY = 'guided-onboarding-flow';
@@ -43,8 +47,9 @@ export default function InitialIntentStep( props: Props ) {
 		'This will help us tailor your onboarding experience to your needs.'
 	);
 
-	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents( SURVEY_KEY );
-	const segment = useGuidedFlowGetSegment( currentAnswers );
+	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents(
+		GUIDED_FLOW_SEGMENTATION_SURVEY_KEY
+	);
 
 	// Record Tracks start event on component mount
 	useEffect( () => {
@@ -91,14 +96,9 @@ export default function InitialIntentStep( props: Props ) {
 
 		const newAnswers = { [ _questionKey ]: _answerKeys };
 
-		const updatedAnswers = { ...currentAnswers, ...newAnswers };
-
 		submitSignupStep(
 			{ flowName, stepName },
-			{
-				segmentationSurveyAnswers: updatedAnswers,
-				onboardingSegment: segment,
-			}
+			{ segmentationSurveyAnswers: { ...currentAnswers, ...newAnswers } }
 		);
 
 		if ( redirect ) {
