@@ -117,11 +117,11 @@ const SearchCategories: FC< {
 				/>
 			</div>
 
-			<div className="search-box-header__sticky-ref" ref={ stickySearchBoxRef }></div>
-
 			<div ref={ categoriesRef }>
 				<Categories selected={ category } noSelection={ searchTerm ? true : false } />
 			</div>
+
+			<div className="search-box-header__sticky-ref" ref={ stickySearchBoxRef }></div>
 		</div>
 	);
 };
