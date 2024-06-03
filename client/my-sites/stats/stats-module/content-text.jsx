@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -11,7 +11,7 @@ export default class extends Component {
 
 	render() {
 		return (
-			<div className={ classNames( 'module-content-text', this.props.className ) }>
+			<div className={ clsx( 'module-content-text', this.props.className ) }>
 				{ this.props.children }
 			</div>
 		);

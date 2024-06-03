@@ -1,5 +1,5 @@
 import { Icon, chevronDown } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useOdieAssistantContext } from '../../context';
 
@@ -30,7 +30,7 @@ export const JumpToRecent = ( {
 		return null;
 	}
 
-	const className = classnames( 'odie-gradient-to-white', {
+	const className = clsx( 'odie-gradient-to-white', {
 		'is-visible': enableJumpToRecent,
 		'is-hidden': ! enableJumpToRecent,
 	} );

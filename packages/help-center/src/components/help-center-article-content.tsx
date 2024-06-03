@@ -13,6 +13,7 @@ interface ArticleContentProps {
 	isLoading?: boolean;
 	postId: number;
 	blogId?: string | null;
+	slug?: string;
 }
 
 const ArticleContent = ( {
@@ -22,6 +23,7 @@ const ArticleContent = ( {
 	postId,
 	blogId,
 	isLoading = false,
+	slug,
 }: ArticleContentProps ) => {
 	const post = { title: title, url: link };
 	return (
@@ -37,7 +39,7 @@ const ArticleContent = ( {
 							// eslint-disable-next-line react/no-danger
 							dangerouslySetInnerHTML={ { __html: content } }
 						/>
-						<HelpCenterFeedbackForm postId={ postId } blogId={ blogId } />
+						<HelpCenterFeedbackForm postId={ postId } blogId={ blogId } slug={ slug } />
 					</EmbedContainer>
 				</>
 			) }

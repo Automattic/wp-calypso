@@ -1,7 +1,7 @@
 import { ShortenedNumber } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useCallback, useContext } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -52,7 +52,7 @@ export default function SiteStatsColumn( { site, stats }: Props ) {
 					translate( '%(totalViews)s views in the last 7 days', { args: { totalViews } } ) as string
 				}
 				onClick={ openStats }
-				className={ classNames(
+				className={ clsx(
 					'sites-overview__stats-trend',
 					`sites-overview__stats-trend__${ viewsTrend }`,
 					{ 'button is-borderless': isA4A }
@@ -68,7 +68,7 @@ export default function SiteStatsColumn( { site, stats }: Props ) {
 
 	return (
 		<span
-			className={ classNames(
+			className={ clsx(
 				'sites-overview__stats-trend',
 				`sites-overview__stats-trend__${ viewsTrend }`
 			) }

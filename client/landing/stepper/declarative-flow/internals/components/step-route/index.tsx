@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import SignupHeader from 'calypso/signup/signup-header';
 import VideoPressIntroBackground from '../../steps-repository/intro/videopress-intro-background';
@@ -16,7 +16,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 
 	return (
 		<div
-			className={ classnames(
+			className={ clsx(
 				'step-route',
 				flow.name,
 				flow.variantSlug,

@@ -16,7 +16,7 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { debounce } from '@wordpress/compose';
 import { Icon, external, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -31,7 +31,7 @@ import './style.scss';
 
 type Props = {
 	plan: APIProductFamilyProduct;
-	pressableOwnership?: boolean;
+	pressableOwnership?: 'regular' | 'agency' | 'none';
 	highestDiscountPercentage?: number;
 	className?: string;
 	/** The minimum height for the pricing section. */
@@ -42,7 +42,7 @@ type Props = {
 
 export default function HostingCard( {
 	plan,
-	pressableOwnership,
+	pressableOwnership = 'none',
 	highestDiscountPercentage,
 	className,
 	minPriceHeight,
@@ -136,7 +136,7 @@ export default function HostingCard( {
 	}, [ setPriceHeight ] );
 
 	const exploreButton = useMemo( () => {
-		if ( pressableOwnership ) {
+		if ( pressableOwnership === 'regular' ) {
 			return (
 				<Button
 					className="hosting-card__pressable-dashboard-button"
@@ -144,7 +144,7 @@ export default function HostingCard( {
 					rel="norefferer nooppener"
 					href={ pressableUrl }
 				>
-					{ translate( 'Go to Pressable Dashboard' ) }
+					{ translate( 'Manage in your Pressable account' ) }
 					<Icon icon={ external } size={ 18 } />
 				</Button>
 			);
@@ -186,11 +186,11 @@ export default function HostingCard( {
 	] );
 
 	return (
-		<div className={ classNames( 'hosting-card', className ) }>
+		<div className={ clsx( 'hosting-card', className ) }>
 			<div className="hosting-card__section">
 				<div className="hosting-card__heading">{ heading }</div>
 
-				{ pressableOwnership && (
+				{ pressableOwnership !== 'none' && (
 					<>
 						{
 							// Show the check icon and tooltip only on desktop

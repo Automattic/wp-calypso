@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useMemo } from 'react';
 import useJetpackMasterbarDataQuery from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
 import { trailingslashit } from 'calypso/lib/route';
@@ -60,7 +60,7 @@ const MenuItem: FC< MenuItemProps > = ( { section, bundles, pathname } ) => {
 
 	return (
 		<li
-			className={ classNames( {
+			className={ clsx( {
 				'is-active': isActive,
 			} ) }
 			key={ `main-menu-${ href }${ label }` }

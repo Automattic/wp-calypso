@@ -1,9 +1,16 @@
-import { Card } from '@automattic/components';
+import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
+import { Card, Dialog } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
+import { useRef, useState } from 'react';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
@@ -27,18 +34,32 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 );
 
 const DevTools = () => {
+	const { searchParams } = new URL( document.location.toString() );
+	const showActivationModal = searchParams.get( 'activate' ) !== null;
+	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) || '';
+	const { siteSlug, isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
+		siteSlug: getSiteSlug( state, siteId ) || '',
+		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
+		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
+	} ) );
+	// The ref is required to persist the value of redirect_to after renders
+	const redirectUrl = useRef(
+		searchParams.get( 'redirect_to' ) ?? hasSftpFeature
+			? `/hosting-config/${ siteId }`
+			: `/overview/${ siteId }`
+	);
+	const hasEnTranslation = useHasEnTranslation();
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const pluginsLink = `https://wordpress.com/plugins/${ encodeURIComponent( siteSlug ) }`;
 	const promoCards = [
 		{
-			title: translate( 'Hosting Configuration' ),
+			title: translate( 'Deployments' ),
 			text: translate(
-				"Access your site's database and tailor your server settings to your specific needs."
+				'Automate updates from GitHub to streamline workflows, reduce errors, and enable faster deployments.'
 			),
-			supportContext: 'hosting-configuration',
+			supportContext: 'github-deployments',
 		},
 		{
 			title: translate( 'Monitoring' ),
@@ -60,28 +81,102 @@ const DevTools = () => {
 			supportContext: 'site-monitoring-logs',
 		},
 		{
-			title: translate( 'GitHub Deployments' ),
+			title: translate( 'Server Configuration' ),
 			text: translate(
-				'Automate updates from GitHub to streamline workflows, reduce errors, and enable faster deployments.'
+				"Access your site's database and tailor your server settings to your specific needs."
 			),
-			supportContext: 'github-deployments',
+			supportContext: 'hosting-configuration',
 		},
 	];
+
+	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
+	const showActivationButton = canSiteGoAtomic;
+	const handleTransfer = ( options: { geo_affinity?: string } ) => {
+		const params = new URLSearchParams( {
+			siteId: String( siteId ),
+			redirect_to: redirectUrl.current,
+			feature: FEATURE_SFTP,
+			initiate_transfer_context: 'hosting',
+			initiate_transfer_geo_affinity: options.geo_affinity || '',
+		} );
+		page( `/setup/transferring-hosted-site?${ params }` );
+	};
+
+	if ( isSiteAtomic ) {
+		page.replace( redirectUrl.current );
+		return;
+	}
+
+	const upgradeCtaCopy = hasEnTranslation(
+		'Upgrade to the %(planName)s plan or higher to get access to all developer tools'
+	)
+		? // translators: %(planName)s is a plan name. E.g. Business plan.
+		  translate(
+				'Upgrade to the %(planName)s plan or higher to get access to all developer tools',
+				{
+					args: {
+						planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+					},
+				}
+		  )
+		: translate( 'Upgrade to the Creator plan or higher to get access to all developer tools' );
+
 	return (
 		<div className="dev-tools">
 			<div className="dev-tools__hero">
-				<h1> { translate( 'Unlock all developer tools' ) }</h1>
+				<h1>
+					{ showActivationButton
+						? translate( 'Activate all developer tools' )
+						: translate( 'Unlock all developer tools' ) }
+				</h1>
 				<p>
-					{ translate(
-						'Upgrade to the Creator plan or higher to get access to all developer tools'
-					) }
+					{ showActivationButton
+						? translate(
+								'Your plan includes all the developer tools listed below. Click "Activate Now" to begin.'
+						  )
+						: upgradeCtaCopy }
 				</p>
-				<Button variant="secondary" className="dev-tools__button" href={ pluginsLink }>
-					{ translate( 'Browse plugins' ) }
-				</Button>
-				<Button variant="primary" className="dev-tools__button" href={ upgradeLink }>
-					{ translate( 'Upgrade now' ) }
-				</Button>
+				{ showActivationButton ? (
+					<>
+						<Button
+							variant="primary"
+							className="dev-tools__button"
+							onClick={ () => {
+								if ( showActivationButton ) {
+									return setShowEligibility( true );
+								}
+							} }
+						>
+							{ translate( 'Activate now' ) }
+						</Button>
+
+						<Dialog
+							additionalClassNames="plugin-details-cta__dialog-content"
+							additionalOverlayClassNames="plugin-details-cta__modal-overlay"
+							isVisible={ showEligibility }
+							onClose={ () => setShowEligibility( false ) }
+							showCloseIcon
+						>
+							<EligibilityWarnings
+								className="hosting__activating-warnings"
+								onProceed={ handleTransfer }
+								backUrl={ redirectUrl.current }
+								showDataCenterPicker
+								standaloneProceed
+								currentContext="dev-tools"
+							/>
+						</Dialog>
+					</>
+				) : (
+					<>
+						<Button variant="secondary" className="dev-tools__button" href={ pluginsLink }>
+							{ translate( 'Browse plugins' ) }
+						</Button>
+						<Button variant="primary" className="dev-tools__button" href={ upgradeLink }>
+							{ translate( 'Upgrade now' ) }
+						</Button>
+					</>
+				) }
 			</div>
 			<div className="dev-tools__cards">
 				{ promoCards.map( ( card ) => (

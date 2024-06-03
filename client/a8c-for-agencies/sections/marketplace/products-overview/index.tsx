@@ -1,11 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { ToggleControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -21,7 +18,8 @@ import {
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
-import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
+import ReferralToggle from '../common/referral-toggle';
+import { ShoppingCartContext } from '../context';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
@@ -40,9 +38,7 @@ type Props = {
 function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 	const translate = useTranslate();
 
-	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
-	const { marketplaceType, toggleMarketplaceType } = useContext( MarketplaceTypeContext );
 
 	const {
 		selectedCartItems,
@@ -82,7 +78,7 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 
 	return (
 		<Layout
-			className={ classNames( 'products-overview' ) }
+			className={ clsx( 'products-overview' ) }
 			title={ translate( 'Product Marketplace' ) }
 			wide
 			withBorder
@@ -104,17 +100,7 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 
 					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
-						{ isAutomatedReferrals && (
-							<div className="a4a-marketplace__toggle-marketplace-type">
-								<ToggleControl
-									onChange={ toggleMarketplaceType }
-									checked={ marketplaceType === 'referral' }
-									id="a4a-marketplace__toggle-marketplace-type"
-									label={ translate( 'Refer products' ) }
-								/>
-								<Gridicon icon="info-outline" size={ 16 } />
-							</div>
-						) }
+						<ReferralToggle />
 						<ShoppingCart
 							showCart={ showCart }
 							setShowCart={ setShowCart }

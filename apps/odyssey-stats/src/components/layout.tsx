@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 interface LayoutProps {
 	sectionGroup: string;
@@ -8,7 +8,7 @@ interface LayoutProps {
 }
 
 export default function Layout( { sectionGroup, sectionName, primary, secondary }: LayoutProps ) {
-	const sectionClass = classnames( 'layout', {
+	const sectionClass = clsx( 'layout', {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
 	} );

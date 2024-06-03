@@ -3,7 +3,7 @@ import { useState } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -75,7 +75,7 @@ export const UpgradePlanHostingDetails = () => {
 	return (
 		<div className="import__upgrade-plan-hosting-details">
 			<div
-				className={ classNames( 'import__upgrade-plan-hosting-details-card-container', {
+				className={ clsx( 'import__upgrade-plan-hosting-details-card-container', {
 					'import__upgrade-plan-hosting-details-card-container--without-identified-host':
 						! shouldDisplayHostIdentificationMessage,
 				} ) }

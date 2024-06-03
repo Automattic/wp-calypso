@@ -5,7 +5,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useState, useRef, useEffect, useCallback, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 import { MemoryRouter } from 'react-router-dom';
@@ -46,7 +46,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
-	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
+	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
 

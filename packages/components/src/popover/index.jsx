@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRtl } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
@@ -376,7 +376,7 @@ class PopoverInner extends Component {
 			return null;
 		}
 
-		const classes = classNames( 'popover', this.props.className, this.state.positionClass );
+		const classes = clsx( 'popover', this.props.className, this.state.positionClass );
 
 		return (
 			<div

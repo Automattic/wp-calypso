@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { PAST_SEVEN_DAYS, PAST_THIRTY_DAYS } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
@@ -298,11 +298,11 @@ class StatsSite extends Component {
 			this.state.activeTab ? this.state.activeTab.attr : 'views'
 		}`;
 
-		const wrapperClass = classNames( 'stats-content', {
+		const wrapperClass = clsx( 'stats-content', {
 			'is-period-year': period === 'year',
 		} );
 
-		const moduleListClasses = classNames(
+		const moduleListClasses = clsx(
 			'is-events',
 			'stats__module-list',
 			'stats__module-list--traffic',
@@ -409,7 +409,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsTopPosts"
 							showSummaryLink
-							className={ classNames(
+							className={ clsx(
 								'stats__flexible-grid-item--60',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
@@ -422,7 +422,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsReferrers"
 							showSummaryLink
-							className={ classNames(
+							className={ clsx(
 								'stats__flexible-grid-item--40--once-space',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
@@ -434,7 +434,7 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							query={ query }
 							summary={ false }
-							className={ classNames( 'stats__flexible-grid-item--full' ) }
+							className={ clsx( 'stats__flexible-grid-item--full' ) }
 						/>
 
 						{ /* If UTM if supported display the module or update Jetpack plugin card */ }
@@ -443,7 +443,7 @@ class StatsSite extends Component {
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
-								className={ classNames(
+								className={ clsx(
 									'stats__flexible-grid-item--60',
 									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
@@ -454,7 +454,7 @@ class StatsSite extends Component {
 						{ supportsUTMStats && isOldJetpack && (
 							<StatsModuleUTMOverlay
 								siteId={ siteId }
-								className={ classNames(
+								className={ clsx(
 									'stats__flexible-grid-item--60',
 									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
@@ -477,7 +477,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsClicks"
 							showSummaryLink
-							className={ classNames(
+							className={ clsx(
 								{
 									'stats__flexible-grid-item--40--once-space': supportsUTMStats,
 									'stats__flexible-grid-item--full--large': supportsUTMStats,
@@ -499,7 +499,7 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsTopAuthors"
-								className={ classNames(
+								className={ clsx(
 									{
 										'stats__author-views': ! supportsUTMStats,
 									},
@@ -515,7 +515,7 @@ class StatsSite extends Component {
 							<StatsModuleEmails
 								period={ this.props.period }
 								query={ query }
-								className={ classNames(
+								className={ clsx(
 									{
 										// half if odd number of modules after countries - UTM + Clicks + Authors or Clicks
 										'stats__flexible-grid-item--half':
@@ -539,7 +539,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsSearchTerms"
 							showSummaryLink
-							className={ classNames(
+							className={ clsx(
 								{
 									// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
 									'stats__flexible-grid-item--one-third--two-spaces':
@@ -567,7 +567,7 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsVideoPlays"
 								showSummaryLink
-								className={ classNames(
+								className={ clsx(
 									{
 										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
 										'stats__flexible-grid-item--half': isJetpack,
@@ -590,7 +590,7 @@ class StatsSite extends Component {
 									statType="statsFileDownloads"
 									showSummaryLink
 									useShortLabel
-									className={ classNames(
+									className={ clsx(
 										{
 											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
 										},
@@ -613,7 +613,7 @@ class StatsSite extends Component {
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
-								className={ classNames(
+								className={ clsx(
 									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large'
 								) }
@@ -621,7 +621,7 @@ class StatsSite extends Component {
 						) }
 						{ ! supportsDevicesStats && isOldJetpack && (
 							<StatsModuleUpgradeOverlay
-								className={ classNames(
+								className={ clsx(
 									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large'
 								) }

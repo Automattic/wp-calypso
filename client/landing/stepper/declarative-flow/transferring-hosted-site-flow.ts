@@ -48,7 +48,10 @@ const transferringHostedSite: Flow = {
 
 					dispatch( requestAdminMenu( siteId ) );
 
-					return exitFlow( '/home/' + siteId );
+					const redirectTo = providedDependencies?.redirectTo
+						? providedDependencies?.redirectTo
+						: `/home/${ siteId }`;
+					return exitFlow( redirectTo as string );
 				}
 
 				case 'waitForAtomic': {

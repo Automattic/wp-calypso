@@ -2,12 +2,22 @@ import scrollTo from 'calypso/lib/scroll-to';
 
 // Danger! Recursive
 // (relatively safe since the DOM tree is only so deep)
-function getOffsetTop( element: HTMLElement ): number {
+function getOffsetTop( element: HTMLElement, container?: HTMLElement ): number {
 	const offset = element.offsetTop;
 
-	return element.offsetParent
-		? offset + getOffsetTop( element.offsetParent as HTMLElement )
-		: offset;
+	if ( container ) {
+		return (
+			container.scrollTop +
+			element.getBoundingClientRect().top -
+			container.getBoundingClientRect().top
+		);
+	}
+
+	if ( element.offsetParent ) {
+		return offset + getOffsetTop( element.offsetParent as HTMLElement );
+	}
+
+	return offset;
 }
 
 /**
@@ -16,7 +26,7 @@ function getOffsetTop( element: HTMLElement ): number {
  * Wait for page.js to update the URL, then see if we are linking
  * directly to a section of this page.
  */
-export default function scrollToAnchor( options: { offset: number } ) {
+export default function scrollToAnchor( options: { offset: number; container?: HTMLElement } ) {
 	const offset = options.offset;
 
 	if ( ! window || ! window.location ) {
@@ -30,7 +40,7 @@ export default function scrollToAnchor( options: { offset: number } ) {
 
 	if ( hash && el ) {
 		const offsetHeight = document.getElementById( 'header' )?.offsetHeight || 0;
-		const y = getOffsetTop( el ) - offsetHeight - offset;
-		scrollTo( { y } );
+		const y = getOffsetTop( el, options.container ) - offsetHeight - offset;
+		scrollTo( { y, container: options.container } );
 	}
 }

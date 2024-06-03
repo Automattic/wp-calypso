@@ -1,5 +1,5 @@
 import { Button, Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -28,7 +28,7 @@ export default class extends PureComponent {
 			onClick,
 			e2eType,
 		} = this.props;
-		const tileClassName = classNames(
+		const tileClassName = clsx(
 			'tile-grid__item',
 			{
 				'is-highlighted': highlighted,
@@ -53,7 +53,7 @@ export default class extends PureComponent {
 				<div className="tile-grid__item-copy">
 					{ buttonLabel && (
 						<Button
-							className={ classNames( 'tile-grid__cta', buttonClassName ) }
+							className={ clsx( 'tile-grid__cta', buttonClassName ) }
 							compact={ !! description }
 						>
 							{ buttonLabel }

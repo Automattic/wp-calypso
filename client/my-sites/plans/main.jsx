@@ -4,6 +4,7 @@ import {
 	getIntervalTypeForTerm,
 	getPlan,
 	isFreePlanProduct,
+	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_FREE,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -401,15 +402,20 @@ class Plans extends Component {
 		);
 
 		const hasEntrepreneurTrialSubHeaderTextTranslation = hasTranslation(
-			"Discover what's available in your Entrepreneur plan."
+			"Discover what's available in your %(planName)s plan."
 		);
 
 		const isEnglishLocale = englishLocales.includes( this.props.locale );
 
 		const entrepreneurTrialSubHeaderText =
 			isEnglishLocale || hasEntrepreneurTrialSubHeaderTextTranslation
-				? translate( "Discover what's available in your Entrepreneur plan." )
-				: translate( "Discover what's available in your Entrepreneur plan" );
+				? // translators: %(planName)s is a plan name. E.g. Commerce plan.
+				  translate( "Discover what's available in your %(planName)s plan.", {
+						args: {
+							planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+						},
+				  } )
+				: translate( "Discover what's available in your Entrepreneur plan." );
 
 		const isWooExpressTrial = purchase?.isWooExpressTrial;
 

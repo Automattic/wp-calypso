@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -46,7 +46,7 @@ export default class EditorMediaModalGalleryPreviewShortcode extends Component {
 	render() {
 		const { siteId, settings } = this.props;
 		const { isLoading, shortcode } = this.state;
-		const classes = classNames( 'editor-media-modal-gallery__preview-shortcode', {
+		const classes = clsx( 'editor-media-modal-gallery__preview-shortcode', {
 			'is-loading': isLoading || some( settings.items, 'transient' ),
 		} );
 

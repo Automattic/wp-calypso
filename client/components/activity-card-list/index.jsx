@@ -4,7 +4,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
@@ -28,11 +28,10 @@ import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-r
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import VisibleDaysLimitUpsell from './visible-days-limit-upsell';
-
 import './style.scss';
 
 class ActivityCardList extends Component {
@@ -169,6 +168,7 @@ class ActivityCardList extends Component {
 			availableActions,
 			onClickClone,
 			siteSlug,
+			siteHasFullActivityLog,
 		} = this.props;
 
 		const today = ( applySiteOffset ?? moment )();
@@ -190,9 +190,13 @@ class ActivityCardList extends Component {
 				<>
 					<EmptyContent
 						title={ translate( 'No matching events found.' ) }
-						line={ translate( 'Try adjusting your date range or activity type filters' ) }
-						action={ translate( 'Remove all filters' ) }
-						actionURL={ '/activity-log/' + siteSlug }
+						line={
+							siteHasFullActivityLog
+								? translate( 'Try adjusting your date range or activity type filters' )
+								: null
+						}
+						action={ siteHasFullActivityLog ? translate( 'Remove all filters' ) : null }
+						actionURL={ siteHasFullActivityLog ? '/activity-log/' + siteSlug : null }
 					/>
 				</>
 			);
@@ -263,7 +267,7 @@ class ActivityCardList extends Component {
 			pageSize,
 			showPagination,
 			siteHasFullActivityLog,
-			isSimple,
+			isWPCOMSite,
 		} = this.props;
 
 		const visibleLimitCutoffDate = Number.isFinite( visibleDays )
@@ -300,7 +304,7 @@ class ActivityCardList extends Component {
 						total={ visibleLogs.length }
 					/>
 				) }
-				{ ! siteHasFullActivityLog && isSimple && this.renderPlanUpsell( pageLogs ) }
+				{ ! siteHasFullActivityLog && isWPCOMSite && this.renderPlanUpsell( pageLogs ) }
 				{ this.renderLogs( pageLogs ) }
 				{ showLimitUpsell && (
 					<VisibleDaysLimitUpsell cardClassName="activity-card-list__primary-card-with-more" />
@@ -330,7 +334,7 @@ class ActivityCardList extends Component {
 			<div className="activity-card-list__loading-placeholder">
 				{ showPagination && (
 					<div
-						className={ classNames( 'activity-card-list__pagination-top', {
+						className={ clsx( 'activity-card-list__pagination-top', {
 							'is-compact': isBreakpointActive,
 						} ) }
 					/>
@@ -363,7 +367,7 @@ class ActivityCardList extends Component {
 				</div>
 				{ showPagination && (
 					<div
-						className={ classNames( 'activity-card-list__pagination-bottom', {
+						className={ clsx( 'activity-card-list__pagination-bottom', {
 							'is-compact': isBreakpointActive,
 						} ) }
 					/>
@@ -409,7 +413,7 @@ const mapStateToProps = ( state ) => {
 	const rewindPoliciesRequestStatus = getRewindPoliciesRequestStatus( state, siteId );
 
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
-	const isSimple = isSimpleSite( state, siteId );
+	const isWPCOMSite = getIsSiteWPCOM( state, siteId );
 	const requestingSiteFeatures = isRequestingSiteFeatures( state, siteId );
 	const siteHasFullActivityLog =
 		siteId && siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG );
@@ -423,7 +427,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		userLocale,
 		isAtomic,
-		isSimple,
+		isWPCOMSite,
 		isRequestingSiteFeatures: requestingSiteFeatures,
 		siteHasFullActivityLog,
 	};

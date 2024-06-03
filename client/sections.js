@@ -705,14 +705,26 @@ const sections = [
 	},
 	{
 		name: 'site-monitoring',
-		paths: [ '/site-monitoring', '/site-logs' ],
+		paths: [ '/site-monitoring' ],
 		module: 'calypso/site-monitoring',
+		group: 'sites',
+	},
+	{
+		name: 'site-logs',
+		paths: [ '/site-logs' ],
+		module: 'calypso/site-logs',
 		group: 'sites',
 	},
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
 		module: 'calypso/github-deployments',
+		group: 'sites',
+	},
+	{
+		name: 'staging-site',
+		paths: [ '/staging-site' ],
+		module: 'calypso/staging-site',
 		group: 'sites',
 	},
 	{

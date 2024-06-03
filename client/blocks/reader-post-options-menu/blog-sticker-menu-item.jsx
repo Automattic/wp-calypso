@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -69,7 +69,7 @@ function ReaderPostOptionsMenuBlogStickerMenuItem( {
 		toggle( blogId, blogStickerName );
 	};
 
-	const classes = classnames( 'reader-post-options-menu__blog-sticker-menu-item', {
+	const classes = clsx( 'reader-post-options-menu__blog-sticker-menu-item', {
 		'has-sticker': hasSticker,
 	} );
 

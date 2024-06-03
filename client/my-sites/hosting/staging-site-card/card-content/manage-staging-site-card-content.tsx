@@ -132,7 +132,7 @@ export const ManageStagingSiteCardContent = ( {
 					onClick={ () => {
 						if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 							navigate(
-								`/hosting-config/${ urlToSlug( stagingSite.url ) }?search=${ urlToSlug(
+								`/overview/${ urlToSlug( stagingSite.url ) }?search=${ urlToSlug(
 									stagingSite.url
 								) }`,
 								false,
