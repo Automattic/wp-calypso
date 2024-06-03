@@ -123,7 +123,7 @@ export class PlansStep extends Component {
 
 		const surveyedIntent = shouldBasePlansOnSegment(
 			flowName,
-			initialContext.trailMapExperimentVariant
+			initialContext?.trailMapExperimentVariant
 		)
 			? getSegmentedIntent( segmentationSurveyAnswers )
 			: undefined;
