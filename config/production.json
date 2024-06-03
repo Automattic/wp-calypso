@@ -72,6 +72,7 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/magic-link-signup": true,
+		"jetpack/manage-simple-sites": false,
 		"jetpack/plugin-management": false,
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
