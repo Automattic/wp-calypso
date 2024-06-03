@@ -429,6 +429,18 @@ export function useCommands() {
 			openMyJetpack: {
 				name: 'openMyJetpack',
 				label: __( 'Open My Jetpack', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'discover Jetpack products',
+						'Keyword for the Open My Jetpack command',
+						__i18n_text_domain__
+					),
+					_x(
+						'manage Jetpack products',
+						'Keyword for the Open My Jetpack command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				callback: commandNavigation( '/wp-admin/admin.php?page=my-jetpack' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to open My Jetpack', __i18n_text_domain__ ),
@@ -1109,9 +1121,42 @@ export function useCommands() {
 				name: 'openCrowdsignal',
 				label: __( 'Open Crowdsignal', __i18n_text_domain__ ),
 				searchLabel: [
-					_x( 'poll', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
-					_x( 'survey', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
-					_x( 'feedback', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create poll', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create survey', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create feedback', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create NPS', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create voting', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x( 'create applause', 'Keyword for the Open Crowdsignal command', __i18n_text_domain__ ),
+					_x(
+						'view poll results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+					_x(
+						'view survey results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+					_x(
+						'view feedback results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+					_x(
+						'view NPS results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+					_x(
+						'view voting results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
+					_x(
+						'view applause results',
+						'Keyword for the Open Crowdsignal command',
+						__i18n_text_domain__
+					),
 				].join( ' ' ),
 				callback: commandNavigation( '/wp-admin/admin.php?page=polls' ),
 				siteSelector: true,
@@ -1235,10 +1280,25 @@ export function useCommands() {
 			},
 			manageScheduledUpdates: {
 				name: 'manageScheduledUpdates',
-				label: __( 'Manage scheduled plugins updates', __i18n_text_domain__ ),
+				label: __( 'Manage scheduled plugin updates', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'add plugin schedule',
+						'Keyword for the Manage scheduled plugin updates command',
+						__i18n_text_domain__
+					),
+					_x(
+						'add scheduled update',
+						'Keyword for the Manage scheduled plugin updates command',
+						__i18n_text_domain__
+					),
+				].join( ' ' ),
 				callback: commandNavigation( '/plugins/scheduled-updates/:site' ),
 				siteSelector: true,
-				siteSelectorLabel: __( 'Select site to manage scheduled updates', __i18n_text_domain__ ),
+				siteSelectorLabel: __(
+					'Select site to manage scheduled plugin updates',
+					__i18n_text_domain__
+				),
 				siteType: SiteType.ATOMIC,
 				capability: SiteCapabilities.ACTIVATE_PLUGINS,
 				icon: pluginsIcon,
