@@ -26,9 +26,10 @@ import {
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { getAuthAccountType } from 'calypso/state/login/actions';
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
-import { getLastCheckedUsernameOrEmail } from 'calypso/state/login/selectors';
+import { getLastCheckedUsernameOrEmail, getRequestError } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -74,6 +75,7 @@ class MagicLogin extends Component {
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
+		this.props.getAuthAccountType( this.state.usernameOrEmail );
 
 		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
 			this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
@@ -134,7 +136,8 @@ class MagicLogin extends Component {
 	};
 
 	renderLinks() {
-		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWoo } = this.props;
+		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWoo, loginRequestError } =
+			this.props;
 
 		if ( isWoo ) {
 			return null;
@@ -166,11 +169,16 @@ class MagicLogin extends Component {
 			signupUrl: this.props.query?.signup_url,
 		};
 
+		let linkBack = translate( 'Enter a password instead' );
+		if ( loginRequestError?.code === 'email_login_not_allowed' ) {
+			linkBack = translate( 'Use username and password instead' );
+		}
+
 		return (
 			<>
 				<div className="magic-login__footer">
 					<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
-						{ translate( 'Enter a password instead' ) }
+						{ linkBack }
 					</a>
 				</div>
 				<AppPromo
@@ -562,6 +570,7 @@ const mapState = ( state ) => ( {
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 	isSendingEmail: isFetchingMagicLoginEmail( state ),
 	emailRequested: isMagicLoginEmailRequested( state ),
+	loginRequestError: getRequestError( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
 	oauth2Client: getCurrentOAuth2Client( state ),
 	userEmail:
@@ -577,6 +586,7 @@ const mapDispatch = {
 	sendEmailLogin,
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
+	getAuthAccountType,
 };
 
 export default connect( mapState, mapDispatch )( localize( MagicLogin ) );
