@@ -72,7 +72,6 @@ import {
 	FEATURE_JETPACK_VIDEOPRESS_UNBRANDED,
 	FEATURE_LANGUAGE_SUPPORT_V2,
 	FEATURE_LIVE_CHAT_SUPPORT,
-	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 	FEATURE_MALWARE_SCANNING_DAILY,
 	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 	FEATURE_MANAGE,
@@ -1575,12 +1574,6 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => EXPERT_SUPPORT_ALL_DAYS,
 		getTitle: () => i18n.translate( '24/7 expert support' ),
 		getDescription: () => i18n.translate( '24/7 expert support' ),
-	},
-
-	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
-		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( 'Live chat support' ),
-		getDescription: () => i18n.translate( 'Live chat support' ),
 	},
 
 	[ FEATURE_JETPACK_VIDEOPRESS ]: {
