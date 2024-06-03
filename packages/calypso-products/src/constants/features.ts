@@ -57,10 +57,6 @@ export const FEATURE_LEGACY_STORAGE_200GB = 'upload-space-200gb';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
 export const FEATURE_EMAIL_SUPPORT = 'email-support';
-export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
-export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS =
-	'email-live-chat-support-business-days';
-export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS = 'email-live-chat-support-all-days';
 export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS = 'live-chat-support-all-days';
 export const FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS = 'live-chat-support-business-days';
 export const EXPERT_SUPPORT_ALL_DAYS = 'expert-support-all-days';

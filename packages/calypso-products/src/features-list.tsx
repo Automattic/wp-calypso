@@ -53,9 +53,6 @@ import {
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
 	FEATURE_ECOMMERCE_MARKETING,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 	FEATURE_EMAIL_SUPPORT,
 	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FILTERING_V2,
@@ -983,36 +980,6 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
 	},
 
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Live chat and email support' )
-				: i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate( 'Live chat support to help you get started with your site.' ),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Live chat is available 24 hours a day from Monday through Friday. ' +
-					'You can also email us any day of the week for personalized support.'
-			),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Live chat is available 24/7. ' +
-					'You can also email us any day of the week for personalized support.'
-			),
-	},
-
 	[ FEATURE_LIVE_CHAT_SUPPORT ]: {
 		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT,
 		getTitle: () => i18n.translate( 'Live chat support' ),
@@ -1628,7 +1595,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		getTitle: () => i18n.translate( 'Live chat support' ),
 		getDescription: () => i18n.translate( 'Live chat support' ),
 	},

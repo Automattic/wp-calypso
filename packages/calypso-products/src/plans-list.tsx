@@ -455,10 +455,7 @@ import {
 	FEATURE_HELP_CENTER_SUPPORT,
 	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 	FEATURE_LIVE_CHAT_SUPPORT,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 } from './constants';
 import { getTrailMapExperiment, isTrailMapCopyVariant } from './experiments';
 import {
@@ -521,8 +518,6 @@ const getDotcomPlanDetails = () => ( {
 	getAnnualPlansOnlyFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
@@ -978,9 +973,16 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	],
 	getNewsletterDescription: () =>
-		i18n.translate(
-			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
-		),
+		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' ) ||
+		i18n.hasTranslation(
+			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with fast support to help get everything just right.'
+		)
+			? i18n.translate(
+					'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with fast support to help get everything just right.'
+			  )
+			: i18n.translate(
+					'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
+			  ),
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
@@ -993,9 +995,16 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AD_FREE_EXPERIENCE,
 	],
 	getLinkInBioDescription: () =>
-		i18n.translate(
-			'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with email support to help get your site just right.'
-		),
+		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' ) ||
+		i18n.hasTranslation(
+			'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with fast support to help get your site just right.'
+		)
+			? i18n.translate(
+					'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with fast support to help get your site just right.'
+			  )
+			: i18n.translate(
+					'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with email support to help get your site just right.'
+			  ),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
@@ -1516,7 +1525,7 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_UNLIMITED_ADMINS,
 		FEATURE_50GB_STORAGE,
 		FEATURE_UNLIMITED_PRODUCTS_SERVICES,
