@@ -1492,6 +1492,16 @@ export function useCommands() {
 				...siteFilters.hostingEnabled,
 				icon: settingsIcon,
 			},
+			manageSettingsCrowdsignal: {
+				name: 'manageSettingsCrowdsignal',
+				label: __( 'Manage Crowdsignal settings', __i18n_text_domain__ ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: commandNavigation( '/wp-admin/options-general.php?page=crowdsignal-settings' ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage Crowdsignal settings', __i18n_text_domain__ ),
+				...siteFilters.hostingEnabled,
+				icon: settingsIcon,
+			},
 			openMarketingTools: {
 				name: 'openMarketingTools',
 				label: __( 'Open marketing tools', __i18n_text_domain__ ),
