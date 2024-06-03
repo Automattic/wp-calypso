@@ -14,8 +14,17 @@ const hasBadge = ( body ) =>
 	body.some( ( { media } ) => media && media.some( ( { type } ) => 'badge' === type ) );
 
 export const Note = React.forwardRef( ( props, ref ) => {
-	const { currentNote, detailView, global, isApproved, isRead, note, selectedNote, unselectNote } =
-		props;
+	const {
+		currentNote,
+		detailView,
+		global,
+		isApproved,
+		isRead,
+		note,
+		selectedNote,
+		unselectNote,
+		isShowing,
+	} = props;
 	const translate = useTranslate();
 
 	let hasCommentReply = false;
@@ -37,6 +46,8 @@ export const Note = React.forwardRef( ( props, ref ) => {
 		}
 	}
 
+	const isSelected = parseInt( selectedNote, 10 ) === parseInt( note.id, 10 );
+
 	const classes = clsx( 'wpnc__note', `wpnc__${ note.type }`, {
 		'comment-reply': hasCommentReply,
 		read: isRead,
@@ -44,10 +55,27 @@ export const Note = React.forwardRef( ( props, ref ) => {
 		wpnc__badge: hasBadge( note.body ),
 		'wpnc__comment-unapproved': hasUnapprovedComment,
 		wpnc__current: detailView,
-		'wpnc__selected-note': parseInt( selectedNote, 10 ) === parseInt( note.id, 10 ),
+		'wpnc__selected-note': isSelected,
 	} );
 
+	const noteContainerRef = React.useRef();
 	const noteBodyRef = React.useRef( null );
+
+	const setContainerRef = React.useCallback( ( currentRef ) => {
+		noteContainerRef.current = currentRef;
+		if ( typeof ref === 'function' ) {
+			ref( currentRef );
+		} else {
+			ref = currentRef;
+		}
+	}, [] );
+
+	React.useEffect( () => {
+		if ( isShowing && isSelected ) {
+			// Make sure it gets focused when re-opening the panel.
+			window.setTimeout( () => noteContainerRef.current?.focus(), 300 );
+		}
+	}, [ isShowing, isSelected ] );
 
 	React.useEffect( () => {
 		if ( detailView && noteBodyRef.current ) {
@@ -59,11 +87,11 @@ export const Note = React.forwardRef( ( props, ref ) => {
 		<li
 			id={ detailView ? 'note-details-' + note.id : 'note-' + note.id }
 			className={ classes }
-			ref={ ref }
+			ref={ setContainerRef }
 			tabIndex={ detailView ? -1 : 0 }
 			role={ detailView ? 'article' : 'listitem' }
 			aria-controls={ detailView ? null : 'note-details-' + note.id }
-			aria-selected={ detailView ? null : currentNote === note.id }
+			aria-selected={ detailView ? null : isSelected }
 		>
 			{ ! detailView && (
 				<SummaryInList

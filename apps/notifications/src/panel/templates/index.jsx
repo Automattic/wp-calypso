@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { modifierKeyIsActive } from '../helpers/input';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
+import getIsLoading from '../state/selectors/get-is-loading';
 import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
@@ -16,6 +17,7 @@ import NavButton from './nav-button';
 import Note from './note';
 import NoteList from './note-list';
 
+const KEY_TAB = 9;
 const KEY_ENTER = 13;
 const KEY_ESC = 27;
 const KEY_LEFT = 37;
@@ -152,7 +154,17 @@ class Layout extends Component {
 		}
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps ) {
+		if (
+			this.noteList &&
+			( ( ! prevProps.isPanelOpen && this.props.isPanelOpen ) ||
+				( prevProps.isLoading && ! this.props.isLoading ) ) &&
+			this.state.lastSelectedIndex === 0 &&
+			! this.state.selectedNote
+		) {
+			this.navigateToNextNote();
+		}
+
 		if ( ! this.detailView ) {
 			return;
 		}
@@ -378,6 +390,15 @@ class Layout extends Component {
 				activateKeyboard();
 				this.navigateToPrevNote();
 				break;
+			case KEY_TAB:
+				stopEvent();
+				activateKeyboard();
+				if ( event.shiftKey ) {
+					this.navigateToPrevNote();
+				} else {
+					this.navigateToNextNote();
+				}
+				break;
 			case KEY_N:
 				this.props.closePanel();
 				stopEvent();
@@ -526,6 +547,7 @@ const mapStateToProps = ( state ) => ( {
 	notes: getAllNotes( state ),
 	selectedNoteId: getSelectedNoteId( state ),
 	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
+	isLoading: getIsLoading( state ),
 } );
 
 const mapDispatchToProps = {

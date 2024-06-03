@@ -249,6 +249,7 @@ export class NoteList extends Component {
 						global={ this.props.global }
 						currentNote={ this.props.selectedNoteId }
 						selectedNote={ this.props.selectedNote }
+						isShowing={ this.props.isPanelOpen }
 					/>
 				);
 			}
