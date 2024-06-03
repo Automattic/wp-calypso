@@ -48,8 +48,6 @@ export default function InitialIntentStep( props: Props ) {
 		GUIDED_FLOW_SEGMENTATION_SURVEY_KEY
 	);
 
-	const { segment } = getSegmentedIntent( currentAnswers );
-
 	// Record Tracks start event on component mount
 	useEffect( () => {
 		recordStartEvent();
@@ -94,11 +92,13 @@ export default function InitialIntentStep( props: Props ) {
 		const redirect = getRedirectForAnswers( _answerKeys );
 
 		const newAnswers = { [ _questionKey ]: _answerKeys };
+		const updatedAnswers = { ...currentAnswers, ...newAnswers };
+		const { segment } = getSegmentedIntent( updatedAnswers );
 
 		submitSignupStep(
 			{ flowName, stepName },
 			{
-				segmentationSurveyAnswers: { ...currentAnswers, ...newAnswers },
+				segmentationSurveyAnswers: updatedAnswers,
 				onboardingSegment: segment,
 			}
 		);
