@@ -1456,6 +1456,22 @@ export function useCommands() {
 				capability: SiteCapabilities.MANAGE_OPTIONS,
 				icon: settingsIcon,
 			},
+			manageSettingsPerformance: {
+				name: 'manageSettingsPerformance',
+				label: __( 'Manage performance settings', __i18n_text_domain__ ),
+				context: [ '/settings', '/wp-admin/options-' ],
+				callback: ( params ) =>
+					commandNavigation(
+						params.site?.is_wpcom_atomic && siteUsesWpAdminInterface( params.site )
+							? '/wp-admin/options-general.php?page=page-optimize'
+							: '/settings/performance/:site'
+					)( params ),
+				siteSelector: true,
+				siteSelectorLabel: __( 'Select site to manage podcast settings', __i18n_text_domain__ ),
+				capability: SiteCapabilities.MANAGE_OPTIONS,
+				filterP2: true,
+				icon: settingsIcon,
+			},
 			openMarketingTools: {
 				name: 'openMarketingTools',
 				label: __( 'Open marketing tools', __i18n_text_domain__ ),
