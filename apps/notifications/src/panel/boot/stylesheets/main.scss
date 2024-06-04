@@ -268,6 +268,11 @@ $with-sidebar-min-page-width: 1114px;
 			color: var(--color-neutral-70);
 		}
 
+		&:focus {
+			outline: var(--color-primary-light) solid 2px;
+			outline-offset: -2px;
+		}
+
 		&:first-of-type {
 			border-top-left-radius: 4px;
 			border-bottom-left-radius: 4px;
@@ -450,6 +455,7 @@ $with-sidebar-min-page-width: 1114px;
 			border-style: solid;
 		}
 
+		.wpnc__note:focus,
 		.wpnc__selected-note {
 			box-shadow: inset 4px 0 0 var(--color-primary);
 
@@ -519,6 +525,7 @@ $with-sidebar-min-page-width: 1114px;
 			.gridicons-cog {
 				cursor: pointer;
 				align-self: center;
+				border-radius: 2px;
 				margin-left: auto;
 				margin-right: $wpnc__padding-small;
 			}
@@ -534,6 +541,10 @@ $with-sidebar-min-page-width: 1114px;
 			.wpnc__settings {
 				display: flex;
 				flex-grow: 1;
+
+				&:focus svg {
+					outline: var(--color-primary-light) solid 2px;
+				}
 			}
 		}
 	}
