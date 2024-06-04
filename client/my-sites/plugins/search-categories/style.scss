@@ -7,21 +7,18 @@
 	}
 
 	.search-categories__search {
-		margin-top: 24px;
 		display: flex;
-		flex-direction: row;
 		width: 100%;
 		justify-content: center;
 
 		.search-categories__searchbox {
-			max-width: 504px;
+			max-width: 245px;
 			width: 100%;
 
 			.search-component {
 				height: 52px;
 				z-index: 0;
-				max-width: 400px;
-				margin: 0 auto;
+				margin: 0;
 				border-radius: 4px;
 				padding-right: 10px;
 
@@ -76,6 +73,14 @@
 				}
 			}
 		}
+	}
+
+	.search-categories__categories {
+		flex: 1;
+	}
+
+	.categories__menu {
+		padding: 0;
 	}
 
 	.search-categories__sticky-ref {

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { SegmentedControl } from '@automattic/components';
 import Search, { ImperativeHandle } from '@automattic/search';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -7,8 +8,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
 import Categories from 'calypso/my-sites/plugins/categories';
+import {
+	ALLOWED_CATEGORIES,
+	useCategories,
+} from 'calypso/my-sites/plugins/categories/use-categories';
 import { useTermsSuggestions } from 'calypso/my-sites/plugins/search-box-header/useTermsSuggestions';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
+import DiscoverNavigation from 'calypso/reader/discover/discover-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -95,7 +101,12 @@ const SearchCategories: FC< {
 	stickySearchBoxRef,
 } ) => {
 	const categoriesRef = useRef< HTMLDivElement >( null );
-
+	// We hide these special categories from the category selector
+	const displayCategories = ALLOWED_CATEGORIES.filter(
+		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
+	);
+	const categories = Object.values( useCategories( displayCategories ) );
+	console.debug( 'categories', categories );
 	// Update the search box with the value from the url everytime it changes
 	// This allows the component to be refilled with a keyword
 	// when navigating back to a page via breadcrumb,
@@ -105,24 +116,39 @@ const SearchCategories: FC< {
 	}, [ searchRef, searchTerm ] );
 
 	return (
-		<div className={ classNames( 'search-categories', { 'fixed-top': isSticky } ) }>
-			<div className="search-categories__search">
-				<SearchBox
-					isMobile={ false }
-					isSearching={ isSearching }
-					searchBoxRef={ searchRef }
-					searchTerm={ searchTerm }
-					categoriesRef={ categoriesRef }
-					searchTerms={ searchTerms }
-				/>
-			</div>
+		<>
+			<div className={ classNames( 'search-categories', { 'fixed-top': isSticky } ) }>
+				<div className="search-categories__search">
+					<SearchBox
+						isMobile={ false }
+						isSearching={ isSearching }
+						searchBoxRef={ searchRef }
+						searchTerm={ searchTerm }
+						categoriesRef={ categoriesRef }
+						searchTerms={ searchTerms }
+					/>
+				</div>
 
-			<div ref={ categoriesRef }>
-				<Categories selected={ category } noSelection={ searchTerm ? true : false } />
-			</div>
+				{ /* <div className="search-categories__categories" ref={ categoriesRef }>
+					<SegmentedControl>
+						{ categories.map( ( tag ) => {
+							return (
+								<SegmentedControl.Item
+									key={ tag.slug }
+									selected={ tag.slug === category }
+									onClick={ () => {} }
+								>
+									{ tag.title }
+								</SegmentedControl.Item>
+							);
+						} ) }
+					</SegmentedControl>
+				</div> */ }
 
-			<div className="search-categories__sticky-ref" ref={ stickySearchBoxRef }></div>
-		</div>
+				<DiscoverNavigation recommendedTags={ categories } />
+			</div>
+			<div className="search-categories__sticky-ref" ref={ stickySearchBoxRef } />
+		</>
 	);
 };
 
