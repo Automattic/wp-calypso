@@ -60,7 +60,7 @@
 
 	height: calc(100vh - var(--masterbar-height));
 
-	@media ( min-width: 782px ) {
+	@media (min-width: 782px) {
 		height: calc(100vh - var(--masterbar-height) - 32px);
 	}
 
@@ -300,7 +300,7 @@
 		}
 	}
 	.is-global-sidebar-collapsed {
-		@media ( min-width: 661px ) {
+		@media (min-width: 661px) {
 			.layout__secondary {
 				transition: all 220ms ease-out;
 
@@ -354,7 +354,7 @@
 			}
 
 			.components-button.is-compact.has-icon:not(.has-text) {
-				@media ( max-width: 961px ) {
+				@media (max-width: 961px) {
 					margin-inline-end: 8px;
 				}
 			}

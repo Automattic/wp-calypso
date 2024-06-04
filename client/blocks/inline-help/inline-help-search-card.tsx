@@ -21,6 +21,8 @@ type Props = {
 	onSearch?: ( query: string ) => void;
 };
 
+const AUTO_FOCUS_LOCATION = [ 'help-center', 'inline-help-popover' ];
+
 const InlineHelpSearchCard = ( {
 	searchQuery = '',
 	location = 'inline-help-popover',
@@ -35,7 +37,7 @@ const InlineHelpSearchCard = ( {
 	// Focus in the input element.
 	useEffect( () => {
 		const inputElement = cardRef.current?.searchInput;
-		if ( ! inputElement || ! isVisible ) {
+		if ( ! AUTO_FOCUS_LOCATION.includes( location ) || ! inputElement || ! isVisible ) {
 			return;
 		}
 

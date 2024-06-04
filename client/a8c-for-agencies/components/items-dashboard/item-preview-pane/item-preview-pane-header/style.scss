@@ -29,7 +29,7 @@
 		}
 	}
 
-	@media ( min-width: $break-large ) {
+	@media (min-width: $break-large) {
 		.item-preview__header-favicon {
 			margin-right: 24px;
 			position: relative;
@@ -82,7 +82,7 @@
 		}
 	}
 
-	@media ( max-width: $break-large ) {
+	@media (max-width: $break-large) {
 		display: flex;
 		padding: 24px 24px 8px;
 

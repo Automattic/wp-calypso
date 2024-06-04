@@ -26,7 +26,7 @@
 	align-items: center;
 	margin-bottom: 20px;
 	margin-top: 64px;
-	@media ( max-width: $break-large ) {
+	@media (max-width: $break-large) {
 		display: block;
 
 		.period-select {
@@ -73,7 +73,7 @@
 	display: flex;
 	justify-content: space-between;
 
-	@media ( max-width: $break-large ) {
+	@media (max-width: $break-large) {
 		display: block;
 	}
 
@@ -90,7 +90,7 @@
 		text-align: right;
 		max-width: 150px;
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			margin-right: auto;
 			text-align: left;
 		}

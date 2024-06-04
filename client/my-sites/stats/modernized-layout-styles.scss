@@ -37,7 +37,7 @@ $sidebar-appearance-break-point: $break-medium;
 		padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 
 		&:not(.navigation-header) {
-			@media ( max-width: $break-small ) {
+			@media (max-width: $break-small) {
 				padding-left: 0;
 				padding-right: 0;
 			}
@@ -56,14 +56,14 @@ $sidebar-appearance-break-point: $break-medium;
 		padding-right: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		background-color: var(--studio-white);
 
-		@media ( max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			// Restore padding to 16px on mobile as per the `.navigation-header` style.
 			padding: 16px;
 			// Reduce gap to the following section on mobile.
 			padding-bottom: 24px;
 		}
 
-		@media ( max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			padding-bottom: 0;
 		}
 	}
@@ -79,7 +79,7 @@ $sidebar-appearance-break-point: $break-medium;
 	&.theme-default .focus-content .layout__content {
 		padding: $stats-layout-contnet-padding-top 0 0 0;
 
-		@media ( min-width: $sidebar-appearance-break-point ) {
+		@media (min-width: $sidebar-appearance-break-point) {
 			padding: $stats-layout-contnet-padding-top 0 0 calc(var(--sidebar-width-max) + 1px);
 		}
 

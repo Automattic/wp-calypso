@@ -24,7 +24,7 @@ form {
 			justify-content: center;
 			max-width: 758px;
 
-			@media (min-width: $breakpoint-mobile ) {
+			@media (min-width: $breakpoint-mobile) {
 				flex-direction: row;
 				margin-top: 32px;
 			}

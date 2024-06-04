@@ -52,7 +52,7 @@
 	}
 
 	&.is-centered-mobile {
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			align-self: center;
 		}
 	}

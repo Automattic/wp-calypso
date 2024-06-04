@@ -27,7 +27,7 @@
 		line-height: 1;
 		margin-bottom: 1rem;
 
-		@media (max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			font-size: 3rem;
 		}
 	}
@@ -208,7 +208,7 @@
 		padding-bottom: 240px;
 
 		// Small screens
-		@media (max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			padding-top: 6rem;
 			padding-bottom: 130px;
 			background-size: 820px;
