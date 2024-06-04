@@ -24,6 +24,7 @@ export const Note = React.forwardRef( ( props, ref ) => {
 		selectedNote,
 		unselectNote,
 		isShowing,
+		handleFocus,
 	} = props;
 	const translate = useTranslate();
 
@@ -71,11 +72,21 @@ export const Note = React.forwardRef( ( props, ref ) => {
 	}, [] );
 
 	React.useEffect( () => {
-		if ( isShowing && isSelected ) {
-			// Make sure it gets focused when re-opening the panel.
-			window.setTimeout( () => noteContainerRef.current?.focus(), 300 );
+		let timerId;
+		if ( isShowing && isSelected && ! currentNote && noteContainerRef.current ) {
+			noteContainerRef.current.focus();
+			// It might not be focused immediately when the panel is opening because of the pointer-events is none.
+			if ( document.activeElement !== noteContainerRef.current ) {
+				timerId = window.setTimeout( () => noteContainerRef.current.focus(), 300 );
+			}
 		}
-	}, [ isShowing, isSelected ] );
+
+		return () => {
+			if ( timerId ) {
+				window.clearTimeout( timerId );
+			}
+		};
+	}, [ isShowing, isSelected, currentNote ] );
 
 	React.useEffect( () => {
 		if ( detailView && noteBodyRef.current ) {
@@ -92,6 +103,7 @@ export const Note = React.forwardRef( ( props, ref ) => {
 			role={ detailView ? 'article' : 'listitem' }
 			aria-controls={ detailView ? null : 'note-details-' + note.id }
 			aria-selected={ detailView ? null : isSelected }
+			onFocus={ () => handleFocus( note.id ) }
 		>
 			{ ! detailView && (
 				<SummaryInList
