@@ -1,4 +1,4 @@
-import { IMPORT_HOSTED_SITE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { HOSTED_SITE_MIGRATION_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import SegmentationSurvey from 'calypso/components/segmentation-survey';
@@ -57,23 +57,24 @@ export default function InitialIntentStep( props: Props ) {
 	}, [] );
 
 	const getRedirectForAnswers = ( _answerKeys: string[] ): string => {
+		const referrer = 'guided-onboarding';
+		let redirect = '';
+
 		if ( _answerKeys.includes( 'migrate-or-import-site' ) ) {
-			return `/setup/${ IMPORT_HOSTED_SITE_FLOW }`;
+			redirect = `/setup/${ HOSTED_SITE_MIGRATION_FLOW }`;
+		} else if ( _answerKeys.includes( 'newsletter' ) ) {
+			redirect = `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
+		} else if ( _answerKeys.includes( 'sell' ) && _answerKeys.includes( 'difm' ) ) {
+			redirect = '/start/do-it-for-me-store';
+		} else if ( _answerKeys.includes( 'difm' ) ) {
+			redirect = '/start/do-it-for-me';
 		}
 
-		if ( _answerKeys.includes( 'newsletter' ) ) {
-			return `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
+		if ( redirect ) {
+			return `${ redirect }?ref=${ referrer }`;
 		}
 
-		if ( _answerKeys.includes( 'sell' ) && _answerKeys.includes( 'difm' ) ) {
-			return '/start/do-it-for-me-store';
-		}
-
-		if ( _answerKeys.includes( 'difm' ) ) {
-			return '/start/do-it-for-me';
-		}
-
-		return '';
+		return redirect;
 	};
 
 	const shouldExitOnSkip = ( _questionKey: string, _answerKeys: string[] ) => {
