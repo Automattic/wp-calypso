@@ -99,7 +99,7 @@
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
 		"layout/support-article-dialog": true,
-		"layout/dotcom-nav-redesign-v2": false,
+		"layout/dotcom-nav-redesign-v2": true,
 		"layout/wpcom-admin-interface": false,
 		"legal-updates-banner": false,
 		"livechat_solution": true,
