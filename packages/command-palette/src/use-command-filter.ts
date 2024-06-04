@@ -1,4 +1,5 @@
 export const COMMAND_SEPARATOR = '|~~~|';
+export const KEYWORD_SEPARATOR = '|~kw~|';
 
 export const useCommandFilter = () => {
 	const commandFilter = ( value: string, search: string ) => {
@@ -15,6 +16,16 @@ export const useCommandFilter = () => {
 		// Check if there is an afterSeparator and the search matches it
 		if ( keywords?.includes( lowercaseSearch ) ) {
 			return 0.5;
+		}
+
+		// Check if any of the keywords allow wildcards, this is indicated by a trailing *
+		const wildcardKeywords = ( keywords ?? '' )
+			.split( KEYWORD_SEPARATOR )
+			.filter( ( keyword ) => keyword.slice( -1 ) === '*' )
+			.map( ( keyword ) => keyword.slice( 0, -1 ) );
+
+		if ( wildcardKeywords.some( ( keyword ) => lowercaseSearch.startsWith( keyword ) ) ) {
+			return 0.4;
 		}
 
 		// No match

@@ -44,6 +44,7 @@ import {
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
+import { KEYWORD_SEPARATOR } from './use-command-filter';
 import { commandNavigation, siteUsesWpAdminInterface } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -938,8 +939,8 @@ export function useCommands() {
 				searchLabel: [
 					_x( 'manage posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
 					_x( 'edit posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
-					'wp post', // WP-CLI command
-				].join( ' ' ),
+					'wp post*', // WP-CLI command
+				].join( KEYWORD_SEPARATOR ),
 				callback: ( params ) =>
 					commandNavigation(
 						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/edit.php' : '/posts/:site'
