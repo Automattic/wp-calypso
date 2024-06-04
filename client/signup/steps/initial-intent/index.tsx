@@ -21,6 +21,7 @@ interface Props {
 			segmentationSurveyAnswers: Record< string, string[] >;
 		}
 	>;
+	progress: Record< string, any >;
 }
 
 const SURVEY_KEY = 'guided-onboarding-flow';
@@ -38,7 +39,8 @@ const QUESTION_CONFIGURATION: QuestionConfiguration = {
 };
 
 export default function InitialIntentStep( props: Props ) {
-	const { submitSignupStep, stepName, signupDependencies, flowName } = props;
+	const { submitSignupStep, stepName, signupDependencies, flowName, progress } = props;
+	const currentPage = progress[ stepName ]?.stepSectionName ?? 1;
 	const currentAnswers = signupDependencies.segmentationSurveyAnswers || {};
 	const translate = useTranslate();
 	const headerText = translate( 'What brings you to WordPress.com?' );
@@ -130,6 +132,10 @@ export default function InitialIntentStep( props: Props ) {
 					skipNextNavigation={ skipNextNavigation }
 					questionConfiguration={ QUESTION_CONFIGURATION }
 					questionComponentMap={ flowQuestionComponentMap }
+					onGoToPage={ ( stepSectionName: number ) =>
+						submitSignupStep( { flowName, stepName, stepSectionName }, {} )
+					}
+					providedPage={ currentPage }
 				/>
 			}
 			align="center"
