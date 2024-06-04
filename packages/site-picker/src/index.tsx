@@ -2,7 +2,7 @@
 import { useFocusTrap } from '@automattic/tour-kit';
 import { __ } from '@wordpress/i18n';
 import { globe, Icon, chevronUp, chevronDown } from '@wordpress/icons';
-import cx from 'classnames';
+import cx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useArrowNavigation } from './hooks';
 import type { FC } from 'react';

@@ -12,7 +12,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -395,7 +395,7 @@ class RemovePurchase extends Component {
 			</>
 		);
 
-		const wrapperClassName = classNames( 'remove-purchase__card', className );
+		const wrapperClassName = clsx( 'remove-purchase__card', className );
 		const Wrapper = useVerticalNavItem ? VerticalNavItem : CompactCard;
 		const getWarningDialog = () => {
 			if ( this.shouldShowNonPrimaryDomainWarning() ) {

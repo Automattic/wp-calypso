@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
@@ -21,7 +21,7 @@ export default function Main( {
 	isLoggedOut = false,
 	ariaLabel,
 }: MainProps ) {
-	const classes = classNames( className, 'main', {
+	const classes = clsx( className, 'main', {
 		'is-wide-layout': wideLayout,
 		'is-full-width-layout': fullWidthLayout,
 		'is-logged-out': isLoggedOut,

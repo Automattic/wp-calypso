@@ -1,6 +1,6 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useMemo } from 'react';
 import { getStylesColorFromVariation } from './utils';
 import type { StyleVariation } from '../../types';
@@ -32,7 +32,7 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick, isSelected } ) => 
 
 	return (
 		<div
-			className={ classnames( 'style-variation__badge-wrapper', {
+			className={ clsx( 'style-variation__badge-wrapper', {
 				'style-variation__badge-is-selected': isSelected,
 			} ) }
 			tabIndex={ 0 }

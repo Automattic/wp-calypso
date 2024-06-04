@@ -1,6 +1,6 @@
 import { FoldableCard } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -37,7 +37,7 @@ export default function CommissionOverview( {
 
 	return (
 		<Layout
-			className={ classNames( 'commission-overview', {
+			className={ clsx( 'commission-overview', {
 				'commission-overview__layout-automated': isAutomatedReferral,
 			} ) }
 			title={ title }

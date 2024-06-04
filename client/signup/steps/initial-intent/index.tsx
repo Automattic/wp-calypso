@@ -1,16 +1,26 @@
 import { IMPORT_HOSTED_SITE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import SegmentationSurvey, { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey';
+import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey/constants';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import { flowQuestionComponentMap } from 'calypso/components/survey-container/components/question-step-mapping';
 import { QuestionConfiguration } from 'calypso/components/survey-container/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './styles.scss';
+import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from './constants';
 
 interface Props {
+	flowName: string;
 	stepName: string;
 	goToNextStep: () => void;
+	submitSignupStep: ( step: any, deps: any ) => void;
+	signupDependencies: Record<
+		string,
+		{
+			segmentationSurveyAnswers: Record< string, string[] >;
+		}
+	>;
 }
 
 const SURVEY_KEY = 'guided-onboarding-flow';
@@ -28,13 +38,17 @@ const QUESTION_CONFIGURATION: QuestionConfiguration = {
 };
 
 export default function InitialIntentStep( props: Props ) {
+	const { submitSignupStep, stepName, signupDependencies, flowName } = props;
+	const currentAnswers = signupDependencies.segmentationSurveyAnswers || {};
 	const translate = useTranslate();
 	const headerText = translate( 'What brings you to WordPress.com?' );
 	const subHeaderText = translate(
 		'This will help us tailor your onboarding experience to your needs.'
 	);
 
-	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents( SURVEY_KEY );
+	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents(
+		GUIDED_FLOW_SEGMENTATION_SURVEY_KEY
+	);
 
 	// Record Tracks start event on component mount
 	useEffect( () => {
@@ -48,7 +62,7 @@ export default function InitialIntentStep( props: Props ) {
 		}
 
 		if ( _answerKeys.includes( 'newsletter' ) ) {
-			return `/setup/${ NEWSLETTER_FLOW }`;
+			return `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
 		}
 
 		if ( _answerKeys.includes( 'sell' ) && _answerKeys.includes( 'difm' ) ) {
@@ -78,6 +92,13 @@ export default function InitialIntentStep( props: Props ) {
 
 	const handleNext = ( _questionKey: string, _answerKeys: string[], isLastQuestion?: boolean ) => {
 		const redirect = getRedirectForAnswers( _answerKeys );
+
+		const newAnswers = { [ _questionKey ]: _answerKeys };
+
+		submitSignupStep(
+			{ flowName, stepName },
+			{ segmentationSurveyAnswers: { ...currentAnswers, ...newAnswers } }
+		);
 
 		if ( redirect ) {
 			recordCompleteEvent();

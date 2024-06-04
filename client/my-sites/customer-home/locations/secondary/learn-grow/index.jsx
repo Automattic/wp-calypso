@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { createElement, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import {
@@ -25,7 +25,9 @@ import RespondToCustomerFeedback from 'calypso/my-sites/customer-home/cards/educ
 import SiteEditorQuickStart from 'calypso/my-sites/customer-home/cards/education/site-editor-quick-start';
 import EducationStore from 'calypso/my-sites/customer-home/cards/education/store';
 import WpCourses from 'calypso/my-sites/customer-home/cards/education/wpcourses';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import trackMyHomeCardImpression, {
+	CardLocation,
+} from 'calypso/my-sites/customer-home/track-my-home-card-impression';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const cardComponents = {
@@ -42,7 +44,6 @@ const cardComponents = {
 
 const LearnGrow = () => {
 	const cards = useLearnGrowCards();
-	const dispatch = useDispatch();
 	const viewedCards = useRef( new Set() );
 
 	const handlePageSelected = ( index ) => {
@@ -52,7 +53,7 @@ const LearnGrow = () => {
 		}
 
 		viewedCards.current.add( selectedCard );
-		dispatch( trackCardImpression( selectedCard ) );
+		trackMyHomeCardImpression( { card: selectedCard, location: CardLocation.SECONDARY } );
 	};
 
 	useEffect( () => handlePageSelected( 0 ) );
@@ -95,13 +96,6 @@ function useLearnGrowCards() {
 
 	// Remove cards we don't know how to deal with on the client-side
 	return allCards.filter( ( card ) => !! cardComponents[ card ] );
-}
-
-function trackCardImpression( card ) {
-	return composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
-		bumpStat( 'calypso_customer_home_card_impression', card )
-	);
 }
 
 export default LearnGrow;

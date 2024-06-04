@@ -9,9 +9,8 @@ import {
 	useSurveyStructureQuery,
 } from 'calypso/data/segmentaton-survey';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { SKIP_ANSWER_KEY } from './constants';
 import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-navigation';
-
-export const SKIP_ANSWER_KEY = 'skip';
 
 type SegmentationSurveyProps = {
 	surveyKey: string;

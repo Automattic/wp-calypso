@@ -14,7 +14,7 @@ import page from '@automattic/calypso-router';
 import NotificationsPanel, {
 	refreshNotes,
 } from '@automattic/notifications/src/panel/Notifications';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -253,7 +253,7 @@ export class Notifications extends Component {
 		return (
 			<div
 				id="wpnc-panel"
-				className={ classNames( 'wide', 'wpnc__main', {
+				className={ clsx( 'wide', 'wpnc__main', {
 					'wpnt-open': this.props.isShowing,
 					'wpnt-closed': ! this.props.isShowing,
 				} ) }

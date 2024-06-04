@@ -147,6 +147,10 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ MIGRATION_SIGNUP_FLOW ]: () =>
 		import( /* webpackChunkName: "migration-signup" */ '../declarative-flow/migration-signup' ),
+	[ SITE_MIGRATION_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
+		),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
@@ -164,17 +168,6 @@ const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-const siteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
-	'onboarding/new-migration-flow'
-)
-	? {
-			[ SITE_MIGRATION_FLOW ]: () =>
-				import(
-					/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
-				),
-	  }
-	: {};
-
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
 		import(
@@ -185,6 +178,5 @@ const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } 
 export default {
 	...availableFlows,
 	...videoPressTvFlows,
-	...siteMigrationFlow,
 	...hostedSiteMigrationFlow,
 };

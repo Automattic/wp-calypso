@@ -22,6 +22,7 @@ import './styles.scss';
 type Props = {
 	compact?: boolean;
 	previewMode: 'table' | 'card';
+	showSubtitle?: boolean;
 	showNewScheduleBtn?: boolean;
 	selectedScheduleId?: string;
 	onEditSchedule: ( id: string ) => void;
@@ -33,6 +34,7 @@ export const ScheduleList = ( props: Props ) => {
 	const {
 		compact,
 		previewMode,
+		showSubtitle = true,
 		showNewScheduleBtn = true,
 		selectedScheduleId: initSelectedScheduleId,
 		onEditSchedule,
@@ -125,11 +127,13 @@ export const ScheduleList = ( props: Props ) => {
 			<div className="plugins-update-manager-multisite__header">
 				<div className="plugins-update-manager-multisite__header-main">
 					<h1>{ translate( 'Scheduled Updates' ) }</h1>
-					<p>
-						{ translate(
-							'Streamline your workflow with scheduled updates, timed to suit your needs.'
-						) }
-					</p>
+					{ showSubtitle && (
+						<p>
+							{ translate(
+								'Streamline your workflow with scheduled updates, timed to suit your needs.'
+							) }
+						</p>
+					) }
 				</div>
 				{ showNewScheduleBtn && ! isScheduleEmpty && (
 					<Button

@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { Icon, chevronRight, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 
 import './style.scss';
@@ -28,9 +28,7 @@ const ActionButtons: React.FunctionComponent< ActionButtonsProps > = ( {
 		stickyClass = 'no-sticky';
 	}
 
-	return (
-		<div className={ classnames( 'action-buttons', className, stickyClass ) }>{ children }</div>
-	);
+	return <div className={ clsx( 'action-buttons', className, stickyClass ) }>{ children }</div>;
 };
 
 export default ActionButtons;
@@ -44,7 +42,7 @@ export const BackButton: React.FunctionComponent< React.ComponentProps< typeof B
 
 	return (
 		<Button
-			className={ classnames( 'action_buttons__button action-buttons__back', className ) }
+			className={ clsx( 'action_buttons__button action-buttons__back', className ) }
 			variant="link"
 			{ ...buttonProps }
 		>
@@ -64,7 +62,7 @@ export const NextButton: React.FunctionComponent< React.ComponentProps< typeof B
 
 	return (
 		<Button
-			className={ classnames( 'button action_buttons__button action-buttons__next', className ) }
+			className={ clsx( 'button action_buttons__button action-buttons__next', className ) }
 			variant="primary"
 			{ ...buttonProps }
 		>
@@ -84,7 +82,7 @@ export const SkipButton: React.FunctionComponent< React.ComponentProps< typeof B
 
 	return (
 		<Button
-			className={ classnames( 'action_buttons__button action-buttons__skip', className ) }
+			className={ clsx( 'action_buttons__button action-buttons__skip', className ) }
 			{ ...buttonProps }
 		>
 			{ children ||
@@ -101,7 +99,7 @@ export const ArrowButton: React.FunctionComponent<
 > = ( { className, children, arrow = 'right', ...buttonProps } ) => {
 	return (
 		<Button
-			className={ classnames(
+			className={ clsx(
 				`action_buttons__button action-buttons__arrow action-buttons__arrow--${ arrow }`,
 				className
 			) }

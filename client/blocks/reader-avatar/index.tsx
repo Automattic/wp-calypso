@@ -1,6 +1,6 @@
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import SiteIcon from 'calypso/blocks/site-icon';
 import Gravatar from 'calypso/components/gravatar';
@@ -99,7 +99,7 @@ const ReaderAvatar = ( {
 		gravatarSize = iconSize;
 	}
 
-	const classes = classnames( 'reader-avatar', {
+	const classes = clsx( 'reader-avatar', {
 		'is-compact': isCompact,
 		'has-site-and-author-icon': hasBothIcons,
 		'has-site-icon': hasSiteIcon,

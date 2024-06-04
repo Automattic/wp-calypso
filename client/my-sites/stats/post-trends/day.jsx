@@ -1,6 +1,6 @@
 import { Tooltip } from '@automattic/components';
 import { Icon, postContent } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent, Fragment } from 'react';
@@ -72,7 +72,7 @@ class PostTrendsDay extends PureComponent {
 		return (
 			<Fragment>
 				<div
-					className={ classNames( 'post-trends__day', hoveredClass, className ) }
+					className={ clsx( 'post-trends__day', hoveredClass, className ) }
 					onMouseEnter={ postCount > 0 ? this.mouseEnter : null }
 					onMouseLeave={ postCount > 0 ? this.mouseLeave : null }
 					ref={ this.dayRef }

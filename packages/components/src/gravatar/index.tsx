@@ -6,7 +6,7 @@ import {
 	format as formatUrl,
 	safeImageUrl,
 } from '@automattic/calypso-url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { Component } from 'react';
 
 import './style.scss';
@@ -79,7 +79,7 @@ export class Gravatar extends Component< Props > {
 
 		const altText = alt || user.display_name || user.name;
 		const avatarURL = tempImage || this.getResizedImageURL( safeImageUrl( user.avatar_URL ) );
-		const classes = classnames( 'gravatar', this.props.className );
+		const classes = clsx( 'gravatar', this.props.className );
 
 		return (
 			<img

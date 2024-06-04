@@ -1,5 +1,5 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -53,7 +53,7 @@ export default function ReferralsBankDetails( {
 
 	return (
 		<Layout
-			className={ classNames( 'bank-details__layout', {
+			className={ clsx( 'bank-details__layout', {
 				'bank-details__layout--automated': isAutomatedReferral,
 			} ) }
 			title={ title }

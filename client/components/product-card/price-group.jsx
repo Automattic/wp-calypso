@@ -1,12 +1,12 @@
 import { PlanPrice } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { isNumber } from 'lodash';
 import PropTypes from 'prop-types';
 
 const ProductCardPriceGroup = ( props ) => {
 	const { billingTimeFrame, currencyCode, discountedPrice, fullPrice } = props;
 	const isDiscounted = isNumber( discountedPrice );
-	const priceGroupClasses = classNames( 'product-card__price-group', {
+	const priceGroupClasses = clsx( 'product-card__price-group', {
 		'is-discounted': isDiscounted,
 	} );
 

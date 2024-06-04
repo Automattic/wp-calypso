@@ -1,6 +1,6 @@
 import { SelectDropdown, Gridicon, Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -138,9 +138,7 @@ export const SiteLogsToolbar = ( {
 				{ translate( 'Filter' ) }
 				<Gridicon icon="filter" />
 			</Button>
-			<div
-				className={ classnames( 'site-logs-toolbar__top-row', { 'is-hidden': ! isMobileOpen } ) }
-			>
+			<div className={ clsx( 'site-logs-toolbar__top-row', { 'is-hidden': ! isMobileOpen } ) }>
 				<label htmlFor="from">{ translate( 'From' ) }</label>
 				<DateTimePicker
 					id="from"

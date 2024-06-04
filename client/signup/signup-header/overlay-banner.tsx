@@ -1,7 +1,7 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css, Global } from '@emotion/react';
 import { Icon } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import BraveTickIcon from './assets/icons/brave-tick';
@@ -28,7 +28,7 @@ const globalStyleOverrides = css`
 `;
 
 const SignupHeaderOverlayBanner = ( { children }: { children: ReactNode } ) => {
-	const classes = classnames( 'signup-header__overlay-banner', {
+	const classes = clsx( 'signup-header__overlay-banner', {
 		'is-dark-background': true,
 	} );
 	return (
@@ -46,7 +46,7 @@ export const SignupHeaderOverlayBannerWithRefundPeriod = () => {
 	return (
 		<SignupHeaderOverlayBanner>
 			<div
-				className={ classnames( 'signup-header__overlay-banner-with-refund-period', {
+				className={ clsx( 'signup-header__overlay-banner-with-refund-period', {
 					'is-mobile': isMobile,
 				} ) }
 			>

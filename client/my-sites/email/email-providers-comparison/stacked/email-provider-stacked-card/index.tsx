@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useState } from 'react';
 import PromoCard, { TitleLocation } from 'calypso/components/promo-section/promo-card';
 import {
@@ -69,7 +69,7 @@ const EmailProvidersStackedCard = ( {
 
 	return (
 		<PromoCard
-			className={ classnames( 'email-providers-stacked-comparison__provider-card', className, {
+			className={ clsx( 'email-providers-stacked-comparison__provider-card', className, {
 				'is-expanded': detailsExpanded,
 			} ) }
 			image={ logo }

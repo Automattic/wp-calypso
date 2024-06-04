@@ -16,7 +16,7 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { debounce } from '@wordpress/compose';
 import { Icon, external, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -186,7 +186,7 @@ export default function HostingCard( {
 	] );
 
 	return (
-		<div className={ classNames( 'hosting-card', className ) }>
+		<div className={ clsx( 'hosting-card', className ) }>
 			<div className="hosting-card__section">
 				<div className="hosting-card__heading">{ heading }</div>
 

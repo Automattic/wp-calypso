@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'calypso/state';
@@ -117,7 +117,7 @@ const StatsModuleUTM = ( {
 	return (
 		<>
 			<StatsListCard
-				className={ classNames( className, 'stats-module__card', path ) }
+				className={ clsx( className, 'stats-module__card', path ) }
 				moduleType={ path }
 				data={ data }
 				useShortLabel={ useShortLabel }
