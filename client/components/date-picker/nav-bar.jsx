@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -20,7 +20,7 @@ export const DatePickerNavBar = ( {
 	showPreviousButton = true,
 	showNextButton = true,
 } ) => {
-	const classes = classNames( 'date-picker__nav-bar', {
+	const classes = clsx( 'date-picker__nav-bar', {
 		[ className ]: !! className,
 	} );
 	return (

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -115,7 +115,7 @@ class VideoPressStatsModule extends Component {
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
 		const hasError = false;
 
-		const cardClasses = classNames(
+		const cardClasses = clsx(
 			'stats-module',
 			{
 				'is-loading': isLoading,
@@ -126,7 +126,7 @@ class VideoPressStatsModule extends Component {
 		);
 
 		const summaryLink = this.getHref();
-		const headerClass = classNames( 'stats-module__header', {
+		const headerClass = clsx( 'stats-module__header', {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 

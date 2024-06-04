@@ -47,6 +47,7 @@ $button-padding: 8px 32px;
 				.components-checkbox-control__label {
 					font-size: var(--font-body);
 					line-height: 24px;
+					width: auto;
 					color: var(--jp-black);
 				}
 			}
@@ -179,6 +180,29 @@ $button-padding: 8px 32px;
 			font-size: $font-headline-small;
 			font-weight: 700;
 			line-height: 40px;
+		}
+
+		a {
+			color: var(--studio-black);
+			text-decoration: underline;
+			font-weight: bolder;
+		}
+	}
+
+	.stats-purchase-wizard__card-inner--single {
+		padding: 64px;
+		box-sizing: border-box;
+		flex: 2 2 auto;
+
+		p {
+			width: 36em;
+			@media (max-width: $break-medium) {
+				width: unset;
+			}
+		}
+
+		@media (max-width: $break-medium) {
+			padding: 32px 24px;
 		}
 	}
 
@@ -520,6 +544,7 @@ $button-padding: 8px 32px;
 
 		.is-link {
 			color: var(--jp-black);
+			font-weight: normal;
 		}
 	}
 

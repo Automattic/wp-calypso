@@ -1,7 +1,6 @@
-import { trendingUp, next } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { defaultHostingDetails } from '../constants';
-import wordpressCwvtechReportJson from '../wordpress-cwvtech-report.json';
+import cwvtechReportJson from '../cwvtech-report.json';
+import { useDefaultHostingDetails } from '../use-default-hosting-details';
 import { useGetUpgradePlanSiteMetrics } from './use-get-upgrade-plan-site-metrics';
 
 export const useUpgradePlanHostingDetailsList = () => {
@@ -9,59 +8,40 @@ export const useUpgradePlanHostingDetailsList = () => {
 	const { lcpPercentageDifference, fidPercentageDifference, isFetching } =
 		useGetUpgradePlanSiteMetrics();
 
-	let newDefaultHostingDetails = [ ...defaultHostingDetails ];
-	const newHostingDetails = [];
+	const newHostingDetails = useDefaultHostingDetails();
 
 	// LCP hosting details.
 	if ( lcpPercentageDifference > 0 ) {
-		const wordpressLCP = Math.floor( 100 * wordpressCwvtechReportJson.goodLCP );
+		const goodLCPercentage = Math.floor( 100 * cwvtechReportJson[ 'WordPress.com' ].goodLCP );
 
-		const updatedHostingSpeedDetails = {
-			title: translate( 'Higher speed' ),
-			description: translate(
-				'%(wordpressLcpPercentage)s of sites on WordPress.com are at least %(sitePercentageDifference)s faster than yours.',
-				{
-					args: {
-						wordpressLcpPercentage: `${ wordpressLCP }%`,
-						sitePercentageDifference: `${ lcpPercentageDifference }%`,
-					},
-				}
-			),
-			icon: trendingUp,
-		};
-		newDefaultHostingDetails = newDefaultHostingDetails.filter(
-			( { id } ) => id !== 'increased-speed'
+		newHostingDetails[ 'higher-speed' ].description = translate(
+			'%(goodLCPercentage)d%% of sites on WordPress.com are at least %(lcpPercentageDifference)d%% faster than yours.',
+			{
+				args: {
+					goodLCPercentage,
+					lcpPercentageDifference,
+				},
+			}
 		);
-		newHostingDetails.push( updatedHostingSpeedDetails );
 	}
 
 	// FID hosting details.
 	if ( fidPercentageDifference > 0 ) {
-		const wordpressFID = Math.floor( 100 * wordpressCwvtechReportJson.goodFID );
+		const goodFIDPercentage = Math.floor( 100 * cwvtechReportJson[ 'WordPress.com' ].goodFID );
 
-		const updatedHostingFasterResponseDetails = {
-			title: translate( 'Faster response' ),
-			description: translate(
-				'%(wordpressFidPercentage)s of sites on WordPress.com respond at least %(sitePercentageDifference)s faster than yours on the first interaction.',
-				{
-					args: {
-						wordpressFidPercentage: `${ wordpressFID }%`,
-						sitePercentageDifference: `${ fidPercentageDifference }%`,
-					},
-				}
-			),
-			icon: next,
-		};
-		newDefaultHostingDetails = newDefaultHostingDetails.filter(
-			( { id } ) => id !== 'reduced-error-rate'
+		newHostingDetails[ 'faster-response' ].description = translate(
+			'%(goodFIDPercentage)d%% of sites on WordPress.com respond at least %(fidPercentageDifference)d%% faster than yours on the first interaction.',
+			{
+				args: {
+					goodFIDPercentage,
+					fidPercentageDifference,
+				},
+			}
 		);
-		newHostingDetails.push( updatedHostingFasterResponseDetails );
 	}
-
-	const list = [ ...newHostingDetails, ...newDefaultHostingDetails ];
 
 	return {
 		isFetching,
-		list,
+		list: Object.values( newHostingDetails ),
 	};
 };

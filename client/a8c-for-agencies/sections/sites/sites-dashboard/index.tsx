@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
@@ -211,7 +211,7 @@ export default function SitesDashboard() {
 
 	return (
 		<Layout
-			className={ classNames(
+			className={ clsx(
 				'sites-dashboard',
 				'sites-dashboard__layout',
 				! dataViewsState.selectedItem && 'preview-hidden'
@@ -260,7 +260,7 @@ export default function SitesDashboard() {
 						} }
 					>
 						<JetpackSitesDataViews
-							className={ classNames( 'sites-overview__content', {
+							className={ clsx( 'sites-overview__content', {
 								'is-hiding-navigation': navItems.length <= 1,
 							} ) }
 							data={ data }

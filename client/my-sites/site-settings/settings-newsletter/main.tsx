@@ -17,6 +17,7 @@ import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
 import { ReplyToSetting } from './ReplyToSetting';
+import { SenderNameSetting } from './SenderNameSetting';
 import { SubscribeModalOnCommentSetting } from './SubscribeModalOnCommentSetting';
 import { SubscribeModalSetting } from './SubscribeModalSetting';
 import { SubscribeOverlaySetting } from './SubscribeOverlaySetting';
@@ -39,6 +40,7 @@ type Fields = {
 	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	jetpack_subscriptions_reply_to?: string;
+	jetpack_subscriptions_from_name?: string;
 	sm_enabled?: boolean;
 	jetpack_subscribe_overlay_enabled?: boolean;
 	jetpack_subscriptions_subscribe_post_end_enabled?: boolean;
@@ -58,6 +60,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		jetpack_subscriptions_reply_to,
+		jetpack_subscriptions_from_name,
 		sm_enabled,
 		jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
@@ -72,6 +75,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories_enabled: !! wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		jetpack_subscriptions_reply_to: jetpack_subscriptions_reply_to || '',
+		jetpack_subscriptions_from_name: jetpack_subscriptions_from_name || '',
 		sm_enabled: !! sm_enabled,
 		jetpack_subscribe_overlay_enabled: !! jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled:
@@ -108,6 +112,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		wpcom_featured_image_in_email,
 		wpcom_subscription_emails_use_excerpt,
 		jetpack_subscriptions_reply_to,
+		jetpack_subscriptions_from_name,
 		subscription_options,
 		sm_enabled,
 		jetpack_subscribe_overlay_enabled,
@@ -212,6 +217,14 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					updateFields={ updateFields }
 					value={ wpcom_subscription_emails_use_excerpt }
+				/>
+			</Card>
+			<Card className="site-settings__card">
+				<SenderNameSetting
+					disabled={ disabled }
+					updateFields={ updateFields }
+					value={ jetpack_subscriptions_from_name }
+					replyToValue={ jetpack_subscriptions_reply_to }
 				/>
 			</Card>
 			<Card className="site-settings__card">

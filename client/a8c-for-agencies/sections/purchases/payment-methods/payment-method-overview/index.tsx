@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -77,7 +77,7 @@ export default function PaymentMethodOverview() {
 
 					{ showPagination && (
 						<Pagination
-							className={ classNames( 'payment-method-overview__pagination', {
+							className={ clsx( 'payment-method-overview__pagination', {
 								'payment-method-overview__pagination--has-prev': page > 1,
 								'payment-method-overview__pagination--has-next': isFetching || hasMoreStoredCards,
 							} ) }

@@ -2,7 +2,7 @@
 import './styles.scss';
 import { getDesignPreviewUrl } from '@automattic/design-picker';
 import { MShotsImage, MShotsOptions } from '@automattic/onboarding';
-import cx from 'classnames';
+import cx from 'clsx';
 
 type Props = {
 	className?: string;

@@ -2,7 +2,7 @@ import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Button, Gridicon, Dialog, ScreenReaderText, PlanPrice } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -70,7 +70,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 			<QueryPlans />
 			<QueryProductsList />
 			<Dialog
-				className={ classNames( 'upgrade-modal', 'premium-global-styles-upgrade-modal', {
+				className={ clsx( 'upgrade-modal', 'premium-global-styles-upgrade-modal', {
 					loading: ! isLoaded,
 				} ) }
 				isFullScreen

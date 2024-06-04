@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 import './style.scss';
@@ -17,7 +17,7 @@ export default function StepSection( {
 	className,
 }: StepSectionProps ) {
 	return (
-		<div className={ classNames( 'step-section', className ) }>
+		<div className={ clsx( 'step-section', className ) }>
 			<div className="step-section__header">
 				{ !! stepCount && <div className="step-section__step-count">{ stepCount }</div> }
 				<div className="step-section__step-heading">{ heading }</div>

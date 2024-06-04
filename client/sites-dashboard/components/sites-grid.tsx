@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesGridItem } from './sites-grid-item';
 import { SitesGridItemLoading } from './sites-grid-item-loading';
@@ -43,7 +43,7 @@ export const SitesGrid = ( props: SitesGridProps ) => {
 		: {};
 
 	return (
-		<div className={ classnames( container, className ) }>
+		<div className={ clsx( container, className ) }>
 			{ isLoading
 				? Array( N_LOADING_ROWS )
 						.fill( null )

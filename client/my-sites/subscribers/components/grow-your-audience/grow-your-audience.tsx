@@ -5,6 +5,7 @@ import { chartBar, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { SectionContainer } from 'calypso/components/section';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -129,7 +130,11 @@ const GrowYourAudience = () => {
 							title={ translate( 'Start earning' ) }
 							tracksEventCta="earn"
 							ctaLabel={ translate( 'Learn more' ) }
-							url={ `https://wordpress.com/earn/${ selectedSiteSlug ?? '' }` }
+							url={
+								isJetpackCloud()
+									? `/monetize/${ selectedSiteSlug ?? '' }`
+									: `/earn/${ selectedSiteSlug ?? '' }`
+							}
 						/>
 						<GrowYourAudienceCard
 							icon={ people }

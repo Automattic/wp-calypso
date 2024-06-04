@@ -5,7 +5,7 @@ import {
 	PLAN_ECOMMERCE_MONTHLY,
 	getPlan,
 } from '@automattic/calypso-products';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -141,7 +141,7 @@ class DomainProductPrice extends Component {
 	renderFreeForFirstYear() {
 		const { translate } = this.props;
 
-		const className = classnames( 'domain-product-price', 'is-free-domain', {
+		const className = clsx( 'domain-product-price', 'is-free-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
 
@@ -158,7 +158,7 @@ class DomainProductPrice extends Component {
 	}
 
 	renderFreeWithPlan() {
-		const className = classnames( 'domain-product-price', 'is-free-domain', {
+		const className = clsx( 'domain-product-price', 'is-free-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
 
@@ -182,11 +182,11 @@ class DomainProductPrice extends Component {
 	renderFree() {
 		const { showStrikedOutPrice, translate } = this.props;
 
-		const className = classnames( 'domain-product-price', {
+		const className = clsx( 'domain-product-price', {
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );
 
-		const productPriceClassName = classnames( 'domain-product-price__price', {
+		const productPriceClassName = clsx( 'domain-product-price__price', {
 			'domain-product-price__free-price': showStrikedOutPrice,
 		} );
 
@@ -202,7 +202,7 @@ class DomainProductPrice extends Component {
 	renderDomainMovePrice() {
 		const { showStrikedOutPrice, translate } = this.props;
 
-		const className = classnames( 'domain-product-price', {
+		const className = clsx( 'domain-product-price', {
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );
 
@@ -220,7 +220,7 @@ class DomainProductPrice extends Component {
 	renderSalePrice() {
 		const { price, salePrice, translate } = this.props;
 
-		const className = classnames( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
+		const className = clsx( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
 
@@ -250,7 +250,7 @@ class DomainProductPrice extends Component {
 			return this.renderSalePrice();
 		}
 
-		const className = classnames( 'domain-product-price', {
+		const className = clsx( 'domain-product-price', {
 			'is-free-domain': showStrikedOutPrice,
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );

@@ -1,6 +1,6 @@
 import { Button, Gridicon, FoldableCard } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
@@ -173,7 +173,7 @@ class ActivityLogItem extends Component {
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
 				{ activityMedia && isDesktop && (
 					<ActivityMedia
-						className={ classNames( {
+						className={ clsx( {
 							'activity-log-item__activity-media': true,
 							'is-desktop': true,
 							'has-gridicon': ! activityMedia.available,
@@ -342,7 +342,7 @@ class ActivityLogItem extends Component {
 		} = this.props;
 		const { activityIcon, activityStatus, activityTs } = activity;
 
-		const classes = classNames( 'activity-log-item', className );
+		const classes = clsx( 'activity-log-item', className );
 
 		const adjustedTime = applySiteOffset( moment( activityTs ), { timezone, gmtOffset } );
 

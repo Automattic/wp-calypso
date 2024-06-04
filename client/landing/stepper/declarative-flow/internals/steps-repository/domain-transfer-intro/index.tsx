@@ -1,4 +1,5 @@
 import { MaterialIcon } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
@@ -13,6 +14,7 @@ import './styles.scss';
 const Intro: Step = function Intro( { navigation, variantSlug } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const handleSubmit = () => {
 		submit?.();
@@ -56,7 +58,9 @@ const Intro: Step = function Intro( { navigation, variantSlug } ) {
 					withHelpCenter={ false }
 				>
 					<MaterialIcon icon="chat_bubble" />
-					{ __( 'Need help? Chat with us' ) }
+					{ hasEnTranslation( 'Need help? Contact us' )
+						? __( 'Need help? Contact us' )
+						: __( 'Need help? Chat with us' ) }
 				</ChatButton>
 			}
 		/>

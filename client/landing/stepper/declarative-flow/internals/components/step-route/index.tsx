@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
@@ -42,7 +42,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 
 	return (
 		<div
-			className={ classnames(
+			className={ clsx(
 				'step-route',
 				flow.name,
 				flow.variantSlug,

@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { Fragment } from 'react';
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 };
 
 function getStepClassName( currentStep: number, step: number ): string {
-	return classnames( {
+	return clsx( {
 		'is-current': currentStep === step,
 		'is-next': currentStep < step,
 		'is-complete': currentStep > step,

@@ -88,9 +88,9 @@ export function useDateTimeFormat( siteSlug?: string ) {
 	};
 
 	// Prepare timestamp based on site settings
-	const prepareDateTime = ( unixTimestamp: number ) => {
+	const prepareDateTime = ( unixTimestamp: number, customPhpDateFormat?: string ) => {
 		const ts = unixTimestamp * 1000;
-		const format = `${ dateFormat } ${ timeFormat }`;
+		const format = `${ customPhpDateFormat || dateFormat } ${ timeFormat }`;
 
 		return phpToMomentDatetimeFormat( moment( ts ), format );
 	};

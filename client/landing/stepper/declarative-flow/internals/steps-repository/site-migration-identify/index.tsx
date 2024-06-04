@@ -18,9 +18,10 @@ interface Props {
 	hasError?: boolean;
 	onComplete: ( siteInfo: UrlData ) => void;
 	onSkip: () => void;
+	hideImporterListLink: boolean;
 }
 
-export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
+export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 
@@ -59,6 +60,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 					dontHaveSiteAddressLabel={ translate(
 						'Or <button>pick your current platform from a list</button>'
 					) }
+					hideImporterListLink={ hideImporterListLink }
 				/>
 			</div>
 		</div>
@@ -124,6 +126,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 						onComplete={ ( { platform, url } ) =>
 							handleSubmit( 'continue', { platform, from: url } )
 						}
+						hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
 						onSkip={ () => {
 							handleSubmit( 'skip_platform_identification' );
 						} }

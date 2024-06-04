@@ -9,9 +9,8 @@ import {
 	useSurveyStructureQuery,
 } from 'calypso/data/segmentaton-survey';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { SKIP_ANSWER_KEY } from './constants';
 import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-navigation';
-
-const SKIP_ANSWER_KEY = 'skip';
 
 type SegmentationSurveyProps = {
 	surveyKey: string;
@@ -101,8 +100,7 @@ const SegmentationSurvey = ( {
 
 	const onSkip = useCallback(
 		async ( currentQuestion: Question ) => {
-			// Clear the answer for the current question and save the skip answer.
-			onChangeAnswer( currentQuestion.key, [] );
+			onChangeAnswer( currentQuestion.key, [ SKIP_ANSWER_KEY ] );
 			await handleSave( currentQuestion, [ SKIP_ANSWER_KEY ] );
 		},
 		[ handleSave, onChangeAnswer ]
