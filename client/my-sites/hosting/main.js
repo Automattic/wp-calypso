@@ -6,6 +6,7 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Fragment, useState, useCallback } from 'react';
@@ -258,6 +259,7 @@ const Hosting = ( props ) => {
 		transferState,
 	} = props;
 
+	const hasEnTranslation = useHasEnTranslation();
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(
 		transferState &&
@@ -294,6 +296,16 @@ const Hosting = ( props ) => {
 		},
 		[ hasTransfer ]
 	);
+
+	const getPageTitle = () => {
+		if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+			return hasEnTranslation( 'Server Settings' )
+				? translate( 'Server Settings' )
+				: translate( 'Server Config' );
+		}
+
+		return translate( 'Hosting' );
+	};
 
 	const getUpgradeBanner = () => {
 		if ( hasTransfer ) {
@@ -399,20 +411,10 @@ const Hosting = ( props ) => {
 				/>
 			) }
 			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
-			<DocumentHead
-				title={
-					isEnabled( 'layout/dotcom-nav-redesign-v2' )
-						? translate( 'Server Config' )
-						: translate( 'Hosting' )
-				}
-			/>
+			<DocumentHead title={ getPageTitle() } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={
-					isEnabled( 'layout/dotcom-nav-redesign-v2' )
-						? translate( 'Server Config' )
-						: translate( 'Hosting Config' )
-				}
+				title={ getPageTitle() }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
 			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (
