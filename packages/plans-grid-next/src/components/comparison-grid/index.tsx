@@ -644,7 +644,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					{ storageJSX }
+					<div className="plans-grid-next-storage-feature">{ storageJSX }</div>
 				</>
 			) : (
 				<>
