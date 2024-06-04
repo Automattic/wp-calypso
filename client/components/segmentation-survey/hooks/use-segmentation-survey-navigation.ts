@@ -12,7 +12,17 @@ type SegmentationSurveyNavigationProps = {
 	questions?: Question[];
 	answers: Answers;
 	skipNextNavigation?: ( currentQuestionKey: string, answers: string[] ) => boolean;
+	onGoToPage?: ( page: number ) => void;
+	providedPage?: number | null;
 };
+
+/**
+ * The default routing mechanism for the survey is hash-based.
+ * @param page The number of the page to go to.
+ */
+function defaultGoToPage( page: number ) {
+	window.location.hash = `${ page }`;
+}
 
 const useSegmentationSurveyNavigation = ( {
 	onBack,
@@ -22,13 +32,21 @@ const useSegmentationSurveyNavigation = ( {
 	questions,
 	answers,
 	skipNextNavigation,
+	onGoToPage = defaultGoToPage,
+	providedPage = null,
 }: SegmentationSurveyNavigationProps ) => {
 	const { recordBackEvent, recordContinueEvent, recordSkipEvent } =
 		useSegmentationSurveyTracksEvents( surveyKey );
 
 	const hash = useHash();
 
-	const currentPage = useMemo( () => parseInt( hash.replace( '#', '' ), 10 ) || 1, [ hash ] );
+	// If the user of the hook doesn't provide a currentPage, we default to the page stored in the hash part of the URL.
+	const defaultCurrentPage = useMemo(
+		() => parseInt( hash.replace( '#', '' ), 10 ) || 1,
+		[ hash ]
+	);
+
+	const currentPage = providedPage ?? defaultCurrentPage;
 
 	const currentQuestion = useMemo(
 		() => questions?.[ currentPage - 1 ],
@@ -47,16 +65,16 @@ const useSegmentationSurveyNavigation = ( {
 			return;
 		}
 
-		window.location.hash = `${ currentPage - 1 }`;
-	}, [ currentPage, currentQuestion, onBack, recordBackEvent ] );
+		onGoToPage( currentPage - 1 );
+	}, [ currentPage, currentQuestion, onBack, recordBackEvent, onGoToPage ] );
 
 	const nextPage = useCallback( () => {
 		if ( currentPage === questions?.length ) {
 			return;
 		}
 
-		window.location.hash = `${ currentPage + 1 }`;
-	}, [ currentPage, questions?.length ] );
+		onGoToPage( currentPage + 1 );
+	}, [ currentPage, questions?.length, onGoToPage ] );
 
 	const skipToNextPage = useCallback( async () => {
 		if ( ! currentQuestion ) {
@@ -71,7 +89,7 @@ const useSegmentationSurveyNavigation = ( {
 		}
 
 		nextPage();
-	}, [ currentQuestion, nextPage, onSkip, recordSkipEvent ] );
+	}, [ currentQuestion, nextPage, onSkip, recordSkipEvent, skipNextNavigation ] );
 
 	const continueToNextPage = useCallback( async () => {
 		if ( ! currentQuestion ) {
@@ -92,11 +110,19 @@ const useSegmentationSurveyNavigation = ( {
 		}
 
 		nextPage();
-	}, [ answers, currentQuestion, nextPage, onContinue, recordContinueEvent, skipToNextPage ] );
+	}, [
+		answers,
+		currentQuestion,
+		nextPage,
+		onContinue,
+		recordContinueEvent,
+		skipToNextPage,
+		skipNextNavigation,
+	] );
 
 	return {
 		currentQuestion,
-		currentPage,
+		currentPage: currentPage,
 		backToPreviousPage,
 		continueToNextPage,
 		skipToNextPage,
