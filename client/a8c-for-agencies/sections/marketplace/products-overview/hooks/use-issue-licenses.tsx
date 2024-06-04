@@ -1,5 +1,9 @@
 import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
-import { APIError, APILicense } from 'calypso/state/partner-portal/types';
+import {
+	APIError,
+	APILicense,
+	APIProductFamilyProductBundlePrice,
+} from 'calypso/state/partner-portal/types';
 import useIssueLicenseMutation from '../../hooks/use-issue-license-mutation';
 
 const NO_OP = () => {
@@ -9,6 +13,7 @@ const NO_OP = () => {
 export type IssueLicenseRequest = {
 	slug: string;
 	quantity: number;
+	supported_bundles?: APIProductFamilyProductBundlePrice[];
 };
 
 export type FulfilledIssueLicenseResult = {
@@ -50,12 +55,14 @@ const useIssueLicenses = ( options: UseIssueLicensesOptions = {} ) => {
 		selectedLicenses: IssueLicenseRequest[]
 	): Promise< IssueLicenseResult[] > => {
 		const requests: Promise< IssueLicenseResult >[] = selectedLicenses.map(
-			( { slug, quantity } ) =>
-				mutateAsync( { product: slug, quantity } )
+			( { slug, quantity, supported_bundles = [] } ) => {
+				const isBundle = supported_bundles.some( ( bundle ) => bundle.quantity === quantity );
+				return mutateAsync( { product: slug, quantity, isBundle } )
 					.then( ( value ): FulfilledIssueLicenseResult => {
 						return { slug, status: 'fulfilled', licenses: value };
 					} )
-					.catch( (): RejectedIssueLicenseResult => ( { slug, status: 'rejected' } ) )
+					.catch( (): RejectedIssueLicenseResult => ( { slug, status: 'rejected' } ) );
+			}
 		);
 
 		return Promise.all( requests );
