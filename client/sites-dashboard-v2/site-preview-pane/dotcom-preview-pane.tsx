@@ -59,7 +59,7 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_DEVELOPER_TOOLS,
 				<span>
-					{ hasEnTranslation ? __( 'Hosting Settings' ) : __( 'Dev Tools' ) }
+					{ hasEnTranslation( 'Hosting Settings' ) ? __( 'Hosting Settings' ) : __( 'Dev Tools' ) }
 					<DevToolsIcon />
 				</span>,
 				isSimpleSite || isPlanExpired,
@@ -101,7 +101,7 @@ const DotcomPreviewPane = ( {
 			),
 			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
-				hasEnTranslation ? __( 'Server Settings' ) : __( 'Server Config' ),
+				hasEnTranslation( 'Server Settings' ) ? __( 'Server Settings' ) : __( 'Server Config' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,

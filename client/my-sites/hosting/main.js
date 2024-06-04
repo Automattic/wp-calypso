@@ -299,7 +299,9 @@ const Hosting = ( props ) => {
 
 	const getPageTitle = () => {
 		if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-			return hasEnTranslation ? translate( 'Server Settings' ) : translate( 'Server Config' );
+			return hasEnTranslation( 'Server Settings' )
+				? translate( 'Server Settings' )
+				: translate( 'Server Config' );
 		}
 
 		return translate( 'Hosting' );
