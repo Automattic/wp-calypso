@@ -9,7 +9,7 @@ $section-max-width: 1224px;
 .is-section-site-monitoring.theme-default:not(:has(.is-global-sidebar-visible)) {
 	background-color: var(--studio-white);
 	.focus-content:not(.has-no-sidebar) .layout__content {
-		@media screen and ( max-width: 782px ) {
+		@media screen and (max-width: 782px) {
 			padding-top: 71px;
 		}
 	}
@@ -26,7 +26,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 			padding-bottom: 88px;
 		}
 
-		@media ( min-width: 782px ) {
+		@media (min-width: 782px) {
 			padding-inline-start: calc(var(--sidebar-width-max) + 1px);
 		}
 	}
@@ -41,7 +41,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	}
 	& .site-logs-container {
 		padding: 0 max(calc(50% - #{math.div( $section-max-width, 2 )}), 32px);
-		@media screen and ( max-width: 782px ) {
+		@media screen and (max-width: 782px) {
 			padding: 0;
 			margin-left: 16px;
 			margin-right: 16px;
