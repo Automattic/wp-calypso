@@ -2,13 +2,13 @@
 	display: flex;
 	align-items: center;
 
-	@media ( max-width: 660px ) {
+	@media (max-width: 660px) {
 		padding: 0 16px;
 	}
 
 	.search-categories__search {
 		display: flex;
-		width: 100%;
+		width: 255px;
 		justify-content: center;
 
 		.search-categories__searchbox {
@@ -90,7 +90,7 @@
 
 .search-categories.fixed-top {
 	.search-categories__search {
-		@media ( min-width: 783px ) {
+		@media (min-width: 783px) {
 			margin-top: 0;
 			position: fixed;
 			z-index: 20;

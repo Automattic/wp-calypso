@@ -1,20 +1,19 @@
 import page from '@automattic/calypso-router';
-import { SegmentedControl } from '@automattic/components';
 import Search, { ImperativeHandle } from '@automattic/search';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, MutableRefObject, useRef, RefObject, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import ScrollableHorizontalNavigation from 'calypso/components/scrollable-horizontal-navigation';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
-import Categories from 'calypso/my-sites/plugins/categories';
 import {
 	ALLOWED_CATEGORIES,
 	useCategories,
 } from 'calypso/my-sites/plugins/categories/use-categories';
+import { useGetCategoryUrl } from 'calypso/my-sites/plugins/categories/use-get-category-url';
 import { useTermsSuggestions } from 'calypso/my-sites/plugins/search-box-header/useTermsSuggestions';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
-import DiscoverNavigation from 'calypso/reader/discover/discover-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -100,12 +99,14 @@ const SearchCategories: FC< {
 	searchTerms,
 	stickySearchBoxRef,
 } ) => {
+	const getCategoryUrl = useGetCategoryUrl();
 	const categoriesRef = useRef< HTMLDivElement >( null );
 	// We hide these special categories from the category selector
 	const displayCategories = ALLOWED_CATEGORIES.filter(
 		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
 	);
 	const categories = Object.values( useCategories( displayCategories ) );
+	console.debug( 'category', category );
 	console.debug( 'categories', categories );
 	// Update the search box with the value from the url everytime it changes
 	// This allows the component to be refilled with a keyword
@@ -117,7 +118,7 @@ const SearchCategories: FC< {
 
 	return (
 		<>
-			<div className={ classNames( 'search-categories', { 'fixed-top': isSticky } ) }>
+			<div className={ clsx( 'search-categories', { 'fixed-top': isSticky } ) }>
 				<div className="search-categories__search">
 					<SearchBox
 						isMobile={ false }
@@ -129,23 +130,14 @@ const SearchCategories: FC< {
 					/>
 				</div>
 
-				{ /* <div className="search-categories__categories" ref={ categoriesRef }>
-					<SegmentedControl>
-						{ categories.map( ( tag ) => {
-							return (
-								<SegmentedControl.Item
-									key={ tag.slug }
-									selected={ tag.slug === category }
-									onClick={ () => {} }
-								>
-									{ tag.title }
-								</SegmentedControl.Item>
-							);
-						} ) }
-					</SegmentedControl>
-				</div> */ }
-
-				<DiscoverNavigation recommendedTags={ categories } />
+				<ScrollableHorizontalNavigation
+					onTabClick={ ( tabSlug ) => {
+						page.replace( getCategoryUrl( tabSlug ) );
+					} }
+					selectedTab={ category }
+					tabs={ categories }
+					width={ 1200 }
+				/>
 			</div>
 			<div className="search-categories__sticky-ref" ref={ stickySearchBoxRef } />
 		</>
