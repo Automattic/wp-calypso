@@ -120,8 +120,9 @@ export class PlansStep extends Component {
 		const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
 			signupDependencies;
 
-		const surveyedIntent =
-			flowName === 'guided' ? getSegmentedIntent( segmentationSurveyAnswers ) : undefined;
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
+
+		const surveyedIntent = flowName === 'guided' ? segmentSlug : undefined;
 
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
