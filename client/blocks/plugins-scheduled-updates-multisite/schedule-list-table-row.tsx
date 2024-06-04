@@ -125,7 +125,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 							/>
 						</td>
 						<td></td>
-						<td></td>
+						<td className="frequency"></td>
 
 						<td></td>
 						<td className="active">
