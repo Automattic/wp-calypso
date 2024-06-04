@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
@@ -83,7 +83,7 @@ const DiscoverStream = ( props ) => {
 			navigationItems={ [] }
 			title={ translate( 'Discover' ) }
 			subtitle={ subHeaderText }
-			className={ classNames( 'discover-stream-header', {
+			className={ clsx( 'discover-stream-header', {
 				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 			} ) }
 		/>

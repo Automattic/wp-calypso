@@ -205,7 +205,8 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 							hasTranslation(
 								"Secure the full benefits of the %(planName)s plan. Purchase today and maximize your store's potential!"
 							)
-								? translate(
+								? // translators: %(planName)s is a plan name. E.g. Commerce plan.
+								  translate(
 										"Secure the full benefits of the %(planName)s plan. Purchase today and maximize your store's potential!",
 										{
 											args: {

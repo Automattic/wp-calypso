@@ -8,7 +8,7 @@ $plans-2023-small-breakpoint: 780px;
  * TODO clk This should migrate to use grid-size on the parent container. As done for features/comparison grid.
  */
 @mixin plan-type-selector-custom-mobile-breakpoint() {
-	@media ( max-width: $plans-2023-small-breakpoint ) {
+	@media (max-width: $plans-2023-small-breakpoint) {
 		@content;
 	}
 }

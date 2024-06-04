@@ -1,6 +1,6 @@
 // Copied from client/a8c-for-agencies/sections/sites/site-sort/index.tsx as we don't have SitesDashboardContext here.
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {
 	defaultSortIcon,
 	ascendingSortIcon,
@@ -78,7 +78,7 @@ export const SiteSort = ( {
 		<span
 			role="button"
 			tabIndex={ 0 }
-			className={ classNames( 'site-sort site-sort__clickable', {
+			className={ clsx( 'site-sort site-sort__clickable', {
 				'site-sort__icon-large_screen': isLargeScreen,
 			} ) }
 			onKeyDown={ handleOnKeyDown }
@@ -87,7 +87,7 @@ export const SiteSort = ( {
 			{ children }
 			{ isSortable && (
 				<Icon
-					className={ classNames( 'site-sort__icon', {
+					className={ clsx( 'site-sort__icon', {
 						'site-sort__icon-hidden': isLargeScreen && isDefault,
 					} ) }
 					size={ 14 }

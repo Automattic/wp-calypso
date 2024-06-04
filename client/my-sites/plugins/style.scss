@@ -59,13 +59,18 @@ body.is-section-plugins {
 	}
 
 	.is-logged-in main:not(.a4a-layout):not(.a4a-layout-column) {
-		@include break-small {
-			padding-left: 1rem;
-			padding-right: 1rem;
+		&:not(.plugins-browser),
+		&.plugins-browser .plugins-browser__content-wrapper {
+			@include break-small {
+				padding-left: 2rem;
+				padding-right: 2rem;
+			}
 		}
-		@include break-small {
-			padding-left: 2rem;
-			padding-right: 2rem;
+
+		&.plugins-browser--site-view .plugins-browser__content-wrapper {
+			box-sizing: border-box;
+			margin: auto;
+			max-width: 1040px;
 		}
 	}
 
@@ -320,7 +325,7 @@ $calypso-header-height: 31px;
 }
 
 .plugin-details__page {
-	@media screen and ( max-width: 1040px ) {
+	@media screen and (max-width: 1040px) {
 		padding: 16px;
 	}
 }
@@ -399,7 +404,7 @@ $calypso-header-height: 31px;
 		}
 	}
 
-	@media screen and ( max-width: 1040px ) {
+	@media screen and (max-width: 1040px) {
 		display: flex;
 		flex-direction: column;
 
@@ -417,7 +422,7 @@ $calypso-header-height: 31px;
 		}
 	}
 
-	@media screen and ( min-width: 481px ) {
+	@media screen and (min-width: 481px) {
 		.section-nav-tab:first-child .section-nav-tab__link {
 			padding-left: 0;
 		}
@@ -437,7 +442,7 @@ $calypso-header-height: 31px;
 	left: 50%;
 	width: calc(100vw - var(--sidebar-width-max) + 1px);
 
-	@media screen and ( max-width: 782px ) {
+	@media screen and (max-width: 782px) {
 		width: 100vw;
 	}
 }
@@ -446,15 +451,15 @@ $calypso-header-height: 31px;
 	max-width: 1040px;
 	margin: auto;
 
-	@media screen and ( max-width: 1400px ) {
+	@media screen and (max-width: 1400px) {
 		padding: 0 40px;
 	}
 
-	@media screen and ( max-width: 1040px ) {
+	@media screen and (max-width: 1040px) {
 		padding: 0 48px;
 	}
 
-	@media screen and ( max-width: 660px ) {
+	@media screen and (max-width: 660px) {
 		padding: 0 24px;
 	}
 }
@@ -552,7 +557,7 @@ body.is-section-plugins .plugin-management-wrapper {
 			&:nth-child(3) {
 				margin-block-start: 12px;
 				display: block;
-				@media ( min-width: 425px ) {
+				@media (min-width: 425px) {
 					display: initial;
 					margin-block-start: initial;
 				}
@@ -667,7 +672,7 @@ body.is-section-plugins .plugin-management-wrapper {
 .plugin-details__reviews {
 	margin-bottom: 40px;
 
-	@media screen and ( max-width: 1040px ) {
+	@media screen and (max-width: 1040px) {
 		padding: 16px;
 	}
 }
@@ -680,7 +685,7 @@ body.is-section-plugins .plugin-management-wrapper {
 		inset-inline-start: 10px !important;
 	}
 
-	@media ( min-width: 782px ) {
+	@media (min-width: 782px) {
 		inset-inline-start: calc(var(--sidebar-width-min) + 10px) !important;
 	}
 

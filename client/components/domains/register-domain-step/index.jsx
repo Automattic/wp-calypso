@@ -5,7 +5,7 @@ import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/compone
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -135,7 +135,6 @@ class RegisterDomainStep extends Component {
 		otherManagedSubdomains: PropTypes.array,
 		forceExactSuggestion: PropTypes.bool,
 		checkDomainAvailabilityPromises: PropTypes.array,
-		useAlternateDomainMessaging: PropTypes.bool,
 
 		/**
 		 * If an override is not provided we generate 1 suggestion per 1 other subdomain
@@ -173,7 +172,6 @@ class RegisterDomainStep extends Component {
 		otherManagedSubdomains: null,
 		hasPendingRequests: false,
 		forceExactSuggestion: false,
-		useAlternateDomainMessaging: false,
 	};
 
 	constructor( props ) {
@@ -470,11 +468,11 @@ class RegisterDomainStep extends Component {
 			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData )
 			: {};
 
-		const containerDivClassName = classNames( 'register-domain-step', {
+		const containerDivClassName = clsx( 'register-domain-step', {
 			'register-domain-step__signup': this.props.isSignupStep,
 		} );
 
-		const searchBoxClassName = classNames( 'register-domain-step__search', {
+		const searchBoxClassName = clsx( 'register-domain-step__search', {
 			'register-domain-step__search-domain-step': this.props.isSignupStep,
 		} );
 
@@ -699,7 +697,7 @@ class RegisterDomainStep extends Component {
 			return null;
 		}
 
-		const className = classNames( 'register-domain-step__next-page', {
+		const className = clsx( 'register-domain-step__next-page', {
 			'register-domain-step__next-page--is-loading': isLoading,
 		} );
 		return (
@@ -1436,42 +1434,11 @@ class RegisterDomainStep extends Component {
 	};
 
 	renderBestNamesPrompt() {
-		const { translate, promptText, useAlternateDomainMessaging } = this.props;
-		const icon = <Icon icon={ tip } size={ 20 } />;
-		const defaultPrompt = (
-			<>
-				{ icon }
-				{ translate( 'The best names are short and memorable' ) }
-			</>
-		);
-		let prompt = defaultPrompt;
-
-		if ( promptText ) {
-			prompt = (
-				<>
-					{ icon }
-					{ promptText }
-				</>
-			);
-		} else if ( useAlternateDomainMessaging ) {
-			prompt = translate(
-				'{{p}}{{icon/}}Think of your domain name as a welcome mat for your website. Choose from hundreds of top-level domains (e.g. .com or .net), and claim your corner of the web with a custom site address.{{/p}}{{p}}Your first year of domain registration is free when you choose an annual, 2-year, or 3-year plan.{{/p}}',
-				{
-					components: {
-						icon,
-						p: <p />,
-					},
-				}
-			);
-		}
-
+		const { translate, promptText } = this.props;
 		return (
-			<div
-				className={ classNames( 'register-domain-step__example-prompt', {
-					[ 'register-domain-step__example-prompt--stacked' ]: useAlternateDomainMessaging,
-				} ) }
-			>
-				{ prompt }
+			<div className="register-domain-step__example-prompt">
+				<Icon icon={ tip } size={ 20 } />
+				{ promptText ?? translate( 'The best names are short and memorable' ) }
 			</div>
 		);
 	}

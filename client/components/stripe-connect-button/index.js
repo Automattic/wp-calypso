@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -13,7 +13,7 @@ export default class StripeConnectButton extends PureComponent {
 	};
 
 	render() {
-		const className = classNames( 'stripe-connect', this.props.className );
+		const className = clsx( 'stripe-connect', this.props.className );
 
 		// block referrers when external link
 		const rel = this.props.target

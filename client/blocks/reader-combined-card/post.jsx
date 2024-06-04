@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -121,7 +121,7 @@ class ReaderCombinedCardPost extends Component {
 		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
 			isSeen = post?.is_seen;
 		}
-		const classes = classnames( {
+		const classes = clsx( {
 			'reader-combined-card__post': true,
 			'is-selected': isSelected,
 			'is-seen': isSeen,

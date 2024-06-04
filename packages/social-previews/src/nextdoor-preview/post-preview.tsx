@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import cx from 'classnames';
+import clsx from 'clsx';
 import {
 	baseDomain,
 	formatNextdoorDate,
@@ -83,7 +83,7 @@ export function NextdoorPostPreview( {
 						) : null }
 
 						<article
-							className={ cx( 'nextdoor-preview__card', {
+							className={ clsx( 'nextdoor-preview__card', {
 								'small-preview': ! image || hasMedia,
 							} ) }
 						>

@@ -1,3 +1,5 @@
+import { WIDE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { Button, Tooltip, FormToggle } from '@wordpress/components';
 import { chevronDown, chevronRight, Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -24,6 +26,7 @@ type Props = {
 
 export const ScheduleListTableRow = ( props: Props ) => {
 	const { schedule, onEditClick, onLogsClick } = props;
+	const isWideScreen = useBreakpoint( WIDE_BREAKPOINT );
 
 	const { prepareSitesTooltipInfo } = usePrepareSitesTooltipInfo();
 	const { prepareScheduleName } = usePrepareScheduleName();
@@ -64,11 +67,13 @@ export const ScheduleListTableRow = ( props: Props ) => {
 					</Tooltip>
 				</td>
 				<td className="last-update">
-					<ScheduleListLastRunStatus schedule={ schedule } />
+					<ScheduleListLastRunStatus schedule={ schedule } showStatusText={ isWideScreen } />
 				</td>
-				<td className="next-update">{ prepareDateTime( schedule.timestamp ) }</td>
+				<td className="next-update">
+					{ prepareDateTime( schedule.timestamp, ! isWideScreen ? 'M d,' : undefined ) }
+				</td>
 
-				<td>
+				<td className="frequency">
 					{
 						{
 							daily: translate( 'Daily' ),
@@ -115,12 +120,13 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						<td>
 							<ScheduleListLastRunStatus
 								schedule={ schedule }
+								showStatusText={ isWideScreen }
 								site={ site }
 								onLogsClick={ onLogsClick }
 							/>
 						</td>
 						<td></td>
-						<td></td>
+						<td className="frequency"></td>
 
 						<td></td>
 						<td className="active">

@@ -5,7 +5,7 @@ import {
 	FlexBlock,
 } from '@wordpress/components';
 import { Icon, chevronRightSmall, external } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
@@ -40,7 +40,7 @@ export const SidebarNavigatorMenuItem = ( {
 	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
 		return (
 			<Item
-				className={ classnames( 'sidebar-v2__menu-item', {
+				className={ clsx( 'sidebar-v2__menu-item', {
 					'is-active': isSelected,
 				} ) }
 				onClick={ () => onClickMenuItem( link ) }

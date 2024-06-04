@@ -3,7 +3,7 @@ import {
 	__unstableComposite as Composite,
 	__unstableUseCompositeState as useCompositeState,
 } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { CSSProperties, useCallback, useMemo, useState } from 'react';
 import { injectTitlesToPageListBlock } from '../html-transformers';
@@ -67,7 +67,7 @@ const PagePreviewList = ( {
 			<Composite
 				{ ...composite }
 				role="listbox"
-				className={ classnames( 'pattern-assembler__preview-list', {
+				className={ clsx( 'pattern-assembler__preview-list', {
 					'pattern-assembler__preview-list--fullscreen-preview': isFullscreenPreview,
 				} ) }
 			>

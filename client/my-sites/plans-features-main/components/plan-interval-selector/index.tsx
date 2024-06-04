@@ -1,5 +1,5 @@
 import { SegmentedControl } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -30,7 +30,7 @@ const PlanIntervalSelector = ( {
 	return (
 		<SegmentedControl
 			compact
-			className={ classNames( 'plan-interval-selector', pricingGridStyles, className ) }
+			className={ clsx( 'plan-interval-selector', pricingGridStyles, className ) }
 			primary
 		>
 			{ intervals.map( ( planInterval ) => (

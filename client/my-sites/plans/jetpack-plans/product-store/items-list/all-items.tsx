@@ -4,7 +4,7 @@ import {
 	isJetpackSocialSlug,
 	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
@@ -41,7 +41,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 		getIsProductInCart,
 	} = useStoreItemInfoContext();
 
-	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
+	const wrapperClassName = clsx( 'jetpack-product-store__all-items', className );
 
 	return (
 		<div className={ wrapperClassName }>

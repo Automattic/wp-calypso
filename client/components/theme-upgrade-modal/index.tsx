@@ -33,7 +33,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon as WpIcon, check, close } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
@@ -559,7 +559,7 @@ export const ThemeUpgradeModal = ( {
 		<Dialog
 			additionalClassNames={ additionalClassNames }
 			additionalOverlayClassNames={ additionalOverlayClassNames }
-			className={ classNames( 'theme-upgrade-modal', { loading: isLoading } ) }
+			className={ clsx( 'theme-upgrade-modal', { loading: isLoading } ) }
 			isVisible={ isOpen }
 			onClose={ () => closeModal( 'dialog_action' ) }
 			isFullScreen

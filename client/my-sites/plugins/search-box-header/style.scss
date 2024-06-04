@@ -3,7 +3,7 @@
 	flex-direction: column;
 	align-items: center;
 
-	@media ( max-width: 660px ) {
+	@media (max-width: 660px) {
 		padding: 0 16px;
 	}
 
@@ -145,7 +145,7 @@
 
 .search-box-header.fixed-top {
 	.search-box-header__search {
-		@media ( min-width: 783px ) {
+		@media (min-width: 783px) {
 			margin-top: 0;
 			position: fixed;
 			z-index: 20;
@@ -167,7 +167,7 @@
 	}
 
 	.search-box-header__recommended-searches-title {
-		@media ( min-width: 783px ) {
+		@media (min-width: 783px) {
 			margin-top: calc(52px + 24px);
 		}
 	}

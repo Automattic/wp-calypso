@@ -7,7 +7,7 @@
 	width: 414px; // width of mobile plans grid
 	margin: 0 auto;
 
-	@media ( min-width: $break-medium ) {
+	@media (min-width: $break-medium) {
 		max-width: fit-content;
 		width: auto;
 	}

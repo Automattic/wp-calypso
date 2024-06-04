@@ -10,7 +10,7 @@ import DesignPicker, {
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
@@ -183,7 +183,7 @@ export default function DesignPickerStep( props ) {
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
 					onUpgrade={ upgradePlanFromDesignPicker }
-					className={ classnames( {
+					className={ clsx( {
 						'design-picker-step__has-categories': showDesignPickerCategories,
 					} ) }
 					highResThumbnails
@@ -285,7 +285,7 @@ export default function DesignPickerStep( props ) {
 	return (
 		<StepWrapper
 			{ ...props }
-			className={ classnames( {
+			className={ clsx( {
 				'design-picker__has-categories': showDesignPickerCategories,
 				'design-picker__hide-category-column': useDIFMThemes || 'sell' === intent,
 			} ) }

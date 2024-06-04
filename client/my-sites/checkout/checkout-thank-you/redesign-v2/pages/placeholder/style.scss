@@ -118,7 +118,7 @@
 	width: 200px;
 }
 
-@media ( max-width: $break-medium ) {
+@media (max-width: $break-medium) {
 	.congrats-placeholder__footer,
 	.congrats-placeholder__item {
 		flex-direction: column;

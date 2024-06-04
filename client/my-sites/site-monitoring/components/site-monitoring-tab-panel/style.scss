@@ -17,7 +17,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	}
 
 	& .section-nav.is-open {
-		@media ( max-width: 481px ) {
+		@media (max-width: 481px) {
 			box-shadow: rgba(0, 0, 0, 0.05) 0 -1px 0 inset;
 		}
 	}
@@ -30,7 +30,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 		&.is-selected .section-nav-tab__link {
 			box-shadow: inset 0 -2px 0 0 var(--wp-admin-theme-color);
 			color: var(--color-neutral-100);
-			@media ( max-width: 481px ) {
+			@media (max-width: 481px) {
 				background-color: var(--color-primary);
 				color: var(--color-text-inverted);
 			}
@@ -54,7 +54,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 		height: 48px;
 		line-height: 20px;
 		position: relative;
-		@media ( max-width: 481px ) {
+		@media (max-width: 481px) {
 			height: initial;
 			line-height: 20px;
 		}

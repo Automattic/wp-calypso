@@ -2,7 +2,7 @@ import { Badge, Gridicon } from '@automattic/components';
 import { Circle, SVG } from '@wordpress/components';
 import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -151,7 +151,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 					<Icon
 						icon={ info }
 						size={ 18 }
-						className={ classnames( 'settings-header__domain-notice-icon gridicon', {
+						className={ clsx( 'settings-header__domain-notice-icon gridicon', {
 							'gridicon--error settings-header__domain-notice-icon--rotated': [
 								'status-error',
 								'status-warning',

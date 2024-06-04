@@ -23,7 +23,7 @@ export default function useWPCOMPlanDescription( slug: string ) {
 		];
 
 		features2 = [
-			translate( 'Expert live chat & email support' ),
+			translate( 'Priority support 24/7' ),
 			translate( 'DDOS mitigation' ),
 			translate( 'Free staging environment' ),
 			translate( 'Isolated site infrastructure' ),

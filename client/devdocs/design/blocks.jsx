@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import PlanPrice from '@automattic/components/src/plan-price/docs/example';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { trim } from 'lodash';
 import { Component, Fragment } from 'react';
 import AllSites from 'calypso/blocks/all-sites/docs/example';
@@ -82,7 +82,7 @@ export default class AppComponents extends Component {
 	};
 
 	render() {
-		const className = classnames( 'devdocs', 'devdocs__blocks', {
+		const className = clsx( 'devdocs', 'devdocs__blocks', {
 			'is-single': this.props.component,
 			'is-list': ! this.props.component,
 		} );

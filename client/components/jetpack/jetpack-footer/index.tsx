@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import AutomatticBylineLogo from 'calypso/components/jetpack/automattic-byline-logo';
@@ -22,7 +22,7 @@ const JetpackFooter: React.FC< JetpackFooterProps > = ( {
 	const translate = useTranslate();
 	moduleName = moduleName ?? translate( 'Jetpack' );
 	return (
-		<div className={ classnames( 'jp-dashboard-footer', className ) } { ...otherProps }>
+		<div className={ clsx( 'jp-dashboard-footer', className ) } { ...otherProps }>
 			<div className="jp-dashboard-footer__footer-left">
 				<JetpackLogo
 					monochrome

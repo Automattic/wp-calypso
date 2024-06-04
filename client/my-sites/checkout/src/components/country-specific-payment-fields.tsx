@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
@@ -288,7 +288,7 @@ export function CountrySpecificPaymentFieldsUnstyled( {
 		( countryElement ) => countryElement.code === countryCode
 	);
 	const countryName = countryData && countryData.name ? countryData.name : '';
-	const containerClassName = classNames(
+	const containerClassName = clsx(
 		'checkout__country-payment-fields',
 		`checkout__country-${ countryCode.toLowerCase() }`,
 		className

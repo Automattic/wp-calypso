@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -89,7 +89,7 @@ class SidebarNotifications extends Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'sidebar-notifications', {
+		const classes = clsx( this.props.className, 'sidebar-notifications', {
 			'is-active': this.props.isActive,
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,

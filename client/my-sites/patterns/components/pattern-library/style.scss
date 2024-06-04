@@ -28,14 +28,14 @@
 		overflow: hidden;
 	}
 
-	@media ( max-width: $break-wide ) {
+	@media (max-width: $break-wide) {
 		.pattern-library__filters-inner {
 			padding-top: 24px;
 			padding-bottom: 24px;
 		}
 	}
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		position: static;
 
 		.category-pill-navigation {
@@ -59,7 +59,7 @@
 	display: flex;
 	margin-left: 16px;
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		display: none;
 	}
 
@@ -118,7 +118,7 @@
 	@include patterns-page-width;
 	padding-bottom: 96px;
 
-	@media ( max-width: $break-wide ) {
+	@media (max-width: $break-wide) {
 		padding-top: 24px;
 		padding-bottom: 24px;
 	}
@@ -130,7 +130,7 @@
 	gap: 24px;
 	padding: 56px 0 48px;
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		align-items: initial;
 		flex-direction: column;
 		padding: 0 0 24px;
@@ -145,7 +145,7 @@
 		letter-spacing: 0.185px;
 	}
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		.pattern-library__title:not(.pattern-library__title--search) {
 			display: none;
 		}

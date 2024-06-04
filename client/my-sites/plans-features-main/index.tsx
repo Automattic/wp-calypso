@@ -42,7 +42,7 @@ import {
 	useState,
 } from '@wordpress/element';
 import { hasQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult, localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
@@ -438,6 +438,11 @@ const PlansFeaturesMain = ( {
 		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
 	);
 
+	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
+	const offeringFreePlan = gridPlansForFeaturesGridRaw?.some(
+		( { planSlug } ) => planSlug === PLAN_FREE
+	);
+
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
@@ -624,12 +629,9 @@ const PlansFeaturesMain = ( {
 		[]
 	);
 
-	const comparisonGridContainerClasses = classNames(
-		'plans-features-main__comparison-grid-container',
-		{
-			'is-hidden': ! showPlansComparisonGrid,
-		}
-	);
+	const comparisonGridContainerClasses = clsx( 'plans-features-main__comparison-grid-container', {
+		'is-hidden': ! showPlansComparisonGrid,
+	} );
 	const [ isExperimentLoading ] = useExperiment(
 		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
 	);
@@ -677,12 +679,7 @@ const PlansFeaturesMain = ( {
 
 	return (
 		<>
-			<div
-				className={ classNames(
-					'plans-features-main',
-					'is-pricing-grid-2023-plans-features-main'
-				) }
-			>
+			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
 				<QueryPlans coupon={ coupon } />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
@@ -733,6 +730,7 @@ const PlansFeaturesMain = ( {
 				<PlansPageSubheader
 					siteSlug={ siteSlug }
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+					offeringFreePlan={ offeringFreePlan }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					showPlanBenefits={ isInSignup && isTrailMapAny }
@@ -751,14 +749,9 @@ const PlansFeaturesMain = ( {
 							/>
 						) }
 						<div
-							className={ classNames(
-								'plans-features-main__group',
-								'is-wpcom',
-								'is-2023-pricing-grid',
-								{
-									'is-scrollable': plansWithScroll,
-								}
-							) }
+							className={ clsx( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
+								'is-scrollable': plansWithScroll,
+							} ) }
 							data-e2e-plans="wpcom"
 						>
 							<div className="plans-wrapper">

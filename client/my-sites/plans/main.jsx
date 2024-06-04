@@ -409,7 +409,8 @@ class Plans extends Component {
 
 		const entrepreneurTrialSubHeaderText =
 			isEnglishLocale || hasEntrepreneurTrialSubHeaderTextTranslation
-				? translate( "Discover what's available in your %(planName)s plan.", {
+				? // translators: %(planName)s is a plan name. E.g. Commerce plan.
+				  translate( "Discover what's available in your %(planName)s plan.", {
 						args: {
 							planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
 						},

@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -24,7 +24,7 @@ interface HostingCardDescriptionProps {
 
 export function HostingCard( { className, headingId, title, children }: HostingCardProps ) {
 	return (
-		<Card className={ classNames( 'hosting-card', className ) }>
+		<Card className={ clsx( 'hosting-card', className ) }>
 			{ title && (
 				<h3 id={ headingId } className="hosting-card__title">
 					{ title }

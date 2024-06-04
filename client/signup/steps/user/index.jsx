@@ -4,7 +4,7 @@ import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { WPCC } from '@automattic/urls';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -500,7 +500,7 @@ export class UserStep extends Component {
 			}
 
 			return (
-				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
+				<div className={ clsx( 'signup-form__woo-wrapper' ) }>
 					<h3>{ translate( 'Create an account' ) }</h3>
 				</div>
 			);
@@ -508,7 +508,7 @@ export class UserStep extends Component {
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 			return (
-				<div className={ classNames( 'signup-form__wrapper' ) }>
+				<div className={ clsx( 'signup-form__wrapper' ) }>
 					<JetpackLogo full={ false } size={ 60 } />
 					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
 				</div>
@@ -517,7 +517,7 @@ export class UserStep extends Component {
 
 		if ( isA4AOAuth2Client( oauth2Client ) ) {
 			return (
-				<div className={ classNames( 'signup-form__wrapper' ) }>
+				<div className={ clsx( 'signup-form__wrapper' ) }>
 					<A4ALogo size={ 60 } />
 					<h3>
 						{ translate( 'Sign up to Automattic for Agencies with a WordPress.com account.' ) }

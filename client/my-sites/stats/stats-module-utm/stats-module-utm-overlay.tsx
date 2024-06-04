@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import { STATS_FEATURE_UTM_STATS } from '../constants';
 import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
@@ -52,7 +52,7 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( {
 		// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
 		<StatsListCard
 			title="UTM"
-			className={ classNames( className, 'stats-module-utm-overlay', 'stats-module__card', 'utm' ) }
+			className={ clsx( className, 'stats-module-utm-overlay', 'stats-module__card', 'utm' ) }
 			moduleType="utm"
 			data={ fakeData }
 			mainItemLabel="Posts by Source / Medium"

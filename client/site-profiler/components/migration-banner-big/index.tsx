@@ -53,14 +53,15 @@ const StyledButton = styled( Button )`
 	}
 `;
 
-const onMigrateSite = () => {
+const onMigrateSite = ( url?: string ) => {
 	recordTracksEvent( 'calypso_site_profiler_cta', {
 		cta_name: 'migrateSiteBannerBig',
+		url,
 	} );
-	page( `/setup/hosted-site-migration?ref=site-profiler` );
+	page( `/setup/hosted-site-migration?ref=site-profiler&from=${ url }` );
 };
 
-export const MigrationBannerBig = () => {
+export const MigrationBannerBig = ( { url }: { url?: string } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -77,7 +78,7 @@ export const MigrationBannerBig = () => {
 					}
 				) }
 			</Description>
-			<StyledButton onClick={ onMigrateSite }>
+			<StyledButton onClick={ () => onMigrateSite( url ) }>
 				{ translate( 'Start your free migration' ) }
 			</StyledButton>
 		</StyledLayoutBlock>
