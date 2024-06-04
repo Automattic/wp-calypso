@@ -25,6 +25,7 @@ export function useLoginUrlForFlow( { flow }: UseLoginUrlForFlowProps ): string 
 	return useLoginUrl( {
 		variationName: flow.variantSlug ?? flow.name,
 		pageTitle: flow.title,
+		extraTrackArgs: flow.useSignupStartEventProps?.(),
 		locale,
 		redirectTo,
 	} );

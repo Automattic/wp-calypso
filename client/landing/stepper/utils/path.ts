@@ -51,6 +51,7 @@ export const getLoginUrl = ( {
 	pageTitle,
 	locale,
 	customLoginPath,
+	extraTrackArgs,
 }: {
 	/**
 	 * Variation name is used to track the relevant login flow in the signup framework as explained in https://github.com/Automattic/wp-calypso/issues/67173
@@ -60,6 +61,7 @@ export const getLoginUrl = ( {
 	pageTitle?: string | null;
 	locale: string;
 	customLoginPath?: string | null;
+	extraTrackArgs?: Record< string, string >;
 } ): string => {
 	const defaultLoginPath = `/start/account/${
 		isEnabled( 'signup/social-first' ) ? 'user-social' : 'user'
@@ -70,6 +72,7 @@ export const getLoginUrl = ( {
 	// Empty values are ignored down the call stack, so we don't need to check for them here.
 	return addQueryArgs( localizedLoginPath, {
 		variationName,
+		...( extraTrackArgs || {} ),
 		redirect_to: redirectTo,
 		pageTitle,
 		toStepper: true,
@@ -82,6 +85,7 @@ export const useLoginUrl = ( {
 	pageTitle,
 	locale,
 	customLoginPath,
+	extraTrackArgs,
 }: {
 	/**
 	 * Variation name is used to track the relevant login flow in the signup framework as explained in https://github.com/Automattic/wp-calypso/issues/67173
@@ -91,6 +95,7 @@ export const useLoginUrl = ( {
 	pageTitle?: string | null;
 	locale?: string;
 	customLoginPath?: string | null;
+	extraTrackArgs?: Record< string, string | number >;
 } ): string => {
 	const currentLocale = useLocale();
 	return getLoginUrl( {
@@ -99,5 +104,6 @@ export const useLoginUrl = ( {
 		pageTitle,
 		locale: locale ?? currentLocale,
 		customLoginPath,
+		extraTrackArgs,
 	} );
 };
