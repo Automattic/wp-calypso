@@ -191,13 +191,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					value={ jetpack_subscribe_overlay_enabled }
 				/>
 				<FormLabel>{ translate( 'Navigation' ) }</FormLabel>
-				{ shouldShowSubscriptionOnCommentModule && (
-					<SubscribeModalOnCommentSetting
-						disabled={ disabled }
-						handleToggle={ handleToggle }
-						value={ jetpack_verbum_subscription_modal }
-					/>
-				) }
 				<SubscribeNavigationSetting
 					disabled={ disabled }
 					handleToggle={ handleToggle }
