@@ -28,11 +28,6 @@ $head-foot-height: 50px;
 			flex-direction: column;
 		}
 
-		// button.components-button:focus {
-		// 	box-shadow: none;
-		// 	outline: none;
-		// }
-
 		.help-center__container-header {
 			height: $head-foot-height;
 			padding: 16px 8px 16px 16px;
@@ -267,6 +262,11 @@ $head-foot-height: 50px;
 			justify-content: space-between;
 			padding: 16px;
 			box-sizing: border-box;
+
+			.odie-button-default:focus {
+				border-radius: 2px;
+				outline: var(--color-primary-light) solid 2px;
+			}
 		}
 	}
 
