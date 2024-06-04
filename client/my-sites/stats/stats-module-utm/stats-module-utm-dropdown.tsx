@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown, chevronUp, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState, useRef } from 'react';
 import { OPTION_KEYS as SELECTED_OPTION_KEYS } from './stats-module-utm';
 
@@ -54,7 +54,7 @@ const UTMDropdown: React.FC< UTMDropdownProps > = ( {
 	};
 
 	return (
-		<div className={ classNames( className, BASE_CLASS_NAME ) }>
+		<div className={ clsx( className, BASE_CLASS_NAME ) }>
 			<Button onClick={ togglePopoverVisibility } ref={ infoReferenceElement }>
 				{ buttonLabel }
 				{ popoverOpened ? (
@@ -78,7 +78,7 @@ const UTMDropdown: React.FC< UTMDropdownProps > = ( {
 						return (
 							<li
 								key={ key }
-								className={ classNames( `${ BASE_CLASS_NAME }__popover-list-item`, {
+								className={ clsx( `${ BASE_CLASS_NAME }__popover-list-item`, {
 									[ 'is-selected' ]: isSelected,
 									[ 'is-grouped' ]: option.isGrouped,
 									[ 'is-not-grouped' ]: ! option.isGrouped,

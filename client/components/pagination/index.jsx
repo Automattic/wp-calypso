@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import {
@@ -104,7 +104,7 @@ class Pagination extends Component {
 
 		return (
 			<div
-				className={ classnames( 'pagination', className, {
+				className={ clsx( 'pagination', className, {
 					'is-compact': compact,
 					'is-minimal': variant === PaginationVariant.minimal,
 				} ) }

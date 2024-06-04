@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import i18n, { localize, getLocaleSlug } from 'i18n-calypso';
 import { map } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -70,7 +70,7 @@ class AccountSettingsClose extends Component {
 		const { translate, hasAtomicSites, hasCancelablePurchases, isLoading, purchasedPremiumThemes } =
 			this.props;
 		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
-		const containerClasses = classnames( 'account-close', 'main', 'is-wide-layout', {
+		const containerClasses = clsx( 'account-close', 'main', 'is-wide-layout', {
 			'is-loading': isLoading,
 			'is-hiding-other-sites': this.state.showSiteDropdown,
 		} );

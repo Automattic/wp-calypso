@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef, useMemo } from 'react';
 import { BASIC_METRICS_UNITS } from 'calypso/data/site-profiler/metrics-dictionaries';
@@ -44,7 +44,7 @@ export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetric
 	return (
 		showMetric && (
 			<div className="basic-metrics__card">
-				<div className={ classNames( 'basic-metrics__header', score ) }>
+				<div className={ clsx( 'basic-metrics__header', score ) }>
 					<div className="basic-metrics__name">
 						<Gridicon size={ 18 } icon={ getIcon( score ) } />
 						{ name }

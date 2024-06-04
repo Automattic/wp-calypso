@@ -1,5 +1,5 @@
 import { PromptIcon } from '@automattic/command-palette';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useDispatch } from 'calypso/state';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import SidebarMenuItem from '../menu-item';
@@ -14,7 +14,7 @@ export const SidebarSearch = ( { tooltip, onClick } ) => {
 		<>
 			<SidebarMenuItem
 				onClick={ showCommandPalette }
-				className={ classnames( 'sidebar__item-search', {
+				className={ clsx( 'sidebar__item-search', {
 					'is-active': false,
 				} ) }
 				tooltip={ tooltip }

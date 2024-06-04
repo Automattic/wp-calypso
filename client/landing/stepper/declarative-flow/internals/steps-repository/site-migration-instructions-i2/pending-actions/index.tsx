@@ -1,6 +1,6 @@
 import { Spinner } from '@wordpress/components';
 import { Icon, check, closeSmall } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { FC } from 'react';
 import './style.scss';
@@ -29,9 +29,7 @@ const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 	}
 
 	return (
-		<span
-			className={ classNames( 'pending-actions__action', `pending-actions__action--${ state }` ) }
-		>
+		<span className={ clsx( 'pending-actions__action', `pending-actions__action--${ state }` ) }>
 			{ text }
 			<span className="pending-actions__action-icon">{ icon }</span>
 		</span>

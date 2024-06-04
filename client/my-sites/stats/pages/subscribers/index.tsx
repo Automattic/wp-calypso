@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -45,7 +45,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	);
 	const today = new Date().toISOString().slice( 0, 10 );
 
-	const statsModuleListClass = classNames(
+	const statsModuleListClass = clsx(
 		'stats__module-list stats__module--unified',
 		'stats__module-list',
 		'stats__flexible-grid-container',
@@ -113,7 +113,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 							<div className={ statsModuleListClass }>
 								<Followers
 									path="followers"
-									className={ classNames(
+									className={ clsx(
 										{
 											'stats__flexible-grid-item--half': supportsEmailStats,
 											'stats__flexible-grid-item--full': ! supportsEmailStats,
@@ -125,7 +125,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 									<StatsModuleEmails
 										period={ period }
 										query={ { period, date: today } }
-										className={ classNames(
+										className={ clsx(
 											'stats__flexible-grid-item--half',
 											'stats__flexible-grid-item--full--large'
 										) }

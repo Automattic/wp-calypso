@@ -1,5 +1,5 @@
 import { Count } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -58,7 +58,7 @@ export default function LayoutNavigation( {
 }: LayoutNavigationProps ) {
 	return (
 		<SectionNav
-			className={ classNames( 'jetpack-cloud-layout__navigation', className ) }
+			className={ clsx( 'jetpack-cloud-layout__navigation', className ) }
 			applyUpdatedStyles
 			selectedText={
 				<span>

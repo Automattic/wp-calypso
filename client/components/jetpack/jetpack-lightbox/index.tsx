@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon, close } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, ReactNode, forwardRef } from 'react';
 import Modal from 'react-modal';
@@ -49,7 +49,7 @@ const JetpackLightbox: FunctionComponent< JetpackLightboxProps > = ( {
 
 	return (
 		<Modal
-			className={ classNames( 'jetpack-lightbox__modal', className ) }
+			className={ clsx( 'jetpack-lightbox__modal', className ) }
 			overlayClassName="jetpack-lightbox__modal-overlay"
 			isOpen={ isOpen }
 			onRequestClose={ onClose }

@@ -59,13 +59,18 @@ body.is-section-plugins {
 	}
 
 	.is-logged-in main:not(.a4a-layout):not(.a4a-layout-column) {
-		@include break-small {
-			padding-left: 1rem;
-			padding-right: 1rem;
+		&:not(.plugins-browser),
+		&.plugins-browser .plugins-browser__content-wrapper {
+			@include break-small {
+				padding-left: 2rem;
+				padding-right: 2rem;
+			}
 		}
-		@include break-small {
-			padding-left: 2rem;
-			padding-right: 2rem;
+
+		&.plugins-browser--site-view .plugins-browser__content-wrapper {
+			box-sizing: border-box;
+			margin: auto;
+			max-width: 1040px;
 		}
 	}
 

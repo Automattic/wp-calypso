@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useRef, useState, useCallback, ChangeEvent } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -87,7 +87,7 @@ export default function JetpackCancellationSurvey( {
 
 		return (
 			<Card
-				className={ classnames( 'jetpack-cancellation-survey__card', {
+				className={ clsx( 'jetpack-cancellation-survey__card', {
 					'is-selected': isSelected,
 				} ) }
 				id={ choice.id }

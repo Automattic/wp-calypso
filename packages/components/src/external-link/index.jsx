@@ -1,5 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -28,7 +28,7 @@ class ExternalLink extends Component {
 	};
 
 	render() {
-		const classes = classnames( 'external-link', this.props.className, {
+		const classes = clsx( 'external-link', this.props.className, {
 			'icon-first': this.props.showIconFirst,
 			'has-icon': this.props.icon,
 		} );

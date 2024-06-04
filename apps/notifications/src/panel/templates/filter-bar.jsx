@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -34,7 +34,7 @@ export class FilterBar extends Component {
 						<li
 							key={ name }
 							data-filter-name={ name }
-							className={ classNames( 'wpnc__filter--segmented-control-item', {
+							className={ clsx( 'wpnc__filter--segmented-control-item', {
 								selected: name === filterName,
 							} ) }
 							onClick={ this.selectFilter }

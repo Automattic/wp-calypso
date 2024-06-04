@@ -1,7 +1,7 @@
 import { Button, FormInputValidation, FormLabel, Spinner } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -143,7 +143,7 @@ export const GitHubConnectionForm = ( {
 					<FormFieldset className="github-deployments-connect-repository__repository">
 						<FormLabel>{ __( 'Repository' ) }</FormLabel>
 						<div
-							className={ classNames( 'github-deployments-connect-repository__repository-input', {
+							className={ clsx( 'github-deployments-connect-repository__repository-input', {
 								'github-deployments-connect-repository__repository-input--has-error':
 									displayMissingRepositoryError,
 							} ) }

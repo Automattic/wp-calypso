@@ -98,15 +98,19 @@ const isCommandAvailableOnSite = (
 	site: SiteExcerptData,
 	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } }
 ): boolean => {
+	const isAtomic = !! site.is_wpcom_atomic;
+	const isJetpack = !! site.jetpack;
+	const isSelfHosted = isJetpack && ! isAtomic;
+
 	if ( command?.capability && ! userCapabilities[ site.ID ]?.[ command.capability ] ) {
 		return false;
 	}
 
-	if ( command.siteType === SiteType.ATOMIC && ! site.is_wpcom_atomic ) {
+	if ( command.siteType === SiteType.ATOMIC && ! isAtomic ) {
 		return false;
 	}
 
-	if ( command.siteType === SiteType.JETPACK && ! site.jetpack ) {
+	if ( command.siteType === SiteType.JETPACK && ! isJetpack ) {
 		return false;
 	}
 
@@ -126,7 +130,15 @@ const isCommandAvailableOnSite = (
 		return false;
 	}
 
-	if ( command?.filterSelfHosted && site.jetpack && ! site.is_wpcom_atomic ) {
+	if ( command?.filterSelfHosted && isSelfHosted ) {
+		return false;
+	}
+
+	if (
+		command?.adminInterface &&
+		! isSelfHosted &&
+		site.options?.wpcom_admin_interface !== command.adminInterface
+	) {
 		return false;
 	}
 
