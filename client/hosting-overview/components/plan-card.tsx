@@ -38,7 +38,7 @@ const PricingSection: FC = () => {
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
-	const planPurchaseLoading = planPurchase === null;
+	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! pricing || ! planData || planPurchaseLoading;
 
 	const getBillingDetails = () => {
@@ -166,7 +166,7 @@ const PlanCard: FC = () => {
 	const planName = isAgencyPurchase
 		? purchaseType( planPurchase )
 		: planDetails?.product_name_short ?? '';
-	const planPurchaseLoading = planPurchase === null;
+	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! planDetails || planPurchaseLoading;
 
 	// Check for storage addons available for purchase.
