@@ -1721,6 +1721,7 @@ class RegisterDomainStep extends Component {
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE,
 			REGISTERED_OTHER_SITE_SAME_USER,
+			REGISTERED_SAME_SITE,
 		} = domainAvailability;
 
 		const { isSignupStep, includeOwnedDomainInSuggestions } = this.props;
@@ -1731,14 +1732,16 @@ class RegisterDomainStep extends Component {
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE === error ||
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE === error ||
 			( isSignupStep && DOTBLOG_SUBDOMAIN === error ) ||
-			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error )
+			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error ) ||
+			( isGravatarFlow &&
+				[ REGISTERED_OTHER_SITE_SAME_USER, REGISTERED_SAME_SITE ].includes( error ) )
 		) {
 			return;
 		}
 		this.setState( {
 			showAvailabilityNotice: true,
 			availabilityError: error,
-			availabilityErrorData: isGravatarFlow ? { ...errorData, site: null } : errorData,
+			availabilityErrorData: errorData,
 			availabilityErrorDomain: domain,
 		} );
 	}
