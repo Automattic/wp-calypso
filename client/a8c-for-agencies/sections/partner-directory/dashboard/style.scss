@@ -1,0 +1,33 @@
+.partner-directory__dashboard {
+	.a4a-layout__body-wrapper {
+		max-width: 700px;
+	}
+}
+
+.partner-directory-dashboard__heading {
+	margin-block-start: 32px;
+	font-size: rem(24px);
+	margin-block-end: 8px;
+	font-weight: 600;
+}
+.partner-directory-dashboard__subtitle {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	font-size: rem(14px);
+	font-weight: 400;
+	margin-block-end: 48px;
+	color: var(--color-neutral-50);
+}
+
+.partner-directory-dashboard__learn-more-section {
+	margin-block-start: 40px;
+
+	a.button {
+		padding-block: 4px;
+	}
+
+	.step-section__header {
+		margin-block-end: 0;
+	}
+}

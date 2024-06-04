@@ -121,3 +121,14 @@
 
 	}
 }
+
+.step-section-item__step-number {
+	color: var(--color-accent);
+	font-size: rem(16px);
+	font-weight: 600;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	border: 2px solid var(--color-accent);
+}
