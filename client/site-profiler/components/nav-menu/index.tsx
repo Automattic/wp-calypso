@@ -3,10 +3,17 @@ import './style.scss';
 interface NavMenuProps {
 	navItems: {
 		label: string;
+		ref: React.RefObject< HTMLElement >;
 	}[];
 	ctaText?: string;
 	ctaUrl?: string;
 }
+
+const executeScroll = ( ref: React.RefObject< HTMLElement > ) => {
+	if ( ref.current ) {
+		ref.current.scrollIntoView( { behavior: 'smooth' } );
+	}
+};
 
 export const NavMenu = ( { navItems, ctaText, ctaUrl }: NavMenuProps ) => {
 	return (
@@ -14,7 +21,9 @@ export const NavMenu = ( { navItems, ctaText, ctaUrl }: NavMenuProps ) => {
 			<ul>
 				{ navItems.map( ( navItem, index ) => (
 					<li>
-						0{ index + 1 }. { navItem.label }
+						<button onClick={ () => executeScroll( navItem.ref ) }>
+							0{ index + 1 }. { navItem.label }
+						</button>
 					</li>
 				) ) }
 				{ ctaText && (

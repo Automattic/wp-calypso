@@ -170,11 +170,11 @@ export default function SiteProfilerV2( props: Props ) {
 								) }
 								<NavMenu
 									navItems={ [
-										{ label: 'Domain' },
-										{ label: 'Hosting' },
-										{ label: 'Performance Metrics' },
-										{ label: 'Health Scores' },
-										{ label: 'Security' },
+										{ label: 'Domain', ref: domainRef },
+										{ label: 'Hosting', ref: hostingRef },
+										{ label: 'Performance Metrics', ref: perfomanceMetricsRef },
+										{ label: 'Health Scores', ref: healthMetricsRef },
+										{ label: 'Security', ref: securityMetricsRef },
 									] }
 									ctaText="Request migration - It’s free"
 									ctaUrl="/"
