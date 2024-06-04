@@ -37,7 +37,11 @@ export const JumpToRecent = ( {
 
 	return (
 		<div className={ className } style={ { bottom: bottomOffset - heightOffset } }>
-			<button className="odie-jump-to-recent-message-button" onClick={ jumpToRecent }>
+			<button
+				className="odie-jump-to-recent-message-button"
+				disabled={ ! enableJumpToRecent }
+				onClick={ jumpToRecent }
+			>
 				{ translate( 'Jump to recent', {
 					context:
 						'A dynamic button that appears on a chatbox, when the last message is not vissible',
