@@ -6,20 +6,20 @@ import { preventWidows } from 'calypso/lib/formatting';
 import './style.scss';
 
 function FormattedHeader( {
-	brandFont,
-	id,
+	brandFont = false,
+	id = '',
 	headerText,
 	subHeaderText,
 	tooltipText,
 	className,
-	compactOnMobile,
-	align,
-	subHeaderAlign,
-	isSecondary,
+	compactOnMobile = false,
+	align = 'center',
+	subHeaderAlign = null,
+	isSecondary = false,
 	hasScreenOptions,
 	subHeaderAs: SubHeaderAs = 'p',
 	children,
-	screenReader,
+	screenReader = null,
 } ) {
 	const classes = clsx( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
@@ -79,19 +79,6 @@ FormattedHeader.propTypes = {
 	hasScreenOptions: PropTypes.bool,
 	children: PropTypes.node,
 	screenReader: PropTypes.node,
-};
-
-FormattedHeader.defaultProps = {
-	id: '',
-	className: '',
-	brandFont: false,
-	subHeaderText: '',
-	tooltipText: '',
-	compactOnMobile: false,
-	isSecondary: false,
-	align: 'center',
-	subHeaderAlign: null,
-	screenReader: null,
 };
 
 export default FormattedHeader;
