@@ -700,6 +700,10 @@ export function generateFlows( {
 			lastModified: '2024-05-15',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			plans: {
+				isCustomDomainAllowedOnFreePlan: true,
+				deemphasizeFreePlan: true,
+			},
 		},
 		{
 			name: 'entrepreneur',
