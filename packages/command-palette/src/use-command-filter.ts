@@ -1,6 +1,10 @@
 export const COMMAND_SEPARATOR = '|~~~|';
 export const KEYWORD_SEPARATOR = '|~kw~|';
 
+// Note that until we upgrade to cmdk@1 or above, the scoring system is only used for filtering.
+// Scores of zero are ommited from the results and scores above zero are all treated as equal.
+// See https://github.com/pacocoursey/cmdk/pull/182
+
 export const useCommandFilter = () => {
 	const commandFilter = ( value: string, search: string ) => {
 		const lowercaseValue = value.toLowerCase();
