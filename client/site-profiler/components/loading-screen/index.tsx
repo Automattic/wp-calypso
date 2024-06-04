@@ -29,14 +29,17 @@ export const LoadingScreen = () => {
 	];
 
 	const [ progress, setProgress ] = useState( 0 );
+	const [ tick, setTick ] = useState( 0 );
 
 	useEffect( () => {
-		setTimeout( () => {
-			if ( progress < 90 ) {
-				setProgress( progress + ( 100 - progress ) / 5 );
-			}
-		}, 3000 );
-	}, [ progress ] );
+		const timeoutId = setTimeout( () => {
+			const newProgress = 100 * ( 1 - Math.pow( 1.07, -tick ) );
+			setProgress( newProgress );
+			setTick( tick + 1 );
+		}, 1000 );
+
+		return () => clearTimeout( timeoutId );
+	}, [ progress, tick ] );
 
 	return (
 		<LayoutBlock className="landing-page-header-block" width="medium">
