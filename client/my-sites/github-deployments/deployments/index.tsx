@@ -28,7 +28,6 @@ export function GitHubDeployments() {
 			return (
 				<>
 					<GitHubDeploymentsList deployments={ deployments } />
-					<GitHubDeploymentSurvey />
 				</>
 			);
 		}
@@ -66,6 +65,7 @@ export function GitHubDeployments() {
 			}
 		>
 			{ renderContent() }
+			<GitHubDeploymentSurvey />
 		</PageShell>
 	);
 }
