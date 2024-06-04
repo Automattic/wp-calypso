@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
 interface NavMenuProps {
@@ -5,8 +6,8 @@ interface NavMenuProps {
 		label: string;
 		ref: React.RefObject< HTMLElement >;
 	}[];
-	ctaText?: string;
-	ctaUrl?: string;
+	showMigrationCta?: boolean;
+	domain: string;
 }
 
 const executeScroll = ( ref: React.RefObject< HTMLElement > ) => {
@@ -15,7 +16,10 @@ const executeScroll = ( ref: React.RefObject< HTMLElement > ) => {
 	}
 };
 
-export const NavMenu = ( { navItems, ctaText, ctaUrl }: NavMenuProps ) => {
+export const NavMenu = ( { navItems, domain, showMigrationCta = false }: NavMenuProps ) => {
+	const translate = useTranslate();
+	const migrateUrl = `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }`;
+
 	return (
 		<nav className="site-profiler-nav-menu">
 			<ul>
@@ -26,9 +30,9 @@ export const NavMenu = ( { navItems, ctaText, ctaUrl }: NavMenuProps ) => {
 						</button>
 					</li>
 				) ) }
-				{ ctaText && (
+				{ showMigrationCta && (
 					<li className="site-profiler-nav-menu__cta">
-						<a href={ ctaUrl }>{ ctaText }</a>
+						<a href={ migrateUrl }>{ translate( 'Request migration - It’s free' ) }</a>
 					</li>
 				) }
 			</ul>

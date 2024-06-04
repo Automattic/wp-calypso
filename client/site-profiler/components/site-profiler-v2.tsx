@@ -169,15 +169,15 @@ export default function SiteProfilerV2( props: Props ) {
 									/>
 								) }
 								<NavMenu
+									domain={ domain }
 									navItems={ [
-										{ label: 'Domain', ref: domainRef },
-										{ label: 'Hosting', ref: hostingRef },
-										{ label: 'Performance Metrics', ref: perfomanceMetricsRef },
-										{ label: 'Health Scores', ref: healthMetricsRef },
-										{ label: 'Security', ref: securityMetricsRef },
+										{ label: translate( 'Domain' ), ref: domainRef },
+										{ label: translate( 'Hosting' ), ref: hostingRef },
+										{ label: translate( 'Performance Metrics' ), ref: perfomanceMetricsRef },
+										{ label: translate( 'Health Scores' ), ref: healthMetricsRef },
+										{ label: translate( 'Security' ), ref: securityMetricsRef },
 									] }
-									ctaText="Request migration - It’s free"
-									ctaUrl="/"
+									showMigrationCta={ ! isWpCom }
 								></NavMenu>
 								<HostingSection
 									domain={ domain }

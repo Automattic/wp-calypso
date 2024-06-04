@@ -12,8 +12,9 @@
 		list-style: none;
 		padding: 1.5em 2em;
 		margin: 0;
+		align-items: center;
 
-		li {
+		li button {
 			color: var(--studio-gray-20);
 			text-wrap: nowrap;
 			padding: 1em 0;
