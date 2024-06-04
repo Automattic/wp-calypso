@@ -32,9 +32,7 @@ export const LoadingScreen = () => {
 
 	useEffect( () => {
 		setTimeout( () => {
-			if ( progress >= 100 ) {
-				setProgress( 0 );
-			} else {
+			if ( progress < 90 ) {
 				setProgress( progress + ( 100 - progress ) / 5 );
 			}
 		}, 3000 );
