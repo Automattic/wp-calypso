@@ -34,8 +34,7 @@
 	max-width: 1224px;
 
 	@media (max-width: $break-mobile) {
-		height: 100vh;
-		height: 100svh;
+		height: 100dvh;
 		overflow-y: auto;
 	}
 
