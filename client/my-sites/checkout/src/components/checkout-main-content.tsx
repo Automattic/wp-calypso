@@ -24,7 +24,12 @@ import {
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import {
+	styled,
+	joinClasses,
+	getContactDetailsType,
+	hasCheckoutVersion,
+} from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -64,7 +69,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
-import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
@@ -82,7 +86,7 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
-import { CheckoutSummaryFeaturedList, WPCheckoutOrderSummary } from './wp-checkout-order-summary';
+import { WPCheckoutOrderSummary } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -226,15 +230,9 @@ const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
 
 /* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
 function CheckoutSidebarNudge( {
-	siteId,
-	formStatus,
-	changeSelection,
 	addItemToCart,
 	areThereDomainProductsInCart,
 }: {
-	siteId: number | undefined;
-	formStatus: FormStatus;
-	changeSelection: OnChangeItemVariant;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	areThereDomainProductsInCart: boolean;
 } ) {
@@ -243,7 +241,6 @@ function CheckoutSidebarNudge( {
 	const isWcMobile = isWcMobileApp();
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
-	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -262,15 +259,6 @@ function CheckoutSidebarNudge( {
 		return (
 			<CheckoutSidebarNudgeWrapper>
 				<CheckoutNextSteps responseCart={ responseCart } />
-
-				{ shouldUseCheckoutV2 && (
-					<CheckoutSummaryFeaturedList
-						responseCart={ responseCart }
-						siteId={ siteId }
-						isCartUpdating={ FormStatus.VALIDATING === formStatus }
-						onChangeSelection={ changeSelection }
-					/>
-				) }
 			</CheckoutSidebarNudgeWrapper>
 		);
 	}
@@ -293,14 +281,6 @@ function CheckoutSidebarNudge( {
 					responseCart={ responseCart }
 					addItemToCart={ addItemToCart }
 					isPurchaseRenewal={ isPurchaseRenewal }
-				/>
-			) }
-			{ shouldUseCheckoutV2 && (
-				<CheckoutSummaryFeaturedList
-					responseCart={ responseCart }
-					siteId={ siteId }
-					isCartUpdating={ FormStatus.VALIDATING === formStatus }
-					onChangeSelection={ changeSelection }
 				/>
 			) }
 		</CheckoutSidebarNudgeWrapper>
@@ -569,11 +549,12 @@ export default function CheckoutMainContent( {
 									</div>
 								) }
 
-								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
-								<CheckoutSidebarNudge
+								<WPCheckoutOrderSummary
 									siteId={ siteId }
-									formStatus={ formStatus }
-									changeSelection={ changeSelection }
+									onChangeSelection={ changeSelection }
+									showFeaturesList
+								/>
+								<CheckoutSidebarNudge
 									addItemToCart={ addItemToCart }
 									areThereDomainProductsInCart={ areThereDomainProductsInCart }
 								/>

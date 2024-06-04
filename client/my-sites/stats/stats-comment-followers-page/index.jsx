@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, flowRight } from 'lodash';
 import { Component } from 'react';
@@ -99,7 +99,7 @@ class StatModuleFollowersPage extends Component {
 			<div className="followers">
 				<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ query } />
 				<SectionHeader label={ translate( 'Comments Subscribers' ) } />
-				<Card className={ classNames( classes ) }>
+				<Card className={ clsx( classes ) }>
 					<div className="module-content">
 						{ noData && ! hasError && ! isLoading && (
 							<ErrorPanel className="is-empty-message" message={ translate( 'No subscribers' ) } />

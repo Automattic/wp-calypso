@@ -3,7 +3,7 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { Icon, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 //import { useInView } from 'react-intersection-observer';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
@@ -91,7 +91,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	return (
 		<div className="sites-dataviews__site">
 			<SiteListTile
-				contentClassName={ classnames(
+				contentClassName={ clsx(
 					'sites-dataviews__site-name',
 					css`
 						min-width: 0;

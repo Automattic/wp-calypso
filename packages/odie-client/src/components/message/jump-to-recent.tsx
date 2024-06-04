@@ -1,5 +1,5 @@
 import { Icon, chevronDown } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useOdieAssistantContext } from '../../context';
 
@@ -30,14 +30,18 @@ export const JumpToRecent = ( {
 		return null;
 	}
 
-	const className = classnames( 'odie-gradient-to-white', {
+	const className = clsx( 'odie-gradient-to-white', {
 		'is-visible': enableJumpToRecent,
 		'is-hidden': ! enableJumpToRecent,
 	} );
 
 	return (
 		<div className={ className } style={ { bottom: bottomOffset - heightOffset } }>
-			<button className="odie-jump-to-recent-message-button" onClick={ jumpToRecent }>
+			<button
+				className="odie-jump-to-recent-message-button"
+				disabled={ ! enableJumpToRecent }
+				onClick={ jumpToRecent }
+			>
 				{ translate( 'Jump to recent', {
 					context:
 						'A dynamic button that appears on a chatbox, when the last message is not vissible',

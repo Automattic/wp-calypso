@@ -1,5 +1,5 @@
 import spritePath from '@automattic/material-design-icons/svg-sprite/material-icons.svg';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 import { Assign } from 'utility-types';
 
@@ -15,7 +15,7 @@ function MaterialIcon( props: Assign< React.SVGProps< SVGSVGElement >, Props > )
 	// Using a missing icon doesn't produce any errors, just a blank icon, which is the exact intended behaviour.
 	// This means we don't need to perform any checks on the icon name.
 	const iconName = `material-icon-${ icon }`;
-	const iconClass = classnames( 'material-icon', iconName, className );
+	const iconClass = clsx( 'material-icon', iconName, className );
 
 	const svgId = `icon-${ style }-${ icon }-${ size }px`;
 

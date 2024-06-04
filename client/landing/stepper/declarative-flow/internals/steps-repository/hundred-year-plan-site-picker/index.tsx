@@ -1,5 +1,6 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button, Modal } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -132,6 +133,7 @@ const ConfirmationModal = ( {
 	closeModal: () => void;
 } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const { openChat } = usePresalesChat( 'wpcom' );
 
@@ -185,11 +187,17 @@ const ConfirmationModal = ( {
 					</List>
 					<Footer>
 						<HelpLink>
-							{ translate( 'Need help? {{ChatLink}}Chat with us{{/ChatLink}}', {
-								components: {
-									ChatLink: <Button variant="link" onClick={ openChat } />,
-								},
-							} ) }
+							{ hasEnTranslation( 'Need help? {{ChatLink}}Contact us{{/ChatLink}}' )
+								? translate( 'Need help? {{ChatLink}}Contact us{{/ChatLink}}', {
+										components: {
+											ChatLink: <Button variant="link" onClick={ openChat } />,
+										},
+								  } )
+								: translate( 'Need help? {{ChatLink}}Chat with us{{/ChatLink}}', {
+										components: {
+											ChatLink: <Button variant="link" onClick={ openChat } />,
+										},
+								  } ) }
 						</HelpLink>
 						<ButtonsContainer>
 							<StyledButton variant="secondary" onClick={ closeModal }>

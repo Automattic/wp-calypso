@@ -46,6 +46,14 @@ const GlobalSidebar = ( {
 		recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_BACK_CLICK, { path } );
 	};
 
+	const getBackLinkFromURL = () => {
+		const searchParams = new URLSearchParams( window.location.search );
+		const url = searchParams.get( 'from' ) || '';
+
+		// Only accept internal links for security purposes.
+		return url.startsWith( '/' ) ? url : '';
+	};
+
 	useEffect( () => {
 		wrapperRef.current?.addEventListener( 'wheel', handleWheel, { passive: false } );
 		return () => {
@@ -71,7 +79,7 @@ const GlobalSidebar = ( {
 	}
 
 	const { requireBackLink, siteTitle, backLinkHref, ...sidebarProps } = props;
-	const sidebarBackLinkHref = backLinkHref || previousLink || '/sites';
+	const sidebarBackLinkHref = getBackLinkFromURL() || backLinkHref || previousLink || '/sites';
 
 	return (
 		<div className="global-sidebar" ref={ wrapperRef }>

@@ -3,7 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useHasEnTranslation, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
@@ -30,6 +30,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
+	const hasEnTranslation = useHasEnTranslation();
 	const {
 		site,
 		navigateToVerifyEmailStep,
@@ -116,6 +117,22 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		);
 	};
 
+	const upgradeCtaCopy = hasEnTranslation(
+		'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.'
+	)
+		? // translators: %(planName)s is a plan name. E.g. Commerce plan.
+		  translate(
+				'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.',
+				{
+					args: {
+						planName: plan?.getTitle() ?? '',
+					},
+				}
+		  )
+		: translate(
+				'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
+		  );
+
 	return (
 		<div className="import__upgrade-plan">
 			{ ! hideTitleAndSubTitle && (
@@ -127,9 +144,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 					</Title>
 					<SubTitle className="onboarding-subtitle--full-width">
 						{ subTitleText || isEnglishLocale
-							? translate(
-									'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
-							  )
+							? upgradeCtaCopy
 							: translate(
 									'Migrating themes, plugins, users, and settings requires a %(plan)s plan.',
 									{

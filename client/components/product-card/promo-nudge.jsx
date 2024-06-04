@@ -1,8 +1,8 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 const ProductCardPromoNudge = ( { badgeText, text } ) => {
-	const className = classNames( 'product-card__promo-nudge', {
+	const className = clsx( 'product-card__promo-nudge', {
 		'has-badge': !! badgeText,
 	} );
 

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { addLocaleToPath, localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -494,7 +494,7 @@ class MagicLogin extends Component {
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			return (
 				<Main
-					className={ classNames( 'grav-powered-magic-login', {
+					className={ clsx( 'grav-powered-magic-login', {
 						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>

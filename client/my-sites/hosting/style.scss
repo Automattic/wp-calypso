@@ -50,11 +50,10 @@ $areas: github-deployments, sftp, site-backup, support, phpmyadmin, staging-site
 				grid-template-columns: 1fr 1fr;
 				grid-template-areas:
 					"github-deployments github-deployments"
-					"sftp site-backup"
-					"sftp support"
-					"phpmyadmin staging-site"
-					"restore-plan-software cache"
-					"web-server-settings admin-interface-style";
+					"sftp phpmyadmin"
+					"sftp cache"
+					"restore-plan-software web-server-settings"
+					"admin-interface-style web-server-settings";
 			}
 		}
 	}

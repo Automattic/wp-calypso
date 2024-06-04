@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, FormInputValidation, Gridicon, SelectDropdown } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FC, useState, useCallback, useEffect, useMemo } from 'react';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
@@ -318,7 +318,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					{ selectDropdownItems.map( ( option ) => (
 						<SelectDropdown.Item { ...option.props }>
 							<div
-								className={ classnames(
+								className={ clsx(
 									'licensing-thank-you-auto-activation__dropdown-item-flex-container',
 									{
 										'has-seperator': option.value === 'activate-license-manually',

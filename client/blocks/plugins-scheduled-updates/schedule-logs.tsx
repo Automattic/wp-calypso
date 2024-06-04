@@ -1,5 +1,13 @@
-import { __experimentalText as Text, Tooltip, Spinner } from '@wordpress/components';
-import { Icon, info } from '@wordpress/icons';
+import {
+	__experimentalText as Text,
+	Tooltip,
+	Spinner,
+	Button,
+	Card,
+	CardHeader,
+	CardBody,
+} from '@wordpress/components';
+import { Icon, info, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import Timeline from 'calypso/components/timeline';
@@ -80,8 +88,18 @@ export const ScheduleLogs = ( props: Props ) => {
 	}
 
 	return (
-		<>
-			<div>
+		<Card className="plugins-update-manager">
+			<CardHeader size="extraSmall">
+				<div className="ch-placeholder">
+					{ onNavBack && (
+						<Button icon={ arrowLeft } onClick={ onNavBack }>
+							{ translate( 'Back' ) }
+						</Button>
+					) }
+				</div>
+				<Text>
+					{ translate( 'Logs' ) } - { prepareScheduleName( schedule as ScheduleUpdates ) }
+				</Text>
 				<div className="ch-placeholder">
 					<Text isBlock align="end" lineHeight={ 2.5 }>
 						{ translate( '%(pluginsNumber)d plugin', '%(pluginsNumber)d plugins', {
@@ -101,13 +119,15 @@ export const ScheduleLogs = ( props: Props ) => {
 						) }
 					</Text>
 				</div>
-			</div>
-			{ isPendingLogs && <Spinner /> }
-			{ ! isPendingLogs && ! scheduleLogs.length && (
-				<div className="empty-state">
-					<Text align="center">{ translate( 'No logs available at the moment.' ) }</Text>
-				</div>
-			) }
+			</CardHeader>
+			<CardBody>
+				{ isPendingLogs && <Spinner /> }
+				{ ! isPendingLogs && ! scheduleLogs.length && (
+					<div className="empty-state">
+						<Text align="center">{ translate( 'No logs available at the moment.' ) }</Text>
+					</div>
+				) }
+			</CardBody>
 			{ scheduleLogs.map( ( logs, i ) => (
 				<Timeline key={ i }>
 					{ logs.reverse().map( ( log, j ) => (
@@ -136,6 +156,6 @@ export const ScheduleLogs = ( props: Props ) => {
 					) ) }
 				</Timeline>
 			) ) }
-		</>
+		</Card>
 	);
 };

@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { InputHTMLAttributes, forwardRef } from 'react';
 
 import './style.scss';
@@ -11,7 +11,7 @@ const FormInputCheckbox = forwardRef< HTMLInputElement | null, CheckboxProps >(
 			ref={ ref }
 			{ ...otherProps }
 			type="checkbox"
-			className={ classnames( className, 'form-checkbox' ) }
+			className={ clsx( className, 'form-checkbox' ) }
 		/>
 	)
 );

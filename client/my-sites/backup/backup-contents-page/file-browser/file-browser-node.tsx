@@ -1,7 +1,7 @@
 import { Button, CheckboxControl, Icon } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import { chevronDown, chevronRight } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -235,12 +235,12 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		return <Icon icon={ isOpen ? chevronDown : chevronRight } />;
 	};
 
-	const nodeItemClassName = classNames( 'file-browser-node__item', {
+	const nodeItemClassName = clsx( 'file-browser-node__item', {
 		'is-alternate': isAlternate,
 	} );
 	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
 
-	const nodeClassName = classNames( 'file-browser-node', item.type, {
+	const nodeClassName = clsx( 'file-browser-node', item.type, {
 		'is-root': isRoot,
 	} );
 

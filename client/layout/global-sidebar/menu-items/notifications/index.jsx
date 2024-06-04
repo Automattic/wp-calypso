@@ -1,10 +1,12 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarMenuItem from 'calypso/layout/global-sidebar/menu-items/menu-item';
+import { setUnseenCount } from 'calypso/state/notifications/actions';
 import getUnseenCount from 'calypso/state/selectors/get-notification-unseen-count';
+import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { BellIcon } from './icon';
@@ -18,13 +20,16 @@ class SidebarNotifications extends Component {
 		onClick: PropTypes.func,
 		//connected
 		isNotificationsOpen: PropTypes.bool,
+		hasUnseenNotifications: PropTypes.bool,
 		unseenCount: PropTypes.number,
 		tooltip: TranslatableString,
 	};
 
 	state = {
 		animationState: 0,
-		newNote: this.props.unseenCount > 0,
+		// unseenCount is null on initial load, so we use hasUnseenNotifications which checks user
+		// data as well.
+		newNote: this.props.hasUnseenNotifications,
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -34,6 +39,9 @@ class SidebarNotifications extends Component {
 
 		if ( ! prevProps.isNotificationsOpen && this.props.isNotificationsOpen ) {
 			this.setNotesIndicator( 0 );
+			// Ensure we setUnseenCount when opening notes panel. The panel only calls this on
+			// APP_RENDER_NOTES which is not consistently called when opening the panel.
+			this.props.setUnseenCount( 0 );
 		}
 	}
 
@@ -81,7 +89,7 @@ class SidebarNotifications extends Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'sidebar-notifications', {
+		const classes = clsx( this.props.className, 'sidebar-notifications', {
 			'is-active': this.props.isActive,
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,
@@ -108,10 +116,12 @@ const mapStateToProps = ( state ) => {
 		isActive: isPanelOpen || window.location.pathname === '/read/notifications',
 		isNotificationsOpen: isPanelOpen,
 		unseenCount: getUnseenCount( state ),
+		hasUnseenNotifications: hasUnseenNotifications( state ),
 	};
 };
 const mapDispatchToProps = {
 	toggleNotificationsPanel,
+	setUnseenCount,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( SidebarNotifications );

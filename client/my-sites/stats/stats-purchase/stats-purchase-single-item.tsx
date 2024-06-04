@@ -126,7 +126,7 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 	}
 
 	return {
-		pageTitle: translate( 'Simple yet powerful stats to grow your site' ),
+		pageTitle: translate( 'Simple, yet powerful stats to grow your site' ),
 		infoText: translate(
 			'Jetpack Stats makes it easy to see how your site is doing. No data science skills needed. Start with a commercial license and get premium access to:'
 		),
@@ -201,24 +201,25 @@ const StatsCommercialPurchase = ( {
 						}_stats_purchase_commercial_slider_clicked` }
 						onSliderChange={ handleSliderChanged }
 					/>
-					<ButtonComponent
-						className="stats-purchase-page__full-width"
-						variant="primary"
-						primary={ isWPCOMSite ? true : undefined }
-						onClick={ () =>
-							gotoCheckoutPage( {
-								from,
-								type: 'commercial',
-								siteSlug,
-								adminUrl,
-								redirectUri,
-								price: undefined,
-								quantity: purchaseTierQuantity,
-							} )
-						}
-					>
-						{ continueButtonText }
-					</ButtonComponent>
+					<div className="stats-purchase-wizard__actions">
+						<ButtonComponent
+							variant="primary"
+							primary={ isWPCOMSite ? true : undefined }
+							onClick={ () =>
+								gotoCheckoutPage( {
+									from,
+									type: 'commercial',
+									siteSlug,
+									adminUrl,
+									redirectUri,
+									price: undefined,
+									quantity: purchaseTierQuantity,
+								} )
+							}
+						>
+							{ continueButtonText }
+						</ButtonComponent>
+					</div>
 					<div className="stats-purchase-page__footnotes">
 						<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>
 					</div>
@@ -477,7 +478,9 @@ function StatsCommercialFlowOptOutForm( {
 					},
 				}
 		  )
-		: translate( 'To use a non-commercial license you must agree to the following:' );
+		: translate(
+				'For non-commercial use, get started with a non-commercial license, including an optional contribution. Please agree to the following terms:'
+		  );
 
 	return (
 		<>

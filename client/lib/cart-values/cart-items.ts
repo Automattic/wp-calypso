@@ -839,6 +839,7 @@ export function getDomainPriceRule(
 		product_slug?: string;
 		productSlug?: string;
 		cost?: string;
+		sale_cost?: number;
 		domain_name?: string;
 		is_premium?: boolean;
 	},
@@ -863,7 +864,7 @@ export function getDomainPriceRule(
 	}
 
 	if ( isDomainForGravatarFlow( flowName ) ) {
-		return 'FREE_FOR_FIRST_YEAR';
+		return suggestion.sale_cost === 0 ? 'FREE_FOR_FIRST_YEAR' : 'PRICE';
 	}
 
 	if ( domainAndPlanUpsellFlow ) {

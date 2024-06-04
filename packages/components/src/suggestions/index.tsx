@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { find, groupBy, isEqual, partition, property } from 'lodash';
 import { Fragment, Component } from 'react';
 import ReactDOM from 'react-dom';
@@ -179,7 +179,7 @@ class Suggestions extends Component< Props, State > {
 
 	render() {
 		const { query, className, title } = this.props;
-		const containerClass = classnames( 'suggestions', className );
+		const containerClass = clsx( 'suggestions', className );
 
 		if ( ! this.getSuggestionsCount() ) {
 			return null;

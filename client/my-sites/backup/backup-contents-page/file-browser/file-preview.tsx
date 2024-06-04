@@ -1,5 +1,5 @@
 import { useEffect, useState } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -110,7 +110,7 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 
 	const isLoading = isTextContent ? ! fileContent && ! isError : isInitialLoading;
 	const isReady = isTextContent ? fileContent : isSuccess;
-	const classNames = classnames( 'file-card__preview', item.type, {
+	const classNames = clsx( 'file-card__preview', item.type, {
 		'file-card__preview--is-loading': isLoading,
 	} );
 

@@ -3,10 +3,40 @@
 
 $brand-display: "SF Pro Display", sans-serif;
 
+.plugins-update-manager:not(.plugins-update-manager-multisite) {
+	.empty-state {
+		max-width: 80%;
+	}
+}
+
 .plugins-update-manager,
 .plugins-update-manager-multisite {
-	@media screen and (max-width: $break-small) {
-		margin: 1rem;
+	// Table cells style based on the screen size
+	@media screen and (min-width: $break-wide) {
+		&-table {
+			td {
+				&.last-update,
+				&.next-update {
+					min-width: 210px;
+				}
+
+				&.name {
+					min-width: 180px;
+				}
+
+				&.sites {
+					min-width: 80px;
+				}
+			}
+		}
+	}
+
+	@media screen and (max-width: $break-wide) {
+		&-table {
+			.frequency {
+				display: none;
+			}
+		}
 	}
 
 	h1 {
@@ -72,6 +102,11 @@ $brand-display: "SF Pro Display", sans-serif;
 		p {
 			text-align: center;
 		}
+
+		button {
+			display: flex;
+			margin: auto;
+		}
 	}
 
 	&-table {
@@ -98,10 +133,6 @@ $brand-display: "SF Pro Display", sans-serif;
 			padding: 0.5rem 0.125rem;
 			vertical-align: middle;
 
-			&.last-update {
-				min-width: 200px;
-			}
-
 			.badge-component {
 				line-height: 2;
 			}
@@ -113,14 +144,6 @@ $brand-display: "SF Pro Display", sans-serif;
 				button {
 					margin-top: rem(2px);
 				}
-			}
-
-			&.name {
-				width: 300px;
-			}
-
-			&.sites {
-				width: 80px;
 			}
 
 			&.menu {

@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable } from '@automattic/domains-table';
 import { useBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { HostingCard, HostingCardHeading } from 'calypso/components/hosting-card';
@@ -29,7 +29,7 @@ const ActiveDomainsCard: FC = () => {
 		<HostingCard className="hosting-overview__active-domains">
 			<HostingCardHeading title={ translate( 'Active domains' ) }>
 				<Button
-					className={ classNames(
+					className={ clsx(
 						'hosting-overview__link-button',
 						'hosting-overview__mobile-hidden-link-button'
 					) }

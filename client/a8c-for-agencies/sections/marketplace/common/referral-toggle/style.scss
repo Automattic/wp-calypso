@@ -1,0 +1,15 @@
+.a4a-marketplace__toggle-marketplace-type {
+	display: flex;
+	align-items: center;
+	margin-inline-end: 1rem;
+	gap: 0.25rem;
+
+	.components-toggle-control {
+		margin: 0;
+	}
+
+	.gridicon {
+		fill: var(--studio-gray-40);
+		cursor: pointer;
+	}
+}

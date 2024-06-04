@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -102,7 +102,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 
 	return (
 		<div
-			className={ classNames( 'onboarding-widget__empty-list', {
+			className={ clsx( 'onboarding-widget__empty-list', {
 				'is-licenses-page': isLicensesPage,
 			} ) }
 		>
@@ -122,7 +122,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 							{ step.isCompleted && completedStep }
 						</div>
 						<div
-							className={ classNames( 'onboarding-widget__video', {
+							className={ clsx( 'onboarding-widget__video', {
 								'is-loading-iframe': ! isIframeLoaded,
 							} ) }
 						>
