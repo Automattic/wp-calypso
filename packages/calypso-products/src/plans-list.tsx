@@ -713,7 +713,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			},
 		];
 	},
-	get2023PlanComparisonFeatureLabels: () => ( {
+	getPlanComparisonFeatureLabels: () => ( {
 		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '10%' ),
 	} ),
@@ -970,7 +970,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			},
 		];
 	},
-	get2023PlanComparisonFeatureLabels: () => ( {
+	getPlanComparisonFeatureLabels: () => ( {
 		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
 		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '8%' ),
@@ -1347,7 +1347,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			};
 		} );
 	},
-	get2023PlanComparisonFeatureLabels: () => ( {
+	getPlanComparisonFeatureLabels: () => ( {
 		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Unlimited premium themes' ),
 		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '0%' ),
@@ -1799,7 +1799,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			},
 		];
 	},
-	get2023PlanComparisonFeatureLabels: () => ( {
+	getPlanComparisonFeatureLabels: () => ( {
 		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Unlimited premium themes' ),
 		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '4%' ),
@@ -2145,7 +2145,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 					FEATURE_SEO_JP,
 			  ]
 			: [],
-	get2023PlanComparisonFeatureLabels: () => {
+	getPlanComparisonFeatureLabels: () => {
 		const featureLabels: Record< Feature, TranslateResult > = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Unlimited premium themes' ),
 			[ FEATURE_PREMIUM_STORE_THEMES ]: i18n.translate( 'Available with plugins' ),

@@ -310,7 +310,7 @@ export type Plan = BillingTerm & {
 	 * Features that are conditionally available and are to be shown in the plans comparison table.
 	 * For example: "Available with plugins"
 	 */
-	get2023PlanComparisonFeatureLabels?: () => Record< Feature, TranslateResult >;
+	getPlanComparisonFeatureLabels?: () => Record< Feature, TranslateResult >;
 
 	get2023PricingGridSignupStorageOptions?: (
 		showLegacyStorageFeature?: boolean,
