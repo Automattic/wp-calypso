@@ -7,7 +7,10 @@ import {
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible } from 'calypso/my-sites/site-monitoring/controller';
 import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
-import { DOTCOM_LOGS } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+import {
+	DOTCOM_PHP_LOGS,
+	DOTCOM_WEB_LOGS,
+} from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
 import { httpRequestLogs, phpErrorLogs } from './controller';
 
 export default function () {
@@ -25,7 +28,7 @@ export default function () {
 		redirectHomeIfIneligible,
 		navigation,
 		phpErrorLogs,
-		siteDashboard( DOTCOM_LOGS ),
+		siteDashboard( DOTCOM_PHP_LOGS ),
 		makeLayout,
 		clientRender
 	);
@@ -36,7 +39,7 @@ export default function () {
 		redirectHomeIfIneligible,
 		navigation,
 		httpRequestLogs,
-		siteDashboard( DOTCOM_LOGS ),
+		siteDashboard( DOTCOM_WEB_LOGS ),
 		makeLayout,
 		clientRender
 	);
