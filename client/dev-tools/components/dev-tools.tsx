@@ -80,7 +80,7 @@ const DevTools = () => {
 			supportContext: 'site-monitoring-logs',
 		},
 		{
-			title: hasEnTranslation
+			title: hasEnTranslation( 'Server Settings' )
 				? translate( 'Server Settings' )
 				: translate( 'Server Configuration' ),
 			text: translate(
