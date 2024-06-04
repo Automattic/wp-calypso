@@ -15,6 +15,7 @@ import {
 	JETPACK_MONITOR_PRODUCTS,
 	WOOCOMMERCE_PRODUCTS,
 	JETPACK_CREATOR_PRODUCTS,
+	JETPACK_SOCIAL_V1_PRODUCTS,
 } from '@automattic/calypso-products';
 import JetpackProductIconAILight from 'calypso/assets/images/jetpack/jetpack-product-icon-ai-light.svg';
 import JetpackProductIconAI from 'calypso/assets/images/jetpack/jetpack-product-icon-ai.svg';
@@ -90,6 +91,10 @@ const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 		light: JetpackProductIconMonitorLight,
 	} ),
 	...setProductsIcon( JETPACK_SOCIAL_PRODUCTS, {
+		regular: JetpackProductIconSocial,
+		light: JetpackProductIconSocialLight,
+	} ),
+	...setProductsIcon( JETPACK_SOCIAL_V1_PRODUCTS, {
 		regular: JetpackProductIconSocial,
 		light: JetpackProductIconSocialLight,
 	} ),

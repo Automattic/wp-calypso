@@ -249,6 +249,8 @@ export class NoteList extends Component {
 						global={ this.props.global }
 						currentNote={ this.props.selectedNoteId }
 						selectedNote={ this.props.selectedNote }
+						isShowing={ this.props.isPanelOpen }
+						handleFocus={ this.props.navigateToNoteById }
 					/>
 				);
 			}
@@ -349,8 +351,13 @@ export class NoteList extends Component {
 		return (
 			<>
 				{ /* Keep the wpnc__note-list as the first child of the Fragment to ensure the ReactDOM.findDOMNode returns the list element */ }
-				<div className={ classes } id="wpnc__note-list">
-					<FilterBar controller={ this.props.filterController } />
+				<div className={ classes } id="wpnc__note-list" ref={ this.props.listElementRef }>
+					<FilterBar
+						controller={ this.props.filterController }
+						isPanelOpen={ this.props.isPanelOpen }
+						/* eslint-disable-next-line jsx-a11y/no-autofocus */
+						autoFocus={ ! this.props.selectedNote }
+					/>
 					<button className="screen-reader-text" onClick={ this.props.closePanel }>
 						{ this.props.translate( 'Close notifications' ) }
 					</button>

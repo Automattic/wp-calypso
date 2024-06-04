@@ -43,7 +43,7 @@ import {
 	FEATURE_EASY_SITE_MIGRATION,
 	FEATURE_ECOMMERCE_MARKETING,
 	FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
-	FEATURE_EMAIL_SUPPORT_SIGNUP,
+	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
 	FEATURE_FREE_THEMES,
@@ -449,16 +449,9 @@ import {
 	FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
 	FEATURE_WEB_SERVER_SETTINGS,
 	FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
-	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	FEATURE_PRIORITY_24_7_SUPPORT,
-	FEATURE_EMAIL_SUPPORT,
 	FEATURE_HELP_CENTER_SUPPORT,
-	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 	FEATURE_LIVE_CHAT_SUPPORT,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 } from './constants';
 import { getTrailMapExperiment, isTrailMapCopyVariant } from './experiments';
 import {
@@ -521,11 +514,7 @@ const getDotcomPlanDetails = () => ( {
 	getAnnualPlansOnlyFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_LIVE_CHAT_SUPPORT,
-		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	],
@@ -791,7 +780,7 @@ const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_BLOG_DOMAIN,
 		FEATURE_JETPACK_ESSENTIAL,
-		FEATURE_EMAIL_SUPPORT,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_FREE_THEMES,
 		FEATURE_6GB_STORAGE,
 		FEATURE_NO_ADS,
@@ -799,18 +788,18 @@ const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_CONTENT_BLOCK,
 	],
 	getSignupFeatures: () => [
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_BLOG_DOMAIN,
 		FEATURE_ALL_FREE_FEATURES,
 	],
 	getBlogSignupFeatures: () => [
 		FEATURE_FREE_BLOG_DOMAIN,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_ALL_FREE_FEATURES,
 	],
 	getPortfolioSignupFeatures: () => [
 		FEATURE_FREE_BLOG_DOMAIN,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_ALL_FREE_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
@@ -856,7 +845,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ESSENTIAL,
-			FEATURE_EMAIL_SUPPORT,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			FEATURE_FREE_THEMES,
 			FEATURE_6GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -866,17 +855,17 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		] ),
 	getSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_FREE_THEMES,
 	],
 	getBlogSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_ALL_FREE_FEATURES,
 	],
 	getPortfolioSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_ALL_FREE_FEATURES,
 	],
 	getSignupCompareAvailableFeatures: () => [
@@ -884,7 +873,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_HOSTING,
 		FEATURE_NO_ADS,
 		FEATURE_COLLECT_PAYMENTS_V2,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => {
 		if ( getTrailMapExperiment() === 'treatment_copy' ) {
@@ -977,10 +966,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 		FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	],
-	getNewsletterDescription: () =>
-		i18n.translate(
-			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
-		),
+
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
@@ -992,10 +978,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UNLIMITED_EMAILS,
 		FEATURE_AD_FREE_EXPERIENCE,
 	],
-	getLinkInBioDescription: () =>
-		i18n.translate(
-			'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with email support to help get your site just right.'
-		),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
@@ -1063,14 +1045,14 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
-			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
+			isLoggedInMonthlyPricing && FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
 			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
-			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_REPUBLICIZE,
@@ -1115,8 +1097,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_HOSTING,
 			FEATURE_NO_ADS,
 			FEATURE_COLLECT_PAYMENTS_V2,
-			FEATURE_EMAIL_SUPPORT_SIGNUP,
-			FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_EARN_AD,
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -1411,7 +1393,7 @@ const getWooExpressMediumPlanCompareFeatures = (): string[] => [
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_LIVE_CHAT_SUPPORT,
-	FEATURE_EMAIL_SUPPORT,
+	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_SALES_REPORTS,
 	FEATURE_GOOGLE_ANALYTICS_V3,
@@ -1453,7 +1435,7 @@ const getWooExpressSmallPlanCompareFeatures = (): string[] => [
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_LIVE_CHAT_SUPPORT,
-	FEATURE_EMAIL_SUPPORT,
+	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_SALES_REPORTS,
 	FEATURE_GOOGLE_ANALYTICS_V3,
@@ -1516,7 +1498,7 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_UNLIMITED_ADMINS,
 		FEATURE_50GB_STORAGE,
 		FEATURE_UNLIMITED_PRODUCTS_SERVICES,
@@ -1588,14 +1570,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ESSENTIAL,
-			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
+			isLoggedInMonthlyPricing && FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
 			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
-			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_REPUBLICIZE,
@@ -1610,7 +1592,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_13GB_STORAGE,
 	],
 	getSignupFeatures: () => [
-		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
@@ -1637,12 +1619,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_REAL_TIME_ANALYTICS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	],
-	getLinkInBioDescription: function () {
-		return i18n.translate(
-			'Take your site further, faster. Get everything included in %(planName)s, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics and 24/7 expert support.',
-			{ args: { planName: this.getTitle() } }
-		) as string;
-	},
+
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -1687,8 +1664,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_HOSTING,
 			FEATURE_NO_ADS,
 			FEATURE_COLLECT_PAYMENTS_V2,
-			FEATURE_EMAIL_SUPPORT_SIGNUP,
-			FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_EARN_AD,
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -1876,14 +1853,14 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
-			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
+			isLoggedInMonthlyPricing && FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_50GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
 			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
-			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_REPUBLICIZE,
@@ -1924,8 +1901,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_HOSTING,
 			FEATURE_NO_ADS,
 			FEATURE_COLLECT_PAYMENTS_V2,
-			FEATURE_EMAIL_SUPPORT_SIGNUP,
-			FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_EARN_AD,
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -3953,7 +3930,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		],
 
 		// TODO: update this once we put P2+ in the signup.
-		getSignupFeatures: () => [ FEATURE_EMAIL_SUPPORT_SIGNUP ],
+		getSignupFeatures: () => [ FEATURE_FAST_SUPPORT_FROM_EXPERTS ],
 
 		// TODO: no idea about this, copied from the WP.com Premium plan.
 		// Features not displayed but used for checking plan abilities

@@ -47,13 +47,13 @@ $common-border-radius: 4px;
 		width: $segment-width;
 		box-sizing: border-box;
 
-		@media ( max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			width: auto;
 		}
 	}
 
 	// Make the content break line earlier than 660px
-	@media ( max-width: $break-large ) {
+	@media (max-width: $break-large) {
 		.segmented-control {
 			width: 100%;
 		}
@@ -73,7 +73,7 @@ $common-border-radius: 4px;
 	padding: 0 24px 0 0;
 	margin: 0;
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		margin: 16px 0;
 		min-width: unset;
 	}
@@ -122,7 +122,7 @@ $common-border-radius: 4px;
 			}
 		}
 
-		@media ( max-width: 660px ) {
+		@media (max-width: 660px) {
 			margin-top: 16px;
 
 			.segmented-control__link {

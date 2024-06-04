@@ -15,7 +15,7 @@
 	color: $font-color;
 	background-color: var(--studio-white);
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		border-radius: 0;
 		border-left: 0;
 		border-right: 0;

@@ -276,15 +276,22 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					image={ imgSwitchPlan }
 				>
 					<>
-						{
-							/* translators: %(plan)s is WordPress.com Personal or another plan */
-							translate(
-								'%(plan)s still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.',
-								{
-									args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
-								}
-							)
-						}{ ' ' }
+						{ hasEnTranslation(
+							'%(plan)s still gives you access to fast support, removal of ads, and more — and for 50% of the cost of your current plan.'
+						)
+							? translate(
+									'%(plan)s still gives you access to fast support, removal of ads, and more — and for 50% of the cost of your current plan.',
+									{
+										args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+										comment: '%(plan)s is WordPress.com Personal or another plan',
+									}
+							  )
+							: translate(
+									'%(plan)s still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.',
+									{
+										args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+									}
+							  ) }{ ' ' }
 						{ refundAmount &&
 							translate(
 								'You can downgrade and get a partial refund of %(amount)s or ' +

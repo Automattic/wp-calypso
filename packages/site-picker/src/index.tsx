@@ -2,7 +2,7 @@
 import { useFocusTrap } from '@automattic/tour-kit';
 import { __ } from '@wordpress/i18n';
 import { globe, Icon, chevronUp, chevronDown } from '@wordpress/icons';
-import cx from 'clsx';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useArrowNavigation } from './hooks';
 import type { FC } from 'react';
@@ -43,7 +43,7 @@ const SitePickerItem: FC< ItemProps > = ( {
 }: ItemProps ) => {
 	return (
 		<button
-			className={ cx( 'site-picker__site-item', { 'main-item': mainItem, selected, enabled } ) }
+			className={ clsx( 'site-picker__site-item', { 'main-item': mainItem, selected, enabled } ) }
 			onClick={ onClick }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ selected }
@@ -116,7 +116,7 @@ export const SitePickerDropDown: FC< Props > = ( {
 					? __( 'Select a site', __i18n_text_domain__ )
 					: __( 'Site', __i18n_text_domain__ ) }
 			</label>
-			<div className={ cx( 'site-picker__site-dropdown', { open } ) }>
+			<div className={ clsx( 'site-picker__site-dropdown', { open } ) }>
 				<SitePickerItem
 					host={ selectedSite?.URL?.replace( 'https://', '' ) ?? '' }
 					enabled={ enabled }

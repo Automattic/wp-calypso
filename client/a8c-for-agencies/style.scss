@@ -240,7 +240,7 @@
 	}
 
 	// Masterbar
-	@media only screen and ( min-width: 782px ) {
+	@media only screen and (min-width: 782px) {
 		--masterbar-height: 46px;
 	}
 
@@ -361,7 +361,7 @@ html {
 }
 
 .layout.focus-content .layout__secondary {
-	@media only screen and ( max-width: 782px ) and ( min-width: 660px ) {
+	@media only screen and (max-width: 782px) and (min-width: 660px) {
 		transform: none;
 		padding: 0;
 	}

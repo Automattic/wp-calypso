@@ -1,0 +1,25 @@
+.a4a-form {
+	display: flex;
+	flex-direction: column;
+	gap: 48px;
+
+	h1,
+	h2,
+	h3,
+	p {
+		margin: 0;
+		padding: 0;
+	}
+}
+
+.a4a-form__heading-title {
+	font-size: rem(24px);
+	line-height: 1.3;
+	font-weight: 600;
+}
+
+.a4a-form__heading-description {
+	font-size: rem(16px);
+	line-height: 1.5;
+	font-weight: 400;
+}
