@@ -28,7 +28,7 @@ interface Props {
 		siteSlug: string,
 		fromSite: string,
 		platform: ImporterPlatform,
-		backToFlow?: string | null
+		backToFlow?: string
 	) => string;
 	onNavBack?: () => void;
 }
@@ -57,7 +57,12 @@ export default function ListStep( props: Props ) {
 	];
 
 	const onImporterSelect = ( platform: ImporterPlatform ): void => {
-		const importerUrl = getFinalImporterUrl( siteSlug ?? '', '', platform, backToFlow ?? null );
+		const importerUrl = getFinalImporterUrl(
+			siteSlug ?? '',
+			'',
+			platform,
+			backToFlow ?? undefined
+		);
 		submit?.( { platform, url: importerUrl } );
 	};
 
