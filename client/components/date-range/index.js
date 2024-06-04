@@ -1,5 +1,5 @@
 import { Button, Popover, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -672,7 +672,7 @@ export class DateRange extends Component {
 	 * @returns {import('react').Element} the DateRange component
 	 */
 	render() {
-		const rootClassNames = classNames( {
+		const rootClassNames = clsx( {
 			'date-range': true,
 			'toggle-visible': this.state.popoverVisible,
 		} );

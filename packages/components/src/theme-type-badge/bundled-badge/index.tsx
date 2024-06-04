@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { type FunctionComponent, useRef, useMemo, useState } from 'react';
 import Popover from '../../popover';
 
@@ -61,7 +61,7 @@ const BundledBadge: FunctionComponent< Props > = ( {
 
 	return (
 		<div
-			className={ classNames( 'bundled-badge', className, {
+			className={ clsx( 'bundled-badge', className, {
 				'bundled-badge--is-clickable': isClickable,
 			} ) }
 			style={ { backgroundColor: color } }
@@ -82,7 +82,7 @@ const BundledBadge: FunctionComponent< Props > = ( {
 			<span>{ children }</span>
 			{ ! shouldHideTooltip && (
 				<Popover
-					className={ classNames( 'bundled-badge__popover', tooltipClassName ) }
+					className={ clsx( 'bundled-badge__popover', tooltipClassName ) }
 					context={ divRef.current }
 					isVisible={ isPopoverVisible }
 					position={ tooltipPosition }

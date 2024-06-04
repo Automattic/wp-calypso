@@ -6,6 +6,9 @@
 }
 
 .plugins-update-manager {
+	&.components-card {
+		margin-bottom: 1rem;
+	}
 
 	.ch-placeholder {
 		min-width: 60px;
@@ -60,7 +63,7 @@
 	svg.icon-info {
 		fill: var(--studio-gray-60);
 		vertical-align: middle;
-		margin: -2px 4px 0 4px;
+		margin: -2px 0 0 4px;
 	}
 
 	.plugin-select-stats {
@@ -104,14 +107,8 @@
 		td {
 			vertical-align: middle;
 
-			&.last-update {
-				min-width: 200px;
-
-			}
-
 			.badge-component {
 				line-height: 2;
-
 			}
 		}
 	}

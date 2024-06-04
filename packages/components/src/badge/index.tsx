@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { memo, forwardRef, ReactNode, HTMLAttributes } from 'react';
 import './style.scss';
 
@@ -21,11 +21,7 @@ const Badge = memo(
 	forwardRef< HTMLDivElement, BadgeProps & HTMLAttributes< HTMLDivElement > >(
 		( { className, children, type = 'warning', ...props }, ref ) => {
 			return (
-				<div
-					ref={ ref }
-					className={ classNames( `badge badge--${ type }`, className ) }
-					{ ...props }
-				>
+				<div ref={ ref } className={ clsx( `badge badge--${ type }`, className ) } { ...props }>
 					{ children }
 				</div>
 			);

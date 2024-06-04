@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -93,7 +93,7 @@ class EditorMediaModalDetailFileInfo extends Component {
 	};
 
 	render() {
-		const classes = classNames( 'editor-media-modal-detail__file-info', {
+		const classes = clsx( 'editor-media-modal-detail__file-info', {
 			'is-loading': ! this.props.item,
 		} );
 

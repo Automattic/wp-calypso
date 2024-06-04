@@ -181,7 +181,11 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
 	const onClose = useCallback( () => {
 		setConfirmationDialogVisible( false );
-	}, [] );
+
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_storage_retention_confirmation_cancel_click' )
+		);
+	}, [ dispatch ] );
 
 	const updateRetentionPeriod = useCallback( () => {
 		dispatch( updateBackupRetention( siteId, retentionSelected as RetentionPeriod ) );
@@ -272,6 +276,10 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 		updateRetentionPeriod,
 		updateRetentionRequestStatus,
 	] );
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_storage_retention_view' ) );
+	}, [ dispatch ] );
 
 	const updateSettingsButton = (
 		<Button primary onClick={ handleUpdateRetention } disabled={ disableFormSubmission }>

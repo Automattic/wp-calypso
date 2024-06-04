@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -11,11 +11,11 @@ export default function ConnectDomainStepClipboardButton( { baseClassName, class
 	const { __ } = useI18n();
 	const [ copiedText, setCopiedText ] = useState( false );
 	const copied = () => setCopiedText( true );
-	const buttonClasses = classNames( baseClassName + '__clipboard-button', ...classes );
-	const stateClasses = classNames( baseClassName + '__clipboard-button-state', {
+	const buttonClasses = clsx( baseClassName + '__clipboard-button', ...classes );
+	const stateClasses = clsx( baseClassName + '__clipboard-button-state', {
 		[ baseClassName + '__clipboard-button-blue' ]: ! copiedText,
 	} );
-	const dataClasses = classNames(
+	const dataClasses = clsx(
 		baseClassName + '__clipboard-button-data',
 		baseClassName + '__clipboard-button-text'
 	);

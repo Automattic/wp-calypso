@@ -1,5 +1,5 @@
 import { createElement, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import QuickLinks from 'calypso/my-sites/customer-home/cards/actions/quick-links';
 import QuickLinksForEcommerceSites from 'calypso/my-sites/customer-home/cards/actions/quick-links-for-ecommerce-sites';
@@ -23,7 +23,9 @@ import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-searc
 import QuickStart from 'calypso/my-sites/customer-home/cards/features/quick-start';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import trackMyHomeCardImpression, {
+	CardLocation,
+} from 'calypso/my-sites/customer-home/track-my-home-card-impression';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const cardComponents = {
@@ -41,13 +43,12 @@ const cardComponents = {
 
 const ManageSite = () => {
 	const cards = useManageSiteCards();
-	const dispatch = useDispatch();
 
 	useEffect( () => {
 		if ( cards && cards.length ) {
-			dispatch( trackCardImpressions( cards ) );
+			trackCardImpressions( cards );
 		}
-	}, [ cards, dispatch ] );
+	}, [ cards ] );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -74,14 +75,12 @@ function useManageSiteCards() {
 }
 
 function trackCardImpressions( cards ) {
-	const analyticsEvents = cards.reduce( ( events, card ) => {
-		return [
-			...events,
-			recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
-			bumpStat( 'calypso_customer_home_card_impression', card ),
-		];
-	}, [] );
-	return composeAnalytics( ...analyticsEvents );
+	if ( ! cards || ! cards.length ) {
+		return;
+	}
+	cards.forEach( ( card ) => {
+		trackMyHomeCardImpression( { card, location: CardLocation.TERTIARY } );
+	} );
 }
 
 export default ManageSite;

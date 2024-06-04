@@ -8,7 +8,7 @@ import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, check, copy, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -302,7 +302,7 @@ function PatternPreviewFragment( {
 
 	return (
 		<div
-			className={ classNames( 'pattern-preview', className, {
+			className={ clsx( 'pattern-preview', className, {
 				'is-loading': ! renderedPattern,
 				// For some reason, the CSS `:target` selector has trouble with the transition from
 				// SSR markup to client-side React code, which is why we need the `is-targeted` class

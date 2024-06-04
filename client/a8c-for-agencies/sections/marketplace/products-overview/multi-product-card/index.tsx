@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -159,7 +159,7 @@ export default function MultiProductCard( props: Props ) {
 	return (
 		<>
 			<div
-				className={ classNames( 'product-card', 'product-card--with-variant', {
+				className={ clsx( 'product-card', 'product-card--with-variant', {
 					selected: isSelected,
 					disabled: isDisabled,
 				} ) }

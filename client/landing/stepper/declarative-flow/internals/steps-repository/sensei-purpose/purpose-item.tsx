@@ -1,5 +1,5 @@
 import { CheckboxControl } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 
 const PurposeItem: React.FC< Props > = ( { label, checked, onToggle, children } ) => (
 	<li
-		className={ classnames( 'sensei-setup-wizard__purpose-item', {
+		className={ clsx( 'sensei-setup-wizard__purpose-item', {
 			'sensei-setup-wizard__purpose-item--checked': checked,
 		} ) }
 	>

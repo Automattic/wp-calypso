@@ -1,5 +1,5 @@
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useContext } from 'react';
 // todo: Extract the context
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
@@ -80,7 +80,7 @@ export default function SiteSort( {
 		<span
 			role="button"
 			tabIndex={ 0 }
-			className={ classNames( 'site-sort site-sort__clickable', {
+			className={ clsx( 'site-sort site-sort__clickable', {
 				'site-sort__icon-large_screen': isLargeScreen,
 			} ) }
 			onKeyDown={ handleOnKeyDown }
@@ -89,7 +89,7 @@ export default function SiteSort( {
 			{ children }
 			{ isSortable && (
 				<Icon
-					className={ classNames( 'site-sort__icon', {
+					className={ clsx( 'site-sort__icon', {
 						'site-sort__icon-hidden': isLargeScreen && isDefault,
 					} ) }
 					size={ 14 }

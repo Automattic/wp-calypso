@@ -115,6 +115,16 @@ function getWarningDescription(
 				}
 			);
 
+		case 'dev-tools':
+			return translate(
+				'By activating all developer tools the following change will be made to the site:',
+				'By activating all developer tools the following changes will be made to the site:',
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
+
 		default:
 			return defaultCopy;
 	}

@@ -4,7 +4,7 @@ import { Button, Spinner } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import { close, search, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { debounce } from 'lodash';
 import { useEffect } from 'react';
 import * as React from 'react';
@@ -370,7 +370,7 @@ const InnerSearch = (
 		spellCheck: 'false' as const,
 	};
 
-	const searchClass = classNames( 'search-component', className, dir, {
+	const searchClass = clsx( 'search-component', className, dir, {
 		'is-expanded-to-container': fitsContainer,
 		'is-open': isOpenUnpinnedOrQueried,
 		'is-searching': searching,
@@ -379,8 +379,8 @@ const InnerSearch = (
 		'has-open-icon': ! hideOpenIcon,
 	} );
 
-	const fadeClass = classNames( 'search-component__input-fade', dir );
-	const inputClass = classNames( 'search-component__input', dir );
+	const fadeClass = clsx( 'search-component__input-fade', dir );
+	const inputClass = clsx( 'search-component__input', dir );
 
 	const shouldRenderRightOpenIcon = openIconSide === 'right' && ! keyword;
 

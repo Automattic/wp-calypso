@@ -6,7 +6,7 @@
  * These two cases might be to be split up?
  */
 
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -57,7 +57,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			forceExternalLink={ forceExternalLink }
 			forceShowExternalIcon={ forceShowExternalIcon }
 			forceChevronIcon={ forceChevronIcon }
-			className={ classnames(
+			className={ clsx(
 				isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent',
 				className
 			) }

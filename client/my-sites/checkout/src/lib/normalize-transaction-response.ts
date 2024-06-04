@@ -14,6 +14,7 @@ const emptyResponse: WPCOMTransactionEndpointResponseFailed = {
 	price_integer: 0,
 	price_float: 0,
 	currency: 'USD',
+	is_gravatar_domain: false,
 };
 
 export default function normalizeTransactionResponse(

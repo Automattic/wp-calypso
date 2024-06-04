@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useState } from 'react';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
 import SectionNav from 'calypso/components/section-nav';
@@ -79,10 +79,11 @@ export default function ItemPreviewPane( {
 	} );
 
 	return (
-		<div className={ classNames( 'item-preview__pane', className ) }>
+		<div className={ clsx( 'item-preview__pane', className ) }>
 			<ItemPreviewPaneHeader
 				closeItemPreviewPane={ closeItemPreviewPane }
 				itemData={ itemData }
+				isPreviewLoaded={ !! selectedFeature.preview }
 				extraProps={ itemPreviewPaneHeaderExtraProps }
 			/>
 			<div ref={ setNavRef }>

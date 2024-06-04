@@ -243,6 +243,13 @@
 	@media only screen and (min-width: 782px) {
 		--masterbar-height: 46px;
 	}
+
+	.button[disabled],
+	.button:disabled,
+	.button.disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
 }
 
 // New navigation will not include a masterbar
@@ -433,5 +440,19 @@ html {
 		color: var(--color-text-white);
 		padding: 10px 12px;
 		border: none;
+	}
+}
+
+.redesigned-a8c-table {
+	thead .dataviews-view-table__row th {
+		font-size: 0.75rem;
+		font-weight: 500;
+		line-height: 20px;
+		color: var(--color-accent-80);
+	}
+
+	.dataviews-view-table tr td:first-child,
+	.dataviews-view-table tr th:first-child {
+		padding-inline-start: 16px;
 	}
 }

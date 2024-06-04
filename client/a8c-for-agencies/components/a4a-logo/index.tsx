@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 export const LOGO_COLOR_PRIMARY = '#029CD7';
 export const LOGO_COLOR_SECONDARY = '#021A23';
@@ -15,7 +15,7 @@ interface A4ALogoProps {
 }
 
 const A4ALogo = ( { full = false, size = 32, className, colors }: A4ALogoProps ) => {
-	const classes = classNames( className );
+	const classes = clsx( className );
 	const primaryColor = colors?.primary || LOGO_COLOR_PRIMARY;
 	const secondaryColor = colors?.secondary || LOGO_COLOR_SECONDARY;
 

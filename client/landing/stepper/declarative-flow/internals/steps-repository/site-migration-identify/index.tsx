@@ -18,9 +18,10 @@ interface Props {
 	hasError?: boolean;
 	onComplete: ( siteInfo: UrlData ) => void;
 	onSkip: () => void;
+	hideImporterListLink: boolean;
 }
 
-export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
+export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 
@@ -59,6 +60,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 					dontHaveSiteAddressLabel={ translate(
 						'Or <button>pick your current platform from a list</button>'
 					) }
+					hideImporterListLink={ hideImporterListLink }
 				/>
 			</div>
 		</div>
@@ -81,6 +83,7 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 
 const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 	const siteSlug = useSiteSlug();
+	const translate = useTranslate();
 
 	const handleSubmit = useCallback(
 		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
@@ -107,7 +110,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 
 	return (
 		<>
-			<DocumentHead title="Site migration instructions" />
+			<DocumentHead title={ translate( 'Import your site content' ) } />
 			<StepContainer
 				stepName="site-migration-identify"
 				flowName="site-migration"
@@ -123,6 +126,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 						onComplete={ ( { platform, url } ) =>
 							handleSubmit( 'continue', { platform, from: url } )
 						}
+						hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
 						onSkip={ () => {
 							handleSubmit( 'skip_platform_identification' );
 						} }

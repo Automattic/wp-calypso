@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
@@ -32,7 +32,7 @@ function LoggedOutFormBackLink( props ) {
 			key="return-to-wpcom-link"
 			onClick={ recordClick }
 			rel="external"
-			className={ classnames( {
+			className={ clsx( {
 				'logged-out-form__link-item': true,
 				'logged-out-form__back-link': true,
 				...props.classes,

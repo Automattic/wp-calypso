@@ -1,6 +1,6 @@
 import { Icon } from '@wordpress/components';
 import { seen, unseen } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import { createRef, Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -33,7 +33,7 @@ class FormPasswordInput extends Component {
 	};
 
 	render() {
-		const toggleVisibilityClasses = classNames( {
+		const toggleVisibilityClasses = clsx( {
 			'form-password-input__toggle': true,
 			'form-password-input__toggle-visibility': ! this.props.hideToggle,
 		} );

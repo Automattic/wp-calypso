@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { CSSProperties } from 'react';
 import './style.scss';
 
@@ -19,7 +19,7 @@ const DoughnutChart = ( props: DoughnutChartProps ) => {
 
 	return (
 		<div
-			className={ classNames( 'doughnut-chart__wrapper', {
+			className={ clsx( 'doughnut-chart__wrapper', {
 				blue: isEntrepreneurTrial,
 			} ) }
 			style={ style }

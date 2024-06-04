@@ -1,3 +1,5 @@
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	NextButton,
 	StepContainer,
@@ -18,9 +20,15 @@ type SubmitDestination = 'import' | 'migrate' | 'upgrade';
 const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const site = useSite();
+	const hasEnTranslation = useHasEnTranslation();
 	const options = [
 		{
-			label: translate( 'Everything (requires a Creator Plan)' ),
+			label: hasEnTranslation( 'Everything (requires a %(planName)s Plan)' )
+				? // translators: %(planName)s is a plan name. E.g. Commerce plan.
+				  translate( 'Everything (requires a %(planName)s Plan)', {
+						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+				  } )
+				: translate( 'Everything (requires a Creator Plan)' ),
 			description: translate(
 				"All your site's content, themes, plugins, users, and customizations."
 			),

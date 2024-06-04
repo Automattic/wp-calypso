@@ -1,5 +1,5 @@
 import { Icon, arrowLeft, arrowRight } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
@@ -19,9 +19,9 @@ function NavigationArrows( {
 	onClickPrevious,
 }: NavigationArrowsProps ) {
 	return (
-		<div className={ classNames( 'stats-navigation-arrows', className ) }>
+		<div className={ clsx( 'stats-navigation-arrows', className ) }>
 			<button
-				className={ classNames( 'stats-navigation-arrows__previous', {
+				className={ clsx( 'stats-navigation-arrows__previous', {
 					'is-disabled': disablePreviousArrow,
 				} ) }
 				onClick={ disablePreviousArrow ? undefined : onClickPrevious }
@@ -30,7 +30,7 @@ function NavigationArrows( {
 				<Icon className="gridicon" icon={ arrowLeft } />
 			</button>
 			<button
-				className={ classNames( 'stats-navigation-arrows__next', {
+				className={ clsx( 'stats-navigation-arrows__next', {
 					'is-disabled': disableNextArrow,
 				} ) }
 				onClick={ disableNextArrow ? undefined : onClickNext }

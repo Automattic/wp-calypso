@@ -2,6 +2,7 @@ import {
 	getAssemblerDesign,
 	themesIllustrationImage,
 	assemblerIllustrationImage,
+	hiBigSky,
 } from '@automattic/design-picker';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -9,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
 import DesignChoice from './design-choice';
@@ -28,6 +30,8 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		[]
 	);
 
+	const isBigSkyEligible = useIsBigSkyEligible();
+
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	const handleSubmit = ( destination: string ) => {
@@ -38,7 +42,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 			destination: kebabCase( destination ),
 		} );
 
-		if ( destination === 'pattern-assembler' ) {
+		if ( destination === 'pattern-assembler' || destination === 'launch-big-sky' ) {
 			setSelectedDesign( getAssemblerDesign() );
 		}
 
@@ -71,6 +75,16 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="pattern-assembler"
 								onSelect={ handleSubmit }
 							/>
+							{ isBigSkyEligible && (
+								<DesignChoice
+									className="design-choices__try-big-sky"
+									title={ translate( 'Try Big Sky' ) }
+									description={ translate( 'The AI website builder for WordPress.' ) }
+									imageSrc={ hiBigSky }
+									destination="launch-big-sky"
+									onSelect={ handleSubmit }
+								/>
+							) }
 						</div>
 					</>
 				}

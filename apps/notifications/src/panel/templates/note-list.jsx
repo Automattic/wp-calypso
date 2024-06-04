@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import ReactDOM from 'react-dom';
@@ -329,12 +329,12 @@ export class NoteList extends Component {
 			);
 		}
 
-		const classes = classNames( 'wpnc__note-list', {
+		const classes = clsx( 'wpnc__note-list', {
 			'disable-sticky': !! window.chrome || !! window.electron, // position: sticky doesn't work in Chrome – `window.chrome` does not exist in electron
 			'is-note-open': !! this.props.selectedNoteId,
 		} );
 
-		const listViewClasses = classNames( 'wpnc__list-view', {
+		const listViewClasses = clsx( 'wpnc__list-view', {
 			wpnc__current: !! this.props.selectedNoteId,
 			'is-empty-list': emptyNoteList,
 		} );

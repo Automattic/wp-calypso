@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -14,7 +14,7 @@ export default class LoggedOutForm extends Component {
 
 	render() {
 		return (
-			<Card className={ classnames( 'logged-out-form', this.props.className ) }>
+			<Card className={ clsx( 'logged-out-form', this.props.className ) }>
 				<form { ...omit( this.props, 'className' ) }>{ this.props.children }</form>
 			</Card>
 		);

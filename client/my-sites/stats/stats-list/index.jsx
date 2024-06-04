@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { Component } from 'react';
 import StatsListItem from './stats-list-item';
@@ -27,7 +27,7 @@ export default class extends Component {
 
 	buildLists = ( groups, parentKey ) => {
 		let results;
-		const listClass = classNames( 'module-content-list', {
+		const listClass = clsx( 'module-content-list', {
 			'module-content-list-sublist': parentKey,
 			'is-expanded': this.isGroupActive( parentKey ),
 		} );

@@ -1,8 +1,8 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 const SharingServiceExample = ( { image, label, single } ) => (
-	<div className={ classNames( 'sharing-service-example', { 'is-single': single } ) }>
+	<div className={ clsx( 'sharing-service-example', { 'is-single': single } ) }>
 		{ image ? (
 			<div className="service-example__screenshot">
 				<img src={ image.src } alt={ image.alt } />

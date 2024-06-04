@@ -84,6 +84,7 @@ const siteSetupFlow: Flow = {
 			STEPS.IMPORTER_MEDIUM,
 			STEPS.IMPORTER_SQUARESPACE,
 			STEPS.IMPORTER_WORDPRESS,
+			STEPS.LAUNCH_BIG_SKY,
 			STEPS.VERIFY_EMAIL,
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.PROCESSING,
@@ -337,13 +338,8 @@ const siteSetupFlow: Flow = {
 
 					switch ( intent ) {
 						case SiteIntent.Import:
-							if ( isEnabled( 'onboarding/new-migration-flow' ) ) {
-								return exitFlow(
-									`/setup/site-migration?siteSlug=${ siteSlug }&flags=onboarding/new-migration-flow`
-								);
-							}
+							return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }&ref=goals` );
 
-							return navigate( 'import' );
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );
 						case SiteIntent.Write:

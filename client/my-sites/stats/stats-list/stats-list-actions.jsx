@@ -1,5 +1,5 @@
 import { Icon, moreHorizontalMobile } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
@@ -93,7 +93,7 @@ const StatsListActions = ( {
 		<>
 			<button
 				onClick={ onMobileMenuClick }
-				className={ classNames( 'stats-list-actions__mobile-toggle', {
+				className={ clsx( 'stats-list-actions__mobile-toggle', {
 					'stats-list-actions__mobile-toggle--expanded': isMobileMenuVisible,
 				} ) }
 				title={ translate( 'Show Actions', {
@@ -106,7 +106,7 @@ const StatsListActions = ( {
 			{ /* prevent actions from triggering row click handler and redirect */ }
 			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */ }
 			<ul
-				className={ classNames( 'stats-list-actions', 'module-content-list-item-actions', {
+				className={ clsx( 'stats-list-actions', 'module-content-list-item-actions', {
 					'stats-list-actions--expanded': isMobileMenuVisible,
 				} ) }
 				onClick={ ( e ) => e.stopPropagation() }

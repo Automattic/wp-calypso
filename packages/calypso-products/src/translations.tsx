@@ -153,6 +153,9 @@ import {
 	PRODUCT_JETPACK_CREATOR_BI_YEARLY,
 	PRODUCT_JETPACK_CREATOR_YEARLY,
 	PRODUCT_JETPACK_CREATOR_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -232,6 +235,9 @@ export const getJetpackProductsShortNames = (): Record< string, React.ReactEleme
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: 'Social',
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: 'Social',
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: 'Social',
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: 'Stats',
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: 'Stats',
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: 'Stats',
@@ -526,6 +532,9 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: { default: socialAdvancedTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: { default: socialAdvancedTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: { default: socialAdvancedTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: { default: socialTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: { default: socialTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: { default: socialTagLine },
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: {
 			default: backupAddonTagLine,
 			owned: backupAddonOwnedTagLine,
@@ -702,6 +711,9 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialDescription,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialDescription,
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialDescription,
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialDescription,
@@ -788,6 +800,9 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedShortDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedShortDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialShortDescription,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialShortDescription,
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialShortDescription,
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialShortDescription,
@@ -876,6 +891,9 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialFeaturedText,
 		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorFeaturedText,
 		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorFeaturedText,
 	};
@@ -1097,6 +1115,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialLightboxDescription,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsLightboxDescription,
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsLightboxDescription,
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsLightboxDescription,
@@ -1348,6 +1369,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Recycle content' ),
 		translate( 'Image generator' ),
 	];
+	const socialIncludesInfo = socialAdvancedIncludesInfo;
 	const statsCommercialIncludesInfo = [
 		translate( 'Real-time data on visitors' ),
 		translate( 'Traffic stats and trends for posts and pages' ),
@@ -1610,6 +1632,9 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialIncludesInfo,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: [
 			translate( '10K site views (upgradeable)' ),
 			...statsCommercialIncludesInfo,
@@ -1800,7 +1825,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Best-in-class support from WordPress experts' ),
 	];
 
-	const socialBenefits = [
+	const socialBasicBenefits = [
 		translate( 'Save time by sharing your posts automatically' ),
 		translate( 'Unlock your growth potential by building a following on social media' ),
 		translate( 'Easy-to-use interface' ),
@@ -1818,6 +1843,8 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Automatically create custom images, saving you hours of tedious work' ),
 		translate( 'Repurpose, reuse or republish already published content' ),
 	];
+
+	const socialBenefits = socialAdvancedBenefits;
 
 	const statsCommercialBenefits = [
 		translate( 'Better understand your audience' ),
@@ -1993,12 +2020,15 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boostBenefits,
 		[ PRODUCT_JETPACK_BOOST ]: boostBenefits,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostBenefits,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialBenefits,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBenefits,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialBasicBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasicBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasicBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialBenefits,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialBenefits,
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialBenefits,
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialBenefits,

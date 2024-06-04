@@ -6,7 +6,7 @@ import {
 	StatsCardAvatar,
 } from '@automattic/components';
 import { Icon, tag, file } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
@@ -136,7 +136,7 @@ const StatsListCard = ( {
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
 			isNew={ [ 'utm', 'devices' ].includes( moduleType ) }
-			className={ classNames( `list-${ moduleType }`, className ) }
+			className={ clsx( `list-${ moduleType }`, className ) }
 			headerClassName={ listItemClassName }
 			metricLabel={ metricLabel }
 			heroElement={ heroElement }
