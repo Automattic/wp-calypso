@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import OdieAssistantProvider, { useSetOdieStorage } from '@automattic/odie-client';
-import { CardBody } from '@wordpress/components';
+import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useCallback, useState } from 'react';
@@ -83,44 +83,46 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
-			<Routes>
-				<Route
-					path="/"
-					element={
-						<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
-					}
-				/>
-				<Route path="/post" element={ <HelpCenterEmbedResult /> } />
-				<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
-				<Route
-					path="/contact-form"
-					element={ <HelpCenterContactForm onSubmit={ () => setOdieStorage( null ) } /> }
-				/>
-				<Route path="/success" element={ <SuccessScreen /> } />
-				<Route
-					path="/odie"
-					element={
-						<OdieAssistantProvider
-							botNameSlug="wpcom-support-chat"
-							botName="Wapuu"
-							enabled={ isWapuuEnabled }
-							isMinimized={ isMinimized }
-							initialUserMessage={ searchTerm }
-							logger={ trackEvent }
-							loggerEventNamePrefix="calypso_odie"
-							selectedSiteId={ selectedSiteId }
-							extraContactOptions={
-								<HelpCenterContactPage
-									hideHeaders
-									trackEventName="calypso_odie_extra_contact_option"
-								/>
-							}
-						>
-							<HelpCenterOdie />
-						</OdieAssistantProvider>
-					}
-				/>
-			</Routes>
+			<Disabled isDisabled={ isMinimized }>
+				<Routes>
+					<Route
+						path="/"
+						element={
+							<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
+						}
+					/>
+					<Route path="/post" element={ <HelpCenterEmbedResult /> } />
+					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
+					<Route
+						path="/contact-form"
+						element={ <HelpCenterContactForm onSubmit={ () => setOdieStorage( null ) } /> }
+					/>
+					<Route path="/success" element={ <SuccessScreen /> } />
+					<Route
+						path="/odie"
+						element={
+							<OdieAssistantProvider
+								botNameSlug="wpcom-support-chat"
+								botName="Wapuu"
+								enabled={ isWapuuEnabled }
+								isMinimized={ isMinimized }
+								initialUserMessage={ searchTerm }
+								logger={ trackEvent }
+								loggerEventNamePrefix="calypso_odie"
+								selectedSiteId={ selectedSiteId }
+								extraContactOptions={
+									<HelpCenterContactPage
+										hideHeaders
+										trackEventName="calypso_odie_extra_contact_option"
+									/>
+								}
+							>
+								<HelpCenterOdie />
+							</OdieAssistantProvider>
+						}
+					/>
+				</Routes>
+			</Disabled>
 		</CardBody>
 	);
 };

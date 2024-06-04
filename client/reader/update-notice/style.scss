@@ -17,12 +17,12 @@
 	transition: background 0.15s ease-in-out, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	font-size: $font-body;
 
-	@media ( min-width: 600px ) {
+	@media (min-width: 600px) {
 		top: calc(var(--masterbar-height) + (24px * 2));
 		right: calc(24px* 2);
 	}
 
-	@media ( min-width: 782px ) {
+	@media (min-width: 782px) {
 		top: 32px;
 		right: 32px;
 	}

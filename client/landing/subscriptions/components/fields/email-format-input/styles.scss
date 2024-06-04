@@ -14,7 +14,7 @@
 		@extend %form-select;
 		width: 457px;
 
-		@media screen and ( max-width: $break-small ) {
+		@media screen and (max-width: $break-small) {
 			width: 100%;
 		}
 	}

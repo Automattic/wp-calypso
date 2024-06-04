@@ -1414,6 +1414,8 @@ export class RenderDomainsStep extends Component {
 			backLabelText = translate( 'Back to themes' );
 		} else if ( 'plans-first' === flowName ) {
 			backUrl = getStepUrl( flowName, previousStepName );
+		} else if ( 'guided' === flowName ) {
+			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 

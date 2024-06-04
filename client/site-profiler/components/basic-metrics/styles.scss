@@ -8,7 +8,7 @@
 	grid-column-gap: 72px;
 	grid-row-gap: 72px;
 
-	@media (max-width: $break-large ) {
+	@media (max-width: $break-large) {
 		grid-template-columns: 1fr;
 	}
 }

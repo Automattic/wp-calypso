@@ -37,9 +37,10 @@ export function ScheduleListLastRunStatus( {
 						variant="link"
 						onClick={ () => onLogsClick && onLogsClick( schedule.schedule_id, site?.slug ) }
 					>
-						{ site.last_run_status === 'in-progress'
-							? translate( 'In progress' )
-							: site.last_run_timestamp && prepareDateTime( site.last_run_timestamp ) }
+						{ showStatusText &&
+							( site.last_run_status === 'in-progress'
+								? translate( 'In progress' )
+								: site.last_run_timestamp && prepareDateTime( site.last_run_timestamp ) ) }
 					</Button>
 				) }
 			</>

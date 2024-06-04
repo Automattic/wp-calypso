@@ -95,7 +95,7 @@
 	display: none;
 }
 
-@media (max-width: $break-small ) {
+@media (max-width: $break-small) {
 	.jetpack-upsell-card__title--short {
 		display: inline;
 	}
@@ -104,7 +104,7 @@
 	}
 }
 
-@media (max-width: $break-medium ) {
+@media (max-width: $break-medium) {
 	.jetpack-upsell-card__product {
 		grid-template-areas:
 			"title title icon"

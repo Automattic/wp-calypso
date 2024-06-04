@@ -4,6 +4,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
+import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { useState, useRef, useEffect, useCallback, FC } from 'react';
@@ -73,6 +74,10 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
 	const nodeRef = useRef( null );
 
+	const focusReturnRef = useFocusReturn();
+
+	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef ] );
+
 	const shouldCloseOnEscapeRef = useRef( false );
 
 	shouldCloseOnEscapeRef.current = !! show && ! hidden && ! isMinimized;
@@ -103,7 +108,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 					handle=".help-center__container-header"
 					bounds="body"
 				>
-					<Card className={ classNames } { ...animationProps } ref={ nodeRef }>
+					<Card className={ classNames } { ...animationProps } ref={ cardMergeRefs }>
 						<HelpCenterHeader
 							isMinimized={ isMinimized }
 							onMinimize={ () => setIsMinimized( true ) }

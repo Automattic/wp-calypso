@@ -3,7 +3,6 @@ import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automatti
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
-import SupportIcon from './assets/images/support.svg';
 import Theme2Image from './assets/images/theme-2.jpg';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
@@ -53,11 +52,6 @@ import {
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
 	FEATURE_ECOMMERCE_MARKETING,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-	FEATURE_EMAIL_SUPPORT,
-	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FILTERING_V2,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
@@ -78,8 +72,6 @@ import {
 	FEATURE_JETPACK_VIDEOPRESS_UNBRANDED,
 	FEATURE_LANGUAGE_SUPPORT_V2,
 	FEATURE_LIVE_CHAT_SUPPORT,
-	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 	FEATURE_MALWARE_SCANNING_DAILY,
 	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 	FEATURE_MANAGE,
@@ -186,7 +178,6 @@ import {
 	FEATURE_ALWAYS_ONLINE,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
-	FEATURE_SUPPORT_EMAIL,
 	FEATURE_DESIGN_TOOLS,
 	FEATURE_PREMIUM_THEMES,
 	FEATURE_WORDADS,
@@ -618,12 +609,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
 	},
 
-	[ FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
-		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
-	},
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
 		getSlug: () => FEATURE_FREE_THEMES_SIGNUP,
 		getTitle: () => i18n.translate( 'Dozens of free themes' ),
@@ -981,36 +966,6 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Help center support' )
 				: i18n.translate( 'Community support' ),
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Live chat and email support' )
-				: i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate( 'Live chat support to help you get started with your site.' ),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Live chat is available 24 hours a day from Monday through Friday. ' +
-					'You can also email us any day of the week for personalized support.'
-			),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Live chat is available 24/7. ' +
-					'You can also email us any day of the week for personalized support.'
-			),
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT ]: {
@@ -1621,18 +1576,6 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () => i18n.translate( '24/7 expert support' ),
 	},
 
-	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
-		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		getTitle: () => i18n.translate( 'Live chat support' ),
-		getDescription: () => i18n.translate( 'Live chat support' ),
-	},
-
-	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( 'Live chat support' ),
-		getDescription: () => i18n.translate( 'Live chat support' ),
-	},
-
 	[ FEATURE_JETPACK_VIDEOPRESS ]: {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS,
 		getTitle: () => i18n.translate( 'Unlimited users' ),
@@ -2018,28 +1961,6 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 		getDescription: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
-	},
-
-	[ FEATURE_EMAIL_SUPPORT ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Email support' )
-				: i18n.translate( 'Unlimited customer support via email' ),
-		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
-	},
-	[ FEATURE_SUPPORT_EMAIL ]: {
-		getSlug: () => FEATURE_SUPPORT_EMAIL,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Email support' )
-				: i18n.translate( 'Support via email' ),
-		getIcon: () => <img src={ SupportIcon } alt={ i18n.translate( 'Customer support' ) } />,
-		getAlternativeTitle: () => i18n.translate( 'Customer support' ),
-		getCompareTitle: () => i18n.translate( 'Unlimited support via emails.' ),
-		getDescription: () =>
-			i18n.translate( 'Fast, friendly, expert WordPress help, whenever you need it.' ),
 	},
 	[ FEATURE_DESIGN_TOOLS ]: {
 		getSlug: () => FEATURE_DESIGN_TOOLS,
