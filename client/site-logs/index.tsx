@@ -7,17 +7,20 @@ import {
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible } from 'calypso/my-sites/site-monitoring/controller';
 import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
-import {
-	DOTCOM_PHP_LOGS,
-	DOTCOM_WEB_LOGS,
-} from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+import { DOTCOM_LOGS } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
 import { httpRequestLogs, phpErrorLogs } from './controller';
 
 export default function () {
 	page( '/site-logs', siteSelection, sites, makeLayout, clientRender );
 
 	const redirectSiteLogsToPhp: Callback = ( context ) => {
-		context.page.replace( `/site-logs/${ context.params.site }/php` );
+		console.log( `/site-logs/${ context.params.site }/web`, context );
+		let redirectTo = `/site-logs/${ context.params.site }/php`;
+		if ( context?.page?.prevContext?.path.endsWith( '/web' ) ) {
+			redirectTo = `/site-logs/${ context.params.site }/web`;
+		}
+		context.page.replace( redirectTo );
+		return;
 	};
 	page( '/site-logs/:site', redirectSiteLogsToPhp );
 
@@ -28,7 +31,7 @@ export default function () {
 		redirectHomeIfIneligible,
 		navigation,
 		phpErrorLogs,
-		siteDashboard( DOTCOM_PHP_LOGS ),
+		siteDashboard( DOTCOM_LOGS ),
 		makeLayout,
 		clientRender
 	);
@@ -39,7 +42,7 @@ export default function () {
 		redirectHomeIfIneligible,
 		navigation,
 		httpRequestLogs,
-		siteDashboard( DOTCOM_WEB_LOGS ),
+		siteDashboard( DOTCOM_LOGS ),
 		makeLayout,
 		clientRender
 	);

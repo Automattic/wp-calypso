@@ -19,7 +19,10 @@ export function LogsHeader( { logType }: { logType: string } ) {
 	];
 
 	const switchType = ( newType: string ) => {
-		navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + newType ) );
+		// check if pathname ends with either /php or /web, if so replace it with newType, otherwise append newType to the end of the pathname
+		const newPath = window.location.pathname.endsWith( '/php' ) || window.location.pathname.endsWith( '/web' );
+		const newUrl = newPath ? window.location.pathname.replace( /php|web$/, newType ) : `${ window.location.pathname }/${ newType }`;
+		return navigate( newUrl );
 	};
 
 	return (
