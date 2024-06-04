@@ -13,6 +13,8 @@
 		padding: 1.5em 2em;
 		margin: 0;
 		align-items: center;
+		gap: 1.5em;
+		overflow-x: scroll;
 
 		li button {
 			color: var(--studio-gray-20);
@@ -32,6 +34,7 @@
 			border-radius: 4px;
 			text-decoration: none !important;
 			padding: 1em 1.5em;
+			text-wrap: nowrap;
 
 			&:hover {
 				background-color: #193de0;
