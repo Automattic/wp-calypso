@@ -10,8 +10,16 @@
 	font-weight: 500;
 }
 
+.a4a-form__section-heading-description {
+	font-size: rem(13px);
+	font-weight: 400;
+	color: var(--color-neutral-50);
+	line-height: 1.5;
+}
+
 .a4a-form__section-body {
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
+	padding: 24px 0;
 }
