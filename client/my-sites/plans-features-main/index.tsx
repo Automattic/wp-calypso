@@ -439,7 +439,7 @@ const PlansFeaturesMain = ( {
 	);
 
 	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
-	const offeringFreePlan = gridPlansForFeaturesGrid?.some(
+	const offeringFreePlan = gridPlansForFeaturesGridRaw?.some(
 		( { planSlug } ) => planSlug === PLAN_FREE
 	);
 
