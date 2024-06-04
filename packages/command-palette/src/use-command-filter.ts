@@ -5,15 +5,15 @@ export const useCommandFilter = () => {
 		const lowercaseValue = value.toLowerCase();
 		const lowercaseSearch = search.toLowerCase().trim();
 
-		const [ beforeSeparator, afterSeparator ] = lowercaseValue.split( COMMAND_SEPARATOR );
+		const [ commandLabel, keywords ] = lowercaseValue.split( COMMAND_SEPARATOR );
 
 		// Check if the search matches the part before the separator
-		if ( beforeSeparator.includes( lowercaseSearch ) ) {
+		if ( commandLabel.includes( lowercaseSearch ) ) {
 			return 1;
 		}
 
 		// Check if there is an afterSeparator and the search matches it
-		if ( afterSeparator?.includes( lowercaseSearch ) ) {
+		if ( keywords?.includes( lowercaseSearch ) ) {
 			return 0.5;
 		}
 
