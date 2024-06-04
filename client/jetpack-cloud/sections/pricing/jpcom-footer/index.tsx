@@ -132,6 +132,11 @@ const JetpackComFooter: React.FC = () => {
 						href: 'https://jetpack.com/for/agencies/',
 						trackId: 'become_an_agency',
 					},
+					{
+						label: translate( 'Affiliate Program' ),
+						href: 'https://jetpack.com/affiliates/',
+						trackId: 'affiliate_program',
+					},
 				],
 			},
 			{
