@@ -52,7 +52,6 @@ const DevTools = () => {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
-	const pluginsLink = `https://wordpress.com/plugins/${ encodeURIComponent( siteSlug ) }`;
 	const promoCards = [
 		{
 			title: translate( 'Deployments' ),
@@ -81,7 +80,9 @@ const DevTools = () => {
 			supportContext: 'site-monitoring-logs',
 		},
 		{
-			title: translate( 'Server Configuration' ),
+			title: hasEnTranslation( 'Server Settings' )
+				? translate( 'Server Settings' )
+				: translate( 'Server Configuration' ),
 			text: translate(
 				"Access your site's database and tailor your server settings to your specific needs."
 			),
@@ -169,9 +170,6 @@ const DevTools = () => {
 					</>
 				) : (
 					<>
-						<Button variant="secondary" className="dev-tools__button" href={ pluginsLink }>
-							{ translate( 'Browse plugins' ) }
-						</Button>
 						<Button variant="primary" className="dev-tools__button" href={ upgradeLink }>
 							{ translate( 'Upgrade now' ) }
 						</Button>

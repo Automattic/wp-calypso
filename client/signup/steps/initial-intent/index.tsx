@@ -62,7 +62,7 @@ export default function InitialIntentStep( props: Props ) {
 		}
 
 		if ( _answerKeys.includes( 'newsletter' ) ) {
-			return `/setup/${ NEWSLETTER_FLOW }`;
+			return `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
 		}
 
 		if ( _answerKeys.includes( 'sell' ) && _answerKeys.includes( 'difm' ) ) {
