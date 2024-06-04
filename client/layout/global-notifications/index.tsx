@@ -68,15 +68,6 @@ const GlobalNotifications = () => {
 		}
 	}, [ prevIsNotificationsOpen, isNotificationsOpen, unseenCount, dispatch ] );
 
-	/**
-	 * Focus on main window if we just closed the notes panel
-	 */
-	useEffect( () => {
-		if ( prevIsNotificationsOpen && ! isNotificationsOpen ) {
-			containerRef.current?.ownerDocument.body.focus();
-		}
-	}, [ prevIsNotificationsOpen, isNotificationsOpen, dispatch ] );
-
 	return (
 		<div className="global-notifications" ref={ containerRef }>
 			<AsyncLoad

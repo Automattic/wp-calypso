@@ -57,9 +57,15 @@ export class Notifications extends Component {
 		isVisible: isDesktop ? true : getIsVisible(),
 	};
 
+	focusedElementBeforeOpen = null;
+
 	componentDidMount() {
 		document.addEventListener( 'click', this.props.checkToggle );
 		document.addEventListener( 'keydown', this.handleKeyPress );
+
+		if ( this.props.isShowing ) {
+			this.focusedElementBeforeOpen = document.activeElement;
+		}
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
@@ -74,6 +80,18 @@ export class Notifications extends Component {
 				this.receiveServiceWorkerMessage
 			);
 			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.isShowing === this.props.isShowing ) {
+			return;
+		}
+
+		if ( ! prevProps.isShowing && this.props.isShowing ) {
+			this.focusedElementBeforeOpen = document.activeElement;
+		} else {
+			this.focusedElementBeforeOpen?.focus();
 		}
 	}
 
