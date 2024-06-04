@@ -59,6 +59,10 @@
 					&:hover {
 						text-decoration: underline;
 					}
+
+					&:focus {
+						outline-offset: -1px;
+					}
 				}
 			}
 
