@@ -205,7 +205,7 @@ export class PlansStep extends Component {
 		if ( surveyedIntent === 'plans-guided-segment-developer-or-agency' ) {
 			const a4aLinkButton = (
 				<Button
-					href={ localizeUrl( 'https://automattic.com/for-agencies/' ) }
+					href="https://automattic.com/for-agencies/"
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ () =>
