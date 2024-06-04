@@ -120,6 +120,7 @@ export const ScheduleListTableRow = ( props: Props ) => {
 						<td>
 							<ScheduleListLastRunStatus
 								schedule={ schedule }
+								showStatusText={ isWideScreen }
 								site={ site }
 								onLogsClick={ onLogsClick }
 							/>
