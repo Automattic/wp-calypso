@@ -322,7 +322,7 @@ const PlansFeaturesMain = ( {
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
 
-	const { isLoading: isTrailMapExperimentLoading, isTrailMap } = useExperimentForTrailMap( {
+	const { isLoading: isTrailMapExperimentLoading, result: isTrailMap } = useExperimentForTrailMap( {
 		flowName,
 		isInSignup,
 		intent,
