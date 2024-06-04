@@ -27,6 +27,7 @@ import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
 import { LoadingScreen } from './loading-screen';
 import { MigrationBannerBig } from './migration-banner-big';
+import { NavMenu } from './nav-menu';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
 import { SecuritySection } from './security-section';
@@ -167,6 +168,17 @@ export default function SiteProfilerV2( props: Props ) {
 										isWpCom={ isWpCom }
 									/>
 								) }
+								<NavMenu
+									navItems={ [
+										{ label: 'Domain' },
+										{ label: 'Hosting' },
+										{ label: 'Performance Metrics' },
+										{ label: 'Health Scores' },
+										{ label: 'Security' },
+									] }
+									ctaText="Request migration - It’s free"
+									ctaUrl="/"
+								></NavMenu>
 								<HostingSection
 									domain={ domain }
 									dns={ siteProfilerData.dns }
