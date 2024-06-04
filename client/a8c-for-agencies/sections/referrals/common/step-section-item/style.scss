@@ -41,6 +41,7 @@
 			height: 40px;
 
 			@include break-large {
+				min-width: 100px;
 				width: auto;
 				height: inherit;
 			}
@@ -123,12 +124,19 @@
 }
 
 .step-section-item__step-number {
+	display: none;
 	color: var(--color-accent);
-	font-size: rem(16px);
+	font-size: rem(12px);
 	font-weight: 600;
 	text-align: center;
-	width: 24px;
-	height: 24px;
+	width: 20px;
+	height: 20px;
 	border-radius: 50%;
 	border: 2px solid var(--color-accent);
+
+	@include break-large {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
