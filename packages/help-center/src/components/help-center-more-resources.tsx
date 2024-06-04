@@ -3,7 +3,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import WhatsNewGuide from '@automattic/whats-new';
+import WhatsNewGuide, { useWhatsNewAnnouncementsQuery } from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -36,6 +36,9 @@ export const HelpCenterMoreResources = () => {
 		purchaseSlugs &&
 		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
 	);
+	const { data } = useWhatsNewAnnouncementsQuery( siteId?.toString() );
+
+	const showWhatsNewItem = data && data.length > 0;
 
 	const { hasSeenWhatsNewModal, doneLoading } = useSelect(
 		( select ) => ( {
@@ -136,21 +139,23 @@ export const HelpCenterMoreResources = () => {
 						</a>
 					</div>
 				</li>
-				<li className="inline-help__resource-item">
-					<div className="inline-help__resource-cell">
-						<Button
-							variant="link"
-							onClick={ handleWhatsNewClick }
-							className="inline-help__new-releases"
-						>
-							<Icon icon={ <NewReleases /> } size={ 24 } />
-							<span>{ __( "What's New", __i18n_text_domain__ ) }</span>
-							{ showWhatsNewDot && (
-								<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
-							) }
-						</Button>
-					</div>
-				</li>
+				{ showWhatsNewItem && (
+					<li className="inline-help__resource-item">
+						<div className="inline-help__resource-cell">
+							<Button
+								variant="link"
+								onClick={ handleWhatsNewClick }
+								className="inline-help__new-releases"
+							>
+								<Icon icon={ <NewReleases /> } size={ 24 } />
+								<span>{ __( "What's New", __i18n_text_domain__ ) }</span>
+								{ showWhatsNewDot && (
+									<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
+								) }
+							</Button>
+						</div>
+					</li>
+				) }
 			</ul>
 			{ showGuide && (
 				<WhatsNewGuide

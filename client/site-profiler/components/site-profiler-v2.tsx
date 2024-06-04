@@ -209,7 +209,7 @@ export default function SiteProfilerV2( props: Props ) {
 							</>
 						) }
 					</LayoutBlock>
-					<MigrationBannerBig url={ basicMetrics?.final_url } />
+					{ ! isWpCom && <MigrationBannerBig url={ basicMetrics?.final_url } /> }
 				</>
 			) }
 			<FootNote />

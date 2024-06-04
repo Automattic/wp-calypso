@@ -122,7 +122,6 @@
 		"stats/tier-upgrade-slider": true,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
-		"onboarding/new-migration-flow": true,
 		"storage-addon": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
