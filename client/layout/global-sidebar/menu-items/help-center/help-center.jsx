@@ -20,8 +20,7 @@ const SidebarHelpCenter = ( { tooltip, onClick } ) => {
 		};
 	}, [] );
 
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const { setIsMinimized } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setIsMinimized } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const handleToggleHelpCenter = () => {
 		if ( isMinimized ) {
