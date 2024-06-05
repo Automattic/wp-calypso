@@ -6,72 +6,70 @@
 		padding: 0 16px;
 	}
 
-	.search-categories__search {
-		display: flex;
-		width: 255px;
-		justify-content: center;
+	.search-categories__searchbox {
+		max-width: 245px;
+		width: 100%;
+		height: 36px;
+		z-index: 0;
+		margin: 0;
+		border-radius: 4px;
 
-		.search-categories__searchbox {
-			max-width: 245px;
-			width: 100%;
+		&.is-open.has-focus {
+			border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			box-shadow:
+				0 0 0 0.5px
+				var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
 
-			.search-component {
-				height: 52px;
-				z-index: 0;
-				margin: 0;
-				border-radius: 4px;
-				padding-right: 10px;
+		&.is-expanded-to-container {
+			height: 100%;
+		}
 
-				&.is-expanded-to-container {
-					height: 100%;
-				}
+		box-shadow: 0 0 0 1px var(--studio-gray-10);
 
-				box-shadow: 0 0 0 1px var(--studio-gray-10);
+		.search-component__icon-navigation:focus {
+			box-shadow: none;
+		}
 
-				.search-component__icon-navigation:focus {
-					box-shadow: none;
-				}
+		.search-component__open-icon,
+		.search-component__close-icon {
+			color: var(--studio-gray-30);
 
-				.search-component__open-icon,
-				.search-component__close-icon {
-					color: var(--studio-gray-30);
-
-					&:hover {
-						color: var(--studio-gray-60);
-					}
-				}
-
-				.search-component__icon-navigation {
-					margin-right: 2px;
-				}
-
-				.search-component__icon-navigation-separator {
-					user-select: none;
-					color: var(--studio-gray-5);
-					margin-bottom: 3px;
-				}
-
-				&.is-searching {
-					.components-spinner {
-						margin: 5px -9px 5px 0;
-						width: 50px;
-					}
-				}
-
-				.search-component__input-fade {
-					padding-left: 16px;
-				}
-
-				.search-component__open-icon {
-					height: 28px;
-					margin-right: -9px;
-				}
-
-				.search-component__close-icon {
-					margin-left: -9px;
-					margin-right: -10px;
-				}
+			&:hover {
+				color: var(--studio-gray-60);
 			}
+		}
+
+		.search-component__icon-navigation {
+			margin-right: 2px;
+		}
+
+		.search-component__icon-navigation-separator {
+			user-select: none;
+			color: var(--studio-gray-5);
+			margin-bottom: 3px;
+		}
+
+		&.is-searching {
+			.components-spinner {
+				margin: 5px -9px 5px 0;
+				width: 50px;
+			}
+		}
+
+		.search-component__input-fade {
+			font-size: $font-body-small !important;
+			padding-left: 8px !important;
+		}
+
+		.search-component__open-icon {
+			height: 28px;
+			margin-right: -9px;
+		}
+
+		.search-component__close-icon {
+			margin-left: -9px;
+			margin-right: -10px;
 		}
 	}
 
@@ -119,42 +117,37 @@ main.is-logged-out .search-categories {
 	margin-bottom: 7px;
 	margin-top: -15px;
 
-	&.fixed-top .search-categories__search {
-		justify-content: center;
-		background: #e5f4ff;
-	}
+	// &.fixed-top .search-categories__search {
+	// 	justify-content: center;
+	// 	background: #e5f4ff;
+	// }
 
-	.search-categories__search {
-		justify-content: flex-start;
-		margin-top: 17px;
+	.search-categories__searchbox {
+		margin-left: 0;
+		height: 55px;
+		max-width: 450px;
+		box-shadow:
+			0 0 0 0 rgba(38, 19, 19, 0.03),
+			0 1px 2px 0 rgba(38, 19, 19, 0.03),
+			0 4px 4px 0 rgba(38, 19, 19, 0.03),
+			0 9px 5px 0 rgba(38, 19, 19, 0.02),
+			0 16px 6px 0 rgba(38, 19, 19, 0),
+			0 25px 7px 0 rgba(38, 19, 19, 0);
 
-		.search-categories__searchbox .search-component {
-			margin-left: 0;
-			height: 55px;
-			max-width: 450px;
-			box-shadow:
-				0 0 0 0 rgba(38, 19, 19, 0.03),
-				0 1px 2px 0 rgba(38, 19, 19, 0.03),
-				0 4px 4px 0 rgba(38, 19, 19, 0.03),
-				0 9px 5px 0 rgba(38, 19, 19, 0.02),
-				0 16px 6px 0 rgba(38, 19, 19, 0),
-				0 25px 7px 0 rgba(38, 19, 19, 0);
+		.search-component__open-icon {
+			color: var(--studio-gray-30);
+			transform: scaleX(-1);
+			height: 33px;
+		}
 
-			.search-component__open-icon {
-				color: var(--studio-gray-30);
-				transform: scaleX(-1);
-				height: 33px;
-			}
+		input.search-component__input[type="search"],
+		input.search-component__input[type="search"]::placeholder {
+			color: var(--studio-gray-50);
+		}
 
-			input.search-component__input[type="search"],
-			input.search-component__input[type="search"]::placeholder {
-				color: var(--studio-gray-50);
-			}
-
-			&.has-focus {
-				border-color: var(--color-neutral-20);
-				box-shadow: none;
-			}
+		&.has-focus {
+			border-color: var(--color-neutral-20);
+			box-shadow: none;
 		}
 	}
 }
