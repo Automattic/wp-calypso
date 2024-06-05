@@ -15,7 +15,7 @@ export default function BlazeProSignupProcessingScreen() {
 
 				<div className="blaze-pro-processing-screen__subtitle">
 					{ translate(
-						"Hang tight, we're almost there! You'll be redirected to BlazePro shortly"
+						"Hang tight, we're almost there! You'll be redirected to Blaze Pro shortly"
 					) }
 				</div>
 			</div>
