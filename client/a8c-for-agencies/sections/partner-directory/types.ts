@@ -1,5 +1,5 @@
 export interface AgencyDirectoryApplication {
-	status: 'pending' | 'in_progress' | 'completed';
+	status: 'pending' | 'in-progress' | 'completed';
 	products: string[];
 	services: string[];
 	directories: DirectoryApplication[];
@@ -7,7 +7,7 @@ export interface AgencyDirectoryApplication {
 }
 
 interface DirectoryApplication {
-	directory: 'WordPress' | 'Jetpack' | 'WooCommerce' | 'Pressable';
+	directory: 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
 	published: boolean;
 	status: 'pending' | 'approved' | 'rejected' | 'closed';
 	urls: string[];
