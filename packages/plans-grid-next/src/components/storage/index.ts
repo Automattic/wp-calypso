@@ -9,3 +9,4 @@ export { default as useGetAvailableStorageOptions } from './hooks/use-get-availa
  */
 // Consider exporting a single generalised `PlanStorageOptions` component that can be used in both Comparison and Features grid.
 export { default as PlanStorageLabel } from './components/plan-storage-label';
+export { default as PlanStorageOption } from './components/plan-storage-option';

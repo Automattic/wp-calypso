@@ -3,13 +3,12 @@ import {
 	WPComStorageAddOnSlug,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
-import { usePlansGridContext } from '../../grid-context';
-import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
-import { PlanFeaturesItem } from '../item';
-import { PlanStorageLabel, useGetAvailableStorageOptions } from '../storage';
-import StorageAddOnDropdown from '../storage-add-on-dropdown';
+import { PlanStorageLabel, useGetAvailableStorageOptions } from '..';
+import { usePlansGridContext } from '../../../grid-context';
+import { isStorageUpgradeableForPlan } from '../../../lib/is-storage-upgradeable-for-plan';
+import StorageAddOnDropdown from '../../storage-add-on-dropdown';
 
-type PlanStorageOptionsProps = {
+type Props = {
 	intervalType: string;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	showUpgradeableStorage: boolean;
@@ -17,15 +16,17 @@ type PlanStorageOptionsProps = {
 	options?: {
 		isTableCell?: boolean;
 	};
+	priceOnSeparateLine?: boolean;
 };
 
-const PlanStorageOptions = ( {
+const PlanStorageOption = ( {
 	intervalType,
 	onStorageAddOnClick,
 	planSlug,
 	options,
 	showUpgradeableStorage,
-}: PlanStorageOptionsProps ) => {
+	priceOnSeparateLine,
+}: Props ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const { availableForPurchase, current } = gridPlansIndex[ planSlug ];
 	const getAvailableStorageOptions = useGetAvailableStorageOptions();
@@ -54,6 +55,7 @@ const PlanStorageOptions = ( {
 			planSlug={ planSlug }
 			onStorageAddOnClick={ onStorageAddOnClick }
 			storageOptions={ availableStorageOptions }
+			priceOnSeparateLine={ priceOnSeparateLine }
 		/>
 	) : (
 		availableStorageOptions.map( ( storageOption ) => {
@@ -63,11 +65,7 @@ const PlanStorageOptions = ( {
 		} )
 	);
 
-	return (
-		<div className="plans-grid-next-storage-feature">
-			<PlanFeaturesItem>{ storageJSX }</PlanFeaturesItem>
-		</div>
-	);
+	return <div className="plans-grid-next-storage-feature">{ storageJSX }</div>;
 };
 
-export default PlanStorageOptions;
+export default PlanStorageOption;

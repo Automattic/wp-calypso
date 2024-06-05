@@ -11,6 +11,8 @@ import { useMemo } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
+import { PlanFeaturesItem } from '../item';
+import { PlanStorageOption } from '../storage';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
 import PartnerLogos from './partner-logos';
@@ -18,7 +20,6 @@ import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
 import PlanPrice from './plan-price';
-import PlanStorageOptions from './plan-storage-options';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import SpotlightPlan from './spotlight-plan';
@@ -113,12 +114,14 @@ const MobileView = ( {
 					) }
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
-					<PlanStorageOptions
-						planSlug={ gridPlan.planSlug }
-						intervalType={ intervalType }
-						onStorageAddOnClick={ onStorageAddOnClick }
-						showUpgradeableStorage={ showUpgradeableStorage }
-					/>
+					<PlanFeaturesItem>
+						<PlanStorageOption
+							planSlug={ gridPlan.planSlug }
+							intervalType={ intervalType }
+							onStorageAddOnClick={ onStorageAddOnClick }
+							showUpgradeableStorage={ showUpgradeableStorage }
+						/>
+					</PlanFeaturesItem>
 					<TopButtons
 						renderedGridPlans={ [ gridPlan ] }
 						isInSignup={ isInSignup }
