@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ScrollableHorizontalNavigation from 'calypso/components/scrollable-horizontal-navigation';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
+import withDimensions from 'calypso/lib/with-dimensions';
 import {
 	ALLOWED_CATEGORIES,
 	useCategories,
@@ -90,6 +91,7 @@ const SearchCategories: FC< {
 	searchTerm: string;
 	searchTerms: string[];
 	stickySearchBoxRef: RefObject< HTMLDivElement >;
+	width: number;
 } > = ( {
 	category,
 	isSearching,
@@ -98,6 +100,7 @@ const SearchCategories: FC< {
 	searchTerm,
 	searchTerms,
 	stickySearchBoxRef,
+	width,
 } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
@@ -132,6 +135,7 @@ const SearchCategories: FC< {
 				</div>
 
 				<ScrollableHorizontalNavigation
+					className="search-categories__categories"
 					onTabClick={ ( tabSlug ) => {
 						dispatch(
 							recordTracksEvent( 'calypso_plugins_category_select', {
@@ -142,7 +146,7 @@ const SearchCategories: FC< {
 					} }
 					selectedTab={ category ?? categories[ 0 ].slug }
 					tabs={ categories }
-					width={ 1200 }
+					width={ width }
 				/>
 			</div>
 			<div className="search-categories__sticky-ref" ref={ stickySearchBoxRef } />
@@ -150,4 +154,4 @@ const SearchCategories: FC< {
 	);
 };
 
-export default SearchCategories;
+export default withDimensions( SearchCategories );
