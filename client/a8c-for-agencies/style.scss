@@ -229,6 +229,33 @@
 		color: var(--color-primary-60);
 	}
 
+	.components-base-control__field {
+		margin: 0;
+	}
+
+	.components-form-token-field__input-container,
+	.components-text-control__input {
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 2px;
+		box-sizing: border-box;
+		color: var(--color-neutral-70);
+		font-size: 1rem;
+		line-height: 1.5;
+		margin: 0;
+		padding: 7px 14px;
+		transition: all 0.15s ease-in-out;
+		width: 100%;
+		min-height: 36px;
+
+		&.is-active,
+		&:focus {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
+		}
+	}
+
 	.button.is-borderless.is-primary.is-active,
 	.button.is-borderless.is-primary:active,
 	.button.is-borderless.is-primary:focus,
