@@ -218,6 +218,11 @@ const JetpackComFooter: React.FC = () => {
 						trackId: 'webinars',
 					},
 					{
+						label: translate( 'Reviews and Testimonials' ),
+						href: 'https://jetpack.com/testimonials/',
+						trackId: 'testimonials',
+					},
+					{
 						label: translate( 'Security Library' ),
 						href: 'https://jetpack.com/features/security/library',
 						trackId: 'security_library',
