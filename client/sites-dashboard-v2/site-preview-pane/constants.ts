@@ -6,6 +6,8 @@ export const DOTCOM_HOSTING_CONFIG = 'dotcom-hosting-config';
 export const DOTCOM_DEVELOPER_TOOLS = 'dotcom-developer-tools';
 export const DOTCOM_STAGING_SITE = 'dotcom-staging-site';
 
+export const DOTCOM_SITE_ENVIRONMENT = 'dotcom-site-environment';
+
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ DOTCOM_OVERVIEW ]: 'overview/:site',
 	[ DOTCOM_MONITORING ]: 'site-monitoring/:site',

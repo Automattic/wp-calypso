@@ -70,6 +70,7 @@ export default function ItemPreviewPane( {
 		return (
 			<NavItem
 				key={ featureTab.key }
+				className={ featureTab.key }
 				selected={ featureTab.selected }
 				onClick={ featureTab.onClick }
 			>

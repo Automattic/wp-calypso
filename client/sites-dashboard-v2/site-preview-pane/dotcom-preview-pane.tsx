@@ -6,6 +6,7 @@ import ItemPreviewPane, {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import DevToolsIcon from 'calypso/dev-tools/components/dev-tools-icon';
+import SiteEnvironmentDropdown from 'calypso/sites-dashboard-v2/site-preview-pane/site-environment-dropdown';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -14,6 +15,7 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_DEVELOPER_TOOLS,
 	DOTCOM_STAGING_SITE,
+	DOTCOM_SITE_ENVIRONMENT,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 
@@ -23,6 +25,7 @@ type Props = {
 	setSelectedSiteFeature: ( feature: string ) => void;
 	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
+	changeSitePreviewPane: ( siteId: number ) => void;
 };
 
 const OVERLAY_MODAL_SELECTORS = [
@@ -37,6 +40,7 @@ const DotcomPreviewPane = ( {
 	setSelectedSiteFeature,
 	selectedSiteFeaturePreview,
 	closeSitePreviewPane,
+	changeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
 
@@ -102,6 +106,14 @@ const DotcomPreviewPane = ( {
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
+				selectedSiteFeaturePreview
+			),
+			createFeaturePreview(
+				DOTCOM_SITE_ENVIRONMENT,
+				<SiteEnvironmentDropdown onChange={ changeSitePreviewPane } site={ site } />,
+				isAtomicSite && ! isPlanExpired,
+				selectedSiteFeature,
+				() => {},
 				selectedSiteFeaturePreview
 			),
 		],

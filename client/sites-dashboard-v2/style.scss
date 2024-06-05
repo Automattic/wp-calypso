@@ -539,6 +539,20 @@
 				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
 				padding-top: 1px;
 				clip-path: inset(2px -1px -1px -1px);
+
+				.dotcom-site-environment {
+					margin-left: auto;
+					padding-top: 0;
+
+					a {
+						padding-top: 1px;
+						padding-bottom: 4px;
+					}
+				}
+
+				.section-nav-tabs__list {
+					align-items: end;
+				}
 			}
 		}
 
