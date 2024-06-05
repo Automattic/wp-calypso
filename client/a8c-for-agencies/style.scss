@@ -219,10 +219,30 @@
 		border-color: var(--color-primary-60);
 	}
 
+	.components-checkbox-control__input {
+		border-radius: 4px;
+		margin: 0;
+	}
+
+	.components-checkbox-control__input-container {
+		margin: 0 8px 0 0;
+	}
+
 	.components-checkbox-control__input[type="checkbox"]:checked,
 	.components-checkbox-control__input[type="checkbox"]:indeterminate {
 		background: var(--color-primary-60);
 		border-color: var(--color-primary-60);
+	}
+
+	.components-checkbox-control__input[type="checkbox"]:focus {
+		box-shadow: none;
+		outline: none;
+	}
+
+	.components-checkbox-control__input[type="checkbox"]:focus-visible {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		outline: none;
 	}
 
 	.components-button.is-tertiary {
