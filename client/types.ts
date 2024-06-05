@@ -10,6 +10,7 @@ export type Scheme = 'http' | 'https';
 // Site stuff
 export type SiteId = number;
 export type SiteSlug = string;
+export type SiteLogType = 'php' | 'web';
 
 // Plan stuff
 export type PlanSlug = string;

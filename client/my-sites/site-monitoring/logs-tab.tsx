@@ -2,13 +2,16 @@ import { ToggleControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector } from 'calypso/state';
+import { setSiteLogType } from 'calypso/state/hosting/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { AppState, SiteLogType } from 'calypso/types';
 import { SiteLogsTable } from './components/site-logs-table';
 import { SiteLogsToolbar } from './components/site-logs-toolbar';
 import {
@@ -18,8 +21,6 @@ import {
 	updateFilterQueryParam,
 } from './site-monitoring-filter-params';
 import type { Moment } from 'moment';
-
-export type LogType = 'php' | 'web';
 
 const DEFAULT_PAGE_SIZE = 50;
 
@@ -53,7 +54,7 @@ export const LogsTab = ( {
 	logType,
 	pageSize = DEFAULT_PAGE_SIZE,
 }: {
-	logType: LogType;
+	logType: SiteLogType;
 	pageSize?: number;
 } ) => {
 	const { __ } = useI18n();
@@ -107,17 +108,18 @@ export const LogsTab = ( {
 		pageIndex: currentPageIndex,
 	} );
 
-	const [ latestLogType, setLatestLogType ] = useState< LogType | undefined | null >( null );
-	useEffect( () => {
-		if ( ! isFetching && logType !== latestLogType ) {
-			setLatestLogType( logType );
-			if ( latestLogType ) {
-				setSeverity( '' );
-				setRequestType( '' );
-				setRequestStatus( '' );
-			}
-		}
-	}, [ latestLogType, logType, isFetching ] );
+	console.log( 'logType', logType );
+
+	// useEffect( () => {
+	// 	if ( ! isFetching && logType ) {
+	// 		setSiteLogType( logType );
+	// 		if ( logType ) {
+	// 			setSeverity( '' );
+	// 			setRequestType( '' );
+	// 			setRequestStatus( '' );
+	// 		}
+	// 	}
+	// }, [ logType, isFetching ] );
 
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
 		if ( isChecked ) {
@@ -222,7 +224,7 @@ export const LogsTab = ( {
 				isLoading={ isFetching }
 				headerTitles={ headerTitles }
 				logType={ logType }
-				latestLogType={ latestLogType }
+				latestLogType={ logType }
 			/>
 			{ paginationText && (
 				<div className="site-monitoring__pagination-text">{ paginationText }</div>
@@ -240,3 +242,11 @@ export const LogsTab = ( {
 		</div>
 	);
 };
+
+const mapStateToProps = ( state: AppState ) => {
+	return {
+		logType: state?.logType || 'php',
+	};
+};
+
+export default connect( mapStateToProps, { setSiteLogType } )( LogsTab );

@@ -1,13 +1,21 @@
 import { SegmentedControl } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { navigate } from 'calypso/lib/navigate';
+import { setSiteLogType } from 'calypso/state/hosting/actions';
+import { AppState, SiteLogType } from 'calypso/types';
 
 import './style.scss';
 
-export function LogsHeader( { logType }: { logType: string } ) {
-	const options = [
+interface Props {
+	logType: SiteLogType;
+	setSiteLogType: ( logType: SiteLogType ) => void;
+}
+
+export function LogsHeader( { logType, setSiteLogType }: Props ) {
+	const options: { value: SiteLogType; label: string }[] = [
 		{
 			value: 'php',
 			label: translate( 'PHP error' ),
@@ -18,12 +26,7 @@ export function LogsHeader( { logType }: { logType: string } ) {
 		},
 	];
 
-	const switchType = ( newType: string ) => {
-		// check if pathname ends with either /php or /web, if so replace it with newType, otherwise append newType to the end of the pathname
-		const newPath = window.location.pathname.endsWith( '/php' ) || window.location.pathname.endsWith( '/web' );
-		const newUrl = newPath ? window.location.pathname.replace( /php|web$/, newType ) : `${ window.location.pathname }/${ newType }`;
-		return navigate( newUrl );
-	};
+	console.log( setSiteLogType );
 
 	return (
 		<div className="logs-header">
@@ -47,14 +50,22 @@ export function LogsHeader( { logType }: { logType: string } ) {
 								key={ option.value }
 								value={ option.value }
 								selected={ option.value === logType }
-								onClick={ () => switchType( option.value ) }
+								onClick={ () => setSiteLogType( option.value ) }
 							>
 								{ option.label }
 							</SegmentedControl.Item>
 						);
-					} ) }
+					}, setSiteLogType ) }
 				</SegmentedControl>
 			</div>
 		</div>
 	);
 }
+
+const mapStateToProps = ( state: AppState ) => {
+	return {
+		logType: state?.logType || 'php',
+	};
+};
+
+export default connect( mapStateToProps, { setSiteLogType } )( LogsHeader );

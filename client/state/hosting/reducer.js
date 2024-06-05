@@ -12,6 +12,7 @@ import {
 	HOSTING_CLEAR_CACHE_REQUEST,
 	HOSTING_SFTP_USERS_REQUEST,
 	HOSTING_SSH_ACCESS_REQUEST,
+	HOSTING_SITE_LOG_TYPE_SET,
 } from 'calypso/state/action-types';
 import {
 	combineReducers,
@@ -139,6 +140,15 @@ export const lastCacheClearTimestamp = withSchemaValidation(
 	} )
 );
 
+export function siteLogTypeReducer( state = { logType: 'php' }, action ) {
+	switch ( action.type ) {
+		case HOSTING_SITE_LOG_TYPE_SET:
+			return { ...state, logType: action.payload };
+		default:
+			return state;
+	}
+}
+
 const atomicHostingReducer = combineReducers( {
 	geoAffinity,
 	isFetchingGeoAffinity,
@@ -151,6 +161,7 @@ const atomicHostingReducer = combineReducers( {
 	isFetchingWpVersion,
 	wpVersion,
 	lastCacheClearTimestamp,
+	siteLogTypeReducer,
 } );
 
 const reducer = keyedReducer( 'siteId', atomicHostingReducer );

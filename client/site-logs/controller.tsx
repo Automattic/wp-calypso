@@ -26,3 +26,17 @@ export function httpRequestLogs( context: PageJSContext, next: () => void ) {
 
 	next();
 }
+
+export function siteLogs( context: PageJSContext, next: () => void ) {
+	const state = context.store.getState();
+	console.log( 'siteLogs', context, state );
+	context.primary = (
+		<>
+			<PageViewTracker path="/site-logs/:site/php" title="PHP Error Logs" />
+			<LogsHeader logType="php" />
+			<LogsTab logType="php" />
+		</>
+	);
+
+	next();
+}

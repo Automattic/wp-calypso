@@ -17,6 +17,7 @@ import {
 	HOSTING_STATIC_FILE_404_SET_REQUEST,
 	HOSTING_WP_VERSION_REQUEST,
 	HOSTING_WP_VERSION_SET_REQUEST,
+	HOSTING_SITE_LOG_TYPE_SET,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/hosting/restore-database-password';
@@ -150,4 +151,9 @@ export const updateAtomicStaticFile404 = ( siteId, setting ) => ( {
 export const getAtomicStaticFile404 = ( siteId ) => ( {
 	type: HOSTING_STATIC_FILE_404_REQUEST,
 	siteId,
+} );
+
+export const setSiteLogType = ( logType ) => ( {
+	type: HOSTING_SITE_LOG_TYPE_SET,
+	logType,
 } );
