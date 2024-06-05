@@ -8,7 +8,7 @@ import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-lis
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import {
 	DATAVIEWS_LIST,
@@ -93,7 +93,7 @@ const SitesDashboardV2 = ( {
 	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
-	const initialSortApplied = useRef( false );
+	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 
@@ -147,7 +147,7 @@ const SitesDashboardV2 = ( {
 	useEffect( () => {
 		// Ensure we set and check initialSortApplied to prevent infinite loops when changing sort
 		// values after initial sort.
-		if ( hasSitesSortingPreferenceLoaded && ! initialSortApplied.current ) {
+		if ( hasSitesSortingPreferenceLoaded && ! initialSortApplied ) {
 			const newSortField =
 				siteSortingKeys.find( ( key ) => key.sortKey === sitesSorting.sortKey )?.dataView || '';
 			const newSortDirection = sitesSorting.sortOrder;
@@ -160,9 +160,9 @@ const SitesDashboardV2 = ( {
 				},
 			} ) );
 
-			initialSortApplied.current = true;
+			setInitialSortApplied( true );
 		}
-	}, [ hasSitesSortingPreferenceLoaded, sitesSorting, dataViewsState.sort ] );
+	}, [ hasSitesSortingPreferenceLoaded, sitesSorting, dataViewsState.sort, initialSortApplied ] );
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
@@ -264,7 +264,7 @@ const SitesDashboardV2 = ( {
 					<DocumentHead title={ __( 'Sites' ) } />
 					<DotcomSitesDataViews
 						sites={ paginatedSites }
-						isLoading={ isLoading }
+						isLoading={ isLoading || ! initialSortApplied }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
