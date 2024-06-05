@@ -28,6 +28,10 @@ const RewindFlowError: FunctionComponent< Props > = ( {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_failed' ) );
 	}, [ dispatch ] );
 
+	const handleContactSupportClick = () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_failed_contact_support_click' ) );
+	};
+
 	return (
 		<>
 			<div className="rewind-flow__header">
@@ -41,6 +45,7 @@ const RewindFlowError: FunctionComponent< Props > = ( {
 				primary
 				rel="noopener noreferrer"
 				target="_blank"
+				onClick={ handleContactSupportClick }
 			>
 				{ translate( 'Contact support {{externalIcon/}}', {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
