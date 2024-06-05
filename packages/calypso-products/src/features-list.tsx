@@ -71,7 +71,6 @@ import {
 	FEATURE_JETPACK_VIDEOPRESS_STORAGE,
 	FEATURE_JETPACK_VIDEOPRESS_UNBRANDED,
 	FEATURE_LANGUAGE_SUPPORT_V2,
-	FEATURE_LIVE_CHAT_SUPPORT,
 	FEATURE_MALWARE_SCANNING_DAILY,
 	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 	FEATURE_MANAGE,
@@ -966,13 +965,6 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Help center support' )
 				: i18n.translate( 'Community support' ),
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
-	},
-
-	[ FEATURE_LIVE_CHAT_SUPPORT ]: {
-		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT,
-		getTitle: () => i18n.translate( 'Live chat support' ),
-		getDescription: () =>
-			i18n.translate( 'Realtime help and guidance from professional WordPress experts.' ),
 	},
 
 	[ FEATURE_PREMIUM_SUPPORT ]: {
