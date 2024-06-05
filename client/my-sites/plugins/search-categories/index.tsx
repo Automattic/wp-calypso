@@ -140,7 +140,7 @@ const SearchCategories: FC< {
 						);
 						page.replace( getCategoryUrl( tabSlug ) );
 					} }
-					selectedTab={ category }
+					selectedTab={ category ?? categories[ 0 ].slug }
 					tabs={ categories }
 					width={ 1200 }
 				/>
