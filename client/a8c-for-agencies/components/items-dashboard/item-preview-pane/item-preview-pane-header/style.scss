@@ -3,16 +3,33 @@
 .item-preview__header {
 
 	.item-preview__header-content {
-		.item-preview__header-title-summary {
-			word-wrap: anywhere;
+		.item-preview__header-info {
+			display: flex;
+			flex-direction: row;
+			flex-grow: 1;
+			gap: 10px;
 		}
 
-		.item-preview__close-preview {
+		.item-preview__header-title-summary {
+			word-wrap: anywhere;
+
+			.item-preview__header-summary-link svg {
+				vertical-align: middle;
+			}
+		}
+
+		.item-preview__close-preview,
+		.item-preview__close-preview-button,
+		.item-preview__admin-button {
 			align-self: flex-start;
+		}
+
+		.item-preview__close-preview-button {
+			margin-right: 15px;
 		}
 	}
 
-	@media ( min-width: $break-large ) {
+	@media (min-width: $break-large) {
 		.item-preview__header-favicon {
 			margin-right: 24px;
 			position: relative;
@@ -41,12 +58,19 @@
 
 					.item-preview__header-summary-link {
 						display: flex;
+						gap: 2px;
 						align-items: center;
-						font-size: rem(18px);
+						font-size: rem(16px);
 						font-weight: 400;
 						color: var(--color-accent-70);
-						line-height: 26px;
+						line-height: 1.5;
 						width: fit-content;
+						text-decoration: none;
+
+						&:hover {
+							color: var(--color-link-dark);
+							text-decoration: underline;
+						}
 
 						&:focus {
 							box-shadow: none;
@@ -58,7 +82,7 @@
 		}
 	}
 
-	@media ( max-width: $break-large ) {
+	@media (max-width: $break-large) {
 		display: flex;
 		padding: 24px 24px 8px;
 
@@ -69,7 +93,7 @@
 		.item-preview__header-content {
 			flex-grow: 1;
 			display: flex;
-			justify-content: space-between;
+
 			.item-preview__header-title-summary {
 				flex-grow: 1;
 				display: flex;

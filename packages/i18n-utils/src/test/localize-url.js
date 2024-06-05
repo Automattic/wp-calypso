@@ -449,6 +449,24 @@ describe( '#localizeUrl', () => {
 		expect( localizeUrl( 'https://wordpress.com/learn/', 'es', false ) ).toEqual(
 			'https://wordpress.com/learn/es/'
 		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'en', true ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'en', false ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'es', true ) ).toEqual(
+			'https://wordpress.com/learn/es/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'es', false ) ).toEqual(
+			'https://wordpress.com/learn/es/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
 	} );
 	test( 'tos', () => {
 		expect( localizeUrl( 'https://wordpress.com/tos/', 'en' ) ).toEqual(

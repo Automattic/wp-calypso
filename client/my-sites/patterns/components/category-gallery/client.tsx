@@ -1,6 +1,6 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
@@ -52,10 +52,16 @@ function CategoryGalleryItem( { category, patternTypeFilter }: CategoryGalleryIt
 		};
 	}, [ category, renderedPattern?.html ] );
 
-	const patternCount =
-		patternTypeFilter === PatternTypeFilter.PAGES
-			? category.pagePatternCount
-			: category.regularPatternCount;
+	const patternCountText =
+		patternTypeFilter === PatternTypeFilter.REGULAR
+			? translate( '%(count)d pattern', '%(count)d patterns', {
+					count: category.regularPatternCount,
+					args: { count: category.regularPatternCount },
+			  } )
+			: translate( '%(count)d layout', '%(count)d layouts', {
+					count: category.pagePatternCount,
+					args: { count: category.pagePatternCount },
+			  } );
 
 	return (
 		<LocalizedLink
@@ -64,7 +70,7 @@ function CategoryGalleryItem( { category, patternTypeFilter }: CategoryGalleryIt
 			key={ category.name }
 		>
 			<div
-				className={ classNames( 'patterns-category-gallery__item-preview', {
+				className={ clsx( 'patterns-category-gallery__item-preview', {
 					'patterns-category-gallery__item-preview--page-layout':
 						patternTypeFilter === PatternTypeFilter.PAGES,
 					'patterns-category-gallery__item-preview--mirrored': category.name === 'footer',
@@ -73,22 +79,15 @@ function CategoryGalleryItem( { category, patternTypeFilter }: CategoryGalleryIt
 			>
 				<div className="patterns-category-gallery__item-preview-inner">
 					<PatternPreview
-						category={ category.name }
 						className="pattern-preview--category-gallery"
 						pattern={ pattern }
-						patternTypeFilter={ patternTypeFilter }
 						viewportWidth={ GRID_VIEW_VIEWPORT_WIDTH }
 					/>
 				</div>
 			</div>
 
 			<div className="patterns-category-gallery__item-name">{ category.label }</div>
-			<div className="patterns-category-gallery__item-count">
-				{ translate( '%(count)d pattern', '%(count)d patterns', {
-					count: patternCount,
-					args: { count: patternCount },
-				} ) }
-			</div>
+			<div className="patterns-category-gallery__item-count">{ patternCountText }</div>
 		</LocalizedLink>
 	);
 }
@@ -129,7 +128,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 			>
 				<PatternsSection title={ title } description={ description }>
 					<div
-						className={ classNames( 'patterns-category-gallery', {
+						className={ clsx( 'patterns-category-gallery', {
 							'is-regular-patterns': patternTypeFilter === PatternTypeFilter.REGULAR,
 							'is-page-patterns': patternTypeFilter === PatternTypeFilter.PAGES,
 						} ) }

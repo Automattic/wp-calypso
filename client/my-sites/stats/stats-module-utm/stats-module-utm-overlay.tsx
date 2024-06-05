@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import { STATS_FEATURE_UTM_STATS } from '../constants';
 import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
@@ -9,9 +9,14 @@ import './stats-module-utm-overlay.scss';
 type StatsModuleUTMOverlayProps = {
 	siteId: number;
 	className?: string;
+	overlay?: React.ReactNode;
 };
 
-const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId, className } ) => {
+const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( {
+	siteId,
+	className,
+	overlay,
+} ) => {
 	const fakeData = [
 		{
 			label: 'google / cpc',
@@ -47,7 +52,7 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId
 		// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
 		<StatsListCard
 			title="UTM"
-			className={ classNames( className, 'stats-module-utm-overlay', 'stats-module__card', 'utm' ) }
+			className={ clsx( className, 'stats-module-utm-overlay', 'stats-module__card', 'utm' ) }
 			moduleType="utm"
 			data={ fakeData }
 			mainItemLabel="Posts by Source / Medium"
@@ -56,11 +61,13 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId
 				label: 'View all',
 			} }
 			overlay={
-				<StatsCardUpsellJetpack
-					className="stats-module__upsell"
-					siteId={ siteId }
-					statType={ STATS_FEATURE_UTM_STATS }
-				/>
+				overlay ?? (
+					<StatsCardUpsellJetpack
+						className="stats-module__upsell"
+						siteId={ siteId }
+						statType={ STATS_FEATURE_UTM_STATS }
+					/>
+				)
 			}
 		></StatsListCard>
 	);

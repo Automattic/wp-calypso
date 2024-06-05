@@ -1,4 +1,13 @@
-import { BLOG_PAGE, CONTACT_PAGE, CUSTOM_PAGE, SHOP_PAGE } from 'calypso/signup/difm/constants';
+import {
+	BLOG_PAGE,
+	CASE_STUDIES_PAGE,
+	CONTACT_PAGE,
+	CUSTOM_PAGE,
+	PHOTO_GALLERY_PAGE,
+	PORTFOLIO_PAGE,
+	SHOP_PAGE,
+	VIDEO_GALLERY_PAGE,
+} from 'calypso/signup/difm/constants';
 import {
 	ContactPageDetails,
 	CustomPageDetails,
@@ -89,6 +98,10 @@ const generateWebsiteContentSections = (
 		[ CONTACT_PAGE ]: true,
 		[ BLOG_PAGE ]: true,
 		[ SHOP_PAGE ]: true,
+		[ VIDEO_GALLERY_PAGE ]: true,
+		[ PHOTO_GALLERY_PAGE ]: true,
+		[ PORTFOLIO_PAGE ]: true,
+		[ CASE_STUDIES_PAGE ]: true,
 	};
 
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {

@@ -211,6 +211,7 @@ const LineItemPriceWrapper = styled.span< {
 	shouldUseCheckoutV2?: boolean;
 } >`
 	display: flex;
+	flex: 0 0 auto;
 	gap: 4px;
 
 	${ ( props ) =>
@@ -262,7 +263,7 @@ const DeleteButton = styled( Button )< { theme?: Theme; shouldUseCheckoutV2?: bo
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
-function LineItemPrice( {
+export function LineItemPrice( {
 	actualAmount,
 	crossedOutAmount,
 	shouldUseCheckoutV2,
@@ -1051,10 +1052,10 @@ const UpgradeCreditHelpIconLink = () => {
 				<Gridicon icon="help-outline" size={ 18 } />
 			</span>
 			<UpgradeCreditPopover
-				autoPosition={ true }
+				autoPosition
 				context={ ref.current }
 				isVisible={ isPopoverOpen }
-				hideArrow={ true }
+				hideArrow
 			>
 				{ translate(
 					'Upgrade now and we’ll automatically apply the remaining credit from your current plan. Remember, upgrade credit can only be used toward plan upgrades for the same website.'

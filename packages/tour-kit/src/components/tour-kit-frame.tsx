@@ -3,7 +3,7 @@
  */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useEffect, useState, useCallback, useMemo, useRef } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { usePopper } from 'react-popper';
 /**
  * Internal Dependencies
@@ -38,8 +38,9 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const tourContainerRef = useRef( null );
 	const isMobile = useMobileBreakpoint();
 	const lastStepIndex = config.steps.length - 1;
+	const referenceElements = config.steps[ currentStepIndex ].referenceElements;
 	const referenceElementSelector =
-		config.steps[ currentStepIndex ].referenceElements?.[ isMobile ? 'mobile' : 'desktop' ] || null;
+		referenceElements?.[ isMobile ? 'mobile' : 'desktop' ] || referenceElements?.desktop;
 	const referenceElement = referenceElementSelector
 		? document.querySelector< HTMLElement >( referenceElementSelector )
 		: null;
@@ -209,7 +210,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		}
 	}, [ config.options?.effects?.autoScroll, referenceElement ] );
 
-	const classes = classnames(
+	const classes = clsx(
 		'tour-kit-frame',
 		isMobile ? 'is-mobile' : 'is-desktop',
 		{ 'is-visible': tourReady },
@@ -235,7 +236,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				isMinimized={ isMinimized }
 			/>
 			<div className={ classes } ref={ tourContainerRef }>
-				{ showOverlay() && <Overlay visible={ true } /> }
+				{ showOverlay() && <Overlay visible /> }
 				{ showSpotlight() && (
 					<Spotlight
 						referenceElement={ referenceElement }

@@ -6,7 +6,12 @@
 		max-width: 968px; // Max width of dual column reader stream.
 	}
 
-	@media (max-width: 660px) {
+	.navigation-header__main {
+		margin-bottom: 24px;
+	}
+
+	@media (max-width: 600px) {
+		margin: 0 16px;
 		.navigation-header__main {
 			min-height: auto;
 		}
@@ -15,6 +20,14 @@
 
 .following.main  .section-nav {
 	margin-top: 0;
+
+	.section-nav-tabs__list {
+		.section-nav-tab__link {
+			&:hover {
+				background-color: transparent;
+			}
+		}
+	}
 }
 
 .following .search {
@@ -35,7 +48,7 @@
 	background-size: 450px;
 	min-height: 140px;
 
-	@media ( min-width: 661px ) and ( max-width: 773px ) {
+	@media (min-width: 661px) and (max-width: 773px) {
 		background-position: 150px 20px;
 	}
 
@@ -54,7 +67,7 @@
 		margin-right: -2px; // prevent right cropping of illustration
 
 		// Hides the character when main content column gets too narrow
-		@media ( min-width: 661px ) and ( max-width: 773px ) {
+		@media (min-width: 661px) and (max-width: 773px) {
 			display: none;
 		}
 	}
@@ -75,7 +88,7 @@
 	justify-content: center;
 	margin-left: 24px;
 
-	@media ( min-width: 661px ) and ( max-width: 773px ) {
+	@media (min-width: 661px) and (max-width: 773px) {
 		margin-bottom: 20px;
 		margin-top: 20px;
 	}

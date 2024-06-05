@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 
 import './style.scss';
@@ -26,9 +26,7 @@ const severityText = ( severity: number ) => {
 const ThreatSeverityBadge = ( { severity }: { severity: number } ) => {
 	return (
 		<div className="threat-severity-badge__wrapper">
-			<div
-				className={ classnames( 'threat-severity-badge__content', severityClassNames( severity ) ) }
-			>
+			<div className={ clsx( 'threat-severity-badge__content', severityClassNames( severity ) ) }>
 				{ severityText( severity ) }
 			</div>
 		</div>

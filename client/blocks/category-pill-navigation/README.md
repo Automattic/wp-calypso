@@ -5,8 +5,8 @@ This component can be used to display a set of categories or tags as pills in an
 ## How to use
 
 ```js
-import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import { Icon, starEmpty as iconStar, category as iconCategory } from '@wordpress/icons';
+import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 
 function render() {
 	return (

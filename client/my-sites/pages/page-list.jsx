@@ -325,7 +325,7 @@ class Pages extends Component {
 					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
 					multisite={ false }
-					hierarchical={ true }
+					hierarchical
 					hierarchyLevel={ page.indentLevel || 0 }
 					showPublishedStatus={ showPublishedStatus }
 				/>
@@ -382,6 +382,7 @@ class Pages extends Component {
 		return (
 			<div id="pages" className="pages__page-list">
 				{ this.renderBlogPostsPage() }
+				{ this.renderVirtualHomePage() }
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 			</div>
 		);
@@ -395,9 +396,7 @@ class Pages extends Component {
 			( loading || areBlockEditorSettingsLoading || isFSEActiveLoading ) && ! hasPage;
 
 		if ( ! isInitialLoad && hasSites ) {
-			return pages.length > 0 || this.showVirtualHomepage()
-				? this.renderPagesList( { pages } )
-				: this.renderNoContent();
+			return pages.length > 0 ? this.renderPagesList( { pages } ) : this.renderNoContent();
 		}
 
 		return this.renderLoading();

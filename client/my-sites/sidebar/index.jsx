@@ -59,7 +59,10 @@ export const MySitesSidebarUnified = ( { path, isUnifiedSiteSidebarVisible } ) =
 						<CurrentSite forceAllSitesView={ isAllDomainsView } />
 					</SidebarRegion>
 				) }
-				<MySitesSidebarUnifiedBody path={ path } />
+				<MySitesSidebarUnifiedBody
+					path={ path }
+					isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
+				/>
 				<CollapseSidebar
 					key="collapse"
 					title={ translate( 'Collapse menu' ) }

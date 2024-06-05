@@ -217,8 +217,14 @@ const sections = [
 	},
 	{
 		name: 'hosting-overview',
-		paths: [ '/hosting' ],
+		paths: [ '/overview' ],
 		module: 'calypso/hosting-overview',
+		group: 'sites',
+	},
+	{
+		name: 'dev-tools',
+		paths: [ '/dev-tools' ],
+		module: 'calypso/dev-tools',
 		group: 'sites',
 	},
 	{
@@ -699,14 +705,26 @@ const sections = [
 	},
 	{
 		name: 'site-monitoring',
-		paths: [ '/site-monitoring', '/site-logs' ],
+		paths: [ '/site-monitoring' ],
 		module: 'calypso/site-monitoring',
+		group: 'sites',
+	},
+	{
+		name: 'site-logs',
+		paths: [ '/site-logs' ],
+		module: 'calypso/site-logs',
 		group: 'sites',
 	},
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
 		module: 'calypso/github-deployments',
+		group: 'sites',
+	},
+	{
+		name: 'staging-site',
+		paths: [ '/staging-site' ],
+		module: 'calypso/staging-site',
 		group: 'sites',
 	},
 	{
@@ -737,7 +755,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-sites',
-		paths: [ '/sites', 'sites/favorite' ],
+		paths: [ '/sites', 'sites/need-setup' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
 		group: 'a8c-for-agencies',
 	},
@@ -777,8 +795,34 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-referrals',
-		paths: [ '/referrals', '/referrals/bank-details' ],
+		paths: [
+			'/referrals',
+			'/referrals/bank-details',
+			'/referrals/commissions',
+			// FIXME: Remove the above 2 items when automated referral is enabled
+			'/referrals/dashboard',
+			'/referrals/payment-settings',
+			'/referrals/faq',
+		],
 		module: 'calypso/a8c-for-agencies/sections/referrals',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-migrations',
+		paths: [ '/migrations' ],
+		module: 'calypso/a8c-for-agencies/sections/migrations',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-settings',
+		paths: [ '/settings' ],
+		module: 'calypso/a8c-for-agencies/sections/settings',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-partner-directory',
+		paths: [ '/partner-directory' ],
+		module: 'calypso/a8c-for-agencies/sections/partner-directory',
 		group: 'a8c-for-agencies',
 	},
 	{

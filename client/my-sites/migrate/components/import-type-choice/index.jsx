@@ -1,5 +1,5 @@
 import { Badge } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { findKey, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -56,7 +56,7 @@ export default class ImportTypeChoice extends Component {
 	};
 
 	renderOption = ( item, key ) => {
-		const className = classNames( 'import-type-choice__option-wrapper', {
+		const className = clsx( 'import-type-choice__option-wrapper', {
 			disabled: this.props.radioOptions[ key ].enabled === false,
 			selected: this.state.activeItem === key,
 		} );
@@ -71,7 +71,7 @@ export default class ImportTypeChoice extends Component {
 				data-key={ key }
 				key={ key }
 			>
-				<FormRadio checked={ this.state.activeItem === key } readOnly={ true } />
+				<FormRadio checked={ this.state.activeItem === key } readOnly />
 				<div className="import-type-choice__option-data">
 					<div className="import-type-choice__option-header">
 						<p className="import-type-choice__option-title">{ item.title }</p>

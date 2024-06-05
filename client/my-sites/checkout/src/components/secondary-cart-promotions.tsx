@@ -60,6 +60,7 @@ const UpsellWrapper = styled.div`
 
 		p {
 			margin-bottom: 1.2em;
+			word-break: break-word;
 		}
 	}
 `;

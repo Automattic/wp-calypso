@@ -10,57 +10,77 @@ import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 export default function useHostingDescription( slug: string ): {
 	name: TranslateResult;
 	description: TranslateResult;
+	heading: TranslateResult;
 	features: TranslateResult[];
+	footerText: TranslateResult;
 } {
 	const translate = useTranslate();
 
 	return useMemo( () => {
 		let description = '';
 		let name = '';
+		let heading = '';
 		let features: TranslateResult[] = [];
+		let footerText: TranslateResult = '';
 
 		switch ( slug ) {
 			case 'pressable-hosting':
 				name = translate( 'Pressable' );
-				description = translate(
-					'Best for developers and agencies who need advanced hosting controls and management tools.'
-				);
+				heading = translate( 'Premier Agency Hosting w/ WooCommerce' );
+				description = translate( 'Best for large-scale businesses and major eCommerce sites.' );
 				features = [
 					translate( 'Optimized for high-traffic WooCommerce stores {{img/}}', {
 						components: {
 							img: <WooCommerceLogo size={ 32 } />,
 						},
 					} ),
+					translate( '24/7 Expert support w/ expanded options' ),
+					translate( '75GB-1TB Storage' ),
 					translate( '100% uptime SLA' ),
-					translate( 'Great for teams with granular permission needs' ),
-					translate( 'Tooling to help you manage sites at scale with one-click config options' ),
-					translate( 'White-label tools for agencies' ),
-					translate(
-						'Partner sales concierge to assist with custom plans and complex purchasing requirements'
-					),
-					translate( 'Multiple support channels: Email, web chat, and Slack.' ),
-					translate( 'Decoupled (headless) support' ),
+					translate( 'Custom pricing' ),
+					translate( 'Agency tools to manage sites at scale' ),
 				];
+				footerText = translate( 'WP.Cloud powered hosting by' );
 				break;
 			case 'wpcom-hosting':
 				name = translate( 'WordPress.com' );
+				heading = translate( 'Standard Agency Hosting' );
 				description = translate(
-					'Best for those who want optimized, hassle-free WordPress hosting.'
+					'Optimized and hassle-free hosting for business websites, local merchants, and small online retailers.'
 				);
 				features = [
-					translate( 'Great for developers with client-managed sites' ),
-					translate( 'Unlimited visits' ),
-					translate( '50GB storage' ),
+					translate( 'Great for client-managed sites.' ),
+					translate( '24/7 Expert Support' ),
+					translate( '50 GB Storage' ),
+					translate( 'Unlimited visitors' ),
 					translate( 'Self-service sales' ),
-					translate( 'Local development environment, Studio' ),
+					translate( 'Studio (local development)' ),
 				];
+				footerText = translate( 'WP.Cloud powered hosting by' );
+				break;
+			case 'vip':
+				name = translate( 'VIP' );
+				heading = translate( 'Enterprise CMS' );
+				description = translate(
+					'Deliver unmatched performance with the highest security standards on our enterprise content platform.'
+				);
+				features = [
+					translate( 'Unmatched flexibility to build a customized web experience' ),
+					translate( 'Tools to increase customer engagement' ),
+					translate(
+						'Scalability to ensure top-notch site performance during campaigns or events'
+					),
+				];
+				footerText = translate( 'Enterprise WordPress hosting by' );
 				break;
 		}
 
 		return {
 			name,
+			heading,
 			description,
 			features,
+			footerText,
 		};
 	}, [ slug, translate ] );
 }

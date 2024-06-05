@@ -1,6 +1,5 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { Button, FormLabel } from '@automattic/components';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import emailValidator from 'email-validator';
@@ -15,7 +14,6 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -32,6 +30,7 @@ class PasswordlessSignupForm extends Component {
 		isInviteLoggedOutForm: PropTypes.bool,
 		onInputBlur: PropTypes.func,
 		onInputChange: PropTypes.func,
+		onCreateAccountError: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -74,6 +73,7 @@ class PasswordlessSignupForm extends Component {
 			password: '',
 		};
 		const { flowName, queryArgs = {} } = this.props;
+		const isDevAccount = queryArgs.ref === 'hosting-lp' || queryArgs.ref === 'developer-lp';
 
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
@@ -81,7 +81,7 @@ class PasswordlessSignupForm extends Component {
 			this.props.submitForm( {
 				email: this.state.email,
 				is_passwordless: true,
-				is_dev_account: queryArgs.ref === 'developer-lp',
+				is_dev_account: isDevAccount,
 			} );
 			return;
 		}
@@ -94,13 +94,18 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		const { oauth2_client_id, oauth2_redirect, ref } = queryArgs;
+		const { oauth2_client_id, oauth2_redirect } = queryArgs;
+
+		// I'm not sure why passwordless signup form stopped respecting flowName from variationName param,
+		// see https://github.com/Automattic/wp-calypso/pull/67225 for more details.
+		// I'm going to add a temporary hack for entrepreneur flow.
+		const signup_flow_name = queryArgs.variationName === 'entrepreneur' ? 'entrepreneur' : flowName;
 
 		try {
 			const response = await wpcom.req.post( '/users/new', {
 				email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
 				is_passwordless: true,
-				signup_flow_name: flowName,
+				signup_flow_name: signup_flow_name,
 				validate: false,
 				locale: getLocaleSlug(),
 				client_id: config( 'wpcom_signup_id' ),
@@ -110,7 +115,8 @@ class PasswordlessSignupForm extends Component {
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
 				anon_id: getTracksAnonymousUserId(),
-				is_dev_account: ref === 'developer-lp',
+				is_dev_account: isDevAccount,
+				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
 			} );
 
 			this.createAccountCallback( response );
@@ -122,29 +128,17 @@ class PasswordlessSignupForm extends Component {
 	createAccountError = async ( error ) => {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
-		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-			page(
-				addQueryArgs(
-					{
-						email_address: this.state.email,
-						is_signup_existing_account: true,
-					},
-					this.props.logInUrl
-				)
-			);
-			return;
+		if ( ! [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+			this.setState( {
+				errorMessages: [
+					this.props.translate(
+						'Sorry, something went wrong when trying to create your account. Please try again.'
+					),
+				],
+				isSubmitting: false,
+			} );
 		}
-
-		this.setState( {
-			errorMessages: [
-				this.props.translate(
-					'Sorry, something went wrong when trying to create your account. Please try again.'
-				),
-			],
-			isSubmitting: false,
-		} );
-
-		return;
+		this.props.onCreateAccountError?.( error, this.state.email );
 	};
 
 	createAccountCallback = ( response ) => {
@@ -223,7 +217,7 @@ class PasswordlessSignupForm extends Component {
 					components: {
 						emailSuggestion: (
 							<Button
-								plain={ true }
+								plain
 								className="signup-form__domain-suggestion-confirmation"
 								onClick={ () => {
 									this.handleAcceptDomainSuggestion( newEmail, newDomain, oldDomain );

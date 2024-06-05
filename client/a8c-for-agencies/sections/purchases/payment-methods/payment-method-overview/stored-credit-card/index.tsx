@@ -1,5 +1,5 @@
 import { PaymentLogo } from '@automattic/wpcom-checkout';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -44,7 +44,7 @@ export default function StoredCreditCard( {
 	// Fetch the stored cards from the cache if they are available.
 	const {
 		data: { allStoredCards },
-	} = useStoredCards( paging, { staleTime: Infinity } );
+	} = useStoredCards( paging, true );
 
 	const { isDeleteDialogVisible, setIsDeleteDialogVisible, handleDelete, isDeleteInProgress } =
 		useDeleteCard( creditCard, allStoredCards );
@@ -78,7 +78,7 @@ export default function StoredCreditCard( {
 	return (
 		<>
 			<div
-				className={ classNames( 'stored-credit-card__card', {
+				className={ clsx( 'stored-credit-card__card', {
 					'is-loading': isLoading,
 				} ) }
 			>
@@ -117,19 +117,19 @@ export default function StoredCreditCard( {
 					</span>
 				</div>
 				<div
-					className={ classNames(
+					className={ clsx(
 						'stored-credit-card__payment-logo',
 						`stored-credit-card__payment-logo-${ cardBrand }`
 					) }
 				>
-					<PaymentLogo brand={ cardBrand } isSummary={ true } />
+					<PaymentLogo brand={ cardBrand } isSummary />
 				</div>
 			</div>
 
 			{ isDeleteDialogVisible && (
 				<StoredCreditCardDeleteDialog
 					paymentMethod={ creditCard }
-					isVisible={ true }
+					isVisible
 					onClose={ () => setIsDeleteDialogVisible( false ) }
 					onConfirm={ handleDelete }
 					isDeleteInProgress={ isDeleteInProgress }

@@ -1,8 +1,9 @@
-import { useLocale } from '@automattic/i18n-utils';
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteData } from '../hooks/use-site-data';
@@ -33,11 +34,9 @@ const migrationSignup: Flow = {
 		return [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_CREATION_STEP,
-			STEPS.BUNDLE_TRANSFER,
-			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			STEPS.SITE_MIGRATION_INSTRUCTIONS,
+			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
 			STEPS.ERROR,
 		];
 	},
@@ -51,15 +50,7 @@ const migrationSignup: Flow = {
 
 		const flowName = this.name;
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+		const locale = useFlowLocale();
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const aff = queryParams.get( 'aff' );
@@ -198,11 +189,7 @@ const migrationSignup: Flow = {
 					}
 
 					return navigate(
-						addQueryArgs(
-							{ from: from, siteSlug, siteId },
-							STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
-						),
-						{ hideFreeMigrationTrialForNonVerifiedEmail: true }
+						addQueryArgs( { from: from, siteSlug, siteId }, STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug )
 					);
 				}
 
@@ -210,14 +197,6 @@ const migrationSignup: Flow = {
 					return navigate(
 						addQueryArgs( { from: fromQueryParam, siteSlug, siteId }, STEPS.PROCESSING.slug )
 					);
-				}
-
-				case STEPS.BUNDLE_TRANSFER.slug: {
-					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
-				}
-
-				case STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug: {
-					return navigate( STEPS.PROCESSING.slug );
 				}
 
 				case STEPS.PROCESSING.slug: {
@@ -242,14 +221,6 @@ const migrationSignup: Flow = {
 					if ( providedDependencies?.error ) {
 						return navigate( STEPS.ERROR.slug );
 					}
-
-					// If the plugin was installed successfully, go to the migration instructions.
-					if ( providedDependencies?.pluginInstalled ) {
-						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
-					}
-
-					// Otherwise processing has finished from the BundleTransfer step and we need to install the plugin.
-					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -259,37 +230,22 @@ const migrationSignup: Flow = {
 								siteSlug,
 								from: fromQueryParam,
 							},
-							`/setup/${ FLOW_NAME }/${ STEPS.BUNDLE_TRANSFER.slug }`
+							`/setup/${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`
 						);
 						goToCheckout( {
 							flowName: FLOW_NAME,
-							stepName: currentStep,
+							stepName: 'site-migration-upgrade-plan',
 							siteSlug: siteSlug,
 							destination: destination,
 							plan: providedDependencies.plan as string,
+							extraQueryParams:
+								providedDependencies?.sendIntentWhenCreatingTrial &&
+								providedDependencies?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
+									? { hosting_intent: HOSTING_INTENT_MIGRATE }
+									: {},
 						} );
 						return;
 					}
-
-					if ( providedDependencies?.freeTrialSelected ) {
-						return navigate(
-							addQueryArgs(
-								{
-									siteSlug,
-									from: fromQueryParam,
-								},
-								STEPS.BUNDLE_TRANSFER.slug
-							),
-							{
-								siteId,
-								siteSlug,
-							}
-						);
-					}
-				}
-
-				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
-					return exitFlow( `/home/${ siteSlug }` );
 				}
 			}
 		}

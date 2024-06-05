@@ -1,6 +1,6 @@
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Button, Gridicon, SelectDropdown } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
@@ -351,7 +351,7 @@ export class PluginsListHeader extends PureComponent {
 
 	render() {
 		const { label, selected, plugins, isBulkManagementActive, translate } = this.props;
-		const sectionClasses = classNames( 'plugin-list-header plugin-list-header-new', {
+		const sectionClasses = clsx( 'plugin-list-header plugin-list-header-new', {
 			'is-bulk-editing': isBulkManagementActive,
 			'is-action-bar-visible': this.state.actionBarVisible,
 		} );

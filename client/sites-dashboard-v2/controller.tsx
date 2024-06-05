@@ -62,7 +62,13 @@ export function sitesDashboard( context: Context, next: () => void ) {
 				// Add border around everything
 				overflow: hidden;
 				min-height: 100vh;
-				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
+				padding: calc( var( --masterbar-height ) + 16px ) 16px 16px
+					calc( var( --sidebar-width-max ) );
+
+				@media only screen and ( max-width: 781px ) {
+					padding: calc( var( --masterbar-height ) + 24px ) 24px 24px
+						calc( var( --sidebar-width-max ) );
+				}
 			}
 
 			.layout__secondary .global-sidebar {
@@ -71,20 +77,16 @@ export function sitesDashboard( context: Context, next: () => void ) {
 		}
 
 		body.is-group-sites-dashboard.rtl .layout__content {
-			padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;
+			padding: calc( var( --masterbar-height ) + 16px ) calc( var( --sidebar-width-max ) ) 16px 16px;
+
+			@media only screen and ( max-width: 781px ) {
+				padding: calc( var( --masterbar-height ) + 24px ) calc( var( --sidebar-width-max ) ) 24px
+					24px;
+			}
 		}
 
 		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
-			height: calc( 100vh - 32px );
 			padding-bottom: 0;
-			box-shadow: none;
-		}
-
-		div.is-group-sites-dashboard:not( .has-no-masterbar ) {
-			.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
-				// Fix for scrollbars when global-sidebar is not visible because masterbar is visible
-				height: calc( 100vh - 95px );
-			}
 		}
 
 		// Update body margin to account for the sidebar width

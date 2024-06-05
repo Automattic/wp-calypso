@@ -1,5 +1,12 @@
 const BloombergLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
-	<svg xmlns="http://www.w3.org/2000/svg" width={ 69 } height={ 27 } fill="none" { ...props }>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width={ 69 }
+		height={ 27 }
+		viewBox="0 0 69 27"
+		fill="none"
+		{ ...props }
+	>
 		<title>WordPress VIP client logo for Bloomberg</title>
 		<mask
 			id="bloomberg-logo-a"

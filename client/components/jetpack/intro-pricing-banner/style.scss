@@ -52,7 +52,7 @@
 	}
 
 	&.is-centered-mobile {
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			align-self: center;
 		}
 	}
@@ -89,6 +89,12 @@
 		top: 14px;
 	}
 
+}
+
+.external-link {
+	.gridicons-external.intro-pricing-banner__external-link-icon {
+		color: var(--studio-gray-50);
+	}
 }
 
 

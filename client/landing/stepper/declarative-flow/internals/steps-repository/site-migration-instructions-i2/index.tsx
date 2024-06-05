@@ -1,13 +1,13 @@
+import { captureException } from '@automattic/calypso-sentry';
 import { StepContainer } from '@automattic/onboarding';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migraiton-key';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MaybeLink } from '../site-migration-instructions/maybe-link';
 import { ShowHideInput } from '../site-migration-instructions/show-hide-input';
@@ -30,54 +30,44 @@ const getPluginInstallationPage = ( fromUrl: string ) => {
 const getMigrateGuruPageURL = ( siteURL: string ) =>
 	removeDuplicatedSlashes( `${ siteURL }/wp-admin/admin.php?page=migrateguru` );
 
-const Loading = () => {
+const DoNotTranslateIt: FC< { value: string } > = ( { value } ) => <>{ value }</>;
+
+const ContactSupportMessage = () => {
+	const translate = useTranslate();
+
 	return (
-		<div className="loading">
-			<div className="loading__content">
-				<LoadingEllipsis />
-			</div>
-		</div>
+		<p className="site-migration-instructions__contact">
+			{ translate(
+				'Sorry, we couldn’t finish setting up your site. {{link}}Please, contact support{{/link}}.',
+				{
+					components: {
+						link: <a href="https://wordpress.com/help/contact" target="_blank" rel="noreferrer" />,
+					},
+				}
+			) }
+		</p>
 	);
 };
 
-const DoNotTranslateIt: FC< { value: string } > = ( { value } ) => <>{ value }</>;
-
-const SiteMigrationInstructions: Step = function () {
+const SiteMigrationInstructions: Step = function ( { flow } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const siteId = site?.ID;
 	const fromUrl = useQuery().get( 'from' ) || '';
-
 	const {
-		data: { migrationKey } = {},
-		isSuccess,
-		isError,
-		isFetching,
-		isFetched,
-	} = useSiteMigrationKey( siteId );
+		detailedStatus,
+		migrationKey,
+		completed: isSetupCompleted,
+		error: setupError,
+	} = usePrepareSiteForMigration( siteId );
 
-	const [ isWaitingForSite, setIsWaitingForSite ] = useState( true );
-	const [ isWaitingForPlugins, setIsWaitingForPlugins ] = useState( true );
-	const isSiteSetupComplete = ! isWaitingForSite && ! isWaitingForPlugins;
-
-	useEffect( () => {
-		const timer = setTimeout( () => {
-			setIsWaitingForSite( false );
-			setIsWaitingForPlugins( true );
-		}, 2000 );
-
-		return () => clearTimeout( timer );
-	}, [] );
-	useEffect( () => {
-		const timer = setTimeout( () => {
-			setIsWaitingForPlugins( false );
-		}, 4000 );
-
-		return () => clearTimeout( timer );
-	}, [] );
+	const hasErrorGetMigrationKey = detailedStatus.migrationKey === 'error';
+	const showCopyIntoNewSite = isSetupCompleted && migrationKey;
+	const showSupportMessage = setupError && ! hasErrorGetMigrationKey;
+	const showFallback = isSetupCompleted && hasErrorGetMigrationKey;
 
 	useEffect( () => {
-		if ( isError && fromUrl ) {
+		if ( hasErrorGetMigrationKey ) {
 			recordTracksEvent(
 				'calypso_onboarding_site_migration_instructions_unable_to_get_migration_key',
 				{
@@ -85,14 +75,46 @@ const SiteMigrationInstructions: Step = function () {
 				}
 			);
 		}
-	}, [ fromUrl, isError ] );
+	}, [ fromUrl, hasErrorGetMigrationKey ] );
+
+	useEffect( () => {
+		if ( isSetupCompleted ) {
+			recordTracksEvent( 'calypso_site_migration_instructions_preparation_complete' );
+		}
+	}, [ isSetupCompleted ] );
+
+	useEffect( () => {
+		if ( setupError ) {
+			const logError = setupError as unknown as { path: string; message: string };
+
+			captureException( setupError, {
+				extra: {
+					message: logError?.message,
+					path: logError?.path,
+				},
+				tags: {
+					blog_id: siteId,
+					calypso_section: 'setup',
+					flow,
+					stepName: 'site-migration-instructions',
+					context: 'failed_to_prepare_site_for_migration',
+				},
+			} );
+		}
+	}, [ flow, setupError, siteId ] );
+
+	const recordInstructionsLinkClick = ( linkname: string ) => {
+		recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
+			linkname,
+		} );
+	};
 
 	const stepContent = (
 		<div className="site-migration-instructions__content">
 			<ol className="site-migration-instructions__list">
 				<li>
 					{ translate(
-						'Install and activate the {{a}}Migrate Guru plugin{{/a}} on your existing site.',
+						'Install and activate the {{a}}Migrate Guru plugin{{/a}} on your source site.',
 						{
 							components: {
 								a: (
@@ -100,6 +122,7 @@ const SiteMigrationInstructions: Step = function () {
 										href={ getPluginInstallationPage( fromUrl ) }
 										target="_blank"
 										rel="noreferrer"
+										onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
 									/>
 								),
 							},
@@ -117,6 +140,7 @@ const SiteMigrationInstructions: Step = function () {
 										target="_blank"
 										rel="noreferrer"
 										fallback={ <strong /> }
+										onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
 									/>
 								),
 								migrateButton: <DoNotTranslateIt value="Migrate" />,
@@ -136,16 +160,13 @@ const SiteMigrationInstructions: Step = function () {
 					) }
 				</li>
 				<li>
-					<PendingActions
-						isWaitingForSite={ isWaitingForSite }
-						isWaitingForPlugins={ isWaitingForPlugins }
-					/>
+					<PendingActions status={ detailedStatus } />
 				</li>
 
-				{ isSuccess && migrationKey && (
+				{ showCopyIntoNewSite && (
 					<li
-						className={ classNames( 'fade-in', {
-							active: isSiteSetupComplete,
+						className={ clsx( 'fade-in', {
+							active: showCopyIntoNewSite,
 						} ) }
 					>
 						{ translate(
@@ -159,13 +180,13 @@ const SiteMigrationInstructions: Step = function () {
 								},
 							}
 						) }
-						<ShowHideInput value={ migrationKey } className="site-migration-instructions__key" />
+						<ShowHideInput value={ migrationKey! } className="site-migration-instructions__key" />
 					</li>
 				) }
-				{ isError && (
+				{ showFallback && (
 					<li
-						className={ classNames( 'fade-in', {
-							active: isSiteSetupComplete,
+						className={ clsx( 'fade-in', {
+							active: showFallback,
 						} ) }
 					>
 						{ translate(
@@ -189,21 +210,17 @@ const SiteMigrationInstructions: Step = function () {
 					</li>
 				) }
 			</ol>
-			<p
-				className={ classNames( 'fade-in', {
-					active: isSiteSetupComplete,
-				} ) }
-			>
-				{ translate(
-					'And you are done! When the migration finishes, Migrate Guru will send you an email.'
-				) }
-			</p>
+			{ showFallback ||
+				( showCopyIntoNewSite && (
+					<p className={ clsx( 'fade-in', { active: true } ) }>
+						{ translate(
+							'And you are done! When the migration finishes, Migrate Guru will send you an email.'
+						) }
+					</p>
+				) ) }
+			{ showSupportMessage && <ContactSupportMessage /> }
 		</div>
 	);
-
-	if ( isFetching || ! isFetched ) {
-		return <Loading />;
-	}
 
 	return (
 		<>
@@ -211,9 +228,9 @@ const SiteMigrationInstructions: Step = function () {
 			<StepContainer
 				stepName="site-migration-instructions"
 				shouldHideNavButtons={ false }
-				className="is-step-site-migration-instructions"
-				hideSkip={ true }
-				hideBack={ true }
+				className="is-step-site-migration-instructions site-migration-instructions-i2"
+				hideSkip
+				hideBack
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"

@@ -1,10 +1,11 @@
-import { StepContainer, Title, SubTitle } from '@automattic/onboarding';
+import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
@@ -17,9 +18,10 @@ interface Props {
 	hasError?: boolean;
 	onComplete: ( siteInfo: UrlData ) => void;
 	onSkip: () => void;
+	hideImporterListLink: boolean;
 }
 
-export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
+export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 
@@ -58,6 +60,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 					dontHaveSiteAddressLabel={ translate(
 						'Or <button>pick your current platform from a list</button>'
 					) }
+					hideImporterListLink={ hideImporterListLink }
 				/>
 			</div>
 		</div>
@@ -78,8 +81,9 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 	);
 };
 
-const SiteMigrationIdentify: Step = function ( { navigation } ) {
+const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 	const siteSlug = useSiteSlug();
+	const translate = useTranslate();
 
 	const handleSubmit = useCallback(
 		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
@@ -94,23 +98,35 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 		[ navigation, siteSlug ]
 	);
 
+	const urlQueryParams = useQuery();
+
+	const shouldHideBackButton = () => {
+		const ref = urlQueryParams.get( 'ref' ) || '';
+		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'calypso-importer' ].includes( ref );
+		const shouldHideBasedOnVariant = [ HOSTED_SITE_MIGRATION_FLOW ].includes( variantSlug || '' );
+
+		return shouldHideBasedOnRef || shouldHideBasedOnVariant;
+	};
+
 	return (
 		<>
-			<DocumentHead title="Site migration instructions" />
+			<DocumentHead title={ translate( 'Import your site content' ) } />
 			<StepContainer
 				stepName="site-migration-identify"
 				flowName="site-migration"
 				className="import__onboarding-page"
-				hideSkip={ true }
-				hideFormattedHeader={ true }
+				hideBack={ shouldHideBackButton() }
+				hideSkip
+				hideFormattedHeader
 				goBack={ navigation.goBack }
 				goNext={ navigation?.submit }
-				isFullLayout={ true }
+				isFullLayout
 				stepContent={
 					<Analyzer
 						onComplete={ ( { platform, url } ) =>
 							handleSubmit( 'continue', { platform, from: url } )
 						}
+						hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
 						onSkip={ () => {
 							handleSubmit( 'skip_platform_identification' );
 						} }

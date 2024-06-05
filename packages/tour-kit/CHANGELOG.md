@@ -1,3 +1,7 @@
+## 1.1.3
+
+- Fallback reference element to the desktop selector if the mobile selector is not provided
+
 ## 1.1.2
 
 - Added 'onStepView' callback that's called each time a step is mounted

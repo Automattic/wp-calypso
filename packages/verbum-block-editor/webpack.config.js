@@ -1,5 +1,6 @@
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const webpack = require( 'webpack' );
 
 /* Arguments to this function replicate webpack's so this config can be used on the command line,
  * with individual options overridden by command line args.
@@ -34,6 +35,15 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			filename: '[name].min.js', // dynamic filename
 			library: 'verbumBlockEditor',
 		},
+		externals: {
+			'@wordpress/i18n': [ 'wp', 'i18n' ],
+		},
+		plugins: [
+			...webpackConfig.plugins,
+			new webpack.DefinePlugin( {
+				'process.env.IS_GUTENBERG_PLUGIN': true,
+			} ),
+		],
 	};
 }
 

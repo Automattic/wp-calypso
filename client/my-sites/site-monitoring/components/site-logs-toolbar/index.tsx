@@ -1,6 +1,6 @@
 import { SelectDropdown, Gridicon, Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -101,16 +101,18 @@ export const SiteLogsToolbar = ( {
 		{ value: 'DELETE', label: translate( 'DELETE' ) },
 	];
 
+	// Numbers don't need to be translated.
 	const requestStatuses = [
 		{ value: '', label: translate( 'All' ) },
-		{ value: '200', label: translate( '200' ) },
-		{ value: '301', label: translate( '301' ) },
-		{ value: '302', label: translate( '302' ) },
-		{ value: '400', label: translate( '400' ) },
-		{ value: '401', label: translate( '401' ) },
-		{ value: '403', label: translate( '403' ) },
-		{ value: '404', label: translate( '404' ) },
-		{ value: '500', label: translate( '500' ) },
+		{ value: '200', label: '200' },
+		{ value: '301', label: '301' },
+		{ value: '302', label: '302' },
+		{ value: '400', label: '400' },
+		{ value: '401', label: '401' },
+		{ value: '403', label: '403' },
+		{ value: '404', label: '404' },
+		{ value: '429', label: '429' },
+		{ value: '500', label: '500' },
 	];
 
 	const selectedSeverity =
@@ -136,9 +138,7 @@ export const SiteLogsToolbar = ( {
 				{ translate( 'Filter' ) }
 				<Gridicon icon="filter" />
 			</Button>
-			<div
-				className={ classnames( 'site-logs-toolbar__top-row', { 'is-hidden': ! isMobileOpen } ) }
-			>
+			<div className={ clsx( 'site-logs-toolbar__top-row', { 'is-hidden': ! isMobileOpen } ) }>
 				<label htmlFor="from">{ translate( 'From' ) }</label>
 				<DateTimePicker
 					id="from"
@@ -185,7 +185,7 @@ export const SiteLogsToolbar = ( {
 				{ logType === 'web' && (
 					<>
 						<div className="site-logs-toolbar-filter-element">
-							<label htmlFor="site-logs-request-type">{ translate( 'Request Type' ) }</label>
+							<label htmlFor="site-logs-request-type">{ translate( 'Request type' ) }</label>
 							<SelectDropdown
 								id="site-logs-request-type"
 								className="site-logs-toolbar-filter-request-type"

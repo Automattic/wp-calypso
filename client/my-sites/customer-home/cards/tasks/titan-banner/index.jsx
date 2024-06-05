@@ -25,7 +25,7 @@ const TitanBanner = () => {
 			actionText={ translate( 'Add email for free' ) }
 			actionUrl={ emailComparisonPath }
 			completeOnStart={ false }
-			enableSkipOptions={ true }
+			enableSkipOptions
 			illustration={ emailIllustration }
 			taskId={ TASK_UPSELL_TITAN }
 			timing={ 3 }

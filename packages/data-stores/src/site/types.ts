@@ -207,6 +207,7 @@ export interface SiteDetailsCapabilities {
 	publish_posts: boolean;
 	remove_users: boolean;
 	upload_files: boolean;
+	update_plugins: boolean;
 	view_hosting: boolean;
 	view_stats: boolean;
 }

@@ -2,17 +2,10 @@ import { Button, Gridicon } from '@automattic/components';
 import { useState, useRef } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import {
-	LicenseAction,
-	LicenseRole,
-	LicenseType,
-} from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import RevokeLicenseDialog from '../revoke-license-dialog';
+import { LicenseAction, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import useLicenseActions from './use-license-actions';
 
 interface Props {
-	licenseKey: string;
-	product: string;
 	siteUrl: string | null;
 	attachedAt: string | null;
 	revokedAt: string | null;
@@ -22,8 +15,6 @@ interface Props {
 
 export default function LicenseActions( {
 	siteUrl,
-	licenseKey,
-	product,
 	attachedAt,
 	revokedAt,
 	licenseType,
@@ -32,7 +23,6 @@ export default function LicenseActions( {
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ showRevokeDialog, setShowRevokeDialog ] = useState( false );
 
 	const licenseActions = useLicenseActions(
 		siteUrl,
@@ -44,9 +34,6 @@ export default function LicenseActions( {
 
 	const handleActionClick = ( action: LicenseAction ) => {
 		action.onClick();
-		if ( action.type === 'revoke' ) {
-			setShowRevokeDialog( true );
-		}
 	};
 
 	return (
@@ -75,16 +62,6 @@ export default function LicenseActions( {
 						</PopoverMenuItem>
 					) ) }
 			</PopoverMenu>
-
-			{ showRevokeDialog && (
-				<RevokeLicenseDialog
-					licenseKey={ licenseKey }
-					product={ product }
-					siteUrl={ siteUrl }
-					onClose={ () => setShowRevokeDialog( false ) }
-					licenseRole={ isChildLicense ? LicenseRole.Child : LicenseRole.Single }
-				/>
-			) }
 		</>
 	);
 }

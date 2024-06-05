@@ -18,7 +18,7 @@ import {
 	isJetpackModuleActive,
 	isJetpackMinimumVersion,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const debug = debugFactory( 'calypso:promote-post' );
 
@@ -123,6 +123,7 @@ const getWidgetOptions = () => {
 
 export interface DSPOriginProps {
 	isAtomic?: boolean;
+	isClassicSimple?: boolean;
 }
 
 export const getDSPOrigin = ( originProps: DSPOriginProps | undefined ) => {
@@ -333,9 +334,11 @@ export enum PromoteWidgetStatus {
  * @returns The props to use when calculating the DSP origin
  */
 export const useDspOriginProps = (): DSPOriginProps => {
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ?? 0 ) );
-	return { isAtomic };
+	const selectedSite = useSelector( getSelectedSite );
+
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSite?.ID ?? 0 ) );
+	const isClassicSimple = selectedSite?.options?.is_wpcom_simple ?? false;
+	return { isAtomic, isClassicSimple };
 };
 
 /**

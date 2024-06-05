@@ -9,6 +9,7 @@ import {
 import {
 	BackupNode,
 	BoostNode,
+	ErrorNode,
 	MonitorNode,
 	PluginNode,
 	ScanNode,
@@ -184,6 +185,12 @@ const useFormatPluginData = () => {
 	);
 };
 
+const formatErrorData = ( site: Site ): ErrorNode => ( {
+	status: site.is_connection_healthy ? 'success' : 'failed',
+	type: 'error',
+	value: site.is_connection_healthy ? 'error' : '',
+} );
+
 const useFormatSite = () => {
 	const formatBackupData = useFormatBackupData();
 	const formatMonitorData = useFormatMonitorData();
@@ -205,6 +212,7 @@ const useFormatSite = () => {
 				scan: formatScanData( site ),
 				monitor: formatMonitorData( site ),
 				plugin: formatPluginData( site ),
+				error: formatErrorData( site ),
 				isFavorite: site.is_favorite,
 				isSelected: site.isSelected,
 				onSelect: site.onSelect,

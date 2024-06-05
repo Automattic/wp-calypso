@@ -266,6 +266,10 @@ $custom-border-corner-size: 16px;
 		opacity: 0;
 		bottom: 0 !important;
 		transition: opacity 0.3s ease, bottom 0.3s ease;
+
+		.odie-jump-to-recent-message-button {
+			pointer-events: none;
+		}
 	}
 
 	&.is-visible {

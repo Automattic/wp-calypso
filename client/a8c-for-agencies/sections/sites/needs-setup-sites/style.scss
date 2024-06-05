@@ -1,0 +1,64 @@
+.plan-field {
+	display: flex;
+	flex-direction: row;
+	gap: 12px;
+
+	align-items: center;
+}
+
+.plan-field__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	border-radius: 4px;
+	border: 1px solid var(--color-primary-10);
+	width: 40px;
+	height: 40px;
+
+	img {
+		width: 20px;
+		height: 20px;
+	}
+}
+
+.plan-field__name {
+	font-size: 0.875rem;
+	line-height: 1.4;
+	font-weight: 500;
+}
+
+.plan-field__sub {
+	font-size: 0.75rem;
+	line-height: 1.3;
+	font-weight: 400;
+	color: var(--color-neutral-50);
+}
+
+.plan-field__button {
+	padding: 8px 16px;
+	text-decoration: underline;
+	font-size: rem(13px);
+	font-weight: 400;
+	cursor: pointer;
+}
+
+.plan-field__loader {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	align-items: center;
+	padding: 8px 16px;
+	font-size: rem(13px);
+	font-weight: 400;
+
+	.components-spinner {
+		margin: 0;
+	}
+}
+
+.sites-overview__banner {
+	margin-inline: auto !important;
+	margin-block-end: 24px;
+	padding-inline: 64px;
+}

@@ -4,37 +4,55 @@
 .sites-dataviews__site {
 	display: flex;
 	flex-direction: row;
+	padding-bottom: 8px;
+	padding-top: 8px;
 
 	.button {
+		margin: 0;
 		padding: 0;
 	}
 }
 
 .sites-dataviews__site-name {
+	align-self: flex-start;
 	display: inline-block;
 	text-align: left;
 	text-overflow: ellipsis;
 	overflow: hidden;
+	padding: 0 8px;
 	white-space: nowrap;
-	width: 180px;
 	font-weight: 500;
 	font-size: rem(14px);
 }
 
-.sites-dataviews__site-url {
+.sites-dataviews__site-urls {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	font-size: rem(12px);
-	color: var(--color-neutral-60);
-	font-weight: 400;
 }
 
-.preview-hidden {
-	@media (min-width: 2040px) {
-		.sites-dataviews__site-name {
-			width: 250px;
-		}
+.sites-dataviews__site-url,
+.sites-dataviews__site-wp-admin-url {
+	color: var(--color-neutral-70);
+	font-size: rem(14px);
+	font-weight: 400;
+
+	&:focus {
+		border-radius: 2px;
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
+
+	&:visited {
+		color: var(--color-neutral-70);
+	}
+
+	&:hover,
+	&:hover:visited {
+		color: var(--color-link);
+	}
+
+	svg {
+		vertical-align: sub;
 	}
 }
 
@@ -59,11 +77,15 @@
 }
 
 .sites-dashboard__layout:not(.preview-hidden) {
+	.sites-dataviews__preview-trigger {
+		flex-shrink: 0;
+	}
+
+	.sites-dataviews__site-name {
+		padding: 0;
+	}
 
 	.dataviews-pagination {
-		line-height: 1;
-		width: 368px;
-
 		.components-base-control {
 			width: unset !important;
 			margin-right: 0 !important;
@@ -71,12 +93,23 @@
 	}
 }
 
-.sites-overview__content:has(.dataviews-pagination) {
-	padding-bottom: 32px !important;
-}
-
 .main.sites-dashboard.sites-dashboard__layout:has(.dataviews-pagination) {
 	.dataviews-view-table {
 		margin: 0;
+	}
+}
+
+.site-sort__clickable {
+	cursor: pointer;
+	// Inline block to ensure focus outline is rectangular.
+	display: inline-block;
+	// 5px right padding so focus border doesnt overlap icon.
+	padding-right: 5px;
+	border-radius: 2px;
+	.accessible-focus &:focus {
+		outline-style: solid;
+		outline-color: var(--color-primary-light);
+		outline-width: 2px;
+		outline-offset: 2px;
 	}
 }

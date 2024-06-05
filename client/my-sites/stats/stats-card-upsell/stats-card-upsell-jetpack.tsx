@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -14,6 +14,7 @@ import {
 	STATS_FEATURE_UTM_STATS,
 	STATS_TYPE_DEVICE_STATS,
 } from '../constants';
+import { trackStatsAnalyticsEvent } from '../utils';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 import { Props } from './';
 
@@ -68,6 +69,10 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 		// publish an event
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_${ tracksEvent }` );
+		// publish new unified upgrade event
+		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
+			type: statType,
+		} );
 
 		// redirect to the Purchase page
 		setTimeout( () => page( `/stats/purchase/${ siteSlug }?${ queryParams.toString() }` ), 250 );
@@ -80,7 +85,7 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 			copyText={ copyText }
 			buttonComponent={
 				<Button
-					className={ classNames( {
+					className={ clsx( {
 						[ 'jetpack-emerald-button' ]: ! isWPCOMSite,
 					} ) }
 					onClick={ onClick }

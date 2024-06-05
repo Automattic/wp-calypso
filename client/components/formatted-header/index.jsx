@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -21,7 +21,7 @@ function FormattedHeader( {
 	children,
 	screenReader,
 } ) {
-	const classes = classNames( 'formatted-header', className, {
+	const classes = clsx( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
 		'is-compact-on-mobile': compactOnMobile,
 		'is-left-align': 'left' === align,
@@ -29,12 +29,12 @@ function FormattedHeader( {
 		'has-screen-options': hasScreenOptions,
 	} );
 
-	const headerClasses = classNames( 'formatted-header__title', { 'wp-brand-font': brandFont } );
-	const subtitleClasses = classNames( 'formatted-header__subtitle', {
+	const headerClasses = clsx( 'formatted-header__title', { 'wp-brand-font': brandFont } );
+	const subtitleClasses = clsx( 'formatted-header__subtitle', {
 		'is-center-align': 'center' === subHeaderAlign,
 	} );
 	const tooltip = tooltipText && (
-		<InfoPopover icon="help-outline" position="right" iconSize={ 18 } showOnHover={ true }>
+		<InfoPopover icon="help-outline" position="right" iconSize={ 18 } showOnHover>
 			{ tooltipText }
 		</InfoPopover>
 	);

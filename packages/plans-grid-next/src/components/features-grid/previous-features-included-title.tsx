@@ -3,17 +3,8 @@ import {
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
-import {
-	BloombergLogo,
-	CNNLogo,
-	CondenastLogo,
-	DisneyLogo,
-	FacebookLogo,
-	SalesforceLogo,
-	SlackLogo,
-	TimeLogo,
-} from '@automattic/components';
-import classNames from 'classnames';
+import { useMemo } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { GridPlan } from '../../types';
 import PlanDivOrTdContainer from '../plan-div-td-container';
@@ -31,9 +22,18 @@ const PreviousFeaturesIncludedTitle = ( {
 }: PreviousFeaturesIncludedTitleProps ) => {
 	const translate = useTranslate();
 
-	return renderedGridPlans.map( ( { planSlug } ) => {
-		const shouldRenderEnterpriseLogos = isWpcomEnterpriseGridPlan( planSlug );
-		const shouldShowFeatureTitle = ! isWpComFreePlan( planSlug ) && ! shouldRenderEnterpriseLogos;
+	/**
+	 * This is a pretty critical and fragile, as it filters out the enterprise plan.
+	 * If the plan sits anywhere else but the tail/end, it will most likely break the grid (render wrong parts at wrong places).
+	 */
+	const plansWithFeatures = useMemo( () => {
+		return renderedGridPlans.filter(
+			( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
+		);
+	}, [ renderedGridPlans ] );
+
+	return plansWithFeatures.map( ( { planSlug } ) => {
+		const shouldShowFeatureTitle = ! isWpComFreePlan( planSlug );
 		const indexInGridPlansForFeaturesGrid = renderedGridPlans.findIndex(
 			( { planSlug: slug } ) => slug === planSlug
 		);
@@ -46,28 +46,15 @@ const PreviousFeaturesIncludedTitle = ( {
 			translate( 'Everything in %(planShortName)s, plus:', {
 				args: { planShortName: previousProductName },
 			} );
-		const classes = classNames( 'plan-features-2023-grid__common-title', getPlanClass( planSlug ) );
-		const rowspanProp = options?.isTableCell && shouldRenderEnterpriseLogos ? { rowSpan: '2' } : {};
+		const classes = clsx( 'plan-features-2023-grid__common-title', getPlanClass( planSlug ) );
+
 		return (
 			<PlanDivOrTdContainer
 				key={ planSlug }
 				isTableCell={ options?.isTableCell }
 				className="plan-features-2023-grid__table-item"
-				{ ...rowspanProp }
 			>
 				{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
-				{ shouldRenderEnterpriseLogos && (
-					<div className="plan-features-2023-grid__item plan-features-2023-grid__enterprise-logo">
-						<TimeLogo />
-						<SlackLogo />
-						<DisneyLogo />
-						<CNNLogo />
-						<SalesforceLogo />
-						<FacebookLogo />
-						<CondenastLogo />
-						<BloombergLogo />
-					</div>
-				) }
 			</PlanDivOrTdContainer>
 		);
 	} );

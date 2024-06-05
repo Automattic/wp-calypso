@@ -16,6 +16,14 @@ export interface Agency {
 		img: string;
 		icon: string;
 	};
+	third_party: null | {
+		pressable: null | {
+			a4a_id: string;
+			email: string;
+			name: string;
+			pressable_id: number;
+		};
+	};
 }
 
 export interface AgencyStore {

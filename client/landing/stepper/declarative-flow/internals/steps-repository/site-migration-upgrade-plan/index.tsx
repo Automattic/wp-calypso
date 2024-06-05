@@ -1,4 +1,10 @@
-import { PLAN_BUSINESS, getPlan, getPlanByPathSlug } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	getPlan,
+	getPlanByPathSlug,
+} from '@automattic/calypso-products';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
@@ -16,9 +22,10 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const queryParams = useQuery();
 	const hideFreeMigrationTrialForNonVerifiedEmail =
-		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? false;
+		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? true;
 
 	const selectedPlanData = useSelectedPlanUpgradeQuery();
 	const selectedPlanPathSlug = selectedPlanData.data;
@@ -33,11 +40,27 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 
+	const goToMigrationAssistanceCheckout = ( userAcceptedDeal = false ) => {
+		navigation?.submit?.( {
+			goToCheckout: true,
+			plan: plan.getPathSlug ? plan.getPathSlug() : '',
+			userAcceptedDeal,
+		} );
+	};
+
+	const customTracksEventProps = {
+		from: migrateFrom,
+		has_source_site: migrateFrom !== '' && migrateFrom !== null,
+	};
+
 	const stepContent = (
 		<>
 			{ showMigrationModal && (
 				<MigrationAssistanceModal
-					onConfirm={ () => {} }
+					onConfirm={ () => {
+						const userAcceptedDeal = true;
+						goToMigrationAssistanceCheckout( userAcceptedDeal );
+					} }
 					migrateFrom={ migrateFrom }
 					navigateBack={ navigation.goBack }
 				/>
@@ -48,20 +71,22 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				subTitleText=""
 				isBusy={ false }
 				hideTitleAndSubTitle
-				sendIntentWhenCreatingTrial
 				onCtaClick={ () => {
+					const userAcceptedDeal = false;
+					goToMigrationAssistanceCheckout( userAcceptedDeal );
+				} }
+				onFreeTrialClick={ () => {
 					navigation.submit?.( {
 						goToCheckout: true,
-						plan: plan.getPathSlug ? plan.getPathSlug() : '',
+						plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+						sendIntentWhenCreatingTrial: true,
 					} );
-				} }
-				onFreeTrialSelectionSuccess={ () => {
-					navigation.submit?.( { freeTrialSelected: true } );
 				} }
 				navigateToVerifyEmailStep={ () => {
 					navigation.submit?.( { verifyEmail: true } );
 				} }
 				hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
+				trackingEventsProps={ customTracksEventProps }
 			/>
 		</>
 	);
@@ -74,14 +99,27 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-upgrade-plan"
 				goBack={ navigation.goBack }
-				hideSkip={ true }
+				hideSkip
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"
 						headerText={ translate( 'Take your site to the next level' ) }
-						subHeaderText={ translate(
-							'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
-						) }
+						subHeaderText={
+							hasEnTranslation(
+								'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.'
+							)
+								? translate(
+										'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.',
+										{
+											args: {
+												planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+											},
+										}
+								  )
+								: translate(
+										'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
+								  )
+						}
 						align="center"
 						subHeaderAlign="center"
 					/>

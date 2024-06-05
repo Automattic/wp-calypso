@@ -1,5 +1,5 @@
 import { formattedNumber } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
@@ -35,7 +35,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	const translate = useTranslate();
 
 	const isOverLimit = limit && usage >= limit;
-	const progressClassNames = classNames( 'plan-usage-progress', {
+	const progressClassNames = clsx( 'plan-usage-progress', {
 		'is-over-limit': isOverLimit,
 	} );
 	const progressWidthInPercentage = limit ? ( usage / limit ) * 100 : 0;
@@ -56,7 +56,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 
 	if ( overLimitMonths && overLimitMonths >= 2 ) {
 		overLimitMonthsText = translate(
-			"{{bold}}You've surpassed your limit for two consecutive months already.{{/bold}} ",
+			"{{bold}}You've surpassed your limit for two consecutive periods already.{{/bold}} ",
 			{
 				components: {
 					bold: <b />,
@@ -66,7 +66,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	}
 
 	const upgradeNote = translate(
-		'Do you want to increase your monthly views limit? {{link}}Upgrade now{{/link}}',
+		'Do you want to increase your views limit? {{link}}Upgrade now{{/link}}',
 		{
 			components: {
 				link: <a href={ upgradeLink } />,
@@ -83,7 +83,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 					style={ { width: `${ progressWidthInPercentage }%` } }
 				></div>
 				<div>
-					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views this month', {
+					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views', {
 						args: {
 							numberOfUsage: formattedNumber( usage ),
 							numberOfLimit: formattedNumber( limit ),

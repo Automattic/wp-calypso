@@ -21,15 +21,14 @@ export interface PlanUsage {
 }
 
 function selectPlanUsage( payload: PlanUsage ): PlanUsage {
+	const recent_usages =
+		payload?.recent_usages
+			?.map( ( usage ) => usage?.views_count ?? 0 )
+			.filter( ( views ) => views > 0 ) ?? [];
+
 	return {
 		...payload,
-		billableMonthlyViews: Math.max(
-			payload?.recent_usages[ 0 ]?.views_count ?? 0,
-			payload?.recent_usages[ 1 ]?.views_count ?? 0,
-			payload?.recent_usages[ 2 ]?.views_count ?? 0,
-			payload?.current_usage?.views_count ?? 0,
-			0
-		),
+		billableMonthlyViews: recent_usages.length > 0 ? Math.min( ...recent_usages ) : 0,
 	};
 }
 

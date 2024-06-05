@@ -1,9 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
 	broadcastChatClearance,
-	clearOdieStorage,
+	useSetOdieStorage,
 	useOdieBroadcastWithCallbacks,
-	useOdieStorage,
+	useGetOdieStorage,
 } from '../data';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
@@ -115,7 +115,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
-	const existingChatIdString = useOdieStorage( 'chat_id' );
+	const existingChatIdString = useGetOdieStorage( 'chat_id' );
+
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
 	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId );
 
@@ -142,15 +143,17 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		[ botNameSlug, chat?.chat_id, logger, loggerEventNamePrefix ]
 	);
 
+	const setOdieStorage = useSetOdieStorage( 'chat_id' );
+
 	const clearChat = useCallback( () => {
-		clearOdieStorage( 'chat_id' );
+		setOdieStorage( null );
 		setChat( {
 			chat_id: null,
 			messages: [ getOdieInitialMessage( botNameSlug ) ],
 		} );
 		trackEvent( 'chat_cleared', {} );
 		broadcastChatClearance( odieClientId );
-	}, [ botNameSlug, trackEvent ] );
+	}, [ botNameSlug, trackEvent, setOdieStorage ] );
 
 	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
 		setChat( ( prevChat ) => {

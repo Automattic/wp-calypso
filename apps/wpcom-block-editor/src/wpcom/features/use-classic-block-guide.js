@@ -30,7 +30,7 @@ const ClassicGuide = () => {
 	setWpcomNuxStatus( { isNuxEnabled: false } );
 
 	return (
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		/* eslint-disable wpcalypso/jsx-classname-namespace, wpcalypso/i18n-unlocalized-url */
 		<>
 			{ isOpen && (
 				<Guide

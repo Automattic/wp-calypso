@@ -25,22 +25,27 @@ const StyledTooltip = styled( Tooltip )`
 	}
 `;
 
-export const Plans2023Tooltip = ( {
-	showOnMobile = true,
-	...props
-}: PropsWithChildren< {
+export type Plans2023TooltipProps = PropsWithChildren< {
 	text?: TranslateResult;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	activeTooltipId: string;
 	id: string;
 	showOnMobile?: boolean;
-} > ) => {
-	const { activeTooltipId, setActiveTooltipId, id } = props;
+} >;
+
+export const Plans2023Tooltip = ( {
+	showOnMobile = true,
+	activeTooltipId,
+	setActiveTooltipId,
+	id,
+	text,
+	children,
+}: Plans2023TooltipProps ) => {
 	const tooltipRef = useRef< HTMLDivElement >( null );
 	const isTouch = hasTouch();
 
-	if ( ! props.text ) {
-		return <>{ props.children }</>;
+	if ( ! text ) {
+		return <>{ children }</>;
 	}
 
 	const getMobileActiveTooltip = () => {
@@ -62,9 +67,9 @@ export const Plans2023Tooltip = ( {
 				onMouseEnter={ () => ! isTouch && setActiveTooltipId( id ) }
 				onMouseLeave={ () => ! isTouch && setActiveTooltipId( '' ) }
 				onTouchStart={ () => isTouch && setActiveTooltipId( getMobileActiveTooltip() ) }
-				id={ props.id }
+				id={ id }
 			>
-				{ props.children }
+				{ children }
 			</HoverAreaContainer>
 			<StyledTooltip
 				isVisible={ isVisible }
@@ -73,7 +78,7 @@ export const Plans2023Tooltip = ( {
 				hideArrow
 				showOnMobile={ showOnMobile }
 			>
-				{ props.text }
+				{ text }
 			</StyledTooltip>
 		</>
 	);

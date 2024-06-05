@@ -27,7 +27,9 @@ const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 	} );
 
 	useEffect( () => {
-		if ( site && ! site?.plan && ! isAddingTrial ) {
+		// A site is trial eligible if it has no plan or the free plan.
+		const siteIsTrialEligible = ! site?.plan || site?.plan?.product_slug === 'free_plan';
+		if ( site && siteIsTrialEligible && ! isAddingTrial ) {
 			setIsAddingTrial( true );
 			const assignMigrationTrialPlan = () => {
 				site.ID && addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY, HOSTING_INTENT_MIGRATE );

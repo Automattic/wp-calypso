@@ -4,9 +4,6 @@
 	&.reader-dual-column {
 		max-width: 968px; // Max width of dual column reader stream.
 	}
-	@media only screen and (max-width: 660px) {
-		padding: 30px 0 0 30px;
-	}
 }
 
 .discover-stream-navigation {
@@ -15,13 +12,16 @@
 	margin-bottom: -20px;
 	max-width: 600px; // Max width of single column reader stream.
 	overflow: hidden;
+	@media only screen and (max-width: 600px) {
+		padding: 0 24px;
+	}
 
 	&.reader-dual-column {
 		max-width: 968px; // Max width of dual column reader stream.
 		margin-bottom: 0;
 	}
 	@media only screen and (max-width: 660px) {
-		margin: 0 30px -24px;
+		margin: 0 16px -24px;
 	}
 
 	.discover-stream-navigation__left-button-wrapper,

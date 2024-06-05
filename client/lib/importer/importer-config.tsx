@@ -80,7 +80,8 @@ function getConfig( {
 				},
 			}
 		),
-		overrideDestination: '/migrate/%SITE_SLUG%',
+		overrideDestination:
+			'/setup/site-migration?siteSlug=%SITE_SLUG%&siteId=%SITE_ID%&ref=calypso-importer&hide_importer_link=true',
 		weight: 1,
 	};
 
@@ -325,6 +326,12 @@ export function getImporterByKey(
 	args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' }
 ) {
 	return filter( getImporters( args ), ( importer ) => importer.key === key )[ 0 ];
+}
+
+export function isSupportedImporterEngine( engine: string ): boolean {
+	const allImporters = getImporters();
+
+	return allImporters.some( ( importer ) => importer.engine === engine );
 }
 
 export default getConfig;

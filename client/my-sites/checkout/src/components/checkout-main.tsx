@@ -3,7 +3,7 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { isValueTruthy, getContactDetailsType } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -40,7 +40,6 @@ import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
-import getContactDetailsType from '../lib/get-contact-details-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { pixProcessor } from '../lib/pix-processor';
@@ -102,6 +101,7 @@ export interface CheckoutMainProps {
 	 */
 	fromSiteSlug?: string;
 	adminUrl?: string;
+	hostingIntent?: string | undefined;
 }
 
 export default function CheckoutMain( {
@@ -131,6 +131,7 @@ export default function CheckoutMain( {
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
+	hostingIntent,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -207,6 +208,7 @@ export default function CheckoutMain( {
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
 		isGiftPurchase,
+		hostingIntent,
 	} );
 
 	const cartKey = useCartKey();

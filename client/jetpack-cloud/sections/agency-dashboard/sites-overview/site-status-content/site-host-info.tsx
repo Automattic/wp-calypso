@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo, Tooltip } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import getWPCOMPlanName from './lib/get-wpcom-plan-name';
@@ -48,7 +48,7 @@ export const SiteHostInfo = ( {
 			<>
 				<div { ...props }>
 					<WordPressLogo
-						className={ classNames( 'wordpress-logo', { 'is-visible': isWPCOMAtomicSite } ) }
+						className={ clsx( 'wordpress-logo', { 'is-visible': isWPCOMAtomicSite } ) }
 						size={ 18 }
 					/>
 				</div>

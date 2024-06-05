@@ -132,7 +132,21 @@ function WordPressFreePurchaseSummary() {
 	const { responseCart } = useShoppingCart( cartKey );
 
 	if ( doesPurchaseHaveFullCredits( responseCart ) ) {
-		return <div>{ __( 'WordPress.com Credits' ) }</div>;
+		return (
+			<>
+				<div>
+					{
+						/* translators: %(amount)s is the total amount of credits available in localized currency */
+						sprintf( __( 'WordPress.com Credits: %(amount)s available' ), {
+							amount: formatCurrency( responseCart.credits_integer, responseCart.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						} )
+					}
+				</div>
+			</>
+		);
 	}
 
 	return <div>{ __( 'Free Purchase' ) }</div>;

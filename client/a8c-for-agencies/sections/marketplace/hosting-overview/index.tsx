@@ -1,38 +1,59 @@
 import page from '@automattic/calypso-router';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
-	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
+	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_MARKETPLACE_CHECKOUT_LINK,
+	A4A_MARKETPLACE_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import ReferralToggle from '../common/referral-toggle';
+import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import HostingList from './hosting-list';
 
-export default function Hosting() {
+function Hosting() {
 	const translate = useTranslate();
 
-	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
+	const { selectedCartItems, onRemoveCartItem, showCart, setShowCart, toggleCart } =
+		useShoppingCart();
 
 	return (
 		<Layout
-			className={ classNames( 'hosting-overview' ) }
+			className={ clsx( 'hosting-overview' ) }
 			title={ translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder
+			compact
 		>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ translate( 'Marketplace' ) }</Title>
+					<Breadcrumb
+						items={ [
+							{
+								label: translate( 'Marketplace' ),
+								href: A4A_MARKETPLACE_LINK,
+							},
+							{
+								label: translate( 'Hosting' ),
+							},
+						] }
+					/>
 
-					<Actions>
+					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
+						<ReferralToggle />
 						<ShoppingCart
+							showCart={ showCart }
+							setShowCart={ setShowCart }
+							toggleCart={ toggleCart }
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {
@@ -49,3 +70,5 @@ export default function Hosting() {
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( Hosting );

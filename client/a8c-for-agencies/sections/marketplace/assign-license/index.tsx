@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -21,13 +21,17 @@ import {
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
+import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import areLicenseKeysAssignableToMultisite from 'calypso/jetpack-cloud/sections/partner-portal/lib/are-license-keys-assignable-to-multisite';
 import isWooCommerceProduct from 'calypso/jetpack-cloud/sections/partner-portal/lib/is-woocommerce-product';
 import { addQueryArgs } from 'calypso/lib/url';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite, setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD } from '../../sites/constants';
+import { Site } from '../../sites/types';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
 import useAssignLicensesToSite from '../products-overview/hooks/use-assign-licenses-to-site';
 import { SITE_CARDS_PER_PAGE } from './constants';
@@ -35,38 +39,18 @@ import { SITE_CARDS_PER_PAGE } from './constants';
 import './styles.scss';
 
 type Props = {
-	sites: Array< any >;
-	currentPage: number;
-	search: string;
+	initialPage: number;
+	initialSearch: string;
 };
 
-function setPage( pageNumber: number ): void {
-	const queryParams = { page: pageNumber };
-	const currentPath = window.location.pathname + window.location.search;
-
-	page( addQueryArgs( queryParams, currentPath ) );
-}
-
-function setSearch( search: string ): void {
-	const queryParams = { search, page: 1 };
-	const currentPath = window.location.pathname + window.location.search;
-
-	page( addQueryArgs( queryParams, currentPath ) );
-}
-
-function paginate( arr: Array< any >, currentPage: number ): Array< any > {
-	return (
-		arr
-			// Slices sites list based on pagination settings
-			.slice( SITE_CARDS_PER_PAGE * ( currentPage - 1 ), SITE_CARDS_PER_PAGE * currentPage )
-	);
-}
-
-export default function AssignLicense( { sites, currentPage, search }: Props ) {
+export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
+	const [ currentPage, setCurrentPage ] = useState< number >( initialPage );
+	const [ search, setSearch ] = useState< string >( initialSearch );
+	const [ totalSites, setTotalSites ] = useState< number >( 0 );
 
 	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite, {
 		onError: ( error: Error ) => {
@@ -88,14 +72,52 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 		return [];
 	}, [] );
 
-	// We need to filter out multisites if the licenses are not assignable to a multisite.
-	let results = areLicenseKeysAssignableToMultisite( licenseKeysArray )
-		? sites
-		: sites.filter( ( site: any ) => ! site.is_multisite );
+	const filterOutMultisites = ! areLicenseKeysAssignableToMultisite( licenseKeysArray );
 
-	if ( search ) {
-		results = results.filter( ( site: any ) => site.domain.search( search ) !== -1 );
-	}
+	const agencyId = useSelector( getActiveAgencyId );
+
+	const { data, isError, isLoading } = useFetchDashboardSites( {
+		isPartnerOAuthTokenLoaded: false,
+		searchQuery: search,
+		currentPage: currentPage,
+		perPage: SITE_CARDS_PER_PAGE,
+		filter: {
+			issueTypes: [],
+			showOnlyFavorites: false,
+			...( filterOutMultisites && { isNotMultisite: true } ),
+		},
+		sort: {
+			field: DEFAULT_SORT_FIELD,
+			direction: DEFAULT_SORT_DIRECTION,
+		},
+		agencyId,
+	} );
+
+	useEffect( () => {
+		if ( isLoading || isError ) {
+			return;
+		}
+
+		setTotalSites( data?.total );
+	}, [ data, isError, isLoading ] );
+
+	useEffect( () => {
+		const urlSearch = getQueryArg( window.location.search, 'search' );
+		const urlPage = getQueryArg( window.location.search, 'page' );
+
+		if ( search !== urlSearch ) {
+			setCurrentPage( 1 );
+		}
+
+		if ( search === urlSearch && currentPage.toString() === urlPage ) {
+			return;
+		}
+
+		const queryParams = { search, page: currentPage };
+		const currentPath = window.location.pathname + window.location.search;
+
+		page( addQueryArgs( queryParams, currentPath ) );
+	}, [ search, currentPage, setCurrentPage ] );
 
 	const showDownloadStep = licenseKeysArray.some( isWooCommerceProduct );
 
@@ -159,7 +181,7 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 
 	return (
 		<Layout
-			className={ classNames( 'assign-license' ) }
+			className={ clsx( 'assign-license' ) }
 			title={ title }
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
@@ -210,33 +232,45 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 				<SearchCard
 					className="assign-license__search-field"
 					placeHolder={ translate( 'Search for website URL right here' ) }
-					onSearch={ ( query: any ) => setSearch( query ) }
+					onSearch={ ( query: string ) => setSearch( query ) }
+					initialValue={ search }
 				/>
 
 				<div className="assign-license__sites-list">
-					{ paginate( results, currentPage ).map( ( site: any ) => {
-						if ( -1 !== site.domain.search( search ) || null === search ) {
-							return (
-								<Card key={ site.ID } onClick={ () => setSelectedSite( site ) }>
-									<FormRadio
-										className="assign-license-form__site-card-radio"
-										label={ site.domain }
-										name="site_select"
-										disabled={ ! isReady }
-										checked={ selectedSite?.ID === site.ID }
-									/>
-								</Card>
-							);
-						}
+					{ data?.sites.map( ( site: Site ) => {
+						return (
+							<Card
+								key={ site.blog_id }
+								onClick={ () =>
+									setSelectedSite( { ID: site.blog_id, domain: site.url_with_scheme } )
+								}
+							>
+								<FormRadio
+									className="assign-license-form__site-card-radio"
+									label={ site.url_with_scheme }
+									name="site_select"
+									disabled={ ! isReady }
+									checked={ selectedSite?.ID === site.blog_id }
+									onChange={ () =>
+										setSelectedSite( { ID: site.blog_id, domain: site.url_with_scheme } )
+									}
+								/>
+							</Card>
+						);
 					} ) }
+					{ data?.sites.length === 0 && (
+						<div className={ clsx( 'card', 'assign-license__sites-no-results' ) }>
+							{ translate( 'No results' ) }
+						</div>
+					) }
 				</div>
 
 				<Pagination
 					className="assign-license__pagination"
 					page={ currentPage }
 					perPage={ SITE_CARDS_PER_PAGE }
-					total={ results.length }
-					pageClick={ ( page: number ) => setPage( page ) }
+					total={ totalSites }
+					pageClick={ ( page: number ) => setCurrentPage( page ) }
 				/>
 			</LayoutBody>
 		</Layout>

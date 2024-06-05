@@ -3,16 +3,17 @@ import { useMutationState } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	Button,
+	Icon,
 	Card,
 	CardHeader,
 	CardBody,
 	CardFooter,
-	Icon,
 } from '@wordpress/components';
-import { arrowLeft, info } from '@wordpress/icons';
+import { info, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { scrollToTop } from '../plugin-scheduled-updates-common/utils';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -62,6 +63,7 @@ export const ScheduleEdit = ( props: Props ) => {
 		} );
 
 		setSyncError( '' );
+		scrollToTop();
 
 		return onNavBack && onNavBack();
 	};
@@ -95,6 +97,7 @@ export const ScheduleEdit = ( props: Props ) => {
 					variant={ canCreateSchedules ? 'primary' : 'secondary' }
 					isBusy={ isBusy }
 					disabled={ ! canCreateSchedules }
+					className="schedule-form-button"
 				>
 					{ translate( 'Save' ) }
 				</Button>

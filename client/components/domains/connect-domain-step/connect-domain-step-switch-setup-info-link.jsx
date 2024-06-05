@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { stepType, modeType, stepSlug } from './constants';
 
@@ -47,7 +47,7 @@ export default function ConnectDomainStepSwitchSetupInfoLink( {
 		return __( 'Switch to our <aadv>advanced setup</aadv>.' );
 	};
 
-	const classes = classNames( baseClassName + '__switch-setup', baseClassName + '__info-links' );
+	const classes = clsx( baseClassName + '__switch-setup', baseClassName + '__info-links' );
 
 	return (
 		<div className={ classes }>

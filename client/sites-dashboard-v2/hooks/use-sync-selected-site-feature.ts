@@ -47,15 +47,22 @@ export function useSyncSelectedSiteFeature( {
 		}
 	};
 
-	// Update URL when a new feature is selected.
+	// Update URL when a new site or feature is selected.
 	useEffect( () => {
+		if (
+			selectedSite?.slug === dataViewsState.selectedItem?.slug &&
+			selectedSiteFeature === initialSiteFeature
+		) {
+			return;
+		}
+
 		// Whether the left sidebar should animate (grow or collapse)
 		const shouldAnimate = Boolean( selectedSite ) !== Boolean( dataViewsState.selectedItem?.slug );
 
 		window.setTimeout(
 			syncUrl,
 			// Delay the update while the left sidebar is animating.
-			shouldAnimate ? 500 : 0
+			shouldAnimate ? 300 : 0
 		);
 	}, [ dataViewsState.selectedItem?.slug, selectedSiteFeature ] );
 

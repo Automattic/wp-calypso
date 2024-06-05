@@ -25,22 +25,24 @@ export type ScheduleUpdates = {
 	last_run_status: LastRunStatus;
 	last_run_timestamp: number | null;
 	health_check_paths?: string[];
+	active: boolean;
 };
 
 export type MultisiteSiteDetails = SiteDetails & {
+	active: boolean;
 	last_run_status: LastRunStatus;
 	last_run_timestamp: number | null;
 };
 
 export type MultisiteSchedulesUpdates = Omit<
 	ScheduleUpdates,
-	'last_run_status' | 'last_run_timestamp'
+	'active' | 'last_run_status' | 'last_run_timestamp'
 > & {
 	schedule_id: string;
 	sites: MultisiteSiteDetails[];
 };
 
-type MultisiteSchedulesUpdatesResponse = {
+export type MultisiteSchedulesUpdatesResponse = {
 	sites: { [ site_id: string ]: { [ scheduleId: string ]: ScheduleUpdates } };
 };
 
@@ -119,8 +121,15 @@ export const useMultisiteUpdateScheduleQuery = (
 
 			for ( const site_id in data.sites ) {
 				for ( const scheduleId in data.sites[ site_id ] ) {
-					const { timestamp, schedule, args, interval, last_run_timestamp, last_run_status } =
-						data.sites[ site_id ][ scheduleId ];
+					const {
+						timestamp,
+						schedule,
+						args,
+						interval,
+						last_run_timestamp,
+						last_run_status,
+						active,
+					} = data.sites[ site_id ][ scheduleId ];
 
 					const id = generateId( scheduleId, timestamp, schedule, interval );
 
@@ -133,6 +142,7 @@ export const useMultisiteUpdateScheduleQuery = (
 					if ( existingSchedule ) {
 						existingSchedule.sites.push( {
 							...site,
+							active,
 							last_run_status,
 							last_run_timestamp,
 						} );
@@ -147,6 +157,7 @@ export const useMultisiteUpdateScheduleQuery = (
 							sites: [
 								{
 									...site,
+									active,
 									last_run_status,
 									last_run_timestamp,
 								},
@@ -155,6 +166,14 @@ export const useMultisiteUpdateScheduleQuery = (
 					}
 				}
 			}
+
+			// sort by schedule (daily/weekly) then timestamp
+			result.sort( ( a, b ) => {
+				if ( a.schedule === b.schedule ) {
+					return a.timestamp - b.timestamp;
+				}
+				return a.schedule.localeCompare( b.schedule );
+			} );
 
 			return result;
 		},

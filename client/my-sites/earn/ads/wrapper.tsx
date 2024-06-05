@@ -3,7 +3,9 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	WPCOM_FEATURES_WORDADS,
 	FEATURE_WORDADS_INSTANT,
+	Plan,
 	getPlan,
+	getPlanFeaturesObject,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -20,6 +22,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { WordAdsStatus } from 'calypso/my-sites/earn/ads/types';
+import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useDispatch, useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
@@ -102,7 +105,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 					>
 						<NoticeAction
 							href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/"
-							external={ true }
+							external
 						>
 							{ translate( 'Learn more' ) }
 						</NoticeAction>
@@ -208,7 +211,11 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	};
 
 	const renderUpsell = () => {
-		const bannerURL = `/checkout/${ siteSlug }/premium`;
+		const bannerURL = buildCheckoutURL( siteSlug as string, PLAN_PREMIUM );
+		const plan = getPlan( PLAN_PREMIUM ) as Plan;
+		const jetpackFeatures = plan?.get2023PricingGridSignupJetpackFeatures?.();
+		const jetpackFeaturesObject = getPlanFeaturesObject( jetpackFeatures );
+
 		return (
 			<UpsellNudge
 				callToAction={ translate( 'Upgrade' ) }
@@ -236,6 +243,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 				list={ [
 					translate( 'Instantly enroll into the WordAds network.' ),
 					translate( 'Earn money from your content and traffic.' ),
+					...jetpackFeaturesObject.map( ( feature ) => feature.getTitle() ),
 				] }
 			/>
 		);
@@ -284,7 +292,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		return (
 			<>
 				<UpsellNudge
-					forceDisplay={ true }
+					forceDisplay
 					callToAction={ translate( 'Upgrade' ) }
 					plan={ PLAN_PREMIUM }
 					title={ translate( 'Upgrade to the %(premiumPlanName)s plan to continue earning', {

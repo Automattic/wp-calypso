@@ -6,12 +6,18 @@ const CommentSubscriptionsManager = () => {
 	const translate = useTranslate();
 
 	return (
-		<SubscriptionsManagerWrapper
-			headerText={ translate( 'Manage subscribed posts' ) }
-			subHeaderText={ translate( 'Manage your site, RSS, and newsletter subscriptions.' ) }
-		>
-			<Comments />
-		</SubscriptionsManagerWrapper>
+		<>
+			<div>
+				<div>
+					<SubscriptionsManagerWrapper
+						headerText={ translate( 'Manage subscribed posts' ) }
+						subHeaderText={ translate( 'Manage your site, RSS, and newsletter subscriptions.' ) }
+					>
+						<Comments />
+					</SubscriptionsManagerWrapper>
+				</div>
+			</div>
+		</>
 	);
 };
 

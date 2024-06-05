@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { findLast, times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -49,7 +49,9 @@ import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import './style.scss';
 
-export const WIDE_DISPLAY_CUTOFF = 900;
+// minimal size for the two-column layout to show without cut off
+// 64 is padding, 8 is margin
+export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
@@ -101,6 +103,11 @@ class ReaderStream extends Component {
 	};
 
 	isMounted = false;
+
+	/**
+	 * A mutation observer to watch whether the target exists
+	 */
+	observer = null;
 
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
@@ -193,6 +200,25 @@ class ReaderStream extends Component {
 		}
 
 		document.addEventListener( 'keydown', this.handleKeydown, true );
+
+		/**
+		 * Observe the class list of the body element because the scroll container depends on it.
+		 */
+		this.observer = new window.MutationObserver( () => {
+			if ( ! this.listRef.current ) {
+				return;
+			}
+
+			const scrollContainer = this.getScrollContainer(
+				ReactDom.findDOMNode( this.listRef.current )
+			);
+			if ( scrollContainer !== this.state.listContext ) {
+				this.setState( {
+					listContext: scrollContainer,
+				} );
+			}
+		} );
+		this.observer.observe( document.body, { attributeFilter: [ 'class' ] } );
 	}
 
 	componentWillUnmount() {
@@ -202,6 +228,10 @@ class ReaderStream extends Component {
 		}
 
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
+
+		if ( this.observer ) {
+			this.observer.disconnect();
+		}
 	}
 
 	handleKeydown = ( event ) => {
@@ -437,7 +467,7 @@ class ReaderStream extends Component {
 					iconSize={ 40 }
 					campaign="calypso-reader-stream"
 					title={ this.props.translate( 'Read on the go with the Jetpack Mobile App' ) }
-					hasQRCode={ true }
+					hasQRCode
 					hasGetAppButton={ false }
 				/>
 			)
@@ -488,6 +518,33 @@ class ReaderStream extends Component {
 		);
 	};
 
+	setListContext = ( component ) => {
+		if ( ! component ) {
+			return;
+		}
+
+		this.listRef.current = component;
+		this.setState( {
+			listContext: this.getScrollContainer( ReactDom.findDOMNode( component ) ),
+		} );
+	};
+
+	getScrollContainer = ( node ) => {
+		// Leave it to the default scroll container if we cannot find it or its the root element.
+		if ( ! node || node.ownerDocument === node.parentNode ) {
+			return false;
+		}
+
+		// Return when overflow is defined to either auto or scroll.
+		const { overflowY } = getComputedStyle( node );
+		if ( /(auto|scroll)/.test( overflowY ) ) {
+			return node;
+		}
+
+		// Continue traversing.
+		return this.getScrollContainer( node.parentNode );
+	};
+
 	render() {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
@@ -507,7 +564,7 @@ class ReaderStream extends Component {
 
 		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
 		// to be updated before we can remove it.
-		let baseClassnames = classnames( 'following', this.props.className );
+		let baseClassnames = clsx( 'following', this.props.className );
 
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
@@ -520,7 +577,7 @@ class ReaderStream extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			const bodyContent = (
 				<InfiniteList
-					ref={ this.listRef }
+					ref={ this.setListContext }
 					items={ items }
 					lastPage={ lastPage }
 					fetchingNextPage={ isRequesting }
@@ -530,6 +587,7 @@ class ReaderStream extends Component {
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 					className="stream__list"
+					context={ this.state.listContext ?? false }
 				/>
 			);
 
@@ -548,7 +606,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
-				baseClassnames = classnames( 'reader-two-column', baseClassnames );
+				baseClassnames = clsx( 'reader-two-column', baseClassnames );
 			} else {
 				body = (
 					<>

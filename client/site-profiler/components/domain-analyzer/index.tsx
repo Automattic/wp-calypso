@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FormEvent, KeyboardEvent } from 'react';
 import './styles.scss';
@@ -47,7 +47,7 @@ export default function DomainAnalyzer( props: Props ) {
 			</p>
 
 			<form
-				className={ classnames( 'domain-analyzer--form', { 'is-error': showError } ) }
+				className={ clsx( 'domain-analyzer--form', { 'is-error': showError } ) }
 				onSubmit={ onSubmit }
 			>
 				<div className="domain-analyzer--form-container">
@@ -56,7 +56,7 @@ export default function DomainAnalyzer( props: Props ) {
 							type="text"
 							name="domain"
 							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus={ true }
+							autoFocus
 							autoComplete="off"
 							defaultValue={ domain }
 							placeholder={ translate( 'Enter a site URL' ) }
@@ -78,7 +78,7 @@ export default function DomainAnalyzer( props: Props ) {
 				</div>
 				<div className="domain-analyzer--msg">
 					<p
-						className={ classnames( 'error', {
+						className={ clsx( 'error', {
 							'vis-hidden': ! showError,
 						} ) }
 					>

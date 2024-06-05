@@ -1,21 +1,67 @@
-import { category, currencyDollar, home, reusableBlock, tag } from '@wordpress/icons';
+import config from '@automattic/calypso-config';
+import {
+	category,
+	currencyDollar,
+	home,
+	moveTo,
+	reusableBlock,
+	tag,
+	cog,
+	commentAuthorAvatar,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import {
 	A4A_MARKETPLACE_LINK,
-	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_LICENSES_LINK,
 	A4A_OVERVIEW_LINK,
 	A4A_PURCHASES_LINK,
 	A4A_REFERRALS_LINK,
 	A4A_SITES_LINK,
+	A4A_MARKETPLACE_HOSTING_LINK,
+	A4A_MIGRATIONS_LINK,
+	A4A_SETTINGS_LINK,
+	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+	A4A_REFERRALS_DASHBOARD,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
 const useMainMenuItems = ( path: string ) => {
 	const translate = useTranslate();
+
 	const menuItems = useMemo( () => {
+		const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
+
+		let referralItems = [] as any[];
+
+		if ( isSectionNameEnabled( 'a8c-for-agencies-referrals' ) ) {
+			referralItems = isAutomatedReferralsEnabled
+				? [
+						{
+							icon: reusableBlock,
+							path: A4A_REFERRALS_LINK,
+							link: A4A_REFERRALS_DASHBOARD,
+							title: translate( 'Referrals' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Referrals',
+							},
+							withChevron: true,
+						},
+				  ]
+				: [
+						{
+							icon: reusableBlock,
+							path: '/',
+							link: A4A_REFERRALS_LINK,
+							title: translate( 'Referrals' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Referrals',
+							},
+						},
+				  ];
+		}
+
 		return [
 			{
 				icon: home,
@@ -51,7 +97,7 @@ const useMainMenuItems = ( path: string ) => {
 			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,
-				link: A4A_MARKETPLACE_PRODUCTS_LINK,
+				link: A4A_MARKETPLACE_HOSTING_LINK,
 				title: translate( 'Marketplace' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Marketplace',
@@ -68,15 +114,42 @@ const useMainMenuItems = ( path: string ) => {
 				},
 				withChevron: true,
 			},
-			...( isSectionNameEnabled( 'a8c-for-agencies-referrals' )
+			...referralItems,
+			...( isSectionNameEnabled( 'a8c-for-agencies-migrations' )
 				? [
 						{
-							icon: reusableBlock,
+							icon: moveTo,
 							path: '/',
-							link: A4A_REFERRALS_LINK,
-							title: translate( 'Referrals' ),
+							link: A4A_MIGRATIONS_LINK,
+							title: translate( 'Migrations' ),
 							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Referrals',
+								menu_item: 'Automattic for Agencies / Migrations',
+							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-partner-directory' )
+				? [
+						{
+							icon: commentAuthorAvatar,
+							path: '/dashboard',
+							link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+							title: translate( 'Partner Directory' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Partner Directory',
+							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-settings' )
+				? [
+						{
+							icon: cog,
+							path: '/',
+							link: A4A_SETTINGS_LINK,
+							title: translate( 'Settings' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Settings',
 							},
 						},
 				  ]

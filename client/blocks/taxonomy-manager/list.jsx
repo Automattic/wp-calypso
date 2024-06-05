@@ -1,6 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import { WindowScroller } from '@automattic/react-virtualized';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -130,7 +130,7 @@ export class TaxonomyManagerList extends Component {
 
 	render() {
 		const { loading, siteId, taxonomy, terms, lastPage, query } = this.props;
-		const classes = classNames( 'taxonomy-manager', {
+		const classes = clsx( 'taxonomy-manager', {
 			'is-loading': loading,
 		} );
 		const hasDefaultSetting = taxonomy === 'category';

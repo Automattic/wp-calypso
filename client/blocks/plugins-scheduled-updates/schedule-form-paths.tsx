@@ -5,8 +5,8 @@ import {
 	Flex,
 	FlexItem,
 } from '@wordpress/components';
-import { check, plus, closeSmall, rotateRight } from '@wordpress/icons';
-import classnames from 'classnames';
+import { check, Icon, info, rotateRight } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect } from 'react';
 import { useScheduledUpdatesVerifyPathQuery } from 'calypso/data/plugins/use-scheduled-updates-verify-path-query';
@@ -15,17 +15,28 @@ import getSiteId from 'calypso/state/sites/selectors/get-site-id';
 import { MAX_SELECTABLE_PATHS } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { prepareRelativePath, validatePath } from './schedule-form.helper';
+import type { PathsOnChangeEvent } from './types';
 
 interface Props {
 	paths?: string[];
-	onChange?: ( value: string[] ) => void;
+	onChange?: ( data: PathsOnChangeEvent ) => void;
 	borderWrapper?: boolean;
+	error?: string;
+	showError?: boolean;
+	onTouch?: ( touched: boolean ) => void;
 }
 export function ScheduleFormPaths( props: Props ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlug();
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
-	const { paths: initPaths = [], onChange, borderWrapper = true } = props;
+	const {
+		paths: initPaths = [],
+		onChange,
+		borderWrapper = true,
+		error,
+		showError = false,
+		onTouch,
+	} = props;
 
 	const [ paths, setPaths ] = useState( initPaths );
 	const [ newPath, setNewPath ] = useState( '' );
@@ -80,8 +91,14 @@ export function ScheduleFormPaths( props: Props ) {
 	 */
 	useEffect( addPath, [ addPath ] );
 	useEffect( handleAsyncValidationError, [ handleAsyncValidationError ] );
-	useEffect( () => setNewPathSubmitted( false ), [ newPath ] );
-	useEffect( () => onChange?.( paths ), [ paths ] );
+	useEffect( () => {
+		setNewPathSubmitted( false );
+		onTouch?.( false );
+	}, [ newPath ] );
+	useEffect(
+		() => onChange?.( { paths, hasUnsubmittedPath: newPath.length > 0 } ),
+		[ paths, newPath, newPathSubmitted ]
+	);
 
 	return (
 		<div className="form-field form-field--paths">
@@ -98,12 +115,12 @@ export function ScheduleFormPaths( props: Props ) {
 					)
 				}
 			</Text>
-			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
+			<div className={ clsx( { 'form-control-container': borderWrapper } ) }>
 				<Text className="info-msg">Website URL paths</Text>
 
 				<div className="paths">
 					<Flex className="path" gap={ 2 }>
-						<FlexItem isBlock={ true }>
+						<FlexItem isBlock>
 							<InputControl value={ siteSlug } size="__unstable-large" readOnly />
 						</FlexItem>
 						<FlexItem>
@@ -112,15 +129,13 @@ export function ScheduleFormPaths( props: Props ) {
 					</Flex>
 					{ paths.map( ( path, i ) => (
 						<Flex className="path" gap={ 2 } key={ i }>
-							<FlexItem isBlock={ true }>
+							<FlexItem isBlock>
 								<InputControl value={ path } size="__unstable-large" readOnly />
 							</FlexItem>
 							<FlexItem>
-								<Button
-									icon={ closeSmall }
-									__next40pxDefaultSize
-									onClick={ () => removePath( i ) }
-								/>
+								<Button __next40pxDefaultSize onClick={ () => removePath( i ) } variant="secondary">
+									{ translate( 'Remove' ) }
+								</Button>
 							</FlexItem>
 						</Flex>
 					) ) }
@@ -128,7 +143,7 @@ export function ScheduleFormPaths( props: Props ) {
 				{ paths.length < MAX_SELECTABLE_PATHS && (
 					<div className="new-path">
 						<Flex gap={ 2 }>
-							<FlexItem isBlock={ true }>
+							<FlexItem isBlock>
 								<InputControl
 									value={ newPath }
 									size="__unstable-large"
@@ -154,13 +169,15 @@ export function ScheduleFormPaths( props: Props ) {
 							</FlexItem>
 							<FlexItem>
 								<Button
-									className={ classnames( { 'is-verifying': isVerifying } ) }
-									icon={ isVerifying ? rotateRight : plus }
+									className={ clsx( { 'is-verifying': isVerifying } ) }
+									icon={ isVerifying ? rotateRight : null }
 									disabled={ isVerifying }
 									variant="secondary"
 									onClick={ onNewPathSubmit }
 									__next40pxDefaultSize
-								/>
+								>
+									{ translate( 'Add' ) }
+								</Button>
 							</FlexItem>
 						</Flex>
 					</div>
@@ -172,6 +189,12 @@ export function ScheduleFormPaths( props: Props ) {
 					{ translate( 'You reached the maximum number of paths.' ) }
 				</Text>
 			) }
+			{ error && showError ? (
+				<Text className="validation-msg">
+					<Icon className="icon-info" icon={ info } size={ 16 } />
+					{ error }
+				</Text>
+			) : null }
 		</div>
 	);
 }

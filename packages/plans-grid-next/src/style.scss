@@ -326,12 +326,6 @@ $mobile-card-max-width: 440px;
 			padding-bottom: 23px;
 		}
 
-		&.plan-features-2023-grid__storage {
-			padding-top: 0;
-			padding-bottom: 32px;
-			width: 205px;
-		}
-
 		.plan-features-2023-grid__header-title {
 			margin-top: 24px;
 		}
@@ -347,6 +341,27 @@ $mobile-card-max-width: 440px;
 
 		.plan-features-2023-gridrison__actions {
 			width: 200px;
+		}
+	}
+}
+
+.plans-grid-next-features-grid__feature-group-title {
+	font-weight: 600;
+	color: var(--studio-gray-80);
+}
+
+.plans-grid-next-features-grid__feature-group-row {
+	> .plan-features-2023-grid__table-item {
+		padding-top: 24px;
+	}
+
+	/**
+	 * This is only relevant to match the styling for the Enterprise plan's parter logos,
+	 * which should probably be cleaned-up/refactored instead
+	 */
+	&.is-first-feature-group-row > .plan-features-2023-grid__table-item {
+		@include plans-grid-medium-large {
+			padding-top: 14px;
 		}
 	}
 }
@@ -384,6 +399,13 @@ $mobile-card-max-width: 440px;
 			text-decoration: line-through;
 		}
 	}
+
+	.plan-features-2023-grid__item-sub-feature-list {
+		margin-bottom: 0;
+		& > li {
+			margin-top: 8px;
+		}
+	}
 }
 
 .plan-features-2023-grid__multiple-actions-container {
@@ -413,6 +435,9 @@ $mobile-card-max-width: 440px;
 
 		& .plan-features-2023-grid__item-info-container {
 			display: flex;
+			.plan-features-2023-grid__storage & {
+				display: block;
+			}
 		}
 	}
 
@@ -428,19 +453,6 @@ $mobile-card-max-width: 440px;
 			margin: 0;
 			top: 14px;
 		}
-	}
-}
-
-.storage-add-on-dropdown__offset-price-container {
-	width: 100%;
-	margin-top: 8px;
-	text-align: left;
-
-	.storage-add-on-dropdown__offset-price {
-		color: var(--studio-green-50);
-
-		font-size: 0.75rem;
-		font-weight: 500;
 	}
 }
 
@@ -601,27 +613,7 @@ $mobile-card-max-width: 440px;
 			padding: 24px 20px 38px 20px;
 
 			.plan-features-2023-grid__storage-title {
-				color: var(--studio-gray-100);
-				font-weight: 500;
-				/* stylelint-disable-next-line */
-				font-size: 0.688rem;
-				line-height: 16px;
 				margin-bottom: 10px;
-				text-transform: uppercase;
-			}
-
-			.plan-features-2023-grid__storage-buttons {
-				background: #f2f2f2;
-				/* stylelint-disable-next-line */
-				border-radius: 5px;
-				padding: 4px 0;
-				width: fit-content;
-				text-align: center;
-				font-size: $font-body-extra-small;
-				font-weight: 400;
-				line-height: 20px;
-				color: var(--studio-gray-90);
-				min-width: 64px;
 			}
 		}
 
@@ -629,7 +621,6 @@ $mobile-card-max-width: 440px;
 			font-weight: 600;
 			font-size: $font-body-small;
 			padding: 0 20px;
-			margin-bottom: 12px;
 
 			&.is-personal-plan {
 				color: var(--studio-blue-60);
@@ -951,6 +942,13 @@ $mobile-card-max-width: 440px;
 			.plan-comparison-grid__plan-subtitle {
 				text-decoration: line-through;
 			}
+
+			&.hide-unsupported-feature {
+				.plan-comparison-grid__plan-title,
+				.plan-comparison-grid__plan-subtitle {
+					display: none;
+				}
+			}
 		}
 
 		@include plans-grid-medium-large {
@@ -1029,5 +1027,77 @@ $mobile-card-max-width: 440px;
 				line-height: 16px;
 			}
 		}
+	}
+}
+
+/**
+ * Storage Add-On Dropdown parts
+ */
+
+.plans-grid-next-plan-storage-label__container {
+	display: flex;
+	gap: 5px;
+	flex-direction: column;
+	align-items: baseline;
+
+	&.is-row {
+		flex-direction: row;
+	}
+
+	/**
+	 * Comparison grid overrides
+	 * - always render as column/wrapped
+	 */
+	.plans-grid-next-comparison-grid & {
+		flex-direction: column;
+		align-items: center;
+	}
+}
+
+.plans-grid-next-plan-storage-label__offset-price {
+	color: var(--studio-green-50);
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+}
+
+.storage-add-on-dropdown__offset-price-container {
+	width: 100%;
+	margin-top: 8px;
+	text-align: left;
+
+	.storage-add-on-dropdown__offset-price {
+		color: var(--studio-green-50);
+		font-size: $font-body-extra-small;
+		font-weight: 500;
+	}
+}
+
+.plan-features-2023-grid__storage-buttons {
+	background: #f2f2f2;
+	color: var(--studio-gray-90);
+	/* stylelint-disable-next-line */
+	border-radius: 5px;
+	padding: 4px 0;
+	text-align: center;
+	font-size: $font-body-extra-small;
+	font-weight: 400;
+	line-height: 20px;
+	width: fit-content;
+	min-width: 64px;
+
+	.plans-grid-next-comparison-grid & {
+		margin-top: 10px;
+
+		@include plans-grid-medium-large {
+			margin-top: 0;
+		}
+	}
+}
+
+.plan-features-2023-grid__storage {
+	.plan-features-2023-grid__plan-spotlight & {
+		padding-top: 0;
+		padding-bottom: 32px;
+		max-width: $table-cell-max-width;
 	}
 }

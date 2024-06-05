@@ -1,4 +1,12 @@
 @import "@wordpress/base-styles/variables";
+@import "@automattic/calypso-color-schemes";
+
+// Calypso style needs these variables
+@import "@automattic/typography/styles/variables";
+// stylelint-disable-next-line scss/at-import-no-partial-leading-underscore
+@import "calypso/assets/stylesheets/shared/mixins/_breakpoints.scss";
+// Calypso style
+@import "calypso/assets/stylesheets/style.scss";
 
 html {
 	font-family: $default-font;

@@ -1,15 +1,15 @@
 import {
 	__experimentalText as Text,
-	Button,
-	Card,
-	CardBody,
-	CardHeader,
 	Tooltip,
 	Spinner,
+	Button,
+	Card,
+	CardHeader,
+	CardBody,
 } from '@wordpress/components';
-import { arrowLeft, Icon, info } from '@wordpress/icons';
+import { Icon, info, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import Timeline from 'calypso/components/timeline';
 import TimelineEvent from 'calypso/components/timeline/timeline-event';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
@@ -35,11 +35,12 @@ import {
 interface Props {
 	scheduleId: string;
 	onNavBack?: () => void;
+	setNavigationTitle: ( title: string ) => void;
 }
 export const ScheduleLogs = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const { scheduleId, onNavBack } = props;
+	const { scheduleId, onNavBack, setNavigationTitle } = props;
 
 	const siteAdminUrl = useSiteAdminUrl();
 	const {
@@ -68,8 +69,17 @@ export const ScheduleLogs = ( props: Props ) => {
 		window.location.href = `${ siteAdminUrl }plugins.php`;
 	}, [ siteAdminUrl ] );
 
+	useEffect( () => {
+		// a bit hacky, but needed to override the title
+		setTimeout( () => {
+			setNavigationTitle(
+				`${ translate( 'Logs' ) } - ${ prepareScheduleName( schedule as ScheduleUpdates ) }`
+			);
+		} );
+	}, [ setNavigationTitle, schedule ] );
+
 	if ( isPending ) {
-		return null;
+		return <Spinner />;
 	}
 	// If the schedule is not found, navigate back to the list
 	else if ( isFetched && ! schedule ) {
@@ -91,7 +101,7 @@ export const ScheduleLogs = ( props: Props ) => {
 					{ translate( 'Logs' ) } - { prepareScheduleName( schedule as ScheduleUpdates ) }
 				</Text>
 				<div className="ch-placeholder">
-					<Text isBlock={ true } align="end" lineHeight={ 2.5 }>
+					<Text isBlock align="end" lineHeight={ 2.5 }>
 						{ translate( '%(pluginsNumber)d plugin', '%(pluginsNumber)d plugins', {
 							count: schedule?.args?.length || 0,
 							args: {
@@ -120,9 +130,9 @@ export const ScheduleLogs = ( props: Props ) => {
 			</CardBody>
 			{ scheduleLogs.map( ( logs, i ) => (
 				<Timeline key={ i }>
-					{ logs.reverse().map( ( log ) => (
+					{ logs.reverse().map( ( log, j ) => (
 						<TimelineEvent
-							key={ log.timestamp }
+							key={ `${ log.timestamp }.${ j }` }
 							date={ log.date }
 							dateFormat={
 								log.action === 'PLUGIN_UPDATES_START'
@@ -140,7 +150,7 @@ export const ScheduleLogs = ( props: Props ) => {
 									? translate( 'Try manual update' )
 									: undefined
 							}
-							actionIsPrimary={ true }
+							actionIsPrimary
 							onActionClick={ goToPluginsPage }
 						/>
 					) ) }

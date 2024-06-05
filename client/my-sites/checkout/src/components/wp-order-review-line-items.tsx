@@ -30,7 +30,7 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
-import { CostOverridesList, LineItemCostOverrides } from './cost-overrides-list';
+import { CouponCostOverride, LineItemCostOverrides } from './cost-overrides-list';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -225,12 +225,9 @@ export function WPOrderReviewLineItems( {
 				/>
 			) }
 			{ shouldUseCheckoutV2 && costOverridesList.length > 0 && (
-				<CostOverridesList
-					costOverridesList={ costOverridesList }
-					currency={ responseCart.currency }
+				<CouponCostOverride
+					responseCart={ responseCart }
 					removeCoupon={ couponLineItem?.hasDeleteButton ? removeCoupon : undefined }
-					couponCode={ responseCart.coupon }
-					showOnlyCoupons
 				/>
 			) }
 		</WPOrderReviewList>

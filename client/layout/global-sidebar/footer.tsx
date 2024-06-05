@@ -1,4 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { LocalizeProps } from 'i18n-calypso';
 import { FC } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -9,27 +11,34 @@ import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { GLOBAL_SIDEBAR_EVENTS } from './events';
+import SidebarMenuItem from './menu-items/menu-item';
+import SidebarNotifications from './menu-items/notifications';
+import { SidebarSearch } from './menu-items/search';
 
 export const GlobalSidebarFooter: FC< {
 	translate: LocalizeProps[ 'translate' ];
 	user?: UserData;
 } > = ( { translate, user } ) => {
+	const hasEnTranslation = useHasEnTranslation();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
+	const isDesktop = useBreakpoint( '>=782px' );
+
+	const isMac = window?.navigator.userAgent && window.navigator.userAgent.indexOf( 'Mac' ) > -1;
+	const searchShortcut = isMac ? '⌘ + K' : 'Ctrl + K';
+
 	return (
 		<SidebarFooter>
-			<a
-				href="/me"
-				className="sidebar__footer-link sidebar__footer-profile tooltip tooltip-top"
-				title={ translate( 'Profile' ) }
-				data-tooltip={ translate( 'Profile' ) }
+			<SidebarMenuItem
+				url="/me"
+				className="sidebar__footer-link sidebar__footer-profile"
+				tooltip={ translate( 'Profile' ) }
+				tooltipPlacement="top"
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.PROFILE_CLICK ) }
-			>
-				<Gravatar user={ user } size={ 20 } />
-			</a>
+				icon={ <Gravatar user={ user } size={ 20 } /> }
+			/>
 			<AsyncLoad
 				require="./menu-items/help-center/help-center"
 				tooltip={ translate( 'Help' ) }
-				tooltipPlacement="top"
 				placeholder={
 					<div className="link-help">
 						<span className="help"></span>
@@ -37,6 +46,25 @@ export const GlobalSidebarFooter: FC< {
 				}
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.HELPCENTER_CLICK ) }
 			/>
+			{ isDesktop && (
+				<>
+					<SidebarSearch
+						tooltip={
+							hasEnTranslation( 'Command Palette (%(shortcut)s)' )
+								? translate( 'Command Palette (%(shortcut)s)', {
+										args: { shortcut: searchShortcut },
+								  } )
+								: translate( 'Jump to…' )
+						}
+						onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.SEARCH_CLICK ) }
+					/>
+					<SidebarNotifications
+						className="sidebar__item-notifications"
+						tooltip={ translate( 'Notifications' ) }
+						onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.NOTIFICATION_CLICK ) }
+					/>
+				</>
+			) }
 			{ isInSupportSession && (
 				<QuickLanguageSwitcher className="sidebar__footer-language-switcher" shouldRenderAsButton />
 			) }

@@ -62,3 +62,13 @@
 
 	}
 }
+
+.products-overview .a4a-layout__body {
+	overflow-y: scroll; // We need to show the scrollbar so we avoid UI from shifting when filtering items.
+}
+
+.products-overview {
+	.a4a-layout__top-wrapper {
+		z-index: 10;
+	}
+}

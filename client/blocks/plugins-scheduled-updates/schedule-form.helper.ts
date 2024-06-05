@@ -172,3 +172,14 @@ export const validatePath = ( path: string, paths: string[] ): string => {
 
 	return error;
 };
+
+/* Validate paths
+ * check if path is submitted before saving the schedule
+ */
+export const validatePaths = ( hasUnsubmittedPath: boolean ): string => {
+	let error = '';
+	if ( hasUnsubmittedPath ) {
+		error = translate( 'Please submit the path before saving the schedule.' );
+	}
+	return error;
+};

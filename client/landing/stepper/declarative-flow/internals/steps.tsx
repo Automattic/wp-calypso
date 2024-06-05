@@ -127,6 +127,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/new-or-existing-site' ),
 	},
 
+	LAUNCH_BIG_SKY: {
+		slug: 'launch-big-sky',
+		asyncComponent: () => import( './steps-repository/launch-big-sky' ),
+	},
+
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
 
 	OPTIONS: {
@@ -226,6 +231,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-instructions-i2' ),
 	},
 
+	SITE_MIGRATION_ASSISTED_MIGRATION: {
+		slug: 'migrateMessage',
+		asyncComponent: () => import( './steps-repository/importer-migrate-message' ),
+	},
+
 	SITE_MIGRATION_IDENTIFY: {
 		slug: 'site-migration-identify',
 		asyncComponent: () => import( './steps-repository/site-migration-identify' ),
@@ -244,6 +254,11 @@ export const STEPS = {
 	SITE_MIGRATION_PLUGIN_INSTALL: {
 		slug: 'site-migration-plugin-install',
 		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
+	},
+
+	PICK_SITE: {
+		slug: 'sitePicker',
+		asyncComponent: () => import( './steps-repository/site-picker' ),
 	},
 
 	SEGMENTATION_SURVEY: {

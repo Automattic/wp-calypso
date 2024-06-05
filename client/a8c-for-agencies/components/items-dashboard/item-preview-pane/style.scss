@@ -26,10 +26,6 @@
 			font-weight: 500;
 		}
 
-		.section-nav-tab:not(.is-selected):hover {
-			border-bottom: none;
-		}
-
 		.section-nav-tab {
 			&.is-selected {
 				border-bottom-color: var(--color-neutral-70);

@@ -1,6 +1,9 @@
-import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
+import { WIDE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { Button, DropdownMenu, Tooltip, FormToggle } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useScheduledUpdatesActivateMutation } from 'calypso/data/plugins/use-scheduled-updates-activate-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { Badge } from '../plugin-scheduled-updates-common/badge';
 import { useDateTimeFormat } from '../plugin-scheduled-updates-common/hooks/use-date-time-format';
@@ -19,6 +22,7 @@ export const ScheduleListTable = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { isEligibleForFeature } = useIsEligibleForFeature();
+	const isWideScreen = useBreakpoint( WIDE_BREAKPOINT );
 
 	const { onEditClick, onRemoveClick, onShowLogs } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
@@ -26,20 +30,22 @@ export const ScheduleListTable = ( props: Props ) => {
 		usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat( siteSlug );
+	const { activateSchedule } = useScheduledUpdatesActivateMutation();
 
 	/**
 	 * NOTE: If you update the table structure,
 	 * make sure to update the ScheduleListCards component as well
 	 */
 	return (
-		<table>
+		<table className="plugins-update-manager-table">
 			<thead>
 				<tr>
 					<th>{ translate( 'Name' ) }</th>
 					<th>{ translate( 'Last update' ) }</th>
 					<th>{ translate( 'Next update' ) }</th>
-					<th>{ translate( 'Frequency' ) }</th>
+					<th className="frequency">{ translate( 'Frequency' ) }</th>
 					<th>{ translate( 'Plugins' ) }</th>
+					<th>{ translate( 'Active' ) }</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -68,7 +74,8 @@ export const ScheduleListTable = ( props: Props ) => {
 										>
 											{ schedule.last_run_status === 'in-progress'
 												? translate( 'In progress' )
-												: schedule.last_run_timestamp &&
+												: isWideScreen &&
+												  schedule.last_run_timestamp &&
 												  prepareDateTime( schedule.last_run_timestamp ) }
 										</Button>
 									) }
@@ -77,8 +84,8 @@ export const ScheduleListTable = ( props: Props ) => {
 
 							{ ! schedule.last_run_status && ! schedule.last_run_timestamp && '-' }
 						</td>
-						<td>{ prepareDateTime( schedule.timestamp ) }</td>
-						<td>
+						<td className="next-update">{ prepareDateTime( schedule.timestamp ) }</td>
+						<td className="frequency">
 							{
 								{
 									daily: translate( 'Daily' ),
@@ -98,6 +105,14 @@ export const ScheduleListTable = ( props: Props ) => {
 									<Icon className="icon-info" icon={ info } size={ 16 } />
 								</Tooltip>
 							) }
+						</td>
+						<td>
+							<FormToggle
+								checked={ schedule.active }
+								onChange={ ( e ) =>
+									activateSchedule( siteSlug, schedule.id, { active: e.target.checked } )
+								}
+							/>
 						</td>
 						<td style={ { textAlign: 'end' } }>
 							<DropdownMenu

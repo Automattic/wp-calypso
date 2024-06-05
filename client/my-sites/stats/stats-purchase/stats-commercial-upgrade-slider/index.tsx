@@ -1,6 +1,6 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -21,10 +21,10 @@ function useTranslatedStrings() {
 	const limits = translate( 'Monthly views limit', {
 		comment: 'Heading for Stats Upgrade slider. The monthly views limit.',
 	} ) as string;
-	const price = translate( 'You pay', {
+	const price = translate( "You'll pay", {
 		comment: 'Heading for Stats Upgrade slider. The monthly price.',
 	} ) as string;
-	const strategy = translate( 'Price per month, billed yearly', {
+	const strategy = translate( 'Price per month, billed yearly*', {
 		comment: 'Stats Upgrade slider message. The billing strategy.',
 	} ) as string;
 
@@ -48,7 +48,7 @@ function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
 
 		// Return the new step with string values.
 		return {
-			lhValue: formatNumber( tier.views ),
+			lhValue: formatNumber( tier.views, getLocaleSlug() ?? 'en' ),
 			rhValue: price,
 			originalPrice: tier.price,
 			upgradePrice: tierUpgradePricePerMonth
@@ -159,7 +159,7 @@ function StatsCommercialUpgradeSlider( {
 			popupInfoString={ perUnitFeeMessaging }
 			steps={ steps }
 			onSliderChange={ handleSliderChanged }
-			marks={ true }
+			marks
 		/>
 	);
 }

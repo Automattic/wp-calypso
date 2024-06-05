@@ -1,11 +1,30 @@
 import { useMemo } from '@wordpress/element';
 import useGridPlans from './use-grid-plans';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
-import type { UseGridPlansParams, UseGridPlansType } from './types';
+import type { UseGridPlansParams } from './types';
 import type { GridPlan } from '../../types';
 
-const useGridPlansForFeaturesGrid = (
-	{
+const useGridPlansForFeaturesGrid = ( {
+	allFeaturesList,
+	coupon,
+	eligibleForFreeHostingTrial,
+	hasRedeemedDomainCredit,
+	hiddenPlans,
+	intent,
+	isDisplayingPlansNeededForFeature,
+	isInSignup,
+	isSubdomainNotGenerated,
+	selectedFeature,
+	selectedPlan,
+	showLegacyStorageFeature,
+	siteId,
+	storageAddOns,
+	term,
+	useCheckPlanAvailabilityForPurchase,
+	useFreeTrialPlanSlugs,
+	highlightLabelOverrides,
+}: UseGridPlansParams ): GridPlan[] | null => {
+	const gridPlans = useGridPlans( {
 		allFeaturesList,
 		coupon,
 		eligibleForFreeHostingTrial,
@@ -13,7 +32,6 @@ const useGridPlansForFeaturesGrid = (
 		hiddenPlans,
 		intent,
 		isDisplayingPlansNeededForFeature,
-		isInSignup,
 		isSubdomainNotGenerated,
 		selectedFeature,
 		selectedPlan,
@@ -23,31 +41,12 @@ const useGridPlansForFeaturesGrid = (
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-	}: UseGridPlansParams,
-	useGridPlansData: UseGridPlansType = useGridPlans
-): GridPlan[] | null => {
-	const gridPlans = useGridPlansData( {
-		allFeaturesList,
-		coupon,
-		eligibleForFreeHostingTrial,
-		hasRedeemedDomainCredit,
-		hiddenPlans,
-		intent,
-		isDisplayingPlansNeededForFeature,
-		isSubdomainNotGenerated,
-		selectedFeature,
-		selectedPlan,
-		siteId,
-		showLegacyStorageFeature,
-		storageAddOns,
-		term,
-		useCheckPlanAvailabilityForPurchase,
-		useFreeTrialPlanSlugs,
+		highlightLabelOverrides,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
-		gridPlans: gridPlans || [],
 		allFeaturesList,
+		gridPlans: gridPlans || [],
 		hasRedeemedDomainCredit,
 		intent,
 		isInSignup,

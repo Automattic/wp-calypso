@@ -6,7 +6,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migraiton-key';
+import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MaybeLink } from './maybe-link';
 import { ShowHideInput } from './show-hide-input';
@@ -172,8 +172,8 @@ const SiteMigrationInstructions: Step = function () {
 				stepName="site-migration-instructions"
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-instructions"
-				hideSkip={ true }
-				hideBack={ true }
+				hideSkip
+				hideBack
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"

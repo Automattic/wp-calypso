@@ -1,29 +1,48 @@
-.pending-actions {
-	.fade-in {
-		opacity: 0;
-		transition: opacity 0.3s ease-in-out;
-	}
-
-	.fade-in.active {
-		opacity: 1;
-	}
-
-	ul.pending-actions__list {
+:root .pending-actions {
+	.pending-actions__list {
 		margin-top: 5px;
+		margin-left: 3px;
+
+		li::before {
+			content: "\b7\a0";
+		}
+
 		li {
+			list-style: none;
 			margin-bottom: 0;
 		}
 	}
 
-	&__action {
+	.pending-actions__action {
+		height: 30px;
+		color: var(--studio-gray-40);
+		transition: color 0.3s ease-in-out;
 		display: inline-flex;
+	}
 
-		&--icon {
-			fill: #008a20;
+	.pending-actions__action--success {
+		.pending-actions__action-icon {
+			svg {
+				fill: var(--color-success);
+			}
 		}
+	}
+	.pending-actions__action--error {
+		.pending-actions__action-icon {
+			svg {
+				fill: var(--color-error);
+			}
+		}
+	}
 
-		.components-spinner {
-			margin: 5px 11px -3px;
-		}
+	.pending-actions__action--success,
+	.pending-actions__action--pending,
+	.pending-actions__action--error {
+		color: var(--studio-gray-80);
+	}
+
+	.pending-actions__loading {
+		display: inline-flex;
+		height: 30px;
 	}
 }

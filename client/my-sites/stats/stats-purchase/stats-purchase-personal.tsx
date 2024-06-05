@@ -103,7 +103,7 @@ const PersonalPurchase = ( {
 		: translate( 'Get Jetpack Stats' );
 
 	if ( isNewPurchaseFlowEnabled ) {
-		continueButtonText = translate( 'Contribute and continue' );
+		continueButtonText = translate( 'Contribute now and continue' );
 	}
 	const { refetch: refetchNotices } = useNoticeVisibilityQuery( siteId, 'focus_jetpack_purchase' );
 	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
@@ -256,18 +256,20 @@ const PersonalPurchase = ( {
 			) }
 
 			{ subscriptionValue === 0 ? (
-				<ButtonComponent
-					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
-					disabled={
-						! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
-					}
-					onClick={ () =>
-						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
-					}
-				>
-					{ translate( 'Continue with Jetpack Stats for free' ) }
-				</ButtonComponent>
+				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						disabled={
+							! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
+						}
+						onClick={ () =>
+							gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
+						}
+					>
+						{ translate( 'Continue with Jetpack Stats for free' ) }
+					</ButtonComponent>
+				</div>
 			) : (
 				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
 					<ButtonComponent
@@ -329,7 +331,7 @@ function StatsBenefitsListing( {
 					</li>
 				) }
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-					{ translate( 'No UTM tracking' ) }
+					{ translate( 'No UTM tracking for your marketing campaigns' ) }
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No access to upcoming advanced features' ) }

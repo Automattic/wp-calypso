@@ -3,7 +3,6 @@ import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automatti
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
-import SupportIcon from './assets/images/support.svg';
 import Theme2Image from './assets/images/theme-2.jpg';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
@@ -53,11 +52,6 @@ import {
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
 	FEATURE_ECOMMERCE_MARKETING,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-	FEATURE_EMAIL_SUPPORT,
-	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FILTERING_V2,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
@@ -78,8 +72,6 @@ import {
 	FEATURE_JETPACK_VIDEOPRESS_UNBRANDED,
 	FEATURE_LANGUAGE_SUPPORT_V2,
 	FEATURE_LIVE_CHAT_SUPPORT,
-	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 	FEATURE_MALWARE_SCANNING_DAILY,
 	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 	FEATURE_MANAGE,
@@ -186,7 +178,6 @@ import {
 	FEATURE_ALWAYS_ONLINE,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
-	FEATURE_SUPPORT_EMAIL,
 	FEATURE_DESIGN_TOOLS,
 	FEATURE_PREMIUM_THEMES,
 	FEATURE_WORDADS,
@@ -288,7 +279,6 @@ import {
 	FEATURE_DISPLAY_PRODUCTS_BRAND,
 	FEATURE_PRODUCT_ADD_ONS,
 	FEATURE_ASSEMBLED_KITS,
-	FEATURE_MIN_MAX_QTY,
 	FEATURE_STOCK_NOTIFS,
 	FEATURE_DYNAMIC_UPSELLS,
 	FEATURE_LOYALTY_PROG,
@@ -336,7 +326,11 @@ import {
 	FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT,
 	FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
 	FEATURE_WEB_SERVER_SETTINGS,
+	FEATURE_1_WEBSITE,
+	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+	FEATURE_PRIORITY_24_7_SUPPORT,
 } from './constants';
+import { getTrailMapExperiment, isTrailMapCopyVariant } from './experiments';
 import {
 	isPersonalPlan,
 	isPremiumPlan,
@@ -351,35 +345,47 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	switch ( variation ) {
 		case 'woo':
 			return i18n.translate(
-				'%(commission)d%% transaction fee for standard WooCommerce payments (+ standard processing fee)',
+				'%(commission)d%% transaction fee for standard WooCommerce payments {{br}}{{/br}}(+ standard processing fee)',
 				{
+					components: { br: <br /> },
 					args: { commission },
 				}
 			);
 
 		case 'all':
 			return i18n.translate(
-				'%(commission)d%% transaction fee for all payment features (+ standard processing fee)',
+				'%(commission)d%% transaction fee for all payment features {{br}}{{/br}}(+ standard processing fee)',
 				{
+					components: { br: <br /> },
 					args: { commission },
 				}
 			);
 
 		case 'regular':
 			return i18n.translate(
-				'%(commission)d%% transaction fee for standard payments (+ standard processing fee)',
+				'%(commission)d%% transaction fee for standard payments {{br}}{{/br}}(+ standard processing fee)',
 				{
+					components: { br: <br /> },
 					args: { commission },
 				}
 			);
 
 		default:
-			return i18n.translate(
-				'%(commission)d%% transaction fee for payments (+ standard processing fee)',
-				{
-					args: { commission },
-				}
-			);
+			return isTrailMapCopyVariant()
+				? i18n.translate(
+						'Accept payments (%(commission)d%% fee) {{br}}{{/br}}(+ standard processing fee)',
+						{
+							components: { br: <br /> },
+							args: { commission },
+						}
+				  )
+				: i18n.translate(
+						'%(commission)d%% transaction fee for payments {{br}}{{/br}}(+ standard processing fee)',
+						{
+							components: { br: <br /> },
+							args: { commission },
+						}
+				  );
 	}
 };
 
@@ -603,12 +609,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
 	},
 
-	[ FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
-		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
-	},
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
 		getSlug: () => FEATURE_FREE_THEMES_SIGNUP,
 		getTitle: () => i18n.translate( 'Dozens of free themes' ),
@@ -641,7 +641,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_FREE_WORDPRESS_THEMES ]: {
 		getSlug: () => FEATURE_FREE_WORDPRESS_THEMES,
-		getTitle: () => i18n.translate( 'Free WordPress Themes' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'All free themes' )
+				: i18n.translate( 'Free WordPress Themes' ),
 	},
 	[ FEATURE_SEO_PREVIEW_TOOLS ]: {
 		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
@@ -760,7 +763,10 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
 		getSlug: () => FEATURE_VIDEO_UPLOADS,
-		getTitle: () => i18n.translate( 'VideoPress support' ),
+		getTitle: () =>
+			getTrailMapExperiment()
+				? i18n.translate( 'Upload 4K video with VideoPress' )
+				: i18n.translate( 'VideoPress support' ),
 		getDescription: () =>
 			i18n.translate(
 				'The easiest way to upload videos to your website and display them ' +
@@ -860,9 +866,11 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_INSTALL_PLUGINS ]: {
 		getSlug: () => FEATURE_INSTALL_PLUGINS,
 		getTitle: () =>
-			i18n.translate(
-				'Access to more than 50,000 WordPress plugins to extend functionality for your site'
-			),
+			isTrailMapCopyVariant()
+				? i18n.translate( '50,000+ plugins and themes' )
+				: i18n.translate(
+						'Access to more than 50,000 WordPress plugins to extend functionality for your site'
+				  ),
 	},
 
 	[ FEATURE_UPLOAD_THEMES ]: {
@@ -953,42 +961,11 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
 		getSlug: () => FEATURE_COMMUNITY_SUPPORT,
-		getTitle: () => i18n.translate( 'Community support' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Help center support' )
+				: i18n.translate( 'Community support' ),
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
-	},
-
-	[ FEATURE_EMAIL_SUPPORT ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
-		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate( 'Live chat support to help you get started with your site.' ),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Live chat is available 24 hours a day from Monday through Friday. ' +
-					'You can also email us any day of the week for personalized support.'
-			),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Live chat is available 24/7. ' +
-					'You can also email us any day of the week for personalized support.'
-			),
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT ]: {
@@ -1145,7 +1122,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
 		getSlug: () => FEATURE_SITE_BACKUPS_AND_RESTORE,
-		getTitle: () => i18n.translate( 'Automated site backups and one-click restore' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Real time full-site backup/restore' )
+				: i18n.translate( 'Automated site backups and one-click restore' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
@@ -1596,18 +1576,6 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () => i18n.translate( '24/7 expert support' ),
 	},
 
-	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
-		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		getTitle: () => i18n.translate( 'Live chat support' ),
-		getDescription: () => i18n.translate( 'Live chat support' ),
-	},
-
-	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( 'Live chat support' ),
-		getDescription: () => i18n.translate( 'Live chat support' ),
-	},
-
 	[ FEATURE_JETPACK_VIDEOPRESS ]: {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS,
 		getTitle: () => i18n.translate( 'Unlimited users' ),
@@ -1836,18 +1804,34 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
 		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 2 },
-			} ),
+			isTrailMapCopyVariant()
+				? i18n.translate(
+						'Accept payments (%(commission)d%% fee, %(wooCommerceCommission)d%% for WooCommerce) {{br}}{{/br}}(+ standard processing fee)',
+						{
+							components: { br: <br /> },
+							args: { commission: 2, wooCommerceCommission: 0 },
+						}
+				  )
+				: i18n.translate( '%(commission)d%% transaction fee for payments', {
+						args: { commission: 2 },
+				  } ),
 		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 0 },
-			} ),
+			isTrailMapCopyVariant()
+				? i18n.translate(
+						'Accept payments (%(commission)d%% fee) {{br}}{{/br}}(+ standard processing fee)',
+						{
+							components: { br: <br /> },
+							args: { commission: 0 },
+						}
+				  )
+				: i18n.translate( '%(commission)d%% transaction fee for payments', {
+						args: { commission: 0 },
+				  } ),
 		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1879,7 +1863,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
-		getTitle: () => i18n.translate( 'No limitations on site visitors' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Unlimited traffic' )
+				: i18n.translate( 'No limitations on site visitors' ),
 		getDescription: () =>
 			i18n.translate( 'Grow your site traffic without worrying about limitations.' ),
 	},
@@ -1921,7 +1908,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_USERS ]: {
 		getSlug: () => FEATURE_USERS,
-		getTitle: () => i18n.translate( 'Unlimited users' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Unlimited collaborators' )
+				: i18n.translate( 'Unlimited users' ),
 		getCompareTitle: () => i18n.translate( 'Invite others to contribute to your site.' ),
 		getDescription: () =>
 			i18n.translate( 'Invite others to contribute to your site and assign access permissions.' ),
@@ -1934,7 +1924,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_POST_EDITS_HISTORY ]: {
 		getSlug: () => FEATURE_POST_EDITS_HISTORY,
-		getTitle: () => i18n.translate( 'Time machine for post edits' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Version history and restore' )
+				: i18n.translate( 'Time machine for post edits' ),
 		getDescription: () =>
 			i18n.translate( 'Roll back your posts to an earlier edit with a built-in revision history.' ),
 	},
@@ -1969,15 +1962,6 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 	},
-	[ FEATURE_SUPPORT_EMAIL ]: {
-		getSlug: () => FEATURE_SUPPORT_EMAIL,
-		getTitle: () => i18n.translate( 'Support via email' ),
-		getIcon: () => <img src={ SupportIcon } alt={ i18n.translate( 'Customer support' ) } />,
-		getAlternativeTitle: () => i18n.translate( 'Customer support' ),
-		getCompareTitle: () => i18n.translate( 'Unlimited support via emails.' ),
-		getDescription: () =>
-			i18n.translate( 'Fast, friendly, expert WordPress help, whenever you need it.' ),
-	},
 	[ FEATURE_DESIGN_TOOLS ]: {
 		getSlug: () => FEATURE_DESIGN_TOOLS,
 		getTitle: () => i18n.translate( 'Avant-garde design tools' ),
@@ -2008,7 +1992,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
-		getTitle: () => i18n.translate( 'Unrestricted bandwidth' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Unmetered bandwidth' )
+				: i18n.translate( 'Unrestricted bandwidth' ),
 		getDescription: () =>
 			i18n.translate( 'Never fret about getting too much traffic or paying overage charges.' ),
 	},
@@ -2022,14 +2009,19 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WAF_V2 ]: {
 		getSlug: () => FEATURE_WAF_V2,
-		getTitle: () => i18n.translate( 'Web application firewall (WAF)' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Web application firewall' )
+				: i18n.translate( 'Web application firewall (WAF)' ),
 		getDescription: () =>
 			i18n.translate( 'Block out malicious activity like SQL injection and XSS attacks.' ),
 	},
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
-		getTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
-		getAlternativeTitle: () => i18n.translate( 'Global CDN' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Global CDN with 28+ locations' )
+				: i18n.translate( 'Global CDN' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Rely on ultra-fast site speeds, from any location on earth.' ),
 		getDescription: () =>
@@ -2057,8 +2049,9 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SECURITY_MALWARE ]: {
 		getSlug: () => FEATURE_SECURITY_MALWARE,
-		getTitle: () => i18n.translate( 'Managed malware protection' ),
-		getDescription: () => i18n.translate( 'Stay safe with automated malware scanning.' ),
+		getTitle: () => i18n.translate( 'Malware detection & removal' ),
+		getDescription: () =>
+			i18n.translate( 'Stay safe with automated malware scanning and removal.' ),
 	},
 	[ FEATURE_REAL_TIME_SECURITY_SCANS ]: {
 		getSlug: () => FEATURE_REAL_TIME_SECURITY_SCANS,
@@ -2078,28 +2071,28 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SECURITY_DDOS ]: {
 		getSlug: () => FEATURE_SECURITY_DDOS,
-		getTitle: () => i18n.translate( 'DDoS protection and mitigation' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'DDoS protection' )
+				: i18n.translate( 'DDoS protection and mitigation' ),
 		getDescription: () =>
 			i18n.translate( 'Breeze past DDoS attacks thanks to real time monitoring and mitigation.' ),
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowNewString =
-				( localeSlug && englishLocales.includes( localeSlug ) ) ||
-				i18n.hasTranslation( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' );
-
-			return shouldShowNewString
-				? i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' )
-				: i18n.translate( 'SFTP/SSH, WP-CLI, Git tools' );
-		},
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'SFTP/SSH, WP-CLI' )
+				: i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
-		getTitle: () => i18n.translate( 'Free staging site' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Staging site' )
+				: i18n.translate( 'Free staging site' ),
 		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
 	},
 
@@ -2161,7 +2154,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
 		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
-		getTitle: () => i18n.translate( 'Back in stock emails' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Back-in-stock notifications' )
+				: i18n.translate( 'Back in stock emails' ),
 		getDescription: () =>
 			i18n.translate( 'Notify customers when an out-of-stock item is back in stock.' ),
 	},
@@ -2235,11 +2231,14 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
 		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
-		getTitle: () => i18n.translate( 'Min/max order quantity' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Min/max order quantities' )
+				: i18n.translate( 'Min/max order quantity' ),
 		getDescription: () =>
-			i18n.translate(
-				'Set minimum and maximum quantity limits for orders to prevent over-ordering or under-ordering.'
-			),
+			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CUSTOM_STORE ]: {
 		getSlug: () => FEATURE_CUSTOM_STORE,
@@ -2493,7 +2492,6 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PRODUCT_ADD_ONS ]: {
 		getSlug: () => FEATURE_PRODUCT_ADD_ONS,
 		getTitle: () => i18n.translate( 'Product add-ons' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Increase your revenue with add-ons like gift wrapping or personalizations like engraving.'
@@ -2512,18 +2510,12 @@ const FEATURES_LIST: FeatureList = {
 		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
-	[ FEATURE_MIN_MAX_QTY ]: {
-		getSlug: () => FEATURE_MIN_MAX_QTY,
-		getTitle: () => i18n.translate( 'Min/max order quantities' ),
-
-		getDescription: () =>
-			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
-		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
-	},
 	[ FEATURE_STOCK_NOTIFS ]: {
 		getSlug: () => FEATURE_STOCK_NOTIFS,
-		getTitle: () => i18n.translate( 'Back-in-stock notifications' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Stock notifications' )
+				: i18n.translate( 'Back-in-stock notifications' ),
 
 		getDescription: () =>
 			i18n.translate( 'Automatically notify customers when your products are restocked.' ),
@@ -2565,7 +2557,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BULK_DISCOUNTS ]: {
 		getSlug: () => FEATURE_BULK_DISCOUNTS,
-		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Bulk discounts' )
+				: i18n.translate( 'Offer bulk discounts' ),
 
 		getDescription: () => i18n.translate( 'Offer personalized packages and bulk discounts.' ),
 		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
@@ -2610,6 +2605,32 @@ const FEATURES_LIST: FeatureList = {
 		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
+	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
+		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+		getTitle: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'Fast support from our expert team' )
+				? i18n.translate( 'Fast support from our expert team' )
+				: i18n.translate( 'Expert support' ),
+		getDescription: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'Prompt support from our expert, friendly Happiness team' )
+				? i18n.translate( 'Prompt support from our expert, friendly Happiness team' )
+				: i18n.translate( 'Expert support' ),
+	},
+	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
+		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
+		getTitle: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'Priority 24/7 support from our expert team' )
+				? i18n.translate( 'Priority 24/7 support from our expert team' )
+				: i18n.translate( '24/7 priority support' ),
+		getDescription: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'The fastest 24/7 support from our expert, friendly Happiness team' )
+				? i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' )
+				: i18n.translate( '24/7 priority support' ),
+	},
 	/* END: 2023 Pricing Grid Features */
 
 	/* START: Woo Express Features */
@@ -2635,7 +2656,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_FREE_SSL_CERTIFICATE ]: {
 		getSlug: () => FEATURE_FREE_SSL_CERTIFICATE,
-		getTitle: () => i18n.translate( 'Free SSL certificate' ),
+		getTitle: () =>
+			isTrailMapCopyVariant()
+				? i18n.translate( 'Free SSL' )
+				: i18n.translate( 'Free SSL certificate' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_GOOGLE_ANALYTICS_V3 ]: {
@@ -2812,15 +2836,11 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DATABASE_ACCESS ]: {
 		getSlug: () => FEATURE_DATABASE_ACCESS,
-		getTitle: () => i18n.translate( 'Database Access' ),
+		getTitle: () => i18n.translate( 'Database access' ),
 	},
 	[ FEATURE_DEVELOPER_TOOLS ]: {
 		getSlug: () => FEATURE_DEVELOPER_TOOLS,
 		getTitle: () => i18n.translate( 'Developer tools' ),
-	},
-	[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ]: {
-		getSlug: () => FEATURE_DYNAMIC_PRODUCT_UPSELLS,
-		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
 	},
 	[ FEATURE_FREE_MIGRATIONS ]: {
 		getSlug: () => FEATURE_FREE_MIGRATIONS,
@@ -2848,23 +2868,33 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS ]: {
 		getSlug: () => FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
-		getTitle: () => i18n.translate( 'Pre-installed plugins for security and performance' ),
+		getTitle: () =>
+			i18n.translate( 'Pre-installed plugins for security and performance ($239/year value)' ),
 	},
 	[ FEATURE_WEB_SERVER_SETTINGS ]: {
 		getSlug: () => FEATURE_WEB_SERVER_SETTINGS,
 		getTitle: () => i18n.translate( 'Web server settings' ),
+	},
+	[ FEATURE_1_WEBSITE ]: {
+		getSlug: () => FEATURE_1_WEBSITE,
+		getTitle: () => i18n.translate( '1 website' ),
+	},
+	[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ]: {
+		getSlug: () => FEATURE_DYNAMIC_PRODUCT_UPSELLS,
+		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
 	},
 	/* END: Trail Map New Features */
 };
 
 FEATURES_LIST[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ] = {
 	...FEATURES_LIST[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ],
-	getSubFeatureSlugs: () => [
-		FEATURE_UNLIMITED_PRODUCTS,
-		FEATURE_MIN_MAX_ORDER_QUANTITY,
-		FEATURE_BULK_DISCOUNTS,
-		FEATURE_INVENTORY,
-		FEATURE_DYNAMIC_PRODUCT_UPSELLS,
+	getSubFeatureObjects: () => [
+		FEATURES_LIST[ FEATURE_UNLIMITED_PRODUCTS ],
+		FEATURES_LIST[ FEATURE_MIN_MAX_ORDER_QUANTITY ],
+		FEATURES_LIST[ FEATURE_BULK_DISCOUNTS ],
+		FEATURES_LIST[ FEATURE_INVENTORY ],
+		FEATURES_LIST[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ],
+		FEATURES_LIST[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ],
 	],
 };
 

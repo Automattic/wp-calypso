@@ -1,5 +1,5 @@
 import { ToggleControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import './styles.scss';
 
 type ToggleInputProps = {
@@ -14,7 +14,7 @@ const ToggleInput = ( { checked, onChange, label, hint, loading }: ToggleInputPr
 	return (
 		<div className="toggle-input">
 			<ToggleControl
-				className={ classNames( 'toggle-input__control', { 'is-loading': loading } ) }
+				className={ clsx( 'toggle-input__control', { 'is-loading': loading } ) }
 				onChange={ onChange }
 				checked={ checked }
 				label={ label }

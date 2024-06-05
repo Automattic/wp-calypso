@@ -5,7 +5,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useEffect, useState, useMemo } from 'react';
 import { MAX_SELECTABLE_PLUGINS } from './config';
@@ -22,6 +22,7 @@ interface Props {
 	onTouch?: ( touched: boolean ) => void;
 	onChange?: ( value: string[] ) => void;
 	borderWrapper?: boolean;
+	selectedSites?: number[] | null;
 }
 export function ScheduleFormPlugins( props: Props ) {
 	const {
@@ -33,6 +34,7 @@ export function ScheduleFormPlugins( props: Props ) {
 		onChange,
 		onTouch,
 		borderWrapper = true,
+		selectedSites = null,
 	} = props;
 	const translate = useTranslate();
 	const plugins = useMemo( () => props.plugins || [], [ props.plugins ] );
@@ -43,11 +45,12 @@ export function ScheduleFormPlugins( props: Props ) {
 	const [ fieldTouched, setFieldTouched ] = useState( false );
 
 	const removeUnlistedSelectedPlugins = useCallback( () => {
-		setSelectedPlugins(
-			selectedPlugins.filter( ( plugin ) => plugins.find( ( p ) => p.plugin === plugin ) )
-		);
-	}, [ plugins, selectedPlugins ] );
-
+		if ( isPluginsFetched ) {
+			setSelectedPlugins(
+				selectedPlugins.filter( ( plugin ) => plugins.find( ( p ) => p.plugin === plugin ) )
+			);
+		}
+	}, [ plugins, isPluginsFetched ] );
 	const onPluginSelectionChange = useCallback(
 		( plugin: CorePlugin, isChecked: boolean ) => {
 			if ( isChecked ) {
@@ -82,7 +85,7 @@ export function ScheduleFormPlugins( props: Props ) {
 
 	useEffect( () => onTouch?.( fieldTouched ), [ fieldTouched ] );
 	useEffect( () => onChange?.( selectedPlugins ), [ selectedPlugins ] );
-	useEffect( () => removeUnlistedSelectedPlugins(), [ plugins ] );
+	useEffect( () => removeUnlistedSelectedPlugins(), [ plugins, isPluginsFetched ] );
 
 	return (
 		<div className="form-field form-field--plugins">
@@ -100,7 +103,7 @@ export function ScheduleFormPlugins( props: Props ) {
 				</Text>
 			) }
 
-			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
+			<div className={ clsx( { 'form-control-container': borderWrapper } ) }>
 				{ pluginsAvailable && (
 					<>
 						<SearchControl
@@ -132,7 +135,7 @@ export function ScheduleFormPlugins( props: Props ) {
 												label={ plugin.name }
 												checked={ selectedPlugins.includes( plugin.plugin ) }
 												disabled={ isPluginSelectionDisabled( plugin ) }
-												className={ classnames( {
+												className={ clsx( {
 													disabled: isPluginSelectionDisabled( plugin ),
 												} ) }
 												onChange={ ( isChecked ) => {
@@ -146,10 +149,13 @@ export function ScheduleFormPlugins( props: Props ) {
 						</div>
 					</>
 				) }
-				{ ! pluginsAvailable && (
+				{ ! pluginsAvailable && selectedSites && selectedSites.length === 0 && (
 					<p className="placeholder-info">
 						{ translate( 'Please select a site to view available plugins.' ) }
 					</p>
+				) }
+				{ ! pluginsAvailable && selectedSites && selectedSites.length > 0 && (
+					<p className="placeholder-info">{ translate( 'No plugins to update.' ) }</p>
 				) }
 			</div>
 			{ ( () => {
@@ -165,7 +171,7 @@ export function ScheduleFormPlugins( props: Props ) {
 						<Text className="validation-msg">
 							<Icon className="icon-info" icon={ info } size={ 16 } />
 							{ translate(
-								'The current site selection does not have any plugins that can be scheduled for updates.'
+								'All installed plugins are provided by WordPress.com and automatically updated for you. Add a plugin from the WordPress.com Marketplace to create a schedule!'
 							) }
 						</Text>
 					);

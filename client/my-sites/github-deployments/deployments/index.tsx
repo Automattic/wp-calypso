@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useI18n } from '@wordpress/react-i18n';
 import ActionPanel from 'calypso/components/action-panel';
@@ -27,7 +28,6 @@ export function GitHubDeployments() {
 			return (
 				<>
 					<GitHubDeploymentsList deployments={ deployments } />
-					<GitHubDeploymentSurvey />
 				</>
 			);
 		}
@@ -38,9 +38,7 @@ export function GitHubDeployments() {
 
 		return (
 			<>
-				<HeaderCake isCompact>
-					<h1>{ __( 'Connect repository' ) }</h1>
-				</HeaderCake>
+				<HeaderCake isCompact>{ __( 'Manage Connection' ) }</HeaderCake>
 				<ActionPanel>
 					<GitHubDeploymentCreationForm onConnected={ refetch } />
 				</ActionPanel>
@@ -50,7 +48,11 @@ export function GitHubDeployments() {
 
 	return (
 		<PageShell
-			pageTitle={ __( 'GitHub Deployments' ) }
+			pageTitle={
+				isEnabled( 'layout/dotcom-nav-redesign-v2' )
+					? __( 'Deployments' )
+					: __( 'GitHub Deployments' )
+			}
 			topRightButton={
 				deployments &&
 				deployments?.length > 0 && (
@@ -63,6 +65,7 @@ export function GitHubDeployments() {
 			}
 		>
 			{ renderContent() }
+			<GitHubDeploymentSurvey />
 		</PageShell>
 	);
 }

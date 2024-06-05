@@ -1,6 +1,7 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import getProductsRaw from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-products-raw';
 import selectAlphabeticallySortedProductOptions from 'calypso/jetpack-cloud/sections/partner-portal/lib/select-alphabetically-sorted-product-options';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -64,7 +65,8 @@ export function usePublicProductsQuery(): UseQueryResult< APIProductFamilyProduc
 }
 
 export default function useProductsQuery(
-	isPublicFacing = false
+	isPublicFacing = false,
+	includeRawData = false
 ): UseQueryResult< APIProductFamilyProduct[], unknown > {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -73,7 +75,7 @@ export default function useProductsQuery(
 	const query = useQuery( {
 		queryKey: [ 'a4a', 'marketplace', 'products', isPublicFacing, agencyId ],
 		queryFn: () => queryProducts( isPublicFacing, agencyId ),
-		select: selectAlphabeticallySortedProductOptions,
+		select: includeRawData ? getProductsRaw : selectAlphabeticallySortedProductOptions,
 		enabled: isPublicFacing || !! agencyId,
 		refetchOnWindowFocus: false,
 	} );

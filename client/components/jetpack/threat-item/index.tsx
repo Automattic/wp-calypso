@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
@@ -28,7 +28,7 @@ interface Props {
 
 export const ThreatItemPlaceholder: React.FC = () => (
 	<LogItem
-		className={ classnames( 'threat-item', 'is-placeholder' ) }
+		className={ clsx( 'threat-item', 'is-placeholder' ) }
 		header="Placeholder threat"
 		subheader="Placeholder sub header"
 	/>
@@ -60,7 +60,7 @@ const ThreatItem: React.FC< Props > = ( {
 			return (
 				<Button
 					primary
-					className={ classnames( 'threat-item__fix-button', className ) }
+					className={ clsx( 'threat-item__fix-button', className ) }
 					onClick={ onClickHandler }
 					disabled={ isFixing }
 				>
@@ -159,13 +159,13 @@ const ThreatItem: React.FC< Props > = ( {
 	return (
 		<LogItem
 			key={ threat.id }
-			className={ classnames( 'threat-item', {
+			className={ clsx( 'threat-item', {
 				'is-fixed': threat.status === 'fixed',
 				'is-ignored': threat.status === 'ignored',
 				'is-current': threat.status === 'current',
 			} ) }
-			header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
-			clickableHeader={ true }
+			header={ <ThreatItemHeader threat={ threat } isStyled /> }
+			clickableHeader
 			onClick={ onOpenTrackEvent }
 		>
 			<ThreatDescription

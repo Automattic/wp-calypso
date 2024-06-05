@@ -153,16 +153,23 @@ const useSiteMenuItems = () => {
 	const result = menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );
 
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		// TODO: After the flag is enabled, the following logic can be reimplemented in jetpack-mu-wpcom
+		// and removed from Calypso.
+		// See: https://github.com/Automattic/dotcom-forge/issues/7066
+
 		return result.map( ( menu ) => {
-			if ( Array.isArray( menu.children ) ) {
+			if ( menu.slug === 'wpcom-hosting-menu' && Array.isArray( menu.children ) ) {
+				// Remove Hosting -> {Configuration, Monitoring}
+				const children = menu.children.filter(
+					( menuItem ) =>
+						! [ '/hosting-config/', '/site-monitoring' ].some( ( path ) =>
+							menuItem.url.startsWith( path )
+						)
+				);
+
 				return {
 					...menu,
-					children: menu.children.filter(
-						( menuItem ) =>
-							! [ '/hosting-config/', '/site-monitoring' ].some( ( path ) =>
-								menuItem.url.startsWith( path )
-							)
-					),
+					children,
 				};
 			}
 			return menu;

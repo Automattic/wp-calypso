@@ -1,9 +1,13 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import {
+	useLocale,
+	addLocaleToPathLocaleInFront,
+	useHasEnTranslation,
+} from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Icon, category as iconCategory } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Substitution, useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
@@ -12,7 +16,6 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
-import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { TypeToggle } from 'calypso/my-sites/patterns/components/type-toggle';
 import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
@@ -78,10 +81,11 @@ export const PatternLibrary = ( {
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
+	const hasTranslation = useHasEnTranslation();
 	const navRef = useRef< HTMLDivElement >( null );
 
 	const { recordPatternsEvent } = useRecordPatternsEvent();
-	const { category, searchTerm, isGridView, patternTypeFilter, referrer, patternPermalinkId } =
+	const { category, searchTerm, isGridView, patternTypeFilter, patternPermalinkId } =
 		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
@@ -220,38 +224,37 @@ export const PatternLibrary = ( {
 		} );
 	}
 
+	const pageLayoutsHeading = hasTranslation( 'Beautiful, curated page layouts' )
+		? translate( 'Beautiful, curated page layouts', {
+				comment:
+					'Heading text for a section in the Pattern Library with links to block pattern categories containing page layouts',
+				textOnly: true,
+		  } )
+		: translate( 'Beautifully curated page layouts', {
+				comment:
+					'Heading text for a section in the Pattern Library with links to block pattern categories containing page layouts',
+				textOnly: true,
+		  } );
+
 	return (
 		<>
 			{ isHomePage ? (
 				<PatternsPageViewTracker
-					searchTerm={ searchTerm }
-					referrer={ referrer }
 					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
 				/>
 			) : (
 				<PatternsPageViewTracker
-					category={ category }
 					patternPermalinkName={ patternPermalinkName }
-					patternTypeFilter={ patternTypeFilter }
 					view={ currentView }
-					searchTerm={ searchTerm }
-					referrer={ referrer }
 					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
 				/>
 			) }
 
-			<PatternsDocumentHead category={ category } />
-
-			<PatternsHeader
-				description={ translate(
-					'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.'
-				) }
-				title={ translate( "It's Easier With Patterns" ) }
-			/>
+			<PatternsHeader />
 
 			<div className="pattern-library__wrapper">
 				<div
-					className={ classNames( patternFiltersClassName, {
+					className={ clsx( patternFiltersClassName, {
 						'pattern-library__filters--sticky': isSticky,
 					} ) }
 					ref={ navRef }
@@ -299,7 +302,7 @@ export const PatternLibrary = ( {
 					<PatternLibraryBody className="pattern-library">
 						<div className="pattern-library__header">
 							<h1
-								className={ classNames( 'pattern-library__title', {
+								className={ clsx( 'pattern-library__title', {
 									'pattern-library__title--search': searchTerm,
 								} ) }
 							>
@@ -334,8 +337,6 @@ export const PatternLibrary = ( {
 							isGridView={ isGridView }
 							key={ `pattern-gallery-${ patternGalleryKey }` }
 							patterns={ patterns }
-							patternTypeFilter={ searchTerm ? PatternTypeFilter.REGULAR : patternTypeFilter }
-							searchTerm={ searchTerm }
 						/>
 
 						{ searchTerm && ! patterns.length && category && (
@@ -360,11 +361,7 @@ export const PatternLibrary = ( {
 
 				{ isHomePage && (
 					<CategoryGallery
-						title={ translate( 'Beautifully curated page layouts', {
-							comment:
-								'Heading text for a section in the Pattern Library with links to block pattern categories containing page layouts',
-							textOnly: true,
-						} ) }
+						title={ pageLayoutsHeading }
 						description={ translate(
 							'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
 						) }

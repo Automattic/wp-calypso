@@ -1,46 +1,80 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
 	Button,
 	Spinner,
 } from '@wordpress/components';
-import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { MultisitePluginUpdateManagerContext } from 'calypso/blocks/plugins-scheduled-updates-multisite/context';
 import { useBatchDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { SiteSlug } from 'calypso/types';
+import { ScheduleErrors } from './schedule-errors';
+import { ScheduleListCardNew } from './schedule-list-card-new';
+import { ScheduleListCards } from './schedule-list-cards';
+import { ScheduleListEmpty } from './schedule-list-empty';
+import { ScheduleListFilter } from './schedule-list-filter';
 import { ScheduleListTable } from './schedule-list-table';
 
+import './styles.scss';
+
 type Props = {
+	compact?: boolean;
+	previewMode: 'table' | 'card';
+	showSubtitle?: boolean;
+	showNewScheduleBtn?: boolean;
+	selectedScheduleId?: string;
 	onEditSchedule: ( id: string ) => void;
 	onShowLogs: ( id: string, siteSlug: string ) => void;
 	onCreateNewSchedule: () => void;
 };
 
 export const ScheduleList = ( props: Props ) => {
-	const { onEditSchedule, onShowLogs, onCreateNewSchedule } = props;
+	const {
+		compact,
+		previewMode,
+		showSubtitle = true,
+		showNewScheduleBtn = true,
+		selectedScheduleId: initSelectedScheduleId,
+		onEditSchedule,
+		onShowLogs,
+		onCreateNewSchedule,
+	} = props;
 	const {
 		data: schedules = [],
 		isLoading: isLoadingSchedules,
 		isFetched,
+		refetch,
 	} = useMultisiteUpdateScheduleQuery( true );
-	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
-	const [ search ] = useState( '' );
+	const { searchTerm } = useContext( MultisitePluginUpdateManagerContext );
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
-	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >();
+	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >(
+		initSelectedScheduleId
+	);
+	const [ selectedSiteSlug, setSelectedSiteSlug ] = useState< string | undefined >();
 	const [ selectedSiteSlugs, setSelectedSiteSlugs ] = useState< string[] >( [] );
+	const selectedSiteSlugsForMutate = selectedSiteSlug ? [ selectedSiteSlug ] : selectedSiteSlugs;
 
 	useEffect( () => {
 		const schedule = schedules?.find( ( schedule ) => schedule.schedule_id === selectedScheduleId );
 		setSelectedSiteSlugs( schedule?.sites?.map( ( site ) => site.slug ) || [] );
 	}, [ selectedScheduleId ] );
+	useEffect( () => setSelectedScheduleId( initSelectedScheduleId ), [ initSelectedScheduleId ] );
 
-	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugs );
+	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugsForMutate, {
+		onSuccess: () => {
+			// Refetch again after 5 seconds
+			setTimeout( () => {
+				refetch();
+			}, 5000 );
+		},
+	} );
 
-	const openRemoveDialog = ( id: string ) => {
+	const openRemoveDialog = ( id: string, siteSlug?: SiteSlug ) => {
 		setRemoveDialogOpen( true );
+		setSelectedSiteSlug( siteSlug );
 		setSelectedScheduleId( id );
 	};
 
@@ -53,48 +87,89 @@ export const ScheduleList = ( props: Props ) => {
 		if ( selectedSiteSlugs && selectedScheduleId ) {
 			deleteUpdateSchedules.mutate( selectedScheduleId );
 			recordTracksEvent( 'calypso_scheduled_updates_multisite_delete_schedule', {
-				site_slugs: selectedSiteSlugs.join( ',' ),
+				site_slugs: selectedSiteSlugsForMutate.join( ',' ),
+				sites_count: selectedSiteSlugsForMutate.length,
+			} );
+
+			selectedSiteSlugsForMutate.forEach( ( siteSlug ) => {
+				recordTracksEvent( 'calypso_scheduled_updates_delete_schedule', {
+					site_slug: siteSlug,
+				} );
 			} );
 		}
 		closeRemoveConfirm();
 	};
+	const lowercasedSearchTerm = searchTerm?.toLowerCase();
+	const filteredSchedules = schedules
+		?.map( ( schedule ) => {
+			if ( ! searchTerm || ! searchTerm.length ) {
+				return schedule;
+			}
+			const filteredSites = schedule.sites.filter(
+				( site ) =>
+					site.title?.toLowerCase().includes( lowercasedSearchTerm ) ||
+					site.URL?.toLowerCase().includes( lowercasedSearchTerm )
+			);
 
-	const filteredSchedules = schedules?.filter( ( schedule ) => {
-		if ( ! search || ! search.length ) {
-			return true;
-		}
+			return {
+				...schedule,
+				sites: filteredSites,
+			};
+		} )
+		.filter( ( schedule ) => schedule.sites.length > 0 );
 
-		return (
-			schedule.sites.filter( ( site ) => site.title.toLowerCase().includes( search.toLowerCase() ) )
-				.length > 0
-		);
-	} );
 	const isLoading = isLoadingSchedules;
-	const ScheduleListComponent = isMobile ? null : ScheduleListTable;
+	const ScheduleListComponent = previewMode === 'table' ? ScheduleListTable : ScheduleListCards;
+	const isScheduleEmpty = schedules.length === 0 && isFetched;
 
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">
-			<h1 className="wp-brand-font">List schedules</h1>
-			<Button
-				__next40pxDefaultSize
-				icon={ plus }
-				variant="primary"
-				onClick={ onCreateNewSchedule }
-				disabled={ false }
-			>
-				{ translate( 'Add new schedule' ) }
-			</Button>
+			<div className="plugins-update-manager-multisite__header">
+				<div className="plugins-update-manager-multisite__header-main">
+					<h1>{ translate( 'Scheduled Updates' ) }</h1>
+					{ showSubtitle && (
+						<p>
+							{ translate(
+								'Streamline your workflow with scheduled updates, timed to suit your needs.'
+							) }
+						</p>
+					) }
+				</div>
+				{ showNewScheduleBtn && ! isScheduleEmpty && (
+					<Button
+						__next40pxDefaultSize={ ! compact }
+						isSmall={ compact }
+						variant={ compact ? 'secondary' : 'primary' }
+						onClick={ onCreateNewSchedule }
+						disabled={ false }
+					>
+						{ translate( 'New schedule' ) }
+					</Button>
+				) }
+			</div>
 
-			{ schedules.length === 0 && isLoading && <Spinner /> }
+			<ScheduleErrors />
 
-			{ isFetched && filteredSchedules && ScheduleListComponent ? (
-				<ScheduleListComponent
-					schedules={ filteredSchedules }
-					onRemoveClick={ openRemoveDialog }
-					onEditClick={ onEditSchedule }
-					onLogsClick={ onShowLogs }
-				/>
+			{ isScheduleEmpty && ! compact && (
+				<ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } />
+			) }
+			{ isScheduleEmpty && compact && <ScheduleListCardNew className="is-selected" /> }
+			{ ! isScheduleEmpty && ScheduleListComponent ? (
+				<>
+					<ScheduleListFilter />
+					{ ! isLoadingSchedules && (
+						<ScheduleListComponent
+							compact={ compact }
+							schedules={ filteredSchedules }
+							selectedScheduleId={ selectedScheduleId }
+							onRemoveClick={ openRemoveDialog }
+							onEditClick={ onEditSchedule }
+							onLogsClick={ onShowLogs }
+						/>
+					) }
+				</>
 			) : null }
+			{ schedules.length === 0 && isLoading && <Spinner /> }
 			<ConfirmDialog
 				isOpen={ removeDialogOpen }
 				onConfirm={ onRemoveDialogConfirm }

@@ -1,3 +1,14 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.hosting-list {
+	justify-content: flex-start;
+
+	.card.foldable-card.a4a-migration-offer__wrapper {
+		margin-block: 4px 32px;
+	}
+}
+
 .hosting-list__placeholder {
 	@include placeholder( --color-neutral-10 );
 	height: 43px;
@@ -24,4 +35,14 @@
 .hosting-list__features-list {
 	display: block;
 	column-count: 2;
+}
+
+.hosting-list__vip-card {
+	background-color: var(--color-neutral-0, #f6f7f7);
+}
+
+.wordpress-vip-logo {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
 }

@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -14,7 +14,6 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_PAYMENT_METHODS_ADD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import Pagination from 'calypso/components/pagination';
 import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PaymentMethodOverviewContext } from '../context';
@@ -78,7 +77,7 @@ export default function PaymentMethodOverview() {
 
 					{ showPagination && (
 						<Pagination
-							className={ classNames( 'payment-method-overview__pagination', {
+							className={ clsx( 'payment-method-overview__pagination', {
 								'payment-method-overview__pagination--has-prev': page > 1,
 								'payment-method-overview__pagination--has-next': isFetching || hasMoreStoredCards,
 							} ) }
@@ -107,8 +106,6 @@ export default function PaymentMethodOverview() {
 
 	return (
 		<Layout className="payment-method-overview" title={ translate( 'Payment Methods' ) } wide>
-			<PageViewTracker title="Purchases > Payment Methods" path="/purchases/payment-methods" />
-
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ translate( 'Payment Methods' ) } </Title>

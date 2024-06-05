@@ -6,6 +6,7 @@ import {
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
 	render as clientRender,
+	redirectIfCurrentUserCannot,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
@@ -23,6 +24,8 @@ import {
 	scrollTopIfNoHash,
 	navigationIfLoggedIn,
 	maybeRedirectLoggedOut,
+	redirectStagingSites,
+	renderPluginsSidebar,
 } from './controller';
 import { plans, upload } from './controller-logged-in';
 
@@ -60,6 +63,7 @@ export default function ( router ) {
 		siteSelection,
 		navigationIfLoggedIn,
 		redirectTrialSites,
+		renderPluginsSidebar,
 		browsePlugins,
 		makeLayout,
 		clientRender
@@ -94,6 +98,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigationIfLoggedIn,
+		renderPluginsSidebar,
 		browsePlugins,
 		makeLayout,
 		clientRender
@@ -122,6 +127,7 @@ export default function ( router ) {
 		siteSelection,
 		navigation,
 		redirectTrialSites,
+		renderPluginsSidebar,
 		plugins,
 		makeLayout,
 		clientRender
@@ -136,6 +142,7 @@ export default function ( router ) {
 		navigation,
 		redirectTrialSites,
 		jetpackCanUpdate,
+		renderPluginsSidebar,
 		plugins,
 		makeLayout,
 		clientRender
@@ -146,10 +153,11 @@ export default function ( router ) {
 			[
 				`/${ langParam }/plugins/scheduled-updates`,
 				`/${ langParam }/plugins/scheduled-updates/:action(create)`,
-				`/${ langParam }/plugins/scheduled-updates/:action(edit)/:schedule_id`,
+				`/${ langParam }/plugins/scheduled-updates/:action(edit)/:id`,
 			],
 			redirectLoggedOut,
 			navigation,
+			renderPluginsSidebar,
 			scheduledUpdatesMultisite,
 			makeLayout,
 			clientRender
@@ -164,6 +172,8 @@ export default function ( router ) {
 		],
 		redirectLoggedOut,
 		siteSelection,
+		redirectIfCurrentUserCannot( 'update_plugins' ),
+		redirectStagingSites,
 		navigation,
 		scheduledUpdates,
 		makeLayout,
@@ -180,6 +190,7 @@ export default function ( router ) {
 		siteSelection,
 		navigationIfLoggedIn,
 		redirectTrialSites,
+		renderPluginsSidebar,
 		relatedPlugins,
 		makeLayout,
 		clientRender
@@ -206,6 +217,7 @@ export default function ( router ) {
 		siteSelection,
 		navigationIfLoggedIn,
 		redirectTrialSites,
+		renderPluginsSidebar,
 		browsePluginsOrPlugin,
 		makeLayout,
 		clientRender

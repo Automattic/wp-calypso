@@ -1,5 +1,5 @@
 import { Button, Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { GetActionUrlProps } from '../confirmation-tasks';
@@ -36,7 +36,7 @@ const ConfirmationTask = ( props: ConfirmationTaskProps ) => {
 
 	return (
 		<Card
-			className={ classnames( 'confirmation-task__card', {
+			className={ clsx( 'confirmation-task__card', {
 				'confirmation-task__card-with-cta': !! onButtonClick,
 			} ) }
 			href={ taskActionUrlProps ? getActionUrl?.( taskActionUrlProps ) : null }
@@ -55,8 +55,8 @@ const ConfirmationTask = ( props: ConfirmationTaskProps ) => {
 			{ buttonText && onButtonClick && (
 				<div className="confirmation-task__action">
 					<Button
-						borderless={ true }
-						primary={ true }
+						borderless
+						primary
 						onClick={ () => {
 							dispatch(
 								recordTracksEvent( `calypso_${ context }_upgraded_card_click`, { card_id: id } )

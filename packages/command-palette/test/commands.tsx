@@ -1,4 +1,5 @@
-import { Command, COMMANDS } from '../src';
+import { renderHook } from '@testing-library/react';
+import { Command, useCommands } from '../src';
 
 jest.mock( '../src/utils', () => ( {
 	commandNavigation: ( path: string ) => () => path,
@@ -42,7 +43,7 @@ const expectedCommandsResults = {
 	disableEdgeCache: [ '/hosting-config/:site#edge', siteFilters.adminPublicAtomic ],
 	manageCacheSettings: [ '/hosting-config/:site#cache', siteFilters.adminAtomic ],
 	visitSite: [ 'https://:site' ],
-	openSiteDashboard: [ '/home/:site' ],
+	openSiteDashboard: [ '/wp-admin' ],
 	openHostingConfiguration: [ '/hosting-config/:site', siteFilters.adminP2SelfHosted ],
 	openPHPmyAdmin: [ '/hosting-config/:site#database-access', siteFilters.adminAtomic ],
 	openProfile: [ '/me' ],
@@ -95,7 +96,8 @@ const expectedCommandsResults = {
 		'https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=:siteId&blog_subscribers=csv&type=all',
 		siteFilters.admin,
 	],
-	import: [ '/import/:site', siteFilters.admin ],
+	import: [ '/wp-admin/import.php', siteFilters.admin ],
+	export: [ '/wp-admin/export.php', siteFilters.admin ],
 	openWooCommerceSettings: [ '/woocommerce-installation/:site', siteFilters.adminP2SelfHosted ],
 	manageSettingsGeneral: [ '/wp-admin/options-general.php', siteFilters.admin ],
 	manageSettingsWriting: [ '/wp-admin/options-writing.php', siteFilters.admin ],
@@ -107,6 +109,10 @@ const expectedCommandsResults = {
 
 describe( 'COMMANDS', () => {
 	it( 'should be correctly defined', () => {
+		const {
+			result: { current: COMMANDS },
+		} = renderHook( useCommands );
+
 		for ( const [ command, expectedResults ] of Object.entries( expectedCommandsResults ) ) {
 			const expectedPath = expectedResults[ 0 ];
 			expect( getNavigationPath( COMMANDS[ command ] ) ).toEqual( expectedPath );

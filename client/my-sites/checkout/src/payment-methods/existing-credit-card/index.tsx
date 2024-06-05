@@ -157,7 +157,7 @@ function ExistingCardLabel( {
 				</CardInfo>
 			</div>
 			<div className="existing-credit-card__logo payment-logos">
-				<PaymentLogo brand={ brand } isSummary={ true } />
+				<PaymentLogo brand={ brand } isSummary />
 			</div>
 		</Fragment>
 	);
@@ -248,7 +248,7 @@ function ExistingCardSummary( {
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName }</SummaryLine>
 			<SummaryLine>
-				<PaymentLogo brand={ brand } isSummary={ true } />
+				<PaymentLogo brand={ brand } isSummary />
 				<CardDetails>{ maskedCardDetails }</CardDetails>
 				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</SummaryLine>

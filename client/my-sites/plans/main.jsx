@@ -4,6 +4,7 @@ import {
 	getIntervalTypeForTerm,
 	getPlan,
 	isFreePlanProduct,
+	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_FREE,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -15,8 +16,10 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import { englishLocales } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
+import { hasTranslation } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -40,6 +43,7 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
@@ -396,9 +400,22 @@ class Plans extends Component {
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);
-		const entrepreneurTrialSubHeaderText = translate(
-			"Discover what's available in your Entrepreneur plan"
+
+		const hasEntrepreneurTrialSubHeaderTextTranslation = hasTranslation(
+			"Discover what's available in your %(planName)s plan."
 		);
+
+		const isEnglishLocale = englishLocales.includes( this.props.locale );
+
+		const entrepreneurTrialSubHeaderText =
+			isEnglishLocale || hasEntrepreneurTrialSubHeaderTextTranslation
+				? // translators: %(planName)s is a plan name. E.g. Commerce plan.
+				  translate( "Discover what's available in your %(planName)s plan.", {
+						args: {
+							planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+						},
+				  } )
+				: translate( "Discover what's available in your Entrepreneur plan." );
 
 		const isWooExpressTrial = purchase?.isWooExpressTrial;
 
@@ -521,6 +538,7 @@ const ConnectedPlans = connect(
 			isFreePlan: isFreePlanProduct( currentPlan ),
 			domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
 			siteHasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
+			locale: getCurrentLocaleSlug( state ),
 		};
 	},
 	( dispatch ) => ( {

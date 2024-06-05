@@ -4,7 +4,7 @@ export default function usePaymentMethod() {
 	// Fetch the stored cards from the cache if they are available.
 	const {
 		data: { allStoredCards },
-	} = useStoredCards( undefined, { staleTime: Infinity } );
+	} = useStoredCards( undefined, true );
 
 	const hasValidPaymentMethod = allStoredCards?.length > 0;
 

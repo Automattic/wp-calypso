@@ -12,7 +12,7 @@ import {
 } from '@automattic/calypso-products';
 import { Tooltip } from '@automattic/components';
 import { Site } from '@automattic/data-stores';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { ComponentType, FC, PropsWithChildren, ReactNode, useRef, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
@@ -120,17 +120,27 @@ export function PlanStorage( {
 	);
 
 	const showTooltip = () => setTooltipVisible( true );
-	const hideTooltip = () => setTooltipVisible( false );
+	const hideTooltip = ( event ) => {
+		const relatedTarget = event?.relatedTarget;
+		// This checks if there is a blur event caused by the displaying of the tooltip.
+		// We don't want to move focus in this case, so return the focus to the target element.
+		if ( event?.type === 'blur' && relatedTarget?.closest?.( '.popover.tooltip.is-top' ) ) {
+			event.stopPropagation();
+			event.target.focus();
+			return;
+		}
+		setTooltipVisible( false );
+	};
 
 	if ( displayUpgradeLink ) {
 		return (
 			<>
 				<a
-					className={ classNames( className, 'plan-storage' ) }
+					className={ clsx( className, 'plan-storage' ) }
 					href={ `/plans/${ siteSlug }` }
 					ref={ tooltipAnchorRef }
 					onMouseOver={ showTooltip }
-					onMouseOut={ hideTooltip }
+					onMouseLeave={ hideTooltip }
 					onFocus={ showTooltip }
 					onBlur={ hideTooltip }
 				>
@@ -147,10 +157,10 @@ export function PlanStorage( {
 		return (
 			<>
 				<div
-					className={ classNames( className, 'plan-storage plan-storage__shared_quota' ) }
+					className={ clsx( className, 'plan-storage plan-storage__shared_quota' ) }
 					ref={ tooltipAnchorRef }
 					onMouseOver={ showTooltip }
-					onMouseOut={ hideTooltip }
+					onMouseLeave={ hideTooltip }
 					onFocus={ showTooltip }
 					onBlur={ hideTooltip }
 				>
@@ -163,7 +173,7 @@ export function PlanStorage( {
 		);
 	}
 
-	return <div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>;
+	return <div className={ clsx( className, 'plan-storage' ) }>{ planStorageComponents }</div>;
 }
 
 PlanStorage.propTypes = {

@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import SearchRestyled from '@automattic/search';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flow } from 'lodash';
@@ -64,6 +64,7 @@ export class SiteSelector extends Component {
 		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
 		hasSiteWithPlugins: PropTypes.bool,
+		showListBottomAdornment: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -81,6 +82,7 @@ export class SiteSelector extends Component {
 		onSiteSelect: noop,
 		groups: false,
 		autoFocus: false,
+		showListBottomAdornment: true,
 	};
 
 	state = {
@@ -377,7 +379,7 @@ export class SiteSelector extends Component {
 				showIcon={ !! multiSiteContext?.icon }
 				icon={
 					multiSiteContext?.icon && (
-						<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden={ true } />
+						<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden />
 					)
 				}
 			/>
@@ -414,7 +416,7 @@ export class SiteSelector extends Component {
 
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
-		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
+		const selectorClass = clsx( 'site-selector', 'sites-list', this.props.className, {
 			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1,
 			'is-hover-enabled': ! this.state.isKeyboardEngaged,
@@ -446,30 +448,33 @@ export class SiteSelector extends Component {
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
 					{ this.renderSites( sites ) }
-					{ ! this.props.showHiddenSites && hiddenSitesCount > 0 && ! this.state.searchTerm && (
-						<span className="site-selector__list-bottom-adornment">
-							{ this.props.translate(
-								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
-								'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
-								{
-									count: hiddenSitesCount,
-									args: {
-										hiddenSitesCount: hiddenSitesCount,
-									},
-									components: {
-										br: <br />,
-										a: (
-											<a
-												href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
-							) }
-						</span>
-					) }
+					{ this.props.showListBottomAdornment &&
+						! this.props.showHiddenSites &&
+						hiddenSitesCount > 0 &&
+						! this.state.searchTerm && (
+							<span className="site-selector__list-bottom-adornment">
+								{ this.props.translate(
+									'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
+									'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
+									{
+										count: hiddenSitesCount,
+										args: {
+											hiddenSitesCount: hiddenSitesCount,
+										},
+										components: {
+											br: <br />,
+											a: (
+												<a
+													href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							</span>
+						) }
 				</div>
 				{ ( this.props.showManageSitesButton || this.props.showAddNewSite ) && (
 					<div className="site-selector__actions">

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -110,7 +111,7 @@ export const ManageStagingSiteCardContent = ( {
 					disabled={ isButtonDisabled }
 					onConfirm={ onDeleteClick }
 					isBusy={ isBusy }
-					isScary={ true }
+					isScary
 					modalTitle={ translate( 'Confirm staging site deletion' ) }
 					modalMessage={ translate(
 						'Are you sure you want to delete the staging site? This action cannot be undone.'
@@ -128,7 +129,19 @@ export const ManageStagingSiteCardContent = ( {
 			return (
 				<Button
 					primary
-					onClick={ () => navigate( `/hosting-config/${ urlToSlug( stagingSite.url ) }` ) }
+					onClick={ () => {
+						if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+							navigate(
+								`/overview/${ urlToSlug( stagingSite.url ) }?search=${ urlToSlug(
+									stagingSite.url
+								) }`,
+								false,
+								true
+							);
+						} else {
+							navigate( `/hosting-config/${ urlToSlug( stagingSite.url ) }` );
+						}
+					} }
 					disabled={ isButtonDisabled }
 				>
 					<span>{ translate( 'Manage staging site' ) }</span>

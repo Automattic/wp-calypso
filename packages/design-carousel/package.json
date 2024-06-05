@@ -33,7 +33,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"classnames": "^2.3.2",
+		"clsx": "^2.1.1",
 		"swiper": "^10.1.0",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0",
@@ -50,9 +50,9 @@
 		"webpack": "^5.91.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.26.0",
-		"@wordpress/element": "^5.33.0",
-		"@wordpress/i18n": "^4.56.0",
+		"@wordpress/data": "^10.0.0",
+		"@wordpress/element": "^6.0.0",
+		"@wordpress/i18n": "^5.0.0",
 		"debug": "^4.3.3",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",

@@ -81,3 +81,87 @@ export interface HostingProviderQueryResponse {
 	domain: string;
 	hosting_provider: HostingProvider;
 }
+
+export type Metrics = 'cls' | 'fid' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
+
+export type Scores = 'good' | 'needs-improvement' | 'poor';
+
+export type BasicMetrics = Record< Metrics, number >;
+export type BasicMetricsList = [ Metrics, number ][];
+
+export type BasicMetricsScored = Record< Metrics, { value: number; score: Scores } >;
+export type BasicMetricsScoredList = [ Metrics, { value: number; score: Scores } ][];
+
+export interface UrlBasicMetricsQueryResponse {
+	final_url: string;
+	basic: {
+		data: BasicMetrics;
+		success: boolean;
+	};
+	advanced: Record< string, string >;
+	token: string;
+}
+
+export interface UrlSecurityMetricsQueryResponse {
+	wpscan: {
+		report: {
+			audits: {
+				pass: Record< string, PerformanceMetricsItemQueryResponse >;
+				fail: Record< string, PerformanceMetricsItemQueryResponse >;
+				truncated: boolean;
+			};
+			ovc: number;
+		};
+		errors: Record< string, Array< string > >;
+	};
+}
+
+export interface PerformanceReport {
+	audits: {
+		health: PerformanceMetricsDataQueryResponse;
+		performance: PerformanceMetricsDataQueryResponse;
+	};
+	performance: number;
+	overall_score: number;
+	is_wpcom: boolean;
+}
+
+export interface UrlPerformanceMetricsQueryResponse {
+	webtestpage_org: {
+		report: PerformanceReport;
+		status: string;
+	};
+}
+
+export interface PerformanceMetricsDataQueryResponse {
+	diagnostic: Record< string, PerformanceMetricsItemQueryResponse >;
+	pass: Record< string, PerformanceMetricsItemQueryResponse >;
+	truncated: boolean;
+}
+
+export interface PerformanceMetricsItemQueryResponse {
+	id: string;
+	title?: string;
+	description?: string;
+	displayValue?: string;
+	details?: PerformanceMetricsDetailsQueryResponse;
+}
+
+export interface PerformanceMetricsDetailsQueryResponse {
+	type: 'table' | 'opportunity' | 'list' | 'criticalrequestchain';
+	headings?: Array< { key: string; label: string; valueType: string } >;
+	items?: Array< {
+		[ key: string ]: string | number | { [ key: string ]: any };
+	} >;
+	chains?: Array< { [ key: string ]: any } >;
+}
+
+export interface BasicMetricsResult extends Omit< UrlBasicMetricsQueryResponse, 'basic' > {
+	basic: BasicMetricsScored;
+}
+
+export type PerformanceCategories =
+	| 'wpcom-low-performer'
+	| 'wpcom-high-performer'
+	| 'non-wpcom-low-performer'
+	| 'non-wpcom-high-performer';

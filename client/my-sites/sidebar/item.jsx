@@ -6,7 +6,7 @@
  * These two cases might be to be split up?
  */
 
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -26,6 +26,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	url,
 	className = '',
 	shouldOpenExternalLinksInCurrentTab,
+	showTooltip = false,
 	forceExternalLink = false,
 	forceShowExternalIcon = false,
 	forceChevronIcon = false,
@@ -47,6 +48,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			badge={ badge }
 			count={ count }
 			label={ title }
+			tooltip={ showTooltip && title }
 			link={ url }
 			onNavigate={ onNavigate }
 			selected={ selected }
@@ -55,7 +57,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			forceExternalLink={ forceExternalLink }
 			forceShowExternalIcon={ forceShowExternalIcon }
 			forceChevronIcon={ forceChevronIcon }
-			className={ classnames(
+			className={ clsx(
 				isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent',
 				className
 			) }
@@ -72,6 +74,7 @@ MySitesSidebarUnifiedItem.propTypes = {
 	sectionId: PropTypes.string,
 	slug: PropTypes.string,
 	title: PropTypes.string,
+	showTooltip: PropTypes.bool,
 	url: PropTypes.string,
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
 	forceExternalLink: PropTypes.bool,

@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { ProductsList } from '@automattic/data-stores';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
@@ -203,7 +203,7 @@ const StatsPurchasePage = ( {
 				/>
 			) }
 			<div
-				className={ classNames( 'stats', 'stats-purchase-page', {
+				className={ clsx( 'stats', 'stats-purchase-page', {
 					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,
 				} ) }
 			>
@@ -228,7 +228,7 @@ const StatsPurchasePage = ( {
 							interval="day"
 							siteId={ siteId }
 							slug={ siteSlug }
-							showLock={ true }
+							showLock
 							hideModuleSettings
 						/>
 					</>

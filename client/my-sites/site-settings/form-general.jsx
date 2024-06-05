@@ -14,7 +14,7 @@ import { Card, CompactCard, Button, FormLabel, Gridicon } from '@automattic/comp
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -53,6 +53,7 @@ import {
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
+	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -551,8 +552,12 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderAdminInterface() {
-		const { site } = this.props;
-		if ( ! isEnabled( 'layout/wpcom-admin-interface' ) ) {
+		const { site, isSimple } = this.props;
+		if (
+			! isEnabled( 'layout/wpcom-admin-interface' ) &&
+			( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) ||
+				( isEnabled( 'layout/dotcom-nav-redesign-v2' ) && isSimple ) )
+		) {
 			return null;
 		}
 
@@ -576,12 +581,12 @@ export class SiteSettingsFormGeneral extends Component {
 			isUnlaunchedSite: propsisUnlaunchedSite,
 			isClassicView,
 		} = this.props;
-		const classes = classNames( 'site-settings__general-settings', {
+		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
 
 		return (
-			<div className={ classNames( classes ) }>
+			<div className={ clsx( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
 				{ ! isClassicView && (
@@ -654,7 +659,7 @@ export class SiteSettingsFormGeneral extends Component {
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
-								showIcon={ true }
+								showIcon
 								event="settings_remove_footer"
 								tracksImpressionName="calypso_upgrade_nudge_impression"
 								tracksClickName="calypso_upgrade_nudge_cta_click"
@@ -695,6 +700,7 @@ const connectComponent = connect( ( state ) => {
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
+		isSimple: isSimpleSite( state, siteId ),
 	};
 } );
 

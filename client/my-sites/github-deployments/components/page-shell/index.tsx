@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { Fragment, ReactNode, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -66,10 +67,13 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 			<DocumentHead title={ pageTitle } />
 			<NavigationHeader
 				compactBreadcrumb
-				css={ { paddingBottom: '40px !important' } }
-				title={ translate( 'GitHub Deployments' ) }
+				title={
+					isEnabled( 'layout/dotcom-nav-redesign-v2' )
+						? translate( 'Deployments' )
+						: translate( 'GitHub Deployments' )
+				}
 				subtitle={ translate(
-					'Effortlessly deploy code from GitHub repositories. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					'Automate updates from GitHub to streamline workflows. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
 							learnMoreLink: (

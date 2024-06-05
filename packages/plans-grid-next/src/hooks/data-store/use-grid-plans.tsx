@@ -127,6 +127,19 @@ const usePlanTypesWithIntent = ( {
 
 	let planTypes;
 	switch ( intent ) {
+		/* START: Guided Signup intents. See: pdDR7T-1xi-p2 */
+		case 'plans-guided-segment-blogger':
+		case 'plans-guided-segment-nonprofit':
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			break;
+		case 'plans-guided-segment-consumer-or-business':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			break;
+		case 'plans-guided-segment-merchant':
+		case 'plans-guided-segment-developer-or-agency':
+			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ];
+			break;
+		/* END: Guided signup intents. END */
 		case 'plans-woocommerce':
 			planTypes = [ TYPE_WOOEXPRESS_SMALL, TYPE_WOOEXPRESS_MEDIUM ];
 			break;
@@ -212,6 +225,7 @@ const useGridPlans: UseGridPlansType = ( {
 	coupon,
 	siteId,
 	isDisplayingPlansNeededForFeature,
+	highlightLabelOverrides,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -251,6 +265,7 @@ const useGridPlans: UseGridPlansType = ( {
 		currentSitePlanSlug: sitePlanSlug,
 		selectedPlan,
 		plansAvailabilityForPurchase,
+		highlightLabelOverrides,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package

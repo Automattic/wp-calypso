@@ -16,6 +16,8 @@ import {
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
+	HOSTED_SITE_MIGRATION_FLOW,
+	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -113,6 +115,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ NEW_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "new-hosted-site-flow" */ './new-hosted-site-flow' ),
 
+	[ NEW_HOSTED_SITE_FLOW_USER_INCLUDED ]: () =>
+		import(
+			/* webpackChunkName: "new-hosted-site-flow-user-included" */ './new-hosted-site-flow-user-included'
+		),
+
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "transferring-hosted-site-flow" */ './transferring-hosted-site-flow'
@@ -140,6 +147,10 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ MIGRATION_SIGNUP_FLOW ]: () =>
 		import( /* webpackChunkName: "migration-signup" */ '../declarative-flow/migration-signup' ),
+	[ SITE_MIGRATION_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
+		),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
@@ -157,15 +168,15 @@ const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-const siteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
-	'onboarding/new-migration-flow'
-)
-	? {
-			[ SITE_MIGRATION_FLOW ]: () =>
-				import(
-					/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
-				),
-	  }
-	: {};
+const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
+	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "hosted-site-migration-flow" */ '../declarative-flow/hosted-site-migration-flow'
+		),
+};
 
-export default { ...availableFlows, ...videoPressTvFlows, ...siteMigrationFlow };
+export default {
+	...availableFlows,
+	...videoPressTvFlows,
+	...hostedSiteMigrationFlow,
+};

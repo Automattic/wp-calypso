@@ -9,7 +9,7 @@ export default function useWPCOMPlanDescription( slug: string ) {
 
 	// FIXME: Need to have correct slug. Right now we use whatever we have.
 	if ( slug === 'wpcom-hosting-business' ) {
-		name = translate( 'Creator' );
+		name = translate( 'WordPress.com' );
 		features1 = [
 			translate( '50GB of storage' ),
 			translate( 'Unrestricted bandwidth' ),
@@ -23,11 +23,11 @@ export default function useWPCOMPlanDescription( slug: string ) {
 		];
 
 		features2 = [
-			translate( 'Expert live chat & email support' ),
+			translate( 'Priority support 24/7' ),
 			translate( 'DDOS mitigation' ),
 			translate( 'Free staging environment' ),
 			translate( 'Isolated site infrastructure' ),
-			translate( 'Managed malware protection' ),
+			translate( 'Malware detection & removal' ),
 			translate( 'SFTP/SSH, WP-CLI, Git tools' ),
 			translate( 'Extremely fast DNS with SSL' ),
 			translate( 'Centralized site management' ),

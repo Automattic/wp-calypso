@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -148,6 +148,14 @@ function PluginDetails( props ) {
 	const isSaasProduct = useSelector( ( state ) =>
 		isSaasProductSelector( state, props.pluginSlug )
 	);
+
+	const isIncompatiblePlugin = useMemo( () => {
+		return ! isCompatiblePlugin( props.pluginSlug ) && ! isJetpackSelfHosted;
+	}, [ isJetpackSelfHosted, props.pluginSlug ] );
+
+	const isIncompatibleBackupPlugin = useMemo( () => {
+		return 'vaultpress' === props.pluginSlug && ! isJetpackSelfHosted;
+	}, [ isJetpackSelfHosted, props.pluginSlug ] );
 
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
@@ -412,7 +420,7 @@ function PluginDetails( props ) {
 					/>
 				) }
 			<div className="plugin-details__page">
-				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
+				<div className={ clsx( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">
 						<PluginDetailsHeader
 							plugin={ fullPlugin }
@@ -424,7 +432,7 @@ function PluginDetails( props ) {
 					<div className="plugin-details__content">
 						{ ! showPlaceholder && (
 							<div className="plugin-details__body">
-								{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
+								{ ! isJetpackSelfHosted && isIncompatiblePlugin && ! isIncompatibleBackupPlugin && (
 									<Notice
 										text={ translate(
 											'Incompatible plugin: This plugin is not supported on WordPress.com.'
@@ -436,6 +444,20 @@ function PluginDetails( props ) {
 											href={ localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' ) }
 										>
 											{ translate( 'More info' ) }
+										</NoticeAction>
+									</Notice>
+								) }
+
+								{ isIncompatibleBackupPlugin && (
+									<Notice
+										text={ translate(
+											'Incompatible plugin: You site plan already includes Jetpack VaultPress Backup.'
+										) }
+										status="is-warning"
+										showDismiss={ false }
+									>
+										<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
+											{ translate( 'View backups' ) }
 										</NoticeAction>
 									</Notice>
 								) }

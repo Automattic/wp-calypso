@@ -1,14 +1,15 @@
 import { formatCurrency } from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	TermsOfServiceRecord,
 	TermsOfServiceRecordArgsRenewal,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import { EDIT_PAYMENT_DETAILS } from '@automattic/urls';
+import { hasTranslation } from '@wordpress/i18n';
 import debugFactory from 'debug';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-import moment from 'moment';
+import { useTranslate } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
@@ -17,7 +18,6 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-service' );
 
 export default function AdditionalTermsOfServiceInCart() {
-	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -29,11 +29,12 @@ export default function AdditionalTermsOfServiceInCart() {
 	return (
 		<>
 			{ responseCart.terms_of_service.map( ( termsOfServiceRecord ) => {
-				const message = getMessageForTermsOfServiceRecord(
-					termsOfServiceRecord,
-					translate,
-					siteSlug,
-					responseCart.currency
+				const message = (
+					<MessageForTermsOfServiceRecord
+						termsOfServiceRecord={ termsOfServiceRecord }
+						siteSlug={ siteSlug }
+						currency={ responseCart.currency }
+					/>
 				);
 
 				if ( ! message ) {
@@ -46,15 +47,31 @@ export default function AdditionalTermsOfServiceInCart() {
 	);
 }
 
-function getMessageForTermsOfServiceRecordUnknown(
-	termsOfServiceRecord: TermsOfServiceRecord,
-	translate: ReturnType< typeof useTranslate >,
-	siteSlug: string | null,
-	currency: string
-): TranslateResult {
+function formatDate( isoDate: string ): string {
+	// This somewhat mimics `moment.format('ll')` (used here formerly) without
+	// needing the depdecated `moment` package.
+	return new Date( Date.parse( isoDate ) ).toLocaleDateString( 'en-US', {
+		weekday: undefined,
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+	} );
+}
+
+function MessageForTermsOfServiceRecordUnknown( {
+	termsOfServiceRecord,
+	siteSlug,
+	currency,
+}: {
+	termsOfServiceRecord: TermsOfServiceRecord;
+	siteSlug: string | null;
+	currency: string;
+} ): ReactNode {
+	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const args = termsOfServiceRecord.args;
 	if ( ! args ) {
-		return '';
+		return null;
 	}
 
 	const productName = args.product_name + ( args.product_meta ? ` (${ args.product_meta })` : '' );
@@ -66,7 +83,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
-	const startDate = moment( args.subscription_start_date ).format( 'll' );
+	const startDate = formatDate( args.subscription_start_date );
 	const maybeProratedRegularPrice = formatCurrency(
 		args.maybe_prorated_regular_renewal_price_integer,
 		currency,
@@ -78,9 +95,13 @@ function getMessageForTermsOfServiceRecordUnknown(
 	const manageSubscriptionLink = `/purchases/subscriptions/${ siteSlug }`;
 
 	if ( doesTermsOfServiceRecordHaveDates( args ) ) {
-		const endDate = moment( args.subscription_end_of_promotion_date ).format( 'll' );
+		const promotionEndDate = formatDate( args.subscription_end_of_promotion_date );
+		const subscriptionEndDate = formatDate( args.subscription_expiry_date );
 		const numberOfDays = args.subscription_pre_renew_reminder_days || 7;
-		const renewalDate = moment( args.subscription_auto_renew_date ).format( 'll' );
+		const renewalDate = formatDate( args.subscription_auto_renew_date );
+		const proratedRenewalDate = formatDate(
+			args.subscription_maybe_prorated_regular_auto_renew_date
+		);
 
 		const termLengthText = translate(
 			'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s.',
@@ -88,7 +109,21 @@ function getMessageForTermsOfServiceRecordUnknown(
 				args: {
 					productName,
 					startDate,
-					endDate,
+					endDate: promotionEndDate,
+				},
+			}
+		);
+		const isRenewalTermLengthTextTranslated =
+			isEnglishLocale ||
+			hasTranslation(
+				'After you renew today, your %(productName)s subscription will last until %(endDate)s.'
+			);
+		const renewalTermLengthText = translate(
+			'After you renew today, your %(productName)s subscription will last until %(endDate)s.',
+			{
+				args: {
+					productName,
+					endDate: subscriptionEndDate,
 				},
 			}
 		);
@@ -108,7 +143,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 			'On %(endDate)s, we will attempt to renew your subscription for %(maybeProratedRegularPrice)s.',
 			{
 				args: {
-					endDate,
+					endDate: proratedRenewalDate,
 					maybeProratedRegularPrice,
 				},
 			}
@@ -147,9 +182,9 @@ function getMessageForTermsOfServiceRecordUnknown(
 		// we are already showing as the next renewal info is the same as the
 		// end of promotion renewal info.
 		const shouldShowEndOfPromotionText =
-			// Show the endOfPromotionChargeText if the endDate differs from
-			// the renewalDate because it is about the endDate.
-			renewalDate !== endDate ||
+			// Show the endOfPromotionChargeText if the proratedRenewalDate differs from
+			// the renewalDate because it is about the proratedRenewalDate.
+			renewalDate !== proratedRenewalDate ||
 			// Show the endOfPromotionChargeText if the
 			// maybeProratedRegularPrice differs from the renewalPrice because
 			// it is about the maybeProratedRegularPrice.
@@ -173,9 +208,14 @@ function getMessageForTermsOfServiceRecordUnknown(
 			return true;
 		} )();
 
+		const shouldShowRenewalTermText =
+			isRenewalTermLengthTextTranslated &&
+			args.is_renewal &&
+			args.remaining_promotional_auto_renewals === 0;
+
 		return (
 			<>
-				{ termLengthText } { nextRenewalText }{ ' ' }
+				{ shouldShowRenewalTermText ? renewalTermLengthText : termLengthText } { nextRenewalText }{ ' ' }
 				{ shouldShowEndOfPromotionText && endOfPromotionChargeText }{ ' ' }
 				{ shouldShowRegularPriceNoticeText && regularPriceNoticeText } { taxesNotIncludedText }{ ' ' }
 				{ emailNoticesText }{ ' ' }
@@ -198,26 +238,30 @@ function getMessageForTermsOfServiceRecordUnknown(
 	);
 }
 
-function getMessageForTermsOfServiceRecord(
-	termsOfServiceRecord: TermsOfServiceRecord,
-	translate: ReturnType< typeof useTranslate >,
-	siteSlug: string | null,
-	currency: string
-): TranslateResult {
+function MessageForTermsOfServiceRecord( {
+	termsOfServiceRecord,
+	siteSlug,
+	currency,
+}: {
+	termsOfServiceRecord: TermsOfServiceRecord;
+	siteSlug: string | null;
+	currency: string;
+} ) {
 	switch ( termsOfServiceRecord.code ) {
 		case 'terms_for_bundled_trial_unknown_payment_method':
-			return getMessageForTermsOfServiceRecordUnknown(
-				termsOfServiceRecord,
-				translate,
-				siteSlug,
-				currency
+			return (
+				<MessageForTermsOfServiceRecordUnknown
+					termsOfServiceRecord={ termsOfServiceRecord }
+					siteSlug={ siteSlug }
+					currency={ currency }
+				/>
 			);
 		default:
 			debug(
 				`Unknown terms of service code: ${ termsOfServiceRecord.code }`,
 				termsOfServiceRecord
 			);
-			return '';
+			return null;
 	}
 }
 

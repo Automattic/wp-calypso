@@ -36,6 +36,8 @@ const EVENT_NAME_EXCEPTIONS = [
 	'calypso_checkout_composite_p24_submit_clicked',
 	// Launch Bar
 	'wpcom_launchbar_button_click',
+	// Request for free migration
+	'wpcom_support_free_migration_request_click',
 ];
 
 let _superProps: any; // Added to all Tracks events.
@@ -153,7 +155,7 @@ export function initializeAnalytics(
 	const tracksLinkerId = getUrlParameter( '_tkl' );
 	if ( tracksLinkerId && tracksLinkerId !== getTracksAnonymousUserId() ) {
 		// Link tk_ai anonymous ids if _tkl parameter is present in URL and ids between pages are different (e.g. cross-domain)
-		signalUserFromAnotherProduct( 'anon', tracksLinkerId );
+		signalUserFromAnotherProduct( tracksLinkerId, 'anon' );
 	}
 
 	// Tracks blocked?

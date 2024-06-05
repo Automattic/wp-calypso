@@ -115,6 +115,28 @@
 			gap: 6px;
 		}
 	}
+	/* Responsive styles */
+	@include breakpoint-deprecated( "<660px" ) {
+		.blogging-prompt__prompt-container {
+			.blogging-prompt__prompt-text {
+				text-align: center;
+			}
+			.blogging-prompt__prompt-navigation {
+				gap: 10px;
+			}
+		}
+		.card:not(.customer-home__card) .blogging-prompt__prompt-container button.navigation-link {
+			&:first-child {
+				margin-left: -36px;
+			}
+			&:last-child {
+				margin-right: -36px;
+			}
+		}
+		.blogging-prompt__prompt-answers .blogging-prompt__prompt-responses-users {
+			display: none;
+		}
+	}
 	/* Blogging Prompt Menu ------------------------ */
 	.blogging-prompt__menu {
 		.button {

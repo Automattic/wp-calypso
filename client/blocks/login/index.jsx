@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
@@ -22,6 +22,7 @@ import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
 	isWooOAuth2Client,
+	isBlazeProOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -50,9 +51,9 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -200,6 +201,7 @@ class Login extends Component {
 			twoFactorEnabled,
 			loginEmailAddress,
 			isWoo,
+			isBlazePro,
 			isPartnerSignup,
 		} = this.props;
 
@@ -207,8 +209,8 @@ class Login extends Component {
 			! twoStepNonce &&
 			! socialConnect &&
 			! privateSite &&
-			// Show the continue as user flow WooCommerce but not other OAuth2 clients
-			! ( oauth2Client && ! ( isWoo && ! isPartnerSignup ) ) &&
+			// Show the continue as user flow WooCommerce and BlazePro but not for other OAuth2 clients
+			! ( oauth2Client && ! ( isWoo && ! isPartnerSignup ) && ! isBlazePro ) &&
 			! isJetpackWooCommerceFlow &&
 			! isJetpack &&
 			! fromSite &&
@@ -568,6 +570,33 @@ class Login extends Component {
 					);
 				}
 			}
+
+			if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+				headerText = <h3>{ translate( 'Log in to your BlazePro account' ) }</h3>;
+				const poweredByWpCom = (
+					<>
+						{ translate( 'Log in with your WordPress.com account.' ) }
+						<br />
+					</>
+				);
+
+				postHeader = (
+					<p className="login__header-subtitle">
+						{ poweredByWpCom }
+						{ translate( "Don't have an account? {{signupLink}}Sign up here{{/signupLink}}", {
+							components: { signupLink },
+						} ) }
+					</p>
+				);
+
+				if ( this.showContinueAsUser() ) {
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate( 'Select the account you’d like to use' ) }
+						</p>
+					);
+				}
+			}
 		} else if ( isWooCoreProfilerFlow ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow;
 			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
@@ -657,7 +686,7 @@ class Login extends Component {
 			headerText = preventWidows( translate( 'Log in to your existing account' ) );
 		}
 
-		if ( isWhiteLogin ) {
+		if ( isWhiteLogin && ! isBlazeProOAuth2Client( oauth2Client ) ) {
 			preHeader = (
 				<div className="login__form-gutenboarding-wordpress-logo">
 					<svg
@@ -784,6 +813,7 @@ class Login extends Component {
 			handleUsernameChange,
 			signupUrl,
 			isWoo,
+			isBlazePro,
 			translate,
 			isPartnerSignup,
 			action,
@@ -841,6 +871,7 @@ class Login extends Component {
 						isBrowserSupported={ this.state.isBrowserSupported }
 						isJetpack={ isJetpack }
 						isWoo={ isWoo }
+						isBlazePro={ isBlazePro }
 						isPartnerSignup={ isPartnerSignup }
 						twoFactorAuthType={ twoFactorAuthType }
 						twoFactorNotificationSent={ twoFactorNotificationSent }
@@ -899,7 +930,33 @@ class Login extends Component {
 							userEmail={ userEmail }
 							handleUsernameChange={ handleUsernameChange }
 							signupUrl={ signupUrl }
-							showSocialLoginFormOnly={ true }
+							showSocialLoginFormOnly
+							sendMagicLoginLink={ this.sendMagicLoginLink }
+							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
+						/>
+					</div>
+				);
+			}
+			if ( isBlazePro ) {
+				return (
+					<div className="login__body login__body--continue-as-user">
+						<ContinueAsUser
+							onChangeAccount={ this.handleContinueAsAnotherUser }
+							isBlazeProOAuth2Client={ isBlazePro }
+						/>
+						<LoginForm
+							disableAutoFocus={ disableAutoFocus }
+							onSuccess={ this.handleValidLogin }
+							privateSite={ privateSite }
+							socialService={ socialService }
+							socialServiceResponse={ socialServiceResponse }
+							domain={ domain }
+							isP2Login={ isP2Login }
+							locale={ locale }
+							userEmail={ userEmail }
+							handleUsernameChange={ handleUsernameChange }
+							signupUrl={ signupUrl }
+							showSocialLoginFormOnly
 							sendMagicLoginLink={ this.sendMagicLoginLink }
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 						/>
@@ -924,7 +981,7 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
-				hideSignupLink={ isGravPoweredLoginPage }
+				hideSignupLink={ isGravPoweredLoginPage || isBlazePro }
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
@@ -945,7 +1002,7 @@ class Login extends Component {
 
 		return (
 			<div
-				className={ classNames( 'login', {
+				className={ clsx( 'login', {
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
@@ -991,7 +1048,7 @@ export default connect(
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 		wccomFrom: getWccomFrom( state ),
-		isWooPasswordless: !! getWooPasswordless( state ),
+		isWooPasswordless: getIsWooPasswordless( state ),
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),
@@ -1005,6 +1062,7 @@ export default connect(
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
 		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+		isBlazePro: isBlazeProOAuth2Client( getCurrentOAuth2Client( state ) ),
 		isSignupExistingAccount: !! (
 			getInitialQueryArguments( state )?.is_signup_existing_account ||
 			getCurrentQueryArguments( state )?.is_signup_existing_account

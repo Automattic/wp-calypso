@@ -19,6 +19,7 @@ import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DnsAddNew from './dns-add-new';
 
@@ -101,7 +102,7 @@ class AddDnsRecord extends Component {
 	};
 
 	renderMain() {
-		const { dns, selectedDomainName, selectedSite, translate } = this.props;
+		const { domains, dns, selectedDomainName, selectedSite, translate } = this.props;
 		const dnsSupportPageLink = (
 			<ExternalLink
 				href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) }
@@ -118,6 +119,7 @@ class AddDnsRecord extends Component {
 			}
 		);
 		const recordBeingEdited = this.getRecordBeingEdited();
+		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 
 		return (
 			<Main wideLayout className="add-dns-record">
@@ -126,6 +128,7 @@ class AddDnsRecord extends Component {
 				<div className="add-dns-record__main">
 					<DnsAddNew
 						isSubmittingForm={ dns.isSubmittingForm }
+						selectedDomain={ selectedDomain }
 						selectedDomainName={ selectedDomainName }
 						selectedSiteSlug={ selectedSite?.slug }
 						goBack={ this.goBack }
@@ -161,10 +164,12 @@ class AddDnsRecord extends Component {
 export default connect(
 	( state, { selectedDomainName } ) => {
 		const selectedSite = getSelectedSite( state );
+		const domains = getDomainsBySiteId( state, selectedSite?.ID );
 		const dns = getDomainDns( state, selectedDomainName );
 
 		return {
 			selectedSite,
+			domains,
 			dns,
 			currentRoute: getCurrentRoute( state ),
 		};

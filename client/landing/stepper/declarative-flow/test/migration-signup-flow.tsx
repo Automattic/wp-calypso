@@ -1,7 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
@@ -129,16 +131,18 @@ describe( 'Migration Signup Flow', () => {
 				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 				dependencies: {
 					goToCheckout: true,
-					plan: 'plan',
+					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+					sendIntentWhenCreatingTrial: true,
 				},
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/migration-signup/${ STEPS.BUNDLE_TRANSFER.slug }?siteSlug=example.wordpress.com`,
+				destination: `/setup/migration-signup/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }?siteSlug=example.wordpress.com`,
+				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 				flowName: 'migration-signup',
 				siteSlug: 'example.wordpress.com',
-				plan: 'plan',
 				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				plan: PLAN_MIGRATION_TRIAL_MONTHLY,
 			} );
 		} );
 
@@ -156,22 +160,6 @@ describe( 'Migration Signup Flow', () => {
 			} );
 		} );
 
-		it( 'redirects the user to instructions step if the plugin was installed successfully', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.PROCESSING.slug,
-				dependencies: {
-					pluginInstalled: true,
-				},
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }`,
-				state: null,
-			} );
-		} );
-
 		it( 'redirects the user to error step if there was an error during the process', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
 
@@ -185,50 +173,6 @@ describe( 'Migration Signup Flow', () => {
 			expect( getFlowLocation() ).toEqual( {
 				path: `/${ STEPS.ERROR.slug }`,
 				state: null,
-			} );
-		} );
-
-		it( 'redirects the user to the plugin install step from the processing step', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.PROCESSING.slug,
-				dependencies: {
-					bundleTransfer: true,
-				},
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug }`,
-				state: null,
-			} );
-		} );
-
-		it( 'redirects the user to the processing step from the migration plugin install step', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug,
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.PROCESSING.slug }`,
-				state: null,
-			} );
-		} );
-
-		it( 'redirects the user to the processing step from the bundle transfer step', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.BUNDLE_TRANSFER.slug,
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.PROCESSING.slug }`,
-				state: {
-					bundleProcessing: true,
-				},
 			} );
 		} );
 	} );

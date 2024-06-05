@@ -1,9 +1,8 @@
-import { Button, Card, FormLabel, LoadingPlaceholder, MaterialIcon } from '@automattic/components';
+import { Button, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
 import QuerySiteGeoAffinity from 'calypso/components/data/query-site-geo-affinity';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import QuerySiteStaticFile404 from 'calypso/components/data/query-site-static-file-404';
@@ -12,6 +11,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import {
 	updateAtomicPhpVersion,
 	updateAtomicStaticFile404,
@@ -202,7 +202,10 @@ const WebServerSettingsCard = ( {
 				disabled: true, // EOL 6th December, 2021
 			},
 			{
-				label: '7.4',
+				label: translate( '%s (deprecated)', {
+					args: '7.4',
+					comment: 'PHP Version for a version switcher',
+				} ),
 				value: '7.4',
 			},
 			{
@@ -221,6 +224,10 @@ const WebServerSettingsCard = ( {
 				label: '8.2',
 				value: '8.2',
 			},
+			{
+				label: '8.3',
+				value: '8.3',
+			},
 		];
 	};
 
@@ -233,7 +240,6 @@ const WebServerSettingsCard = ( {
 			disabled || ! selectedPhpVersion || selectedPhpVersion === phpVersion;
 		const selectedPhpVersionValue =
 			selectedPhpVersion || phpVersion || ( disabled && recommendedValue );
-
 		return (
 			<FormFieldset>
 				<FormLabel>{ translate( 'PHP version' ) }</FormLabel>
@@ -380,24 +386,26 @@ const WebServerSettingsCard = ( {
 	};
 
 	return (
-		<Card className="web-server-settings-card">
+		<HostingCard
+			className="web-server-settings-card"
+			headingId="web-server-settings"
+			title={ translate( 'Web server settings' ) }
+		>
 			<QuerySiteGeoAffinity siteId={ siteId } />
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteWpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
-			<MaterialIcon icon="build" size={ 32 } />
-			<CardHeading id="web-server-settings">{ translate( 'Web server settings' ) }</CardHeading>
-			<p>
+			<HostingCardDescription>
 				{ translate(
 					'For sites with specialized needs, fine-tune how the web server runs your website.'
 				) }
-			</p>
+			</HostingCardDescription>
 			{ ! isLoading && getWpVersionContent() }
 			{ ! isLoading && getGeoAffinityContent() }
 			{ ! isLoading && getPhpVersionContent() }
 			{ ! isLoading && getStaticFile404Content() }
 			{ isLoading && getPlaceholderContent() }
-		</Card>
+		</HostingCard>
 	);
 };
 

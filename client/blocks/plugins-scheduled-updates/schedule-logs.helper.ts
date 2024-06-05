@@ -24,6 +24,17 @@ export const getLogDetails = ( log: ScheduleLog, plugins: CorePlugin[], siteSlug
 			}
 			return translate( 'Plugins update completed' );
 		case 'PLUGIN_UPDATES_FAILURE':
+			if ( log.message === 'pre_update_health_check_failed' && log.context?.path ) {
+				const path = log.context?.path === '/' ? '' : log.context?.path;
+				return translate(
+					'Plugins update failed — pre-update site health check failed on %(path)s',
+					{
+						args: {
+							path: siteSlug + path,
+						},
+					}
+				);
+			}
 			return translate( 'Plugins update failed' );
 
 		case 'PLUGIN_UPDATE_SUCCESS':

@@ -22,15 +22,15 @@
 		"build:command-palette-wp-admin": "calypso-build",
 		"teamcity:build-app": "yarn run build && yarn run translate",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/command-palette",
-		"translate": "rm -rf dist/strings && mkdirp dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/command-palette-strings.pot' && node bin/build-languages.js"
+		"translate": "rm -rf dist/strings && mkdirp dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/command-palette-strings.pot' && build-app-languages --stringsFilePath='./dist/command-palette-strings.pot'"
 	},
 	"dependencies": {
 		"@automattic/command-palette": "workspace:^",
 		"@automattic/sites": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/data": "^9.26.0",
-		"@wordpress/dom-ready": "^3.56.0",
-		"@wordpress/i18n": "^4.56.0",
+		"@wordpress/data": "^10.0.0",
+		"@wordpress/dom-ready": "^4.0.0",
+		"@wordpress/i18n": "^5.0.0",
 		"calypso": "workspace:^",
 		"i18n-calypso": "workspace:^",
 		"react": "^18.2.0",
@@ -43,7 +43,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^5.7.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^5.9.0",
 		"gettext-parser": "^6.0.0",
 		"lodash": "^4.17.21",
 		"mkdirp": "^1.0.4",

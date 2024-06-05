@@ -1,8 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Spinner, Gridicon } from '@automattic/components';
+import { Spinner } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef } from 'react';
+import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
+import { useRtl, useTranslate } from 'i18n-calypso';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { GlobalSidebarHeader } from 'calypso/layout/global-sidebar/header';
 import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
@@ -29,10 +30,10 @@ const GlobalSidebar = ( {
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
 	const isDesktop = useBreakpoint( '>=782px' );
+	const isRtl = useRtl();
 	const previousRoute = useSelector( getPreviousRoute );
 	const section = useSelector( getSection );
-	const previousLink = useRef( previousRoute );
-
+	const [ previousLink, setPreviousLink ] = useState( '' );
 	const handleWheel = useCallback( ( event ) => {
 		const bodyEl = bodyRef.current;
 		if ( bodyEl && bodyEl.contains( event.target ) && bodyEl.scrollHeight > bodyEl.clientHeight ) {
@@ -45,6 +46,14 @@ const GlobalSidebar = ( {
 		recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_BACK_CLICK, { path } );
 	};
 
+	const getBackLinkFromURL = () => {
+		const searchParams = new URLSearchParams( window.location.search );
+		const url = searchParams.get( 'from' ) || '';
+
+		// Only accept internal links for security purposes.
+		return url.startsWith( '/' ) ? url : '';
+	};
+
 	useEffect( () => {
 		wrapperRef.current?.addEventListener( 'wheel', handleWheel, { passive: false } );
 		return () => {
@@ -55,7 +64,7 @@ const GlobalSidebar = ( {
 	useEffect( () => {
 		// Update the previous link only when the group is changed.
 		if ( previousRoute && ! previousRoute.startsWith( `/${ section.group }` ) ) {
-			previousLink.current = previousRoute;
+			setPreviousLink( previousRoute );
 		}
 	}, [ previousRoute, section.group ] );
 
@@ -69,9 +78,8 @@ const GlobalSidebar = ( {
 		return <Spinner className="sidebar__menu-loading" />;
 	}
 
-	const { requireBackLink, backLinkText, backLinkHref, ...sidebarProps } = props;
-	const sidebarBackLinkText = backLinkText ?? translate( 'Back' );
-	const sidebarBackLinkHref = backLinkHref || previousLink.current || '/sites';
+	const { requireBackLink, siteTitle, backLinkHref, ...sidebarProps } = props;
+	const sidebarBackLinkHref = getBackLinkFromURL() || backLinkHref || previousLink || '/sites';
 
 	return (
 		<div className="global-sidebar" ref={ wrapperRef }>
@@ -81,9 +89,9 @@ const GlobalSidebar = ( {
 					{ requireBackLink && (
 						<div className="sidebar__back-link">
 							<a href={ sidebarBackLinkHref } onClick={ handleBackLinkClick }>
-								<Gridicon icon="chevron-left" size={ 24 } />
-								<span className="sidebar__back-link-text">{ sidebarBackLinkText }</span>
+								<Icon icon={ isRtl ? chevronRight : chevronLeft } size={ 24 } />
 							</a>
+							<span className="sidebar__site-title">{ siteTitle || translate( 'Back' ) }</span>
 						</div>
 					) }
 					{ children }

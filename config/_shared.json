@@ -36,6 +36,7 @@
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0oHFYHpzmHGpuUAXZ6ygDAFxM4XkRArRsET0orrofmsynkd9DhFaOGEsDZ3RC4f8mgI0zhEyN000X8i0Mqx",
 	"dsp_widget_js_src": "https://dsp.wp.com/widget.js",
+	"blaze_pro_back_link": "https://dsp-pro-client.production.ingress.dca.tumblr.net/app",
 	"advertising_dashboard_path_prefix": "/advertising",
 	"zendesk_presales_chat_key": false,
 	"zendesk_presales_chat_key_akismet": false,
@@ -169,6 +170,9 @@
 		"a8c-for-agencies-purchases": false,
 		"a8c-for-agencies-signup": false,
 		"a8c-for-agencies-referrals": false,
+		"a8c-for-agencies-migrations": false,
+		"a8c-for-agencies-settings": false,
+		"a8c-for-agencies-partner-directory": false,
 		"jetpack-cloud": false,
 		"jetpack-cloud-overview": false,
 		"jetpack-cloud-agency-dashboard": false,
@@ -242,12 +246,16 @@
 		"ecommerce-monthly",
 		"ecommerce-2y",
 		"ecommerce-3y",
+		"entrepreneur",
 		"pro",
 		"starter",
 		"domain",
 		"onboarding-2023-pricing-grid",
 		"domain-transfer",
-		"site-selected"
+		"site-selected",
+		"guided",
+		"domain-for-gravatar",
+		"plans-first"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

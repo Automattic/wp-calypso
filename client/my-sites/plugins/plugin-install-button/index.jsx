@@ -8,7 +8,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, useRef } from 'react';
@@ -43,7 +43,7 @@ const PluginInstallNotice = ( { isEmbed, warningText, children } ) => {
 		infoPopover.current.handleClick( event );
 	};
 	return (
-		<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
+		<div className={ clsx( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
 			<span
 				onClick={ togglePopover }
 				ref={ disabledInfoLabel }
@@ -245,7 +245,7 @@ export class PluginInstallButton extends Component {
 					{ isInstalling ? (
 						<span className="plugin-install-button__installing">{ label }</span>
 					) : (
-						<Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
+						<Button compact onClick={ this.installAction } disabled={ disabled }>
 							{ ! isJetpackCloud && (
 								<>
 									<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
@@ -263,11 +263,7 @@ export class PluginInstallButton extends Component {
 
 		return (
 			<span className="plugin-install-button__install">
-				<Button
-					onClick={ this.installAction }
-					primary={ true }
-					disabled={ isInstalling || disabled }
-				>
+				<Button onClick={ this.installAction } primary disabled={ isInstalling || disabled }>
 					{ label }
 				</Button>
 			</span>

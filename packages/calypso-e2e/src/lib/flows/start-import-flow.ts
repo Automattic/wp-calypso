@@ -6,7 +6,7 @@ const selectors = {
 	button: ( text: string ) => `button:text("${ text }")`,
 	backLink: '.navigation-link:text("Back")',
 	dontHaveASiteButton: 'button:text-matches("choose a content platform", "i")',
-
+	migrationModalCancel: 'button.action-buttons__cancel',
 	// Inputs
 	urlInput: 'input.capture__input',
 	goalsCaptureUrlInput: 'input.form-text-input[value]',
@@ -24,6 +24,8 @@ const selectors = {
 	// Headers
 	setupHeader: 'h1:text("Themes")',
 	startBuildingHeader: ( text: string ) => `h1.onboarding-title:text("${ text }")`,
+
+	importModal: 'div.import__confirm-modal',
 
 	// Buttons
 	checkUrlButton: 'form.capture__input-wrapper button.action-buttons__next',
@@ -64,6 +66,13 @@ export class StartImportFlow {
 		await this.page.locator(
 			`${ selectors.startImportButton }, ${ selectors.startImportGoalButton }`
 		);
+	}
+
+	/**
+	 * Validates that we show migration modal.
+	 */
+	async validateImportModal(): Promise< void > {
+		await this.page.locator( `${ selectors.importModal }` ).waitFor();
 	}
 
 	/**
@@ -281,9 +290,24 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Click back button of the flow.
+	 */
+	async clickBack(): Promise< void > {
+		await this.page.click( selectors.backLink );
+	}
+
+	/**
+	 * Click migration modal cancel.
+	 */
+	async clickMigrationModalCancel(): Promise< void > {
+		await this.page.click( selectors.migrationModalCancel );
+	}
+
+	/**
 	 * Navigate back one screen in the flow.
 	 */
 	async goBackOneScreen(): Promise< void > {
-		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.backLink ) ] );
+		await this.clickBack();
+		await this.page.waitForNavigation();
 	}
 }

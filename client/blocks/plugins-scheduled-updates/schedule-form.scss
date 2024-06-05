@@ -58,15 +58,6 @@
 	.components-search-control {
 		max-width: 300px;
 		margin-bottom: 1.5rem;
-
-		.components-input-control__container {
-			border: solid 1px var(--studio-gray-10);
-			background-color: var(--studio-white);
-		}
-
-		.components-base-control__field {
-			display: block !important;
-		}
 	}
 
 	.checkbox-options-container {
@@ -111,6 +102,27 @@
 			border-radius: 4px;
 			background-color: var(--studio-gray-10);
 			box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+		}
+
+		&__sites {
+			> div {
+				display: flex;
+				align-items: center;
+
+				label {
+					max-width: calc(100% - 2rem);
+
+					.site-slug {
+						color: var(--studio-gray-50);
+						display: inline-block;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						max-width: 100%;
+					}
+				}
+			}
+
 		}
 
 	}
@@ -210,6 +222,14 @@
 	}
 
 	.form-field--paths {
+		.paths,
+		.new-path {
+			.components-button {
+				min-width: rem(100px);
+				justify-content: center;
+			}
+		}
+
 		.paths {
 			.components-input-control__backdrop {
 				border-color: var(--studio-gray-0);
@@ -245,4 +265,8 @@
 			}
 		}
 	}
+}
+
+.schedule-form-button {
+	margin: 0.5rem 0;
 }

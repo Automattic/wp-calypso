@@ -1,5 +1,5 @@
 import { isJetpackPlanSlug } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { FeaturedItemCard } from '../featured-item-card';
 import { HeroImage } from '../hero-image';
@@ -17,7 +17,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 	onClickMoreInfoFactory,
 	siteId,
 } ) => {
-	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
+	const wrapperClassName = clsx( 'jetpack-product-store__most-popular', className );
 
 	const {
 		getCheckoutURL,

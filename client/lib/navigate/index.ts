@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { logmeinUrl } from 'calypso/lib/logmein';
+import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 
 // Using page() for cross origin navigations would throw a `History.pushState` exception
 // about creating state object with a cross-origin URL.
@@ -21,10 +22,30 @@ function shouldNavigateWithinSamePage( path: string ): boolean {
 	return currentPath === targetUrl.pathname && !! targetUrl.hash;
 }
 
-export function navigate( path: string, openInNewTab = false ): void {
+function getScrollableContainer( node: HTMLElement ): HTMLElement | undefined {
+	if ( node === document.body ) {
+		return undefined;
+	}
+
+	const overflowY = window.getComputedStyle( node ).overflowY;
+	const isScrollable = overflowY !== 'visible' && overflowY !== 'hidden';
+	if ( isScrollable && node.scrollHeight >= node.clientHeight ) {
+		return node;
+	}
+
+	if ( node.parentNode ) {
+		return getScrollableContainer( node.parentNode as HTMLElement );
+	}
+
+	return undefined;
+}
+
+export function navigate( path: string, openInNewTab = false, forceReload = false ): void {
 	if ( isSameOrigin( path ) ) {
 		if ( openInNewTab ) {
 			window.open( path, '_blank' );
+		} else if ( forceReload ) {
+			window.location.href = path;
 		} else if ( isCurrentPathOutOfScope( window.location.pathname ) ) {
 			const state = { path };
 			window.history.pushState( state, '', path );
@@ -33,14 +54,10 @@ export function navigate( path: string, openInNewTab = false ): void {
 			const targetUrl = new URL( path, window.location.origin );
 			const element = document.querySelector( targetUrl.hash );
 			if ( element ) {
-				// Offset by the height of the navigation header from the top of the page.
-				const fixedHeaderHeight = 72;
-				const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-				const offsetPosition = elementPosition - fixedHeaderHeight;
 				window.location.hash = targetUrl.hash;
-				window.scrollTo( {
-					top: offsetPosition,
-					behavior: 'smooth',
+				scrollToAnchor( {
+					offset: 72,
+					container: getScrollableContainer( element as HTMLElement ),
 				} );
 			}
 		} else {

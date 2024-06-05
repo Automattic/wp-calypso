@@ -666,3 +666,7 @@
 .wp-block-latest-posts__post-date::before {
 	content: " - ";
 }
+
+.is-reader-full-post {
+	background: var(--color-surface);
+}

@@ -9,6 +9,7 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } from '../const';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
@@ -84,7 +85,6 @@ interface StatsCommercialFlowOptOutFormProps {
 }
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
-const FLAGS_CHECKOUT_FLOWS_V2 = 'stats/checkout-flows-v2';
 
 const StatsUpgradeInstructions = () => {
 	const translate = useTranslate();
@@ -102,6 +102,36 @@ const StatsUpgradeInstructions = () => {
 			</div>
 		</div>
 	);
+};
+
+const useLocalizedStrings = ( isCommercial: boolean ) => {
+	const translate = useTranslate();
+
+	// Page title, info text, and button text depend on isCommercial status of site.
+	if ( isCommercial ) {
+		return {
+			pageTitle: translate( 'Upgrade and continue using Jetpack Stats' ),
+			infoText: translate(
+				'To continue using Stats and access its newest premium features you need to get a commercial license. {{link}}Learn more about this update{{/link}}.',
+				{
+					comment: '{{link}} links to explainer post on Jetpack blog.',
+					components: {
+						link: <a href={ JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } />,
+					},
+					context: 'Stats: Descriptive text in the commercial purchase flow',
+				}
+			),
+			continueButtonText: translate( 'Upgrade now and continue' ),
+		};
+	}
+
+	return {
+		pageTitle: translate( 'Simple, yet powerful stats to grow your site' ),
+		infoText: translate(
+			'Jetpack Stats makes it easy to see how your site is doing. No data science skills needed. Start with a commercial license and get premium access to:'
+		),
+		continueButtonText: translate( 'Get Stats to grow my site' ),
+	};
 };
 
 const StatsCommercialPurchase = ( {
@@ -130,13 +160,10 @@ const StatsCommercialPurchase = ( {
 		setPurchaseTierQuantity( value );
 	}, [] );
 
-	const pageTitle = config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 )
-		? translate( 'Welcome to Jetpack Stats' )
-		: translate( 'Jetpack Stats' );
-
-	const continueButtonText = config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 )
-		? translate( 'Upgrade and continue' )
-		: translate( 'Purchase' );
+	const isCommercial = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'is_commercial' )
+	) as boolean;
+	const { pageTitle, infoText, continueButtonText } = useLocalizedStrings( isCommercial );
 
 	// TODO: Remove isTierUpgradeSliderEnabled code paths.
 
@@ -145,7 +172,7 @@ const StatsCommercialPurchase = ( {
 			<h1>{ pageTitle }</h1>
 			{ ! isCommercialOwned && (
 				<>
-					<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
+					<p>{ infoText }</p>
 					<StatsBenefitsCommercial />
 				</>
 			) }
@@ -166,6 +193,7 @@ const StatsCommercialPurchase = ( {
 			) }
 			{ isTierUpgradeSliderEnabled && (
 				<>
+					<p>{ translate( 'Pick your Stats tier below:' ) }</p>
 					<StatsCommercialUpgradeSlider
 						currencyCode={ currencyCode }
 						analyticsEventName={ `${
@@ -173,23 +201,28 @@ const StatsCommercialPurchase = ( {
 						}_stats_purchase_commercial_slider_clicked` }
 						onSliderChange={ handleSliderChanged }
 					/>
-					<ButtonComponent
-						variant="primary"
-						primary={ isWPCOMSite ? true : undefined }
-						onClick={ () =>
-							gotoCheckoutPage( {
-								from,
-								type: 'commercial',
-								siteSlug,
-								adminUrl,
-								redirectUri,
-								price: undefined,
-								quantity: purchaseTierQuantity,
-							} )
-						}
-					>
-						{ continueButtonText }
-					</ButtonComponent>
+					<div className="stats-purchase-wizard__actions">
+						<ButtonComponent
+							variant="primary"
+							primary={ isWPCOMSite ? true : undefined }
+							onClick={ () =>
+								gotoCheckoutPage( {
+									from,
+									type: 'commercial',
+									siteSlug,
+									adminUrl,
+									redirectUri,
+									price: undefined,
+									quantity: purchaseTierQuantity,
+								} )
+							}
+						>
+							{ continueButtonText }
+						</ButtonComponent>
+					</div>
+					<div className="stats-purchase-page__footnotes">
+						<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>
+					</div>
 				</>
 			) }
 		</>
@@ -222,19 +255,20 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		const queryFrom = isOdysseyStats ? '&from=jetpack-my-jetpack' : '';
 		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
 
-		page( `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection` );
+		page(
+			`/stats/purchase/${ siteSlug }?productType=commercial${ queryFrom }&flags=stats/type-detection`
+		);
 	};
-
-	const pageTitle = config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 )
-		? translate( 'Name your price for Jetpack Stats' )
-		: translate( 'Jetpack Stats' );
 
 	return (
 		<>
-			<h1>{ pageTitle }</h1>
-			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
+			<h1>{ translate( 'Support Jetpack Stats and set your price' ) }</h1>
+			<p>
+				{ translate( 'Help Jetpack Stats with a non-commercial license and get these perks:' ) }
+			</p>
 			<PersonalPurchase
 				subscriptionValue={ subscriptionValue }
 				setSubscriptionValue={ setSubscriptionValue }
@@ -253,7 +287,7 @@ const StatsPersonalPurchase = ( {
 				adminUrl={ adminUrl }
 				redirectUri={ redirectUri }
 				from={ from }
-				isStandalone={ true }
+				isStandalone
 			/>
 		</>
 	);
@@ -349,6 +383,7 @@ function StatsCommercialFlowOptOutForm( {
 		'contact-details': translate( 'Business Contact Details' ),
 		'manual-override': translate( 'Manual Override' ),
 		ecommerce: translate( 'Ecommerce' ),
+		donations: translate( 'Donations' ),
 	};
 	const { supportsOnDemandCommercialClassification } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
@@ -443,7 +478,9 @@ function StatsCommercialFlowOptOutForm( {
 					},
 				}
 		  )
-		: translate( 'To use a non-commercial license you must agree to the following:' );
+		: translate(
+				'For non-commercial use, get started with a non-commercial license, including an optional contribution. Please agree to the following terms:'
+		  );
 
 	return (
 		<>

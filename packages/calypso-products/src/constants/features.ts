@@ -16,6 +16,9 @@ import {
 	PRODUCT_JETPACK_BOOST_BI_YEARLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	PRODUCT_JETPACK_SCAN_BI_YEARLY,
@@ -53,13 +56,6 @@ export const FEATURE_200GB_STORAGE = '200gb-storage';
 export const FEATURE_LEGACY_STORAGE_200GB = 'upload-space-200gb';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
-export const FEATURE_EMAIL_SUPPORT = 'email-support';
-export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
-export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS =
-	'email-live-chat-support-business-days';
-export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS = 'email-live-chat-support-all-days';
-export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS = 'live-chat-support-all-days';
-export const FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS = 'live-chat-support-business-days';
 export const EXPERT_SUPPORT_ALL_DAYS = 'expert-support-all-days';
 export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
@@ -96,7 +92,6 @@ export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customizat
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
 export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
 export const FEATURE_FREE_BLOG_DOMAIN = 'free-blog-domain';
-export const FEATURE_EMAIL_SUPPORT_SIGNUP = 'email-support-signup';
 export const FEATURE_MONETISE = 'monetise-your-site';
 export const FEATURE_EARN_AD = 'earn-ad-revenue';
 export const FEATURE_WP_SUBDOMAIN_SIGNUP = 'wordpress-subdomain-signup';
@@ -222,6 +217,9 @@ export const FEATURE_JETPACK_SOCIAL_ADVANCED_MONTHLY = PRODUCT_JETPACK_SOCIAL_AD
 export const FEATURE_JETPACK_SOCIAL_BASIC_BI_YEARLY = PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY;
 export const FEATURE_JETPACK_SOCIAL_BASIC = PRODUCT_JETPACK_SOCIAL_BASIC;
 export const FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY = PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY;
+export const FEATURE_JETPACK_SOCIAL_V1_YEARLY = PRODUCT_JETPACK_SOCIAL_V1_YEARLY;
+export const FEATURE_JETPACK_SOCIAL_V1_MONTHLY = PRODUCT_JETPACK_SOCIAL_V1_MONTHLY;
+export const FEATURE_JETPACK_SOCIAL_V1_BI_YEARLY = PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY;
 export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
 export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
 export const FEATURE_SOCIAL_MASTODON_CONNECTION = 'social-mastodon-connection';
@@ -357,7 +355,6 @@ export const FEATURE_SMART_REDIRECTS = 'smart-redirects';
 export const FEATURE_ALWAYS_ONLINE = 'always-online';
 export const FEATURE_FAST_DNS = 'fast-dns';
 export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
-export const FEATURE_SUPPORT_EMAIL = 'support-email-v1';
 export const FEATURE_DESIGN_TOOLS = 'design-tools';
 export const FEATURE_WORDADS = 'wordads-v2';
 export const FEATURE_PLUGINS_THEMES = 'plugins-themes-v1';
@@ -429,7 +426,6 @@ export const FEATURE_UNLIMITED_PRODUCTS = 'unlimited-products';
 export const FEATURE_DISPLAY_PRODUCTS_BRAND = 'display-products-brand';
 export const FEATURE_PRODUCT_ADD_ONS = 'product-add-ons';
 export const FEATURE_ASSEMBLED_KITS = 'assembled-kits';
-export const FEATURE_MIN_MAX_QTY = 'min-max-qty';
 export const FEATURE_STOCK_NOTIFS = 'stock-notifs';
 export const FEATURE_DYNAMIC_UPSELLS = 'dynamic-upsells';
 export const FEATURE_LOYALTY_PROG = 'loyalty-prog';
@@ -443,6 +439,8 @@ export const FEATURE_50GB_STORAGE_ADD_ON = '50gb-storage-add-on';
 export const FEATURE_100GB_STORAGE_ADD_ON = '100gb-storage-add-on';
 export const FEATURE_UNLIMITED_TRAFFIC = 'unlimited-traffic';
 export const FEATURE_TIERED_STORAGE_PLANS_AVAILABLE = 'tiered-storage-plans-available';
+export const FEATURE_FAST_SUPPORT_FROM_EXPERTS = 'fast-support-from-experts';
+export const FEATURE_PRIORITY_24_7_SUPPORT = 'priority-24-7-support';
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
@@ -510,3 +508,4 @@ export const FEATURE_LIMITED_STATS = 'limited_stats';
 export const FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT = 'local_development_environment';
 export const FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS = 'pre_installed_security_perf_plugins';
 export const FEATURE_WEB_SERVER_SETTINGS = 'web_server_settings';
+export const FEATURE_1_WEBSITE = '1_website';

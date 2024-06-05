@@ -4,7 +4,7 @@ import { Spinner } from '@automattic/components';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -98,7 +98,6 @@ export class RenderDomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isReskinned: PropTypes.bool,
-		useAlternateDomainMessaging: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -432,6 +431,36 @@ export class RenderDomainsStep extends Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
+
+		// For the `domain-for-gravatar` flow, add an extra `is_gravatar_domain` property to the domain registration product,
+		// pre-select the "domain" choice in the "site or domain" step and skip the others, going straight to checkout
+		if ( this.props.flowName === 'domain-for-gravatar' ) {
+			const domainForGravatarItem = domainRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug,
+				extra: {
+					is_gravatar_domain: true,
+				},
+			} );
+
+			this.props.submitSignupStep(
+				{
+					stepName: 'site-or-domain',
+					domainItem: domainForGravatarItem,
+					designType: 'domain',
+					siteSlug: domainForGravatarItem.meta,
+					siteUrl,
+					isPurchasingItem: true,
+				},
+				{ designType: 'domain', domainItem: domainForGravatarItem, siteUrl }
+			);
+			this.props.submitSignupStep(
+				{ stepName: 'site-picker', wasSkipped: true },
+				{ themeSlugWithRepo: 'pub/twentysixteen' }
+			);
+			return;
+		}
+
 		this.props.goToNextStep();
 
 		// Start the username suggestion process.
@@ -558,12 +587,13 @@ export class RenderDomainsStep extends Component {
 	}
 
 	shouldHideDomainExplainer = () => {
-		return this.props.flowName === 'domain';
+		const { flowName } = this.props;
+		return [ 'domain', 'domain-for-gravatar' ].includes( flowName );
 	};
 
 	shouldHideUseYourDomain = () => {
 		const { flowName } = this.props;
-		return [ 'domain' ].includes( flowName );
+		return [ 'domain', 'domain-for-gravatar' ].includes( flowName );
 	};
 
 	shouldDisplayDomainOnlyExplainer = () => {
@@ -894,7 +924,7 @@ export class RenderDomainsStep extends Component {
 
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div
-				className={ classNames( 'domains__domain-side-content', {
+				className={ clsx( 'domains__domain-side-content', {
 					'fade-out':
 						shouldUseMultipleDomainsInCart( flowName ) &&
 						( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ),
@@ -1046,7 +1076,6 @@ export class RenderDomainsStep extends Component {
 				forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
-				useAlternateDomainMessaging={ this.props.useAlternateDomainMessaging }
 			/>
 		);
 	};
@@ -1106,14 +1135,7 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const {
-			flowName,
-			isAllDomains,
-			useAlternateDomainMessaging,
-			isReskinned,
-			stepSectionName,
-			translate,
-		} = this.props;
+		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -1159,12 +1181,6 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			if ( useAlternateDomainMessaging ) {
-				return translate(
-					"Find a unique web address that's easy to remember and even easier to share."
-				);
-			}
-
 			return (
 				! stepSectionName &&
 				'domain-transfer' !== flowName &&
@@ -1178,15 +1194,8 @@ export class RenderDomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const {
-			flowName,
-			headerText,
-			isAllDomains,
-			useAlternateDomainMessaging,
-			isReskinned,
-			stepSectionName,
-			translate,
-		} = this.props;
+		const { headerText, isAllDomains, isReskinned, stepSectionName, translate, flowName } =
+			this.props;
 
 		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === flowName ) {
 			return '';
@@ -1204,11 +1213,6 @@ export class RenderDomainsStep extends Component {
 			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
 				return ! stepSectionName && translate( 'Choose your domains' );
 			}
-
-			if ( useAlternateDomainMessaging ) {
-				return translate( 'Claim your domain name' );
-			}
-
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
@@ -1358,12 +1362,19 @@ export class RenderDomainsStep extends Component {
 		} else if ( ! previousStepBackUrl && 'domain-transfer' === flowName ) {
 			backUrl = null;
 			backLabelText = null;
+		} else if ( 'domain-for-gravatar' === flowName ) {
+			backUrl = null;
+			backLabelText = null;
 		} else if ( 'with-plugin' === flowName ) {
 			backUrl = '/plugins';
 			backLabelText = translate( 'Back to plugins' );
 		} else if ( isWithThemeFlow( flowName ) ) {
 			backUrl = '/themes';
 			backLabelText = translate( 'Back to themes' );
+		} else if ( 'plans-first' === flowName ) {
+			backUrl = getStepUrl( flowName, previousStepName );
+		} else if ( 'guided' === flowName ) {
+			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
@@ -1415,7 +1426,7 @@ export class RenderDomainsStep extends Component {
 				}
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
-				hideSkip={ true }
+				hideSkip
 				goToNextStep={ this.handleSkip }
 				align="center"
 				isWideLayout={ isReskinned }

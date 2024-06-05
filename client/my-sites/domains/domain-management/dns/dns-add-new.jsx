@@ -20,6 +20,7 @@ import ARecord from './a-record';
 import AliasRecord from './alias-record';
 import CnameRecord from './cname-record';
 import MxRecord from './mx-record';
+import NsRecord from './ns-record';
 import SrvRecord from './srv-record';
 import TxtRecord from './txt-record';
 
@@ -39,7 +40,7 @@ class DnsAddNew extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		const { translate, selectedDomainName } = props;
+		const { translate, selectedDomain, selectedDomainName } = props;
 
 		this.dnsRecords = [
 			{
@@ -120,13 +121,25 @@ class DnsAddNew extends React.Component {
 					protocol: '_tcp',
 				},
 			},
+			{
+				component: NsRecord,
+				types: [ 'NS' ],
+				description: translate(
+					'NS (name server) records are used to delegate the authoritative DNS servers for a subdomain.'
+				),
+				initialFields: {
+					name: '',
+					ttl: 86400,
+					data: '',
+				},
+			},
 		];
 
 		this.formStateController = formState.Controller( {
 			initialFields: this.getFieldsForType( initialState.type ),
 			onNewState: this.setFormState,
 			validatorFunction: ( fieldValues, onComplete ) => {
-				onComplete( null, validateAllFields( fieldValues, selectedDomainName ) );
+				onComplete( null, validateAllFields( fieldValues, selectedDomainName, selectedDomain ) );
 			},
 		} );
 
@@ -204,7 +217,7 @@ class DnsAddNew extends React.Component {
 
 	onAddOrUpdateDnsRecord = ( event ) => {
 		event.preventDefault();
-		const { recordToEdit, selectedDomainName, translate } = this.props;
+		const { recordToEdit, selectedDomain, selectedDomainName, translate } = this.props;
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
@@ -213,7 +226,8 @@ class DnsAddNew extends React.Component {
 
 			const normalizedData = getNormalizedData(
 				formState.getAllFieldValues( this.state.fields ),
-				selectedDomainName
+				selectedDomainName,
+				selectedDomain
 			);
 
 			if ( recordToEdit ) {
@@ -274,8 +288,9 @@ class DnsAddNew extends React.Component {
 	renderFields( selectedRecordType ) {
 		return (
 			<selectedRecordType.component
+				selectedDomain={ this.props.selectedDomain }
 				selectedDomainName={ this.props.selectedDomainName }
-				show={ true }
+				show
 				fieldValues={ formState.getAllFieldValues( this.state.fields ) }
 				isValid={ this.isValid }
 				onChange={ this.onChange }

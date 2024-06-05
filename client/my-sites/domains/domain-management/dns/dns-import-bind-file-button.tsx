@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { Icon, cloudUpload } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useCallback, useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import wpcom from 'calypso/lib/wp';
@@ -48,7 +48,7 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 		setRecordsToImport( newRecordsToImport );
 	};
 
-	const className = classNames( 'dns__breadcrumb-button import-bind-file', {
+	const className = clsx( 'dns__breadcrumb-button import-bind-file', {
 		'is-icon-button': isMobile,
 	} );
 

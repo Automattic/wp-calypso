@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { BackButton, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -98,11 +98,10 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		const domainMappingUrl = domainUseMyDomain(
-			this.props.selectedSiteSlug,
+		const domainMappingUrl = domainUseMyDomain( this.props.selectedSiteSlug, {
 			domain,
-			useMyDomainInputMode.transferOrConnect
-		);
+			initialMode: useMyDomainInputMode.transferOrConnect,
+		} );
 		this.isMounted && page( domainMappingUrl );
 	};
 
@@ -272,7 +271,7 @@ class DomainSearch extends Component {
 			return null;
 		}
 
-		const classes = classnames( 'main-column', {
+		const classes = clsx( 'main-column', {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
 		} );
 		const { domainRegistrationMaintenanceEndTime } = this.state;

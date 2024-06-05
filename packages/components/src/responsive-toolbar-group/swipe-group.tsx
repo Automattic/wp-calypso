@@ -1,5 +1,5 @@
 import { ToolbarGroup, ToolbarButton as BaseToolbarButton } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode, useState, useRef, useEffect } from 'react';
 import type { Button } from '@wordpress/components';
 
@@ -23,7 +23,7 @@ export default function SwipeGroup( {
 	initialActiveIndex?: number;
 	hrefList?: string[];
 } ) {
-	const classes = classnames( 'responsive-toolbar-group__swipe', className );
+	const classes = clsx( 'responsive-toolbar-group__swipe', className );
 
 	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
 

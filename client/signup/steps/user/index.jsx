@@ -4,7 +4,7 @@ import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { WPCC } from '@automattic/urls';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -19,6 +19,7 @@ import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isA4AOAuth2Client,
+	isBlazeProOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -44,8 +45,8 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -273,6 +274,8 @@ export class UserStep extends Component {
 						},
 					}
 				);
+			} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+				subHeaderText = translate( 'To get started create a new account with WordPress.com.' );
 			} else {
 				subHeaderText = translate(
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
@@ -497,7 +500,7 @@ export class UserStep extends Component {
 			}
 
 			return (
-				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
+				<div className={ clsx( 'signup-form__woo-wrapper' ) }>
 					<h3>{ translate( 'Create an account' ) }</h3>
 				</div>
 			);
@@ -505,7 +508,7 @@ export class UserStep extends Component {
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 			return (
-				<div className={ classNames( 'signup-form__wrapper' ) }>
+				<div className={ clsx( 'signup-form__wrapper' ) }>
 					<JetpackLogo full={ false } size={ 60 } />
 					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
 				</div>
@@ -514,13 +517,21 @@ export class UserStep extends Component {
 
 		if ( isA4AOAuth2Client( oauth2Client ) ) {
 			return (
-				<div className={ classNames( 'signup-form__wrapper' ) }>
+				<div className={ clsx( 'signup-form__wrapper' ) }>
 					<A4ALogo size={ 60 } />
 					<h3>
 						{ translate( 'Sign up to Automattic for Agencies with a WordPress.com account.' ) }
 					</h3>
 				</div>
 			);
+		}
+
+		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+			return translate( 'Welcome to %(clientTitle)s', {
+				args: { clientTitle: oauth2Client.title },
+				comment:
+					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
+			} );
 		}
 
 		if ( flowName === 'wpcc' && oauth2Client ) {
@@ -584,6 +595,10 @@ export class UserStep extends Component {
 			isSocialSignupEnabled = true;
 		}
 
+		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+			isSocialSignupEnabled = false;
+		}
+
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
 		if ( isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
 			const clientId = hashObject.client_id;
@@ -614,7 +629,9 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
+					shouldDisplayUserExistsError={
+						! isWooOAuth2Client( oauth2Client ) && ! isBlazeProOAuth2Client( oauth2Client )
+					}
 					isSocialFirst={ this.props.isSocialFirst }
 					labelText={ this.props.isWooPasswordless ? this.props.translate( 'Your email' ) : null }
 				/>
@@ -748,7 +765,7 @@ const ConnectedUser = connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
-			isWooPasswordless: !! getWooPasswordless( state ),
+			isWooPasswordless: getIsWooPasswordless( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};

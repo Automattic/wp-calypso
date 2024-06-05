@@ -1,14 +1,13 @@
 import config from '@automattic/calypso-config';
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
-import { useLocale } from '@automattic/i18n-utils';
 import { AI_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getTheme } from 'calypso/state/themes/selectors';
@@ -323,14 +322,7 @@ const withAIAssemblerFlow: Flow = {
 			currentPath.includes( `setup/${ flowName }/check-sites` );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+		const locale = useFlowLocale();
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: window.location.href.replace( window.location.origin, '' ),

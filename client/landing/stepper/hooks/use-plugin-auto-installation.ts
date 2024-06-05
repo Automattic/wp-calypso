@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
 import type { SitePlugin } from 'calypso/data/plugins/types';
@@ -6,50 +6,51 @@ import type { SitePlugin } from 'calypso/data/plugins/types';
 interface Response {
 	plugins: SitePlugin[];
 }
-
 interface SkipStatus {
 	installation: boolean;
 	activation: boolean;
 }
 type SitePluginParam = Pick< SitePlugin, 'slug' | 'name' >;
-
-type StatusVariation = 'idle' | 'loading' | 'success' | 'error' | 'pending' | 'skipped';
+type Status = 'idle' | 'pending' | 'success' | 'error';
 
 interface SiteMigrationStatus {
-	waitingPluginList: StatusVariation;
-	activatingPlugin: StatusVariation;
-	installingPlugin: StatusVariation;
+	status: Status;
 	completed: boolean;
 	error: Error | null;
 }
 
-const fetchPluginsForSite = async ( siteIdOrSlug: string ): Promise< Response > =>
-	wpcom.req.get( `/sites/${ siteIdOrSlug }/plugins?http_envelope=1`, {
+type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
+const DEFAULT_RETRY = process.env.NODE_ENV !== 'production' ? 1 : 15;
+const DEFAULT_RETRY_DELAY = process.env.NODE_ENV !== 'production' ? 300 : 3000;
+
+const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
+	wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
 		apiNamespace: 'rest/v1.2',
 	} );
 
-const installPlugin = async ( siteIdOrSlug: string, pluginSlug: string ) =>
+const installPlugin = async ( siteId: number, pluginSlug: string ) =>
 	wpcom.req.post( {
-		path: `/sites/${ siteIdOrSlug }/plugins/${ pluginSlug }/install`,
+		path: `/sites/${ siteId }/plugins/${ pluginSlug }/install`,
 		apiNamespace: 'rest/v1.2',
 	} );
 
-const activatePlugin = async ( siteIdOrSlug: string, pluginName: string ) =>
+const activatePlugin = async ( siteId: number, pluginName: string ) =>
 	wpcom.req.post( {
-		path: `/sites/${ siteIdOrSlug }/plugins/${ encodeURIComponent( pluginName ) }`,
+		path: `/sites/${ siteId }/plugins/${ encodeURIComponent( pluginName ) }`,
 		apiNamespace: 'rest/v1.2',
 		body: {
 			active: true,
 		},
 	} );
 
-const usePluginStatus = ( pluginSlug: string, siteIdOrSlug?: string ) => {
+const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options ) => {
 	return useQuery( {
-		queryKey: [ 'onboarding-site-plugin-status', siteIdOrSlug, pluginSlug ],
-		queryFn: () => fetchPluginsForSite( siteIdOrSlug! ),
-		enabled: !! siteIdOrSlug,
-		retry: true,
-		retryDelay: 2000,
+		queryKey: [ 'onboarding-site-plugin-status', siteId, pluginSlug ],
+		queryFn: () => fetchPluginsForSite( siteId! ),
+		enabled: !! siteId && ( options?.enabled ?? true ),
+		retry: options?.retry ?? DEFAULT_RETRY,
+		retryDelay: DEFAULT_RETRY_DELAY,
+		refetchOnWindowFocus: false,
 		select: ( data ) => {
 			return {
 				isActive: data.plugins.some( ( plugin ) => plugin.slug === pluginSlug && plugin.active ),
@@ -59,45 +60,45 @@ const usePluginStatus = ( pluginSlug: string, siteIdOrSlug?: string ) => {
 	} );
 };
 
-const usePluginInstallation = ( pluginSlug: string, siteIdOrSlug: string ) => {
+const usePluginInstallation = ( pluginSlug: string, siteId?: number, options?: Options ) => {
 	return useMutation( {
-		mutationKey: [ 'onboarding-site-plugin-installation', siteIdOrSlug, pluginSlug ],
-		mutationFn: async () => installPlugin( siteIdOrSlug, pluginSlug ),
-		retry: true,
-		retryDelay: 2000,
+		mutationKey: [ 'onboarding-site-plugin-installation', siteId, pluginSlug ],
+		mutationFn: async () => installPlugin( siteId!, pluginSlug ),
+		retry: options?.retry ?? DEFAULT_RETRY,
 	} );
 };
 
-const usePluginActivation = ( pluginName: string, siteIdOrSlug: string ) => {
+const usePluginActivation = ( pluginName: string, siteId?: number, options?: Options ) => {
 	return useMutation( {
-		mutationKey: [ 'onboarding-site-plugin-activation', siteIdOrSlug, pluginName ],
-		mutationFn: async () => activatePlugin( siteIdOrSlug, pluginName ),
-		retry: true,
-		retryDelay: 2000,
+		mutationKey: [ 'onboarding-site-plugin-activation', siteId, pluginName ],
+		mutationFn: async () => activatePlugin( siteId!, pluginName ),
+		retryDelay: DEFAULT_RETRY_DELAY,
+		retry: options?.retry ?? DEFAULT_RETRY,
 	} );
 };
 
 export const usePluginAutoInstallation = (
 	plugin: SitePluginParam,
-	siteIdOrSlug?: string
+	siteId?: number,
+	options?: Options
 ): SiteMigrationStatus => {
 	const {
 		data: status,
 		error: statusError,
-		status: provisioningStatus,
-	} = usePluginStatus( plugin.slug, siteIdOrSlug );
+		fetchStatus: pluginStatus,
+	} = usePluginStatus( plugin.slug, siteId, options );
 
 	const {
 		mutate: install,
 		error: installationError,
-		status: instalationRequestStatus,
-	} = usePluginInstallation( plugin.slug, siteIdOrSlug! );
+		status: installationRequestStatus,
+	} = usePluginInstallation( plugin.slug, siteId, options );
 
 	const {
 		mutate: activatePlugin,
 		status: activationRequestStatus,
 		error: activationError,
-	} = usePluginActivation( plugin.name, siteIdOrSlug! );
+	} = usePluginActivation( plugin.name, siteId, options );
 
 	const skipped: SkipStatus = {
 		installation: status?.isInstalled,
@@ -109,10 +110,10 @@ export const usePluginAutoInstallation = (
 			return;
 		}
 
-		if ( instalationRequestStatus === 'idle' ) {
+		if ( installationRequestStatus === 'idle' ) {
 			install();
 		}
-	}, [ install, instalationRequestStatus, skipped?.installation, status ] );
+	}, [ install, installationRequestStatus, skipped?.installation, status ] );
 
 	useEffect( () => {
 		if ( ! status || skipped?.activation ) {
@@ -123,29 +124,44 @@ export const usePluginAutoInstallation = (
 			return;
 		}
 
-		if ( instalationRequestStatus === 'success' || status.isInstalled ) {
+		if ( installationRequestStatus === 'success' || status.isInstalled ) {
 			activatePlugin();
 		}
 	}, [
 		activatePlugin,
-		instalationRequestStatus,
+		installationRequestStatus,
 		activationRequestStatus,
 		skipped?.activation,
 		status,
 	] );
 
 	const error = statusError || installationError || activationError;
-	const installationStatus = skipped?.installation ? 'skipped' : instalationRequestStatus;
+	const installationStatus = skipped?.installation ? 'skipped' : installationRequestStatus;
 	const activationStatus = skipped?.activation ? 'skipped' : activationRequestStatus;
-	const completed = [ installationStatus, activationStatus, provisioningStatus ].every(
-		( status ) => status === 'success' || status === 'skipped'
+	const completed = activationStatus === 'success' || ( skipped?.activation ?? false );
+	const isPending = [ installationStatus, activationStatus, pluginStatus ].some(
+		( status ) => status === 'pending' || status === 'fetching'
 	);
 
+	const getStatus = (): Status => {
+		if ( completed ) {
+			return 'success';
+		}
+
+		if ( isPending ) {
+			return 'pending';
+		}
+
+		if ( error ) {
+			return 'error';
+		}
+
+		return 'idle';
+	};
+
 	return {
-		waitingPluginList: provisioningStatus,
-		installingPlugin: installationStatus,
-		activatingPlugin: activationStatus,
+		status: getStatus(),
 		completed,
-		error,
+		error: ! isPending && error ? error : null,
 	};
 };

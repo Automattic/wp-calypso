@@ -1,5 +1,5 @@
 import formatCurrency from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -36,9 +36,7 @@ export default function ProductPriceWithDiscount( {
 
 	return (
 		<div>
-			<div
-				className={ classNames( 'product-price-with-discount__price', { 'is-compact': compact } ) }
-			>
+			<div className={ clsx( 'product-price-with-discount__price', { 'is-compact': compact } ) }>
 				{ formatCurrency( discountedCost, product.currency ) }
 				{
 					// Display discount info only if there is a discount

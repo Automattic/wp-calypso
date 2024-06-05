@@ -1,5 +1,5 @@
 import { Icon } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -18,7 +18,7 @@ function VideoPressStepWrapper( {
 	const translate = useTranslate();
 
 	return (
-		<div className={ classnames( 'videopress-step-wrapper', 'is-videopress-stepper', className ) }>
+		<div className={ clsx( 'videopress-step-wrapper', 'is-videopress-stepper', className ) }>
 			<div className="videopress-step-wrapper__middle">
 				<div className="videopress-step-wrapper__header">
 					{ headerIcon && (
@@ -35,7 +35,7 @@ function VideoPressStepWrapper( {
 				</div>
 				<StepWrapper
 					hideFormattedHeader
-					shouldHideNavButtons={ true }
+					shouldHideNavButtons
 					flowName={ flowName }
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }

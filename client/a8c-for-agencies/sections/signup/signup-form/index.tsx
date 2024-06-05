@@ -47,10 +47,9 @@ export default function SignupForm() {
 	const onSubmit = useCallback(
 		async ( payload: AgencyDetailsPayload ) => {
 			dispatch( removeNotice( notificationId ) );
-
 			if ( shouldRedirectToWPCOM ) {
 				saveSignupDataToLocalStorage( payload );
-				await handleWPCOMRedirect( payload );
+				handleWPCOMRedirect( payload );
 				return;
 			}
 
@@ -96,7 +95,7 @@ export default function SignupForm() {
 			</h2>
 
 			<AgencyDetailsForm
-				includeTermsOfService={ true }
+				includeTermsOfService
 				isLoading={ createAgency.isPending }
 				onSubmit={ onSubmit }
 				submitLabel={ translate( 'Continue' ) }

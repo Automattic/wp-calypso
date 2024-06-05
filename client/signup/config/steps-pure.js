@@ -1066,6 +1066,10 @@ export function generateSteps( {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
 		},
+		'initial-intent': {
+			stepName: 'initial-intent',
+			providesDependencies: [ 'segmentationSurveyAnswers', 'onboardingSegment' ],
+		},
 	};
 }
 

@@ -52,6 +52,7 @@ export function generateFlows( {
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
+	getEntrepreneurFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
@@ -197,6 +198,17 @@ export function generateFlows( {
 			onEnterFlow: onEnterOnboarding,
 		},
 		{
+			name: 'plans-first',
+			steps: [ 'plans', 'domains', userSocialStep ],
+			destination: getSignupDestination,
+			description: 'Plans first signup flow',
+			lastModified: '2024-05-24',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
+			hideProgressIndicator: true,
+		},
+		{
 			name: 'onboarding-2023-pricing-grid',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ userSocialStep, 'domains', 'emails', 'plans' ]
@@ -231,9 +243,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
-				domains: {
-					useAlternateDomainMessaging: true,
-				},
 				plans: {
 					isCustomDomainAllowedOnFreePlan: true,
 					deemphasizeFreePlan: true,
@@ -398,6 +407,16 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
+			name: 'domain-for-gravatar',
+			steps: [ 'domain-only', 'site-or-domain', 'site-picker' ],
+			destination: getDomainSignupFlowDestination,
+			description: 'Checkout flow for domains on Gravatar',
+			disallowResume: true,
+			lastModified: '2024-05-07',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
 			name: 'site-selected',
 			steps: [ 'plans-site-selected-legacy' ],
 			destination: getSignupDestination,
@@ -520,10 +539,12 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2024-02-09',
+			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePresales: true,
+			enablePresales: false,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'do-it-for-me-store',
@@ -539,10 +560,12 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'The BBE store flow',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2024-02-09',
+			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePresales: true,
+			enablePresales: false,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'website-design-services',
@@ -551,8 +574,8 @@ export function generateFlows( {
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2024-02-09',
-			enablePresales: true,
+			lastModified: '2024-05-16',
+			enablePresales: false,
 		},
 
 		{
@@ -657,6 +680,26 @@ export function generateFlows( {
 				'Create an account and a blog and then add the personal 3y plan to the users cart.',
 			lastModified: '2024-04-17',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'guided',
+			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
+			destination: getSignupDestination,
+			description: 'Choose what brings them to WordPress.com',
+			lastModified: '2024-05-15',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'entrepreneur',
+			steps: [ userSocialStep ],
+			destination: getEntrepreneurFlowDestination,
+			description: 'Entrepreneur Trial signup flow that goes through the trialAcknowledge step',
+			lastModified: '2024-05-29',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 			hideProgressIndicator: true,
 		},
 	];

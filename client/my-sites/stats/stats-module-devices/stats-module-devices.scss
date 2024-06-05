@@ -17,13 +17,15 @@
 	.pie-chart__legend {
 		flex-direction: row;
 		align-items: center;
+		flex-wrap: wrap;
+		column-gap: 20px;
+		row-gap: 12px;
 		padding: 0 20px;
 
 		.legend-item {
 			flex-direction: row;
 
 			&:not(:first-child) {
-				margin-left: 20px;
 				margin-top: 0;
 			}
 		}
@@ -76,10 +78,17 @@
 }
 
 .stats-module-devices__tabs {
+	// Align items by resetting the margin set from the segmented-controls mixin.
+	&.segmented-control {
+		@media (max-width: 660px) {
+			margin-top: 0;
+		}
+	}
+
 	.segmented-control__item {
 		min-width: 80px;
 
-		@media (max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			min-width: auto;
 		}
 	}

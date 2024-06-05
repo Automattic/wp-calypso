@@ -30,8 +30,15 @@ import {
 	type TYPES_LIST,
 	type WPCOM_SPACE_UPGRADE_PRODUCTS,
 	type WPCOM_OTHER_PRODUCTS,
+	type JETPACK_ALIAS_LIST,
 	FEATURE_50GB_STORAGE_ADD_ON,
 	FEATURE_100GB_STORAGE_ADD_ON,
+	FEATURE_GROUP_WEBSITE_BUILDING,
+	FEATURE_GROUP_MANAGED_WP_HOSTING,
+	FEATURE_GROUP_ECOMMERCE,
+	FEATURE_GROUP_SUPPORT,
+	FEATURE_GROUP_STORAGE,
+	FEATURE_GROUP_ALL_FEATURES,
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
@@ -54,7 +61,7 @@ export type FeatureObject = {
 	getFeatureGroup?: () => string;
 	getQuantity?: () => number; // storage add-ons are a quantity based product. this determines checkout price
 	getUnitProductSlug?: () => string; // used for storage add-ons to determine the checkout item
-	getSubFeatureSlugs?: () => Array< string >;
+	getSubFeatureObjects?: () => Array< FeatureObject >;
 };
 
 export type FeatureList = {
@@ -105,10 +112,8 @@ export interface WPComPlan extends Plan {
 	getSignupFeatures?: () => Feature[];
 	getBlogSignupFeatures?: () => Feature[];
 	getPortfolioSignupFeatures?: () => Feature[];
-	getNewsletterDescription?: () => string;
 	getNewsletterSignupFeatures?: () => Feature[];
 	getNewsletterHighlightedFeatures?: () => Feature[];
-	getLinkInBioDescription?: () => string;
 	getLinkInBioSignupFeatures?: () => Feature[];
 	getLinkInBioHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupFeatures?: () => Feature[];
@@ -134,6 +139,7 @@ export type IncompleteWPcomPlan = Partial< WPComPlan > &
  * Jetpack
  */
 export type JetpackProductSlug = ( typeof JETPACK_PRODUCTS_LIST )[ number ];
+export type JetpackAliasSlug = ( typeof JETPACK_ALIAS_LIST )[ number ];
 export type JetpackLegacyPlanSlug = ( typeof JETPACK_LEGACY_PLANS )[ number ];
 export type JetpackYearlyLegacyPlanSlug = ( typeof JETPACK_YEARLY_LEGACY_PLANS )[ number ];
 export type JetpackMonthlyLegacyPlanSlug = ( typeof JETPACK_MONTHLY_LEGACY_PLANS )[ number ];
@@ -201,6 +207,7 @@ export type PurchasableItemSlug = WPComPurchasableItemSlug | JetpackPurchasableI
 export interface Product {
 	product_name: TranslateResult;
 	product_slug: ProductSlug;
+	product_alias?: JetpackAliasSlug;
 	type: ProductSlug;
 	term: ( typeof TERMS_LIST )[ number ];
 	bill_period: ( typeof PERIOD_LIST )[ number ];
@@ -226,10 +233,16 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS
 	| typeof FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS
 	| typeof FEATURE_GROUP_YOUR_STORE
+	| typeof FEATURE_GROUP_WEBSITE_BUILDING
+	| typeof FEATURE_GROUP_MANAGED_WP_HOSTING
+	| typeof FEATURE_GROUP_ECOMMERCE
+	| typeof FEATURE_GROUP_SUPPORT
 	| typeof FEATURE_GROUP_PRODUCTS
 	| typeof FEATURE_GROUP_PAYMENTS
 	| typeof FEATURE_GROUP_MARKETING_EMAIL
-	| typeof FEATURE_GROUP_SHIPPING;
+	| typeof FEATURE_GROUP_SHIPPING
+	| typeof FEATURE_GROUP_STORAGE
+	| typeof FEATURE_GROUP_ALL_FEATURES;
 
 export interface FeatureFootnotes {
 	[ key: string ]: Feature[];
@@ -237,8 +250,8 @@ export interface FeatureFootnotes {
 
 export type FeatureGroup = {
 	slug: FeatureGroupSlug;
-	getTitle: () => string;
-	get2023PricingGridSignupWpcomFeatures: () => Feature[];
+	getTitle: () => string | null;
+	getFeatures: () => Feature[];
 	/**
 	 * This optionally returns an object containing footnotes and the features that should display the footnote.
 	 *

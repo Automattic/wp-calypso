@@ -27,7 +27,15 @@
 
 		.step-section__step-heading {
 			font-size: rem(20px);
+			font-weight: 600;
 			text-wrap: pretty;
 		}
+	}
+}
+
+.referrals-layout--automated,
+.commission-overview__layout-automated {
+	.step-section .step-section__header .step-section__step-heading {
+		font-size: rem(16px);
 	}
 }

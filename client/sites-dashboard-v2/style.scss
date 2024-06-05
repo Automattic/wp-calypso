@@ -4,6 +4,7 @@
 :root {
 	--color-light-backdrop: var(--studio-white);
 }
+
 .main.a4a-layout.sites-dashboard {
 	padding-block-start: 0;
 
@@ -37,13 +38,24 @@
 		padding-block-start: 24px;
 	}
 
-	.item-preview__content {
-		.hosting-overview,
-		.site-monitoring-overview {
-			overflow-y: initial;
-			max-height: initial;
-			padding-bottom: 88px;
+	.sites-dataviews__site {
+		.button {
+			flex-shrink: 0;
+			@include breakpoint-deprecated("<480px") {
+				width: 90px;
+			}
 		}
+		.sites-dataviews__site-name {
+			padding: 0;
+		}
+	}
+	th[data-field-id="actions"] {
+		padding-inline-end: 16px;
+		text-align: end;
+	}
+
+	.dataviews-view-table-wrapper {
+		overflow: auto;
 	}
 
 	@media (min-width: $break-large) {
@@ -66,12 +78,23 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
+			padding-left: 26px;
+		}
+		.dataviews-view-table tr th:last-child,
+		.dataviews-view-table tr td:last-child {
+			padding-right: 26px;
+			width: 20px;
+			white-space: nowrap;
+		}
+	}
+	@media (min-width: $break-huge) {
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
 			padding-left: 64px;
 		}
 		.dataviews-view-table tr th:last-child,
 		.dataviews-view-table tr td:last-child {
 			padding-right: 64px;
-			width: 20px;
 		}
 	}
 
@@ -82,8 +105,6 @@
 	}
 
 	@media (max-width: $break-large) {
-		height: calc(100vh - 120px); /* Matches the offset defined in PR #65520 */
-
 		.section-nav__mobile-header {
 			padding: 13px;
 		}
@@ -139,15 +160,18 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
-			padding: 8px 24px 8px 16px;
+			padding: 8px 16px 8px 16px;
 		}
 		.dataviews-view-table tr td:last-child {
 			padding: 0;
-			padding-inline-end: 8px;
+			padding-inline-end: 16px;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
 			min-width: 40px;
+		}
+		.components-button.is-compact.is-tertiary:not(.dataviews-filters-button) {
+			display: none;
 		}
 
 		.components-button.is-compact.is-tertiary {
@@ -158,7 +182,7 @@
 			padding-bottom: 8px;
 
 			& > :first-child {
-				margin-inline-start: 8px;
+				margin-inline-start: 16px;
 			}
 
 			.components-input-control {
@@ -169,10 +193,6 @@
 				flex: 6;
 			}
 
-			.components-button.is-compact.has-icon {
-				flex: 1;
-				margin-left: -12px;
-			}
 		}
 
 		.sites-overview__stats-trend,
@@ -184,7 +204,7 @@
 			display: none;
 		}
 
-		td:nth-child(n+2):nth-child(-n+5) {
+		.dataviews-view-table-wrapper td:nth-child(n+2):nth-child(-n+5) {
 			display: none;
 		}
 
@@ -207,9 +227,8 @@
 		}
 
 		.dataviews-view-table-wrapper {
+			flex: 1;
 			overflow-y: auto;
-			// Without masterbar
-			max-height: calc(100vh - 285px); /* 285px is the size of all the height above and below the dataviews-view-table-wrapper */
 
 			table {
 				width: 100%;
@@ -223,16 +242,6 @@
 				display: none;
 			}
 
-			th[data-field-id="actions"] {
-				padding-inline-end: 12px;
-				text-align: end;
-			}
-		}
-	}
-
-	@media (max-width: 600px) {
-		.dataviews-view-table-wrapper {
-			max-height: calc(100vh - 323px); /* 323px is the size of all the height above and below the dataviews-view-table-wrapper */
 		}
 	}
 
@@ -258,18 +267,6 @@
 	}
 
 	@media (min-width: $break-large) {
-		&.sites-dashboard__layout {
-			.dataviews-view-table-wrapper {
-				overflow-y: auto;
-				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
-			}
-
-			.is-hiding-navigation .dataviews-view-table-wrapper {
-				overflow-y: auto;
-				max-height: calc(100vh - 277px); /* 277px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
-			}
-		}
-
 		&.sites-dashboard__layout:not(.preview-hidden) {
 			.sites-overview {
 				padding: 0;
@@ -444,7 +441,6 @@
 		}
 
 		.components-base-control {
-			width: 86%;
 			margin-right: 6px;
 		}
 
@@ -500,27 +496,19 @@
 			}
 		}
 
-		.a4a-layout__top-wrapper,
-		.a4a-layout__body {
-			> * {
-				@include breakpoint-deprecated(">660px") {
-					max-width: none;
-				}
-			}
-		}
-
 		.sites-overview {
+			height: 100%;
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
 			background: var(--color-light-backdrop);
 
 			.sites-overview__content {
+				display: flex;
+				flex: 1;
+				height: 100%;
+				overflow: hidden;
 				margin-top: 24px;
-
-				&.is-hiding-navigation {
-					margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
-				}
 			}
 		}
 
@@ -544,8 +532,14 @@
 			width: auto;
 			transition: flex-grow 0.2s;
 			background: var(--color-light-backdrop);
-			max-height: calc(100vh - 32px);
+			max-height: calc(100vh - 32px - var(--masterbar-height));
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
+			.preview-pane__navigation {
+				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);
+				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
+				padding-top: 1px;
+				clip-path: inset(2px -1px -1px -1px);
+			}
 		}
 
 		.site-preview__open {
@@ -567,6 +561,19 @@
 				.sites-overview {
 					padding: 0;
 
+					.dataviews-filters__view-actions {
+						& > :first-child {
+							margin-inline-start: 26px;
+						}
+
+						& > :last-child {
+							margin-inline-end: 26px;
+						}
+					}
+				}
+			}
+			@media only screen and (min-width: $break-huge) {
+				.sites-overview {
 					.dataviews-filters__view-actions {
 						& > :first-child {
 							margin-inline-start: 64px;
@@ -1098,6 +1105,15 @@
 	}
 }
 
+.dataviews-pagination {
+	box-sizing: border-box;
+	width: 100%;
+
+	.components-input-control__container > div.components-input-control__backdrop {
+		border-color: var(--color-border-subtle);
+	}
+}
+
 /* See wp-calypso/client/layout/style.scss for the original style - this is removed on sites dashboard to enable pagination to display properly. */
 .layout__primary .preview-hidden {
 	@include breakpoint-deprecated( ">960px" ) {
@@ -1105,3 +1121,8 @@
 	}
 }
 
+.layout__content {
+	@include breakpoint-deprecated( "<960px" ) {
+		padding: 70px 24px 24px calc(var(--sidebar-width-min) + 1px);
+	}
+}

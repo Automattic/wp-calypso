@@ -1,5 +1,9 @@
-import classNames from 'classnames';
+import page from '@automattic/calypso-router';
+import { Icon, starEmpty } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useState } from 'react';
+import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/sections/overview/sidebar/contact-support';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
@@ -10,10 +14,14 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { A4A_OVERVIEW_LINK } from '../sidebar-menu/lib/constants';
+import UserFeedbackModalForm from '../user-feedback-modal-form';
 import SidebarHeader from './header';
 import ProfileDropdown from './header/profile-dropdown';
 
 import './style.scss';
+
+const USER_FEEDBACK_FORM_URL_HASH = '#product-feedback';
 
 type Props = {
 	className?: string;
@@ -54,8 +62,24 @@ const A4ASidebar = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	// Determine whether to initially show the user feedback form.
+	const shouldShowUserFeedbackForm = window.location.hash === USER_FEEDBACK_FORM_URL_HASH;
+
+	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState( shouldShowUserFeedbackForm );
+
+	const onShareProductFeedback = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_share_product_feedback_click' ) );
+		setShowUserFeedbackForm( true );
+	}, [ dispatch ] );
+
+	const onCloseUserFeedbackForm = useCallback( () => {
+		// Remove any hash from the URL.
+		history.pushState( null, '', window.location.pathname + window.location.search );
+		setShowUserFeedbackForm( false );
+	}, [] );
+
 	return (
-		<Sidebar className={ classNames( 'a4a-sidebar', className ) }>
+		<Sidebar className={ clsx( 'a4a-sidebar', className ) }>
 			<SidebarHeader withProfileDropdown={ ! withUserProfileFooter } />
 
 			<SidebarMain>
@@ -87,14 +111,14 @@ const A4ASidebar = ( {
 				<ul>
 					{ withGetHelpLink && (
 						<SidebarNavigatorMenuItem
-							isExternalLink
 							title={ translate( 'Get help', {
 								comment: 'A4A sidebar navigation item',
 							} ) }
-							link="https://agencies.automattic.com/support"
+							link=""
 							path=""
 							icon={ <JetpackIcons icon="help" /> }
 							onClickMenuItem={ () => {
+								page( A4A_OVERVIEW_LINK + CONTACT_URL_HASH_FRAGMENT );
 								dispatch(
 									recordTracksEvent( 'calypso_a4a_sidebar_menu_click', {
 										menu_item: 'A4A / Support',
@@ -104,9 +128,21 @@ const A4ASidebar = ( {
 						/>
 					) }
 
+					<SidebarNavigatorMenuItem
+						title={ translate( 'Share product feedback', {
+							comment: 'A4A sidebar navigation item',
+						} ) }
+						link={ USER_FEEDBACK_FORM_URL_HASH }
+						path=""
+						icon={ <Icon icon={ starEmpty } /> }
+						onClickMenuItem={ onShareProductFeedback }
+					/>
+
 					{ withUserProfileFooter && <ProfileDropdown dropdownPosition="up" /> }
 				</ul>
 			</SidebarFooter>
+
+			<UserFeedbackModalForm show={ showUserFeedbackForm } onClose={ onCloseUserFeedbackForm } />
 		</Sidebar>
 	);
 };

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
@@ -15,12 +15,13 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
+import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getIntervalType } from './util';
@@ -95,7 +96,7 @@ export class PlansStep extends Component {
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
-			deemphasizeFreePlan,
+			deemphasizeFreePlan: deemphasizeFreePlanFromProps,
 			hideFreePlan,
 			isLaunchPage,
 			selectedSite,
@@ -116,12 +117,25 @@ export class PlansStep extends Component {
 		}
 
 		const { signupDependencies } = this.props;
-		const { siteUrl, domainItem, siteTitle, username, coupon } = signupDependencies;
+		const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
+			signupDependencies;
+
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
+
+		const surveyedIntent = flowName === 'guided' ? segmentSlug : undefined;
+
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
 		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
 			freeWPComSubdomain = siteUrl;
 		}
+
+		// De-emphasize the Free plan as a CTA link on the main onboarding flow, and the guided flow, when a paid domain is picked.
+		// More context can be found in p2-p5uIfZ-f5p
+		const deemphasizeFreePlan =
+			( [ 'onboarding', 'guided' ].includes( flowName ) && paidDomainName != null ) ||
+			deemphasizeFreePlanFromProps;
+
 		return (
 			<div>
 				{ errorDisplay }
@@ -132,7 +146,7 @@ export class PlansStep extends Component {
 					signupFlowUserName={ username }
 					siteId={ selectedSite?.ID }
 					isCustomDomainAllowedOnFreePlan={ this.props.isCustomDomainAllowedOnFreePlan }
-					isInSignup={ true }
+					isInSignup
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
 					displayedIntervals={ this.props.displayedIntervals }
@@ -141,7 +155,7 @@ export class PlansStep extends Component {
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					plansWithScroll={ this.state.isDesktop }
-					intent={ intent }
+					intent={ intent || surveyedIntent }
 					flowName={ flowName }
 					hideFreePlan={ hideFreePlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
@@ -252,7 +266,7 @@ export class PlansStep extends Component {
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
 					isWideLayout={ false }
-					isExtraWideLayout={ true }
+					isExtraWideLayout
 					stepContent={ this.plansFeaturesList() }
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }
@@ -264,7 +278,7 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const classes = classNames( 'plans plans-step', {
+		const classes = clsx( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': false,
 			'is-extra-wide-layout': true,
@@ -328,7 +342,7 @@ export default connect(
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
-		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+		hasInitializedSitesBackUrl: getCurrentUserSiteCount( state ) ? '/sites/' : false,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

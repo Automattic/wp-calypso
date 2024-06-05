@@ -7,7 +7,7 @@ import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { capitalize, find, flow, isEmpty } from 'lodash';
 import { Component } from 'react';
@@ -461,7 +461,7 @@ export class PluginsMain extends Component {
 		const selectedTextContent = (
 			<span>
 				{ title }
-				{ count ? <Count count={ count } compact={ true } /> : null }
+				{ count ? <Count count={ count } compact /> : null }
 			</span>
 		);
 
@@ -477,91 +477,96 @@ export class PluginsMain extends Component {
 					<QueryJetpackSitesFeatures />
 				) }
 				{ this.renderPageViewTracking() }
-				{ ! isJetpackCloud && (
-					<NavigationHeader
-						navigationItems={ [] }
-						title={ pageTitle }
-						subtitle={
-							this.props.selectedSite
-								? this.props.translate( 'Manage all plugins installed on %(selectedSite)s', {
-										args: {
-											selectedSite: this.props.selectedSite.domain,
-										},
-								  } )
-								: this.props.translate( 'Manage plugins installed on all sites' )
-						}
+				<div className="plugin-management-wrapper">
+					{ ! isJetpackCloud && (
+						<NavigationHeader
+							navigationItems={ [] }
+							title={ pageTitle }
+							subtitle={
+								this.props.selectedSite
+									? this.props.translate( 'Manage all plugins installed on %(selectedSite)s', {
+											args: {
+												selectedSite: this.props.selectedSite.domain,
+											},
+									  } )
+									: this.props.translate( 'Manage plugins installed on all sites' )
+							}
+						>
+							{ ! isJetpackCloud && (
+								<>
+									{ this.renderAddPluginButton() }
+									{ this.renderUploadPluginButton() }
+									<UpdatePlugins isWpCom plugins={ currentPlugins } />
+								</>
+							) }
+						</NavigationHeader>
+					) }
+					<div
+						className={ clsx( 'plugins__top-container', {
+							'plugins__top-container-jc': isJetpackCloud,
+						} ) }
 					>
-						{ ! isJetpackCloud && (
-							<>
-								{ this.renderAddPluginButton() }
-								{ this.renderUploadPluginButton() }
-								<UpdatePlugins isWpCom plugins={ currentPlugins } />
-							</>
-						) }
-					</NavigationHeader>
-				) }
-				<div
-					className={ classNames( 'plugins__top-container', {
-						'plugins__top-container-jc': isJetpackCloud,
-					} ) }
-				>
-					<div className="plugins__content-wrapper">
-						<MissingPaymentNotification />
+						<div className="plugins__content-wrapper">
+							<MissingPaymentNotification />
 
-						{ isJetpackCloud && (
-							<div className="plugins__page-title-container">
-								<div className="plugins__header-left-content">
-									<h2 className="plugins__page-title">{ pageTitle }</h2>
-									<div className="plugins__page-subtitle">
-										{ this.props.selectedSite
-											? this.props.translate( 'Manage all plugins installed on %(selectedSite)s', {
-													args: {
-														selectedSite: this.props.selectedSite.domain,
-													},
-											  } )
-											: this.props.translate( 'Manage plugins installed on all sites' ) }
+							{ isJetpackCloud && (
+								<div className="plugins__page-title-container">
+									<div className="plugins__header-left-content">
+										<h2 className="plugins__page-title">{ pageTitle }</h2>
+										<div className="plugins__page-subtitle">
+											{ this.props.selectedSite
+												? this.props.translate(
+														'Manage all plugins installed on %(selectedSite)s',
+														{
+															args: {
+																selectedSite: this.props.selectedSite.domain,
+															},
+														}
+												  )
+												: this.props.translate( 'Manage plugins installed on all sites' ) }
+										</div>
 									</div>
 								</div>
-							</div>
-						) }
-						<div className="plugins__main plugins__main-updated">
-							<div className="plugins__main-header">
-								<SectionNav
-									applyUpdatedStyles
-									selectedText={ selectedTextContent }
-									className="plugins-section-nav"
-								>
-									<NavTabs selectedText={ title } selectedCount={ count }>
-										{ navItems }
-									</NavTabs>
-								</SectionNav>
+							) }
+							<div className="plugins__main plugins__main-updated">
+								<div className="plugins__main-header">
+									<SectionNav
+										applyUpdatedStyles
+										selectedText={ selectedTextContent }
+										className="plugins-section-nav"
+									>
+										<NavTabs selectedText={ title } selectedCount={ count }>
+											{ navItems }
+										</NavTabs>
+									</SectionNav>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div
-					className={ classNames( 'plugins__main-content', {
-						'plugins__main-content-jc': isJetpackCloud,
-					} ) }
-				>
-					<div className="plugins__content-wrapper">
-						{
-							// Hide the search box only when the request to fetch plugins fail, and there are no sites.
-							! ( this.props.requestPluginsError && ! currentPlugins?.length ) && (
-								<div className="plugins__search">
-									<Search
-										hideFocus
-										isOpen
-										onSearch={ this.props.doSearch }
-										initialValue={ this.props.search }
-										hideClose={ ! this.props.search }
-										analyticsGroup="Plugins"
-										placeholder={ this.props.translate( 'Search plugins' ) }
-									/>
-								</div>
-							)
-						}
-						{ this.renderPluginsContent() }
+					<div
+						className={ clsx( 'plugins__main-content', {
+							'plugins__main-content-jc': isJetpackCloud,
+						} ) }
+					>
+						<div className="plugins__content-wrapper">
+							{
+								// Hide the search box only when the request to fetch plugins fail, and there are no sites.
+								! ( this.props.requestPluginsError && ! currentPlugins?.length ) && (
+									<div className="plugins__search">
+										<Search
+											hideFocus
+											isOpen
+											onSearch={ this.props.doSearch }
+											initialValue={ this.props.search }
+											hideClose={ ! this.props.search }
+											analyticsGroup="Plugins"
+											placeholder={ this.props.translate( 'Search plugins' ) }
+										/>
+									</div>
+								)
+							}
+							{ this.renderPluginsContent() }
+						</div>
 					</div>
 				</div>
 			</>

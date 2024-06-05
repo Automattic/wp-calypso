@@ -7,7 +7,7 @@ import {
 	moreVertical,
 	check,
 } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
 import ComponentSwapper from '../component-swapper';
@@ -96,7 +96,7 @@ const HighlightCardsSettings = function ( {
 				isVisible={ showTooltip }
 				position="bottom left"
 				context={ settingsActionRef.current }
-				autoRepositionOnInitialLoad={ true }
+				autoRepositionOnInitialLoad
 			>
 				<div className="highlight-card-tooltip-content">
 					<p>
@@ -252,7 +252,7 @@ export default function WeeklyHighlightCards( {
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 
 	return (
-		<div className={ classNames( 'highlight-cards', className ?? null ) }>
+		<div className={ clsx( 'highlight-cards', className ?? null ) }>
 			<h3 className="highlight-cards-heading">
 				<span>
 					{ currentPeriod === PAST_THIRTY_DAYS

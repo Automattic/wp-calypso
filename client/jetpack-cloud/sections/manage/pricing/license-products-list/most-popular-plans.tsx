@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { FeaturedLicenseItemCard } from './featured-license-item-card';
 import { FeaturedLicenseMultiItemCard } from './featured-license-multi-item-card';
@@ -19,7 +19,7 @@ export const MostPopularPlans = ( {
 	items,
 	bundleSize,
 }: MostPopularPlansProps ) => {
-	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
+	const wrapperClassName = clsx( 'jetpack-product-store__most-popular', className );
 
 	return (
 		<div className={ wrapperClassName }>
@@ -40,7 +40,7 @@ export const MostPopularPlans = ( {
 								<FeaturedLicenseMultiItemCard
 									variants={ item }
 									bundleSize={ supportedBundleSize }
-									ctaAsPrimary={ true }
+									ctaAsPrimary
 									isCtaDisabled={ false }
 									isCtaExternal={ false }
 								/>
@@ -48,7 +48,7 @@ export const MostPopularPlans = ( {
 								<FeaturedLicenseItemCard
 									item={ item }
 									bundleSize={ supportedBundleSize }
-									ctaAsPrimary={ true }
+									ctaAsPrimary
 									isCtaDisabled={ false }
 									isCtaExternal={ false }
 								/>

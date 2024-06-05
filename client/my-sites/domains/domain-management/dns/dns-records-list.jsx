@@ -18,6 +18,7 @@ import DomainConnectInfoDialog from './domain-connect-info-dialog';
 class DnsRecordsList extends Component {
 	static propTypes = {
 		dns: PropTypes.object.isRequired,
+		selectedDOmain: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
@@ -230,12 +231,15 @@ class DnsRecordsList extends Component {
 	}
 
 	render() {
-		const { dns, selectedDomainName, selectedSite } = this.props;
+		const { dns, selectedDomain, selectedDomainName, selectedSite } = this.props;
 		const { dialog } = this.state;
 
 		let domainConnectRecordIsEnabled = false;
 		const dnsRecordsList = dns.records.map( ( dnsRecord, index ) => {
-			if ( 'NS' === dnsRecord.type ) {
+			const isRootRecord = dnsRecord.name === `${ selectedDomainName }.`;
+
+			// We want to hide root NS records for root domains, but not for subdomains
+			if ( 'NS' === dnsRecord.type && ! selectedDomain.isSubdomain && isRootRecord ) {
 				return;
 			}
 
@@ -250,7 +254,7 @@ class DnsRecordsList extends Component {
 					dnsRecord={ dnsRecord }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
-					enabled={ true }
+					enabled
 					actions={ this.getActionsForDnsRecord( dnsRecord ) }
 				/>
 			);

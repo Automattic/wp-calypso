@@ -1,7 +1,9 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { APIError } from '@automattic/data-stores';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalText as Text } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import { handleErrorMessage } from 'calypso/blocks/plugin-scheduled-updates-common/error-utils';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateUpdateScheduleMutation,
@@ -16,8 +18,8 @@ import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleFormFrequency } from './schedule-form-frequency';
 import { ScheduleFormPaths } from './schedule-form-paths';
 import { ScheduleFormPlugins } from './schedule-form-plugins';
-import { validatePlugins, validateTimeSlot } from './schedule-form.helper';
-import type { SyncSuccessParams } from './types';
+import { validatePaths, validatePlugins, validateTimeSlot } from './schedule-form.helper';
+import type { PathsOnChangeEvent, SyncSuccessParams } from './types';
 
 import './schedule-form.scss';
 
@@ -29,7 +31,7 @@ interface Props {
 export const ScheduleForm = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const isMobile = useMobileBreakpoint();
+	const isSmallScreen = useBreakpoint( '<660px' );
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
 
@@ -49,6 +51,8 @@ export const ScheduleForm = ( props: Props ) => {
 		scheduleForEdit?.health_check_paths || []
 	);
 
+	const [ hasUnsubmittedPath, setHasUnsubmittedPath ] = useState( false );
+
 	const scheduledTimeSlots = schedules.map( ( schedule ) => ( {
 		timestamp: schedule.timestamp,
 		frequency: schedule.schedule,
@@ -57,6 +61,7 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {
 		plugins: validatePlugins( selectedPlugins, scheduledPlugins ),
 		timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
+		paths: validatePaths( hasUnsubmittedPath ),
 	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
@@ -70,7 +75,7 @@ export const ScheduleForm = ( props: Props ) => {
 				weekday: frequency === 'weekly' ? date.getDay() : undefined,
 			} );
 		},
-		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
+		onError: ( e: APIError ) => onSyncError && onSyncError( handleErrorMessage( e ) ),
 	};
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
 	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
@@ -85,6 +90,7 @@ export const ScheduleForm = ( props: Props ) => {
 		setFieldTouched( {
 			plugins: true,
 			timestamp: true,
+			paths: true,
 		} );
 
 		const params = {
@@ -92,8 +98,11 @@ export const ScheduleForm = ( props: Props ) => {
 			schedule: {
 				timestamp,
 				interval: frequency,
+				// Temporary: this field is left here for backward compatibility.
+				// Will be removed after https://github.com/Automattic/jetpack/pull/37223 is landed.
 				health_check_paths: healthCheckPaths,
 			},
+			health_check_paths: healthCheckPaths,
 		};
 
 		if ( formValid ) {
@@ -122,6 +131,21 @@ export const ScheduleForm = ( props: Props ) => {
 			} ),
 		[ timestamp ]
 	);
+
+	// Paths validation
+	useEffect(
+		() =>
+			setValidationErrors( {
+				...validationErrors,
+				paths: validatePaths( hasUnsubmittedPath ),
+			} ),
+		[ hasUnsubmittedPath ]
+	);
+
+	const onPathChange = ( data: PathsOnChangeEvent ) => {
+		setHealthCheckPaths( data.paths );
+		setHasUnsubmittedPath( data.hasUnsubmittedPath );
+	};
 
 	return (
 		<form
@@ -153,7 +177,7 @@ export const ScheduleForm = ( props: Props ) => {
 				selectedPlugins={ selectedPlugins }
 				isPluginsFetching={ isPluginsFetching }
 				isPluginsFetched={ isPluginsFetched }
-				borderWrapper={ ! isMobile }
+				borderWrapper={ ! isSmallScreen }
 				error={ validationErrors?.plugins }
 				showError={ fieldTouched?.plugins }
 				onChange={ setSelectedPlugins }
@@ -166,7 +190,12 @@ export const ScheduleForm = ( props: Props ) => {
 			<ScheduleFormPaths
 				paths={ healthCheckPaths }
 				borderWrapper={ false }
-				onChange={ setHealthCheckPaths }
+				onChange={ onPathChange }
+				error={ validationErrors?.paths }
+				showError={ fieldTouched?.paths }
+				onTouch={ ( touched ) => {
+					setFieldTouched( { ...fieldTouched, paths: touched } );
+				} }
 			/>
 		</form>
 	);

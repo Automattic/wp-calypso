@@ -88,9 +88,7 @@ export default function AgencySignupFinish() {
 				size={ 48 }
 			/>
 			<h1 className="agency-signup-finish__text">
-				{ translate(
-					`We're setting up your agency account! This usually takes about 10-30 seconds. Soon you'll manage all your sites from one spot.`
-				) }
+				{ translate( 'Please hold, great things are coming.' ) }
 			</h1>
 		</div>
 	);

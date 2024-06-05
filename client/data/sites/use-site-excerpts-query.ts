@@ -14,14 +14,15 @@ export type SiteVisibility = 'all' | 'deleted';
 
 const fetchSites = (
 	site_visibility: SiteVisibility = 'all',
-	siteFilter = config< string[] >( 'site_filter' )
+	siteFilter = config< string[] >( 'site_filter' ),
+	additional_fields: string[] = []
 ): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	return wpcom.me().sites( {
 		apiVersion: '1.2',
 		site_visibility,
 		include_domain_only: true,
 		site_activity: 'active',
-		fields: SITE_EXCERPT_REQUEST_FIELDS.join( ',' ),
+		fields: additional_fields.concat( SITE_EXCERPT_REQUEST_FIELDS ).join( ',' ),
 		options: SITE_EXCERPT_REQUEST_OPTIONS.join( ',' ),
 		filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 	} );
@@ -30,7 +31,8 @@ const fetchSites = (
 export const useSiteExcerptsQuery = (
 	fetchFilter?: string[],
 	sitesFilterFn?: ( site: SiteExcerptData ) => boolean,
-	site_visibility: SiteVisibility = 'all'
+	site_visibility: SiteVisibility = 'all',
+	additional_fields: string[] = []
 ) => {
 	const store = useStore();
 
@@ -41,23 +43,11 @@ export const useSiteExcerptsQuery = (
 			SITE_EXCERPT_REQUEST_OPTIONS,
 			fetchFilter,
 			site_visibility,
+			additional_fields,
 		],
-		queryFn: () => fetchSites( site_visibility, fetchFilter ),
+		queryFn: () => fetchSites( site_visibility, fetchFilter, additional_fields ),
 		select: ( data ) => {
-			let sites = data?.sites.map( computeFields( data?.sites ) ) || [];
-
-			if ( site_visibility === 'deleted' ) {
-				// If we got the site data from Redux store (see `initialData` below),
-				// then we can't rely on the `site_visibility` parameter to know
-				// whether the site is deleted or not. We use the `site_owner` field
-				// to infer the `is_deleted` status.
-				sites = sites.filter( ( site ) => site.site_owner === undefined );
-
-				sites.forEach( ( site ) => {
-					site.is_deleted = true;
-				} );
-			}
-
+			const sites = data?.sites.map( computeFields( data?.sites ) ) || [];
 			return sitesFilterFn ? sites.filter( sitesFilterFn ) : sites;
 		},
 		initialData: () => {

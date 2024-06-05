@@ -47,6 +47,7 @@ $button-padding: 8px 32px;
 				.components-checkbox-control__label {
 					font-size: var(--font-body);
 					line-height: 24px;
+					width: auto;
 					color: var(--jp-black);
 				}
 			}
@@ -179,6 +180,29 @@ $button-padding: 8px 32px;
 			font-size: $font-headline-small;
 			font-weight: 700;
 			line-height: 40px;
+		}
+
+		a {
+			color: var(--studio-black);
+			text-decoration: underline;
+			font-weight: bolder;
+		}
+	}
+
+	.stats-purchase-wizard__card-inner--single {
+		padding: 64px;
+		box-sizing: border-box;
+		flex: 2 2 auto;
+
+		p {
+			width: 36em;
+			@media (max-width: $break-medium) {
+				width: unset;
+			}
+		}
+
+		@media (max-width: $break-medium) {
+			padding: 32px 24px;
 		}
 	}
 
@@ -513,12 +537,14 @@ $button-padding: 8px 32px;
 	}
 
 	.stats-purchase-wizard__notice {
+		margin: 12px 0;
 		padding: 12px 16px;
 		background: var(--studio-yellow-5);
 		border-radius: 4px;
 
 		.is-link {
 			color: var(--jp-black);
+			font-weight: normal;
 		}
 	}
 
@@ -545,28 +571,13 @@ $button-padding: 8px 32px;
 		line-height: 40px;
 		margin-bottom: 24px;
 	}
-
-	.components-button + button.components-button {
-		margin-left: 12px;
-	}
 }
 
 .stats-purchase-wizard__actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 12px;
-
-	margin: 12px 0;
-
-	.components-button + button.components-button {
-		margin: 0;
-	}
-
-	button {
-		@media (max-width: $break-small) {
-			width: 100%;
-			justify-content: center;
-		}
+	.components-button {
+		display: block;
+		width: 100%;
+		margin-bottom: 12px;
 	}
 }
 
@@ -588,4 +599,11 @@ $button-padding: 8px 32px;
 	font-style: italic;
 	font-size: $font-body-small;
 	margin-top: 24px;
+}
+
+.stats-purchase-page__footnotes {
+	margin-top: 24px;
+	color: var(--gray-gray-50);
+	font-size: $font-body-small;
+	text-align: center;
 }

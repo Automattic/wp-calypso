@@ -32,7 +32,7 @@ $left-margin: 36px;
 		width: 800px;
 	}
 
-	@media ( min-width: 480px ) {
+	@media (min-width: 480px) {
 		padding: 0;
 	}
 }
@@ -234,6 +234,11 @@ $left-margin: 36px;
 .purchase-modal__tax {
 	font-weight: normal;
 	color: var(--color-neutral-40);
+	font-size: $font-body-small;
+}
+
+.purchase-modal__coupon {
+	font-weight: normal;
 	font-size: $font-body-small;
 }
 

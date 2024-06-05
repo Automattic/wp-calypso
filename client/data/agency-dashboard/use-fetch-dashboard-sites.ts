@@ -1,16 +1,16 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import wpcom, { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import type {
 	AgencyDashboardFilter,
 	DashboardSortInterface,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
-const client = isEnabled( 'a8c-for-agencies' ) ? wpcom : wpcomJpl;
+const client = isA8CForAgencies() ? wpcom : wpcomJpl;
 
 const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => {
 	return {
-		...filter.issueTypes?.reduce(
+		...filter?.issueTypes?.reduce(
 			( previousValue, currentValue ) => ( {
 				...previousValue,
 				[ currentValue ]: true,
@@ -18,17 +18,19 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => 
 			{}
 		),
 		...( filter.showOnlyFavorites && { show_only_favorites: true } ),
+		...( filter.isNotMultisite && { not_multisite: true } ),
+		...( filter?.showOnlyFavorites && { show_only_favorites: true } ),
 	};
 };
 
 const agencyDashboardSortToQueryObject = ( sort: DashboardSortInterface ) => {
 	return {
-		...( sort.field && { sort_field: sort.field } ),
-		...( sort.direction && { sort_direction: sort.direction } ),
+		...( sort?.field && { sort_field: sort.field } ),
+		...( sort?.direction && { sort_direction: sort.direction } ),
 	};
 };
 
-interface FetchDashboardSitesArgsInterface {
+export interface FetchDashboardSitesArgsInterface {
 	isPartnerOAuthTokenLoaded: boolean;
 	searchQuery: string;
 	currentPage: number;
@@ -69,8 +71,7 @@ const useFetchDashboardSites = ( {
 		];
 	}
 
-	const isAgencyOrPartnerAuthEnabled =
-		isPartnerOAuthTokenLoaded || ( agencyId !== undefined && agencyId !== null );
+	const isAgencyOrPartnerAuthEnabled = isPartnerOAuthTokenLoaded || !! agencyId;
 
 	return useQuery( {
 		// Disable eslint rule since TS isn't grasping that agencyId is being optionally added to the array
@@ -83,12 +84,12 @@ const useFetchDashboardSites = ( {
 					apiNamespace: 'wpcom/v2',
 				},
 				{
-					...( searchQuery && { query: searchQuery } ),
-					...( currentPage && { page: currentPage } ),
+					...( searchQuery ? { query: searchQuery } : {} ),
+					...( currentPage ? { page: currentPage } : {} ),
 					...agencyDashboardFilterToQueryObject( filter ),
 					...agencyDashboardSortToQueryObject( sort ),
 					per_page: perPage,
-					...( agencyId && { agency_id: agencyId } ),
+					...( agencyId ? { agency_id: agencyId } : {} ),
 				}
 			),
 		select: ( data ) => {

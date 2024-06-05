@@ -82,6 +82,7 @@ const stepNameToModuleName = {
 	'difm-page-picker': 'page-picker',
 	'website-content': 'website-content',
 	intent: 'intent',
+	'initial-intent': 'initial-intent',
 	'store-address': 'woocommerce-install/step-store-address',
 	'business-info': 'woocommerce-install/step-business-info',
 	confirm: 'woocommerce-install/confirm',

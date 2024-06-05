@@ -28,9 +28,11 @@
 	"oauth_client_id": 95931,
 	"features": {
 		"a8c-for-agencies": true,
-		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": false,
+		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
+		"a8c-for-agencies/import-site-from-wpcom": true,
 		"oauth": true,
-		"a4a/site-details-pane": true
+		"a4a/site-details-pane": true,
+		"a4a-logged-out-signup": true
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -42,7 +44,11 @@
 		"a8c-for-agencies-sites": true,
 		"a8c-for-agencies-marketplace": true,
 		"a8c-for-agencies-purchases": true,
-		"a8c-for-agencies-signup": true
+		"a8c-for-agencies-signup": true,
+		"a8c-for-agencies-referrals": true,
+		"a8c-for-agencies-settings": false,
+		"a8c-for-agencies-partner-directory": false,
+		"a8c-for-agencies-migrations": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

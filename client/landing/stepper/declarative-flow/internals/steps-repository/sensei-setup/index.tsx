@@ -3,7 +3,7 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { CSSProperties, useEffect, useRef } from 'react';
 import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -44,7 +44,7 @@ const ThemeStylePreviews = ( {
 					return (
 						<div
 							key={ name }
-							className={ classnames( 'sensei-theme-item', { selected: name === active } ) }
+							className={ clsx( 'sensei-theme-item', { selected: name === active } ) }
 						>
 							<div className={ `sensei-theme ${ name }` }></div>
 						</div>
@@ -128,7 +128,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 					/>
 					{ hasSubmitted && ! siteTitle && (
 						<FormInputValidation
-							isError={ true }
+							isError
 							text={ __( `Oops. Looks like your course site doesn't have a name yet.` ) }
 						/>
 					) }

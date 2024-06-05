@@ -4,7 +4,7 @@ import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -17,7 +17,6 @@ import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface Props {
 	children: React.ReactNode;
-	isEligibleForTrialPlan: boolean;
 }
 
 export const UpgradePlanDetails = ( props: Props ) => {
@@ -25,7 +24,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ showFeatures, setShowFeatures ] = useState( false );
 
-	const { children, isEligibleForTrialPlan } = props;
+	const { children } = props;
 	const [ selectedPlan, setSelectedPlan ] = useState<
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
 	>( PLAN_BUSINESS );
@@ -46,21 +45,21 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	}, [ plan ] );
 
 	return (
-		<div className={ classnames( 'import__upgrade-plan-details' ) }>
+		<div className="import__upgrade-plan-details">
 			<QueryPlans />
 
-			<div className={ classnames( 'import__upgrade-plan-period-switcher' ) }>
+			<div className="import__upgrade-plan-period-switcher">
 				<ButtonGroup>
 					<Button
-						borderless={ true }
-						className={ classnames( { selected: selectedPlan === PLAN_BUSINESS_MONTHLY } ) }
+						borderless
+						className={ clsx( { selected: selectedPlan === PLAN_BUSINESS_MONTHLY } ) }
 						onClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
 					>
 						{ __( 'Pay monthly' ) }
 					</Button>
 					<Button
-						borderless={ true }
-						className={ classnames( { selected: selectedPlan === PLAN_BUSINESS } ) }
+						borderless
+						className={ clsx( { selected: selectedPlan === PLAN_BUSINESS } ) }
 						onClick={ () => setSelectedPlan( PLAN_BUSINESS ) }
 					>
 						{ __( 'Pay annually' ) }
@@ -68,14 +67,9 @@ export const UpgradePlanDetails = ( props: Props ) => {
 				</ButtonGroup>
 			</div>
 
-			<div
-				className={ classnames( 'import__upgrade-plan-container', {
-					'feature-list-expanded': showFeatures,
-					'is-not-eligible-for-trial-plan': ! isEligibleForTrialPlan,
-				} ) }
-			>
-				<div className={ classnames( 'import__upgrade-plan-features-container' ) }>
-					<div className={ classnames( 'import__upgrade-plan-header' ) }>
+			<div className="import__upgrade-plan-container">
+				<div className="import__upgrade-plan-features-container">
+					<div className="import__upgrade-plan-header">
 						<Plans2023Tooltip
 							text={ __(
 								'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
@@ -92,17 +86,17 @@ export const UpgradePlanDetails = ( props: Props ) => {
 						<p>{ __( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
 					</div>
 
-					<div className={ classnames( 'import__upgrade-plan-price' ) }>
+					<div className="import__upgrade-plan-price">
 						<PlanPrice rawPrice={ rawPrice ?? undefined } currencyCode={ currencyCode } />
-						<span className={ classnames( 'plan-time-frame' ) }>
+						<span className="plan-time-frame">
 							<small>{ plan?.getBillingTimeFrame() }</small>
 							<small>{ __( 'Refundable within 14 days. No questions asked.' ) }</small>
 						</span>
 					</div>
 
-					<div className={ classnames( 'import__upgrade-plan-cta' ) }>{ children }</div>
+					<div className="import__upgrade-plan-cta">{ children }</div>
 
-					<div className={ classnames( 'import__upgrade-plan-features-list' ) }>
+					<div className="import__upgrade-plan-features-list">
 						<UpgradePlanFeatureList
 							plan={ plan }
 							showFeatures={ showFeatures }
