@@ -21,7 +21,7 @@ export function formatDate( date, period ) {
 		case 'day':
 			return momentizedDate.format( 'LL' );
 		case 'week':
-			return momentizedDate.format( 'L' ) + ' - ' + momentizedDate.add( 6, 'days' ).format( 'L' );
+			return momentizedDate.format( 'LL' ) + ' - ' + momentizedDate.add( 6, 'days' ).format( 'LL' );
 		case 'month':
 			return momentizedDate.format( 'MMMM YYYY' );
 		case 'year':
