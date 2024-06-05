@@ -60,26 +60,25 @@ const SearchBox: FC< {
 		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
 
 	return (
-		<div className="search-categories__searchbox">
-			<Search
-				ref={ searchBoxRef }
-				pinned={ isMobile }
-				fitsContainer={ isMobile }
-				onSearch={ pageToSearch }
-				defaultValue={ searchTerm }
-				searchMode="on-enter"
-				placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
-					args: { searchTermSuggestion },
-					textOnly: true,
-				} ) }
-				delaySearch={ false }
-				recordEvent={ recordSearchEvent }
-				searching={ isSearching }
-				submitOnOpenIconClick
-				openIconSide="right"
-				displayOpenAndCloseIcons
-			/>
-		</div>
+		<Search
+			className="search-categories__searchbox"
+			ref={ searchBoxRef }
+			pinned={ isMobile }
+			fitsContainer={ isMobile }
+			onSearch={ pageToSearch }
+			defaultValue={ searchTerm }
+			searchMode="on-enter"
+			placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
+				args: { searchTermSuggestion },
+				textOnly: true,
+			} ) }
+			delaySearch={ false }
+			recordEvent={ recordSearchEvent }
+			searching={ isSearching }
+			submitOnOpenIconClick
+			openIconSide="right"
+			displayOpenAndCloseIcons
+		/>
 	);
 };
 
@@ -123,16 +122,14 @@ const SearchCategories: FC< {
 	return (
 		<>
 			<div className={ clsx( 'search-categories', { 'fixed-top': isSticky } ) }>
-				<div className="search-categories__search">
-					<SearchBox
-						isMobile={ false }
-						isSearching={ isSearching }
-						searchBoxRef={ searchRef }
-						searchTerm={ searchTerm }
-						categoriesRef={ categoriesRef }
-						searchTerms={ searchTerms }
-					/>
-				</div>
+				<SearchBox
+					isMobile={ false }
+					isSearching={ isSearching }
+					searchBoxRef={ searchRef }
+					searchTerm={ searchTerm }
+					categoriesRef={ categoriesRef }
+					searchTerms={ searchTerms }
+				/>
 
 				<ScrollableHorizontalNavigation
 					className="search-categories__categories"
