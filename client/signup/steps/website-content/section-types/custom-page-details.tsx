@@ -1,4 +1,3 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import {
@@ -31,7 +30,6 @@ export function CustomPageDetails( {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const description = useTranslatedPageDescriptions( page.id, context );
-	const isEnglishLocale = useIsEnglishLocale();
 
 	const { onCheckboxChanged, onFieldChanged } = useChangeHandlers( {
 		pageId: page.id,
@@ -55,7 +53,7 @@ export function CustomPageDetails( {
 				error={ formErrors[ 'content' ] }
 				label={ description }
 				disabled={ !! page.useFillerContent }
-				hasFillerContentCheckbox={ isEnglishLocale }
+				hasFillerContentCheckbox
 				characterLimit={ CHARACTER_LIMIT }
 				characterLimitError={ translate(
 					"Please shorten your text to under %(characterLimit)s characters for optimal formatting. If it remains over this limit, we'll optimize it with AI when building your site.",
@@ -67,18 +65,16 @@ export function CustomPageDetails( {
 					}
 				) }
 			/>
-			{ isEnglishLocale && (
-				<CheckboxField
-					name="useFillerContent"
-					checked={ page.useFillerContent || false }
-					value="true"
-					onChange={ onCheckboxChanged }
-					label={ translate( 'Build this page with AI-generated text.' ) }
-					helpText={ translate(
-						'When building your site, we will use AI to generate copy based on the search phrases you have provided. The copy can be edited later with the WordPress editor.'
-					) }
-				/>
-			) }
+			<CheckboxField
+				name="useFillerContent"
+				checked={ page.useFillerContent || false }
+				value="true"
+				onChange={ onCheckboxChanged }
+				label={ translate( 'Build this page with AI-generated text.' ) }
+				helpText={ translate(
+					'When building your site, we will use AI to generate copy based on the search phrases you have provided. The copy can be edited later with the WordPress editor.'
+				) }
+			/>
 			{ site && <MediaUpload page={ page } site={ site } onChangeField={ onChangeField } /> }
 		</>
 	);
