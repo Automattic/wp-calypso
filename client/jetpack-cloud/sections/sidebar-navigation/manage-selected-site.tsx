@@ -122,12 +122,13 @@ const useMenuItems = ( {
 					enabled: isAdmin && ! isWPCOM && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, scanPath( siteSlug ) ),
 				},
+				// Scan history is mutually exclusive with the scan item above and should only be shown for atomic sites
 				{
 					icon: shield,
 					path: '/',
 					link: `${ JETPACK_CLOUD_SCAN_HISTORY_LINK }/${ siteSlug }`,
 					title: translate( 'Scan' ),
-					trackEventName: 'calypso_jetpack_sidebar_scan_clicked',
+					trackEventName: 'calypso_jetpack_sidebar_scan_history_clicked',
 					enabled: isAdmin && showScanHistory && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SCAN_HISTORY_LINK }/${ siteSlug }` ),
 				},
