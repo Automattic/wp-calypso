@@ -25,6 +25,8 @@ export const useUrlSecurityMetricsQuery = ( url?: string, hash?: string ) => {
 		retry: false,
 		refetchOnWindowFocus: false,
 		refetchInterval: ( query ) =>
-			query.state.data?.wpscan?.status === 'completed' ? false : 5000, // 5 second	;
+			query.state.data?.wpscan?.status === 'completed' || query.state.data?.wpscan.errors
+				? false
+				: 5000, // 5 second	;
 	} );
 };
