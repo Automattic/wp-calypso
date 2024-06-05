@@ -556,9 +556,10 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		}
 
 		if ( isFinished ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_backup_granular_restore_completed' ) );
 			setUserHasRequestedRestore( false );
 		}
-	}, [ inProgressRewindStatus, isFinished, isInProgress, userHasRequestedRestore ] );
+	}, [ dispatch, inProgressRewindStatus, isFinished, isInProgress, userHasRequestedRestore ] );
 
 	const render = () => {
 		if ( loading ) {
