@@ -100,33 +100,31 @@ export const UpgradePlanHostingDetails = () => {
 				<div className="import__upgrade-plan-hosting-details-list">
 					<ul>{ hostingDetailsItems }</ul>
 				</div>
-				{ isEnglishLocale && (
-					<div className="import__upgrade-plan-hosting-details-testimonials-container">
-						<p>{ translate( '100% loved by our best customers' ) }</p>
-						<div className="import__upgrade-plan-hosting-details-testimonials">
-							{ UpgradePlanHostingTestimonials.map(
-								( { customerName, customerTestimonial, customerInfo, customerImage }, i ) => (
-									<UpgradePlanHostingDetailsTooltip
-										key={ i }
-										id={ `testimonial-${ i }` }
-										setActiveTooltipId={ setActiveTooltipId }
-										activeTooltipId={ activeTooltipId }
-										customerName={ customerName }
-										customerInfo={ customerInfo }
-										customerTestimonial={ customerTestimonial }
-										hideArrow={ false }
-									>
-										<img
-											className="import__upgrade-plan-hosting-details-testimonials-image"
-											src={ customerImage }
-											alt={ customerName }
-										/>
-									</UpgradePlanHostingDetailsTooltip>
-								)
-							) }
-						</div>
+				<div className="import__upgrade-plan-hosting-details-testimonials-container">
+					<p>{ translate( '100% loved by our best customers' ) }</p>
+					<div className="import__upgrade-plan-hosting-details-testimonials">
+						{ UpgradePlanHostingTestimonials.map(
+							( { customerName, customerTestimonial, customerInfo, customerImage }, i ) => (
+								<UpgradePlanHostingDetailsTooltip
+									key={ i }
+									id={ `testimonial-${ i }` }
+									setActiveTooltipId={ setActiveTooltipId }
+									activeTooltipId={ activeTooltipId }
+									customerName={ customerName }
+									customerInfo={ customerInfo }
+									customerTestimonial={ customerTestimonial }
+									hideArrow={ false }
+								>
+									<img
+										className="import__upgrade-plan-hosting-details-testimonials-image"
+										src={ customerImage }
+										alt={ customerName }
+									/>
+								</UpgradePlanHostingDetailsTooltip>
+							)
+						) }
 					</div>
-				) }
+				</div>
 			</div>
 			{ shouldDisplayHostIdentificationMessage && (
 				<div className="import__upgrade-plan-hosting-details-identified-host">
