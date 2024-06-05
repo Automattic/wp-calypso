@@ -1,5 +1,5 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { throttle } from 'lodash';
 import React, { FC, useRef } from 'react';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
@@ -57,12 +57,12 @@ const ScrollableHorizontalNavigation: FC< {
 
 	return (
 		<div
-			className={ classNames( 'scrollable-horizontal-navigation', className, {
+			className={ clsx( 'scrollable-horizontal-navigation', className, {
 				'reader-dual-column': width > WIDE_DISPLAY_CUTOFF,
 			} ) }
 		>
 			<div
-				className={ classNames( `scrollable-horizontal-navigation__left-button-wrapper`, {
+				className={ clsx( `scrollable-horizontal-navigation__left-button-wrapper`, {
 					'display-none': shouldHideLeftScrollButton(),
 				} ) }
 				aria-hidden
@@ -77,7 +77,7 @@ const ScrollableHorizontalNavigation: FC< {
 			</div>
 
 			<div
-				className={ classNames( `scrollable-horizontal-navigation__right-button-wrapper`, {
+				className={ clsx( `scrollable-horizontal-navigation__right-button-wrapper`, {
 					'display-none': shouldHideRightScrollButton(),
 				} ) }
 				aria-hidden
