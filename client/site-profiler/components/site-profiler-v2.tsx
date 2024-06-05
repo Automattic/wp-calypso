@@ -10,6 +10,7 @@ import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-an
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceMetricsQuery } from 'calypso/data/site-profiler/use-url-performance-metrics-query';
+import { useUrlSecurityMetricsQuery } from 'calypso/data/site-profiler/use-url-security-metrics-query';
 import { LayoutBlock } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
@@ -73,7 +74,7 @@ export default function SiteProfilerV2( props: Props ) {
 		hostingProviderData,
 		isErrorUrlData ? null : urlData
 	);
-	const showResultScreen = siteProfilerData || isDomainSpecial;
+	const showLandingPage = ! ( siteProfilerData || isDomainSpecial );
 
 	useScrollToTop( !! siteProfilerData );
 	useSiteProfilerRecordAnalytics(
@@ -112,6 +113,14 @@ export default function SiteProfilerV2( props: Props ) {
 		basicMetrics?.token
 	);
 
+	const { data: securityMetrics } = useUrlSecurityMetricsQuery(
+		basicMetrics?.final_url,
+		basicMetrics?.token
+	);
+
+	const showResultScreen =
+		siteProfilerData && showBasicMetrics && performanceMetrics && securityMetrics;
+
 	const performanceCategory = getPerformanceCategory( performanceMetrics );
 
 	const updateDomainRouteParam = ( value: string ) => {
@@ -124,7 +133,7 @@ export default function SiteProfilerV2( props: Props ) {
 
 	return (
 		<div id="site-profiler-v2">
-			{ ! showResultScreen && (
+			{ showLandingPage && (
 				<LayoutBlock className="landing-page-header-block" width="medium">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<LandingPageHeader
@@ -137,8 +146,8 @@ export default function SiteProfilerV2( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-			{ showResultScreen && ! performanceMetrics && <LoadingScreen /> }
-			{ showResultScreen && performanceMetrics && (
+			{ ! showResultScreen && <LoadingScreen /> }
+			{ showResultScreen && (
 				<>
 					<LayoutBlock
 						className={ clsx(
@@ -148,66 +157,58 @@ export default function SiteProfilerV2( props: Props ) {
 						) }
 						width="medium"
 					>
-						{ showBasicMetrics && (
-							<ResultsHeader
-								domain={ domain }
-								performanceCategory={ performanceCategory }
-								isWpCom={ isWpCom }
-								onGetReport={ () => setIsGetReportFormOpen( true ) }
-							/>
-						) }
+						<ResultsHeader
+							domain={ domain }
+							performanceCategory={ performanceCategory }
+							isWpCom={ isWpCom }
+							onGetReport={ () => setIsGetReportFormOpen( true ) }
+						/>
 					</LayoutBlock>
 					<LayoutBlock width="medium">
-						{ siteProfilerData && (
-							<>
-								{ showBasicMetrics && (
-									<BasicMetrics
-										basicMetrics={ basicMetrics.basic }
-										domain={ domain }
-										isWpCom={ isWpCom }
-									/>
-								) }
-								<HostingSection
-									url={ basicMetrics?.final_url }
-									dns={ siteProfilerData.dns }
-									urlData={ urlData }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									hostingRef={ hostingRef }
-								/>
+						<BasicMetrics
+							basicMetrics={ basicMetrics.basic }
+							domain={ domain }
+							isWpCom={ isWpCom }
+						/>
+						<HostingSection
+							url={ basicMetrics?.final_url }
+							dns={ siteProfilerData.dns }
+							urlData={ urlData }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							hostingRef={ hostingRef }
+						/>
 
-								<DomainSection
-									domain={ domain }
-									whois={ siteProfilerData.whois }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									urlData={ urlData }
-									domainRef={ domainRef }
-								/>
+						<DomainSection
+							domain={ domain }
+							whois={ siteProfilerData.whois }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							urlData={ urlData }
+							domainRef={ domainRef }
+						/>
 
-								<PerformanceSection
-									url={ basicMetrics?.final_url }
-									hash={ hash ?? basicMetrics?.token }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									performanceMetricsRef={ perfomanceMetricsRef }
-									setIsGetReportFormOpen={ setIsGetReportFormOpen }
-								/>
+						<PerformanceSection
+							url={ basicMetrics?.final_url }
+							hash={ hash ?? basicMetrics?.token }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							performanceMetricsRef={ perfomanceMetricsRef }
+							setIsGetReportFormOpen={ setIsGetReportFormOpen }
+						/>
 
-								<HealthSection
-									url={ basicMetrics?.final_url }
-									hash={ hash ?? basicMetrics?.token }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									healthMetricsRef={ healthMetricsRef }
-									setIsGetReportFormOpen={ setIsGetReportFormOpen }
-								/>
+						<HealthSection
+							url={ basicMetrics?.final_url }
+							hash={ hash ?? basicMetrics?.token }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							healthMetricsRef={ healthMetricsRef }
+							setIsGetReportFormOpen={ setIsGetReportFormOpen }
+						/>
 
-								<SecuritySection
-									url={ basicMetrics?.final_url }
-									hash={ hash ?? basicMetrics?.token }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									securityMetricsRef={ securityMetricsRef }
-									setIsGetReportFormOpen={ setIsGetReportFormOpen }
-								/>
-							</>
-						) }
+						<SecuritySection
+							url={ basicMetrics?.final_url }
+							hash={ hash ?? basicMetrics?.token }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							securityMetricsRef={ securityMetricsRef }
+							setIsGetReportFormOpen={ setIsGetReportFormOpen }
+						/>
 					</LayoutBlock>
 					{ ! isWpCom && <MigrationBannerBig url={ basicMetrics?.final_url } /> }
 				</>
