@@ -201,6 +201,11 @@
 		&.a8c-blue-link {
 			color: var(--color-primary-50);
 			text-decoration: underline;
+
+			svg {
+				fill: var(--color-primary-50);
+				margin-inline-start: 4px;
+			}
 		}
 	}
 
@@ -249,6 +254,7 @@
 	.button.disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
+		pointer-events: none;
 	}
 }
 

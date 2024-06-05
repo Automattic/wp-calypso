@@ -39,7 +39,6 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/command-palette#readme",
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
-		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",

@@ -49,7 +49,7 @@ export default function useProductFilterOptions() {
 			{ key: PRODUCT_TYPE_EXTENSION, label: translate( 'Extension' ) },
 			{ key: PRODUCT_TYPE_PLAN, label: translate( 'Plan' ) },
 			{ key: PRODUCT_TYPE_PRODUCT, label: translate( 'Product' ) },
-			{ key: PRODUCT_TYPE_ADDON, label: translate( 'Addon' ) },
+			{ key: PRODUCT_TYPE_ADDON, label: translate( 'Add-on' ) },
 		],
 		[ PRODUCT_FILTER_KEY_PRICES ]: [
 			{ key: PRODUCT_PRICE_FREE, label: translate( 'Free' ) },

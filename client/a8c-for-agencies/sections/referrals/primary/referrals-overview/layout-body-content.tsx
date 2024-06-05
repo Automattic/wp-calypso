@@ -203,7 +203,7 @@ export default function LayoutBodyContent( {
 							}
 						>
 							<StepSectionItem
-								isAutomatedReferral={ isAutomatedReferral }
+								isNewLayout={ isAutomatedReferral }
 								icon={ tipaltiLogo }
 								heading={
 									isAutomatedReferral
@@ -250,7 +250,7 @@ export default function LayoutBodyContent( {
 							{ isAutomatedReferral ? (
 								<StepSectionItem
 									iconClassName="referrals-overview__opacity-70-percent"
-									isAutomatedReferral
+									isNewLayout
 									icon={ reusableBlock }
 									heading={ translate( 'Refer products and hosting' ) }
 									description={ translate( 'Receive up to a 50% commission.' ) }
@@ -279,7 +279,7 @@ export default function LayoutBodyContent( {
 								/>
 							) }
 							<StepSectionItem
-								isAutomatedReferral={ isAutomatedReferral }
+								isNewLayout={ isAutomatedReferral }
 								className="referrals-overview__step-section-woo-payments"
 								icon={ <WooLogo /> }
 								heading={
