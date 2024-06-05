@@ -1,15 +1,13 @@
 import { ToggleControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { useCallback, useState } from 'react';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector } from 'calypso/state';
-import { setSiteLogType } from 'calypso/state/hosting/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState, SiteLogType } from 'calypso/types';
 import { SiteLogsTable } from './components/site-logs-table';
@@ -51,10 +49,10 @@ export function buildFilterParam(
 }
 
 export const LogsTab = ( {
-	logType,
+	initialLogType,
 	pageSize = DEFAULT_PAGE_SIZE,
 }: {
-	logType: SiteLogType;
+	initialLogType: SiteLogType;
 	pageSize?: number;
 } ) => {
 	const { __ } = useI18n();
@@ -62,6 +60,10 @@ export const LogsTab = ( {
 	const moment = useLocalizedMoment();
 
 	const [ autoRefresh, setAutoRefresh ] = useState( false );
+
+	const logType = useSelector(
+		( state: AppState ) => state?.sites?.siteLogType.logType || initialLogType
+	);
 
 	const getLatestDateRange = useCallback( () => {
 		const startTime = moment().subtract( 7, 'd' );
@@ -107,19 +109,6 @@ export const LogsTab = ( {
 		pageSize,
 		pageIndex: currentPageIndex,
 	} );
-
-	console.log( 'logType', logType );
-
-	// useEffect( () => {
-	// 	if ( ! isFetching && logType ) {
-	// 		setSiteLogType( logType );
-	// 		if ( logType ) {
-	// 			setSeverity( '' );
-	// 			setRequestType( '' );
-	// 			setRequestStatus( '' );
-	// 		}
-	// 	}
-	// }, [ logType, isFetching ] );
 
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
 		if ( isChecked ) {
@@ -242,11 +231,3 @@ export const LogsTab = ( {
 		</div>
 	);
 };
-
-const mapStateToProps = ( state: AppState ) => {
-	return {
-		logType: state?.logType || 'php',
-	};
-};
-
-export default connect( mapStateToProps, { setSiteLogType } )( LogsTab );

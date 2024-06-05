@@ -23,6 +23,7 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
+	SITE_LOG_TYPE_SET,
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
@@ -415,6 +416,16 @@ export const isRequestingJetpackSitesFeatures = ( state = false, action ) => {
 	return state;
 };
 
+export const siteLogType = ( state = false, action ) => {
+	switch ( action.type ) {
+		case SITE_LOG_TYPE_SET: {
+			const { logType } = action;
+			return { ...state, logType: logType };
+		}
+	}
+	return state;
+};
+
 export default combineReducers( {
 	domains,
 	requestingAll,
@@ -427,4 +438,5 @@ export default combineReducers( {
 	hasAllSitesList,
 	jetpackSiteDisconnected,
 	isRequestingJetpackSitesFeatures,
+	siteLogType,
 } );

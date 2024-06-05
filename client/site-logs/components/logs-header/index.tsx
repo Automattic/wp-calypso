@@ -1,20 +1,16 @@
 import { SegmentedControl } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { setSiteLogType } from 'calypso/state/hosting/actions';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useDispatch, useSelector } from 'calypso/state';
+import { setSiteLogType } from 'calypso/state/sites/actions';
 import { AppState, SiteLogType } from 'calypso/types';
 
 import './style.scss';
 
-interface Props {
-	logType: SiteLogType;
-	setSiteLogType: ( logType: SiteLogType ) => void;
-}
-
-export function LogsHeader( { logType, setSiteLogType }: Props ) {
+export function LogsHeader( { initialLogType }: { initialLogType: SiteLogType } ) {
 	const options: { value: SiteLogType; label: string }[] = [
 		{
 			value: 'php',
@@ -26,10 +22,19 @@ export function LogsHeader( { logType, setSiteLogType }: Props ) {
 		},
 	];
 
-	console.log( setSiteLogType );
+	const logType = useSelector(
+		( state: AppState ) => state?.sites?.siteLogType.logType || initialLogType
+	);
+	const dispatch = useDispatch();
 
 	return (
 		<div className="logs-header">
+			{ logType === 'php' && (
+				<PageViewTracker path="/site-logs/:site/php" title="PHP Error Logs" />
+			) }
+			{ logType === 'web' && (
+				<PageViewTracker path="/site-logs/:site/web" title="Web Server Logs" />
+			) }
 			<NavigationHeader
 				title={ translate( 'Logs' ) }
 				subtitle={ translate(
@@ -50,22 +55,14 @@ export function LogsHeader( { logType, setSiteLogType }: Props ) {
 								key={ option.value }
 								value={ option.value }
 								selected={ option.value === logType }
-								onClick={ () => setSiteLogType( option.value ) }
+								onClick={ () => dispatch( setSiteLogType( option.value ) ) }
 							>
 								{ option.label }
 							</SegmentedControl.Item>
 						);
-					}, setSiteLogType ) }
+					} ) }
 				</SegmentedControl>
 			</div>
 		</div>
 	);
 }
-
-const mapStateToProps = ( state: AppState ) => {
-	return {
-		logType: state?.logType || 'php',
-	};
-};
-
-export default connect( mapStateToProps, { setSiteLogType } )( LogsHeader );
