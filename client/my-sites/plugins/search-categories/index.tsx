@@ -131,6 +131,8 @@ const SearchCategories: FC< {
 					searchTerms={ searchTerms }
 				/>
 
+				<div className="search-categories__vertical-separator" />
+
 				<ScrollableHorizontalNavigation
 					className="search-categories__categories"
 					onTabClick={ ( tabSlug ) => {

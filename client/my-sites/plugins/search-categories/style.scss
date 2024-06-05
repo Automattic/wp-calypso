@@ -1,6 +1,7 @@
 .search-categories {
 	display: flex;
 	align-items: center;
+	gap: 12px;
 
 	@media (max-width: 660px) {
 		padding: 0 16px;
@@ -15,10 +16,13 @@
 		border-radius: 4px;
 
 		&.is-open.has-focus {
-			border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-			box-shadow:
-				0 0 0 0.5px
-				var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			&,
+			&:hover {
+				border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+				box-shadow:
+					0 0 0 0.5px
+					var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			}
 		}
 
 		&.is-expanded-to-container {
@@ -71,6 +75,11 @@
 			margin-left: -9px;
 			margin-right: -10px;
 		}
+	}
+
+	.search-categories__vertical-separator {
+		border: 0.5px solid var(--studio-gray-5);
+		height: 14px;
 	}
 
 	.search-categories__categories {
