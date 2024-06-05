@@ -280,7 +280,15 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button primary href={ siteUrl } target="_blank" className="rewind-flow__primary-button">
+			<Button
+				primary
+				href={ siteUrl }
+				target="_blank"
+				className="rewind-flow__primary-button"
+				onClick={ () =>
+					dispatch( recordTracksEvent( 'calypso_jetpack_restore_complete_view_site' ) )
+				}
+			>
 				{ translate( 'View your website {{externalIcon/}}', {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
 				} ) }
