@@ -14,7 +14,7 @@ import PlanFeatures2023GridFeatures from '../features';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
-import { PlanStorageOption } from '../storage';
+import { StorageFeature } from '../storage';
 import type { DataResponse, GridPlan } from '../../types';
 
 type PlanFeaturesListProps = {
@@ -96,7 +96,7 @@ const PlanFeaturesList = ( {
 							</h2>
 						</PlanFeaturesItem>
 						<PlanFeaturesItem>
-							<PlanStorageOption
+							<StorageFeature
 								planSlug={ planSlug }
 								options={ { isTableCell: true } }
 								intervalType={ intervalType }

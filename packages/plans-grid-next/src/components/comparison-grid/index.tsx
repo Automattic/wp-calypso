@@ -35,7 +35,7 @@ import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import BillingTimeframe from '../shared/billing-timeframe';
 import { StickyContainer } from '../sticky-container';
-import { PlanStorageOption } from '../storage';
+import { StorageFeature } from '../storage';
 import type {
 	GridPlan,
 	ComparisonGridProps,
@@ -602,7 +602,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					<PlanStorageOption
+					<StorageFeature
 						planSlug={ planSlug }
 						intervalType={ intervalType }
 						onStorageAddOnClick={ onStorageAddOnClick }

@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import { PlanFeaturesItem } from '../item';
-import { PlanStorageOption } from '../storage';
+import { StorageFeature } from '../storage';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
 import PartnerLogos from './partner-logos';
@@ -115,7 +115,7 @@ const MobileView = ( {
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
 					<PlanFeaturesItem>
-						<PlanStorageOption
+						<StorageFeature
 							planSlug={ gridPlan.planSlug }
 							intervalType={ intervalType }
 							onStorageAddOnClick={ onStorageAddOnClick }

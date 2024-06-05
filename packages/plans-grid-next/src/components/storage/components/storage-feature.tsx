@@ -3,10 +3,11 @@ import {
 	WPComStorageAddOnSlug,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
-import { PlanStorageLabel, useGetAvailableStorageOptions } from '..';
 import { usePlansGridContext } from '../../../grid-context';
 import { isStorageUpgradeableForPlan } from '../../../lib/is-storage-upgradeable-for-plan';
-import StorageAddOnDropdown from '../../storage-add-on-dropdown';
+import useGetAvailableStorageOptions from '../hooks/use-get-available-storage-options';
+import PlanStorageLabel from './plan-storage-label';
+import StorageAddOnDropdown from './storage-add-on-dropdown';
 
 type Props = {
 	intervalType: string;
@@ -19,7 +20,7 @@ type Props = {
 	priceOnSeparateLine?: boolean;
 };
 
-const PlanStorageOption = ( {
+const StorageFeature = ( {
 	intervalType,
 	onStorageAddOnClick,
 	planSlug,
@@ -68,4 +69,4 @@ const PlanStorageOption = ( {
 	return <div className="plans-grid-next-storage-feature">{ storageJSX }</div>;
 };
 
-export default PlanStorageOption;
+export default StorageFeature;

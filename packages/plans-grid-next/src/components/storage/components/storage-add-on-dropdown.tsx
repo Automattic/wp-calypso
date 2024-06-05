@@ -3,11 +3,11 @@ import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../grid-context';
-import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
-import useIsLargeCurrency from '../hooks/use-is-large-currency';
-import DropdownOption from './dropdown-option';
-import { useStorageStringFromFeature } from './storage';
+import { usePlansGridContext } from '../../../grid-context';
+import useDefaultStorageOption from '../../../hooks/data-store/use-default-storage-option';
+import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
+import DropdownOption from '../../dropdown-option';
+import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { AddOnMeta } from '@automattic/data-stores';
 
@@ -72,7 +72,7 @@ const StorageAddOnOption = ( {
 	);
 };
 
-export const StorageAddOnDropdown = ( {
+const StorageAddOnDropdown = ( {
 	planSlug,
 	storageOptions,
 	onStorageAddOnClick,
