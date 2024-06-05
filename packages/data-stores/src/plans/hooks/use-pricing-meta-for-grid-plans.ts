@@ -230,6 +230,7 @@ const usePricingMetaForGridPlans = ( {
 					billingPeriod: plans.data?.[ planSlug ]?.pricing?.billPeriod,
 					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 					currencyCode: plans.data?.[ planSlug ]?.pricing?.currencyCode,
+					purchaseCurrencyCode: purchasedPlan?.currencyCode,
 					expiry: sitePlans.data?.[ planSlug ]?.expiry,
 					introOffer: introOffers?.[ planSlug ],
 				},

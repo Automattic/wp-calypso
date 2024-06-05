@@ -50,7 +50,7 @@ const PricingSection: FC = () => {
 			args: {
 				rawPrice: formatCurrency(
 					pricing?.[ planSlug ].originalPrice.full ?? 0,
-					planData?.currencyCode ?? '',
+					pricing?.[ planSlug ].purchaseCurrencyCode ?? '',
 					{
 						stripZeros: true,
 						isSmallestUnit: true,
@@ -86,7 +86,7 @@ const PricingSection: FC = () => {
 				<div className="hosting-overview__plan-price-wrapper">
 					<PlanPrice
 						className="hosting-overview__plan-price"
-						currencyCode={ planData?.currencyCode }
+						currencyCode={ pricing?.[ planSlug ].purchaseCurrencyCode }
 						isSmallestUnit
 						rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
 					/>
