@@ -92,12 +92,28 @@
 		.scrollable-horizontal-navigation__right-button-wrapper {
 			margin: 0;
 
+			&:not(.display-none) {
+				display: flex;
+				align-items: center;
+			}
+
 			button {
+				display: flex;
+				align-items: center;
 				border: 0;
+				padding-top: 0;
+				padding-bottom: 0;
+				position: static;
+
+				.gridicon {
+					top: 0;
+					margin: 0;
+				}
 			}
 		}
 
 		.scrollable-horizontal-navigation__tabs {
+			position: static;
 			border: 0;
 			margin: 0;
 			padding: 0;
@@ -105,6 +121,7 @@
 
 		.segmented-control__link {
 			border: 0 !important;
+			margin: 0 2px !important;
 			padding-top: 7px;
 			padding-bottom: 7px;
 			transition: none;
