@@ -1,4 +1,6 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
@@ -23,7 +25,19 @@ interface Props {
 
 export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
+
+	// TODO: Remove extra steps for non-English locales once we have translations.
+	const oldSubtitle = translate( 'Drop your current site address below to get started.' );
+	const newSubtitle = translate(
+		"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
+	);
+	const isTranslationAvailableForNewSubtitle = hasTranslation(
+		"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
+	);
+	const subtitleInUse =
+		isEnglishLocale || isTranslationAvailableForNewSubtitle ? newSubtitle : oldSubtitle;
 
 	const {
 		data: siteInfo,
@@ -46,7 +60,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		<div>
 			<div className="import__heading import__heading-center">
 				<Title>{ translate( 'Let’s import your content' ) }</Title>
-				<SubTitle>{ translate( 'Drop your current site address below to get started.' ) }</SubTitle>
+				<SubTitle>{ subtitleInUse }</SubTitle>
 			</div>
 			<div className="import__capture-container">
 				<CaptureInput
