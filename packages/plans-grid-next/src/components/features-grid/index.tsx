@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import { PlanFeaturesItem } from '../item';
-import { StorageFeature } from '../storage';
+import { StorageFeature } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
 import PartnerLogos from './partner-logos';

@@ -34,8 +34,8 @@ import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import BillingTimeframe from '../shared/billing-timeframe';
+import { StorageFeature } from '../shared/storage';
 import { StickyContainer } from '../sticky-container';
-import { StorageFeature } from '../storage';
 import type {
 	GridPlan,
 	ComparisonGridProps,

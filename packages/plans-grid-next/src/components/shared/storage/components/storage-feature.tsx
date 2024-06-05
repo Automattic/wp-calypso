@@ -3,8 +3,8 @@ import {
 	WPComStorageAddOnSlug,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
-import { usePlansGridContext } from '../../../grid-context';
-import { isStorageUpgradeableForPlan } from '../../../lib/is-storage-upgradeable-for-plan';
+import { usePlansGridContext } from '../../../../grid-context';
+import { isStorageUpgradeableForPlan } from '../../../../lib/is-storage-upgradeable-for-plan';
 import useGetAvailableStorageOptions from '../hooks/use-get-available-storage-options';
 import PlanStorageLabel from './plan-storage-label';
 import StorageAddOnDropdown from './storage-add-on-dropdown';

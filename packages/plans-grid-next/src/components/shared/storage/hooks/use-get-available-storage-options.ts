@@ -1,7 +1,7 @@
 import { PlanSlug } from '@automattic/calypso-products';
 import { AddOns, Site } from '@automattic/data-stores';
 import { useCallback } from '@wordpress/element';
-import { usePlansGridContext } from '../../../grid-context';
+import { usePlansGridContext } from '../../../../grid-context';
 
 interface CallbackProps {
 	planSlug: PlanSlug;

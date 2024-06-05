@@ -14,7 +14,7 @@ import PlanFeatures2023GridFeatures from '../features';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
-import { StorageFeature } from '../storage';
+import { StorageFeature } from '../shared/storage';
 import type { DataResponse, GridPlan } from '../../types';
 
 type PlanFeaturesListProps = {
