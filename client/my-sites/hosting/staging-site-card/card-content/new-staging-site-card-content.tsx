@@ -24,10 +24,10 @@ export const NewStagingSiteCardContent = ( {
 			<>
 				<HostingCardDescription>
 					{ hasEnTranslation(
-						'Preview and troubleshoot changes before applying them to your production site. {{a}}Learn more{{/a}}.'
+						'Preview and troubleshoot changes before updating your production site. {{a}}Learn more{{/a}}.'
 					)
 						? translate(
-								'Preview and troubleshoot changes before applying them to your production site. {{a}}Learn more{{/a}}.',
+								'Preview and troubleshoot changes before updating your production site. {{a}}Learn more{{/a}}.',
 								{
 									components: {
 										a: (
