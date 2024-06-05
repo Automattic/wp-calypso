@@ -91,9 +91,14 @@ export function requestSites() {
 			} )
 			.then( ( response ) => {
 				const jetpackCloudSites = response.sites.filter( ( site ) => {
-					// Filter Jetpack Cloud sites to exclude P2 sites by default.
+					// Filter Jetpack Cloud sites to exclude P2 & Simple not-classic sites by default.
 					const isP2 = site?.options?.is_wpforteams_site;
-					let filterCondition = ! isP2;
+					const isSimpleClassic =
+						! site?.jetpack &&
+						! site?.is_wpcom_atomic &&
+						site?.options?.wpcom_admin_interface !== 'wp-admin';
+					let filterCondition = ! isP2 && ! isSimpleClassic;
+
 					// Filter out simple sites if feature flag is not enabled.
 					if ( ! isEnabled( 'jetpack/manage-simple-sites' ) ) {
 						const isSimple = ! site?.jetpack && ! site?.is_wpcom_atomic;
