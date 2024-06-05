@@ -280,7 +280,7 @@ const SitesDashboardV2 = ( {
 								) }
 								dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
 								horizontal
-								href="https://agencies.automattic.com"
+								href="https://wordpress.com/for-agencies/"
 								title={ translate( 'Streamlined multisite agency hosting' ) }
 							/>
 						</div>
