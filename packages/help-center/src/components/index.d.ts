@@ -107,7 +107,10 @@ declare module 'calypso/state/current-user/selectors' {
 }
 
 declare module 'calypso/state/current-user/selectors' {
-	export const getCurrentUser: ( state: unknown ) => { display_name: string };
+	export const getCurrentUser: ( state: unknown ) => {
+		email: string;
+		display_name: string;
+	};
 }
 
 declare module 'calypso/components/ellipsis-menu' {
