@@ -25,7 +25,7 @@ function mapScores( response: UrlBasicMetricsQueryResponse ) {
 	return { ...response, success: basic.success, basic: basicMetricsScored };
 }
 
-export const useUrlBasicMetricsQuery = ( url?: string ) => {
+export const useUrlBasicMetricsQuery = ( url?: string, hash?: string ) => {
 	return useQuery( {
 		queryKey: [ 'url-', url ],
 		queryFn: (): Promise< UrlBasicMetricsQueryResponse > =>
@@ -40,7 +40,7 @@ export const useUrlBasicMetricsQuery = ( url?: string ) => {
 		meta: {
 			persist: false,
 		},
-		enabled: !! url,
+		enabled: !! url && ! hash, // Disable if hash is present
 		retry: false,
 		refetchOnWindowFocus: false,
 	} );

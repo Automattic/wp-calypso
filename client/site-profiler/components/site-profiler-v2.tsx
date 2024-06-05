@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getPerformanceCategory } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -52,7 +52,6 @@ export default function SiteProfilerV2( props: Props ) {
 		domain,
 		category: domainCategory,
 		isValid: isDomainValid,
-		isSpecial: isDomainSpecial,
 		readyForDataFetch,
 	} = useDomainParam( routerDomain );
 
@@ -73,7 +72,7 @@ export default function SiteProfilerV2( props: Props ) {
 		hostingProviderData,
 		isErrorUrlData ? null : urlData
 	);
-	const showResultScreen = siteProfilerData || isDomainSpecial;
+	const showResultScreen = hash;
 
 	useScrollToTop( !! siteProfilerData );
 	useSiteProfilerRecordAnalytics(
@@ -92,7 +91,7 @@ export default function SiteProfilerV2( props: Props ) {
 		data: basicMetrics,
 		error: errorBasicMetrics,
 		isFetching: isFetchingBasicMetrics,
-	} = useUrlBasicMetricsQuery( url );
+	} = useUrlBasicMetricsQuery( url, hash );
 
 	const showBasicMetrics =
 		basicMetrics && basicMetrics.success && ! isFetchingBasicMetrics && ! errorBasicMetrics;
@@ -105,14 +104,17 @@ export default function SiteProfilerV2( props: Props ) {
 		);
 	}
 
-	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
+	const showGetReportForm = !! url && isGetReportFormOpen;
 
-	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery(
-		basicMetrics?.final_url,
-		basicMetrics?.token
-	);
+	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery( routerDomain, hash );
 
-	const performanceCategory = getPerformanceCategory( performanceMetrics );
+	const { final_url: finalUrl, token } = basicMetrics || {};
+
+	useEffect( () => {
+		if ( finalUrl && token ) {
+			page( `/site-profiler/report/${ token }/${ finalUrl }` );
+		}
+	}, [ finalUrl, token ] );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
@@ -120,6 +122,7 @@ export default function SiteProfilerV2( props: Props ) {
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
 
+	const performanceCategory = getPerformanceCategory( performanceMetrics );
 	const isWpCom = !! performanceMetrics?.is_wpcom;
 
 	return (
@@ -148,14 +151,12 @@ export default function SiteProfilerV2( props: Props ) {
 						) }
 						width="medium"
 					>
-						{ showBasicMetrics && (
-							<ResultsHeader
-								domain={ domain }
-								performanceCategory={ performanceCategory }
-								isWpCom={ isWpCom }
-								onGetReport={ () => setIsGetReportFormOpen( true ) }
-							/>
-						) }
+						<ResultsHeader
+							domain={ domain }
+							performanceCategory={ performanceCategory }
+							isWpCom={ isWpCom }
+							onGetReport={ () => setIsGetReportFormOpen( true ) }
+						/>
 					</LayoutBlock>
 					<LayoutBlock width="medium">
 						{ siteProfilerData && (
