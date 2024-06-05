@@ -178,8 +178,8 @@ export default function SiteProfilerV2( props: Props ) {
 								<NavMenu
 									domain={ domain }
 									navItems={ [
-										{ label: translate( 'Domain' ), ref: domainRef },
 										{ label: translate( 'Hosting' ), ref: hostingRef },
+										{ label: translate( 'Domain' ), ref: domainRef },
 										{ label: translate( 'Performance Metrics' ), ref: perfomanceMetricsRef },
 										{ label: translate( 'Health Scores' ), ref: healthMetricsRef },
 										...( noWordPressFound
