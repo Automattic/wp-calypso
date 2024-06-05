@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	SitesSortKey,
 	useSitesListFiltering,
@@ -240,6 +241,7 @@ const SitesDashboardV2 = ( {
 	const isNarrowView = false;
 
 	const showA8CForAgenciesBanner = paginatedSites.length >= 5;
+	const hasEnTranslation = useHasEnTranslation();
 
 	return (
 		<Layout
@@ -275,13 +277,25 @@ const SitesDashboardV2 = ( {
 									},
 								} ) }
 								className="sites-a8c-for-agencies-banner"
-								description={ translate(
-									'As you’re managing multiple sites, Automattic for Agencies offers you efficient multisite management, volume discounts on hosting products, and up to 50% revenue share for migrating sites and referring products.'
-								) }
+								description={
+									hasEnTranslation(
+										'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
+									)
+										? translate(
+												'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
+										  )
+										: translate(
+												'As you’re managing multiple sites, Automattic for Agencies offers you efficient multisite management, volume discounts on hosting products, and up to 50% revenue share for migrating sites and referring products.'
+										  )
+								}
 								dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
 								horizontal
-								href="https://wordpress.com/for-agencies/"
-								title={ translate( 'Streamlined multisite agency hosting' ) }
+								href="https://wordpress.com/for-agencies"
+								title={
+									hasEnTranslation( 'Managing multiple sites? Meet our agency hosting' )
+										? translate( 'Managing multiple sites? Meet our agency hosting' )
+										: translate( 'Streamlined multisite agency hosting' )
+								}
 							/>
 						</div>
 					) }
