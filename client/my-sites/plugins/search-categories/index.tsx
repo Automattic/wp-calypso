@@ -141,7 +141,8 @@ const SearchCategories: FC< {
 								tag: tabSlug,
 							} )
 						);
-						page.replace( getCategoryUrl( tabSlug ) );
+
+						page( getCategoryUrl( tabSlug ) );
 					} }
 					selectedTab={ category ?? categories[ 0 ].slug }
 					tabs={ categories }
