@@ -18,7 +18,7 @@ const getSitePluginsEndpoint = ( siteId: number ) =>
 	`/rest/v1.2/sites/${ siteId }/plugins?http_envelope=1`;
 
 const getPluginInstallationEndpoint = ( siteId: number ) =>
-	`/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install`;
+	`/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install?http_envelope=1`;
 
 const getPluginActivationEndpoint = ( siteId: number ) =>
 	`/rest/v1.2/sites/${ siteId }/plugins/migrate-guru%2Fmigrateguru`;
