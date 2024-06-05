@@ -1,11 +1,27 @@
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
+import { ElementType, FC, PropsWithChildren, ReactNode } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
-
 import './style.scss';
 
-function FormattedHeader( {
+interface Props extends PropsWithChildren {
+	id: string;
+	className: string;
+	brandFont: boolean;
+	headerText: ReactNode;
+	subHeaderAs: ElementType;
+	subHeaderText: ReactNode;
+	tooltipText: ReactNode;
+	compactOnMobile: boolean;
+	isSecondary: boolean;
+	align: 'center' | 'left' | 'right';
+	subHeaderAlign?: 'center';
+	hasScreenOptions: boolean;
+	children: ReactNode;
+	screenReader: ReactNode;
+}
+
+const FormattedHeader: FC< Props > = ( {
 	brandFont = false,
 	id = '',
 	headerText,
@@ -14,13 +30,13 @@ function FormattedHeader( {
 	className,
 	compactOnMobile = false,
 	align = 'center',
-	subHeaderAlign = null,
+	subHeaderAlign,
 	isSecondary = false,
 	hasScreenOptions,
 	subHeaderAs: SubHeaderAs = 'p',
 	children,
 	screenReader = null,
-} ) {
+} ) => {
 	const classes = clsx( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
 		'is-compact-on-mobile': compactOnMobile,
@@ -62,23 +78,6 @@ function FormattedHeader( {
 			{ children }
 		</header>
 	);
-}
-
-FormattedHeader.propTypes = {
-	id: PropTypes.string,
-	className: PropTypes.string,
-	brandFont: PropTypes.bool,
-	headerText: PropTypes.node,
-	subHeaderAs: PropTypes.elementType,
-	subHeaderText: PropTypes.node,
-	tooltipText: PropTypes.node,
-	compactOnMobile: PropTypes.bool,
-	isSecondary: PropTypes.bool,
-	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
-	subHeaderAlign: PropTypes.oneOf( [ 'center', null ] ),
-	hasScreenOptions: PropTypes.bool,
-	children: PropTypes.node,
-	screenReader: PropTypes.node,
 };
 
 export default FormattedHeader;
