@@ -89,7 +89,13 @@ export default function PartnerDirectoryDashboard() {
 		return (
 			<div className="partner-directory-dashboard__completed-section">
 				<div className="partner-directory-dashboard__heading">
-					{ translate( 'Congratulations! Your agency is now listed in our partner directories.' ) }
+					{ translate(
+						'Congratulations! Your agency is now listed in our partner directory.',
+						'Congratulations! Your agency is now listed in our partner directories.',
+						{
+							count: brandStatuses.filter( ( { status } ) => status === 'Approved' ).length,
+						}
+					) }
 				</div>
 				{ brandStatuses.length > 0 &&
 					brandStatuses.map( ( { brand, status, type } ) => {
