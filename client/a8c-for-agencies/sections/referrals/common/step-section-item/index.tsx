@@ -48,12 +48,7 @@ export default function StepSectionItem( {
 		<div className={ clsx( 'step-section-item', className ) }>
 			{ icon && (
 				<div className={ clsx( 'step-section-item__icon', iconClassName ) }>
-					<Icon
-						className="sidebar__menu-icon"
-						style={ { fill: 'currentcolor' } }
-						icon={ icon }
-						size={ ICON_SIZE }
-					/>
+					<Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } />
 				</div>
 			) }
 			{ stepNumber && <span className="step-section-item__step-number">{ stepNumber }</span> }

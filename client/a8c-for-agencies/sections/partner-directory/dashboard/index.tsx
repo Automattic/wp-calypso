@@ -1,11 +1,12 @@
-import { Button } from '@automattic/components';
-import { Icon, external } from '@wordpress/icons';
+import { BadgeType, Button } from '@automattic/components';
+import { Icon, external, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import StepSection from '../../referrals/common/step-section';
 import StepSectionItem from '../../referrals/common/step-section-item';
+import StatusBadge from '../../referrals/common/step-section-item/status-badge';
 
 import './style.scss';
 
@@ -21,6 +22,30 @@ export default function PartnerDirectoryDashboard() {
 		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_finish_profile_click' ) );
 	}, [ dispatch ] );
 
+	const isSubmitted = true; // FIXME: Replace with actual value
+	const brandStatuses = [
+		{
+			brand: 'WordPress.com',
+			status: 'Approved',
+			type: 'success',
+		},
+		{
+			brand: 'Woocommerce.com',
+			status: 'Pending',
+			type: 'warning',
+		},
+		{
+			brand: 'Pressable.com',
+			status: 'Pending',
+			type: 'warning',
+		},
+		{
+			brand: 'Jetpack.com',
+			status: 'Pending',
+			type: 'warning',
+		},
+	] as { brand: string; status: string; type: BadgeType }[]; // FIXME: Replace with actual value
+
 	return (
 		<>
 			<div className="partner-directory-dashboard__heading">
@@ -35,16 +60,30 @@ export default function PartnerDirectoryDashboard() {
 			<StepSection heading={ translate( 'How do I start?' ) }>
 				<StepSectionItem
 					isNewLayout
-					stepNumber={ 1 }
+					icon={ check }
+					stepNumber={ isSubmitted ? undefined : 1 }
 					heading={ translate( 'Share your expertise' ) }
-					description={ translate(
-						`Pick your agency's specialties and choose your directories. We'll review your application.`
-					) }
+					description={
+						isSubmitted && brandStatuses.length > 0 ? (
+							<div className="partner-directory-dashboard__brand-status-section">
+								{ brandStatuses.map( ( { brand, status, type } ) => (
+									<div key={ brand }>
+										<StatusBadge statusProps={ { children: status, type } } />
+										<span>{ brand }</span>
+									</div>
+								) ) }
+							</div>
+						) : (
+							translate(
+								`Pick your agency's specialties and choose your directories. We'll review your application.`
+							)
+						)
+					}
 					buttonProps={ {
-						children: translate( 'Apply now' ),
+						children: isSubmitted ? translate( 'Edit expertise' ) : translate( 'Apply now' ),
 						href: '/partner-directory/agency-expertise',
 						onClick: onApplyNowClick,
-						primary: true,
+						primary: ! isSubmitted,
 						compact: true,
 					} }
 				/>
@@ -59,8 +98,8 @@ export default function PartnerDirectoryDashboard() {
 						children: translate( 'Finish profile' ),
 						href: '/partner-directory/agency-details',
 						onClick: onFinishProfileClick,
-						primary: false,
-						disabled: true,
+						primary: isSubmitted,
+						disabled: ! isSubmitted,
 						compact: true,
 					} }
 				/>

@@ -2,6 +2,15 @@
 	.a4a-layout__body-wrapper {
 		max-width: 700px;
 	}
+
+	svg.sidebar__menu-icon {
+		width: 20px;
+		height: 20px;
+		padding: 2px;
+		background: var(--color-success-50);
+		border-radius: 50%;
+		fill: var(--color-text-white);
+	}
 }
 
 .partner-directory-dashboard__heading {
@@ -29,5 +38,22 @@
 
 	.step-section__header {
 		margin-block-end: 0;
+	}
+}
+
+.partner-directory-dashboard__brand-status-section {
+	margin-block-start: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	.badge {
+		min-width: 80px;
+		margin-inline-end: 8px;
+		text-align: center;
+	}
+
+	span {
+		color: var(--color-text-black);
 	}
 }

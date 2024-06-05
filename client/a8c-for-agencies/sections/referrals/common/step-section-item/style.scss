@@ -15,6 +15,7 @@
 	.step-section-item__icon {
 		display: none;
 
+
 		@include break-large {
 			display: block;
 		}
@@ -139,4 +140,8 @@
 		align-items: center;
 		justify-content: center;
 	}
+}
+
+.sidebar__menu-icon {
+	fill: currentColor;
 }
