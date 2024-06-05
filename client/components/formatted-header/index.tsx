@@ -5,20 +5,20 @@ import { preventWidows } from 'calypso/lib/formatting';
 import './style.scss';
 
 interface Props extends PropsWithChildren {
-	id: string;
-	className: string;
-	brandFont: boolean;
+	id?: string;
+	className?: string;
+	brandFont?: boolean;
 	headerText: ReactNode;
-	subHeaderAs: ElementType;
-	subHeaderText: ReactNode;
-	tooltipText: ReactNode;
-	compactOnMobile: boolean;
-	isSecondary: boolean;
-	align: 'center' | 'left' | 'right';
+	subHeaderAs?: ElementType;
+	subHeaderText?: ReactNode;
+	tooltipText?: ReactNode;
+	compactOnMobile?: boolean;
+	isSecondary?: boolean;
+	align?: 'center' | 'left' | 'right';
 	subHeaderAlign?: 'center';
-	hasScreenOptions: boolean;
-	children: ReactNode;
-	screenReader: ReactNode;
+	hasScreenOptions?: boolean;
+	children?: ReactNode;
+	screenReader?: ReactNode;
 }
 
 const FormattedHeader: FC< Props > = ( {
