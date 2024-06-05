@@ -1,6 +1,4 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
-import { hasTranslation } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
@@ -16,7 +14,6 @@ import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details
 
 export const UpgradePlanHostingDetails = () => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	let importSiteHostName = '';
@@ -25,10 +22,6 @@ export const UpgradePlanHostingDetails = () => {
 		importSiteHostName = new URL( importSiteQueryParam )?.hostname;
 	} catch ( e ) {}
 
-	const headerMainText =
-		hasTranslation( 'Why should you host with us?' ) || isEnglishLocale
-			? translate( 'Why should you host with us?' )
-			: translate( 'Why you should host with us?' );
 	const { list: upgradePlanHostingDetailsList, isFetching } = useUpgradePlanHostingDetailsList();
 
 	const { data: urlData } = useAnalyzeUrlQuery( importSiteQueryParam, true );
@@ -87,7 +80,9 @@ export const UpgradePlanHostingDetails = () => {
 				} ) }
 			>
 				<div className="import__upgrade-plan-hosting-details-header">
-					<p className="import__upgrade-plan-hosting-details-header-main">{ headerMainText }</p>
+					<p className="import__upgrade-plan-hosting-details-header-main">
+						{ translate( 'Why should you host with us?' ) }
+					</p>
 					<p className="import__upgrade-plan-hosting-details-header-subtext">
 						{ translate(
 							'Google data shows that %(boostPercentage)d%% more WordPress.com sites have good Core Web Vitals as compared to other WordPress hosts.',
