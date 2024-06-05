@@ -10,6 +10,7 @@ import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-an
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceMetricsQuery } from 'calypso/data/site-profiler/use-url-performance-metrics-query';
+import { useUrlSecurityMetricsQuery } from 'calypso/data/site-profiler/use-url-security-metrics-query';
 import { LayoutBlock } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
@@ -113,6 +114,12 @@ export default function SiteProfilerV2( props: Props ) {
 		basicMetrics?.token
 	);
 
+	const { data: securityMetrics } = useUrlSecurityMetricsQuery( url, basicMetrics?.token );
+	const { errors: securityMetricsErrors = {} } = securityMetrics ?? {};
+	const noWordPressFound = Object.keys( securityMetricsErrors ).find(
+		( error ) => error === 'no_wordpress'
+	);
+
 	const performanceCategory = getPerformanceCategory( performanceMetrics );
 
 	const updateDomainRouteParam = ( value: string ) => {
@@ -175,7 +182,9 @@ export default function SiteProfilerV2( props: Props ) {
 										{ label: translate( 'Hosting' ), ref: hostingRef },
 										{ label: translate( 'Performance Metrics' ), ref: perfomanceMetricsRef },
 										{ label: translate( 'Health Scores' ), ref: healthMetricsRef },
-										{ label: translate( 'Security' ), ref: securityMetricsRef },
+										...( noWordPressFound
+											? []
+											: [ { label: translate( 'Security' ), ref: securityMetricsRef } ] ),
 									] }
 									showMigrationCta={ ! isWpCom }
 								></NavMenu>
