@@ -85,6 +85,7 @@
 
 	.search-categories__categories {
 		flex: 1;
+		margin: 0;
 		max-width: none;
 
 		.scrollable-horizontal-navigation__left-button-wrapper,
@@ -102,13 +103,20 @@
 			padding: 0;
 		}
 
-		.segmented-control__item.is-selected .segmented-control__link {
-			background-color: var(--studio-gray-80) !important;
-			color: var(--studio-gray-0) !important;
-		}
-
 		.segmented-control__link {
 			border: 0 !important;
+			padding-top: 7px;
+			padding-bottom: 7px;
+			transition: none;
+		}
+
+		.segmented-control__item.is-selected .segmented-control__link {
+			&,
+			&:focus,
+			&:hover {
+				background-color: var(--studio-gray-80) !important;
+				color: var(--studio-gray-0) !important;
+			}
 		}
 	}
 
