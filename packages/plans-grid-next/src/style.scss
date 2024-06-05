@@ -1035,6 +1035,8 @@ $mobile-card-max-width: 440px;
 
 	.plans-grid-next-comparison-grid & {
 		margin-top: 10px;
+		margin-left: auto;
+		margin-right: auto;
 
 		@include plans-grid-medium-large {
 			margin-top: 0;
