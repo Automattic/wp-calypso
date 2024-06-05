@@ -59,11 +59,8 @@ import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-<<<<<<< HEAD
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
-=======
->>>>>>> 4beb5d83a9 (Remove checkoutv2 hook from checkout-main-content)
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
@@ -304,6 +301,7 @@ export default function CheckoutMainContent( {
 	customizedPreviousPath,
 	loadingHeader,
 	onStepChanged,
+	showSitePreview = false,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changeSelection: OnChangeItemVariant;
@@ -335,6 +333,18 @@ export default function CheckoutMainContent( {
 		removeCoupon,
 		couponStatus,
 	} = useShoppingCart( cartKey );
+
+	const searchParams = new URLSearchParams( window.location.search );
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
+	const selectedSiteData = useSelector( getSelectedSite );
+	const wpcomDomain = useSelector( ( state ) =>
+		getWpComDomainBySiteId( state, selectedSiteData?.ID )
+	);
+
+	// Only show the site preview for WPCOM domains that have a site connected to the site id
+	const shouldShowSitePreview =
+		showSitePreview && selectedSiteData && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
 
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
@@ -526,13 +536,19 @@ export default function CheckoutMainContent( {
 							</CheckoutSummaryTitleLink>
 
 							<CheckoutSummaryBody className="checkout__summary-body">
-								<div className="checkout-site-preview">
-									<SitePreviewWrapper>
-										<SitePreview showEditSite={ false } showSiteDetails={ false } />
-									</SitePreviewWrapper>
-								</div>
+								{ shouldShowSitePreview && (
+									<div className="checkout-site-preview">
+										<SitePreviewWrapper>
+											<SitePreview showEditSite={ false } showSiteDetails={ false } />
+										</SitePreviewWrapper>
+									</div>
+								) }
 
-								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
+								<WPCheckoutOrderSummary
+									siteId={ siteId }
+									onChangeSelection={ changeSelection }
+									showFeaturesList
+								/>
 								<CheckoutSidebarNudge
 									addItemToCart={ addItemToCart }
 									areThereDomainProductsInCart={ areThereDomainProductsInCart }
