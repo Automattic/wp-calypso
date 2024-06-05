@@ -316,10 +316,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	useEffect( () => {
 		if ( isFinished ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_completed' ) );
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
 		}
-	}, [ isFinished ] );
+	}, [ dispatch, isFinished ] );
 
 	const render = () => {
 		if ( loading ) {
