@@ -216,7 +216,7 @@ export class PlansStep extends Component {
 			);
 
 			return translate(
-				'Are you an agency? Get bulk discounts, revenue sharing, and premier support with {{link}}Automattic for Agencies{{/link}}.',
+				'Are you an agency? Get bulk discounts and premier support with {{link}}Automattic for Agencies{{/link}}.',
 				{ components: { link: a4aLinkButton } }
 			);
 		}
