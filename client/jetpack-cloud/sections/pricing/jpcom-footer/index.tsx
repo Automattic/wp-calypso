@@ -133,9 +133,9 @@ const JetpackComFooter: React.FC = () => {
 						trackId: 'become_an_agency',
 					},
 					{
-						label: translate( 'Affiliate Program' ),
+						label: translate( 'For Affiliates' ),
 						href: 'https://jetpack.com/affiliates/',
-						trackId: 'affiliate_program',
+						trackId: 'become_an_affiliate',
 					},
 				],
 			},
@@ -211,6 +211,11 @@ const JetpackComFooter: React.FC = () => {
 						label: translate( 'Forums' ),
 						href: addQueryArgs( utmParams, 'https://wordpress.org/support/plugin/jetpack/' ),
 						trackId: 'forums',
+					},
+					{
+						label: translate( 'Webinars' ),
+						href: 'https://jetpack.com/webinars/',
+						trackId: 'webinars',
 					},
 					{
 						label: translate( 'Security Library' ),
