@@ -286,7 +286,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				target="_blank"
 				className="rewind-flow__primary-button"
 				onClick={ () =>
-					dispatch( recordTracksEvent( 'calypso_jetpack_restore_complete_view_site' ) )
+					dispatch( recordTracksEvent( 'calypso_jetpack_restore_completed_view_site' ) )
 				}
 			>
 				{ translate( 'View your website {{externalIcon/}}', {
