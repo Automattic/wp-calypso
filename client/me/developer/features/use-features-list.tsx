@@ -46,7 +46,7 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl( 'https://agencies.automattic.com' ),
+			linkLearnMore: localizeUrl( 'https://wordpress.com/for-agencies/' ),
 		},
 		{
 			id: 'code',
