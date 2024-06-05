@@ -82,6 +82,22 @@ export function translationExists( phrase: string ) {
 }
 
 /**
+ * Get the first translated phrase if it is available in the user locale,
+ * otherwise returns the fallback.
+ * @param {string} phrase The text to check if translation is available.
+ * @param {string} translatedPhrase The translated phrase.
+ * @param {string} phraseFallback The fallback phrase.
+ * @returns {string} The translation if available, otherwise the fallback.
+ */
+export function getTranslationOrFallback(
+	phrase: string,
+	translatedPhrase: string,
+	phraseFallback: string
+) {
+	return translationExists( phrase ) ? translatedPhrase : phraseFallback;
+}
+
+/**
  * Return a list of all supported language slugs
  * @returns {Array} A list of all supported language slugs
  */
