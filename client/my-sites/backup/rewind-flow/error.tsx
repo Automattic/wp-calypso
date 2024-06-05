@@ -1,8 +1,10 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import downloadFailureImage from 'calypso/assets/images/illustrations/jetpack-cloud-download-failure.svg';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 interface Props {
 	imgSrc?: string;
@@ -20,6 +22,12 @@ const RewindFlowError: FunctionComponent< Props > = ( {
 	imgAlt = 'jetpack cloud error',
 } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_failed' ) );
+	}, [ dispatch ] );
+
 	return (
 		<>
 			<div className="rewind-flow__header">
