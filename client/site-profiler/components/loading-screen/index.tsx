@@ -29,22 +29,23 @@ export const LoadingScreen = () => {
 	];
 
 	const [ progress, setProgress ] = useState( 0 );
+	const [ tick, setTick ] = useState( 0 );
 
 	useEffect( () => {
-		setTimeout( () => {
-			if ( progress >= 100 ) {
-				setProgress( 0 );
-			} else {
-				setProgress( progress + 3 );
-			}
+		const timeoutId = setTimeout( () => {
+			const newProgress = 100 * ( 1 - Math.pow( 1.07, -tick ) );
+			setProgress( newProgress );
+			setTick( tick + 1 );
 		}, 1000 );
-	}, [ progress ] );
+
+		return () => clearTimeout( timeoutId );
+	}, [ progress, tick ] );
 
 	return (
 		<LayoutBlock className="landing-page-header-block" width="medium">
 			<StyledLoadingScreen>
 				<h2>{ progressHeadings[ Math.floor( ( progress / 101 ) * progressHeadings.length ) ] }</h2>
-				<Progress value={ progress } total={ 100 } canGoBackwards />
+				<Progress value={ progress } total={ 100 } />
 			</StyledLoadingScreen>
 		</LayoutBlock>
 	);

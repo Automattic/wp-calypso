@@ -5,7 +5,7 @@ import {
 	PRODUCT_FILTER_KEY_PRICES,
 	PRODUCT_FILTER_KEY_TYPES,
 } from '../../../constants';
-import { SelectedFilters, hasSelectedFilter } from '../../../lib/product-filter';
+import { SelectedFilters } from '../../../lib/product-filter';
 
 const DEFAULT_SELECTED_FILTERS = {
 	[ PRODUCT_FILTER_KEY_BRAND ]: '',
@@ -43,7 +43,6 @@ export default function useSelectedProductFilters( { productBrand }: Props ) {
 			selectedFilters,
 			setSelectedFilters,
 			resetFilters,
-			hasSelected: hasSelectedFilter( selectedFilters ),
 		} ),
 		[ resetFilters, selectedFilters ]
 	);

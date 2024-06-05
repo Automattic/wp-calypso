@@ -4,7 +4,7 @@ import { getCurrentOAuth2Client } from '../oauth2-clients/ui/selectors';
 import type { AppState } from 'calypso/types';
 
 /**
- * Return whether it's BlazePro authentication flow.
+ * Return whether it's Blaze Pro authentication flow.
  */
 export default function getIsBlazePro( state: AppState ): boolean {
 	return isBlazeProOAuth2Client( getCurrentOAuth2Client( state ) );

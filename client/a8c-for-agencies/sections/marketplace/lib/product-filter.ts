@@ -43,13 +43,15 @@ export type SelectedFilters = {
 };
 
 export function hasSelectedFilter( selectedFilters: SelectedFilters ) {
-	return Object.keys( selectedFilters )
-		.filter( ( key ) => key !== PRODUCT_FILTER_KEY_BRAND )
-		.some( ( key ) => {
-			return Object.values( selectedFilters[ key as keyof SelectedFilters ] ).some(
-				( selected ) => selected
-			);
-		} );
+	return [
+		selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ],
+		selectedFilters[ PRODUCT_FILTER_KEY_TYPES ],
+		selectedFilters[ PRODUCT_FILTER_KEY_PRICES ],
+	].some( ( filters ) => hasSelectedFilterByType( filters ) );
+}
+
+export function hasSelectedFilterByType( filters: Record< string, boolean > ) {
+	return Object.values( filters ).some( ( selected ) => selected );
 }
 
 export function filterProductsAndPlans(
