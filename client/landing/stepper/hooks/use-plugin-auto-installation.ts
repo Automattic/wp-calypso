@@ -31,7 +31,7 @@ const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
 
 const installPlugin = async ( siteId: number, pluginSlug: string ) =>
 	wpcom.req.post( {
-		path: `/sites/${ siteId }/plugins/${ pluginSlug }/install`,
+		path: `/sites/${ siteId }/plugins/${ pluginSlug }/install?http_envelope=1`,
 		apiNamespace: 'rest/v1.2',
 	} );
 
@@ -65,7 +65,14 @@ const usePluginInstallation = ( pluginSlug: string, siteId?: number, options?: O
 	return useMutation( {
 		mutationKey: [ 'onboarding-site-plugin-installation', siteId, pluginSlug ],
 		mutationFn: async () => installPlugin( siteId!, pluginSlug ),
-		retry: options?.retry ?? DEFAULT_RETRY,
+		retry:
+			options?.retry ||
+			( ( failCount, e: Error & { error?: string } ) => {
+				if ( e?.error === 'plugin_already_installed' ) {
+					return false;
+				}
+				return failCount < DEFAULT_RETRY;
+			} ),
 	} );
 };
 
