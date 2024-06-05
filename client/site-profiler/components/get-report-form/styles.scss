@@ -8,7 +8,7 @@
 	bottom: 0;
 	left: 0;
 	right: 0;
-	z-index: 10;
+	z-index: 185;
 	background-color: var(--studio-gray-0);
 	border: 1px solid #cbcbcb;
 	padding: 0 1.5rem;
@@ -16,10 +16,6 @@
 
 	&--hidden {
 		transform: translateY(100%);
-	}
-
-	@media (max-width: $break-mobile) {
-		bottom: -36px;
 	}
 }
 .get-report-form__container {
