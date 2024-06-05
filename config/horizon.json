@@ -172,6 +172,5 @@
 	"boom_analytics_enabled": true,
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "horizon",
-	"google_analytics_key": "UA-10673494-20",
 	"hotjar_enabled": true
 }
