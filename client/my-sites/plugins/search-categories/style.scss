@@ -172,41 +172,5 @@
 }
 
 main.is-logged-out .search-categories {
-	align-items: flex-start;
-	margin-bottom: 7px;
-	margin-top: -15px;
-
-	// &.fixed-top .search-categories__search {
-	// 	justify-content: center;
-	// 	background: #e5f4ff;
-	// }
-
-	.search-categories__searchbox {
-		margin-left: 0;
-		height: 55px;
-		max-width: 450px;
-		box-shadow:
-			0 0 0 0 rgba(38, 19, 19, 0.03),
-			0 1px 2px 0 rgba(38, 19, 19, 0.03),
-			0 4px 4px 0 rgba(38, 19, 19, 0.03),
-			0 9px 5px 0 rgba(38, 19, 19, 0.02),
-			0 16px 6px 0 rgba(38, 19, 19, 0),
-			0 25px 7px 0 rgba(38, 19, 19, 0);
-
-		.search-component__open-icon {
-			color: var(--studio-gray-30);
-			transform: scaleX(-1);
-			height: 33px;
-		}
-
-		input.search-component__input[type="search"],
-		input.search-component__input[type="search"]::placeholder {
-			color: var(--studio-gray-50);
-		}
-
-		&.has-focus {
-			border-color: var(--color-neutral-20);
-			box-shadow: none;
-		}
-	}
+	padding-bottom: 20px;
 }
