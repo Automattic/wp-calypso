@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FormEvent, KeyboardEvent } from 'react';
 import './styles.scss';
@@ -47,7 +47,7 @@ export const LandingPageHeader = ( props: Props ) => {
 			</p>
 
 			<form
-				className={ classnames( 'landing-page-header--form', { 'is-error': showError } ) }
+				className={ clsx( 'landing-page-header--form', { 'is-error': showError } ) }
 				onSubmit={ onSubmit }
 			>
 				<div className="landing-page-header--form-container">
@@ -78,7 +78,7 @@ export const LandingPageHeader = ( props: Props ) => {
 				</div>
 				<div className="landing-page-header--msg">
 					<p
-						className={ classnames( 'error', {
+						className={ clsx( 'error', {
 							'vis-hidden': ! showError,
 						} ) }
 					>

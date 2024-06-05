@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
@@ -174,7 +174,7 @@ export class Login extends Component {
 
 		return (
 			<div
-				className={ classNames( 'wp-login__footer', {
+				className={ clsx( 'wp-login__footer', {
 					'wp-login__footer--oauth': isOauthLogin,
 					'wp-login__footer--jetpack': ! isOauthLogin,
 				} ) }
@@ -602,7 +602,7 @@ export class Login extends Component {
 			<div>
 				{ this.props.isP2Login && this.renderP2Logo() }
 				<Main
-					className={ classNames( 'wp-login__main', {
+					className={ clsx( 'wp-login__main', {
 						'is-wpcom-migration': isFromMigrationPlugin,
 						'is-social-first': isSocialFirst,
 					} ) }

@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { defer } from 'lodash';
@@ -453,7 +453,7 @@ export default class Step extends Component< Props, State > {
 		const style = { ...this.props.style, ...posToCss( stepPos ) };
 
 		return (
-			<Card className={ classNames( ...classes ) } style={ style }>
+			<Card className={ clsx( ...classes ) } style={ style }>
 				<ContentComponent translate={ translate } />
 			</Card>
 		);

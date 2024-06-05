@@ -1,6 +1,6 @@
 import { ProgressBar, WooCommerceWooLogo } from '@automattic/components';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
@@ -49,7 +49,7 @@ const SignupHeader = ( {
 		shouldShowLoadingScreen,
 	} ).result;
 
-	const logoClasses = classnames( 'wordpress-logo', {
+	const logoClasses = clsx( 'wordpress-logo', {
 		'is-large': shouldShowLoadingScreen && ! isReskinned,
 		'is-dark-background': refundPeriodInSignupHeaderBanner,
 	} );

@@ -8,7 +8,7 @@ import type { DNS, HostingProvider } from 'calypso/data/site-profiler/types';
 
 interface HostingSectionProps {
 	dns: DNS[];
-	domain?: string;
+	url?: string;
 	urlData?: UrlData;
 	hostingProvider?: HostingProvider;
 	hostingRef: React.RefObject< HTMLObjectElement >;
@@ -16,7 +16,7 @@ interface HostingSectionProps {
 
 export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {
 	const translate = useTranslate();
-	const { dns = [], domain, urlData, hostingProvider, hostingRef } = props;
+	const { dns = [], url, urlData, hostingProvider, hostingRef } = props;
 	const isWPcom = hostingProvider?.slug?.toLowerCase() === 'automattic';
 
 	return (
@@ -35,7 +35,7 @@ export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {
 			}
 			subtitle={ ! isWPcom ? translate( 'Upgrade your hosting with WordPress.com' ) : null }
 			subtitleOnClick={ () =>
-				page( `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }` )
+				page( `/setup/hosted-site-migration?ref=site-profiler&from=${ url }` )
 			}
 			ref={ hostingRef }
 		>

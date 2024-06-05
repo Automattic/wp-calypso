@@ -216,6 +216,12 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							path,
 						} );
 						break;
+					case 'jetpack_subscriptions_subscribe_navigation_enabled':
+						trackTracksEvent( 'calypso_settings_subscribe_navigation_updated', {
+							value: fields.jetpack_subscriptions_subscribe_navigation_enabled,
+							path,
+						} );
+						break;
 					case 'jetpack_subscriptions_login_navigation_enabled':
 						trackTracksEvent( 'calypso_settings_subscriber_login_navigation_updated', {
 							value: fields.jetpack_subscriptions_login_navigation_enabled,

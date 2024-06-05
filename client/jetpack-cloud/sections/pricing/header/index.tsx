@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -26,7 +26,7 @@ const Header: React.FC< Props > = ( { title } ) => {
 
 	return (
 		<>
-			<div className={ classNames( 'header', { 'has-sale-banner': hasSaleBanner } ) }>
+			<div className={ clsx( 'header', { 'has-sale-banner': hasSaleBanner } ) }>
 				<FormattedHeader
 					className="header__main-title"
 					headerText={ preventWidows(

@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
@@ -43,6 +44,7 @@ const DotcomPreviewPane = ( {
 	changeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack;
@@ -61,7 +63,8 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_DEVELOPER_TOOLS,
 				<span>
-					{ __( 'Dev Tools' ) } <DevToolsIcon />
+					{ hasEnTranslation( 'Hosting Settings' ) ? __( 'Hosting Settings' ) : __( 'Dev Tools' ) }
+					<DevToolsIcon />
 				</span>,
 				isSimpleSite || isPlanExpired,
 				selectedSiteFeature,
@@ -102,7 +105,7 @@ const DotcomPreviewPane = ( {
 			),
 			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
-				__( 'Server Config' ),
+				hasEnTranslation( 'Server Settings' ) ? __( 'Server Settings' ) : __( 'Server Config' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,

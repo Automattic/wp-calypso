@@ -7,7 +7,7 @@ import {
 } from '@automattic/sites';
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
@@ -263,7 +263,7 @@ const SitesDashboardV2 = ( {
 
 	return (
 		<Layout
-			className={ classNames(
+			className={ clsx(
 				'sites-dashboard',
 				'sites-dashboard__layout',
 				! dataViewsState.selectedItem && 'preview-hidden'

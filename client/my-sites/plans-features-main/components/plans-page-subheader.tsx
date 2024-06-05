@@ -101,11 +101,13 @@ const PlansPageSubheader = ( {
 	isDisplayingPlansNeededForFeature,
 	deemphasizeFreePlan,
 	showPlanBenefits,
+	offeringFreePlan,
 	onFreePlanCTAClick,
 }: {
 	siteSlug?: string | null;
 	isDisplayingPlansNeededForFeature: boolean;
 	deemphasizeFreePlan?: boolean;
+	offeringFreePlan?: boolean;
 	showPlanBenefits?: boolean;
 	onFreePlanCTAClick: () => void;
 } ) => {
@@ -113,7 +115,7 @@ const PlansPageSubheader = ( {
 
 	return (
 		<>
-			{ deemphasizeFreePlan && (
+			{ deemphasizeFreePlan && offeringFreePlan ? (
 				<Subheader>
 					{ translate(
 						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
@@ -124,8 +126,9 @@ const PlansPageSubheader = ( {
 						}
 					) }
 				</Subheader>
+			) : (
+				showPlanBenefits && <PlanBenefitHeader />
 			) }
-			{ ! deemphasizeFreePlan && showPlanBenefits && <PlanBenefitHeader /> }
 			{ isDisplayingPlansNeededForFeature && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
 		</>
 	);

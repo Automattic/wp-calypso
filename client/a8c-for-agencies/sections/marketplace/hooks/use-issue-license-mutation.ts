@@ -7,12 +7,14 @@ import { APIError, APILicense } from 'calypso/state/partner-portal/types';
 export interface MutationIssueLicenseVariables {
 	product: string;
 	quantity: number;
+	isBundle?: boolean;
 }
 
 function mutationIssueLicense( {
 	product,
 	quantity,
 	agencyId,
+	isBundle = false,
 }: MutationIssueLicenseVariables & { agencyId?: number } ): Promise< APILicense[] > {
 	if ( ! agencyId ) {
 		throw new Error( 'Agency ID is required to issue a license' );
@@ -20,7 +22,7 @@ function mutationIssueLicense( {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/jetpack-licensing/licenses',
-		body: { product, quantity, agency_id: agencyId, bundle: false },
+		body: { product, quantity, agency_id: agencyId, bundle: isBundle },
 	} );
 }
 

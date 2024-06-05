@@ -94,7 +94,10 @@ export type BasicMetricsScoredList = [ Metrics, { value: number; score: Scores }
 
 export interface UrlBasicMetricsQueryResponse {
 	final_url: string;
-	basic: BasicMetrics;
+	basic: {
+		data: BasicMetrics;
+		success: boolean;
+	};
 	advanced: Record< string, string >;
 	token: string;
 }
@@ -113,16 +116,20 @@ export interface UrlSecurityMetricsQueryResponse {
 	};
 }
 
+export interface PerformanceReport {
+	audits: {
+		health: PerformanceMetricsDataQueryResponse;
+		performance: PerformanceMetricsDataQueryResponse;
+	};
+	performance: number;
+	overall_score: number;
+	is_wpcom: boolean;
+}
+
 export interface UrlPerformanceMetricsQueryResponse {
 	webtestpage_org: {
-		report: {
-			audits: {
-				health: PerformanceMetricsDataQueryResponse;
-				performance: PerformanceMetricsDataQueryResponse;
-			};
-			performance: number;
-			overall_score: number;
-		};
+		report: PerformanceReport;
+		status: string;
 	};
 }
 
@@ -141,11 +148,12 @@ export interface PerformanceMetricsItemQueryResponse {
 }
 
 export interface PerformanceMetricsDetailsQueryResponse {
-	type: 'table' | 'opportunity' | 'list';
+	type: 'table' | 'opportunity' | 'list' | 'criticalrequestchain';
 	headings?: Array< { key: string; label: string; valueType: string } >;
 	items?: Array< {
 		[ key: string ]: string | number | { [ key: string ]: any };
 	} >;
+	chains?: Array< { [ key: string ]: any } >;
 }
 
 export interface BasicMetricsResult extends Omit< UrlBasicMetricsQueryResponse, 'basic' > {

@@ -59,6 +59,7 @@ const entrepreneurFlow: Flow = {
 				variationName: flowName,
 				redirectTo,
 				locale,
+				customLoginPath: '/start/entrepreneur/user-social',
 			} );
 
 			return loginUrl;

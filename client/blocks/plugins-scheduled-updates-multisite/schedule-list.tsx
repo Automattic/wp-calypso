@@ -157,14 +157,16 @@ export const ScheduleList = ( props: Props ) => {
 			{ ! isScheduleEmpty && ScheduleListComponent ? (
 				<>
 					<ScheduleListFilter />
-					<ScheduleListComponent
-						compact={ compact }
-						schedules={ filteredSchedules }
-						selectedScheduleId={ selectedScheduleId }
-						onRemoveClick={ openRemoveDialog }
-						onEditClick={ onEditSchedule }
-						onLogsClick={ onShowLogs }
-					/>
+					{ ! isLoadingSchedules && (
+						<ScheduleListComponent
+							compact={ compact }
+							schedules={ filteredSchedules }
+							selectedScheduleId={ selectedScheduleId }
+							onRemoveClick={ openRemoveDialog }
+							onEditClick={ onEditSchedule }
+							onLogsClick={ onShowLogs }
+						/>
+					) }
 				</>
 			) : null }
 			{ schedules.length === 0 && isLoading && <Spinner /> }

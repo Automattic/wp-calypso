@@ -20,7 +20,7 @@
 			display: flex;
 			font-weight: 500;
 
-			@media ( max-width: $break-mobile ) {
+			@media (max-width: $break-mobile) {
 				display: none;
 			}
 		}
@@ -40,12 +40,12 @@
 		background-color: var(--color-white);
 		z-index: 999;
 
-		@media ( max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			display: flex;
 		}
 
 		.masterbar__login-back-link {
-			@media ( max-width: $break-mobile ) {
+			@media (max-width: $break-mobile) {
 				display: block;
 			}
 		}
@@ -73,7 +73,7 @@
 				// margin-top: -10px;
 				font-weight: 500;
 
-				@media ( max-width: $break-mobile ) {
+				@media (max-width: $break-mobile) {
 					display: none;
 				}
 			}
@@ -105,7 +105,7 @@
 	.layout__content {
 		padding-top: 85px;
 
-		@media ( max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			padding-top: 50px;
 			padding-bottom: 80px;
 		}
@@ -437,7 +437,7 @@
 		justify-content: center;
 		max-width: 758px;
 
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			flex-direction: column;
 		}
 
@@ -458,7 +458,7 @@
 		}
 
 		.auth-form__separator {
-			@media screen and ( min-width: $break-medium ) {
+			@media screen and (min-width: $break-medium) {
 				margin-block: 0;
 			}
 		}

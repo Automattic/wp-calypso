@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import photon from 'photon';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -259,7 +259,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 				{ assemblerCtaData.shouldGoToAssemblerStep && (
 					<Button
-						className={ classnames( 'design-picker__design-your-own-button', {
+						className={ clsx( 'design-picker__design-your-own-button', {
 							'design-picker__design-your-own-button-without-categories': ! hasCategories,
 						} ) }
 						onClick={ () => onClickDesignYourOwnTopButton( getAssemblerDesign() ) }
@@ -338,14 +338,9 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 
 	return (
 		<div
-			className={ classnames(
-				'design-picker',
-				`design-picker--theme-light`,
-				'design-picker__unified',
-				{
-					'design-picker--has-categories': hasCategories,
-				}
-			) }
+			className={ clsx( 'design-picker', `design-picker--theme-light`, 'design-picker__unified', {
+				'design-picker--has-categories': hasCategories,
+			} ) }
 		>
 			{ heading }
 			<div className="unified-design-picker__designs">

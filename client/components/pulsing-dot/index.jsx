@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { number } from 'prop-types';
 import { Component } from 'react';
 
@@ -33,7 +33,7 @@ class PulsingDot extends Component {
 			return null;
 		}
 
-		const className = classnames( 'pulsing-dot', { 'is-active': active } );
+		const className = clsx( 'pulsing-dot', { 'is-active': active } );
 		return <div className={ className } />;
 	}
 }

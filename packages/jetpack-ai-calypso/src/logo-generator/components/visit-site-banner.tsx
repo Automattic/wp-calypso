@@ -4,7 +4,7 @@
 import { Button, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 /**
  * Internal dependencies
  */
@@ -21,7 +21,7 @@ export const VisitSiteBanner: React.FC< {
 	onVisitBlankTarget: () => void;
 } > = ( { className = null, siteURL = '#', onVisitBlankTarget } ) => {
 	return (
-		<div className={ classnames( 'jetpack-ai-logo-generator-modal-visit-site-banner', className ) }>
+		<div className={ clsx( 'jetpack-ai-logo-generator-modal-visit-site-banner', className ) }>
 			<div className="jetpack-ai-logo-generator-modal-visit-site-banner__jetpack-logo">
 				<img src={ jetpackLogo } alt="Jetpack" />
 			</div>

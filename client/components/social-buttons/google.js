@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { cloneElement, Component, Fragment } from 'react';
@@ -185,7 +185,7 @@ class GoogleSocialButton extends Component {
 
 		if ( children ) {
 			const childProps = {
-				className: classNames( { disabled: isDisabled } ),
+				className: clsx( { disabled: isDisabled } ),
 				onClick: this.handleClick,
 			};
 
@@ -198,7 +198,7 @@ class GoogleSocialButton extends Component {
 					customButton
 				) : (
 					<button
-						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+						className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
 						onClick={ this.handleClick }
 						disabled={ isDisabled }
 					>

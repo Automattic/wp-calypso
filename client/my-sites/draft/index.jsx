@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import photon from 'photon';
@@ -63,7 +63,7 @@ class Draft extends Component {
 			}
 		}
 
-		const classes = classnames( 'draft', `is-${ post.format }`, {
+		const classes = clsx( 'draft', `is-${ post.format }`, {
 			'has-image': !! image,
 			'is-placeholder': this.props.isPlaceholder,
 			'is-touch': hasTouch(),

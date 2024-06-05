@@ -1,5 +1,5 @@
 import { CompactCard, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -33,10 +33,7 @@ class VerticalNavItem extends Component {
 	};
 
 	renderPlaceholder = () => {
-		const compactCardClassNames = classNames(
-			'vertical-nav-item is-placeholder',
-			this.props.className
-		);
+		const compactCardClassNames = clsx( 'vertical-nav-item is-placeholder', this.props.className );
 
 		return (
 			<CompactCard className={ compactCardClassNames }>
@@ -53,7 +50,7 @@ class VerticalNavItem extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const compactCardClassNames = classNames( 'vertical-nav-item', className, { disabled } );
+		const compactCardClassNames = clsx( 'vertical-nav-item', className, { disabled } );
 
 		const linkProps = external ? { target: '_blank', rel: 'noreferrer' } : {};
 

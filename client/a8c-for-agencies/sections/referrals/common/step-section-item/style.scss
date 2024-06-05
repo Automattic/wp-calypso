@@ -15,6 +15,7 @@
 	.step-section-item__icon {
 		display: none;
 
+
 		@include break-large {
 			display: block;
 		}
@@ -41,6 +42,7 @@
 			height: 40px;
 
 			@include break-large {
+				min-width: 100px;
 				width: auto;
 				height: inherit;
 			}
@@ -120,4 +122,26 @@
 		}
 
 	}
+}
+
+.step-section-item__step-number {
+	display: none;
+	color: var(--color-accent);
+	font-size: rem(12px);
+	font-weight: 600;
+	text-align: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 2px solid var(--color-accent);
+
+	@include break-large {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+.sidebar__menu-icon {
+	fill: currentColor;
 }

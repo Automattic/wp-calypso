@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { GridPlan, PlanActionOverrides } from '../../types';
 import PlanFeatures2023GridActions from '../actions';
 import PlanDivOrTdContainer from '../plan-div-td-container';
@@ -23,7 +23,7 @@ const TopButtons = ( {
 }: TopButtonsProps ) => {
 	return renderedGridPlans.map(
 		( { planSlug, availableForPurchase, isMonthlyPlan, features: { storageOptions } } ) => {
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
+			const classes = clsx( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 			return (
 				<PlanDivOrTdContainer

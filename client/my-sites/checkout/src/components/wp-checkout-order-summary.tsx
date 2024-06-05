@@ -77,6 +77,7 @@ const StyledIcon = styled( Icon )`
 export function WPCheckoutOrderSummary( {
 	siteId,
 	onChangeSelection,
+	showFeaturesList,
 }: {
 	siteId: number | undefined;
 	onChangeSelection: (
@@ -85,6 +86,7 @@ export function WPCheckoutOrderSummary( {
 		productId: number,
 		volume?: number
 	) => void;
+	showFeaturesList?: boolean;
 } ) {
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
@@ -98,7 +100,7 @@ export function WPCheckoutOrderSummary( {
 			data-e2e-cart-is-loading={ isCartUpdating }
 			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
-			{ ! shouldUseCheckoutV2 && (
+			{ showFeaturesList && (
 				<CheckoutSummaryFeaturedList
 					responseCart={ responseCart }
 					siteId={ siteId }
@@ -520,7 +522,7 @@ export function CheckoutSummaryFeaturesList( props: {
 			{ ! hasPlanInCart && hasEmailInCart && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-support-email" />
-					{ translate( '24/7 support via email' ) }
+					{ translate( 'Fast support' ) }
 				</CheckoutSummaryFeaturesListItem>
 			) }
 

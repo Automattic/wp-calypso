@@ -9,9 +9,11 @@ const StyledLayoutBlock = styled( LayoutBlock )`
 		display: flex;
 		gap: 90px;
 		justify-content: space-between;
+		align-items: flex-end;
 
 		@media ( max-width: 980px ) {
 			flex-direction: column;
+			align-items: flex-start;
 			gap: 30px;
 		}
 	}

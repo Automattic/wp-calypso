@@ -1,5 +1,5 @@
 import { Dialog } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { filter, find, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -198,7 +198,7 @@ class AccountDialog extends Component {
 	}
 
 	render() {
-		const classes = classNames( 'account-dialog', {
+		const classes = clsx( 'account-dialog', {
 			'single-account': 1 === this.props.accounts.length,
 		} );
 		const buttons = [

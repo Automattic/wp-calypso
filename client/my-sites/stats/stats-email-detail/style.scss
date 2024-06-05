@@ -27,7 +27,7 @@ $break-large-stats-countries: 1280px;
 		font-family: Recoleta, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 		margin-bottom: 16px;
 
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			margin-left: 0.875rem;
 			margin-right: 0.875rem;
 		}
@@ -36,7 +36,7 @@ $break-large-stats-countries: 1280px;
 		padding-top: 32px;
 		padding-bottom: 32px;
 
-		@media ( max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			padding-top: $mobile-highlights-section-top-padding;
 		}
 	}
@@ -52,7 +52,7 @@ $break-large-stats-countries: 1280px;
 			"devices devices devices devices devices devices clients clients clients clients clients clients"
 			"links links links links links links empty empty empty empty empty empty";
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			grid-template-columns: repeat(8, 1fr);
 			grid-template-rows: repeat(3, min-content);
 			grid-template-areas:
@@ -62,7 +62,7 @@ $break-large-stats-countries: 1280px;
 		}
 
 		// Mobile
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			grid-template-columns: repeat(4, 1fr);
 			grid-template-rows: repeat(4, min-content);
 			gap: 0;
@@ -83,7 +83,7 @@ $break-large-stats-countries: 1280px;
 			"map list"
 			"more more";
 
-		@media ( max-width: $break-large-stats-countries ) {
+		@media (max-width: $break-large-stats-countries) {
 			grid-template-columns: 100%;
 			grid-template-areas:
 				"map"

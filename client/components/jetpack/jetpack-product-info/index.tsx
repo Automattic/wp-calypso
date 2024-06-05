@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useIncludedProductDescriptionMap } from 'calypso/components/jetpack/jetpack-product-info/hooks/use-included-product-description-map';
@@ -44,7 +44,7 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 
 	const translate = useTranslate();
 	const icon = getProductIcon( { productSlug } );
-	const iconStyles = classnames( {
+	const iconStyles = clsx( {
 		'jetpack-product-info__product-icon': true,
 		'jetpack-product-info__product-icon-woocommerce': isWooCommerceProduct( productSlug ),
 	} );

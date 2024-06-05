@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { values } from 'lodash';
 import PropTypes from 'prop-types';
@@ -32,7 +32,7 @@ class SearchStreamHeader extends Component {
 		if ( wideDisplay ) {
 			return (
 				<ul
-					className={ classNames( 'search-stream__headers', {
+					className={ clsx( 'search-stream__headers', {
 						'search-stream__headers-logged-out': ! isLoggedIn,
 					} ) }
 				>

@@ -14,7 +14,7 @@ import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { FC, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -235,7 +235,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		return (
 			<Link to={ emailUrl } onClick={ contactOptionsEventMap[ 'email' ] }>
 				<div
-					className={ classnames( 'help-center-contact-page__box', 'email' ) }
+					className={ clsx( 'help-center-contact-page__box', 'email' ) }
 					role="button"
 					tabIndex={ 0 }
 				>
@@ -266,7 +266,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					enabled={ ! renderEmail.render }
 				/>
 
-				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
+				<div className={ clsx( 'help-center-contact-page__boxes' ) }>
 					{ renderEmail.render ? renderEmailOption() : renderChatOption() }
 				</div>
 			</div>

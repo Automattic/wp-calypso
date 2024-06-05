@@ -400,7 +400,7 @@ $brand-text: "SF Pro Text", $sans;
 .accessible-focus div.global-sidebar {
 	*:focus {
 		outline-style: solid;
-		outline-color: var(--color-sidebar-menu-selected-background);
+		outline-color: var(--color-primary-light);
 		outline-width: 2px;
 		outline-offset: 2px;
 	}
@@ -455,7 +455,7 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-@media ( min-width: 661px ) {
+@media (min-width: 661px) {
 	.is-global-sidebar-collapsed {
 		.global-sidebar {
 			.sidebar__header,
@@ -498,7 +498,7 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-@media ( max-width: 660px ) {
+@media (max-width: 660px) {
 	.global-sidebar .tooltip:hover::after {
 		display: none;
 	}
