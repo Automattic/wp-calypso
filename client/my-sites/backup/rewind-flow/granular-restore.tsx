@@ -515,20 +515,8 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button
-				primary
-				href={ siteUrl }
-				target="_blank"
-				className="rewind-flow__primary-button"
-				onClick={ () =>
-					dispatch(
-						recordTracksEvent( 'calypso_jetpack_backup_granular_restore_complete_view_site' )
-					)
-				}
-			>
-				{ translate( 'View your website {{externalIcon/}}', {
-					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
-				} ) }
+			<Button primary href={ siteUrl } className="rewind-flow__primary-button">
+				{ translate( 'View your website' ) }
 			</Button>
 		</>
 	);
