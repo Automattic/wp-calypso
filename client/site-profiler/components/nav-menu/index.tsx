@@ -1,7 +1,8 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import './style.scss';
+import StickyPanel from 'calypso/components/sticky-panel';
 import { useIsMenuSectionVisible } from 'calypso/site-profiler/hooks/use-is-menu-section-visible';
+import './style.scss';
 
 interface NavMenuProps {
 	navItems: {
@@ -28,24 +29,26 @@ export const NavMenu = ( { navItems, domain, showMigrationCta = false }: NavMenu
 	const activeIndex = activeIndexes.indexOf( true );
 
 	return (
-		<nav className="site-profiler-nav-menu">
-			<ul>
-				{ navItems.map( ( navItem, index ) => (
-					<li>
-						<button
-							className={ clsx( { active: index === activeIndex } ) }
-							onClick={ () => executeScroll( navItem.ref ) }
-						>
-							0{ index + 1 }. { navItem.label }
-						</button>
-					</li>
-				) ) }
-				{ showMigrationCta && (
-					<li className="site-profiler-nav-menu__cta">
-						<a href={ migrateUrl }>{ translate( 'Request migration - It’s free' ) }</a>
-					</li>
-				) }
-			</ul>
-		</nav>
+		<StickyPanel minLimit={ 0 }>
+			<nav className="site-profiler-nav-menu">
+				<ul>
+					{ navItems.map( ( navItem, index ) => (
+						<li>
+							<button
+								className={ clsx( { active: index === activeIndex } ) }
+								onClick={ () => executeScroll( navItem.ref ) }
+							>
+								0{ index + 1 }. { navItem.label }
+							</button>
+						</li>
+					) ) }
+					{ showMigrationCta && (
+						<li className="site-profiler-nav-menu__cta">
+							<a href={ migrateUrl }>{ translate( 'Request migration - It’s free' ) }</a>
+						</li>
+					) }
+				</ul>
+			</nav>
+		</StickyPanel>
 	);
 };
