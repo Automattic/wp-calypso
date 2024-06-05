@@ -576,6 +576,12 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
 	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 
+	useEffect( () => {
+		if ( isFinished ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_completed' ) );
+		}
+	}, [ dispatch, isFinished ] );
+
 	const render = () => {
 		if ( loading ) {
 			return <Loading />;
