@@ -37,6 +37,7 @@ export type CreateNewAccountParams = Pick<
 	| 'recaptchaDidntLoad'
 	| 'recaptchaFailed'
 	| 'recaptchaToken'
+	| 'oauth2Signup'
 >;
 
 export type WpcomResolvedResponse = {

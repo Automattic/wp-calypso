@@ -13,6 +13,7 @@ import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Step } from '../../types';
+import useProcessingCallbacks from './userProcessingCallbacks';
 
 import './style.scss';
 
@@ -22,6 +23,10 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const { handleSocialResponse } = useProcessingCallbacks( {
+		flowName: flow,
+		stepSubmit: submit,
+	} );
 
 	useEffect( () => {
 		if ( ! isLoggedIn ) {
@@ -47,9 +52,7 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 				logInUrl={ login( {
 					signupUrl: window.location.pathname + window.location.search,
 				} ) }
-				handleSocialResponse={ () => {
-					submit?.();
-				} }
+				handleSocialResponse={ handleSocialResponse }
 				socialService={ socialService ?? '' }
 				socialServiceResponse={ {} }
 				isReskinned

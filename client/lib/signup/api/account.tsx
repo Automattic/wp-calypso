@@ -82,6 +82,7 @@ async function createNewAccount( {
 	recaptchaDidntLoad,
 	recaptchaFailed,
 	recaptchaToken,
+	oauth2Signup,
 }: CreateNewAccountParams ) {
 	const { errors, response } = await new Promise< WpcomResolvedResponse >( ( resolve ) => {
 		wpcom.req.post(
@@ -154,6 +155,7 @@ export async function createAccount( {
 			recaptchaDidntLoad,
 			recaptchaFailed,
 			recaptchaToken,
+			oauth2Signup,
 		} ) );
 		if ( oauth2Signup ) {
 			oauth2SignupParams = {

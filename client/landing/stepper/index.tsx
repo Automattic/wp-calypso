@@ -49,6 +49,20 @@ function determineFlow() {
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
 }
 
+const extractAuthQueryParams = () => {
+	const urlSearchParams = new URL( window.location.href ).searchParams;
+
+	const oauth2_client_id = urlSearchParams.get( 'oauth2_client_id' );
+	const oauth2_redirect = urlSearchParams.get( 'oauth2_redirect' );
+	const redirect_to = urlSearchParams.get( 'oauth2_redirect' );
+	const jetpack_redirect = urlSearchParams.get( 'jetpack_redirect' );
+	if ( ! oauth2_client_id && ! oauth2_redirect && ! redirect_to && ! jetpack_redirect ) {
+		return null;
+	}
+
+	return { oauth2_client_id, oauth2_redirect, redirect_to, jetpack_redirect };
+};
+
 /**
  * TODO: this is no longer a switch and should be removed
  */
@@ -56,8 +70,11 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 	user,
 	flow,
 } ) => {
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
+	const { receiveCurrentUser, receiveAuthRedirectParams } = useDispatch( USER_STORE );
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
+
+	const queryArgs = extractAuthQueryParams();
+	queryArgs && receiveAuthRedirectParams();
 
 	return <FlowRenderer flow={ flow } />;
 };
@@ -96,6 +113,7 @@ window.AppBoot = async () => {
 	setupLocale( user, reduxStore );
 
 	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
