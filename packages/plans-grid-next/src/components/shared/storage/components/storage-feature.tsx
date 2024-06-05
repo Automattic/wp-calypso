@@ -5,7 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { usePlansGridContext } from '../../../../grid-context';
 import { isStorageUpgradeableForPlan } from '../../../../lib/is-storage-upgradeable-for-plan';
-import useGetAvailableStorageOptions from '../hooks/use-get-available-storage-options';
+import useAvailableStorageOptions from '../hooks/use-available-storage-options';
 import PlanStorageLabel from './plan-storage-label';
 import StorageAddOnDropdown from './storage-add-on-dropdown';
 
@@ -30,16 +30,16 @@ const StorageFeature = ( {
 }: Props ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const { availableForPurchase, current } = gridPlansIndex[ planSlug ];
-	const getAvailableStorageOptions = useGetAvailableStorageOptions();
+
+	/**
+	 * TODO: Consider centralising `canUpgradeStorageForPlan` behind `availableStorageOptions`
+	 */
+	const availableStorageOptions = useAvailableStorageOptions( { planSlug } );
 
 	if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;
 	}
 
-	/**
-	 * TODO: Consider centralising `canUpgradeStorageForPlan` behind `availableStorageOptions`
-	 */
-	const availableStorageOptions = getAvailableStorageOptions( { planSlug } );
 	/**
 	 * The current plan is not marked as `availableForPurchase`, hence check on `current`.
 	 */

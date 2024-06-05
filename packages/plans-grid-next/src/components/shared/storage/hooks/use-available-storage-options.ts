@@ -1,9 +1,9 @@
 import { PlanSlug } from '@automattic/calypso-products';
 import { AddOns, Site } from '@automattic/data-stores';
-import { useCallback } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import { usePlansGridContext } from '../../../../grid-context';
 
-interface CallbackProps {
+interface Props {
 	planSlug: PlanSlug;
 }
 
@@ -13,7 +13,7 @@ interface CallbackProps {
  *     so never render something that would exceed that limit (hence fail during checkout)
  *   - storage option being allowed for purchase only once (cannot repurchase same add-on on any site)
  */
-const useGetAvailableStorageOptions = () => {
+const useAvailableStorageOptions = ( { planSlug }: Props ) => {
 	const { siteId, gridPlansIndex } = usePlansGridContext();
 	const siteMediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
 	const currentMaxStorage = siteMediaStorage.data?.maxStorageBytes
@@ -22,13 +22,13 @@ const useGetAvailableStorageOptions = () => {
 	const availableStorageUpgrade = AddOns.STORAGE_LIMIT - currentMaxStorage;
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 
-	return useCallback(
-		( { planSlug }: CallbackProps ) => {
-			const {
-				features: { storageOptions },
-			} = gridPlansIndex[ planSlug ];
+	const {
+		features: { storageOptions },
+	} = gridPlansIndex[ planSlug ];
 
-			return storageOptions.filter( ( storageOption ) => {
+	return useMemo(
+		() =>
+			storageOptions.filter( ( storageOption ) => {
 				const storageAddOn = storageAddOns.find(
 					( addOn ) =>
 						! addOn?.purchased &&
@@ -40,10 +40,9 @@ const useGetAvailableStorageOptions = () => {
 				return storageAddOn
 					? ( storageAddOn?.quantity ?? 0 ) <= availableStorageUpgrade
 					: ! storageOption.isAddOn;
-			} );
-		},
-		[ availableStorageUpgrade, gridPlansIndex, storageAddOns ]
+			} ),
+		[ storageOptions, storageAddOns, availableStorageUpgrade ]
 	);
 };
 
-export default useGetAvailableStorageOptions;
+export default useAvailableStorageOptions;
