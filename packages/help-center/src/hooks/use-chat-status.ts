@@ -7,6 +7,7 @@ import { useSupportAvailability } from '../data/use-support-availability';
  * Internal Dependencies
  */
 import { isWapuuFlagSetInURL } from './use-still-need-help-url';
+import useUserIsAtomicAdmin from './use-user-is-admin-atomic';
 import { useZendeskConfig, useMessagingAvailability } from './';
 import type { MessagingGroup } from './use-messaging-availability';
 
@@ -18,7 +19,10 @@ export default function useChatStatus(
 
 	// All paying customers are eligible for chat.
 	// See: pdDR7T-1vN-p2
-	const isEligibleForChat = Boolean( chatStatus?.is_paying_customer );
+	const { isAtomicSite, isAdministrator } = useUserIsAtomicAdmin();
+	// Atomic site administrators are eligible for chat.
+	const isEligibleForChat =
+		( isAtomicSite && isAdministrator ) || Boolean( chatStatus?.is_paying_customer );
 
 	const { data: supportActivity, isInitialLoading: isLoadingSupportActivity } =
 		useSupportActivity( isEligibleForChat );
