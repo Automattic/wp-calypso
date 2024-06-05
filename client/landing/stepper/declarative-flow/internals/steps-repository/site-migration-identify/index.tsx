@@ -39,6 +39,12 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 	const subtitleInUse =
 		isEnglishLocale || isTranslationAvailableForNewSubtitle ? newSubtitle : oldSubtitle;
 
+	// TODO: Remove extra steps for non-English locales once we have translations.
+	const oldTitle = translate( 'Let’s import your content' );
+	const newTitle = translate( 'Let’s find your site' );
+	const isTranslationAvailableForNewTitle = hasTranslation( 'Let’s find your site' );
+	const titleInUse = isTranslationAvailableForNewTitle ? newTitle : oldTitle;
+
 	const {
 		data: siteInfo,
 		isError: hasError,
@@ -59,7 +65,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 	return (
 		<div>
 			<div className="import__heading import__heading-center">
-				<Title>{ translate( 'Let’s import your content' ) }</Title>
+				<Title>{ titleInUse }</Title>
 				<SubTitle>{ subtitleInUse }</SubTitle>
 			</div>
 			<div className="import__capture-container">
