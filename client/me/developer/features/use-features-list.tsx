@@ -36,6 +36,19 @@ export const useFeaturesList = () => {
 			),
 		},
 		{
+			id: 'multi-site-management',
+			title: translate( 'Multi-site management', {
+				comment: 'Feature title',
+			} ),
+			description: translate(
+				'Seamlessly manage and host multiple sites. Receive 50% revenue sharing and volume discounts when you migrate sites to our platform and refer products to clients.',
+				{
+					comment: 'Feature description',
+				}
+			),
+			linkLearnMore: localizeUrl( 'https://agencies.automattic.com' ),
+		},
+		{
 			id: 'code',
 			title: translate( 'Custom code', {
 				comment: 'Feature title',
