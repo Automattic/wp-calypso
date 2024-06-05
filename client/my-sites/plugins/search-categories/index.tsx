@@ -14,7 +14,7 @@ import {
 import { useGetCategoryUrl } from 'calypso/my-sites/plugins/categories/use-get-category-url';
 import { useTermsSuggestions } from 'calypso/my-sites/plugins/search-box-header/useTermsSuggestions';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -99,6 +99,7 @@ const SearchCategories: FC< {
 	searchTerms,
 	stickySearchBoxRef,
 } ) => {
+	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
 	const categoriesRef = useRef< HTMLDivElement >( null );
 	// We hide these special categories from the category selector
@@ -106,8 +107,8 @@ const SearchCategories: FC< {
 		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
 	);
 	const categories = Object.values( useCategories( displayCategories ) );
-	console.debug( 'category', category );
-	console.debug( 'categories', categories );
+	// console.debug( 'category', category );
+	// console.debug( 'categories', categories );
 	// Update the search box with the value from the url everytime it changes
 	// This allows the component to be refilled with a keyword
 	// when navigating back to a page via breadcrumb,
@@ -132,6 +133,11 @@ const SearchCategories: FC< {
 
 				<ScrollableHorizontalNavigation
 					onTabClick={ ( tabSlug ) => {
+						dispatch(
+							recordTracksEvent( 'calypso_plugins_category_select', {
+								tag: tabSlug,
+							} )
+						);
 						page.replace( getCategoryUrl( tabSlug ) );
 					} }
 					selectedTab={ category }
