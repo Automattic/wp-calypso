@@ -50,7 +50,7 @@ const PricingSection: FC = () => {
 			args: {
 				rawPrice: formatCurrency(
 					pricing?.[ planSlug ].originalPrice.full ?? 0,
-					planData?.currencyCode ?? '',
+					pricing?.[ planSlug ].purchaseCurrencyCode ?? '',
 					{
 						stripZeros: true,
 						isSmallestUnit: true,
