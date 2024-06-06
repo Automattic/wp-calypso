@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getPerformanceCategory } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -16,7 +16,7 @@ import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
 import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
 import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
-import { getValidUrl } from '../utils/get-valid-url';
+import { getDomainFromUrl, getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { BasicMetrics } from './basic-metrics';
 import { DomainSection } from './domain-section';
@@ -85,7 +85,7 @@ export default function SiteProfilerV2( props: Props ) {
 		urlData
 	);
 
-	const url = getValidUrl( routerDomain );
+	const url = useMemo( () => getValidUrl( routerDomain ), [ routerDomain ] );
 
 	const {
 		data: basicMetrics,
@@ -109,12 +109,13 @@ export default function SiteProfilerV2( props: Props ) {
 	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery( routerDomain, hash );
 
 	const { final_url: finalUrl, token } = basicMetrics || {};
+	const finalUrlDomain = useMemo( () => getDomainFromUrl( finalUrl ), [ finalUrl ] );
 
 	useEffect( () => {
-		if ( finalUrl && token ) {
-			page( `/site-profiler/report/${ token }/${ finalUrl }` );
+		if ( finalUrlDomain && token ) {
+			page( `/site-profiler/report/${ token }/${ finalUrlDomain }` );
 		}
-	}, [ finalUrl, token ] );
+	}, [ finalUrlDomain, token ] );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
