@@ -177,7 +177,6 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
-		"stats/checkout-flows-v2": true,
 		"stats/date-control": true,
 		"stats/devices": true,
 		"stats/paid-wpcom-stats": true,

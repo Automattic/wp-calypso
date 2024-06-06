@@ -25,16 +25,16 @@ function mapScores( response: UrlBasicMetricsQueryResponse ) {
 	return { ...response, success: basic.success, basic: basicMetricsScored };
 }
 
-export const useUrlBasicMetricsQuery = ( url?: string, hash?: string ) => {
+export const useUrlBasicMetricsQuery = ( url?: string, hash?: string, advance = false ) => {
 	return useQuery( {
-		queryKey: [ 'url-', url ],
+		queryKey: [ 'url', 'basic-metrics', url, hash, advance ],
 		queryFn: (): Promise< UrlBasicMetricsQueryResponse > =>
 			wp.req.get(
 				{
 					path: '/site-profiler/metrics/basic',
 					apiNamespace: 'wpcom/v2',
 				},
-				{ url, advance: '1' }
+				{ url, ...( advance ? { advance: '1' } : {} ) }
 			),
 		select: mapScores,
 		meta: {

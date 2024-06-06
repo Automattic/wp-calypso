@@ -10,6 +10,7 @@ import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-an
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceMetricsQuery } from 'calypso/data/site-profiler/use-url-performance-metrics-query';
+import { useUrlSecurityMetricsQuery } from 'calypso/data/site-profiler/use-url-security-metrics-query';
 import { LayoutBlock } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
@@ -27,6 +28,7 @@ import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
 import { LoadingScreen } from './loading-screen';
 import { MigrationBannerBig } from './migration-banner-big';
+import { NavMenu } from './nav-menu';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
 import { SecuritySection } from './security-section';
@@ -72,7 +74,7 @@ export default function SiteProfilerV2( props: Props ) {
 		hostingProviderData,
 		isErrorUrlData ? null : urlData
 	);
-	const showResultScreen = hash;
+	const showLandingPage = ! hash;
 
 	useScrollToTop( !! siteProfilerData );
 	useSiteProfilerRecordAnalytics(
@@ -87,14 +89,11 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const url = useMemo( () => getValidUrl( routerDomain ), [ routerDomain ] );
 
-	const {
-		data: basicMetrics,
-		error: errorBasicMetrics,
-		isFetching: isFetchingBasicMetrics,
-	} = useUrlBasicMetricsQuery( url, hash );
-
-	const showBasicMetrics =
-		basicMetrics && basicMetrics.success && ! isFetchingBasicMetrics && ! errorBasicMetrics;
+	const { data: basicMetrics, error: errorBasicMetrics } = useUrlBasicMetricsQuery(
+		url,
+		hash,
+		true
+	);
 
 	// TODO: Remove this debug statement once we have a better error handling mechanism
 	if ( errorBasicMetrics ) {
@@ -110,12 +109,21 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const finalUrlDomain = useMemo( () => getDomainFromUrl( finalUrl ), [ finalUrl ] );
-
 	useEffect( () => {
 		if ( finalUrlDomain && token ) {
 			page( `/site-profiler/report/${ token }/${ finalUrlDomain }` );
 		}
 	}, [ finalUrlDomain, token ] );
+
+	const { data: securityMetrics } = useUrlSecurityMetricsQuery( url, basicMetrics?.token );
+	const { errors: securityMetricsErrors = {} } = securityMetrics ?? {};
+	const noWordPressFound = Object.keys( securityMetricsErrors ).find(
+		( error ) => error === 'no_wordpress'
+	);
+
+	const showResultScreen = siteProfilerData && performanceMetrics && securityMetrics;
+
+	const performanceCategory = getPerformanceCategory( performanceMetrics );
 
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
@@ -123,12 +131,11 @@ export default function SiteProfilerV2( props: Props ) {
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
 
-	const performanceCategory = getPerformanceCategory( performanceMetrics );
 	const isWpCom = !! performanceMetrics?.is_wpcom;
 
 	return (
 		<div id="site-profiler-v2">
-			{ ! showResultScreen && (
+			{ showLandingPage && (
 				<LayoutBlock className="landing-page-header-block" width="medium">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<LandingPageHeader
@@ -141,8 +148,8 @@ export default function SiteProfilerV2( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-			{ showResultScreen && ! performanceMetrics && <LoadingScreen /> }
-			{ showResultScreen && performanceMetrics && (
+			{ ! showLandingPage && ! showResultScreen && <LoadingScreen /> }
+			{ showResultScreen && (
 				<>
 					<LayoutBlock
 						className={ clsx(
@@ -160,56 +167,63 @@ export default function SiteProfilerV2( props: Props ) {
 						/>
 					</LayoutBlock>
 					<LayoutBlock width="medium">
-						{ siteProfilerData && (
-							<>
-								{ showBasicMetrics && (
-									<BasicMetrics
-										basicMetrics={ basicMetrics.basic }
-										domain={ domain }
-										isWpCom={ isWpCom }
-									/>
-								) }
-								<HostingSection
-									url={ basicMetrics?.final_url }
-									dns={ siteProfilerData.dns }
-									urlData={ urlData }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									hostingRef={ hostingRef }
-								/>
+						<BasicMetrics
+							basicMetrics={ basicMetrics.basic }
+							domain={ domain }
+							isWpCom={ isWpCom }
+						/>
+						<NavMenu
+							domain={ domain }
+							navItems={ [
+								{ label: translate( 'Hosting' ), ref: hostingRef },
+								{ label: translate( 'Domain' ), ref: domainRef },
+								{ label: translate( 'Performance Metrics' ), ref: perfomanceMetricsRef },
+								{ label: translate( 'Health Scores' ), ref: healthMetricsRef },
+								...( noWordPressFound
+									? []
+									: [ { label: translate( 'Security' ), ref: securityMetricsRef } ] ),
+							] }
+							showMigrationCta={ ! isWpCom }
+						></NavMenu>
+						<HostingSection
+							url={ basicMetrics?.final_url }
+							dns={ siteProfilerData.dns }
+							urlData={ urlData }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							hostingRef={ hostingRef }
+						/>
 
-								<DomainSection
-									domain={ domain }
-									whois={ siteProfilerData.whois }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									urlData={ urlData }
-									domainRef={ domainRef }
-								/>
+						<DomainSection
+							domain={ domain }
+							whois={ siteProfilerData.whois }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							urlData={ urlData }
+							domainRef={ domainRef }
+						/>
 
-								<PerformanceSection
-									url={ basicMetrics?.final_url }
-									hash={ hash ?? basicMetrics?.token }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									performanceMetricsRef={ perfomanceMetricsRef }
-									setIsGetReportFormOpen={ setIsGetReportFormOpen }
-								/>
+						<PerformanceSection
+							url={ basicMetrics?.final_url }
+							hash={ hash ?? basicMetrics?.token }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							performanceMetricsRef={ perfomanceMetricsRef }
+							setIsGetReportFormOpen={ setIsGetReportFormOpen }
+						/>
 
-								<HealthSection
-									url={ basicMetrics?.final_url }
-									hash={ hash ?? basicMetrics?.token }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									healthMetricsRef={ healthMetricsRef }
-									setIsGetReportFormOpen={ setIsGetReportFormOpen }
-								/>
+						<HealthSection
+							url={ basicMetrics?.final_url }
+							hash={ hash ?? basicMetrics?.token }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							healthMetricsRef={ healthMetricsRef }
+							setIsGetReportFormOpen={ setIsGetReportFormOpen }
+						/>
 
-								<SecuritySection
-									url={ basicMetrics?.final_url }
-									hash={ hash ?? basicMetrics?.token }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									securityMetricsRef={ securityMetricsRef }
-									setIsGetReportFormOpen={ setIsGetReportFormOpen }
-								/>
-							</>
-						) }
+						<SecuritySection
+							url={ basicMetrics?.final_url }
+							hash={ hash ?? basicMetrics?.token }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							securityMetricsRef={ securityMetricsRef }
+							setIsGetReportFormOpen={ setIsGetReportFormOpen }
+						/>
 					</LayoutBlock>
 					{ ! isWpCom && <MigrationBannerBig url={ basicMetrics?.final_url } /> }
 				</>
