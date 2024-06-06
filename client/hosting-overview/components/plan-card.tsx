@@ -40,13 +40,17 @@ const PricingSection: FC = () => {
 	} );
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! pricing || ! planData || planPurchaseLoading;
+	const billingPeriod = planPurchase?.billPeriodLabel;
 
 	const getBillingDetails = () => {
 		if ( isFreePlan ) {
 			return null;
 		}
+		if ( ! billingPeriod ) {
+			return null;
+		}
 
-		return translate( '{{span}}%(rawPrice)s{{/span}} billed annually, excludes taxes.', {
+		return translate( '{{span}}%(rawPrice)s{{/span}} billed %(billingPeriod)s, excludes taxes.', {
 			args: {
 				rawPrice: formatCurrency(
 					pricing?.[ planSlug ].originalPrice.full ?? 0,
@@ -56,10 +60,12 @@ const PricingSection: FC = () => {
 						isSmallestUnit: true,
 					}
 				),
+				billingPeriod,
 			},
 			components: {
 				span: <span />,
 			},
+			comment: 'billingPeriod e.g., every month, every year, every 3 years',
 		} );
 	};
 
