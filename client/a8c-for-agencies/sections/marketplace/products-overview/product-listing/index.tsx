@@ -1,4 +1,4 @@
-import { Button, JetpackLogo, WooLogo } from '@automattic/components';
+import { JetpackLogo, WooLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -17,6 +17,7 @@ import ListingSection from '../../listing-section';
 import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
 import ProductFilter from '../product-filter';
+import EmptyResultMessage from './empty-result-message';
 import { getSupportedBundleSizes, useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSelectedProductFilters from './hooks/use-selected-product-filters';
 import useSubmitForm from './hooks/use-submit-form';
@@ -53,12 +54,9 @@ export default function ProductListing( {
 		setSelectedSize: setSelectedBundleSize,
 	} = useProductBundleSize();
 
-	const {
-		selectedFilters,
-		setSelectedFilters,
-		resetFilters,
-		hasSelected: shouldShowResetButton,
-	} = useSelectedProductFilters( { productBrand } );
+	const { selectedFilters, setSelectedFilters, resetFilters } = useSelectedProductFilters( {
+		productBrand,
+	} );
 
 	const quantity = useMemo(
 		() => ( isReferingProducts ? 1 : selectedBundleSize ),
@@ -80,6 +78,8 @@ export default function ProductListing( {
 		selectedProductFilters: selectedFilters,
 		productSearchQuery,
 	} );
+
+	const isEmptyList = ! filteredProductsAndBundles.length;
 
 	// Create a ref for `filteredProductsAndBundles` to prevent unnecessary re-renders caused by the `useEffect` hook.
 	const filteredProductsAndBundlesRef = useRef( filteredProductsAndBundles );
@@ -303,7 +303,7 @@ export default function ProductListing( {
 			<div className="product-listing__actions">
 				<div className="product-listing__actions-search-and-filter">
 					<FilterSearch
-						label={ translate( 'Search' ) }
+						label={ translate( 'Search products' ) }
 						onSearch={ onProductSearch }
 						onClick={ trackClickCallback( 'search' ) }
 					/>
@@ -311,13 +311,8 @@ export default function ProductListing( {
 					<ProductFilter
 						selectedFilters={ selectedFilters }
 						setSelectedFilters={ setSelectedFilters }
+						resetFilters={ resetFilters }
 					/>
-
-					{ shouldShowResetButton && (
-						<Button className="product-listing__reset-filter-button" plain onClick={ resetFilters }>
-							{ translate( 'Reset filter' ) }
-						</Button>
-					) }
 				</div>
 
 				{ ! isReferingProducts && availableBundleSizes.length > 1 && (
@@ -328,6 +323,12 @@ export default function ProductListing( {
 					/>
 				) }
 			</div>
+
+			{ isEmptyList && (
+				<div className="product-listing">
+					<EmptyResultMessage />
+				</div>
+			) }
 
 			{ wooExtensions.length > 0 && (
 				<ListingSection

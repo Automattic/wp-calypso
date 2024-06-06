@@ -10,14 +10,15 @@ import './style.scss';
 const ICON_SIZE = 24;
 
 interface StepSectionItemProps {
-	icon: JSX.Element;
+	icon?: JSX.Element;
 	heading: string;
 	description: TranslateResult;
 	buttonProps?: React.ComponentProps< typeof Button >;
 	statusProps?: React.ComponentProps< typeof Badge > & { tooltip?: string };
 	className?: string;
 	iconClassName?: string;
-	isAutomatedReferral?: boolean;
+	isNewLayout?: boolean;
+	stepNumber?: number;
 }
 
 export default function StepSectionItem( {
@@ -28,7 +29,8 @@ export default function StepSectionItem( {
 	statusProps,
 	className,
 	iconClassName,
-	isAutomatedReferral = false,
+	isNewLayout = false,
+	stepNumber,
 }: StepSectionItemProps ) {
 	const status = <StatusBadge statusProps={ statusProps } />;
 
@@ -44,25 +46,23 @@ export default function StepSectionItem( {
 
 	return (
 		<div className={ clsx( 'step-section-item', className ) }>
-			<div className={ clsx( 'step-section-item__icon', iconClassName ) }>
-				<Icon
-					className="sidebar__menu-icon"
-					style={ { fill: 'currentcolor' } }
-					icon={ icon }
-					size={ ICON_SIZE }
-				/>
-			</div>
+			{ icon && (
+				<div className={ clsx( 'step-section-item__icon', iconClassName ) }>
+					<Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } />
+				</div>
+			) }
+			{ stepNumber && <span className="step-section-item__step-number">{ stepNumber }</span> }
 			<div className="step-section-item__content">
 				{ statusProps && (
 					<div className="step-section-item__status is-small-screen">{ status }</div>
 				) }
 				<div className="step-section-item__heading">
-					{ heading } { isAutomatedReferral && statusContent }
+					{ heading } { isNewLayout && statusContent }
 				</div>
 				<div className="step-section-item__description">{ description }</div>
-				{ ! isAutomatedReferral && buttonContent }
+				{ ! isNewLayout && buttonContent }
 			</div>
-			{ isAutomatedReferral ? buttonContent : statusContent }
+			{ isNewLayout ? buttonContent : statusContent }
 		</div>
 	);
 }

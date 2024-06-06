@@ -120,8 +120,9 @@ export class PlansStep extends Component {
 		const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
 			signupDependencies;
 
-		const surveyedIntent =
-			flowName === 'guided' ? getSegmentedIntent( segmentationSurveyAnswers ) : undefined;
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
+
+		const surveyedIntent = flowName === 'guided' ? segmentSlug : undefined;
 
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
@@ -129,10 +130,11 @@ export class PlansStep extends Component {
 			freeWPComSubdomain = siteUrl;
 		}
 
-		// De-emphasize the Free plan as a CTA link on the main onboarding flow when a paid domain is picked.
+		// De-emphasize the Free plan as a CTA link on the main onboarding flow, and the guided flow, when a paid domain is picked.
 		// More context can be found in p2-p5uIfZ-f5p
 		const deemphasizeFreePlan =
-			( flowName === 'onboarding' && paidDomainName != null ) || deemphasizeFreePlanFromProps;
+			( [ 'onboarding', 'guided' ].includes( flowName ) && paidDomainName != null ) ||
+			deemphasizeFreePlanFromProps;
 
 		return (
 			<div>

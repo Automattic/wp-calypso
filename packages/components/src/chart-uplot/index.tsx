@@ -49,6 +49,64 @@ export default function UplotChart( {
 
 	const scaleGradient = useScaleGradient( fillColorFrom );
 
+	const series = [
+		{
+			label: translate( 'Date' ),
+			value: ( self: uPlot, rawValue: number ) => {
+				// outputs legend content - value available when mouse is hovering the chart
+				if ( ! rawValue ) {
+					return '-';
+				}
+
+				return getPeriodDateFormat( period, new Date( rawValue * 1000 ), getLocaleSlug() || 'en' );
+			},
+		},
+		{
+			fill: solidFill
+				? fillColorFrom
+				: getGradientFill( fillColorFrom, fillColorTo, scaleGradient ),
+			label: translate( 'Subscribers' ),
+			stroke: mainColor,
+			width: 2,
+			paths: ( u: uPlot, seriesIdx: number, idx0: number, idx1: number ) => {
+				return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+			},
+			points: {
+				show: false,
+			},
+			value: ( self: uPlot, rawValue: number ) => {
+				if ( ! rawValue ) {
+					return '-';
+				}
+
+				return numberFormat( rawValue, 0 );
+			},
+		},
+	];
+
+	// Add another series for multiple datasets.
+	if ( data.length === 3 ) {
+		series.push( {
+			fill: getGradientFill( 'rgba(230, 139, 40, 0.4)', 'rgba(230, 139, 40, 0)', scaleGradient ),
+			label: translate( 'Paid Subscribers' ),
+			stroke: '#e68b28',
+			width: 2,
+			paths: ( u, seriesIdx, idx0, idx1 ) => {
+				return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+			},
+			points: {
+				show: false,
+			},
+			value: ( self: uPlot, rawValue: number ) => {
+				if ( ! rawValue ) {
+					return '-';
+				}
+
+				return numberFormat( rawValue, 0 );
+			},
+		} );
+	}
+
 	const [ options ] = useState< uPlot.Options >(
 		useMemo( () => {
 			const defaultOptions: uPlot.Options = {
@@ -106,44 +164,7 @@ export default function UplotChart( {
 						fill: () => '#fff',
 					},
 				},
-				series: [
-					{
-						label: translate( 'Date' ),
-						value: ( self: uPlot, rawValue: number ) => {
-							// outputs legend content - value available when mouse is hovering the chart
-							if ( ! rawValue ) {
-								return '-';
-							}
-
-							return getPeriodDateFormat(
-								period,
-								new Date( rawValue * 1000 ),
-								getLocaleSlug() || 'en'
-							);
-						},
-					},
-					{
-						fill: solidFill
-							? fillColorFrom
-							: getGradientFill( fillColorFrom, fillColorTo, scaleGradient ),
-						label: translate( 'Subscribers' ),
-						stroke: mainColor,
-						width: 2,
-						paths: ( u, seriesIdx, idx0, idx1 ) => {
-							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
-						},
-						points: {
-							show: false,
-						},
-						value: ( self: uPlot, rawValue: number ) => {
-							if ( ! rawValue ) {
-								return '-';
-							}
-
-							return numberFormat( rawValue, 0 );
-						},
-					},
-				],
+				series: series,
 				legend: {
 					isolate: true,
 					mount: ( self: uPlot, el: HTMLElement ) => {

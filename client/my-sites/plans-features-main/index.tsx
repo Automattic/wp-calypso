@@ -438,6 +438,11 @@ const PlansFeaturesMain = ( {
 		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
 	);
 
+	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
+	const offeringFreePlan = gridPlansForFeaturesGridRaw?.some(
+		( { planSlug } ) => planSlug === PLAN_FREE
+	);
+
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
@@ -725,6 +730,7 @@ const PlansFeaturesMain = ( {
 				<PlansPageSubheader
 					siteSlug={ siteSlug }
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+					offeringFreePlan={ offeringFreePlan }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					showPlanBenefits={ isInSignup && isTrailMapAny }

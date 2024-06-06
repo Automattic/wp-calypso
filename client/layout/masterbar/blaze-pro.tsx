@@ -30,7 +30,7 @@ const BlazeProOauthMasterbar = () => {
 					<ul className="masterbar__blaze-pro-nav">
 						<li className="masterbar__blaze-pro-nav-item">
 							<a href={ config( 'blaze_pro_back_link' ) } className="masterbar__blaze-pro-link">
-								<img src={ BlazeProLogo } alt="BlazePro" width="40" />
+								<img src={ BlazeProLogo } alt="Blaze Pro" width="40" />
 							</a>
 						</li>
 						{ backNav }

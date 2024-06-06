@@ -23,7 +23,7 @@
 .gifting-checkout-banner div {
 	display: inline-block;
 	padding: 5px 20px;
-	@media ( min-width: 700px ) {
+	@media (min-width: 700px) {
 		padding: 18px 26px;
 	}
 	@include break-large {

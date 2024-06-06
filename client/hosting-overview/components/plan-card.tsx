@@ -12,6 +12,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { HostingCard } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
+import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
@@ -19,7 +20,7 @@ import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-p
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 
 const PricingSection: FC = () => {
 	const translate = useTranslate();
@@ -29,6 +30,7 @@ const PricingSection: FC = () => {
 	const planSlug = ( planDetails?.product_slug || '' ) as PlanSlug;
 	const planData = useSelector( ( state ) => getCurrentPlan( state, site?.ID ) );
 	const isFreePlan = planDetails?.is_free;
+	const planPurchase = useSelector( getSelectedPurchase );
 	const pricing = usePricingMetaForGridPlans( {
 		coupon: undefined,
 		planSlugs: [ planSlug ],
@@ -36,26 +38,34 @@ const PricingSection: FC = () => {
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
-	const isLoading = ! pricing || ! planData;
+	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
+	const isLoading = ! pricing || ! planData || planPurchaseLoading;
+	const billingPeriod = planPurchase?.billPeriodLabel;
 
 	const getBillingDetails = () => {
 		if ( isFreePlan ) {
 			return null;
 		}
-		return translate( '{{span}}%(rawPrice)s{{/span}} billed annually, excludes taxes.', {
+		if ( ! billingPeriod ) {
+			return null;
+		}
+
+		return translate( '{{span}}%(rawPrice)s{{/span}} billed %(billingPeriod)s, excludes taxes.', {
 			args: {
 				rawPrice: formatCurrency(
 					pricing?.[ planSlug ].originalPrice.full ?? 0,
-					planData?.currencyCode ?? '',
+					pricing?.[ planSlug ].purchaseCurrencyCode ?? '',
 					{
 						stripZeros: true,
 						isSmallestUnit: true,
 					}
 				),
+				billingPeriod,
 			},
 			components: {
 				span: <span />,
 			},
+			comment: 'billingPeriod e.g., every month, every year, every 3 years',
 		} );
 	};
 
@@ -82,7 +92,7 @@ const PricingSection: FC = () => {
 				<div className="hosting-overview__plan-price-wrapper">
 					<PlanPrice
 						className="hosting-overview__plan-price"
-						currencyCode={ planData?.currencyCode }
+						currencyCode={ pricing?.[ planSlug ].purchaseCurrencyCode }
 						isSmallestUnit
 						rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
 					/>
@@ -147,7 +157,6 @@ const PlanCard: FC = () => {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
-	const planName = planDetails?.product_name_short ?? '';
 	const isFreePlan = planDetails?.is_free;
 	const isJetpack = useSelector( ( state ) =>
 		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
@@ -157,6 +166,14 @@ const PlanCard: FC = () => {
 	const planPurchaseId = useSelector( ( state: IAppState ) =>
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
 	);
+	const planPurchase = useSelector( getSelectedPurchase );
+	const isAgencyPurchase = planPurchase && isPartnerPurchase( planPurchase );
+	// Show that this is an Agency Managed plan for agency purchases.
+	const planName = isAgencyPurchase
+		? purchaseType( planPurchase )
+		: planDetails?.product_name_short ?? '';
+	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
+	const isLoading = ! planDetails || planPurchaseLoading;
 
 	// Check for storage addons available for purchase.
 	const addOns = AddOns.useAddOns( { selectedSiteId: site?.ID } );
@@ -164,7 +181,7 @@ const PlanCard: FC = () => {
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
 	);
 	const renderManageButton = () => {
-		if ( isJetpack || ! site || isStaging ) {
+		if ( isJetpack || ! site || isStaging || isAgencyPurchase ) {
 			return false;
 		}
 		if ( isFreePlan ) {
@@ -202,12 +219,18 @@ const PlanCard: FC = () => {
 			<QuerySitePlans siteId={ site?.ID } />
 			<HostingCard className="hosting-overview__plan">
 				<div className="hosting-overview__plan-card-header">
-					<h3 className="hosting-overview__plan-card-title">
-						{ isStaging ? translate( 'Staging site' ) : planName }
-					</h3>
-					{ renderManageButton() }
+					{ isLoading ? (
+						<LoadingPlaceholder width="100px" height="16px" />
+					) : (
+						<>
+							<h3 className="hosting-overview__plan-card-title">
+								{ isStaging ? translate( 'Staging site' ) : planName }
+							</h3>
+							{ renderManageButton() }
+						</>
+					) }
 				</div>
-				{ ! isStaging && (
+				{ ! isStaging && ! isAgencyPurchase && (
 					<>
 						<PricingSection />
 						<PlanStorage

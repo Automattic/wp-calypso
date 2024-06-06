@@ -12,7 +12,7 @@
 	overflow: hidden;
 	width: 100%;
 
-	@media (max-width: $break-small ) {
+	@media (max-width: $break-small) {
 		grid-template-columns: 100%;
 	}
 }
@@ -20,7 +20,7 @@
 .thank-you__upsell-image {
 	display: flex;
 
-	@media (max-width: $break-small ) {
+	@media (max-width: $break-small) {
 		max-height: 80px;
 	}
 
@@ -32,7 +32,7 @@
 .thank-you__upsell-content {
 	padding: 20px 24px 20px;
 
-	@media (max-width: $break-small ) {
+	@media (max-width: $break-small) {
 		padding: 20px;
 	}
 }
@@ -62,7 +62,7 @@
 	gap: 12px;
 	margin-top: 20px;
 
-	@media (max-width: $break-small ) {
+	@media (max-width: $break-small) {
 		flex-direction: column;
 		gap: 16px;
 	}

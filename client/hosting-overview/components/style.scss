@@ -63,15 +63,25 @@ $card-padding: 24px;
 	.happiness-engineers-tray {
 		align-items: flex-start;
 		display: flex;
-		justify-content: flex-start;
+		/* Flipping the display order around so that the negative margin on gravatars
+		means that left overlaps right rather than vice versa */
+		justify-content: flex-end;
+		flex-direction: row-reverse;
+		height: 44px;
 	}
 
 	.happiness-engineers-tray__gravatar {
-		margin-right: 16px;
+		margin-left: -10px;
+		margin-right: 0;
+		border: 2px solid #fff;
+	}
+
+	:last-child {
+		margin-left: 0;
 	}
 }
 
-@media ( max-width: $break-xlarge ) {
+@media (max-width: $break-xlarge) {
 	.hosting-overview {
 		grid-template-columns: minmax(300px, 1fr);
 		grid-template-rows: auto auto auto;
@@ -104,7 +114,7 @@ $card-padding: 24px;
 	align-items: center;
 }
 
-@media ( max-width: $break-xlarge ) {
+@media (max-width: $break-xlarge) {
 	.hosting-overview__plan-card-header {
 		margin-bottom: 4px;
 	}
@@ -134,7 +144,7 @@ $card-padding: 24px;
 	font-weight: 400;
 }
 
-@media ( max-width: $break-xlarge ) {
+@media (max-width: $break-xlarge) {
 	.hosting-overview__plan-card-title {
 		font-size: $font-size-header-small;
 		font-weight: 500;
@@ -159,7 +169,7 @@ a.hosting-overview__link-button {
 	line-height: 16px;
 }
 
-@media ( max-width: $break-xlarge ) {
+@media (max-width: $break-xlarge) {
 	.hosting-overview__mobile-hidden-link-button {
 		display: none;
 	}
@@ -221,7 +231,7 @@ a.hosting-overview__link-button {
 	text-align: right;
 }
 
-@media ( max-width: $break-xlarge ) {
+@media (max-width: $break-xlarge) {
 	.hosting-overview .hosting-overview__plan-price-wrapper,
 	.hosting-overview__plan-price-loading-placeholder {
 		margin-bottom: 4px;

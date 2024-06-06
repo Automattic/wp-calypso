@@ -32,7 +32,7 @@ function SocialAuthToS( props ) {
 	if ( props.isWooPasswordless ) {
 		return getToSComponent(
 			props.translate(
-				'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 				toSLinks
 			)
 		);
@@ -41,7 +41,7 @@ function SocialAuthToS( props ) {
 	if ( props.isBlazePro ) {
 		return getToSComponent(
 			props.translate(
-				'By continuing with any of the options above you agree to our {{tosLink}}Terms of Service{{/tosLink}} and {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 				toSLinks
 			)
 		);

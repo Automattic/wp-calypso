@@ -179,6 +179,13 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		const handleOnClick = () => {
 			contactOptionsEventMap.chat();
 
+			recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+				support_variation: 'messaging',
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+			} );
+
 			recordTracksEvent( 'calypso_help_live_chat_begin', {
 				site_plan_product_id: productId,
 				is_automated_transfer: currentSite?.is_wpcom_atomic,

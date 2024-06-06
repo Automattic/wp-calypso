@@ -22,6 +22,11 @@ export function RouteProvider( {
 		() => ( { currentSection, currentRoute, currentQuery } ),
 		[ currentSection, currentRoute, currentQuery ]
 	);
+
+	if ( ! currentRoute ) {
+		return null;
+	}
+
 	return <RouteContext.Provider value={ currentRouteInfo }>{ children }</RouteContext.Provider>;
 }
 

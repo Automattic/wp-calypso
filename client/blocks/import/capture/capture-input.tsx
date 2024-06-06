@@ -23,6 +23,7 @@ interface Props {
 	label?: ReactNode;
 	placeholder?: string;
 	dontHaveSiteAddressLabel?: string;
+	hideImporterListLink?: boolean;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const {
@@ -34,6 +35,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		label,
 		placeholder = 'artfulbaker.blog',
 		dontHaveSiteAddressLabel,
+		hideImporterListLink = false,
 	} = props;
 
 	const translate = useTranslate();
@@ -125,7 +127,8 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 			<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
 
 			<div className="action-buttons__importer-list">
-				{ onDontHaveSiteAddressClick &&
+				{ ! hideImporterListLink &&
+					onDontHaveSiteAddressClick &&
 					createInterpolateElement(
 						dontHaveSiteAddressLabel ??
 							translate( 'Or <button>choose a content platform</button>' ),

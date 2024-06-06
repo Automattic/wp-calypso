@@ -1,14 +1,5 @@
 import { Metrics, PerformanceCategories, PerformanceReport, Scores } from './types';
 
-export const BASIC_METRICS_UNITS: Record< Metrics, string > = {
-	cls: '',
-	fid: 'ms',
-	lcp: 'ms',
-	fcp: 'ms',
-	ttfb: 'ms',
-	inp: 'ms',
-};
-
 export const BASIC_METRICS_SCORES: Record< Metrics, [ number, number ] > = {
 	cls: [ 0.1, 0.25 ], // https://web.dev/articles/cls
 	fid: [ 100, 300 ], // https://web.dev/articles/fid

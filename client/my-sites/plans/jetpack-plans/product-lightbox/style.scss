@@ -207,13 +207,13 @@
 	}
 }
 
-@media screen and ( max-width: $break-medium ) and ( orientation: portrait ) {
+@media screen and (max-width: $break-medium) and (orientation: portrait) {
 	.product-lightbox__variants-options {
 		margin: 0;
 	}
 }
 
-@media screen and ( max-height: 365px ) and ( orientation: landscape ) {
+@media screen and (max-height: 365px) and (orientation: landscape) {
 	.product-lightbox__variants-options {
 		margin-top: 0.25rem;
 		margin-bottom: 0.5rem;
