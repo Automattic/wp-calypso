@@ -2,11 +2,11 @@ import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-produc
 import page from '@automattic/calypso-router';
 import { Card, Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import CardHeading from 'calypso/components/card-heading';
+import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -25,11 +25,7 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 	<Card className="dev-tools__card">
 		<CardHeading>{ title }</CardHeading>
 		<p>{ text }</p>
-		{ translate( '{{supportLink}}Learn more{{/supportLink}}', {
-			components: {
-				supportLink: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
-			},
-		} ) }
+		<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
 	</Card>
 );
 
@@ -51,7 +47,9 @@ const DevTools = () => {
 	);
 	const hasEnTranslation = useHasEnTranslation();
 
-	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
+	const encodedSiteSlug = encodeURIComponent( siteSlug );
+	const upgradeLink = `/checkout/${ encodedSiteSlug }/business?redirect_to=/dev-tools/${ encodedSiteSlug }`;
+
 	const promoCards = [
 		{
 			title: translate( 'Deployments' ),
@@ -124,58 +122,45 @@ const DevTools = () => {
 
 	return (
 		<div className="dev-tools">
-			<div className="dev-tools__hero">
-				<h1>
-					{ showActivationButton
+			<EmptyContent
+				title={
+					showActivationButton
 						? translate( 'Activate all developer tools' )
-						: translate( 'Unlock all developer tools' ) }
-				</h1>
-				<p>
-					{ showActivationButton
+						: translate( 'Unlock all developer tools' )
+				}
+				line={
+					showActivationButton
 						? translate(
 								'Your plan includes all the developer tools listed below. Click "Activate now" to begin.'
 						  )
-						: upgradeCtaCopy }
-				</p>
-				{ showActivationButton ? (
-					<>
-						<Button
-							variant="primary"
-							className="dev-tools__button"
-							onClick={ () => {
-								if ( showActivationButton ) {
-									return setShowEligibility( true );
-								}
-							} }
-						>
-							{ translate( 'Activate now' ) }
-						</Button>
+						: upgradeCtaCopy
+				}
+				illustration=""
+				action={ showActivationButton ? translate( 'Activate now' ) : translate( 'Upgrade now' ) }
+				actionCallback={ () => {
+					if ( showActivationButton ) {
+						return setShowEligibility( true );
+					}
+				} }
+				actionURL={ ! showActivationButton ? upgradeLink : null }
+			/>
 
-						<Dialog
-							additionalClassNames="plugin-details-cta__dialog-content"
-							additionalOverlayClassNames="plugin-details-cta__modal-overlay"
-							isVisible={ showEligibility }
-							onClose={ () => setShowEligibility( false ) }
-							showCloseIcon
-						>
-							<EligibilityWarnings
-								className="hosting__activating-warnings"
-								onProceed={ handleTransfer }
-								backUrl={ redirectUrl.current }
-								showDataCenterPicker
-								standaloneProceed
-								currentContext="dev-tools"
-							/>
-						</Dialog>
-					</>
-				) : (
-					<>
-						<Button variant="primary" className="dev-tools__button" href={ upgradeLink }>
-							{ translate( 'Upgrade now' ) }
-						</Button>
-					</>
-				) }
-			</div>
+			<Dialog
+				additionalClassNames="plugin-details-cta__dialog-content"
+				additionalOverlayClassNames="plugin-details-cta__modal-overlay"
+				isVisible={ showEligibility }
+				onClose={ () => setShowEligibility( false ) }
+				showCloseIcon
+			>
+				<EligibilityWarnings
+					className="hosting__activating-warnings"
+					onProceed={ handleTransfer }
+					backUrl={ redirectUrl.current }
+					showDataCenterPicker
+					standaloneProceed
+					currentContext="dev-tools"
+				/>
+			</Dialog>
 			<div className="dev-tools__cards">
 				{ promoCards.map( ( card ) => (
 					<PromoCard

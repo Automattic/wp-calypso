@@ -2,28 +2,25 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.dev-tools__hero {
-	grid-column: 1 / -1;
-	text-align: center;
-	margin-bottom: 70px;
-
-	> h1 {
-		margin-top: 30px;
-		font-style: normal;
-		font-weight: 500;
-		font-size: rem(36px);
+.dev-tools {
+	.empty-content__title {
+		color: var(--studio-black);
 		font-family: Recoleta, sans-serif;
+		font-size: rem(34px); //typography-exception
+		font-weight: 500;
 	}
-	> p {
+
+	.empty-content__line {
+		color: var(--studio-black);
+		font-size: $font-body-large;
 		font-style: normal;
 		font-weight: 400;
-		font-size: rem(18px);
+		margin-bottom: 1.5em;
 	}
-	.dev-tools__button {
-		margin: 0 5px;
-		padding: 10px 14px;
-		font-size: rem(14px);
-		height: 40px;
+
+	.empty-content__action {
+		margin: 0;
+		margin-bottom: 70px;
 	}
 }
 
@@ -49,20 +46,20 @@
 	flex-direction: column;
 
 	> .card-heading {
-		font-size: rem(16px);
+		font-size: $font-body;
 		font-weight: 500;
 		margin-bottom: 6px;
 	}
 
 	> p {
-		font-size: rem(14px);
+		font-size: $font-body-small;
 		margin-bottom: 20px;
 		color: var(--color-text-subtle);
 		flex-grow: 1;
 	}
 
 	> a {
-		font-size: rem(13px);
+		font-size: rem(13px); //typography-exception
 		font-weight: 400;
 		line-height: 16px;
 	}
