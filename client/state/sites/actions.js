@@ -93,16 +93,15 @@ export function requestSites() {
 				const jetpackCloudSites = response.sites.filter( ( site ) => {
 					// Filter Jetpack Cloud sites to exclude P2 & Simple not-classic sites by default.
 					const isP2 = site?.options?.is_wpforteams_site;
-					const isSimpleClassic =
-						! site?.jetpack &&
-						! site?.is_wpcom_atomic &&
-						site?.options?.wpcom_admin_interface !== 'wp-admin';
-					let filterCondition = ! isP2 && ! isSimpleClassic;
+					let filterCondition = ! isP2;
 
 					// Filter out simple sites if feature flag is not enabled.
 					if ( ! isEnabled( 'jetpack/manage-simple-sites' ) ) {
-						const isSimple = ! site?.jetpack && ! site?.is_wpcom_atomic;
-						filterCondition = ! isP2 && ! isSimple;
+						const isSimpleClassic =
+							! site?.jetpack &&
+							! site?.is_wpcom_atomic &&
+							site?.options?.wpcom_admin_interface !== 'wp-admin';
+						filterCondition = ! isP2 && ! isSimpleClassic;
 					}
 					return filterCondition;
 				} );
