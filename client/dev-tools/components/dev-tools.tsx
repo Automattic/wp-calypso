@@ -133,7 +133,7 @@ const DevTools = () => {
 				<p>
 					{ showActivationButton
 						? translate(
-								'Your plan includes all the developer tools listed below. Click "Activate Now" to begin.'
+								'Your plan includes all the developer tools listed below. Click "Activate now" to begin.'
 						  )
 						: upgradeCtaCopy }
 				</p>

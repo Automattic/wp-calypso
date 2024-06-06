@@ -76,7 +76,12 @@ export default function MigrationsOverview() {
 								) }
 							</div>
 							<div>
-								<Button primary compact href="https://wordpress.com/move/" target="_blank">
+								<Button
+									primary
+									compact
+									href="https://developer.wordpress.com/docs/get-started/build-new-or-migrate/migrate-existing/"
+									target="_blank"
+								>
 									{ translate( 'Migrate to WordPress.com' ) } <Icon icon={ external } size={ 16 } />
 								</Button>
 							</div>

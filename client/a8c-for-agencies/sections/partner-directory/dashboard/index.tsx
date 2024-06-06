@@ -1,12 +1,14 @@
 import { BadgeType, Button } from '@automattic/components';
 import { Icon, external, check } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import StepSection from '../../referrals/common/step-section';
 import StepSectionItem from '../../referrals/common/step-section-item';
-import StatusBadge from '../../referrals/common/step-section-item/status-badge';
+import { getBrandMeta } from '../lib/get-brand-meta';
+import DashboardStatusBadge from './status-badge';
 
 import './style.scss';
 
@@ -22,6 +24,18 @@ export default function PartnerDirectoryDashboard() {
 		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_finish_profile_click' ) );
 	}, [ dispatch ] );
 
+	const onEditExpertiseClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_edit_expertise_click' ) );
+	}, [ dispatch ] );
+
+	const onEditProfileClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_edit_profile_click' ) );
+	}, [ dispatch ] );
+
+	const onAgencyProfileClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_agency_profile_click' ) );
+	}, [ dispatch ] );
+
 	const isSubmitted = true; // FIXME: Replace with actual value
 	const brandStatuses = [
 		{
@@ -30,9 +44,9 @@ export default function PartnerDirectoryDashboard() {
 			type: 'success',
 		},
 		{
-			brand: 'Woocommerce.com',
-			status: 'Pending',
-			type: 'warning',
+			brand: 'WooCommerce.com',
+			status: 'Not approved',
+			type: 'error',
 		},
 		{
 			brand: 'Pressable.com',
@@ -45,6 +59,115 @@ export default function PartnerDirectoryDashboard() {
 			type: 'warning',
 		},
 	] as { brand: string; status: string; type: BadgeType }[]; // FIXME: Replace with actual value
+
+	const isCompleted = true; // FIXME: Replace with actual value
+
+	const programLinks = (
+		<StepSection
+			className="partner-directory-dashboard__learn-more-section"
+			heading={ translate( 'Learn more about the program' ) }
+		>
+			{
+				// FIXME: Add link
+				<Button className="a8c-blue-link" borderless href="#">
+					{ translate( 'How does the approval process work?' ) }
+					<Icon icon={ external } size={ 18 } />
+				</Button>
+			}
+			<br />
+			{
+				// FIXME: Add link
+				<Button className="a8c-blue-link" borderless href="#">
+					{ translate( 'What can I put on my public profile?' ) }
+					<Icon icon={ external } size={ 18 } />
+				</Button>
+			}
+		</StepSection>
+	);
+
+	const showFinishProfileButton = brandStatuses.some( ( { status } ) => status === 'Approved' );
+
+	if ( isCompleted ) {
+		return (
+			<div className="partner-directory-dashboard__completed-section">
+				<div className="partner-directory-dashboard__heading">
+					{ translate(
+						'Congratulations! Your agency is now listed in our partner directory.',
+						'Congratulations! Your agency is now listed in our partner directories.',
+						{
+							count: brandStatuses.filter( ( { status } ) => status === 'Approved' ).length,
+						}
+					) }
+				</div>
+				{ brandStatuses.length > 0 &&
+					brandStatuses.map( ( { brand, status, type } ) => {
+						const brandMeta = getBrandMeta( brand );
+						const showPopoverOnLoad =
+							brandStatuses.filter( ( { status } ) => status === 'Not approved' ).length === 1;
+						return (
+							<StepSectionItem
+								isNewLayout
+								iconClassName={ clsx( brandMeta.className ) }
+								icon={ brandMeta.icon }
+								heading={ brand }
+								description={
+									// FIXME: Add links to all the buttons
+									status === 'Approved' ? (
+										<>
+											<Button className="a8c-blue-link" borderless href="#">
+												{ translate( '%(brand)s Partner Directory', {
+													args: { brand },
+												} ) }
+											</Button>
+											<br />
+											<Button
+												className="a8c-blue-link"
+												onClick={ onAgencyProfileClick }
+												href="/partner-directory/agency-details"
+												borderless
+											>
+												{ translate( `Your agency's profile` ) }
+											</Button>
+										</>
+									) : (
+										<DashboardStatusBadge
+											statusProps={ {
+												status,
+												type,
+											} }
+											showPopoverOnLoad={ showPopoverOnLoad }
+										/>
+									)
+								}
+							/>
+						);
+					} ) }
+				<StepSection
+					className="partner-directory-dashboard__edit-section"
+					heading={ translate( `Edit your agency's information` ) }
+				>
+					<div className="partner-directory-dashboard__subtitle">
+						{ translate(
+							`Expand to more Automattic directories by adding products or updating your agency's profile.`
+						) }
+					</div>
+					<div>
+						<Button
+							onClick={ onEditExpertiseClick }
+							href="/partner-directory/agency-expertise"
+							compact
+						>
+							{ translate( 'Edit expertise' ) }
+						</Button>
+						<Button onClick={ onEditProfileClick } href="/partner-directory/agency-details" compact>
+							{ translate( 'Edit profile' ) }
+						</Button>
+					</div>
+				</StepSection>
+				{ programLinks }
+			</div>
+		);
+	}
 
 	return (
 		<>
@@ -60,18 +183,30 @@ export default function PartnerDirectoryDashboard() {
 			<StepSection heading={ translate( 'How do I start?' ) }>
 				<StepSectionItem
 					isNewLayout
+					className="partner-directory-dashboard__apply-now-section"
 					icon={ check }
 					stepNumber={ isSubmitted ? undefined : 1 }
 					heading={ translate( 'Share your expertise' ) }
 					description={
 						isSubmitted && brandStatuses.length > 0 ? (
 							<div className="partner-directory-dashboard__brand-status-section">
-								{ brandStatuses.map( ( { brand, status, type } ) => (
-									<div key={ brand }>
-										<StatusBadge statusProps={ { children: status, type } } />
-										<span>{ brand }</span>
-									</div>
-								) ) }
+								{ brandStatuses.map( ( { brand, status, type } ) => {
+									const showPopoverOnLoad =
+										brandStatuses.filter( ( { status } ) => status === 'Not approved' ).length ===
+										1;
+									return (
+										<div key={ brand }>
+											<DashboardStatusBadge
+												statusProps={ {
+													status,
+													type,
+												} }
+												showPopoverOnLoad={ showPopoverOnLoad }
+											/>
+											<span>{ brand }</span>
+										</div>
+									);
+								} ) }
 							</div>
 						) : (
 							translate(
@@ -99,7 +234,7 @@ export default function PartnerDirectoryDashboard() {
 						href: '/partner-directory/agency-details',
 						onClick: onFinishProfileClick,
 						primary: isSubmitted,
-						disabled: ! isSubmitted,
+						disabled: ! isSubmitted || ! showFinishProfileButton,
 						compact: true,
 					} }
 				/>
@@ -112,26 +247,7 @@ export default function PartnerDirectoryDashboard() {
 					) }
 				/>
 			</StepSection>
-			<StepSection
-				className="partner-directory-dashboard__learn-more-section"
-				heading={ translate( 'Learn more about the program' ) }
-			>
-				{
-					// FIXME: Add link
-					<Button className="a8c-blue-link" borderless href="#">
-						{ translate( 'How does the approval process work?' ) }
-						<Icon icon={ external } size={ 18 } />
-					</Button>
-				}
-				<br />
-				{
-					// FIXME: Add link
-					<Button className="a8c-blue-link" borderless href="#">
-						{ translate( 'What can I put on my public profile?' ) }
-						<Icon icon={ external } size={ 18 } />
-					</Button>
-				}
-			</StepSection>
+			{ programLinks }
 		</>
 	);
 }

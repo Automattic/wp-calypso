@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { omit } from 'lodash';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -91,15 +91,14 @@ export function requestSites() {
 			} )
 			.then( ( response ) => {
 				const jetpackCloudSites = response.sites.filter( ( site ) => {
-					// Filter Jetpack Cloud sites to exclude P2 sites by default.
+					// Filter Jetpack Cloud sites to exclude P2 and Simple non-Classic sites by default.
 					const isP2 = site?.options?.is_wpforteams_site;
-					let filterCondition = ! isP2;
-					// Filter out simple sites if feature flag is not enabled.
-					if ( ! isEnabled( 'jetpack/manage-simple-sites' ) ) {
-						const isSimple = ! site?.jetpack && ! site?.is_wpcom_atomic;
-						filterCondition = ! isP2 && ! isSimple;
-					}
-					return filterCondition;
+					const isSimpleClassic =
+						! site?.jetpack &&
+						! site?.is_wpcom_atomic &&
+						site?.options?.wpcom_admin_interface !== 'wp-admin';
+
+					return ! isP2 && ! isSimpleClassic;
 				} );
 				dispatch( receiveSites( isJetpackCloud() ? jetpackCloudSites : response.sites ) );
 				dispatch( {

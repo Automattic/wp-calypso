@@ -25,7 +25,7 @@ function mapScores( response: UrlBasicMetricsQueryResponse ) {
 	return { ...response, success: basic.success, basic: basicMetricsScored };
 }
 
-export const useUrlBasicMetricsQuery = ( url?: string ) => {
+export const useUrlBasicMetricsQuery = ( url?: string, advance = false ) => {
 	return useQuery( {
 		queryKey: [ 'url-', url ],
 		queryFn: (): Promise< UrlBasicMetricsQueryResponse > =>
@@ -34,7 +34,7 @@ export const useUrlBasicMetricsQuery = ( url?: string ) => {
 					path: '/site-profiler/metrics/basic',
 					apiNamespace: 'wpcom/v2',
 				},
-				{ url, advance: '1' }
+				{ url, ...( advance ? { advance: '1' } : {} ) }
 			),
 		select: mapScores,
 		meta: {

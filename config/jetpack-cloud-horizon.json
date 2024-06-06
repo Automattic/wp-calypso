@@ -51,7 +51,7 @@
 		"jetpack/pro-dashboard-monitor-paid-tier": true,
 		"jetpack/pro-dashboard-monitor-sms-notification": true,
 		"jetpack/pro-dashboard-wpcom-atomic-hosting": true,
-		"jetpack/manage-simple-sites": false,
+		"jetpack/manage-simple-sites": true,
 		"jetpack/manage-sites-v2-menu": false,
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
