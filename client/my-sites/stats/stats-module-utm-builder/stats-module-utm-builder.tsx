@@ -19,7 +19,6 @@ interface EmptyStateActionProps {
 
 const EmptyStateAction: React.FC< EmptyStateActionProps > = ( { text, icon, onClick } ) => {
 	const handleClick = () => {
-		// recordTracksEvent( eventName );// use new event
 		trackStatsAnalyticsEvent( 'utm_builder_opened' );
 		trackStatsAnalyticsEvent( 'advanced_feature_interaction', { feature: 'utm_builder' } );
 
