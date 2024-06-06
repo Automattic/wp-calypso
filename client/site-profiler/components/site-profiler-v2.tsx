@@ -10,6 +10,7 @@ import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-an
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceMetricsQuery } from 'calypso/data/site-profiler/use-url-performance-metrics-query';
+import { useUrlSecurityMetricsQuery } from 'calypso/data/site-profiler/use-url-security-metrics-query';
 import { LayoutBlock } from 'calypso/site-profiler/components/layout';
 import useDefineConversionAction from 'calypso/site-profiler/hooks/use-define-conversion-action';
 import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
@@ -27,6 +28,7 @@ import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
 import { LoadingScreen } from './loading-screen';
 import { MigrationBannerBig } from './migration-banner-big';
+import { NavMenu } from './nav-menu';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
 import { SecuritySection } from './security-section';
@@ -112,6 +114,12 @@ export default function SiteProfilerV2( props: Props ) {
 		basicMetrics?.token
 	);
 
+	const { data: securityMetrics } = useUrlSecurityMetricsQuery( url, basicMetrics?.token );
+	const { errors: securityMetricsErrors = {} } = securityMetrics ?? {};
+	const noWordPressFound = Object.keys( securityMetricsErrors ).find(
+		( error ) => error === 'no_wordpress'
+	);
+
 	const performanceCategory = getPerformanceCategory( performanceMetrics );
 
 	const updateDomainRouteParam = ( value: string ) => {
@@ -167,6 +175,19 @@ export default function SiteProfilerV2( props: Props ) {
 										isWpCom={ isWpCom }
 									/>
 								) }
+								<NavMenu
+									domain={ domain }
+									navItems={ [
+										{ label: translate( 'Hosting' ), ref: hostingRef },
+										{ label: translate( 'Domain' ), ref: domainRef },
+										{ label: translate( 'Performance Metrics' ), ref: perfomanceMetricsRef },
+										{ label: translate( 'Health Scores' ), ref: healthMetricsRef },
+										...( noWordPressFound
+											? []
+											: [ { label: translate( 'Security' ), ref: securityMetricsRef } ] ),
+									] }
+									showMigrationCta={ ! isWpCom }
+								></NavMenu>
 								<HostingSection
 									url={ basicMetrics?.final_url }
 									dns={ siteProfilerData.dns }

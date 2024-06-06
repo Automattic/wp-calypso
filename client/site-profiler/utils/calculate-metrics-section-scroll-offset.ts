@@ -1,7 +1,7 @@
 export function calculateMetricsSectionScrollOffset() {
 	let offset = 0;
 	const headerEl = document.getElementById( 'header' );
-	const menuHeight = 50;
+	const menuHeight = 92;
 
 	// Offset to account for Masterbar if it is fixed position
 	offset +=
@@ -12,7 +12,7 @@ export function calculateMetricsSectionScrollOffset() {
 	// Offset to account for the metrics menu navbar
 	offset += menuHeight;
 
-	const padding = 20;
+	const padding = 30;
 
 	return offset + padding;
 }
