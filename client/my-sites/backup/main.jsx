@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { ExternalLink } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -74,12 +74,12 @@ const BackupPage = ( { queryDate } ) => {
 
 	return (
 		<div
-			className={ classNames( 'backup__page', {
+			className={ clsx( 'backup__page', {
 				wordpressdotcom: ! ( isJetpackCloud() || isA8CForAgencies() ),
 			} ) }
 		>
 			<Main
-				className={ classNames( {
+				className={ clsx( {
 					is_jetpackcom: isJetpackCloud(),
 				} ) }
 			>

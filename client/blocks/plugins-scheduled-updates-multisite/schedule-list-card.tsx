@@ -1,6 +1,6 @@
 import { Button, FormToggle, Tooltip } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon, info } from '@wordpress/icons';
-import clsx from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDateTimeFormat } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-date-time-format';

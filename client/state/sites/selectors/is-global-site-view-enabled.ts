@@ -10,7 +10,6 @@ import type { AppState } from 'calypso/types';
 export default function isGlobalSiteViewEnabled( state: AppState, siteId: number | null ) {
 	const isAdminInterfaceWPAdmin =
 		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
-	const isClassicEarlyRelease = !! getSiteOption( state, siteId, 'wpcom_classic_early_release' );
 
-	return isAdminInterfaceWPAdmin && isClassicEarlyRelease;
+	return isAdminInterfaceWPAdmin;
 }

@@ -1,5 +1,5 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useState, useMemo } from 'react';
 import * as React from 'react';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
@@ -168,7 +168,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			{ nav }
 
 			<Main
-				className={ classNames(
+				className={ clsx(
 					'selector__main',
 					iterationClassName,
 					'fs-unmask',

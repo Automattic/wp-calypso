@@ -26,7 +26,7 @@
 		text-align: center;
 	}
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		padding: 40px 32px 24px;
 
 		.formatted-header__title {
@@ -78,7 +78,7 @@
 		}
 	}
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		position: fixed;
 		left: 0;
 		bottom: 0;

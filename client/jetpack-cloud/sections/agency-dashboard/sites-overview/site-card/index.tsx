@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon, Button } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -97,7 +97,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 
 	return (
 		<Card
-			className={ classNames( 'site-card__card', {
+			className={ clsx( 'site-card__card', {
 				'site-card__card-disabled': shouldDisableLicenseSelection,
 				'site-card__card-active': currentSiteHasSelectedLicenses,
 			} ) }
@@ -132,7 +132,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 							if ( row.type ) {
 								return (
 									<div
-										className={ classNames(
+										className={ clsx(
 											'site-card__expanded-content-list',
 											isSiteConnected && 'site-card__content-list-no-error'
 										) }

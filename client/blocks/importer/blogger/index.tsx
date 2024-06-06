@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { resetImport, startImport } from 'calypso/state/imports/actions';
@@ -96,7 +96,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 
 	return (
 		<>
-			<div className={ classnames( `importer-${ importer }` ) }>
+			<div className={ clsx( `importer-${ importer }` ) }>
 				{ ( () => {
 					if ( ! job ) {
 						return;

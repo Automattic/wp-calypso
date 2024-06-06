@@ -9,7 +9,7 @@
 	display: flex;
 	align-items: center;
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		display: block;
 	}
 }
@@ -84,7 +84,7 @@
 			transform: rotate(0);
 		}
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			width: 0;
 			padding: 0;
 		}

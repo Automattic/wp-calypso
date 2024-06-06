@@ -18,7 +18,7 @@ export default function useChatStatus(
 
 	// All paying customers are eligible for chat.
 	// See: pdDR7T-1vN-p2
-	const isEligibleForChat = Boolean( chatStatus?.is_paying_customer );
+	const isEligibleForChat = Boolean( chatStatus?.is_user_eligible );
 
 	const { data: supportActivity, isInitialLoading: isLoadingSupportActivity } =
 		useSupportActivity( isEligibleForChat );

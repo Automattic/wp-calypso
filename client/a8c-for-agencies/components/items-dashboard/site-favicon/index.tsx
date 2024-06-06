@@ -1,6 +1,6 @@
 import { WordPressLogo } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { getFirstGrapheme } from 'calypso/lib/string';
 import { useSelector } from 'calypso/state';
@@ -48,7 +48,7 @@ const SiteFavicon = ( {
 	}
 
 	return (
-		<div className={ classNames( 'site-favicon', className, defaultFaviconClass ) }>
+		<div className={ clsx( 'site-favicon', className, defaultFaviconClass ) }>
 			<SiteIcon siteId={ blogId } size={ size } defaultIcon={ defaultFavicon } />
 		</div>
 	);

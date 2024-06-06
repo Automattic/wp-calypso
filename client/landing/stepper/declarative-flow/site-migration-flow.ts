@@ -4,11 +4,12 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
+import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useIsSiteAdmin } from '../hooks/use-is-site-admin';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -46,24 +47,40 @@ const siteMigration: Flow = {
 
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
-		const { isOwner } = useIsSiteOwner();
+		const { isAdmin } = useIsSiteAdmin();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+		const flowPath = this.variantSlug ?? FLOW_NAME;
 
 		useEffect( () => {
-			if ( isOwner === false && userIsLoggedIn ) {
+			if ( isAdmin === false ) {
 				window.location.assign( '/start' );
 			}
-		}, [ isOwner, userIsLoggedIn ] );
+		}, [ isAdmin ] );
 
-		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
+		useEffect( () => {
+			// We don't need to do anything if the user isn't logged in.
+			if ( ! userIsLoggedIn ) {
+				return;
+			}
+
+			if ( siteSlug || siteId ) {
+				return;
+			}
+
+			if ( isHostedSiteMigrationFlow( flowPath ) ) {
+				return;
+			}
+
 			window.location.assign( '/start' );
+		}, [ flowPath, siteId, siteSlug, userIsLoggedIn, isAdmin ] );
 
+		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
 			return {
 				state: AssertConditionState.FAILURE,
-				message: 'site-setup did not provide the site slug or site id it is configured to.',
+				message: 'site-migration does not have the site slug or site id.',
 			};
 		}
 
@@ -87,6 +104,12 @@ const siteMigration: Flow = {
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+		const { data: urlData, isLoading: isLoadingFromData } = useAnalyzeUrlQuery(
+			fromQueryParam || '',
+			true
+		);
+		const isFromSiteWordPress = ! isLoadingFromData && urlData?.platform === 'wordpress';
+
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
@@ -303,13 +326,16 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					if ( urlQueryParams.has( 'showModal' ) ) {
+					if ( urlQueryParams.has( 'showModal' ) || ! isFromSiteWordPress ) {
 						urlQueryParams.delete( 'showModal' );
 						return navigate(
 							`${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }`
 						);
 					}
-					urlQueryParams.set( 'showModal', 'true' );
+
+					if ( isFromSiteWordPress ) {
+						urlQueryParams.set( 'showModal', 'true' );
+					}
 
 					return navigate( `site-migration-upgrade-plan?${ urlQueryParams.toString() }` );
 				}

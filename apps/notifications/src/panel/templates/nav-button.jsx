@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Gridicon from './gridicons';
@@ -25,7 +25,7 @@ export class NavButton extends Component {
 
 		return (
 			<button
-				className={ classNames( className, { disabled: ! isEnabled } ) }
+				className={ clsx( className, { disabled: ! isEnabled } ) }
 				disabled={ ! isEnabled }
 				onClick={ isEnabled ? this.navigate : noop }
 			>

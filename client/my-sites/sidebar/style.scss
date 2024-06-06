@@ -58,6 +58,7 @@ $brand-text: "SF Pro Text", $sans;
 		--color-sidebar-gridicon-selected-fill: var(--color-sidebar-menu-selected-text);
 		--color-sidebar-tooltip-background: var(--color-sidebar-menu-hover-background);
 		--color-sidebar-tooltip-text: var(--color-sidebar-menu-hover-text);
+		--color-masterbar-unread-dot-background: #e65054;
 	}
 
 	.is-global-sidebar-collapsed {
@@ -941,7 +942,7 @@ $font-size: rem(14px);
 }
 
 // Flyout menu (showing from >782px)
-@media screen and ( min-width: 783px ) {
+@media screen and (min-width: 783px) {
 	.theme-default {
 		.focus-content,
 		.focus-sites,
@@ -1009,7 +1010,7 @@ $font-size: rem(14px);
 	}
 }
 
-@media screen and ( max-width: 781px ) {
+@media screen and (max-width: 781px) {
 	// client/layout/sidebar/style.scss
 	.theme-default {
 		.focus-content .layout__content {
@@ -1081,7 +1082,7 @@ $font-size: rem(14px);
 	}
 }
 
-@media screen and ( max-width: $break-small ) {
+@media screen and (max-width: $break-small) {
 	.theme-default {
 		// client/layout/style.scss
 		.layout__content {

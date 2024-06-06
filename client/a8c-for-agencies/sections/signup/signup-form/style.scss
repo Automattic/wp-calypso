@@ -1,6 +1,13 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .agency-signup-form {
 	max-width: 720px;
-	padding: 56px 68px 68px;
+	padding: 56px 32px 68px;
+
+	@include break-small {
+		padding: 56px 68px 68px;
+	}
 
 	.agency-signup-form__logo {
 		display: block;

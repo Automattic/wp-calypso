@@ -24,6 +24,7 @@
 		"scss/at-else-empty-line-before": null,
 		"scss/at-if-closing-brace-space-after": null,
 		"no-invalid-position-at-import-rule": null,
+		"media-feature-parentheses-space-inside": "never",
 		"declaration-property-unit-allowed-list": [
 			{
 				"/^font-size$|^font$/": [ "rem" ],

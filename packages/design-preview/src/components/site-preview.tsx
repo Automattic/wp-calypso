@@ -1,5 +1,5 @@
 import { ThemePreview } from '@automattic/design-picker';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import photon from 'photon';
 import AnimatedFullscreen from './animated-fullscreen';
@@ -55,7 +55,7 @@ const SitePreview: React.FC< SitePreviewProps > = ( {
 
 	return (
 		<AnimatedFullscreen
-			className={ classnames( 'design-preview__site-preview', {
+			className={ clsx( 'design-preview__site-preview', {
 				'design-preview__site-preview--animated': animated,
 			} ) }
 			isFullscreen={ isFullscreen }

@@ -16,7 +16,7 @@ ul.plans-feature-list__item-group {
 		display: flex;
 		flex-wrap: wrap;
 
-		@media ( min-width: $break-mobile ) {
+		@media (min-width: $break-mobile) {
 			@supports ( display: grid ) {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -41,7 +41,7 @@ ul.plans-feature-list__item-group {
 		margin-right: 10px;
 		align-self: flex-end;
 
-		@media ( min-width: $break-mobile ) {
+		@media (min-width: $break-mobile) {
 			@supports ( display: grid ) {
 				align-self: end;
 			}

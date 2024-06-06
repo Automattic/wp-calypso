@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -104,7 +104,7 @@ class EmptyContent extends Component {
 
 		return (
 			<div
-				className={ classNames( 'empty-content', this.props.className, {
+				className={ clsx( 'empty-content', this.props.className, {
 					'is-compact': this.props.isCompact,
 					'has-title-only': title && ! this.props.line,
 				} ) }

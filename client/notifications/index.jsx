@@ -14,7 +14,7 @@ import page from '@automattic/calypso-router';
 import NotificationsPanel, {
 	refreshNotes,
 } from '@automattic/notifications/src/panel/Notifications';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -57,9 +57,15 @@ export class Notifications extends Component {
 		isVisible: isDesktop ? true : getIsVisible(),
 	};
 
+	focusedElementBeforeOpen = null;
+
 	componentDidMount() {
 		document.addEventListener( 'click', this.props.checkToggle );
 		document.addEventListener( 'keydown', this.handleKeyPress );
+
+		if ( this.props.isShowing ) {
+			this.focusedElementBeforeOpen = document.activeElement;
+		}
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
@@ -74,6 +80,18 @@ export class Notifications extends Component {
 				this.receiveServiceWorkerMessage
 			);
 			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.isShowing === this.props.isShowing ) {
+			return;
+		}
+
+		if ( ! prevProps.isShowing && this.props.isShowing ) {
+			this.focusedElementBeforeOpen = document.activeElement;
+		} else {
+			this.focusedElementBeforeOpen?.focus();
 		}
 	}
 
@@ -253,7 +271,7 @@ export class Notifications extends Component {
 		return (
 			<div
 				id="wpnc-panel"
-				className={ classNames( 'wide', 'wpnc__main', {
+				className={ clsx( 'wide', 'wpnc__main', {
 					'wpnt-open': this.props.isShowing,
 					'wpnt-closed': ! this.props.isShowing,
 				} ) }

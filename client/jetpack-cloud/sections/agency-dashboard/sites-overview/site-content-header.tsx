@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing-payment-notification';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
@@ -28,7 +28,7 @@ export default function SiteContentHeader( { content, pageTitle, showStickyConte
 
 			<div className="sites-overview__viewport" { ...outerDivProps }>
 				<div
-					className={ classNames( 'sites-overview__page-title-container', {
+					className={ clsx( 'sites-overview__page-title-container', {
 						'is-sticky': showStickyContent && hasCrossed,
 					} ) }
 				>

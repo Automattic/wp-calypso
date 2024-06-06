@@ -1,5 +1,5 @@
 import { AutoSizer, List } from '@automattic/react-virtualized';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
@@ -162,7 +162,7 @@ class VirtualList extends Component {
 	render() {
 		const rowCount = this.getRowCount();
 		const { className, loading, defaultRowHeight, getRowHeight, height, scrollTop } = this.props;
-		const classes = classNames( 'virtual-list', className, {
+		const classes = clsx( 'virtual-list', className, {
 			'is-loading': loading,
 		} );
 

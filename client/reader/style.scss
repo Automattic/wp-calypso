@@ -261,11 +261,11 @@ body.is-section-reader:not(.is-reader-full-post) {
 .is-group-reader .reader-share__button-label,
 .is-group-reader .comment-button__label-status,
 .is-group-reader .like-button__label-status {
-	@media ( max-width: 530px ) {
+	@media (max-width: 530px) {
 		@include hide-content-accessibly();
 	}
 
-	@media ( min-width: 661px ) and ( max-width: 790px ) {
+	@media (min-width: 661px) and (max-width: 790px) {
 		@include hide-content-accessibly();
 	}
 }
@@ -285,7 +285,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 	}
 }
 .is-group-reader .reader-notifications__panel {
-	@media only screen and ( min-width: 1114px ) {
+	@media only screen and (min-width: 1114px) {
 		.wpnc__main {
 			width: calc(100vw - 310px);
 			.wpnc__note-list {

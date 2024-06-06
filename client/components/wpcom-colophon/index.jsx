@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
@@ -11,7 +11,7 @@ const icon = (
 );
 
 const WpcomColophon = ( { className } ) => (
-	<div className={ classNames( 'wpcom-colophon', className ) }>{ icon }</div>
+	<div className={ clsx( 'wpcom-colophon', className ) }>{ icon }</div>
 );
 
 export default WpcomColophon;

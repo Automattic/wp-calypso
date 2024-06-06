@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import cookie from 'cookie';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
@@ -68,7 +68,7 @@ const SurveyModal = ( {
 
 	return (
 		<div
-			className={ classNames( 'modal-survey-notice', className ) }
+			className={ clsx( 'modal-survey-notice', className ) }
 			style={ { pointerEvents: showOverlay ? 'auto' : 'none' } }
 		>
 			{ showOverlay && <Button className="modal-survey-notice__backdrop" onClick={ onClose } /> }

@@ -75,7 +75,7 @@
 		padding-right: 24px;
 	}
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		display: flex;
 		flex-direction: column-reverse;
 	}
@@ -103,7 +103,7 @@
 		margin-right: 10px;
 	}
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		margin: 2px 0;
 	}
 }

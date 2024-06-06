@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
@@ -12,9 +12,9 @@ interface JetpackColophonProps {
 export default ( { className, grayscale = false }: JetpackColophonProps ) => {
 	const translate = useTranslate();
 	return (
-		<div className={ classNames( 'jetpack-colophon', className ) }>
+		<div className={ clsx( 'jetpack-colophon', className ) }>
 			<span
-				className={ classNames( 'jetpack-colophon__power', {
+				className={ clsx( 'jetpack-colophon__power', {
 					'jetpack-colophon__grayscale': grayscale,
 				} ) }
 			>

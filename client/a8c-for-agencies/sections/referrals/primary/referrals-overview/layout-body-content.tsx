@@ -10,9 +10,14 @@ import {
 	A4A_REFERRALS_COMMISSIONS_LINK,
 	A4A_REFERRALS_PAYMENT_SETTINGS,
 	A4A_REFERRALS_FAQ,
+	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
+import {
+	MARKETPLACE_TYPE_REFERRAL,
+	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
+} from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
@@ -24,7 +29,6 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import StepSection from '../../common/step-section';
 import StepSectionItem from '../../common/step-section-item';
 import ConsolidatedViews from '../../consolidated-view';
-import { REFER_PRODUCTS_LINK } from '../../lib/constants';
 import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';
 import ReferralList from '../../referrals-list';
@@ -59,6 +63,7 @@ export default function LayoutBodyContent( {
 	}, [ dispatch ] );
 
 	const onGetStartedClick = useCallback( () => {
+		sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REFERRAL );
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' ) );
 	}, [ dispatch ] );
 
@@ -198,7 +203,7 @@ export default function LayoutBodyContent( {
 							}
 						>
 							<StepSectionItem
-								isAutomatedReferral={ isAutomatedReferral }
+								isNewLayout={ isAutomatedReferral }
 								icon={ tipaltiLogo }
 								heading={
 									isAutomatedReferral
@@ -245,7 +250,7 @@ export default function LayoutBodyContent( {
 							{ isAutomatedReferral ? (
 								<StepSectionItem
 									iconClassName="referrals-overview__opacity-70-percent"
-									isAutomatedReferral
+									isNewLayout
 									icon={ reusableBlock }
 									heading={ translate( 'Refer products and hosting' ) }
 									description={ translate( 'Receive up to a 50% commission.' ) }
@@ -253,7 +258,7 @@ export default function LayoutBodyContent( {
 										children: translate( 'Get started' ),
 										compact: true,
 										primary: hasPayeeAccount,
-										href: REFER_PRODUCTS_LINK,
+										href: A4A_MARKETPLACE_PRODUCTS_LINK,
 										onClick: onGetStartedClick,
 									} }
 								/>
@@ -274,7 +279,7 @@ export default function LayoutBodyContent( {
 								/>
 							) }
 							<StepSectionItem
-								isAutomatedReferral={ isAutomatedReferral }
+								isNewLayout={ isAutomatedReferral }
 								className="referrals-overview__step-section-woo-payments"
 								icon={ <WooLogo /> }
 								heading={

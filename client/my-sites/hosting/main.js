@@ -6,7 +6,8 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import classnames from 'classnames';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Fragment, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
@@ -24,6 +25,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { useCodeDeploymentsQuery } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
@@ -95,12 +97,17 @@ const MainCards = ( {
 	siteId,
 	siteSlug,
 } ) => {
+	const { data, isLoading } = useCodeDeploymentsQuery( siteId );
+	const isCodeDeploymentsUnused = ! isLoading && data && ! data.length;
+
 	const mainCards = [
-		{
-			feature: 'github-deployments',
-			content: <GitHubDeploymentsCard />,
-			type: 'advanced',
-		},
+		isCodeDeploymentsUnused
+			? {
+					feature: 'github-deployments',
+					content: <GitHubDeploymentsCard />,
+					type: 'advanced',
+			  }
+			: null,
 		{
 			feature: 'sftp',
 			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
@@ -180,20 +187,8 @@ const SidebarCards = ( { isBasicHostingDisabled } ) => {
 	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
 };
 
-const AllCards = ( {
-	hasStagingSitesFeature,
-	isAdvancedHostingDisabled,
-	isBasicHostingDisabled,
-	isWpcomStagingSite,
-	siteId,
-	siteSlug,
-} ) => {
+const AllCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, siteId, siteSlug } ) => {
 	const allCards = [
-		{
-			feature: 'github-deployments',
-			content: <GitHubDeploymentsCard />,
-			type: 'advanced',
-		},
 		{
 			feature: 'sftp',
 			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
@@ -204,22 +199,6 @@ const AllCards = ( {
 			content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
 			type: 'advanced',
 		},
-		! isWpcomStagingSite && hasStagingSitesFeature
-			? {
-					feature: 'staging-site',
-					content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
-					type: 'advanced',
-			  }
-			: null,
-		isWpcomStagingSite && siteId
-			? {
-					feature: 'staging-production-site',
-					content: (
-						<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
-					),
-					type: 'advanced',
-			  }
-			: null,
 		{
 			feature: 'web-server-settings',
 			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
@@ -239,15 +218,6 @@ const AllCards = ( {
 			feature: 'wp-admin',
 			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
 			type: 'basic',
-		},
-		{
-			feature: 'site-backup',
-			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
-			type: 'basic',
-		},
-		{
-			feature: 'support',
-			content: <SupportCard />,
 		},
 	].filter( ( card ) => card !== null );
 
@@ -279,6 +249,7 @@ const Hosting = ( props ) => {
 		transferState,
 	} = props;
 
+	const hasEnTranslation = useHasEnTranslation();
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(
 		transferState &&
@@ -315,6 +286,16 @@ const Hosting = ( props ) => {
 		},
 		[ hasTransfer ]
 	);
+
+	const getPageTitle = () => {
+		if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+			return hasEnTranslation( 'Server Settings' )
+				? translate( 'Server Settings' )
+				: translate( 'Server Config' );
+		}
+
+		return translate( 'Hosting' );
+	};
 
 	const getUpgradeBanner = () => {
 		if ( hasTransfer ) {
@@ -362,11 +343,9 @@ const Hosting = ( props ) => {
 					<Layout className="hosting__layout">
 						{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) ? (
 							<AllCards
-								hasStagingSitesFeature={ hasStagingSitesFeature }
 								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
 								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
-								isWpcomStagingSite={ isWpcomStagingSite }
 								siteId={ siteId }
 								siteSlug={ siteSlug }
 							/>
@@ -406,16 +385,26 @@ const Hosting = ( props ) => {
 	return (
 		<Main
 			wideLayout
-			className={ classnames( 'hosting', {
+			className={ clsx( 'hosting', {
 				'hosting--is-two-columns': isEnabled( 'layout/dotcom-nav-redesign-v2' ),
 			} ) }
 		>
-			{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
+			{ ! isLoadingSftpData && (
+				<ScrollToAnchorOnMount
+					offset={ HEADING_OFFSET }
+					timeout={ 250 }
+					container={
+						isEnabled( 'layout/dotcom-nav-redesign-v2' )
+							? document.querySelector( '.item-preview__content' )
+							: undefined
+					}
+				/>
+			) }
 			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
-			<DocumentHead title={ translate( 'Hosting' ) } />
+			<DocumentHead title={ getPageTitle() } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Hosting Config' ) }
+				title={ getPageTitle() }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
 			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (

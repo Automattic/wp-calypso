@@ -629,7 +629,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				max-width: 100%;
 				margin-top: 30px;
 
-				@media screen and (max-width: $breakpoint-mobile ) {
+				@media screen and (max-width: $breakpoint-mobile) {
 					margin-top: 0;
 
 					&::before,
@@ -727,7 +727,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			width: 100%;
 			margin-bottom: 48px;
 
-			@media screen and ( max-width: $breakpoint-mobile ) {
+			@media screen and (max-width: $breakpoint-mobile) {
 				margin-bottom: 0;
 			}
 		}

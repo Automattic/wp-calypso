@@ -3,7 +3,7 @@ import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products
 import { Badge, FoldableCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -533,7 +533,7 @@ export class SharingService extends Component {
 		const serviceStatus = this.props.service.status ?? 'ok';
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID, serviceStatus );
 		const earliestExpiry = this.getConnectionExpiry();
-		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
+		const classNames = clsx( 'sharing-service', this.props.service.ID, connectionStatus, {
 			'is-open': this.state.isOpen,
 		} );
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
@@ -643,7 +643,7 @@ export class SharingService extends Component {
 					}
 				>
 					<div
-						className={ classnames( 'sharing-service__content', {
+						className={ clsx( 'sharing-service__content', {
 							'is-placeholder': this.props.isFetching,
 						} ) }
 					>

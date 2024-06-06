@@ -14,7 +14,7 @@ import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { FC, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -179,6 +179,13 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		const handleOnClick = () => {
 			contactOptionsEventMap.chat();
 
+			recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+				support_variation: 'messaging',
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+			} );
+
 			recordTracksEvent( 'calypso_help_live_chat_begin', {
 				site_plan_product_id: productId,
 				is_automated_transfer: currentSite?.is_wpcom_atomic,
@@ -235,7 +242,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		return (
 			<Link to={ emailUrl } onClick={ contactOptionsEventMap[ 'email' ] }>
 				<div
-					className={ classnames( 'help-center-contact-page__box', 'email' ) }
+					className={ clsx( 'help-center-contact-page__box', 'email' ) }
 					role="button"
 					tabIndex={ 0 }
 				>
@@ -266,7 +273,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					enabled={ ! renderEmail.render }
 				/>
 
-				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
+				<div className={ clsx( 'help-center-contact-page__boxes' ) }>
 					{ renderEmail.render ? renderEmailOption() : renderChatOption() }
 				</div>
 			</div>

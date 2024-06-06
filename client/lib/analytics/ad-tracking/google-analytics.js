@@ -1,5 +1,4 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { getGaGtag } from '../utils/get-ga-gtag';
 import * as GA4 from './google-analytics-4';
 
 // Ensure setup has run.
@@ -7,8 +6,6 @@ import './setup';
 
 export function setupGoogleAnalyticsGtag( params ) {
 	GA4.setup( params );
-
-	window.gtag( 'config', getGaGtag(), params );
 }
 
 /**
@@ -55,18 +52,6 @@ export function fireGoogleAnalyticsPageView(
 
 	const ga4PropertyGtag = getGa4PropertyGtag();
 	GA4.firePageView( pageTitle, urlPath, ga4PropertyGtag );
-
-	const params = {
-		...getGoogleAnalyticsDefaultConfig(),
-		page_path: urlPath,
-		page_title: pageTitle,
-	};
-
-	window.gtag(
-		'config',
-		getGaGtag( useJetpackGoogleAnalytics, useAkismetGoogleAnalytics ),
-		params
-	);
 }
 
 /**
