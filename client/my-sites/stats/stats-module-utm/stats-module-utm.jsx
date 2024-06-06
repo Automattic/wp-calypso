@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import config from '@automattic/calypso-config';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'calypso/state';
