@@ -75,7 +75,7 @@ export default function SiteProfilerV2( props: Props ) {
 		hostingProviderData,
 		isErrorUrlData ? null : urlData
 	);
-	const showResultScreen = siteProfilerData || isDomainSpecial;
+	const showResultScreen = hash || siteProfilerData || isDomainSpecial;
 
 	useScrollToTop( !! siteProfilerData );
 	useSiteProfilerRecordAnalytics(
