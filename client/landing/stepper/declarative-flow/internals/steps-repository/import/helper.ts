@@ -8,6 +8,7 @@ import {
 	getWpOrgImporterUrl,
 } from 'calypso/blocks/import/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
+import { getImporterEngines } from 'calypso/lib/importer/importer-config';
 import { BASE_ROUTE } from './config';
 
 export function getFinalImporterUrl(
@@ -18,7 +19,7 @@ export function getFinalImporterUrl(
 ) {
 	let importerUrl;
 	const encodedFromSite = encodeURIComponent( fromSite );
-	const productImporters = [ 'blogger', 'medium', 'substack', 'squarespace', 'wix', 'wordpress' ];
+	const productImporters = getImporterEngines();
 
 	if ( productImporters.includes( platform ) ) {
 		importerUrl = isEnabled( `onboarding/import-from-${ platform }` )
