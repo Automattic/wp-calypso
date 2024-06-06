@@ -60,7 +60,7 @@
 
 	height: calc(100vh - var(--masterbar-height));
 
-	@media ( min-width: 782px ) {
+	@media (min-width: 782px) {
 		height: calc(100vh - var(--masterbar-height) - 32px);
 	}
 
@@ -78,6 +78,32 @@
 		@include break-medium {
 			border-block-end: 1px solid var(--color-border-secondary);
 			margin-bottom: 24px;
+		}
+	}
+
+	.sites-a8c-for-agencies-banner-container {
+		display: flex;
+		justify-content: center;
+	}
+
+	.sites-a8c-for-agencies-banner {
+		margin-inline: 16px;
+
+		.banner__action {
+			a {
+				display: flex;
+				white-space: nowrap;
+			}
+		}
+
+		@include break-large {
+			margin-inline: 26px;
+		}
+
+		@include break-huge {
+			margin-inline: 64px;
+			width: 100%;
+			max-width: 1400px;
 		}
 	}
 
@@ -300,7 +326,7 @@
 		}
 	}
 	.is-global-sidebar-collapsed {
-		@media ( min-width: 661px ) {
+		@media (min-width: 661px) {
 			.layout__secondary {
 				transition: all 220ms ease-out;
 
@@ -323,6 +349,7 @@
 							opacity: 0;
 							display: block !important;
 							width: 0;
+							white-space: nowrap;
 						}
 						.sidebar__menu-link {
 							width: fit-content;
@@ -353,7 +380,7 @@
 			}
 
 			.components-button.is-compact.has-icon:not(.has-text) {
-				@media ( max-width: 961px ) {
+				@media (max-width: 961px) {
 					margin-inline-end: 8px;
 				}
 			}
@@ -527,6 +554,13 @@
 				position: relative;
 				width: 100%;
 			}
+
+			.spinner-wrapper {
+				position: absolute;
+				left: 50%;
+				top: 70px;
+				z-index: 2;
+			}
 		}
 	}
 }
@@ -590,7 +624,6 @@
 			margin-top: 0;
 			overflow: hidden;
 			padding-bottom: 0 !important;
-
 		}
 
 		.dataviews-wrapper {
@@ -604,6 +637,14 @@
 				flex: 1;
 				max-height: none;
 			}
+
+			.components-base-control {
+				width: 85%;
+			}
+		}
+
+		.sites-a8c-for-agencies-banner-container {
+			display: none;
 		}
 	}
 }

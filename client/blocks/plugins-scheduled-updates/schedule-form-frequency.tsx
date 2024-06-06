@@ -6,7 +6,7 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -66,7 +66,7 @@ export function ScheduleFormFrequency( props: Props ) {
 		<div className={ `form-field form-field--frequency ${ className }` }>
 			<label htmlFor="frequency">{ translate( 'Select frequency' ) }</label>
 			<Flex direction={ [ 'column', 'row' ] }>
-				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
+				<FlexItem className={ clsx( 'radio-option', { selected: frequency === 'daily' } ) }>
 					<Flex className="form-field--frequency-container" gap={ 6 }>
 						<FlexItem>
 							<RadioControl
@@ -91,7 +91,7 @@ export function ScheduleFormFrequency( props: Props ) {
 						</FlexItem>
 					</Flex>
 				</FlexItem>
-				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'weekly' } ) }>
+				<FlexItem className={ clsx( 'radio-option', { selected: frequency === 'weekly' } ) }>
 					<Flex
 						className="form-field--frequency-container"
 						gap={ 6 }

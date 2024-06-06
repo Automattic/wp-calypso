@@ -35,7 +35,6 @@
 	margin: 0;
 	margin-bottom: 24px;
 	position: relative;
-	background: #FAFAFA; /* stylelint-disable color-hex-case */
 
 	@include breakpoint-deprecated( "<660px" ) {
 		background: none;

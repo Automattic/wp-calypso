@@ -4,7 +4,7 @@ import { Spinner } from '@automattic/components';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -35,7 +35,6 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { Experiment } from 'calypso/lib/explat';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -99,7 +98,6 @@ export class RenderDomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isReskinned: PropTypes.bool,
-		useAlternateDomainMessaging: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -324,18 +322,12 @@ export class RenderDomainsStep extends Component {
 		);
 	};
 
-	handleSkip = (
-		googleAppsCartItem,
-		shouldHideFreePlan = false,
-		signupDomainOrigin,
-		migrateSite = false
-	) => {
+	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin ) => {
 		const tracksProperties = Object.assign(
 			{
 				section: this.getAnalyticsSection(),
 				flow: this.props.flowName,
 				step: this.props.stepName,
-				is_migration: migrateSite,
 			},
 			this.isDependencyShouldHideFreePlanProvided()
 				? { should_hide_free_plan: shouldHideFreePlan }
@@ -353,25 +345,13 @@ export class RenderDomainsStep extends Component {
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain( {
-				googleAppsCartItem,
-				shouldHideFreePlan,
-				signupDomainOrigin,
-				migrateSite,
-			} );
+			this.submitWithDomain( { googleAppsCartItem, shouldHideFreePlan, signupDomainOrigin } );
 		} );
 	};
 
 	handleDomainExplainerClick = () => {
 		const hideFreePlan = true;
 		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
-	};
-
-	handleSiteMigrationClick = () => {
-		const hideFreePlan = true;
-		const migrateSite = true;
-
-		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.SITE_MIGRATION, migrateSite );
 	};
 
 	handleUseYourDomainClick = () => {
@@ -390,12 +370,7 @@ export class RenderDomainsStep extends Component {
 		}
 	};
 
-	submitWithDomain = ( {
-		googleAppsCartItem,
-		shouldHideFreePlan = false,
-		signupDomainOrigin,
-		migrateSite = false,
-	} ) => {
+	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
 		const { step } = this.props;
 		const { suggestion } = step;
 
@@ -486,11 +461,7 @@ export class RenderDomainsStep extends Component {
 			return;
 		}
 
-		if ( migrateSite ) {
-			this.props.goToNextStep( 'site-migration' );
-		} else {
-			this.props.goToNextStep();
-		}
+		this.props.goToNextStep();
 
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
@@ -953,7 +924,7 @@ export class RenderDomainsStep extends Component {
 
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div
-				className={ classNames( 'domains__domain-side-content', {
+				className={ clsx( 'domains__domain-side-content', {
 					'fade-out':
 						shouldUseMultipleDomainsInCart( flowName ) &&
 						( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ),
@@ -967,19 +938,6 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<div className="domains__domain-side-content-container">
-				<Experiment
-					name="calypso_signup_domains_show_migrate_cta_2024"
-					defaultExperience={ null }
-					loadingExperience={ null }
-					treatmentExperience={
-						<div className="domains__domain-side-content domains__domain-site-migration">
-							<ReskinSideExplainer
-								type="site-migration"
-								onClick={ this.handleSiteMigrationClick }
-							/>
-						</div>
-					}
-				/>
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
 					<DomainsMiniCart
 						domainsInCart={ domainsInCart }
@@ -1118,7 +1076,6 @@ export class RenderDomainsStep extends Component {
 				forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
-				useAlternateDomainMessaging={ this.props.useAlternateDomainMessaging }
 			/>
 		);
 	};
@@ -1178,14 +1135,7 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const {
-			flowName,
-			isAllDomains,
-			useAlternateDomainMessaging,
-			isReskinned,
-			stepSectionName,
-			translate,
-		} = this.props;
+		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -1231,12 +1181,6 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			if ( useAlternateDomainMessaging ) {
-				return translate(
-					"Find a unique web address that's easy to remember and even easier to share."
-				);
-			}
-
 			return (
 				! stepSectionName &&
 				'domain-transfer' !== flowName &&
@@ -1250,15 +1194,8 @@ export class RenderDomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const {
-			flowName,
-			headerText,
-			isAllDomains,
-			useAlternateDomainMessaging,
-			isReskinned,
-			stepSectionName,
-			translate,
-		} = this.props;
+		const { headerText, isAllDomains, isReskinned, stepSectionName, translate, flowName } =
+			this.props;
 
 		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === flowName ) {
 			return '';
@@ -1276,11 +1213,6 @@ export class RenderDomainsStep extends Component {
 			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
 				return ! stepSectionName && translate( 'Choose your domains' );
 			}
-
-			if ( useAlternateDomainMessaging ) {
-				return translate( 'Claim your domain name' );
-			}
-
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
@@ -1439,6 +1371,10 @@ export class RenderDomainsStep extends Component {
 		} else if ( isWithThemeFlow( flowName ) ) {
 			backUrl = '/themes';
 			backLabelText = translate( 'Back to themes' );
+		} else if ( 'plans-first' === flowName ) {
+			backUrl = getStepUrl( flowName, previousStepName );
+		} else if ( 'guided' === flowName ) {
+			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 

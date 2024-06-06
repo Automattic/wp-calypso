@@ -3,7 +3,7 @@ import { Button, FormLabel } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { ChangeEvent, FormEvent, useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -23,6 +23,7 @@ interface Props {
 	label?: ReactNode;
 	placeholder?: string;
 	dontHaveSiteAddressLabel?: string;
+	hideImporterListLink?: boolean;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const {
@@ -34,6 +35,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		label,
 		placeholder = 'artfulbaker.blog',
 		dontHaveSiteAddressLabel,
+		hideImporterListLink = false,
 	} = props;
 
 	const translate = useTranslate();
@@ -99,7 +101,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				<FormTextInput
 					id="capture-site-url"
 					type="text"
-					className={ classnames( { 'is-error': showValidationMsg } ) }
+					className={ clsx( { 'is-error': showValidationMsg } ) }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus
 					autoComplete="off"
@@ -111,7 +113,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				/>
 
 				<FormSettingExplanation>
-					<span className={ classnames( { 'is-error': showValidationMsg } ) }>
+					<span className={ clsx( { 'is-error': showValidationMsg } ) }>
 						{ showValidationMsg && (
 							<>
 								<Icon icon={ info } size={ 20 } />{ ' ' }
@@ -125,7 +127,8 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 			<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
 
 			<div className="action-buttons__importer-list">
-				{ onDontHaveSiteAddressClick &&
+				{ ! hideImporterListLink &&
+					onDontHaveSiteAddressClick &&
 					createInterpolateElement(
 						dontHaveSiteAddressLabel ??
 							translate( 'Or <button>choose a content platform</button>' ),

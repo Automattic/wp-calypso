@@ -10,7 +10,7 @@ import {
 	Gridicon,
 	Spinner,
 } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -187,10 +187,10 @@ export class OrgCredentialsForm extends Component {
 		const { translate, isRemoteInstalling } = this.props;
 		const { password, username } = this.state;
 
-		const userClassName = classnames( 'jetpack-connect__credentials-form-input', {
+		const userClassName = clsx( 'jetpack-connect__credentials-form-input', {
 			'is-error': this.isInvalidUsername(),
 		} );
-		const passwordClassName = classnames( 'jetpack-connect__password-form-input', {
+		const passwordClassName = clsx( 'jetpack-connect__password-form-input', {
 			'is-error': this.isInvalidPassword(),
 		} );
 		const removedProtocolURL = this.props.siteToConnect.replace( /(^\w+:|^)\/\//, '' );

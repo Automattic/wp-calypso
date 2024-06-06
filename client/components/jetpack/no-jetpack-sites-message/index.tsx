@@ -19,9 +19,6 @@ export const NoJetpackSitesMessage = ( { siteSlug }: { siteSlug: string | undefi
 					) }
 				</p>
 			) }
-			<p>
-				{ translate( 'This area is only for Jetpack customers with self-hosted WordPress sites.' ) }
-			</p>
 			<Button primary href="https://wordpress.com" rel="noopener noreferrer">
 				{ translate( 'Visit Dashboard' ) }
 			</Button>

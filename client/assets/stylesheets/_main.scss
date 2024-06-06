@@ -60,7 +60,7 @@ body {
 	}
 
 	/* stylelint-disable-next-line unit-allowed-list */
-	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+	@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
 		&.font-smoothing-antialiased {
 			text-rendering: optimizeLegibility;
 			-moz-osx-font-smoothing: grayscale;

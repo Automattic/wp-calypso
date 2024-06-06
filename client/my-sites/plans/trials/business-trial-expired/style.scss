@@ -12,7 +12,7 @@ body.is-section-plans.is-expired-business-trial-plan {
 	}
 
 	.main.is-wide-layout {
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			padding-left: 1.25rem;
 			padding-right: 1.25rem;
 		}
@@ -21,7 +21,7 @@ body.is-section-plans.is-expired-business-trial-plan {
 	.business-trial-expired__content {
 		text-align: center;
 
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			padding-top: 2.5rem;
 		}
 
@@ -29,7 +29,7 @@ body.is-section-plans.is-expired-business-trial-plan {
 			@include onboarding-font-recoleta;
 			font-size: $woo-font-title-medium;
 
-			@media ( min-width: $break-medium ) {
+			@media (min-width: $break-medium) {
 				font-size: $woo-font-title-large;
 			}
 		}
@@ -38,7 +38,7 @@ body.is-section-plans.is-expired-business-trial-plan {
 			margin: 0 auto 0;
 			color: var(--color-neutral-50);
 
-			@media ( min-width: $break-medium ) {
+			@media (min-width: $break-medium) {
 				max-width: 580px;
 			}
 
@@ -65,7 +65,7 @@ body.is-section-plans.is-expired-business-trial-plan {
 		max-width: 800px;
 		padding-top: 1.5em;
 
-		@media ( min-width: $break-small ) {
+		@media (min-width: $break-small) {
 			flex-direction: row;
 		}
 	}

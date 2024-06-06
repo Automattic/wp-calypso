@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -26,6 +27,7 @@ type Props = {
 interface Section {
 	content: ReactNode;
 	breadcrumbItems: BreadcrumbItem[];
+	className?: string;
 }
 
 export default function PartnerDirectory( { selectedSection }: Props ) {
@@ -44,6 +46,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 					href: A4A_PARTNER_DIRECTORY_LINK,
 				},
 			],
+			className: 'partner-directory__dashboard',
 		};
 
 		sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] = {
@@ -75,7 +78,12 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 	const section: Section = sections[ selectedSection ];
 
 	return (
-		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
+		<Layout
+			className={ clsx( section.className ) }
+			title={ title }
+			wide
+			sidebarNavigation={ <MobileSidebarNavigation /> }
+		>
 			<LayoutTop>
 				<LayoutHeader>
 					{ section.breadcrumbItems.length === 1 ? (

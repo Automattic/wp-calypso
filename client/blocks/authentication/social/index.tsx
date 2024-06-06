@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
@@ -85,7 +85,7 @@ const SocialAuthenticationForm = ( {
 	return (
 		! isSignupOnDesktop && (
 			<Card
-				className={ classNames( 'auth-form__social', isLogin ? 'is-login' : 'is-signup', {
+				className={ clsx( 'auth-form__social', isLogin ? 'is-login' : 'is-signup', {
 					'is-social-first': isSocialFirst,
 				} ) }
 			>

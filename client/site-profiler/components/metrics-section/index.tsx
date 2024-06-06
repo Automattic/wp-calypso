@@ -41,14 +41,14 @@ const Title = styled.div`
 		letter-spacing: -1.5px;
 
 		&.good {
-			background: linear-gradient( 270deg, #349f4b 49.73%, #3858e9 100% );
+			background: linear-gradient( 270deg, #349f4b 10.23%, #3858e9 100% );
 			background-clip: text;
 			-webkit-background-clip: text;
 			-webkit-text-fill-color: transparent;
 		}
 
 		&.poor {
-			background: linear-gradient( 270deg, #d63638 10.23%, #5200ff 100% );
+			background: linear-gradient( 90deg, #ff0094, #d63638 );
 			background-clip: text;
 			-webkit-background-clip: text;
 			-webkit-text-fill-color: transparent;

@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FunctionComponent, useCallback } from 'react';
 import JetpackLightbox, {
 	JetpackLightboxAside,
@@ -61,7 +61,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 
 	return (
 		<JetpackLightbox
-			className={ classNames( 'license-lightbox', className ) }
+			className={ clsx( 'license-lightbox', className ) }
 			isOpen
 			onClose={ onClose }
 			onAfterOpen={ initMobileSidebar }

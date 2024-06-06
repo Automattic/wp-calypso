@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { isRTL } from '@wordpress/i18n';
 import { Icon, chevronLeft, chevronRight, check } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import './style.scss';
 
 interface NavigatorItemProps {
@@ -41,7 +41,7 @@ export function NavigatorItem( { icon, checked, active, children, ...props }: Na
 	return (
 		<Item
 			{ ...props }
-			className={ classnames( 'navigator-item', {
+			className={ clsx( 'navigator-item', {
 				'navigator-item--active': active,
 			} ) }
 		>

@@ -1,7 +1,10 @@
 import { Button, Gridicon, Tooltip } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useCallback } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { STORAGE_RETENTION_LEARN_MORE_LINK } from '../constants';
 import './style.scss';
 
@@ -10,15 +13,31 @@ const InfoToolTip: FunctionComponent = () => {
 	const [ isTooltipVisible, setTooltipVisible ] = useState< boolean >( false );
 	const tooltip = useRef< SVGSVGElement >( null );
 
-	const toggleTooltip = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ): void => {
-		setTooltipVisible( ! isTooltipVisible );
-		// when the info tooltip inside a button, we don't want clicking it to propagate up
-		event.stopPropagation();
-	};
+	const dispatch = useDispatch();
+	const toggleTooltip = useCallback(
+		( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ): void => {
+			if ( ! isTooltipVisible ) {
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_backup_storage_retention_tooltip_open_click' )
+				);
+			}
+
+			setTooltipVisible( ! isTooltipVisible );
+			// when the info tooltip inside a button, we don't want clicking it to propagate up
+			event.stopPropagation();
+		},
+		[ dispatch, isTooltipVisible ]
+	);
 
 	const closeTooltip = () => {
 		setTooltipVisible( false );
 	};
+
+	const onLearnMoreClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_storage_retention_tooltip_learn_more_click' )
+		);
+	}, [ dispatch ] );
 
 	return (
 		<div className="retention-setting-info-tooltip">
@@ -50,17 +69,9 @@ const InfoToolTip: FunctionComponent = () => {
 					</Button>
 				</p>
 				<hr />
-				{ translate( '{{a}}Learn more…{{/a}}', {
-					components: {
-						a: (
-							<a
-								href={ STORAGE_RETENTION_LEARN_MORE_LINK }
-								target="_blank"
-								rel="external noreferrer noopener"
-							/>
-						),
-					},
-				} ) }
+				<ExternalLink href={ STORAGE_RETENTION_LEARN_MORE_LINK } onClick={ onLearnMoreClick }>
+					{ translate( 'Learn more' ) }
+				</ExternalLink>
 			</Tooltip>
 		</div>
 	);

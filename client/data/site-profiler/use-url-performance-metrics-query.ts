@@ -3,12 +3,12 @@ import wp from 'calypso/lib/wp';
 import { UrlPerformanceMetricsQueryResponse } from './types';
 
 function mapResult( response: UrlPerformanceMetricsQueryResponse ) {
-	return response.webtestpage_org.report.audits;
+	return response.webtestpage_org.report;
 }
 
 export const useUrlPerformanceMetricsQuery = ( url?: string, hash?: string ) => {
 	return useQuery( {
-		queryKey: [ 'url-', url, hash ],
+		queryKey: [ 'url', 'performance', url, hash ],
 		queryFn: () =>
 			wp.req.get(
 				{
@@ -21,8 +21,10 @@ export const useUrlPerformanceMetricsQuery = ( url?: string, hash?: string ) => 
 			persist: false,
 		},
 		select: mapResult,
-		enabled: !! url,
+		enabled: !! url && !! hash,
 		retry: false,
 		refetchOnWindowFocus: false,
+		refetchInterval: ( query ) =>
+			query.state.data?.webtestpage_org?.status === 'completed' ? false : 5000, // 5 second	;
 	} );
 };

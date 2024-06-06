@@ -46,7 +46,7 @@
 		.edit-post-layout__content {
 			//fixes a notice display issue in Safari
 			margin-left: 0;
-			@media ( min-width: 600px ) {
+			@media (min-width: 600px) {
 				top: 56px;
 			}
 			// Fixes a color consistency issue.
@@ -60,7 +60,7 @@
 		}
 
 		.components-notice-list {
-			@media ( max-width: 600px ) {
+			@media (max-width: 600px) {
 				top: auto;
 			}
 

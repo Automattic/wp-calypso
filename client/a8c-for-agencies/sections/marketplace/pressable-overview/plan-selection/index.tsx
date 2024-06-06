@@ -3,6 +3,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
+import useExistingPressablePlan from '../hooks/use-existing-pressable-plan';
 import PlanSelectionDetails from './details';
 import PlanSelectionFilter from './filter';
 
@@ -29,6 +30,10 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 		productSearchQuery: '',
 	} );
 
+	const { existingPlan, isReady: isExistingPlanFetched } = useExistingPressablePlan( {
+		plans: pressablePlans,
+	} );
+
 	useEffect( () => {
 		if ( pressablePlans?.length ) {
 			setSelectedPlan( pressablePlans[ 0 ] );
@@ -52,9 +57,15 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 				selectedPlan={ selectedPlan }
 				plans={ pressablePlans }
 				onSelectPlan={ onSelectPlan }
+				existingPlan={ existingPlan }
+				isLoading={ ! isExistingPlanFetched }
 			/>
 
-			<PlanSelectionDetails selectedPlan={ selectedPlan } onSelectPlan={ onPlanAddToCart } />
+			<PlanSelectionDetails
+				selectedPlan={ selectedPlan }
+				onSelectPlan={ onPlanAddToCart }
+				isLoading={ ! isExistingPlanFetched }
+			/>
 		</div>
 	);
 }

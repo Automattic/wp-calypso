@@ -1,5 +1,5 @@
 import { Dialog, Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import { Component } from 'react';
@@ -235,7 +235,7 @@ export class Translatable extends Component {
 	render() {
 		const { untranslated, children } = this.props;
 
-		const classes = classNames( 'translatable community-translator__element', {
+		const classes = clsx( 'translatable community-translator__element', {
 			'is-untranslated': untranslated,
 		} );
 

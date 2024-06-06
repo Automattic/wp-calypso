@@ -9,27 +9,54 @@ import {
 	useSurveyStructureQuery,
 } from 'calypso/data/segmentaton-survey';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { SKIP_ANSWER_KEY } from './constants';
 import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-navigation';
 
-const SKIP_ANSWER_KEY = 'skip';
-
 type SegmentationSurveyProps = {
+	/**
+	 * The key of the survey to render.
+	 */
 	surveyKey: string;
+	/**
+	 * A function that will be called when the user navigates back.
+	 */
 	onBack?: () => void;
+	/**
+	 * A function that will be called when the user navigates forward.
+	 */
 	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void;
+	/**
+	 * A function that determines whether to skip the next navigation.
+	 */
 	skipNextNavigation?: ( questionKey: string, answerKeys: string[] ) => boolean;
+	/**
+	 * The alignment of the header text.
+	 */
 	headerAlign?: string;
+	/**
+	 * The configuration for the questions.
+	 */
 	questionConfiguration?: QuestionConfiguration;
+	/**
+	 * A map of question types to components.
+	 */
 	questionComponentMap?: QuestionComponentMap;
+	/**
+	 * Whether to clear the answers after the last question.
+	 */
+	clearAnswersOnLastQuestion?: boolean;
+	/**
+	 * Requires `providedPage` prop. If you want to manage your own navigation, you can provide a function that navigates to a specific page.
+	 */
+	onGoToPage?: ( page: number ) => void;
+	/**
+	 * Requires `onGoToPage` prop. If you want to manage your own navigation, you can provide the current page number.
+	 */
+	providedPage?: number;
 };
 
 /**
  * A component that renders a segmentation survey.
- * @param {SegmentationSurveyProps} props
- * @param {string} props.surveyKey - The key of the survey to render.
- * @param {() => void} [props.onBack] - A function that navigates to the previous step.
- * @param {(questionKey: string, answerKeys: string[], isLastQuestion?: boolean) => void} [props.onNext] - A function that navigates to the next question/step.
- * @returns {React.ReactComponentElement}
  */
 const SegmentationSurvey = ( {
 	surveyKey,
@@ -39,6 +66,9 @@ const SegmentationSurvey = ( {
 	headerAlign,
 	questionConfiguration,
 	questionComponentMap,
+	clearAnswersOnLastQuestion = true,
+	onGoToPage,
+	providedPage,
 }: SegmentationSurveyProps ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
 	const { mutateAsync, isPending } = useSaveAnswersMutation( { surveyKey } );
@@ -62,7 +92,7 @@ const SegmentationSurvey = ( {
 
 				const isLastQuestion = questions?.[ questions.length - 1 ].key === currentQuestion.key;
 
-				if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
+				if ( clearAnswersOnLastQuestion && isLastQuestion ) {
 					clearAnswers();
 				}
 
@@ -78,7 +108,7 @@ const SegmentationSurvey = ( {
 				} );
 			}
 		},
-		[ clearAnswers, mutateAsync, onNext, questions, surveyKey ]
+		[ clearAnswers, clearAnswersOnLastQuestion, mutateAsync, onNext, questions, surveyKey ]
 	);
 
 	const onContinue = useCallback(
@@ -95,9 +125,10 @@ const SegmentationSurvey = ( {
 
 	const onSkip = useCallback(
 		async ( currentQuestion: Question ) => {
+			onChangeAnswer( currentQuestion.key, [] );
 			await handleSave( currentQuestion, [ SKIP_ANSWER_KEY ] );
 		},
-		[ handleSave ]
+		[ handleSave, onChangeAnswer ]
 	);
 
 	const { currentPage, currentQuestion, backToPreviousPage, continueToNextPage, skipToNextPage } =
@@ -109,6 +140,8 @@ const SegmentationSurvey = ( {
 			questions,
 			surveyKey,
 			skipNextNavigation,
+			onGoToPage,
+			providedPage,
 		} );
 
 	if ( ! questions ) {

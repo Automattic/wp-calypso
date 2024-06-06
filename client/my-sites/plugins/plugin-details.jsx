@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -420,7 +420,7 @@ function PluginDetails( props ) {
 					/>
 				) }
 			<div className="plugin-details__page">
-				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
+				<div className={ clsx( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">
 						<PluginDetailsHeader
 							plugin={ fullPlugin }

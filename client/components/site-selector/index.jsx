@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import SearchRestyled from '@automattic/search';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flow } from 'lodash';
@@ -416,7 +416,7 @@ export class SiteSelector extends Component {
 
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
-		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
+		const selectorClass = clsx( 'site-selector', 'sites-list', this.props.className, {
 			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1,
 			'is-hover-enabled': ! this.state.isKeyboardEngaged,

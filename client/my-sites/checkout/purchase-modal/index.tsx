@@ -7,7 +7,7 @@ import {
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { getContactDetailsType } from '@automattic/wpcom-checkout';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState, useMemo, useEffect, type PropsWithChildren } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCreditCard, type StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
@@ -85,7 +85,7 @@ function PurchaseModal( {
 		<Dialog
 			isVisible
 			baseClassName="purchase-modal dialog"
-			className={ classNames( {
+			className={ clsx( {
 				'has-feature-list': showFeatureList,
 			} ) }
 			onClose={ onClose }

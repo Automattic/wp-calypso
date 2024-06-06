@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banner';
@@ -17,8 +17,11 @@ import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
 import { ReplyToSetting } from './ReplyToSetting';
+import { SenderNameSetting } from './SenderNameSetting';
 import { SubscribeModalOnCommentSetting } from './SubscribeModalOnCommentSetting';
 import { SubscribeModalSetting } from './SubscribeModalSetting';
+import { SubscribeNavigationSetting } from './SubscribeNavigationSetting';
+import { SubscribeOverlaySetting } from './SubscribeOverlaySetting';
 import { SubscribePostEndSetting } from './SubscribePostEndSetting';
 import { SubscriberLoginNavigationSetting } from './SubscriberLoginNavigationSetting';
 import { NewsletterCategoriesSection } from './newsletter-categories-section';
@@ -38,8 +41,11 @@ type Fields = {
 	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	jetpack_subscriptions_reply_to?: string;
+	jetpack_subscriptions_from_name?: string;
 	sm_enabled?: boolean;
+	jetpack_subscribe_overlay_enabled?: boolean;
 	jetpack_subscriptions_subscribe_post_end_enabled?: boolean;
+	jetpack_subscriptions_subscribe_navigation_enabled?: boolean;
 	jetpack_subscriptions_login_navigation_enabled?: boolean;
 	jetpack_verbum_subscription_modal?: boolean;
 };
@@ -56,8 +62,11 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		jetpack_subscriptions_reply_to,
+		jetpack_subscriptions_from_name,
 		sm_enabled,
+		jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_subscribe_navigation_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
 	} = settings;
@@ -69,9 +78,13 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories_enabled: !! wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		jetpack_subscriptions_reply_to: jetpack_subscriptions_reply_to || '',
+		jetpack_subscriptions_from_name: jetpack_subscriptions_from_name || '',
 		sm_enabled: !! sm_enabled,
+		jetpack_subscribe_overlay_enabled: !! jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled:
 			!! jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_subscribe_navigation_enabled:
+			!! jetpack_subscriptions_subscribe_navigation_enabled,
 		jetpack_subscriptions_login_navigation_enabled:
 			!! jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal: !! jetpack_verbum_subscription_modal,
@@ -104,9 +117,12 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		wpcom_featured_image_in_email,
 		wpcom_subscription_emails_use_excerpt,
 		jetpack_subscriptions_reply_to,
+		jetpack_subscriptions_from_name,
 		subscription_options,
 		sm_enabled,
+		jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_subscribe_navigation_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
 	} = fields;
@@ -158,6 +174,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				title={ translate( 'Subscriptions' ) }
 			/>
 			<Card className="site-settings__card">
+				<FormLabel>{ translate( 'Homepage and posts' ) }</FormLabel>
 				<SubscribePostEndSetting
 					disabled={ disabled }
 					handleToggle={ handleToggle }
@@ -168,18 +185,32 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					handleToggle={ handleToggle }
 					value={ sm_enabled }
 				/>
-				{ shouldShowSubscriptionOnCommentModule && (
-					<SubscribeModalOnCommentSetting
-						disabled={ disabled }
-						handleToggle={ handleToggle }
-						value={ jetpack_verbum_subscription_modal }
-					/>
-				) }
+				<SubscribeOverlaySetting
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ jetpack_subscribe_overlay_enabled }
+				/>
+				<FormLabel>{ translate( 'Navigation' ) }</FormLabel>
+				<SubscribeNavigationSetting
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ jetpack_subscriptions_subscribe_navigation_enabled }
+				/>
 				<SubscriberLoginNavigationSetting
 					disabled={ disabled }
 					handleToggle={ handleToggle }
 					value={ jetpack_subscriptions_login_navigation_enabled }
 				/>
+				{ shouldShowSubscriptionOnCommentModule && (
+					<>
+						<FormLabel>{ translate( 'Comments' ) }</FormLabel>
+						<SubscribeModalOnCommentSetting
+							disabled={ disabled }
+							handleToggle={ handleToggle }
+							value={ jetpack_verbum_subscription_modal }
+						/>
+					</>
+				) }
 			</Card>
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
@@ -202,6 +233,14 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					updateFields={ updateFields }
 					value={ wpcom_subscription_emails_use_excerpt }
+				/>
+			</Card>
+			<Card className="site-settings__card">
+				<SenderNameSetting
+					disabled={ disabled }
+					updateFields={ updateFields }
+					value={ jetpack_subscriptions_from_name }
+					replyToValue={ jetpack_subscriptions_reply_to }
 				/>
 			</Card>
 			<Card className="site-settings__card">

@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -75,7 +75,7 @@ export class SitesDropdown extends PureComponent {
 	render() {
 		return (
 			<div
-				className={ classNames(
+				className={ clsx(
 					'sites-dropdown',
 					{ 'is-open': this.state.open },
 					{ 'has-multiple-sites': this.props.hasMultipleSites }

@@ -16,6 +16,9 @@ import {
 	PRODUCT_JETPACK_BOOST_BI_YEARLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	PRODUCT_JETPACK_SCAN_BI_YEARLY,
@@ -53,13 +56,6 @@ export const FEATURE_200GB_STORAGE = '200gb-storage';
 export const FEATURE_LEGACY_STORAGE_200GB = 'upload-space-200gb';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
-export const FEATURE_EMAIL_SUPPORT = 'email-support';
-export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
-export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS =
-	'email-live-chat-support-business-days';
-export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS = 'email-live-chat-support-all-days';
-export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS = 'live-chat-support-all-days';
-export const FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS = 'live-chat-support-business-days';
 export const EXPERT_SUPPORT_ALL_DAYS = 'expert-support-all-days';
 export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
@@ -70,7 +66,6 @@ export const FEATURE_SFTP = 'sftp';
 export const FEATURE_SSH = 'ssh';
 export const FEATURE_SITE_STAGING_SITES = 'staging-sites';
 export const FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING = 'seamless-staging-production-syncing';
-export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 export const FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM = 'video-upload-jetpack-premium';
@@ -96,7 +91,6 @@ export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customizat
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
 export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
 export const FEATURE_FREE_BLOG_DOMAIN = 'free-blog-domain';
-export const FEATURE_EMAIL_SUPPORT_SIGNUP = 'email-support-signup';
 export const FEATURE_MONETISE = 'monetise-your-site';
 export const FEATURE_EARN_AD = 'earn-ad-revenue';
 export const FEATURE_WP_SUBDOMAIN_SIGNUP = 'wordpress-subdomain-signup';
@@ -222,6 +216,9 @@ export const FEATURE_JETPACK_SOCIAL_ADVANCED_MONTHLY = PRODUCT_JETPACK_SOCIAL_AD
 export const FEATURE_JETPACK_SOCIAL_BASIC_BI_YEARLY = PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY;
 export const FEATURE_JETPACK_SOCIAL_BASIC = PRODUCT_JETPACK_SOCIAL_BASIC;
 export const FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY = PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY;
+export const FEATURE_JETPACK_SOCIAL_V1_YEARLY = PRODUCT_JETPACK_SOCIAL_V1_YEARLY;
+export const FEATURE_JETPACK_SOCIAL_V1_MONTHLY = PRODUCT_JETPACK_SOCIAL_V1_MONTHLY;
+export const FEATURE_JETPACK_SOCIAL_V1_BI_YEARLY = PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY;
 export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
 export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
 export const FEATURE_SOCIAL_MASTODON_CONNECTION = 'social-mastodon-connection';
@@ -357,7 +354,6 @@ export const FEATURE_SMART_REDIRECTS = 'smart-redirects';
 export const FEATURE_ALWAYS_ONLINE = 'always-online';
 export const FEATURE_FAST_DNS = 'fast-dns';
 export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
-export const FEATURE_SUPPORT_EMAIL = 'support-email-v1';
 export const FEATURE_DESIGN_TOOLS = 'design-tools';
 export const FEATURE_WORDADS = 'wordads-v2';
 export const FEATURE_PLUGINS_THEMES = 'plugins-themes-v1';

@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -198,7 +198,7 @@ class StatsPeriodNavigation extends PureComponent {
 
 		return (
 			<div
-				className={ classNames( 'stats-period-navigation', {
+				className={ clsx( 'stats-period-navigation', {
 					'stats-period-navigation__is-with-new-date-control': isWithNewDateControl,
 				} ) }
 			>

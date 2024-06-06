@@ -250,19 +250,21 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__footer-language-switcher {
 			align-items: center;
-			color: var(--studio-gray-5);
+			color: var(--color-sidebar-text);
 			cursor: pointer;
 			display: flex;
+			font-size: $font-body-extra-small;
 			height: 32px;
 			gap: 6px;
+			line-height: 32px;
 			padding: 6px;
 			justify-content: center;
 			margin-inline-start: auto;
-		}
 
-
-		&:has(.sidebar__footer-language-switcher) {
-			background: var(--studio-orange);
+			svg {
+				height: 20px;
+				width: 20px;
+			}
 		}
 
 		.sidebar__item-help,
@@ -398,7 +400,7 @@ $brand-text: "SF Pro Text", $sans;
 .accessible-focus div.global-sidebar {
 	*:focus {
 		outline-style: solid;
-		outline-color: var(--color-sidebar-menu-selected-background);
+		outline-color: var(--color-primary-light);
 		outline-width: 2px;
 		outline-offset: 2px;
 	}
@@ -453,7 +455,7 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-@media ( min-width: 661px ) {
+@media (min-width: 661px) {
 	.is-global-sidebar-collapsed {
 		.global-sidebar {
 			.sidebar__header,
@@ -474,6 +476,14 @@ $brand-text: "SF Pro Text", $sans;
 				}
 			}
 
+			.sidebar__footer {
+				.sidebar__footer-language-switcher {
+					font-size: 0;
+					gap: 0;
+					margin-inline-start: unset;
+				}
+			}
+
 			.sidebar__body {
 				overflow-y: visible;
 				.sidebar__menu-item-parent .sidebar__menu-link {
@@ -488,7 +498,7 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-@media ( max-width: 660px ) {
+@media (max-width: 660px) {
 	.global-sidebar .tooltip:hover::after {
 		display: none;
 	}
@@ -503,4 +513,18 @@ body.has-global-sidebar .help-center .components-card.help-center__container.is-
 
 body.has-global-sidebar.has-global-sidebar-collapsed .help-center .components-card.help-center__container.is-desktop {
 	left: 82px;
+}
+
+body.has-global-sidebar .is-global-sidebar-visible.is-support-session {
+	&::before {
+		border: 2px solid var(--studio-orange);
+		bottom: 0;
+		content: "";
+		left: 0;
+		pointer-events: none;
+		position: fixed;
+		right: 0;
+		top: 0;
+		z-index: z-index("root", ".layout__secondary") + 1;
+	}
 }

@@ -94,6 +94,12 @@ body.command-palette-modal-open {
 		}
 	}
 
+	// The plugins site view needs the header to be full width, so the padding
+	// is added on the header and .plugins-browser__content-wrapper instead
+	.is-section-plugins & {
+		padding: 79px 0 32px calc(var(--sidebar-width-max) + 1px);
+	}
+
 	// This is needed to ensure the WebPreview component
 	// displays at full height.
 	.is-section-preview & {
@@ -330,7 +336,7 @@ body.is-mobile-app-view {
 // Move the secondary element off screen when focused
 // on the content. This only applies to small screens.
 .layout.focus-content .layout__secondary {
-	@media only screen and ( max-width: 781px ) {
+	@media only screen and (max-width: 781px) {
 		transform: translateX(-100%);
 	}
 }

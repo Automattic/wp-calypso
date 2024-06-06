@@ -11,33 +11,36 @@ import { getScore } from './metrics-dictionaries';
 function mapScores( response: UrlBasicMetricsQueryResponse ) {
 	const { basic } = response;
 
-	const basicMetricsScored = ( Object.entries( basic ) as BasicMetricsList ).reduce(
-		( acc, [ key, value ] ) => {
-			acc[ key ] = { value: value, score: getScore( key as Metrics, value ) };
-			return acc;
-		},
-		{} as BasicMetricsScored
-	);
+	let basicMetricsScored = {} as BasicMetricsScored;
+	if ( basic.success ) {
+		basicMetricsScored = ( Object.entries( basic.data ) as BasicMetricsList ).reduce(
+			( acc, [ key, value ] ) => {
+				acc[ key ] = { value: value, score: getScore( key as Metrics, value ) };
+				return acc;
+			},
+			{} as BasicMetricsScored
+		);
+	}
 
-	return { ...response, basic: basicMetricsScored };
+	return { ...response, success: basic.success, basic: basicMetricsScored };
 }
 
-export const useUrlBasicMetricsQuery = ( url?: string ) => {
+export const useUrlBasicMetricsQuery = ( url?: string, hash?: string, advance = false ) => {
 	return useQuery( {
-		queryKey: [ 'url-', url ],
+		queryKey: [ 'url', 'basic-metrics', url, hash, advance ],
 		queryFn: (): Promise< UrlBasicMetricsQueryResponse > =>
 			wp.req.get(
 				{
 					path: '/site-profiler/metrics/basic',
 					apiNamespace: 'wpcom/v2',
 				},
-				{ url }
+				{ url, ...( advance ? { advance: '1' } : {} ) }
 			),
 		select: mapScores,
 		meta: {
 			persist: false,
 		},
-		enabled: !! url,
+		enabled: !! url && ! hash, // Disable if hash is present
 		retry: false,
 		refetchOnWindowFocus: false,
 	} );

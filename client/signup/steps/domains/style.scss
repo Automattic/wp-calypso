@@ -9,7 +9,7 @@
 
 .signup__step.is-domains {
 	.action-buttons.step-wrapper__navigation {
-		@media ( max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			display: none;
 		}
 	}
@@ -342,10 +342,6 @@ body.is-section-signup.is-white-signup {
 			@include break-medium {
 				width: 290px;
 				margin: 0 20px;
-
-				&.domains__domain-site-migration {
-					margin-right: 0;
-				}
 			}
 
 			@include break-large {

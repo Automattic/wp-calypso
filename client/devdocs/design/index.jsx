@@ -18,7 +18,7 @@ import SelectDropdown from '@automattic/components/src/select-dropdown/docs/exam
 import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import Tooltip from '@automattic/components/src/tooltip/docs/example';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { trim } from 'lodash';
 import { Component, Fragment } from 'react';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
@@ -140,7 +140,7 @@ export default class DesignAssets extends Component {
 		const { component } = this.props;
 		const { filter } = this.state;
 
-		const className = classnames( 'devdocs', 'devdocs__components', {
+		const className = clsx( 'devdocs', 'devdocs__components', {
 			'is-single': this.props.component,
 			'is-list': ! this.props.component,
 		} );
