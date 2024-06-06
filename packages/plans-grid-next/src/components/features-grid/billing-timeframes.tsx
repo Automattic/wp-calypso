@@ -16,7 +16,7 @@ const BillingTimeframes = ( {
 	renderedGridPlans,
 	showRefundPeriod,
 }: BillingTimeframesProps ) => {
-	return renderedGridPlans.map( ( { planSlug } ) => {
+	return renderedGridPlans.map( ( { planSlug, current } ) => {
 		const classes = clsx(
 			'plan-features-2023-grid__table-item',
 			'plan-features-2023-grid__header-billing-info'
@@ -28,7 +28,11 @@ const BillingTimeframes = ( {
 				isTableCell={ options?.isTableCell }
 				key={ planSlug }
 			>
-				<BillingTimeframe planSlug={ planSlug } showRefundPeriod={ showRefundPeriod } />
+				<BillingTimeframe
+					planSlug={ planSlug }
+					showRefundPeriod={ showRefundPeriod }
+					isCurrentPlan={ current }
+				/>
 			</PlanDivOrTdContainer>
 		);
 	} );

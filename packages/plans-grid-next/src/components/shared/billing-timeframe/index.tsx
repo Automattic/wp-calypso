@@ -18,12 +18,25 @@ import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import type { GridPlan } from '../../../types';
 
-function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
+function usePerMonthDescription( {
+	planSlug,
+	isCurrentPlan,
+}: {
+	planSlug: PlanSlug;
+	isCurrentPlan?: boolean;
+} ) {
 	const translate = useTranslate();
 	const { helpers, gridPlansIndex, coupon, siteId } = usePlansGridContext();
 	const {
 		isMonthlyPlan,
-		pricing: { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer },
+		pricing: {
+			currencyCode,
+			originalPrice,
+			discountedPrice,
+			billingPeriod,
+			introOffer,
+			purchaseCurrencyCode,
+		},
 		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 
@@ -37,6 +50,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
 	} )?.[ yearlyVariantPlanSlug ?? '' ];
 
+	const showCurrencyCode = isCurrentPlan ? purchaseCurrencyCode : currencyCode;
 	if (
 		isWpComFreePlan( planSlug ) ||
 		isWpcomEnterpriseGridPlan( planSlug ) ||
@@ -72,15 +86,15 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	}
 
 	const discountedPriceFullTermText =
-		currencyCode && discountedPrice?.full
-			? formatCurrency( discountedPrice.full, currencyCode, {
+		showCurrencyCode && discountedPrice?.full
+			? formatCurrency( discountedPrice.full, showCurrencyCode, {
 					stripZeros: true,
 					isSmallestUnit: true,
 			  } )
 			: null;
 	const originalPriceFullTermText =
-		currencyCode && originalPrice?.full
-			? formatCurrency( originalPrice.full, currencyCode, {
+		showCurrencyCode && originalPrice?.full
+			? formatCurrency( originalPrice.full, showCurrencyCode, {
 					stripZeros: true,
 					isSmallestUnit: true,
 			  } )
@@ -286,9 +300,10 @@ const RefundNotice = ( { planSlug, showRefundPeriod, billingPeriod }: RefundNoti
 interface Props {
 	planSlug: PlanSlug;
 	showRefundPeriod?: boolean;
+	isCurrentPlan?: boolean;
 }
 
-const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
+const BillingTimeframe = ( { showRefundPeriod, planSlug, isCurrentPlan }: Props ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
@@ -296,7 +311,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		billingTimeframe,
 		pricing: { introOffer, billingPeriod },
 	} = gridPlansIndex[ planSlug ];
-	const perMonthDescription = usePerMonthDescription( { planSlug } );
+	const perMonthDescription = usePerMonthDescription( { planSlug, isCurrentPlan } );
 	const description = perMonthDescription || billingTimeframe;
 
 	if (
