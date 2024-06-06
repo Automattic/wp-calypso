@@ -1,7 +1,7 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
 import clsx from 'clsx';
 import { throttle } from 'lodash';
-import React, { FC, useRef } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 
 import './styles.scss';
@@ -17,7 +17,26 @@ const ScrollableHorizontalNavigation: FC< {
 	tabs: { slug: string; title: string }[];
 	width: number;
 } > = ( { className, onTabClick, selectedTab, tabs, width } ) => {
+	const hasScrolledSelectedTabIntoView = useRef( false );
 	const scrollRef = useRef< HTMLDivElement >( null );
+
+	const scrollSelectedTabIntoView = () => {
+		const selectedTabElement = scrollRef.current?.querySelector( '.is-selected' );
+		selectedTabElement?.scrollIntoView( {
+			behavior: 'smooth',
+			block: 'nearest',
+			inline: 'center',
+		} );
+	};
+
+	// Scroll the selected tab into view on initial render.
+	useEffect( () => {
+		if ( ! hasScrolledSelectedTabIntoView.current ) {
+			scrollSelectedTabIntoView();
+
+			hasScrolledSelectedTabIntoView.current = true;
+		}
+	}, [] );
 
 	const bumpScrollX = ( shouldScrollLeft = false ) => {
 		if ( scrollRef.current ) {
@@ -102,7 +121,10 @@ const ScrollableHorizontalNavigation: FC< {
 							<SegmentedControl.Item
 								key={ tab.slug }
 								selected={ tab.slug === selectedTab }
-								onClick={ () => onTabClick( tab.slug ) }
+								onClick={ () => {
+									// scrollSelectedTabIntoView();
+									onTabClick( tab.slug );
+								} }
 							>
 								{ tab.title }
 							</SegmentedControl.Item>
