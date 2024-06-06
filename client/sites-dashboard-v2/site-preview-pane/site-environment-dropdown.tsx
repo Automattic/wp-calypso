@@ -35,6 +35,7 @@ export default function SiteEnvironmentDropdown( {
 
 	return (
 		<SelectDropdown
+			className="site-preview-pane__environment-dropdown"
 			showSelectedOption
 			options={ [
 				{ value: 'production', label: __( 'Production' ) },

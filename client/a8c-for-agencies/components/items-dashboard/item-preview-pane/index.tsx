@@ -70,7 +70,6 @@ export default function ItemPreviewPane( {
 		return (
 			<NavItem
 				key={ featureTab.key }
-				className={ featureTab.key }
 				selected={ featureTab.selected }
 				onClick={ featureTab.onClick }
 			>
@@ -92,6 +91,9 @@ export default function ItemPreviewPane( {
 					{ navItems && navItems.length > 0 ? (
 						<NavTabs hasHorizontalScroll>{ navItems }</NavTabs>
 					) : null }
+					{ itemPreviewPaneHeaderExtraProps?.menuButtons && (
+						<itemPreviewPaneHeaderExtraProps.menuButtons />
+					) }
 				</SectionNav>
 			</div>
 			{ addTourDetails && (

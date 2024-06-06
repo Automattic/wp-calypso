@@ -16,7 +16,6 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_DEVELOPER_TOOLS,
 	DOTCOM_STAGING_SITE,
-	DOTCOM_SITE_ENVIRONMENT,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 
@@ -111,14 +110,6 @@ const DotcomPreviewPane = ( {
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
 			),
-			createFeaturePreview(
-				DOTCOM_SITE_ENVIRONMENT,
-				<SiteEnvironmentDropdown onChange={ changeSitePreviewPane } site={ site } />,
-				isAtomicSite && ! isPlanExpired,
-				selectedSiteFeature,
-				() => {},
-				selectedSiteFeaturePreview
-			),
 		],
 		[
 			__,
@@ -168,6 +159,9 @@ const DotcomPreviewPane = ( {
 				externalIconSize: 16,
 				siteIconFallback: 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
+				menuButtons: () => (
+					<SiteEnvironmentDropdown onChange={ changeSitePreviewPane } site={ site } />
+				),
 			} }
 		/>
 	);

@@ -535,23 +535,35 @@
 			max-height: calc(100vh - 32px - var(--masterbar-height));
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 			.preview-pane__navigation {
-				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);
+				height: 52px;
+				box-shadow: none;
+				border-bottom: 1px solid var(--color-border-subtle);
 				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
 				padding-top: 1px;
-				clip-path: inset(2px -1px -1px -1px);
+				padding-bottom: 1px;
+				clip-path: none;
 
-				.dotcom-site-environment {
-					margin-left: auto;
-					padding-top: 0;
+				.section-nav-tabs__list {
+					align-items: start;
+				}
+				.site-preview-pane__environment-dropdown {
+					margin-right: 48px;
+				}
 
-					a {
-						padding-top: 1px;
-						padding-bottom: 4px;
+				@media (max-width: 480px) {
+					border-bottom: 0;
+					.site-preview-pane__environment-dropdown {
+						visibility: hidden;
 					}
 				}
 
-				.section-nav-tabs__list {
-					align-items: end;
+				@media (max-width: 960px) {
+					.site-preview-pane__environment-dropdown {
+						margin-right: 24px;
+					}
+				}
+				.section-nav__panel {
+					align-items: start;
 				}
 			}
 		}
@@ -1140,3 +1152,4 @@
 		padding: 70px 24px 24px calc(var(--sidebar-width-min) + 1px);
 	}
 }
+
