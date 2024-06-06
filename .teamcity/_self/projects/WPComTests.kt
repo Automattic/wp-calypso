@@ -427,7 +427,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			defaultE2eFailureConditions()
 			// These are long-running tests, and we have to scale back the parallelization too.
 			// Let's give them some more breathing room.
-			executionTimeoutMin = 25
+			executionTimeoutMin = 31
 		}
 	});
 }
