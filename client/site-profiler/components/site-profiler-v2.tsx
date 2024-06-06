@@ -75,7 +75,7 @@ export default function SiteProfilerV2( props: Props ) {
 		hostingProviderData,
 		isErrorUrlData ? null : urlData
 	);
-	const showResultScreen = siteProfilerData || isDomainSpecial;
+	const showLandingPage = ! ( siteProfilerData || isDomainSpecial );
 
 	useScrollToTop( !! siteProfilerData );
 	useSiteProfilerRecordAnalytics(
@@ -120,6 +120,9 @@ export default function SiteProfilerV2( props: Props ) {
 		( error ) => error === 'no_wordpress'
 	);
 
+	const showResultScreen =
+		siteProfilerData && showBasicMetrics && performanceMetrics && securityMetrics;
+
 	const performanceCategory = getPerformanceCategory( performanceMetrics );
 
 	const updateDomainRouteParam = ( value: string ) => {
@@ -132,7 +135,7 @@ export default function SiteProfilerV2( props: Props ) {
 
 	return (
 		<div id="site-profiler-v2">
-			{ ! showResultScreen && (
+			{ showLandingPage && (
 				<LayoutBlock className="landing-page-header-block" width="medium">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<LandingPageHeader
@@ -145,8 +148,8 @@ export default function SiteProfilerV2( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-			{ showResultScreen && ! performanceMetrics && <LoadingScreen /> }
-			{ showResultScreen && performanceMetrics && (
+			{ ! showResultScreen && <LoadingScreen /> }
+			{ showResultScreen && (
 				<>
 					<LayoutBlock
 						className={ clsx(
@@ -156,79 +159,71 @@ export default function SiteProfilerV2( props: Props ) {
 						) }
 						width="medium"
 					>
-						{ showBasicMetrics && (
-							<ResultsHeader
-								domain={ domain }
-								performanceCategory={ performanceCategory }
-								isWpCom={ isWpCom }
-								onGetReport={ () => setIsGetReportFormOpen( true ) }
-							/>
-						) }
+						<ResultsHeader
+							domain={ domain }
+							performanceCategory={ performanceCategory }
+							isWpCom={ isWpCom }
+							onGetReport={ () => setIsGetReportFormOpen( true ) }
+						/>
 					</LayoutBlock>
 					<LayoutBlock width="medium">
-						{ siteProfilerData && (
-							<>
-								{ showBasicMetrics && (
-									<BasicMetrics
-										basicMetrics={ basicMetrics.basic }
-										domain={ domain }
-										isWpCom={ isWpCom }
-									/>
-								) }
-								<NavMenu
-									domain={ domain }
-									navItems={ [
-										{ label: translate( 'Hosting' ), ref: hostingRef },
-										{ label: translate( 'Domain' ), ref: domainRef },
-										{ label: translate( 'Performance Metrics' ), ref: perfomanceMetricsRef },
-										{ label: translate( 'Health Scores' ), ref: healthMetricsRef },
-										...( noWordPressFound
-											? []
-											: [ { label: translate( 'Security' ), ref: securityMetricsRef } ] ),
-									] }
-									showMigrationCta={ ! isWpCom }
-								></NavMenu>
-								<HostingSection
-									url={ basicMetrics?.final_url }
-									dns={ siteProfilerData.dns }
-									urlData={ urlData }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									hostingRef={ hostingRef }
-								/>
+						<BasicMetrics
+							basicMetrics={ basicMetrics.basic }
+							domain={ domain }
+							isWpCom={ isWpCom }
+						/>
+						<NavMenu
+							domain={ domain }
+							navItems={ [
+								{ label: translate( 'Hosting' ), ref: hostingRef },
+								{ label: translate( 'Domain' ), ref: domainRef },
+								{ label: translate( 'Performance Metrics' ), ref: perfomanceMetricsRef },
+								{ label: translate( 'Health Scores' ), ref: healthMetricsRef },
+								...( noWordPressFound
+									? []
+									: [ { label: translate( 'Security' ), ref: securityMetricsRef } ] ),
+							] }
+							showMigrationCta={ ! isWpCom }
+						></NavMenu>
+						<HostingSection
+							url={ basicMetrics?.final_url }
+							dns={ siteProfilerData.dns }
+							urlData={ urlData }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							hostingRef={ hostingRef }
+						/>
 
-								<DomainSection
-									domain={ domain }
-									whois={ siteProfilerData.whois }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									urlData={ urlData }
-									domainRef={ domainRef }
-								/>
+						<DomainSection
+							domain={ domain }
+							whois={ siteProfilerData.whois }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							urlData={ urlData }
+							domainRef={ domainRef }
+						/>
 
-								<PerformanceSection
-									url={ basicMetrics?.final_url }
-									hash={ hash ?? basicMetrics?.token }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									performanceMetricsRef={ perfomanceMetricsRef }
-									setIsGetReportFormOpen={ setIsGetReportFormOpen }
-								/>
+						<PerformanceSection
+							url={ basicMetrics?.final_url }
+							hash={ hash ?? basicMetrics?.token }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							performanceMetricsRef={ perfomanceMetricsRef }
+							setIsGetReportFormOpen={ setIsGetReportFormOpen }
+						/>
 
-								<HealthSection
-									url={ basicMetrics?.final_url }
-									hash={ hash ?? basicMetrics?.token }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									healthMetricsRef={ healthMetricsRef }
-									setIsGetReportFormOpen={ setIsGetReportFormOpen }
-								/>
+						<HealthSection
+							url={ basicMetrics?.final_url }
+							hash={ hash ?? basicMetrics?.token }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							healthMetricsRef={ healthMetricsRef }
+							setIsGetReportFormOpen={ setIsGetReportFormOpen }
+						/>
 
-								<SecuritySection
-									url={ basicMetrics?.final_url }
-									hash={ hash ?? basicMetrics?.token }
-									hostingProvider={ hostingProviderData?.hosting_provider }
-									securityMetricsRef={ securityMetricsRef }
-									setIsGetReportFormOpen={ setIsGetReportFormOpen }
-								/>
-							</>
-						) }
+						<SecuritySection
+							url={ basicMetrics?.final_url }
+							hash={ hash ?? basicMetrics?.token }
+							hostingProvider={ hostingProviderData?.hosting_provider }
+							securityMetricsRef={ securityMetricsRef }
+							setIsGetReportFormOpen={ setIsGetReportFormOpen }
+						/>
 					</LayoutBlock>
 					{ ! isWpCom && <MigrationBannerBig url={ basicMetrics?.final_url } /> }
 				</>
