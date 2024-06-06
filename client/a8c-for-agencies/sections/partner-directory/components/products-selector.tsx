@@ -3,17 +3,27 @@ import { TokenItem } from '@wordpress/components/build-types/form-token-field/ty
 
 type Props = {
 	setProducts: ( tokens: ( string | TokenItem )[] ) => void;
-	selectedProducts: string[] | undefined;
+	selectedProducts: ( string | TokenItem )[];
 };
 
 const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
-	const availableProducts: string[] = [
-		'WordPress',
-		'WooCommerce',
-		'Jetpack',
-		'WordPress VIP',
-		'Pressable',
-	];
+	const availableProducts: Record< string, string > = {
+		wordpress: 'WordPress',
+		woocommerce: 'WooCommerce',
+		jetpack: 'Jetpack',
+		wordpress_vip: 'WordPress VIP',
+		pressable: 'Pressable',
+	};
+
+	const setTokens = ( tokens: ( string | TokenItem )[] ) => {
+		const selectedServicesByToken = tokens.filter( ( token ) => {
+			return Object.keys( availableProducts ).find(
+				( key: string ) => availableProducts?.[ key ] === token
+			);
+		} );
+
+		setProducts( selectedServicesByToken );
+	};
 
 	return (
 		<FormTokenField
@@ -22,8 +32,8 @@ const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
 			__experimentalShowHowTo={ false }
 			__nextHasNoMarginBottom
 			label=""
-			onChange={ setProducts }
-			suggestions={ availableProducts }
+			onChange={ setTokens }
+			suggestions={ Object.values( availableProducts ) }
 			value={ selectedProducts }
 		/>
 	);
