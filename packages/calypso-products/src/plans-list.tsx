@@ -470,6 +470,7 @@ import type {
 	IncompleteWPcomPlan,
 	IncompleteJetpackPlan,
 	Feature,
+	StorageOption,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -1329,8 +1330,11 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature, isCurrentPlan ) => {
-		let storageOptionSlugs = [];
-		const storageAddOns = [ FEATURE_50GB_STORAGE_ADD_ON, FEATURE_100GB_STORAGE_ADD_ON ];
+		let storageOptionSlugs = [] as StorageOption[ 'slug' ][];
+		const storageAddOns = [
+			FEATURE_50GB_STORAGE_ADD_ON,
+			FEATURE_100GB_STORAGE_ADD_ON,
+		] as StorageOption[ 'slug' ][];
 
 		if ( showLegacyStorageFeature && isCurrentPlan ) {
 			storageOptionSlugs = [ FEATURE_200GB_STORAGE ];
@@ -2201,8 +2205,11 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		return featureLabels;
 	},
 	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature, isCurrentPlan ) => {
-		let storageOptionSlugs = [];
-		const storageAddOns = [ FEATURE_50GB_STORAGE_ADD_ON, FEATURE_100GB_STORAGE_ADD_ON ];
+		let storageOptionSlugs = [] as StorageOption[ 'slug' ][];
+		const storageAddOns = [
+			FEATURE_50GB_STORAGE_ADD_ON,
+			FEATURE_100GB_STORAGE_ADD_ON,
+		] as StorageOption[ 'slug' ][];
 
 		if ( showLegacyStorageFeature ) {
 			/* If the user is currently has a legacy plan with 200GB storage space, the capacity will decrease to

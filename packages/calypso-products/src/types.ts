@@ -45,6 +45,8 @@ import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_200GB_STORAGE,
+	FEATURE_P2_13GB_STORAGE,
+	FEATURE_P2_3GB_STORAGE,
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
@@ -95,6 +97,8 @@ const WPCOM_PLAN_STORAGE_FEATURES = < const >[
 	FEATURE_13GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_200GB_STORAGE,
+	FEATURE_P2_13GB_STORAGE,
+	FEATURE_P2_3GB_STORAGE,
 ];
 
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
