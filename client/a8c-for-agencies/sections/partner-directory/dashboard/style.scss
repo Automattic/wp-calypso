@@ -3,7 +3,7 @@
 		max-width: 700px;
 	}
 
-	svg.sidebar__menu-icon {
+	.partner-directory-dashboard__apply-now-section svg.sidebar__menu-icon {
 		width: 20px;
 		height: 20px;
 		padding: 2px;
@@ -48,12 +48,55 @@
 	gap: 8px;
 
 	.badge {
-		min-width: 80px;
+		min-width: 100px;
 		margin-inline-end: 8px;
 		text-align: center;
 	}
 
 	span {
 		color: var(--color-text-black);
+	}
+}
+
+.partner-directory-dashboard__completed-section {
+	.partner-directory-dashboard__heading {
+		margin-block-end: 32px;
+	}
+	.step-section-item__status {
+		margin-block-start: 4px;
+	}
+
+	.a8c-blue-link {
+		padding-block: 2px;
+	}
+
+	.sidebar__menu-icon {
+		width: 33px;
+		height: 33px;
+	}
+
+	.partner-directory-dashboard__woo-icon {
+		.sidebar__menu-icon {
+			width: 38px;
+			height: 38px;
+			position: relative;
+			left: -3px;
+		}
+	}
+}
+
+.partner-directory-dashboard__edit-section {
+	margin-block-start: 40px;
+
+	.step-section__header {
+		margin-block-end: 4px;
+	}
+
+	.partner-directory-dashboard__subtitle {
+		margin-block-end: 24px;
+	}
+
+	.button {
+		margin-inline-end: 8px;
 	}
 }
