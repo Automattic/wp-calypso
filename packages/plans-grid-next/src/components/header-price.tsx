@@ -140,7 +140,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
 		current,
-		pricing: { currencyCode, originalPrice, discountedPrice, introOffer, purchaseCurrencyCode },
+		pricing: { currencyCode, originalPrice, discountedPrice, introOffer },
 	} = gridPlansIndex[ planSlug ];
 	const isPricedPlan = null !== originalPrice.monthly;
 
@@ -161,8 +161,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	);
 
 	const { prices } = usePlanPricingInfoFromGridPlans( { gridPlans: visibleGridPlans } );
-	const showCurrencyCode = current ? purchaseCurrencyCode : currencyCode;
-	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: showCurrencyCode || 'USD' } );
+	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;
@@ -183,7 +182,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 				{ isLargeCurrency ? (
 					<PricesGroup isLargeCurrency={ isLargeCurrency }>
 						<PlanPrice
-							currencyCode={ showCurrencyCode }
+							currencyCode={ currencyCode }
 							rawPrice={ 0 }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
@@ -193,7 +192,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							original
 						/>
 						<PlanPrice
-							currencyCode={ showCurrencyCode }
+							currencyCode={ currencyCode }
 							rawPrice={ introOfferPrice }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
@@ -204,7 +203,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					</PricesGroup>
 				) : (
 					<PlanPrice
-						currencyCode={ showCurrencyCode }
+						currencyCode={ currencyCode }
 						rawPrice={ introOfferPrice }
 						displayPerMonthNotation={ false }
 						isLargeCurrency={ isLargeCurrency }
@@ -224,7 +223,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 				</Badge>
 				<PricesGroup isLargeCurrency={ isLargeCurrency }>
 					<PlanPrice
-						currencyCode={ showCurrencyCode }
+						currencyCode={ currencyCode }
 						rawPrice={ originalPrice.monthly }
 						displayPerMonthNotation={ false }
 						isLargeCurrency={ isLargeCurrency }
@@ -233,7 +232,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						original
 					/>
 					<PlanPrice
-						currencyCode={ showCurrencyCode }
+						currencyCode={ currencyCode }
 						rawPrice={ discountedPrice.monthly }
 						displayPerMonthNotation={ false }
 						isLargeCurrency={ isLargeCurrency }
@@ -255,7 +254,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 				{ isLargeCurrency ? (
 					<PricesGroup isLargeCurrency={ isLargeCurrency }>
 						<PlanPrice
-							currencyCode={ showCurrencyCode }
+							currencyCode={ currencyCode }
 							rawPrice={ 0 }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
@@ -265,7 +264,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							original
 						/>
 						<PlanPrice
-							currencyCode={ showCurrencyCode }
+							currencyCode={ currencyCode }
 							rawPrice={ originalPrice.monthly }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
@@ -276,7 +275,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					</PricesGroup>
 				) : (
 					<PlanPrice
-						currencyCode={ showCurrencyCode }
+						currencyCode={ currencyCode }
 						rawPrice={ originalPrice.monthly }
 						displayPerMonthNotation={ false }
 						isLargeCurrency={ isLargeCurrency }
@@ -291,7 +290,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	return (
 		<HeaderPriceContainer>
 			<PlanPrice
-				currencyCode={ showCurrencyCode }
+				currencyCode={ currencyCode }
 				rawPrice={ originalPrice.monthly }
 				displayPerMonthNotation={ false }
 				isLargeCurrency={ isLargeCurrency }
