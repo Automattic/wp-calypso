@@ -127,6 +127,15 @@
 			transition: none;
 		}
 
+		.segmented-control__item:first-child .segmented-control__link {
+			margin-left: 0 !important;
+		}
+
+		.segmented-control__item:last-child .segmented-control__link {
+			margin-right: 0 !important;
+		}
+
+
 		.segmented-control__item.is-selected .segmented-control__link {
 			&,
 			&:focus,
