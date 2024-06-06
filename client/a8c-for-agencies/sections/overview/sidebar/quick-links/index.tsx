@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { category, key, receipt, store, tag } from '@wordpress/icons';
+import { category, key, receipt, store, tag, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FoldableNav from 'calypso/a8c-for-agencies/components/foldable-nav';
 import { FoldableNavItem } from 'calypso/a8c-for-agencies/components/foldable-nav/types';
@@ -20,6 +20,14 @@ export default function OverviewSidebarQuickLinks() {
 	const tracksName = 'calypso_jetpack_manage_overview_quick_links';
 
 	const navItems: FoldableNavItem[] = [
+		{
+			icon: info,
+			link: 'http://automattic.com/for-agencies/help',
+			slug: 'view_knowledge_base',
+			title: translate( 'View Knowledge Base' ),
+			trackEventName: 'calypso_a4a_overview_quick_links_knowledge_base_click',
+			isExternalLink: true,
+		},
 		{
 			icon: category,
 			link: A4A_SITES_LINK,
