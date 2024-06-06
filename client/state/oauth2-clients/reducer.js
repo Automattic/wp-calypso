@@ -98,17 +98,17 @@ export const initialClientsData = {
 	92099: {
 		id: 92099,
 		name: 'blaze-pro',
-		title: 'BlazePro',
+		title: 'Blaze Pro',
 	},
 	99370: {
 		id: 99370,
 		name: 'blaze-pro',
-		title: 'BlazePro',
+		title: 'Blaze Pro',
 	},
 	98166: {
 		id: 98166,
 		name: 'blaze-pro',
-		title: 'BlazePro',
+		title: 'Blaze Pro',
 	},
 };
 

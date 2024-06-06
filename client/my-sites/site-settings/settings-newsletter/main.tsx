@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banner';
@@ -174,6 +174,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				title={ translate( 'Subscriptions' ) }
 			/>
 			<Card className="site-settings__card">
+				<FormLabel>{ translate( 'Homepage and posts' ) }</FormLabel>
 				<SubscribePostEndSetting
 					disabled={ disabled }
 					handleToggle={ handleToggle }
@@ -189,13 +190,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					handleToggle={ handleToggle }
 					value={ jetpack_subscribe_overlay_enabled }
 				/>
-				{ shouldShowSubscriptionOnCommentModule && (
-					<SubscribeModalOnCommentSetting
-						disabled={ disabled }
-						handleToggle={ handleToggle }
-						value={ jetpack_verbum_subscription_modal }
-					/>
-				) }
+				<FormLabel>{ translate( 'Navigation' ) }</FormLabel>
 				<SubscribeNavigationSetting
 					disabled={ disabled }
 					handleToggle={ handleToggle }
@@ -206,6 +201,16 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					handleToggle={ handleToggle }
 					value={ jetpack_subscriptions_login_navigation_enabled }
 				/>
+				{ shouldShowSubscriptionOnCommentModule && (
+					<>
+						<FormLabel>{ translate( 'Comments' ) }</FormLabel>
+						<SubscribeModalOnCommentSetting
+							disabled={ disabled }
+							handleToggle={ handleToggle }
+							value={ jetpack_verbum_subscription_modal }
+						/>
+					</>
+				) }
 			</Card>
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader

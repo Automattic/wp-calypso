@@ -112,6 +112,7 @@ export interface UrlSecurityMetricsQueryResponse {
 			};
 			ovc: number;
 		};
+		status: string;
 		errors: Record< string, Array< string > >;
 	};
 }

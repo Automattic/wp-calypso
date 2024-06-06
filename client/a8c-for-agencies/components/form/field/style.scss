@@ -5,6 +5,7 @@
 }
 
 .a4a-form__section-field-label,
+.a4a-form__section-field-sub,
 .a4a-form__section-field-description {
 	font-size: rem(14px);
 	line-height: 1.5;
@@ -14,6 +15,7 @@
 	font-weight: 500;
 }
 
+.a4a-form__section-field-sub,
 .a4a-form__section-field-description {
 	font-weight: 400;
 	color: var(--color-neutral-50);

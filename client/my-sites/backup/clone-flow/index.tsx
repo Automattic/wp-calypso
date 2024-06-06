@@ -238,6 +238,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
 		requestClone();
+		dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_confirm' ) );
 	}, [ dispatch, setUserHasRequestedRestore, requestClone ] );
 
 	// Takes a destination as a vault role or blog id
@@ -536,6 +537,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				<Button
 					primary
 					href={ getDestinationUrl() }
+					target="_blank"
 					onClick={ () =>
 						dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_finished_view_site' ) )
 					}
@@ -573,6 +575,12 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		( ! inProgressRewindStatus && userHasRequestedRestore && userHasSetDestination ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
 	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
+
+	useEffect( () => {
+		if ( isFinished ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_completed' ) );
+		}
+	}, [ dispatch, isFinished ] );
 
 	const render = () => {
 		if ( loading ) {

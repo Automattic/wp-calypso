@@ -129,6 +129,7 @@ const DotcomPreviewPane = ( {
 		blogId: site.ID,
 		isDotcomSite: site.is_wpcom_atomic || site.is_wpcom_staging_site,
 		adminUrl: site.options?.admin_url || `${ site.URL }/wp-admin`,
+		withIcon: true,
 	};
 
 	useEffect( () => {

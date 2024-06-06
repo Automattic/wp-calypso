@@ -1,3 +1,5 @@
+import { Gridicon } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
@@ -9,7 +11,7 @@ import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-lis
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import {
 	DATAVIEWS_LIST,
@@ -25,6 +27,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
+import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import {
@@ -94,7 +97,7 @@ const SitesDashboardV2 = ( {
 	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
-	const initialSortApplied = useRef( false );
+	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 
@@ -153,7 +156,7 @@ const SitesDashboardV2 = ( {
 	useEffect( () => {
 		// Ensure we set and check initialSortApplied to prevent infinite loops when changing sort
 		// values after initial sort.
-		if ( hasSitesSortingPreferenceLoaded && ! initialSortApplied.current ) {
+		if ( hasSitesSortingPreferenceLoaded && ! initialSortApplied ) {
 			const newSortField =
 				siteSortingKeys.find( ( key ) => key.sortKey === sitesSorting.sortKey )?.dataView || '';
 			const newSortDirection = sitesSorting.sortOrder;
@@ -166,9 +169,9 @@ const SitesDashboardV2 = ( {
 				},
 			} ) );
 
-			initialSortApplied.current = true;
+			setInitialSortApplied( true );
 		}
-	}, [ hasSitesSortingPreferenceLoaded, sitesSorting, dataViewsState.sort ] );
+	}, [ hasSitesSortingPreferenceLoaded, sitesSorting, dataViewsState.sort, initialSortApplied ] );
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
@@ -261,6 +264,9 @@ const SitesDashboardV2 = ( {
 	const hideListing = false;
 	const isNarrowView = false;
 
+	const showA8CForAgenciesBanner = paginatedSites.length >= 5;
+	const hasEnTranslation = useHasEnTranslation();
+
 	return (
 		<Layout
 			className={ clsx(
@@ -286,9 +292,40 @@ const SitesDashboardV2 = ( {
 					</LayoutTop>
 
 					<DocumentHead title={ __( 'Sites' ) } />
+					{ showA8CForAgenciesBanner && (
+						<div className="sites-a8c-for-agencies-banner-container">
+							<Banner
+								callToAction={ translate( 'Learn more {{icon/}}', {
+									components: {
+										icon: <Gridicon icon="external" />,
+									},
+								} ) }
+								className="sites-a8c-for-agencies-banner"
+								description={
+									hasEnTranslation(
+										'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
+									)
+										? translate(
+												'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
+										  )
+										: translate(
+												'As you’re managing multiple sites, Automattic for Agencies offers you efficient multisite management, volume discounts on hosting products, and up to 50% revenue share for migrating sites and referring products.'
+										  )
+								}
+								dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
+								horizontal
+								href="https://wordpress.com/for-agencies"
+								title={
+									hasEnTranslation( 'Managing multiple sites? Meet our agency hosting' )
+										? translate( 'Managing multiple sites? Meet our agency hosting' )
+										: translate( 'Streamlined multisite agency hosting' )
+								}
+							/>
+						</div>
+					) }
 					<DotcomSitesDataViews
 						sites={ paginatedSites }
-						isLoading={ isLoading }
+						isLoading={ isLoading || ! initialSortApplied }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }

@@ -188,17 +188,7 @@ const SidebarCards = ( { isBasicHostingDisabled } ) => {
 };
 
 const AllCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, siteId, siteSlug } ) => {
-	const { data, isLoading } = useCodeDeploymentsQuery( siteId );
-	const isCodeDeploymentsUnused = ! isLoading && data && ! data.length;
-
 	const allCards = [
-		isCodeDeploymentsUnused
-			? {
-					feature: 'github-deployments',
-					content: <GitHubDeploymentsCard />,
-					type: 'advanced',
-			  }
-			: null,
 		{
 			feature: 'sftp',
 			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,

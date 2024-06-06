@@ -40,26 +40,32 @@ const PricingSection: FC = () => {
 	} );
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! pricing || ! planData || planPurchaseLoading;
+	const billingPeriod = planPurchase?.billPeriodLabel;
 
 	const getBillingDetails = () => {
 		if ( isFreePlan ) {
 			return null;
 		}
+		if ( ! billingPeriod ) {
+			return null;
+		}
 
-		return translate( '{{span}}%(rawPrice)s{{/span}} billed annually, excludes taxes.', {
+		return translate( '{{span}}%(rawPrice)s{{/span}} billed %(billingPeriod)s, excludes taxes.', {
 			args: {
 				rawPrice: formatCurrency(
 					pricing?.[ planSlug ].originalPrice.full ?? 0,
-					planData?.currencyCode ?? '',
+					pricing?.[ planSlug ].purchaseCurrencyCode ?? '',
 					{
 						stripZeros: true,
 						isSmallestUnit: true,
 					}
 				),
+				billingPeriod,
 			},
 			components: {
 				span: <span />,
 			},
+			comment: 'billingPeriod e.g., every month, every year, every 3 years',
 		} );
 	};
 
@@ -86,7 +92,7 @@ const PricingSection: FC = () => {
 				<div className="hosting-overview__plan-price-wrapper">
 					<PlanPrice
 						className="hosting-overview__plan-price"
-						currencyCode={ planData?.currencyCode }
+						currencyCode={ pricing?.[ planSlug ].purchaseCurrencyCode }
 						isSmallestUnit
 						rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
 					/>
