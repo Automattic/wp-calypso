@@ -229,6 +229,31 @@ function renderSpaceAddOnquantitySummary(
 	} );
 }
 
+export function renderTransactionVolumeSummary(
+	{ volume, wpcom_product_slug }: BillingTransactionItem,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( ! volume ) {
+		return null;
+	}
+
+	volume = parseInt( String( volume ) );
+
+	if ( 'dotblog_domain' !== wpcom_product_slug ) {
+		return null;
+	}
+
+	return translate(
+		'Domain registered for %(quantity)d year',
+		'Domain registered for %(quantity)d years',
+		{
+			args: { quantity: volume },
+			count: volume,
+			comment: '%(quantity)d is number of years the domain has been registered for',
+		}
+	);
+}
+
 export function renderTransactionQuantitySummary(
 	{ licensed_quantity, new_quantity, type, wpcom_product_slug }: BillingTransactionItem,
 	translate: LocalizeProps[ 'translate' ]

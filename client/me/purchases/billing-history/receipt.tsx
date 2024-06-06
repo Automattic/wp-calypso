@@ -39,6 +39,7 @@ import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionQuantitySummary,
+	renderTransactionVolumeSummary,
 	transactionIncludesTax,
 } from './utils';
 import { VatVendorDetails } from './vat-vendor-details';
@@ -533,6 +534,7 @@ function ReceiptLineItem( {
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 					) }
+					{ item.volume && <em>{ renderTransactionVolumeSummary( item, translate ) }</em> }
 				</td>
 				<td className="billing-history__receipt-amount">
 					{ doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
