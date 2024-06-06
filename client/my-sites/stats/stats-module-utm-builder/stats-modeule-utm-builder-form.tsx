@@ -1,9 +1,9 @@
 import { FormLabel } from '@automattic/components';
-import { Button } from '@wordpress/components';
-// import { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import StatsButton from '../components/stats-button';
 
 import './style.scss';
 
@@ -47,6 +47,7 @@ const InputField: React.FC< InputFieldProps > = ( {
 };
 
 const UtmBuilder: React.FC = () => {
+	const translate = useTranslate();
 	const [ url, setUrl ] = useState( '' );
 	const [ inputValues, setInputValues ] = useState< inputValuesType >( {
 		utm_source: '',
@@ -56,12 +57,18 @@ const UtmBuilder: React.FC = () => {
 
 	const fromLabels: formLabelsType = {
 		url: {
-			label: 'Website URL',
+			label: translate( 'Site or post URL' ),
 			placeholder: '',
 		},
-		utm_source: { label: 'UTM source (utm_source)', placeholder: 'e.g. newsletter' },
-		utm_medium: { label: 'UTM medium (utm_medium)', placeholder: 'e.g. email, social' },
-		utm_campaign: { label: 'UTM campaign (utm_campaign)', placeholder: 'e.g. promotion' },
+		utm_source: { label: translate( 'UTM source' ), placeholder: translate( 'e.g. newsletter' ) },
+		utm_medium: {
+			label: translate( 'UTM medium' ),
+			placeholder: translate( 'e.g. email, social' ),
+		},
+		utm_campaign: {
+			label: translate( 'UTM campaign' ),
+			placeholder: translate( 'e.g. promotion' ),
+		},
 	};
 
 	const handleInputChange = ( e: React.ChangeEvent< HTMLInputElement > ) => {
@@ -82,7 +89,9 @@ const UtmBuilder: React.FC = () => {
 		.filter( ( value ) => value.length )
 		.join( '&' );
 
-	const utmString = `${ url }/?${ campaignString }`;
+	const utmString = ! url
+		? translate( 'Fill out campaign parameters to see the URL' )
+		: `${ url }${ campaignString ? `/?${ campaignString }` : '' }`;
 
 	return (
 		<>
@@ -110,23 +119,18 @@ const UtmBuilder: React.FC = () => {
 				</FormFieldset>
 			</form>
 
-			{ url && (
-				<>
-					<div>
-						<h2>Generated UTM string:</h2>
-						<span>{ utmString }</span>
-					</div>
-					<div>
-						<Button
-							onClick={ () => {
-								navigator.clipboard.writeText( utmString );
-							} }
-						>
-							Copy to Clipboard
-						</Button>
-					</div>
-				</>
-			) }
+			<div>
+				<div className="stats-utm-builder__label">{ translate( 'Your URL to share' ) }</div>
+				<div className="stats-utm-builder__url">{ utmString }</div>
+			</div>
+			<StatsButton
+				primary
+				onClick={ () => {
+					navigator.clipboard.writeText( utmString );
+				} }
+			>
+				{ translate( 'Copy to clipboard' ) }
+			</StatsButton>
 		</>
 	);
 };

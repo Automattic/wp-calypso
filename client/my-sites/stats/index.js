@@ -17,7 +17,6 @@ import {
 	emailSummary,
 	subscribers,
 	purchase,
-	utmBuilder,
 } from './controller';
 
 import './style.scss';
@@ -93,9 +92,6 @@ export default function () {
 	// Email stats Pages
 	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
 	statsPage( `/stats/day/emails/:site`, emailSummary );
-
-	// Stat UTM Builder Page
-	statsPage( '/stats/utm-builder/:site', utmBuilder ); // site id is needed for license check
 
 	// Anything else should redirect to default stats page
 	page( '/stats/(.*)', redirectToDefaultSitePage );

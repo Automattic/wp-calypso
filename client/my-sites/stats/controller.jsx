@@ -533,4 +533,3 @@ export function emailSummary( context, next ) {
 export { default as insights } from './pages/insights/controller';
 export { default as subscribers } from './pages/subscribers/controller';
 export { default as purchase } from './pages/purchase/controller';
-export { default as utmBuilder } from './pages/utm-builder/controller';
