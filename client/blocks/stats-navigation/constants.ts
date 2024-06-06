@@ -85,12 +85,6 @@ const googleMyBusiness = {
 	showIntervals: false,
 } as NavItem;
 
-const utmBuilder = {
-	label: translate( 'UTM builder' ),
-	path: '/stats/utm-builder',
-	showIntervals: false,
-} as NavItem;
-
 export interface NavItems {
 	traffic: NavItem;
 	insights: NavItem;
@@ -109,7 +103,6 @@ const assembleNavItems = () => {
 		store,
 		wordads,
 		googleMyBusiness,
-		utmBuilder,
 	} as NavItems;
 
 	return navItems;
