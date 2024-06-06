@@ -258,13 +258,17 @@ const PlanCard: FC = () => {
 				) }
 				{ isAgencyPurchase && (
 					<div className="hosting-overview__plan-agency-purchase">
-						{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
-							components: {
-								a: (
-									<a href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }></a>
-								),
-							},
-						} ) }
+						<p>
+							{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
+								components: {
+									a: (
+										<a
+											href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
+										></a>
+									),
+								},
+							} ) }
+						</p>
 					</div>
 				) }
 			</HostingCard>
