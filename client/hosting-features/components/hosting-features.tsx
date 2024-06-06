@@ -95,6 +95,7 @@ const HostingFeatures = () => {
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
 	const handleTransfer = ( options: { geo_affinity?: string } ) => {
+		dispatch( recordTracksEvent( 'calypso_hosting_settings_activate_confirm' ) );
 		const params = new URLSearchParams( {
 			siteId: String( siteId ),
 			redirect_to: redirectUrl.current,
@@ -161,6 +162,7 @@ const HostingFeatures = () => {
 							className="hosting-features__button"
 							onClick={ () => {
 								if ( showActivationButton ) {
+									dispatch( recordTracksEvent( 'calypso_hosting_settings_activate_click' ) );
 									return setShowEligibility( true );
 								}
 							} }
