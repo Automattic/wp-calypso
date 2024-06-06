@@ -160,9 +160,13 @@ const DotcomPreviewPane = ( {
 				externalIconSize: 16,
 				siteIconFallback: 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
-				menuButtons: () => (
-					<SiteEnvironmentDropdown onChange={ changeSitePreviewPane } site={ site } />
-				),
+				menuButtons: () =>
+					isAtomicSite &&
+					( ( site.options?.wpcom_staging_blog_ids &&
+						site.options?.wpcom_staging_blog_ids.length > 0 ) ||
+						site.is_wpcom_staging_site ) && (
+						<SiteEnvironmentDropdown onChange={ changeSitePreviewPane } site={ site } />
+					),
 			} }
 		/>
 	);

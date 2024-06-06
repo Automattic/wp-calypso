@@ -535,7 +535,9 @@
 			max-height: calc(100vh - 32px - var(--masterbar-height));
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 			.preview-pane__navigation {
-				height: 52px;
+				@media (min-width: $break-mobile) {
+					height: 52px;
+				}
 				box-shadow: none;
 				border-bottom: 1px solid var(--color-border-subtle);
 				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
@@ -550,14 +552,14 @@
 					margin-right: 48px;
 				}
 
-				@media (max-width: 480px) {
+				@media (max-width: $break-mobile) {
 					border-bottom: 0;
 					.site-preview-pane__environment-dropdown {
 						visibility: hidden;
 					}
 				}
 
-				@media (max-width: 960px) {
+				@media (max-width: $break-large) {
 					.site-preview-pane__environment-dropdown {
 						margin-right: 24px;
 					}
