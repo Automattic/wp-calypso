@@ -247,13 +247,12 @@ export default {
 
 		// See: 1113-gh-Automattic/experimentation-platform for details.
 		if ( flowName === 'guided' && userLoggedIn ) {
-			const bigSkyExperiment = await loadExperimentAssignment(
-				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
-			);
+			// Load both experiments in parallel for better performance.
+			const [ bigSkyExperiment, trailMapExperiment ] = await Promise.all( [
+				loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
+				loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
+			] );
 			if ( bigSkyExperiment.variationName === 'trailmap' ) {
-				const trailMapExperiment = await loadExperimentAssignment(
-					'explat_test_calypso_signup_onboarding_trailmap_guided_flow'
-				);
 				initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
 			}
 		}
