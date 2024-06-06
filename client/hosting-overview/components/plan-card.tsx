@@ -60,7 +60,7 @@ const PricingSection: FC = () => {
 			return null;
 		}
 
-		return perMonthDescription || getPlan( planSlug )?.getBillingTimeFrame?.();
+		return <>{ perMonthDescription || getPlan( planSlug )?.getBillingTimeFrame?.() }.</>;
 	};
 
 	const getExpireDetails = () => {
