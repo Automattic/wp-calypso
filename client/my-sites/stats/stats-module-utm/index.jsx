@@ -51,6 +51,7 @@ const StatsModuleUTMWrapper = ( { siteId, period, postId, query, summary, classN
 					isLoading={ isFetching ?? true }
 					hideSummaryLink={ hideSummaryLink }
 					postId={ postId }
+					summary={ summary }
 				/>
 			) }
 		</>

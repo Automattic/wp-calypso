@@ -4,6 +4,7 @@ import { Title, SubTitle } from '@automattic/onboarding';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 import type { ImporterPlatform } from '../types';
 import './style.scss';
@@ -23,13 +24,20 @@ interface ImporterOption {
 interface Props {
 	siteSlug: string | null;
 	submit?: ( dependencies: Record< string, unknown > ) => void;
-	getFinalImporterUrl: ( siteSlug: string, fromSite: string, platform: ImporterPlatform ) => string;
+	getFinalImporterUrl: (
+		siteSlug: string,
+		fromSite: string,
+		platform: ImporterPlatform,
+		backToFlow?: string
+	) => string;
 	onNavBack?: () => void;
 }
 
 export default function ListStep( props: Props ) {
 	const { __ } = useI18n();
+	const urlQueryParams = useQuery();
 	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
+	const backToFlow = urlQueryParams.get( 'backToFlow' );
 
 	const primaryListOptions: ImporterOption[] = [
 		{ value: 'wordpress', label: 'WordPress', icon: 'wordpress' },
@@ -49,7 +57,12 @@ export default function ListStep( props: Props ) {
 	];
 
 	const onImporterSelect = ( platform: ImporterPlatform ): void => {
-		const importerUrl = getFinalImporterUrl( siteSlug ?? '', '', platform );
+		const importerUrl = getFinalImporterUrl(
+			siteSlug ?? '',
+			'',
+			platform,
+			backToFlow ?? undefined
+		);
 		submit?.( { platform, url: importerUrl } );
 	};
 

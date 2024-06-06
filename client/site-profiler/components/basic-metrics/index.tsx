@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef, useMemo } from 'react';
-import { BASIC_METRICS_UNITS } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { calculateMetricsSectionScrollOffset } from 'calypso/site-profiler/utils/calculate-metrics-section-scroll-offset';
 import { CopiesReturnValueList, MetricsCopies, getCopies } from './copies';
 import type { BasicMetricsScored, Metrics, Scores } from 'calypso/data/site-profiler/types';
@@ -11,6 +10,7 @@ import './styles.scss';
 
 const Container = styled.div`
 	scroll-margin-top: ${ calculateMetricsSectionScrollOffset }px;
+	margin-bottom: 130px;
 `;
 
 const SubtitleIcon = styled( Gridicon )`
@@ -37,6 +37,7 @@ type BasicMetricProps = {
 };
 
 export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetricProps ) => {
+	const translate = useTranslate();
 	const { value, score } = basicMetrics[ metric ];
 	const showMetric = value !== undefined && value !== null;
 	const isPositiveScore = score === 'good';
@@ -50,8 +51,12 @@ export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetric
 						{ name }
 					</div>
 					<div className="basic-metrics__value">
-						{ value }
-						{ BASIC_METRICS_UNITS[ metric ] }
+						{ metric === 'cls'
+							? value
+							: translate( '%(ms)dms', {
+									comment: 'value to be displayed in millisecond',
+									args: { ms: value },
+							  } ) }
 					</div>
 				</div>
 				<h3>{ isPositiveScore ? copies.good.diagnostic : copies.poor.diagnostic }</h3>

@@ -68,7 +68,7 @@ const PlanStorageOptions = ( {
 	);
 
 	return (
-		<div className="plan-features-2023-grid__storage">
+		<div className="plans-grid-next-storage-feature">
 			<PlanFeaturesItem>{ storageJSX }</PlanFeaturesItem>
 		</div>
 	);

@@ -14,16 +14,16 @@ function useReferralsGuide() {
 	const steps = useMemo(
 		() => [
 			{
-				title: translate( 'Welcome to Refer products mode' ),
+				title: translate( 'Welcome to product referral mode' ),
 				description: translate(
-					'Check out the quick steps you’ll take to refer products to your client so that you get paid commissions.'
+					`Manage your clients' products without the burden of managing the billing. Assemble a cart of products, send a request for payment to your clients, and make commissions based on what you sell.`
 				),
 				preview: <img src={ step1 } alt="" />,
 			},
 			{
-				title: translate( 'Add the needed products for your client' ),
+				title: translate( 'Add the products your client needs' ),
 				description: translate(
-					'Just add the products to the cart like you would in any other e-commerce page.'
+					'Ensure "Refer products" is toggled on, and add any mix of products to your cart.'
 				),
 				preview: (
 					<video
@@ -37,9 +37,9 @@ function useReferralsGuide() {
 				),
 			},
 			{
-				title: translate( 'Proceed to checkout as normal' ),
+				title: translate( 'Review your selection during checkout' ),
 				description: translate(
-					'All done? Just click Checkout to fill in the details for your client.'
+					`During checkout, add your clients' email address and a note about the invoice for the selected products.`
 				),
 				preview: (
 					<video
@@ -53,9 +53,9 @@ function useReferralsGuide() {
 				),
 			},
 			{
-				title: translate( 'Send a payment to your client with a note' ),
+				title: translate( 'Send your client the payment request' ),
 				description: translate(
-					'At checkout, instead of paying yourself, send a payment request to your client with a note.'
+					`Once sent, your client will get the invoice delivered to their inbox. After they pay, you'll be able to assign the products to their site.`
 				),
 				preview: (
 					<video
@@ -69,9 +69,9 @@ function useReferralsGuide() {
 				),
 			},
 			{
-				title: translate( 'Get paid commissions' ),
+				title: translate( 'Get paid real commissions' ),
 				description: translate(
-					'Your client will pay for the subscriptions. You will get commissions when they pay each month. You’ll have access to the licenses so that you can configure the products and hosting for your client.'
+					`Clients will be billed at the end of every month for their products. When they pay, you'll make commissions on those products, which you'll be able to manage under the Referrals section, soon.`
 				),
 				preview: <img src={ step5 } alt="" />,
 			},

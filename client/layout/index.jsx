@@ -404,8 +404,11 @@ class Layout extends Component {
 				/>
 				<HtmlIsIframeClassname />
 				<DocumentHead />
-				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
-				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
+				{ this.props.shouldQueryAllSites ? (
+					<QuerySites allSites />
+				) : (
+					<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
+				) }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				{ this.props.isUnifiedSiteSidebarVisible && (

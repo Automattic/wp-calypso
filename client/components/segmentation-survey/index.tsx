@@ -13,27 +13,50 @@ import { SKIP_ANSWER_KEY } from './constants';
 import useSegmentationSurveyNavigation from './hooks/use-segmentation-survey-navigation';
 
 type SegmentationSurveyProps = {
+	/**
+	 * The key of the survey to render.
+	 */
 	surveyKey: string;
+	/**
+	 * A function that will be called when the user navigates back.
+	 */
 	onBack?: () => void;
+	/**
+	 * A function that will be called when the user navigates forward.
+	 */
 	onNext?: ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => void;
+	/**
+	 * A function that determines whether to skip the next navigation.
+	 */
 	skipNextNavigation?: ( questionKey: string, answerKeys: string[] ) => boolean;
+	/**
+	 * The alignment of the header text.
+	 */
 	headerAlign?: string;
+	/**
+	 * The configuration for the questions.
+	 */
 	questionConfiguration?: QuestionConfiguration;
+	/**
+	 * A map of question types to components.
+	 */
 	questionComponentMap?: QuestionComponentMap;
+	/**
+	 * Whether to clear the answers after the last question.
+	 */
 	clearAnswersOnLastQuestion?: boolean;
+	/**
+	 * Requires `providedPage` prop. If you want to manage your own navigation, you can provide a function that navigates to a specific page.
+	 */
+	onGoToPage?: ( page: number ) => void;
+	/**
+	 * Requires `onGoToPage` prop. If you want to manage your own navigation, you can provide the current page number.
+	 */
+	providedPage?: number;
 };
 
 /**
  * A component that renders a segmentation survey.
- * @param {SegmentationSurveyProps} props
- * @param {string} props.surveyKey - The key of the survey to render.
- * @param {() => void} [props.onBack] - A function that navigates to the previous step.
- * @param {(questionKey: string, answerKeys: string[], isLastQuestion?: boolean) => void} [props.onNext] - A function that navigates to the next question/step.
- * @param {string} [props.headerAlign] - The alignment of the header text.
- * @param {QuestionConfiguration} [props.questionConfiguration] - The configuration for the questions.
- * @param {QuestionComponentMap} [props.questionComponentMap] - A map of question types to components.
- * @param {boolean} [props.clearAnswersOnLastQuestion] - Whether to clear the answers after the last question.
- * @returns {React.ReactComponentElement}
  */
 const SegmentationSurvey = ( {
 	surveyKey,
@@ -44,6 +67,8 @@ const SegmentationSurvey = ( {
 	questionConfiguration,
 	questionComponentMap,
 	clearAnswersOnLastQuestion = true,
+	onGoToPage,
+	providedPage,
 }: SegmentationSurveyProps ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
 	const { mutateAsync, isPending } = useSaveAnswersMutation( { surveyKey } );
@@ -100,7 +125,7 @@ const SegmentationSurvey = ( {
 
 	const onSkip = useCallback(
 		async ( currentQuestion: Question ) => {
-			onChangeAnswer( currentQuestion.key, [ SKIP_ANSWER_KEY ] );
+			onChangeAnswer( currentQuestion.key, [] );
 			await handleSave( currentQuestion, [ SKIP_ANSWER_KEY ] );
 		},
 		[ handleSave, onChangeAnswer ]
@@ -115,6 +140,8 @@ const SegmentationSurvey = ( {
 			questions,
 			surveyKey,
 			skipNextNavigation,
+			onGoToPage,
+			providedPage,
 		} );
 
 	if ( ! questions ) {

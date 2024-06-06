@@ -942,7 +942,7 @@ $font-size: rem(14px);
 }
 
 // Flyout menu (showing from >782px)
-@media screen and ( min-width: 783px ) {
+@media screen and (min-width: 783px) {
 	.theme-default {
 		.focus-content,
 		.focus-sites,
@@ -1010,7 +1010,7 @@ $font-size: rem(14px);
 	}
 }
 
-@media screen and ( max-width: 781px ) {
+@media screen and (max-width: 781px) {
 	// client/layout/sidebar/style.scss
 	.theme-default {
 		.focus-content .layout__content {
@@ -1082,7 +1082,7 @@ $font-size: rem(14px);
 	}
 }
 
-@media screen and ( max-width: $break-small ) {
+@media screen and (max-width: $break-small) {
 	.theme-default {
 		// client/layout/style.scss
 		.layout__content {

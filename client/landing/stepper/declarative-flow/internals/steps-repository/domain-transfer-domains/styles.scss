@@ -18,7 +18,7 @@
 	.is-invisible-field {
 		visibility: hidden;
 		// On mobile, display:none, keeps the layout without breaking it
-		@media (max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			display: none;
 		}
 	}
@@ -65,13 +65,13 @@
 			box-shadow: none;
 		}
 
-		@media (min-width: $break-medium ) {
+		@media (min-width: $break-medium) {
 			.formatted-header .formatted-header__subtitle {
 				text-align: center;
 			}
 		}
 
-		@media (max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			.step-container__header {
 				width: 100%;
 				margin-top: 48px;
@@ -90,7 +90,7 @@
 	}
 
 	&.step-container {
-		@media (max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			padding: 0 20px;
 		}
 
@@ -99,11 +99,11 @@
 			padding-bottom: 56px;
 			margin: 0;
 
-			@media (min-width: $break-large ) {
+			@media (min-width: $break-large) {
 				margin-top: auto;
 			}
 
-			@media (max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				padding-bottom: 32px;
 			}
 		}
@@ -114,7 +114,7 @@
 		flex-shrink: 0;
 		width: 100%;
 
-		@media (max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			min-height: auto;
 		}
 	}
@@ -133,7 +133,7 @@
 		align-items: flex-end;
 		flex-wrap: nowrap;
 
-		@media (max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			align-items: normal;
 			flex-direction: column;
 			flex-wrap: wrap;
@@ -165,7 +165,7 @@
 
 		.validation-actions {
 			margin-left: 5px;
-			@media (max-width: $break-medium ) {
+			@media (max-width: $break-medium) {
 				display: block;
 				margin-left: 0;
 			}
@@ -174,7 +174,7 @@
 			.components-button:has(.unlock-label), {
 				color: var(--studio-gray-100, #101517);
 				text-decoration-color: var(--studio-gray-100, #101517);
-				@media (max-width: $break-medium ) {
+				@media (max-width: $break-medium) {
 					&.is-first-row {
 						margin-left: 0;
 					}
@@ -199,7 +199,7 @@
 			}
 		}
 
-		@media (max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			margin-top: 0;
 
 			&.is-mobile {
@@ -233,7 +233,7 @@
 
 	.domains__domain-domain,
 	.domains__domain-key {
-		@media (max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			flex: 1;
 		}
 
@@ -251,7 +251,7 @@
 			font-weight: 500;
 			line-height: 24px;
 
-			@media (max-width: $break-medium ) {
+			@media (max-width: $break-medium) {
 				align-items: flex-start;
 			}
 
@@ -304,7 +304,7 @@
 				line-height: 24px;
 			}
 
-			@media (max-width: $break-medium ) {
+			@media (max-width: $break-medium) {
 				display: block;
 			}
 		}
@@ -313,7 +313,7 @@
 		.google-domains-transfer-instructions__button.is-first-row {
 			display: inline-block;
 
-			@media (max-width: $break-mobile ) {
+			@media (max-width: $break-mobile) {
 				margin-left: 3px;
 			}
 
@@ -424,7 +424,7 @@
 				vertical-align: middle;
 			}
 
-			@media (max-width: $break-medium ) {
+			@media (max-width: $break-medium) {
 				margin-bottom: 50px;
 			}
 		}
@@ -433,7 +433,7 @@
 	.domains__domain-info-and-validation {
 		margin-bottom: 20px;
 
-		@media (max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			margin-bottom: 32px;
 
 			&:not(:first-of-type) {

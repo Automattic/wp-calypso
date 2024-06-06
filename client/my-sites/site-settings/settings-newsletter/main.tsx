@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banner';
@@ -20,6 +20,7 @@ import { ReplyToSetting } from './ReplyToSetting';
 import { SenderNameSetting } from './SenderNameSetting';
 import { SubscribeModalOnCommentSetting } from './SubscribeModalOnCommentSetting';
 import { SubscribeModalSetting } from './SubscribeModalSetting';
+import { SubscribeNavigationSetting } from './SubscribeNavigationSetting';
 import { SubscribeOverlaySetting } from './SubscribeOverlaySetting';
 import { SubscribePostEndSetting } from './SubscribePostEndSetting';
 import { SubscriberLoginNavigationSetting } from './SubscriberLoginNavigationSetting';
@@ -44,6 +45,7 @@ type Fields = {
 	sm_enabled?: boolean;
 	jetpack_subscribe_overlay_enabled?: boolean;
 	jetpack_subscriptions_subscribe_post_end_enabled?: boolean;
+	jetpack_subscriptions_subscribe_navigation_enabled?: boolean;
 	jetpack_subscriptions_login_navigation_enabled?: boolean;
 	jetpack_verbum_subscription_modal?: boolean;
 };
@@ -64,6 +66,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		sm_enabled,
 		jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_subscribe_navigation_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
 	} = settings;
@@ -80,6 +83,8 @@ const getFormSettings = ( settings?: Fields ) => {
 		jetpack_subscribe_overlay_enabled: !! jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled:
 			!! jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_subscribe_navigation_enabled:
+			!! jetpack_subscriptions_subscribe_navigation_enabled,
 		jetpack_subscriptions_login_navigation_enabled:
 			!! jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal: !! jetpack_verbum_subscription_modal,
@@ -117,6 +122,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		sm_enabled,
 		jetpack_subscribe_overlay_enabled,
 		jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_subscribe_navigation_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
 	} = fields;
@@ -168,6 +174,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				title={ translate( 'Subscriptions' ) }
 			/>
 			<Card className="site-settings__card">
+				<FormLabel>{ translate( 'Homepage and posts' ) }</FormLabel>
 				<SubscribePostEndSetting
 					disabled={ disabled }
 					handleToggle={ handleToggle }
@@ -183,18 +190,27 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					handleToggle={ handleToggle }
 					value={ jetpack_subscribe_overlay_enabled }
 				/>
-				{ shouldShowSubscriptionOnCommentModule && (
-					<SubscribeModalOnCommentSetting
-						disabled={ disabled }
-						handleToggle={ handleToggle }
-						value={ jetpack_verbum_subscription_modal }
-					/>
-				) }
+				<FormLabel>{ translate( 'Navigation' ) }</FormLabel>
+				<SubscribeNavigationSetting
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ jetpack_subscriptions_subscribe_navigation_enabled }
+				/>
 				<SubscriberLoginNavigationSetting
 					disabled={ disabled }
 					handleToggle={ handleToggle }
 					value={ jetpack_subscriptions_login_navigation_enabled }
 				/>
+				{ shouldShowSubscriptionOnCommentModule && (
+					<>
+						<FormLabel>{ translate( 'Comments' ) }</FormLabel>
+						<SubscribeModalOnCommentSetting
+							disabled={ disabled }
+							handleToggle={ handleToggle }
+							value={ jetpack_verbum_subscription_modal }
+						/>
+					</>
+				) }
 			</Card>
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader

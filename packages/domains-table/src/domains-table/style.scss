@@ -2,7 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 
-@media ( max-width: $break-small ) {
+@media (max-width: $break-small) {
 	.domains-table {
 		padding: 0 16px;
 	}

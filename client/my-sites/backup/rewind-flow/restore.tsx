@@ -154,6 +154,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		refetchPreflightStatus,
 	] );
 
+	const onGoBack = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_goback' ) );
+	}, [ dispatch ] );
+
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const loading = rewindState.state === 'uninitialized';
@@ -201,7 +205,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				) }
 			</>
 			<div className="rewind-flow__btn-group">
-				<Button className="rewind-flow__back-button" href={ backupMainPath( siteSlug ) }>
+				<Button
+					className="rewind-flow__back-button"
+					href={ backupMainPath( siteSlug ) }
+					onClick={ onGoBack }
+				>
 					{ translate( 'Go back' ) }
 				</Button>
 				<Button
@@ -272,7 +280,15 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button primary href={ siteUrl } target="_blank" className="rewind-flow__primary-button">
+			<Button
+				primary
+				href={ siteUrl }
+				target="_blank"
+				className="rewind-flow__primary-button"
+				onClick={ () =>
+					dispatch( recordTracksEvent( 'calypso_jetpack_restore_completed_view_site' ) )
+				}
+			>
 				{ translate( 'View your website {{externalIcon/}}', {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
 				} ) }
@@ -308,10 +324,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	useEffect( () => {
 		if ( isFinished ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_completed' ) );
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
 		}
-	}, [ isFinished ] );
+	}, [ dispatch, isFinished ] );
 
 	const render = () => {
 		if ( loading ) {

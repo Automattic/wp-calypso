@@ -1,20 +1,28 @@
+import { Button } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { HostingCard } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useSelector } from 'calypso/state';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import getLastGoodRewindBackup from 'calypso/state/selectors/get-last-good-rewind-backup';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) => {
+const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId, siteSlug } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	const hasRetrievedLastBackup = lastGoodBackup !== null;
 	const [ isLoading, setIsLoading ] = useState( false );
+	const wpcomAdminInterface = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'wpcom_admin_interface' )
+	);
 
 	useEffect( () => {
 		const shouldRequestLastBackup = ! disabled && ! hasRetrievedLastBackup && ! isLoading;
@@ -47,6 +55,17 @@ const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) 
 							"If you restore your site using this backup, you'll lose any changes made after that date."
 						) }
 					</p>
+					<Button
+						className={ clsx( 'site-backup-card__button', 'hosting-overview__link-button' ) }
+						plain
+						href={
+							wpcomAdminInterface === 'wp-admin'
+								? `https://cloud.jetpack.com/backup/${ siteSlug }`
+								: `/backup/${ siteSlug }`
+						}
+					>
+						{ translate( 'See all backups' ) }
+					</Button>
 				</>
 			) }
 			{ ( ( hasRetrievedLastBackup && ! lastGoodBackup && ! isLoading ) || disabled ) && (
@@ -69,6 +88,7 @@ export default connect(
 		return {
 			lastGoodBackup: getLastGoodRewindBackup( state, siteId ),
 			siteId,
+			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
 	{

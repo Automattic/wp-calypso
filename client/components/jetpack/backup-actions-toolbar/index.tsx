@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { backupClonePath, backupMainPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -23,8 +22,8 @@ const BackupActionsToolbar: FunctionComponent< Props > = ( { siteId } ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 	const hasBackups = useSelector( ( state ) => siteHasBackups( state, siteId ) );
 
-	// Show the "Copy site" button if accessing on Jetpack Cloud or A4A
-	const showCopySiteButton = isJetpackCloud() || isA8CForAgencies();
+	// Show the "Copy site" button if accessing on Jetpack Cloud (A4A removed for now)
+	const showCopySiteButton = isJetpackCloud();
 
 	const copySite = (
 		<Tooltip

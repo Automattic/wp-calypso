@@ -13,7 +13,6 @@ import {
 	ICON_MEDIA_ORDER_PIXEL_URL,
 	GA_PRODUCT_BRAND_WPCOM,
 	GA_PRODUCT_BRAND_JETPACK,
-	GA_PRODUCT_BRAND_AKISMET,
 } from './constants';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
@@ -590,29 +589,6 @@ function recordOrderInJetpackGA(
 			cartToGaPurchase( String( orderId ), cart, wpcomJetpackCartInfo ),
 			Ga4PropertyGtag.JETPACK
 		);
-
-		const jetpackParams = [
-			'event',
-			'purchase',
-			{
-				send_to: TRACKING_IDS.jetpackGoogleAnalyticsGtag,
-				value: wpcomJetpackCartInfo.jetpackCostUSD,
-				currency: 'USD',
-				transaction_id: orderId,
-				coupon: cart.coupon?.toString() ?? '',
-				items: wpcomJetpackCartInfo.jetpackProducts.map(
-					( { product_id, product_name_en, cost, volume } ) => ( {
-						id: product_id.toString(),
-						name: product_name_en.toString(),
-						quantity: parseInt( String( volume ) ),
-						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
-						brand: GA_PRODUCT_BRAND_JETPACK,
-					} )
-				),
-			},
-		];
-		debug( 'recordOrderInJetpackGA: Record Jetpack Purchase', jetpackParams );
-		window.gtag( ...jetpackParams );
 	}
 }
 
@@ -633,29 +609,6 @@ function recordOrderInAkismetGA(
 			cartToGaPurchase( String( orderId ), cart, wpcomJetpackCartInfo ),
 			Ga4PropertyGtag.AKISMET
 		);
-
-		const akismetParams = [
-			'event',
-			'purchase',
-			{
-				send_to: TRACKING_IDS.akismetGoogleAnalyticsGtag,
-				value: wpcomJetpackCartInfo.akismetCostUSD,
-				currency: 'USD',
-				transaction_id: orderId,
-				coupon: cart.coupon?.toString() ?? '',
-				items: wpcomJetpackCartInfo.akismetProducts.map(
-					( { product_id, product_name_en, cost, volume } ) => ( {
-						id: product_id.toString(),
-						name: product_name_en.toString(),
-						quantity: parseInt( String( volume ) ),
-						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
-						brand: GA_PRODUCT_BRAND_AKISMET,
-					} )
-				),
-			},
-		];
-		debug( 'recordOrderInAkismetGA: Record Akismet Purchase', akismetParams );
-		window.gtag( ...akismetParams );
 	}
 }
 

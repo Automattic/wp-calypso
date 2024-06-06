@@ -1069,8 +1069,8 @@ export function generateSteps( {
 		},
 		'initial-intent': {
 			stepName: 'initial-intent',
-			providesDependencies: [ 'segmentationSurveyAnswers' ],
 			fulfilledStepCallback: excludeSegmentSurveyStepIfInactive,
+			providesDependencies: [ 'segmentationSurveyAnswers', 'onboardingSegment' ],
 		},
 	};
 }
