@@ -162,6 +162,7 @@ export default function SiteProfilerV2( props: Props ) {
 						<ResultsHeader
 							domain={ domain }
 							performanceCategory={ performanceCategory }
+							isWordPress={ ! noWordPressFound }
 							isWpCom={ isWpCom }
 							onGetReport={ () => setIsGetReportFormOpen( true ) }
 						/>

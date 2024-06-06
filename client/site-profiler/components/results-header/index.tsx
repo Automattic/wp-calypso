@@ -10,14 +10,17 @@ type Props = {
 	domain: string;
 	performanceCategory: PerformanceCategories;
 	isWpCom: boolean;
+	isWordPress: boolean;
 	onGetReport: () => void;
 };
 
-function getIcon( isWpCom?: boolean ) {
-	if ( isWpCom ) {
-		return <img src={ wpComSiteIcon } alt={ translate( 'WordPress.com site' ) } />;
+function getIcon( isWordPress?: boolean ) {
+	if ( isWordPress ) {
+		return <img src={ wpComSiteIcon } alt={ translate( 'This site is built with WordPress' ) } />;
 	}
-	return <img src={ nonWpComSiteIcon } alt={ translate( 'Non WordPress.com site' ) } />;
+	return (
+		<img src={ nonWpComSiteIcon } alt={ translate( 'This site is not built with WordPress' ) } />
+	);
 }
 
 function getIsWpComSiteMessage( isWpCom?: boolean ) {
@@ -40,12 +43,18 @@ function getTitleMessage( performanceCategory: PerformanceCategories ) {
 	return translate( 'Room for growth! Let’s optimize your site.' );
 }
 
-export const ResultsHeader = ( { domain, performanceCategory, isWpCom, onGetReport }: Props ) => {
+export const ResultsHeader = ( {
+	domain,
+	performanceCategory,
+	isWpCom,
+	isWordPress,
+	onGetReport,
+}: Props ) => {
 	return (
 		<div className="results-header--container">
 			<div className="results-header--domain-container">
 				<span className="domain-title">{ domain }</span>
-				{ getIcon( isWpCom ) }
+				{ getIcon( isWordPress ) }
 				<span className="domain-message">{ getIsWpComSiteMessage( isWpCom ) }</span>
 			</div>
 			<h1>{ getTitleMessage( performanceCategory ) }</h1>
