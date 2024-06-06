@@ -5,13 +5,13 @@ import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
-import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useIsSiteAdmin } from '../hooks/use-is-site-admin';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { useStartUrl } from '../hooks/use-start-url';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -42,51 +42,49 @@ const siteMigration: Flow = {
 			? [ STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
 			: [];
 
-		return [ ...baseSteps, ...hostedVariantSteps ];
+		return stepsWithRequiredLogin( [ ...baseSteps, ...hostedVariantSteps ] );
 	},
 
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
+		const { isAdmin } = useIsSiteAdmin();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
-		const startUrl = useStartUrl( this.variantSlug ?? FLOW_NAME );
-
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-		const { isOwner } = useIsSiteOwner();
+		const flowPath = this.variantSlug ?? FLOW_NAME;
 
 		useEffect( () => {
-			if ( ! userIsLoggedIn ) {
-				const logInUrl = startUrl;
-				window.location.assign( logInUrl );
-			}
-		}, [ startUrl, userIsLoggedIn ] );
-
-		useEffect( () => {
-			if ( isOwner === false ) {
+			if ( isAdmin === false ) {
 				window.location.assign( '/start' );
 			}
-		}, [ isOwner ] );
+		}, [ isAdmin ] );
 
-		if ( ! userIsLoggedIn ) {
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'site-migration requires a logged in user',
-			};
+		useEffect( () => {
+			// We don't need to do anything if the user isn't logged in.
+			if ( ! userIsLoggedIn ) {
+				return;
+			}
 
-			return result;
-		}
+			if ( siteSlug || siteId ) {
+				return;
+			}
 
-		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) ) {
+			if ( isHostedSiteMigrationFlow( flowPath ) ) {
+				return;
+			}
+
 			window.location.assign( '/start' );
-			result = {
+		}, [ flowPath, siteId, siteSlug, userIsLoggedIn, isAdmin ] );
+
+		if ( ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
+			return {
 				state: AssertConditionState.FAILURE,
-				message: 'site-setup did not provide the site slug or site id it is configured to.',
+				message: 'site-migration does not have the site slug or site id.',
 			};
 		}
 
-		return result;
+		return { state: AssertConditionState.SUCCESS };
 	},
 
 	useStepNavigation( currentStep, navigate ) {

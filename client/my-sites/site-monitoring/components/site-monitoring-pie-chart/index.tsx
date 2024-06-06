@@ -1,5 +1,5 @@
 import { Spinner } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
@@ -32,7 +32,7 @@ export const SiteMonitoringPieChart = ( {
 	}
 
 	return (
-		<HostingCard className={ classnames( classes ) } title={ title }>
+		<HostingCard className={ clsx( classes ) } title={ title }>
 			<HostingCardDescription>{ subtitle }</HostingCardDescription>
 			<div className="site-monitoring__chart-container">
 				{ ! data.length ? <Spinner /> : null }

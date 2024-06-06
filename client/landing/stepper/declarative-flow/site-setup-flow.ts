@@ -338,13 +338,8 @@ const siteSetupFlow: Flow = {
 
 					switch ( intent ) {
 						case SiteIntent.Import:
-							if ( isEnabled( 'onboarding/new-migration-flow' ) ) {
-								return exitFlow(
-									`/setup/site-migration?siteSlug=${ siteSlug }&flags=onboarding/new-migration-flow`
-								);
-							}
+							return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }&ref=goals` );
 
-							return navigate( 'import' );
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );
 						case SiteIntent.Write:
@@ -527,6 +522,9 @@ const siteSetupFlow: Flow = {
 				case 'importerBlogger':
 				case 'importerMedium':
 				case 'importerSquarespace':
+					if ( backToFlow ) {
+						return navigate( `importList?siteSlug=${ siteSlug }&backToFlow=${ backToFlow }` );
+					}
 					return navigate( `importList?siteSlug=${ siteSlug }` );
 
 				case 'importerWordpress':

@@ -7,7 +7,7 @@ import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
@@ -45,7 +45,7 @@ function HelpCenterContent() {
 	const content = (
 		<>
 			<Button
-				className={ cx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
+				className={ clsx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
 				onClick={ handleToggleHelpCenter }
 				icon={
 					<HelpIcon

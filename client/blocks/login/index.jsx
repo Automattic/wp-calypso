@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
@@ -209,7 +209,7 @@ class Login extends Component {
 			! twoStepNonce &&
 			! socialConnect &&
 			! privateSite &&
-			// Show the continue as user flow WooCommerce and BlazePro but not for other OAuth2 clients
+			// Show the continue as user flow WooCommerce and Blaze Pro but not for other OAuth2 clients
 			! ( oauth2Client && ! ( isWoo && ! isPartnerSignup ) && ! isBlazePro ) &&
 			! isJetpackWooCommerceFlow &&
 			! isJetpack &&
@@ -572,7 +572,7 @@ class Login extends Component {
 			}
 
 			if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-				headerText = <h3>{ translate( 'Log in to your BlazePro account' ) }</h3>;
+				headerText = <h3>{ translate( 'Log in to your Blaze Pro account' ) }</h3>;
 				const poweredByWpCom = (
 					<>
 						{ translate( 'Log in with your WordPress.com account.' ) }
@@ -1002,7 +1002,7 @@ class Login extends Component {
 
 		return (
 			<div
-				className={ classNames( 'login', {
+				className={ clsx( 'login', {
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,

@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
@@ -141,7 +141,7 @@ export default function SiteProfilerV2( props: Props ) {
 			{ showResultScreen && performanceMetrics && (
 				<>
 					<LayoutBlock
-						className={ classnames(
+						className={ clsx(
 							'results-header-block',
 							{ poor: performanceCategory === 'non-wpcom-low-performer' },
 							{ good: performanceCategory !== 'non-wpcom-low-performer' }
@@ -168,7 +168,7 @@ export default function SiteProfilerV2( props: Props ) {
 									/>
 								) }
 								<HostingSection
-									domain={ domain }
+									url={ basicMetrics?.final_url }
 									dns={ siteProfilerData.dns }
 									urlData={ urlData }
 									hostingProvider={ hostingProviderData?.hosting_provider }
@@ -209,7 +209,7 @@ export default function SiteProfilerV2( props: Props ) {
 							</>
 						) }
 					</LayoutBlock>
-					<MigrationBannerBig />
+					{ ! isWpCom && <MigrationBannerBig url={ basicMetrics?.final_url } /> }
 				</>
 			) }
 			<FootNote />

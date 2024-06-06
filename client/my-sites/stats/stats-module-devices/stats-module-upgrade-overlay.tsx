@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import { STATS_TYPE_DEVICE_STATS } from '../constants';
 import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
@@ -52,7 +52,7 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 		// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
 		<StatsListCard
 			title="Devices"
-			className={ classNames(
+			className={ clsx(
 				className,
 				'stats-module-upgrade-overlay',
 				'stats-module__card',

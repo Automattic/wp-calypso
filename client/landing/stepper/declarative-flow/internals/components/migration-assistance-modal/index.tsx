@@ -63,7 +63,8 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 				{ hasEnTranslation(
 					'Subscribe to the %(planName)s plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.'
 				)
-					? translate(
+					? // translators: %(planName)s is a plan name. E.g. Commerce plan.
+					  translate(
 							'Subscribe to the %(planName)s plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.',
 							{
 								args: {

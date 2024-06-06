@@ -29,8 +29,15 @@ export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTa
 		}
 	};
 
+	const isTagsSubmitDisabled = tagsInput === '' || ! tagsInput;
+
 	return (
 		<div className="agency-site-tags">
+			<p>
+				{ translate(
+					'Add tags to categorize your sites and easily filter through them on your Sites dashboard.'
+				) }
+			</p>
 			<Card className="agency-site-tags__controls">
 				<FormTextInput
 					disabled={ isLoading }
@@ -46,19 +53,22 @@ export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTa
 					primary
 					compact
 					busy={ isLoading }
+					disabled={ isTagsSubmitDisabled }
 					onClick={ handleAddTags }
 					className="agency-site-tags__button"
 				>
 					{ translate( 'Add' ) }
 				</Button>
 			</Card>
-			<Card tagName="ul" className="agency-site-tags__list">
-				{ tags.map( ( tag ) => (
-					<li>
-						<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
-					</li>
-				) ) }
-			</Card>
+			{ tags.length ? (
+				<Card tagName="ul" className="agency-site-tags__list">
+					{ tags.map( ( tag ) => (
+						<li>
+							<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
+						</li>
+					) ) }
+				</Card>
+			) : null }
 		</div>
 	);
 }

@@ -1,5 +1,5 @@
 import { ProgressBar, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { truncate } from 'lodash';
 import PropTypes from 'prop-types';
@@ -104,7 +104,7 @@ export class UploadingPane extends PureComponent {
 			case appStates.UPLOAD_PROCESSING:
 			case appStates.UPLOADING: {
 				const uploadPercent = percentComplete;
-				const progressClasses = classNames( 'importer__upload-progress', {
+				const progressClasses = clsx( 'importer__upload-progress', {
 					'is-complete': uploadPercent > 95,
 				} );
 				const uploaderPrompt =
@@ -238,7 +238,7 @@ export class UploadingPane extends PureComponent {
 	render() {
 		const { importerStatus, site, isEnabled } = this.props;
 		const isReadyForImport = this.isReadyForImport();
-		const importerStatusClasses = classNames(
+		const importerStatusClasses = clsx(
 			'importer__upload-content',
 			this.props.importerStatus.importerState
 		);

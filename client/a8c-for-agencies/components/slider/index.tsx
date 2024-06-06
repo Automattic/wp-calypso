@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useRef } from 'react';
 
 import './style.scss';
@@ -54,7 +54,7 @@ export default function A4ASlider( {
 	}, [ normalizeMinimum, onChange, options, value ] );
 
 	return (
-		<div className={ classNames( 'a4a-slider', className ) }>
+		<div className={ clsx( 'a4a-slider', className ) }>
 			{ label && (
 				<div className="a4a-slider__label-container">
 					<div className="a4a-slider__label">{ label }</div>

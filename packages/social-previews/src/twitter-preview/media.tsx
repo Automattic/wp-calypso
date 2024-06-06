@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { Fragment } from 'react';
 import { MediaProps } from './types';
 
@@ -37,7 +37,7 @@ export const Media: React.FC< MediaProps > = ( { media } ) => {
 
 	const isVideo = filteredMedia[ 0 ].type.startsWith( 'video/' );
 
-	const mediaClasses = classnames( [
+	const mediaClasses = clsx( [
 		'twitter-preview__media',
 		'twitter-preview__media-children-' + filteredMedia.length,
 	] );

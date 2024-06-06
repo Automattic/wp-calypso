@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import { useRef } from 'react';
@@ -64,12 +64,12 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 
 	return (
 		<div
-			className={ classNames( DEFAULT_CLASS, {
+			className={ clsx( DEFAULT_CLASS, {
 				'reader-dual-column': width > WIDE_DISPLAY_CUTOFF,
 			} ) }
 		>
 			<div
-				className={ classNames( `${ DEFAULT_CLASS }__left-button-wrapper`, {
+				className={ clsx( `${ DEFAULT_CLASS }__left-button-wrapper`, {
 					'display-none': shouldHideLeftScrollButton(),
 				} ) }
 				aria-hidden
@@ -84,7 +84,7 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 			</div>
 
 			<div
-				className={ classNames( `${ DEFAULT_CLASS }__right-button-wrapper`, {
+				className={ clsx( `${ DEFAULT_CLASS }__right-button-wrapper`, {
 					'display-none': shouldHideRightScrollButton(),
 				} ) }
 				aria-hidden

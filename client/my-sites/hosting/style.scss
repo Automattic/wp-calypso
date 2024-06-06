@@ -1,6 +1,6 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
-$areas: github-deployments, sftp, site-backup, support, phpmyadmin, staging-site, restore-plan-software, cache, web-server-settings, admin-interface-style;
+$areas: sftp, site-backup, support, phpmyadmin, staging-site, restore-plan-software, cache, web-server-settings, admin-interface-style;
 
 .hosting {
 	/* Rely on the standard spacing for the underlying elements. */
@@ -49,7 +49,6 @@ $areas: github-deployments, sftp, site-backup, support, phpmyadmin, staging-site
 				display: grid;
 				grid-template-columns: 1fr 1fr;
 				grid-template-areas:
-					"github-deployments github-deployments"
 					"sftp phpmyadmin"
 					"sftp cache"
 					"restore-plan-software web-server-settings"

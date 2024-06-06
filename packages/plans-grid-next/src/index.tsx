@@ -1,5 +1,5 @@
 import { useRef } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import PlanButton from './components/plan-button';
@@ -52,7 +52,7 @@ const WrappedComparisonGrid = ( {
 		] ),
 	} );
 
-	const classNames = classnames( 'plans-grid-next', className, {
+	const classNames = clsx( 'plans-grid-next', className, {
 		'is-small': 'small' === gridSize,
 		'is-smedium': 'smedium' === gridSize,
 		'is-medium': 'medium' === gridSize,
@@ -121,7 +121,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		] ),
 	} );
 
-	const classNames = classnames( 'plans-grid-next', className, {
+	const classNames = clsx( 'plans-grid-next', className, {
 		'is-small': 'small' === gridSize,
 		'is-medium': 'medium' === gridSize,
 		'is-large': 'large' === gridSize,

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { ReactNode } from 'react';
 import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
 import useGuidedTours from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
@@ -40,7 +40,7 @@ function MainLayout( {
 
 	return (
 		<Main
-			className={ classNames( 'a4a-layout', className, {
+			className={ clsx( 'a4a-layout', className, {
 				'is-with-border': withBorder,
 				'is-compact': compact,
 			} ) }

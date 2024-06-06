@@ -4,7 +4,7 @@ import { RichText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, plus } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { ItemEditor } from './item';
 
 import './editor.scss';
@@ -173,7 +173,7 @@ const edit = class extends Component {
 						const onSplit = () => {
 							this.insertNewItemAfter( itemIndex );
 						};
-						const classNames = classnames( `${ className }__item`, {
+						const classNames = clsx( `${ className }__item`, {
 							[ `${ className }__item--done` ]: item.done,
 						} );
 

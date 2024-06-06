@@ -1,6 +1,4 @@
-import { shield, trendingUp, chartBar } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
-import { ReactNode } from 'react';
 import customerImageAjitBohra from 'calypso/assets/images/migrations/customer-testimonials/ajit-bohra.jpg';
 import customerImageAntonyAgnel from 'calypso/assets/images/migrations/customer-testimonials/antony-agnel.jpg';
 import customerImageChrisCoyier from 'calypso/assets/images/migrations/customer-testimonials/chris-coyier.jpg';
@@ -48,24 +46,3 @@ export const UpgradePlanHostingTestimonials = [
 		customerInfo: 'AntonyAgnel.com',
 	},
 ];
-
-export const defaultHostingDetails = [
-	{
-		id: 'reduced-error-rate',
-		title: translate( 'Reduced error rate' ),
-		description: translate( '16% fewer errors' ),
-		icon: shield,
-	},
-	{
-		id: 'increased-speed',
-		title: translate( 'Increased speed' ),
-		description: translate( '30% faster' ),
-		icon: trendingUp,
-	},
-	{
-		id: 'higher-availability',
-		title: translate( 'Higher availability' ),
-		description: translate( '3% better uptime' ),
-		icon: chartBar,
-	},
-] as Array< { id: string; title: string; description: string | ReactNode; icon: JSX.Element } >;

@@ -6,7 +6,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
 } from '@automattic/urls';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -114,7 +114,7 @@ class TransferDomainPrecheck extends Component {
 		const { loading } = this.props;
 		const isAtCurrentStep = step === currentStep;
 		const isStepFinished = currentStep > step;
-		const sectionClasses = classNames( 'transfer-domain-step__section', {
+		const sectionClasses = clsx( 'transfer-domain-step__section', {
 			'is-expanded': isAtCurrentStep,
 			'is-complete': isStepFinished,
 		} );

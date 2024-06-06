@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { PureComponent } from 'react';
 
 import './style.scss';
@@ -14,7 +14,7 @@ export class Spinner extends PureComponent< {
 	};
 
 	render() {
-		const className = classNames( this.props.baseClassName, this.props.className );
+		const className = clsx( this.props.baseClassName, this.props.className );
 
 		const style = {
 			width: this.props.size,

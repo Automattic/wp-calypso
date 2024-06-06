@@ -1,5 +1,5 @@
 import { SegmentedControl } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -136,7 +136,7 @@ class StatsPostSummary extends Component {
 			selectedRecord = chartData[ chartData.length - 1 ];
 		}
 
-		const summaryWrapperClass = classNames( 'stats-post-summary', 'is-chart-tabs', {
+		const summaryWrapperClass = clsx( 'stats-post-summary', 'is-chart-tabs', {
 			'is-period-year': this.state.period === 'year',
 		} );
 

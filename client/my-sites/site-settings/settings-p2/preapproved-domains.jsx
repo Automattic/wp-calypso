@@ -1,7 +1,7 @@
 import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { includes, pickBy, filter } from 'lodash';
 import { useSelector } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
@@ -193,7 +193,7 @@ const P2PreapprovedDomainsForm = ( {
 
 	return (
 		<div
-			className={ classNames( 'p2-preapproved-domains', {
+			className={ clsx( 'p2-preapproved-domains', {
 				'is-loading': isRequestingSettings,
 			} ) }
 		>

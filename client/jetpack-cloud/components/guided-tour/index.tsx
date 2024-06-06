@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Popover, Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -156,7 +156,7 @@ const GuidedTour = ( {
 	return (
 		<Popover
 			isVisible={ isVisible }
-			className={ classNames( className, 'guided-tour__popover' ) }
+			className={ clsx( className, 'guided-tour__popover' ) }
 			context={ targetElement }
 			position={ popoverPosition }
 		>

@@ -379,7 +379,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-								support_variation: 'kayako',
+								support_variation: 'email',
 								force_site_id: true,
 								location: 'help-center',
 								section: sectionName,

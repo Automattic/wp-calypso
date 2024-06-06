@@ -6,7 +6,7 @@ import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selector
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
+import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
@@ -18,7 +18,7 @@ const originalLocation = window.location;
 
 jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
-jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
+jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
 jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
 	triggerGuidesForStep: jest.fn(),
 } ) );
@@ -37,8 +37,8 @@ describe( 'Site Migration Flow', () => {
 	beforeEach( () => {
 		( window.location.assign as jest.Mock ).mockClear();
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
-		( useIsSiteOwner as jest.Mock ).mockReturnValue( {
-			isOwner: true,
+		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
+			isAdmin: true,
 		} );
 
 		const apiBaseUrl = 'https://public-api.wordpress.com';
@@ -54,19 +54,6 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	describe( 'useAssertConditions', () => {
-		it( 'redirects the user to the login page when they are not logged in', () => {
-			( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
-
-			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
-			runUseAssertionCondition( {
-				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-			} );
-
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/start/account/user-social?variationName=site-migration&toStepper=true&redirect_to=/setup/site-migration`
-			);
-		} );
-
 		it( 'redirects the user to the start page when there is not siteSlug and SiteID', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
 
@@ -78,9 +65,9 @@ describe( 'Site Migration Flow', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
 		} );
 
-		it( 'redirects the user to the start page when the user is not the site owner', () => {
+		it( 'redirects the user to the start page when the user is not the site admin', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
-			( useIsSiteOwner as jest.Mock ).mockReturnValue( { isOwner: false } );
+			( useIsSiteAdmin as jest.Mock ).mockReturnValue( { isAdmin: false } );
 
 			runUseAssertionCondition( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,

@@ -99,7 +99,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		font-weight: 400;
 		margin-left: 12px;
 
-		@media ( max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			display: block;
 		}
 	}
@@ -420,7 +420,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 
-@media ( max-width: $custom-mobile-breakpoint ) {
+@media (max-width: $custom-mobile-breakpoint) {
 	.highlight-cards-heading {
 		margin-left: $font-body-small;
 		margin-right: $font-body-small;
@@ -438,7 +438,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 
-@media ( max-width: $break-small ) {
+@media (max-width: $break-small) {
 	.highlight-cards {
 		overflow-y: auto;
 	}

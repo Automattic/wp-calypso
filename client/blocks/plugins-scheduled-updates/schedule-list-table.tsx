@@ -1,3 +1,5 @@
+import { WIDE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { Button, DropdownMenu, Tooltip, FormToggle } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -20,6 +22,7 @@ export const ScheduleListTable = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { isEligibleForFeature } = useIsEligibleForFeature();
+	const isWideScreen = useBreakpoint( WIDE_BREAKPOINT );
 
 	const { onEditClick, onRemoveClick, onShowLogs } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
@@ -40,7 +43,7 @@ export const ScheduleListTable = ( props: Props ) => {
 					<th>{ translate( 'Name' ) }</th>
 					<th>{ translate( 'Last update' ) }</th>
 					<th>{ translate( 'Next update' ) }</th>
-					<th>{ translate( 'Frequency' ) }</th>
+					<th className="frequency">{ translate( 'Frequency' ) }</th>
 					<th>{ translate( 'Plugins' ) }</th>
 					<th>{ translate( 'Active' ) }</th>
 					<th></th>
@@ -71,7 +74,8 @@ export const ScheduleListTable = ( props: Props ) => {
 										>
 											{ schedule.last_run_status === 'in-progress'
 												? translate( 'In progress' )
-												: schedule.last_run_timestamp &&
+												: isWideScreen &&
+												  schedule.last_run_timestamp &&
 												  prepareDateTime( schedule.last_run_timestamp ) }
 										</Button>
 									) }
@@ -81,7 +85,7 @@ export const ScheduleListTable = ( props: Props ) => {
 							{ ! schedule.last_run_status && ! schedule.last_run_timestamp && '-' }
 						</td>
 						<td className="next-update">{ prepareDateTime( schedule.timestamp ) }</td>
-						<td>
+						<td className="frequency">
 							{
 								{
 									daily: translate( 'Daily' ),

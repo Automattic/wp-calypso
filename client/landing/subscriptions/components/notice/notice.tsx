@@ -1,5 +1,5 @@
 import './style.scss';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import closeIcon from './images/close.svg';
 import errorIcon from './images/error.svg';
@@ -38,7 +38,7 @@ const Notice = ( {
 }: NoticeProps ) => {
 	return visible ? (
 		<div
-			className={ classNames(
+			className={ clsx(
 				'subscription-management__notice',
 				`subscription-management__notice--${ type }`,
 				className

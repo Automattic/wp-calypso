@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -291,7 +291,7 @@ class SignupForm extends Component {
 		const fieldsForValidation = filter( [
 			'email',
 			this.props.isPasswordless === false && 'password', // Remove password from validation if passwordless
-			this.props.displayUsernameInput && 'username',
+			this.displayUsernameInput() && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
@@ -544,7 +544,7 @@ class SignupForm extends Component {
 	globalNotice( notice, status ) {
 		return (
 			<Notice
-				className={ classNames( 'signup-form__notice', {
+				className={ clsx( 'signup-form__notice', {
 					'signup-form__span-columns': this.isHorizontal(),
 				} ) }
 				showDismiss={ false }
@@ -573,7 +573,7 @@ class SignupForm extends Component {
 			};
 		}
 
-		if ( this.props.displayUsernameInput ) {
+		if ( this.displayUsernameInput() ) {
 			userData.username = formState.getFieldValue( this.state.form, 'username' );
 		} else {
 			userData.extra = {
@@ -1046,7 +1046,7 @@ class SignupForm extends Component {
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
 				{ this.termsOfServiceLink() }
 				<FormButton
-					className={ classNames(
+					className={ clsx(
 						'signup-form__submit',
 						variationName && `${ variationName }-signup-form`
 					) }
@@ -1176,7 +1176,7 @@ class SignupForm extends Component {
 
 		if ( this.props.isJetpackWooCommerceFlow || this.props.isJetpackWooDnaFlow ) {
 			return (
-				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
+				<div className={ clsx( 'signup-form__woocommerce', this.props.className ) }>
 					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate>
 						{ this.props.formHeader && (
 							<header className="signup-form__header">{ this.props.formHeader }</header>
@@ -1282,7 +1282,7 @@ class SignupForm extends Component {
 
 			return (
 				<div
-					className={ classNames( 'signup-form', this.props.className, {
+					className={ clsx( 'signup-form', this.props.className, {
 						'is-horizontal': this.isHorizontal(),
 					} ) }
 				>
@@ -1346,7 +1346,7 @@ class SignupForm extends Component {
 
 		return (
 			<div
-				className={ classNames( 'signup-form', this.props.className, {
+				className={ clsx( 'signup-form', this.props.className, {
 					'is-horizontal': this.isHorizontal(),
 				} ) }
 			>

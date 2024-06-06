@@ -1,9 +1,8 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef, useMemo } from 'react';
-import { BASIC_METRICS_UNITS } from 'calypso/data/site-profiler/metrics-dictionaries';
 import { calculateMetricsSectionScrollOffset } from 'calypso/site-profiler/utils/calculate-metrics-section-scroll-offset';
 import { CopiesReturnValueList, MetricsCopies, getCopies } from './copies';
 import type { BasicMetricsScored, Metrics, Scores } from 'calypso/data/site-profiler/types';
@@ -37,6 +36,7 @@ type BasicMetricProps = {
 };
 
 export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetricProps ) => {
+	const translate = useTranslate();
 	const { value, score } = basicMetrics[ metric ];
 	const showMetric = value !== undefined && value !== null;
 	const isPositiveScore = score === 'good';
@@ -44,14 +44,18 @@ export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetric
 	return (
 		showMetric && (
 			<div className="basic-metrics__card">
-				<div className={ classNames( 'basic-metrics__header', score ) }>
+				<div className={ clsx( 'basic-metrics__header', score ) }>
 					<div className="basic-metrics__name">
 						<Gridicon size={ 18 } icon={ getIcon( score ) } />
 						{ name }
 					</div>
 					<div className="basic-metrics__value">
-						{ value }
-						{ BASIC_METRICS_UNITS[ metric ] }
+						{ metric === 'cls'
+							? value
+							: translate( '%(ms)dms', {
+									comment: 'value to be displayed in millisecond',
+									args: { ms: value },
+							  } ) }
 					</div>
 				</div>
 				<h3>{ isPositiveScore ? copies.good.diagnostic : copies.poor.diagnostic }</h3>

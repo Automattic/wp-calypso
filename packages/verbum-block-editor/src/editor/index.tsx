@@ -14,7 +14,7 @@ import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import React, { useState, useEffect, useCallback } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { safeParse } from '../utils';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
@@ -110,7 +110,7 @@ export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRT
 					onInput={ handleContentUpdate }
 					onChange={ handleContentUpdate }
 				>
-					<div className={ classNames( 'editor__header', { 'is-editing': isEditing } ) }>
+					<div className={ clsx( 'editor__header', { 'is-editing': isEditing } ) }>
 						<div className="editor__header-wrapper">
 							<div className="editor__header-toolbar">
 								<BlockToolbar hideDragHandle />

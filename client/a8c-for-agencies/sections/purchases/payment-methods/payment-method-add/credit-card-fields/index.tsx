@@ -1,7 +1,7 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { Field } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
@@ -82,7 +82,7 @@ export default function CreditCardFields() {
 			{ ! isStripeFullyLoaded && <CreditCardLoading /> }
 
 			<div
-				className={ classnames( 'credit-card-fields', {
+				className={ clsx( 'credit-card-fields', {
 					'credit-card-fields--is-loaded': isStripeFullyLoaded,
 				} ) }
 			>

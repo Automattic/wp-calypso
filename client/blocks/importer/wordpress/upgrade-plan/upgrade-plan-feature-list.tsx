@@ -3,7 +3,7 @@ import { Badge } from '@automattic/components';
 import { Plans2023Tooltip } from '@automattic/plans-grid-next';
 import { chevronDown, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React, { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
@@ -35,9 +35,9 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 		.filter( ( option ) => option?.getTitle() );
 
 	return (
-		<ul className={ classnames( 'import__details-list' ) }>
+		<ul className={ clsx( 'import__details-list' ) }>
 			{ ! showFeatures && (
-				<li className={ classnames( 'import__upgrade-plan-feature-more' ) }>
+				<li className={ clsx( 'import__upgrade-plan-feature-more' ) }>
 					<button onClick={ () => setShowFeatures( true ) }>
 						{ __( 'Show all features' ) }
 						<Icon size={ 18 } icon={ chevronDown } />
@@ -48,7 +48,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 			{ showFeatures && (
 				<>
 					{ wpcomFeatures?.map( ( feature, i ) => (
-						<li className={ classnames( 'import__upgrade-plan-feature' ) } key={ i }>
+						<li className={ clsx( 'import__upgrade-plan-feature' ) } key={ i }>
 							<Plans2023Tooltip
 								id={ `feature-${ i }` }
 								text={ feature?.getDescription?.() }
@@ -61,11 +61,11 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 						</li>
 					) ) }
 
-					<li className={ classnames( 'import__upgrade-plan-feature logo' ) }>
+					<li className={ clsx( 'import__upgrade-plan-feature logo' ) }>
 						<JetpackLogo size={ 16 } />
 					</li>
 					{ jetpackFeatures?.map( ( feature, i ) => (
-						<li className={ classnames( 'import__upgrade-plan-feature' ) } key={ i }>
+						<li className={ clsx( 'import__upgrade-plan-feature' ) } key={ i }>
 							<Plans2023Tooltip
 								id={ `jetpack-feature-${ i }` }
 								text={ feature?.getDescription?.() }
@@ -76,10 +76,10 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 							</Plans2023Tooltip>
 						</li>
 					) ) }
-					<li className={ classnames( 'import__upgrade-plan-feature logo' ) }>
+					<li className={ clsx( 'import__upgrade-plan-feature logo' ) }>
 						<strong>{ __( 'Storage' ) }</strong>
 					</li>
-					<li className={ classnames( 'import__upgrade-plan-feature' ) }>
+					<li className={ clsx( 'import__upgrade-plan-feature' ) }>
 						{ storageOptions?.map( ( storage, i ) => (
 							<Badge type="info" key={ i }>
 								{ storage?.getTitle() }

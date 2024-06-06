@@ -1,7 +1,7 @@
 import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
 import { usePlansGridContext } from '../grid-context';
@@ -96,15 +96,15 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					  ( currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && paidDomainName ) ||
 					  ! currentFeature.availableForCurrentPlan;
 
-				const divClasses = classNames( '', getPlanClass( planSlug ), {
+				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 				} );
-				const spanClasses = classNames( 'plan-features-2023-grid__item-info', {
+				const spanClasses = clsx( 'plan-features-2023-grid__item-info', {
 					'is-annual-plan-feature': currentFeature.availableOnlyForAnnualPlans,
 					'is-available':
 						isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan,
 				} );
-				const itemTitleClasses = classNames( 'plan-features-2023-grid__item-title', {
+				const itemTitleClasses = clsx( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
 				} );
 

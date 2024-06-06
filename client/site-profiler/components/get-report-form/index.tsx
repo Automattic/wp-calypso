@@ -1,6 +1,6 @@
 import { FormLabel, FormInputValidation, Gridicon, Button } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -103,7 +103,7 @@ export function GetReportForm( {
 
 	return (
 		<div
-			className={ classnames( 'get-report-form__wrapper', {
+			className={ clsx( 'get-report-form__wrapper', {
 				'get-report-form__wrapper--hidden': ! isOpen,
 			} ) }
 		>

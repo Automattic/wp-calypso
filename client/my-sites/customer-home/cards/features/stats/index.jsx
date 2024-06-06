@@ -1,6 +1,6 @@
 import { Card, Spinner } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect } from 'react';
@@ -87,7 +87,7 @@ export const StatsV2 = ( {
 				</>
 			) }
 			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-			<Card className={ classnames( 'customer-home__card', { 'stats__with-chart': renderChart } ) }>
+			<Card className={ clsx( 'customer-home__card', { 'stats__with-chart': renderChart } ) }>
 				{ isSiteUnlaunched && (
 					<Chart data={ placeholderChartData } isPlaceholder>
 						<div>

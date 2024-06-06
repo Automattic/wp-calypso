@@ -1,6 +1,6 @@
 import { PLAN_100_YEARS, domainProductSlugs, isFreePlan } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import i18n, { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -81,7 +81,7 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		contentType = 'free_domain_credit';
 	}
 
-	const className = classNames( {
+	const className = clsx( {
 		'has-non-wpcom-domains': hasNonWpcomDomains,
 	} );
 

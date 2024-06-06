@@ -1,14 +1,11 @@
-import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { Card } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
 import StatsPurchasePreviewImage from './stats-purchase-preview-image';
-import StatsPurchaseSVG from './stats-purchase-svg';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 
 interface StatsCommercialPriceDisplayProps {
@@ -18,7 +15,6 @@ interface StatsCommercialPriceDisplayProps {
 
 interface StatsSingleItemPagePurchaseFrameProps {
 	children: React.ReactNode;
-	isFree?: boolean;
 }
 
 const StatsCommercialPriceDisplay = ( {
@@ -265,24 +261,14 @@ const StatsBenefitsFree = () => {
 
 const StatsSingleItemPagePurchaseFrame = ( {
 	children,
-	isFree = false,
 }: StatsSingleItemPagePurchaseFrameProps ) => {
-	const useNewPreviewImage = config.isEnabled( 'stats/checkout-flows-v2' );
 	return (
-		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
+		<div className={ clsx( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
 			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>{ children }</div>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
-						{ useNewPreviewImage && <StatsPurchasePreviewImage /> }
-						{ ! useNewPreviewImage && (
-							<>
-								<StatsPurchaseSVG isFree={ isFree } hasHighlight={ false } extraMessage={ false } />
-								<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
-									<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
-								</div>
-							</>
-						) }
+						<StatsPurchasePreviewImage />
 					</div>
 				</div>
 			</Card>
@@ -292,7 +278,7 @@ const StatsSingleItemPagePurchaseFrame = ( {
 
 const StatsSingleItemCard = ( { children }: { children: React.ReactNode } ) => {
 	return (
-		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
+		<div className={ clsx( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
 			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--single` }>{ children }</div>

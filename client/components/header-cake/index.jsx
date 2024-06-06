@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import HeaderCakeBack from './back';
@@ -20,7 +20,7 @@ export default class HeaderCake extends Component {
 			alwaysShowActionText,
 			alwaysShowBackText,
 		} = this.props;
-		const classes = classNames( 'header-cake', this.props.className, {
+		const classes = clsx( 'header-cake', this.props.className, {
 			'is-compact': this.props.isCompact,
 		} );
 

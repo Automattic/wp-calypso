@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTourKitContext } from '../../../index';
 import thumbsDown from '../icons/thumbs_down';
 import thumbsUp from '../icons/thumbs_up';
@@ -47,7 +47,7 @@ const WpcomTourKitRating: React.FunctionComponent = () => {
 			<div>
 				<Button
 					aria-label={ __( 'Rate thumbs up', __i18n_text_domain__ ) }
-					className={ classNames( 'wpcom-tour-kit-rating__end-icon', {
+					className={ clsx( 'wpcom-tour-kit-rating__end-icon', {
 						active: tourRating === 'thumbs-up',
 					} ) }
 					disabled={ isDisabled }
@@ -57,7 +57,7 @@ const WpcomTourKitRating: React.FunctionComponent = () => {
 				/>
 				<Button
 					aria-label={ __( 'Rate thumbs down', __i18n_text_domain__ ) }
-					className={ classNames( 'wpcom-tour-kit-rating__end-icon', {
+					className={ clsx( 'wpcom-tour-kit-rating__end-icon', {
 						active: tourRating === 'thumbs-down',
 					} ) }
 					disabled={ isDisabled }

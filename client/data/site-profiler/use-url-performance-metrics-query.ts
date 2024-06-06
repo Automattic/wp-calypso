@@ -25,6 +25,6 @@ export const useUrlPerformanceMetricsQuery = ( url?: string, hash?: string ) => 
 		retry: false,
 		refetchOnWindowFocus: false,
 		refetchInterval: ( query ) =>
-			query.state.data?.webtestpage_org?.status === 'completed' ? false : 1000, // 1 second	;
+			query.state.data?.webtestpage_org?.status === 'completed' ? false : 5000, // 5 second	;
 	} );
 };

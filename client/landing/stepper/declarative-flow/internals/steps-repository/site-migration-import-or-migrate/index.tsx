@@ -24,7 +24,8 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const options = [
 		{
 			label: hasEnTranslation( 'Everything (requires a %(planName)s Plan)' )
-				? translate( 'Everything (requires a %(planName)s Plan)', {
+				? // translators: %(planName)s is a plan name. E.g. Commerce plan.
+				  translate( 'Everything (requires a %(planName)s Plan)', {
 						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
 				  } )
 				: translate( 'Everything (requires a Creator Plan)' ),

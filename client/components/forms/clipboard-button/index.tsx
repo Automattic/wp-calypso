@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { forwardRef } from 'react';
 
 interface ClipboardButtonProps {
@@ -36,7 +36,7 @@ const ClipboardButton = forwardRef<
 			{ ...rest }
 			onClick={ onCopyHandler }
 			ref={ ref }
-			className={ classNames( 'clipboard-button', className ) }
+			className={ clsx( 'clipboard-button', className ) }
 		/>
 	);
 } );

@@ -1,21 +1,13 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import surveyImage from 'calypso/assets/images/illustrations/github-deployments.svg';
 import SurveyModal from 'calypso/components/survey-modal';
-import { maybeSetDeploymentDone, shouldShowDeploymentSurvey } from './utils';
 
 export const GitHubDeploymentSurvey = () => {
 	const localeSlug = useLocale();
-	const [ showSurvey, setShowSurvey ] = useState( false );
 
-	useEffect( () => {
-		maybeSetDeploymentDone();
-		setShowSurvey( shouldShowDeploymentSurvey() );
-	}, [] );
-
-	if ( localeSlug !== 'en' || ! showSurvey ) {
+	if ( localeSlug !== 'en' ) {
 		return null;
 	}
 
