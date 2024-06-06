@@ -21,7 +21,6 @@ import './style.scss';
 
 const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const { submit } = navigation;
-	const socialService = getSocialServiceFromClientId( '' );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -43,6 +42,20 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const loginLink = login( {
 		signupUrl: window.location.pathname + window.location.search,
 	} );
+
+	const hashEntries = new globalThis.URLSearchParams( window.location.hash.substring( 1 ) );
+
+	let socialServiceResponse: Record< string, string[] | string > = {};
+	let socialService: string = '';
+
+	if ( hashEntries.size > 0 ) {
+		const hashObject = Object.fromEntries( hashEntries.entries() );
+		const clientId = hashObject.client_id;
+		socialService = getSocialServiceFromClientId( clientId ) ?? socialService;
+		if ( socialService ) {
+			socialServiceResponse = hashObject;
+		}
+	}
 	return (
 		<>
 			<FormattedHeader align="center" headerText={ translate( 'Create your account' ) } brandFont />
@@ -56,8 +69,8 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 				} }
 				logInUrl={ loginLink }
 				handleSocialResponse={ handleSocialResponse }
-				socialService={ socialService ?? '' }
-				socialServiceResponse={ {} }
+				socialService={ socialService }
+				socialServiceResponse={ socialServiceResponse }
 				isReskinned
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
