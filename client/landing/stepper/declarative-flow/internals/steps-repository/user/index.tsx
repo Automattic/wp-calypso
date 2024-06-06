@@ -9,11 +9,13 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Step } from '../../types';
-import useProcessingCallbacks from './userProcessingCallbacks';
+import useErrorNotice from './useErrorNotice';
+import useProcessingCallbacks from './useUserProcessingCallbacks';
 
 import './style.scss';
 
@@ -23,10 +25,11 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { handleSocialResponse } = useProcessingCallbacks( {
-		flowName: flow,
-		stepSubmit: submit,
-	} );
+	const { handleSocialResponse, accountCreateResponse, recentSocialAuthAttemptParams } =
+		useProcessingCallbacks( {
+			flowName: flow,
+		} );
+	const notice = useErrorNotice( { accountCreateResponse, recentSocialAuthAttemptParams } );
 
 	useEffect( () => {
 		if ( ! isLoggedIn ) {
@@ -37,7 +40,9 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	if ( isLoggedIn ) {
 		submit?.();
 	}
-
+	const loginLink = login( {
+		signupUrl: window.location.pathname + window.location.search,
+	} );
 	return (
 		<>
 			<FormattedHeader align="center" headerText={ translate( 'Create your account' ) } brandFont />
@@ -49,9 +54,7 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 					dispatch( fetchCurrentUser() as unknown as AnyAction );
 					submit?.();
 				} }
-				logInUrl={ login( {
-					signupUrl: window.location.pathname + window.location.search,
-				} ) }
+				logInUrl={ loginLink }
 				handleSocialResponse={ handleSocialResponse }
 				socialService={ socialService ?? '' }
 				socialServiceResponse={ {} }
@@ -59,9 +62,16 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
 				userEmail=""
-				notice={ false }
+				notice={ notice }
 				isSocialFirst
 			/>
+			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
+				<WpcomLoginForm
+					authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
+					log={ accountCreateResponse.username }
+					redirectTo={ window.location.href }
+				/>
+			) }
 		</>
 	);
 };

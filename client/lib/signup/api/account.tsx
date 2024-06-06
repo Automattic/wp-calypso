@@ -5,7 +5,8 @@ import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
 import {
-	AccountCreationResponse,
+	AccountCreateReturn,
+	AccountCreationAPIResponse,
 	CreateAccountParams,
 	CreateNewAccountParams,
 	CreateSocialAccountParams,
@@ -13,7 +14,7 @@ import {
 } from './type';
 
 function recordNewAccountCreation( params: {
-	response: AccountCreationResponse;
+	response: AccountCreationAPIResponse;
 	flowName: string;
 	username: string;
 	userData: CreateAccountParams[ 'userData' ];
@@ -132,10 +133,10 @@ export async function createAccount( {
 	recaptchaDidntLoad,
 	recaptchaFailed,
 	recaptchaToken,
-}: CreateAccountParams ) {
+}: CreateAccountParams ): Promise< AccountCreateReturn > {
 	let oauth2SignupParams = {};
 	let errors;
-	let response: AccountCreationResponse;
+	let response: AccountCreationAPIResponse;
 	let isNewAccountCreated = true;
 
 	if ( service ) {
@@ -146,7 +147,7 @@ export async function createAccount( {
 			userData,
 		} ) );
 
-		isNewAccountCreated = !! response.created_account;
+		isNewAccountCreated = !! response?.created_account;
 	} else {
 		( { errors, response } = await createNewAccount( {
 			userData,
@@ -166,7 +167,7 @@ export async function createAccount( {
 	}
 
 	if ( errors.length > 0 ) {
-		return errors;
+		return { errors };
 	}
 
 	if ( ! response?.bearer_token ) {

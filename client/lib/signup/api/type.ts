@@ -1,4 +1,4 @@
-export type AccountCreationResponse = {
+export type AccountCreationAPIResponse = {
 	username: string;
 	bearer_token: string;
 	signup_sandbox_username?: string;
@@ -41,11 +41,25 @@ export type CreateNewAccountParams = Pick<
 >;
 
 export type WpcomResolvedResponse = {
-	errors: Array< { error?: string; message: string; data?: { email: string } } >;
-	response: any;
+	errors: Array< {
+		error?: 'already_taken' | 'already_active' | 'email_exists' | 'user_exists';
+		message: string;
+		data?: { email: string };
+	} >;
+	response?: any;
 };
 
 export type CreateSocialAccountParams = Pick<
 	CreateAccountParams,
 	'service' | 'access_token' | 'id_token' | 'userData'
 >;
+
+export type AccountCreateReturn =
+	| {
+			errors?: Array< any >;
+	  }
+	| {
+			username?: string;
+			marketing_price_group?: string | undefined;
+			bearer_token?: string | undefined;
+	  };

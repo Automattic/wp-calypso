@@ -4,12 +4,23 @@
 import { AuthRedirectParams, UserSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
+import * as oauthToken from 'calypso/lib/oauth-token';
 import { createAccount } from 'calypso/lib/signup/api/account';
+import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { errorNotice } from 'calypso/state/notices/actions';
 
-type Props = { flowName: string; stepSubmit?: () => void };
-export default function useProcessingCallbacks( { flowName, stepSubmit }: Props ) {
+export type SocialAuthParams = {
+	service?: string;
+	access_token?: string;
+	id_token?: string | null;
+};
+type Props = { flowName: string };
+export default function useUserProcessingCallbacks( { flowName }: Props ) {
+	const [ accountCreateResponse, setAccountCreateResponse ] = useState< AccountCreateReturn >();
+	const [ recentSocialAuthAttemptParams, setRecentSocialAuthAttemptParams ] =
+		useState< SocialAuthParams >();
 	const translate = useTranslate();
 	const authParams = useSelect(
 		( select ) => ( select( USER_STORE ) as UserSelect ).getAuthRedirectParams(),
@@ -75,8 +86,13 @@ export default function useProcessingCallbacks( { flowName, stepSubmit }: Props 
 			...rest,
 		};
 
-		await createAccount( accountCreateParams );
-		stepSubmit?.();
+		const result = await createAccount( accountCreateParams );
+
+		if ( 'bearer_token' in result && result?.bearer_token ) {
+			oauthToken.setToken( result?.bearer_token );
+		}
+
+		setAccountCreateResponse( result );
 	};
 
 	function isOauth2RedirectValid( oauth2Redirect?: string | null ) {
@@ -122,10 +138,12 @@ export default function useProcessingCallbacks( { flowName, stepSubmit }: Props 
 			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
 			window.sessionStorage.removeItem( 'signup_redirect_to' );
 		}
-
+		setRecentSocialAuthAttemptParams( { service, access_token, id_token } );
 		submitToCreateAccount( { service, access_token, id_token, userData, queryArgs: query } );
 	};
 	return {
 		handleSocialResponse,
+		accountCreateResponse,
+		recentSocialAuthAttemptParams,
 	};
 }
