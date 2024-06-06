@@ -7,9 +7,11 @@
 		padding-right: 12px;
 	}
 
-	&:hover {
-		svg.sidebar-v2__external-icon {
-			color: var(--color-text-inverted);
+	.sidebar-v2__menu-item {
+		&:hover {
+			svg.sidebar-v2__external-icon {
+				color: var(--color-text-inverted);
+			}
 		}
 	}
 }
