@@ -41,6 +41,7 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 			__experimentalExpandOnFocus
 			__experimentalShowHowTo={ false }
 			__nextHasNoMarginBottom
+			label=""
 			onChange={ setTokens }
 			suggestions={ Object.values( availableServices ) }
 			value={ selectedServices }

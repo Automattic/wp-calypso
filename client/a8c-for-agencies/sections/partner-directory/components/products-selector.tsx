@@ -21,6 +21,7 @@ const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
 			__experimentalExpandOnFocus
 			__experimentalShowHowTo={ false }
 			__nextHasNoMarginBottom
+			label=""
 			onChange={ setProducts }
 			suggestions={ availableProducts }
 			value={ selectedProducts }
