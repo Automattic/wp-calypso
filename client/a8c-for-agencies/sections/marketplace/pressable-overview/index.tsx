@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -20,6 +20,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingOverview from '../common/hosting-overview';
+import { MarketplaceTypeContext } from '../context';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
@@ -40,6 +41,14 @@ function PressableOverview() {
 		setShowCart,
 		toggleCart,
 	} = useShoppingCart();
+
+	const { setMarketplaceType } = useContext( MarketplaceTypeContext );
+
+	// Set the marketplace type to regular when the component mounts
+	// since we are not using the referral marketplace for Pressable.
+	useEffect( () => {
+		setMarketplaceType( 'regular' );
+	}, [ setMarketplaceType ] );
 
 	const onAddToCart = useCallback(
 		( item: APIProductFamilyProduct ) => {

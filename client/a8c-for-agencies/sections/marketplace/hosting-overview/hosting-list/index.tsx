@@ -2,13 +2,14 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import SimpleList from '../../common/simple-list';
+import { MarketplaceTypeContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { getCheapestPlan, getWPCOMCreatorPlan } from '../../lib/hosting';
 import ListingSection from '../../listing-section';
@@ -26,6 +27,12 @@ export default function HostingList( { selectedSite }: Props ) {
 	const activeAgency = useSelector( getActiveAgency );
 
 	const { data } = useProductsQuery( false, true );
+
+	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	// Hide the section if it's automated referrals marketplace
+	const hideSection = marketplaceType === 'referral' && isAutomatedReferrals;
 
 	const wpcomProducts = data
 		? ( data.find(
@@ -131,7 +138,7 @@ export default function HostingList( { selectedSite }: Props ) {
 					/>
 				) }
 
-				{ cheapestPressablePlan && (
+				{ cheapestPressablePlan && ! hideSection && (
 					<HostingCard
 						plan={ cheapestPressablePlan }
 						pressableOwnership={ pressableOwnership }
@@ -148,7 +155,7 @@ export default function HostingList( { selectedSite }: Props ) {
 					/>
 				) }
 			</ListingSection>
-			{ isWPCOMOptionEnabled && (
+			{ isWPCOMOptionEnabled && ! hideSection && (
 				<Card className="hosting-list__features">
 					<h3 className="hosting-list__features-heading">
 						{ translate( 'Included with Standard & Premier hosting' ) }
