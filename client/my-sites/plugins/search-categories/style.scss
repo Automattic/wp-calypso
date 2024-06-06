@@ -125,6 +125,10 @@
 			padding-top: 7px;
 			padding-bottom: 7px;
 			transition: none;
+
+			&:focus {
+				box-shadow: 0 0 0 1px var(--color-primary-light) inset;
+			}
 		}
 
 		.segmented-control__item:first-child .segmented-control__link {
@@ -134,7 +138,6 @@
 		.segmented-control__item:last-child .segmented-control__link {
 			margin-right: 0 !important;
 		}
-
 
 		.segmented-control__item.is-selected .segmented-control__link {
 			&,
