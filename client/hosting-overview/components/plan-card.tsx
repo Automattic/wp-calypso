@@ -65,6 +65,7 @@ const PricingSection: FC = () => {
 			components: {
 				span: <span />,
 			},
+			comment: 'billingPeriod e.g., every month, every year, every 3 years',
 		} );
 	};
 
