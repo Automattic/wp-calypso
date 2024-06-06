@@ -548,19 +548,23 @@
 				.section-nav-tabs__list {
 					align-items: start;
 				}
-				.site-preview-pane__environment-dropdown {
+				.site-preview-pane__menu-buttons {
+					margin-left: 10px;
 					margin-right: 48px;
+					.site-preview-pane__create-staging-site-button {
+						margin-top: 10px;
+					}
 				}
 
 				@media (max-width: $break-mobile) {
 					border-bottom: 0;
-					.site-preview-pane__environment-dropdown {
+					.site-preview-pane__menu-buttons {
 						visibility: hidden;
 					}
 				}
 
 				@media (max-width: $break-large) {
-					.site-preview-pane__environment-dropdown {
+					.site-preview-pane__menu-buttons {
 						margin-right: 24px;
 					}
 				}
