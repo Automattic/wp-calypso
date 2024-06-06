@@ -100,3 +100,26 @@
 		margin-inline-end: 8px;
 	}
 }
+
+.partner-directory-dashboard__popover-content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	border-radius: 4px;
+	width: 300px;
+
+	.button {
+		margin-inline-end: 8px;
+	}
+
+	.partner-directory-dashboard__popover-content-title {
+		font-size: rem(14px);
+		color: var(--color-accent-60);
+	}
+}
+
+.partner-directory-dashboard__popover {
+	.components-popover__content {
+		padding: 16px;
+	}
+}

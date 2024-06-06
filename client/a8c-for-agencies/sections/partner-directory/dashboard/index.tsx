@@ -7,8 +7,8 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import StepSection from '../../referrals/common/step-section';
 import StepSectionItem from '../../referrals/common/step-section-item';
-import StatusBadge from '../../referrals/common/step-section-item/status-badge';
 import { getBrandMeta } from '../lib/get-brand-meta';
+import DashboardStatusBadge from './status-badge';
 
 import './style.scss';
 
@@ -85,6 +85,8 @@ export default function PartnerDirectoryDashboard() {
 		</StepSection>
 	);
 
+	const showFinishProfileButton = brandStatuses.some( ( { status } ) => status === 'Approved' );
+
 	if ( isCompleted ) {
 		return (
 			<div className="partner-directory-dashboard__completed-section">
@@ -100,6 +102,8 @@ export default function PartnerDirectoryDashboard() {
 				{ brandStatuses.length > 0 &&
 					brandStatuses.map( ( { brand, status, type } ) => {
 						const brandMeta = getBrandMeta( brand );
+						const showPopoverOnLoad =
+							brandStatuses.filter( ( { status } ) => status === 'Not approved' ).length === 1;
 						return (
 							<StepSectionItem
 								isNewLayout
@@ -126,11 +130,12 @@ export default function PartnerDirectoryDashboard() {
 											</Button>
 										</>
 									) : (
-										<StatusBadge
+										<DashboardStatusBadge
 											statusProps={ {
-												children: status,
+												status,
 												type,
 											} }
+											showPopoverOnLoad={ showPopoverOnLoad }
 										/>
 									)
 								}
@@ -185,17 +190,23 @@ export default function PartnerDirectoryDashboard() {
 					description={
 						isSubmitted && brandStatuses.length > 0 ? (
 							<div className="partner-directory-dashboard__brand-status-section">
-								{ brandStatuses.map( ( { brand, status, type } ) => (
-									<div key={ brand }>
-										<StatusBadge
-											statusProps={ {
-												children: status,
-												type,
-											} }
-										/>
-										<span>{ brand }</span>
-									</div>
-								) ) }
+								{ brandStatuses.map( ( { brand, status, type } ) => {
+									const showPopoverOnLoad =
+										brandStatuses.filter( ( { status } ) => status === 'Not approved' ).length ===
+										1;
+									return (
+										<div key={ brand }>
+											<DashboardStatusBadge
+												statusProps={ {
+													status,
+													type,
+												} }
+												showPopoverOnLoad={ showPopoverOnLoad }
+											/>
+											<span>{ brand }</span>
+										</div>
+									);
+								} ) }
 							</div>
 						) : (
 							translate(
@@ -223,7 +234,7 @@ export default function PartnerDirectoryDashboard() {
 						href: '/partner-directory/agency-details',
 						onClick: onFinishProfileClick,
 						primary: isSubmitted,
-						disabled: ! isSubmitted,
+						disabled: ! isSubmitted || ! showFinishProfileButton,
 						compact: true,
 					} }
 				/>
