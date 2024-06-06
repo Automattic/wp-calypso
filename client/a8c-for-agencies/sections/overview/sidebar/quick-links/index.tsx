@@ -9,6 +9,7 @@ import {
 	A4A_PURCHASES_LINK,
 	A4A_BILLING_LINK,
 	A4A_INVOICES_LINK,
+	EXTERNAL_A4A_KNOWLEDGE_BASE,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 
 import './style.scss';
@@ -22,7 +23,7 @@ export default function OverviewSidebarQuickLinks() {
 	const navItems: FoldableNavItem[] = [
 		{
 			icon: info,
-			link: 'http://automattic.com/for-agencies/help',
+			link: EXTERNAL_A4A_KNOWLEDGE_BASE,
 			slug: 'view_knowledge_base',
 			title: translate( 'View Knowledge Base' ),
 			trackEventName: 'calypso_a4a_overview_quick_links_knowledge_base_click',
