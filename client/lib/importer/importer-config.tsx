@@ -309,6 +309,17 @@ function getConfig( {
 	return importerConfig;
 }
 
+export function getImporterEngines(): string[] {
+	const importerConfig = getConfig( {} );
+	const engines = [];
+
+	for ( const config in importerConfig ) {
+		engines.push( importerConfig[ config ].engine );
+	}
+
+	return engines;
+}
+
 export function getImporters( args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' } ) {
 	const importerConfig = getConfig( args );
 
