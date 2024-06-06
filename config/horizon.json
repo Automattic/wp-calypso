@@ -58,7 +58,7 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/magic-link-signup": true,
-		"jetpack/manage-simple-sites": false,
+		"jetpack/manage-simple-sites": true,
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/sharing-buttons-block-enabled": false,
@@ -131,7 +131,6 @@
 		"site-indicator": true,
 		"site-profiler/metrics": true,
 		"ssr/prefetch-timebox": true,
-		"stats/checkout-flows-v2": true,
 		"stats/date-control": true,
 		"stats/devices": true,
 		"stats/paid-wpcom-stats": true,
@@ -173,6 +172,5 @@
 	"boom_analytics_enabled": true,
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "horizon",
-	"google_analytics_key": "UA-10673494-20",
 	"hotjar_enabled": true
 }

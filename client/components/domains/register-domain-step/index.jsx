@@ -1721,16 +1721,20 @@ class RegisterDomainStep extends Component {
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE,
 			REGISTERED_OTHER_SITE_SAME_USER,
+			REGISTERED_SAME_SITE,
 		} = domainAvailability;
 
 		const { isSignupStep, includeOwnedDomainInSuggestions } = this.props;
+		const isGravatarFlow = this.props.flowName === 'domain-for-gravatar';
 
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE === error ||
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE === error ||
 			( isSignupStep && DOTBLOG_SUBDOMAIN === error ) ||
-			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error )
+			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error ) ||
+			( isGravatarFlow &&
+				[ REGISTERED_OTHER_SITE_SAME_USER, REGISTERED_SAME_SITE ].includes( error ) )
 		) {
 			return;
 		}

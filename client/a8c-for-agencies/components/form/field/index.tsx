@@ -4,14 +4,18 @@ import './style.scss';
 
 type Props = {
 	label: string;
+	sub?: string;
 	description?: string;
 	children: ReactNode;
 };
 
-export default function FormField( { label, children, description }: Props ) {
+export default function FormField( { label, sub, children, description }: Props ) {
 	return (
 		<div className="a4a-form__section-field">
-			<h3 className="a4a-form__section-field-label">{ label }</h3>
+			<div className="a4a-form__section-field-heading">
+				<h3 className="a4a-form__section-field-label">{ label }</h3>
+				{ sub && <p className="a4a-form__section-field-sub">{ sub }</p> }
+			</div>
 
 			{ children }
 

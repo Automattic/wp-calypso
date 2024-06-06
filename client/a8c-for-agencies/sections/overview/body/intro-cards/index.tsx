@@ -10,7 +10,7 @@ const Card1 = () => {
 	const translate = useTranslate();
 	return (
 		<>
-			<h1>{ translate( 'Welcome to the Automattic for Agencies beta' ) }</h1>
+			<h1>{ translate( 'Welcome to Automattic for Agencies' ) }</h1>
 			<p>
 				{ translate(
 					'Automattic for Agencies is a new agency program that brings together all of Automattic’s brands under one roof, enabling you to get the best deals on our products and services. We’ll also provide you with tooling to help you be more efficient in your work and grow your business.'

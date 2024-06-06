@@ -4,9 +4,9 @@ export function useShouldRenderEmailOption() {
 	const { data: supportAvailability, isFetching } = useSupportAvailability();
 
 	// Domain only customers should always see the email option
-	// Domain only users have this combination of support level === free, and paying customer status.
+	// Domain only users have this combination of support level === free, and is_user_eligible === true.
 	const isDomainOnlyUser =
-		supportAvailability?.is_paying_customer && supportAvailability?.supportLevel === 'free';
+		supportAvailability?.is_user_eligible && supportAvailability?.supportLevel === 'free';
 
 	return {
 		isLoading: isFetching,

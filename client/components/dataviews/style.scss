@@ -184,6 +184,10 @@
 	.dataviews-view-table-wrapper {
 		height: 0 !important;
 	}
+
+	.dataviews-pagination {
+		display: none;
+	}
 }
 
 .dataviews-wrapper:has(.dataviews-no-results) {

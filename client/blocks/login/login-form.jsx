@@ -284,7 +284,7 @@ export class LoginForm extends Component {
 		const isWooAndNotPartnerSignup =
 			this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless;
 
-		// Skip this step if we're in the ( ( Woo and not the partner ) or BlazePro ) signup flows, and hasAccountTypeLoaded.
+		// Skip this step if we're in the ( ( Woo and not the partner ) or Blaze Pro ) signup flows, and hasAccountTypeLoaded.
 		if (
 			! isWooAndNotPartnerSignup &&
 			! this.props.hasAccountTypeLoaded &&
