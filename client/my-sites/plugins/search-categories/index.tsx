@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import Search, { ImperativeHandle } from '@automattic/search';
+import { isDesktop } from '@automattic/viewport';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, MutableRefObject, useRef, RefObject, useEffect } from 'react';
@@ -8,6 +9,7 @@ import ScrollableHorizontalNavigation from 'calypso/components/scrollable-horizo
 import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
+import Categories from 'calypso/my-sites/plugins/categories';
 import {
 	ALLOWED_CATEGORIES,
 	useCategories,
@@ -131,23 +133,31 @@ const SearchCategories: FC< {
 					searchTerms={ searchTerms }
 				/>
 
-				<div className="search-categories__vertical-separator" />
+				{ isDesktop() ? (
+					<>
+						<div className="search-categories__vertical-separator" />
 
-				<ScrollableHorizontalNavigation
-					className="search-categories__categories"
-					onTabClick={ ( tabSlug ) => {
-						dispatch(
-							recordTracksEvent( 'calypso_plugins_category_select', {
-								tag: tabSlug,
-							} )
-						);
+						<ScrollableHorizontalNavigation
+							className="search-categories__categories"
+							onTabClick={ ( tabSlug ) => {
+								dispatch(
+									recordTracksEvent( 'calypso_plugins_category_select', {
+										tag: tabSlug,
+									} )
+								);
 
-						page( getCategoryUrl( tabSlug ) );
-					} }
-					selectedTab={ category ?? categories[ 0 ].slug }
-					tabs={ categories }
-					width={ width }
-				/>
+								page( getCategoryUrl( tabSlug ) );
+							} }
+							selectedTab={ category ?? categories[ 0 ].slug }
+							tabs={ categories }
+							width={ width }
+						/>
+					</>
+				) : (
+					<div ref={ categoriesRef }>
+						<Categories selected={ category } noSelection={ searchTerm ? true : false } />
+					</div>
+				) }
 			</div>
 			<div className="search-categories__sticky-ref" ref={ stickySearchBoxRef } />
 		</>

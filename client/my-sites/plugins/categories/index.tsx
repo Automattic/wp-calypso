@@ -57,7 +57,7 @@ const Categories = ( { selected, noSelection }: { selected?: string; noSelection
 			initialActiveIndex={ activeIndex }
 			onClick={ onClick }
 			hrefList={ categoryUrls }
-			forceSwipe={ 'undefined' === typeof window }
+			swipeEnabled={ false }
 		>
 			{ categories.map( ( category ) => (
 				<span key={ `category-${ category.slug }` } title={ category.menu }>
