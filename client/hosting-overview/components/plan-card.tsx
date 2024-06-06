@@ -11,7 +11,7 @@ import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { HostingCard } from 'calypso/components/hosting-card';
@@ -21,6 +21,7 @@ import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -29,6 +30,7 @@ import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors
 
 const PricingSection: FC = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
@@ -121,7 +123,14 @@ const PricingSection: FC = () => {
 					{ getExpireDetails() }
 					<div className="hosting-overview__plan-cta">
 						{ isFreePlan && (
-							<Button primary compact href={ `/plans/${ site?.slug }` }>
+							<Button
+								primary
+								compact
+								href={ `/plans/${ site?.slug }` }
+								onClick={ () =>
+									dispatch( recordTracksEvent( 'calypso_hosting_overview_upgrade_plan_click' ) )
+								}
+							>
 								{ translate( 'Upgrade your plan' ) }
 							</Button>
 						) }
