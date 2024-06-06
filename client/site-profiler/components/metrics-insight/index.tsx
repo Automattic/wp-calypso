@@ -33,10 +33,13 @@ const Header = styled.div`
 	font-size: 16px;
 	filter: ${ ( props: Header ) => ( props.locked ? 'blur(3px)' : 'none' ) };
 	user-select: ${ ( props: Header ) => ( props.locked ? 'none' : 'auto' ) };
-	display: flex;
 
 	span {
 		display: inline-block;
+
+		&.is-mobile {
+			display: block;
+		}
 	}
 `;
 
