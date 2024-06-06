@@ -85,7 +85,7 @@ function getWarningDescription(
 	context: string | null,
 	warningCount: number,
 	translate: LocalizeProps[ 'translate' ],
-	hasTranslation: ( string ) => boolean
+	hasTranslation: ( arg: string ) => boolean
 ) {
 	const defaultCopy = translate(
 		'By proceeding the following change will be made to the site:',
