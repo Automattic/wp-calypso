@@ -24,12 +24,11 @@ import './style.scss';
 
 const SearchBox: FC< {
 	categoriesRef: RefObject< HTMLDivElement >;
-	isMobile: boolean;
 	isSearching: boolean;
 	searchBoxRef: MutableRefObject< ImperativeHandle >;
 	searchTerm: string;
 	searchTerms: string[];
-} > = ( { categoriesRef, isMobile, isSearching, searchBoxRef, searchTerm, searchTerms } ) => {
+} > = ( { categoriesRef, isSearching, searchBoxRef, searchTerm, searchTerms } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
@@ -65,8 +64,6 @@ const SearchBox: FC< {
 		<Search
 			className="search-categories__searchbox"
 			ref={ searchBoxRef }
-			pinned={ isMobile }
-			fitsContainer={ isMobile }
 			onSearch={ pageToSearch }
 			defaultValue={ searchTerm }
 			searchMode="on-enter"
@@ -124,7 +121,6 @@ const SearchCategories: FC< {
 		<>
 			<div className={ clsx( 'search-categories', { 'fixed-top': isSticky } ) }>
 				<SearchBox
-					isMobile={ false }
 					isSearching={ isSearching }
 					searchBoxRef={ searchRef }
 					searchTerm={ searchTerm }
