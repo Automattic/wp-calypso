@@ -28,6 +28,7 @@ import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
 import { LoadingScreen } from './loading-screen';
 import { MigrationBannerBig } from './migration-banner-big';
+import { NavMenu } from './nav-menu';
 import { PerformanceSection } from './performance-section';
 import { ResultsHeader } from './results-header';
 import { SecuritySection } from './security-section';
@@ -93,7 +94,7 @@ export default function SiteProfilerV2( props: Props ) {
 		data: basicMetrics,
 		error: errorBasicMetrics,
 		isFetching: isFetchingBasicMetrics,
-	} = useUrlBasicMetricsQuery( url );
+	} = useUrlBasicMetricsQuery( url, true );
 
 	const showBasicMetrics =
 		basicMetrics && basicMetrics.success && ! isFetchingBasicMetrics && ! errorBasicMetrics;
@@ -113,9 +114,10 @@ export default function SiteProfilerV2( props: Props ) {
 		basicMetrics?.token
 	);
 
-	const { data: securityMetrics } = useUrlSecurityMetricsQuery(
-		basicMetrics?.final_url,
-		basicMetrics?.token
+	const { data: securityMetrics } = useUrlSecurityMetricsQuery( url, basicMetrics?.token );
+	const { errors: securityMetricsErrors = {} } = securityMetrics ?? {};
+	const noWordPressFound = Object.keys( securityMetricsErrors ).find(
+		( error ) => error === 'no_wordpress'
 	);
 
 	const showResultScreen =
@@ -170,6 +172,19 @@ export default function SiteProfilerV2( props: Props ) {
 							domain={ domain }
 							isWpCom={ isWpCom }
 						/>
+						<NavMenu
+							domain={ domain }
+							navItems={ [
+								{ label: translate( 'Hosting' ), ref: hostingRef },
+								{ label: translate( 'Domain' ), ref: domainRef },
+								{ label: translate( 'Performance Metrics' ), ref: perfomanceMetricsRef },
+								{ label: translate( 'Health Scores' ), ref: healthMetricsRef },
+								...( noWordPressFound
+									? []
+									: [ { label: translate( 'Security' ), ref: securityMetricsRef } ] ),
+							] }
+							showMigrationCta={ ! isWpCom }
+						></NavMenu>
 						<HostingSection
 							url={ basicMetrics?.final_url }
 							dns={ siteProfilerData.dns }
