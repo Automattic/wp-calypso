@@ -92,7 +92,7 @@ export default function SiteProfilerV2( props: Props ) {
 		data: basicMetrics,
 		error: errorBasicMetrics,
 		isFetching: isFetchingBasicMetrics,
-	} = useUrlBasicMetricsQuery( url );
+	} = useUrlBasicMetricsQuery( url, true );
 
 	const showBasicMetrics =
 		basicMetrics && basicMetrics.success && ! isFetchingBasicMetrics && ! errorBasicMetrics;
