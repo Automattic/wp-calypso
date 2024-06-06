@@ -145,7 +145,7 @@ export default function SiteProfilerV2( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-			{ showResultScreen && ! performanceMetrics && <LoadingScreen /> }
+			{ showResultScreen && ! performanceMetrics && <LoadingScreen isSavedReport={ !! hash } /> }
 			{ showResultScreen && performanceMetrics && (
 				<>
 					<LayoutBlock
