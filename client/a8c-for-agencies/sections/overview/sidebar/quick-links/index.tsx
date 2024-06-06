@@ -22,14 +22,6 @@ export default function OverviewSidebarQuickLinks() {
 
 	const navItems: FoldableNavItem[] = [
 		{
-			icon: info,
-			link: EXTERNAL_A4A_KNOWLEDGE_BASE,
-			slug: 'view_knowledge_base',
-			title: translate( 'View Knowledge Base' ),
-			trackEventName: 'calypso_a4a_overview_quick_links_knowledge_base_click',
-			isExternalLink: true,
-		},
-		{
 			icon: category,
 			link: A4A_SITES_LINK,
 			slug: 'manage_sites',
@@ -63,6 +55,14 @@ export default function OverviewSidebarQuickLinks() {
 			slug: 'view_invoices',
 			title: translate( 'View invoices' ),
 			trackEventName: 'calypso_a4a_overview_quick_links_view_invoices_click',
+		},
+		{
+			icon: info,
+			link: EXTERNAL_A4A_KNOWLEDGE_BASE,
+			slug: 'view_knowledge_base',
+			title: translate( 'View Knowledge Base' ),
+			trackEventName: 'calypso_a4a_overview_quick_links_knowledge_base_click',
+			isExternalLink: true,
 		},
 	];
 

@@ -6,4 +6,10 @@
 		padding-left: 12px;
 		padding-right: 12px;
 	}
+
+	&:hover {
+		svg.sidebar-v2__external-icon {
+			color: var(--color-text-inverted);
+		}
+	}
 }
