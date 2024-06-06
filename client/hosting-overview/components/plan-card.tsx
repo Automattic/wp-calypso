@@ -60,27 +60,7 @@ const PricingSection: FC = () => {
 			return null;
 		}
 
-<<<<<<< HEAD
-		return translate( '{{span}}%(rawPrice)s{{/span}} billed %(billingPeriod)s, excludes taxes.', {
-			args: {
-				rawPrice: formatCurrency(
-					pricing?.[ planSlug ].originalPrice.full ?? 0,
-					pricing?.[ planSlug ].currencyCode ?? '',
-					{
-						stripZeros: true,
-						isSmallestUnit: true,
-					}
-				),
-				billingPeriod,
-			},
-			components: {
-				span: <span />,
-			},
-			comment: 'billingPeriod e.g., every month, every year, every 3 years',
-		} );
-=======
-		return perMonthDescription || getPlan( planSlug ).getBillingTimeFrame?.();
->>>>>>> 27ba959d95 (Site Management Panel: Introduce usePerMonthDescription hook to make the description of the plan consistent)
+		return perMonthDescription || getPlan( planSlug )?.getBillingTimeFrame?.();
 	};
 
 	const getExpireDetails = () => {

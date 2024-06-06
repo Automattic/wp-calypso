@@ -63,7 +63,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		isMonthlyPlan,
 		storageAddOnsForPlan,
 		coupon,
-		useCheckPlanAvailabilityForPurchase: helpers.useCheckPlanAvailabilityForPurchase,
+		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
 	} );
 	const description = perMonthDescription || billingTimeframe;
 
