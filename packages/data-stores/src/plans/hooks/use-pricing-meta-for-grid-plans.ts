@@ -126,7 +126,7 @@ const usePricingMetaForGridPlans = ( {
 								monthly: null,
 								full: null,
 							},
-							currencyCode: null,
+							currencyCode: plans.data?.[ planSlug ]?.pricing?.currencyCode,
 						},
 					];
 				}
@@ -167,7 +167,9 @@ const usePricingMetaForGridPlans = ( {
 								monthly: null,
 								full: null,
 							},
-							currencyCode: purchasedPlan ? purchasedPlan?.currencyCode : null,
+							currencyCode: purchasedPlan
+								? purchasedPlan?.currencyCode
+								: plan?.pricing?.currencyCode,
 						},
 					];
 				}
