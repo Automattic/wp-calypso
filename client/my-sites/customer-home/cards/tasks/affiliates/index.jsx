@@ -9,15 +9,16 @@ const Affiliates = () => {
 	const hasTranslation = useHasEnTranslation();
 
 	const title = translate( 'Earn with the Automattic Affiliate Program' );
-	const hasTitleTranaslation = hasTranslation( title );
+	const hasTitleTranaslation = hasTranslation( 'Earn with the Automattic Affiliate Program' );
 
 	const description = translate(
 		'Get up to 100% payouts with Automattic’s suite of trusted, profitable brands, all with a single dashboard to manage and track your earnings across every product. Promote WordPress.com, WooCommerce, Jetpack, and more to your audience and turn conversions into earnings.'
 	);
+	const hasDescriptionTranslation = hasTranslation(
+		'Get up to 100% payouts with Automattic’s suite of trusted, profitable brands, all with a single dashboard to manage and track your earnings across every product. Promote WordPress.com, WooCommerce, Jetpack, and more to your audience and turn conversions into earnings.'
+	);
 
-	const hasDescriptionTranslations = hasTranslation( description );
-
-	if ( ! hasTitleTranaslation || ! hasDescriptionTranslations ) {
+	if ( ! hasTitleTranaslation || ! hasDescriptionTranslation ) {
 		Affiliates.isDisabled = true;
 		return null;
 	}
