@@ -190,7 +190,7 @@ export default function SiteProfilerV2( props: Props ) {
 							showMigrationCta={ ! isWpCom }
 						></NavMenu>
 						<HostingSection
-							url={ basicMetrics?.final_url }
+							url={ url }
 							dns={ siteProfilerData.dns }
 							urlData={ urlData }
 							hostingProvider={ hostingProviderData?.hosting_provider }
@@ -206,7 +206,7 @@ export default function SiteProfilerV2( props: Props ) {
 						/>
 
 						<PerformanceSection
-							url={ basicMetrics?.final_url }
+							url={ url }
 							hash={ hash ?? basicMetrics?.token }
 							hostingProvider={ hostingProviderData?.hosting_provider }
 							performanceMetricsRef={ perfomanceMetricsRef }
@@ -214,7 +214,7 @@ export default function SiteProfilerV2( props: Props ) {
 						/>
 
 						<HealthSection
-							url={ basicMetrics?.final_url }
+							url={ url }
 							hash={ hash ?? basicMetrics?.token }
 							hostingProvider={ hostingProviderData?.hosting_provider }
 							healthMetricsRef={ healthMetricsRef }
@@ -222,7 +222,7 @@ export default function SiteProfilerV2( props: Props ) {
 						/>
 
 						<SecuritySection
-							url={ basicMetrics?.final_url }
+							url={ url }
 							hash={ hash ?? basicMetrics?.token }
 							hostingProvider={ hostingProviderData?.hosting_provider }
 							securityMetricsRef={ securityMetricsRef }
