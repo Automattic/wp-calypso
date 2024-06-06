@@ -246,8 +246,7 @@ export default {
 		}
 
 		// See: 1113-gh-Automattic/experimentation-platform for details.
-		const isGuidedFlow = flowName === 'guided';
-		if ( isGuidedFlow && ( ! userLoggedIn || ( userLoggedIn && isNewUser ) ) ) {
+		if ( flowName === 'guided' && userLoggedIn ) {
 			const bigSkyExperiment = await loadExperimentAssignment(
 				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
 			);

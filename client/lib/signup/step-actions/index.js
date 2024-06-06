@@ -1231,9 +1231,10 @@ export function excludeSurveyStepIfInactive( stepName, defaultDependencies, next
 }
 
 export function excludeSegmentSurveyStepIfInactive( stepName, _, nextProps ) {
-	// trailMapExperimentVariant = undefined | 'control' | 'treatment_guided' | 'treatment_survey_only'
+	// trailMapExperimentVariant = undefined | null | 'treatment_guided' | 'treatment_survey_only'
+	// null => control group.
 	const { trailMapExperimentVariant } = nextProps?.initialContext ?? {};
-	if ( ! trailMapExperimentVariant || trailMapExperimentVariant === 'control' ) {
+	if ( ! trailMapExperimentVariant ) {
 		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 		flows.excludeStep( stepName );
 	}
