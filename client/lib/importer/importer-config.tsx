@@ -14,6 +14,7 @@ export interface ImporterConfig {
 	engine: string;
 	key: string;
 	type: 'file' | 'url';
+	priority: 'primary' | 'secondary';
 	title: string;
 	icon: string;
 	description: TranslateResult;
@@ -50,6 +51,7 @@ function getConfig( {
 		engine: 'wordpress',
 		key: 'importer-type-wordpress',
 		type: 'file',
+		priority: 'primary',
 		title: 'WordPress',
 		icon: 'wordpress',
 		description: (
@@ -89,6 +91,7 @@ function getConfig( {
 		engine: 'blogger',
 		key: 'importer-type-blogger',
 		type: 'file',
+		priority: 'primary',
 		title: 'Blogger',
 		icon: 'blogger-alt',
 		description: (
@@ -131,6 +134,7 @@ function getConfig( {
 		engine: 'medium',
 		key: 'importer-type-medium',
 		type: 'file',
+		priority: 'primary',
 		title: 'Medium',
 		icon: 'medium',
 		description: (
@@ -171,6 +175,7 @@ function getConfig( {
 		engine: 'substack',
 		key: 'importer-type-substack',
 		type: 'file',
+		priority: 'primary',
 		title: 'Substack',
 		icon: 'substack',
 		description: (
@@ -225,6 +230,7 @@ function getConfig( {
 		engine: 'squarespace',
 		key: 'importer-type-squarespace',
 		type: 'file',
+		priority: 'primary',
 		title: 'Squarespace',
 		icon: 'squarespace',
 		description: (
@@ -267,6 +273,7 @@ function getConfig( {
 		engine: 'wix',
 		key: 'importer-type-wix',
 		type: 'url',
+		priority: 'primary',
 		title: 'Wix',
 		icon: 'wix',
 		description: (
