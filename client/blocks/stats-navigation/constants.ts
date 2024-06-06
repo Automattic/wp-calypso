@@ -92,7 +92,6 @@ export interface NavItems {
 	wordads: NavItem;
 	googleMyBusiness: NavItem;
 	subscribers?: NavItem;
-	utmBuilder?: NavItem;
 }
 
 const assembleNavItems = () => {
