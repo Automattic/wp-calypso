@@ -34,8 +34,8 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 		? getProductPricingInfo( userProducts, selectedPlan, 1 )
 		: { discountedCost: 0 };
 
-	const onChatWithUs = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_chat_with_us_click' ) );
+	const onContactUs = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_contact_us_click' ) );
 	}, [ dispatch ] );
 
 	const PRESSABLE_CONTACT_LINK = 'https://pressable.com/request-demo';
@@ -126,12 +126,12 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 				{ ! selectedPlan && (
 					<Button
 						className="pressable-overview-plan-selection__details-card-cta-button"
-						onClick={ onChatWithUs }
+						onClick={ onContactUs }
 						href={ PRESSABLE_CONTACT_LINK }
 						target="_blank"
 						primary
 					>
-						{ translate( 'Chat with us' ) } <Icon icon={ external } size={ 16 } />
+						{ translate( 'Contact us' ) } <Icon icon={ external } size={ 16 } />
 					</Button>
 				) }
 			</div>
