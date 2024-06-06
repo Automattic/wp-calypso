@@ -1,17 +1,6 @@
 import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
 import type { SelectFromMap } from '../mapped-types';
-
-export interface AuthRedirectParams {
-	oauth2_client_id?: string | null;
-	oauth2_redirect?: string | null;
-	redirect_to?: string | null;
-	/**
-	 *  url sent in the confirmation email
-	 */
-	jetpack_redirect?: string | null;
-}
-
 export interface CurrentUser {
 	ID: number;
 	display_name: string;
