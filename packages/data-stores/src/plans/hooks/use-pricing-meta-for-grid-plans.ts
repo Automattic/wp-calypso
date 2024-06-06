@@ -193,7 +193,7 @@ const usePricingMetaForGridPlans = ( {
 						{
 							originalPrice,
 							discountedPrice,
-							currencyCode: null,
+							currencyCode: plan?.pricing?.currencyCode,
 						},
 					];
 				}
@@ -215,7 +215,7 @@ const usePricingMetaForGridPlans = ( {
 							monthly: null,
 							full: null,
 						},
-						currencyCode: null,
+						currencyCode: plan?.pricing?.currencyCode,
 					},
 				];
 			} )
@@ -234,9 +234,7 @@ const usePricingMetaForGridPlans = ( {
 					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 					billingPeriod: plans.data?.[ planSlug ]?.pricing?.billPeriod,
 					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
-					currencyCode:
-						planPrices?.[ planSlug ]?.currencyCode ??
-						plans.data?.[ planSlug ]?.pricing?.currencyCode,
+					currencyCode: planPrices?.[ planSlug ]?.currencyCode,
 					expiry: sitePlans.data?.[ planSlug ]?.expiry,
 					introOffer: introOffers?.[ planSlug ],
 				},
