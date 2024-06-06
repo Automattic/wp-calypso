@@ -7,7 +7,7 @@ import {
 import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
-import { usePerMonthDescription } from '@automattic/plans-grid-next';
+import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -46,7 +46,7 @@ const PricingSection: FC = () => {
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! pricing || ! planData || planPurchaseLoading;
 
-	const perMonthDescription = usePerMonthDescription( {
+	const planBillingDescription = usePlanBillingDescription( {
 		siteId: site?.ID,
 		planSlug,
 		pricing: pricing ?? null,
@@ -60,7 +60,7 @@ const PricingSection: FC = () => {
 			return null;
 		}
 
-		return <>{ perMonthDescription || getPlan( planSlug )?.getBillingTimeFrame?.() }.</>;
+		return <>{ planBillingDescription || getPlan( planSlug )?.getBillingTimeFrame?.() }.</>;
 	};
 
 	const getExpireDetails = () => {

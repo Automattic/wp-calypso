@@ -10,7 +10,7 @@ import useGridPlanForSpotlight from './hooks/data-store/use-grid-plan-for-spotli
 import useGridPlans from './hooks/data-store/use-grid-plans';
 import useGridPlansForComparisonGrid from './hooks/data-store/use-grid-plans-for-comparison-grid';
 import useGridPlansForFeaturesGrid from './hooks/data-store/use-grid-plans-for-features-grid';
-import usePerMonthDescription from './hooks/data-store/use-per-month-description';
+import usePlanBillingDescription from './hooks/data-store/use-plan-billing-description';
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
 import useGridSize from './hooks/use-grid-size';
@@ -174,7 +174,7 @@ export {
 	useGridPlansForFeaturesGrid,
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
-	usePerMonthDescription,
+	usePlanBillingDescription,
 	usePlanFeaturesForGridPlans,
 	useRestructuredPlanFeaturesForComparisonGrid,
 };

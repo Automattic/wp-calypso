@@ -14,7 +14,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import type { GridPlan } from '../../types';
 
-interface UsePerMonthDescriptionProps {
+interface UsePlanBillingDescriptionProps {
 	siteId?: number | null;
 	planSlug: PlanSlug;
 	pricing: GridPlan[ 'pricing' ] | null;
@@ -24,7 +24,7 @@ interface UsePerMonthDescriptionProps {
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 }
 
-export default function usePerMonthDescription( {
+export default function usePlanBillingDescription( {
 	siteId,
 	planSlug,
 	pricing,
@@ -32,7 +32,7 @@ export default function usePerMonthDescription( {
 	isMonthlyPlan,
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
-}: UsePerMonthDescriptionProps ) {
+}: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
 	const { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer } = pricing || {};
 

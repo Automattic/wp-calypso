@@ -8,7 +8,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
-import usePerMonthDescription from '../../../hooks/data-store/use-per-month-description';
+import usePlanBillingDescription from '../../../hooks/data-store/use-plan-billing-description';
 import type { GridPlan } from '../../../types';
 
 const DiscountPromotion = styled.div`
@@ -56,7 +56,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		gridPlansIndex[ planSlug ];
 
 	const { introOffer, billingPeriod } = pricing;
-	const perMonthDescription = usePerMonthDescription( {
+	const planBillingDescription = usePlanBillingDescription( {
 		siteId,
 		planSlug,
 		pricing,
@@ -65,7 +65,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		coupon,
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
 	} );
-	const description = perMonthDescription || billingTimeframe;
+	const description = planBillingDescription || billingTimeframe;
 
 	if (
 		isWooExpressPlan( planSlug ) &&
@@ -75,7 +75,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		return (
 			<div>
 				<div>{ billingTimeframe }</div>
-				<DiscountPromotion>{ perMonthDescription }</DiscountPromotion>
+				<DiscountPromotion>{ planBillingDescription }</DiscountPromotion>
 			</div>
 		);
 	}
