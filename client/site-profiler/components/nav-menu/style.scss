@@ -1,16 +1,8 @@
-
-.layout__content {
-	overflow: initial;
-}
-
 .site-profiler-nav-menu {
 	background-color: #101517;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px;
-	margin: 100px 0;
-	position: sticky;
-	top: 50px;
-	z-index: 99;
+	margin-top: 20px;
 
 	ul {
 		display: flex;
