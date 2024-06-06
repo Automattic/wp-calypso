@@ -1,6 +1,5 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
-import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
@@ -25,25 +24,26 @@ interface Props {
 
 export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
+	const hasEnTranslation = useHasEnTranslation();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 
-	// TODO: Remove extra steps for non-English locales once we have translations.
-	const oldSubtitle = translate( 'Drop your current site address below to get started.' );
-	const newSubtitle = translate(
-		"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
-	);
-	const isTranslationAvailableForNewSubtitle = hasTranslation(
-		"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
-	);
-	const subtitleInUse =
-		isEnglishLocale || isTranslationAvailableForNewSubtitle ? newSubtitle : oldSubtitle;
+	// TODO: Remove extra steps for non-English locales once we have translations -- title.
+	const titleInUse = hasEnTranslation( 'Let’s find your site' )
+		? translate( 'Let’s find your site' )
+		: translate( 'Let’s import your content' );
 
-	// TODO: Remove extra steps for non-English locales once we have translations.
-	const oldTitle = translate( 'Let’s import your content' );
-	const newTitle = translate( 'Let’s find your site' );
-	const isTranslationAvailableForNewTitle = hasTranslation( 'Let’s find your site' );
-	const titleInUse = isTranslationAvailableForNewTitle ? newTitle : oldTitle;
+	// TODO: Remove extra steps for non-English locales once we have translations -- subtitle.
+	const subtitleInUse = hasEnTranslation(
+		"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
+	)
+		? translate(
+				"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
+		  )
+		: translate( 'Drop your current site address below to get started.' );
+
+	// TODO: Remove extra steps for non-English locales once we have translations -- CTA text.
+	const nextLabelText = hasEnTranslation( 'Check my site' ) ? translate( 'Check my site' ) : false;
+	const nextLabelProp = nextLabelText ? { nextLabelText } : {}; // If we don't pass anything, the default label 'Continue' will be used.
 
 	const {
 		data: siteInfo,
@@ -81,6 +81,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 						'Or <button>pick your current platform from a list</button>'
 					) }
 					hideImporterListLink={ hideImporterListLink }
+					{ ...nextLabelProp }
 				/>
 			</div>
 		</div>
