@@ -17,6 +17,7 @@ export interface UseGridPlansParams {
 	selectedFeature?: string | null;
 	selectedPlan?: PlanSlug;
 	showLegacyStorageFeature?: boolean;
+	forceDefaultPlans?: boolean;
 	siteId?: number | null;
 	storageAddOns: ( AddOnMeta | null )[];
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
