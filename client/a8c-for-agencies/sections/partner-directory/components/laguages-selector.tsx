@@ -121,6 +121,8 @@ const LanguagesSelector = ( { setLanguages, selectedLanguages }: Props ) => {
 		<FormTokenField
 			__experimentalAutoSelectFirstMatch
 			__experimentalExpandOnFocus
+			__experimentalShowHowTo={ false }
+			__nextHasNoMarginBottom
 			onChange={ setLanguages }
 			suggestions={ availableLanguages }
 			value={ selectedLanguages }

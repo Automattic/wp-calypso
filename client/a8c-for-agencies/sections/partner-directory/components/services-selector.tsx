@@ -39,6 +39,8 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 		<FormTokenField
 			__experimentalAutoSelectFirstMatch
 			__experimentalExpandOnFocus
+			__experimentalShowHowTo={ false }
+			__nextHasNoMarginBottom
 			onChange={ setTokens }
 			suggestions={ Object.values( availableServices ) }
 			value={ selectedServices }

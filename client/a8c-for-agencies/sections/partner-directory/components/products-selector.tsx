@@ -19,6 +19,8 @@ const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
 		<FormTokenField
 			__experimentalAutoSelectFirstMatch
 			__experimentalExpandOnFocus
+			__experimentalShowHowTo={ false }
+			__nextHasNoMarginBottom
 			onChange={ setProducts }
 			suggestions={ availableProducts }
 			value={ selectedProducts }
