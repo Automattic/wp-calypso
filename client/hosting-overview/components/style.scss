@@ -63,11 +63,21 @@ $card-padding: 24px;
 	.happiness-engineers-tray {
 		align-items: flex-start;
 		display: flex;
-		justify-content: flex-start;
+		/* Flipping the display order around so that the negative margin on gravatars
+		means that left overlaps right rather than vice versa */
+		justify-content: flex-end;
+		flex-direction: row-reverse;
+		height: 44px;
 	}
 
 	.happiness-engineers-tray__gravatar {
-		margin-right: 16px;
+		margin-left: -10px;
+		margin-right: 0;
+		border: 2px solid #fff;
+	}
+
+	:last-child {
+		margin-left: 0;
 	}
 }
 
