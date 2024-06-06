@@ -67,18 +67,6 @@ $sidebar-appearance-break-point: $break-medium;
 			padding-bottom: 0;
 		}
 	}
-
-	.stats-page__heading {
-		display: flex;
-		align-items: center;
-		margin-top: $vertical-margin;
-		margin-bottom: $vertical-margin;
-		color: var(--color-neutral-100);
-		font-family: $brand-serif;
-		font-weight: 500;
-		font-size: $font-title-small;
-		line-height: 26px;
-	}
 }
 
 .is-section-stats,
