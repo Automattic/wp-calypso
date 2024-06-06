@@ -17,26 +17,17 @@ const ScrollableHorizontalNavigation: FC< {
 	tabs: { slug: string; title: string }[];
 	width: number;
 } > = ( { className, onTabClick, selectedTab, tabs, width } ) => {
-	const hasScrolledSelectedTabIntoView = useRef( false );
 	const scrollRef = useRef< HTMLDivElement >( null );
 
-	const scrollSelectedTabIntoView = () => {
+	// Scroll the selected tab into view on initial render and whenever it changes.
+	useEffect( () => {
 		const selectedTabElement = scrollRef.current?.querySelector( '.is-selected' );
 		selectedTabElement?.scrollIntoView( {
 			behavior: 'smooth',
 			block: 'nearest',
 			inline: 'center',
 		} );
-	};
-
-	// Scroll the selected tab into view on initial render.
-	useEffect( () => {
-		if ( ! hasScrolledSelectedTabIntoView.current ) {
-			scrollSelectedTabIntoView();
-
-			hasScrolledSelectedTabIntoView.current = true;
-		}
-	}, [] );
+	}, [ selectedTab ] );
 
 	const bumpScrollX = ( shouldScrollLeft = false ) => {
 		if ( scrollRef.current ) {
@@ -122,7 +113,6 @@ const ScrollableHorizontalNavigation: FC< {
 								key={ tab.slug }
 								selected={ tab.slug === selectedTab }
 								onClick={ () => {
-									// scrollSelectedTabIntoView();
 									onTabClick( tab.slug );
 								} }
 							>
