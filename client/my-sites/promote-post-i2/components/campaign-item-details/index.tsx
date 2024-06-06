@@ -507,7 +507,7 @@ export default function CampaignItemDetails( props: Props ) {
 													<br />
 													<span className="popover-title">
 														{ __(
-															'a metric used to measure the ratio of users who click on your ad to the number of total users view it.'
+															'the ratio of clicks on your ad to the number of impressions delivered.'
 														) }
 													</span>
 												</InfoPopover>
