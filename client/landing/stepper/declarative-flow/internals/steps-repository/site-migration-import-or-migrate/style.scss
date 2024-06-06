@@ -5,26 +5,30 @@
 	max-width: 602px;
 	padding: 0 12px;
 
-	.import-or-migrate__title {
+	.onboarding-title {
 		font-size: 2.75rem;
 		text-align: center;
 	}
 
-	.import-or-migrate__content {
-		display: flex;
-		flex-direction: column;
-		gap: 50px;
-		padding-bottom: 108px;
-		align-items: center;
+	.onboarding-subtitle {
+		color: var(--studio-gray-50, #646970);
+		font-size: 1rem;
+		letter-spacing: -0.32px;
+		line-height: 1.5;
+		margin-bottom: 50px;
+		text-align: center;
 
 		@include break-mobile {
-			gap: 80px;
-			padding-bottom: revert;
+			margin-bottom: 80px;
 		}
 	}
 
 	.import-or-migrate__list {
-		width: 100%;
+		padding-bottom: 108px;
+
+		@include break-mobile {
+			padding-bottom: revert;
+		}
 
 		.card {
 			svg {
