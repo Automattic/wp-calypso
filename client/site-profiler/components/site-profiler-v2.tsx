@@ -89,11 +89,13 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const url = useMemo( () => getValidUrl( routerDomain ), [ routerDomain ] );
 
-	const { data: basicMetrics, error: errorBasicMetrics } = useUrlBasicMetricsQuery(
-		url,
-		hash,
-		true
-	);
+	const {
+		data: basicMetrics,
+		isFetching: isFetchingBasicMetrics,
+		error: errorBasicMetrics,
+	} = useUrlBasicMetricsQuery( url, hash, true );
+	const showBasicMetrics =
+		basicMetrics && basicMetrics.success && ! isFetchingBasicMetrics && ! errorBasicMetrics;
 
 	// TODO: Remove this debug statement once we have a better error handling mechanism
 	if ( errorBasicMetrics ) {
@@ -115,7 +117,7 @@ export default function SiteProfilerV2( props: Props ) {
 		}
 	}, [ finalUrlDomain, token ] );
 
-	const { data: securityMetrics } = useUrlSecurityMetricsQuery( url, basicMetrics?.token );
+	const { data: securityMetrics } = useUrlSecurityMetricsQuery( url, hash );
 	const { errors: securityMetricsErrors = {} } = securityMetrics ?? {};
 	const noWordPressFound = Object.keys( securityMetricsErrors ).find(
 		( error ) => error === 'no_wordpress'
@@ -167,11 +169,13 @@ export default function SiteProfilerV2( props: Props ) {
 						/>
 					</LayoutBlock>
 					<LayoutBlock width="medium">
-						<BasicMetrics
-							basicMetrics={ basicMetrics.basic }
-							domain={ domain }
-							isWpCom={ isWpCom }
-						/>
+						{ showBasicMetrics && (
+							<BasicMetrics
+								basicMetrics={ basicMetrics.basic }
+								domain={ domain }
+								isWpCom={ isWpCom }
+							/>
+						) }
 						<NavMenu
 							domain={ domain }
 							navItems={ [
