@@ -110,13 +110,20 @@ const ecommerceFlow: Flow = {
 			resetStorageAddonSlug,
 		} = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
-		const { selectedDesign, recurType, couponCode, storageAddonSlug } = useSelect(
-			( select ) => ( {
-				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
-				couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
-				storageAddonSlug: ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
-			} ),
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+		const recurType = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			[]
+		);
+		const couponCode = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
+			[]
+		);
+		const storageAddonSlug = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
 			[]
 		);
 		const selectedPlan = getPlanFromRecurType( recurType );
