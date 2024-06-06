@@ -86,7 +86,7 @@ const PricingSection: FC = () => {
 				<div className="hosting-overview__plan-price-wrapper">
 					<PlanPrice
 						className="hosting-overview__plan-price"
-						currencyCode={ pricing?.[ planSlug ].currencyCode }
+						currencyCode={ pricing?.currencyCode }
 						isSmallestUnit
 						rawPrice={ pricing?.originalPrice.monthly }
 					/>
