@@ -1,41 +1,40 @@
 import clsx from 'clsx';
-import { ElementType, FC, PropsWithChildren, ReactNode } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
+import type { ElementType, FC, PropsWithChildren, ReactNode } from 'react';
 import './style.scss';
 
 interface Props extends PropsWithChildren {
-	id?: string;
-	className?: string;
+	align?: 'center' | 'left' | 'right';
 	brandFont?: boolean;
+	className?: string;
+	compactOnMobile?: boolean;
+	hasScreenOptions?: boolean;
 	headerText: ReactNode;
+	id?: string;
+	isSecondary?: boolean;
+	screenReader?: ReactNode;
+	subHeaderAlign?: 'center';
 	subHeaderAs?: ElementType;
 	subHeaderText?: ReactNode;
 	tooltipText?: ReactNode;
-	compactOnMobile?: boolean;
-	isSecondary?: boolean;
-	align?: 'center' | 'left' | 'right';
-	subHeaderAlign?: 'center';
-	hasScreenOptions?: boolean;
-	children?: ReactNode;
-	screenReader?: ReactNode;
 }
 
 const FormattedHeader: FC< Props > = ( {
+	align = 'center',
 	brandFont = false,
-	id = '',
-	headerText,
-	subHeaderText,
-	tooltipText,
+	children,
 	className,
 	compactOnMobile = false,
-	align = 'center',
-	subHeaderAlign,
-	isSecondary = false,
 	hasScreenOptions,
-	subHeaderAs: SubHeaderAs = 'p',
-	children,
+	headerText,
+	id = '',
+	isSecondary = false,
 	screenReader = null,
+	subHeaderAlign,
+	subHeaderAs: SubHeaderAs = 'p',
+	subHeaderText,
+	tooltipText,
 } ) => {
 	const classes = clsx( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
