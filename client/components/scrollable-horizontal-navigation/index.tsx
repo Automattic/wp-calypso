@@ -1,7 +1,7 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
 import clsx from 'clsx';
 import { throttle } from 'lodash';
-import React, { FC, useRef } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 
 import './styles.scss';
@@ -18,6 +18,16 @@ const ScrollableHorizontalNavigation: FC< {
 	width: number;
 } > = ( { className, onTabClick, selectedTab, tabs, width } ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
+
+	// Scroll the selected tab into view on initial render and whenever it changes.
+	useEffect( () => {
+		const selectedTabElement = scrollRef.current?.querySelector( '.is-selected' );
+		selectedTabElement?.scrollIntoView( {
+			behavior: 'smooth',
+			block: 'nearest',
+			inline: 'center',
+		} );
+	}, [ selectedTab ] );
 
 	const bumpScrollX = ( shouldScrollLeft = false ) => {
 		if ( scrollRef.current ) {
@@ -42,10 +52,10 @@ const ScrollableHorizontalNavigation: FC< {
 	const handleScroll = throttle( () => {
 		// Determine and set visibility classes on scroll button wrappers.
 		const leftScrollButton = document.querySelector(
-			'.scrollable-horizontal-navigation__left-button-wrapper'
+			`.scrollable-horizontal-navigation__left-button-wrapper`
 		);
 		const rightScrollButton = document.querySelector(
-			'.scrollable-horizontal-navigation__right-button-wrapper'
+			`.scrollable-horizontal-navigation__right-button-wrapper`
 		);
 		shouldHideLeftScrollButton()
 			? hideElement( leftScrollButton )
@@ -62,7 +72,7 @@ const ScrollableHorizontalNavigation: FC< {
 			} ) }
 		>
 			<div
-				className={ clsx( 'scrollable-horizontal-navigation__left-button-wrapper', {
+				className={ clsx( `scrollable-horizontal-navigation__left-button-wrapper`, {
 					'display-none': shouldHideLeftScrollButton(),
 				} ) }
 				aria-hidden
@@ -77,7 +87,7 @@ const ScrollableHorizontalNavigation: FC< {
 			</div>
 
 			<div
-				className={ clsx( 'scrollable-horizontal-navigation__right-button-wrapper', {
+				className={ clsx( `scrollable-horizontal-navigation__right-button-wrapper`, {
 					'display-none': shouldHideRightScrollButton(),
 				} ) }
 				aria-hidden
@@ -102,7 +112,9 @@ const ScrollableHorizontalNavigation: FC< {
 							<SegmentedControl.Item
 								key={ tab.slug }
 								selected={ tab.slug === selectedTab }
-								onClick={ () => onTabClick( tab.slug ) }
+								onClick={ () => {
+									onTabClick( tab.slug );
+								} }
 							>
 								{ tab.title }
 							</SegmentedControl.Item>
