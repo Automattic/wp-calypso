@@ -9,6 +9,15 @@ export const siteMetrics: Callback = ( context, next ) => {
 	next();
 };
 
+export const redirectSiteLogs: Callback = ( context, next ) => {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const logType = state?.sites?.siteLogType.logType || 'php';
+	const redirectTo = `/site-logs/${ site?.slug }/${ logType }`;
+	console.log( 'redirecting to', redirectTo );
+	context.page.replace( redirectTo );
+};
+
 export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );

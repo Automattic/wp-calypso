@@ -4,6 +4,7 @@ import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { navigate } from 'calypso/lib/navigate';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setSiteLogType } from 'calypso/state/sites/actions';
 import { AppState, SiteLogType } from 'calypso/types';
@@ -26,6 +27,13 @@ export function LogsHeader( { initialLogType }: { initialLogType: SiteLogType } 
 		( state: AppState ) => state?.sites?.siteLogType.logType || initialLogType
 	);
 	const dispatch = useDispatch();
+	const switchType = ( newType: string ) => {
+		// check if pathname ends with either /php or /web, if so replace it with newType, otherwise append newType to the end of the pathname
+		const newPath = window.location.pathname.endsWith( '/php' ) || window.location.pathname.endsWith( '/web' );
+		const newUrl = newPath ? window.location.pathname.replace( /php|web$/, newType ) : `${ window.location.pathname }/${ newType }`;
+		dispatch( setSiteLogType( newType ) );
+		return navigate( newUrl );
+	};
 
 	return (
 		<div className="logs-header">
@@ -55,7 +63,7 @@ export function LogsHeader( { initialLogType }: { initialLogType: SiteLogType } 
 								key={ option.value }
 								value={ option.value }
 								selected={ option.value === logType }
-								onClick={ () => dispatch( setSiteLogType( option.value ) ) }
+								onClick={ () => switchType( option.value ) }
 							>
 								{ option.label }
 							</SegmentedControl.Item>
