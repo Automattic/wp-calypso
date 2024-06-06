@@ -234,8 +234,8 @@ export default function SiteProfilerV2( props: Props ) {
 			) }
 			<FootNote />
 			<GetReportForm
-				url={ basicMetrics?.final_url }
-				token={ basicMetrics?.token }
+				url={ url }
+				token={ hash }
 				isOpen={ showGetReportForm }
 				onClose={ () => setIsGetReportFormOpen( false ) }
 			/>
