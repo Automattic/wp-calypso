@@ -2,7 +2,12 @@
  * @group calypso-pr
  */
 
-import { SupportComponent, TestAccount, TestAccountName } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	SupportComponent,
+	TestAccount,
+	TestAccountName,
+} from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
@@ -48,9 +53,9 @@ describe.each( [
 
 	describe( 'Verify Help Center is opened and visible in Editor', function () {
 		it( 'Navigate to the Editor and verify the Help Center is initially closed', async function () {
-			const postURL = `http://wordpress.com/post/${ testAccount.getSiteURL( {
-				protocol: false,
-			} ) }`;
+			const postURL = DataHelper.getCalypsoURL(
+				'/post/' + testAccount.getSiteURL( { protocol: false } )
+			);
 
 			await page.goto( postURL, {
 				waitUntil: 'networkidle',
