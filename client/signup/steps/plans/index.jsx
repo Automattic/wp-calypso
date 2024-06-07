@@ -1,6 +1,11 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
+import {
+	isSiteAssemblerFlow,
+	isTailoredSignupFlow,
+	isOnboardingGuidedFlow,
+	ONBOARDING_GUIDED_FLOW,
+} from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -122,7 +127,7 @@ export class PlansStep extends Component {
 
 		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
-		const surveyedIntent = flowName === 'guided' ? segmentSlug : undefined;
+		const surveyedIntent = isOnboardingGuidedFlow( flowName ) ? segmentSlug : undefined;
 
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
@@ -133,7 +138,7 @@ export class PlansStep extends Component {
 		// De-emphasize the Free plan as a CTA link on the main onboarding flow, and the guided flow, when a paid domain is picked.
 		// More context can be found in p2-p5uIfZ-f5p
 		const deemphasizeFreePlan =
-			( [ 'onboarding', 'guided' ].includes( flowName ) && paidDomainName != null ) ||
+			( [ 'onboarding', ONBOARDING_GUIDED_FLOW ].includes( flowName ) && paidDomainName != null ) ||
 			deemphasizeFreePlanFromProps;
 
 		return (
