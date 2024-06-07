@@ -396,7 +396,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		forceDefaultPlans: shouldForceDefaultPlansBasedOnIntent( intent ),
+		forceDefaultIntent: shouldForceDefaultPlansBasedOnIntent( intent ),
 	} );
 
 	let highlightLabelOverrides: { [ K in PlanSlug ]?: TranslateResult } | undefined;
