@@ -394,7 +394,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),
 				[ TYPE_PRO ]: () => this.getProFeatuers(),
 				[ TYPE_100_YEAR ]: () => this.getBusinessFeatures(),
-				[ TYPE_STARTER ]: () => this.getStarterFeatuers(),
+				[ TYPE_STARTER ]: () => this.getWPCOMLegacyStarterFeatures(),
 			},
 			[ GROUP_JETPACK ]: {
 				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),
