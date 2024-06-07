@@ -23,7 +23,7 @@ type QuestionStepType = {
 	hideBack?: boolean;
 	hideContinue?: boolean;
 	hideSkip?: boolean;
-	headerAlign?: string;
+	headerAlign?: 'center' | 'left' | 'right';
 	questionComponentMap?: QuestionComponentMap;
 } & QuestionSelectionComponentProps;
 
