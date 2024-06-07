@@ -43,7 +43,21 @@ const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId, sit
 		: null;
 
 	return (
-		<HostingCard className="site-backup-card" title={ translate( 'Site backup' ) }>
+		<HostingCard className="site-backup-card">
+			<div className="hosting-card__heading">
+				<h3 className="hosting-card__title">{ translate( 'Site backup' ) }</h3>
+				<Button
+					className={ clsx( 'site-backup-card__button', 'hosting-overview__link-button' ) }
+					plain
+					href={
+						wpcomAdminInterface === 'wp-admin'
+							? `https://cloud.jetpack.com/backup/${ siteSlug }`
+							: `/backup/${ siteSlug }`
+					}
+				>
+					{ translate( 'See all backups' ) }
+				</Button>
+			</div>
 			{ hasRetrievedLastBackup && lastGoodBackup && ! isLoading && ! disabled && (
 				<>
 					<p className="site-backup-card__date">
@@ -55,17 +69,6 @@ const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId, sit
 							"If you restore your site using this backup, you'll lose any changes made after that date."
 						) }
 					</p>
-					<Button
-						className={ clsx( 'site-backup-card__button', 'hosting-overview__link-button' ) }
-						plain
-						href={
-							wpcomAdminInterface === 'wp-admin'
-								? `https://cloud.jetpack.com/backup/${ siteSlug }`
-								: `/backup/${ siteSlug }`
-						}
-					>
-						{ translate( 'See all backups' ) }
-					</Button>
 				</>
 			) }
 			{ ( ( hasRetrievedLastBackup && ! lastGoodBackup && ! isLoading ) || disabled ) && (
