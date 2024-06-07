@@ -30,9 +30,10 @@ export async function jetpack_site_xhr_wrapper( params, callback ) {
 			'X-WP-Nonce': config( 'nonce' ),
 		},
 		isRestAPI: false,
-		apiNamespace: DIRECT_API_NAMESPACES.includes( params.apiNamespace )
-			? params.apiNamespace
-			: 'jetpack/v4/stats-app',
+		apiNamespace:
+			DIRECT_API_NAMESPACES.includes( params.apiNamespace ) || params.isLocalApiCall
+				? params.apiNamespace
+				: 'jetpack/v4/stats-app',
 	};
 
 	return xhr( params, async function ( error, response, headers ) {
