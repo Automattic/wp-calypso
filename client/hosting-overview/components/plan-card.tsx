@@ -1,8 +1,13 @@
-import { PlanSlug, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PlanSlug,
+	PRODUCT_1GB_SPACE,
+	PLAN_MONTHLY_PERIOD,
+} from '@automattic/calypso-products';
 import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
-import { formatCurrency } from '@automattic/format-currency';
+import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -37,36 +42,25 @@ const PricingSection: FC = () => {
 		siteId: site?.ID,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
-	} );
+	} )?.[ planSlug ];
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! pricing || ! planData || planPurchaseLoading;
-	const billingPeriod = planPurchase?.billPeriodLabel;
+
+	const planBillingDescription = usePlanBillingDescription( {
+		siteId: site?.ID,
+		planSlug,
+		pricing: pricing ?? null,
+		isMonthlyPlan: pricing?.billingPeriod === PLAN_MONTHLY_PERIOD,
+		storageAddOnsForPlan: null,
+		useCheckPlanAvailabilityForPurchase,
+	} );
 
 	const getBillingDetails = () => {
 		if ( isFreePlan ) {
 			return null;
 		}
-		if ( ! billingPeriod ) {
-			return null;
-		}
 
-		return translate( '{{span}}%(rawPrice)s{{/span}} billed %(billingPeriod)s, excludes taxes.', {
-			args: {
-				rawPrice: formatCurrency(
-					pricing?.[ planSlug ].originalPrice.full ?? 0,
-					pricing?.[ planSlug ].currencyCode ?? '',
-					{
-						stripZeros: true,
-						isSmallestUnit: true,
-					}
-				),
-				billingPeriod,
-			},
-			components: {
-				span: <span />,
-			},
-			comment: 'billingPeriod e.g., every month, every year, every 3 years',
-		} );
+		return <>{ planBillingDescription || getPlan( planSlug )?.getBillingTimeFrame?.() }.</>;
 	};
 
 	const getExpireDetails = () => {
@@ -92,9 +86,9 @@ const PricingSection: FC = () => {
 				<div className="hosting-overview__plan-price-wrapper">
 					<PlanPrice
 						className="hosting-overview__plan-price"
-						currencyCode={ pricing?.[ planSlug ].currencyCode }
+						currencyCode={ pricing?.currencyCode }
 						isSmallestUnit
-						rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
+						rawPrice={ pricing?.originalPrice.monthly }
 					/>
 					<span className="hosting-overview__plan-price-term">
 						{ translate( '/mo', {
