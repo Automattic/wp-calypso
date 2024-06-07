@@ -185,10 +185,10 @@ const useFormatPluginData = () => {
 	);
 };
 
-const formatErrorData = ( site: Site ): ErrorNode => ( {
-	status: site.is_connection_healthy ? 'success' : 'failed',
+const formatErrorData = ( isConnected: boolean ): ErrorNode => ( {
+	status: isConnected ? 'success' : 'failed',
 	type: 'error',
-	value: site.is_connection_healthy ? 'error' : '',
+	value: isConnected ? 'error' : '',
 } );
 
 const useFormatSite = () => {
@@ -198,7 +198,7 @@ const useFormatSite = () => {
 	const formatScanData = useFormatScanData();
 
 	return useCallback(
-		( site: Site ): SiteData => {
+		( site: Site, isConnected: boolean ): SiteData => {
 			return {
 				site: {
 					value: site,
@@ -212,7 +212,7 @@ const useFormatSite = () => {
 				scan: formatScanData( site ),
 				monitor: formatMonitorData( site ),
 				plugin: formatPluginData( site ),
-				error: formatErrorData( site ),
+				error: formatErrorData( isConnected ),
 				isFavorite: site.is_favorite,
 				isSelected: site.isSelected,
 				onSelect: site.onSelect,
@@ -222,13 +222,29 @@ const useFormatSite = () => {
 	);
 };
 
+type SiteConnectionStatus = {
+	ID: number;
+	connected: boolean;
+};
+
 /**
  * Returns formatted sites
  */
-const useFormattedSites = ( sites: Site[] ): SiteData[] => {
+const useFormattedSites = (
+	sites: Site[],
+	connectionStatus: SiteConnectionStatus[]
+): SiteData[] => {
 	const formatSite = useFormatSite();
 
-	return useMemo( () => sites.map( ( site ) => formatSite( site ) ), [ formatSite, sites ] );
+	return useMemo(
+		() =>
+			sites.map( ( site ) => {
+				const isConnected =
+					connectionStatus.find( ( status ) => status.ID === site.blog_id )?.connected || false;
+				return formatSite( site, isConnected );
+			} ),
+		[ formatSite, sites, connectionStatus ]
+	);
 };
 
 export default useFormattedSites;
