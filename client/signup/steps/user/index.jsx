@@ -458,7 +458,7 @@ export class UserStep extends Component {
 			id_token: id_token,
 		};
 
-		loginSocialUser( socialInfo, '' ).finally( () => {
+		this.props.loginSocialUser( socialInfo, '' ).finally( () => {
 			this.submit( {
 				service,
 				access_token,
