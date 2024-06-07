@@ -22,7 +22,8 @@ describe.each( [
 	let testAccount: TestAccount;
 	const helpCenterContainerVisibilityErrorMessage = `This is a bug that should be urgently fixed.
 	But because this test runs against ETK production, this bug was probably not introduced in this pull request.
-	Please consider alerting the last person who deployed ETK to attend to this issue and fix the Help Center.`;
+	Please consider alerting the last person who deployed ETK to attend to this issue and fix the Help Center.
+	You can view the history here: https://github.com/Automattic/wp-calypso/commits/trunk/apps/editing-toolkit`;
 
 	beforeAll( async function () {
 		page = await browser.newPage();
