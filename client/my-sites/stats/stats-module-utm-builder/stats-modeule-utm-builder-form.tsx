@@ -85,7 +85,7 @@ const UtmBuilder: React.FC = () => {
 	};
 
 	const campaignString = Object.entries( inputValues )
-		.map( ( [ key, value ] ) => ( value ? `${ key }=${ value }` : '' ) )
+		.map( ( [ key, value ] ) => ( value ? `${ key }=${ encodeURIComponent( value ) }` : '' ) )
 		.filter( ( value ) => value.length )
 		.join( '&' );
 
