@@ -84,6 +84,7 @@ const usePricingMetaForGridPlans = ( {
 				[ planSlug in PlanSlug ]?: {
 					originalPrice: Plans.PlanPricing[ 'originalPrice' ];
 					discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
+					currencyCode: Plans.PlanPricing[ 'currencyCode' ];
 				};
 		  }
 		| null = null;
@@ -125,6 +126,7 @@ const usePricingMetaForGridPlans = ( {
 								monthly: null,
 								full: null,
 							},
+							currencyCode: plans.data?.[ planSlug ]?.pricing?.currencyCode,
 						},
 					];
 				}
@@ -165,6 +167,9 @@ const usePricingMetaForGridPlans = ( {
 								monthly: null,
 								full: null,
 							},
+							currencyCode: purchasedPlan
+								? purchasedPlan?.currencyCode
+								: plan?.pricing?.currencyCode,
 						},
 					];
 				}
@@ -190,6 +195,7 @@ const usePricingMetaForGridPlans = ( {
 						{
 							originalPrice,
 							discountedPrice,
+							currencyCode: plan?.pricing?.currencyCode,
 						},
 					];
 				}
@@ -211,6 +217,7 @@ const usePricingMetaForGridPlans = ( {
 							monthly: null,
 							full: null,
 						},
+						currencyCode: plan?.pricing?.currencyCode,
 					},
 				];
 			} )
@@ -229,8 +236,7 @@ const usePricingMetaForGridPlans = ( {
 					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 					billingPeriod: plans.data?.[ planSlug ]?.pricing?.billPeriod,
 					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
-					currencyCode: plans.data?.[ planSlug ]?.pricing?.currencyCode,
-					purchaseCurrencyCode: purchasedPlan?.currencyCode,
+					currencyCode: planPrices?.[ planSlug ]?.currencyCode,
 					expiry: sitePlans.data?.[ planSlug ]?.expiry,
 					introOffer: introOffers?.[ planSlug ],
 				},

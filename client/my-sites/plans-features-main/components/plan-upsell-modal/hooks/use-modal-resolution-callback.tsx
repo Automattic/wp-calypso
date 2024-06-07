@@ -35,7 +35,8 @@ export function useModalResolutionCallback( {
 				// TODO: look into decoupling the flowName from here as well.
 				if (
 					paidDomainName &&
-					( flowName === 'onboarding' || intent === 'plans-jetpack-app-site-creation' )
+					( ( flowName && [ 'guided', 'onboarding' ].includes( flowName ) ) ||
+						intent === 'plans-jetpack-app-site-creation' )
 				) {
 					return PAID_PLAN_IS_REQUIRED_DIALOG;
 				}

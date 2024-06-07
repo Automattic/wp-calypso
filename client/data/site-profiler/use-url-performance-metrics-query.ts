@@ -21,7 +21,7 @@ export const useUrlPerformanceMetricsQuery = ( url?: string, hash?: string ) => 
 			persist: false,
 		},
 		select: mapResult,
-		enabled: !! url,
+		enabled: !! url && !! hash,
 		retry: false,
 		refetchOnWindowFocus: false,
 		refetchInterval: ( query ) =>

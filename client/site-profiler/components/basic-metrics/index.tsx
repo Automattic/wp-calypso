@@ -10,6 +10,7 @@ import './styles.scss';
 
 const Container = styled.div`
 	scroll-margin-top: ${ calculateMetricsSectionScrollOffset }px;
+	margin-bottom: 130px;
 `;
 
 const SubtitleIcon = styled( Gridicon )`
