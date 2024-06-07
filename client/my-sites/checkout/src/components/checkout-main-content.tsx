@@ -553,6 +553,7 @@ export default function CheckoutMainContent( {
 									siteId={ siteId }
 									onChangeSelection={ changeSelection }
 									showFeaturesList
+									removeProductFromCart={ removeProductFromCart }
 								/>
 								<CheckoutSidebarNudge
 									addItemToCart={ addItemToCart }
