@@ -35,3 +35,4 @@ export const A4A_MIGRATIONS_LINK = '/migrations';
 export const A4A_SETTINGS_LINK = '/settings';
 export const A4A_PARTNER_DIRECTORY_LINK = '/partner-directory';
 export const A4A_PARTNER_DIRECTORY_DASHBOARD_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/dashboard`;
+export const EXTERNAL_A4A_KNOWLEDGE_BASE = 'http://automattic.com/for-agencies/help';

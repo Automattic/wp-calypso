@@ -316,18 +316,18 @@ export function redirectIfJetpackNonAtomic( context, next ) {
 }
 
 /**
- * Middleware to redirect a user to /dev-tools if the site is not Atomic.
+ * Middleware to redirect a user to /hosting-features if the site is not Atomic.
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
  */
-export function redirectToDevToolsPromoIfNotAtomic( context, next ) {
+export function redirectToHostingPromoIfNotAtomic( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 
 	if ( config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && ! isAtomicSite ) {
-		return page.redirect( `/dev-tools/${ site?.slug }` );
+		return page.redirect( `/hosting-features/${ site?.slug }` );
 	}
 
 	next();

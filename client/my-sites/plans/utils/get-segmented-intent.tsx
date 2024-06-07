@@ -1,47 +1,55 @@
 import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey/constants';
+import { SurveyData, SegmentedIntent } from 'calypso/signup/steps/initial-intent/types';
 
-type SurveyData = {
-	'what-are-your-goals': string[];
-	'what-brings-you-to-wordpress': string[];
-};
-
-export function getSegmentedIntent( answers: SurveyData ): string | undefined {
+export function getSegmentedIntent( answers: SurveyData ): SegmentedIntent {
 	const surveyedGoals = answers?.[ 'what-are-your-goals' ];
 	const surveyedIntent = answers?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
 	// Return default wpcom plans for migration flow.
-	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals.includes( SKIP_ANSWER_KEY ) ) {
-		return undefined;
+	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals?.includes( SKIP_ANSWER_KEY ) ) {
+		return { segmentSlug: undefined, segment: 'migration' };
 	}
 
 	if ( surveyedIntent === 'client' ) {
-		return 'plans-guided-segment-developer-or-agency';
+		return {
+			segmentSlug: 'plans-guided-segment-developer-or-agency',
+			segment: 'developer-or-agency',
+		};
 	}
 
 	// Handle different cases when intent is 'Create for self'
 	if ( surveyedIntent === 'myself-business-or-friend' ) {
-		if (
-			surveyedGoals.length === 0 ||
-			surveyedGoals.includes( SKIP_ANSWER_KEY ) ||
-			surveyedGoals.includes( 'newsletter' ) ||
-			surveyedGoals.includes( 'difm' )
-		) {
-			return undefined;
+		if ( surveyedGoals?.length === 0 || surveyedGoals?.includes( SKIP_ANSWER_KEY ) ) {
+			return { segmentSlug: undefined, segment: 'unknown' };
 		}
-		if ( surveyedGoals.includes( 'sell' ) && ! surveyedGoals.includes( 'difm' ) ) {
-			return 'plans-guided-segment-merchant';
+
+		if ( surveyedGoals?.includes( 'difm' ) ) {
+			return { segmentSlug: undefined, segment: 'difm' };
 		}
-		if ( surveyedGoals.includes( 'blog' ) ) {
-			return 'plans-guided-segment-blogger';
+
+		if ( surveyedGoals?.includes( 'sell' ) && ! surveyedGoals?.includes( 'difm' ) ) {
+			return { segmentSlug: 'plans-guided-segment-merchant', segment: 'merchant' };
 		}
-		if ( surveyedGoals.includes( 'educational-or-nonprofit' ) ) {
-			return 'plans-guided-segment-nonprofit';
+		if ( surveyedGoals?.includes( 'blog' ) ) {
+			return { segmentSlug: 'plans-guided-segment-blogger', segment: 'blogger' };
 		}
+		if ( surveyedGoals?.includes( 'educational-or-nonprofit' ) ) {
+			return { segmentSlug: 'plans-guided-segment-nonprofit', segment: 'nonprofit' };
+		}
+
+		if ( surveyedGoals?.includes( 'newsletter' ) ) {
+			return { segmentSlug: undefined, segment: 'newsletter' };
+		}
+
 		// Catch-all case for when none of the specific goals are met
 		// This will also account for "( ! DIFM && ! Sell ) = Consumer / Business" condition
-		return 'plans-guided-segment-consumer-or-business';
+
+		return {
+			segmentSlug: 'plans-guided-segment-consumer-or-business',
+			segment: 'consumer-or-business',
+		};
 	}
 
 	// Default return if no conditions are met
-	return undefined;
+	return { segmentSlug: undefined, segment: 'unknown' };
 }

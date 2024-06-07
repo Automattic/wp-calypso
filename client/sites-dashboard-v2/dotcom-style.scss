@@ -81,6 +81,32 @@
 		}
 	}
 
+	.sites-a8c-for-agencies-banner-container {
+		display: flex;
+		justify-content: center;
+	}
+
+	.sites-a8c-for-agencies-banner {
+		margin-inline: 16px;
+
+		.banner__action {
+			a {
+				display: flex;
+				white-space: nowrap;
+			}
+		}
+
+		@include break-large {
+			margin-inline: 26px;
+		}
+
+		@include break-huge {
+			margin-inline: 64px;
+			width: 100%;
+			max-width: 1400px;
+		}
+	}
+
 	.dataviews-filters__view-actions {
 		border-bottom: 0;
 		align-items: center;
@@ -412,7 +438,7 @@
 
 // Styles for site preview pane.
 .wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
-	.dev-tools__icon {
+	.hosting-features__icon {
 		display: inline-block;
 		height: 18px;
 		vertical-align: top;
@@ -528,6 +554,13 @@
 				position: relative;
 				width: 100%;
 			}
+
+			.spinner-wrapper {
+				position: absolute;
+				left: 50%;
+				top: 70px;
+				z-index: 2;
+			}
 		}
 	}
 }
@@ -591,7 +624,6 @@
 			margin-top: 0;
 			overflow: hidden;
 			padding-bottom: 0 !important;
-
 		}
 
 		.dataviews-wrapper {
@@ -605,6 +637,14 @@
 				flex: 1;
 				max-height: none;
 			}
+
+			.components-base-control {
+				width: 85%;
+			}
+		}
+
+		.sites-a8c-for-agencies-banner-container {
+			display: none;
 		}
 	}
 }

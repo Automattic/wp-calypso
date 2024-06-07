@@ -1,20 +1,28 @@
+import { Button } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { HostingCard } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useSelector } from 'calypso/state';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import getLastGoodRewindBackup from 'calypso/state/selectors/get-last-good-rewind-backup';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) => {
+const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId, siteSlug } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	const hasRetrievedLastBackup = lastGoodBackup !== null;
 	const [ isLoading, setIsLoading ] = useState( false );
+	const wpcomAdminInterface = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'wpcom_admin_interface' )
+	);
 
 	useEffect( () => {
 		const shouldRequestLastBackup = ! disabled && ! hasRetrievedLastBackup && ! isLoading;
@@ -35,7 +43,21 @@ const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) 
 		: null;
 
 	return (
-		<HostingCard className="site-backup-card" title={ translate( 'Site backup' ) }>
+		<HostingCard className="site-backup-card">
+			<div className="hosting-card__heading">
+				<h3 className="hosting-card__title">{ translate( 'Site backup' ) }</h3>
+				<Button
+					className={ clsx( 'site-backup-card__button', 'hosting-overview__link-button' ) }
+					plain
+					href={
+						wpcomAdminInterface === 'wp-admin'
+							? `https://cloud.jetpack.com/backup/${ siteSlug }`
+							: `/backup/${ siteSlug }`
+					}
+				>
+					{ translate( 'See all backups' ) }
+				</Button>
+			</div>
 			{ hasRetrievedLastBackup && lastGoodBackup && ! isLoading && ! disabled && (
 				<>
 					<p className="site-backup-card__date">
@@ -69,6 +91,7 @@ export default connect(
 		return {
 			lastGoodBackup: getLastGoodRewindBackup( state, siteId ),
 			siteId,
+			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
 	{

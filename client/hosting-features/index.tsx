@@ -2,9 +2,9 @@ import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender, redirectIfP2 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
-import { DOTCOM_DEVELOPER_TOOLS } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+import { DOTCOM_HOSTING_FEATURES } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { devTools } from './controller';
+import { hostingFeatures } from './controller';
 
 const redirectForNonSimpleSite = ( context: PageJSContext, next: () => void ) => {
 	const state = context.store.getState();
@@ -16,15 +16,15 @@ const redirectForNonSimpleSite = ( context: PageJSContext, next: () => void ) =>
 };
 
 export default function () {
-	page( '/dev-tools', siteSelection, sites, makeLayout, clientRender );
+	page( '/hosting-features', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/dev-tools/:site',
+		'/hosting-features/:site',
 		siteSelection,
 		navigation,
 		redirectForNonSimpleSite,
 		redirectIfP2,
-		devTools,
-		siteDashboard( DOTCOM_DEVELOPER_TOOLS ),
+		hostingFeatures,
+		siteDashboard( DOTCOM_HOSTING_FEATURES ),
 		makeLayout,
 		clientRender
 	);

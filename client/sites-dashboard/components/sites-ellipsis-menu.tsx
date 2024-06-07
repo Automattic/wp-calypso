@@ -34,7 +34,6 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/laun
 import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import {
 	getHostingConfigUrl,
-	getManagePluginsUrl,
 	getPluginsUrl,
 	getSettingsUrl,
 	getSiteMonitoringUrl,
@@ -126,14 +125,10 @@ const ManagePluginsItem = ( {
 		useSelector( ( state: AppState ) =>
 			siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
 		) || isNotAtomicJetpack( site );
-	// If the site can't manage plugins then go to the main plugins page instead
-	// because it shows an upsell message.
-	const [ href, label ] = hasManagePluginsFeature
-		? [
-				isWpAdminInterface ? `${ wpAdminUrl }plugins.php` : getManagePluginsUrl( site.slug ),
-				__( 'Manage plugins' ),
-		  ]
-		: [ getPluginsUrl( site.slug ), __( 'Plugins' ) ];
+	const [ href, label ] = [
+		isWpAdminInterface ? `${ wpAdminUrl }plugins.php` : getPluginsUrl( site.slug ),
+		__( 'Plugins' ),
+	];
 	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	return (
@@ -339,7 +334,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const { __ } = useI18n();
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP ) && ! site?.plan?.expired;
 	const displayUpsell = ! hasFeatureSFTP;
-	const shouldLinkToDevTools = ! hasFeatureSFTP && isEnabled( 'layout/dotcom-nav-redesign-v2' );
+	const shouldLinkToHostingPromo = ! hasFeatureSFTP && isEnabled( 'layout/dotcom-nav-redesign-v2' );
 	const submenuItems = useSubmenuItems( site );
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offset: -8,
@@ -369,18 +364,15 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 						  )
 						: undefined
 				}
-				href={ shouldLinkToDevTools ? `/dev-tools/${ site.slug }` : undefined }
+				href={ shouldLinkToHostingPromo ? `/hosting-features/${ site.slug }` : undefined }
 				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_hosting_click' ) }
 			>
-				{ shouldLinkToDevTools ? (
-					__( 'Dev Tools' )
-				) : (
-					<>
-						{ __( 'Hosting' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
-					</>
-				) }
+				<>
+					{ __( 'Hosting' ) }
+					{ ! shouldLinkToHostingPromo && <MenuItemGridIcon icon="chevron-right" size={ 18 } /> }
+				</>
 			</MenuItemLink>
-			{ ! shouldLinkToDevTools && (
+			{ ! shouldLinkToHostingPromo && (
 				<SubmenuPopover
 					{ ...submenuProps.submenu }
 					inline

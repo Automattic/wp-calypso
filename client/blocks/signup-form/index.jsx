@@ -291,7 +291,7 @@ class SignupForm extends Component {
 		const fieldsForValidation = filter( [
 			'email',
 			this.props.isPasswordless === false && 'password', // Remove password from validation if passwordless
-			this.props.displayUsernameInput && 'username',
+			this.displayUsernameInput() && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
@@ -573,7 +573,7 @@ class SignupForm extends Component {
 			};
 		}
 
-		if ( this.props.displayUsernameInput ) {
+		if ( this.displayUsernameInput() ) {
 			userData.username = formState.getFieldValue( this.state.form, 'username' );
 		} else {
 			userData.extra = {
@@ -916,6 +916,13 @@ class SignupForm extends Component {
 		if ( this.props.isGravatar ) {
 			tosText = this.props.translate(
 				'By entering your email address, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				options
+			);
+		}
+
+		if ( this.props.isBlazePro ) {
+			tosText = this.props.translate(
+				'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 				options
 			);
 		}

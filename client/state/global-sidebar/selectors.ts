@@ -16,7 +16,7 @@ const GLOBAL_SITE_DASHBOARD_ROUTES = {
 	'github-deployments': '/github-deployments/',
 	'site-monitoring': '/site-monitoring/',
 	'site-logs': '/site-logs/',
-	'dev-tools': '/dev-tools/',
+	'hosting-features': '/hosting-features/',
 	'staging-site': '/staging-site',
 };
 

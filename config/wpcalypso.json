@@ -74,6 +74,7 @@
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
+		"jetpack/manage-simple-sites": true,
 		"jetpack/plugin-management": false,
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
@@ -167,7 +168,6 @@
 		"site-indicator": true,
 		"site-profiler/metrics": true,
 		"ssr/prefetch-timebox": true,
-		"stats/checkout-flows-v2": true,
 		"stats/date-control": true,
 		"stats/devices": true,
 		"stats/paid-wpcom-stats": true,
@@ -175,6 +175,7 @@
 		"stats/plan-usage": true,
 		"stats/tier-upgrade-slider": true,
 		"stats/type-detection": true,
+		"stats/utm-builder": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
@@ -207,6 +208,5 @@
 	"boom_analytics_enabled": true,
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "wpcalypso",
-	"google_analytics_key": "UA-10673494-15",
 	"hotjar_enabled": true
 }

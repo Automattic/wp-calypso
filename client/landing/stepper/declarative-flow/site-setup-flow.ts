@@ -522,6 +522,9 @@ const siteSetupFlow: Flow = {
 				case 'importerBlogger':
 				case 'importerMedium':
 				case 'importerSquarespace':
+					if ( backToFlow ) {
+						return navigate( `importList?siteSlug=${ siteSlug }&backToFlow=${ backToFlow }` );
+					}
 					return navigate( `importList?siteSlug=${ siteSlug }` );
 
 				case 'importerWordpress':

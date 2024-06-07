@@ -3,7 +3,7 @@ import {
 	makeLayout,
 	render as clientRender,
 	redirectIfCurrentUserCannot,
-	redirectToDevToolsPromoIfNotAtomic,
+	redirectToHostingPromoIfNotAtomic,
 	redirectIfP2,
 	redirectIfJetpackNonAtomic,
 } from 'calypso/controller';
@@ -42,7 +42,7 @@ export default function () {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
-		redirectToDevToolsPromoIfNotAtomic,
+		redirectToHostingPromoIfNotAtomic,
 		handleHostingPanelRedirect,
 		hostingConfiguration,
 		siteDashboard( DOTCOM_HOSTING_CONFIG ),
@@ -57,7 +57,7 @@ export default function () {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
-		redirectToDevToolsPromoIfNotAtomic,
+		redirectToHostingPromoIfNotAtomic,
 		handleHostingPanelRedirect,
 		hostingActivate,
 		siteDashboard( DOTCOM_HOSTING_CONFIG ),

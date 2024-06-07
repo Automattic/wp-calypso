@@ -287,7 +287,6 @@ const StatsPersonalPurchase = ( {
 				adminUrl={ adminUrl }
 				redirectUri={ redirectUri }
 				from={ from }
-				isStandalone
 			/>
 		</>
 	);
@@ -382,6 +381,7 @@ function StatsCommercialFlowOptOutForm( {
 		'commercial-dext': translate( 'Commercial Domain Extension' ),
 		'contact-details': translate( 'Business Contact Details' ),
 		'manual-override': translate( 'Manual Override' ),
+		'promotes-service': translate( 'Promotion of Service' ),
 		ecommerce: translate( 'Ecommerce' ),
 		donations: translate( 'Donations' ),
 	};

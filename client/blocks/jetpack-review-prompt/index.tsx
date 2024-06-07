@@ -48,13 +48,17 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 		dispatch( dismiss( type, Date.now(), true ) );
 	}, [ dispatch, type ] );
 
+	const shouldRenderReviewPrompt = hasReceivedRemotePreferences && ! isDismissed && isValid;
+
 	useEffect( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_review_prompt_view', {
-				type,
-			} )
-		);
-	}, [ dispatch, type ] );
+		if ( shouldRenderReviewPrompt ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_review_prompt_view', {
+					type,
+				} )
+			);
+		}
+	}, [ dispatch, shouldRenderReviewPrompt, type ] );
 
 	const body = () => {
 		switch ( type ) {
@@ -95,7 +99,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 	return (
 		<>
 			<QueryPreferences />
-			{ hasReceivedRemotePreferences && ! isDismissed && isValid && (
+			{ shouldRenderReviewPrompt && (
 				<Card className={ topClass() }>
 					<Gridicon
 						className="jetpack-review-prompt__close-icon"

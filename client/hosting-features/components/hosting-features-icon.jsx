@@ -1,6 +1,6 @@
-export default function DevToolsIcon() {
+export default function HostingFeaturesIcon() {
 	return (
-		<span className="dev-tools__icon" key="blogging-prompt__dev-tools-icon">
+		<span className="hosting-features__icon" key="blogging-prompt__hosting-features-icon">
 			<svg
 				fill="none"
 				height="20"

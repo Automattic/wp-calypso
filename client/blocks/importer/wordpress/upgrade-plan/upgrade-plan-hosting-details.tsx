@@ -1,6 +1,4 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
-import { hasTranslation } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
@@ -16,7 +14,6 @@ import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details
 
 export const UpgradePlanHostingDetails = () => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	let importSiteHostName = '';
@@ -25,10 +22,6 @@ export const UpgradePlanHostingDetails = () => {
 		importSiteHostName = new URL( importSiteQueryParam )?.hostname;
 	} catch ( e ) {}
 
-	const headerMainText =
-		hasTranslation( 'Why should you host with us?' ) || isEnglishLocale
-			? translate( 'Why should you host with us?' )
-			: translate( 'Why you should host with us?' );
 	const { list: upgradePlanHostingDetailsList, isFetching } = useUpgradePlanHostingDetailsList();
 
 	const { data: urlData } = useAnalyzeUrlQuery( importSiteQueryParam, true );
@@ -39,10 +32,11 @@ export const UpgradePlanHostingDetails = () => {
 		urlData
 	);
 
+	const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
 	const shouldDisplayHostIdentificationMessage =
-		hostingProviderName &&
-		hostingProviderName !== 'Unknown' &&
-		hostingProviderName !== 'WordPress.com';
+		hostingProviderSlug &&
+		hostingProviderSlug !== 'unknown' &&
+		hostingProviderSlug !== 'automattic';
 
 	let hostingDetailsItems = null;
 
@@ -87,7 +81,9 @@ export const UpgradePlanHostingDetails = () => {
 				} ) }
 			>
 				<div className="import__upgrade-plan-hosting-details-header">
-					<p className="import__upgrade-plan-hosting-details-header-main">{ headerMainText }</p>
+					<p className="import__upgrade-plan-hosting-details-header-main">
+						{ translate( 'Why should you host with us?' ) }
+					</p>
 					<p className="import__upgrade-plan-hosting-details-header-subtext">
 						{ translate(
 							'Google data shows that %(boostPercentage)d%% more WordPress.com sites have good Core Web Vitals as compared to other WordPress hosts.',
@@ -100,33 +96,31 @@ export const UpgradePlanHostingDetails = () => {
 				<div className="import__upgrade-plan-hosting-details-list">
 					<ul>{ hostingDetailsItems }</ul>
 				</div>
-				{ isEnglishLocale && (
-					<div className="import__upgrade-plan-hosting-details-testimonials-container">
-						<p>{ translate( '100% loved by our best customers' ) }</p>
-						<div className="import__upgrade-plan-hosting-details-testimonials">
-							{ UpgradePlanHostingTestimonials.map(
-								( { customerName, customerTestimonial, customerInfo, customerImage }, i ) => (
-									<UpgradePlanHostingDetailsTooltip
-										key={ i }
-										id={ `testimonial-${ i }` }
-										setActiveTooltipId={ setActiveTooltipId }
-										activeTooltipId={ activeTooltipId }
-										customerName={ customerName }
-										customerInfo={ customerInfo }
-										customerTestimonial={ customerTestimonial }
-										hideArrow={ false }
-									>
-										<img
-											className="import__upgrade-plan-hosting-details-testimonials-image"
-											src={ customerImage }
-											alt={ customerName }
-										/>
-									</UpgradePlanHostingDetailsTooltip>
-								)
-							) }
-						</div>
+				<div className="import__upgrade-plan-hosting-details-testimonials-container">
+					<p>{ translate( '100% loved by our best customers' ) }</p>
+					<div className="import__upgrade-plan-hosting-details-testimonials">
+						{ UpgradePlanHostingTestimonials.map(
+							( { customerName, customerTestimonial, customerInfo, customerImage }, i ) => (
+								<UpgradePlanHostingDetailsTooltip
+									key={ i }
+									id={ `testimonial-${ i }` }
+									setActiveTooltipId={ setActiveTooltipId }
+									activeTooltipId={ activeTooltipId }
+									customerName={ customerName }
+									customerInfo={ customerInfo }
+									customerTestimonial={ customerTestimonial }
+									hideArrow={ false }
+								>
+									<img
+										className="import__upgrade-plan-hosting-details-testimonials-image"
+										src={ customerImage }
+										alt={ customerName }
+									/>
+								</UpgradePlanHostingDetailsTooltip>
+							)
+						) }
 					</div>
-				) }
+				</div>
 			</div>
 			{ shouldDisplayHostIdentificationMessage && (
 				<div className="import__upgrade-plan-hosting-details-identified-host">

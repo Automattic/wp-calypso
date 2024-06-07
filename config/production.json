@@ -177,7 +177,6 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
-		"stats/checkout-flows-v2": true,
 		"stats/date-control": true,
 		"stats/devices": true,
 		"stats/paid-wpcom-stats": true,
@@ -185,6 +184,7 @@
 		"stats/plan-usage": true,
 		"stats/tier-upgrade-slider": true,
 		"stats/type-detection": true,
+		"stats/utm-builder": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
@@ -218,6 +218,5 @@
 	"boom_analytics_enabled": true,
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "production",
-	"google_analytics_key": "UA-10673494-10",
 	"hotjar_enabled": true
 }
