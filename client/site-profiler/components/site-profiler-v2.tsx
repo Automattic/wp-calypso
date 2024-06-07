@@ -39,11 +39,11 @@ import './styles-v2.scss';
 interface Props {
 	routerDomain?: string;
 	hash?: string;
-	routerRef?: string;
+	routerOrigin?: string;
 }
 
 export default function SiteProfilerV2( props: Props ) {
-	const { routerDomain, hash, routerRef } = props;
+	const { routerDomain, hash, routerOrigin } = props;
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const perfomanceMetricsRef = useRef( null );
@@ -143,7 +143,7 @@ export default function SiteProfilerV2( props: Props ) {
 				</LayoutBlock>
 			) }
 			{ ! showLandingPage && ! showResultScreen && (
-				<LoadingScreen isSavedReport={ routerRef !== 'landingPage' } />
+				<LoadingScreen isSavedReport={ routerOrigin !== 'landingPage' } />
 			) }
 			{ showResultScreen && (
 				<>

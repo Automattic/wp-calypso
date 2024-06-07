@@ -66,7 +66,7 @@ export const siteProfilerReportContext: Callback = ( context, next ) => {
 				<SiteProfilerComponent
 					routerDomain={ routerDomain }
 					hash={ context.params.hash }
-					routerRef={ context.query?.ref }
+					routerOrigin={ context.query?.ref }
 				/>
 			</Main>
 
