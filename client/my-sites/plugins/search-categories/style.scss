@@ -16,6 +16,10 @@
 		margin: 0;
 		border-radius: 4px;
 
+		&.search-categories__searchbox--mobile {
+			max-width: none;
+		}
+
 		&.is-open.has-focus {
 			&,
 			&:hover {

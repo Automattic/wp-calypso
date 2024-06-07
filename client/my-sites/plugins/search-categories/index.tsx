@@ -62,7 +62,9 @@ const SearchBox: FC< {
 
 	return (
 		<Search
-			className="search-categories__searchbox"
+			className={ clsx( 'search-categories__searchbox', {
+				'search-categories__searchbox--mobile': ! isDesktop(),
+			} ) }
 			ref={ searchBoxRef }
 			onSearch={ pageToSearch }
 			defaultValue={ searchTerm }
