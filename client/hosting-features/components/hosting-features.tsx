@@ -95,7 +95,7 @@ const HostingFeatures = () => {
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
 	const handleTransfer = ( options: { geo_affinity?: string } ) => {
-		dispatch( recordTracksEvent( 'calypso_hosting_settings_activate_confirm' ) );
+		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
 		const params = new URLSearchParams( {
 			siteId: String( siteId ),
 			redirect_to: redirectUrl.current,
@@ -162,7 +162,7 @@ const HostingFeatures = () => {
 							className="hosting-features__button"
 							onClick={ () => {
 								if ( showActivationButton ) {
-									dispatch( recordTracksEvent( 'calypso_hosting_settings_activate_click' ) );
+									dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
 									return setShowEligibility( true );
 								}
 							} }
@@ -189,9 +189,14 @@ const HostingFeatures = () => {
 					</>
 				) : (
 					<>
-						<Button variant="primary" className="hosting-features__button" href={ upgradeLink } onClick={ () =>
-								dispatch( recordTracksEvent( 'calypso_hosting_settings_upgrade_plan_click' ) )
-							}>
+						<Button
+							variant="primary"
+							className="hosting-features__button"
+							href={ upgradeLink }
+							onClick={ () =>
+								dispatch( recordTracksEvent( 'calypso_hosting_features_upgrade_plan_click' ) )
+							}
+						>
 							{ translate( 'Upgrade now' ) }
 						</Button>
 					</>
