@@ -39,10 +39,11 @@ import './styles-v2.scss';
 interface Props {
 	routerDomain?: string;
 	hash?: string;
+	routerOrigin?: string;
 }
 
 export default function SiteProfilerV2( props: Props ) {
-	const { routerDomain, hash } = props;
+	const { routerDomain, hash, routerOrigin } = props;
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const perfomanceMetricsRef = useRef( null );
@@ -104,7 +105,7 @@ export default function SiteProfilerV2( props: Props ) {
 	const finalUrlDomain = useMemo( () => getDomainFromUrl( finalUrl ), [ finalUrl ] );
 	useEffect( () => {
 		if ( finalUrlDomain && token ) {
-			page( `/site-profiler/report/${ token }/${ finalUrlDomain }` );
+			page( `/site-profiler/report/${ token }/${ finalUrlDomain }/?ref=landingPage` );
 		}
 	}, [ finalUrlDomain, token ] );
 
@@ -141,7 +142,9 @@ export default function SiteProfilerV2( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-			{ ! showLandingPage && ! showResultScreen && <LoadingScreen /> }
+			{ ! showLandingPage && ! showResultScreen && (
+				<LoadingScreen isSavedReport={ routerOrigin !== 'landingPage' } />
+			) }
 			{ showResultScreen && (
 				<>
 					<LayoutBlock
