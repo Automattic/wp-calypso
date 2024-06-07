@@ -1,7 +1,12 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
-import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
+import {
+	VIDEOPRESS_FLOW,
+	isWithThemeFlow,
+	isHostingSignupFlow,
+	isOnboardingGuidedFlow,
+} from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import clsx from 'clsx';
@@ -1373,7 +1378,7 @@ export class RenderDomainsStep extends Component {
 			backLabelText = translate( 'Back to themes' );
 		} else if ( 'plans-first' === flowName ) {
 			backUrl = getStepUrl( flowName, previousStepName );
-		} else if ( 'guided' === flowName ) {
+		} else if ( isOnboardingGuidedFlow( flowName ) ) {
 			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );

@@ -14,6 +14,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
+import { isOnboardingGuidedFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
@@ -158,7 +159,7 @@ export const getNewSiteParams = ( {
 
 	// Guided onboarding flow specific dependencies
 	const guidedFlowProps = {};
-	if ( flowToCheck === 'guided' ) {
+	if ( isOnboardingGuidedFlow( flowToCheck ) ) {
 		guidedFlowProps.set_dev_account =
 			signupDependencies?.segmentationSurveyAnswers?.[ 'what-brings-you-to-wordpress' ].includes(
 				'client'
@@ -1225,6 +1226,16 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 
 export function excludeSurveyStepIfInactive( stepName, defaultDependencies, nextProps ) {
 	if ( ! nextProps.initialContext?.isSignupSurveyActive ) {
+		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+		flows.excludeStep( stepName );
+	}
+}
+
+export function excludeSegmentSurveyStepIfInactive( stepName, _, nextProps ) {
+	// trailMapExperimentVariant = undefined | null | 'treatment_guided' | 'treatment_survey_only'
+	// null => control group.
+	const { trailMapExperimentVariant } = nextProps?.initialContext ?? {};
+	if ( ! trailMapExperimentVariant ) {
 		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 		flows.excludeStep( stepName );
 	}
