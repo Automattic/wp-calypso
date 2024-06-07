@@ -61,7 +61,7 @@ const StatsModuleUTM = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
-	const isBuilderEnabled = config.isEnabled( 'stats/utm-builder' ) || true;
+	const isBuilderEnabled = config.isEnabled( 'stats/utm-builder' );
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
