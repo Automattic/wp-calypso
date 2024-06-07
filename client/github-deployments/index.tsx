@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectToDevToolsPromoIfNotAtomic,
+	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
@@ -21,7 +21,7 @@ export default function () {
 	page(
 		'/github-deployments/:site',
 		siteSelection,
-		redirectToDevToolsPromoIfNotAtomic,
+		redirectToHostingPromoIfNotAtomic,
 		redirectHomeIfIneligible,
 		navigation,
 		deploymentsList,
@@ -33,7 +33,7 @@ export default function () {
 	page(
 		'/github-deployments/:site/create',
 		siteSelection,
-		redirectToDevToolsPromoIfNotAtomic,
+		redirectToHostingPromoIfNotAtomic,
 		redirectHomeIfIneligible,
 		navigation,
 		deploymentCreation,
@@ -45,7 +45,7 @@ export default function () {
 	page(
 		'/github-deployments/:site/manage/:deploymentId',
 		siteSelection,
-		redirectToDevToolsPromoIfNotAtomic,
+		redirectToHostingPromoIfNotAtomic,
 		redirectHomeIfIneligible,
 		navigation,
 		deploymentManagement,
@@ -57,7 +57,7 @@ export default function () {
 	page(
 		'/github-deployments/:site/logs/:deploymentId',
 		siteSelection,
-		redirectToDevToolsPromoIfNotAtomic,
+		redirectToHostingPromoIfNotAtomic,
 		redirectHomeIfIneligible,
 		navigation,
 		deploymentRunLogs,
