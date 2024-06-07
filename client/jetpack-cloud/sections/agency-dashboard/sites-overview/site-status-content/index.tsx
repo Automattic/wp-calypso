@@ -66,7 +66,13 @@ export default function SiteStatusContent( {
 	}
 
 	if ( type === 'stats' ) {
-		return <SiteStatsColumn site={ rows.site.value } stats={ rows.stats.value } />;
+		return (
+			<SiteStatsColumn
+				site={ rows.site.value }
+				stats={ rows.stats.value }
+				siteError={ hasAnyError }
+			/>
+		);
 	}
 
 	// We will show a progress icon when the site score is being fetched.
