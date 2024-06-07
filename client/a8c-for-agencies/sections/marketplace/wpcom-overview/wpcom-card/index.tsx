@@ -21,7 +21,8 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect, isL
 	const originalPrice = Number( plan.amount ) * quantity;
 	const actualPrice = originalPrice - originalPrice * discount;
 
-	const { name, features1, features2 } = useWPCOMPlanDescription( plan.slug );
+	const { name, features1, features2, jetpackFeatures1, jetpackFeatures2 } =
+		useWPCOMPlanDescription( plan.slug );
 
 	return (
 		<div className="wpcom-plan-card">
@@ -89,12 +90,13 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect, isL
 			</div>
 			<div className="wpcom-plan-card__section">
 				<h2 className="wpcom-plan-card__title">
-					<JetpackLogo size={ 20 } /> { translate( 'Premium Jetpack features included' ) }{ ' ' }
+					<JetpackLogo size={ 20 } />{ ' ' }
+					{ translate( 'Premium Jetpack features included with your WordPress.com plans' ) }{ ' ' }
 				</h2>
 
 				<div className="wpcom-plan-card__features is-jetpack">
-					{ !! features1.length && <SimpleList items={ features1 } /> }
-					{ !! features2.length && <SimpleList items={ features2 } /> }
+					{ !! jetpackFeatures1.length && <SimpleList items={ jetpackFeatures1 } /> }
+					{ !! jetpackFeatures2.length && <SimpleList items={ jetpackFeatures2 } /> }
 				</div>
 			</div>
 		</div>
