@@ -196,6 +196,9 @@ const usePlanTypesWithIntent = ( {
 		case 'plans-videopress':
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
+		case 'plans-affiliates':
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		default:
 			planTypes = availablePlanTypes;
 	}
