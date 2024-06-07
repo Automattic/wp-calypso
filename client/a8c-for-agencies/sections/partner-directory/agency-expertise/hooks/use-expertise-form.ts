@@ -1,14 +1,21 @@
 import { useCallback, useState } from 'react';
+import { isValidApplicationForm } from '../../lib/agency-directory-application-form';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../../types';
 
-export default function useExpertiseForm() {
-	const [ formData, setFormData ] = useState< AgencyDirectoryApplication >( {
-		status: 'pending',
-		services: [],
-		products: [],
-		feedbackUrl: '',
-		directories: [],
-	} );
+type Props = {
+	initialData?: AgencyDirectoryApplication;
+};
+
+export default function useExpertiseForm( { initialData }: Props ) {
+	const [ formData, setFormData ] = useState< AgencyDirectoryApplication >(
+		initialData ?? {
+			status: 'pending',
+			services: [],
+			products: [],
+			feedbackUrl: '',
+			directories: [],
+		}
+	);
 
 	const isDirectorySelected = useCallback(
 		( name: string ) => {
@@ -81,6 +88,7 @@ export default function useExpertiseForm() {
 	return {
 		formData,
 		setFormData,
+		isValidFormData: isValidApplicationForm( formData ),
 		isDirectorySelected,
 		isDirectoryApproved,
 		setDirectorySelected,

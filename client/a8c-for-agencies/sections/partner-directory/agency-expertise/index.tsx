@@ -1,9 +1,11 @@
+import { Button } from '@automattic/components';
 import { CheckboxControl, TextControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
+import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
 import {
@@ -11,10 +13,12 @@ import {
 	DIRECTORY_PRESSABLE,
 	DIRECTORY_WOOCOMMERCE,
 	DIRECTORY_WPCOM,
+	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 } from '../constants';
-import { DirectoryApplicationType } from '../types';
+import { AgencyDirectoryApplication, DirectoryApplicationType } from '../types';
 import { getPartnerDirectoryLabel } from '../utils/get-partner-directory-label';
 import useExpertiseForm from './hooks/use-expertise-form';
+import useSubmitForm from './hooks/use-submit-form';
 
 import './style.scss';
 
@@ -49,18 +53,25 @@ const DirectoryClientSamples = ( { label, samples, onChange }: DirectoryClientSa
 	);
 };
 
-const AgencyExpertise = () => {
+type Props = {
+	initialData?: AgencyDirectoryApplication;
+};
+
+const AgencyExpertise = ( { initialData }: Props ) => {
 	const translate = useTranslate();
 
 	const {
 		formData,
 		setFormData,
+		isValidFormData,
 		isDirectorySelected,
 		isDirectoryApproved,
 		setDirectorySelected,
 		getDirectoryClientSamples,
 		setDirectorClientSample,
-	} = useExpertiseForm();
+	} = useExpertiseForm( { initialData } );
+
+	const { onSubmit, isSubmitting } = useSubmitForm( { formData } );
 
 	const { services, products, directories, feedbackUrl } = formData;
 
@@ -172,6 +183,19 @@ const AgencyExpertise = () => {
 					/>
 				</FormField>
 			</FormSection>
+
+			<div className="partner-directory-agency-expertise__footer">
+				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
+					{ translate( 'Submit my application' ) }
+				</Button>
+
+				<Button
+					href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_DASHBOARD_SLUG }` }
+					disabled={ isSubmitting }
+				>
+					{ translate( 'Cancel' ) }
+				</Button>
+			</div>
 		</Form>
 	);
 };
