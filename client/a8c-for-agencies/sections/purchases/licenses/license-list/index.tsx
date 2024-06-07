@@ -63,6 +63,7 @@ export default function LicenseList() {
 		},
 		[ dispatch ]
 	);
+	// console.log(licenses);
 
 	return (
 		<div className="license-list">

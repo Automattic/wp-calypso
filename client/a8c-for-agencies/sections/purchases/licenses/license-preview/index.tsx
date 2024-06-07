@@ -143,7 +143,9 @@ export default function LicensePreview( {
 
 	// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
 	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
-	const productTitle = product === 'WordPress.com Creator' ? 'WordPress.com Site' : product;
+	const productTitle = licenseKey.startsWith( 'wpcom-hosting-business' )
+		? 'WordPress.com Site'
+		: product;
 
 	return (
 		<div

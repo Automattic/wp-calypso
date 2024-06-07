@@ -23,7 +23,7 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 	// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
 	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
 	const productDisplayName =
-		item.name === 'WordPress.com Creator' ? 'WordPress.com Site' : item.name;
+		item.slug === 'wpcom-hosting-business' ? 'WordPress.com Site' : item.name;
 	const itemDisplayName =
 		item.quantity > 1
 			? translate( '%(productName)s x %(quantity)s', {
