@@ -1,8 +1,11 @@
 import { Card, Badge } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import React, { useState, Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import ExternalLink from 'calypso/components/external-link';
+import { setAdminInterfaceStyle } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/sensei-launch/launch-completion-tasks';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { DomainNames, EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
 interface ExternalProps {
@@ -13,54 +16,81 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
-export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => (
-	<div>
-		{ getWarningDescription( context, warnings.length, translate ) && (
-			<div className="eligibility-warnings__warning">
-				<div className="eligibility-warnings__message">
-					<span className="eligibility-warnings__message-description">
-						{ getWarningDescription( context, warnings.length, translate ) }
-					</span>
-				</div>
-			</div>
-		) }
+export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => {
+	const [ isAdminStyleEnabled, setAdminStyleEnabled ] = useState( true ); // State to track toggle
 
-		{ warnings.map( ( { name, description, supportUrl, domainNames }, index ) => (
-			<div className="eligibility-warnings__warning" key={ index }>
-				<div className="eligibility-warnings__message">
-					{ context !== 'plugin-details' && (
-						<Fragment>
-							<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
-						</Fragment>
-					) }
-					<span className="eligibility-warnings__message-description">
-						<span>{ description } </span>
-						{ domainNames && displayDomainNames( domainNames ) }
-						{ supportUrl && (
-							<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">
-								{ translate( 'Learn more.' ) }
-							</ExternalLink>
+	// Function to handle toggle changes
+	const handleAdminStyleToggle = ( checkedValue: boolean ) => {
+		console.log( 'checkedValue', checkedValue );
+		setAdminStyleEnabled( checkedValue );
+		const siteId = getSelectedSiteId( getState() );
+		console.log( 'siteId', siteId );
+
+		if ( siteId !== null ) {
+			const adminStyle = checkedValue ? 'wp-admin' : 'calypso';
+			setAdminInterfaceStyle( siteId, adminStyle );
+		}
+	};
+
+	return (
+		<div>
+			{ getWarningDescription( context, warnings.length, translate ) && (
+				<div className="eligibility-warnings__warning">
+					<div className="eligibility-warnings__message">
+						<span className="eligibility-warnings__message-description">
+							{ getWarningDescription( context, warnings.length, translate ) }
+						</span>
+					</div>
+				</div>
+			) }
+
+			{ warnings.map( ( { id, name, description, supportUrl, domainNames }, index ) => (
+				<div className="eligibility-warnings__warning" key={ index }>
+					<div className="eligibility-warnings__message">
+						{ context !== 'plugin-details' && (
+							<Fragment>
+								<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
+							</Fragment>
 						) }
-					</span>
+						<span className="eligibility-warnings__message-description">
+							<span>{ description } </span>
+							{ domainNames && displayDomainNames( domainNames ) }
+							{ supportUrl && (
+								<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">
+									{ translate( 'Learn more.' ) }
+								</ExternalLink>
+							) }
+							{ id === 'wordpress_admin_style' && (
+								<div>
+									<ToggleControl
+										checked={ isAdminStyleEnabled }
+										onChange={ handleAdminStyleToggle }
+										disabled={ false }
+										label={ translate( 'Use the Classic WP-Admin style' ) }
+									/>
+								</div>
+							) }
+						</span>
+					</div>
 				</div>
-			</div>
-		) ) }
+			) ) }
 
-		{ showContact && (
-			<div className="eligibility-warnings__warning">
-				<div className="eligibility-warnings__message">
-					<span className="eligibility-warnings__message-description">
-						{ translate( '{{a}}Contact support{{/a}} for help and questions.', {
-							components: {
-								a: <ActionPanelLink href="/help/contact" />,
-							},
-						} ) }
-					</span>
+			{ showContact && (
+				<div className="eligibility-warnings__warning">
+					<div className="eligibility-warnings__message">
+						<span className="eligibility-warnings__message-description">
+							{ translate( '{{a}}Contact support{{/a}} for help and questions.', {
+								components: {
+									a: <ActionPanelLink href="/help/contact" />,
+								},
+							} ) }
+						</span>
+					</div>
 				</div>
-			</div>
-		) }
-	</div>
-);
+			) }
+		</div>
+	);
+};
 
 function displayDomainNames( domainNames: DomainNames ) {
 	return (
