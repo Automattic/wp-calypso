@@ -12,6 +12,7 @@ import {
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
 	DOTCOM_LOGS_PHP,
+	DOTCOM_LOGS_WEB,
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
@@ -84,7 +85,7 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_LOGS_PHP,
+				[ DOTCOM_LOGS_PHP, DOTCOM_LOGS_WEB ],
 				__( 'Logs' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,

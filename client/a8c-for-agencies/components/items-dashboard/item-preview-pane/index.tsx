@@ -11,20 +11,29 @@ import { FeaturePreviewInterface, PreviewPaneProps } from './types';
 import './style.scss';
 
 export const createFeaturePreview = (
-	id: string,
+	idOrIds: string | string[],
 	label: string | React.ReactNode,
 	enabled: boolean,
-	selectedFeatureId: string | undefined,
+	selectedFeatureId: string | undefined = '',
 	setSelectedFeatureId: ( id: string ) => void,
 	preview: React.ReactNode
 ): FeaturePreviewInterface => {
+	const ids = typeof idOrIds === 'string' ? [ idOrIds ] : idOrIds;
+	const defaultId = ids[ 0 ];
+	const selected = enabled && ids.includes( selectedFeatureId );
 	return {
-		id,
+		id: defaultId,
 		tab: {
 			label,
 			visible: enabled,
-			selected: enabled && selectedFeatureId === id,
-			onTabClick: () => enabled && setSelectedFeatureId( id ),
+			selected,
+			onTabClick: () => {
+				if ( ! enabled || selected ) {
+					return;
+				}
+
+				setSelectedFeatureId( defaultId );
+			},
 		},
 		enabled,
 		preview: enabled ? preview : null,
