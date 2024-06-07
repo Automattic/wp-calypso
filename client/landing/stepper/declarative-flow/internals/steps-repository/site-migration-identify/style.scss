@@ -78,7 +78,7 @@
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	gap: 1.5rem;
+	gap: 1.25rem;
 	margin: 40px auto 0 auto;
 	max-width: 368px;
 	padding: 1.5rem;
@@ -92,7 +92,7 @@
 	&--list {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 1.125rem;
 
 		&-item {
 			display: flex;
