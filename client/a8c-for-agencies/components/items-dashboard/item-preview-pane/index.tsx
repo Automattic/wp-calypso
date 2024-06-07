@@ -14,7 +14,7 @@ export const createFeaturePreview = (
 	id: string,
 	label: string | React.ReactNode,
 	enabled: boolean,
-	selectedFeatureId: string | undefined = '',
+	selectedFeatureId: string | undefined,
 	setSelectedFeatureId: ( id: string ) => void,
 	preview: React.ReactNode
 ): FeaturePreviewInterface => {
