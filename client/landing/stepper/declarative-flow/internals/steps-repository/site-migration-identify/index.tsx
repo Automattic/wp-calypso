@@ -118,6 +118,11 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 				'Deliver lightning-fast load times with our global CDN spanning 28+ locations, providing a seamless experience for your visitors no matter where they are.',
 		},
 	};
+
+	const hasTranslationsForAllItems = Object.values( hostingDetailItems ).every(
+		( item ) => hasEnTranslation( item.titleString ) && hasEnTranslation( item.descriptionString )
+	);
+
 	return (
 		<div>
 			<div className="import__heading import__heading-center">
