@@ -3,7 +3,7 @@ export type AgencyDirectoryApplicationStatus = 'pending' | 'in-progress' | 'comp
 export type DirectoryApplicationType = 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
 
 export interface AgencyDirectoryApplication {
-	status?: AgencyDirectoryApplicationStatus;
+	status: AgencyDirectoryApplicationStatus;
 	products: string[];
 	services: string[];
 	directories: DirectoryApplication[];
