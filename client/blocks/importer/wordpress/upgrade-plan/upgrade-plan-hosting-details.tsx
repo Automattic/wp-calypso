@@ -1,6 +1,5 @@
 import { useState } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { UpgradePlanHostingTestimonials } from './constants';
 import cwvtechReportJson from './cwvtech-report.json';
@@ -49,7 +48,7 @@ export const UpgradePlanHostingDetails = () => {
 
 	return (
 		<div className="import__upgrade-plan-hosting-details">
-			<div className={ clsx( 'import__upgrade-plan-hosting-details-card-container' ) }>
+			<div className="import__upgrade-plan-hosting-details-card-container">
 				<div className="import__upgrade-plan-hosting-details-header">
 					<p className="import__upgrade-plan-hosting-details-header-main">
 						{ translate( 'Why should you host with us?' ) }
