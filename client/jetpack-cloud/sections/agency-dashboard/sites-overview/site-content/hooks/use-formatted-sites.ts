@@ -202,7 +202,7 @@ const useFormatSite = () => {
 			return {
 				site: {
 					value: site,
-					error: ! site.is_connection_healthy,
+					error: ! isConnected,
 					status: 'active',
 					type: 'site',
 				},
