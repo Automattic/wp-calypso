@@ -8,7 +8,8 @@ import { useRef, useState } from 'react';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -34,6 +35,7 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 );
 
 const HostingFeatures = () => {
+	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
@@ -93,6 +95,7 @@ const HostingFeatures = () => {
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
 	const handleTransfer = ( options: { geo_affinity?: string } ) => {
+		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
 		const params = new URLSearchParams( {
 			siteId: String( siteId ),
 			redirect_to: redirectUrl.current,
@@ -159,6 +162,7 @@ const HostingFeatures = () => {
 							className="hosting-features__button"
 							onClick={ () => {
 								if ( showActivationButton ) {
+									dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
 									return setShowEligibility( true );
 								}
 							} }
@@ -185,7 +189,14 @@ const HostingFeatures = () => {
 					</>
 				) : (
 					<>
-						<Button variant="primary" className="hosting-features__button" href={ upgradeLink }>
+						<Button
+							variant="primary"
+							className="hosting-features__button"
+							href={ upgradeLink }
+							onClick={ () =>
+								dispatch( recordTracksEvent( 'calypso_hosting_features_upgrade_plan_click' ) )
+							}
+						>
 							{ translate( 'Upgrade now' ) }
 						</Button>
 					</>
