@@ -75,7 +75,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site.ID );
 
 	const stagingSiteSlug = useSelector( ( state ) => {
-		const stagingBlogId = site.options?.wpcom_staging_blog_ids?.[ 0 ];
+		const stagingBlogId = site.options?.wpcom_staging_blog_ids?.[ 0 ] ?? null;
 		if ( ! stagingBlogId ) {
 			return false;
 		}
