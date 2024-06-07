@@ -58,7 +58,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 		? true
 		: false;
 
-	const handleClick = ( destination ) => {
+	const handleClick = ( destination: string ) => {
 		if ( destination === 'migrate' && ! canInstallPlugins ) {
 			return navigation.submit?.( { destination: 'upgrade' } );
 		}
