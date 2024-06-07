@@ -6,14 +6,14 @@ import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
-import DevToolsIcon from 'calypso/dev-tools/components/dev-tools-icon';
+import HostingFeaturesIcon from 'calypso/hosting-features/components/hosting-features-icon';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
 	DOTCOM_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
-	DOTCOM_DEVELOPER_TOOLS,
+	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
@@ -57,10 +57,10 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_DEVELOPER_TOOLS,
+				DOTCOM_HOSTING_FEATURES,
 				<span>
-					{ hasEnTranslation( 'Hosting Settings' ) ? __( 'Hosting Settings' ) : __( 'Dev Tools' ) }
-					<DevToolsIcon />
+					{ hasEnTranslation( 'Hosting Features' ) ? __( 'Hosting Features' ) : __( 'Dev Tools' ) }
+					<HostingFeaturesIcon />
 				</span>,
 				isSimpleSite || isPlanExpired,
 				selectedSiteFeature,
