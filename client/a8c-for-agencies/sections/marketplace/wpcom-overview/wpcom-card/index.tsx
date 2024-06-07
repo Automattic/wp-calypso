@@ -91,7 +91,7 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect, isL
 			<div className="wpcom-plan-card__section">
 				<h2 className="wpcom-plan-card__title">
 					<JetpackLogo size={ 20 } />{ ' ' }
-					{ translate( 'Premium Jetpack features included with your WordPress.com plans' ) }{ ' ' }
+					{ translate( 'Premium Jetpack features included with WordPress.com plans' ) }{ ' ' }
 				</h2>
 
 				<div className="wpcom-plan-card__features is-jetpack">
