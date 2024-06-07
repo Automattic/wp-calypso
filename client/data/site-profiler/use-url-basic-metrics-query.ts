@@ -1,25 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-	BasicMetricsList,
-	BasicMetricsScored,
-	Metrics,
-	UrlBasicMetricsQueryResponse,
-} from 'calypso/data/site-profiler/types';
+import { BasicMetricsScored, UrlBasicMetricsQueryResponse } from 'calypso/data/site-profiler/types';
 import wp from 'calypso/lib/wp';
-import { getScore } from './metrics-dictionaries';
+import { getBasicMetricsScored } from './metrics-dictionaries';
 
 function mapScores( response: UrlBasicMetricsQueryResponse ) {
 	const { basic } = response;
 
 	let basicMetricsScored = {} as BasicMetricsScored;
 	if ( basic.success ) {
-		basicMetricsScored = ( Object.entries( basic.data ) as BasicMetricsList ).reduce(
-			( acc, [ key, value ] ) => {
-				acc[ key ] = { value: value, score: getScore( key as Metrics, value ) };
-				return acc;
-			},
-			{} as BasicMetricsScored
-		);
+		basicMetricsScored = getBasicMetricsScored( basic.data );
 	}
 
 	return { ...response, success: basic.success, basic: basicMetricsScored };
