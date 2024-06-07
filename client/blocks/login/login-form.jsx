@@ -899,7 +899,12 @@ export class LoginForm extends Component {
 									name="calypso_login_failed_show_migrate_cta_202406"
 									defaultExperience={ null }
 									loadingExperience={ null }
-									treatmentExperience={ <MigrateNotice /> }
+									treatmentExperience={
+										<MigrateNotice
+											translate={ this.props.translate }
+											recordTracksEvent={ this.props.recordTracksEvent }
+										/>
+									}
 								/>
 							</Fragment>
 						) }
