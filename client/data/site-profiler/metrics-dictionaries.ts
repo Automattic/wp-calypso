@@ -1,4 +1,12 @@
-import { Metrics, PerformanceCategories, PerformanceReport, Scores } from './types';
+import {
+	BasicMetrics,
+	BasicMetricsList,
+	BasicMetricsScored,
+	Metrics,
+	PerformanceCategories,
+	PerformanceReport,
+	Scores,
+} from './types';
 
 export const BASIC_METRICS_SCORES: Record< Metrics, [ number, number ] > = {
 	cls: [ 0.1, 0.25 ], // https://web.dev/articles/cls
@@ -62,4 +70,29 @@ export function getPerformanceCategory( metrics?: PerformanceReport ): Performan
 		return 'wpcom-low-performer';
 	}
 	return 'non-wpcom-low-performer';
+}
+
+export function getBasicMetricsScored( metrics: BasicMetrics ) {
+	return ( Object.entries( metrics ) as BasicMetricsList ).reduce( ( acc, [ key, value ] ) => {
+		acc[ key ] = { value: value, score: getScore( key as Metrics, value ) };
+		return acc;
+	}, {} as BasicMetricsScored );
+}
+
+export function getBasicMetricsFromPerfReport(
+	metrics?: PerformanceReport
+): BasicMetricsScored | undefined {
+	if ( ! metrics ) {
+		return undefined;
+	}
+
+	const basicMetrics = {
+		cls: metrics.cls,
+		fid: metrics.fid,
+		lcp: metrics.lcp,
+		fcp: metrics.fcp,
+		ttfb: metrics.ttfb,
+		inp: metrics.inp,
+	};
+	return getBasicMetricsScored( basicMetrics );
 }
