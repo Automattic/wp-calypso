@@ -23,11 +23,11 @@ function getIcon( isWordPress?: boolean ) {
 	);
 }
 
-function getIsWpComSiteMessage( isWpCom?: boolean ) {
-	if ( isWpCom ) {
-		return translate( 'This site is hosted on WordPress.com' );
-	}
-	return translate( 'This site is not hosted on WordPress.com' );
+function getIsWpComSiteMessage( isWpCom?: boolean, isWordPress?: boolean ) {
+	const message = isWordPress
+		? translate( 'This site is built with WordPress' )
+		: translate( 'This site is not built with WordPress' );
+	return message + ( isWpCom ? translate( ', and is hosted on WordPress.com.' ) : '.' );
 }
 
 function getTitleMessage( performanceCategory: PerformanceCategories ) {
@@ -55,7 +55,7 @@ export const ResultsHeader = ( {
 			<div className="results-header--domain-container">
 				<span className="domain-title">{ domain }</span>
 				{ getIcon( isWordPress ) }
-				<span className="domain-message">{ getIsWpComSiteMessage( isWpCom ) }</span>
+				<span className="domain-message">{ getIsWpComSiteMessage( isWpCom, isWordPress ) }</span>
 			</div>
 			<h1>{ getTitleMessage( performanceCategory ) }</h1>
 			<div className="results-header--button-container">
