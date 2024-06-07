@@ -2,7 +2,7 @@ import page, { type Callback } from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectToDevToolsPromoIfNotAtomic,
+	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible } from 'calypso/my-sites/site-monitoring/controller';
@@ -21,7 +21,7 @@ export default function () {
 	page(
 		'/site-logs/:site/php',
 		siteSelection,
-		redirectToDevToolsPromoIfNotAtomic,
+		redirectToHostingPromoIfNotAtomic,
 		redirectHomeIfIneligible,
 		navigation,
 		phpErrorLogs,
@@ -32,7 +32,7 @@ export default function () {
 	page(
 		'/site-logs/:site/web',
 		siteSelection,
-		redirectToDevToolsPromoIfNotAtomic,
+		redirectToHostingPromoIfNotAtomic,
 		redirectHomeIfIneligible,
 		navigation,
 		httpRequestLogs,

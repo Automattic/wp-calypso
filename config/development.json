@@ -213,6 +213,7 @@
 		"stats/plan-usage": true,
 		"stats/tier-upgrade-slider": true,
 		"stats/type-detection": true,
+		"stats/utm-builder": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,

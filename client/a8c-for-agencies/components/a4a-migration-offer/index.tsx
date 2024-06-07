@@ -30,13 +30,12 @@ const MigrationOfferBody = () => {
 		<>
 			<p className="a4a-migration-offer__description">{ description }</p>
 			<Button
-				className="a4a-migration-offer__chat-button"
 				onClick={ () => {
 					page( `${ A4A_OVERVIEW_LINK }#contact-support-migration-offer` );
 				} }
 				primary
 			>
-				{ translate( 'Chat with us' ) }
+				{ translate( 'Contact us' ) }
 				<Icon icon={ external } size={ 18 } />
 			</Button>
 			<Button

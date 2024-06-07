@@ -3,7 +3,7 @@ export const DOTCOM_MONITORING = 'dotcom-site-monitoring';
 export const DOTCOM_LOGS = 'dotcom-site-logs';
 export const DOTCOM_GITHUB_DEPLOYMENTS = 'dotcom-github-deployments';
 export const DOTCOM_HOSTING_CONFIG = 'dotcom-hosting-config';
-export const DOTCOM_DEVELOPER_TOOLS = 'dotcom-developer-tools';
+export const DOTCOM_HOSTING_FEATURES = 'dotcom-hosting-features';
 export const DOTCOM_STAGING_SITE = 'dotcom-staging-site';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
@@ -12,6 +12,6 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ DOTCOM_LOGS ]: 'site-logs/:site/php',
 	[ DOTCOM_GITHUB_DEPLOYMENTS ]: 'github-deployments/:site',
 	[ DOTCOM_HOSTING_CONFIG ]: 'hosting-config/:site',
-	[ DOTCOM_DEVELOPER_TOOLS ]: 'dev-tools/:site',
+	[ DOTCOM_HOSTING_FEATURES ]: 'hosting-features/:site',
 	[ DOTCOM_STAGING_SITE ]: 'staging-site/:site',
 };
