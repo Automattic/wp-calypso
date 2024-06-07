@@ -22,6 +22,7 @@ import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -171,6 +172,7 @@ const PlanCard: FC = () => {
 	);
 	const planPurchase = useSelector( getSelectedPurchase );
 	const isAgencyPurchase = planPurchase && isPartnerPurchase( planPurchase );
+	const isAgency = useSelector( isAgencyUser );
 	// Show that this is an Agency Managed plan for agency purchases.
 	const planName = isAgencyPurchase
 		? purchaseType( planPurchase )
@@ -261,10 +263,12 @@ const PlanCard: FC = () => {
 						<p>
 							{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
 								components: {
-									a: (
+									a: isAgency ? (
 										<a
 											href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
 										></a>
+									) : (
+										<strong></strong>
 									),
 								},
 							} ) }
