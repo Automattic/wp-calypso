@@ -193,7 +193,7 @@ export class ReaderSidebar extends Component {
 					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
 						'sidebar-streams__following': true,
 					} ) }
-					label={ recentLabelTranslationReady ? translate( 'Recent' ) : translate( 'Following' ) }
+					label={ recentLabelTranslationReady ? translate( 'Home' ) : translate( 'Following' ) }
 					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 					customIcon={ <ReaderFollowingIcon /> }
 					link="/read"

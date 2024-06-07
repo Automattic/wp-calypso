@@ -8,7 +8,12 @@ export default function ReaderFollowingIcon() {
 			width="20"
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			<path d="m3 10.2794 4.48 4.4706 9.52-9.5" stroke="#a2aab2" strokeWidth="1.5" />
+			<path
+				d="M18 5.57142V17H12.2857V10.1428H7.71428V17H2V5.57142L9.99999 1L18 5.57142Z"
+				stroke="#a2aab2"
+				strokeLinecap="round"
+				strokeWidth="1.5"
+			/>
 		</svg>
 	);
 }
