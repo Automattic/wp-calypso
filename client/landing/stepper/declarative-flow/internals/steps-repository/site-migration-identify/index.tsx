@@ -15,6 +15,32 @@ import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
 
+interface HostingDetailsProps {
+	items: { title: string; description: string }[];
+}
+
+const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
+	const translate = useTranslate();
+
+	return (
+		<div className="import__site-identify-hosting-details">
+			<p className="import__site-identify-hosting-details--title">
+				{ translate( 'Why should you host with us?' ) }
+			</p>
+			<div className="import__site-identify-hosting-details--list">
+				{ items.map( ( item, index ) => (
+					<div key={ index } className="import__site-identify-hosting-details--list-item">
+						<p className="import__site-identify-hosting-details--list-item-title">{ item.title }</p>
+						<p className="import__site-identify-hosting-details--list-item-description">
+							{ item.description }
+						</p>
+					</div>
+				) ) }
+			</div>
+		</div>
+	);
+};
+
 interface Props {
 	hasError?: boolean;
 	onComplete: ( siteInfo: UrlData ) => void;
