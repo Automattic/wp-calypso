@@ -1366,6 +1366,7 @@ class ThemeSheet extends Component {
 			isThemeAllowed,
 			successNotice: showSuccessNotice,
 			themeTier,
+			styleVariations,
 		} = this.props;
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
@@ -1632,7 +1633,7 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ isWpcomTheme && ! isExternallyManagedTheme
+							{ isWpcomTheme && ! isExternallyManagedTheme && styleVariations?.length
 								? this.renderWebPreview()
 								: this.renderScreenshot() }
 						</div>
