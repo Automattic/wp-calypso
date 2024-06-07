@@ -96,7 +96,7 @@ describe.each( [
 			const helpCenterContainerIsVisible = await helpCenterContainer.isVisible();
 
 			if ( ! helpCenterContainerIsVisible ) {
-				console.error(
+				throw new Error(
 					`The Help Center is not visible in the editor. ${ helpCenterContainerVisibilityErrorMessage }`
 				);
 			}
@@ -128,7 +128,7 @@ describe.each( [
 				.isVisible();
 
 			if ( ! helpCenterContainerIsVisible ) {
-				console.error(
+				throw new Error(
 					`The Help Center is not visible in WP Admin. ${ helpCenterContainerVisibilityErrorMessage }`
 				);
 			}
