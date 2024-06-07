@@ -52,13 +52,11 @@ const DotcomPreviewPane = ( {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
 		const siteFeatures = [
 			{
-				id: 'overview',
 				label: __( 'Overview' ),
 				enabled: true,
 				featureIds: [ DOTCOM_OVERVIEW ],
 			},
 			{
-				DOTCOM_HOSTING_FEATURES,
 				label: (
 					<span>
 						{ hasEnTranslation( 'Hosting Features' )
@@ -71,31 +69,26 @@ const DotcomPreviewPane = ( {
 				featureIds: [ DOTCOM_HOSTING_FEATURES ],
 			},
 			{
-				id: 'deployments',
 				label: __( 'Deployments' ),
 				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_GITHUB_DEPLOYMENTS ],
 			},
 			{
-				id: 'monitoring',
 				label: __( 'Monitoring' ),
 				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_MONITORING ],
 			},
 			{
-				id: 'logs',
 				label: __( 'Logs' ),
 				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_LOGS_PHP, DOTCOM_LOGS_WEB ],
 			},
 			{
-				id: 'staging-site',
 				label: __( 'Staging Site' ),
 				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_STAGING_SITE ],
 			},
 			{
-				id: 'server-settings',
 				label: hasEnTranslation( 'Server Settings' )
 					? __( 'Server Settings' )
 					: __( 'Server Config' ),
@@ -104,17 +97,18 @@ const DotcomPreviewPane = ( {
 			},
 		];
 
-		return siteFeatures.map( ( { id, label, enabled, featureIds } ) => {
+		return siteFeatures.map( ( { label, enabled, featureIds } ) => {
 			const selected = enabled && featureIds.includes( selectedSiteFeature );
+			const defaultFeatureId = featureIds[ 0 ];
 			return {
-				id,
+				id: defaultFeatureId,
 				tab: {
 					label,
 					visible: enabled,
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
-							setSelectedSiteFeature( featureIds[ 0 ] );
+							setSelectedSiteFeature( defaultFeatureId );
 						}
 					},
 				},
