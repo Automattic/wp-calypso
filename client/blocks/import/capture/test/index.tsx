@@ -75,4 +75,14 @@ describe( 'CaptureInput', () => {
 
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 	} );
+
+	it( 'shows a custom CTA label', async () => {
+		render(
+			<MemoryRouter>
+				<CaptureInput onInputEnter={ jest.fn() } label="A custom label text" nextLabelText="XYZ" />
+			</MemoryRouter>
+		);
+
+		expect( screen.getByRole( 'button', { name: /XYZ/ } ) ).toBeInTheDocument();
+	} );
 } );

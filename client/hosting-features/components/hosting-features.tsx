@@ -8,7 +8,8 @@ import { useRef, useState } from 'react';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -22,7 +23,7 @@ type PromoCardProps = {
 };
 
 const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
-	<Card className="dev-tools__card">
+	<Card className="hosting-features__card">
 		<CardHeading>{ title }</CardHeading>
 		<p>{ text }</p>
 		{ translate( '{{supportLink}}Learn more{{/supportLink}}', {
@@ -33,7 +34,8 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 	</Card>
 );
 
-const DevTools = () => {
+const HostingFeatures = () => {
+	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
@@ -93,6 +95,7 @@ const DevTools = () => {
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showActivationButton = canSiteGoAtomic;
 	const handleTransfer = ( options: { geo_affinity?: string } ) => {
+		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
 		const params = new URLSearchParams( {
 			siteId: String( siteId ),
 			redirect_to: redirectUrl.current,
@@ -107,11 +110,37 @@ const DevTools = () => {
 		page.replace( redirectUrl.current );
 		return;
 	}
+	const activateTitle = hasEnTranslation( 'Activate all hosting features' )
+		? translate( 'Activate all hosting features' )
+		: translate( 'Activate all developer tools' );
 
-	const upgradeCtaCopy = hasEnTranslation(
-		'Upgrade to the %(planName)s plan or higher to get access to all developer tools'
+	const unlockTitle = hasEnTranslation( 'Unlock all hosting features' )
+		? translate( 'Unlock all hosting features' )
+		: translate( 'Unlock all developer tools' );
+
+	const activateDescription = hasEnTranslation(
+		'Your plan includes all the hosting features listed below. Click "Activate now" to begin.'
+	)
+		? translate(
+				'Your plan includes all the hosting features listed below. Click "Activate now" to begin.'
+		  )
+		: translate(
+				'Your plan includes all the developer tools listed below. Click "Activate now" to begin.'
+		  );
+
+	const unlockDescription = hasEnTranslation(
+		'Upgrade to the %(planName)s plan or higher to get access to all hosting features'
 	)
 		? // translators: %(planName)s is a plan name. E.g. Business plan.
+		  translate(
+				'Upgrade to the %(planName)s plan or higher to get access to all hosting features',
+				{
+					args: {
+						planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+					},
+				}
+		  )
+		: // translators: %(planName)s is a plan name. E.g. Business plan.
 		  translate(
 				'Upgrade to the %(planName)s plan or higher to get access to all developer tools',
 				{
@@ -119,31 +148,21 @@ const DevTools = () => {
 						planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
 					},
 				}
-		  )
-		: translate( 'Upgrade to the Creator plan or higher to get access to all developer tools' );
+		  );
 
 	return (
-		<div className="dev-tools">
-			<div className="dev-tools__hero">
-				<h1>
-					{ showActivationButton
-						? translate( 'Activate all developer tools' )
-						: translate( 'Unlock all developer tools' ) }
-				</h1>
-				<p>
-					{ showActivationButton
-						? translate(
-								'Your plan includes all the developer tools listed below. Click "Activate now" to begin.'
-						  )
-						: upgradeCtaCopy }
-				</p>
+		<div className="hosting-features">
+			<div className="hosting-features__hero">
+				<h1>{ showActivationButton ? activateTitle : unlockTitle }</h1>
+				<p>{ showActivationButton ? activateDescription : unlockDescription }</p>
 				{ showActivationButton ? (
 					<>
 						<Button
 							variant="primary"
-							className="dev-tools__button"
+							className="hosting-features__button"
 							onClick={ () => {
 								if ( showActivationButton ) {
+									dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
 									return setShowEligibility( true );
 								}
 							} }
@@ -164,19 +183,26 @@ const DevTools = () => {
 								backUrl={ redirectUrl.current }
 								showDataCenterPicker
 								standaloneProceed
-								currentContext="dev-tools"
+								currentContext="hosting-features"
 							/>
 						</Dialog>
 					</>
 				) : (
 					<>
-						<Button variant="primary" className="dev-tools__button" href={ upgradeLink }>
+						<Button
+							variant="primary"
+							className="hosting-features__button"
+							href={ upgradeLink }
+							onClick={ () =>
+								dispatch( recordTracksEvent( 'calypso_hosting_features_upgrade_plan_click' ) )
+							}
+						>
 							{ translate( 'Upgrade now' ) }
 						</Button>
 					</>
 				) }
 			</div>
-			<div className="dev-tools__cards">
+			<div className="hosting-features__cards">
 				{ promoCards.map( ( card ) => (
 					<PromoCard
 						title={ card.title }
@@ -189,4 +215,4 @@ const DevTools = () => {
 	);
 };
 
-export default DevTools;
+export default HostingFeatures;

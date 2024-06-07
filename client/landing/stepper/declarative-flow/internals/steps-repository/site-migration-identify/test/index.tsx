@@ -67,7 +67,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 		await userEvent.type( getInput(), 'https://example.com' );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 
 		await waitFor( () => {
 			expect( submit ).toHaveBeenCalledWith(
@@ -91,7 +91,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 		await userEvent.type( getInput(), 'https://example.com' );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { platform: 'unknown' } ) )
@@ -124,7 +124,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 		await userEvent.type( getInput(), 'https://example.com' );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 
 		await waitFor( () =>
 			expect( screen.getByText( /Please enter a valid website / ) ).toBeVisible()
@@ -149,7 +149,7 @@ describe( 'SiteMigrationIdentify', () => {
 			.query( { site_url: 'https://existent-site.com' } )
 			.reply( 200, API_RESPONSE_WITH_OTHER_PLATFORM );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { platform: 'unknown' } ) )
 		);

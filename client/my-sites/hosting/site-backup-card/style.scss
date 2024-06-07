@@ -27,10 +27,6 @@
 		}
 	}
 
-	&__button.hosting-overview__link-button {
-		font-size: $font-body;
-	}
-
 	&.is-disabled {
 		.site-backup-card__placeholder {
 			animation: none;

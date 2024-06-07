@@ -25,9 +25,9 @@ function mapScores( response: UrlBasicMetricsQueryResponse ) {
 	return { ...response, success: basic.success, basic: basicMetricsScored };
 }
 
-export const useUrlBasicMetricsQuery = ( url?: string, advance = false ) => {
+export const useUrlBasicMetricsQuery = ( url?: string, hash?: string, advance = false ) => {
 	return useQuery( {
-		queryKey: [ 'url-', url ],
+		queryKey: [ 'url', 'basic-metrics', url, hash, advance ],
 		queryFn: (): Promise< UrlBasicMetricsQueryResponse > =>
 			wp.req.get(
 				{
@@ -40,7 +40,7 @@ export const useUrlBasicMetricsQuery = ( url?: string, advance = false ) => {
 		meta: {
 			persist: false,
 		},
-		enabled: !! url,
+		enabled: !! url && ! hash, // Disable if hash is present
 		retry: false,
 		refetchOnWindowFocus: false,
 	} );

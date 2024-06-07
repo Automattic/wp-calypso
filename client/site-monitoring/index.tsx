@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectToDevToolsPromoIfNotAtomic,
+	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible, siteMetrics } from 'calypso/my-sites/site-monitoring/controller';
@@ -18,7 +18,7 @@ export default function () {
 		page(
 			'/site-monitoring/:site',
 			siteSelection,
-			redirectToDevToolsPromoIfNotAtomic,
+			redirectToHostingPromoIfNotAtomic,
 			redirectHomeIfIneligible,
 			navigation,
 			siteMonitoring,
@@ -30,7 +30,7 @@ export default function () {
 		page(
 			'/site-monitoring/:siteId/:tab(php|web)?',
 			siteSelection,
-			redirectToDevToolsPromoIfNotAtomic,
+			redirectToHostingPromoIfNotAtomic,
 			redirectHomeIfIneligible,
 			navigation,
 			siteMetrics,
