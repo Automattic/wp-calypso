@@ -2,7 +2,12 @@
  * @group calypso-pr
  */
 
-import { SupportComponent, TestAccount, TestAccountName } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	SupportComponent,
+	TestAccount,
+	TestAccountName,
+} from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
@@ -49,13 +54,11 @@ You can view the history here: https://github.com/Automattic/wp-calypso/commits/
 
 		describe( 'Verify Help Center is opened and visible in Editor', function () {
 			it( 'Navigate to the Editor and verify the Help Center is initially closed', async function () {
-				const postURL = `https://wordpress.com/post/${ testAccount.getSiteURL( {
-					protocol: false,
-				} ) }`;
+				const postURL = DataHelper.getCalypsoURL(
+					'/post/' + testAccount.getSiteURL( { protocol: false } )
+				);
 
-				await page.goto( postURL, {
-					waitUntil: 'networkidle',
-				} );
+				await page.goto( postURL );
 			} );
 
 			it( 'Verify Help Center is initially closed', async function () {
@@ -95,9 +98,7 @@ You can view the history here: https://github.com/Automattic/wp-calypso/commits/
 				const postURL = `${ testAccount.getSiteURL( {
 					protocol: true,
 				} ) }wp-admin/options-general.php`;
-				await page.goto( postURL, {
-					waitUntil: 'networkidle',
-				} );
+				await page.goto( postURL );
 			} );
 
 			it( 'Verify the Help Center is initially closed', async function () {
