@@ -71,10 +71,16 @@ You can view the history here: https://github.com/Automattic/wp-calypso/commits/
 			} );
 
 			it( 'Open Help Center', async function () {
-				await page
-					.frameLocator( '.calypsoify iframe' )
-					.getByLabel( 'Help', { exact: true } )
-					.click();
+				try {
+					await page
+						.frameLocator( '.calypsoify iframe' )
+						.getByLabel( 'Help', { exact: true } )
+						.click();
+				} catch ( error ) {
+					throw new Error(
+						`The Help Center could not be opened in the Editor. ${ helpCenterContainerVisibilityErrorMessage }`
+					);
+				}
 			} );
 
 			it( 'Verify Help Center is opened', async function () {
