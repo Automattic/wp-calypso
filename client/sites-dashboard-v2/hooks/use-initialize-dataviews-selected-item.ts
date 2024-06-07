@@ -18,9 +18,17 @@ export function useInitializeDataViewsSelectedItem( {
 		if ( initialized.current || ! selectedSite ) {
 			return;
 		}
-		for ( const site of document.querySelectorAll( '.sites-dataviews__site' ) ) {
-			const slug = site.querySelector( '.sites-dataviews__site-url span' );
-			if ( selectedSite.slug === ( slug as HTMLElement )?.innerText ) {
+
+		const selector = selectedSite.is_wpcom_staging_site
+			? '.site-dataviews__staging-site'
+			: '.sites-dataviews__site';
+
+		for ( const site of document.querySelectorAll( selector ) ) {
+			const slug = selectedSite.is_wpcom_staging_site
+				? site.getAttribute( 'data-site-slug' )
+				: ( site.querySelector( '.sites-dataviews__site-url span' ) as HTMLElement )?.innerText;
+
+			if ( selectedSite.slug === slug ) {
 				( site as HTMLElement ).click?.();
 				initialized.current = true;
 				break;

@@ -24,6 +24,7 @@ import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
@@ -72,6 +73,15 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 
 	const title = __( 'View Site Details' );
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site.ID );
+
+	const stagingSiteSlug = useSelector( ( state ) => {
+		const stagingBlogId = site.options?.wpcom_staging_blog_ids?.[ 0 ];
+		if ( ! stagingBlogId ) {
+			return false;
+		}
+
+		return getSiteSlug( state, stagingBlogId );
+	} );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
@@ -146,6 +156,13 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 							<a className="sites-dataviews__site-wp-admin-url" href={ adminUrl }>
 								<Truncated>{ adminLabel }</Truncated>
 							</a>
+							{ stagingSiteSlug && (
+								<button
+									tabIndex={ -1 }
+									data-site-slug={ stagingSiteSlug }
+									className="site-dataviews__staging-site"
+								></button>
+							) }
 						</>
 					)
 				}
