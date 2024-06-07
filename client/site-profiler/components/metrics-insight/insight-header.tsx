@@ -1,3 +1,4 @@
+import { isMobile } from '@automattic/viewport';
 import Markdown from 'react-markdown';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 
@@ -21,7 +22,8 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 			>
 				{ title }
 			</Markdown>
-			{ value && (
+			{ value && isMobile() && <span className="value is-mobile"> { value }</span> }
+			{ value && ! isMobile() && (
 				<span>
 					&nbsp;&minus;&nbsp;<span className="value"> { value }</span>
 				</span>
