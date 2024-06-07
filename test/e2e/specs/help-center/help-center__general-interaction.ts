@@ -7,8 +7,10 @@ import {
 	SupportComponent,
 	TestAccount,
 	TestAccountName,
+	envVariables,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -52,83 +54,89 @@ describe.each( [ { accountName: 'defaultUser' as TestAccountName } ] )(
 			} );
 		} );
 
-		describe( 'Verify Help Center is opened and visible in Editor', function () {
-			it( 'Navigate to the Editor and verify the Help Center is initially closed', async function () {
-				const postURL = DataHelper.getCalypsoURL(
-					'/post/' + testAccount.getSiteURL( { protocol: false } )
-				);
+		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
+			'Verify Help Center is opened and visible in Editor',
+			function () {
+				it( 'Navigate to the Editor and verify the Help Center is initially closed', async function () {
+					const postURL = DataHelper.getCalypsoURL(
+						'/post/' + testAccount.getSiteURL( { protocol: false } )
+					);
 
-				await page.goto( postURL );
-			} );
+					await page.goto( postURL );
+				} );
 
-			it( 'Verify Help Center is initially closed', async function () {
-				expect(
-					await page
+				it( 'Verify Help Center is initially closed', async function () {
+					expect(
+						await page
+							.frameLocator( '.calypsoify iframe' )
+							.locator( '.help-center__container' )
+							.isVisible()
+					).toBeFalsy();
+				} );
+
+				it( 'Open Help Center', async function () {
+					try {
+						await page
+							.frameLocator( '.calypsoify iframe' )
+							.getByLabel( 'Help', { exact: true } )
+							.click();
+					} catch ( error ) {
+						throw new Error(
+							`The Help Center could not be opened in the Editor. ${ helpCenterContainerVisibilityErrorMessage }`
+						);
+					}
+				} );
+
+				it( 'Verify Help Center is opened', async function () {
+					const helpCenterContainerIsVisible = await page
 						.frameLocator( '.calypsoify iframe' )
 						.locator( '.help-center__container' )
-						.isVisible()
-				).toBeFalsy();
-			} );
+						.isVisible();
 
-			it( 'Open Help Center', async function () {
-				try {
-					await page
-						.frameLocator( '.calypsoify iframe' )
-						.getByLabel( 'Help', { exact: true } )
-						.click();
-				} catch ( error ) {
-					throw new Error(
-						`The Help Center could not be opened in the Editor. ${ helpCenterContainerVisibilityErrorMessage }`
-					);
-				}
-			} );
+					if ( ! helpCenterContainerIsVisible ) {
+						throw new Error(
+							`The Help Center is not visible in the Editor. ${ helpCenterContainerVisibilityErrorMessage }`
+						);
+					}
 
-			it( 'Verify Help Center is opened', async function () {
-				const helpCenterContainerIsVisible = await page
-					.frameLocator( '.calypsoify iframe' )
-					.locator( '.help-center__container' )
-					.isVisible();
+					expect( helpCenterContainerIsVisible ).toBeTruthy();
+				} );
+			}
+		);
 
-				if ( ! helpCenterContainerIsVisible ) {
-					throw new Error(
-						`The Help Center is not visible in the Editor. ${ helpCenterContainerVisibilityErrorMessage }`
-					);
-				}
+		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
+			'Verify Help Center is opened and visible in WP Admin',
+			function () {
+				it( 'Navigate to wp-admin page', async function () {
+					const postURL = `${ testAccount.getSiteURL( {
+						protocol: true,
+					} ) }wp-admin/options-general.php`;
+					await page.goto( postURL );
+				} );
 
-				expect( helpCenterContainerIsVisible ).toBeTruthy();
-			} );
-		} );
+				it( 'Verify the Help Center is initially closed', async function () {
+					expect( await page.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
+				} );
 
-		describe( 'Verify Help Center is opened and visible in WP Admin', function () {
-			it( 'Navigate to wp-admin page', async function () {
-				const postURL = `${ testAccount.getSiteURL( {
-					protocol: true,
-				} ) }wp-admin/options-general.php`;
-				await page.goto( postURL );
-			} );
+				it( 'Open Help Center in WP Admin', async function () {
+					await page.locator( '#wp-admin-bar-help-center' ).click();
+				} );
 
-			it( 'Verify the Help Center is initially closed', async function () {
-				expect( await page.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
-			} );
+				it( 'Verify Help Center is opened in WP Admin', async function () {
+					const helpCenterContainerIsVisible = await page
+						.locator( '.help-center__container' )
+						.isVisible();
 
-			it( 'Open Help Center', async function () {
-				await page.locator( '#wp-admin-bar-help-center' ).click();
-			} );
+					if ( ! helpCenterContainerIsVisible ) {
+						throw new Error(
+							`The Help Center is not visible in WP Admin. ${ helpCenterContainerVisibilityErrorMessage }`
+						);
+					}
 
-			it( 'Verify Help Center is opened', async function () {
-				const helpCenterContainerIsVisible = await page
-					.locator( '.help-center__container' )
-					.isVisible();
-
-				if ( ! helpCenterContainerIsVisible ) {
-					throw new Error(
-						`The Help Center is not visible in WP Admin. ${ helpCenterContainerVisibilityErrorMessage }`
-					);
-				}
-
-				expect( helpCenterContainerIsVisible ).toBeTruthy();
-			} );
-		} );
+					expect( helpCenterContainerIsVisible ).toBeTruthy();
+				} );
+			}
+		);
 	}
 );
 
