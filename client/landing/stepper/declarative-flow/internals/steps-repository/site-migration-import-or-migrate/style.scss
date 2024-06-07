@@ -15,18 +15,15 @@
 		font-size: 1rem;
 		letter-spacing: -0.32px;
 		line-height: 1.5;
-		margin-bottom: 50px;
 		text-align: center;
-
-		@include break-mobile {
-			margin-bottom: 80px;
-		}
 	}
 
 	.import-or-migrate__list {
+		margin-top: 50px;
 		padding-bottom: 108px;
 
 		@include break-mobile {
+			margin-top: 80px;
 			padding-bottom: revert;
 		}
 
