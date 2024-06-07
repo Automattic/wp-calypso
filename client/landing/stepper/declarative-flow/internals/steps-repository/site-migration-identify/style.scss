@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 
 .import__capture-container {
 	max-width: 368px;
@@ -79,9 +80,14 @@
 	display: flex;
 	flex-direction: column;
 	gap: 1.25rem;
-	margin: 40px auto;
+	margin: 40px auto 0 auto;
 	max-width: 368px;
 	padding: 1.5rem;
+
+	@media (max-width: $break-small) {
+		margin: 40px auto 60px auto;
+	}
+
 
 	&--title {
 		color: var(--studio-gray-100);
