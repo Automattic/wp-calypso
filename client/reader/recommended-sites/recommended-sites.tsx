@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { requestRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 import {
 	getReaderRecommendedSites,
@@ -61,6 +62,8 @@ const RecommendedSites = () => {
 	);
 
 	const offset = useSelector( ( state ) => getReaderRecommendedSitesPagingOffset( state, seed ) );
+
+	const currentUser = useSelector( getCurrentUser );
 	const blockedSites = useSelector( getBlockedSites );
 
 	const filteredRecommendedSites = useMemo( () => {
@@ -80,6 +83,9 @@ const RecommendedSites = () => {
 		}
 	}, [ dispatch, filteredRecommendedSites.length, offset ] );
 
+	if ( ! currentUser?.email_verified ) {
+		return null;
+	}
 	return (
 		<div className="recommended-sites">
 			<h2 className="recommended-sites__heading">{ translate( 'Recommended sites' ) }</h2>

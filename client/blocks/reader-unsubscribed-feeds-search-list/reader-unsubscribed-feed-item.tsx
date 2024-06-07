@@ -5,8 +5,10 @@ import {
 } from '@wordpress/components';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import ExternalLink from 'calypso/components/external-link';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 type ReaderUnsubscribedFeedItemProps = {
 	defaultIcon?: JSX.Element | null;
@@ -42,6 +44,8 @@ const ReaderUnsubscribedFeedItem = ( {
 	title,
 }: ReaderUnsubscribedFeedItemProps ) => {
 	const translate = useTranslate();
+	const currentUser = useSelector( getCurrentUser );
+	const isEmailVarified = currentUser?.email_verified;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
 
 	const SubscribeButton = () => (
@@ -122,14 +126,14 @@ const ReaderUnsubscribedFeedItem = ( {
 						<div className="reader-unsubscribed-feed-item__description">{ description }</div>
 
 						<div className="reader-unsubscribed-feed-item__subscribe-button">
-							<SubscribeButton />
+							{ isEmailVarified && <SubscribeButton /> }
 						</div>
 					</HStack>
 					<div className="reader-unsubscribed-feed-item__mobile-description" aria-hidden="true">
 						{ description }
 					</div>
 					<div className="reader-unsubscribed-feed-item__mobile-subscribe-button">
-						<SubscribeButton />
+						{ isEmailVarified && <SubscribeButton /> }
 					</div>
 				</VStack>
 			</HStack>
