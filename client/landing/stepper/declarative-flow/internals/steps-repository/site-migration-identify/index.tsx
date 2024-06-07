@@ -145,6 +145,9 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 					{ ...nextLabelProp }
 				/>
 			</div>
+			{ hasTranslationsForAllItems && (
+				<HostingDetails items={ Object.values( hostingDetailItems ) } />
+			) }
 		</div>
 	);
 };
