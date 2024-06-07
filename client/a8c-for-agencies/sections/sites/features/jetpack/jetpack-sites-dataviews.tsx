@@ -23,8 +23,6 @@ import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/s
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-// import { useSelector } from 'calypso/state';
-// import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import { AllowedTypes, Site, SiteData } from '../../types';
 import type { MouseEvent, KeyboardEvent } from 'react';
