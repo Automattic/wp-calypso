@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -8,6 +9,7 @@ import useUTMMetricsQuery from '../hooks/use-utm-metrics-query';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+import UTMBuilder from '../stats-module-utm-builder/';
 import UTMDropdown from './stats-module-utm-dropdown';
 import UTMExportButton from './utm-export-button';
 
@@ -59,6 +61,7 @@ const StatsModuleUTM = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
+	const isBuilderEnabled = config.isEnabled( 'stats/utm-builder' ) || true;
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
@@ -122,7 +125,12 @@ const StatsModuleUTM = ( {
 				data={ data }
 				useShortLabel={ useShortLabel }
 				title={ moduleStrings?.title }
-				emptyMessage={ moduleStrings.empty }
+				emptyMessage={
+					<div>
+						{ moduleStrings.empty }
+						{ isBuilderEnabled && <UTMBuilder /> }
+					</div>
+				}
 				metricLabel={ metricLabel }
 				showMore={
 					displaySummaryLink && ! summary
