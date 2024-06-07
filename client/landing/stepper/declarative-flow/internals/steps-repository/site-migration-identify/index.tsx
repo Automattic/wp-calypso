@@ -15,6 +15,32 @@ import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
 
+interface HostingDetailsProps {
+	items: { title: string; description: string }[];
+}
+
+const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
+	const translate = useTranslate();
+
+	return (
+		<div className="import__site-identify-hosting-details">
+			<p className="import__site-identify-hosting-details--title">
+				{ translate( 'Why should you host with us?' ) }
+			</p>
+			<div className="import__site-identify-hosting-details--list">
+				{ items.map( ( item, index ) => (
+					<div key={ index } className="import__site-identify-hosting-details--list-item">
+						<p className="import__site-identify-hosting-details--list-item-title">{ item.title }</p>
+						<p className="import__site-identify-hosting-details--list-item-description">
+							{ item.description }
+						</p>
+					</div>
+				) ) }
+			</div>
+		</div>
+	);
+};
+
 interface Props {
 	hasError?: boolean;
 	onComplete: ( siteInfo: UrlData ) => void;
@@ -62,6 +88,41 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		return <ScanningStep />;
 	}
 
+	// TODO: Remove extra steps and properties for non-English locales once we have translations -- hosting details.
+	const hostingDetailItems = {
+		'unmatched-uptime': {
+			title: translate( 'Unmatched Reliability and Uptime' ),
+			titleString: 'Unmatched Reliability and Uptime', // Temporary string for non-English locales. Remove once we have translations.
+			description: translate(
+				'Our rock-solid infrastructure ensures 99.999% uptime, keeping your site always accessible to your users no matter what!'
+			),
+			descriptionString:
+				'Our rock-solid infrastructure ensures 99.999% uptime, keeping your site always accessible to your users no matter what!', // Temporary string for non-English locales. Remove once we have translations.
+		},
+		'effortless-customization': {
+			title: translate( 'Effortless Customization' ),
+			titleString: 'Effortless Customization',
+			description: translate(
+				'Our intuitive tools and extensive customization options let you design a website that meets all your needs, without any hassle. Whether you’re a beginner or an expert, building your dream site has never been easier.'
+			),
+			descriptionString:
+				'Our intuitive tools and extensive customization options let you design a website that meets all your needs, without any hassle. Whether you’re a beginner or an expert, building your dream site has never been easier.',
+		},
+		'blazing-fast-speed': {
+			title: translate( 'Blazing Fast Page Speed' ),
+			titleString: 'Blazing Fast Page Speed',
+			description: translate(
+				'Deliver lightning-fast load times with our global CDN spanning 28+ locations, providing a seamless experience for your visitors no matter where they are.'
+			),
+			descriptionString:
+				'Deliver lightning-fast load times with our global CDN spanning 28+ locations, providing a seamless experience for your visitors no matter where they are.',
+		},
+	};
+
+	const hasTranslationsForAllItems = Object.values( hostingDetailItems ).every(
+		( item ) => hasEnTranslation( item.titleString ) && hasEnTranslation( item.descriptionString )
+	);
+
 	return (
 		<div>
 			<div className="import__heading import__heading-center">
@@ -84,6 +145,9 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 					{ ...nextLabelProp }
 				/>
 			</div>
+			{ hasTranslationsForAllItems && (
+				<HostingDetails items={ Object.values( hostingDetailItems ) } />
+			) }
 		</div>
 	);
 };
