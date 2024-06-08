@@ -7,7 +7,6 @@ import { AnyAction } from 'redux';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
@@ -15,8 +14,8 @@ import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Step } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
-
 import './style.scss';
+import { useSocialService } from './use-social-service';
 
 const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const { submit } = navigation;
@@ -24,6 +23,7 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
+	const { socialService, socialServiceResponse } = useSocialService();
 
 	useEffect( () => {
 		if ( isLoggedIn ) {
@@ -37,19 +37,6 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 		signupUrl: window.location.pathname + window.location.search,
 	} );
 
-	const hashEntries = new globalThis.URLSearchParams( window.location.hash.substring( 1 ) );
-
-	let socialServiceResponse: Record< string, string[] | string > = {};
-	let socialService: string = '';
-
-	if ( hashEntries.size > 0 ) {
-		const hashObject = Object.fromEntries( hashEntries.entries() );
-		const clientId = hashObject.client_id;
-		socialService = getSocialServiceFromClientId( clientId ) ?? socialService;
-		if ( socialService ) {
-			socialServiceResponse = hashObject;
-		}
-	}
 	return (
 		<>
 			<FormattedHeader align="center" headerText={ translate( 'Create your account' ) } brandFont />
