@@ -1,15 +1,23 @@
 // import config from '@automattic/calypso-config';
 // import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
-
-import { AuthRedirectParams, UserSelect } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { USER_STORE } from 'calypso/landing/stepper/stores';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import { createAccount } from 'calypso/lib/signup/api/account';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { errorNotice } from 'calypso/state/notices/actions';
+
+const extractAuthQueryParams = () => {
+	const urlSearchParams = new URL( window.location.href ).searchParams;
+
+	const oauth2_client_id = urlSearchParams.get( 'oauth2_client_id' );
+	const oauth2_redirect = urlSearchParams.get( 'oauth2_redirect' );
+	const redirect_to =
+		urlSearchParams.get( 'oauth2_redirect' ) || urlSearchParams.get( 'redirect_to' );
+	const jetpack_redirect = urlSearchParams.get( 'jetpack_redirect' );
+
+	return { oauth2_client_id, oauth2_redirect, redirect_to, jetpack_redirect };
+};
 
 export type SocialAuthParams = {
 	service?: string;
@@ -22,10 +30,7 @@ export default function useUserProcessingCallbacks( { flowName }: Props ) {
 	const [ recentSocialAuthAttemptParams, setRecentSocialAuthAttemptParams ] =
 		useState< SocialAuthParams >();
 	const translate = useTranslate();
-	const authParams = useSelect(
-		( select ) => ( select( USER_STORE ) as UserSelect ).getAuthRedirectParams(),
-		[]
-	);
+	const authParams = extractAuthQueryParams();
 	// const initGoogleRecaptchaCallback = () => {
 	// 	initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
 	// 		( clientId ) => {
@@ -56,7 +61,7 @@ export default function useUserProcessingCallbacks( { flowName }: Props ) {
 		access_token?: string;
 		id_token?: string | null;
 		oauth2Signup?: boolean;
-		queryArgs: AuthRedirectParams;
+		queryArgs: ReturnType< typeof extractAuthQueryParams >;
 		form?: any;
 	};
 
@@ -128,7 +133,7 @@ export default function useUserProcessingCallbacks( { flowName }: Props ) {
 		id_token: string | null = null,
 		userData: SubmitProps[ 'userData' ] | null = null
 	) => {
-		if ( ! isOauth2RedirectValid( authParams?.oauth2_redirect ) ) {
+		if ( ! isOauth2RedirectValid( authParams.oauth2_redirect ) ) {
 			errorNotice( translate( 'An unexpected error occurred. Please try again later.' ) );
 			return;
 		}
