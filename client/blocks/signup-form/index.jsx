@@ -111,9 +111,6 @@ class SignupForm extends Component {
 		positionInFlow: PropTypes.number,
 		save: PropTypes.func,
 		signupDependencies: PropTypes.object,
-		/**
-		 * Current step details
-		 */
 		step: PropTypes.object,
 		submitButtonText: PropTypes.string.isRequired,
 		submitting: PropTypes.bool,
