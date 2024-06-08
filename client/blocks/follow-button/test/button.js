@@ -8,17 +8,32 @@ import FollowButton from '../button';
 
 describe( 'FollowButton', () => {
 	test( 'should apply a custom follow label', () => {
-		const initialState = createReduxStore( {
-			currentUser: {
-				email_verified: true,
-			},
-		} );
 		render(
-			<Provider store={ initialState }>
+			<Provider store={ createTestStore( true ) }>
 				<FollowButton followLabel="Follow Tag" />
 			</Provider>
 		);
 
 		expect( screen.getByText( 'Follow Tag' ) ).toBeVisible();
 	} );
+
+	test( 'should be empty', () => {
+		render(
+			<Provider store={ createTestStore( false ) }>
+				<FollowButton followLabel="Follow Tag" />
+			</Provider>
+		);
+
+		expect( screen.getByText( 'Follow Tag' ) ).toBeEmptyDOMElement();
+	} );
 } );
+
+function createTestStore( verified ) {
+	return createReduxStore( {
+		currentUser: {
+			user: {
+				email_verified: verified,
+			},
+		},
+	} );
+}
