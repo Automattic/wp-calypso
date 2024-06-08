@@ -28,17 +28,6 @@ export type PreSignUpUserData = {
 	};
 };
 
-export type PostSignUpUserData = {
-	ID: number;
-	password: string;
-	user_email: string;
-	extra: {
-		first_name: string;
-		last_name: string;
-		username_hint: string;
-	};
-};
-
 export type CreateAccountParams = {
 	userData: PreSignUpUserData | null;
 	flowName: string;
@@ -51,20 +40,10 @@ export type CreateAccountParams = {
 	recaptchaToken: string;
 };
 
-export type CreateNewAccountParams = Pick<
+export type CreateWPCOMAccountParams = Pick<
 	CreateAccountParams,
 	'userData' | 'flowName' | 'recaptchaDidntLoad' | 'recaptchaFailed' | 'recaptchaToken'
 >;
-
-export type WpcomResolvedResponse = {
-	errors: Array< {
-		error?: 'already_taken' | 'already_active' | 'email_exists' | 'user_exists';
-		message: string;
-		data?: { email: string };
-	} >;
-	response?: any;
-};
-
 export type CreateSocialAccountParams = Pick<
 	CreateAccountParams,
 	'service' | 'access_token' | 'id_token' | 'userData'

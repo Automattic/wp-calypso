@@ -7,7 +7,7 @@ import wpcom from 'calypso/lib/wp';
 import type {
 	AccountCreationAPIResponse,
 	CreateAccountParams,
-	CreateNewAccountParams,
+	CreateWPCOMAccountParams,
 	CreateSocialAccountParams,
 } from './type';
 
@@ -64,7 +64,7 @@ function createNewAccount( {
 	recaptchaDidntLoad,
 	recaptchaFailed,
 	recaptchaToken,
-}: CreateNewAccountParams ) {
+}: CreateWPCOMAccountParams ) {
 	return wpcom.req.post(
 		'/users/new',
 		Object.assign(
