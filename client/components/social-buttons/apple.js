@@ -68,7 +68,6 @@ class AppleLoginButton extends Component {
 			email: socialServiceResponse.user_email,
 			name: socialServiceResponse.user_name,
 		};
-
 		this.props.responseHandler( {
 			id_token: socialServiceResponse.id_token,
 			user: user,
