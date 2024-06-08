@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
@@ -10,10 +11,10 @@ import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
-	DOTCOM_PHP_LOGS,
-	DOTCOM_SERVER_LOGS,
+	DOTCOM_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_DEVELOPER_TOOLS,
+	DOTCOM_STAGING_SITE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 
@@ -39,6 +40,7 @@ const DotcomPreviewPane = ( {
 	closeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack;
@@ -57,7 +59,8 @@ const DotcomPreviewPane = ( {
 			createFeaturePreview(
 				DOTCOM_DEVELOPER_TOOLS,
 				<span>
-					{ __( 'Dev Tools' ) } <DevToolsIcon />
+					{ hasEnTranslation( 'Hosting Settings' ) ? __( 'Hosting Settings' ) : __( 'Dev Tools' ) }
+					<DevToolsIcon />
 				</span>,
 				isSimpleSite || isPlanExpired,
 				selectedSiteFeature,
@@ -65,8 +68,8 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_HOSTING_CONFIG,
-				__( 'Hosting Config' ),
+				DOTCOM_GITHUB_DEPLOYMENTS,
+				__( 'Deployments' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
@@ -81,24 +84,24 @@ const DotcomPreviewPane = ( {
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_PHP_LOGS,
-				__( 'PHP Logs' ),
+				DOTCOM_LOGS,
+				__( 'Logs' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_SERVER_LOGS,
-				__( 'Server Logs' ),
+				DOTCOM_STAGING_SITE,
+				__( 'Staging Site' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
-				DOTCOM_GITHUB_DEPLOYMENTS,
-				__( 'GitHub Deployments' ),
+				DOTCOM_HOSTING_CONFIG,
+				hasEnTranslation( 'Server Settings' ) ? __( 'Server Settings' ) : __( 'Server Config' ),
 				isAtomicSite && ! isPlanExpired,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
@@ -123,6 +126,7 @@ const DotcomPreviewPane = ( {
 		blogId: site.ID,
 		isDotcomSite: site.is_wpcom_atomic || site.is_wpcom_staging_site,
 		adminUrl: site.options?.admin_url || `${ site.URL }/wp-admin`,
+		withIcon: true,
 	};
 
 	useEffect( () => {

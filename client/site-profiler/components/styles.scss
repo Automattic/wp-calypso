@@ -29,7 +29,7 @@ html[dir="rtl"] {
 		margin-bottom: 1rem;
 		color: var(--studio-gray-100);
 
-		@media (max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			font-size: 3rem;
 		}
 	}
@@ -192,7 +192,7 @@ html[dir="rtl"] {
 
 	.domain-analyzer-block {
 		padding-top: 10rem;
-		@media (max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			padding-top: 4rem;
 		}
 	}

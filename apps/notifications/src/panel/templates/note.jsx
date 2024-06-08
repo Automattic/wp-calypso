@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -14,8 +14,18 @@ const hasBadge = ( body ) =>
 	body.some( ( { media } ) => media && media.some( ( { type } ) => 'badge' === type ) );
 
 export const Note = React.forwardRef( ( props, ref ) => {
-	const { currentNote, detailView, global, isApproved, isRead, note, selectedNote, unselectNote } =
-		props;
+	const {
+		currentNote,
+		detailView,
+		global,
+		isApproved,
+		isRead,
+		note,
+		selectedNote,
+		unselectNote,
+		isShowing,
+		handleFocus,
+	} = props;
 	const translate = useTranslate();
 
 	let hasCommentReply = false;
@@ -37,17 +47,46 @@ export const Note = React.forwardRef( ( props, ref ) => {
 		}
 	}
 
-	const classes = classNames( 'wpnc__note', `wpnc__${ note.type }`, {
+	const isSelected = parseInt( selectedNote, 10 ) === parseInt( note.id, 10 );
+
+	const classes = clsx( 'wpnc__note', `wpnc__${ note.type }`, {
 		'comment-reply': hasCommentReply,
 		read: isRead,
 		unread: ! isRead,
 		wpnc__badge: hasBadge( note.body ),
 		'wpnc__comment-unapproved': hasUnapprovedComment,
 		wpnc__current: detailView,
-		'wpnc__selected-note': parseInt( selectedNote, 10 ) === parseInt( note.id, 10 ),
+		'wpnc__selected-note': isSelected,
 	} );
 
+	const noteContainerRef = React.useRef();
 	const noteBodyRef = React.useRef( null );
+
+	const setContainerRef = React.useCallback( ( currentRef ) => {
+		noteContainerRef.current = currentRef;
+		if ( typeof ref === 'function' ) {
+			ref( currentRef );
+		} else {
+			ref = currentRef;
+		}
+	}, [] );
+
+	React.useEffect( () => {
+		let timerId;
+		if ( isShowing && isSelected && ! currentNote && noteContainerRef.current ) {
+			noteContainerRef.current.focus();
+			// It might not be focused immediately when the panel is opening because of the pointer-events is none.
+			if ( document.activeElement !== noteContainerRef.current ) {
+				timerId = window.setTimeout( () => noteContainerRef.current.focus(), 300 );
+			}
+		}
+
+		return () => {
+			if ( timerId ) {
+				window.clearTimeout( timerId );
+			}
+		};
+	}, [ isShowing, isSelected, currentNote ] );
 
 	React.useEffect( () => {
 		if ( detailView && noteBodyRef.current ) {
@@ -59,11 +98,12 @@ export const Note = React.forwardRef( ( props, ref ) => {
 		<li
 			id={ detailView ? 'note-details-' + note.id : 'note-' + note.id }
 			className={ classes }
-			ref={ ref }
+			ref={ setContainerRef }
 			tabIndex={ detailView ? -1 : 0 }
 			role={ detailView ? 'article' : 'listitem' }
 			aria-controls={ detailView ? null : 'note-details-' + note.id }
-			aria-selected={ detailView ? null : currentNote === note.id }
+			aria-selected={ detailView ? null : isSelected }
+			onFocus={ () => handleFocus( note.id ) }
 		>
 			{ ! detailView && (
 				<SummaryInList

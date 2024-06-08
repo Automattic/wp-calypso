@@ -10,7 +10,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon, PlanPrice } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import DOMPurify from 'dompurify';
 import { size } from 'lodash';
 import PropTypes from 'prop-types';
@@ -365,7 +365,7 @@ export class Banner extends Component {
 			}
 		}
 
-		const classes = classNames(
+		const classes = clsx(
 			'banner',
 			className,
 			{ 'has-call-to-action': callToAction },

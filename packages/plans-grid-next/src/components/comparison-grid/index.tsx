@@ -11,7 +11,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
 import { Icon, chevronRightSmall } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import {
 	useState,
@@ -31,7 +31,6 @@ import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object'
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
-import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanTypeSelector from '../plan-type-selector';
@@ -39,6 +38,7 @@ import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import BillingTimeframe from '../shared/billing-timeframe';
 import { StickyContainer } from '../sticky-container';
+import { PlanStorageLabel, useGetAvailableStorageOptions } from '../storage';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
 	GridPlan,
@@ -299,25 +299,6 @@ const PlanSelector = styled.header`
 	}
 `;
 
-const StorageButton = styled.div`
-	background: #f2f2f2;
-	border-radius: 5px;
-	padding: 4px 0;
-	width: -moz-fit-content;
-	width: fit-content;
-	text-align: center;
-	font-size: 0.75rem;
-	font-weight: 400;
-	line-height: 20px;
-	color: var( --studio-gray-90 );
-	min-width: 64px;
-	margin-top: 10px;
-
-	${ plansGridMediumLarge( css`
-		margin-top: 0;
-	` ) }
-`;
-
 const FeatureFootnotes = styled.div`
 	ol {
 		margin: 2em 0 0 1em;
@@ -395,7 +376,7 @@ const ComparisonGridHeaderCell = ( {
 		return null;
 	}
 
-	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planSlug ), {
+	const headerClasses = clsx( 'plan-comparison-grid__header-cell', getPlanClass( planSlug ), {
 		'popular-plan-parent-class': gridPlan.highlightLabel,
 		'is-last-in-row': isLastInRow,
 		'plan-is-footer': isFooter,
@@ -405,7 +386,7 @@ const ComparisonGridHeaderCell = ( {
 		'is-current-plan': gridPlan.current,
 		'is-stuck': isStuck,
 	} );
-	const popularBadgeClasses = classNames( {
+	const popularBadgeClasses = clsx( {
 		'is-current-plan': gridPlan.current,
 		'popular-badge-is-stuck': isStuck,
 	} );
@@ -420,10 +401,7 @@ const ComparisonGridHeaderCell = ( {
 			/>
 			<PlanSelector>
 				<h4
-					className={ classNames(
-						'plan-comparison-grid__title',
-						showPlanSelect && 'is-select-trigger'
-					) }
+					className={ clsx( 'plan-comparison-grid__title', showPlanSelect && 'is-select-trigger' ) }
 				>
 					<span className="plan-comparison-grid__title-label">{ gridPlan.planTitle }</span>
 					{ showPlanSelect && (
@@ -584,6 +562,38 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		renderedGridPlans: visibleGridPlans,
 	} );
 
+	/**
+	 * TODO: Consider centralising `canUpgradeStorageForPlan` behind `availableStorageOptions`
+	 */
+	const availableStorageOptions = useGetAvailableStorageOptions()( {
+		storageOptions: gridPlan.features.storageOptions,
+	} );
+	/**
+	 * The current plan is not marked as `availableForPurchase`, hence check on `current`.
+	 */
+	const canUpgradeStorageForPlan =
+		( gridPlan.current || gridPlan.availableForPurchase ) &&
+		isStorageUpgradeableForPlan( {
+			intervalType,
+			showUpgradeableStorage,
+			storageOptions: availableStorageOptions,
+		} );
+
+	const storageJSX = canUpgradeStorageForPlan ? (
+		<StorageAddOnDropdown
+			planSlug={ planSlug }
+			onStorageAddOnClick={ onStorageAddOnClick }
+			storageOptions={ availableStorageOptions }
+			priceOnSeparateLine
+		/>
+	) : (
+		gridPlan.features.storageOptions.map( ( storageOption ) => {
+			if ( ! storageOption?.isAddOn ) {
+				return <PlanStorageLabel storageOption={ storageOption } planSlug={ planSlug } />;
+			}
+		} )
+	);
+
 	if ( ! gridPlan ) {
 		return null;
 	}
@@ -605,15 +615,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 				( feature ) => feature.getSlug() === featureSlug
 		  )
 		: false;
-	const storageOptions = gridPlan.features.storageOptions;
-	const defaultStorageOption = storageOptions.find( ( option ) => ! option.isAddOn );
-	const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
-		intervalType,
-		showUpgradeableStorage,
-		storageOptions,
-	} );
 
-	const cellClasses = classNames(
+	const cellClasses = clsx(
 		'plan-comparison-grid__feature-group-row-cell',
 		'plan-comparison-grid__plan',
 		getPlanClass( planSlug ),
@@ -638,18 +641,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					{ canUpgradeStorageForPlan ? (
-						<StorageAddOnDropdown
-							planSlug={ planSlug }
-							storageOptions={ gridPlan.features.storageOptions }
-							onStorageAddOnClick={ onStorageAddOnClick }
-							priceOnSeparateLine
-						/>
-					) : (
-						<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>
-							{ getStorageStringFromFeature( defaultStorageOption?.slug || '' ) }
-						</StorageButton>
-					) }
+					<div className="plans-grid-next-storage-feature">{ storageJSX }</div>
 				</>
 			) : (
 				<>
@@ -750,7 +742,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	onStorageAddOnClick,
 } ) => {
 	const translate = useTranslate();
-	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
+	const rowClasses = clsx( 'plan-comparison-grid__feature-group-row', {
 		'is-storage-feature': isStorageFeature,
 	} );
 	const featureSlug = feature?.getSlug() ?? '';
@@ -1109,7 +1101,7 @@ const ComparisonGrid = ( {
 	 * Some padding is applied in the stylesheet to cover the badges/labels.
 	 */
 	const hasHighlightedPlan = gridPlans.some( ( { highlightLabel } ) => !! highlightLabel );
-	const classes = classNames( 'plans-grid-next-comparison-grid', {
+	const classes = clsx( 'plans-grid-next-comparison-grid', {
 		'has-highlighted-plan': hasHighlightedPlan,
 	} );
 

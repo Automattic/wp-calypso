@@ -379,7 +379,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-								support_variation: 'kayako',
+								support_variation: 'email',
 								force_site_id: true,
 								location: 'help-center',
 								section: sectionName,
@@ -528,7 +528,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		}
 
 		if ( mode === 'CHAT' && showingHelpOrGPTResults ) {
-			return __( 'Still chat with us', __i18n_text_domain__ );
+			return __( 'Still contact us', __i18n_text_domain__ );
 		}
 
 		if ( mode === 'EMAIL' && showingHelpOrGPTResults ) {

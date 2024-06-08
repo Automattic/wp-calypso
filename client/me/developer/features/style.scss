@@ -1,6 +1,17 @@
 @import "@wordpress/base-styles/breakpoints.scss";
+@import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
+
+.developer-features-sub-title {
+	margin-bottom: 16px;
+	font-weight: 500;
+	color: $studio-gray-60;
+
+	@media (max-width: $break-large) {
+		margin: 0 32px 16px;
+	}
+}
 
 .developer-features-list {
 	display: grid;
@@ -8,6 +19,10 @@
 	grid-gap: 24px;
 	padding-bottom: 24px;
 	font-family: $font-sf-pro-text;
+
+	&--latest {
+		grid-template-columns: repeat(2, 1fr);
+	}
 
 	.developer-features-list__item {
 		display: flex;
@@ -38,10 +53,6 @@
 			padding-top: 8px;
 			margin-top: auto;
 		}
-
-		&--full {
-			grid-column: 1/4;
-		}
 	}
 
 	.developer-features-list__item-tag {
@@ -51,7 +62,7 @@
 		text-transform: uppercase;
 	}
 
-	@media ( max-width: $break-large ) {
+	@media (max-width: $break-large) {
 		display: block;
 
 		.developer-features-list__item {

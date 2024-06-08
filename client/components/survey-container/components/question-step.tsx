@@ -1,6 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -46,7 +46,7 @@ const QuestionStep = ( {
 
 	return (
 		<StepContainer
-			className={ classNames( 'question-step', { disabled } ) }
+			className={ clsx( 'question-step', { disabled } ) }
 			hideBack={ hideBack }
 			goBack={ onBack }
 			goNext={ onSkip }

@@ -1,5 +1,5 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState, useCallback } from 'react';
 import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
 import ThreatItem, { ThreatItemPlaceholder } from 'calypso/components/jetpack/threat-item';
@@ -90,7 +90,7 @@ export const ListItemsPlaceholder = ( { count, perPage }: { count: number; perPa
 		<>
 			{ showPagination && (
 				<div
-					className={ classNames( 'threat-history-list__pagination--top', 'is-placeholder', {
+					className={ clsx( 'threat-history-list__pagination--top', 'is-placeholder', {
 						'is-compact': isMobile,
 					} ) }
 				/>
@@ -98,7 +98,7 @@ export const ListItemsPlaceholder = ( { count, perPage }: { count: number; perPa
 			{ fakeItems }
 			{ showPagination && (
 				<div
-					className={ classNames( 'threat-history-list__pagination--bottom', 'is-placeholder', {
+					className={ clsx( 'threat-history-list__pagination--bottom', 'is-placeholder', {
 						'is-compact': isMobile,
 					} ) }
 				/>

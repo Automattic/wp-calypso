@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -11,7 +11,7 @@ export default class extends PureComponent {
 
 	render() {
 		const { children, className } = this.props;
-		const gridClassName = classNames( 'tile-grid', className );
+		const gridClassName = clsx( 'tile-grid', className );
 
 		return <div className={ gridClassName }>{ children }</div>;
 	}

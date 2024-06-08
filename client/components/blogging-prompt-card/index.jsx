@@ -1,5 +1,5 @@
 import { Card, Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -102,7 +102,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	return (
 		<div className="blogging-prompt">
 			<Card
-				className={ classnames( 'blogging-prompt__card', {
+				className={ clsx( 'blogging-prompt__card', {
 					'customer-home__card': viewContext === 'home',
 				} ) }
 			>

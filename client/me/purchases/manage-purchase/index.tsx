@@ -50,7 +50,7 @@ import {
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -1199,7 +1199,7 @@ class ManagePurchase extends Component<
 
 		const isActive100YearPurchase = is100Year( purchase ) && ! isCloseToExpiration( purchase );
 
-		const classes = classNames( 'manage-purchase__info', {
+		const classes = clsx( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': purchase && isPersonal( purchase ),
 			'is-premium': purchase && isPremium( purchase ),
@@ -1439,7 +1439,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 
 	return (
 		<div
-			className={ classNames( 'manage-purchase__description', {
+			className={ clsx( 'manage-purchase__description', {
 				'is-placeholder': isLoading,
 			} ) }
 		>

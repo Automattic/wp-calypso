@@ -95,6 +95,21 @@ export const initialClientsData = {
 		name: 'studio',
 		title: 'Studio by WordPress.com',
 	},
+	92099: {
+		id: 92099,
+		name: 'blaze-pro',
+		title: 'Blaze Pro',
+	},
+	99370: {
+		id: 99370,
+		name: 'blaze-pro',
+		title: 'Blaze Pro',
+	},
+	98166: {
+		id: 98166,
+		name: 'blaze-pro',
+		title: 'Blaze Pro',
+	},
 };
 
 export function clients( state = initialClientsData, action ) {

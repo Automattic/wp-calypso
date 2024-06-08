@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -49,7 +49,7 @@ export default class PopoverMenuItem extends Component {
 			'className',
 			'itemComponent'
 		);
-		const classes = classnames( 'popover__menu-item', className, {
+		const classes = clsx( 'popover__menu-item', className, {
 			'is-selected': isSelected,
 		} );
 

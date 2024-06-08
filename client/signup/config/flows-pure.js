@@ -52,6 +52,7 @@ export function generateFlows( {
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
+	getEntrepreneurFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
@@ -208,16 +209,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'site-migration',
-			steps: [ 'domains' ],
-			destination: getSignupDestination,
-			description: 'Take users to the site migration flow from the domains step.',
-			lastModified: '2024-05-09',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-			onEnterFlow: onEnterOnboarding,
-		},
-		{
 			name: 'onboarding-2023-pricing-grid',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ userSocialStep, 'domains', 'emails', 'plans' ]
@@ -252,9 +243,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
-				domains: {
-					useAlternateDomainMessaging: true,
-				},
 				plans: {
 					isCustomDomainAllowedOnFreePlan: true,
 					deemphasizeFreePlan: true,
@@ -696,11 +684,22 @@ export function generateFlows( {
 		},
 		{
 			name: 'guided',
-			steps: [ userSocialStep, 'initial-intent', 'domains' ],
+			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Choose what brings them to WordPress.com',
 			lastModified: '2024-05-15',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'entrepreneur',
+			steps: [ userSocialStep ],
+			destination: getEntrepreneurFlowDestination,
+			description: 'Entrepreneur Trial signup flow that goes through the trialAcknowledge step',
+			lastModified: '2024-05-29',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 			hideProgressIndicator: true,
 		},
 	];

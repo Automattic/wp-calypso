@@ -34,7 +34,6 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/laun
 import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import {
 	getHostingConfigUrl,
-	getManagePluginsUrl,
 	getPluginsUrl,
 	getSettingsUrl,
 	getSiteMonitoringUrl,
@@ -126,14 +125,10 @@ const ManagePluginsItem = ( {
 		useSelector( ( state: AppState ) =>
 			siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
 		) || isNotAtomicJetpack( site );
-	// If the site can't manage plugins then go to the main plugins page instead
-	// because it shows an upsell message.
-	const [ href, label ] = hasManagePluginsFeature
-		? [
-				isWpAdminInterface ? `${ wpAdminUrl }plugins.php` : getManagePluginsUrl( site.slug ),
-				__( 'Manage plugins' ),
-		  ]
-		: [ getPluginsUrl( site.slug ), __( 'Plugins' ) ];
+	const [ href, label ] = [
+		isWpAdminInterface ? `${ wpAdminUrl }plugins.php` : getPluginsUrl( site.slug ),
+		__( 'Plugins' ),
+	];
 	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	return (

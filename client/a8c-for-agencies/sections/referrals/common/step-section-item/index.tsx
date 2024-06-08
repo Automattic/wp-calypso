@@ -1,6 +1,6 @@
 import { Button, Badge } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import StatusBadge from './status-badge';
 import type { TranslateResult } from 'i18n-calypso';
@@ -10,14 +10,15 @@ import './style.scss';
 const ICON_SIZE = 24;
 
 interface StepSectionItemProps {
-	icon: JSX.Element;
+	icon?: JSX.Element;
 	heading: string;
 	description: TranslateResult;
 	buttonProps?: React.ComponentProps< typeof Button >;
 	statusProps?: React.ComponentProps< typeof Badge > & { tooltip?: string };
 	className?: string;
 	iconClassName?: string;
-	isAutomatedReferral?: boolean;
+	isNewLayout?: boolean;
+	stepNumber?: number;
 }
 
 export default function StepSectionItem( {
@@ -28,7 +29,8 @@ export default function StepSectionItem( {
 	statusProps,
 	className,
 	iconClassName,
-	isAutomatedReferral = false,
+	isNewLayout = false,
+	stepNumber,
 }: StepSectionItemProps ) {
 	const status = <StatusBadge statusProps={ statusProps } />;
 
@@ -43,26 +45,24 @@ export default function StepSectionItem( {
 	);
 
 	return (
-		<div className={ classNames( 'step-section-item', className ) }>
-			<div className={ classNames( 'step-section-item__icon', iconClassName ) }>
-				<Icon
-					className="sidebar__menu-icon"
-					style={ { fill: 'currentcolor' } }
-					icon={ icon }
-					size={ ICON_SIZE }
-				/>
-			</div>
+		<div className={ clsx( 'step-section-item', className ) }>
+			{ icon && (
+				<div className={ clsx( 'step-section-item__icon', iconClassName ) }>
+					<Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } />
+				</div>
+			) }
+			{ stepNumber && <span className="step-section-item__step-number">{ stepNumber }</span> }
 			<div className="step-section-item__content">
 				{ statusProps && (
 					<div className="step-section-item__status is-small-screen">{ status }</div>
 				) }
 				<div className="step-section-item__heading">
-					{ heading } { isAutomatedReferral && statusContent }
+					{ heading } { isNewLayout && statusContent }
 				</div>
 				<div className="step-section-item__description">{ description }</div>
-				{ ! isAutomatedReferral && buttonContent }
+				{ ! isNewLayout && buttonContent }
 			</div>
-			{ isAutomatedReferral ? buttonContent : statusContent }
+			{ isNewLayout ? buttonContent : statusContent }
 		</div>
 	);
 }

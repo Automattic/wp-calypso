@@ -56,6 +56,7 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 	const ctaButtonURL: string = `https://wordpress.com/checkout/${ selectedSiteSlug }/${ planSlug }?redirect_to=${ encodeURIComponent(
 		window.location.href
 	) }`;
+	const secondaryCtaURL: string = `https://wordpress.com/plans/${ selectedSiteSlug }`;
 	const isFetchingPrices: boolean = ! siteProduct;
 	const originalPrice: number = siteProduct?.cost_smallest_unit ?? 0;
 	const displayPrice: number = siteProduct?.cost / 12 ?? 0;
@@ -129,7 +130,7 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 					/>
 				</div>
 				<div className="upsell-product-card__included" aria-hidden="true">
-					{ translate( 'Included with %(planName)s plan:', {
+					{ translate( 'Included with the %(planName)s plan:', {
 						args: {
 							planName: plan.getTitle(),
 						},
@@ -159,6 +160,7 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 				ctaButtonLabel={ ctaButtonLabel }
 				cardImage={ upsellImageUrl }
 				cardImageAlt={ upsellImageAlt }
+				secondaryCtaURL={ secondaryCtaURL }
 			>
 				{ renderProductCardBody() }
 			</JetpackRnaActionCard>

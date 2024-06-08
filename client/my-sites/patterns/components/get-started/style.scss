@@ -31,7 +31,7 @@
 	scroll-snap-type: x proximity;
 	scroll-padding-left: 24px;
 
-	@media ( max-width: $break-wide ) {
+	@media (max-width: $break-wide) {
 		padding: 0 24px;
 	}
 }
@@ -64,7 +64,7 @@
 	}
 }
 
-@media ( max-width: $break-wide ) {
+@media (max-width: $break-wide) {
 	.patterns-get-started__buttons {
 		padding: 0 24px;
 		margin-top: -16px;

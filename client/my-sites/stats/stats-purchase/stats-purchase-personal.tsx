@@ -31,7 +31,6 @@ interface PersonalPurchaseProps {
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
-	isStandalone?: boolean;
 }
 
 const PersonalPurchase = ( {
@@ -46,7 +45,6 @@ const PersonalPurchase = ( {
 	adminUrl,
 	redirectUri,
 	from,
-	isStandalone,
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -63,7 +61,6 @@ const PersonalPurchase = ( {
 	} = sliderSettings;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
-	const isNewPurchaseFlowEnabled = config.isEnabled( 'stats/checkout-flows-v2' );
 
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
@@ -98,13 +95,7 @@ const PersonalPurchase = ( {
 	// TODO: Remove old slider code paths.
 	const showOldSlider = ! isTierUpgradeSliderEnabled;
 
-	let continueButtonText = isStandalone
-		? translate( 'Get Stats' )
-		: translate( 'Get Jetpack Stats' );
-
-	if ( isNewPurchaseFlowEnabled ) {
-		continueButtonText = translate( 'Contribute now and continue' );
-	}
+	const continueButtonText = translate( 'Contribute now and continue' );
 	const { refetch: refetchNotices } = useNoticeVisibilityQuery( siteId, 'focus_jetpack_purchase' );
 	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
 		siteId,
@@ -256,23 +247,23 @@ const PersonalPurchase = ( {
 			) }
 
 			{ subscriptionValue === 0 ? (
-				<ButtonComponent
-					className="stats-purchase-page__full-width"
-					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
-					disabled={
-						! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
-					}
-					onClick={ () =>
-						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
-					}
-				>
-					{ translate( 'Continue with Jetpack Stats for free' ) }
-				</ButtonComponent>
+				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						disabled={
+							! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
+						}
+						onClick={ () =>
+							gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
+						}
+					>
+						{ translate( 'Continue with Jetpack Stats for free' ) }
+					</ButtonComponent>
+				</div>
 			) : (
 				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
 					<ButtonComponent
-						className="stats-purchase-page__full-width"
 						variant="primary"
 						primary={ isWPCOMSite ? true : undefined }
 						onClick={ handleCheckoutRedirect }
@@ -280,17 +271,14 @@ const PersonalPurchase = ( {
 						{ continueButtonText }
 					</ButtonComponent>
 
-					{ isNewPurchaseFlowEnabled && (
-						<ButtonComponent
-							className="stats-purchase-page__full-width"
-							variant="secondary"
-							isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
-							busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />
-							onClick={ handleCheckoutPostponed }
-						>
-							{ translate( 'I will do it later' ) }
-						</ButtonComponent>
-					) }
+					<ButtonComponent
+						variant="secondary"
+						isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
+						busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />
+						onClick={ handleCheckoutPostponed }
+					>
+						{ translate( 'I will do it later' ) }
+					</ButtonComponent>
 				</div>
 			) }
 		</div>

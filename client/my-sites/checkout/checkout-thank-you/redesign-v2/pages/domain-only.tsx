@@ -62,9 +62,14 @@ function UpsellActions( {
 interface DomainOnlyThankYouProps {
 	purchases: ReceiptPurchase[];
 	receiptId: number;
+	isGravatarDomain: boolean;
 }
 
-export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnlyThankYouProps ) {
+export default function DomainOnlyThankYou( {
+	purchases,
+	receiptId,
+	isGravatarDomain,
+}: DomainOnlyThankYouProps ) {
 	const translate = useTranslate();
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 	const domainPurchases = purchases.filter( predicate );
@@ -101,6 +106,7 @@ export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnly
 				key={ `domain-${ purchase.meta }` }
 				siteSlug={ domainOnlySite?.slug }
 				isDomainOnly
+				isGravatarDomain={ isGravatarDomain }
 			/>
 		);
 	} );
@@ -121,6 +127,7 @@ export default function DomainOnlyThankYou( { purchases, receiptId }: DomainOnly
 				products={ products }
 				footerDetails={ getDomainFooterDetails( 'domain-only' ) }
 				upsellProps={ upsellProps }
+				isGravatarDomain={ isGravatarDomain }
 			/>
 		</>
 	);

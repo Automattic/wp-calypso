@@ -17,7 +17,7 @@ export function isWapuuFlagSetInURL(): boolean {
 export function useStillNeedHelpURL() {
 	const { data: supportAvailability, isLoading } = useSupportAvailability();
 	const isWapuuEnabled = useIsWapuuEnabled() || isWapuuFlagSetInURL();
-	const isFreeUser = ! supportAvailability?.is_paying_customer;
+	const isFreeUser = ! supportAvailability?.is_user_eligible;
 
 	if ( ! isFreeUser ) {
 		const url = isWapuuEnabled ? '/odie' : '/contact-options';

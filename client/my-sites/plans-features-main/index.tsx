@@ -42,7 +42,7 @@ import {
 	useState,
 } from '@wordpress/element';
 import { hasQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult, localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
@@ -71,7 +71,6 @@ import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
-import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
 import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
@@ -215,7 +214,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
-	deemphasizeFreePlan: deemphasizeFreePlanFromProps,
+	deemphasizeFreePlan,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -378,12 +377,6 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
-	// The hook is introduced temporarily to alter the value dynamically according to the ExPlat variant loaded.
-	// Once the experiment concludes, we will clean it up and simply use the prop value.
-	// For more details, please refer to peP6yB-23n-p2
-	const resolvedDeemphasizeFreePlan = useDeemphasizeFreePlan( flowName, paidDomainName );
-	const deemphasizeFreePlan = deemphasizeFreePlanFromProps || resolvedDeemphasizeFreePlan.result;
-
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -443,6 +436,11 @@ const PlansFeaturesMain = ( {
 				return true;
 			} ) ?? null, // optional chaining can result in `undefined`; we don't want to introduce it here.
 		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
+	);
+
+	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
+	const offeringFreePlan = gridPlansForFeaturesGridRaw?.some(
+		( { planSlug } ) => planSlug === PLAN_FREE
 	);
 
 	let hidePlanSelector = false;
@@ -631,12 +629,9 @@ const PlansFeaturesMain = ( {
 		[]
 	);
 
-	const comparisonGridContainerClasses = classNames(
-		'plans-features-main__comparison-grid-container',
-		{
-			'is-hidden': ! showPlansComparisonGrid,
-		}
-	);
+	const comparisonGridContainerClasses = clsx( 'plans-features-main__comparison-grid-container', {
+		'is-hidden': ! showPlansComparisonGrid,
+	} );
 	const [ isExperimentLoading ] = useExperiment(
 		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
 	);
@@ -647,10 +642,7 @@ const PlansFeaturesMain = ( {
 			isExperimentLoading ||
 			isTrailMapExperimentLoading
 	);
-	const isPlansGridReady =
-		! isLoadingGridPlans &&
-		! resolvedSubdomainName.isLoading &&
-		! resolvedDeemphasizeFreePlan.isLoading;
+	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
@@ -687,12 +679,7 @@ const PlansFeaturesMain = ( {
 
 	return (
 		<>
-			<div
-				className={ classNames(
-					'plans-features-main',
-					'is-pricing-grid-2023-plans-features-main'
-				) }
-			>
+			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
 				<QueryPlans coupon={ coupon } />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
@@ -743,6 +730,7 @@ const PlansFeaturesMain = ( {
 				<PlansPageSubheader
 					siteSlug={ siteSlug }
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+					offeringFreePlan={ offeringFreePlan }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					showPlanBenefits={ isInSignup && isTrailMapAny }
@@ -761,14 +749,9 @@ const PlansFeaturesMain = ( {
 							/>
 						) }
 						<div
-							className={ classNames(
-								'plans-features-main__group',
-								'is-wpcom',
-								'is-2023-pricing-grid',
-								{
-									'is-scrollable': plansWithScroll,
-								}
-							) }
+							className={ clsx( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
+								'is-scrollable': plansWithScroll,
+							} ) }
 							data-e2e-plans="wpcom"
 						>
 							<div className="plans-wrapper">

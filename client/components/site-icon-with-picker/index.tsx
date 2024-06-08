@@ -3,7 +3,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { FormFileUpload } from '@wordpress/components';
 import { Icon, upload } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useCallback, useEffect } from 'react';
 import ImageEditor from 'calypso/blocks/image-editor';
 import DropZone from 'calypso/components/drop-zone';
@@ -65,7 +65,7 @@ export function SiteIconWithPicker( {
 				shouldCloseOnEsc
 			>
 				<ImageEditor
-					className={ classNames( 'site-icon-with-picker__image-editor', imageEditorClassName ) }
+					className={ clsx( 'site-icon-with-picker__image-editor', imageEditorClassName ) }
 					siteId={ site?.ID }
 					media={ {
 						src:
@@ -93,7 +93,7 @@ export function SiteIconWithPicker( {
 			</Dialog>
 
 			<FormFieldset
-				className={ classNames( 'site-icon-with-picker__site-icon', uploadFieldClassName ) }
+				className={ clsx( 'site-icon-with-picker__site-icon', uploadFieldClassName ) }
 				disabled={ disabled }
 			>
 				<DropZone
@@ -105,7 +105,7 @@ export function SiteIconWithPicker( {
 					} }
 				/>
 				<FormFileUpload
-					className={ classNames( 'site-icon-with-picker__upload-button', {
+					className={ clsx( 'site-icon-with-picker__upload-button', {
 						'has-icon-or-image': selectedFile || siteIconUrl,
 					} ) }
 					accept=".jpg,.jpeg,.gif,.png"

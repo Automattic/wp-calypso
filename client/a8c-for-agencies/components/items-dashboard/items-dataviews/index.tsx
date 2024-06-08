@@ -57,29 +57,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 	const translate = useTranslate();
 	const scrollContainerRef = useRef< HTMLElement >();
 	const previousDataViewsState = usePrevious( data.dataViewsState );
-
-	// Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
-	// todo: The DataViews v0.9 has the spinner support. Remove this once we upgrade the package.
-	const SpinnerWrapper = () => {
-		return (
-			<div className="spinner-wrapper">
-				<Spinner />
-			</div>
-		);
-	};
 	const dataviewsWrapper = document.getElementsByClassName( 'dataviews-wrapper' )[ 0 ];
-	if ( dataviewsWrapper ) {
-		// Remove any existing spinner if present
-		const existingSpinner = dataviewsWrapper.querySelector( '.spinner-wrapper' );
-		if ( existingSpinner ) {
-			existingSpinner.remove();
-		}
-
-		const spinnerWrapper = dataviewsWrapper.appendChild( document.createElement( 'div' ) );
-		spinnerWrapper.classList.add( 'spinner-wrapper' );
-		// Render the SpinnerWrapper component inside the spinner wrapper
-		ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
-	}
 
 	useLayoutEffect( () => {
 		if (
@@ -127,6 +105,17 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				actions={ data.actions }
 				isLoading={ isLoading }
 			/>
+			{ dataviewsWrapper &&
+				ReactDOM.createPortal(
+					/**
+					 * Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
+					 * todo: The DataViews v0.9 has the spinner support. Remove this once we upgrade the package.
+					 */
+					<div className="spinner-wrapper">
+						<Spinner />
+					</div>,
+					dataviewsWrapper
+				) }
 		</div>
 	);
 };

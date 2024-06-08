@@ -15,7 +15,9 @@ const GLOBAL_SITE_DASHBOARD_ROUTES = {
 	hosting: '/hosting-config/',
 	'github-deployments': '/github-deployments/',
 	'site-monitoring': '/site-monitoring/',
+	'site-logs': '/site-logs/',
 	'dev-tools': '/dev-tools/',
+	'staging-site': '/staging-site',
 };
 
 function isInSection( sectionName: string, sectionNames: string[] ) {
