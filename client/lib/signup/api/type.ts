@@ -1,43 +1,59 @@
-export type AccountCreationAPIResponse = {
-	username: string;
-	bearer_token: string;
-	signup_sandbox_username?: string;
-	signup_sandbox_user_id?: string;
-	user_id?: string;
-	email?: string;
-	oauth2_redirect?: string;
-	marketing_price_group?: string;
-	created_account?: boolean;
+export type AccountCreationAPIResponse =
+	| {
+			username: string;
+			bearer_token: string;
+			signup_sandbox_username?: string;
+			signup_sandbox_user_id?: string;
+			user_id?: string;
+			email?: string;
+			oauth2_redirect?: string;
+			marketing_price_group?: string;
+			created_account?: boolean;
+	  }
+	| {
+			error: 'user_exists';
+			message: string;
+			data: {
+				email: string;
+			};
+	  };
+
+export type PreSignUpUserData = {
+	password: string;
+	email: string;
+	extra: {
+		first_name: string;
+		last_name: string;
+		username_hint: string;
+	};
+};
+
+export type PostSignUpUserData = {
+	ID: number;
+	password: string;
+	user_email: string;
+	extra: {
+		first_name: string;
+		last_name: string;
+		username_hint: string;
+	};
 };
 
 export type CreateAccountParams = {
-	userData: {
-		username: string;
-		email?: string;
-		user_email?: string;
-		ID: string;
-	};
+	userData: PreSignUpUserData | null;
 	flowName: string;
 	lastKnownFlow: string;
-	queryArgs: { jetpack_redirect: string; oauth2_redirect: string; oauth2_client_id: string };
-	service: string;
-	access_token: string;
-	id_token: string;
-	oauth2Signup: string;
-	recaptchaDidntLoad: string;
-	recaptchaFailed: string;
+	service?: string;
+	access_token?: string;
+	id_token?: string | null;
+	recaptchaDidntLoad: boolean;
+	recaptchaFailed: boolean;
 	recaptchaToken: string;
 };
 
 export type CreateNewAccountParams = Pick<
 	CreateAccountParams,
-	| 'userData'
-	| 'flowName'
-	| 'queryArgs'
-	| 'recaptchaDidntLoad'
-	| 'recaptchaFailed'
-	| 'recaptchaToken'
-	| 'oauth2Signup'
+	'userData' | 'flowName' | 'recaptchaDidntLoad' | 'recaptchaFailed' | 'recaptchaToken'
 >;
 
 export type WpcomResolvedResponse = {
@@ -56,10 +72,20 @@ export type CreateSocialAccountParams = Pick<
 
 export type AccountCreateReturn =
 	| {
-			errors?: Array< any >;
+			error: 'user_exists';
+			message: string;
+			data: {
+				email: string;
+			};
 	  }
 	| {
 			username?: string;
 			marketing_price_group?: string | undefined;
 			bearer_token?: string | undefined;
 	  };
+
+export type SocialAuthParams = {
+	service?: string;
+	access_token?: string;
+	id_token?: string | null;
+};

@@ -2,30 +2,20 @@ import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
-import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { addQueryArgs } from 'calypso/lib/url';
-import { SocialAuthParams } from './useUserProcessingCallbacks';
+import type { AccountCreateReturn, SocialAuthParams } from 'calypso/lib/signup/api/type';
 
 type Props = {
-	accountCreateResponse?: AccountCreateReturn;
+	error: ( Error & AccountCreateReturn ) | null;
 	recentSocialAuthAttemptParams?: SocialAuthParams;
 };
 
-export default function useErrorNotice( {
-	accountCreateResponse,
-	recentSocialAuthAttemptParams,
-}: Props ) {
+export function useErrorNotice( { error: errorResponse, recentSocialAuthAttemptParams }: Props ) {
 	const translate = useTranslate();
 	const loginLink = login( {
 		signupUrl: window.location.pathname + window.location.search,
 	} );
-	let userExistsError = null;
-	if ( accountCreateResponse && 'errors' in accountCreateResponse ) {
-		userExistsError = accountCreateResponse?.errors?.find(
-			( { error } ) => error === 'user_exists'
-		);
-	}
-	if ( userExistsError ) {
+	if ( errorResponse && 'error' in errorResponse && errorResponse?.error === 'user_exists' ) {
 		return (
 			<Notice
 				className="signup-form__notice signup-form__span-columns"
@@ -35,7 +25,7 @@ export default function useErrorNotice( {
 					'We found a WordPress.com account with the email "%(email)s". ' +
 						'{{a}}Log in to connect it{{/a}}, or use a different email to sign up.',
 					{
-						args: { email: userExistsError.data?.email },
+						args: { email: errorResponse.data?.email },
 						components: {
 							a: (
 								<a

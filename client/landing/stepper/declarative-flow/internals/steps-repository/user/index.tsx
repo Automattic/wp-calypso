@@ -14,8 +14,7 @@ import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Step } from '../../types';
-import useErrorNotice from './useErrorNotice';
-import useProcessingCallbacks from './useUserProcessingCallbacks';
+import { useHandleSocialResponse } from './handle-social-response';
 
 import './style.scss';
 
@@ -24,21 +23,16 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { handleSocialResponse, accountCreateResponse, recentSocialAuthAttemptParams } =
-		useProcessingCallbacks( {
-			flowName: flow,
-		} );
-	const notice = useErrorNotice( { accountCreateResponse, recentSocialAuthAttemptParams } );
+	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 
 	useEffect( () => {
-		if ( ! isLoggedIn ) {
+		if ( isLoggedIn ) {
+			submit?.();
+		} else {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		}
-	}, [ dispatch, isLoggedIn ] );
+	}, [ dispatch, isLoggedIn, submit ] );
 
-	if ( isLoggedIn ) {
-		submit?.();
-	}
 	const loginLink = login( {
 		signupUrl: window.location.pathname + window.location.search,
 	} );
@@ -95,9 +89,6 @@ const UserStep: Step = function UserStep( props ) {
 	return (
 		<StepContainer
 			stepName="user"
-			goBack={ () => {
-				window.location.assign( 'https://wordpress.com/hosting' );
-			} }
 			isHorizontalLayout={ false }
 			isWideLayout={ false }
 			isFullLayout
