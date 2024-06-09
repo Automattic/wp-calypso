@@ -72,9 +72,12 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 
 			{ shouldDisplayHostIdentificationMessage && (
 				<SubTitle>
-					{ translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
-						args: { hostingProviderName },
-					} ) }
+					{
+						// translators: %(hostingProviderName)s is the name of a hosting provider (e.g. WP Engine).
+						translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
+							args: { hostingProviderName },
+						} )
+					}
 				</SubTitle>
 			) }
 
