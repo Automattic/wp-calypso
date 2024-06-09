@@ -10,7 +10,10 @@ import { SiteId } from 'calypso/types';
 
 function queryMemberships() {
 	return wpcom.req
-		.get( { path: '/memberships/products', apiNamespace: 'wpcom/v2', isLocalApiCall: true } )
+		.get(
+			{ path: '/memberships/products', apiNamespace: 'wpcom/v2', isLocalApiCall: true },
+			{ type: 'all', is_editable: true }
+		)
 		.catch( () => ( { products: [] } ) );
 }
 
