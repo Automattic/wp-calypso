@@ -190,6 +190,8 @@ export class Theme extends Component {
 		) {
 			const { id: themeId, stylesheet } = theme;
 
+			// eslint-disable-next-line no-console
+			console.log( '------------DesignPreviewImage from components/theme/index.jsx' );
 			return (
 				<DesignPreviewImage
 					design={ { slug: themeId, recipe: { stylesheet } } }

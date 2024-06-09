@@ -20,6 +20,7 @@ export type MShotsOptions = {
 	h?: number;
 	screen_height?: number;
 	format?: 'png' | 'jpeg';
+	oldSlowerImageLoading?: boolean;
 };
 
 const debug = debugFactory( 'design-picker:mshots-image' );
@@ -53,6 +54,9 @@ const useMshotsImg = (
 	options: MShotsOptions,
 	imgRef: React.MutableRefObject< HTMLImageElement | null >
 ): string | null => {
+	// eslint-disable-next-line no-console
+	console.log( `--useMshotsImg options ${ options?.oldSlowerImageLoading } ` );
+
 	const [ loadedImg, setLoadedImg ] = useState< string | null >( null );
 	const [ count, setCount ] = useState( 0 );
 	const previousSrc = useRef( src );
@@ -150,6 +154,9 @@ const MShotsImage = ( {
 	options,
 	scrollable = false,
 }: MShotsImageProps ) => {
+	// eslint-disable-next-line no-console
+	console.log( `--MShotsImage slow ${ options?.oldSlowerImageLoading }` );
+
 	const imgRef = useRef< HTMLImageElement | null >( null );
 	const currentlyLoadedUrl = useMshotsImg( url, options, imgRef );
 	const src: string = imgRef.current?.src || '';
@@ -175,6 +182,20 @@ const MShotsImage = ( {
 		visible ? 'mshots-image-visible' : 'mshots-image__loader'
 	);
 
+	if ( options?.oldSlowerImageLoading ) {
+		return scrollable ? (
+			<div className={ className } style={ style } aria-labelledby={ labelledby }>
+				<img ref={ imgRef } className="mshots-dummy-image" aria-hidden="true" alt="" />
+			</div>
+		) : (
+			<img
+				ref={ imgRef }
+				{ ...{ className, style, src, alt } }
+				aria-labelledby={ labelledby }
+				alt={ alt }
+			/>
+		);
+	} // else, prettier doesn't like having an else after a return
 	return scrollable ? (
 		<div className={ className } style={ style } aria-labelledby={ labelledby }>
 			<img ref={ imgRef } loading="lazy" className="mshots-dummy-image" aria-hidden="true" alt="" />
