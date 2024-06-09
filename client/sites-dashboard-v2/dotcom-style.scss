@@ -438,7 +438,7 @@
 
 // Styles for site preview pane.
 .wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
-	.dev-tools__icon {
+	.hosting-features__icon {
 		display: inline-block;
 		height: 18px;
 		vertical-align: top;
@@ -553,6 +553,13 @@
 				margin: 0;
 				position: relative;
 				width: 100%;
+			}
+
+			.spinner-wrapper {
+				position: absolute;
+				left: 50%;
+				top: 70px;
+				z-index: 2;
 			}
 		}
 	}

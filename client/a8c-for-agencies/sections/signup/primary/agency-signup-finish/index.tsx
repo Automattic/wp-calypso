@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { APIError } from '@automattic/data-stores';
-import { loadScript } from '@automattic/load-script';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import A4ALogo, { LOGO_COLOR_SECONDARY_ALT } from 'calypso/a8c-for-agencies/components/a4a-logo';
@@ -48,13 +47,12 @@ export default function AgencySignupFinish() {
 	}, [ agency ] );
 
 	useEffect( () => {
-		async function createAgencyHandler() {
+		function createAgencyHandler() {
 			// Added to prevent typescript errors and for additional safety
 			if ( ! userLoggedIn || ! signupData ) {
 				page.redirect( A4A_SIGNUP_LINK );
 				return;
 			}
-			await loadScript( '//js.hs-scripts.com/45522507.js' );
 
 			createAgency.mutate( signupData );
 			dispatch(

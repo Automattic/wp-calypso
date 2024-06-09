@@ -222,9 +222,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'dev-tools',
-		paths: [ '/dev-tools' ],
-		module: 'calypso/dev-tools',
+		name: 'hosting-features',
+		paths: [ '/hosting-features' ],
+		module: 'calypso/hosting-features',
 		group: 'sites',
 	},
 	{

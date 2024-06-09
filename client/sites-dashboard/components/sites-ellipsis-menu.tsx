@@ -334,7 +334,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const { __ } = useI18n();
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP ) && ! site?.plan?.expired;
 	const displayUpsell = ! hasFeatureSFTP;
-	const shouldLinkToDevTools = ! hasFeatureSFTP && isEnabled( 'layout/dotcom-nav-redesign-v2' );
+	const shouldLinkToHostingPromo = ! hasFeatureSFTP && isEnabled( 'layout/dotcom-nav-redesign-v2' );
 	const submenuItems = useSubmenuItems( site );
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offset: -8,
@@ -364,18 +364,15 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 						  )
 						: undefined
 				}
-				href={ shouldLinkToDevTools ? `/dev-tools/${ site.slug }` : undefined }
+				href={ shouldLinkToHostingPromo ? `/hosting-features/${ site.slug }` : undefined }
 				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_hosting_click' ) }
 			>
-				{ shouldLinkToDevTools ? (
-					__( 'Dev Tools' )
-				) : (
-					<>
-						{ __( 'Hosting' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
-					</>
-				) }
+				<>
+					{ __( 'Hosting' ) }
+					{ ! shouldLinkToHostingPromo && <MenuItemGridIcon icon="chevron-right" size={ 18 } /> }
+				</>
 			</MenuItemLink>
-			{ ! shouldLinkToDevTools && (
+			{ ! shouldLinkToHostingPromo && (
 				<SubmenuPopover
 					{ ...submenuProps.submenu }
 					inline

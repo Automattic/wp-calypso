@@ -231,8 +231,8 @@
 
 	.components-checkbox-control__input[type="checkbox"]:checked,
 	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--color-primary-60);
-		border-color: var(--color-primary-60);
+		background: var(--color-primary-50);
+		border-color: var(--color-primary-50);
 	}
 
 	.components-checkbox-control__input[type="checkbox"]:focus {
@@ -273,18 +273,37 @@
 		width: 100%;
 		min-height: 36px;
 
-		&.is-active,
-		&:focus {
-			border-color: var(--color-primary);
-			box-shadow: 0 0 0 2px var(--color-primary-5);
-			outline: none;
+		:not(.components-form-token-field__input-container) {
+			&.is-active,
+			&:focus {
+				border-color: var(--color-primary);
+				box-shadow: 0 0 0 2px var(--color-primary-5);
+				outline: none;
+			}
 		}
 	}
 
 	.components-form-token-field__input-container {
-		> * {
-			margin: 0;
-			padding: 0;
+		position: relative;
+
+		&.is-active,
+		&:focus {
+			box-shadow: none;
+			outline: none;
+			border-color: var(--color-primary-50);
+		}
+
+		.components-form-token-field__suggestions-list {
+			box-sizing: border-box;
+			position: absolute;
+			margin-block-start: 7px;
+			margin-inline-start: -13px;
+			background-color: var(--color-surface);
+			border: 1px solid var(--color-neutral-10);
+			z-index: 10;
+			box-shadow: none;
+			width: calc(100% + 2px);
+			border-block-start-color: var(--color-primary-50);
 		}
 
 		.components-form-token-field__token,
@@ -292,6 +311,11 @@
 		.components-form-token-field__remove-token.components-button {
 			background-color: var(--color-neutral-5);
 			border-radius: 4px;
+		}
+
+		> * {
+			margin: 0;
+			padding: 0;
 		}
 	}
 
