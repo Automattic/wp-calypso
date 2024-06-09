@@ -40,9 +40,6 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	styleVariation,
 	oldSlowerImageLoading,
 } ) => {
-	// eslint-disable-next-line no-console
-	console.log( `--DesignPreviewImage slow ${ oldSlowerImageLoading }` );
-
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	if ( design.is_externally_managed && design.screenshot ) {
@@ -362,10 +359,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	} );
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
-
-	// TODO: remove, temp logging
-	// eslint-disable-next-line no-console
-	console.log( `---packages/unified-design-picker, slow: ${ oldSlowerImageLoading }.` );
 
 	return (
 		<div

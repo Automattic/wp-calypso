@@ -54,9 +54,6 @@ const useMshotsImg = (
 	options: MShotsOptions,
 	imgRef: React.MutableRefObject< HTMLImageElement | null >
 ): string | null => {
-	// eslint-disable-next-line no-console
-	console.log( `--useMshotsImg options ${ options?.oldSlowerImageLoading } ` );
-
 	const [ loadedImg, setLoadedImg ] = useState< string | null >( null );
 	const [ count, setCount ] = useState( 0 );
 	const previousSrc = useRef( src );
@@ -154,9 +151,6 @@ const MShotsImage = ( {
 	options,
 	scrollable = false,
 }: MShotsImageProps ) => {
-	// eslint-disable-next-line no-console
-	console.log( `--MShotsImage slow ${ options?.oldSlowerImageLoading }` );
-
 	const imgRef = useRef< HTMLImageElement | null >( null );
 	const currentlyLoadedUrl = useMshotsImg( url, options, imgRef );
 	const src: string = imgRef.current?.src || '';

@@ -105,10 +105,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 	const variantName = experimentAssignment?.variationName;
 	const oldSlowerImageLoading = ! isLoadingExperiment && variantName === 'treatment';
-	// eslint-disable-next-line no-console
-	console.log(
-		`---isLoading ${ isLoadingExperiment } assignment ${ variantName } slow ${ oldSlowerImageLoading }`
-	);
 
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
