@@ -94,28 +94,28 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 			title: translate( 'Unmatched Reliability and Uptime' ),
 			titleString: 'Unmatched Reliability and Uptime', // Temporary string for non-English locales. Remove once we have translations.
 			description: translate(
-				'Our rock-solid infrastructure ensures 99.999% uptime, keeping your site always accessible to your users no matter what!'
+				'Our infrastructure ensures 99.999% uptime and automatic WordPress updates, your site is always accessible and updated!'
 			),
 			descriptionString:
-				'Our rock-solid infrastructure ensures 99.999% uptime, keeping your site always accessible to your users no matter what!', // Temporary string for non-English locales. Remove once we have translations.
+				'Our infrastructure ensures 99.999% uptime and automatic WordPress updates, your site is always accessible and updated!', // Temporary string for non-English locales. Remove once we have translations.
 		},
 		'effortless-customization': {
 			title: translate( 'Effortless Customization' ),
 			titleString: 'Effortless Customization',
 			description: translate(
-				'Our intuitive tools and extensive customization options let you design a website that meets all your needs, without any hassle. Whether you’re a beginner or an expert, building your dream site has never been easier.'
+				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.'
 			),
 			descriptionString:
-				'Our intuitive tools and extensive customization options let you design a website that meets all your needs, without any hassle. Whether you’re a beginner or an expert, building your dream site has never been easier.',
+				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.',
 		},
 		'blazing-fast-speed': {
 			title: translate( 'Blazing Fast Page Speed' ),
 			titleString: 'Blazing Fast Page Speed',
 			description: translate(
-				'Deliver lightning-fast load times with our global CDN spanning 28+ locations, providing a seamless experience for your visitors no matter where they are.'
+				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.'
 			),
 			descriptionString:
-				'Deliver lightning-fast load times with our global CDN spanning 28+ locations, providing a seamless experience for your visitors no matter where they are.',
+				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.',
 		},
 	};
 
