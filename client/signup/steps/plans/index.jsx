@@ -195,7 +195,32 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, useEmailOnboardingSubheader } = this.props;
+		const { translate, useEmailOnboardingSubheader, signupDependencies, flowName } = this.props;
+
+		const { segmentationSurveyAnswers } = signupDependencies;
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
+
+		if (
+			isOnboardingGuidedFlow( flowName ) &&
+			segmentSlug === 'plans-guided-segment-developer-or-agency'
+		) {
+			const a4aLinkButton = (
+				<Button
+					href="https://automattic.com/for-agencies/"
+					target="_blank"
+					rel="noopener noreferrer"
+					onClick={ () =>
+						this.props.recordTracksEvent( 'calypso_guided_onboarding_agency_link_click' )
+					}
+					borderless
+				/>
+			);
+
+			return translate(
+				'Are you an agency? Get bulk discounts and premier support with {{link}}Automattic for Agencies{{/link}}.',
+				{ components: { link: a4aLinkButton } }
+			);
+		}
 
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
