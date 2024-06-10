@@ -121,7 +121,13 @@ export const MarketingTools: FunctionComponent = () => {
 					imagePath="/calypso/images/marketing/mailchimp-logo.svg"
 					imageAlt={ translate( 'Mailchimp logo' ) }
 				>
-					<Button onClick={ handleMailchimpClick }>{ translate( 'Get started today' ) }</Button>
+					<Button
+						onClick={ handleMailchimpClick }
+						href="https://mailchimp.com/pricing/marketing/"
+						target="_blank"
+					>
+						{ translate( 'Get started today' ) }
+					</Button>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
