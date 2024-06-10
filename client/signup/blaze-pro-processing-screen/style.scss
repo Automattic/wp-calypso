@@ -1,3 +1,18 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography.scss";
+
+@font-face {
+	font-family: InterVariable;
+	font-style: normal;
+	font-weight: 400 700;
+	font-display: swap;
+	src: url(../../assets/fonts/Inter-VariableFont.ttf) format("truetype");
+	src: url(../../assets/fonts/Inter-VariableFont.woff2) format("woff2");
+}
+
+$inter: InterVariable, $sans;
+$sfProText: "SF Pro Text", $sans;
+
 @keyframes processing {
 	0% {
 		background-position: 0% 0, 0% 0;
@@ -37,6 +52,7 @@
 		}
 
 		&__title {
+			font-family: $inter;
 			font-size: 2rem;
 			font-weight: 700;
 			line-height: 40px;
@@ -45,6 +61,7 @@
 		}
 
 		&__subtitle {
+			font-family: $sfProText;
 			font-size: rem(18px);
 			line-height: 25px;
 			text-align: center;
