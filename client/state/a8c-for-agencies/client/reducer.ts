@@ -1,33 +1,31 @@
 import { AnyAction } from 'redux';
 import { combineReducers } from 'calypso/state/utils';
 import {
-	JETPACK_GET_AGENCIES_REQUEST,
-	JETPACK_GET_AGENCIES_SUCCESS,
-	JETPACK_GET_AGENCIES_ERROR,
-	JETPACK_CURRENT_AGENCY_UPDATE,
+	A4A_GET_CLIENT_REQUEST,
+	A4A_GET_CLIENT_SUCCESS,
+	A4A_GET_CLIENT_ERROR,
 } from './action-types';
 
 export const initialState = {
 	hasFetched: false,
 	isFetching: false,
-	activeAgency: null,
-	agencies: [],
+	client: null,
 	error: null,
 };
 
 export const hasFetched = ( state = initialState.isFetching, action: AnyAction ) => {
 	switch ( action.type ) {
-		case JETPACK_GET_AGENCIES_SUCCESS:
+		case A4A_GET_CLIENT_SUCCESS:
 			return true;
 	}
 
 	return state;
 };
 
-export const agencies = ( state = initialState.isFetching, action: AnyAction ) => {
+export const client = ( state = initialState.isFetching, action: AnyAction ) => {
 	switch ( action.type ) {
-		case JETPACK_GET_AGENCIES_SUCCESS:
-			return action.agencies;
+		case A4A_GET_CLIENT_SUCCESS:
+			return action.client;
 	}
 
 	return state;
@@ -35,21 +33,12 @@ export const agencies = ( state = initialState.isFetching, action: AnyAction ) =
 
 export const isFetching = ( state = initialState.isFetching, action: AnyAction ) => {
 	switch ( action.type ) {
-		case JETPACK_GET_AGENCIES_REQUEST:
+		case A4A_GET_CLIENT_REQUEST:
 			return true;
 
-		case JETPACK_GET_AGENCIES_SUCCESS:
-		case JETPACK_GET_AGENCIES_ERROR:
+		case A4A_GET_CLIENT_SUCCESS:
+		case A4A_GET_CLIENT_ERROR:
 			return false;
-	}
-
-	return state;
-};
-
-const activeAgency = ( state = initialState.activeAgency, action: AnyAction ) => {
-	switch ( action.type ) {
-		case JETPACK_CURRENT_AGENCY_UPDATE:
-			return action.activeAgency;
 	}
 
 	return state;
@@ -57,7 +46,7 @@ const activeAgency = ( state = initialState.activeAgency, action: AnyAction ) =>
 
 export const error = ( state = initialState.error, action: AnyAction ) => {
 	switch ( action.type ) {
-		case JETPACK_GET_AGENCIES_ERROR:
+		case A4A_GET_CLIENT_ERROR:
 			return action.error;
 	}
 
@@ -67,7 +56,6 @@ export const error = ( state = initialState.error, action: AnyAction ) => {
 export default combineReducers( {
 	hasFetched,
 	isFetching,
-	activeAgency,
-	agencies,
+	client,
 	error,
 } );

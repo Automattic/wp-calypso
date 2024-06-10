@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
 import agencies from 'calypso/state/a8c-for-agencies/agency/handlers';
+import client from 'calypso/state/a8c-for-agencies/client/handlers';
 import reducer from 'calypso/state/a8c-for-agencies/reducer';
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -7,7 +8,7 @@ import { registerReducer } from 'calypso/state/redux-store';
 
 const debug = debugFactory( 'a8c-for-agencies' );
 
-const handlers = mergeHandlers( agencies );
+const handlers = mergeHandlers( agencies, client );
 
 export default function installActionHandlers() {
 	const id = 'a8c-for-agencies';
