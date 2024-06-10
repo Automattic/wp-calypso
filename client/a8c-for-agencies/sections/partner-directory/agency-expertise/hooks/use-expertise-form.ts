@@ -1,10 +1,13 @@
 import { useCallback, useState } from 'react';
-import { isValidApplicationForm } from '../../lib/agency-directory-application-form';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../../types';
 
 type Props = {
 	initialData?: AgencyDirectoryApplication;
 };
+
+function validateURL( url: string ) {
+	return /^(https?:\/\/)?([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(:[0-9]+)?(\/[a-z0-9-]*)*$/.test( url );
+}
 
 export default function useExpertiseForm( { initialData }: Props ) {
 	const [ formData, setFormData ] = useState< AgencyDirectoryApplication >(
@@ -85,10 +88,26 @@ export default function useExpertiseForm( { initialData }: Props ) {
 		} ) );
 	}, [] );
 
+	const isValidFormData = useCallback( (): boolean => {
+		let isValid =
+			formData.services.length > 0 &&
+			formData.products.length > 0 &&
+			formData.directories.length > 0;
+
+		if ( isValid ) {
+			// Ensure that each directory request has 5 non-empty and valid URLs
+			isValid = formData.directories.every( ( { urls } ) => {
+				return urls.every( ( url ) => url && validateURL( url ) );
+			} );
+		}
+
+		return isValid;
+	}, [ formData ] );
+
 	return {
 		formData,
 		setFormData,
-		isValidFormData: isValidApplicationForm( formData ),
+		isValidFormData,
 		isDirectorySelected,
 		isDirectoryApproved,
 		setDirectorySelected,
