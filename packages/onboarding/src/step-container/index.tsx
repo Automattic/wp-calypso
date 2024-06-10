@@ -2,7 +2,7 @@ import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/comp
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
+import { usePresalesChat } from 'calypso/lib/presales-chat'; //eslint-disable-line no-restricted-imports
 import ActionButtons from '../action-buttons';
 import SenseiLogo from '../sensei-logo';
 import StepNavigationLink from '../step-navigation-link';
