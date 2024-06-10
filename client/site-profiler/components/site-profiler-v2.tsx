@@ -158,6 +158,7 @@ export default function SiteProfilerV2( props: Props ) {
 						<ResultsHeader
 							domain={ domain }
 							performanceCategory={ performanceCategory }
+							isWordPress={ urlData?.platform === 'wordpress' }
 							isWpCom={ isWpCom }
 							onGetReport={ () => setIsGetReportFormOpen( true ) }
 						/>
