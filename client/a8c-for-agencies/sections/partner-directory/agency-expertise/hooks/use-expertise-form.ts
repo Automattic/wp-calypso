@@ -88,21 +88,17 @@ export default function useExpertiseForm( { initialData }: Props ) {
 		} ) );
 	}, [] );
 
-	const isValidFormData = useCallback( (): boolean => {
-		let isValid =
+	const isValidFormData = useCallback(
+		(): boolean =>
 			formData.services.length > 0 &&
 			formData.products.length > 0 &&
-			formData.directories.length > 0;
-
-		if ( isValid ) {
-			// Ensure that each directory request has 5 non-empty and valid URLs
-			isValid = formData.directories.every( ( { urls } ) => {
+			formData.directories.length > 0 &&
+			// Ensure that each directory request has 5 valid URLs
+			formData.directories.every( ( { urls } ) => {
 				return urls.every( ( url ) => url && validateURL( url ) );
-			} );
-		}
-
-		return isValid;
-	}, [ formData ] );
+			} ),
+		[ formData ]
+	);
 
 	return {
 		formData,
