@@ -177,6 +177,7 @@ class Login extends Component {
 				twoFactorAuthType: 'link',
 				oauth2ClientId: this.props.currentQuery?.client_id,
 				redirectTo: this.props.currentQuery?.redirect_to,
+				usernameOnly: true,
 			} );
 
 			page( magicLoginUrl );
