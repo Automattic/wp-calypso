@@ -8,7 +8,7 @@ const siteSetupWithoutGoalsFlow: Flow = {
 	...siteSetup,
 	variantSlug: 'site-setup-wg',
 	useSteps() {
-		return siteSetup.useSteps().slice( 1 );
+		return siteSetup.useSteps().slice( 2 );
 	},
 };
 
