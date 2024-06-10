@@ -198,12 +198,12 @@ export class PlansStep extends Component {
 		const { translate, useEmailOnboardingSubheader, signupDependencies, flowName } = this.props;
 
 		const { segmentationSurveyAnswers } = signupDependencies;
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
-		const surveyedIntent = isOnboardingGuidedFlow( flowName )
-			? getSegmentedIntent( segmentationSurveyAnswers )
-			: undefined;
-
-		if ( surveyedIntent === 'plans-guided-segment-developer-or-agency' ) {
+		if (
+			isOnboardingGuidedFlow( flowName ) &&
+			segmentSlug === 'plans-guided-segment-developer-or-agency'
+		) {
 			const a4aLinkButton = (
 				<Button
 					href="https://automattic.com/for-agencies/"
