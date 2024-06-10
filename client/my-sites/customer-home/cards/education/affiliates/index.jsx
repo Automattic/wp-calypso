@@ -9,7 +9,7 @@ const EducationAffiliates = () => {
 	const hasTranslation = useHasEnTranslation();
 
 	const title = translate( 'Earn with the Automattic Affiliate Program' );
-	const hasTitleTranaslation = hasTranslation( 'Earn with the Automattic Affiliate Program' );
+	const hasTitleTranslation = hasTranslation( 'Earn with the Automattic Affiliate Program' );
 
 	const description = translate(
 		'Join the Automattic Affiliate Program and get up to 100% payouts by promoting one or more of Automattic’s trusted, profitable products.'
@@ -18,7 +18,7 @@ const EducationAffiliates = () => {
 		'Join the Automattic Affiliate Program and get up to 100% payouts by promoting one or more of Automattic’s trusted, profitable products.'
 	);
 
-	if ( ! hasTitleTranaslation || ! hasDescriptionTranslation ) {
+	if ( ! hasTitleTranslation || ! hasDescriptionTranslation ) {
 		EducationAffiliates.isDisabled = true;
 		return null;
 	}
