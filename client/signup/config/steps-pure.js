@@ -405,15 +405,15 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-affiliates': {
-			stepName: 'plans-affiliates',
+		'plans-affiliate': {
+			stepName: 'plans-affiliate',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
-				intent: 'plans-affiliates',
+				intent: 'plans-affiliate',
 			},
 		},
 

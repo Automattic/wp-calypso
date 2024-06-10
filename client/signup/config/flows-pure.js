@@ -703,8 +703,8 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'affiliates',
-			steps: [ 'domains', 'plans-affiliates', userSocialStep ],
+			name: 'onboarding-affiliate',
+			steps: [ userSocialStep, 'domains', 'plans-affiliate' ],
 			destination: getSignupDestination,
 			description: 'Affiliates flow',
 			lastModified: '2024-06-06',
