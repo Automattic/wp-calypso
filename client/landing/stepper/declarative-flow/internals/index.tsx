@@ -1,28 +1,27 @@
 import {
-	SENSEI_FLOW,
 	isNewsletterOrLinkInBioFlow,
 	isSenseiFlow,
 	isWooExpressFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
+import React, { useEffect, useMemo, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
-import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
-import { useQuery } from '../../hooks/use-query';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import { StepRoute, StepperLoader } from './components';
+import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
+
 import './global.scss';
 
 /**
@@ -40,6 +39,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	Modal.setAppElement( '#wpcom' );
 	const flowSteps = flow.useSteps();
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
+
 	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
 		() =>
 			flowSteps.reduce(
@@ -64,7 +64,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 
 	useSaveQueryParams();
-	const ref = useQuery().get( 'ref' ) || '';
 
 	const { site, siteSlugOrId } = useSiteData();
 
@@ -90,18 +89,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// some steps, and they'll simply be loaded later.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ flow, siteSlugOrId, selectedSite ] );
-
-	const isFlowStart = useCallback( () => {
-		if ( ! flow || ! stepPaths.length ) {
-			return false;
-		}
-
-		if ( flow.name === SENSEI_FLOW ) {
-			return currentStepRoute === stepPaths[ 1 ];
-		}
-
-		return currentStepRoute === stepPaths[ 0 ];
-	}, [ flow, currentStepRoute, ...stepPaths ] );
 
 	const _navigate = async ( path: string, extraData = {} ) => {
 		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
@@ -139,16 +126,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
 
-	// Get any flow-specific event props to include in the
-	// `calypso_signup_start` Tracks event triggerd in the effect below.
-	const signupStartEventProps = flow.useSignupStartEventProps?.() ?? {};
-
-	useEffect( () => {
-		if ( flow.isSignupFlow && isFlowStart() ) {
-			recordSignupStart( flow.name, ref, signupStartEventProps );
-		}
-	}, [ flow, ref, isFlowStart ] );
-
 	const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
 		state: AssertConditionState.SUCCESS,
 	};
@@ -183,6 +160,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			return __( 'Course Creator' );
 		}
 	};
+
+	useSignUpStartTracking( { flow, currentStepRoute: currentStepRoute } );
 
 	return (
 		<Suspense fallback={ <StepperLoader /> }>

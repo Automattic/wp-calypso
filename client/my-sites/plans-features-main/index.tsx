@@ -57,6 +57,7 @@ import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-ite
 import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
+import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -395,6 +396,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		forceDefaultIntent: shouldForceDefaultPlansBasedOnIntent( intent ),
 	} );
 
 	let highlightLabelOverrides: { [ K in PlanSlug ]?: TranslateResult } | undefined;

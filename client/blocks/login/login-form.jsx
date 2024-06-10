@@ -598,6 +598,10 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your email address or username' );
 		}
 
+		if ( this.props.currentQuery?.username_only === 'true' ) {
+			return this.props.translate( 'Your username' );
+		}
+
 		return this.isPasswordView() ? (
 			this.renderChangeUsername()
 		) : (

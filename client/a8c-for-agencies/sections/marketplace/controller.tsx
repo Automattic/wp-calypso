@@ -51,13 +51,11 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 };
 
 export const marketplacePressableContext: Callback = ( context, next ) => {
-	const { purchase_type } = context.query;
-	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting > Pressable" path={ context.path } />
-			<PressableOverview defaultMarketplaceType={ purchaseType } />
+			<PressableOverview />
 		</>
 	);
 	next();
