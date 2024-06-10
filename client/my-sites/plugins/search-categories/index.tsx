@@ -18,7 +18,7 @@ import { useGetCategoryUrl } from 'calypso/my-sites/plugins/categories/use-get-c
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { useTermsSuggestions } from './useTermsSuggestions';
+import { useTermsSuggestions } from '../use-terms-suggestions';
 
 import './style.scss';
 
