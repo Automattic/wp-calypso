@@ -17,7 +17,7 @@ const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
 				id: referral.id,
 				client_id: referral.client_id,
 				client_email: referral.client_email,
-				purchases: referral.products,
+				purchases: [ ...referral.products ],
 				commissions: referral.commission,
 				statuses: [ referral.status ],
 			} );
