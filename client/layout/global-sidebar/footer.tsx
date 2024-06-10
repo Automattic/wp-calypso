@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { recordCommandPaletteOpen } from '@automattic/command-palette';
+import { recordCommandPaletteOpen } from '@automattic/command-palette/src/tracks';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { LocalizeProps } from 'i18n-calypso';

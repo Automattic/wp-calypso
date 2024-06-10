@@ -13,6 +13,7 @@ import {
 	CommandPaletteContextProvider,
 	useCommandPaletteContext,
 } from './context';
+import { recordCommandPaletteOpen } from './tracks';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { useCommandPalette } from './use-command-palette';
 import { siteUsesWpAdminInterface } from './utils';
@@ -272,13 +273,6 @@ const toggleModalOpenClassnameOnDocumentHtmlElement = ( isModalOpen: boolean ) =
 	document.body.classList.toggle( COMMAND_PALETTE_MODAL_OPEN_CLASSNAME, isModalOpen );
 };
 
-const recordCommandPaletteOpen = ( currentRoute: string, openType: string ) => {
-	recordTracksEvent( 'calypso_hosting_command_palette_open', {
-		current_route: currentRoute,
-		opened_with: openType,
-	} );
-};
-
 const CommandPalette = ( {
 	currentRoute,
 	currentSiteId,
@@ -475,4 +469,3 @@ export default CommandPalette;
 export type { Command, CommandCallBackParams } from './commands';
 export { useCommands } from './commands';
 export { PromptIcon } from './icons/prompt';
-export { recordCommandPaletteOpen };
