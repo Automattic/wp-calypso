@@ -1,20 +1,13 @@
 import { MaterialIcon } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './migrate-notice.scss';
 
-const MigrateNotice = () => {
-	const translate = useTranslate();
-
+const MigrateNotice = ( { translate, recordTracksEvent } ) => {
 	const recordClick = () => {
 		recordTracksEvent( 'calypso_login_failed_migrate_notice_cta_click' );
 	};
 
-	useEffect( () => {
-		recordTracksEvent( 'calypso_login_failed_migrate_notice_show' );
-	}, [] );
+	recordTracksEvent( 'calypso_login_failed_migrate_notice_show' );
 
 	return (
 		<div className="login__form-migrate-notice">
