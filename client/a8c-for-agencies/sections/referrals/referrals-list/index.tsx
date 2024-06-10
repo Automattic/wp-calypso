@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, ReactNode } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function ReferralList( { referrals, dataViewsState, setDataViewsState }: Props ) {
+	const isDesktop = useDesktopBreakpoint();
 	const translate = useTranslate();
 
 	const openSitePreviewPane = useCallback(
@@ -29,7 +31,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 
 	const fields = useMemo(
 		() =>
-			dataViewsState.selectedItem
+			dataViewsState.selectedItem || ! isDesktop
 				? [
 						{
 							id: 'client',
@@ -78,16 +80,6 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							enableSorting: false,
 						},
 						{
-							id: 'commissions',
-							header: translate( 'Commissions' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => {
-								return `$${ item.commissions }`;
-							},
-							enableHiding: false,
-							enableSorting: false,
-						},
-						{
 							id: 'subscription-status',
 							header: translate( 'Subscription Status' ).toUpperCase(),
 							getValue: () => '-',
@@ -113,7 +105,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							enableSorting: false,
 						},
 				  ],
-		[ dataViewsState.selectedItem, openSitePreviewPane, translate ]
+		[ dataViewsState.selectedItem, isDesktop, openSitePreviewPane, translate ]
 	);
 
 	return (
@@ -125,7 +117,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 						totalItems: 1,
 						totalPages: 1,
 					},
-					searchLabel: translate( 'Search referrals' ),
+					enableSearch: false,
 					fields: fields,
 					actions: [],
 					setDataViewsState: setDataViewsState,

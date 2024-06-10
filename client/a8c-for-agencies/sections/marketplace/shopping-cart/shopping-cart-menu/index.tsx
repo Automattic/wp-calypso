@@ -27,8 +27,6 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 	const { getTotalInvoiceValue } = useTotalInvoiceValue();
 	const { discountedCost } = getTotalInvoiceValue( userProducts, items );
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
-	// FIXME: we should update the magic numbers here with values when backend part is finished.
-	const commissionAmount = Math.floor( discountedCost * 0.5 );
 
 	return (
 		<Popover
@@ -75,18 +73,6 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 							} ) }
 						</span>
 					</div>
-					{ marketplaceType === 'referral' && (
-						<div className="shopping-cart__menu-commission">
-							<span>{ translate( 'Your estimated commision:' ) }</span>
-							<span>
-								{ translate( '%(total)s/mo', {
-									args: {
-										total: formatCurrency( commissionAmount, items[ 0 ]?.currency ?? 'USD' ),
-									},
-								} ) }
-							</span>
-						</div>
-					) }
 
 					<Button
 						className="shopping-cart__menu-checkout-button"
