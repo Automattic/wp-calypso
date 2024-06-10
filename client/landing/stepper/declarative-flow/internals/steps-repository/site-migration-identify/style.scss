@@ -80,12 +80,12 @@
 	display: flex;
 	flex-direction: column;
 	gap: 1.25rem;
-	margin: 40px auto 0 auto;
+	margin: 40px auto 60px auto;
 	max-width: 368px;
 	padding: 1.5rem;
 
-	@media (max-width: $break-small) {
-		margin: 40px auto 60px auto;
+	@media (min-width: $break-small) {
+		margin: 40px auto 0 auto;
 	}
 
 
@@ -98,7 +98,7 @@
 	&--list {
 		display: flex;
 		flex-direction: column;
-		gap: 1.125rem;
+		gap: 1.25rem;
 
 		&-item {
 			display: flex;
