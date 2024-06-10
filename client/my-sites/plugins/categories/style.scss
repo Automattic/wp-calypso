@@ -3,7 +3,9 @@
 		z-index: z-index("root", ".categories__menu .components-popover");
 	}
 
-	.components-toolbar .components-button::before {
-		height: 38px;
+	&.is-logged-in {
+		.components-toolbar .components-button::before {
+			height: 38px;
+		}
 	}
 }

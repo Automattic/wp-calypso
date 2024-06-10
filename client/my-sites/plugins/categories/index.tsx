@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
+import clsx from 'clsx';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -55,7 +56,9 @@ const Categories = ( { selected, noSelection }: { selected?: string; noSelection
 
 	return (
 		<ResponsiveToolbarGroup
-			className="categories__menu"
+			className={ clsx( 'categories__menu', {
+				'is-logged-in': isLoggedIn,
+			} ) }
 			initialActiveIndex={ activeIndex }
 			onClick={ onClick }
 			hrefList={ categoryUrls }
