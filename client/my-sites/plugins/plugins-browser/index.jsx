@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -11,9 +12,11 @@ import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connec
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
+import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
+import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -64,6 +67,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
 	const searchRef = useRef( null );
+	const categoriesRef = useRef();
 	//  another temporary solution until phase 4 is merged
 	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
 
@@ -88,8 +92,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 	const translate = useTranslate();
+	const locale = useLocale();
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.menu || __( 'Plugins' );
@@ -167,15 +172,49 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
-				<SearchCategories
-					category={ category }
-					isSearching={ isFetchingPluginsBySearchTerm }
-					isSticky={ isAboveElement }
-					searchRef={ searchRef }
-					searchTerm={ search }
-					searchTerms={ searchTerms }
-					stickySearchBoxRef={ searchHeaderRef }
-				/>
+				{ isLoggedIn ? (
+					<SearchCategories
+						category={ category }
+						isSearching={ isFetchingPluginsBySearchTerm }
+						isSticky={ isAboveElement }
+						searchRef={ searchRef }
+						searchTerm={ search }
+						searchTerms={ searchTerms }
+						stickySearchBoxRef={ searchHeaderRef }
+					/>
+				) : (
+					<>
+						<SearchBoxHeader
+							searchRef={ searchRef }
+							categoriesRef={ categoriesRef }
+							stickySearchBoxRef={ searchHeaderRef }
+							isSticky={ isAboveElement }
+							searchTerm={ search }
+							isSearching={ isFetchingPluginsBySearchTerm }
+							title={
+								'en' === locale || hasTranslation( 'Flex your site’s features with plugins' )
+									? __( 'Flex your site’s features with plugins' )
+									: __( 'Plugins you need to get your projects done' )
+							}
+							subtitle={
+								! isLoggedIn &&
+								( 'en' === locale ||
+									hasTranslation(
+										'Add new functionality and integrations to your site with thousands of plugins.'
+									) ) &&
+								__(
+									'Add new functionality and integrations to your site with thousands of plugins.'
+								)
+							}
+							searchTerms={ searchTerms }
+							renderTitleInH1={ ! category }
+						/>
+
+						<div ref={ categoriesRef }>
+							<Categories selected={ category } noSelection={ search ? true : false } />
+						</div>
+					</>
+				) }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
 					<div className="plugins-browser__marketplace-footer">

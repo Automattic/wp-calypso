@@ -1,7 +1,8 @@
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { ALLOWED_CATEGORIES, useCategories } from './use-categories';
 import { useGetCategoryUrl } from './use-get-category-url';
 
@@ -28,6 +29,7 @@ export type Plugin = {
 const Categories = ( { selected, noSelection }: { selected?: string; noSelection?: boolean } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	// We hide these special categories from the category selector
 	const displayCategories = ALLOWED_CATEGORIES.filter(
@@ -57,7 +59,8 @@ const Categories = ( { selected, noSelection }: { selected?: string; noSelection
 			initialActiveIndex={ activeIndex }
 			onClick={ onClick }
 			hrefList={ categoryUrls }
-			swipeEnabled={ false }
+			forceSwipe={ isLoggedIn ? false : 'undefined' === typeof window }
+			swipeEnabled={ ! isLoggedIn }
 		>
 			{ categories.map( ( category ) => (
 				<span key={ `category-${ category.slug }` } title={ category.menu }>
