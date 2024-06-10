@@ -316,18 +316,6 @@ function getConfig( {
 		weight: 0,
 	};
 
-	importerConfig.ghost = {
-		engine: 'ghost',
-		key: 'importer-type-ghost',
-		type: 'url',
-		priority: 'secondary',
-		title: 'Ghost',
-		icon: 'ghost',
-		description: '',
-		uploadDescription: '',
-		weight: 0,
-	};
-
 	importerConfig.livejournal = {
 		engine: 'livejournal',
 		key: 'importer-type-livejournal',
