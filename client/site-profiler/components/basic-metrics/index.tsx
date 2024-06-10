@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { ForwardedRef, forwardRef, useMemo } from 'react';
 import { calculateMetricsSectionScrollOffset } from 'calypso/site-profiler/utils/calculate-metrics-section-scroll-offset';
 import { CopiesReturnValueList, MetricsCopies, getCopies } from './copies';
@@ -52,10 +52,10 @@ export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetric
 					</div>
 					<div className="basic-metrics__value">
 						{ metric === 'cls'
-							? value
+							? numberFormat( value, 2 )
 							: translate( '%(ms)dms', {
 									comment: 'value to be displayed in millisecond',
-									args: { ms: value },
+									args: { ms: numberFormat( value, 2 ) },
 							  } ) }
 					</div>
 				</div>
