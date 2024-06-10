@@ -31,14 +31,14 @@ interface DesignPreviewImageProps {
 	imageOptimizationExperiment?: boolean;
 	locale?: string;
 	styleVariation?: StyleVariation;
-	oldSlowerImageLoading?: boolean; // Temporary for A/B test.
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 }
 
 const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	design,
 	locale,
 	styleVariation,
-	oldSlowerImageLoading,
+	oldHighResImageLoading,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -49,7 +49,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		const themeImgSrc = photon( design.screenshot, { fit } ) || design.screenshot;
 		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
 
-		if ( oldSlowerImageLoading ) {
+		if ( oldHighResImageLoading ) {
 			<img
 				src={ themeImgSrc }
 				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
@@ -80,7 +80,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 				scrollable: false,
 				highRes: ! isMobile,
 				isMobile,
-				oldSlowerImageLoading,
+				oldHighResImageLoading,
 			} ) }
 			scrollable={ false }
 		/>
@@ -175,7 +175,7 @@ interface DesignCardProps {
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
-	oldSlowerImageLoading?: boolean; // Temporary for A/B test.
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
@@ -187,7 +187,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onChangeVariation,
 	onPreview,
 	getBadge,
-	oldSlowerImageLoading,
+	oldHighResImageLoading,
 } ) => {
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
@@ -213,7 +213,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					design={ design }
 					locale={ locale }
 					styleVariation={ selectedStyleVariation }
-					oldSlowerImageLoading={ oldSlowerImageLoading }
+					oldHighResImageLoading={ oldHighResImageLoading }
 				/>
 			}
 			badge={ getBadge( design.slug, isLocked ) }
@@ -240,7 +240,7 @@ interface DesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
-	oldSlowerImageLoading?: boolean; // Temporary for A/B test
+	oldHighResImageLoading?: boolean; // Temporary for A/B test
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -254,7 +254,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
-	oldSlowerImageLoading,
+	oldHighResImageLoading,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useMemo( () => {
@@ -307,7 +307,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							onChangeVariation={ onChangeVariation }
 							onPreview={ onPreview }
 							getBadge={ getBadge }
-							oldSlowerImageLoading={ oldSlowerImageLoading }
+							oldHighResImageLoading={ oldHighResImageLoading }
 						/>
 					);
 				} ) }
@@ -330,7 +330,7 @@ export interface UnifiedDesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
-	oldSlowerImageLoading?: boolean; // Temporary for A/B test
+	oldHighResImageLoading?: boolean; // Temporary for A/B test
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -346,7 +346,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
-	oldSlowerImageLoading,
+	oldHighResImageLoading,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -379,7 +379,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					getBadge={ getBadge }
-					oldSlowerImageLoading={ oldSlowerImageLoading }
+					oldHighResImageLoading={ oldHighResImageLoading }
 				/>
 				{ bottomAnchorContent }
 			</div>

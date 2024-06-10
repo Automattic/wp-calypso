@@ -20,7 +20,7 @@ export type MShotsOptions = {
 	h?: number;
 	screen_height?: number;
 	format?: 'png' | 'jpeg';
-	oldSlowerImageLoading?: boolean;
+	oldHighResImageLoading?: boolean;
 };
 
 const debug = debugFactory( 'design-picker:mshots-image' );
@@ -176,7 +176,7 @@ const MShotsImage = ( {
 		visible ? 'mshots-image-visible' : 'mshots-image__loader'
 	);
 
-	if ( options?.oldSlowerImageLoading ) {
+	if ( options?.oldHighResImageLoading ) {
 		return scrollable ? (
 			<div className={ className } style={ style } aria-labelledby={ labelledby }>
 				<img ref={ imgRef } className="mshots-dummy-image" aria-hidden="true" alt="" />

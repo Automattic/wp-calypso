@@ -104,7 +104,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		'calypso_design_picker_image_optimization_202406'
 	);
 	const variantName = experimentAssignment?.variationName;
-	const oldSlowerImageLoading = ! isLoadingExperiment && variantName === 'treatment';
+	// const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
+	// Temporary to test undo of Sergio's code path.
+	const oldHighResImageLoading = ! ( ! isLoadingExperiment && variantName === 'treatment' );
 
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
@@ -915,7 +917,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 			getBadge={ getBadge }
-			oldSlowerImageLoading={ oldSlowerImageLoading }
+			oldHighResImageLoading={ oldHighResImageLoading }
 		/>
 	);
 

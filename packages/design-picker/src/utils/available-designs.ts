@@ -6,7 +6,7 @@ type MShotInputOptions = {
 	scrollable?: boolean;
 	highRes?: boolean;
 	isMobile?: boolean;
-	oldSlowerImageLoading?: boolean; // Temporary for A/B test.
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 };
 
 // Used for both prefetching and loading design screenshots
@@ -14,7 +14,7 @@ export const getMShotOptions = ( {
 	scrollable,
 	highRes,
 	isMobile,
-	oldSlowerImageLoading,
+	oldHighResImageLoading,
 }: MShotInputOptions = {} ): MShotsOptions => {
 	// Take care changing these values, as the design-picker CSS animations are written for these values (see the *__landscape and *__portrait classes)
 
@@ -25,7 +25,7 @@ export const getMShotOptions = ( {
 	// See #88786 for more info.
 	let w = 500;
 	let screen_height = 1100;
-	if ( oldSlowerImageLoading ) {
+	if ( oldHighResImageLoading ) {
 		w = highRes ? 1199 : 600;
 		screen_height = 3600;
 	}
@@ -34,7 +34,7 @@ export const getMShotOptions = ( {
 		vph: scrollable ? 1600 : 1040,
 		w: w,
 		screen_height: screen_height,
-		oldSlowerImageLoading: oldSlowerImageLoading,
+		oldHighResImageLoading: oldHighResImageLoading,
 	};
 };
 
