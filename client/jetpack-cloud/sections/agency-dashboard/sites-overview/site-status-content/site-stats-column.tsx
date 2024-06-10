@@ -46,10 +46,10 @@ export default function SiteStatsColumn( { site, stats, siteError }: Props ) {
 
 	// When in A4A, the stats column is a clickable button that opens the preview pane.
 	if ( isA4A ) {
-		const hasJetpackPlugin =
-			! site?.is_atomic && !! site?.enabled_plugin_slugs?.find( ( value ) => value === 'jetpack' );
+		const shouldShowUpsell =
+			! site?.is_atomic && ! site?.enabled_plugin_slugs?.find( ( value ) => value === 'jetpack' );
 
-		if ( hasJetpackPlugin ) {
+		if ( ! shouldShowUpsell ) {
 			return (
 				<button
 					type="button"

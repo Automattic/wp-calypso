@@ -1,0 +1,69 @@
+.upsell-stats-card__wrapper {
+	.upsell-stats-card__features {
+		list-style: none;
+		margin: 0 0 24px;
+	}
+
+	.upsell-stats-card__features-item {
+		margin-bottom: 12px;
+		span {
+			.is-placeholder & {
+				@include placeholder( --studio-gray-5 );
+			}
+		}
+
+		.gridicon {
+			fill: var(--studio-jetpack-green-50);
+			margin-right: 8px;
+		}
+	}
+
+	.upsell-stats-card__footer {
+		margin-block-start: 24px;
+		font-weight: 400;
+	}
+
+	.jetpack-rna-action-card__action {
+		font-size: 0.875rem;
+
+		.jetpack-rna-action-card__button {
+			width: 60%;
+			min-width: 170px;
+		}
+
+		.jetpack-rna-action-card__secondary-cta {
+			width: 30%;
+			a {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				white-space: nowrap;
+				box-sizing: border-box;
+				border-radius: 4px;
+				border-color: var(--color-neutral-5);
+				font-size: 1rem;
+				padding: 8px 32px;
+				border-style: solid;
+				border-width: 1px;
+			}
+		}
+
+		.gridicon {
+			top: 0;
+			margin-top: 0;
+			margin-inline-start: 4px;
+			min-width: 16px;
+		}
+
+	}
+
+	.jetpack-rna-action-card__footer {
+		align-items: flex-start;
+
+		.jetpack-rna-action-card__footer-image {
+			margin-inline-start: 24px;
+			margin-block-start: 120px;
+		}
+	}
+}
+
