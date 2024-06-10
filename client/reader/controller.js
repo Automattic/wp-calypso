@@ -126,7 +126,7 @@ export function following( context, next ) {
 		{ pathnameOverride: getCurrentRoute( state ) }
 	);
 
-	setPageTitle( context, i18n.translate( 'Following' ) );
+	setPageTitle( context, i18n.translate( 'Home' ) );
 
 	// warn: don't async load this only. we need it to keep feed-post-store in the reader bundle
 	context.primary = createElement( StreamComponent, {
