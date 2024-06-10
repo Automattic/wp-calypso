@@ -22,10 +22,13 @@ function getIcon( isWordPress?: boolean ) {
 }
 
 function getIsWpComSiteMessage( isWpCom?: boolean, isWordPress?: boolean ) {
-	const message = isWordPress
-		? translate( 'This site is built with WordPress' )
-		: translate( 'This site is not built with WordPress' );
-	return message + ( isWpCom ? translate( ', and is hosted on WordPress.com.' ) : '.' );
+	if ( isWpCom ) {
+		return translate( 'This site is hosted on WordPress.com.' );
+	}
+
+	return isWordPress
+		? translate( 'This site is built with WordPress.' )
+		: translate( 'This site is not built with WordPress.' );
 }
 
 function getTitleMessage( performanceCategory: PerformanceCategories ) {
