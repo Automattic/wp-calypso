@@ -28,7 +28,9 @@ export function GitHubDeployments() {
 			return (
 				<>
 					<GitHubDeploymentsList deployments={ deployments } />
-					<GitHubDeploymentSurvey />
+					{ deployments.some( ( deployment ) => deployment.current_deployed_run !== null ) && (
+						<GitHubDeploymentSurvey />
+					) }
 				</>
 			);
 		}
