@@ -81,9 +81,17 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
+	// Disabled component only applies the class if isDisabled is true, we want it always.
+	const OptionalDisabled = isMinimized
+		? Disabled
+		: ( props: React.HTMLAttributes< HTMLDivElement > ) => <div { ...props } />;
+
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
-			<Disabled isDisabled={ isMinimized }>
+			<OptionalDisabled
+				isDisabled={ isMinimized }
+				className="help-center__container-content-wrapper"
+			>
 				<Routes>
 					<Route
 						path="/"
@@ -122,7 +130,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						}
 					/>
 				</Routes>
-			</Disabled>
+			</OptionalDisabled>
 		</CardBody>
 	);
 };
