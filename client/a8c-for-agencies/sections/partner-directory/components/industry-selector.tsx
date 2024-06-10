@@ -2,11 +2,11 @@ import { SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 
 type Props = {
-	setIndustry: () => void;
+	setIndustry: ( industry: string ) => void;
 	industry: string;
 };
 
-const IndustrySelector = ( { setIndustry }: Props ) => {
+const IndustrySelector = ( { setIndustry, industry }: Props ) => {
 	const translate = useTranslate();
 
 	const industries = [
@@ -62,7 +62,13 @@ const IndustrySelector = ( { setIndustry }: Props ) => {
 		},
 	];
 
-	return <SelectControl options={ industries } onChange={ setIndustry }></SelectControl>;
+	return (
+		<SelectControl
+			value={ industry }
+			options={ industries }
+			onChange={ setIndustry }
+		></SelectControl>
+	);
 };
 
 export default IndustrySelector;
