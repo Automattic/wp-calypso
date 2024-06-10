@@ -28,8 +28,8 @@ const EducationAffiliates = () => {
 			description={ description }
 			links={ [
 				{
-					calypsoLink: true,
-					url: `https://app.impact.com/campaign-campaign-info-v2/Automattic-Inc.brand?ref=wordpressdotcom`,
+					externalLink: true,
+					url: `https://app.impact.com/campaign-campaign-info-v2/Automattic-Inc.brand?ref=wordpressdotcom_education_home_card`,
 					text: translate( 'Sign up' ),
 				},
 			] }
