@@ -27,7 +27,9 @@ export function fetchAgencies(): AgencyThunkAction {
 			return;
 		}
 
-		dispatch( { type: JETPACK_GET_AGENCIES_REQUEST } );
+		dispatch( {
+			type: JETPACK_GET_AGENCIES_REQUEST,
+		} );
 	};
 }
 

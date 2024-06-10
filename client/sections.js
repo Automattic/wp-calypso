@@ -832,6 +832,17 @@ const sections = [
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},
+	{
+		name: 'a8c-for-agencies-client',
+		paths: [
+			'/agency/[a-zA-Z0-9]+/client/[a-zA-Z0-9]+$',
+			'/client/landing',
+			'/client/subscriptions',
+			'/client/payment-methods',
+		],
+		module: 'calypso/a8c-for-agencies/sections/client',
+		group: 'a8c-for-agencies',
+	},
 ];
 
 module.exports = sections;

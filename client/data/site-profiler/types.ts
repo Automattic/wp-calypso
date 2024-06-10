@@ -117,7 +117,7 @@ export interface UrlSecurityMetricsQueryResponse {
 	};
 }
 
-export interface PerformanceReport {
+export type PerformanceReport = {
 	audits: {
 		health: PerformanceMetricsDataQueryResponse;
 		performance: PerformanceMetricsDataQueryResponse;
@@ -125,7 +125,7 @@ export interface PerformanceReport {
 	performance: number;
 	overall_score: number;
 	is_wpcom: boolean;
-}
+} & BasicMetrics;
 
 export interface UrlPerformanceMetricsQueryResponse {
 	webtestpage_org: {

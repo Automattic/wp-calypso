@@ -2,7 +2,8 @@ import page, { type Callback } from '@automattic/calypso-router';
 import { getQueryArgs, addQueryArgs } from '@wordpress/url';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { A4A_LANDING_LINK } from './components/sidebar-menu/lib/constants';
+import { getClient } from 'calypso/state/a8c-for-agencies/client/selectors';
+import { A4A_CLIENT_LANDING_LINK, A4A_LANDING_LINK } from './components/sidebar-menu/lib/constants';
 
 export const redirectToLandingContext: Callback = () => {
 	if ( isA8CForAgencies() ) {
@@ -26,4 +27,21 @@ export const requireAccessContext: Callback = ( context, next ) => {
 
 	const args = getQueryArgs( window.location.href );
 	page.redirect( addQueryArgs( A4A_LANDING_LINK, { ...args, return: pathname + search + hash } ) );
+};
+
+export const requireClientAccessContext: Callback = ( context, next ) => {
+	const state = context.store.getState();
+	const client = getClient( state );
+
+	const { pathname, search, hash } = window.location;
+
+	if ( client ) {
+		next();
+		return;
+	}
+
+	const args = getQueryArgs( window.location.href );
+	page.redirect(
+		addQueryArgs( A4A_CLIENT_LANDING_LINK, { ...args, return: pathname + search + hash } )
+	);
 };

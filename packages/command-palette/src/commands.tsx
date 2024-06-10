@@ -289,16 +289,11 @@ export function useCommands() {
 			},
 			openHostingConfiguration: {
 				name: 'openHostingConfiguration',
-				label: __( 'Open hosting configuration', __i18n_text_domain__ ),
+				label: __( 'Open server settings', __i18n_text_domain__ ),
 				callback: commandNavigation( '/hosting-config/:site' ),
 				searchLabel: [
 					_x(
 						'open hosting configuration',
-						'Keyword for the Open hosting configuration command',
-						__i18n_text_domain__
-					),
-					_x(
-						'admin interface style',
 						'Keyword for the Open hosting configuration command',
 						__i18n_text_domain__
 					),
@@ -812,7 +807,7 @@ export function useCommands() {
 					_x( 'php errors', 'Keyword for the Open PHP logs command', __i18n_text_domain__ ),
 					_x( 'php warnings', 'Keyword for the Open PHP logs command', __i18n_text_domain__ ),
 				].join( KEYWORD_SEPARATOR ),
-				callback: commandNavigation( '/site-monitoring/:site/php' ),
+				callback: commandNavigation( '/site-logs/:site/php' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to open PHP logs', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
@@ -836,7 +831,7 @@ export function useCommands() {
 						__i18n_text_domain__
 					),
 				].join( KEYWORD_SEPARATOR ),
-				callback: commandNavigation( '/site-monitoring/:site/web' ),
+				callback: commandNavigation( '/site-logs/:site/web' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to open web server logs', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
@@ -872,7 +867,7 @@ export function useCommands() {
 						__i18n_text_domain__
 					),
 				].join( KEYWORD_SEPARATOR ),
-				callback: commandNavigation( '/hosting-config/:site#staging-site' ),
+				callback: commandNavigation( '/staging-site/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage staging sites', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
@@ -902,7 +897,12 @@ export function useCommands() {
 						__i18n_text_domain__
 					),
 				].join( KEYWORD_SEPARATOR ),
-				callback: commandNavigation( '/hosting-config/:site#admin-interface-style' ),
+				callback: ( params ) =>
+					commandNavigation(
+						siteUsesWpAdminInterface( params.site )
+							? '/wp-admin/options-general.php'
+							: '/settings/general/:site#admin-interface-style'
+					)( params ),
 				siteSelector: true,
 				siteSelectorLabel: __(
 					'Select site to change admin interface style',
