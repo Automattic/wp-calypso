@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { Component, useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryAgencies from 'calypso/a8c-for-agencies/data/agencies/query-agencies';
-import QueryAgencyClient from 'calypso/a8c-for-agencies/data/client/query-agency-client';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -382,8 +381,6 @@ class Layout extends Component {
 			// There is a custom command palette in the "Switch site" page, so we disable it.
 			config.isEnabled( 'yolo/command-palette' ) && this.props.currentRoute !== '/switch-site';
 
-		const isA4AClient = this.props.sectionName === 'a8c-for-agencies-client';
-
 		return (
 			<div className={ sectionClass }>
 				<WhatsNewLoader
@@ -435,7 +432,6 @@ class Layout extends Component {
 						<QueryAgencies />
 					</>
 				) }
-				{ isA4AClient && <QueryAgencyClient /> }
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
