@@ -49,7 +49,7 @@ export default function ConsolidatedViews( { referrals }: { referrals: Referral[
 			</Card>
 			<Card compact>
 				<div className="consolidated-view__value">{ pendingOrders }</div>
-				<div className="consolidated-view__label">{ translate( 'Pending order' ) }</div>
+				<div className="consolidated-view__label">{ translate( 'Pending orders' ) }</div>
 			</Card>
 		</div>
 	);
