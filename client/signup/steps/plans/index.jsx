@@ -199,8 +199,9 @@ export class PlansStep extends Component {
 
 		const { segmentationSurveyAnswers } = signupDependencies;
 
-		const surveyedIntent =
-			flowName === 'guided' ? getSegmentedIntent( segmentationSurveyAnswers ) : undefined;
+		const surveyedIntent = isOnboardingGuidedFlow( flowName )
+			? getSegmentedIntent( segmentationSurveyAnswers )
+			: undefined;
 
 		if ( surveyedIntent === 'plans-guided-segment-developer-or-agency' ) {
 			const a4aLinkButton = (
