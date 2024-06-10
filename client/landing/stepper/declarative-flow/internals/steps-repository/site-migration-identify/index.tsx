@@ -218,6 +218,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 					/>
 				}
 				recordTracksEvent={ recordTracksEvent }
+				showPresalesChat
 			/>
 		</>
 	);

@@ -92,6 +92,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
 				goBack={ navigation.goBack }
+				showPresalesChat
 			/>
 		</>
 	);

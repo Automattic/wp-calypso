@@ -242,6 +242,7 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 				}
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
+				showPresalesChat
 			/>
 		</>
 	);

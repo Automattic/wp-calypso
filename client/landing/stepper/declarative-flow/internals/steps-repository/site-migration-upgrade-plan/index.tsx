@@ -126,6 +126,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				}
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
+				showPresalesChat
 			/>
 		</>
 	);
