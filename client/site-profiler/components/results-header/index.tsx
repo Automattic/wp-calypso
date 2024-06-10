@@ -16,11 +16,9 @@ type Props = {
 
 function getIcon( isWordPress?: boolean ) {
 	if ( isWordPress ) {
-		return <img src={ wpComSiteIcon } alt={ translate( 'This site is built with WordPress' ) } />;
+		return <img src={ wpComSiteIcon } alt="" />;
 	}
-	return (
-		<img src={ nonWpComSiteIcon } alt={ translate( 'This site is not built with WordPress' ) } />
-	);
+	return <img src={ nonWpComSiteIcon } alt="" />;
 }
 
 function getIsWpComSiteMessage( isWpCom?: boolean, isWordPress?: boolean ) {
