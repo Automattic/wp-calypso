@@ -24,6 +24,7 @@ import {
 	SECTION_BLOGGING_PROMPT,
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,
 	SECTION_LEARN_GROW,
+	TASK_AFFILIATES,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_DOMAIN_UPSELL,
 	TASK_EARN_FEATURES,
@@ -45,7 +46,6 @@ import {
 	TASK_VERIFY_EMAIL,
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
-	TASK_AFFILIATES,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsellFeature from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
