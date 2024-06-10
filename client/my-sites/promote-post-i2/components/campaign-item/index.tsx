@@ -200,22 +200,28 @@ export default function CampaignItem( props: Props ) {
 				</div>
 			</td>
 			<td className="campaign-item__status">
-				<div
-					ref={ tooltipRef }
-					onMouseEnter={ () => ! isTouch && setActiveTooltipId( campaignIdString ) }
-					onMouseLeave={ () => ! isTouch && setActiveTooltipId( '' ) }
-				>
-					{ statusBadge }
-				</div>
-				<Tooltip
-					className="import__campaign-schedule-tooptip"
-					position="bottom"
-					hideArrow
-					context={ tooltipRef.current }
-					isVisible={ activeTooltipId === campaignIdString }
-				>
-					<div>{ getCampaignStartDateFormatted( start_date ) }</div>
-				</Tooltip>
+				{ ui_status === campaignStatus.SCHEDULED ? (
+					<>
+						<div
+							ref={ tooltipRef }
+							onMouseEnter={ () => ! isTouch && setActiveTooltipId( campaignIdString ) }
+							onMouseLeave={ () => ! isTouch && setActiveTooltipId( '' ) }
+						>
+							{ statusBadge }
+						</div>
+						<Tooltip
+							className="import__campaign-schedule-tooptip"
+							position="bottom"
+							hideArrow
+							context={ tooltipRef.current }
+							isVisible={ activeTooltipId === campaignIdString }
+						>
+							<div>{ getCampaignStartDateFormatted( start_date ) }</div>
+						</Tooltip>
+					</>
+				) : (
+					<div>{ statusBadge }</div>
+				) }
 			</td>
 			<td className="campaign-item__ends">
 				<div>
