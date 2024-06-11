@@ -5,10 +5,12 @@ import {
 } from '@wordpress/components';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import ExternalLink from 'calypso/components/external-link';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
 
 type ReaderUnsubscribedFeedItemProps = {
 	defaultIcon?: JSX.Element | null;
@@ -48,12 +50,29 @@ const ReaderUnsubscribedFeedItem = ( {
 	const isEmailVarified = currentUser?.email_verified;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
 
+	const dispatch = useDispatch();
+	const resendEmailVerification = useResendEmailVerification();
+
+	const onSubscribeClickEvent = ! isEmailVarified
+		? () => {
+				dispatch(
+					errorNotice( translate( 'Your email has not been verified yet.' ), {
+						id: 'unverfied-email-notice',
+						button: translate( 'Resend Email' ),
+						onClick: () => {
+							resendEmailVerification();
+						},
+					} )
+				);
+		  }
+		: onSubscribeClick;
+
 	const SubscribeButton = () => (
 		<Button
 			primary
 			disabled={ subscribeDisabled }
 			busy={ isSubscribing }
-			onClick={ onSubscribeClick }
+			onClick={ onSubscribeClickEvent }
 		>
 			{ hasSubscribed
 				? translate( 'Subscribed', {
@@ -126,14 +145,14 @@ const ReaderUnsubscribedFeedItem = ( {
 						<div className="reader-unsubscribed-feed-item__description">{ description }</div>
 
 						<div className="reader-unsubscribed-feed-item__subscribe-button">
-							{ isEmailVarified && <SubscribeButton /> }
+							<SubscribeButton />
 						</div>
 					</HStack>
 					<div className="reader-unsubscribed-feed-item__mobile-description" aria-hidden="true">
 						{ description }
 					</div>
 					<div className="reader-unsubscribed-feed-item__mobile-subscribe-button">
-						{ isEmailVarified && <SubscribeButton /> }
+						<SubscribeButton />
 					</div>
 				</VStack>
 			</HStack>

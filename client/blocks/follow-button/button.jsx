@@ -2,8 +2,6 @@ import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
-import { connect } from 'react-redux';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
@@ -46,9 +44,6 @@ class FollowButton extends Component {
 	};
 
 	render() {
-		if ( ! this.props.currentUser?.email_verified ) {
-			return null;
-		}
 		let label = this.props.followLabel
 			? this.props.followLabel
 			: this.props.translate( 'Subscribe' );
@@ -94,6 +89,4 @@ class FollowButton extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	currentUser: getCurrentUser( state ),
-} ) )( localize( FollowButton ) );
+export default localize( FollowButton );
