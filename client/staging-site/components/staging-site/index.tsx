@@ -18,7 +18,7 @@ const StagingSite = () => {
 	);
 	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
-	if ( ! hasAtomicFeature && ! hasStagingSitesFeature ) {
+	if ( ! hasAtomicFeature || ! hasStagingSitesFeature ) {
 		return <StagingSiteUpsellNudge />;
 	}
 
