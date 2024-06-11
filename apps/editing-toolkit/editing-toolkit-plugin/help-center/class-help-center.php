@@ -48,7 +48,8 @@ class Help_Center {
 			return;
 		}
 
-		$this->asset_file = include plugin_dir_path( __FILE__ ) . $this->is_jetpack_connected() ? 'dist/help-center.asset.php' : 'dist/help-center-disconnected.asset.php';
+		$file             = $this->is_jetpack_disconnected() ? 'dist/help-center-disconnected.asset.php' : 'dist/help-center.asset.php';
+		$this->asset_file = include plugin_dir_path( __FILE__ ) . $file;
 		$this->version    = $this->asset_file['version'];
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
@@ -91,7 +92,7 @@ class Help_Center {
 		// The disconnected version is significantly smaller than the connected version.
 		wp_enqueue_script(
 			'help-center-script',
-			plugins_url( $this->is_jetpack_connected() ? 'dist/help-center.min.js' : 'dist/help-center-disconnected.min.js', __FILE__ ),
+			plugins_url( $this->is_jetpack_disconnected() ? 'dist/help-center-disconnected.min.js' : 'dist/help-center.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$this->version,
 			true
@@ -286,9 +287,19 @@ class Help_Center {
 	/**
 	 * Returns true if the current user is connected through Jetpack
 	 */
-	public function is_jetpack_connected() {
+	public function is_jetpack_disconnected() {
 		$user_id = get_current_user_id();
-		return ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
+		$blog_id = get_current_blog_id();
+
+		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+			return ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
+		}
+
+		if ( true === apply_filters( 'is_jetpack_site', false, $blog_id ) ) {
+			return ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
+		}
+
+		return false;
 	}
 
 	/**
@@ -332,7 +343,8 @@ class Help_Center {
 						'id'     => 'help-center',
 						'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 						'parent' => 'top-secondary',
-						'href'   => $this->is_jetpack_connected() ? false : localized_wpcom_url( 'https://wordpress.com/support/' ),
+						// phpcs:ignore WPCOM.I18nRules.LocalizedUrl.UnlocalizedUrl
+						'href'   => $this->is_jetpack_disconnected() ? 'https://wordpress.com/support/' : false,
 						'meta'   => array(
 							'html'   => '<div id="help-center-masterbar" />',
 							'class'  => 'menupop',
