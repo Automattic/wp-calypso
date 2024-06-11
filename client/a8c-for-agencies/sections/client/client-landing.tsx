@@ -13,8 +13,7 @@ import {
 	A4A_OVERVIEW_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useSelector } from 'calypso/state';
-import { getActiveAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { getClient, hasFetchedClient } from 'calypso/state/a8c-for-agencies/client/selectors';
+import { hasAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 /**
  * Redirect with Current Query
@@ -29,41 +28,25 @@ export default function ClientLanding() {
 	const translate = useTranslate();
 	const title = translate( 'Automattic for Agencies' );
 
-	const hasFetched = useSelector( hasFetchedClient );
-	const client = useSelector( getClient );
-
 	const hasFetchedAgencies = useSelector( hasFetchedAgency );
-	const agency = useSelector( getActiveAgency );
-
-	const redirectAgency = false; // FIXME: Remove this once we have the correct logic
+	const isAgency = useSelector( hasAgency );
 
 	useEffect( () => {
-		if ( ! hasFetched || ! hasFetchedAgencies ) {
+		if ( ! hasFetchedAgencies ) {
 			return;
 		}
 
-		if ( agency && redirectAgency ) {
+		if ( isAgency ) {
 			page.redirect( A4A_OVERVIEW_LINK );
 			return;
-		} else if ( client ) {
-			const returnQuery = getQueryArg( window.location.href, 'return' ) as string;
-
-			// Redirect to the client subscriptions page if the return query is not a client page
-			const regex = /\/agency\/([^/]+)\/client\/([^/]+)/;
-			const matches = returnQuery && returnQuery.match( regex );
-			if ( matches ) {
-				page.redirect( A4A_CLIENT_SUBSCRIPTIONS_LINK );
-				return;
-			}
-
-			if ( returnQuery ) {
-				page.redirect( returnQuery );
-				return;
-			}
-
-			return redirectWithCurrentQuery( A4A_CLIENT_SUBSCRIPTIONS_LINK );
 		}
-	}, [ agency, client, hasFetched, hasFetchedAgencies, redirectAgency ] );
+		const returnQuery = getQueryArg( window.location.href, 'return' ) as string;
+		if ( returnQuery ) {
+			page.redirect( returnQuery );
+			return;
+		}
+		return redirectWithCurrentQuery( A4A_CLIENT_SUBSCRIPTIONS_LINK );
+	}, [ hasFetchedAgencies, isAgency ] );
 
 	return (
 		<Layout className="a4a-landing" title={ title } wide>
