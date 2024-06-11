@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
+import BudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/budget-selector';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import IndustrySelector from '../components/industry-selector';
 import LanguageSelector from '../components/laguages-selector';
@@ -137,10 +138,10 @@ const AgencyDetailsForm = () => {
 					'Optionally set your minimum budget. Clients can filter these details to find the right agency.'
 				) }
 			>
-				<div>{ translate( 'Budget details' ) }</div>
-				<TextControl
-					value={ formData.budgetLowerRange }
-					onChange={ ( value ) => setFormFields( { budgetLowerRange: value } ) }
+				<div>{ translate( 'Minimum project budget' ) }</div>
+				<BudgetSelector
+					budgetLowerRange={ formData.budgetLowerRange }
+					setBudget={ ( budget: string ) => setFormFields( { budgetLowerRange: budget } ) }
 				/>
 			</FormSection>
 			<div className="agency-details-form__footer">
