@@ -162,14 +162,14 @@ class PluginSections extends Component {
 	getDefaultSection = () => {
 		const sections = this.props.plugin.sections;
 		return find( this.getFilteredSections(), function ( section ) {
-			return sections[ section.key ];
+			return sections?.[ section.key ];
 		} )?.key;
 	};
 
 	getAvailableSections = () => {
 		const sections = this.props.plugin.sections;
 		return filter( this.getFilteredSections(), function ( section ) {
-			return sections[ section.key ];
+			return sections?.[ section.key ];
 		} );
 	};
 
