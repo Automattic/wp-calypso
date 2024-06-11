@@ -94,10 +94,10 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 			title: translate( 'Unmatched Reliability and Uptime' ),
 			titleString: 'Unmatched Reliability and Uptime', // Temporary string for non-English locales. Remove once we have translations.
 			description: translate(
-				'Our infrastructure ensures 99.999% uptime and automatic WordPress updates, your site is always accessible and updated!'
+				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure."
 			),
 			descriptionString:
-				'Our infrastructure ensures 99.999% uptime and automatic WordPress updates, your site is always accessible and updated!', // Temporary string for non-English locales. Remove once we have translations.
+				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure.", // Temporary string for non-English locales. Remove once we have translations.
 		},
 		'effortless-customization': {
 			title: translate( 'Effortless Customization' ),
