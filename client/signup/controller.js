@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isOnboardingGuidedFlow } from '@automattic/onboarding';
 import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
@@ -9,6 +10,7 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -162,7 +164,7 @@ export default {
 	},
 
 	async redirectToFlow( context, next ) {
-		const userLoggedIn = isUserLoggedIn( context.store.getState() );
+		let userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const localeFromParams = context.params.lang;
 		const localeFromStore = ! userLoggedIn ? store.get( 'signup-locale' ) : '';
@@ -246,14 +248,23 @@ export default {
 		}
 
 		// See: 1113-gh-Automattic/experimentation-platform for details.
-		if ( flowName === 'guided' && userLoggedIn ) {
-			// Load both experiments in parallel for better performance.
-			const [ bigSkyExperiment, trailMapExperiment ] = await Promise.all( [
-				loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
-				loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
-			] );
-			if ( bigSkyExperiment.variationName === 'trailmap' ) {
-				initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
+		if ( isOnboardingGuidedFlow( flowName ) ) {
+			// If the user-social submitted a username, it means the user just signed up. But we need to fetch the user to hydrate the store with it.
+			// This is necessary to load the experiments as a logged in user.
+			if ( ! userLoggedIn && signupProgress[ 'user-social' ]?.providedDependencies?.username ) {
+				await context.store.dispatch( fetchCurrentUser() );
+				userLoggedIn = isUserLoggedIn( context.store.getState() );
+			}
+
+			if ( userLoggedIn ) {
+				// Load both experiments in parallel for better performance.
+				const [ bigSkyExperiment, trailMapExperiment ] = await Promise.all( [
+					loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
+					loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
+				] );
+				if ( bigSkyExperiment.variationName === 'trailmap' ) {
+					initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
+				}
 			}
 		}
 
