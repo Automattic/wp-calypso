@@ -121,9 +121,9 @@ class TagStream extends Component {
 					<TagStreamHeader
 						title={ title }
 						imageSearchString={ imageSearchString }
-						// This shouldn't be necessary as user should have been able to subscribe to
-						// an error tag. Nevertheless, we should give them a route to unfollow if
-						// that was the case.
+						// This shouldn not be necessary as user should not have been able to
+						// subscribe to an error tag. Nevertheless, we should give them a route to
+						// unfollow if that was the case.
 						showFollow={ tag.id && this.isSubscribed() }
 						showSort={ false }
 						showBack={ this.props.showBack }
