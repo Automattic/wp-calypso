@@ -21,9 +21,29 @@
 		}
 	}
 
+	&__configs-header {
+		h3 {
+			margin-bottom: 12px;
+			font-size: $font-body;
+			font-weight: 500;
+			line-height: 24px;
+			color: var(--studio-gray-80);
+		}
+
+		p {
+			margin-bottom: 12px;
+			font-size: $font-body-small;
+			line-height: 20px;
+			color: var(--studio-gray-100);
+		}
+	}
+
 	&__configs {
 		.form-fieldset {
-			margin-bottom: 24px;
+			margin-bottom: 16px;
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 	}
 
@@ -37,7 +57,6 @@
 			border: 1px solid var(--color-neutral-10);
 			border-radius: 2px;
 			background-color: #fff;
-			margin-bottom: 4px;
 
 			&--has-error {
 				border-color: var(--color-error);
@@ -56,6 +75,7 @@
 
 		.form-select {
 			width: 100%;
+			font-size: $font-body;
 		}
 	}
 

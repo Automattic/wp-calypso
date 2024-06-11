@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useI18n } from '@wordpress/react-i18n';
 import ActionPanel from 'calypso/components/action-panel';
-import HeaderCake from 'calypso/components/header-cake';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { GitHubDeploymentSurvey } from '../components/deployments-survey';
@@ -40,12 +39,9 @@ export function GitHubDeployments() {
 		}
 
 		return (
-			<>
-				<HeaderCake isCompact>{ __( 'Manage Connection' ) }</HeaderCake>
-				<ActionPanel>
-					<GitHubDeploymentCreationForm onConnected={ refetch } />
-				</ActionPanel>
-			</>
+			<ActionPanel>
+				<GitHubDeploymentCreationForm onConnected={ refetch } />
+			</ActionPanel>
 		);
 	};
 

@@ -1,9 +1,6 @@
 .github-deployments-deployment-style {
-	border: 1px solid var(--studio-gray-5);
 	box-sizing: border-box;
-	padding: 24px;
 	border-radius: 2px;
-	background-color: var(--studio-gray-0);
 	width: 100%;
 	height: fit-content;
 
@@ -12,14 +9,22 @@
 		align-items: center;
 		gap: 4px;
 		font-weight: 500;
-		font-size: 1rem;
-		margin-bottom: 16px;
+		font-size: $font-body;
+		margin-bottom: 12px;
 		line-height: 24px;
+		color: var(--studio-gray-80);
 
 		.support-info {
-			margin-left: 0 !important;
-			margin-top: 4px;
+			margin: 0;
+			transform: translateY(2.5px);
 		}
+	}
+
+	&__description {
+		margin-bottom: 12px;
+		font-size: $font-body-small;
+		line-height: 20px;
+		color: var(--studio-gray-100);
 	}
 
 	&__repository {
@@ -199,6 +204,7 @@
 	}
 
 	&__workflow-recipes {
+		font-size: $font-body-small;
 		font-style: italic;
 		color: var(--color-text-subtle);
 		margin-top: 5px;

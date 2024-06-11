@@ -67,6 +67,11 @@ export const DeploymentStyle = ( {
 					{ supportMessage }
 				</SupportInfo>
 			</div>
+			<p className="github-deployments-deployment-style__description">
+				{ __(
+					'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
+				) }
+			</p>
 			<FormRadiosBar
 				disabled={ isDisabled }
 				items={ [
