@@ -12,6 +12,7 @@ import { useState, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -81,6 +82,8 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 		</div>
 	);
 
+	usePresalesChat( 'wpcom' );
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'What do you want to migrate?' ) } />
@@ -92,7 +95,6 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
 				goBack={ navigation.goBack }
-				showPresalesChat
 			/>
 		</>
 	);

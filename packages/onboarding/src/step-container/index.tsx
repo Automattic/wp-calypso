@@ -2,7 +2,6 @@ import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/comp
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
-import { usePresalesChat } from 'calypso/lib/presales-chat'; //eslint-disable-line no-restricted-imports
 import ActionButtons from '../action-buttons';
 import SenseiLogo from '../sensei-logo';
 import StepNavigationLink from '../step-navigation-link';
@@ -48,7 +47,6 @@ interface Props {
 	showFooterWooCommercePowered?: boolean;
 	showSenseiPowered?: boolean;
 	showVideoPressPowered?: boolean;
-	showPresalesChat?: boolean;
 }
 
 const StepContainer: React.FC< Props > = ( {
@@ -88,14 +86,8 @@ const StepContainer: React.FC< Props > = ( {
 	showSenseiPowered,
 	showVideoPressPowered,
 	showFooterWooCommercePowered,
-	showPresalesChat,
 } ) => {
 	const translate = useTranslate();
-
-	function PresalesChat() {
-		usePresalesChat( 'wpcom' );
-		return null;
-	}
 
 	const recordClick = ( direction: 'back' | 'forward', stepSectionName?: string ) => {
 		const tracksProps = {
@@ -219,8 +211,6 @@ const StepContainer: React.FC< Props > = ( {
 			) }
 
 			<div className="step-container__content">{ stepContent }</div>
-
-			{ showPresalesChat && <PresalesChat /> }
 
 			{ ! hideSkip && skipButtonAlign === 'bottom' && (
 				<div className="step-container__buttons">
