@@ -1,5 +1,5 @@
 .store-sandbox-helper__menu-item.is-enabled {
-	color: #d54e21;
+	color: var(--studio-red);
 }
 
 .store-sandbox-helper__popover {
@@ -10,8 +10,8 @@
 	display: block;
 	position: absolute;
 	bottom: 100%;
-	padding: 8px;
+	padding: 12px 12px 0 12px;
 	background: var(--color-surface);
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
-	width: 150px;
+	width: 200px;
 }
