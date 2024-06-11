@@ -245,6 +245,17 @@ export default {
 				experiment.variationName === 'treatment_scrambled';
 		}
 
+		if ( isOnboardingFlow && userLoggedIn ) {
+			const experimentAssignmentBigSky = await loadExperimentAssignment(
+				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
+			);
+			if ( experimentAssignmentBigSky?.variationName === 'trailmap' ) {
+				await loadExperimentAssignment(
+					'explat_test_calypso_signup_onboarding_trailmap_guided_flow'
+				);
+			}
+		}
+
 		if (
 			config.isEnabled( 'onboarding/new-user-survey' ) ||
 			config.isEnabled( 'onboarding/new-user-survey-scrambled' )
