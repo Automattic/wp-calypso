@@ -6,7 +6,7 @@ import {
 	MARKETPLACE_THEME,
 	isAssemblerSupported,
 } from '@automattic/design-picker';
-import { isSiteAssemblerFlow } from '@automattic/onboarding';
+import { isOnboardingGuidedFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -83,7 +83,7 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) {
+function getSignupDestination( { domainItem, siteId, siteSlug, refParameter, flowName, ...rest } ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
@@ -95,6 +95,16 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) 
 		// case we use the ID because we know it won't change depending on whether the user
 		// successfully completes the checkout process or not.
 		queryParam = { siteId };
+	}
+
+	// For guided flow, in the variant where the goals are answered in the first step, redirect to the site-setup-wg (without goals).
+	// NOTE: we may need a better way to detect the variant where goals are answered in the first step.
+	// The `segmentationSurveyAnswers` are persisted and can affect the following visits of the flow.
+	if (
+		isOnboardingGuidedFlow( flowName ) &&
+		rest.segmentationSurveyAnswers?.[ 'what-are-your-goals' ]
+	) {
+		return addQueryArgs( queryParam, '/setup/site-setup-wg' );
 	}
 
 	// Add referral param to query args
