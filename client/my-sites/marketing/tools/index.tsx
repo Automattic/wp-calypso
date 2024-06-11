@@ -118,7 +118,7 @@ export const MarketingTools: FunctionComponent = () => {
 					description={ translate(
 						'Create newsletters, automate your email and SMS marketing campaigns, track your subscriber activity, and target your customers with personalized messages. Enhance your site and build long-term relationships with your audience.'
 					) }
-					imagePath="/calypso/images/marketing/mailchimp-no-text-logo.svg"
+					imagePath="/calypso/images/marketing/mailchimp-logo.svg"
 					imageAlt={ translate( 'Mailchimp logo' ) }
 				>
 					<Button
