@@ -29,6 +29,7 @@ import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
 import ReferralsFooter from '../footer';
 import LayoutBodyContent from './layout-body-content';
+import NewRefferalOrderNotification from './new-referral-order-notification';
 
 import './style.scss';
 
@@ -64,6 +65,8 @@ export default function ReferralsOverview( {
 
 	const selectedItem = dataViewsState.selectedItem;
 
+	const referralEmail = 'jkguidaven@gmail.com';
+
 	return (
 		<Layout
 			className={ clsx( 'referrals-layout', {
@@ -78,6 +81,8 @@ export default function ReferralsOverview( {
 		>
 			<LayoutColumn wide className="referrals-layout__column">
 				<LayoutTop>
+					{ !! referralEmail && <NewRefferalOrderNotification email={ referralEmail } /> }
+
 					<LayoutHeader>
 						<Title>{ title } </Title>
 						{ isAutomatedReferral && (
