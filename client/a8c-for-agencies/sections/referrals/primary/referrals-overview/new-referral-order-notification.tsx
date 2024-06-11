@@ -7,7 +7,7 @@ type Props = {
 	onClose?: () => void;
 };
 
-export default function NewRefferalOrderNotification( { email, onClose }: Props ) {
+export default function NewReferralOrderNotification( { email, onClose }: Props ) {
 	const [ showBanner, setShowBanner ] = useState( true );
 
 	const translate = useTranslate();

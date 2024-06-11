@@ -31,7 +31,7 @@ import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
 import ReferralsFooter from '../footer';
 import LayoutBodyContent from './layout-body-content';
-import NewRefferalOrderNotification from './new-referral-order-notification';
+import NewReferralOrderNotification from './new-referral-order-notification';
 
 import './style.scss';
 
@@ -86,7 +86,7 @@ export default function ReferralsOverview( {
 			<LayoutColumn wide className="referrals-layout__column">
 				<LayoutTop>
 					{ !! referralEmail && (
-						<NewRefferalOrderNotification
+						<NewReferralOrderNotification
 							email={ referralEmail }
 							onClose={ () => setReferralEmail( '' ) }
 						/>
