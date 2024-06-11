@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback, ReactNode } from 'react';
+import { useMemo, useCallback, ReactNode, useEffect } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -39,7 +39,12 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => {
 								return (
-									<Button onClick={ () => openSitePreviewPane( item ) } borderless>
+									<Button
+										className="view-details-button"
+										data-client-id={ item.client_id }
+										onClick={ () => openSitePreviewPane( item ) }
+										borderless
+									>
 										{ item.client_email }
 									</Button>
 								);
@@ -96,7 +101,11 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							render: ( { item }: { item: Referral } ) => {
 								return (
 									<div>
-										<Button onClick={ () => openSitePreviewPane( item ) } borderless>
+										<Button
+											className="view-details-button"
+											onClick={ () => openSitePreviewPane( item ) }
+											borderless
+										>
 											<Gridicon icon="chevron-right" />
 										</Button>
 									</div>
@@ -108,6 +117,51 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 				  ],
 		[ dataViewsState.selectedItem, isDesktop, openSitePreviewPane, translate ]
 	);
+
+	useEffect( () => {
+		// If the user clicks on a row, open the preview pane by triggering the View details button click.
+		const handleRowClick = ( event: Event ) => {
+			const target = event.target as HTMLElement;
+			const row = target.closest(
+				'.dataviews-view-table__row, li:has(.dataviews-view-list__item)'
+			);
+
+			if ( row ) {
+				const isButtonOrLink = target.closest( 'button, a' );
+				if ( ! isButtonOrLink ) {
+					const button = row.querySelector( '.view-details-button' ) as HTMLButtonElement;
+					if ( button ) {
+						button.click();
+					}
+				}
+			}
+		};
+
+		const rowsContainer = document.querySelector( '.dataviews-view-table, .dataviews-view-list' );
+
+		if ( rowsContainer ) {
+			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
+		}
+
+		// We need to trigger the click event on the View details button when the selected item changes to ensure highlighted row is correct.
+		if (
+			rowsContainer?.classList.contains( 'dataviews-view-list' ) &&
+			dataViewsState?.selectedItem?.client_id
+		) {
+			const trigger: HTMLButtonElement | null = rowsContainer.querySelector(
+				`li:not(.is-selected) .view-details-button[data-client-id='${ dataViewsState?.selectedItem?.client_id }']`
+			);
+			if ( trigger ) {
+				trigger.click();
+			}
+		}
+
+		return () => {
+			if ( rowsContainer ) {
+				rowsContainer.removeEventListener( 'click', handleRowClick as EventListener );
+			}
+		};
+	}, [ dataViewsState ] );
 
 	return (
 		<div className="redesigned-a8c-table">
