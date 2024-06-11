@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
-import { MShotsImage } from '@automattic/onboarding';
+import { MShotsImage, MShotsImageTreatment } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import photon from 'photon';
@@ -67,8 +67,29 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		}
 	}
 
+	if ( oldHighResImageLoading ) {
+		return (
+			<MShotsImage
+				url={ getDesignPreviewUrl( design, {
+					use_screenshot_overrides: true,
+					style_variation: styleVariation,
+					...( locale && { language: locale } ),
+				} ) }
+				aria-labelledby={ makeOptionId( design ) }
+				alt=""
+				options={ getMShotOptions( {
+					scrollable: false,
+					highRes: ! isMobile,
+					isMobile,
+					oldHighResImageLoading,
+				} ) }
+				scrollable={ false }
+			/>
+		);
+	}
+	// else, prettier doesn't want return in else.
 	return (
-		<MShotsImage
+		<MShotsImageTreatment
 			url={ getDesignPreviewUrl( design, {
 				use_screenshot_overrides: true,
 				style_variation: styleVariation,
