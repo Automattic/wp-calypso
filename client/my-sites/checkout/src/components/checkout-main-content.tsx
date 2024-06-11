@@ -354,10 +354,9 @@ export default function CheckoutMainContent( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
 
-	usePresalesChat(
-		getPresalesChatKey( responseCart ),
-		! useSelector( isOnboardingAffiliateFlow ) && responseCart?.products?.length > 0
-	);
+	const isPresalesChatEnabled =
+		! useSelector( isOnboardingAffiliateFlow ) && responseCart?.products?.length > 0;
+	usePresalesChat( getPresalesChatKey( responseCart ), isPresalesChatEnabled );
 
 	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
