@@ -12,7 +12,7 @@ type SurveyContainerProps = {
 	onChange: ( questionKey: string, value: string[] ) => void;
 	hideBackOnFirstPage?: boolean;
 	disabled?: boolean;
-	headerAlign?: string;
+	headerAlign?: 'center' | 'left' | 'right';
 	questionConfiguration?: QuestionConfiguration;
 	questionComponentMap?: QuestionComponentMap;
 };

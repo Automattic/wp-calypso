@@ -316,7 +316,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				<FormattedHeader
 					id="domains-header"
 					align={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
-					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : null }
+					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : undefined }
 					headerText={ getHeaderText() }
 					subHeaderText={ getSubHeaderText() }
 				/>

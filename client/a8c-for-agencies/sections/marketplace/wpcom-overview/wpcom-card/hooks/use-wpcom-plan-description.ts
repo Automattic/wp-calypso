@@ -6,6 +6,8 @@ export default function useWPCOMPlanDescription( slug: string ) {
 	let name = slug;
 	let features1: string[] = [];
 	let features2: string[] = [];
+	let jetpackFeatures1: string[] = [];
+	let jetpackFeatures2: string[] = [];
 
 	// FIXME: Need to have correct slug. Right now we use whatever we have.
 	if ( slug === 'wpcom-hosting-business' ) {
@@ -32,11 +34,29 @@ export default function useWPCOMPlanDescription( slug: string ) {
 			translate( 'Extremely fast DNS with SSL' ),
 			translate( 'Centralized site management' ),
 		];
+
+		jetpackFeatures1 = [
+			translate( 'Real-time backups' ),
+			translate( 'One-click restores' ),
+			translate( 'Uptime monitor' ),
+			translate( 'Built-in Elasticsearch' ),
+			translate( 'Plugin auto-updates' ),
+		];
+
+		jetpackFeatures2 = [
+			translate( 'SEO and analytics tools' ),
+			translate( '4K video support with VideoPress' ),
+			translate( 'Unlimited automatic social media shares' ),
+			translate( 'Site activity log' ),
+			translate( 'Detailed analytics dashboard' ),
+		];
 	}
 
 	return {
 		name,
 		features1,
 		features2,
+		jetpackFeatures1,
+		jetpackFeatures2,
 	};
 }

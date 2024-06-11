@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { HOSTING_LP_FLOW } from '@automattic/onboarding';
+import { HOSTING_LP_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { onEnterOnboarding } from '../flow-actions';
 
@@ -683,7 +683,7 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'guided',
+			name: ONBOARDING_GUIDED_FLOW,
 			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Choose what brings them to WordPress.com',

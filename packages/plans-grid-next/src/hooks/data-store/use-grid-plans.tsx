@@ -225,6 +225,7 @@ const useGridPlans: UseGridPlansType = ( {
 	coupon,
 	siteId,
 	isDisplayingPlansNeededForFeature,
+	forceDefaultIntent,
 	highlightLabelOverrides,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
@@ -244,7 +245,7 @@ const useGridPlans: UseGridPlansType = ( {
 	} );
 	const planSlugsForIntent = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
-			intent,
+			intent: forceDefaultIntent ? 'plans-default-wpcom' : intent,
 			selectedPlan,
 			siteId,
 			hiddenPlans,
