@@ -61,10 +61,14 @@ export function isAgencyUser( state: PartnerPortalStore | IAppState ): boolean {
 	const currentUser = getCurrentUser( state );
 	return (
 		( currentUser?.jetpack_partner_types?.includes( 'agency' ) ||
-			currentUser?.jetpack_partner_types?.includes( 'agency_beta' ) ||
-			currentUser?.jetpack_partner_types?.includes( 'a4a_agency' ) ) ??
+			currentUser?.jetpack_partner_types?.includes( 'agency_beta' ) ) ??
 		false
 	);
+}
+
+export function isA4AUser( state: PartnerPortalStore | IAppState ): boolean {
+	const currentUser = getCurrentUser( state );
+	return currentUser?.jetpack_partner_types?.includes( 'a4a_agency' ) ?? false;
 }
 
 export function showAgencyDashboard( state: PartnerPortalStore ): boolean {
