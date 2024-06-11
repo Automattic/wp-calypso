@@ -6,7 +6,6 @@ import ActionButtons from '../action-buttons';
 import SenseiLogo from '../sensei-logo';
 import StepNavigationLink from '../step-navigation-link';
 import VideoPressLogo from '../videopress-logo';
-
 import './style.scss';
 
 interface Props {
