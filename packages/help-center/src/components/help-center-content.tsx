@@ -7,7 +7,7 @@ import OdieAssistantProvider, { useSetOdieStorage } from '@automattic/odie-clien
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -23,6 +23,22 @@ import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
+
+// Disabled component only applies the class if isDisabled is true, we want it always.
+function Wrapper( {
+	isDisabled,
+	className,
+	children,
+}: React.PropsWithChildren< { isDisabled: boolean; className: string } > ) {
+	if ( isDisabled ) {
+		return (
+			<Disabled isDisabled={ isDisabled } className={ className }>
+				{ children }
+			</Disabled>
+		);
+	}
+	return <div className={ className }>{ children }</div>;
+}
 
 const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string } > = ( {
 	currentRoute,
@@ -81,17 +97,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
-	// Disabled component only applies the class if isDisabled is true, we want it always.
-	const OptionalDisabled = isMinimized
-		? Disabled
-		: ( props: React.HTMLAttributes< HTMLDivElement > ) => <div { ...props } />;
-
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
-			<OptionalDisabled
-				isDisabled={ isMinimized }
-				className="help-center__container-content-wrapper"
-			>
+			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
 				<Routes>
 					<Route
 						path="/"
@@ -130,7 +138,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						}
 					/>
 				</Routes>
-			</OptionalDisabled>
+			</Wrapper>
 		</CardBody>
 	);
 };
