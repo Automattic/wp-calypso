@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 
 export default function useDetailsForm() {
@@ -18,7 +18,7 @@ export default function useDetailsForm() {
 		products: [],
 	} );
 
-	const isValidFormData = useCallback(
+	const isValidFormData = useMemo(
 		(): boolean =>
 			formData.name.length > 0 &&
 			formData.email.length > 0 &&

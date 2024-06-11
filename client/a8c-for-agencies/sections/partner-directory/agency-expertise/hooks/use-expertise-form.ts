@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../../types';
 
 type Props = {
@@ -88,7 +88,7 @@ export default function useExpertiseForm( { initialData }: Props ) {
 		} ) );
 	}, [] );
 
-	const isValidFormData = useCallback(
+	const isValidFormData = useMemo(
 		(): boolean =>
 			formData.services.length > 0 &&
 			formData.products.length > 0 &&

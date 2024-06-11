@@ -141,7 +141,7 @@ const AgencyDetailsForm = () => {
 				</div>
 			</FormSection>
 			<div className="agency-details-form__footer">
-				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData() || isSubmitting }>
+				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
 					{ translate( 'Publish public profile' ) }
 				</Button>
 			</div>
