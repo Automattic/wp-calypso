@@ -7,11 +7,16 @@ import { MEMBERSHIPS_PRODUCTS_RECEIVE } from 'calypso/state/action-types';
 import { membershipProductFromApi } from 'calypso/state/data-layer/wpcom/sites/memberships';
 import 'calypso/state/memberships/init';
 import { SiteId } from 'calypso/types';
+import { getApiPath } from '../lib/get-api';
 
-function queryMemberships() {
+function queryMemberships( siteId: SiteId ) {
 	return wpcom.req
 		.get(
-			{ path: '/memberships/products', apiNamespace: 'wpcom/v2', isLocalApiCall: true },
+			{
+				path: getApiPath( '/memberships/products', { siteId } ),
+				apiNamespace: 'wpcom/v2',
+				isLocalApiCall: true,
+			},
 			{ type: 'all', is_editable: true }
 		)
 		.catch( () => ( { products: [] } ) );
@@ -21,7 +26,7 @@ function useQueryMemberships( siteId: SiteId ) {
 	return useQuery( {
 		...getDefaultQueryParams< { products: Array< object > } >(),
 		queryKey: [ 'odyssey-stats', 'memberships', 'products', siteId ],
-		queryFn: () => queryMemberships(),
+		queryFn: () => queryMemberships( siteId ),
 		select: ( data ) => data?.products.map( membershipProductFromApi ),
 	} );
 }
