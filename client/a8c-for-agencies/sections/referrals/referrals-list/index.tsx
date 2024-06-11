@@ -113,6 +113,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 			<ItemsDataViews
 				data={ {
 					items: referrals,
+					getItemId: ( item: Referral ) => `${ item.client_id }`,
 					pagination: {
 						totalItems: 1,
 						totalPages: 1,
