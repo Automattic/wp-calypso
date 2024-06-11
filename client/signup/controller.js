@@ -8,6 +8,7 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
@@ -243,6 +244,17 @@ export default {
 			initialContext.isSignupSurveyActive =
 				experiment.variationName === 'treatment' ||
 				experiment.variationName === 'treatment_scrambled';
+		}
+
+		if ( isOnboardingFlow && wpcom.isTokenLoaded() ) {
+			const experimentAssignmentBigSky = await loadExperimentAssignment(
+				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
+			);
+			if ( experimentAssignmentBigSky?.variationName === 'trailmap' ) {
+				await loadExperimentAssignment(
+					'explat_test_calypso_signup_onboarding_trailmap_guided_flow'
+				);
+			}
 		}
 
 		if (
