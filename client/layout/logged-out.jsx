@@ -201,14 +201,17 @@ const LayoutLoggedOut = ( {
 		! isReaderSearchPage &&
 		! isReaderDiscoverPage
 	) {
+		const nonMonochromeSections = [ 'plugins' ];
+
 		masterbar = (
 			<UniversalNavbarHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
-				{ ...( isEnabled( 'site-profiler/metrics' ) && {
-					logoColor: 'white',
-					className: 'is-style-monochrome',
-				} ) }
+				{ ...( isEnabled( 'site-profiler/metrics' ) &&
+					! nonMonochromeSections.includes( sectionName ) && {
+						logoColor: 'white',
+						className: 'is-style-monochrome',
+					} ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
 					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),
