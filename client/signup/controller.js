@@ -11,7 +11,6 @@ import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -165,7 +164,7 @@ export default {
 	},
 
 	async redirectToFlow( context, next ) {
-		let userLoggedIn = isUserLoggedIn( context.store.getState() );
+		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const localeFromParams = context.params.lang;
 		const localeFromStore = ! userLoggedIn ? store.get( 'signup-locale' ) : '';
