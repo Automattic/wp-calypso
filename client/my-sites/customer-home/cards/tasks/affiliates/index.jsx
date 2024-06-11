@@ -28,7 +28,7 @@ const Affiliates = () => {
 			title={ title }
 			description={ description }
 			actionText={ translate( 'Sign up' ) }
-			actionUrl="https://app.impact.com/campaign-campaign-info-v2/Automattic-Inc.brand?ref=wordpressdotcom_task_home_card"
+			actionUrl="https://automattic.com/affiliates/?ref=wordpressdotcom_task_home_card"
 			actionTarget="_blank"
 			completeOnStart={ false }
 			illustration={ affiliatesIllustration }
