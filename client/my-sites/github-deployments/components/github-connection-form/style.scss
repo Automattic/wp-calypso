@@ -1,12 +1,21 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .github-deployments-connect-repository {
 
 	&__content {
 		display: flex;
+		flex-direction: column;
 		justify-content: space-between;
-		gap: 58px;
+		gap: 16px;
 
 		> div {
 			flex: 1;
+		}
+
+		@include break-medium {
+			flex-direction: row;
+			gap: 58px;
 		}
 	}
 
