@@ -8,6 +8,7 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
@@ -245,7 +246,7 @@ export default {
 				experiment.variationName === 'treatment_scrambled';
 		}
 
-		if ( isOnboardingFlow && userLoggedIn ) {
+		if ( isOnboardingFlow && wpcom.isTokenLoaded() ) {
 			const experimentAssignmentBigSky = await loadExperimentAssignment(
 				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
 			);
