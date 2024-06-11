@@ -18,6 +18,8 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
+import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
 	MARKETPLACE_TYPE_REFERRAL,
@@ -43,6 +45,10 @@ export default function ReferralsOverview( {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
+	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
+		REFERRAL_EMAIL_QUERY_PARAM_KEY
+	);
+
 	const isDesktop = useDesktopBreakpoint();
 
 	const title =
@@ -65,8 +71,6 @@ export default function ReferralsOverview( {
 
 	const selectedItem = dataViewsState.selectedItem;
 
-	const referralEmail = 'jkguidaven@gmail.com';
-
 	return (
 		<Layout
 			className={ clsx( 'referrals-layout', {
@@ -81,7 +85,12 @@ export default function ReferralsOverview( {
 		>
 			<LayoutColumn wide className="referrals-layout__column">
 				<LayoutTop>
-					{ !! referralEmail && <NewRefferalOrderNotification email={ referralEmail } /> }
+					{ !! referralEmail && (
+						<NewRefferalOrderNotification
+							email={ referralEmail }
+							onClose={ () => setReferralEmail( '' ) }
+						/>
+					) }
 
 					<LayoutHeader>
 						<Title>{ title } </Title>

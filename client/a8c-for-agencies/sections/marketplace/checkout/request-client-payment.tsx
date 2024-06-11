@@ -1,8 +1,10 @@
 import page from '@automattic/calypso-router';
 import { Button, FormLabel } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { A4A_REFERRALS_DASHBOARD } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
@@ -60,14 +62,16 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	}, [ dispatch ] );
 
 	useEffect( () => {
-		if ( isSuccess ) {
+		if ( isSuccess && !! email ) {
+			sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REGULAR );
+			page.redirect(
+				addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
+			);
 			setEmail( '' );
 			setMessage( '' );
 			onClearCart();
-			sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REGULAR );
-			page.redirect( A4A_REFERRALS_DASHBOARD );
 		}
-	}, [ isSuccess, onClearCart ] );
+	}, [ email, isSuccess, onClearCart ] );
 
 	return (
 		<>
