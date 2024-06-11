@@ -128,17 +128,17 @@ const AgencyDetailsForm = () => {
 				</FormField>
 			</FormSection>
 
-			<FormSection title={ translate( 'Budget details' ) }>
+			<FormSection
+				title={ translate( 'Budget details' ) }
+				description={ translate(
+					'Optionally set your minimum budget. Clients can filter these details to find the right agency.'
+				) }
+			>
 				<div>{ translate( 'Budget details' ) }</div>
 				<TextControl
 					value={ formData.budgetLowerRange }
 					onChange={ ( value ) => setFormFields( { budgetLowerRange: value } ) }
 				/>
-				<div>
-					{ translate(
-						'Optionally set your minimum budget. Clients can filter these details to find the right agency.'
-					) }
-				</div>
 			</FormSection>
 			<div className="agency-details-form__footer">
 				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
