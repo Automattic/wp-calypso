@@ -1,26 +1,41 @@
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
 import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
-
+import type { ElementType, FC, PropsWithChildren, ReactNode } from 'react';
 import './style.scss';
 
-function FormattedHeader( {
-	brandFont,
-	id,
+interface Props extends PropsWithChildren {
+	align?: 'center' | 'left' | 'right';
+	brandFont?: boolean;
+	className?: string;
+	compactOnMobile?: boolean;
+	hasScreenOptions?: boolean;
+	headerText: ReactNode;
+	id?: string;
+	isSecondary?: boolean;
+	screenReader?: ReactNode;
+	subHeaderAlign?: 'center';
+	subHeaderAs?: ElementType;
+	subHeaderText?: ReactNode;
+	tooltipText?: ReactNode;
+}
+
+const FormattedHeader: FC< Props > = ( {
+	align = 'center',
+	brandFont = false,
+	children,
+	className,
+	compactOnMobile = false,
+	hasScreenOptions,
 	headerText,
+	id = '',
+	isSecondary = false,
+	screenReader = null,
+	subHeaderAlign,
+	subHeaderAs: SubHeaderAs = 'p',
 	subHeaderText,
 	tooltipText,
-	className,
-	compactOnMobile,
-	align,
-	subHeaderAlign,
-	isSecondary,
-	hasScreenOptions,
-	subHeaderAs: SubHeaderAs = 'p',
-	children,
-	screenReader,
-} ) {
+} ) => {
 	const classes = clsx( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
 		'is-compact-on-mobile': compactOnMobile,
@@ -62,36 +77,6 @@ function FormattedHeader( {
 			{ children }
 		</header>
 	);
-}
-
-FormattedHeader.propTypes = {
-	id: PropTypes.string,
-	className: PropTypes.string,
-	brandFont: PropTypes.bool,
-	headerText: PropTypes.node,
-	subHeaderAs: PropTypes.elementType,
-	subHeaderText: PropTypes.node,
-	tooltipText: PropTypes.node,
-	compactOnMobile: PropTypes.bool,
-	isSecondary: PropTypes.bool,
-	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
-	subHeaderAlign: PropTypes.oneOf( [ 'center', null ] ),
-	hasScreenOptions: PropTypes.bool,
-	children: PropTypes.node,
-	screenReader: PropTypes.node,
-};
-
-FormattedHeader.defaultProps = {
-	id: '',
-	className: '',
-	brandFont: false,
-	subHeaderText: '',
-	tooltipText: '',
-	compactOnMobile: false,
-	isSecondary: false,
-	align: 'center',
-	subHeaderAlign: null,
-	screenReader: null,
 };
 
 export default FormattedHeader;

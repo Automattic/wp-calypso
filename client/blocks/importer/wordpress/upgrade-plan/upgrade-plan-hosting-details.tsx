@@ -32,10 +32,11 @@ export const UpgradePlanHostingDetails = () => {
 		urlData
 	);
 
+	const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
 	const shouldDisplayHostIdentificationMessage =
-		hostingProviderName &&
-		hostingProviderName !== 'Unknown' &&
-		hostingProviderName !== 'WordPress.com';
+		hostingProviderSlug &&
+		hostingProviderSlug !== 'unknown' &&
+		hostingProviderSlug !== 'automattic';
 
 	let hostingDetailsItems = null;
 

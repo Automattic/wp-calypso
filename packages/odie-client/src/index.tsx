@@ -22,7 +22,6 @@ export const OdieAssistant: React.FC = () => {
 	const chatboxMessagesRef = useRef< HTMLDivElement | null >( null );
 	const { ref: bottomRef, entry: lastMessageElement, inView } = useInView( { threshold: 0 } );
 	const [ stickToBottom, setStickToBottom ] = useState( true );
-
 	const scrollToBottom = useCallback(
 		( force = false ) => {
 			if ( force || stickToBottom ) {
@@ -30,7 +29,7 @@ export const OdieAssistant: React.FC = () => {
 					if ( lastMessageElement?.target ) {
 						lastMessageElement.target.scrollIntoView( {
 							behavior: 'auto',
-							block: 'start',
+							block: 'end',
 							inline: 'nearest',
 						} );
 					}

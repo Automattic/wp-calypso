@@ -920,6 +920,13 @@ class SignupForm extends Component {
 			);
 		}
 
+		if ( this.props.isBlazePro ) {
+			tosText = this.props.translate(
+				'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				options
+			);
+		}
+
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
 

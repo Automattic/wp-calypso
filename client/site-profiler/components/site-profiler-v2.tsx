@@ -1,10 +1,12 @@
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
-import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getPerformanceCategory } from 'calypso/data/site-profiler/metrics-dictionaries';
+import {
+	getBasicMetricsFromPerfReport,
+	getPerformanceCategory,
+} from 'calypso/data/site-profiler/metrics-dictionaries';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -17,7 +19,7 @@ import useDomainParam from 'calypso/site-profiler/hooks/use-domain-param';
 import useLongFetchingDetection from '../hooks/use-long-fetching-detection';
 import useScrollToTop from '../hooks/use-scroll-to-top';
 import useSiteProfilerRecordAnalytics from '../hooks/use-site-profiler-record-analytics';
-import { getValidUrl } from '../utils/get-valid-url';
+import { getDomainFromUrl, getValidUrl } from '../utils/get-valid-url';
 import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { BasicMetrics } from './basic-metrics';
 import { DomainSection } from './domain-section';
@@ -34,15 +36,14 @@ import { ResultsHeader } from './results-header';
 import { SecuritySection } from './security-section';
 import './styles-v2.scss';
 
-const debug = debugFactory( 'apps:site-profiler' );
-
 interface Props {
 	routerDomain?: string;
 	hash?: string;
+	routerOrigin?: string;
 }
 
 export default function SiteProfilerV2( props: Props ) {
-	const { routerDomain, hash } = props;
+	const { routerDomain, hash, routerOrigin } = props;
 	const hostingRef = useRef( null );
 	const domainRef = useRef( null );
 	const perfomanceMetricsRef = useRef( null );
@@ -54,7 +55,6 @@ export default function SiteProfilerV2( props: Props ) {
 		domain,
 		category: domainCategory,
 		isValid: isDomainValid,
-		isSpecial: isDomainSpecial,
 		readyForDataFetch,
 	} = useDomainParam( routerDomain );
 
@@ -75,7 +75,7 @@ export default function SiteProfilerV2( props: Props ) {
 		hostingProviderData,
 		isErrorUrlData ? null : urlData
 	);
-	const showLandingPage = ! ( siteProfilerData || isDomainSpecial );
+	const showLandingPage = ! hash;
 
 	useScrollToTop( !! siteProfilerData );
 	useSiteProfilerRecordAnalytics(
@@ -88,40 +88,34 @@ export default function SiteProfilerV2( props: Props ) {
 		urlData
 	);
 
-	const url = getValidUrl( routerDomain );
+	const url = useMemo( () => getValidUrl( routerDomain ), [ routerDomain ] );
 
-	const {
-		data: basicMetrics,
-		error: errorBasicMetrics,
-		isFetching: isFetchingBasicMetrics,
-	} = useUrlBasicMetricsQuery( url, true );
+	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
 
-	const showBasicMetrics =
-		basicMetrics && basicMetrics.success && ! isFetchingBasicMetrics && ! errorBasicMetrics;
+	const showGetReportForm = !! url && isGetReportFormOpen;
 
-	// TODO: Remove this debug statement once we have a better error handling mechanism
-	if ( errorBasicMetrics ) {
-		debug(
-			`Error fetching basic metrics for domain ${ domain }: ${ errorBasicMetrics.message }`,
-			errorBasicMetrics
-		);
-	}
+	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery( routerDomain, hash );
 
-	const showGetReportForm = !! showBasicMetrics && !! url && isGetReportFormOpen;
-
-	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery(
-		basicMetrics?.final_url,
-		basicMetrics?.token
+	const basicMetricsFromPerfReport = useMemo(
+		() => getBasicMetricsFromPerfReport( performanceMetrics ),
+		[ performanceMetrics ]
 	);
 
-	const { data: securityMetrics } = useUrlSecurityMetricsQuery( url, basicMetrics?.token );
+	const { final_url: finalUrl, token } = basicMetrics || {};
+	const finalUrlDomain = useMemo( () => getDomainFromUrl( finalUrl ), [ finalUrl ] );
+	useEffect( () => {
+		if ( finalUrlDomain && token ) {
+			page( `/site-profiler/report/${ token }/${ finalUrlDomain }/?ref=landingPage` );
+		}
+	}, [ finalUrlDomain, token ] );
+
+	const { data: securityMetrics } = useUrlSecurityMetricsQuery( url, hash );
 	const { errors: securityMetricsErrors = {} } = securityMetrics ?? {};
 	const noWordPressFound = Object.keys( securityMetricsErrors ).find(
 		( error ) => error === 'no_wordpress'
 	);
 
-	const showResultScreen =
-		siteProfilerData && showBasicMetrics && performanceMetrics && securityMetrics;
+	const showResultScreen = siteProfilerData && performanceMetrics && securityMetrics;
 
 	const performanceCategory = getPerformanceCategory( performanceMetrics );
 
@@ -148,7 +142,9 @@ export default function SiteProfilerV2( props: Props ) {
 					/>
 				</LayoutBlock>
 			) }
-			{ ! showResultScreen && <LoadingScreen /> }
+			{ ! showLandingPage && ! showResultScreen && (
+				<LoadingScreen isSavedReport={ routerOrigin !== 'landingPage' } />
+			) }
 			{ showResultScreen && (
 				<>
 					<LayoutBlock
@@ -162,16 +158,19 @@ export default function SiteProfilerV2( props: Props ) {
 						<ResultsHeader
 							domain={ domain }
 							performanceCategory={ performanceCategory }
+							isWordPress={ urlData?.platform === 'wordpress' }
 							isWpCom={ isWpCom }
 							onGetReport={ () => setIsGetReportFormOpen( true ) }
 						/>
 					</LayoutBlock>
 					<LayoutBlock width="medium">
-						<BasicMetrics
-							basicMetrics={ basicMetrics.basic }
-							domain={ domain }
-							isWpCom={ isWpCom }
-						/>
+						{ basicMetricsFromPerfReport && (
+							<BasicMetrics
+								basicMetrics={ basicMetricsFromPerfReport }
+								domain={ domain }
+								isWpCom={ isWpCom }
+							/>
+						) }
 						<NavMenu
 							domain={ domain }
 							navItems={ [
@@ -186,7 +185,7 @@ export default function SiteProfilerV2( props: Props ) {
 							showMigrationCta={ ! isWpCom }
 						></NavMenu>
 						<HostingSection
-							url={ basicMetrics?.final_url }
+							url={ url }
 							dns={ siteProfilerData.dns }
 							urlData={ urlData }
 							hostingProvider={ hostingProviderData?.hosting_provider }
@@ -202,7 +201,7 @@ export default function SiteProfilerV2( props: Props ) {
 						/>
 
 						<PerformanceSection
-							url={ basicMetrics?.final_url }
+							url={ url }
 							hash={ hash ?? basicMetrics?.token }
 							hostingProvider={ hostingProviderData?.hosting_provider }
 							performanceMetricsRef={ perfomanceMetricsRef }
@@ -210,7 +209,7 @@ export default function SiteProfilerV2( props: Props ) {
 						/>
 
 						<HealthSection
-							url={ basicMetrics?.final_url }
+							url={ url }
 							hash={ hash ?? basicMetrics?.token }
 							hostingProvider={ hostingProviderData?.hosting_provider }
 							healthMetricsRef={ healthMetricsRef }
@@ -218,7 +217,7 @@ export default function SiteProfilerV2( props: Props ) {
 						/>
 
 						<SecuritySection
-							url={ basicMetrics?.final_url }
+							url={ url }
 							hash={ hash ?? basicMetrics?.token }
 							hostingProvider={ hostingProviderData?.hosting_provider }
 							securityMetricsRef={ securityMetricsRef }
@@ -230,8 +229,8 @@ export default function SiteProfilerV2( props: Props ) {
 			) }
 			<FootNote />
 			<GetReportForm
-				url={ basicMetrics?.final_url }
-				token={ basicMetrics?.token }
+				url={ url }
+				token={ hash }
 				isOpen={ showGetReportForm }
 				onClose={ () => setIsGetReportFormOpen( false ) }
 			/>

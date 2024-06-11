@@ -1,3 +1,24 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography.scss";
+
+@font-face {
+	font-family: Inter;
+	font-weight: 400 700;
+	font-style: normal;
+	// stylelint-disable-next-line property-no-unknown
+	font-named-instance: "Regular";
+	src:
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2-variations&v=3.19) format("woff2-variations"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2&v=3.19) format("woff2");
+}
+
+$inter: Inter, $sans;
+$sfProText: "SF Pro Text", $sans;
+
+* {
+	font-family: $inter;
+}
+
 @keyframes processing {
 	0% {
 		background-position: 0% 0, 0% 0;
@@ -37,6 +58,7 @@
 		}
 
 		&__title {
+			font-family: $inter;
 			font-size: 2rem;
 			font-weight: 700;
 			line-height: 40px;
@@ -45,6 +67,7 @@
 		}
 
 		&__subtitle {
+			font-family: $sfProText;
 			font-size: rem(18px);
 			line-height: 25px;
 			text-align: center;

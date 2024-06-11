@@ -1,6 +1,11 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
+import {
+	isSiteAssemblerFlow,
+	isTailoredSignupFlow,
+	isOnboardingGuidedFlow,
+	ONBOARDING_GUIDED_FLOW,
+} from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -139,7 +144,7 @@ export class PlansStep extends Component {
 		// De-emphasize the Free plan as a CTA link on the main onboarding flow, and the guided flow, when a paid domain is picked.
 		// More context can be found in p2-p5uIfZ-f5p
 		const deemphasizeFreePlan =
-			( [ 'onboarding', 'guided' ].includes( flowName ) && paidDomainName != null ) ||
+			( [ 'onboarding', ONBOARDING_GUIDED_FLOW ].includes( flowName ) && paidDomainName != null ) ||
 			deemphasizeFreePlanFromProps;
 
 		return (
@@ -196,7 +201,32 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, useEmailOnboardingSubheader } = this.props;
+		const { translate, useEmailOnboardingSubheader, signupDependencies, flowName } = this.props;
+
+		const { segmentationSurveyAnswers } = signupDependencies;
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
+
+		if (
+			isOnboardingGuidedFlow( flowName ) &&
+			segmentSlug === 'plans-guided-segment-developer-or-agency'
+		) {
+			const a4aLinkButton = (
+				<Button
+					href="https://automattic.com/for-agencies/"
+					target="_blank"
+					rel="noopener noreferrer"
+					onClick={ () =>
+						this.props.recordTracksEvent( 'calypso_guided_onboarding_agency_link_click' )
+					}
+					borderless
+				/>
+			);
+
+			return translate(
+				'Are you an agency? Get bulk discounts and premier support with {{link}}Automattic for Agencies{{/link}}.',
+				{ components: { link: a4aLinkButton } }
+			);
+		}
 
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />

@@ -11,7 +11,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
-import AgencyDetails from './agency-details';
+import AgencyDetailsForm from './agency-details';
 import AgencyExpertise from './agency-expertise';
 import {
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
@@ -50,7 +50,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] = {
-			content: <AgencyDetails />,
+			content: <AgencyDetailsForm />,
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ].breadcrumbItems,
 				{

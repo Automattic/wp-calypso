@@ -7,6 +7,9 @@ import SurveyModal from 'calypso/components/survey-modal';
 export const GitHubDeploymentSurvey = () => {
 	const localeSlug = useLocale();
 
+	// Disable it for now
+	return null;
+
 	if ( localeSlug !== 'en' ) {
 		return null;
 	}

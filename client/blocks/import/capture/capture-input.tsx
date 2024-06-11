@@ -15,15 +15,16 @@ import type { OnInputChange, OnInputEnter } from './types';
 import type { FunctionComponent, ReactNode } from 'react';
 
 interface Props {
-	onInputEnter: OnInputEnter;
-	onInputChange?: OnInputChange;
-	onDontHaveSiteAddressClick?: () => void;
-	hasError?: boolean;
-	skipInitialChecking?: boolean;
-	label?: ReactNode;
-	placeholder?: string;
 	dontHaveSiteAddressLabel?: string;
+	hasError?: boolean;
 	hideImporterListLink?: boolean;
+	label?: ReactNode;
+	nextLabelText?: string;
+	onDontHaveSiteAddressClick?: () => void;
+	onInputChange?: OnInputChange;
+	onInputEnter: OnInputEnter;
+	placeholder?: string;
+	skipInitialChecking?: boolean;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const {
@@ -36,6 +37,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		placeholder = 'artfulbaker.blog',
 		dontHaveSiteAddressLabel,
 		hideImporterListLink = false,
+		nextLabelText,
 	} = props;
 
 	const translate = useTranslate();
@@ -124,7 +126,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</FormSettingExplanation>
 			</FormFieldset>
 
-			<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
+			<NextButton type="submit">{ nextLabelText ?? translate( 'Continue' ) }</NextButton>
 
 			<div className="action-buttons__importer-list">
 				{ ! hideImporterListLink &&
