@@ -69,7 +69,7 @@ const SurveyCheckboxOption = ( {
 					</span>
 				) }
 			</div>
-			{ option?.additionalProps?.is_premium === true && <PremiumBadge shouldHideTooltip /> }
+			{ option?.additionalProps?.is_premium && <PremiumBadge shouldHideTooltip /> }
 		</div>
 	);
 };
