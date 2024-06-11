@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToggleControl } from '@wordpress/components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ReactDom from 'react-dom';
 import useStoreSandboxStatusQuery from 'calypso/data/store-sandbox/use-store-sandbox-status';
 import wp from 'calypso/lib/wp';
@@ -14,8 +14,12 @@ interface StoreSandboxQueryResponse {
 }
 
 export function StoreSandboxHelper() {
-	const { data: isSandboxed } = useStoreSandboxStatusQuery();
+	const { data: isSandboxed = false } = useStoreSandboxStatusQuery();
 	const [ isStoreSandboxed, setIsStoreSandboxed ] = useState( isSandboxed );
+
+	useEffect( () => {
+		setIsStoreSandboxed( isSandboxed );
+	}, [ isSandboxed ] );
 
 	const onToggleStoreSandbox = () => {
 		wp.req.post(
