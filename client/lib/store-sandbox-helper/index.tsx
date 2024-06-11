@@ -16,6 +16,7 @@ interface StoreSandboxQueryResponse {
 export function StoreSandboxHelper() {
 	const { data: isSandboxed = false } = useStoreSandboxStatusQuery();
 	const [ isStoreSandboxed, setIsStoreSandboxed ] = useState( isSandboxed );
+	const [ responseError, setResponseError ] = useState< string | null >( null );
 
 	useEffect( () => {
 		setIsStoreSandboxed( isSandboxed );
@@ -28,9 +29,14 @@ export function StoreSandboxHelper() {
 				apiNamespace: 'wpcom/v2',
 			},
 			{},
-			( error: string, data: StoreSandboxQueryResponse ) => {
+			( error: Error, data: StoreSandboxQueryResponse ) => {
+				if ( error ) {
+					setResponseError( error.message || String( error ) );
+				}
+
 				if ( ! error && data ) {
 					setIsStoreSandboxed( !! data?.store_sandbox_cookie_name );
+					window.location.reload();
 				}
 			}
 		);
@@ -52,7 +58,7 @@ export function StoreSandboxHelper() {
 					label="Store Sandbox"
 					checked={ isStoreSandboxed || false }
 					onChange={ onToggleStoreSandbox }
-					help={ popoverStatus }
+					help={ responseError ? responseError : popoverStatus }
 				/>
 			</div>
 		</>
