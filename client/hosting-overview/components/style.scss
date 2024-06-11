@@ -162,25 +162,6 @@ $card-padding: 24px;
 
 }
 
-a.hosting-overview__link-button {
-	color: var(--color-link);
-	font-family: "SF Pro Text", $sans;
-	font-size: $font-body-extra-small;
-	line-height: 16px;
-}
-
-@media (max-width: $break-xlarge) {
-	.hosting-overview__mobile-hidden-link-button {
-		display: none;
-	}
-}
-
-.hosting-overview__card-header {
-	display: flex;
-	gap: var(--grid-unit-15, 12px);
-	margin-bottom: 16px;
-}
-
 .hosting-overview__plan-info {
 	color: var(--studio-gray-80);
 	font-family: "SF Pro Text", $sans;
@@ -257,7 +238,7 @@ a.hosting-overview__link-button {
 	margin: 0;
 }
 
-.hosting-overview__action-button {
+a.hosting-overview__action-button {
 	display: flex;
 	justify-content: space-between;
 	color: var(--studio-gray-100);
