@@ -7,6 +7,12 @@ import wp from 'calypso/lib/wp';
 
 import './style.scss';
 
+interface StoreSandboxQueryResponse {
+	store_sandbox_cookie_name: string | undefined;
+	store_sandbox_expiration_time: number | undefined;
+	is_disabled: boolean | undefined;
+}
+
 export function StoreSandboxHelper() {
 	const { data: isSandboxed } = useStoreSandboxStatusQuery();
 	const [ isStoreSandboxed, setIsStoreSandboxed ] = useState( isSandboxed );
@@ -18,9 +24,9 @@ export function StoreSandboxHelper() {
 				apiNamespace: 'wpcom/v2',
 			},
 			{},
-			( error: string, data: string ) => {
+			( error: string, data: StoreSandboxQueryResponse ) => {
 				if ( ! error && data ) {
-					setIsStoreSandboxed( ! isStoreSandboxed );
+					setIsStoreSandboxed( !! data?.store_sandbox_cookie_name );
 				}
 			}
 		);
@@ -40,7 +46,7 @@ export function StoreSandboxHelper() {
 			<div className="store-sandbox-helper__popover">
 				<ToggleControl
 					label="Store Sandbox"
-					checked={ isStoreSandboxed }
+					checked={ isStoreSandboxed || false }
 					onChange={ onToggleStoreSandbox }
 					help={ popoverStatus }
 				/>
