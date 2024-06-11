@@ -13,6 +13,7 @@ import makeImagesSafe from 'calypso/lib/post-normalizer/rule-content-make-images
 import makeContentLinksSafe from 'calypso/lib/post-normalizer/rule-content-make-links-safe';
 import removeElementsBySelector from 'calypso/lib/post-normalizer/rule-content-remove-elements-by-selector';
 import removeStyles from 'calypso/lib/post-normalizer/rule-content-remove-styles';
+import transformBlocks from 'calypso/lib/post-normalizer/rule-content-transform-blocks';
 import createBetterExcerpt from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 import decodeEntities from 'calypso/lib/post-normalizer/rule-decode-entities';
 import keepValidImages from 'calypso/lib/post-normalizer/rule-keep-valid-images';
@@ -114,6 +115,7 @@ const fastPostNormalizationRules = flow( [
 	safeImageProperties( READER_CONTENT_WIDTH ),
 	makeLinksSafe,
 	withContentDom( [
+		transformBlocks,
 		removeStyles,
 		removeElementsBySelector,
 		makeImagesSafe(),
