@@ -129,6 +129,7 @@ const entrepreneurFlow: Flow = {
 							);
 						}
 
+						// TODO: This redirect probably needs to include the `solution` query param.
 						const redirectTo = encodeURIComponent(
 							`https://${ stagingUrl }/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign-with-ai&ref=entrepreneur-signup`
 						);
