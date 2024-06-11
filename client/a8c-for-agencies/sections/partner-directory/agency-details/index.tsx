@@ -32,7 +32,10 @@ const AgencyDetailsForm = () => {
 		<Form
 			title={ translate( 'Finish adding details to your public profile' ) }
 			description={
-				"Add details to your agency's public profile for clients to see. Want to update your expertise instead?"
+				<>
+					Add details to your agency\'s public profile for clients to see.{ ' ' }
+					<a href="/partner-directory/agency-expertise">Want to update your expertise instead?</a>
+				</>
 			}
 		>
 			<FormSection title={ translate( 'Agency information' ) }>
