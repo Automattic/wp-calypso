@@ -55,7 +55,7 @@ const ReaderUnsubscribedFeedItem = ( {
 		? () => {
 				dispatch(
 					errorNotice( translate( 'Your email has not been verified yet.' ), {
-						id: 'unverfied-email-notice',
+						id: 'resend-verification-email',
 						button: translate( 'Resend Email' ),
 						onClick: () => {
 							resendEmailVerification();
