@@ -10,7 +10,7 @@ import {
 	type ImporterConfigPriority,
 } from 'calypso/lib/importer/importer-config';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
-import type { ImporterPlatform } from '../types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
 
 const trackEventName = 'calypso_signup_step_start';
