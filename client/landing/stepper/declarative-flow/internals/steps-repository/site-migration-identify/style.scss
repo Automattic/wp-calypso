@@ -74,20 +74,23 @@
 	}
 }
 
+.import__capture-wrapper {
+	margin-bottom: 60px;
+
+	@media (min-width: $break-small) {
+		margin-bottom: 0;
+	}
+}
+
 .import__site-identify-hosting-details {
 	background-color: #f6f7f7;
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	gap: 1.25rem;
-	margin: 40px auto 60px auto;
+	margin: 40px auto 0 auto;
 	max-width: 368px;
 	padding: 1.5rem;
-
-	@media (min-width: $break-small) {
-		margin: 40px auto 0 auto;
-	}
-
 
 	&--title {
 		color: var(--studio-gray-100);

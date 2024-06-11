@@ -124,7 +124,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 	);
 
 	return (
-		<div>
+		<div className="import__capture-wrapper">
 			<div className="import__heading import__heading-center">
 				<Title>{ titleInUse }</Title>
 				<SubTitle>{ subtitleInUse }</SubTitle>
