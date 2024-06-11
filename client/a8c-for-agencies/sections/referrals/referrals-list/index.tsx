@@ -44,6 +44,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 									</Button>
 								);
 							},
+							width: '100%',
 							enableHiding: false,
 							enableSorting: false,
 						},
@@ -114,6 +115,9 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 				data={ {
 					items: referrals,
 					getItemId: ( item: Referral ) => `${ item.client_id }`,
+					onSelectionChange: ( data ) => {
+						openSitePreviewPane( data[ 0 ] );
+					},
 					pagination: {
 						totalItems: 1,
 						totalPages: 1,
