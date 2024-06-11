@@ -50,7 +50,7 @@ export const MarketingTools: FunctionComponent = () => {
 	};
 
 	const handleMailchimpClick = () => {
-		// recordTracksEvent( 'calypso_marketing_tools_mailchimp_button_click' );
+		recordTracksEvent( 'calypso_marketing_tools_mailchimp_button_click' );
 	};
 
 	const handleVerblioClick = () => {
