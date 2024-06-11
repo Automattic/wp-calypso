@@ -279,9 +279,11 @@ const SitesDashboardV2 = ( {
 									'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
 								) }
 								dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
+								event="learn-more"
 								horizontal
 								href="https://wordpress.com/for-agencies"
 								title={ translate( 'Managing multiple sites? Meet our agency hosting' ) }
+								tracksClickName="calypso_sites_dashboard_a4a_banner_click"
 							/>
 						</div>
 					) }
