@@ -834,12 +834,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-client',
-		paths: [
-			'/client/landing',
-			'/client/subscriptions',
-			'/client/payment-methods',
-			'/purchases/payment-methods/add',
-		],
+		paths: [ '/client/landing', '/client/subscriptions', '/client/payment-methods' ],
 		module: 'calypso/a8c-for-agencies/sections/client',
 		group: 'a8c-for-agencies',
 	},
