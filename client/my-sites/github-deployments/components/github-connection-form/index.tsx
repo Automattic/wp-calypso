@@ -141,7 +141,7 @@ export const GitHubConnectionForm = ( {
 			<div className="github-deployments-connect-repository__content">
 				<div className="github-deployments-connect-repository__configs">
 					<div className="github-deployments-connect-repository__configs-header">
-						<h3>{ __( 'Connect a repository' ) }</h3>
+						<h3>{ deploymentId ? __( 'Manage a repository' ) : __( 'Connect a repository' ) }</h3>
 						<p>
 							{ __(
 								'Configure a repository connection to deploy a GitHub repository to your WordPress.com site.'
