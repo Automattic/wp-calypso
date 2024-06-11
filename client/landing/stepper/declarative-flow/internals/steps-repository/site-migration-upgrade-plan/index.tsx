@@ -35,6 +35,8 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 		? getPlanByPathSlug( selectedPlanPathSlug )
 		: getPlan( PLAN_BUSINESS );
 
+	usePresalesChat( 'wpcom' );
+
 	if ( ! siteItem || ! siteSlug || ! plan ) {
 		return;
 	}
@@ -53,8 +55,6 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 		from: migrateFrom,
 		has_source_site: migrateFrom !== '' && migrateFrom !== null,
 	};
-
-	usePresalesChat( 'wpcom' );
 
 	const stepContent = (
 		<>
