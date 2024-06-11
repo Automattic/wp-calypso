@@ -28,6 +28,9 @@ export function GitHubDeployments() {
 			return (
 				<>
 					<GitHubDeploymentsList deployments={ deployments } />
+					{ deployments.some( ( deployment ) => deployment.current_deployed_run !== null ) && (
+						<GitHubDeploymentSurvey />
+					) }
 				</>
 			);
 		}
@@ -65,7 +68,6 @@ export function GitHubDeployments() {
 			}
 		>
 			{ renderContent() }
-			<GitHubDeploymentSurvey />
 		</PageShell>
 	);
 }
