@@ -81,7 +81,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		return sections;
-	}, [ translate ] );
+	}, [ translate, application ] );
 
 	// Set the selected section
 	const section: Section = sections[ selectedSection ];

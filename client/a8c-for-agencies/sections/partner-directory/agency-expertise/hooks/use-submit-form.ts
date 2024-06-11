@@ -1,17 +1,23 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import useSubmitPartnerDirectoryApplicationMutation from 'calypso/a8c-for-agencies/data/partner-directory/use-submit-partner-directory-application';
 import { AgencyDirectoryApplication } from '../../types';
 
 type Props = {
 	formData: AgencyDirectoryApplication;
 };
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 export default function useSubmitForm( { formData }: Props ) {
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const { mutate: submit, isPending: isSubmitting } =
+		useSubmitPartnerDirectoryApplicationMutation();
 
 	const onSubmit = useCallback( () => {
-		setIsSubmitting( true );
-		// FIXME: Submit the  data to the backend
-	}, [] );
+		submit( {
+			services: formData.services,
+			products: formData.products,
+			directories: formData.directories,
+			feedback_url: formData.feedbackUrl,
+		} );
+	}, [ formData.directories, formData.feedbackUrl, formData.products, formData.services, submit ] );
 
 	return {
 		onSubmit,
