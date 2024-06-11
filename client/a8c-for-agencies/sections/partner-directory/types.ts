@@ -31,5 +31,5 @@ export interface AgencyDetails {
 	services: string[];
 	products: string[];
 	languagesSpoken: string[];
-	budgetLowerRange: number;
+	budgetLowerRange: string;
 }
