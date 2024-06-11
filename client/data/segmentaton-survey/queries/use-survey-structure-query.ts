@@ -16,7 +16,7 @@ type SurveyStructureResponse = {
 		label: string;
 		value: string;
 		help_text: string;
-		additional_props: Record< string, unknown >;
+		additional_props: Record< string, boolean >;
 	}[];
 }[];
 
