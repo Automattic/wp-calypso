@@ -9,6 +9,7 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -249,9 +250,9 @@ export default {
 
 		// See: 1113-gh-Automattic/experimentation-platform for details.
 		if ( isOnboardingGuidedFlow( flowName ) ) {
-			// If the user-social submitted a username, it means the user just signed up. But we need to fetch the user to hydrate the store with it.
+			// If the token is loaded but the user is not logged in, we need to fetch the current user to hydrate the store with the user data.
 			// This is necessary to load the experiments as a logged in user.
-			if ( ! userLoggedIn && signupProgress[ 'user-social' ]?.providedDependencies?.username ) {
+			if ( ! userLoggedIn && wpcom.isTokenLoaded() ) {
 				await context.store.dispatch( fetchCurrentUser() );
 				userLoggedIn = isUserLoggedIn( context.store.getState() );
 			}
