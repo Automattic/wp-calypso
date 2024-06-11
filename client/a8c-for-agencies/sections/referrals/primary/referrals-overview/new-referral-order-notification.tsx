@@ -1,6 +1,6 @@
-import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 
 type Props = {
 	email: string;
@@ -19,12 +19,12 @@ export default function NewRefferalOrderNotification( { email, onClose }: Props 
 
 	return (
 		showBanner && (
-			<NoticeBanner level="success" onClose={ onCloseClick }>
+			<LayoutBanner level="success" onClose={ onCloseClick }>
 				{ translate( 'Your referral order was emailed to %(referralEmail)s for payment.', {
 					args: { referralEmail: email },
 					comment: 'The %(referralEmail)s is the email where referral order was sent.',
 				} ) }
-			</NoticeBanner>
+			</LayoutBanner>
 		)
 	);
 }
