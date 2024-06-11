@@ -332,7 +332,7 @@ class Help_Center {
 						'id'     => 'help-center',
 						'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 						'parent' => 'top-secondary',
-						'href'   => $this->is_jetpack_connected() ? false : 'https://wordpress.com/support/',
+						'href'   => $this->is_jetpack_connected() ? false : localized_wpcom_url( 'https://wordpress.com/support/' ),
 						'meta'   => array(
 							'html'   => '<div id="help-center-masterbar" />',
 							'class'  => 'menupop',
