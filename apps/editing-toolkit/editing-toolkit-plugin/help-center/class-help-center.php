@@ -290,22 +290,17 @@ class Help_Center {
 		$user_id = get_current_user_id();
 		$blog_id = get_current_blog_id();
 
-		// l('$user_id: '.$user_id);
-		// l('$blog_id: '.$blog_id);
-		// l('is_jetpack_site: '.is_jetpack_site( $blog_id ));
-		// l('function exists (is_jetpack_site): '.function_exists( 'is_jetpack_site' ));
-
-		// l('is_jetpack_disconnected: '. is_jetpack_site( $blog_id ) && ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id ));
-		if ( ! function_exists( 'is_jetpack_site' ) ) {
-			return false;
+		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+			return ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
 		}
 
-		if ( ! is_jetpack_site( $blog_id ) ) {
-			return true;
+		if ( true === apply_filters( 'is_jetpack_site', false, $blog_id ) ) {
+			return ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
 		}
 
-		return is_jetpack_site( $blog_id ) && ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
+		return false;
 	}
+
 	/**
 	 * Add icon to WP-ADMIN admin bar.
 	 */
@@ -347,7 +342,8 @@ class Help_Center {
 						'id'     => 'help-center',
 						'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 						'parent' => 'top-secondary',
-						'href'   => $this->is_jetpack_disconnected() ? localized_wpcom_url( 'https://wordpress.com/support/' ) : false,
+						// phpcs:ignore WPCOM.I18nRules.LocalizedUrl.UnlocalizedUrl
+						'href'   => $this->is_jetpack_disconnected() ? 'https://wordpress.com/support/' : false,
 						'meta'   => array(
 							'html'   => '<div id="help-center-masterbar" />',
 							'class'  => 'menupop',
