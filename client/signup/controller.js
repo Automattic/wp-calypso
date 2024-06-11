@@ -249,23 +249,15 @@ export default {
 		}
 
 		// See: 1113-gh-Automattic/experimentation-platform for details.
-		if ( isOnboardingGuidedFlow( flowName ) ) {
-			// If the token is loaded but the user is not logged in, we need to fetch the current user to hydrate the store with the user data.
-			// This is necessary to load the experiments as a logged in user.
-			if ( ! userLoggedIn && wpcom.isTokenLoaded() ) {
-				await context.store.dispatch( fetchCurrentUser() );
-				userLoggedIn = isUserLoggedIn( context.store.getState() );
-			}
-
-			if ( userLoggedIn ) {
-				// Load both experiments in parallel for better performance.
-				const [ bigSkyExperiment, trailMapExperiment ] = await Promise.all( [
-					loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
-					loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
-				] );
-				if ( bigSkyExperiment.variationName === 'trailmap' ) {
-					initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
-				}
+		// `isTokenLoaded` is a more accurate check than `isUserLoggedIn`. Because `loadExperimentAssignment` uses `wpcom` token to fetch the experiment as the user.
+		if ( isOnboardingGuidedFlow( flowName ) && wpcom.isTokenLoaded() ) {
+			// Load both experiments in parallel for better performance.
+			const [ bigSkyExperiment, trailMapExperiment ] = await Promise.all( [
+				loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
+				loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
+			] );
+			if ( bigSkyExperiment.variationName === 'trailmap' ) {
+				initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
 			}
 		}
 
