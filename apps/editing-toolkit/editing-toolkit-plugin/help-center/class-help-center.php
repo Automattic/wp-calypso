@@ -48,7 +48,8 @@ class Help_Center {
 			return;
 		}
 
-		$this->asset_file = include plugin_dir_path( __FILE__ ) . $this->is_jetpack_disconnected() ? 'dist/help-center-disconnected.asset.php' : 'dist/help-center.asset.php';
+		$file             = $this->is_jetpack_disconnected() ? 'dist/help-center-disconnected.asset.php' : 'dist/help-center.asset.php';
+		$this->asset_file = include plugin_dir_path( __FILE__ ) . $file;
 		$this->version    = $this->asset_file['version'];
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
