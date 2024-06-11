@@ -7,7 +7,7 @@ import FilePicker from 'calypso/components/file-picker';
 import { useResendEmailVerification } from 'calypso/landing/stepper/hooks/use-resend-email-verification';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';
@@ -31,10 +31,10 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
 	const { hasTranslation } = useI18n();
 	const dispatch = useDispatch();
 	const resendEmailVerification = useResendEmailVerification();
-	const currentUser = useSelector( getCurrentUser );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const checkUser = ( event: React.MouseEvent< HTMLButtonElement > ) => {
-		if ( ! currentUser?.email_verified ) {
+		if ( ! isEmailVerified ) {
 			event?.preventDefault();
 
 			dispatch(
@@ -113,15 +113,13 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
 			iconSize={ iconSize }
 			onClick={ checkUser }
 		>
-			{ currentUser?.email_verified && (
+			{ isEmailVerified && (
 				<FilePicker accept=".xml,.opml" onClick={ onClick } onPick={ onPick }>
 					{ ! icon && <Gridicon icon="cloud-upload" className="reader-import-button__icon" /> }
 					<span className="reader-import-button__label">{ importLabel }</span>
 				</FilePicker>
 			) }
-			{ ! currentUser?.email_verified && (
-				<span className="reader-import-button__label">{ importLabel }</span>
-			) }
+			{ ! isEmailVerified && <span className="reader-import-button__label">{ importLabel }</span> }
 		</Button>
 	);
 };

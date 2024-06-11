@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import ExternalLink from 'calypso/components/external-link';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
 
@@ -46,14 +46,12 @@ const ReaderUnsubscribedFeedItem = ( {
 	title,
 }: ReaderUnsubscribedFeedItemProps ) => {
 	const translate = useTranslate();
-	const currentUser = useSelector( getCurrentUser );
-	const isEmailVerified = currentUser?.email_verified;
-	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
-
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const dispatch = useDispatch();
 	const resendEmailVerification = useResendEmailVerification();
+	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
 
-	const onSubscribeClickEvent = ! isEmailVarified
+	const onSubscribeClickEvent = ! isEmailVerified
 		? () => {
 				dispatch(
 					errorNotice( translate( 'Your email has not been verified yet.' ), {

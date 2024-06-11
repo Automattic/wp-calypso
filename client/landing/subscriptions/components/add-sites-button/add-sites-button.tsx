@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useResendEmailVerification } from 'calypso/landing/stepper/hooks/use-resend-email-verification';
 import { AddSitesModal } from 'calypso/landing/subscriptions/components/add-sites-modal';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 
 import './styles.scss';
@@ -14,7 +14,7 @@ const AddSitesButton = () => {
 	const [ isAddSitesModalVisible, setIsAddSitesModalVisible ] = useState( false );
 	const dispatch = useDispatch();
 	const resendEmailVerification = useResendEmailVerification();
-	const currentUser = useSelector( getCurrentUser );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	return (
 		<>
@@ -22,7 +22,7 @@ const AddSitesButton = () => {
 				primary
 				className="subscriptions-add-sites__button"
 				onClick={ () => {
-					if ( ! currentUser?.email_verified ) {
+					if ( ! isEmailVerified ) {
 						return dispatch(
 							errorNotice( translate( 'Your email has not been verified yet.' ), {
 								id: 'resend-verification-email',

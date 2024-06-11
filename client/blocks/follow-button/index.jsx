@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
-import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { follow, unfollow } from 'calypso/state/reader/follows/actions';
 import { isFollowing } from 'calypso/state/reader/follows/selectors';
@@ -11,7 +11,7 @@ import FollowButton from './button';
 
 function FollowButtonContainer( props ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const currentUser = useSelector( getCurrentUser );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const following = useSelector( ( state ) => isFollowing( state, { feedUrl: props.siteUrl } ) );
 
 	const dispatch = useDispatch();
@@ -28,7 +28,7 @@ function FollowButtonContainer( props ) {
 			);
 		}
 
-		if ( ! currentUser?.email_verified ) {
+		if ( ! isEmailVerified ) {
 			return dispatch(
 				errorNotice( translate( 'Your email has not been verified yet.' ), {
 					id: 'resend-verification-email',
