@@ -24,7 +24,7 @@ const BlazePressStrings = () => {
 	translate( 'Get started' );
 	translate( 'Learn more' );
 	translate( "Don't show me this step again." );
-	translate( 'Uploading images...' );
+	translate( 'Uploading images…' );
 	translate( 'Checking payment information…' );
 	translate( 'Fetching pages…' );
 	translate( 'Fetching products…' );
@@ -64,7 +64,7 @@ const BlazePressStrings = () => {
 	translate( 'Ad creative' );
 	translate( "Use post's media" );
 	translate( 'Site title' );
-	translate( 'Loading page title...' );
+	translate( 'Loading page title…' );
 	translate( 'Page title' );
 	translate( 'Snippet' );
 	translate(
