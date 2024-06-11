@@ -12,7 +12,7 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/staging-site-production-c
 	</div>
 ) );
 
-import { FEATURE_SITE_STAGING_SITES, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import { FEATURE_SITE_STAGING_SITES } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -102,7 +102,7 @@ describe( 'Staging Site', () => {
 		const testConfig = getTestConfig( {
 			isAtomicSite: true,
 			isWpcomStagingSite: true,
-			siteFeatures: [ WPCOM_FEATURES_ATOMIC, FEATURE_SITE_STAGING_SITES ],
+			siteFeatures: [ FEATURE_SITE_STAGING_SITES ],
 		} );
 
 		renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
