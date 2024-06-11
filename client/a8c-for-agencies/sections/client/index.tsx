@@ -9,13 +9,6 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import * as controller from './controller';
 
 export default function () {
-	page(
-		'/agency/:id/client/:id',
-		requireClientAccessContext,
-		controller.clientContext,
-		makeLayout,
-		clientRender
-	);
 	page( A4A_CLIENT_LANDING_LINK, controller.clientLandingContext, makeLayout, clientRender );
 	page(
 		A4A_CLIENT_SUBSCRIPTIONS_LINK,
