@@ -556,6 +556,9 @@ const siteSetupFlow: Flow = {
 				case 'importReadyPreview':
 					return navigate( `import?siteSlug=${ siteSlug }` );
 
+				case 'launch-big-sky':
+					return navigate( 'design-choices' );
+
 				case 'options':
 					return navigate( 'goals' );
 
