@@ -7,8 +7,6 @@
 
 namespace A8C\FSE;
 
-use Automattic\Jetpack\Connection\Manager as Connection_Manager;
-
 /**
  * Class Help_Center
  */
@@ -48,7 +46,7 @@ class Help_Center {
 			return;
 		}
 
-		$this->asset_file = include plugin_dir_path( __FILE__ ) . $this->is_jetpack_connected() ? 'dist/help-center.asset.php' : 'dist/help-center-disconnected.asset.php';
+		$this->asset_file = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
 		$this->version    = $this->asset_file['version'];
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
@@ -91,7 +89,7 @@ class Help_Center {
 		// The disconnected version is significantly smaller than the connected version.
 		wp_enqueue_script(
 			'help-center-script',
-			plugins_url( $this->is_jetpack_connected() ? 'dist/help-center.min.js' : 'dist/help-center-disconnected.min.js', __FILE__ ),
+			plugins_url( 'dist/help-center.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$this->version,
 			true
@@ -284,14 +282,6 @@ class Help_Center {
 	}
 
 	/**
-	 * Returns true if the current user is connected through Jetpack
-	 */
-	public function is_jetpack_connected() {
-		$user_id = get_current_user_id();
-		return ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
-	}
-
-	/**
 	 * Add icon to WP-ADMIN admin bar.
 	 */
 	public function enqueue_wp_admin_scripts() {
@@ -332,11 +322,9 @@ class Help_Center {
 						'id'     => 'help-center',
 						'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 						'parent' => 'top-secondary',
-						'href'   => $this->is_jetpack_connected() ? false : localized_wpcom_url( 'https://wordpress.com/support/' ),
 						'meta'   => array(
-							'html'   => '<div id="help-center-masterbar" />',
-							'class'  => 'menupop',
-							'target' => '_blank',
+							'html'  => '<div id="help-center-masterbar" />',
+							'class' => 'menupop',
 						),
 					)
 				);
