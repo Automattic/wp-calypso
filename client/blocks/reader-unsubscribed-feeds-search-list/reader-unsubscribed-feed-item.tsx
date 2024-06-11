@@ -47,7 +47,7 @@ const ReaderUnsubscribedFeedItem = ( {
 }: ReaderUnsubscribedFeedItemProps ) => {
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
-	const isEmailVarified = currentUser?.email_verified;
+	const isEmailVerified = currentUser?.email_verified;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
 
 	const dispatch = useDispatch();
