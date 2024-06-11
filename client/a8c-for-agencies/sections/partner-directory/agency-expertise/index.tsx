@@ -54,7 +54,7 @@ const DirectoryClientSamples = ( { label, samples, onChange }: DirectoryClientSa
 };
 
 type Props = {
-	initialData?: AgencyDirectoryApplication;
+	initialData?: AgencyDirectoryApplication | null;
 };
 
 const AgencyExpertise = ( { initialData }: Props ) => {

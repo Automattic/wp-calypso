@@ -24,6 +24,36 @@ export interface Agency {
 			pressable_id: number;
 		};
 	};
+	profile: {
+		company_details: {
+			name: string;
+			email: string;
+			website: string;
+			bio_description: string;
+			logo_url: string;
+			landing_page_url: string;
+			country: string;
+		};
+		listing_details: {
+			is_available: boolean;
+			industry: string;
+			services: string[];
+			products: string[];
+			languages_spoken: string[];
+		};
+		partner_directory_application: null | {
+			status: 'pending' | 'in-progress' | 'completed';
+			directories: {
+				status: 'pending' | 'approved' | 'rejected' | 'closed';
+				directory: 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
+				published: boolean;
+				urls: string[];
+				note: string;
+				is_published?: boolean;
+			}[];
+			feedback_url: string;
+		};
+	};
 }
 
 export interface AgencyStore {

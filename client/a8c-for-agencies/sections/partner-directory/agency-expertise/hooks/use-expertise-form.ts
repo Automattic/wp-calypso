@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../../types';
 
 type Props = {
-	initialData?: AgencyDirectoryApplication;
+	initialData?: AgencyDirectoryApplication | null;
 };
 
 function validateURL( url: string ) {
