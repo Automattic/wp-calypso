@@ -22,14 +22,14 @@ export interface AgencyDetails {
 	name: string;
 	email: string;
 	website: string;
-	bio_description: string;
-	logo_url: string;
-	landing_page_url: string;
+	bioDescription: string;
+	logoUrl: string;
+	landingPageUrl: string;
 	country: string;
-	is_available: boolean;
+	isAvailable: boolean;
 	industry: string;
 	services: string[];
 	products: string[];
-	languages_spoken: string[];
-	budget_lower_range: number;
+	languagesSpoken: string[];
+	budgetLowerRange: number;
 }
