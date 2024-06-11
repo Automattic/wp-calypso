@@ -2,16 +2,22 @@
 @import "@automattic/components/src/styles/typography.scss";
 
 @font-face {
-	font-family: InterVariable;
-	font-style: normal;
+	font-family: Inter;
 	font-weight: 400 700;
-	font-display: swap;
-	src: url(../../assets/fonts/Inter-VariableFont.ttf) format("truetype");
-	src: url(../../assets/fonts/Inter-VariableFont.woff2) format("woff2");
+	font-style: normal;
+	// stylelint-disable-next-line property-no-unknown
+	font-named-instance: "Regular";
+	src:
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2-variations&v=3.19) format("woff2-variations"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2&v=3.19) format("woff2");
 }
 
-$inter: InterVariable, $sans;
+$inter: Inter, $sans;
 $sfProText: "SF Pro Text", $sans;
+
+* {
+	font-family: $inter;
+}
 
 .blaze-pro {
 	--color-white: #fff;
@@ -270,7 +276,6 @@ $sfProText: "SF Pro Text", $sans;
 	}
 
 	.two-factor-authentication__small-print {
-		font-family: $inter;
 		font-size: 0.75rem;
 		font-weight: 400;
 		padding-top: 4px;
@@ -281,12 +286,18 @@ $sfProText: "SF Pro Text", $sans;
 
 	.auth-form__social .auth-form__social-buttons-container {
 		margin-bottom: 24px;
+
+		.social-buttons__button {
+			font-family: $inter;
+			font-size: rem(13px);
+			font-weight: 600;
+			line-height: 14px;
+		}
 	}
 
 	.auth-form__social-buttons-tos,
 	.signup-form__terms-of-service-link {
 		color: var(--studio-gray-60);
-		font-family: $inter;
 		font-size: 0.75rem;
 		font-weight: 400;
 		line-height: 20px;
@@ -322,7 +333,6 @@ $sfProText: "SF Pro Text", $sans;
 				width: 360px;
 
 				.formatted-header__title {
-					font-family: $inter;
 					font-size: 2rem;
 					font-weight: 700;
 					line-height: 40px;
@@ -393,7 +403,6 @@ $sfProText: "SF Pro Text", $sans;
 
 		.form-label {
 			color: #1e1e1e;
-			font-family: $inter;
 			font-size: rem(11px);
 			line-height: 16px;
 			text-transform: uppercase;
@@ -417,7 +426,6 @@ $sfProText: "SF Pro Text", $sans;
 	// "Continue with a backup code" button
 	&.layout.is-white-login .wp-login__links.two-factor-authentication__actions > .button:first-of-type {
 		color: var(--color-black);
-		font-family: $inter;
 		font-size: rem(13px);
 		font-weight: 600;
 		line-height: 14px;
@@ -435,7 +443,6 @@ $sfProText: "SF Pro Text", $sans;
 			border-color: var(--color-orange);
 			border-radius: 4px;
 			color: var(--color-white);
-			font-family: $inter;
 			font-size: rem(13px);
 			font-weight: 600;
 			line-height: 14px;
