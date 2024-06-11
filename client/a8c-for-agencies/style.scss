@@ -551,4 +551,13 @@ html {
 	.dataviews-view-table tr th:first-child {
 		padding-inline-start: 16px;
 	}
+
+	.dataviews-view-list li {
+		cursor: pointer;
+	}
+
+	.dataviews-view-list li .components-h-stack {
+		display: block;
+		width: 100%;
+	}
 }

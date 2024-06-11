@@ -1,31 +1,40 @@
-import { CheckboxControl, FormTokenField, TextControl } from '@wordpress/components';
+import { Button } from '@automattic/components';
+import { CheckboxControl, TextControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
+import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import ProductsSelector from '../components/products-selector';
+import ServicesSelector from '../components/services-selector';
 import {
-	EXPERTISE_FORM_FIELD_CUSTOMER_FEEDBACK_URL,
-	EXPERTISE_FORM_FIELD_PRODUCTS,
-	EXPERTISE_FORM_FIELD_SERVICES,
+	DIRECTORY_JETPACK,
+	DIRECTORY_PRESSABLE,
+	DIRECTORY_WOOCOMMERCE,
+	DIRECTORY_WPCOM,
+	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 } from '../constants';
+import { AgencyDirectoryApplication, DirectoryApplicationType } from '../types';
 import { getPartnerDirectoryLabel } from '../utils/get-partner-directory-label';
 import useExpertiseForm from './hooks/use-expertise-form';
+import useSubmitForm from './hooks/use-submit-form';
 
 import './style.scss';
 
 type DirectoryClientSamplesProps = {
 	label: string | ReactNode;
 	samples: string[];
-	onSampleChange: ( index: number, value: string ) => void;
+	onChange: ( samples: string[] ) => void;
 };
 
-const DirectoryClientSamples = ( {
-	label,
-	samples,
-	onSampleChange,
-}: DirectoryClientSamplesProps ) => {
+const DirectoryClientSamples = ( { label, samples, onChange }: DirectoryClientSamplesProps ) => {
 	const translate = useTranslate();
+
+	const onSampleChange = ( index: number, value: string ) => {
+		onChange( samples.map( ( sample, i ) => ( i === index ? value : sample ) ) );
+	};
+
 	return (
 		<div className="partner-directory-agency-expertise__directory-client-site">
 			<h3 className="partner-directory-agency-expertise__client-samples-label">{ label }</h3>
@@ -44,23 +53,34 @@ const DirectoryClientSamples = ( {
 	);
 };
 
-const AgencyExpertise = () => {
+type Props = {
+	initialData?: AgencyDirectoryApplication;
+};
+
+const AgencyExpertise = ( { initialData }: Props ) => {
 	const translate = useTranslate();
 
 	const {
-		getFormValue,
-		setFormValue,
+		formData,
+		setFormData,
+		isValidFormData,
 		isDirectorySelected,
+		isDirectoryApproved,
 		setDirectorySelected,
-		getDirectories,
-		getSelectedDirectories,
 		getDirectoryClientSamples,
 		setDirectorClientSample,
-	} = useExpertiseForm();
+	} = useExpertiseForm( { initialData } );
 
-	const selectedDirectories = getSelectedDirectories();
+	const { onSubmit, isSubmitting } = useSubmitForm( { formData } );
 
-	const directories = getDirectories();
+	const { services, products, directories, feedbackUrl } = formData;
+
+	const directoryOptions: DirectoryApplicationType[] = [
+		DIRECTORY_WPCOM,
+		DIRECTORY_WOOCOMMERCE,
+		DIRECTORY_JETPACK,
+		DIRECTORY_PRESSABLE,
+	];
 
 	return (
 		<Form
@@ -75,22 +95,26 @@ const AgencyExpertise = () => {
 						'We allow each agency to offer up to five services to help you focus on what you do best.'
 					) }
 				>
-					<FormTokenField
-						label=""
-						value={ getFormValue( EXPERTISE_FORM_FIELD_SERVICES ) as string[] }
-						onChange={ ( value ) => setFormValue( EXPERTISE_FORM_FIELD_SERVICES, value ) }
-						__experimentalShowHowTo={ false }
-						__nextHasNoMarginBottom
+					<ServicesSelector
+						selectedServices={ services }
+						setServices={ ( value ) =>
+							setFormData( ( state ) => ( {
+								...state,
+								services: value as string[],
+							} ) )
+						}
 					/>
 				</FormField>
 
 				<FormField label={ translate( 'What products do you work with?' ) }>
-					<FormTokenField
-						label=""
-						value={ getFormValue( EXPERTISE_FORM_FIELD_PRODUCTS ) as string[] }
-						onChange={ ( value ) => setFormValue( EXPERTISE_FORM_FIELD_PRODUCTS, value ) }
-						__experimentalShowHowTo={ false }
-						__nextHasNoMarginBottom
+					<ProductsSelector
+						selectedProducts={ products }
+						setProducts={ ( value ) =>
+							setFormData( ( state ) => ( {
+								...state,
+								products: value as string[],
+							} ) )
+						}
 					/>
 				</FormField>
 			</FormSection>
@@ -101,18 +125,19 @@ const AgencyExpertise = () => {
 					sub={ translate( 'Select the Automattic directories you would like to appear on.' ) }
 				>
 					<div className="partner-directory-agency-expertise__directory-options">
-						{ directories.map( ( directory ) => (
+						{ directoryOptions.map( ( directory ) => (
 							<CheckboxControl
 								key={ `directory-${ directory }` }
 								label={ getPartnerDirectoryLabel( directory ) }
 								checked={ isDirectorySelected( directory ) }
 								onChange={ ( value ) => setDirectorySelected( directory, value ) }
+								disabled={ isDirectoryApproved( directory ) }
 							/>
 						) ) }
 					</div>
 				</FormField>
 
-				{ !! selectedDirectories.length && (
+				{ !! directories.length && (
 					<FormField
 						label={ translate( 'Client sites' ) }
 						sub={ translate(
@@ -120,7 +145,7 @@ const AgencyExpertise = () => {
 						) }
 					>
 						<div className="partner-directory-agency-expertise__directory-client-sites">
-							{ selectedDirectories.map( ( directory ) => (
+							{ directories.map( ( { directory } ) => (
 								<DirectoryClientSamples
 									key={ `directory-samples-${ directory }` }
 									label={ translate( 'Relevant examples for %(directory)s', {
@@ -130,8 +155,8 @@ const AgencyExpertise = () => {
 										comment: '%(directory)s is the directory name, e.g. "WordPress.com"',
 									} ) }
 									samples={ getDirectoryClientSamples( directory ) }
-									onSampleChange={ ( index, value ) =>
-										setDirectorClientSample( directory, index, value )
+									onChange={ ( samples: string[] ) =>
+										setDirectorClientSample( directory, samples )
 									}
 								/>
 							) ) }
@@ -148,13 +173,29 @@ const AgencyExpertise = () => {
 					<TextControl
 						type="text"
 						placeholder={ translate( 'Enter URL' ) }
-						value={ getFormValue( EXPERTISE_FORM_FIELD_CUSTOMER_FEEDBACK_URL ) as string }
+						value={ feedbackUrl }
 						onChange={ ( value ) =>
-							setFormValue( EXPERTISE_FORM_FIELD_CUSTOMER_FEEDBACK_URL, value )
+							setFormData( ( state ) => ( {
+								...state,
+								feedbackUrl: value,
+							} ) )
 						}
 					/>
 				</FormField>
 			</FormSection>
+
+			<div className="partner-directory-agency-expertise__footer">
+				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
+					{ translate( 'Submit my application' ) }
+				</Button>
+
+				<Button
+					href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_DASHBOARD_SLUG }` }
+					disabled={ isSubmitting }
+				>
+					{ translate( 'Cancel' ) }
+				</Button>
+			</div>
 		</Form>
 	);
 };

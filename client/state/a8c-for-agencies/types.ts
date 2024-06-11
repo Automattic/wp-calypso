@@ -34,18 +34,6 @@ export interface AgencyStore {
 	error: APIError | null;
 }
 
-export interface Client {
-	id: number;
-	email: string;
-}
-
-export interface ClientStore {
-	hasFetched: boolean;
-	isFetching: boolean;
-	client: Client | null;
-	error: APIError | null;
-}
-
 export type AgencyThunkAction< A extends Action = AnyAction, R = unknown > = ThunkAction<
 	void,
 	A4AStore,
@@ -55,7 +43,6 @@ export type AgencyThunkAction< A extends Action = AnyAction, R = unknown > = Thu
 
 interface CombinedStore {
 	agencies: AgencyStore;
-	client: ClientStore;
 }
 
 /**

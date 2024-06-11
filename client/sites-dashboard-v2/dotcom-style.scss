@@ -160,11 +160,18 @@
 		}
 
 		&:nth-child(4) {
-			span {
+			.site-sort {
 				display: inline-block;
+				font-size: $font-body-small;
 				max-width: calc(100% - 14px);
-				white-space: normal;
 				overflow-wrap: anywhere;
+				white-space: normal;
+
+				span {
+					display: inline-block;
+					max-width: calc(100% - 14px);
+					vertical-align: middle;
+				}
 			}
 
 			svg.site-sort__icon {
