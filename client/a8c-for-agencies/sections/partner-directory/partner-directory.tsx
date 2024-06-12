@@ -20,6 +20,8 @@ import {
 } from './constants';
 import Dashboard from './dashboard';
 
+import './style.scss';
+
 type Props = {
 	selectedSection: string;
 };
