@@ -265,7 +265,6 @@ export default {
 			// 	loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
 			// ] );
 
-			debugger;
 			if ( [ 'guided', 'survey_only' ].includes( context.query.trailmap ) ) {
 				initialContext.trailMapExperimentVariant = context.params.trailmap;
 			}
