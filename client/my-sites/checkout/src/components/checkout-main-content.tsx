@@ -64,7 +64,7 @@ import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import { isOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
+import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
@@ -355,7 +355,7 @@ export default function CheckoutMainContent( {
 	const reduxDispatch = useReduxDispatch();
 
 	const isPresalesChatEnabled =
-		! useSelector( isOnboardingAffiliateFlow ) && responseCart?.products?.length > 0;
+		! useSelector( getIsOnboardingAffiliateFlow ) && responseCart?.products?.length > 0;
 	usePresalesChat( getPresalesChatKey( responseCart ), isPresalesChatEnabled );
 
 	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
