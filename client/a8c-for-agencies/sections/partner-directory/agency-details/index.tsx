@@ -16,6 +16,8 @@ import { useCountryList } from './hooks/use-country-list';
 import useDetailsForm from './hooks/use-details-form';
 import useSubmitForm from './hooks/use-submit-form';
 
+import './style.scss';
+
 const AgencyDetailsForm = () => {
 	const translate = useTranslate();
 
@@ -35,6 +37,7 @@ const AgencyDetailsForm = () => {
 
 	return (
 		<Form
+			className="partner-directory-agency-details"
 			title={ translate( 'Finish adding details to your public profile' ) }
 			description={
 				<>
