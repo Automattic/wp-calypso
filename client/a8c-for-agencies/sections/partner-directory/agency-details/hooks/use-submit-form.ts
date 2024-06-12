@@ -11,7 +11,7 @@ export default function useSubmitForm( { formData }: Props ) {
 	const onSubmit = useCallback( () => {
 		setIsSubmitting( true );
 		// FIXME: Submit the  data to the backend
-	}, [] );
+	}, [ formData ] );
 
 	return {
 		onSubmit,
