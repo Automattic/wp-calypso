@@ -2,7 +2,6 @@ import {
 	isGoogleWorkspaceExtraLicence,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from '@automattic/calypso-products';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
 import cookie from 'cookie';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {

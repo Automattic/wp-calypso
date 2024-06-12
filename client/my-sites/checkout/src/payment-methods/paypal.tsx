@@ -5,7 +5,6 @@ import {
 	useFormStatus,
 	Button,
 } from '@automattic/composite-checkout';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -261,7 +260,7 @@ function TaxLabel() {
 		( select ) => ( select( storeKey ) as PaypalSelectors ).getCountryCode(),
 		[]
 	);
-	const taxString = [ countryCode.value, postalCode.value ].filter( isValueTruthy ).join( ', ' );
+	const taxString = [ countryCode.value, postalCode.value ].filter( Boolean ).join( ', ' );
 	if ( taxString.length < 1 ) {
 		return null;
 	}

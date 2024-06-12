@@ -1,4 +1,3 @@
-import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 import {
@@ -26,7 +25,9 @@ function getSearchableStrings( transaction: BillingTransaction ): string[] {
 	const dateString: string | null = transaction.date ? formatDate( transaction.date ) : null;
 	const itemStrings: string[] = transaction.items.flatMap( ( item ) => Object.values( item ) );
 
-	return [ ...rootStrings, dateString, ...itemStrings ].filter( isValueTruthy );
+	return [ ...rootStrings, dateString, ...itemStrings ].filter(
+		( item: string | null ): item is string => !! item
+	);
 }
 
 /**

@@ -1,4 +1,3 @@
-import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useQuery, useQueries, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from './default-query-params';
@@ -83,6 +82,8 @@ export default function useSubscribersQuery(
 	} );
 }
 
+const isTruthy = < T, >( value: T | undefined ): value is T => !! value;
+
 export function useSubscribersQueries(
 	siteId: number | null,
 	period: string,
@@ -100,7 +101,7 @@ export function useSubscribersQueries(
 	const results = useQueries( { queries: queryConfigs } );
 	const isLoading = results.some( ( result ) => result.isLoading );
 	const isError = results.some( ( result ) => result.isError );
-	const subscribersData = results.map( ( result ) => result.data ).filter( isValueTruthy );
+	const subscribersData = results.map( ( result ) => result.data ).filter( isTruthy );
 
 	return { isLoading, isError, subscribersData };
 }
