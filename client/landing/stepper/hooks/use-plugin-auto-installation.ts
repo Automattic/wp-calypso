@@ -2,6 +2,7 @@ import { useMutation, useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
+import { usePluginInstallation } from './use-plugin-installation';
 import type { SitePlugin } from 'calypso/data/plugins/types';
 
 interface Response {
@@ -20,18 +21,12 @@ interface SiteMigrationStatus {
 	error: Error | null;
 }
 
-type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
-const DEFAULT_RETRY = process.env.NODE_ENV === 'test' ? 1 : 100;
+export type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
+export const DEFAULT_RETRY = process.env.NODE_ENV === 'test' ? 1 : 100;
 const DEFAULT_RETRY_DELAY = process.env.NODE_ENV !== 'production' ? 300 : 3000;
 
 const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
 	wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
-		apiNamespace: 'rest/v1.2',
-	} );
-
-const installPlugin = async ( siteId: number, pluginSlug: string ) =>
-	wpcom.req.post( {
-		path: `/sites/${ siteId }/plugins/${ pluginSlug }/install?http_envelope=1`,
 		apiNamespace: 'rest/v1.2',
 	} );
 
@@ -58,21 +53,6 @@ const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options
 				isInstalled: data.plugins.some( ( plugin ) => plugin.slug === pluginSlug ),
 			};
 		},
-	} );
-};
-
-const usePluginInstallation = ( pluginSlug: string, siteId?: number, options?: Options ) => {
-	return useMutation( {
-		mutationKey: [ 'onboarding-site-plugin-installation', siteId, pluginSlug ],
-		mutationFn: async () => installPlugin( siteId!, pluginSlug ),
-		retry:
-			options?.retry ||
-			( ( failCount, e: Error & { error?: string } ) => {
-				if ( e?.error === 'plugin_already_installed' ) {
-					return false;
-				}
-				return failCount < DEFAULT_RETRY;
-			} ),
 	} );
 };
 

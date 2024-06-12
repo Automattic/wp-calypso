@@ -18,7 +18,7 @@ const getSitePluginsEndpoint = ( siteId: number ) =>
 	`/rest/v1.2/sites/${ siteId }/plugins?http_envelope=1`;
 
 const getPluginInstallationEndpoint = ( siteId: number ) =>
-	`/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install?http_envelope=1`;
+	`/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install`;
 
 const getPluginActivationEndpoint = ( siteId: number ) =>
 	`/rest/v1.2/sites/${ siteId }/plugins/migrate-guru%2Fmigrateguru`;
@@ -91,6 +91,28 @@ describe( 'usePluginAutoInstallation', () => {
 			.reply( 200, { plugins: [] } )
 			.post( getPluginInstallationEndpoint( SITE_ID ) )
 			.reply( 500, new Error( 'Error installing plugin' ) );
+
+		const { result } = render( { retry: 2 } );
+
+		await waitFor(
+			() => {
+				expect( result.current ).toEqual( {
+					status: 'pending',
+					error: null,
+					completed: false,
+				} );
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	it( 'returns "pending" when a retry is required to install a plugin1', async () => {
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( getSitePluginsEndpoint( SITE_ID ) )
+			.once()
+			.reply( 200, { plugins: [] } )
+			.post( getPluginInstallationEndpoint( SITE_ID ) )
+			.reply( 200 );
 
 		const { result } = render( { retry: 2 } );
 
