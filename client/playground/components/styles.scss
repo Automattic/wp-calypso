@@ -1,0 +1,61 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.is-section-playground .layout__content {
+	background: #fff;
+	padding: 0;
+	min-height: calc(100vh - 3.5rem);
+}
+
+.is-section-playground .main {
+	h1 {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		/* stylelint-disable-next-line */
+		font-size: 4.375rem;
+		line-height: 1;
+		margin-bottom: 1rem;
+		color: var(--studio-gray-100);
+
+		@media (max-width: $break-small ) {
+			font-size: 3rem;
+		}
+	}
+
+	p {
+		font-family: "Noto Sans", Helvetica, Arial, sans-serif;
+		/* stylelint-disable-next-line */
+		font-size: 1.125rem;
+		color: var(--studio-gray-80);
+	}
+
+	a,
+	button.is-link {
+		color: var(--wp-admin-theme-color);
+		text-decoration: underline;
+		font-size: 1rem;
+
+		&:hover {
+			color: var(--wp-admin-theme-color-darker-20);
+		}
+	}
+}
+
+.l-block.heading-block {
+	.l-block-wrapper {
+		position: relative;
+	}
+
+	.arrow-pointer {
+		width: 100px;
+		position: absolute;
+		right: -47px;
+		bottom: -115px;
+	}
+}
+
+.wp-playground-container {
+	iframe {
+		display: block;
+		width: 100%;
+		height: 90vh;
+	}
+}
