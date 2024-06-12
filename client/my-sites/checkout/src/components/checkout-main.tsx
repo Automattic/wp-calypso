@@ -694,9 +694,11 @@ export default function CheckoutMain( {
 			transactionError: string | null;
 			paymentMethodId: string | null;
 		} ) => {
+			const errorString = String( transactionError );
+
 			reduxDispatch(
 				errorNotice(
-					parse( DOMPurify.sanitize( transactionError ) ) ||
+					parse( DOMPurify.sanitize( errorString ) ) ||
 						translate( 'An error occurred during your purchase.' )
 				)
 			);
@@ -704,7 +706,7 @@ export default function CheckoutMain( {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_payment_error', {
 					error_code: null,
-					reason: String( transactionError ),
+					reason: errorString,
 				} )
 			);
 			reduxDispatch(
@@ -712,12 +714,12 @@ export default function CheckoutMain( {
 					error_code: null,
 					payment_method:
 						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ?? '' ) || '',
-					reason: String( transactionError ),
+					reason: errorString,
 				} )
 			);
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
-					error_message: String( transactionError ),
+					error_message: errorString,
 				} )
 			);
 		},
