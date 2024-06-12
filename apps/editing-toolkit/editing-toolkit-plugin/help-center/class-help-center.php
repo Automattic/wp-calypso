@@ -344,7 +344,7 @@ class Help_Center {
 						'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 						'parent' => 'top-secondary',
 						// phpcs:ignore WPCOM.I18nRules.LocalizedUrl.UnlocalizedUrl
-						'href'   => $this->is_jetpack_disconnected() ? 'https://wordpress.com/support/' : false,
+						'href'   => $this->is_jetpack_disconnected() ? 'https://wordpress.com/help/' : false,
 						'meta'   => array(
 							'html'   => '<div id="help-center-masterbar" />',
 							'class'  => 'menupop',
