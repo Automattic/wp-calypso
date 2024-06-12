@@ -21,7 +21,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
-import { isAnyHostingFlow } from '@automattic/onboarding';
+import { ONBOARDING_GUIDED_FLOW, isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
 	ComparisonGrid,
@@ -679,6 +679,18 @@ const PlansFeaturesMain = ( {
 		? getWooExpressFeaturesGroupedForFeaturesGrid()
 		: getPlanFeaturesGroupedForFeaturesGrid();
 
+	const getComparisonGridToggleLabel = () => {
+		if ( showPlansComparisonGrid ) {
+			return translate( 'Hide comparison' );
+		}
+		switch ( flowName ) {
+			case ONBOARDING_GUIDED_FLOW:
+				return translate( 'Compare all plans' );
+			default:
+				return translate( 'Compare plans' );
+		}
+	};
+
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -800,11 +812,7 @@ const PlansFeaturesMain = ( {
 									<>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }
-											label={
-												showPlansComparisonGrid
-													? translate( 'Hide comparison' )
-													: translate( 'Compare plans' )
-											}
+											label={ getComparisonGridToggleLabel() }
 										/>
 										{ showEscapeHatch && (
 											<div className="plans-features-main__escape-hatch">
