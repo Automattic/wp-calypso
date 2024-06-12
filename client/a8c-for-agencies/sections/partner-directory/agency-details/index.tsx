@@ -41,7 +41,7 @@ const AgencyDetailsForm = () => {
 			title={ translate( 'Finish adding details to your public profile' ) }
 			description={
 				<>
-					Add details to your agency\'s public profile for clients to see.{ ' ' }
+					Add details to your agency's public profile for clients to see.{ ' ' }
 					<a href={ `/partner-directory/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }` }>
 						Want to update your expertise instead?
 					</a>
