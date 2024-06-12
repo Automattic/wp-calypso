@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
+import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
 import BudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/budget-selector';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import IndustrySelector from '../components/industry-selector';
@@ -11,6 +12,7 @@ import LanguageSelector from '../components/languages-selector';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
 import { PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG } from '../constants';
+import { useCountryList } from './hooks/use-country-list';
 import useDetailsForm from './hooks/use-details-form';
 import useSubmitForm from './hooks/use-submit-form';
 
@@ -18,6 +20,7 @@ const AgencyDetailsForm = () => {
 	const translate = useTranslate();
 
 	const { formData, setFormData, isValidFormData } = useDetailsForm();
+	const { countryOptions } = useCountryList();
 
 	const { onSubmit, isSubmitting } = useSubmitForm( { formData } );
 
@@ -82,9 +85,13 @@ const AgencyDetailsForm = () => {
 					/>
 				</FormField>
 				<FormField label={ translate( 'Company location' ) }>
-					<TextControl
+					<SearchableDropdown
 						value={ formData.country }
-						onChange={ ( value ) => setFormFields( { country: value } ) }
+						onChange={ ( value ) => {
+							setFormFields( { country: value } );
+						} }
+						options={ countryOptions }
+						disabled={ false }
 					/>
 				</FormField>
 				<FormField
