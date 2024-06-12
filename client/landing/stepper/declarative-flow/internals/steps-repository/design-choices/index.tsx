@@ -13,6 +13,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
+import BigSkyDisclaimerModal from '../../components/big-sky-disclaimer-modal';
 import DesignChoice from './design-choice';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -44,6 +45,10 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 
 		if ( destination === 'pattern-assembler' || destination === 'launch-big-sky' ) {
 			setSelectedDesign( getAssemblerDesign() );
+		}
+
+		if ( destination === 'launch-big-sky' ) {
+			return;
 		}
 
 		submit?.( { destination } );
@@ -84,14 +89,16 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								onSelect={ handleSubmit }
 							/>
 							{ isBigSkyEligible && recordBigSkyView() && (
-								<DesignChoice
-									className="design-choices__try-big-sky"
-									title={ translate( 'Try Big Sky' ) }
-									description={ translate( 'The AI website builder for WordPress.' ) }
-									imageSrc={ hiBigSky }
-									destination="launch-big-sky"
-									onSelect={ handleSubmit }
-								/>
+								<BigSkyDisclaimerModal>
+									<DesignChoice
+										className="design-choices__try-big-sky"
+										title={ translate( 'Try Big Sky' ) }
+										description={ translate( 'The AI website builder for WordPress.' ) }
+										imageSrc={ hiBigSky }
+										destination="launch-big-sky"
+										onSelect={ handleSubmit }
+									/>
+								</BigSkyDisclaimerModal>
 							) }
 						</div>
 					</>

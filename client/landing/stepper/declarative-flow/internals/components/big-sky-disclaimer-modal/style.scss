@@ -1,0 +1,59 @@
+.components-modal__frame.big-sky-disclaimer-modal__modal {
+	max-width: 600px;
+	max-height: 85%;
+}
+
+.big-sky-disclaimer-modal__modal {
+	.components-modal__header {
+		height: 220px;
+		padding: 0;
+		overflow: hidden;
+
+		.components-button {
+			position: absolute;
+			top: 10px;
+			left: 555px;
+			width: fit-content;
+		}
+	}
+
+	.components-modal__content {
+		margin-top: 220px;
+	}
+}
+
+.big-sky-disclaimer-modal__content {
+	h1 {
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin: 20px 0;
+	}
+}
+
+button.components-button.big-sky-disclaimer-modal__button.is-link {
+	align-items: normal;
+	text-decoration: auto;
+}
+
+button.components-button.big-sky-disclaimer-modal__button-start.is-primary {
+	margin: 24px 0;
+	padding: 24px 0;
+	width: 100%;
+	justify-content: center;
+}
+
+.big-sky-disclaimer-modal__features {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.big-sky-disclaimer-modal__features .feature {
+	display: flex;
+	align-items: flex-start;
+}
+
+.big-sky-disclaimer-modal__features .feature svg {
+	margin-right: 10px;
+	fill: #3858e9;
+}

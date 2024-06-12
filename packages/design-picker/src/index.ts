@@ -2,6 +2,7 @@ export { default } from './components';
 export { default as themesIllustrationImage } from './components/assets/images/themes-illustration.png';
 export { default as assemblerIllustrationImage } from './components/assets/images/assembler-illustration.png';
 export { default as hiBigSky } from './components/assets/images/hi-big-sky.png';
+export { default as bigSkyModalHeader } from './components/assets/images/big-sky-interstitial-modal.gif';
 export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';
 export { default as BadgeContainer } from './components/badge-container';
 export { default as StyleVariationBadges } from './components/style-variation-badges';
