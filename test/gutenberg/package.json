@@ -1,0 +1,23 @@
+{
+	"name": "wp-gutenberg-test-runner",
+	"version": "0.0.1",
+	"description": "Gutenberg e2e tests on WPCOM",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Automattic/wp-calypso.git"
+	},
+	"main": "greetings.js",
+	"scripts": {
+		"test": "wp-scripts test-e2e --config ./jest.config.js"
+	},
+	"dependencies": {
+		"@wordpress/e2e-tests": "^1.14.1",
+		"@wordpress/jest-console": "^3.6.0",
+		"@wordpress/jest-puppeteer-axe": "^1.7.0",
+		"@wordpress/scripts": "^8.0.1",
+		"expect-puppeteer": "^4.4.0",
+		"jest": "^25.5.2",
+		"jest-puppeteer": "^4.4.0"
+	}
+}
