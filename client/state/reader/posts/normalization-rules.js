@@ -1,5 +1,6 @@
 import { flow } from 'lodash';
 import addImageWrapperElement from 'calypso/lib/post-normalizer/rule-add-image-wrapper-element';
+import convertGalleryBlock from 'calypso/lib/post-normalizer/rule-content-convert-gallery-block';
 import convertVideoPressBlocks from 'calypso/lib/post-normalizer/rule-content-convert-videopress-blocks';
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'calypso/lib/post-normalizer/rule-content-detect-polls';
@@ -115,6 +116,7 @@ const fastPostNormalizationRules = flow( [
 	safeImageProperties( READER_CONTENT_WIDTH ),
 	makeLinksSafe,
 	withContentDom( [
+		convertGalleryBlock,
 		convertVideoPressBlocks,
 		removeStyles,
 		removeElementsBySelector,
