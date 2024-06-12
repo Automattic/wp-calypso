@@ -3,6 +3,11 @@ import { Icon, external, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
+	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
+} from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import StepSection from '../../referrals/common/step-section';
@@ -123,7 +128,7 @@ export default function PartnerDirectoryDashboard() {
 											<Button
 												className="a8c-blue-link"
 												onClick={ onAgencyProfileClick }
-												href="/partner-directory/agency-details"
+												href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }` }
 												borderless
 											>
 												{ translate( `Your agency's profile` ) }
@@ -154,12 +159,16 @@ export default function PartnerDirectoryDashboard() {
 					<div>
 						<Button
 							onClick={ onEditExpertiseClick }
-							href="/partner-directory/agency-expertise"
+							href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }` }
 							compact
 						>
 							{ translate( 'Edit expertise' ) }
 						</Button>
-						<Button onClick={ onEditProfileClick } href="/partner-directory/agency-details" compact>
+						<Button
+							onClick={ onEditProfileClick }
+							href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }` }
+							compact
+						>
 							{ translate( 'Edit profile' ) }
 						</Button>
 					</div>
@@ -216,7 +225,7 @@ export default function PartnerDirectoryDashboard() {
 					}
 					buttonProps={ {
 						children: isSubmitted ? translate( 'Edit expertise' ) : translate( 'Apply now' ),
-						href: '/partner-directory/agency-expertise',
+						href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }`,
 						onClick: onApplyNowClick,
 						primary: ! isSubmitted,
 						compact: true,
@@ -231,7 +240,7 @@ export default function PartnerDirectoryDashboard() {
 					) }
 					buttonProps={ {
 						children: translate( 'Finish profile' ),
-						href: '/partner-directory/agency-details',
+						href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
 						onClick: onFinishProfileClick,
 						primary: isSubmitted,
 						disabled: ! isSubmitted || ! showFinishProfileButton,
