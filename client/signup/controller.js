@@ -248,16 +248,31 @@ export default {
 		}
 
 		// See: 1113-gh-Automattic/experimentation-platform for details.
-		// `isTokenLoaded` is a more accurate check than `isUserLoggedIn`. Because `loadExperimentAssignment` uses `wpcom` token to fetch the experiment as the user.
-		if ( isOnboardingGuidedFlow( flowName ) && wpcom.isTokenLoaded() ) {
+		// `isTokenLoaded` covers users who just logged in.
+		if (
+			( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) &&
+			( wpcom.isTokenLoaded() || userLoggedIn )
+		) {
 			// Load both experiments in parallel for better performance.
-			const [ bigSkyExperiment, trailMapExperiment ] = await Promise.all( [
+			await Promise.all( [
 				loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
 				loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
 			] );
-			if ( bigSkyExperiment.variationName === 'trailmap' ) {
-				initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
+
+			// NOTE: Uncomment the following code to use the experiments.
+			// const [ _bigSkyExperiment, _trailMapExperiment ] = await Promise.all( [
+			// 	loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
+			// 	loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
+			// ] );
+
+			debugger;
+			if ( [ 'guided', 'survey_only' ].includes( context.query.trailmap ) ) {
+				initialContext.trailMapExperimentVariant = context.params.trailmap;
 			}
+
+			//if ( bigSkyExperiment.variationName === 'trailmap' ) {
+			// initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
+			//}
 		}
 
 		if (

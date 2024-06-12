@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.0.1
+## v2.0.1 (2024-06-10)
 
 - Added Mastodon, Instagram and Nextdoor previews.
 - Fixed hyperlinks for Facebook.

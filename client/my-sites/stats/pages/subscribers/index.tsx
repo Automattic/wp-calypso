@@ -88,7 +88,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 				<NavigationHeader
 					className="stats__section-header modernized-header"
 					title={ translate( 'Jetpack Stats' ) }
-					subtitle={ translate( "View your site's performance and learn from trends." ) }
+					subtitle={ translate( 'Track your subscriber growth and engagement.' ) }
 					screenReader={ navItems.subscribers?.label }
 					navigationItems={ [] }
 				></NavigationHeader>

@@ -9,6 +9,7 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -192,6 +193,8 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 
 		return shouldHideBasedOnRef || shouldHideBasedOnVariant;
 	};
+
+	usePresalesChat( 'wpcom' );
 
 	return (
 		<>

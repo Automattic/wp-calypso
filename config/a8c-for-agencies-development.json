@@ -28,10 +28,12 @@
 	],
 	"oauth_client_id": 95928,
 	"features": {
+		"ad-tracking": false,
 		"a8c-for-agencies": true,
 		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
 		"a8c-for-agencies/import-site-from-wpcom": true,
 		"always_use_logout_url": true,
+		"cookie-banner": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"oauth": true,

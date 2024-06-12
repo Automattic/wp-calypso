@@ -1,6 +1,6 @@
 import { type Callback } from '@automattic/calypso-router';
+import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import ReferralsSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/referrals';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MainSidebar from '../../components/sidebar-menu/main';
 import ReferralsBankDetails from './primary/bank-details';
 import CommissionOverview from './primary/commission-overview';
