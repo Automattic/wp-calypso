@@ -344,6 +344,10 @@ class ReaderStream extends Component {
 			stream: { items },
 		} = this.props;
 
+		// THIS (below comments) bypasses functionality further below. This prevents a bug, but
+		// loses the ability to behave well with combinations of shortkey selections and manual
+		// scrolling.
+
 		// do we have a selected item? if so, just move to the next one
 		if ( this.props.selectedPostKey ) {
 			this.props.selectNextItem( { streamKey, items } );
@@ -351,6 +355,13 @@ class ReaderStream extends Component {
 		}
 
 		const visibleIndexes = this.getVisibleItemIndexes();
+
+		// THIS (below) doesn't work as expected. First it is being bypassed by the above. When its not, it
+		// causes bugs and selects the previous item if the item you selected is slightly off the
+		// bottom of the page (causing selection loop).
+
+		// We could remove above and check below if the selected item is the last visible index, and call selectNextItem in that case.
+		// Or we could update above instead of romving it entirely to check if the selected item is above the viewport.
 
 		// This is slightly magical...
 		// When a user tries to select the "next" item, we really want to select
