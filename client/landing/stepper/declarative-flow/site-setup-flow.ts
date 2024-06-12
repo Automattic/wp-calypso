@@ -62,15 +62,24 @@ const siteSetupFlow: Flow = {
 			}
 		}, [] );
 
-		const { setIntent, setGoals } = useDispatch( ONBOARD_STORE );
 		const { site } = useSiteData();
+		const { setIntent, setGoals } = useDispatch( ONBOARD_STORE );
+
+		const goals = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			[]
+		);
 
 		useEffect( () => {
+			if ( goals.length ) {
+				return;
+			}
+
 			if ( site?.options?.site_goals?.length ) {
 				setIntent( goalsToIntent( site.options.site_goals ) );
 				setGoals( site.options.site_goals );
 			}
-		}, [ site, setIntent ] );
+		}, [ site, setIntent, setGoals, goals ] );
 	},
 
 	useSteps() {
