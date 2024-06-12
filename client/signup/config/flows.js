@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getPlan } from '@automattic/calypso-products/';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
@@ -258,6 +259,41 @@ function getEntrepreneurFlowDestination() {
 	return '/setup/entrepreneur/trialAcknowledge';
 }
 
+function getGuidedOnboardingFlowDestination( dependencies ) {
+	const { onboardingSegment, siteSlug, siteId, domainItem, cartItems, refParameter } = dependencies;
+
+	if ( 'no-site' === siteSlug ) {
+		return '/home';
+	}
+	let queryParams = { siteSlug, siteId };
+
+	if ( domainItem ) {
+		queryParams = { siteId };
+	}
+
+	if ( refParameter ) {
+		queryParams.ref = refParameter;
+	}
+
+	const planSlug = cartItems?.[ 0 ]?.product_slug;
+	const planTitle = getPlan( planSlug )?.getTitle();
+
+	if (
+		onboardingSegment === 'developer-or-agency' &&
+		( planTitle === 'Creator' || planTitle === 'Entrepreneur' )
+	) {
+		return `${ siteSlug }/wp-admin`;
+	} else if ( onboardingSegment === 'consumer-or-business' && planTitle === 'Entrepreneur' ) {
+		return `/checkout/thank-you/${ siteSlug }`;
+	} else if ( onboardingSegment === 'blogger' ) {
+		return addQueryArgs( queryParams, `/setup/site-setup/options` );
+	} else if ( onboardingSegment === 'nonprofit' || onboardingSegment === 'consumer-or-business' ) {
+		return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
+	} else if ( onboardingSegment === 'unknown' ) {
+		return `/checkout/thank-you/${ siteSlug }`;
+	}
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -274,6 +310,7 @@ const flows = generateFlows( {
 	getDIFMSiteContentCollectionDestination,
 	getHostingFlowDestination,
 	getEntrepreneurFlowDestination,
+	getGuidedOnboardingFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

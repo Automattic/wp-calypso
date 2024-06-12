@@ -53,6 +53,7 @@ export function generateFlows( {
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
 	getEntrepreneurFlowDestination = noop,
+	getGuidedOnboardingFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
@@ -685,7 +686,7 @@ export function generateFlows( {
 		{
 			name: ONBOARDING_GUIDED_FLOW,
 			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
-			destination: getSignupDestination,
+			destination: getGuidedOnboardingFlowDestination,
 			description: 'Choose what brings them to WordPress.com',
 			lastModified: '2024-05-15',
 			showRecaptcha: true,

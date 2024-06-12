@@ -795,7 +795,7 @@ class Signup extends Component {
 				<ReskinnedProcessingScreen
 					flowName={ this.props.flowName }
 					hasPaidDomain={ hasPaidDomain }
-					isDestinationSetupSiteFlow={ destination.startsWith( '/setup' ) }
+					isDestinationSetupSiteFlow={ destination?.startsWith( '/setup' ) }
 				/>
 			);
 		}
