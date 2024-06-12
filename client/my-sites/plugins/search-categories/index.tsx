@@ -147,6 +147,7 @@ const SearchCategories: FC< {
 							} }
 							selectedTab={ category ?? categories[ 0 ].slug }
 							tabs={ categories }
+							titleField="menu"
 							width={ width }
 						/>
 					</>
