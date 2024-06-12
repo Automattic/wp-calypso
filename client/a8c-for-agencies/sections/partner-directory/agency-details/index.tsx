@@ -7,7 +7,7 @@ import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import BudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/budget-selector';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import IndustrySelector from '../components/industry-selector';
-import LanguageSelector from '../components/laguages-selector';
+import LanguageSelector from '../components/languages-selector';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
 import { PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG } from '../constants';
