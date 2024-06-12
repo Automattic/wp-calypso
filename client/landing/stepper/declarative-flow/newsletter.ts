@@ -29,11 +29,13 @@ const newsletter: Flow = {
 	isSignupFlow: true,
 	useSteps() {
 		const query = useQuery();
-		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+		const ref = query.get( 'ref' ) ?? '';
+		// Marketing page (/newsletter) and support page (/support/launch-a-newsletter/) skip the intro.
+		const skipIntro = [ 'newsletter-lp', 'support-site-inline' ].includes( ref );
 
 		return [
-			// Load intro step component only when not coming from the marketing page
-			...( ! isComingFromMarketingPage
+			// Load intro step component only when not skipping intro
+			...( ! skipIntro
 				? [
 						{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
 				  ]
