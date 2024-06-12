@@ -11,9 +11,9 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
-import AgencyDetailsForm from './agency-details';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import AgencyDetailsForm from './agency-details';
 import AgencyExpertise from './agency-expertise';
 import {
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
@@ -21,7 +21,7 @@ import {
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 } from './constants';
 import Dashboard from './dashboard';
-import parseFormData from './utils/parse-form-data';
+import mapApplicationFormData from './utils/map-application-form-data';
 
 import './style.scss';
 
@@ -41,7 +41,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 
 	const agency = useSelector( getActiveAgency );
 
-	const application = useMemo( () => parseFormData( agency ), [ agency ] );
+	const application = useMemo( () => mapApplicationFormData( agency ), [ agency ] );
 
 	// Define the sub-menu sections
 	const sections: { [ slug: string ]: Section } = useMemo( () => {
