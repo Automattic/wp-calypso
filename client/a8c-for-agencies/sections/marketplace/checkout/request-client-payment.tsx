@@ -1,6 +1,8 @@
 import page from '@automattic/calypso-router';
 import { Button, FormLabel } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
+import clsx from 'clsx';
+import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { A4A_REFERRALS_DASHBOARD } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -22,18 +24,26 @@ interface Props {
 	checkoutItems: ShoppingCartItem[];
 }
 
+type ValidationState = {
+	email?: string;
+};
+
 function RequestClientPayment( { checkoutItems }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ email, setEmail ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
+	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
 
 	const { onClearCart } = useShoppingCart();
 
-	const onEmailChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
+	const onEmailChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		setEmail( event.currentTarget.value );
-	}, [] );
+		if ( validationError.email ) {
+			setValidationError( { email: undefined } );
+		}
+	};
 
 	const onMessageChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setMessage( event.currentTarget.value );
@@ -51,11 +61,15 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		if ( ! hasCompletedForm ) {
 			return;
 		}
+		if ( ! emailValidator.validate( email ) ) {
+			setValidationError( { email: translate( 'Please provide correct email' ) } );
+			return;
+		}
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_request_payment_click' )
 		);
 		requestPayment( { client_email: email, client_message: message, product_ids: productIds } );
-	}, [ dispatch, email, hasCompletedForm, message, productIds, requestPayment ] );
+	}, [ dispatch, email, hasCompletedForm, message, productIds, requestPayment, translate ] );
 
 	const onClickLearnMore = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_learn_more_click' ) );
@@ -87,6 +101,14 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_form_email_click' ) )
 						}
 					/>
+					<div
+						className={ clsx( 'checkout__client-referral-form-footer-error', {
+							hidden: ! validationError?.email,
+						} ) }
+						role="alert"
+					>
+						{ validationError.email }
+					</div>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="message">{ translate( 'Custom message' ) }</FormLabel>
