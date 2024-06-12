@@ -10,6 +10,7 @@ import IndustrySelector from '../components/industry-selector';
 import LanguageSelector from '../components/laguages-selector';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
+import { PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG } from '../constants';
 import useDetailsForm from './hooks/use-details-form';
 import useSubmitForm from './hooks/use-submit-form';
 
@@ -35,7 +36,9 @@ const AgencyDetailsForm = () => {
 			description={
 				<>
 					Add details to your agency\'s public profile for clients to see.{ ' ' }
-					<a href="/partner-directory/agency-expertise">Want to update your expertise instead?</a>
+					<a href={ `/partner-directory/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }` }>
+						Want to update your expertise instead?
+					</a>
 				</>
 			}
 		>
