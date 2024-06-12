@@ -266,7 +266,7 @@ export default {
 			// ] );
 
 			if ( [ 'treatment_guided', 'treatment_survey_only' ].includes( context.query.trailmap ) ) {
-				initialContext.trailMapExperimentVariant = context.params.trailmap;
+				initialContext.trailMapExperimentVariant = context.query.trailmap;
 			}
 
 			//if ( bigSkyExperiment.variationName === 'trailmap' ) {
