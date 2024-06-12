@@ -253,3 +253,4 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 };
 
 export { OdieAssistantContext, useOdieAssistantContext, OdieAssistantProvider };
+export type { OdieAssistantContextInterface };
