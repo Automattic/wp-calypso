@@ -134,6 +134,7 @@ export default class SignupFlowController {
 
 		this._resetStoresIfProcessing(); // reset the stores if the cached progress contained a processing step
 		this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
+		this._resetStoresIfSavedProgressStepRemoved(); // reset the stores if the cached progress contains a step that is missing in the current flow
 		this._resetSiteSlugIfUserEnteredAnotherFlow(); // reset the site slug if user entered another flow
 
 		// If we have access to the siteId, then make sure we've also loaded the siteSlug into
@@ -213,6 +214,20 @@ export default class SignupFlowController {
 			) {
 				this._reduxStore.dispatch( removeSiteSlugDependency() );
 			}
+		}
+	}
+
+	_resetStoresIfSavedProgressStepRemoved() {
+		const signupProgress = getSignupProgress( this._reduxStore.getState() );
+		const flowSteps = this._getFlowSteps();
+		if (
+			Object.values( signupProgress ).some(
+				( savedStep ) =>
+					this._flowName === savedStep.lastKnownFlow && ! flowSteps.includes( savedStep.stepName )
+			)
+		) {
+			debug( `Resetting stores: saved progress step missing in flow: ${ this._flowName }` );
+			this.reset();
 		}
 	}
 
