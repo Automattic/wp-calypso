@@ -13,7 +13,7 @@ export default function useDetailsForm() {
 		isAvailable: true,
 		industry: '',
 		languagesSpoken: [],
-		budgetLowerRange: 0,
+		budgetLowerRange: '0',
 		services: [],
 		products: [],
 	} );
@@ -26,7 +26,7 @@ export default function useDetailsForm() {
 			formData.bioDescription.length > 0 &&
 			formData.logoUrl.length > 0 &&
 			formData.landingPageUrl.length > 0 &&
-			formData.country.length > 0 &&
+			formData.country?.length > 0 &&
 			formData.industry.length > 0 &&
 			formData.services.length > 0 &&
 			formData.products.length > 0 &&
