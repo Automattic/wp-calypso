@@ -246,7 +246,7 @@ export default {
 				experiment.variationName === 'treatment_scrambled';
 		}
 
-		if ( isOnboardingFlow && wpcom.isTokenLoaded() ) {
+		if ( isOnboardingFlow && ( wpcom.isTokenLoaded() || userLoggedIn ) ) {
 			const experimentAssignmentBigSky = await loadExperimentAssignment(
 				'explat_test_calypso_signup_onboarding_bigsky_soft_launch'
 			);
