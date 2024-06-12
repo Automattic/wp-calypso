@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
+import DOMPurify from 'dompurify';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, isValidElement } from 'react';
@@ -145,7 +146,14 @@ export class Notice extends Component {
 					{ renderedIcon }
 				</span>
 				<span className="notice__content">
-					<span className="notice__text">{ text ? text : children }</span>
+					{ typeof text.valueOf() === 'string' ? (
+						<span
+							className="notice__text"
+							dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( text ) } } // eslint-disable-line react/no-danger
+						/>
+					) : (
+						<span className="notice__text">{ text ? text : children }</span>
+					) }
 				</span>
 				{ text ? children : null }
 				{ showDismiss && (
