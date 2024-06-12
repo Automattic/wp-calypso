@@ -171,7 +171,6 @@
 		"site-indicator": true,
 		"site-profiler/metrics": false,
 		"ssr/prefetch-timebox": true,
-		"stats/date-control": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/plan-usage": true,
