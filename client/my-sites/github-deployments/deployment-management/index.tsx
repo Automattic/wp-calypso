@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
-import ActionPanel from 'calypso/components/action-panel';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
+import { HostingCard } from 'calypso/components/hosting-card';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
@@ -41,7 +41,7 @@ export const GitHubDeploymentManagement = ( {
 	return (
 		<PageShell pageTitle={ __( 'Manage GitHub connection' ) }>
 			<HeaderCakeBack icon="chevron-left" onClick={ goToDeployments } />
-			<ActionPanel>{ renderContent() }</ActionPanel>
+			<HostingCard>{ renderContent() }</HostingCard>
 		</PageShell>
 	);
 };
