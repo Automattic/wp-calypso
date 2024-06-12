@@ -41,7 +41,7 @@ const useBBEGoal = () => {
 	//
 	// ************************************************************************
 
-	return translate( 'Get a website built quickly' );
+	return translate( 'Let us build your site in 4 days' );
 };
 
 export const useGoals = (): Goal[] => {
