@@ -1,6 +1,6 @@
 import { FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
-import { useFormSelectors } from '../agency-details/hooks/use-form-selectors';
+import { useFormSelectors } from './hooks/use-form-selectors';
 
 type Props = {
 	setProducts: ( tokens: ( string | TokenItem )[] ) => void;
