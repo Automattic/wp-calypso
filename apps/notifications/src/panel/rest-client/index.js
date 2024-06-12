@@ -34,6 +34,149 @@ export function Client() {
 	this.main( this );
 }
 
+/**
+ * @typedef Notification
+ *
+ * @property {string} id      Notification ID.
+ * @property {number} version Version of copy of notification data.
+ * @property {object} data    Notification data.
+ */
+
+/**
+ * Stores Simperium state for polling.
+ *
+ * @typedef SimperiumState
+ *
+ * @property {string|null}                  currentCv     Last seen CV for bucket.
+ * @property {Record<string, Notification>} notifications Notification data.
+ */
+
+/**
+ * @type {SimperiumState}
+ */
+let simperiumState = {
+	currentCv: null,
+	notifications: {},
+};
+
+/**
+ * @typedef ClientMessage
+ * @type {['delete', string] | ['add', string, Notification]}
+ */
+
+/**
+ * Connects to Simperium and loops via HTTP long-polling.
+ *
+ * @param {string}      token API token for user's Simperium account.
+ * @param {MessagePort} port  Communicates out to client application.
+ */
+const simperiumLoop = async ( token, port ) => {
+	const { current: currentCv, index } = await fetch(
+		'https://api.simperium.com/1/victims-markets-c61/note20/index',
+		{
+			headers: { 'X-Simperium-Token': token },
+		}
+	).then( ( r ) => r.json() );
+
+	simperiumState.currentCv = currentCv;
+
+	const currentIds = new Set();
+	const pendingIds = [];
+	for ( const { id, v } of index ) {
+		currentIds.add( id );
+		if (
+			! ( id in simperiumState.notifications && v !== simperiumState.notifications[ id ].version )
+		) {
+			continue;
+		}
+
+		const request = fetch(
+			`https://api.simperium.com/1/victims-markets-c61/note20/i/${ id }/v/${ v }`,
+			{
+				headers: { 'X-Simperium-Token': token },
+			}
+		)
+			.then( ( r ) => r.json() )
+			.then( ( data ) => {
+				simperiumState.notifications[ id ] = { id, version: v, data };
+				port.postMessage( [ 'add', id, data ] );
+			} );
+
+		pendingIds.push( request );
+	}
+
+	for ( const id in simperiumState.notifications ) {
+		if ( ! currentIds.has( id ) ) {
+			port.postMessage( [ 'delete', id ] );
+		}
+	}
+
+	await Promise.all( pendingIds );
+
+	const tryFetch = ( ...args ) => {
+		try {
+			return fetch( ...args );
+		} catch ( e ) {
+			return null;
+		}
+	};
+
+	const metaLoop = async () => {
+		const changes = tryFetch();
+	};
+
+	const notificationsLoop = async () => {
+		const changes = await fetch(
+			`https://api.simperium.com/1/victims-markets-c61/note20/changes?cv=${ simperiumState.currentCv }`,
+			{ headers: { 'X-Simperium-Token': token } }
+		);
+
+		if ( null === changes ) {
+			setTimeout( notificationsLoop, 50 );
+			return;
+		}
+
+		for ( const change in changes ) {
+			switch ( change.o ) {
+				case '-':
+					delete simperiumState.notifications[ change.id ];
+					port.postMessage( [ 'delete', change.id ] );
+					break;
+
+				case 'M':
+					console.log( `Change for ${ change.id }` );
+					console.log( { change } );
+					break;
+			}
+		}
+
+		simperiumState.currentCv = setTimeout( notificationsLoop, 50 );
+	};
+
+	notificationsLoop();
+	metaLoop();
+};
+
+const connectToSimperium = () => {
+	const token = localStorage.getItem( 'simperium-token' );
+	if ( null === token ) {
+		return null;
+	}
+
+	const persistedState = localStorage.getItem( 'simperium-state' );
+	if ( null !== persistedState ) {
+		simperiumState = JSON.parse( persistedState );
+	}
+
+	const { port1: clientPort, port2: loopPort } = new MessageChannel();
+
+	simperiumLoop( token, loopPort );
+
+	return clientPort;
+};
+
+connectToSimperium();
+
 function main() {
 	// subscribe if possible
 	if ( ! this.subscribed && ! this.subscribing ) {
