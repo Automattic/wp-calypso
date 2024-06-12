@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useI18n } from '@wordpress/react-i18n';
-import ActionPanel from 'calypso/components/action-panel';
+import { HostingCard } from 'calypso/components/hosting-card';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { GitHubDeploymentSurvey } from '../components/deployments-survey';
@@ -39,9 +39,9 @@ export function GitHubDeployments() {
 		}
 
 		return (
-			<ActionPanel>
+			<HostingCard>
 				<GitHubDeploymentCreationForm onConnected={ refetch } />
-			</ActionPanel>
+			</HostingCard>
 		);
 	};
 

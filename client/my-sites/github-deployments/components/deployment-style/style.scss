@@ -4,32 +4,22 @@
 	width: 100%;
 	height: fit-content;
 
-	&__header {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-		font-weight: 500;
-		font-size: $font-body;
-		margin-bottom: 12px;
-		line-height: 24px;
-		color: var(--studio-gray-80);
-
-		.support-info {
-			margin: 0;
-			transform: translateY(2.5px);
-		}
-	}
-
-	&__description {
-		margin-bottom: 12px;
-		font-size: $font-body-small;
-		line-height: 20px;
-		color: var(--studio-gray-100);
-	}
-
 	&__repository {
 		label {
 			margin-bottom: 0;
+		}
+	}
+
+	.hosting-card__heading {
+		.hosting-card__title {
+			flex: unset;
+		}
+
+		.support-info {
+			height: 24px;
+			margin: 0;
+			margin-inline-start: -8px;
+			transform: translateY(2.5px);
 		}
 	}
 
