@@ -1,6 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isJetpackAISlug,
 	isJetpackPlanSlug,
+	isJetpackSocialSlug,
 	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import clsx from 'clsx';
@@ -101,6 +103,8 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					);
 
 					const isMultiPlanSelectProduct =
+						( isJetpackSocialSlug( item.productSlug ) &&
+							! isEnabled( 'jetpack/social-plans-v1' ) ) ||
 						isJetpackAISlug( item.productSlug ) ||
 						isJetpackStatsPaidProductSlug( item.productSlug );
 
