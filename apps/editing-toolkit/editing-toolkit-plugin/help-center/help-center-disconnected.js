@@ -11,7 +11,7 @@ function HelpCenterContent() {
 		<>
 			<Button
 				className="help-center"
-				onClick={ () => window.open( localizeUrl( 'https://wordpress.com/support/' ), '_blank' ) }
+				onClick={ () => window.open( localizeUrl( 'https://wordpress.com/help/' ), '_blank' ) }
 				icon={ <HelpIcon /> }
 				label="Help"
 				size="compact"
