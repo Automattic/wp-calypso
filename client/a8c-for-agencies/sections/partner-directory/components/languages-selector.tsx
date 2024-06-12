@@ -134,6 +134,7 @@ const LanguagesSelector = ( { setLanguages, selectedLanguages }: Props ) => {
 			__experimentalExpandOnFocus
 			__experimentalShowHowTo={ false }
 			__nextHasNoMarginBottom
+			label=""
 			onChange={ setLanguagesByCode }
 			suggestions={ Object.values( availableLanguages ) }
 			value={ selectedLanguages }
