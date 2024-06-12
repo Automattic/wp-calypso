@@ -20,14 +20,15 @@ const getWordPressOptions = ( environmentUrlSuffix ) => ( {
 			type: 'image/png',
 		},
 	],
+	prefer_related_applications: true,
 	related_applications: [
 		{
 			platform: 'play',
-			url: 'https://play.google.com/store/apps/details?id=org.wordpress.android',
+			url: 'https://play.google.com/store/apps/details?id=com.jetpack.android',
 		},
 		{
 			platform: 'itunes',
-			url: 'https://itunes.apple.com/app/wordpress/id335703880',
+			url: 'https://apps.apple.com/app/jetpack-for-wordpress/id1565481562?ct=pwa-manifest&mt=8&pt=299112',
 		},
 	],
 } );
