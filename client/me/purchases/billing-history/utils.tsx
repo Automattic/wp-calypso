@@ -229,7 +229,7 @@ function renderSpaceAddOnquantitySummary(
 	} );
 }
 
-export function renderTransactionVolumeSummary(
+export function renderDomainTransactionVolumeSummary(
 	{ volume, product_slug, type }: BillingTransactionItem,
 	translate: LocalizeProps[ 'translate' ]
 ) {
