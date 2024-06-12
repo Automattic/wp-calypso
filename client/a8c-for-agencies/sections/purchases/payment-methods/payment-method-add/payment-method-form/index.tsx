@@ -26,6 +26,7 @@ import {
 	A4A_MARKETPLACE_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
 	A4A_PAYMENT_METHODS_LINK,
+	A4A_CLIENT_PAYMENT_METHODS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview/hooks/use-issue-and-assign-licenses';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
@@ -43,6 +44,7 @@ import usePaymentMethod from '../../hooks/use-payment-method';
 import { useReturnUrl } from '../../hooks/use-return-url';
 import useStoredCards from '../../hooks/use-stored-cards';
 import { getStripeConfiguration } from '../../lib/get-stripe-configuration';
+import { isClientView } from '../../lib/is-client-view';
 import CreditCardLoading from '../credit-card-fields/credit-card-loading';
 
 import './style.scss';
@@ -198,7 +200,7 @@ function PaymentMethodForm() {
 		if ( returnQueryArg || products ) {
 			refetchStoredCards();
 		} else {
-			page( A4A_PAYMENT_METHODS_LINK );
+			page( isClientView() ? A4A_CLIENT_PAYMENT_METHODS_LINK : A4A_PAYMENT_METHODS_LINK );
 		}
 	}, [ returnQueryArg, products, refetchStoredCards ] );
 
@@ -237,6 +239,9 @@ function PaymentMethodForm() {
 	}, [ setupIntentError, reduxDispatch ] );
 
 	const getPreviousPageLink = () => {
+		if ( isClientView() ) {
+			return A4A_CLIENT_PAYMENT_METHODS_LINK;
+		}
 		if ( products ) {
 			if ( source === 'sitesdashboard' ) {
 				const productsSlugs = products
