@@ -230,17 +230,31 @@ function renderSpaceAddOnquantitySummary(
 }
 
 export function renderTransactionVolumeSummary(
-	{ volume, wpcom_product_slug }: BillingTransactionItem,
+	{ volume, wpcom_product_slug, type }: BillingTransactionItem,
 	translate: LocalizeProps[ 'translate' ]
 ) {
 	if ( ! volume ) {
 		return null;
 	}
 
+	const isRenewal = 'recurring' === type;
+
 	volume = parseInt( String( volume ) );
 
 	if ( 'dotblog_domain' !== wpcom_product_slug ) {
 		return null;
+	}
+
+	if ( isRenewal ) {
+		return translate(
+			'Domain renewed for %(quantity)d year',
+			'Domain renewed for %(quantity)d years',
+			{
+				args: { quantity: volume },
+				count: volume,
+				comment: '%(quantity)d is the number of years the domain has been renewed for',
+			}
+		);
 	}
 
 	return translate(
