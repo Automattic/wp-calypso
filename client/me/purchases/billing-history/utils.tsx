@@ -230,7 +230,7 @@ function renderSpaceAddOnquantitySummary(
 }
 
 export function renderTransactionVolumeSummary(
-	{ volume, wpcom_product_slug, type }: BillingTransactionItem,
+	{ volume, product_slug, type }: BillingTransactionItem,
 	translate: LocalizeProps[ 'translate' ]
 ) {
 	if ( ! volume ) {
@@ -241,7 +241,7 @@ export function renderTransactionVolumeSummary(
 
 	volume = parseInt( String( volume ) );
 
-	if ( 'dotblog_domain' !== wpcom_product_slug ) {
+	if ( 'wp-domains' !== product_slug ) {
 		return null;
 	}
 
