@@ -332,6 +332,12 @@ export class UserStep extends Component {
 			}
 		}
 
+		if ( 'onboarding-affiliate' === flowName ) {
+			subHeaderText = translate(
+				"Thanks for stopping by! You're a few steps away from building your perfect website. Let's do this."
+			);
+		}
+
 		if ( this.props.userLoggedIn ) {
 			subHeaderText = '';
 		}
