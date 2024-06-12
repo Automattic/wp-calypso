@@ -283,6 +283,7 @@ const SitesDashboardV2 = ( {
 								event="learn-more"
 								horizontal
 								href={ localizeUrl( 'https://wordpress.com/for-agencies' ) }
+								target="_blank"
 								title={ translate( 'Managing multiple sites? Meet our agency hosting' ) }
 								tracksClickName="calypso_sites_dashboard_a4a_banner_click"
 							/>
