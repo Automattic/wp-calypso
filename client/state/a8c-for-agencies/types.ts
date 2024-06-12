@@ -41,6 +41,9 @@ export interface Agency {
 			products: string[];
 			languages_spoken: string[];
 		};
+		budget_details: {
+			budget_lower_range: string;
+		};
 		partner_directory_application: null | {
 			status: 'pending' | 'in-progress' | 'completed';
 			directories: {
