@@ -6,6 +6,8 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { isValueTruthy, getContactDetailsType } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
+import DOMPurify from 'dompurify';
+import parse from 'html-react-parser';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
@@ -693,7 +695,10 @@ export default function CheckoutMain( {
 			paymentMethodId: string | null;
 		} ) => {
 			reduxDispatch(
-				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+				errorNotice(
+					parse( DOMPurify.sanitize( transactionError ) ) ||
+						translate( 'An error occurred during your purchase.' )
+				)
 			);
 
 			reduxDispatch(
