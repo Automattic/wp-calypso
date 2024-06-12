@@ -27,6 +27,7 @@
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
 		"design-picker/use-assembler-styles": true,
+		"dev/store-sandbox-helper": true,
 		"devdocs": false,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
