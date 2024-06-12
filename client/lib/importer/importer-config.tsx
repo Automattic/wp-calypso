@@ -2,9 +2,9 @@ import config from '@automattic/calypso-config';
 import { TranslateResult, translate } from 'i18n-calypso';
 import { filter, orderBy, values } from 'lodash';
 import { type ImporterOption } from 'calypso/blocks/import/list';
-import { type ImporterPlatform } from 'calypso/blocks/import/types';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { appStates } from 'calypso/state/imports/constants';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 export interface ImporterOptionalURL {
 	title: TranslateResult;
