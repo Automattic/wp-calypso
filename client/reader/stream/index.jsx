@@ -483,12 +483,14 @@ class ReaderStream extends Component {
 		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
 		const itemKey = this.getPostRef( postKey );
-		const showPost = ( args ) =>
+		const showPost = ( args ) => {
+			this.props.selectItem( { streamKey: this.props.streamKey, postKey } );
 			this.props.showSelectedPost( {
 				...args,
 				postKey: postKey,
 				streamKey,
 			} );
+		};
 
 		return (
 			<Fragment key={ itemKey }>
