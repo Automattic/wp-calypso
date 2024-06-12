@@ -15,6 +15,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
+import ReaderOnboardingModal from 'calypso/reader/components/onboarding-modal';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
@@ -651,6 +652,7 @@ class ReaderStream extends Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ baseClassnames }>
+				<ReaderOnboardingModal />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />

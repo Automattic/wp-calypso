@@ -44,6 +44,7 @@ function ReaderSubscriptionListItem( {
 	railcar,
 	isLoggedIn,
 	registerLastActionRequiresLogin: registerLastActionRequiresLoginProp,
+	disableSuggestedFollows,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -210,7 +211,7 @@ function ReaderSubscriptionListItem( {
 					<ReaderSiteNotificationSettings siteId={ siteId } />
 				) }
 			</div>
-			{ siteId && (
+			{ siteId && ! disableSuggestedFollows && (
 				<ReaderSuggestedFollowsDialog
 					onClose={ onCloseSuggestedFollowModal }
 					siteId={ +siteId }

@@ -1,0 +1,74 @@
+$reader-modal-header-height: 100px;
+
+.reader-onboarding-modal {
+	position: relative;
+
+	.components-modal__content {
+		// to accomodate the absolute positioned footer, we need extra padding in the bottom of the
+		// content so everything can be scrolled into view.
+		padding-bottom: 75px;
+
+		margin-top: $reader-modal-header-height;
+	}
+
+	.reader-onboarding-modal__footer {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		align-items: flex-end;
+		justify-content: flex-end;
+		box-sizing: border-box;
+		width: 100%;
+		background: var(--color-surface);
+		margin-top: 20px;
+		padding: 15px;
+		border-top: 1px solid #ddd;
+	}
+
+	.components-modal__header {
+		height: $reader-modal-header-height;
+
+		.components-modal__header-heading {
+			font-size: $font-headline-small;
+		}
+	}
+
+	.reader-onboarding-modal__sub-heading {
+		font-size: $font-title-large;
+		margin-bottom: 10px;
+	}
+
+	.reader-onboarding-modal__step-description {
+		max-width: 800px;
+	}
+
+	.reader-onboarding-modal__follow-list {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-evenly;
+		max-width: 1200px;
+		margin: auto;
+
+		.follow-button {
+			margin: 0 5px 5px;
+			width: 200px;
+		}
+	}
+
+	.reader-onboarding-modal__recommended-sites {
+		max-width: 1200px;
+		margin: auto;
+		display: flex;
+		justify-content: space-around;
+		// align-items: center;
+		flex-wrap: wrap;
+
+		.reader-onboarding-modal__recommended-sites-list {
+			max-width: 450px;
+			margin-left: 15px;
+			margin-right: 15px;
+		}
+	}
+}
+

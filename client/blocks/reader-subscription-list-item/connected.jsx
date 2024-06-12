@@ -23,6 +23,7 @@ class ConnectedSubscriptionListItem extends Component {
 		isFollowing: PropTypes.bool,
 		followSource: PropTypes.string,
 		railcar: PropTypes.object,
+		disableSuggestedFollows: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -31,6 +32,7 @@ class ConnectedSubscriptionListItem extends Component {
 		showNotificationSettings: true,
 		showLastUpdatedDate: true,
 		showFollowedOnDate: true,
+		disableSuggestedFollows: false,
 	};
 
 	componentDidMount() {
@@ -62,6 +64,7 @@ class ConnectedSubscriptionListItem extends Component {
 			isFollowing,
 			followSource,
 			railcar,
+			disableSuggestedFollows,
 		} = this.props;
 
 		return (
@@ -77,6 +80,7 @@ class ConnectedSubscriptionListItem extends Component {
 				isFollowing={ isFollowing }
 				followSource={ followSource }
 				railcar={ railcar }
+				disableSuggestedFollows={ disableSuggestedFollows }
 			/>
 		);
 	}
