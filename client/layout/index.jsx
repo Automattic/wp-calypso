@@ -46,7 +46,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
-import { isOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
+import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -552,7 +552,7 @@ export default withCurrentRoute(
 		].includes( sectionName );
 		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
 		const userAllowedToHelpCenter =
-			config.isEnabled( 'calypso/help-center' ) && ! isOnboardingAffiliateFlow( state );
+			config.isEnabled( 'calypso/help-center' ) && ! getIsOnboardingAffiliateFlow( state );
 
 		const calypsoColorScheme = getPreference( state, 'colorScheme' );
 		const siteColorScheme = getAdminColor( state, siteId ) ?? calypsoColorScheme;
