@@ -16,6 +16,12 @@ import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-comp
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
+import {
+	MIN_STEP_SPLITS,
+	DEFAULT_STARTING_FRACTION,
+	UI_EMOJI_HEART_TIER_THRESHOLD,
+	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
+} from './stats-purchase-consts';
 import PersonalPurchase from './stats-purchase-personal';
 import {
 	StatsCommercialPriceDisplay,
@@ -23,12 +29,6 @@ import {
 	StatsSingleItemPagePurchaseFrame,
 	StatsSingleItemCard,
 } from './stats-purchase-shared';
-import {
-	MIN_STEP_SPLITS,
-	DEFAULT_STARTING_FRACTION,
-	UI_EMOJI_HEART_TIER_THRESHOLD,
-	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
-} from './stats-purchase-wizard';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
@@ -258,9 +258,7 @@ const StatsPersonalPurchase = ( {
 		const queryFrom = isOdysseyStats ? '&from=jetpack-my-jetpack' : '';
 		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
 
-		page(
-			`/stats/purchase/${ siteSlug }?productType=commercial${ queryFrom }&flags=stats/type-detection`
-		);
+		page( `/stats/purchase/${ siteSlug }?productType=commercial${ queryFrom }` );
 	};
 
 	return (
