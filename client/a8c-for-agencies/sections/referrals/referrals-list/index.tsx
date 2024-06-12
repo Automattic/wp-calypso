@@ -41,11 +41,11 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 								return (
 									<Button
 										className="view-details-button"
-										data-client-id={ item.client_id }
+										data-client-id={ item.client.id }
 										onClick={ () => openSitePreviewPane( item ) }
 										borderless
 									>
-										{ item.client_email }
+										{ item.client.email }
 									</Button>
 								);
 							},
@@ -60,7 +60,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							header: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => {
-								return item.client_email;
+								return item.client.email;
 							},
 							enableHiding: false,
 							enableSorting: false,
@@ -168,7 +168,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 			<ItemsDataViews
 				data={ {
 					items: referrals,
-					getItemId: ( item: Referral ) => `${ item.client_id }`,
+					getItemId: ( item: Referral ) => `${ item.client.id }`,
 					onSelectionChange: ( data ) => {
 						openSitePreviewPane( data[ 0 ] );
 					},
