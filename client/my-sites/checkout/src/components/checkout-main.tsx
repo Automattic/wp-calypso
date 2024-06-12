@@ -6,8 +6,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { isValueTruthy, getContactDetailsType } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
-import DOMPurify from 'dompurify';
-import parse from 'html-react-parser';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
@@ -694,19 +692,14 @@ export default function CheckoutMain( {
 			transactionError: string | null;
 			paymentMethodId: string | null;
 		} ) => {
-			const errorString = String( transactionError );
-
 			reduxDispatch(
-				errorNotice(
-					parse( DOMPurify.sanitize( errorString ) ) ||
-						translate( 'An error occurred during your purchase.' )
-				)
+				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
 			);
 
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_payment_error', {
 					error_code: null,
-					reason: errorString,
+					reason: String( transactionError ),
 				} )
 			);
 			reduxDispatch(
@@ -714,12 +707,12 @@ export default function CheckoutMain( {
 					error_code: null,
 					payment_method:
 						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ?? '' ) || '',
-					reason: errorString,
+					reason: String( transactionError ),
 				} )
 			);
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
-					error_message: errorString,
+					error_message: String( transactionError ),
 				} )
 			);
 		},
