@@ -1,9 +1,11 @@
-import { Button } from '@automattic/components';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { HostingCard } from 'calypso/components/hosting-card';
+import {
+	HostingCard,
+	HostingCardHeading,
+	HostingCardLinkButton,
+} from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
@@ -44,27 +46,24 @@ const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId, sit
 
 	return (
 		<HostingCard className="site-backup-card">
-			<div className="hosting-card__heading">
-				<h3 className="hosting-card__title">{ translate( 'Site backup' ) }</h3>
-				<Button
-					className={ clsx( 'site-backup-card__button', 'hosting-overview__link-button' ) }
-					plain
-					href={
+			<HostingCardHeading title={ translate( 'Site backup' ) }>
+				<HostingCardLinkButton
+					to={
 						wpcomAdminInterface === 'wp-admin'
 							? `https://cloud.jetpack.com/backup/${ siteSlug }`
 							: `/backup/${ siteSlug }`
 					}
 				>
 					{ translate( 'See all backups' ) }
-				</Button>
-			</div>
+				</HostingCardLinkButton>
+			</HostingCardHeading>
 			{ hasRetrievedLastBackup && lastGoodBackup && ! isLoading && ! disabled && (
 				<>
 					<p className="site-backup-card__date">
 						{ translate( 'Last backup was on:' ) }
 						<strong>{ lastGoodBackupTime }</strong>
 					</p>
-					<p className="site-backup-card__warning">
+					<p>
 						{ translate(
 							"If you restore your site using this backup, you'll lose any changes made after that date."
 						) }
