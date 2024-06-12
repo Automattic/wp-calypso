@@ -163,7 +163,7 @@ describe( 'SiteMigrationIdentify', () => {
 		expect( screen.getByText( /Unmatched Reliability and Uptime/ ) ).toBeVisible();
 		expect(
 			screen.getByText(
-				/Our rock-solid infrastructure ensures 99.999% uptime, keeping your site always accessible to your users no matter what!/
+				/Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure./
 			)
 		).toBeVisible();
 	} );
