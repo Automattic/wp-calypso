@@ -146,7 +146,7 @@ export class Notice extends Component {
 					{ renderedIcon }
 				</span>
 				<span className="notice__content">
-					{ typeof text.valueOf() === 'string' ? (
+					{ typeof text?.valueOf() === 'string' ? (
 						<span
 							className="notice__text"
 							dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( text ) } } // eslint-disable-line react/no-danger
