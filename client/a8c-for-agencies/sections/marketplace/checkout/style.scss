@@ -58,7 +58,8 @@
 		background: var(--color-neutral-0);
 	}
 
-	&.checkout__aside--referral {
+	&.checkout__aside--referral,
+	&.checkout__aside--client {
 		padding-block-start: 64px;
 	}
 }
@@ -230,3 +231,40 @@
 .checkout__client-referral-form {
 	padding-block-start: 48px;
 }
+
+.checkout__aside--client {
+	position: relative;
+
+	.checkout__aside-actions {
+		margin-block-start: 16px;
+	}
+	.checkout__summary-client-payment-notice {
+		margin-block-start: 48px;
+		color: var(--color-neutral-70);
+		font-size: rem(16px);
+		font-weight: 600;
+		text-wrap: nowrap;
+	}
+
+	.checkout__summary-notice {
+		margin-block-start: 48px;
+	}
+
+	.checkout__aside-footer {
+		position: absolute;
+		bottom: 32px;
+
+		.checkout__aside-powered-by {
+			div {
+				color: var(--color-neutral-70);
+				font-size: rem(12px);
+			}
+
+			img {
+				margin-block-start: 8px;
+				width: 150px;
+			}
+		}
+	}
+}
+

@@ -23,9 +23,10 @@ import './style.scss';
 
 type Props = {
 	withAssignLicense?: boolean;
+	hideBreadcrumbs?: boolean;
 };
 
-export default function PaymentMethodAdd( { withAssignLicense }: Props ) {
+export default function PaymentMethodAdd( { withAssignLicense, hideBreadcrumbs }: Props ) {
 	const translate = useTranslate();
 
 	const title = translate( 'Add new card' );
@@ -49,7 +50,7 @@ export default function PaymentMethodAdd( { withAssignLicense }: Props ) {
 
 			<LayoutTop>
 				<LayoutHeader>
-					{ ! stepper && (
+					{ ! stepper && ! hideBreadcrumbs && (
 						<Breadcrumb
 							items={ [
 								{ label: translate( 'Payment Methods' ), href: paymentMethodsLink },
