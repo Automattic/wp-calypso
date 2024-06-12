@@ -5,10 +5,13 @@
 
 	&.is-full-width-layout {
 		max-width: 100%;
+		padding-bottom: 10%;
 	}
 
 	&.is-wide-layout {
 		max-width: 1040px;
+		padding-bottom: 10%;
+
 	}
 }
 
