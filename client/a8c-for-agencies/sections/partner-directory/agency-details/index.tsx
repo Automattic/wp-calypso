@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { CheckboxControl, TextareaControl, TextControl } from '@wordpress/components';
+import { TextareaControl, TextControl, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
@@ -113,10 +113,14 @@ const AgencyDetailsForm = () => {
 				description={ translate( 'Clients can filter these details to find the right agency.' ) }
 			>
 				<FormField label={ translate( 'Availability' ) }>
-					<CheckboxControl
-						checked={ formData.isAvailable }
+					<ToggleControl
 						onChange={ ( isChecked ) => setFormFields( { isAvailable: isChecked } ) }
-						label={ translate( "I'm accepting new clients" ) }
+						checked={ formData.isAvailable }
+						label={
+							formData.isAvailable
+								? translate( "I'm accepting new clients" )
+								: translate( "I'm not accepting new clients" )
+						}
 					/>
 				</FormField>
 				<FormField label={ translate( 'Industry' ) }>
@@ -157,7 +161,7 @@ const AgencyDetailsForm = () => {
 					setBudget={ ( budget: string ) => setFormFields( { budgetLowerRange: budget } ) }
 				/>
 			</FormSection>
-			<div className="agency-details-form__footer">
+			<div className="partner-directory-agency-cta__footer">
 				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
 					{ translate( 'Publish public profile' ) }
 				</Button>
