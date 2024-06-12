@@ -1,5 +1,5 @@
 import { Context, type Callback } from '@automattic/calypso-router';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import SitesSidebar from '../../components/sidebar-menu/sites';
 import AddSitesFromWPCOM from './add-sites/add-sites-from-wpcom';
