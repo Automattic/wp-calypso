@@ -178,7 +178,6 @@
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
 		"stats/date-control": true,
-		"stats/devices": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/plan-usage": true,

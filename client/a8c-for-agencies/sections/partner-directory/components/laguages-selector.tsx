@@ -7,6 +7,7 @@ type Props = {
 };
 
 const LanguagesSelector = ( { setLanguages, selectedLanguages }: Props ) => {
+	// todo: add the language ISO codes as object index
 	const availableLanguages = [
 		'Afrikaans',
 		'Albanian',

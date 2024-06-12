@@ -128,13 +128,14 @@ class MagicLogin extends Component {
 			locale: this.props.locale,
 			emailAddress: this.props.query?.email_address,
 			signupUrl: this.props.query?.signup_url,
+			usernameOnly: true,
 		};
 
 		page( login( loginParameters ) );
 	};
 
 	renderLinks() {
-		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWoo } = this.props;
+		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWoo, query } = this.props;
 
 		if ( isWoo ) {
 			return null;
@@ -152,7 +153,7 @@ class MagicLogin extends Component {
 				/>
 			);
 		}
-		if ( this.props.query?.client_id ) {
+		if ( query?.client_id ) {
 			return null;
 		}
 
@@ -166,11 +167,16 @@ class MagicLogin extends Component {
 			signupUrl: this.props.query?.signup_url,
 		};
 
+		let linkBack = translate( 'Enter a password instead' );
+		if ( query?.username_only === 'true' ) {
+			linkBack = translate( 'Use username and password instead' );
+		}
+
 		return (
 			<>
 				<div className="magic-login__footer">
 					<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
-						{ translate( 'Enter a password instead' ) }
+						{ linkBack }
 					</a>
 				</div>
 				<AppPromo

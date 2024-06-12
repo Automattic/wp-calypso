@@ -23,6 +23,8 @@ export const getApiPath = ( jetpackPath: string, params: Record< string, string 
 			return `/sites/${ params.siteId }/purchases`;
 		case '/site':
 			return `/sites/${ params.siteId }`;
+		case '/memberships/products':
+			return `/sites/${ params.siteId }/memberships/products`;
 		default:
 			return jetpackPath;
 	}

@@ -1,11 +1,13 @@
-import { Button } from '@automattic/components';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable } from '@automattic/domains-table';
 import { useBreakpoint } from '@automattic/viewport-react';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
-import { HostingCard, HostingCardHeading } from 'calypso/components/hosting-card';
+import {
+	HostingCard,
+	HostingCardHeading,
+	HostingCardLinkButton,
+} from 'calypso/components/hosting-card';
 import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
 import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
@@ -28,23 +30,15 @@ const ActiveDomainsCard: FC = () => {
 	return (
 		<HostingCard className="hosting-overview__active-domains">
 			<HostingCardHeading title={ translate( 'Active domains' ) }>
-				<Button
-					className={ clsx(
-						'hosting-overview__link-button',
-						'hosting-overview__mobile-hidden-link-button'
-					) }
-					plain
-					href={ `/domains/add/${ site?.slug }?redirect_to=${ window.location.pathname }` }
+				<HostingCardLinkButton
+					to={ `/domains/add/${ site?.slug }?redirect_to=${ window.location.pathname }` }
+					hideOnMobile
 				>
 					{ translate( 'Add new domain' ) }
-				</Button>
-				<Button
-					className="hosting-overview__link-button"
-					plain
-					href={ `/domains/manage/${ site?.slug }` }
-				>
+				</HostingCardLinkButton>
+				<HostingCardLinkButton to={ `/domains/manage/${ site?.slug }` }>
 					{ translate( 'Manage domains' ) }
-				</Button>
+				</HostingCardLinkButton>
 			</HostingCardHeading>
 
 			<DomainsTable

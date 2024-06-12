@@ -160,11 +160,18 @@
 		}
 
 		&:nth-child(4) {
-			span {
+			.site-sort {
 				display: inline-block;
+				font-size: $font-body-small;
 				max-width: calc(100% - 14px);
-				white-space: normal;
 				overflow-wrap: anywhere;
+				white-space: normal;
+
+				span {
+					display: inline-block;
+					max-width: calc(100% - 14px);
+					vertical-align: middle;
+				}
 			}
 
 			svg.site-sort__icon {
@@ -499,6 +506,8 @@
 	}
 	.item-preview__content {
 		padding: 32px 48px 48px;
+		font-size: rem(14px);
+		color: var(--studio-gray-100);
 
 		.navigation-header {
 			padding: 0;
@@ -532,7 +541,7 @@
 		font-weight: 400;
 		font-size: rem(13px);
 		line-height: 20px;
-		color: #757575;
+		color: var(--studio-gray-50);
 		text-transform: capitalize;
 	}
 }

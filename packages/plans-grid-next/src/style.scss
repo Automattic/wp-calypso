@@ -857,7 +857,7 @@ $mobile-card-max-width: 440px;
 			text-wrap: pretty;
 		}
 
-		&:not(.has-feature):not(.has-conditional-feature) {
+		&:not(.has-feature):not(.has-feature-label) {
 			.plan-comparison-grid__plan-title,
 			.plan-comparison-grid__plan-subtitle {
 				text-decoration: line-through;

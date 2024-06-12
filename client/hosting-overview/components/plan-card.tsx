@@ -14,7 +14,7 @@ import { FC } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { HostingCard } from 'calypso/components/hosting-card';
+import { HostingCard, HostingCardLinkButton } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
@@ -189,30 +189,19 @@ const PlanCard: FC = () => {
 		}
 		if ( isFreePlan ) {
 			return (
-				<Button
-					className={ clsx(
-						'hosting-overview__link-button',
-						'hosting-overview__mobile-hidden-link-button'
-					) }
-					plain
-					href={ `/add-ons/${ site?.slug }` }
-				>
+				<HostingCardLinkButton to={ `/add-ons/${ site?.slug }` } hideOnMobile>
 					{ translate( 'Manage add-ons' ) }
-				</Button>
+				</HostingCardLinkButton>
 			);
 		}
 		if ( isOwner ) {
 			return (
-				<Button
-					className={ clsx(
-						'hosting-overview__link-button',
-						'hosting-overview__mobile-hidden-link-button'
-					) }
-					plain
-					href={ getManagePurchaseUrlFor( site?.slug, planPurchaseId ?? 0 ) }
+				<HostingCardLinkButton
+					to={ getManagePurchaseUrlFor( site?.slug, planPurchaseId ?? 0 ) }
+					hideOnMobile
 				>
 					{ translate( 'Manage plan' ) }
-				</Button>
+				</HostingCardLinkButton>
 			);
 		}
 	};

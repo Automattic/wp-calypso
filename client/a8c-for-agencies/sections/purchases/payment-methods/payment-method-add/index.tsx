@@ -10,9 +10,13 @@ import LayoutHeader, {
 import LayoutStepper from 'calypso/a8c-for-agencies/components/layout/stepper';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_PAYMENT_METHODS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_PAYMENT_METHODS_LINK,
+	A4A_CLIENT_PAYMENT_METHODS_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PaymentMethodStripeInfo from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-stripe-info';
 import { usePaymentMethodStepper } from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add-v2/hooks/use-payment-method-stepper';
+import { isClientView } from '../lib/is-client-view';
 import PaymentMethodForm from './payment-method-form';
 
 import './style.scss';
@@ -28,6 +32,12 @@ export default function PaymentMethodAdd( { withAssignLicense }: Props ) {
 
 	const stepper = usePaymentMethodStepper( { withAssignLicense } );
 
+	const isClientUI = isClientView();
+
+	const paymentMethodsLink = isClientUI
+		? A4A_CLIENT_PAYMENT_METHODS_LINK
+		: A4A_PAYMENT_METHODS_LINK;
+
 	return (
 		<Layout
 			className="payment-method-add"
@@ -42,7 +52,7 @@ export default function PaymentMethodAdd( { withAssignLicense }: Props ) {
 					{ ! stepper && (
 						<Breadcrumb
 							items={ [
-								{ label: translate( 'Payment Methods' ), href: A4A_PAYMENT_METHODS_LINK },
+								{ label: translate( 'Payment Methods' ), href: paymentMethodsLink },
 								{ label: translate( 'Add new card' ) },
 							] }
 						/>

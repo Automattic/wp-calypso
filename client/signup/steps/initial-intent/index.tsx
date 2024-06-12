@@ -60,7 +60,7 @@ export default function InitialIntentStep( props: Props ) {
 		const referrer = 'guided-onboarding';
 		let redirect = '';
 
-		if ( _answerKeys.includes( 'migrate-or-import-site' ) ) {
+		if ( _answerKeys.includes( 'import' ) ) {
 			redirect = `/setup/${ HOSTED_SITE_MIGRATION_FLOW }`;
 		} else if ( _answerKeys.includes( 'newsletter' ) ) {
 			redirect = `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
@@ -85,7 +85,7 @@ export default function InitialIntentStep( props: Props ) {
 
 	const skipNextNavigation = ( _questionKey: string, _answerKeys: string[] ) => {
 		return (
-			_answerKeys.includes( 'client' ) ||
+			_answerKeys.includes( 'host-site' ) ||
 			Boolean( getRedirectForAnswers( _answerKeys ) ) ||
 			shouldExitOnSkip( _questionKey, _answerKeys )
 		);
@@ -112,7 +112,7 @@ export default function InitialIntentStep( props: Props ) {
 		}
 
 		if (
-			_answerKeys.includes( 'client' ) ||
+			_answerKeys.includes( 'host-site' ) ||
 			isLastQuestion ||
 			shouldExitOnSkip( _questionKey, _answerKeys )
 		) {

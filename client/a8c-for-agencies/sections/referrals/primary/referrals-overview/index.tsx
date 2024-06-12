@@ -18,6 +18,8 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
+import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
 	MARKETPLACE_TYPE_REFERRAL,
@@ -29,6 +31,7 @@ import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
 import ReferralsFooter from '../footer';
 import LayoutBodyContent from './layout-body-content';
+import NewReferralOrderNotification from './new-referral-order-notification';
 
 import './style.scss';
 
@@ -41,6 +44,10 @@ export default function ReferralsOverview( {
 	const dispatch = useDispatch();
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+
+	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
+		REFERRAL_EMAIL_QUERY_PARAM_KEY
+	);
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -78,6 +85,13 @@ export default function ReferralsOverview( {
 		>
 			<LayoutColumn wide className="referrals-layout__column">
 				<LayoutTop>
+					{ !! referralEmail && (
+						<NewReferralOrderNotification
+							email={ referralEmail }
+							onClose={ () => setReferralEmail( '' ) }
+						/>
+					) }
+
 					<LayoutHeader>
 						<Title>{ title } </Title>
 						{ isAutomatedReferral && (

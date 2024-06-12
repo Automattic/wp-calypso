@@ -24,9 +24,6 @@ export default function PricingSummary( { items, onRemoveItem, isAutomatedReferr
 
 	const { discountedCost, actualCost } = getTotalInvoiceValue( userProducts, items );
 
-	// FIXME: we should update the magic numbers here with values when backend part is finished.
-	const commissionAmount = Math.floor( discountedCost * 0.5 );
-
 	const currency = items[ 0 ]?.currency ?? 'USD'; // FIXME: Fix if multiple currencies are supported
 
 	const learnMoreLink = ''; //FIXME: Add link for A4A;
@@ -77,19 +74,6 @@ export default function PricingSummary( { items, onRemoveItem, isAutomatedReferr
 					} ) }
 				</span>
 			</div>
-
-			{ isAutomatedReferrals && (
-				<div className="shopping-cart__menu-commission">
-					<span>{ translate( 'Your estimated commision:' ) }</span>
-					<span>
-						{ translate( '%(total)s/mo', {
-							args: {
-								total: formatCurrency( commissionAmount, items[ 0 ]?.currency ?? 'USD' ),
-							},
-						} ) }
-					</span>
-				</div>
-			) }
 
 			{ ! isAutomatedReferrals && (
 				<div className="checkout__summary-notice">
