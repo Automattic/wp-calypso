@@ -48,11 +48,10 @@ export type Feature = string;
 
 export type FeatureObject = {
 	getSlug: () => string;
-	getTitle: ( params?: { domainName?: string; planSlug?: string } ) => TranslateResult;
+	getTitle: ( params?: { domainName?: string } ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
-	getConditionalTitle?: ( planSlug?: string ) => TranslateResult;
 	getHeader?: () => TranslateResult;
-	getDescription?: ( params?: { domainName?: string; planSlug?: string } ) => TranslateResult;
+	getDescription?: ( params?: { domainName?: string } ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
 	getCompareSubtitle?: () => TranslateResult;
@@ -311,7 +310,7 @@ export type Plan = BillingTerm & {
 	 * Features that are conditionally available and are to be shown in the plans comparison table.
 	 * For example: "Available with plugins"
 	 */
-	get2023PlanComparisonConditionalFeatures?: () => Feature[];
+	getPlanComparisonFeatureLabels?: () => Record< Feature, TranslateResult >;
 
 	get2023PricingGridSignupStorageOptions?: (
 		showLegacyStorageFeature?: boolean,
