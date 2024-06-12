@@ -53,6 +53,7 @@
 		"dev/features-helper": true,
 		"dev/preferences-helper": true,
 		"dev/react-query-devtools": true,
+		"dev/store-sandbox-helper": true,
 		"devdocs": true,
 		"devdocs/color-scheme-picker": true,
 		"devdocs/redirect-loggedout-homepage": true,
