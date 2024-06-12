@@ -226,13 +226,7 @@ const useMshotsImgTreatment = (
 	return loadedImg;
 };
 
-// For hover-scroll, we use a div with a background image (rather than an img element)
-// in order to use transitions between `top` and `bottom` on the
-// `background-position` property.
-// The "normal" top & bottom properties are problematic individually because we
-// don't know how big the images will be, and using both gets the
-// right positions but with no transition (as they're different properties).
-const MShotsImage = ( {
+const MShotsImageControl = ( {
 	url,
 	'aria-labelledby': labelledby,
 	alt,
@@ -335,8 +329,40 @@ const MShotsImageTreatment = ( {
 	);
 };
 
-// export default MShotsImage;
-// Temporary for A/B test.
-export default () => {
-	return { MShotsImage, MShotsImageTreatment };
+// For hover-scroll, we use a div with a background image (rather than an img element)
+// in order to use transitions between `top` and `bottom` on the
+// `background-position` property.
+// The "normal" top & bottom properties are problematic individually because we
+// don't know how big the images will be, and using both gets the
+// right positions but with no transition (as they're different properties).
+const MShotsImage = ( {
+	url,
+	'aria-labelledby': labelledby,
+	alt,
+	options,
+	scrollable = false,
+}: MShotsImageProps ) => {
+	// Return MShotsImageControl or MShotsImageTreatment depending on options.oldHighResImageLoading
+	if ( options?.oldHighResImageLoading ) {
+		return (
+			<MShotsImageTreatment
+				url={ url }
+				aria-labelledby={ labelledby }
+				alt={ alt }
+				options={ options }
+				scrollable={ scrollable }
+			/>
+		);
+	}
+	return (
+		<MShotsImageControl
+			url={ url }
+			aria-labelledby={ labelledby }
+			alt={ alt }
+			options={ options }
+			scrollable={ scrollable }
+		/>
+	);
 };
+
+export default MShotsImage;
