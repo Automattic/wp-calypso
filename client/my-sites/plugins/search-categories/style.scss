@@ -126,8 +126,11 @@
 			padding-bottom: 7px;
 			transition: none;
 
-			&:focus {
+			&:focus-visible {
 				box-shadow: 0 0 0 1px var(--color-primary-light) inset;
+			}
+			&:active {
+				box-shadow: none;
 			}
 		}
 
