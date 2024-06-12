@@ -172,12 +172,13 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 
 	const handleSubmit = useCallback(
 		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
-			// If we have a site and URL, and we're coming from a WordPress site,
-			// record the migration source domain.
-			if ( siteSlug && 'wordpress' === data?.platform && data?.from ) {
-				await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
-			}
+			// // If we have a site and URL, and we're coming from a WordPress site,
+			// // record the migration source domain.
+			// if ( siteSlug && 'wordpress' === data?.platform && data?.from ) {
+			// 	await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
+			// }
 
+			console.log( 'step submit' );
 			navigation?.submit?.( { action, ...data } );
 		},
 		[ navigation, siteSlug ]

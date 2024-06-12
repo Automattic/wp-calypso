@@ -5,7 +5,7 @@ import {
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useMemo, Suspense, lazy } from 'react';
+import React, { useEffect, useMemo, Suspense, lazy, ReactNode, Component } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -38,6 +38,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
 	const flowSteps = flow.useSteps();
+	console.count( 'FlowRenderer' );
+
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 
 	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
@@ -196,4 +198,109 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			<AsyncCheckoutModal siteId={ site?.ID } />
 		</Suspense>
 	);
+};
+
+export const FlowComponent: React.FC< { flow: React.FC< any > } > = ( { flow } ) => {
+	// Configure app element that React Modal will aria-hide when modal is open
+	Modal.setAppElement( '#wpcom' );
+	const FlowComponentX = flow;
+
+	const location = useLocation();
+	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
+	const { __ } = useI18n();
+	const navigate = useNavigate();
+	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
+
+	useSaveQueryParams();
+
+	const { site, siteSlugOrId } = useSiteData();
+
+	// Ensure that the selected site is fetched, if available. This is used for event tracking purposes.
+	// See https://github.com/Automattic/wp-calypso/pull/82981.
+	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
+
+	const _navigate = async ( path: string, extraData = {} ) => {
+		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
+		setStepData( {
+			path: path,
+			intent: intent,
+			previousStep: currentStepRoute,
+			...extraData,
+		} );
+
+		const _path = path.includes( '?' ) // does path contain search params
+			? generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }` )
+			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ window.location.search }` );
+
+		navigate( _path, { state: stepPaths } );
+	};
+
+	// const stepNavigation = flow.useStepNavigation(
+	// 	currentStepRoute,
+	// 	_navigate,
+	// 	flowSteps.map( ( step ) => step.slug )
+	// );
+
+	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
+	const stepData = useSelect(
+		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
+		[]
+	);
+
+	// flow.useSideEffect?.( currentStepRoute, _navigate );
+
+	useSyncRoute();
+
+	useEffect( () => {
+		window.scrollTo( 0, 0 );
+	}, [ location ] );
+
+	// const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
+	// 	state: AssertConditionState.SUCCESS,
+	// };
+
+	// const renderStep = ( step: StepperStep ) => {
+	// 	switch ( assertCondition.state ) {
+	// 		case AssertConditionState.CHECKING:
+	// 			/* eslint-disable wpcalypso/jsx-classname-namespace */
+	// 			return <StepperLoader />;
+	// 		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	// 		case AssertConditionState.FAILURE:
+	// 			return null;
+	// 	}
+
+	// 	const StepComponent = stepComponents[ step.slug ];
+
+	// 	return (
+	// 		<StepComponent
+	// 			navigation={ stepNavigation }
+	// 			flow={ flow.name }
+	// 			variantSlug={ flow.variantSlug }
+	// 			stepName={ step.slug }
+	// 			data={ stepData }
+	// 		/>
+	// 	);
+	// };
+
+	// const getDocumentHeadTitle = () => {
+	// 	if ( isNewsletterOrLinkInBioFlow( flow.name ) ) {
+	// 		return flow.title;
+	// 	} else if ( isSenseiFlow( flow.name ) ) {
+	// 		return __( 'Course Creator' );
+	// 	}
+	// };
+
+	// useSignUpStartTracking( { flow, currentStepRoute: currentStepRoute } );
+
+	return <FlowComponentX navigate={ _navigate } />;
+
+	// return (
+	// 	<Routes>
+	// 		<Route key="flow" path="/:flow/:step" Component={ FlowComponentX } />
+	// 	</Routes>
+	// );
 };

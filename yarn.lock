@@ -31275,6 +31275,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-pattern@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "ts-pattern@npm:5.1.2"
+  checksum: df6e70ebde9eb0aaf1966afd4e135995ff38830b3c4f720e47c10a4d78618ec33bbcc6d55e0d0c4648e2e01408ca3f9bceba34ec7b1ed7a7324a7735e925634b
+  languageName: node
+  linkType: hard
+
 "tsconfig-paths@npm:^3.15.0":
   version: 3.15.0
   resolution: "tsconfig-paths@npm:3.15.0"
@@ -33304,6 +33311,7 @@ __metadata:
     stacktrace-gps: "npm:^3.0.3"
     stylelint: "npm:^14.16.1"
     swiper: "npm:^10.1.0"
+    ts-pattern: "npm:^5.1.2"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     v8-profiler-next: "npm:^1.10.0"
