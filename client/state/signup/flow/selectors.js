@@ -14,5 +14,5 @@ export function getExcludedSteps( state ) {
 	return get( state, 'signup.flow.excludedSteps', [] );
 }
 
-export const isOnboardingAffiliateFlow = ( state ) =>
+export const getIsOnboardingAffiliateFlow = ( state ) =>
 	'onboarding-affiliate' === getCurrentFlowName( state );
