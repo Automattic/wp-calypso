@@ -22,10 +22,8 @@ const siteSetupWithoutGoalsFlow: Flow = {
 		const { site } = useSiteData();
 
 		useEffect( () => {
-			if ( site?.options?.site_goals?.length ) {
-				setIntent( goalsToIntent( site?.options?.site_goals ) );
-				setGoals( site?.options?.site_goals );
-			}
+			setIntent( goalsToIntent( site?.options?.site_goals ?? [] ) );
+			setGoals( site?.options?.site_goals ?? [] );
 		}, [ site, setIntent, setGoals ] );
 
 		return siteSetup.useSideEffect?.( currentStep, navigate );
