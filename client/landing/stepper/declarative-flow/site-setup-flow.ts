@@ -35,6 +35,7 @@ import type {
 } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
+const { goalsToIntent } = Onboard.utils;
 
 type ExitFlowOptions = {
 	skipLaunchpad?: boolean;
@@ -60,6 +61,16 @@ const siteSetupFlow: Flow = {
 				navigate( 'goals' );
 			}
 		}, [] );
+
+		const { setIntent, setGoals } = useDispatch( ONBOARD_STORE );
+		const { site } = useSiteData();
+
+		useEffect( () => {
+			if ( site?.options?.site_goals?.length ) {
+				setIntent( goalsToIntent( site.options.site_goals ) );
+				setGoals( site.options.site_goals );
+			}
+		}, [ site, setIntent ] );
 	},
 
 	useSteps() {
