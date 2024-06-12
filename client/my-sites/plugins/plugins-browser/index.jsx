@@ -96,7 +96,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const locale = useLocale();
 
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.menu || category;
+	const fallbackCategoryName = category.charAt( 0 ).toUpperCase() + category.slice( 1 );
+	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
