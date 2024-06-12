@@ -377,7 +377,7 @@ function LineItemWrapper( {
 							isOpen={ variantOpenId === product.uuid }
 						/>
 					) }
-					{ isAkPro500Cart && (
+					{ ! isRenewal && isAkPro500Cart && (
 						<AkismetProQuantityDropDown
 							id={ product.uuid }
 							responseCart={ responseCart }
