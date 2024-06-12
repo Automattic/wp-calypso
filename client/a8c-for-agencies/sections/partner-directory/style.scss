@@ -8,3 +8,13 @@
 .partner-directory-agency-cta__footer button {
 	margin-left: auto;
 }
+
+.partner-directory__body {
+	.searchable-dropdown input.components-combobox-control__input[type="text"] {
+		font-size: rem(14px);
+	}
+
+	.searchable-dropdown .components-form-token-field__suggestions-list li {
+		font-size: rem(14px);
+	}
+}
