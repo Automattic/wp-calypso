@@ -2,24 +2,40 @@ import { Button } from '@automattic/components';
 import { Icon, lock, currencyDollar, postDate } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { A4A_PAYMENT_METHODS_ADD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_CLIENT_PAYMENT_METHODS_ADD_LINK,
+	A4A_PAYMENT_METHODS_ADD_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import CreditCardImg from 'calypso/assets/images/jetpack/credit-cards.png';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isClientView } from '../lib/is-client-view';
 
 export default function EmptyState() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const isClientUI = isClientView();
+
 	const navigateToCreateMethod = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_license_list_empty_issue_license_click' ) );
-	}, [ dispatch ] );
+		dispatch(
+			recordTracksEvent(
+				isClientUI
+					? 'calypso_a4a_client_license_list_empty_issue_license_click'
+					: 'calypso_a4a_license_list_empty_issue_license_click'
+			)
+		);
+	}, [ dispatch, isClientUI ] );
+
+	const addCardURL = isClientUI
+		? A4A_CLIENT_PAYMENT_METHODS_ADD_LINK
+		: A4A_PAYMENT_METHODS_ADD_LINK;
 
 	return (
 		<div className="payment-method-overview-empty-state">
 			<div className="payment-method-overview-empty-state__top-content">
 				<img src={ CreditCardImg } alt={ translate( 'Credit Cards' ) } />
-				<Button primary href={ A4A_PAYMENT_METHODS_ADD_LINK } onClick={ navigateToCreateMethod }>
+				<Button primary href={ addCardURL } onClick={ navigateToCreateMethod }>
 					{ translate( 'Add a card' ) }
 				</Button>
 			</div>

@@ -177,8 +177,6 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
-		"stats/date-control": true,
-		"stats/devices": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/tier-upgrade-slider": true,
 		"stats/utm-builder": false,

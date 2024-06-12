@@ -23,7 +23,7 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 	const [ selectedReferralTab, setSelectedReferralTab ] = useState( REFERRAL_PURCHASES_ID );
 
 	const itemData: ItemData = {
-		title: referral.client_email,
+		title: referral.client.email,
 		subtitle: (
 			<div className="referral-details__subtitle">
 				{ translate( 'Payment status {{badge}}%(status)s{{/badge}}', {

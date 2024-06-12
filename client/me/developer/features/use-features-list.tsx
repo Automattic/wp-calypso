@@ -46,7 +46,7 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl( 'https://wordpress.com/for-agencies/' ),
+			linkLearnMore: localizeUrl( 'https://wordpress.com/for-agencies?ref=wpcom-dev-dashboard' ),
 		},
 		{
 			id: 'code',

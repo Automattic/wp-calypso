@@ -1,5 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
+import { HostingCardHeading, HostingCardDescription } from 'calypso/components/hosting-card';
 import SupportInfo from 'calypso/components/support-info/index';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
@@ -56,8 +57,7 @@ export const DeploymentStyle = ( {
 
 	return (
 		<div className="github-deployments-deployment-style">
-			<div className="github-deployments-deployment-style__header">
-				<h3>{ __( 'Pick your deployment mode' ) }</h3>
+			<HostingCardHeading title={ __( 'Pick your deployment mode' ) }>
 				<SupportInfo
 					popoverClassName="github-deployments-deployments-style-popover"
 					// @todo Move to contextLinks
@@ -66,7 +66,12 @@ export const DeploymentStyle = ( {
 				>
 					{ supportMessage }
 				</SupportInfo>
-			</div>
+			</HostingCardHeading>
+			<HostingCardDescription>
+				{ __(
+					'Simple deployments copy repository files to a directory, while advanced deployments use scripts for custom build steps and testing.'
+				) }
+			</HostingCardDescription>
 			<FormRadiosBar
 				disabled={ isDisabled }
 				items={ [

@@ -113,8 +113,6 @@
 		"signup/social-first": true,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
-		"stats/date-control": true,
-		"stats/devices": true,
 		"stats/tier-upgrade-slider": true,
 		"stats/utm-builder": false,
 		"stepper-woocommerce-poc": true,

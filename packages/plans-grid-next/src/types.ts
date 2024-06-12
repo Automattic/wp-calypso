@@ -8,6 +8,7 @@ import type {
 	FeatureObject,
 	StorageOption,
 	FeatureGroupMap,
+	Feature,
 } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -26,7 +27,7 @@ export interface PlanFeaturesForGridPlan {
 	jetpackFeatures: TransformedFeatureObject[];
 	storageOptions: StorageOption[];
 	// used for comparison grid so far
-	conditionalFeatures?: FeatureObject[];
+	comparisonGridFeatureLabels?: Record< Feature, TranslateResult >;
 }
 
 export interface GridPlan {

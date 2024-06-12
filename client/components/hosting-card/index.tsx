@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
 
@@ -50,4 +50,28 @@ export function HostingCardHeading( { id, title, children }: HostingCardHeadingP
 
 export function HostingCardDescription( { children }: HostingCardDescriptionProps ) {
 	return <p className="hosting-card__description">{ children }</p>;
+}
+
+interface HostingCardLinkButtonProps {
+	to: string;
+	children: string | ReactNode;
+	hideOnMobile?: boolean;
+}
+
+export function HostingCardLinkButton( {
+	to,
+	children,
+	hideOnMobile,
+}: HostingCardLinkButtonProps ) {
+	return (
+		<Button
+			className={ clsx( 'hosting-card__link-button', {
+				'hosting-card__link-button--hide-on-mobile': hideOnMobile,
+			} ) }
+			plain
+			href={ to }
+		>
+			{ children }
+		</Button>
+	);
 }

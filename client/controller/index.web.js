@@ -73,8 +73,12 @@ export const ProviderWrappedLayout = ( {
 
 	useEffect( () => {
 		// TODO: Implement a proper way to reset the experiment assignment
-		localStorage.removeItem( localStorageExperimentAssignmentKey( PLAN_NAME_EXPERIMENT ) );
-		loadExperimentAssignment( PLAN_NAME_EXPERIMENT );
+		try {
+			localStorage.removeItem( localStorageExperimentAssignmentKey( PLAN_NAME_EXPERIMENT ) );
+			loadExperimentAssignment( PLAN_NAME_EXPERIMENT );
+		} catch ( e ) {
+			// Ignore NS_ERROR_FILE_NOT_FOUND Firefox (bug report: https://bugzilla.mozilla.org/show_bug.cgi?id=1536796)
+		}
 	}, [ userLoggedIn ] );
 
 	const layout = userLoggedIn ? (
