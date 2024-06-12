@@ -62,7 +62,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 			return;
 		}
 		if ( ! emailValidator.validate( email ) ) {
-			setValidationError( { email: translate( 'Please provide correct email' ) } );
+			setValidationError( { email: translate( 'Please provide correct email address' ) } );
 			return;
 		}
 		dispatch(
