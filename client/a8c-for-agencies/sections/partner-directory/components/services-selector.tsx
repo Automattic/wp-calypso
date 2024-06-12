@@ -3,7 +3,7 @@ import { TokenItem } from '@wordpress/components/build-types/form-token-field/ty
 import { useTranslate } from 'i18n-calypso';
 
 type Props = {
-	setServices: ( tokens: ( string | TokenItem )[] ) => void;
+	setServices: ( services: ( string | TokenItem )[] ) => void;
 	selectedServices: ( string | TokenItem )[];
 };
 
@@ -25,6 +25,7 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 		government_services: translate( 'Government services' ),
 	};
 
+	// It converts the values selected into their keys
 	const setTokens = ( tokens: ( string | TokenItem )[] ) => {
 		const selectedServicesByToken = tokens.filter( ( token ) => {
 			return Object.keys( availableServices ).find(

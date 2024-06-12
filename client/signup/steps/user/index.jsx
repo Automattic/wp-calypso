@@ -41,6 +41,7 @@ import {
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { loginSocialUser } from 'calypso/state/login/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -450,12 +451,21 @@ export class UserStep extends Component {
 			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
 			window.sessionStorage.removeItem( 'signup_redirect_to' );
 		}
-		this.submit( {
-			service,
-			access_token,
-			id_token,
-			userData,
-			queryArgs: query,
+
+		const socialInfo = {
+			service: service,
+			access_token: access_token,
+			id_token: id_token,
+		};
+
+		this.props.loginSocialUser( socialInfo, '' ).finally( () => {
+			this.submit( {
+				service,
+				access_token,
+				id_token,
+				userData,
+				queryArgs: query,
+			} );
 		} );
 	};
 
@@ -776,6 +786,7 @@ const ConnectedUser = connect(
 		fetchOAuth2ClientData,
 		saveSignupStep,
 		submitSignupStep,
+		loginSocialUser,
 	}
 )( localize( UserStep ) );
 

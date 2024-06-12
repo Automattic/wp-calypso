@@ -19,10 +19,11 @@ import {
 } from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
-import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
+import useFormattedSites from '../../hooks/use-formatted-sites';
 import { AllowedTypes, Site, SiteData } from '../../types';
 import type { MouseEvent, KeyboardEvent } from 'react';
 
@@ -42,22 +43,28 @@ export const JetpackSitesDataViews = ( {
 	const sitesPerPage = dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 
-	const sites = useFormattedSites( data?.sites ?? [] ).reduce< SiteData[] >( ( acc, item ) => {
-		item.ref = item.site.value.blog_id;
-		acc.push( item );
-		// If this site has an error, we duplicate this row - while changing the duplicate's type to 'error' - to display an error message below it.
-		if ( item.site.error ) {
-			acc.push( {
-				...item,
-				site: {
-					...item.site,
-					type: 'error',
-				},
-				ref: `error-${ item.ref }`,
-			} );
-		}
-		return acc;
-	}, [] );
+	const possibleSites = data?.sites ?? [];
+	const connectionStatus = useFetchTestConnections( true, possibleSites );
+
+	const sites = useFormattedSites( possibleSites, connectionStatus ).reduce< SiteData[] >(
+		( acc, item ) => {
+			item.ref = item.site.value.blog_id;
+			acc.push( item );
+			// If this site has an error, we duplicate this row - while changing the duplicate's type to 'error' - to display an error message below it.
+			if ( item.site.error ) {
+				acc.push( {
+					...item,
+					site: {
+						...item.site,
+						type: 'error',
+					},
+					ref: `error-${ item.ref }`,
+				} );
+			}
+			return acc;
+		},
+		[]
+	);
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {

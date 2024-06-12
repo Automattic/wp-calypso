@@ -160,11 +160,18 @@
 		}
 
 		&:nth-child(4) {
-			span {
+			.site-sort {
 				display: inline-block;
+				font-size: $font-body-small;
 				max-width: calc(100% - 14px);
-				white-space: normal;
 				overflow-wrap: anywhere;
+				white-space: normal;
+
+				span {
+					display: inline-block;
+					max-width: calc(100% - 14px);
+					vertical-align: middle;
+				}
 			}
 
 			svg.site-sort__icon {
@@ -438,7 +445,7 @@
 
 // Styles for site preview pane.
 .wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
-	.dev-tools__icon {
+	.hosting-features__icon {
 		display: inline-block;
 		height: 18px;
 		vertical-align: top;

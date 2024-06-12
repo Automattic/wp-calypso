@@ -214,6 +214,7 @@ const StatsCommercialPurchase = ( {
 									redirectUri,
 									price: undefined,
 									quantity: purchaseTierQuantity,
+									isUpgrade: isCommercialOwned,
 								} )
 							}
 						>
