@@ -8,7 +8,7 @@ type Props = {
 const BudgetSelector = ( { setBudget, budgetLowerRange }: Props ) => {
 	const translate = useTranslate();
 
-	const availableLanguages = [
+	const minBudgetList = [
 		{
 			label: translate( 'No minimum budget' ),
 			value: '0',
@@ -42,7 +42,7 @@ const BudgetSelector = ( { setBudget, budgetLowerRange }: Props ) => {
 	return (
 		<SelectControl
 			value={ budgetLowerRange }
-			options={ availableLanguages }
+			options={ minBudgetList }
 			onChange={ setBudget }
 		></SelectControl>
 	);
