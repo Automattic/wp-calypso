@@ -1,7 +1,6 @@
 import {
 	isJetpackAISlug,
 	isJetpackPlanSlug,
-	isJetpackSocialSlug,
 	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import clsx from 'clsx';
@@ -102,13 +101,9 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					);
 
 					const isMultiPlanSelectProduct =
-						isJetpackSocialSlug( item.productSlug ) ||
 						isJetpackAISlug( item.productSlug ) ||
 						isJetpackStatsPaidProductSlug( item.productSlug );
 
-					// Go to the checkout page for all products when they click on the 'GET' CTA,
-					// except for Jetpack Social when it isn't owned or included in an active plan,
-					// in which case we open a modal.
 					let ctaHref = getCheckoutURL( item );
 					if ( isMultiPlanSelectProduct && ! isIncludedInPlanOrSuperseded ) {
 						ctaHref = `#${ item.productSlug }`;
