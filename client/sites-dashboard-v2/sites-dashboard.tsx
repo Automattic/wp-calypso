@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	SitesSortKey,
 	useSitesListFiltering,
@@ -281,7 +282,8 @@ const SitesDashboardV2 = ( {
 								dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
 								event="learn-more"
 								horizontal
-								href="https://wordpress.com/for-agencies"
+								href={ localizeUrl( 'https://wordpress.com/for-agencies' ) }
+								target="_blank"
 								title={ translate( 'Managing multiple sites? Meet our agency hosting' ) }
 								tracksClickName="calypso_sites_dashboard_a4a_banner_click"
 							/>

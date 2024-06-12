@@ -5,6 +5,7 @@ import ClientSidebar from '../../components/sidebar-menu/client';
 import PaymentMethodAdd from '../purchases/payment-methods/payment-method-add';
 import PaymentMethodOverview from '../purchases/payment-methods/payment-method-overview';
 import ClientLanding from './client-landing';
+import SubscriptionsList from './primary/subscriptions-list';
 
 export const clientContext: Callback = ( context, next ) => {
 	context.secondary = <ClientSidebar path={ context.path } />;
@@ -18,7 +19,7 @@ export const clientLandingContext: Callback = ( context, next ) => {
 };
 
 export const clientSubscriptionsContext: Callback = ( context, next ) => {
-	context.primary = <div>Subscriptions</div>;
+	context.primary = <SubscriptionsList />;
 	context.secondary = <ClientSidebar path={ context.path } />;
 	next();
 };

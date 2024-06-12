@@ -49,6 +49,14 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		submit?.( { destination } );
 	};
 
+	const recordBigSkyView = () => {
+		recordTracksEvent( 'calypso_big_sky_view_choice', {
+			flow,
+			step: stepName,
+		} );
+		return true;
+	};
+
 	return (
 		<>
 			<DocumentHead title={ headerText } />
@@ -75,7 +83,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="pattern-assembler"
 								onSelect={ handleSubmit }
 							/>
-							{ isBigSkyEligible && (
+							{ isBigSkyEligible && recordBigSkyView() && (
 								<DesignChoice
 									className="design-choices__try-big-sky"
 									title={ translate( 'Try Big Sky' ) }
