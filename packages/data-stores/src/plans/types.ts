@@ -105,7 +105,6 @@ export interface SitePlanPricing extends Omit< PlanPricing, 'billPeriod' > {}
 export interface PricingMetaForGridPlan {
 	billingPeriod?: PlanPricing[ 'billPeriod' ];
 	currencyCode?: PlanPricing[ 'currencyCode' ];
-	purchaseCurrencyCode?: PlanPricing[ 'currencyCode' ];
 	originalPrice: PlanPricing[ 'originalPrice' ];
 	/**
 	 * If discounted prices are provided (not null), they will take precedence over originalPrice.

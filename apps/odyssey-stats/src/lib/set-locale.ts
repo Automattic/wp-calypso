@@ -8,7 +8,7 @@ const DEFAULT_LANGUAGE = 'en';
 const DEFAULT_MOMENT_LOCALE = 'en';
 // Only Simple Site has the default locale as 'en'. For atomic/jetpack sites the default locale is 'en-us'.
 const SIMPLE_SITE_DEFAULT_LOCALE = 'en';
-const ALWAYS_LOAD_WITH_LOCALE = [ 'zh' ];
+const ALWAYS_LOAD_WITH_LOCALE = [ 'pt', 'zh' ];
 
 const getLanguageCodeFromLocale = ( localeSlug: string ) => {
 	debug( localeSlug );

@@ -40,7 +40,7 @@ export function getPathWithUpdatedQueryString( query = {}, path = page.current )
  * @param {*} eventName Analytics event name, automatically prefixed with 'jetpack_odyssey' or 'calypso'
  * @param {*} properties Analytics properties
  */
-export const trackStatsAnalyticsEvent = ( eventName, properties ) => {
+export const trackStatsAnalyticsEvent = ( eventName, properties = {} ) => {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	// publish an event

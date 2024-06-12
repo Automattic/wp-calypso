@@ -15,3 +15,21 @@ export function getValidUrl( url?: string ) {
 
 	return parsedUrl.toString();
 }
+
+/**
+ * Get a valid domain from the URL or undefined if the URL is invalid.
+ * @param url The URL to extract the domain from.
+ * @returns The domain or undefined if the URL is invalid.
+ */
+export function getDomainFromUrl( url?: string ) {
+	if ( ! url ) {
+		return undefined;
+	}
+
+	try {
+		const validUrl = new URL( url );
+		return validUrl.hostname;
+	} catch {
+		return undefined;
+	}
+}

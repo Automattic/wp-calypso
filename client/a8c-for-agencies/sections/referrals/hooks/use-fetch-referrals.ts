@@ -9,25 +9,28 @@ export const getReferralsQueryKey = ( agencyId?: number ) => {
 };
 
 const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
-	const clients: Referral[] = [];
-	referrals.forEach( ( referral ) => {
-		const clientIndex = clients.findIndex( ( client ) => client.client_id === referral.client_id );
-		if ( clientIndex === -1 ) {
-			clients.push( {
+	const clients = referrals.reduce< { [ key: string ]: Referral } >( ( acc, referral ) => {
+		const purchases = referral.products.map( ( product ) => ( {
+			...product,
+			status: referral.status,
+		} ) );
+		if ( ! acc[ referral.client.id ] ) {
+			acc[ referral.client.id ] = {
 				id: referral.id,
-				client_id: referral.client_id,
-				client_email: referral.client_email,
-				purchases: referral.products,
+				client: referral.client,
+				purchases: [ ...purchases ],
 				commissions: referral.commission,
 				statuses: [ referral.status ],
-			} );
+			};
 		} else {
-			clients[ clientIndex ].purchases.push( ...referral.products );
-			clients[ clientIndex ].commissions += referral.commission;
-			clients[ clientIndex ].statuses.push( referral.status );
+			acc[ referral.client.id ].purchases.push( ...purchases );
+			acc[ referral.client.id ].commissions += referral.commission;
+			acc[ referral.client.id ].statuses.push( referral.status );
 		}
-	} );
-	return clients;
+		return acc;
+	}, {} );
+
+	return Object.values( clients );
 };
 
 export default function useFetchReferrals( isEnabled: boolean ) {

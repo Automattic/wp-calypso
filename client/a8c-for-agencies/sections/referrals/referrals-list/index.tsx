@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback, ReactNode } from 'react';
+import { useMemo, useCallback, ReactNode, useEffect } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function ReferralList( { referrals, dataViewsState, setDataViewsState }: Props ) {
+	const isDesktop = useDesktopBreakpoint();
 	const translate = useTranslate();
 
 	const openSitePreviewPane = useCallback(
@@ -29,7 +31,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 
 	const fields = useMemo(
 		() =>
-			dataViewsState.selectedItem
+			dataViewsState.selectedItem || ! isDesktop
 				? [
 						{
 							id: 'client',
@@ -37,11 +39,17 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => {
 								return (
-									<Button onClick={ () => openSitePreviewPane( item ) } borderless>
-										{ item.client_email }
+									<Button
+										className="view-details-button"
+										data-client-id={ item.client.id }
+										onClick={ () => openSitePreviewPane( item ) }
+										borderless
+									>
+										{ item.client.email }
 									</Button>
 								);
 							},
+							width: '100%',
 							enableHiding: false,
 							enableSorting: false,
 						},
@@ -52,7 +60,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							header: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => {
-								return item.client_email;
+								return item.client.email;
 							},
 							enableHiding: false,
 							enableSorting: false,
@@ -78,16 +86,6 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							enableSorting: false,
 						},
 						{
-							id: 'commissions',
-							header: translate( 'Commissions' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => {
-								return `$${ item.commissions }`;
-							},
-							enableHiding: false,
-							enableSorting: false,
-						},
-						{
 							id: 'subscription-status',
 							header: translate( 'Subscription Status' ).toUpperCase(),
 							getValue: () => '-',
@@ -103,7 +101,11 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							render: ( { item }: { item: Referral } ) => {
 								return (
 									<div>
-										<Button onClick={ () => openSitePreviewPane( item ) } borderless>
+										<Button
+											className="view-details-button"
+											onClick={ () => openSitePreviewPane( item ) }
+											borderless
+										>
 											<Gridicon icon="chevron-right" />
 										</Button>
 									</div>
@@ -113,19 +115,68 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							enableSorting: false,
 						},
 				  ],
-		[ dataViewsState.selectedItem, openSitePreviewPane, translate ]
+		[ dataViewsState.selectedItem, isDesktop, openSitePreviewPane, translate ]
 	);
+
+	useEffect( () => {
+		// If the user clicks on a row, open the preview pane by triggering the View details button click.
+		const handleRowClick = ( event: Event ) => {
+			const target = event.target as HTMLElement;
+			const row = target.closest(
+				'.dataviews-view-table__row, li:has(.dataviews-view-list__item)'
+			);
+
+			if ( row ) {
+				const isButtonOrLink = target.closest( 'button, a' );
+				if ( ! isButtonOrLink ) {
+					const button = row.querySelector( '.view-details-button' ) as HTMLButtonElement;
+					if ( button ) {
+						button.click();
+					}
+				}
+			}
+		};
+
+		const rowsContainer = document.querySelector( '.dataviews-view-table, .dataviews-view-list' );
+
+		if ( rowsContainer ) {
+			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
+		}
+
+		// We need to trigger the click event on the View details button when the selected item changes to ensure highlighted row is correct.
+		if (
+			rowsContainer?.classList.contains( 'dataviews-view-list' ) &&
+			dataViewsState?.selectedItem?.client_id
+		) {
+			const trigger: HTMLButtonElement | null = rowsContainer.querySelector(
+				`li:not(.is-selected) .view-details-button[data-client-id='${ dataViewsState?.selectedItem?.client_id }']`
+			);
+			if ( trigger ) {
+				trigger.click();
+			}
+		}
+
+		return () => {
+			if ( rowsContainer ) {
+				rowsContainer.removeEventListener( 'click', handleRowClick as EventListener );
+			}
+		};
+	}, [ dataViewsState ] );
 
 	return (
 		<div className="redesigned-a8c-table">
 			<ItemsDataViews
 				data={ {
 					items: referrals,
+					getItemId: ( item: Referral ) => `${ item.client.id }`,
+					onSelectionChange: ( data ) => {
+						openSitePreviewPane( data[ 0 ] );
+					},
 					pagination: {
 						totalItems: 1,
 						totalPages: 1,
 					},
-					searchLabel: translate( 'Search referrals' ),
+					enableSearch: false,
 					fields: fields,
 					actions: [],
 					setDataViewsState: setDataViewsState,

@@ -158,9 +158,12 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 				onCtaButtonClick={ onCtaButtonClick }
 				ctaButtonURL={ ctaButtonURL }
 				ctaButtonLabel={ ctaButtonLabel }
+				ctaTracksEvent="calypso_jetpack_upsell_product_wpcom_plan_cta_click"
 				cardImage={ upsellImageUrl }
 				cardImageAlt={ upsellImageAlt }
 				secondaryCtaURL={ secondaryCtaURL }
+				secondaryCtaLabel={ translate( 'See all plans' ) }
+				secondaryCtaTracksEvent="calypso_jetpack_upsell_product_wpcom_plan_see_all_plans_cta_click"
 			>
 				{ renderProductCardBody() }
 			</JetpackRnaActionCard>

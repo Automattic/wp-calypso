@@ -9,6 +9,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import CloudflareAnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-cloudflare-analytics';
 import AnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-google-analytics';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
@@ -21,7 +22,7 @@ import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form'
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isBlazeEnabled from 'calypso/state/selectors/is-blaze-enabled';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -37,7 +38,6 @@ const SiteSettingsTraffic = ( {
 	isSavingSettings,
 	setFieldValue,
 	siteId,
-	siteSlug,
 	shouldShowAdvertisingOption,
 	translate,
 } ) => {
@@ -47,6 +47,8 @@ const SiteSettingsTraffic = ( {
 			document.getElementById( window.location.hash.substring( 1 ) )?.scrollIntoView();
 		}
 	}, [] );
+
+	const advertisingUrl = useAdvertisingUrl();
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -70,7 +72,7 @@ const SiteSettingsTraffic = ( {
 					) }
 					ctaText={ translate( 'Get started' ) }
 					image={ blazeIllustration }
-					href={ `/advertising/${ siteSlug || '' }` }
+					href={ advertisingUrl }
 				/>
 			) }
 			{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
@@ -119,7 +121,6 @@ const SiteSettingsTraffic = ( {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const site = getSelectedSite( state );
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackAdmin = isJetpack && isAdmin;
@@ -127,7 +128,6 @@ const connectComponent = connect( ( state ) => {
 
 	return {
 		siteId,
-		siteSlug: site?.slug,
 		isAdmin,
 		isJetpack,
 		isJetpackAdmin,

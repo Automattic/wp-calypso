@@ -35,3 +35,10 @@ export const A4A_MIGRATIONS_LINK = '/migrations';
 export const A4A_SETTINGS_LINK = '/settings';
 export const A4A_PARTNER_DIRECTORY_LINK = '/partner-directory';
 export const A4A_PARTNER_DIRECTORY_DASHBOARD_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/dashboard`;
+export const EXTERNAL_A4A_KNOWLEDGE_BASE = 'http://automattic.com/for-agencies/help';
+
+// Client
+export const A4A_CLIENT_LANDING_LINK = '/client/landing';
+export const A4A_CLIENT_SUBSCRIPTIONS_LINK = '/client/subscriptions';
+export const A4A_CLIENT_PAYMENT_METHODS_LINK = '/client/payment-methods';
+export const A4A_CLIENT_PAYMENT_METHODS_ADD_LINK = `${ A4A_CLIENT_PAYMENT_METHODS_LINK }/add`;

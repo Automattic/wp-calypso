@@ -38,7 +38,8 @@ export function fireGoogleAnalyticsPageView(
 	urlPath,
 	pageTitle,
 	useJetpackGoogleAnalytics = false,
-	useAkismetGoogleAnalytics = false
+	useAkismetGoogleAnalytics = false,
+	useA8CForAgenciesGoogleAnalytics = false
 ) {
 	const getGa4PropertyGtag = () => {
 		if ( useJetpackGoogleAnalytics ) {
@@ -46,6 +47,9 @@ export function fireGoogleAnalyticsPageView(
 		}
 		if ( useAkismetGoogleAnalytics ) {
 			return GA4.Ga4PropertyGtag.AKISMET;
+		}
+		if ( useA8CForAgenciesGoogleAnalytics ) {
+			return GA4.Ga4PropertyGtag.A8C_FOR_AGENCIES;
 		}
 		return GA4.Ga4PropertyGtag.WPCOM;
 	};

@@ -1,4 +1,5 @@
 import { Button, Gridicon, FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
@@ -8,6 +9,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MultiCheckbox, { ChangeList } from 'calypso/components/forms/multi-checkbox';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
+import useSignupFormValidation from './hooks/use-signup-form-validation';
 import { AgencyDetailsPayload } from './types';
 import type { FormEventHandler } from 'react';
 
@@ -62,6 +64,8 @@ export default function AgencyDetailsForm( {
 	const [ servicesOffered, setServicesOffered ] = useState( initialValues?.servicesOffered ?? [] );
 	const [ productsOffered, setProductsOffered ] = useState( initialValues?.productsOffered ?? [] );
 
+	const { validate, validationError, updateValidationError } = useSignupFormValidation();
+
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
 
@@ -115,9 +119,18 @@ export default function AgencyDetailsForm( {
 				return;
 			}
 
+			const error = validate( payload );
+			if ( error ) {
+				// Scrolling only for fields positioned on top
+				if ( error.firstName || error.lastName || error.agencyName || error.agencyUrl ) {
+					window?.scrollTo( { behavior: 'smooth', top: 0 } );
+				}
+				return;
+			}
+
 			onSubmit( payload );
 		},
-		[ showCountryFields, isLoading, onSubmit, payload ]
+		[ showCountryFields, isLoading, onSubmit, payload, validate ]
 	);
 
 	const getServicesOfferedOptions = () => {
@@ -166,11 +179,21 @@ export default function AgencyDetailsForm( {
 							id="firstName"
 							name="firstName"
 							value={ firstName }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-								setFirstName( event.target.value )
-							}
+							isError={ !! validationError.firstName }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								setFirstName( event.target.value );
+								updateValidationError( { firstName: undefined } );
+							} }
 							disabled={ isLoading }
 						/>
+						<div
+							className={ clsx( 'agency-details-form__footer-error', {
+								hidden: ! validationError?.firstName,
+							} ) }
+							role="alert"
+						>
+							{ validationError.firstName }
+						</div>
 					</FormFieldset>
 					<FormFieldset>
 						<FormLabel htmlFor="lastName">{ translate( 'Last name' ) }</FormLabel>
@@ -178,11 +201,21 @@ export default function AgencyDetailsForm( {
 							id="lastName"
 							name="lastName"
 							value={ lastName }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-								setLastName( event.target.value )
-							}
+							isError={ !! validationError.lastName }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								setLastName( event.target.value );
+								updateValidationError( { lastName: undefined } );
+							} }
 							disabled={ isLoading }
 						/>
+						<div
+							className={ clsx( 'agency-details-form__footer-error', {
+								hidden: ! validationError?.lastName,
+							} ) }
+							role="alert"
+						>
+							{ validationError.lastName }
+						</div>
 					</FormFieldset>
 				</div>
 				<FormFieldset>
@@ -191,11 +224,21 @@ export default function AgencyDetailsForm( {
 						id="agencyName"
 						name="agencyName"
 						value={ agencyName }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setAgencyName( event.target.value )
-						}
+						isError={ !! validationError.agencyName }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							setAgencyName( event.target.value );
+							updateValidationError( { agencyName: undefined } );
+						} }
 						disabled={ isLoading }
 					/>
+					<div
+						className={ clsx( 'agency-details-form__footer-error', {
+							hidden: ! validationError?.agencyName,
+						} ) }
+						role="alert"
+					>
+						{ validationError.agencyName }
+					</div>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="agencyUrl">{ translate( 'Business URL' ) }</FormLabel>
@@ -203,11 +246,21 @@ export default function AgencyDetailsForm( {
 						id="agencyUrl"
 						name="agencyUrl"
 						value={ agencyUrl }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setAgencyUrl( event.target.value )
-						}
+						isError={ !! validationError.agencyUrl }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							setAgencyUrl( event.target.value );
+							updateValidationError( { agencyUrl: undefined } );
+						} }
 						disabled={ isLoading }
 					/>
+					<div
+						className={ clsx( 'agency-details-form__footer-error', {
+							hidden: ! validationError?.agencyUrl,
+						} ) }
+						role="alert"
+					>
+						{ validationError.agencyUrl }
+					</div>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="managed_sites">
@@ -265,6 +318,7 @@ export default function AgencyDetailsForm( {
 							value={ countryValue }
 							onChange={ ( value ) => {
 								setCountryValue( value ?? '' );
+								updateValidationError( { country: undefined } );
 							} }
 							options={ countryOptions }
 							disabled={ isLoading }
@@ -272,6 +326,14 @@ export default function AgencyDetailsForm( {
 					) }
 
 					{ ! showCountryFields && <TextPlaceholder /> }
+					<div
+						className={ clsx( 'agency-details-form__footer-error', {
+							hidden: ! validationError?.country,
+						} ) }
+						role="alert"
+					>
+						{ validationError.country }
+					</div>
 				</FormFieldset>
 				{ showCountryFields && stateOptions && (
 					<FormFieldset>
@@ -292,11 +354,22 @@ export default function AgencyDetailsForm( {
 						name="line1"
 						placeholder={ translate( 'Street name and house number' ) }
 						value={ line1 }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setLine1( event.target.value )
-						}
+						isError={ !! validationError.line1 }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							setLine1( event.target.value );
+							updateValidationError( { line1: undefined } );
+						} }
 						disabled={ isLoading }
 					/>
+					<div
+						className={ clsx( 'agency-details-form__footer-error', {
+							hidden: ! validationError?.line1,
+							'line-separated': !! validationError?.line1,
+						} ) }
+						role="alert"
+					>
+						{ validationError.line1 }
+					</div>
 					<FormTextInput
 						id="line2"
 						name="line2"
@@ -314,12 +387,24 @@ export default function AgencyDetailsForm( {
 						id="city"
 						name="city"
 						value={ city }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => setCity( event.target.value ) }
+						isError={ !! validationError.city }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							setCity( event.target.value );
+							updateValidationError( { city: undefined } );
+						} }
 						disabled={ isLoading }
 					/>
+
+					{ !! validationError?.city && (
+						<div className="agency-details-form__footer-error" role="alert">
+							{ validationError.city }
+						</div>
+					) }
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
+					<FormLabel optional htmlFor="postalCode">
+						{ translate( 'Postal code' ) }
+					</FormLabel>
 					<FormTextInput
 						id="postalCode"
 						name="postalCode"

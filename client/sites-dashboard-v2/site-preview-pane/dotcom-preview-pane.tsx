@@ -2,21 +2,23 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
-import ItemPreviewPane, {
-	createFeaturePreview,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
-import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
-import DevToolsIcon from 'calypso/dev-tools/components/dev-tools-icon';
+import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
+import HostingFeaturesIcon from 'calypso/hosting-features/components/hosting-features-icon';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
-	DOTCOM_LOGS,
+	DOTCOM_LOGS_PHP,
+	DOTCOM_LOGS_WEB,
 	DOTCOM_GITHUB_DEPLOYMENTS,
-	DOTCOM_DEVELOPER_TOOLS,
+	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
+import type {
+	ItemData,
+	FeaturePreviewInterface,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 
 type Props = {
 	site: SiteExcerptData;
@@ -46,78 +48,83 @@ const DotcomPreviewPane = ( {
 	const isSimpleSite = ! site.jetpack;
 	const isPlanExpired = !! site.plan?.expired;
 
-	const features = useMemo(
-		() => [
-			createFeaturePreview(
-				DOTCOM_OVERVIEW,
-				__( 'Overview' ),
-				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				selectedSiteFeaturePreview
-			),
-			createFeaturePreview(
-				DOTCOM_DEVELOPER_TOOLS,
-				<span>
-					{ hasEnTranslation( 'Hosting Settings' ) ? __( 'Hosting Settings' ) : __( 'Dev Tools' ) }
-					<DevToolsIcon />
-				</span>,
-				isSimpleSite || isPlanExpired,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				selectedSiteFeaturePreview
-			),
-			createFeaturePreview(
-				DOTCOM_GITHUB_DEPLOYMENTS,
-				__( 'Deployments' ),
-				isAtomicSite && ! isPlanExpired,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				selectedSiteFeaturePreview
-			),
-			createFeaturePreview(
-				DOTCOM_MONITORING,
-				__( 'Monitoring' ),
-				isAtomicSite && ! isPlanExpired,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				selectedSiteFeaturePreview
-			),
-			createFeaturePreview(
-				DOTCOM_LOGS,
-				__( 'Logs' ),
-				isAtomicSite && ! isPlanExpired,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				selectedSiteFeaturePreview
-			),
-			createFeaturePreview(
-				DOTCOM_STAGING_SITE,
-				__( 'Staging Site' ),
-				isAtomicSite && ! isPlanExpired,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				selectedSiteFeaturePreview
-			),
-			createFeaturePreview(
-				DOTCOM_HOSTING_CONFIG,
-				hasEnTranslation( 'Server Settings' ) ? __( 'Server Settings' ) : __( 'Server Config' ),
-				isAtomicSite && ! isPlanExpired,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				selectedSiteFeaturePreview
-			),
-		],
-		[
-			__,
-			selectedSiteFeature,
-			setSelectedSiteFeature,
-			selectedSiteFeaturePreview,
-			isSimpleSite,
-			isPlanExpired,
-			isAtomicSite,
-		]
-	);
+	const features: FeaturePreviewInterface[] = useMemo( () => {
+		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
+		const siteFeatures = [
+			{
+				label: __( 'Overview' ),
+				enabled: true,
+				featureIds: [ DOTCOM_OVERVIEW ],
+			},
+			{
+				label: (
+					<span>
+						{ hasEnTranslation( 'Hosting Features' )
+							? __( 'Hosting Features' )
+							: __( 'Dev Tools' ) }
+						<HostingFeaturesIcon />
+					</span>
+				),
+				enabled: isSimpleSite || isPlanExpired,
+				featureIds: [ DOTCOM_HOSTING_FEATURES ],
+			},
+			{
+				label: __( 'Deployments' ),
+				enabled: isActiveAtomicSite,
+				featureIds: [ DOTCOM_GITHUB_DEPLOYMENTS ],
+			},
+			{
+				label: __( 'Monitoring' ),
+				enabled: isActiveAtomicSite,
+				featureIds: [ DOTCOM_MONITORING ],
+			},
+			{
+				label: __( 'Logs' ),
+				enabled: isActiveAtomicSite,
+				featureIds: [ DOTCOM_LOGS_PHP, DOTCOM_LOGS_WEB ],
+			},
+			{
+				label: __( 'Staging Site' ),
+				enabled: isActiveAtomicSite,
+				featureIds: [ DOTCOM_STAGING_SITE ],
+			},
+			{
+				label: hasEnTranslation( 'Server Settings' )
+					? __( 'Server Settings' )
+					: __( 'Server Config' ),
+				enabled: isActiveAtomicSite,
+				featureIds: [ DOTCOM_HOSTING_CONFIG ],
+			},
+		];
+
+		return siteFeatures.map( ( { label, enabled, featureIds } ) => {
+			const selected = enabled && featureIds.includes( selectedSiteFeature );
+			const defaultFeatureId = featureIds[ 0 ];
+			return {
+				id: defaultFeatureId,
+				tab: {
+					label,
+					visible: enabled,
+					selected,
+					onTabClick: () => {
+						if ( enabled && ! selected ) {
+							setSelectedSiteFeature( defaultFeatureId );
+						}
+					},
+				},
+				enabled,
+				preview: enabled ? selectedSiteFeaturePreview : null,
+			};
+		} );
+	}, [
+		__,
+		selectedSiteFeature,
+		setSelectedSiteFeature,
+		selectedSiteFeaturePreview,
+		isSimpleSite,
+		isPlanExpired,
+		isAtomicSite,
+	] );
 
 	const itemData: ItemData = {
 		title: site.title,

@@ -204,3 +204,13 @@ $data-view-border-color: #f1f1f1;
 	height: auto;
 	overflow-y: scroll;
 }
+
+
+.referrals-layout .notice-banner {
+	display: none;
+	margin-block-end: 24px;
+}
+
+.referrals-layout:not(.referrals-layout--has-selected) .notice-banner {
+	display: flex;
+}

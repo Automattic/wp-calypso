@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button, Gravatar } from '@automattic/components';
+import { Button, Gridicon, Gravatar } from '@automattic/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { A4A_OVERVIEW_LINK } from '../../sidebar-menu/lib/constants';
+import { A4A_OVERVIEW_LINK, EXTERNAL_A4A_KNOWLEDGE_BASE } from '../../sidebar-menu/lib/constants';
 
 import './style.scss';
 
@@ -36,7 +36,17 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 		<ul className="a4a-sidebar__profile-dropdown-menu" hidden={ ! isExpanded }>
 			<li className="a4a-sidebar__profile-dropdown-menu-item">
 				<Button borderless onClick={ onGetHelp }>
-					{ translate( 'Get help' ) }
+					{ translate( 'Contact sales' ) }
+				</Button>
+			</li>
+			<li className="a4a-sidebar__profile-dropdown-menu-item">
+				<Button
+					borderless
+					href={ EXTERNAL_A4A_KNOWLEDGE_BASE }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ translate( 'View Knowledge Base' ) } <Gridicon icon="external" size={ 18 } />
 				</Button>
 			</li>
 			<li className="a4a-sidebar__profile-dropdown-menu-item">

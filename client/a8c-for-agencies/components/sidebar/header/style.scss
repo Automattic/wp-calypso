@@ -124,6 +124,12 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 			padding-inline: 8px;
 		}
 	}
+
+	a svg.gridicon.gridicons-external {
+		width: 18px;
+		height: 18px;
+		top: 2px;
+	}
 }
 
 a.a4a-sidebar__external-link {

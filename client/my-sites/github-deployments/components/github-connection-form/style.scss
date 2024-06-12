@@ -1,12 +1,21 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .github-deployments-connect-repository {
 
 	&__content {
 		display: flex;
+		flex-direction: column;
 		justify-content: space-between;
-		gap: 58px;
+		gap: 32px;
 
 		> div {
 			flex: 1;
+		}
+
+		@include break-medium {
+			flex-direction: row;
+			gap: 58px;
 		}
 	}
 
@@ -23,7 +32,10 @@
 
 	&__configs {
 		.form-fieldset {
-			margin-bottom: 24px;
+			margin-bottom: 16px;
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 	}
 
@@ -37,7 +49,6 @@
 			border: 1px solid var(--color-neutral-10);
 			border-radius: 2px;
 			background-color: #fff;
-			margin-bottom: 4px;
 
 			&--has-error {
 				border-color: var(--color-error);
@@ -56,6 +67,7 @@
 
 		.form-select {
 			width: 100%;
+			font-size: $font-body;
 		}
 	}
 

@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { type I18N, numberFormat } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import type { BasicMetricsScored, Metrics, Scores } from 'calypso/data/site-profiler/types';
-import type { I18N } from 'i18n-calypso';
 
 type SubsetScores = Exclude< Scores, 'needs-improvement' >;
 
@@ -36,13 +36,20 @@ export function getCopies(
 	const migrateUrl = `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }`;
 	const supportUrl = localizeUrl( 'https://wordpress.com/support' );
 
+	const clsValue = numberFormat( basicMetrics?.cls?.value, 2 );
+	const fidValue = numberFormat( basicMetrics?.fid?.value, 2 );
+	const lcpValue = numberFormat( basicMetrics?.lcp?.value, 2 );
+	const fcpValue = numberFormat( basicMetrics?.fcp?.value, 2 );
+	const ttfbValue = numberFormat( basicMetrics?.ttfb?.value, 2 );
+	const inpValue = numberFormat( basicMetrics?.inp?.value, 2 );
+
 	const cls: CopiesProps = {
 		title: translate( 'Cumulative Layout Shift (CLS)' ),
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
 					'Your site’s CLS is %(value)f, ensuring a stable layout. Excellent job maintaining low shifts!',
-					{ args: { value: basicMetrics?.cls?.value } }
+					{ args: { value: clsValue } }
 				),
 				solution: translate(
 					'Migrate to WordPress.com to maintain this stability and further enhance your site’s layout performance.'
@@ -55,7 +62,7 @@ export function getCopies(
 					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
 					{
 						args: {
-							value: basicMetrics?.cls?.value,
+							value: clsValue,
 						},
 					}
 				),
@@ -70,7 +77,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s CLS is %(value)f, ensuring a stable layout. Great job maintaining low shifts.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					{ args: { value: clsValue } }
 				),
 				solution: translate(
 					'Keep up the good work! Continue using best practices to maintain your site’s stability.'
@@ -81,7 +88,7 @@ export function getCopies(
 			poor: {
 				diagnostic: translate(
 					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
-					{ args: { value: basicMetrics?.cls?.value } }
+					{ args: { value: clsValue } }
 				),
 				solution: translate(
 					'Connect with a Happiness Engineer to reduce CLS and ensure a more stable layout for your users.'
@@ -98,7 +105,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s FID is %(value)fms, offering quick response times. Excellent job maintaining fast interactions!',
-					{ args: { value: basicMetrics?.fid?.value } }
+					{ args: { value: fidValue } }
 				),
 				solution: translate(
 					'Migrate to WordPress.com to sustain this performance and further improve response times.'
@@ -111,7 +118,7 @@ export function getCopies(
 					'Your site’s FID is %(value)fms, slower than most. Aim for less than 100ms for better responsiveness.',
 					{
 						args: {
-							value: basicMetrics?.fid?.value,
+							value: fidValue,
 						},
 					}
 				),
@@ -126,7 +133,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s FID is %(value)fms, offering quick response times. Excellent job on maintaining swift interactions!',
-					{ args: { value: basicMetrics?.fid?.value } }
+					{ args: { value: fidValue } }
 				),
 				solution: translate(
 					'Maintain this top-notch responsiveness by regularly optimizing your site for consistent performance.'
@@ -137,7 +144,7 @@ export function getCopies(
 			poor: {
 				diagnostic: translate(
 					'Your site’s FID is %(value)fms, slower than most. Aim for less than 100ms for better responsiveness.',
-					{ args: { value: basicMetrics?.fid?.value } }
+					{ args: { value: fidValue } }
 				),
 				solution: translate(
 					'Connect with a Happiness Engineer to optimize FID and improve your site’s responsiveness'
@@ -154,7 +161,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s FCP is %(value)fms, providing a fast initial load. Great job on maintaining quick content display!',
-					{ args: { value: basicMetrics?.fcp?.value } }
+					{ args: { value: fcpValue } }
 				),
 				solution: translate(
 					'Migrate to WordPress.com to sustain this speed and further enhance your initial content load times.'
@@ -167,7 +174,7 @@ export function getCopies(
 					'Your site’s FCP is %(value)fms, slower than average. Aim for under 2s to improve user experience.',
 					{
 						args: {
-							value: basicMetrics?.fcp?.value,
+							value: fcpValue,
 						},
 					}
 				),
@@ -182,7 +189,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s FCP is %(value)fms, providing a fast initial load. Excellent job maintaining quick content delivery!',
-					{ args: { value: basicMetrics?.fcp?.value } }
+					{ args: { value: fcpValue } }
 				),
 				solution: translate(
 					'Continue optimizing your content delivery to consistently maintain this fast load time and performance.'
@@ -193,7 +200,7 @@ export function getCopies(
 			poor: {
 				diagnostic: translate(
 					'Your site’s FCP is %(value)fms, slower than average. Aim for under 2s to improve user experience.',
-					{ args: { value: basicMetrics?.fcp?.value } }
+					{ args: { value: fcpValue } }
 				),
 				solution: translate(
 					'Connect with a Happiness Engineer to reduce FCP and speed up initial content load.'
@@ -210,7 +217,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s LCP is %(value)fms, loading main content quickly. Well done on maintaining fast load times!',
-					{ args: { value: basicMetrics?.lcp?.value } }
+					{ args: { value: lcpValue } }
 				),
 				solution: translate(
 					'Migrate to WordPress.com to achieve even faster LCP and enhance your site’s overall performance.'
@@ -223,7 +230,7 @@ export function getCopies(
 					'Your site’s LCP is %(value)fms, slower than typical sites. Aim for under 2.5s for better performance.',
 					{
 						args: {
-							value: basicMetrics?.lcp?.value,
+							value: lcpValue,
 						},
 					}
 				),
@@ -238,7 +245,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s LCP is %(value)fms, loading main content quickly. Excellent job maintaining fast content display!',
-					{ args: { value: basicMetrics?.lcp?.value } }
+					{ args: { value: lcpValue } }
 				),
 				solution: translate(
 					'Keep optimizing images and elements to consistently maintain swift load times and performance.'
@@ -249,7 +256,7 @@ export function getCopies(
 			poor: {
 				diagnostic: translate(
 					'Your site’s LCP is %(value)fms, slower than typical sites. Aim for under 2.5s for better performance.',
-					{ args: { value: basicMetrics?.lcp?.value } }
+					{ args: { value: lcpValue } }
 				),
 				solution: translate(
 					'Connect with a Happiness Engineer to optimize LCP and enhance main content load speed.'
@@ -266,7 +273,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s TTFB is %(value)fms, offering fast server response. Excellent job on maintaining quick response!',
-					{ args: { value: basicMetrics?.ttfb?.value } }
+					{ args: { value: ttfbValue } }
 				),
 				solution: translate(
 					'Migrate to WordPress.com to sustain this speed and further enhance your server response times.'
@@ -279,7 +286,7 @@ export function getCopies(
 					'Your site’s TTFB is %(value)fms, longer than most sites. Aim for less than 600ms for better performance.',
 					{
 						args: {
-							value: basicMetrics?.ttfb?.value,
+							value: ttfbValue,
 						},
 					}
 				),
@@ -294,7 +301,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s TTFB is %(value)fms, offering fast server response. Excellent job on maintaining quick server performance!',
-					{ args: { value: basicMetrics?.ttfb?.value } }
+					{ args: { value: ttfbValue } }
 				),
 				solution: translate(
 					'Continue monitoring server performance to consistently maintain these quick response times and efficiency.'
@@ -305,7 +312,7 @@ export function getCopies(
 			poor: {
 				diagnostic: translate(
 					'Your site’s TTFB is %(value)fms, longer than most sites. Aim for less than 600ms for better performance.',
-					{ args: { value: basicMetrics?.ttfb?.value } }
+					{ args: { value: ttfbValue } }
 				),
 				solution: translate(
 					'Connect with a Happiness Engineer to reduce TTFB and improve server response time'
@@ -322,7 +329,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s INP is %(value)fms, providing smooth interactions. Great job on maintaining quick responses!',
-					{ args: { value: basicMetrics?.inp?.value } }
+					{ args: { value: inpValue } }
 				),
 				solution: translate(
 					'Migrate to WordPress.com to sustain and further enhance your site’s interaction speed.'
@@ -335,7 +342,7 @@ export function getCopies(
 					'Your site’s INP is %(value)fms, higher than average. Aim for less than 100ms for smoother interactions.',
 					{
 						args: {
-							value: basicMetrics?.inp?.value,
+							value: inpValue,
 						},
 					}
 				),
@@ -350,7 +357,7 @@ export function getCopies(
 			good: {
 				diagnostic: translate(
 					'Your site’s INP is %(value)fms, providing smooth interactions. Excellent performance, keep it up!',
-					{ args: { value: basicMetrics?.inp?.value } }
+					{ args: { value: inpValue } }
 				),
 				solution: translate(
 					'Keep refining interactive elements to sustain this high level of performance and user satisfaction.'
@@ -361,7 +368,7 @@ export function getCopies(
 			poor: {
 				diagnostic: translate(
 					'Your site’s INP is %(value)fms, higher than average. Aim for less than 100ms for smoother interactions.',
-					{ args: { value: basicMetrics?.inp?.value } }
+					{ args: { value: inpValue } }
 				),
 				solution: translate(
 					'Connect with a Happiness Engineer to optimize INP and improve interaction speed.'
@@ -372,7 +379,6 @@ export function getCopies(
 		},
 	};
 
-	// TODO: Add the rest of the metrics
 	return {
 		ttfb,
 		fcp,

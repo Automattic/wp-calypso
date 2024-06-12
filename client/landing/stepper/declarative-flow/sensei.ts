@@ -26,7 +26,7 @@ const sensei: Flow = {
 	get title() {
 		return translate( 'Course Creator' );
 	},
-	isSignupFlow: false,
+	isSignupFlow: true,
 	useSteps() {
 		return [
 			{ slug: 'intro', component: Intro },
