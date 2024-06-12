@@ -14,7 +14,6 @@ import illustration404 from 'calypso/assets/images/illustrations/illustration-40
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
-import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -236,55 +235,47 @@ class StatsSite extends Component {
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
-		// For the new date picker
-		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
-
 		// Set up a custom range for the chart.
 		// Dependant on new date range picker controls.
 		let customChartRange = null;
-		let customChartQuantity;
 
-		if ( isDateControlEnabled ) {
-			// Sort out end date for chart.
-			const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+		// Sort out end date for chart.
+		const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
 
-			if ( chartEnd ) {
-				customChartRange = { chartEnd };
-			} else {
-				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
-			}
-
-			// Find the quantity of bars for the chart.
-			let daysInRange = this.getDefaultDaysForPeriod( period );
-			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
-			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
-
-			if ( chartStart && isSameOrBefore ) {
-				// Add one to calculation to include the start date.
-				daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
-				customChartRange.chartStart = chartStart;
-			} else {
-				// if start date is missing let the frequency of data take over to avoid showing one bar
-				// (e.g. months defaulting to 30 days and showing one point)
-				customChartRange.chartStart = moment()
-					.subtract( daysInRange, 'days' )
-					.format( 'YYYY-MM-DD' );
-			}
-
-			// Calculate diff between requested start and end in `priod` units.
-			// Move end point (most recent) to the end of period to account for partial periods
-			// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
-			const adjustedChartEndDate =
-				period === 'day'
-					? moment( customChartRange.chartEnd )
-					: moment( customChartRange.chartEnd ).endOf( period );
-
-			customChartQuantity = Math.ceil(
-				adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
-			);
-
-			customChartRange.daysInRange = daysInRange;
+		if ( chartEnd ) {
+			customChartRange = { chartEnd };
+		} else {
+			customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 		}
+
+		// Find the quantity of bars for the chart.
+		let daysInRange = this.getDefaultDaysForPeriod( period );
+		const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
+		const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
+
+		if ( chartStart && isSameOrBefore ) {
+			// Add one to calculation to include the start date.
+			daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
+			customChartRange.chartStart = chartStart;
+		} else {
+			// if start date is missing let the frequency of data take over to avoid showing one bar
+			// (e.g. months defaulting to 30 days and showing one point)
+			customChartRange.chartStart = moment().subtract( daysInRange, 'days' ).format( 'YYYY-MM-DD' );
+		}
+
+		// Calculate diff between requested start and end in `priod` units.
+		// Move end point (most recent) to the end of period to account for partial periods
+		// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
+		const adjustedChartEndDate =
+			period === 'day'
+				? moment( customChartRange.chartEnd )
+				: moment( customChartRange.chartEnd ).endOf( period );
+
+		const customChartQuantity = Math.ceil(
+			adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
+		);
+
+		customChartRange.daysInRange = daysInRange;
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
@@ -308,7 +299,6 @@ class StatsSite extends Component {
 			'stats__module-list--traffic',
 			'stats__module--unified',
 			'stats__flexible-grid-container',
-			// @TODO: Refactor hidden modules with a more flexible layout (e.g., Flexbox) to fit mass configuration to moduels in the future.
 			{
 				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
 				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
@@ -363,7 +353,7 @@ class StatsSite extends Component {
 								activeTab={ getActiveTab( this.props.chartTab ) }
 								activeLegend={ this.state.activeLegend }
 								onChangeLegend={ this.onChangeLegend }
-								isWithNewDateControl={ isDateControlEnabled }
+								isWithNewDateControl
 								slug={ slug }
 								dateRange={ customChartRange }
 							>
@@ -377,9 +367,6 @@ class StatsSite extends Component {
 									isShort
 								/>
 							</StatsPeriodNavigation>
-							{ ! isDateControlEnabled && (
-								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-							) }
 						</StatsPeriodHeader>
 
 						<ChartTabs
@@ -395,7 +382,7 @@ class StatsSite extends Component {
 							chartTab={ this.props.chartTab }
 							customQuantity={ customChartQuantity }
 							customRange={ customChartRange }
-							hideLegend={ isDateControlEnabled }
+							hideLegend
 						/>
 					</>
 
