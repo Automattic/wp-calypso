@@ -13,10 +13,12 @@ const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
 		const purchases = referral.products.map( ( product ) => ( {
 			...product,
 			status: referral.status,
+			referral_id: referral.id, // referral id is needed for the purchase to be unique
 		} ) );
 		if ( ! acc[ referral.client.id ] ) {
 			acc[ referral.client.id ] = {
-				id: referral.id,
+				// id is a combination of client id and referral id to make it unique
+				id: `${ referral.client.id }${ referral.id }`,
 				client: referral.client,
 				purchases: [ ...purchases ],
 				commissions: referral.commission,
