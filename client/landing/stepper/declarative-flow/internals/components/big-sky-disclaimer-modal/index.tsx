@@ -22,7 +22,13 @@ type Props = {
 const BigSkyDisclaimerModal: React.FC< Props > = ( { children, flow, stepName } ) => {
 	const translate = useTranslate();
 	const [ isOpen, setOpen ] = useState( false );
-	const openModal = () => setOpen( true );
+	const openModal = () => {
+		recordTracksEvent( 'calypso_big_sky_disclaimer_modal_open', {
+			flow,
+			step: stepName,
+		} );
+		setOpen( true );
+	};
 	const closeModal = () => {
 		recordTracksEvent( 'calypso_big_sky_disclaimer_modal_close', {
 			flow,
