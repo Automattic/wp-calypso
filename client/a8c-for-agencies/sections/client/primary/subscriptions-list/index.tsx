@@ -10,9 +10,9 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
 import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
-import CancelSubscriptionAction from '../../components/cancel-subscription-confirmation-dialog';
+import CancelSubscriptionAction from '../../cancel-subscription-confirmation-dialog';
 import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';
 import { getSubscriptionStatus } from '../../lib/get-subscription-status';
 import type { Subscription } from '../../types';
@@ -23,8 +23,8 @@ export default function SubscriptionsList() {
 	const translate = useTranslate();
 	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
 
-	const { data, isFetching } = useFetchClientSubscriptions();
-	const { data: products, isFetching: isFetchingProducts } = useProductsQuery( true );
+	const { data, isFetching, refetch } = useFetchClientSubscriptions();
+	const { data: products, isFetching: isFetchingProducts } = useFetchClientProducts();
 
 	const title = translate( 'Your subscriptions' );
 
@@ -70,13 +70,20 @@ export default function SubscriptionsList() {
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					const status = item.status;
 					const isActive = status === 'active';
-					return isActive ? <CancelSubscriptionAction subscription={ item } /> : '-';
+					return isActive ? (
+						<CancelSubscriptionAction
+							subscription={ item }
+							onCancelSubscription={ () => refetch() }
+						/>
+					) : (
+						'-'
+					);
 				},
 				enableHiding: false,
 				enableSorting: false,
 			},
 		],
-		[ isFetchingProducts, products, translate ]
+		[ isFetchingProducts, products, refetch, translate ]
 	);
 
 	return (
