@@ -6,6 +6,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { isValueTruthy, getContactDetailsType } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
+import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
@@ -692,9 +693,13 @@ export default function CheckoutMain( {
 			transactionError: string | null;
 			paymentMethodId: string | null;
 		} ) => {
-			reduxDispatch(
-				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			const errorNoticeText = transactionError ? (
+				<div dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( transactionError ) } } /> // eslint-disable-line react/no-danger -- The API response can contain anchor elements that we need to parse so they are rendered properly
+			) : (
+				translate( 'An error occurred during your purchase.' )
 			);
+
+			reduxDispatch( errorNotice( errorNoticeText ) );
 
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_payment_error', {
