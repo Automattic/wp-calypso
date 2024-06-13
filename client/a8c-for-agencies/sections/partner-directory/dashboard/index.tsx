@@ -4,13 +4,18 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useDetailsForm from 'calypso/a8c-for-agencies/sections/partner-directory/agency-details/hooks/use-details-form';
 import { useFormSelectors } from 'calypso/a8c-for-agencies/sections/partner-directory/components/hooks/use-form-selectors';
 import {
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
-import { AgencyDirectoryApplication } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
-import { useDispatch } from 'calypso/state';
+import {
+	mapAgencyDetailsFormData,
+	mapApplicationFormData,
+} from 'calypso/a8c-for-agencies/sections/partner-directory/utils/map-application-form-data';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import StepSection from '../../referrals/common/step-section';
 import StepSectionItem from '../../referrals/common/step-section-item';
@@ -18,10 +23,6 @@ import { getBrandMeta } from '../lib/get-brand-meta';
 import DashboardStatusBadge from './status-badge';
 
 import './style.scss';
-
-type Props = {
-	applicationData: AgencyDirectoryApplication | null;
-};
 
 interface DirectoryApplicationStatus {
 	key: string;
@@ -36,9 +37,14 @@ interface StatusBadge {
 	type: BadgeType;
 }
 
-const PartnerDirectoryDashboard = ( { applicationData }: Props ) => {
+const PartnerDirectoryDashboard = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const agency = useSelector( getActiveAgency );
+
+	const applicationData = useMemo( () => mapApplicationFormData( agency ), [ agency ] );
+	const agencyDetailsData = useMemo( () => mapAgencyDetailsFormData( agency ), [ agency ] );
 
 	const applicationStatusTypeMap = useMemo( (): Record< string, StatusBadge > => {
 		return {
@@ -95,11 +101,16 @@ const PartnerDirectoryDashboard = ( { applicationData }: Props ) => {
 		document.querySelector( '.partner-directory__body' )?.scrollTo( 0, 0 );
 	}, [] );
 
-	const { availableProducts } = useFormSelectors();
+	const isSubmitted = applicationData?.status !== 'completed';
 
-	const isSubmitted =
-		applicationData?.status === 'pending' || applicationData?.status === 'in-progress';
-	const isCompleted = applicationData?.status === 'completed';
+	const { isValidFormData } = useDetailsForm( { initialFormData: agencyDetailsData } );
+
+	const isCompleted =
+		( applicationData?.directories?.every( ( directory ) => directory.status !== 'pending' ) &&
+			isValidFormData ) ??
+		false;
+
+	const { availableProducts } = useFormSelectors();
 
 	const directoryApplicationStatuses =
 		applicationData?.directories?.reduce( ( statuses: DirectoryApplicationStatus[], directory ) => {
