@@ -48,6 +48,7 @@ export function generateSteps( {
 	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
 	excludeSurveyStepIfInactive = noop,
+	excludeSegmentSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
 		// `themes` does not update the theme for an existing site as we normally
@@ -1068,6 +1069,7 @@ export function generateSteps( {
 		},
 		'initial-intent': {
 			stepName: 'initial-intent',
+			fulfilledStepCallback: excludeSegmentSurveyStepIfInactive,
 			providesDependencies: [ 'segmentationSurveyAnswers', 'onboardingSegment' ],
 		},
 	};
