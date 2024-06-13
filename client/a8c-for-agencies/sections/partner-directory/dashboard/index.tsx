@@ -2,7 +2,7 @@ import { BadgeType, Button } from '@automattic/components';
 import { Icon, external, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
@@ -40,6 +40,11 @@ export default function PartnerDirectoryDashboard() {
 	const onAgencyProfileClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_agency_profile_click' ) );
 	}, [ dispatch ] );
+
+	// We want to scroll to the top of the page when the component is rendered
+	useEffect( () => {
+		document.querySelector( '.partner-directory__body' )?.scrollTo( 0, 0 );
+	}, [] );
 
 	const isSubmitted = true; // FIXME: Replace with actual value
 	const brandStatuses = [
