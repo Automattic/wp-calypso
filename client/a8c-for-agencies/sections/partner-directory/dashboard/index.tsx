@@ -101,18 +101,18 @@ const PartnerDirectoryDashboard = ( { applicationData }: Props ) => {
 		applicationData?.status === 'pending' || applicationData?.status === 'in-progress';
 	const isCompleted = applicationData?.status === 'completed';
 
-	const directoryApplicationStatuses: DirectoryApplicationStatus[] = [];
+	const directoryApplicationStatuses =
+		applicationData?.directories?.reduce( ( statuses: DirectoryApplicationStatus[], directory ) => {
+			statuses.push( {
+				brand: availableProducts[ directory.directory ],
+				status: applicationStatusTypeMap[ directory.status || 'unknown' ].label,
+				type: applicationStatusTypeMap[ directory.status || 'unknown' ].type,
+				key: applicationStatusTypeMap[ directory.status || 'unknown' ].key,
+			} );
+			return statuses;
+		}, [] ) || [];
 
-	for ( const directory of applicationData?.directories || [] ) {
-		directoryApplicationStatuses.push( {
-			brand: availableProducts[ directory.directory ],
-			status: applicationStatusTypeMap[ directory.status || 'unknown' ].label,
-			type: applicationStatusTypeMap[ directory.status || 'unknown' ].type,
-			key: applicationStatusTypeMap[ directory.status || 'unknown' ].key,
-		} );
-	}
-
-	// todo: remove this when we have the links.
+	// todo: to remove this when we have the links.
 	const displayProgramLinks = false;
 
 	const programLinks = (
