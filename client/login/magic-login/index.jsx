@@ -268,10 +268,10 @@ class MagicLogin extends Component {
 
 		showMagicLogin();
 
-		this.props.recordTracksEvent(
-			'calypso_gravatar_powered_magic_login_click_use_different_email',
-			{ client_id: oauth2Client.id, client_name: oauth2Client.name }
-		);
+		this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_switch_email', {
+			client_id: oauth2Client.id,
+			client_name: oauth2Client.name,
+		} );
 	};
 
 	renderGravPoweredMagicLoginTos() {
