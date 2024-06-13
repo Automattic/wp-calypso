@@ -193,7 +193,10 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					<span className={ clsx( { 'is-error': showValidationMsg } ) }>
 						{ showValidationMsg && (
 							<>
-								<Icon icon={ info } size={ 20 } /> { validationMessage }
+								<Icon icon={ info } size={ 20 } />{ ' ' }
+								{ validationMessage
+									? validationMessage
+									: translate( 'Please enter a valid website address. You can copy and paste.' ) }
 							</>
 						) }
 					</span>
