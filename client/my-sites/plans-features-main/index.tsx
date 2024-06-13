@@ -683,12 +683,15 @@ const PlansFeaturesMain = ( {
 		if ( showPlansComparisonGrid ) {
 			return translate( 'Hide comparison' );
 		}
-		switch ( flowName ) {
-			case ONBOARDING_GUIDED_FLOW:
-				return translate( 'Compare all plans' );
-			default:
-				return translate( 'Compare plans' );
+		if (
+			Array.isArray( gridPlansForFeaturesGrid ) &&
+			Array.isArray( gridPlansForComparisonGrid ) &&
+			gridPlansForFeaturesGrid.length < gridPlansForComparisonGrid.length &&
+			flowName === ONBOARDING_GUIDED_FLOW
+		) {
+			return translate( 'Compare all plans' );
 		}
+		return translate( 'Compare plans' );
 	};
 
 	return (
