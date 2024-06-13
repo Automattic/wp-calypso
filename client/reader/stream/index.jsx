@@ -344,10 +344,6 @@ class ReaderStream extends Component {
 			stream: { items },
 		} = this.props;
 
-		// THIS (below comments) bypasses functionality further below. This prevents a bug, but
-		// loses the ability to behave well with combinations of shortkey selections and manual
-		// scrolling.
-
 		// do we have a selected item? if so, just move to the next one
 		if ( this.props.selectedPostKey ) {
 			this.props.selectNextItem( { streamKey, items } );
@@ -355,13 +351,6 @@ class ReaderStream extends Component {
 		}
 
 		const visibleIndexes = this.getVisibleItemIndexes();
-
-		// THIS (below) doesn't work as expected. First it is being bypassed by the above. When its not, it
-		// causes bugs and selects the previous item if the item you selected is slightly off the
-		// bottom of the page (causing selection loop).
-
-		// We could remove above and check below if the selected item is the last visible index, and call selectNextItem in that case.
-		// Or we could update above instead of romving it entirely to check if the selected item is above the viewport.
 
 		// This is slightly magical...
 		// When a user tries to select the "next" item, we really want to select
@@ -495,7 +484,14 @@ class ReaderStream extends Component {
 
 		const itemKey = this.getPostRef( postKey );
 		const showPost = ( args ) => {
-			this.props.selectItem( { streamKey: this.props.streamKey, postKey } );
+			// Ensure the post selected becomes the selected item. It may already be the selected
+			// item through shortkeys, or not if use a mouse clicking flow. Setting the selected
+			// item this way adds consistency to scroll position when coming back from the full post
+			// view, as well as avoids conflict between out systems for preserving scroll position
+			// and scrolling to selected posts when users use a mix of shortkeys and mouse clicks.
+			if ( ! isSelected ) {
+				this.props.selectItem( { streamKey: this.props.streamKey, postKey } );
+			}
 			this.props.showSelectedPost( {
 				...args,
 				postKey: postKey,
