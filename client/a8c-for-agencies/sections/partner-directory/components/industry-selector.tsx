@@ -11,6 +11,10 @@ const IndustrySelector = ( { setIndustry, industry }: Props ) => {
 
 	const industries = [
 		{
+			label: translate( 'Select your industry' ),
+			value: '',
+		},
+		{
 			label: translate( 'Agricultural services' ),
 			value: 'agricultural_services',
 		},
