@@ -152,7 +152,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			}
 
 			return planFeatureMap;
-		}, [ gridPlans, allFeaturesList, planFeaturesForGridPlans, intent ] );
+		}, [ gridPlans, allFeaturesList, planFeaturesForGridPlans, intent, hasRedeemedDomainCredit ] );
 	};
 
 export default useRestructuredPlanFeaturesForComparisonGrid;

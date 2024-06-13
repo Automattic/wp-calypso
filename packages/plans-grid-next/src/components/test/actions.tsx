@@ -20,6 +20,9 @@ jest.mock( '@automattic/data-stores', () => ( {
 	WpcomPlansUI: {
 		store: null,
 	},
+	AddOns: {
+		useStorageAddOns: jest.fn(),
+	},
 } ) );
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
@@ -89,6 +92,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							...pricing,
 							billingPeriod: PLAN_ANNUAL_PERIOD,
 						},
+						features: {},
 					},
 					[ PLAN_PREMIUM_2_YEARS ]: {
 						isMonthlyPlan: false,
@@ -96,6 +100,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							...pricing,
 							billingPeriod: PLAN_BIENNIAL_PERIOD,
 						},
+						features: {},
 					},
 				},
 				helpers: {
@@ -133,6 +138,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							...pricing,
 							billingPeriod: PLAN_ANNUAL_PERIOD,
 						},
+						features: {},
 					},
 					[ PLAN_PREMIUM ]: {
 						isMonthlyPlan: false,
@@ -140,6 +146,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							...pricing,
 							billingPeriod: PLAN_ANNUAL_PERIOD,
 						},
+						features: {},
 					},
 				},
 				helpers: {
@@ -177,6 +184,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_ANNUAL_PERIOD,
 							},
+							features: {},
 						},
 						[ PLAN_BUSINESS_MONTHLY ]: {
 							isMonthlyPlan: true,
@@ -184,6 +192,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_MONTHLY_PERIOD,
 							},
+							features: {},
 						},
 					},
 					helpers: {
@@ -219,6 +228,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_ANNUAL_PERIOD,
 							},
+							features: {},
 						},
 					},
 					helpers: {
@@ -240,6 +250,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_BIENNIAL_PERIOD,
 							},
+							features: {},
 						},
 					},
 					helpers: {
@@ -276,6 +287,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_TRIENNIAL_PERIOD,
 							},
+							features: {},
 						},
 						[ PLAN_BUSINESS_MONTHLY ]: {
 							isMonthlyPlan: true,
@@ -318,6 +330,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_TRIENNIAL_PERIOD,
 							},
+							features: {},
 						},
 					},
 					helpers: {
@@ -356,6 +369,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							pricing: {
 								...pricing,
 							},
+							features: {},
 						},
 					},
 					helpers: {
