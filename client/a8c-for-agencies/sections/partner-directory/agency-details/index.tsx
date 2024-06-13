@@ -1,21 +1,28 @@
 import { Button } from '@automattic/components';
-import { CheckboxControl, TextareaControl, TextControl } from '@wordpress/components';
+import { TextareaControl, TextControl, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
+import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
+import BudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/budget-selector';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import IndustrySelector from '../components/industry-selector';
-import LanguageSelector from '../components/laguages-selector';
+import LanguageSelector from '../components/languages-selector';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
+import { PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG } from '../constants';
+import { useCountryList } from './hooks/use-country-list';
 import useDetailsForm from './hooks/use-details-form';
 import useSubmitForm from './hooks/use-submit-form';
+
+import './style.scss';
 
 const AgencyDetailsForm = () => {
 	const translate = useTranslate();
 
 	const { formData, setFormData, isValidFormData } = useDetailsForm();
+	const { countryOptions } = useCountryList();
 
 	const { onSubmit, isSubmitting } = useSubmitForm( { formData } );
 
@@ -30,9 +37,15 @@ const AgencyDetailsForm = () => {
 
 	return (
 		<Form
+			className="partner-directory-agency-details"
 			title={ translate( 'Finish adding details to your public profile' ) }
 			description={
-				"Add details to your agency's public profile for clients to see. Want to update your expertise instead?"
+				<>
+					Add details to your agency's public profile for clients to see.{ ' ' }
+					<a href={ `/partner-directory/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }` }>
+						Want to update your expertise instead?
+					</a>
+				</>
 			}
 		>
 			<FormSection title={ translate( 'Agency information' ) }>
@@ -75,9 +88,13 @@ const AgencyDetailsForm = () => {
 					/>
 				</FormField>
 				<FormField label={ translate( 'Company location' ) }>
-					<TextControl
+					<SearchableDropdown
 						value={ formData.country }
-						onChange={ ( value ) => setFormFields( { country: value } ) }
+						onChange={ ( value ) => {
+							setFormFields( { country: value } );
+						} }
+						options={ countryOptions }
+						disabled={ false }
 					/>
 				</FormField>
 				<FormField
@@ -96,10 +113,14 @@ const AgencyDetailsForm = () => {
 				description={ translate( 'Clients can filter these details to find the right agency.' ) }
 			>
 				<FormField label={ translate( 'Availability' ) }>
-					<CheckboxControl
-						checked={ formData.isAvailable }
+					<ToggleControl
 						onChange={ ( isChecked ) => setFormFields( { isAvailable: isChecked } ) }
-						label={ translate( "I'm accepting new clients" ) }
+						checked={ formData.isAvailable }
+						label={
+							formData.isAvailable
+								? translate( "I'm accepting new clients" )
+								: translate( "I'm not accepting new clients" )
+						}
 					/>
 				</FormField>
 				<FormField label={ translate( 'Industry' ) }>
@@ -128,19 +149,19 @@ const AgencyDetailsForm = () => {
 				</FormField>
 			</FormSection>
 
-			<FormSection title={ translate( 'Budget details' ) }>
-				<div>{ translate( 'Budget details' ) }</div>
-				<TextControl
-					value={ formData.budgetLowerRange }
-					onChange={ ( value ) => setFormFields( { budgetLowerRange: value } ) }
+			<FormSection
+				title={ translate( 'Budget details' ) }
+				description={ translate(
+					'Optionally set your minimum budget. Clients can filter these details to find the right agency.'
+				) }
+			>
+				<div>{ translate( 'Minimum project budget' ) }</div>
+				<BudgetSelector
+					budgetLowerRange={ formData.budgetLowerRange }
+					setBudget={ ( budget: string ) => setFormFields( { budgetLowerRange: budget } ) }
 				/>
-				<div>
-					{ translate(
-						'Optionally set your minimum budget. Clients can filter these details to find the right agency.'
-					) }
-				</div>
 			</FormSection>
-			<div className="agency-details-form__footer">
+			<div className="partner-directory-agency-cta__footer">
 				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
 					{ translate( 'Publish public profile' ) }
 				</Button>

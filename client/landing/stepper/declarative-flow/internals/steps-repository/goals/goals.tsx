@@ -1,6 +1,7 @@
 import { Onboard } from '@automattic/data-stores';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import type { Goal } from './types';
 
 const SiteGoal = Onboard.SiteGoal;
@@ -15,7 +16,7 @@ const DIFMSupportedLocales = [ ...englishLocales, 'es' ];
 
 const useBBEGoal = () => {
 	const translate = useTranslate();
-
+	const locale = useLocale();
 	// ************************************************************************
 	// ****  Experiment skeleton left in for future BBE copy change tests  ****
 	// ************************************************************************
@@ -41,10 +42,14 @@ const useBBEGoal = () => {
 	//
 	// ************************************************************************
 
-	return translate( 'Get a website built quickly' );
+	return locale === 'en'
+		? translate( 'Let us build your site in 4 days' )
+		: translate( 'Get a website built quickly' );
 };
 
 export const useGoals = (): Goal[] => {
+	loadExperimentAssignment( 'calypso_design_picker_image_optimization_202406' ); // Temporary for A/B test.
+
 	const translate = useTranslate();
 	const locale = useLocale();
 	const builtByExpressGoalDisplayText = useBBEGoal();

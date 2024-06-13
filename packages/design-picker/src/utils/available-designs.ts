@@ -6,6 +6,7 @@ type MShotInputOptions = {
 	scrollable?: boolean;
 	highRes?: boolean;
 	isMobile?: boolean;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 };
 
 // Used for both prefetching and loading design screenshots
@@ -13,6 +14,7 @@ export const getMShotOptions = ( {
 	scrollable,
 	highRes,
 	isMobile,
+	oldHighResImageLoading,
 }: MShotInputOptions = {} ): MShotsOptions => {
 	// Take care changing these values, as the design-picker CSS animations are written for these values (see the *__landscape and *__portrait classes)
 
@@ -21,11 +23,18 @@ export const getMShotOptions = ( {
 	// end up serving WEBPs instead of JPEGs, spend fewer bits on parts of images that are not displayed, and possibly display fewer images.
 	//
 	// See #88786 for more info.
+	let w = 500;
+	let screen_height = 1100;
+	if ( oldHighResImageLoading ) {
+		w = highRes ? 1199 : 600;
+		screen_height = 3600;
+	}
 	return {
 		vpw: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
 		vph: scrollable ? 1600 : 1040,
-		w: highRes ? 500 : 500, // Stubbed out. See #88786 for more info.
-		screen_height: 1100,
+		w: w,
+		screen_height: screen_height,
+		oldHighResImageLoading: oldHighResImageLoading,
 	};
 };
 

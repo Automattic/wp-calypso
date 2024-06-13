@@ -1,7 +1,7 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
 import clsx from 'clsx';
 import { throttle } from 'lodash';
-import React, { FC, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 
 import './styles.scss';
@@ -10,13 +10,30 @@ const SHOW_SCROLL_THRESHOLD = 10;
 const showElement = ( element: Element | null ) => element?.classList.remove( 'display-none' );
 const hideElement = ( element: Element | null ) => element?.classList.add( 'display-none' );
 
-const ScrollableHorizontalNavigation: FC< {
+type BaseTab = {
+	slug: string;
+	title: string;
+};
+
+type Tab< T extends object > = T & BaseTab;
+
+interface Props< T extends object > {
 	className?: string;
 	onTabClick: ( tabSlug: string ) => void;
 	selectedTab: string;
-	tabs: { slug: string; title: string }[];
+	tabs: Tab< T >[];
+	titleField?: keyof Tab< T >;
 	width: number;
-} > = ( { className, onTabClick, selectedTab, tabs, width } ) => {
+}
+
+const ScrollableHorizontalNavigation = < T extends object >( {
+	className,
+	onTabClick,
+	selectedTab,
+	tabs,
+	titleField = 'title',
+	width,
+}: Props< T > ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
 
 	// Scroll the selected tab into view on initial render and whenever it changes.
@@ -116,7 +133,7 @@ const ScrollableHorizontalNavigation: FC< {
 									onTabClick( tab.slug );
 								} }
 							>
-								{ tab.title }
+								{ tab[ titleField ] }
 							</SegmentedControl.Item>
 						);
 					} ) }

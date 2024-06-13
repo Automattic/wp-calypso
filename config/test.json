@@ -113,7 +113,6 @@
 		"signup/social-first": true,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
-		"stats/date-control": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/plan-usage": true,
 		"stats/tier-upgrade-slider": true,
