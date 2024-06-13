@@ -35,7 +35,7 @@ const PlanUpsellCard: React.FC< Props > = ( { upsellPlanName } ) => {
 
 	return (
 		<div className="activity-card-list__date-group-upsell">
-			<div className="activity-card-list__date-group-date">Past</div>
+			<div className="activity-card-list__date-group-date">{ translate( 'Older' ) }</div>
 			<div className="activity-card-list__date-group-content">
 				<div className="activity-card-list__secondary-card-with-more activity-card">
 					<div className="activity-card__header">
@@ -46,8 +46,10 @@ const PlanUpsellCard: React.FC< Props > = ( { upsellPlanName } ) => {
 					</div>
 					<Card>
 						<ActivityActor actorName="WordPress" actorType="Application" />
-						<div className="activity-card__activity-description">Description</div>
-						<div className="activity-card__activity-title">Title</div>
+						<div className="activity-card__activity-description">
+							Lorem ipsum dolor sit amet consectetur adipiscing elit
+						</div>
+						<div className="activity-card__activity-title">Laboris Nisi</div>
 						<div className="activity-card__activity-overlay">
 							<div className="activity-card__activity-overlay-content">
 								<div className="activity-card__activity-overlay-lock">
