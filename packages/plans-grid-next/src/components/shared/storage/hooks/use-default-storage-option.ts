@@ -1,5 +1,5 @@
 import { AddOns } from '@automattic/data-stores';
-import { usePlansGridContext } from '../../grid-context';
+import { usePlansGridContext } from '../../../../grid-context';
 import type {
 	PlanSlug,
 	WPComStorageAddOnSlug,

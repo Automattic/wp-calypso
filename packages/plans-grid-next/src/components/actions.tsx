@@ -13,12 +13,12 @@ import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
-import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
 import PlanButton from './plan-button';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
+import { useDefaultStorageOption } from './shared/storage';
 import type { GridPlan, PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
