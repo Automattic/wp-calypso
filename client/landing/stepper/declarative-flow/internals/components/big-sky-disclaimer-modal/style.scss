@@ -24,7 +24,7 @@
 
 .big-sky-disclaimer-modal__content {
 	h1 {
-		margin: 16px 0 8px;
+		margin: 24px 0 8px;
 		font-size: 1.5rem;
 		font-weight: 700;
 		line-height: 32px;
@@ -42,24 +42,11 @@
 	display: flex;
 }
 
-button.components-button.big-sky-disclaimer-modal__button-start.is-primary {
-	padding: 24px 0;
-	width: 100%;
-	justify-content: center;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 100%;
-}
-
-.big-sky-disclaimer-modal__footer {
-	margin-bottom: 16px;
-	color: var(--studio-gray-50);
-}
-
 .big-sky-disclaimer-modal__features {
 	margin: 18px 0;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 18px;
 }
 
 .big-sky-disclaimer-modal__features .feature {
@@ -71,4 +58,17 @@ button.components-button.big-sky-disclaimer-modal__button-start.is-primary {
 	margin-right: 10px;
 	fill: #3858e9;
 	min-width: 27.5px;
+}
+
+.big-sky-disclaimer-modal__footer {
+	margin-bottom: 18px;
+	color: var(--studio-gray-50);
+}
+
+button.components-button.big-sky-disclaimer-modal__button-start.is-primary {
+	padding: 24px 0;
+	width: 100%;
+	justify-content: center;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 100%;
 }
