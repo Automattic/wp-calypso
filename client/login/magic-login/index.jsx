@@ -71,6 +71,7 @@ class MagicLogin extends Component {
 		usernameOrEmail: this.props.userEmail || '',
 		resendEmailCountdown: RESEND_EMAIL_COUNTDOWN_TIME,
 		verificationCodeInputValue: '',
+		isLoginWithMainAccount: true,
 	};
 
 	verificationCodeInputRef = createRef();
@@ -262,6 +263,17 @@ class MagicLogin extends Component {
 		} );
 	};
 
+	handleGravPoweredSwitchEmail = () => {
+		const { hideMagicLoginRequestForm: showMagicLogin, oauth2Client } = this.props;
+
+		showMagicLogin();
+
+		this.props.recordTracksEvent(
+			'calypso_gravatar_powered_magic_login_click_use_different_email',
+			{ client_id: oauth2Client.id, client_name: oauth2Client.name }
+		);
+	};
+
 	renderGravPoweredMagicLoginTos() {
 		const { oauth2Client, translate } = this.props;
 
@@ -334,12 +346,7 @@ class MagicLogin extends Component {
 	};
 
 	renderGravPoweredEmailLinkVerification() {
-		const {
-			oauth2Client,
-			translate,
-			isSendingEmail,
-			hideMagicLoginRequestForm: showMagicLogin,
-		} = this.props;
+		const { oauth2Client, translate, isSendingEmail } = this.props;
 		const { usernameOrEmail, resendEmailCountdown } = this.state;
 		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
 
@@ -353,12 +360,7 @@ class MagicLogin extends Component {
 						className="grav-powered-magic-login__show-magic-login"
 						onClick={ () => {
 							this.resetResendEmailCountdown();
-							showMagicLogin();
-
-							this.props.recordTracksEvent(
-								'calypso_gravatar_powered_magic_login_click_use_different_email',
-								{ client_id: oauth2Client.id, client_name: oauth2Client.name }
-							);
+							this.handleGravPoweredSwitchEmail();
 						} }
 					/>
 				),
@@ -458,13 +460,78 @@ class MagicLogin extends Component {
 		);
 	}
 
-	renderGravPoweredSecondaryEmail() {
+	renderGravPoweredSecondaryEmailOptions() {
 		const { oauth2Client, translate } = this.props;
+		const { isLoginWithMainAccount } = this.state;
 
 		return (
 			<div className="grav-powered-magic-login__content">
 				<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 				<h1 className="grav-powered-magic-login__header">{ translate( 'Important note' ) }</h1>
+				<p className="grav-powered-magic-login__sub-header">
+					{ translate(
+						'The submitted email is already linked to an existing Gravatar account as a secondary email:'
+					) }
+				</p>
+				<div className="grav-powered-magic-login__account-info">
+					<div className="grav-powered-magic-login__masked-email-address">
+						{ translate( 'Account: {{strong}}%(maskedEmailAddress)s{{/strong}}', {
+							components: { strong: <strong /> },
+							// TODO: Use real data
+							args: { maskedEmailAddress: 'test@gmail.com' },
+						} ) }
+					</div>
+					{ /* TODO: Use real data */ }
+					<a href="https://gravatar.com/wellyshen" target="_blank" rel="noreferrer">
+						{ translate( 'Open profile' ) }
+					</a>
+				</div>
+				<div className="grav-powered-magic-login__account-options">
+					<button
+						className={ clsx( 'grav-powered-magic-login__account-option', {
+							'grav-powered-magic-login__account-option--selected': isLoginWithMainAccount,
+						} ) }
+						onClick={ () => this.setState( { isLoginWithMainAccount: true } ) }
+					>
+						{ translate( 'Log in with main account (recommended)' ) }
+					</button>
+					{ isLoginWithMainAccount && (
+						<div>
+							{ translate(
+								'Log in with your main account and edit there your avatar for your secondary email address.'
+							) }
+						</div>
+					) }
+					<button
+						className={ clsx( 'grav-powered-magic-login__account-option', {
+							'grav-powered-magic-login__account-option--selected': ! isLoginWithMainAccount,
+						} ) }
+						onClick={ () => this.setState( { isLoginWithMainAccount: false } ) }
+					>
+						{ translate( 'Create a new account' ) }
+					</button>
+					{ ! isLoginWithMainAccount && (
+						<div>
+							{ translate(
+								'If you continue a new account will be created, and {{strong}}%(emailAddress)s{{/strong}} will be disconnected from the current main account.',
+								{
+									components: { strong: <strong /> },
+									// TODO: Use real data
+									args: { emailAddress: 'test@gmail.com' },
+								}
+							) }
+						</div>
+					) }
+				</div>
+				<button className="button form-button is-primary">{ translate( 'Continue' ) }</button>
+				<footer className="grav-powered-magic-login__footer">
+					<button onClick={ this.handleGravPoweredSwitchEmail }>
+						{ translate( 'Switch email' ) }
+					</button>
+					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
+						{ translate( 'Need help logging in?' ) }
+					</a>
+				</footer>
 			</div>
 		);
 	}
@@ -713,7 +780,7 @@ class MagicLogin extends Component {
 						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
-					{ ! showCheckYourEmail ? renderEmailVerification : this.renderGravPoweredMagicLogin() }
+					{ showCheckYourEmail ? renderEmailVerification : this.renderGravPoweredMagicLogin() }
 				</Main>
 			);
 		}
