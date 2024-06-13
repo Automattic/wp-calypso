@@ -16,8 +16,6 @@ const selectors = {
 	browseAllFree: 'a[href^="/plugins/browse/popular"]',
 	browseAllPaid: 'a[href^="/plugins/browse/paid"]',
 	browseFirstCategory: 'button:has-text("Search Engine Optimization")',
-	categoryButton: ( section: string ) =>
-		`button:has-text("${ section }"),a:has-text("${ section }")`,
 	breadcrumb: ( section: string ) => `.navigation-header__main a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
@@ -182,12 +180,14 @@ export class PluginsPage {
 	 * Validate Category Button
 	 */
 	async validateCategoryButton( category: string, isDesktop: boolean ): Promise< void > {
-		const categoryLocator = this.page.locator( selectors.categoryButton( category ) );
+		let categoryLocator;
 		if ( isDesktop ) {
-			await categoryLocator.nth( 1 ).click();
+			categoryLocator = this.page.getByRole( 'radio', { name: category } );
 		} else {
-			await categoryLocator.click();
+			await this.page.getByRole( 'button', { name: 'More' } ).click();
+			categoryLocator = this.page.getByRole( 'menuitem', { name: category } );
 		}
+		await categoryLocator.click();
 		await this.page.waitForSelector( selectors.headerTitle( category ) );
 	}
 
