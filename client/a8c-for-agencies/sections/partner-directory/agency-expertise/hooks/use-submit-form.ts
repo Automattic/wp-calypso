@@ -1,23 +1,33 @@
 import { useCallback } from 'react';
 import useSubmitPartnerDirectoryApplicationMutation from 'calypso/a8c-for-agencies/data/partner-directory/use-submit-partner-directory-application';
+import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { AgencyDirectoryApplication } from '../../types';
 
 type Props = {
 	formData: AgencyDirectoryApplication;
+	onSubmitSuccess?: ( data: Agency ) => void;
+	onSubmitError?: () => void;
 };
 
-export default function useSubmitForm( { formData }: Props ) {
-	const { mutate: submit, isPending: isSubmitting } =
-		useSubmitPartnerDirectoryApplicationMutation();
+export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitError }: Props ) {
+	const { mutate: submit, isPending: isSubmitting } = useSubmitPartnerDirectoryApplicationMutation(
+		{
+			onSuccess: ( data ) => {
+				if ( onSubmitSuccess && data?.profile.partner_directory_application?.status ) {
+					onSubmitSuccess( data );
+				} else {
+					onSubmitError && onSubmitError();
+				}
+			},
+			onError: () => {
+				onSubmitError && onSubmitError();
+			},
+		}
+	);
 
 	const onSubmit = useCallback( () => {
-		submit( {
-			services: formData.services,
-			products: formData.products,
-			directories: formData.directories,
-			feedback_url: formData.feedbackUrl,
-		} );
-	}, [ formData.directories, formData.feedbackUrl, formData.products, formData.services, submit ] );
+		submit( formData );
+	}, [ formData, submit ] );
 
 	return {
 		onSubmit,

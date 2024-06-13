@@ -1,11 +1,21 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { CheckboxControl, TextControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import { ReactNode, useCallback } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
-import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+	A4A_PARTNER_DIRECTORY_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { useSelector } from 'calypso/state';
+import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { Agency } from 'calypso/state/a8c-for-agencies/types';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
 import {
@@ -60,6 +70,32 @@ type Props = {
 const AgencyExpertise = ( { initialData }: Props ) => {
 	const translate = useTranslate();
 
+	const agency = useSelector( getActiveAgency );
+	const agencyApplication = agency?.profile?.partner_directory_application;
+
+	const onSubmitSuccess = useCallback(
+		( response: Agency ) => {
+			agency && response && reduxDispatch( setActiveAgency( response ) );
+
+			reduxDispatch(
+				successNotice( translate( 'Your Partner Directory application was submitted!' ), {
+					displayOnNextPage: true,
+					duration: 6000,
+				} )
+			);
+			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
+		},
+		[ page, reduxDispatch, translate ]
+	);
+
+	const onSubmitError = useCallback( () => {
+		reduxDispatch(
+			errorNotice( translate( 'Something went wrong submitting your application!' ), {
+				duration: 6000,
+			} )
+		);
+	}, [ page, reduxDispatch, translate ] );
+
 	const {
 		formData,
 		setFormData,
@@ -71,7 +107,7 @@ const AgencyExpertise = ( { initialData }: Props ) => {
 		setDirectorClientSample,
 	} = useExpertiseForm( { initialData } );
 
-	const { onSubmit, isSubmitting } = useSubmitForm( { formData } );
+	const { onSubmit, isSubmitting } = useSubmitForm( { formData, onSubmitSuccess, onSubmitError } );
 
 	const { services, products, directories, feedbackUrl } = formData;
 
