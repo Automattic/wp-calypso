@@ -485,9 +485,9 @@ class ReaderStream extends Component {
 		const itemKey = this.getPostRef( postKey );
 		const showPost = ( args ) => {
 			// Ensure the post selected becomes the selected item. It may already be the selected
-			// item through shortkeys, or not if use a mouse clicking flow. Setting the selected
+			// item through shortkeys, or not if using a mouse clicking flow. Setting the selected
 			// item this way adds consistency to scroll position when coming back from the full post
-			// view, as well as avoids conflict between out systems for preserving scroll position
+			// view, as well as avoids conflict between our systems for preserving scroll position
 			// and scrolling to selected posts when users use a mix of shortkeys and mouse clicks.
 			if ( ! isSelected ) {
 				this.props.selectItem( { streamKey: this.props.streamKey, postKey } );
