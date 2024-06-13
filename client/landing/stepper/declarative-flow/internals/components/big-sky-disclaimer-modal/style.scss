@@ -46,6 +46,8 @@ button.components-button.big-sky-disclaimer-modal__button-start.is-primary {
 	padding: 24px 0;
 	width: 100%;
 	justify-content: center;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 100%;
 }
 
 .big-sky-disclaimer-modal__footer {
