@@ -1,12 +1,19 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { TextareaControl, TextControl, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
+import { A4A_PARTNER_DIRECTORY_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import BudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/budget-selector';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
+import { Agency } from 'calypso/state/a8c-for-agencies/types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import IndustrySelector from '../components/industry-selector';
 import LanguageSelector from '../components/languages-selector';
 import ProductsSelector from '../components/products-selector';
@@ -18,13 +25,42 @@ import useSubmitForm from './hooks/use-submit-form';
 
 import './style.scss';
 
-const AgencyDetailsForm = () => {
+type Props = {
+	initialFormData: AgencyDetails | null;
+};
+
+const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
 
-	const { formData, setFormData, isValidFormData } = useDetailsForm();
+	const onSubmitSuccess = useCallback(
+		( response: Agency ) => {
+			response && reduxDispatch( setActiveAgency( response ) );
+
+			reduxDispatch(
+				successNotice( translate( 'Your agency profile was submitted!' ), {
+					displayOnNextPage: true,
+					duration: 6000,
+				} )
+			);
+			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
+		},
+		[ page, reduxDispatch, translate ]
+	);
+
+	const onSubmitError = useCallback( () => {
+		reduxDispatch(
+			errorNotice( translate( 'Something went wrong submitting the profile!' ), {
+				duration: 6000,
+			} )
+		);
+	}, [ page, reduxDispatch, translate ] );
+
+	const { formData, setFormData, isValidFormData } = useDetailsForm( {
+		initialFormData,
+	} );
 	const { countryOptions } = useCountryList();
 
-	const { onSubmit, isSubmitting } = useSubmitForm( { formData } );
+	const { onSubmit, isSubmitting } = useSubmitForm( { formData, onSubmitSuccess, onSubmitError } );
 
 	const setFormFields = ( fields: Record< string, any > ) => {
 		setFormData( ( state: AgencyDetails ) => {
