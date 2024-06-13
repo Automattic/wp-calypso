@@ -15,8 +15,6 @@ type StatsNoticeType = {
 };
 
 function shouldShowCommercialUpgradeNotice( options: StatsNoticeProps ) {
-	// eslint-disable-next-line prefer-rest-params
-	console.log( 'arguments: ', arguments );
 	// Pull props.
 	const {
 		isOdysseyStats,
