@@ -1238,7 +1238,13 @@ export function excludeSegmentSurveyStepIfInactive( stepName, _, nextProps ) {
 	const { trailMapExperimentVariant } = nextProps?.initialContext ?? {};
 	// The check has to be null to make we don't remove the step before the experiment loads.
 	if ( trailMapExperimentVariant === null ) {
-		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+		nextProps.submitSignupStep(
+			{ stepName, wasSkipped: true },
+			{
+				segmentationSurveyAnswers: null,
+				onboardingSegment: null,
+			}
+		);
 		flows.excludeStep( stepName );
 	}
 }
