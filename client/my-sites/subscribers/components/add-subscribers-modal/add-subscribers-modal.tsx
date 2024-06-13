@@ -3,10 +3,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
 import { AddSubscriberForm } from '@automattic/subscriber';
+import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
+import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
+import Notice from 'calypso/components/notice';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import './style.scss';
@@ -57,6 +60,9 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 		addSubscribersCallback();
 	};
 
+	const isImportInProgress = useInProgressState();
+	const hasStaleImportJobs = useHasStaleImportJobs();
+
 	if ( ! showAddSubscribersModal ) {
 		return null;
 	}
@@ -92,6 +98,34 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 				</>
 			) }
 
+			{ isImportInProgress && ! hasStaleImportJobs && (
+				<Notice
+					className="add-subscribers-modal__notice"
+					isCompact
+					isReskinned
+					status="is-info"
+					showDismiss={ false }
+				>
+					{ translate(
+						'Your subscribers are being imported. This may take a few minutes. You can close this window and we’ll notify you when the import is complete.'
+					) }
+				</Notice>
+			) }
+
+			{ isImportInProgress && hasStaleImportJobs && (
+				<Notice
+					className="add-subscribers-modal__notice"
+					isCompact
+					isReskinned
+					status="is-warning"
+					showDismiss={ false }
+				>
+					{ translate(
+						'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
+					) }
+				</Notice>
+			) }
+
 			{ ! isUploading && (
 				<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
 			) }
@@ -108,6 +142,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 				recordTracksEvent={ recordTracksEvent }
 				hidden={ isUploading }
 				isWPCOMSite={ isWPCOMSite }
+				disabled={ isImportInProgress }
 			/>
 		</Modal>
 	);
