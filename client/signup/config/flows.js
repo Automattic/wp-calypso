@@ -292,7 +292,7 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 
 	// Developer or Agency with Creator/Business Plan
 	if ( onboardingSegment === 'developer-or-agency' && planType === TYPE_BUSINESS ) {
-		return `${ siteSlug }/wp-admin`;
+		return `/home/${ siteSlug }`;
 	}
 
 	return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
