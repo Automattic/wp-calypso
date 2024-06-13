@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -13,6 +12,7 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
+import CancelSubscriptionAction from '../../components/cancel-subscription-confirmation-dialog';
 import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';
 import { getSubscriptionStatus } from '../../lib/get-subscription-status';
 import type { Subscription } from '../../types';
@@ -70,11 +70,7 @@ export default function SubscriptionsList() {
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					const status = item.status;
 					const isActive = status === 'active';
-					return isActive ? (
-						<Button compact>{ translate( 'Cancel the subscription' ) }</Button>
-					) : (
-						'-'
-					);
+					return isActive ? <CancelSubscriptionAction subscription={ item } /> : '-';
 				},
 				enableHiding: false,
 				enableSorting: false,
