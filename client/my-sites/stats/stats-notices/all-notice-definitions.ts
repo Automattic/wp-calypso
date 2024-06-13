@@ -41,6 +41,7 @@ function shouldShowCommercialUpgradeNotice( options: StatsNoticeProps ) {
 		if ( isCommercial && ! isCommercialOwned ) {
 			return true;
 		}
+		// Other cases fall through to existing behavour.
 	}
 
 	// Test for WPCOM sites.
