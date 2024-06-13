@@ -118,7 +118,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		},
 	};
 
-	function getValidationMessage( url ) {
+	function getValidationMessage( url: string ) {
 		const hasEnTranslationForAllMessages = Object.values( errorMessages ).every( ( message ) =>
 			hasEnTranslation( message.messageString )
 		);
