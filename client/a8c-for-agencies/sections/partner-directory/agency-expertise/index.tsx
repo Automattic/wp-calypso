@@ -11,9 +11,7 @@ import {
 	A4A_PARTNER_DIRECTORY_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
-import { useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import ProductsSelector from '../components/products-selector';
@@ -64,18 +62,15 @@ const DirectoryClientSamples = ( { label, samples, onChange }: DirectoryClientSa
 };
 
 type Props = {
-	initialData?: AgencyDirectoryApplication | null;
+	initialFormData: AgencyDirectoryApplication | null;
 };
 
-const AgencyExpertise = ( { initialData }: Props ) => {
+const AgencyExpertise = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
-
-	const agency = useSelector( getActiveAgency );
-	const agencyApplication = agency?.profile?.partner_directory_application;
 
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
-			agency && response && reduxDispatch( setActiveAgency( response ) );
+			response && reduxDispatch( setActiveAgency( response ) );
 
 			reduxDispatch(
 				successNotice( translate( 'Your Partner Directory application was submitted!' ), {
@@ -105,7 +100,7 @@ const AgencyExpertise = ( { initialData }: Props ) => {
 		setDirectorySelected,
 		getDirectoryClientSamples,
 		setDirectorClientSample,
-	} = useExpertiseForm( { initialData } );
+	} = useExpertiseForm( { initialFormData } );
 
 	const { onSubmit, isSubmitting } = useSubmitForm( { formData, onSubmitSuccess, onSubmitError } );
 
@@ -222,7 +217,7 @@ const AgencyExpertise = ( { initialData }: Props ) => {
 
 			<div className="partner-directory-agency-cta__footer">
 				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
-					{ agencyApplication
+					{ initialFormData
 						? translate( 'Update my expertise' )
 						: translate( 'Submit my application' ) }
 				</Button>

@@ -1,9 +1,7 @@
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { AgencyDirectoryApplication } from '../types';
 
-export default function mapApplicationFormData(
-	agency: Agency | null
-): AgencyDirectoryApplication | null {
+export function mapApplicationFormData( agency: Agency | null ): AgencyDirectoryApplication | null {
 	if ( ! agency?.profile?.partner_directory_application ) {
 		return null;
 	}

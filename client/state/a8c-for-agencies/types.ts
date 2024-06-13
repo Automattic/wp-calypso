@@ -48,7 +48,7 @@ export interface Agency {
 			hourly_rate_value: string;
 		};
 		partner_directory_application: null | {
-			status: 'pending' | 'in-progress' | 'completed';
+			status?: 'pending' | 'in-progress' | 'completed';
 			directories: {
 				status: 'pending' | 'approved' | 'rejected' | 'closed';
 				directory: 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
