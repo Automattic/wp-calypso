@@ -14,7 +14,7 @@ type StatsNoticeType = {
 	disabled: boolean;
 };
 
-function shouldShowCommercialUpgradeNotice( props: StatsNoticeProps ) {
+function shouldShowCommercialUpgradeNotice( options: StatsNoticeProps ) {
 	// eslint-disable-next-line prefer-rest-params
 	console.log( 'arguments: ', arguments );
 	// Pull props.
@@ -28,7 +28,7 @@ function shouldShowCommercialUpgradeNotice( props: StatsNoticeProps ) {
 		isSiteJetpackNotAtomic,
 		isCommercial,
 		isCommercialOwned,
-	} = props;
+	} = options;
 
 	// Show notice for Jetpack-connected sites that are not Atomic AND
 	// they are classified as commercial but do not have a commercial license.
