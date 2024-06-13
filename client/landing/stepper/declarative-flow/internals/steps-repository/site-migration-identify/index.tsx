@@ -194,7 +194,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 		return shouldHideBasedOnRef || shouldHideBasedOnVariant;
 	};
 
-	usePresalesChat( 'wpcom' );
+	usePresalesChat( 'wpcom', true, true );
 
 	return (
 		<>
