@@ -286,12 +286,14 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 	} else if ( onboardingSegment === 'consumer-or-business' && planType === TYPE_ECOMMERCE ) {
 		return `/checkout/thank-you/${ siteSlug }`;
 	} else if ( onboardingSegment === 'blogger' ) {
-		return addQueryArgs( queryParams, `/setup/site-setup/options` );
+		return addQueryArgs( queryParams, `/setup/site-setup-wg/options` );
 	} else if ( onboardingSegment === 'nonprofit' || onboardingSegment === 'consumer-or-business' ) {
 		return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
 	} else if ( onboardingSegment === 'unknown' ) {
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
+
+	return getSignupDestination( dependencies );
 }
 
 const flows = generateFlows( {
