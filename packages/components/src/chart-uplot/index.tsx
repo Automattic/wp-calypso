@@ -1,5 +1,5 @@
 import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
-import { useMemo, useState, useRef, useEffect } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import useResize from './hooks/use-resize';
@@ -49,8 +49,43 @@ export default function UplotChart( {
 
 	const scaleGradient = useScaleGradient( fillColorFrom );
 
-	const [ options, setOptions ] = useState< uPlot.Options >(
+	const [ options ] = useState< uPlot.Options >(
 		useMemo( () => {
+			const seriesTemplate = {
+				width: 2,
+				paths: ( u: uPlot, seriesIdx: number, idx0: number, idx1: number ) => {
+					return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+				},
+				points: {
+					show: false,
+				},
+				value: ( self: uPlot, rawValue: number ) => {
+					if ( ! rawValue ) {
+						return '-';
+					}
+
+					return numberFormat( rawValue, 0 );
+				},
+			};
+
+			const mainSeries = {
+				...seriesTemplate,
+				fill: solidFill
+					? fillColorFrom
+					: getGradientFill( fillColorFrom, fillColorTo, scaleGradient ),
+				label: translate( 'Subscribers' ),
+				stroke: mainColor,
+			};
+
+			const subSeries = {
+				...seriesTemplate,
+				fill: getGradientFill( 'rgba(230, 139, 40, 0.4)', 'rgba(230, 139, 40, 0)', scaleGradient ),
+				label: translate( 'Paid Subscribers' ),
+				stroke: '#e68b28',
+			};
+
+			const seriesSet = data.length === 3 ? [ mainSeries, subSeries ] : [ mainSeries ];
+
 			const defaultOptions: uPlot.Options = {
 				class: 'calypso-uplot-chart',
 				...DEFAULT_DIMENSIONS,
@@ -122,27 +157,7 @@ export default function UplotChart( {
 							);
 						},
 					},
-					{
-						fill: solidFill
-							? fillColorFrom
-							: getGradientFill( fillColorFrom, fillColorTo, scaleGradient ),
-						label: translate( 'Subscribers' ),
-						stroke: mainColor,
-						width: 2,
-						paths: ( u: uPlot, seriesIdx: number, idx0: number, idx1: number ) => {
-							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
-						},
-						points: {
-							show: false,
-						},
-						value: ( self: uPlot, rawValue: number ) => {
-							if ( ! rawValue ) {
-								return '-';
-							}
-
-							return numberFormat( rawValue, 0 );
-						},
-					},
+					...seriesSet,
 				],
 				legend: {
 					isolate: true,
@@ -170,43 +185,9 @@ export default function UplotChart( {
 			spline,
 			translate,
 			period,
+			data.length,
 		] )
 	);
-
-	useEffect( () => {
-		// Add another series for multiple datasets.
-		if ( data.length === 3 ) {
-			const newOptions = Object.assign( {}, options );
-			newOptions.series = [
-				...newOptions.series,
-				{
-					fill: getGradientFill(
-						'rgba(230, 139, 40, 0.4)',
-						'rgba(230, 139, 40, 0)',
-						scaleGradient
-					),
-					label: translate( 'Paid Subscribers' ),
-					stroke: '#e68b28',
-					width: 2,
-					paths: ( u, seriesIdx, idx0, idx1 ) => {
-						return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
-					},
-					points: {
-						show: false,
-					},
-					value: ( self: uPlot, rawValue: number ) => {
-						if ( ! rawValue ) {
-							return '-';
-						}
-
-						return numberFormat( rawValue, 0 );
-					},
-				},
-			];
-
-			setOptions( newOptions );
-		}
-	}, [ data.length ] );
 
 	useResize( uplot, uplotContainer );
 
