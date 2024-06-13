@@ -48,6 +48,7 @@ import {
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isP2Flow } from 'calypso/signup/is-flow';
@@ -119,6 +120,7 @@ class SignupForm extends Component {
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
 		submitForm: PropTypes.func,
+		handleCreateAccountError: PropTypes.func,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -1136,6 +1138,24 @@ class SignupForm extends Component {
 			: formState.getFieldValue( this.state.form, 'email' );
 	};
 
+	handleCreateAccountError = ( error, email ) => {
+		if ( this.props.handleCreateAccountError ) {
+			return this.props.handleCreateAccountError( error, email );
+		}
+
+		if ( isExistingAccountError( error.error ) ) {
+			page(
+				addQueryArgs(
+					{
+						email_address: email,
+						is_signup_existing_account: true,
+					},
+					this.getLoginLink()
+				)
+			);
+		}
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
@@ -1301,19 +1321,7 @@ class SignupForm extends Component {
 						labelText={ this.props.labelText }
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
-						onCreateAccountError={ ( error, email ) => {
-							if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-								page(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
+						onCreateAccountError={ this.handleCreateAccountError }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (

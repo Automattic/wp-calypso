@@ -5,6 +5,7 @@ import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -170,7 +171,7 @@ const SignupFormSocialFirst = ( {
 						userEmail={ userEmail }
 						renderTerms={ renderEmailStepTermsOfService }
 						onCreateAccountError={ ( error: { error: string }, email: string ) => {
-							if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+							if ( isExistingAccountError( error.error ) ) {
 								window.location.assign(
 									addQueryArgs(
 										{
