@@ -41,12 +41,14 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 
 	const agency = useSelector( getActiveAgency );
 
+	const applicationData = useMemo( () => mapApplicationFormData( agency ), [ agency ] );
+
 	// Define the sub-menu sections
 	const sections: { [ slug: string ]: Section } = useMemo( () => {
 		const sections: { [ slug: string ]: Section } = {};
 
 		sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ] = {
-			content: <Dashboard />,
+			content: <Dashboard applicationData={ applicationData } />,
 			breadcrumbItems: [
 				{
 					label: translate( 'Partner Directory' ),
@@ -68,7 +70,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		sections[ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG ] = {
-			content: <AgencyExpertise initialFormData={ mapApplicationFormData( agency ) } />,
+			content: <AgencyExpertise initialFormData={ applicationData } />,
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ].breadcrumbItems,
 				{
