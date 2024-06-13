@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getName,
 	hasAmountAvailableToRefund,
@@ -17,9 +18,11 @@ import {
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
+	isGravatarDomain,
 	isJetpackPurchase,
 	includedDomainPurchase,
 	cancelBundledDomain,
@@ -48,20 +51,32 @@ const CancelPurchaseRefundInformation = ( {
 		if ( isDomainRegistration( purchase ) ) {
 			// Domain bought with domain credits, so there's no refund
 			if ( ! hasAmountAvailableToRefund( purchase ) ) {
-				text = i18n.translate(
-					'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
-						'it will be removed from your site immediately.',
-					{
-						args: { refundPeriodInDays },
-					}
-				);
+				text = [
+					i18n.translate(
+						'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+							'it will be removed from your site immediately.',
+						{
+							args: { refundPeriodInDays },
+						}
+					),
+				];
 			} else {
-				text = i18n.translate(
-					'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
-						"you'll receive a refund and it will be removed from your site immediately.",
-					{
-						args: { refundPeriodInDays },
-					}
+				text = [
+					i18n.translate(
+						'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+							"you'll receive a refund and it will be removed from your site immediately.",
+						{
+							args: { refundPeriodInDays },
+						}
+					),
+				];
+			}
+
+			if ( isGravatarDomain ) {
+				text.push(
+					i18n.translate(
+						"This is a free Gravatar domain. If it is canceled, you won't be able to get another free domain to use with Gravatar."
+					)
 				);
 			}
 		}
@@ -287,10 +302,20 @@ const CancelPurchaseRefundInformation = ( {
 			);
 		}
 	} else if ( isDomainRegistration( purchase ) ) {
-		text = i18n.translate(
-			'When you cancel your domain, it will remain registered and active until the registration expires, ' +
-				'at which point it will be automatically removed from your site.'
-		);
+		text = [
+			i18n.translate(
+				'When you cancel your domain, it will remain registered and active until the registration expires, ' +
+					'at which point it will be automatically removed from your site.'
+			),
+		];
+
+		if ( isGravatarDomain ) {
+			text.push(
+				i18n.translate(
+					"This is a free Gravatar domain. If it expires, you won't be able to get another free domain to use with Gravatar."
+				)
+			);
+		}
 	} else if (
 		isSubscription( purchase ) &&
 		includedDomainPurchase &&
@@ -382,6 +407,13 @@ CancelPurchaseRefundInformation.propTypes = {
 	onCancelConfirmationStateChange: PropTypes.func,
 };
 
-export default connect( ( state, props ) => ( {
-	includedDomainPurchase: getIncludedDomainPurchase( state, props.purchase ),
-} ) )( CancelPurchaseRefundInformation );
+export default connect( ( state, props ) => {
+	const domains = getDomainsBySiteId( state, props.purchase.siteId );
+	const selectedDomainName = getName( props.purchase );
+	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
+
+	return {
+		includedDomainPurchase: getIncludedDomainPurchase( state, props.purchase ),
+		isGravatarDomain: selectedDomain.isGravatarDomain,
+	};
+} )( CancelPurchaseRefundInformation );
