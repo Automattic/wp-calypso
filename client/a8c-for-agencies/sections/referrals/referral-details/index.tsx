@@ -1,9 +1,11 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import SubscriptionStatus from '../referrals-list/subscription-status';
+import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
 import type { Referral } from '../types';
 import type { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
@@ -40,6 +42,8 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 		withIcon: false,
 	};
 
+	const isMobile = useMobileBreakpoint();
+
 	const features = useMemo(
 		() => [
 			createFeaturePreview(
@@ -48,10 +52,14 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 				true,
 				selectedReferralTab,
 				setSelectedReferralTab,
-				<ReferralPurchases purchases={ referral.purchases } />
+				isMobile ? (
+					<ReferralPurchasesMobile purchases={ referral.purchases } />
+				) : (
+					<ReferralPurchases purchases={ referral.purchases } />
+				)
 			),
 		],
-		[ referral, selectedReferralTab, translate ]
+		[ referral, selectedReferralTab, translate, isMobile ]
 	);
 
 	return (
