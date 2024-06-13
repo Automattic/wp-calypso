@@ -24,6 +24,7 @@
 		"akismet/checkout-quantity-dropdown": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
+		"calypso/big-sky": false,
 		"bilmur-script": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,

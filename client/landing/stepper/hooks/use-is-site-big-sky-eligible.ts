@@ -20,19 +20,22 @@ export function useIsBigSkyEligible(): boolean | null {
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
 		'calypso_signup_onboarding_bigsky_soft_launch'
 	);
+
+	const featureFlagEnabled = config.isEnabled( 'calypso/big-sky' );
+	if ( ! featureFlagEnabled ) {
+		return false;
+	}
+
+	// For testing purposes. Will bypass the ExPlat experiment results.
+	const bypassExperiment = config.isEnabled( 'big-sky-bypass' );
+
 	const variantName = experimentAssignment?.variationName;
-	const showBigSkyExperiment = ! isLoadingExperiment && variantName === 'treatment';
-	if ( ! showBigSkyExperiment ) {
+	const isInBigSkyExperiment = ! isLoadingExperiment && variantName === 'treatment';
+	if ( ! isInBigSkyExperiment && ! bypassExperiment ) {
 		return false;
 	}
 
 	const validGoals = [ 'other', 'promote' ];
-
-	const configEnabled = config.isEnabled( 'calypso/ai-assembler' );
-	if ( ! configEnabled ) {
-		return false;
-	}
-
 	const hasValidGoal = goals.every( ( value ) => validGoals.includes( value ) );
 	const isEligiblePlan = isPremiumPlan( productSlug ) || isBusinessPlan( productSlug );
 
