@@ -248,7 +248,6 @@ export default {
 		}
 
 		// See: 1113-gh-Automattic/experimentation-platform for details.
-		// `isTokenLoaded` covers users who just logged in.
 		if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
 			// use config flags to set the variants during the CFT.
 			if ( config.isEnabled( 'onboarding/guided' ) ) {
@@ -258,6 +257,7 @@ export default {
 			} else {
 				initialContext.trailMapExperimentVariant = null;
 			}
+			// `isTokenLoaded` covers users who just logged in.
 			if ( wpcom.isTokenLoaded() || userLoggedIn ) {
 				// Load both experiments in parallel for better performance.
 				await Promise.all( [
