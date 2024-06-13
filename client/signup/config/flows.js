@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { getPlan } from '@automattic/calypso-products/';
+import { getPlan, TYPE_ECOMMERCE, TYPE_BUSINESS } from '@automattic/calypso-products/';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
@@ -276,14 +276,14 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 	}
 
 	const planSlug = cartItems?.[ 0 ]?.product_slug;
-	const planTitle = getPlan( planSlug )?.getTitle();
+	const planType = getPlan( planSlug )?.type;
 
 	if (
 		onboardingSegment === 'developer-or-agency' &&
-		( planTitle === 'Creator' || planTitle === 'Entrepreneur' )
+		( planType === TYPE_BUSINESS || planType === TYPE_ECOMMERCE )
 	) {
 		return `${ siteSlug }/wp-admin`;
-	} else if ( onboardingSegment === 'consumer-or-business' && planTitle === 'Entrepreneur' ) {
+	} else if ( onboardingSegment === 'consumer-or-business' && planType === TYPE_ECOMMERCE ) {
 		return `/checkout/thank-you/${ siteSlug }`;
 	} else if ( onboardingSegment === 'blogger' ) {
 		return addQueryArgs( queryParams, `/setup/site-setup/options` );
