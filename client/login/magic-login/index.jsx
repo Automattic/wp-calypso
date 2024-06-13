@@ -713,7 +713,7 @@ class MagicLogin extends Component {
 						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
-					{ showCheckYourEmail ? renderEmailVerification : this.renderGravPoweredMagicLogin() }
+					{ ! showCheckYourEmail ? renderEmailVerification : this.renderGravPoweredMagicLogin() }
 				</Main>
 			);
 		}

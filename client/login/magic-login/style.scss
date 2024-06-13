@@ -340,7 +340,7 @@
 		}
 
 		.grav-powered-magic-login__footer {
-			flex-direction: column;
+			align-items: start;
 			gap: 16px;
 			font-size: 15px;
 			color: #949494;
@@ -372,6 +372,7 @@
 
 	button[type="submit"].form-button.is-primary,
 	.magic-login__form-action button[type="submit"].form-button.is-primary {
+		width: 100%;
 		height: 56px;
 		margin-top: 30px;
 	}
@@ -505,9 +506,11 @@
 
 	.grav-powered-magic-login__footer {
 		display: flex;
-		justify-content: space-between;
+		flex-direction: column;
+		align-items: center;
 		line-height: 1;
 		margin-top: 30px;
+		gap: 30px;
 
 		button {
 			color: #1d4fc4;
@@ -573,6 +576,10 @@
 			.grav-powered-magic-login__tos {
 				margin-top: 44px;
 			}
+
+			.grav-powered-magic-login__footer {
+				flex-direction: column;
+			}
 		}
 
 		.grav-powered-magic-login__content {
@@ -586,6 +593,12 @@
 
 		.magic-login__form-header {
 			margin-bottom: 40px;
+		}
+
+		.grav-powered-magic-login__footer {
+			flex-direction: row;
+			justify-content: space-between;
+			gap: 0;
 		}
 
 		.grav-powered-magic-login__show-magic-login {
