@@ -1,19 +1,9 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import { AgencyDirectoryApplication } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
-
-interface Params {
-	agency_id?: number;
-	services: string[];
-	products: string[];
-	directories: {
-		directory: 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
-		urls: string[];
-		note: string;
-	}[];
-	feedback_url: string;
-}
+import { Agency } from 'calypso/state/a8c-for-agencies/types';
 
 interface APIError {
 	status: number;
@@ -22,31 +12,39 @@ interface APIError {
 	data?: any;
 }
 
-interface APIResponse {
-	success: boolean;
-}
-
-function mutationSubmitPartnerDirectoryApplication( params: Params ): Promise< APIResponse > {
-	if ( ! params.agency_id ) {
+function mutationSubmitPartnerDirectoryApplication(
+	agencyId: number | undefined,
+	application: AgencyDirectoryApplication
+): Promise< Agency > {
+	if ( ! agencyId ) {
 		throw new Error( 'Agency ID is required to issue a license' );
 	}
 
 	return wpcom.req.put( {
 		apiNamespace: 'wpcom/v2',
-		path: `/agency/${ params.agency_id }/profile/application`,
+		path: `/agency/${ agencyId }/profile/application`,
 		method: 'PUT',
-		body: params,
+		body: {
+			services: application.services,
+			products: application.products,
+			directories: application.directories.map( ( { directory, urls, note } ) => ( {
+				directory,
+				urls,
+				note,
+			} ) ),
+			feedback_url: application.feedbackUrl,
+		},
 	} );
 }
 
 export default function useSubmitPartnerDirectoryApplicationMutation< TContext = unknown >(
-	options?: UseMutationOptions< APIResponse, APIError, Params, TContext >
-): UseMutationResult< APIResponse, APIError, Params, TContext > {
+	options?: UseMutationOptions< Agency, APIError, AgencyDirectoryApplication, TContext >
+): UseMutationResult< Agency, APIError, AgencyDirectoryApplication, TContext > {
 	const agencyId = useSelector( getActiveAgencyId );
 
-	return useMutation< APIResponse, APIError, Params, TContext >( {
+	return useMutation< Agency, APIError, AgencyDirectoryApplication, TContext >( {
 		...options,
-		mutationFn: ( args ) =>
-			mutationSubmitPartnerDirectoryApplication( { ...args, agency_id: agencyId } ),
+		mutationFn: ( application ) =>
+			mutationSubmitPartnerDirectoryApplication( agencyId, application ),
 	} );
 }
