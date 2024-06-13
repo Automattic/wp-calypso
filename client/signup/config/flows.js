@@ -266,6 +266,7 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
+
 	let queryParams = { siteSlug, siteId };
 
 	if ( domainItem ) {
@@ -279,22 +280,22 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 	const planSlug = getPlanCartItem( cartItems )?.product_slug;
 	const planType = getPlan( planSlug )?.type;
 
-	if (
-		onboardingSegment === 'developer-or-agency' &&
-		( planType === TYPE_BUSINESS || planType === TYPE_ECOMMERCE )
-	) {
-		return `${ siteSlug }/wp-admin`;
-	} else if ( onboardingSegment === 'consumer-or-business' && planType === TYPE_ECOMMERCE ) {
-		return `/checkout/thank-you/${ siteSlug }`;
-	} else if ( onboardingSegment === 'blogger' ) {
+	// Blog setup
+	if ( onboardingSegment === 'blogger' ) {
 		return addQueryArgs( queryParams, `/setup/site-setup-wg/options` );
-	} else if ( onboardingSegment === 'nonprofit' || onboardingSegment === 'consumer-or-business' ) {
-		return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
-	} else if ( onboardingSegment === 'unknown' ) {
+	}
+
+	// Entrepreneur/Ecommerce Plan
+	if ( planType === TYPE_ECOMMERCE ) {
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
 
-	return getSignupDestination( dependencies );
+	// Developer or Agency with Creator/Business Plan
+	if ( onboardingSegment === 'developer-or-agency' && planType === TYPE_BUSINESS ) {
+		return `${ siteSlug }/wp-admin`;
+	}
+
+	return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
 }
 
 const flows = generateFlows( {
