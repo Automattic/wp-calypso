@@ -1,9 +1,12 @@
 import { bigSkyModalHeader } from '@automattic/design-picker';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Modal } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { brush, Icon, layout } from '@wordpress/icons';
+import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { Link } from 'react-router-dom';
+import Brush from 'calypso/assets/images/icons/brush.svg';
+import SVGIcon from 'calypso/components/svg-icon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 
@@ -40,9 +43,19 @@ const BigSkyDisclaimerModal: React.FC< Props > = ( { children, flow, stepName } 
 
 	return (
 		<>
-			<Button className="big-sky-disclaimer-modal__button" variant="link" onClick={ openModal }>
+			<div
+				className="big-sky-disclaimer-modal__wrapper"
+				role="button"
+				onClick={ openModal }
+				tabIndex={ 0 }
+				onKeyDown={ ( event ) => {
+					if ( event.key === 'Enter' || event.key === ' ' ) {
+						openModal();
+					}
+				} }
+			>
 				{ children }
-			</Button>
+			</div>
 			{ isOpen && (
 				<Modal
 					className="big-sky-disclaimer-modal__modal"
@@ -50,8 +63,13 @@ const BigSkyDisclaimerModal: React.FC< Props > = ( { children, flow, stepName } 
 					headerActions={ <img src={ bigSkyModalHeader } alt="big-sky-modal-header" /> }
 				>
 					<div className="big-sky-disclaimer-modal__content">
-						<h1>{ translate( 'Try Big Sky' ) }</h1>
 						<div className="big-sky-disclaimer-modal__body">
+							<h1>{ translate( 'Try Big Sky' ) }</h1>
+							<h2>
+								{ translate(
+									'Build a stunning website effortlessly with Big Sky, our AI-powered website builder. No coding required.'
+								) }
+							</h2>
 							<div className="big-sky-disclaimer-modal__features">
 								<div className="feature">
 									<Icon size={ 32 } icon={ layout } />
@@ -64,7 +82,12 @@ const BigSkyDisclaimerModal: React.FC< Props > = ( { children, flow, stepName } 
 									</p>
 								</div>
 								<div className="feature">
-									<Icon size={ 32 } icon={ brush } />
+									<SVGIcon
+										classes="big-sky-brush-icon"
+										size={ 32 }
+										name="big-sky-brush"
+										icon={ Brush }
+									/>
 									<p>
 										<strong>{ translate( 'Give your creativity a head start' ) }</strong>
 										<br />
@@ -75,15 +98,9 @@ const BigSkyDisclaimerModal: React.FC< Props > = ( { children, flow, stepName } 
 								</div>
 							</div>
 						</div>
-						<Button
-							className="big-sky-disclaimer-modal__button-start"
-							variant="primary"
-							onClick={ onSubmit }
-							text={ translate( "Ok, let's get started" ) }
-						/>
 						<p className="big-sky-disclaimer-modal__footer">
 							{ translate(
-								'Big Sky is powered by AI. If you have any questions, view our {{a}}AI Guidelines{{/a}}. Be sure to review the AI-generated contents of your site before publishing it.',
+								'Big Sky is powered by AI. Please review our {{a}}AI Guidelines{{/a}} and the contents of your site to ensure it complies with our {{b}}User Guidelines{{/b}}.',
 								{
 									components: {
 										a: (
@@ -94,10 +111,24 @@ const BigSkyDisclaimerModal: React.FC< Props > = ( { children, flow, stepName } 
 												title={ translate( 'Automattic AI Guidelines' ) }
 											/>
 										),
+										b: (
+											<Link
+												to={ localizeUrl( 'https://wordpress.com/support/user-guidelines/' ) }
+												target="_blank"
+												rel="noopener noreferrer"
+												title={ translate( 'WordPress.com User Guidelines' ) }
+											/>
+										),
 									},
 								}
 							) }
 						</p>
+						<Button
+							className="big-sky-disclaimer-modal__button-start"
+							variant="primary"
+							onClick={ onSubmit }
+							text={ translate( "Ok, let's get started" ) }
+						/>
 					</div>
 				</Modal>
 			) }
