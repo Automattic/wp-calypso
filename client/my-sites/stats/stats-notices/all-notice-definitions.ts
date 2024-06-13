@@ -14,6 +14,42 @@ type StatsNoticeType = {
 	disabled: boolean;
 };
 
+function shouldShowCommercialUpgradeNotice( props: StatsNoticeProps ) {
+	// eslint-disable-next-line prefer-rest-params
+	console.log( 'arguments: ', arguments );
+	// Pull props.
+	const {
+		isOdysseyStats,
+		isWpcom,
+		isVip,
+		isP2,
+		isOwnedByTeam51,
+		hasPaidStats,
+		isSiteJetpackNotAtomic,
+		isCommercial,
+	} = props;
+
+	// Gate notices for WPCOM sites behind a flag.
+	const showUpgradeNoticeForWpcomSites =
+		config.isEnabled( 'stats/paid-wpcom-stats' ) && isWpcom && ! isP2 && ! isOwnedByTeam51;
+
+	// Show the notice if the site is Jetpack or it is Odyssey Stats.
+	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
+
+	const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
+
+	return !! (
+		( showUpgradeNoticeOnOdyssey ||
+			showUpgradeNoticeForJetpackNotAtomic ||
+			showUpgradeNoticeForWpcomSites ) &&
+		// Show the notice if the site has not purchased the paid stats product.
+		! hasPaidStats &&
+		// Show the notice only if the site is commercial.
+		isCommercial &&
+		! isVip
+	);
+}
+
 /** Sorted by priority */
 const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
@@ -33,36 +69,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: CommercialSiteUpgradeNotice,
 		noticeId: 'commercial_site_upgrade',
-		isVisibleFunc: ( {
-			isOdysseyStats,
-			isWpcom,
-			isVip,
-			isP2,
-			isOwnedByTeam51,
-			hasPaidStats,
-			isSiteJetpackNotAtomic,
-			isCommercial,
-		}: StatsNoticeProps ) => {
-			// Gate notices for WPCOM sites behind a flag.
-			const showUpgradeNoticeForWpcomSites =
-				config.isEnabled( 'stats/paid-wpcom-stats' ) && isWpcom && ! isP2 && ! isOwnedByTeam51;
-
-			// Show the notice if the site is Jetpack or it is Odyssey Stats.
-			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
-
-			const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
-
-			return !! (
-				( showUpgradeNoticeOnOdyssey ||
-					showUpgradeNoticeForJetpackNotAtomic ||
-					showUpgradeNoticeForWpcomSites ) &&
-				// Show the notice if the site has not purchased the paid stats product.
-				! hasPaidStats &&
-				// Show the notice only if the site is commercial.
-				isCommercial &&
-				! isVip
-			);
-		},
+		isVisibleFunc: shouldShowCommercialUpgradeNotice,
 		disabled: ! config.isEnabled( 'stats/type-detection' ),
 	},
 	{
