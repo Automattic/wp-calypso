@@ -324,6 +324,7 @@ const SitesDashboardV2 = ( {
 						</div>
 					) }
 					<DotcomSitesDataViews
+						selectedSite={ dataViewsState.selectedItem }
 						sites={ paginatedSites }
 						isLoading={ isLoading || ! initialSortApplied }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }

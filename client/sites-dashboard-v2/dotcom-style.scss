@@ -18,11 +18,11 @@
 		> * {
 			padding-inline: 8px;
 
-			@include breakpoint-deprecated( ">660px" ) {
+			@include breakpoint-deprecated(">660px") {
 				padding-inline: 8px;
 			}
 
-			@include breakpoint-deprecated( ">960px" ) {
+			@include breakpoint-deprecated(">960px") {
 				padding-inline: 26px;
 			}
 
@@ -525,6 +525,29 @@
 			padding-left: 24px;
 			padding-right: 24px;
 		}
+	}
+
+	.is-staging-site {
+		position: relative;
+
+		.item-preview__admin-button {
+			background-color: var(--studio-yellow-20);
+			color: var(--studio-yellow-80);
+			border: 0;
+		}
+	}
+
+	.is-staging-site::before {
+		content: "";
+		position: absolute;
+		z-index: 300;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: inherit;
+		pointer-events: none;
+		box-shadow: inset 0 0 0 3px var(--studio-yellow-20);
 	}
 
 	.domains-table-header .list__header-column {

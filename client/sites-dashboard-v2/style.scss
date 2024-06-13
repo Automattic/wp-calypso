@@ -534,43 +534,17 @@
 			background: var(--color-light-backdrop);
 			max-height: calc(100vh - 32px - var(--masterbar-height));
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+			.site-preview-pane__site-environment-switcher {
+				display: flex;
+				align-items: center;
+			}
+
 			.preview-pane__navigation {
-				@media (min-width: $break-mobile) {
-					height: 52px;
-				}
-				box-shadow: none;
-				border-bottom: 1px solid var(--color-border-subtle);
+				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);
 				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
 				padding-top: 1px;
-				padding-bottom: 1px;
-				clip-path: none;
-
-				.section-nav-tabs__list {
-					align-items: start;
-				}
-				.site-preview-pane__menu-buttons {
-					margin-left: 10px;
-					margin-right: 48px;
-					.site-preview-pane__create-staging-site-button {
-						margin-top: 10px;
-					}
-				}
-
-				@media (max-width: $break-mobile) {
-					border-bottom: 0;
-					.site-preview-pane__menu-buttons {
-						visibility: hidden;
-					}
-				}
-
-				@media (max-width: $break-large) {
-					.site-preview-pane__menu-buttons {
-						margin-right: 24px;
-					}
-				}
-				.section-nav__panel {
-					align-items: start;
-				}
+				clip-path: inset(2px -1px -1px -1px);
 			}
 		}
 

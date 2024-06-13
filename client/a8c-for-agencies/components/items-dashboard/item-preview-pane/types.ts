@@ -48,5 +48,5 @@ export interface ItemPreviewPaneHeaderExtraProps {
 		itemData: ItemData;
 		closeSitePreviewPane: () => void;
 	} >;
-	menuButtons?: React.ComponentType;
+	subtitleExtra?: string | React.ComponentType;
 }

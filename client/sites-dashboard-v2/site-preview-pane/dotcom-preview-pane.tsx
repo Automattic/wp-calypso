@@ -7,7 +7,7 @@ import ItemPreviewPane, {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import HostingFeaturesIcon from 'calypso/hosting-features/components/hosting-features-icon';
-import PreviewPaneMenuButtons from 'calypso/sites-dashboard-v2/site-preview-pane/preview-pane-menu-buttons';
+import SiteEnvironmentSwitcher from 'calypso/sites-dashboard-v2/site-preview-pane/site-environment-switcher';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -156,12 +156,13 @@ const DotcomPreviewPane = ( {
 			itemData={ itemData }
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
+			className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
 				siteIconFallback: 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
-				menuButtons: () => (
-					<PreviewPaneMenuButtons site={ site } changeSitePreviewPane={ changeSitePreviewPane } />
+				subtitleExtra: () => (
+					<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />
 				),
 			} }
 		/>
