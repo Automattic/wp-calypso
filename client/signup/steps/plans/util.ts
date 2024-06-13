@@ -1,5 +1,6 @@
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
+import { isOnboardingGuidedFlow } from '@automattic/onboarding';
 
 type SupportedIntervalTypes = Extract<
 	UrlFriendlyTermType,
@@ -27,5 +28,5 @@ export const shouldBasePlansOnSegment = (
 	flowName: string,
 	trailMapExperimentVariant: undefined | null | 'treatment_guided' | 'treatment_survey_only'
 ): boolean => {
-	return flowName === 'guided' && trailMapExperimentVariant === 'treatment_guided';
+	return isOnboardingGuidedFlow( flowName ) && trailMapExperimentVariant === 'treatment_guided';
 };
