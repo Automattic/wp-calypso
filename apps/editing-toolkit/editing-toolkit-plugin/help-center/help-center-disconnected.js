@@ -11,7 +11,7 @@ function HelpCenterContent() {
 		<>
 			<Button
 				className="help-center"
-				href={ localizeUrl( 'https://wordpress.com/help/' ) }
+				href={ localizeUrl( 'https://wordpress.com/help' ) }
 				icon={ <HelpIcon /> }
 				label="Help"
 				size="compact"

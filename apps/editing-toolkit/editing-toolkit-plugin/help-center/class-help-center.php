@@ -303,6 +303,24 @@ class Help_Center {
 	}
 
 	/**
+	 * Returns the URL for the Help Center redirect.
+	 * Used for the Help Center when disconnected.
+	 */
+	public function get_help_center_url() {
+		$help_url = 'https://wordpress.com/help';
+
+		if ( ! $this->is_jetpack_disconnected() ) {
+			return false;
+		}
+
+		if ( function_exists( 'localized_wpcom_url' ) ) {
+			return localized_wpcom_url( $help_url );
+		}
+
+		return $help_url;
+	}
+
+	/**
 	 * Add icon to WP-ADMIN admin bar.
 	 */
 	public function enqueue_wp_admin_scripts() {
@@ -343,8 +361,7 @@ class Help_Center {
 						'id'     => 'help-center',
 						'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 						'parent' => 'top-secondary',
-						// phpcs:ignore WPCOM.I18nRules.LocalizedUrl.UnlocalizedUrl
-						'href'   => $this->is_jetpack_disconnected() ? 'https://wordpress.com/help/' : false,
+						'href'   => $this->get_help_center_url(),
 						'meta'   => array(
 							'html'   => '<div id="help-center-masterbar" />',
 							'class'  => 'menupop',
