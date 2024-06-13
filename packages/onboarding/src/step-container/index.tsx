@@ -106,7 +106,8 @@ const StepContainer: React.FC< Props > = ( {
 	};
 
 	function BackButton() {
-		if ( shouldHideNavButtons ) {
+		// Hide back button if goBack is falsy, it won't do anything in that case.
+		if ( shouldHideNavButtons || ! goBack ) {
 			return null;
 		}
 		return (

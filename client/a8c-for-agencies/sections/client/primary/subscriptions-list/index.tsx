@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -11,8 +10,9 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
 import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
+import CancelSubscriptionAction from '../../cancel-subscription-confirmation-dialog';
 import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';
 import { getSubscriptionStatus } from '../../lib/get-subscription-status';
 import type { Subscription } from '../../types';
@@ -23,8 +23,8 @@ export default function SubscriptionsList() {
 	const translate = useTranslate();
 	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
 
-	const { data, isFetching } = useFetchClientSubscriptions();
-	const { data: products, isFetching: isFetchingProducts } = useProductsQuery( true );
+	const { data, isFetching, refetch } = useFetchClientSubscriptions();
+	const { data: products, isFetching: isFetchingProducts } = useFetchClientProducts();
 
 	const title = translate( 'Your subscriptions' );
 
@@ -71,7 +71,10 @@ export default function SubscriptionsList() {
 					const status = item.status;
 					const isActive = status === 'active';
 					return isActive ? (
-						<Button compact>{ translate( 'Cancel the subscription' ) }</Button>
+						<CancelSubscriptionAction
+							subscription={ item }
+							onCancelSubscription={ () => refetch() }
+						/>
 					) : (
 						'-'
 					);
@@ -80,7 +83,7 @@ export default function SubscriptionsList() {
 				enableSorting: false,
 			},
 		],
-		[ isFetchingProducts, products, translate ]
+		[ isFetchingProducts, products, refetch, translate ]
 	);
 
 	return (

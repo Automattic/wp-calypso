@@ -417,6 +417,15 @@
 	margin: 0;
 }
 
+.theme-a8c-for-agencies .dialog.card {
+	border-radius: 4px;
+
+	.dialog__action-buttons {
+		border: none;
+		background: var(--color-surface);
+	}
+}
+
 // Universal Text Styles
 html {
 	h2 {
