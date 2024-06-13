@@ -124,3 +124,90 @@ describe( 'CaptureInput', () => {
 		).toBeInTheDocument();
 	} );
 } );
+
+// Helper function to enter URL and click CTA.
+const enterUrlAndContinue = async ( url ) => {
+	await userEvent.type( screen.getByLabelText( /Enter the URL of the site/ ), url );
+	await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+};
+
+describe( 'URL Validation', () => {
+	beforeEach( () => {
+		const onInputEnter = jest.fn();
+		render(
+			<MemoryRouter>
+				<CaptureInput onInputEnter={ onInputEnter } />
+			</MemoryRouter>
+		);
+	} );
+
+	test( 'should show error for missing top-level domain', async () => {
+		await enterUrlAndContinue( 'myblog' );
+
+		expect(
+			screen.getByText(
+				'Your URL is missing a top-level domain (e.g., .com, .net, etc.). Example URL: example.com'
+			)
+		).toBeInTheDocument();
+	} );
+
+	test( 'should show error for missing top-level domain event when protocol is present', async () => {
+		await enterUrlAndContinue( 'https://myblog' );
+
+		expect(
+			screen.getByText(
+				'Your URL is missing a top-level domain (e.g., .com, .net, etc.). Example URL: example.com'
+			)
+		).toBeInTheDocument();
+	} );
+
+	test( 'should show error for email instead of URL', async () => {
+		await enterUrlAndContinue( 'user@example.com' );
+
+		expect(
+			screen.getByText(
+				'It looks like you’ve entered an email address. Please enter a valid URL instead (e.g., example.com).'
+			)
+		).toBeInTheDocument();
+	} );
+
+	test( 'should show error for URL with invalid characters', async () => {
+		await enterUrlAndContinue( 'http://my^blog.com' );
+
+		expect(
+			screen.getByText(
+				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com)'
+			)
+		).toBeInTheDocument();
+	} );
+
+	test( 'should show error for invalid protocol', async () => {
+		await enterUrlAndContinue( 'ftp://example.com' );
+
+		expect(
+			screen.getByText(
+				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com)'
+			)
+		).toBeInTheDocument();
+	} );
+
+	test( 'should show error for invalid protocol for filepath', async () => {
+		await enterUrlAndContinue( 'file:///C:/DEVELOPER/index.html' );
+
+		expect(
+			screen.getByText(
+				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com)'
+			)
+		).toBeInTheDocument();
+	} );
+
+	test( 'should show default error message', async () => {
+		await enterUrlAndContinue( 'invalid-url' );
+
+		expect(
+			screen.getByText(
+				'Please enter a valid website address (e.g., example.com). You can copy and paste.'
+			)
+		).toBeInTheDocument();
+	} );
+} );
