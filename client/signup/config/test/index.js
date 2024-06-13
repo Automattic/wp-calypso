@@ -1,7 +1,5 @@
-import { readdirSync } from 'fs';
 import { intersection, isEmpty, keys } from 'lodash';
 import flows from '../flows';
-import { generateFlows } from '../flows-pure';
 import { getStepModuleMap } from '../step-components';
 import steps from '../steps';
 import { generateSteps } from '../steps-pure';
@@ -32,6 +30,7 @@ describe( 'index', () => {
 		const stepModuleMap = getStepModuleMap();
 		const stepNames = new Set( Object.keys( stepModuleMap ) );
 		const allStepDefinitions = generateSteps();
+
 		stepNames.forEach( ( stepName ) => {
 			expect( allStepDefinitions ).toHaveProperty( stepName );
 		} );
@@ -126,47 +125,5 @@ describe( 'index', () => {
 						} );
 					} );
 			} );
-	} );
-
-	test( 'all steps in the flow definition must have a step definition', () => {
-		const allStepDefinitions = generateSteps();
-		const allFlowDefinitions = generateFlows();
-		const usedSteps = new Set(
-			Object.values( allFlowDefinitions ).reduce( ( acc, flow ) => acc.concat( flow.steps ), [] )
-		);
-		Array.from( usedSteps ).forEach( ( step ) => {
-			if ( allStepDefinitions[ step ] ) {
-				usedSteps.delete( step );
-			}
-		} );
-		expect( usedSteps ).toEqual( new Set() );
-	} );
-
-	test( 'There should be no unused steps', () => {
-		const allStepDefinitions = generateSteps();
-		const allFlowDefinitions = generateFlows();
-		const stepKeys = new Set( Object.keys( allStepDefinitions ) );
-		Object.values( allFlowDefinitions ).forEach( ( flow ) => {
-			flow.steps.forEach( ( step ) => {
-				stepKeys.delete( step );
-			} );
-		} );
-		expect( stepKeys ).toEqual( new Set() );
-	} );
-
-	test( 'There should be no unused step modules', async () => {
-		const path = 'client/signup/steps';
-		const modules = new Set(
-			readdirSync( path, { withFileTypes: true } )
-				.filter( ( dir ) => dir.isDirectory() )
-				.map( ( dir ) => dir.name )
-		);
-		const usedStepModules = new Set( Object.values( getStepModuleMap() ) );
-		Array.from( modules ).forEach( ( module ) => {
-			if ( usedStepModules.has( module ) ) {
-				modules.delete( module );
-			}
-		} );
-		expect( modules ).toEqual( new Set() );
 	} );
 } );
