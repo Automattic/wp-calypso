@@ -296,7 +296,9 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 
 	// Developer or Agency with Creator/Business Plan
 	if ( onboardingSegment === 'developer-or-agency' && planType === TYPE_BUSINESS ) {
-		return `/home/${ siteSlug }`;
+		queryParams.initiate_transfer_context = 'guided';
+		queryParams.redirect_to = `/home/${ siteSlug }`;
+		return addQueryArgs( queryParams, '/setup/transferring-hosted-site' );
 	}
 
 	return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
