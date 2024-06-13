@@ -43,6 +43,9 @@ export interface Agency {
 		};
 		budget_details: {
 			budget_lower_range: string;
+			budget_upper_range: string;
+			has_hourly_rate: boolean;
+			hourly_rate_value: string;
 		};
 		partner_directory_application: null | {
 			status: 'pending' | 'in-progress' | 'completed';
