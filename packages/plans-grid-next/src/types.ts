@@ -39,7 +39,6 @@ export interface GridPlan {
 	planTitle: TranslateResult;
 	availableForPurchase: boolean;
 	pricing: Plans.PricingMetaForGridPlan;
-	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null;
 	productNameShort?: string | null;
 	billingTimeframe?: TranslateResult | null;
 	current?: boolean;

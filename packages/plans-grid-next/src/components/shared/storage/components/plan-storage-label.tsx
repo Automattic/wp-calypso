@@ -8,8 +8,8 @@ import { AddOns } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../../../grid-context';
-import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
+import { usePlansGridContext } from '../../../../grid-context';
+import useIsLargeCurrency from '../../../../hooks/use-is-large-currency';
 import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
 
 interface Props {

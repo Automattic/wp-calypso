@@ -320,9 +320,6 @@ const useGridPlans: UseGridPlansType = ( {
 						product_slug: planSlug,
 				  };
 
-		const storageAddOnsForPlan =
-			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
-
 		const isVisible = isGridPlanVisible( {
 			planSlug,
 			planSlugsForIntent,
@@ -346,7 +343,6 @@ const useGridPlans: UseGridPlansType = ( {
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
 			pricing: pricingMeta[ planSlug ],
-			storageAddOnsForPlan,
 		};
 	} );
 };

@@ -186,9 +186,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding',
-			steps: isEnabled( 'signup/professional-email-step' )
-				? [ userSocialStep, 'new-user-survey', 'domains', 'emails', 'plans' ]
-				: [ userSocialStep, 'new-user-survey', 'domains', 'plans' ],
+			steps: [ userSocialStep, 'new-user-survey', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2023-10-11',
@@ -211,9 +209,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
-			steps: isEnabled( 'signup/professional-email-step' )
-				? [ userSocialStep, 'domains', 'emails', 'plans' ]
-				: [ userSocialStep, 'domains', 'plans' ],
+			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2023-10-11',
@@ -222,9 +218,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'domain-transfer',
-			steps: isEnabled( 'signup/professional-email-step' )
-				? [ userSocialStep, 'domains', 'emails', 'plans' ]
-				: [ userSocialStep, 'domains', 'plans' ],
+			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: ( dependencies ) => `/domains/manage/${ dependencies.siteSlug }`,
 			description:
 				'Onboarding flow specifically for domain transfers. Read more in https://wp.me/pdhack-Hk.',
@@ -265,9 +259,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-add-ons',
-			steps: isEnabled( 'signup/professional-email-step' )
-				? [ userSocialStep, 'domains', 'emails', 'plans', 'add-ons' ]
-				: [ userSocialStep, 'domains', 'plans', 'add-ons' ],
+			steps: [ userSocialStep, 'domains', 'plans', 'add-ons' ],
 			destination: getSignupDestination,
 			description:
 				'Copy of the onboarding flow that includes an add-ons step; the flow is used for AB testing (ExPlat) add-ons in signup',

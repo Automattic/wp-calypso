@@ -2,7 +2,12 @@ import { BadgeType, Button } from '@automattic/components';
 import { Icon, external, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
+import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
+	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
+} from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import StepSection from '../../referrals/common/step-section';
@@ -35,6 +40,11 @@ export default function PartnerDirectoryDashboard() {
 	const onAgencyProfileClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_agency_profile_click' ) );
 	}, [ dispatch ] );
+
+	// We want to scroll to the top of the page when the component is rendered
+	useEffect( () => {
+		document.querySelector( '.partner-directory__body' )?.scrollTo( 0, 0 );
+	}, [] );
 
 	const isSubmitted = true; // FIXME: Replace with actual value
 	const brandStatuses = [
@@ -123,7 +133,7 @@ export default function PartnerDirectoryDashboard() {
 											<Button
 												className="a8c-blue-link"
 												onClick={ onAgencyProfileClick }
-												href="/partner-directory/agency-details"
+												href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }` }
 												borderless
 											>
 												{ translate( `Your agency's profile` ) }
@@ -154,12 +164,16 @@ export default function PartnerDirectoryDashboard() {
 					<div>
 						<Button
 							onClick={ onEditExpertiseClick }
-							href="/partner-directory/agency-expertise"
+							href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }` }
 							compact
 						>
 							{ translate( 'Edit expertise' ) }
 						</Button>
-						<Button onClick={ onEditProfileClick } href="/partner-directory/agency-details" compact>
+						<Button
+							onClick={ onEditProfileClick }
+							href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }` }
+							compact
+						>
 							{ translate( 'Edit profile' ) }
 						</Button>
 					</div>
@@ -216,7 +230,7 @@ export default function PartnerDirectoryDashboard() {
 					}
 					buttonProps={ {
 						children: isSubmitted ? translate( 'Edit expertise' ) : translate( 'Apply now' ),
-						href: '/partner-directory/agency-expertise',
+						href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }`,
 						onClick: onApplyNowClick,
 						primary: ! isSubmitted,
 						compact: true,
@@ -231,7 +245,7 @@ export default function PartnerDirectoryDashboard() {
 					) }
 					buttonProps={ {
 						children: translate( 'Finish profile' ),
-						href: '/partner-directory/agency-details',
+						href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
 						onClick: onFinishProfileClick,
 						primary: isSubmitted,
 						disabled: ! isSubmitted || ! showFinishProfileButton,

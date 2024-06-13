@@ -112,7 +112,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 		</>
 	);
 
-	usePresalesChat( 'wpcom' );
+	usePresalesChat( 'wpcom', true, true );
 
 	return (
 		<>

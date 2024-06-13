@@ -11,6 +11,8 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import AgencyDetailsForm from './agency-details';
 import AgencyExpertise from './agency-expertise';
 import {
@@ -19,6 +21,7 @@ import {
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 } from './constants';
 import Dashboard from './dashboard';
+import { mapApplicationFormData } from './utils/map-application-form-data';
 
 import './style.scss';
 
@@ -35,6 +38,8 @@ interface Section {
 export default function PartnerDirectory( { selectedSection }: Props ) {
 	const translate = useTranslate();
 	const title = translate( 'Partner Directory' );
+
+	const agency = useSelector( getActiveAgency );
 
 	// Define the sub-menu sections
 	const sections: { [ slug: string ]: Section } = useMemo( () => {
@@ -63,7 +68,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		sections[ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG ] = {
-			content: <AgencyExpertise />,
+			content: <AgencyExpertise initialFormData={ mapApplicationFormData( agency ) } />,
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ].breadcrumbItems,
 				{
@@ -74,7 +79,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		return sections;
-	}, [ translate ] );
+	}, [ translate, agency ] );
 
 	// Set the selected section
 	const section: Section = sections[ selectedSection ];

@@ -1,13 +1,13 @@
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../grid-context';
-import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
-import useIsLargeCurrency from '../hooks/use-is-large-currency';
-import DropdownOption from './dropdown-option';
-import { useStorageStringFromFeature } from './storage';
+import { usePlansGridContext } from '../../../../grid-context';
+import useIsLargeCurrency from '../../../../hooks/use-is-large-currency';
+import DropdownOption from '../../../dropdown-option';
+import useDefaultStorageOption from '../hooks/use-default-storage-option';
+import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import type { AddOnMeta } from '@automattic/data-stores';
 
@@ -72,7 +72,7 @@ const StorageAddOnOption = ( {
 	);
 };
 
-export const StorageAddOnDropdown = ( {
+const StorageAddOnDropdown = ( {
 	planSlug,
 	storageOptions,
 	onStorageAddOnClick,
@@ -82,12 +82,12 @@ export const StorageAddOnDropdown = ( {
 	const { gridPlansIndex, siteId } = usePlansGridContext();
 	const {
 		pricing: { currencyCode },
-		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const storageAddOnPrices = useMemo(
-		() => storageAddOnsForPlan?.map( ( addOn ) => addOn?.prices?.monthlyPrice ?? 0 ),
-		[ storageAddOnsForPlan ]
+		() => storageAddOns?.map( ( addOn ) => addOn?.prices?.monthlyPrice ?? 0 ),
+		[ storageAddOns ]
 	);
 	const isLargeCurrency = useIsLargeCurrency( {
 		prices: storageAddOnPrices,
@@ -98,18 +98,16 @@ export const StorageAddOnDropdown = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
 		[ planSlug ]
 	);
-	const defaultStorageOption = useDefaultStorageOption( {
-		storageOptions,
-		storageAddOnsForPlan,
-	} );
+	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 
 	useEffect( () => {
-		if ( storageAddOnsForPlan && defaultStorageOption && ! selectedStorageOptionForPlan ) {
-			setSelectedStorageOptionForPlan( {
-				addOnSlug: defaultStorageOption,
-				planSlug,
-				siteId,
-			} );
+		if ( ! selectedStorageOptionForPlan ) {
+			defaultStorageOption &&
+				setSelectedStorageOptionForPlan( {
+					addOnSlug: defaultStorageOption,
+					planSlug,
+					siteId,
+				} );
 		}
 	}, [] );
 
@@ -119,25 +117,22 @@ export const StorageAddOnDropdown = ( {
 			name: (
 				<StorageAddOnOption
 					planSlug={ planSlug }
-					price={ getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug ) }
+					price={ getStorageOptionPrice( storageAddOns, storageOption.slug ) }
 					storageFeature={ storageOption.slug }
 				/>
 			),
 		};
 	} );
 
-	const selectedOptionKey = selectedStorageOptionForPlan
-		? selectedStorageOptionForPlan
-		: defaultStorageOption;
-	const selectedOptionPrice = getStorageOptionPrice( storageAddOnsForPlan, selectedOptionKey );
+	const selectedOptionPrice = getStorageOptionPrice( storageAddOns, selectedStorageOptionForPlan );
 
 	const selectedOption = {
-		key: selectedOptionKey,
+		key: selectedStorageOptionForPlan,
 		name: (
 			<StorageAddOnOption
 				planSlug={ planSlug }
 				price={ selectedOptionPrice }
-				storageFeature={ selectedOptionKey }
+				storageFeature={ selectedStorageOptionForPlan }
 				isLargeCurrency={ isLargeCurrency }
 				priceOnSeparateLine={ priceOnSeparateLine }
 			/>

@@ -3,13 +3,13 @@ import {
 	WPComStorageAddOnSlug,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
-import { usePlansGridContext } from '../../grid-context';
-import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
-import { PlanFeaturesItem } from '../item';
-import { PlanStorageLabel, useGetAvailableStorageOptions } from '../storage';
-import StorageAddOnDropdown from '../storage-add-on-dropdown';
+import { usePlansGridContext } from '../../../../grid-context';
+import { isStorageUpgradeableForPlan } from '../../../../lib/is-storage-upgradeable-for-plan';
+import useAvailableStorageOptions from '../hooks/use-available-storage-options';
+import PlanStorageLabel from './plan-storage-label';
+import StorageAddOnDropdown from './storage-add-on-dropdown';
 
-type PlanStorageOptionsProps = {
+type Props = {
 	intervalType: string;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	showUpgradeableStorage: boolean;
@@ -17,31 +17,29 @@ type PlanStorageOptionsProps = {
 	options?: {
 		isTableCell?: boolean;
 	};
+	priceOnSeparateLine?: boolean;
 };
 
-const PlanStorageOptions = ( {
+const StorageFeature = ( {
 	intervalType,
 	onStorageAddOnClick,
 	planSlug,
 	options,
 	showUpgradeableStorage,
-}: PlanStorageOptionsProps ) => {
+	priceOnSeparateLine,
+}: Props ) => {
 	const { gridPlansIndex } = usePlansGridContext();
-	const {
-		availableForPurchase,
-		features: { storageOptions },
-		current,
-	} = gridPlansIndex[ planSlug ];
-	const getAvailableStorageOptions = useGetAvailableStorageOptions();
+	const { availableForPurchase, current } = gridPlansIndex[ planSlug ];
+
+	/**
+	 * TODO: Consider centralising `canUpgradeStorageForPlan` behind `availableStorageOptions`
+	 */
+	const availableStorageOptions = useAvailableStorageOptions( { planSlug } );
 
 	if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;
 	}
 
-	/**
-	 * TODO: Consider centralising `canUpgradeStorageForPlan` behind `availableStorageOptions`
-	 */
-	const availableStorageOptions = getAvailableStorageOptions( { storageOptions } );
 	/**
 	 * The current plan is not marked as `availableForPurchase`, hence check on `current`.
 	 */
@@ -58,20 +56,17 @@ const PlanStorageOptions = ( {
 			planSlug={ planSlug }
 			onStorageAddOnClick={ onStorageAddOnClick }
 			storageOptions={ availableStorageOptions }
+			priceOnSeparateLine={ priceOnSeparateLine }
 		/>
 	) : (
-		storageOptions.map( ( storageOption ) => {
+		availableStorageOptions.map( ( storageOption ) => {
 			if ( ! storageOption?.isAddOn ) {
 				return <PlanStorageLabel storageOption={ storageOption } planSlug={ planSlug } />;
 			}
 		} )
 	);
 
-	return (
-		<div className="plans-grid-next-storage-feature">
-			<PlanFeaturesItem>{ storageJSX }</PlanFeaturesItem>
-		</div>
-	);
+	return <div className="plans-grid-next-storage-feature">{ storageJSX }</div>;
 };
 
-export default PlanStorageOptions;
+export default StorageFeature;
