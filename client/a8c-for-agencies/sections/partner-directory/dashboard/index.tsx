@@ -40,7 +40,7 @@ const PartnerDirectoryDashboard = ( { applicationData }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const statusTypeMap = useMemo( (): Record< string, StatusBadge > => {
+	const applicationStatusTypeMap = useMemo( (): Record< string, StatusBadge > => {
 		return {
 			pending: {
 				key: 'pending',
@@ -106,9 +106,9 @@ const PartnerDirectoryDashboard = ( { applicationData }: Props ) => {
 	for ( const directory of applicationData?.directories || [] ) {
 		directoryApplicationStatuses.push( {
 			brand: availableProducts[ directory.directory ],
-			status: statusTypeMap[ directory.status || 'unknown' ].label,
-			type: statusTypeMap[ directory.status || 'unknown' ].type,
-			key: statusTypeMap[ directory.status || 'unknown' ].key,
+			status: applicationStatusTypeMap[ directory.status || 'unknown' ].label,
+			type: applicationStatusTypeMap[ directory.status || 'unknown' ].type,
+			key: applicationStatusTypeMap[ directory.status || 'unknown' ].key,
 		} );
 	}
 
@@ -170,7 +170,7 @@ const PartnerDirectoryDashboard = ( { applicationData }: Props ) => {
 									// FIXME: Add links to all the buttons
 									key === 'approved' ? (
 										<>
-											<Button className="a8c-blue-link" borderless href="#">
+											<Button className="a8c-blue-link" borderless href={ brandMeta.url }>
 												{ translate( '%(brand)s Partner Directory', {
 													args: { brand },
 												} ) }
