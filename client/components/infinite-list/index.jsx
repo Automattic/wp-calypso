@@ -106,6 +106,15 @@ export default class InfiniteList extends Component {
 			triggeredByScroll: false,
 		} );
 		if ( this._contextLoaded() ) {
+			const scrollTop = this.state.scrollTop;
+			window.setTimeout( () => {
+				this._setContainerY( scrollTop );
+				this.updateScroll( {
+					triggeredByScroll: false,
+				} );
+			}, 0 );
+		}
+		if ( this._contextLoaded() ) {
 			this._scrollContainer.addEventListener( 'scroll', this.onScroll );
 		}
 	}
