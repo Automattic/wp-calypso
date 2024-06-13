@@ -22,7 +22,7 @@ const getStatsPurchaseURL = (
 	hasFreeStats = false
 ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-wpcom-stats&from=${ from }-stats-upgrade-notice${
+	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-stats-upgrade-notice${
 		hasFreeStats ? '&productType=personal' : ''
 	}`;
 	return purchasePath;
