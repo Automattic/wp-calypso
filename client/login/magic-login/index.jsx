@@ -3,10 +3,12 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { addLocaleToPath, localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
+import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
+import wpcomRequest from 'wpcom-proxy-request';
 import AppPromo from 'calypso/blocks/app-promo';
 import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
@@ -69,9 +71,11 @@ class MagicLogin extends Component {
 
 	state = {
 		usernameOrEmail: this.props.userEmail || '',
+		userEmail: '',
 		resendEmailCountdown: RESEND_EMAIL_COUNTDOWN_TIME,
 		verificationCodeInputValue: '',
 		isLoginWithMainAccount: true,
+		emailErrorMessage: null,
 	};
 
 	verificationCodeInputRef = createRef();
@@ -228,6 +232,41 @@ class MagicLogin extends Component {
 			</div>
 		);
 	}
+
+	handleGravPoweredEmailSubmit = async ( usernameOrEmail, e ) => {
+		e.preventDefault();
+
+		const { translate } = this.props;
+
+		if ( ! emailValidator.validate( usernameOrEmail ) ) {
+			return this.setState( { emailErrorMessage: translate( 'Invalid email' ) } );
+		}
+
+		try {
+			const res = await wpcomRequest( {
+				path: '/auth/get-gravatar-info',
+				query: { email: usernameOrEmail },
+			} );
+
+			if ( res.is_secondary ) {
+				// TODO: Handle secondary email options
+			} else {
+				// TODO: Handle primary email options
+			}
+		} catch ( error ) {
+			// TODO: Error events?
+
+			if ( error.error === 'invalid_email' ) {
+				return this.setState( { emailErrorMessage: translate( 'Invalid email' ) } );
+			}
+
+			return this.setState( {
+				emailErrorMessage: translate( 'Something went wrong. Please try again.' ),
+			} );
+		}
+
+		this.setState( { userEmail: usernameOrEmail } );
+	};
 
 	handleVerificationCodeInputChange = ( e ) => {
 		let value = e.target.value.toUpperCase();
@@ -405,8 +444,7 @@ class MagicLogin extends Component {
 
 	renderGravPoweredEmailCodeVerification() {
 		const { oauth2Client, isSendingEmail, translate } = this.props;
-		const { usernameOrEmail, verificationCodeInputValue } = this.state;
-		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : '';
+		const { userEmail, verificationCodeInputValue } = this.state;
 
 		return (
 			<div className="grav-powered-magic-login__content">
@@ -417,7 +455,7 @@ class MagicLogin extends Component {
 						'Enter the verification code we’ve sent to {{strong}}%(emailAddress)s{{/strong}}. A new Gravatar account will be created.',
 						{
 							components: { strong: <strong /> },
-							args: { emailAddress },
+							args: { emailAddress: userEmail },
 						}
 					) }
 				</p>
@@ -462,7 +500,7 @@ class MagicLogin extends Component {
 
 	renderGravPoweredSecondaryEmailOptions() {
 		const { oauth2Client, translate } = this.props;
-		const { isLoginWithMainAccount } = this.state;
+		const { userEmail, isLoginWithMainAccount } = this.state;
 
 		return (
 			<div className="grav-powered-magic-login__content">
@@ -516,8 +554,7 @@ class MagicLogin extends Component {
 								'If you continue a new account will be created, and {{strong}}%(emailAddress)s{{/strong}} will be disconnected from the current main account.',
 								{
 									components: { strong: <strong /> },
-									// TODO: Use real data
-									args: { emailAddress: 'test@gmail.com' },
+									args: { emailAddress: userEmail },
 								}
 							) }
 						</div>
@@ -572,8 +609,11 @@ class MagicLogin extends Component {
 						inputPlaceholder={ translate( 'Enter your email address' ) }
 						submitButtonLabel={ submitButtonLabel }
 						tosComponent={ ! isGravatar && this.renderGravPoweredMagicLoginTos() }
+						onSubmitEmail={ isGravatar && this.handleGravPoweredEmailSubmit }
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
+						errorMessage={ this.state.emailErrorMessage }
+						onErrorDismiss={ () => this.setState( { emailErrorMessage: null } ) }
 					/>
 					{ isGravatar && (
 						<div className="grav-powered-magic-login__feature-items">

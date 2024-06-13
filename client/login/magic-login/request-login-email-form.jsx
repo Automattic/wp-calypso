@@ -55,9 +55,12 @@ class RequestLoginEmailForm extends Component {
 		customFormLabel: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
+		onSubmitEmail: PropTypes.func,
 		onSendEmailLogin: PropTypes.func,
 		createAccountForNewUser: PropTypes.bool,
 		blogId: PropTypes.string,
+		errorMessage: PropTypes.string,
+		onErrorDismiss: PropTypes.func,
 	};
 
 	state = {
@@ -89,6 +92,10 @@ class RequestLoginEmailForm extends Component {
 
 		if ( this.props.requestError ) {
 			this.props.hideMagicLoginRequestNotice();
+		}
+
+		if ( this.props.errorMessage ) {
+			this.props.onErrorDismiss?.();
 		}
 	};
 
@@ -178,6 +185,9 @@ class RequestLoginEmailForm extends Component {
 			submitButtonLabel,
 			locale,
 			customFormLabel,
+			onSubmitEmail,
+			errorMessage,
+			onErrorDismiss,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -212,6 +222,10 @@ class RequestLoginEmailForm extends Component {
 				? this.props.translate( 'Email address or username' )
 				: this.props.translate( 'Email Address or Username' ) );
 
+		const onSubmit = onSubmitEmail
+			? ( e ) => onSubmitEmail( this.getUsernameOrEmailFromState(), e )
+			: this.onSubmit;
+
 		return (
 			<div className="magic-login__form">
 				{ siteIcon && (
@@ -236,7 +250,7 @@ class RequestLoginEmailForm extends Component {
 						} ) }
 					</p>
 				) }
-				<LoggedOutForm onSubmit={ this.onSubmit }>
+				<LoggedOutForm onSubmit={ onSubmit }>
 					<p className="magic-login__form-sub-header">
 						{ ! hideSubHeaderText && this.getSubHeaderText() }
 					</p>
@@ -260,6 +274,16 @@ class RequestLoginEmailForm extends Component {
 								className="magic-login__request-login-email-form-notice"
 								showDismiss={ false }
 								onDismissClick={ this.onNoticeDismiss }
+								status="is-transparent-info"
+							/>
+						) }
+						{ errorMessage && (
+							<Notice
+								duration={ 10000 }
+								text={ errorMessage }
+								className="magic-login__request-login-email-form-notice"
+								showDismiss={ false }
+								onDismissClick={ onErrorDismiss }
 								status="is-transparent-info"
 							/>
 						) }
