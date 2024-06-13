@@ -2,22 +2,24 @@ import { useMutation } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { DEFAULT_RETRY, Options } from './use-plugin-auto-installation';
 
-interface APIError extends Error {
-	error: string;
+interface WPError {
+	name: string;
 }
 
 const installPlugin = async ( siteId: number, pluginSlug: string ) => {
 	try {
-		return await wpcom.req.post( {
-			path: `/sites/${ siteId }/plugins/${ pluginSlug }/install?http_envelope=1`,
-			apiNamespace: 'rest/v1.2',
-			body: {},
-		} );
+		await wpcom.req.post(
+			{
+				path: `/sites/${ siteId }/plugins/${ pluginSlug }/install`,
+			},
+			{ apiVersion: '1.2', http_envelope: 1 },
+			{}
+		);
 	} catch ( error ) {
-		if ( ( error as APIError ).error === 'plugin_already_installed' ) {
-			return { status: 'success' };
+		if ( ( error as WPError ).name === 'PluginAlreadyInstalledError' ) {
+			return 'success';
 		}
-		return Promise.reject( error );
+		throw error;
 	}
 };
 

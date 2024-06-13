@@ -6,6 +6,13 @@ import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { usePluginInstallation } from '../use-plugin-installation';
+import { replyWithSuccess, replyWithError } from './helpers/nock';
+
+const installationWithSuccess = replyWithSuccess( 200 );
+const installationWithGenericError = replyWithError( { error: 'any generic error' } );
+const installationWithPluginAlreadyInstalled = replyWithError( {
+	error: 'plugin_already_installed',
+} );
 
 const Wrapper =
 	( queryClient: QueryClient ) =>
@@ -33,11 +40,14 @@ describe( 'usePluginInstallation', () => {
 
 	it( 'returns success when the installation was completed', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
-			.post( `/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install?http_envelope=1` )
-			.reply( 200 );
+			.post( `/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install` )
+			.once()
+			.query( { http_envelope: 1 } )
+			.reply( installationWithSuccess );
 
 		const { result } = render( { siteId } );
 		result.current.mutate();
+
 		await waitFor( () => {
 			expect( result.current.isSuccess ).toEqual( true );
 		} );
@@ -45,35 +55,24 @@ describe( 'usePluginInstallation', () => {
 
 	it( 'returns error when there is an error to install', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
-			.post( `/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install?http_envelope=1` )
-			.reply( 200, {
-				code: 400,
-				headers: [
-					{
-						name: 'Content-Type',
-						value: 'application/json',
-					},
-				],
-				body: {
-					error: 'plugin_already_installed',
-					message: 'The plugin is already installed',
-				},
-			} );
+			.post( `/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install` )
+			.query( { http_envelope: 1 } )
+			.reply( installationWithGenericError );
 
 		const { result } = render( { siteId } );
 
 		result.current.mutate();
 
 		await waitFor( () => {
-			// console.log( result.current );
-			expect( result.current.isError ).toEqual( true );
+			expect( result.current.isError ).toBe( true );
 		} );
 	} );
 
 	it( 'returns success when the plugin is already installed', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( `/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install` )
-			.reply( 400, { error: 'plugin_already_installed' } );
+			.query( { http_envelope: 1 } )
+			.reply( installationWithPluginAlreadyInstalled );
 
 		const { result } = render( { siteId } );
 
