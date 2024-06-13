@@ -249,29 +249,33 @@ export default {
 
 		// See: 1113-gh-Automattic/experimentation-platform for details.
 		// `isTokenLoaded` covers users who just logged in.
-		if (
-			( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) &&
-			( wpcom.isTokenLoaded() || userLoggedIn )
-		) {
-			// Load both experiments in parallel for better performance.
-			await Promise.all( [
-				loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
-				loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
-			] );
 
-			// NOTE: Uncomment the following code to use the experiments.
-			// const [ _bigSkyExperiment, _trailMapExperiment ] = await Promise.all( [
-			// 	loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
-			// 	loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
-			// ] );
-
-			if ( [ 'treatment_guided', 'treatment_survey_only' ].includes( context.query.trailmap ) ) {
-				initialContext.trailMapExperimentVariant = context.query.trailmap;
+		if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
+			// use config flags to set the variants during the CFT.
+			if ( config.isEnabled( 'onboarding/guided' ) ) {
+				initialContext.trailMapExperimentVariant = 'treatment_guided';
+			} else if ( config.isEnabled( 'onboarding/guided-survey-only' ) ) {
+				initialContext.trailMapExperimentVariant = 'treatment_survey_only';
 			}
+			if ( wpcom.isTokenLoaded() || userLoggedIn ) {
+				// Load both experiments in parallel for better performance.
+				await Promise.all( [
+					loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
+					loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
+				] );
 
-			//if ( bigSkyExperiment.variationName === 'trailmap' ) {
-			// initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
-			//}
+				if ( isOnboardingGuidedFlow( flowName ) ) {
+					// NOTE: Uncomment the following code to use the experiments.
+					// const [ _bigSkyExperiment, _trailMapExperiment ] = await Promise.all( [
+					// 	loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
+					// 	loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
+					// ] );
+				}
+
+				//if ( bigSkyExperiment.variationName === 'trailmap' ) {
+				// initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
+				//}
+			}
 		}
 
 		if (
