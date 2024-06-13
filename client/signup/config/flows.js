@@ -9,6 +9,7 @@ import {
 } from '@automattic/design-picker';
 import { isOnboardingGuidedFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
 import { get, includes, reject } from 'lodash';
+import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -275,7 +276,7 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 		queryParams.ref = refParameter;
 	}
 
-	const planSlug = cartItems?.[ 0 ]?.product_slug;
+	const planSlug = getPlanCartItem( cartItems )?.product_slug;
 	const planType = getPlan( planSlug )?.type;
 
 	if (
