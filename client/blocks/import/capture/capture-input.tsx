@@ -97,17 +97,17 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		},
 		'invalid-chars': {
 			message: translate(
-				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com)'
+				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com).'
 			),
 			messageString:
-				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com)',
+				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com).',
 		},
 		'invalid-protocol': {
 			message: translate(
-				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com)'
+				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).'
 			),
 			messageString:
-				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com)',
+				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).',
 		},
 		default: {
 			message: translate(

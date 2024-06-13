@@ -176,7 +176,7 @@ describe( 'URL Validation', () => {
 
 		expect(
 			screen.getByText(
-				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com)'
+				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com).'
 			)
 		).toBeInTheDocument();
 	} );
@@ -186,7 +186,7 @@ describe( 'URL Validation', () => {
 
 		expect(
 			screen.getByText(
-				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com)'
+				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).'
 			)
 		).toBeInTheDocument();
 	} );
@@ -196,7 +196,7 @@ describe( 'URL Validation', () => {
 
 		expect(
 			screen.getByText(
-				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com)'
+				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).'
 			)
 		).toBeInTheDocument();
 	} );
