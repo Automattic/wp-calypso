@@ -1,22 +1,28 @@
 import { useMemo, useState } from 'react';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 
-export default function useDetailsForm() {
-	const [ formData, setFormData ] = useState< AgencyDetails >( {
-		name: '',
-		email: '',
-		website: '',
-		bioDescription: '',
-		logoUrl: '',
-		landingPageUrl: '',
-		country: '',
-		isAvailable: true,
-		industry: '',
-		languagesSpoken: [],
-		budgetLowerRange: '0',
-		services: [],
-		products: [],
-	} );
+type Props = {
+	initialFormData?: AgencyDetails | null;
+};
+
+export default function useDetailsForm( { initialFormData }: Props ) {
+	const [ formData, setFormData ] = useState< AgencyDetails >(
+		initialFormData ?? {
+			name: '',
+			email: '',
+			website: '',
+			bioDescription: '',
+			logoUrl: '',
+			landingPageUrl: '',
+			country: '',
+			isAvailable: true,
+			industry: '',
+			languagesSpoken: [],
+			budgetLowerRange: '0',
+			services: [],
+			products: [],
+		}
+	);
 
 	const isValidFormData = useMemo(
 		(): boolean =>

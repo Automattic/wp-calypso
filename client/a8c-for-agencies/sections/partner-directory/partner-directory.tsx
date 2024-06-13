@@ -21,7 +21,10 @@ import {
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 } from './constants';
 import Dashboard from './dashboard';
-import { mapApplicationFormData } from './utils/map-application-form-data';
+import {
+	mapAgencyDetailsFormData,
+	mapApplicationFormData,
+} from './utils/map-application-form-data';
 
 import './style.scss';
 
@@ -42,13 +45,14 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 	const agency = useSelector( getActiveAgency );
 
 	const applicationData = useMemo( () => mapApplicationFormData( agency ), [ agency ] );
+	const agencyDetailsData = useMemo( () => mapAgencyDetailsFormData( agency ), [ agency ] );
 
 	// Define the sub-menu sections
 	const sections: { [ slug: string ]: Section } = useMemo( () => {
 		const sections: { [ slug: string ]: Section } = {};
 
 		sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ] = {
-			content: <Dashboard applicationData={ applicationData } />,
+			content: <Dashboard />,
 			breadcrumbItems: [
 				{
 					label: translate( 'Partner Directory' ),
@@ -59,7 +63,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] = {
-			content: <AgencyDetailsForm />,
+			content: <AgencyDetailsForm initialFormData={ agencyDetailsData } />,
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ].breadcrumbItems,
 				{
@@ -81,7 +85,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		return sections;
-	}, [ translate, agency ] );
+	}, [ translate, agencyDetailsData, applicationData ] );
 
 	// Set the selected section
 	const section: Section = sections[ selectedSection ];
