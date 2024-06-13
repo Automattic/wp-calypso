@@ -29,9 +29,8 @@ function shouldShowCommercialUpgradeNotice( props: StatsNoticeProps ) {
 		isCommercial,
 	} = props;
 
-	// Gate notices for WPCOM sites behind a flag.
-	const showUpgradeNoticeForWpcomSites =
-		config.isEnabled( 'stats/paid-wpcom-stats' ) && isWpcom && ! isP2 && ! isOwnedByTeam51;
+	// Test for WPCOM sites.
+	const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
 
 	// Show the notice if the site is Jetpack or it is Odyssey Stats.
 	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
