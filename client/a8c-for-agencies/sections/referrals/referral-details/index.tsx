@@ -10,12 +10,12 @@ import ReferralPurchases from './purchases';
 import type { Referral } from '../types';
 import type { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 
+import './style.scss';
+
 interface Props {
 	referral: Referral;
 	closeSitePreviewPane: () => void;
 }
-
-import './style.scss';
 
 const REFERRAL_PURCHASES_ID = 'referral-purchases';
 
@@ -64,6 +64,7 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 
 	return (
 		<ItemPreviewPane
+			className="referral-details-items"
 			itemData={ itemData }
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
