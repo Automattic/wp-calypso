@@ -11,10 +11,11 @@ function HelpCenterContent() {
 		<>
 			<Button
 				className="help-center"
-				onClick={ () => window.open( localizeUrl( 'https://wordpress.com/help/' ), '_blank' ) }
+				href={ localizeUrl( 'https://wordpress.com/help/' ) }
 				icon={ <HelpIcon /> }
 				label="Help"
 				size="compact"
+				target="_blank"
 			/>
 		</>
 	);
