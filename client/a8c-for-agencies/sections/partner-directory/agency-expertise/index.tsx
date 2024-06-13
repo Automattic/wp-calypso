@@ -184,7 +184,7 @@ const AgencyExpertise = ( { initialData }: Props ) => {
 				</FormField>
 			</FormSection>
 
-			<div className="partner-directory-agency-expertise__footer">
+			<div className="partner-directory-agency-cta__footer">
 				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
 					{ translate( 'Submit my application' ) }
 				</Button>

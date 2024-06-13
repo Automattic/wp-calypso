@@ -20,6 +20,8 @@ import {
 } from './constants';
 import Dashboard from './dashboard';
 
+import './style.scss';
+
 type Props = {
 	selectedSection: string;
 };
@@ -93,7 +95,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 					) }
 				</LayoutHeader>
 			</LayoutTop>
-			<LayoutBody>{ section.content }</LayoutBody>
+			<LayoutBody className="partner-directory__body">{ section.content }</LayoutBody>
 		</Layout>
 	);
 }
