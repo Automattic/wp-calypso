@@ -483,11 +483,11 @@ class MagicLogin extends Component {
 		} );
 		let headerText = translate( 'Sign in with your email' );
 
-		if ( isGravatar && query?.gravatar_auth_source ) {
-			if ( query.gravatar_auth_source === 'signup' ) {
+		if ( isGravatar && query?.gravatar_from ) {
+			if ( query.gravatar_from === 'signup' ) {
 				headerText = translate( 'Create your Profile' );
 			}
-			if ( query.gravatar_auth_source === '3rd-party' ) {
+			if ( query.gravatar_from === '3rd-party' ) {
 				headerText = translate( 'Edit your Profile' );
 			}
 		}
