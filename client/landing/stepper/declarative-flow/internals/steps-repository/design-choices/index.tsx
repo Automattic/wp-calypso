@@ -89,7 +89,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								onSelect={ handleSubmit }
 							/>
 							{ isBigSkyEligible && recordBigSkyView() && (
-								<BigSkyDisclaimerModal>
+								<BigSkyDisclaimerModal flow={ flow } stepName={ stepName }>
 									<DesignChoice
 										className="design-choices__try-big-sky"
 										title={ translate( 'Try Big Sky' ) }

@@ -4,6 +4,7 @@ import { useState } from '@wordpress/element';
 import { brush, Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { Link } from 'react-router-dom';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 
 import './style.scss';
@@ -11,16 +12,28 @@ import './style.scss';
 type Props = {
 	children: React.ReactNode;
 	className?: string | undefined;
+	flow: string;
+	stepName: string;
 };
 
-const BigSkyDisclaimerModal: React.FC< Props > = ( { children } ) => {
+const BigSkyDisclaimerModal: React.FC< Props > = ( { children, flow, stepName } ) => {
 	const translate = useTranslate();
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
-	const closeModal = () => setOpen( false );
+	const closeModal = () => {
+		recordTracksEvent( 'calypso_big_sky_disclaimer_modal_close', {
+			flow,
+			step: stepName,
+		} );
+		setOpen( false );
+	};
 
 	const onSubmit = () => {
-		closeModal();
+		recordTracksEvent( 'calypso_big_sky_disclaimer_accept', {
+			flow,
+			step: stepName,
+		} );
+		setOpen( false );
 		const queryParams = new URLSearchParams( location.search ).toString();
 		navigate( `/setup/site-setup/launch-big-sky${ queryParams ? `?${ queryParams }` : '' }` );
 	};
