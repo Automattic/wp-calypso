@@ -5,7 +5,7 @@ import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholde
 import useCancelClientSubscription from 'calypso/a8c-for-agencies/data/client/use-cancel-client-subscription';
 import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
 import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { Subscription } from '../types';
 
 type Props = {
@@ -23,6 +23,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 	const { mutate: cancelSubscription, isPending } = useCancelClientSubscription( {
 		onSuccess: () => {
+			dispatch( successNotice( translate( 'The subscription was successfully cancelled.' ) ) );
 			onCancelSubscription?.( subscription );
 			setIsVisible( false );
 		},
@@ -54,7 +55,13 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 					<Button onClick={ () => setIsVisible( false ) } disabled={ isPending }>
 						{ translate( 'Keep the subscription' ) }
 					</Button>,
-					<Button onClick={ () => onConfirm() } scary primary busy={ isPending }>
+					<Button
+						onClick={ () => onConfirm() }
+						scary
+						primary
+						busy={ isPending }
+						disabled={ isPending }
+					>
 						{ translate( 'Cancel subscription' ) }
 					</Button>,
 				] }
