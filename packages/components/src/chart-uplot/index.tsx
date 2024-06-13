@@ -92,9 +92,9 @@ export default function UplotChart( {
 			...DEFAULT_DIMENSIONS,
 			// Set incoming dates as UTC.
 			tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
+			// First, it cycles through all possible templates in case they are substitutes.
 			fmtDate: ( chartDateStringTemplate: string ) => {
-				// first it cycles through all possible templates in case they are substitues
-				// the date for a specific point
+				// The date for a specific point in the chart.
 				return ( date ) => getDateFormat( chartDateStringTemplate, date, getLocaleSlug() || 'en' );
 			},
 			axes: [
