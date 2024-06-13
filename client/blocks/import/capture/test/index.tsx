@@ -85,4 +85,23 @@ describe( 'CaptureInput', () => {
 
 		expect( screen.getByRole( 'button', { name: /XYZ/ } ) ).toBeInTheDocument();
 	} );
+
+	it( 'should show no TLD error', async () => {
+		const onInputEnter = jest.fn();
+		const { getByText } = render(
+			<MemoryRouter>
+				<CaptureInput onInputEnter={ onInputEnter } />
+			</MemoryRouter>
+		);
+
+		await userEvent.type( screen.getByLabelText( /Enter the URL of the site/ ), 'myblog' );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect(
+			getByText(
+				'Your URL is missing a top-level domain (e.g., .com, .net, etc.). Example URL: example.com'
+			)
+		).toBeInTheDocument();
+	} );
 } );
