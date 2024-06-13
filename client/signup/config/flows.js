@@ -261,6 +261,10 @@ function getEntrepreneurFlowDestination() {
 }
 
 function getGuidedOnboardingFlowDestination( dependencies ) {
+	if ( ! config.isEnabled( 'onboarding/guided' ) ) {
+		return getSignupDestination( dependencies );
+	}
+
 	const { onboardingSegment, siteSlug, siteId, domainItem, cartItems, refParameter } = dependencies;
 
 	if ( 'no-site' === siteSlug ) {
