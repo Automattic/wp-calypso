@@ -310,9 +310,11 @@
 .grav-powered-magic-login {
 	max-width: 480px;
 	line-height: 1.5;
+	font-size: 14px;
 
 	&.grav-powered-magic-login--wp-job-manager {
 		max-width: 560px;
+		font-size: 16px;
 
 		a,
 		.grav-powered-magic-login__content a,
@@ -367,6 +369,7 @@
 		.grav-powered-magic-login__tos {
 			margin: 32px 0 20px;
 			text-align: center;
+			font-size: 13px;
 		}
 	}
 
@@ -453,7 +456,6 @@
 
 	.grav-powered-magic-login__tos {
 		margin: 20px 0 30px;
-		font-size: 13px;
 		color: rgba(#00101c, 0.6);
 	}
 
@@ -539,8 +541,8 @@
 			&::before {
 				content: "";
 				display: inline-block;
-				width: 19px;
-				height: 20px;
+				min-width: 19px;
+				min-height: 20px;
 				background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMCAyMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC41IiB5PSIxIiB3aWR0aD0iMTkiIGhlaWdodD0iMTkiIHJ4PSI5LjUiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjAuNSIgeT0iMSIgd2lkdGg9IjE5IiBoZWlnaHQ9IjE5IiByeD0iOS41IiBzdHJva2U9IiM5NDk0OTQiLz4KPC9zdmc+Cg==);
 				background-size: cover;
 			}
@@ -572,6 +574,7 @@
 	}
 
 	.grav-powered-magic-login__login-page-link {
+		font-size: 16px;
 		text-align: center;
 	}
 
@@ -654,6 +657,7 @@
 			flex-direction: row;
 			justify-content: space-between;
 			gap: 0;
+			font-size: 16px;
 		}
 
 		.grav-powered-magic-login__show-magic-login {
