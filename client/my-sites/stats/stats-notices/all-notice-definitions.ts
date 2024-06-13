@@ -27,15 +27,24 @@ function shouldShowCommercialUpgradeNotice( props: StatsNoticeProps ) {
 		hasPaidStats,
 		isSiteJetpackNotAtomic,
 		isCommercial,
+		isCommercialOwned,
 	} = props;
+
+	// Show notice for Jetpack-connected sites that are not Atomic AND
+	// they are classified as commercial but do not have a commercial license.
+	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
+	const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
+	if ( showUpgradeNoticeOnOdyssey || showUpgradeNoticeForJetpackNotAtomic ) {
+		if ( isVip || isOwnedByTeam51 ) {
+			return false;
+		}
+		if ( isCommercial && ! isCommercialOwned ) {
+			return true;
+		}
+	}
 
 	// Test for WPCOM sites.
 	const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
-
-	// Show the notice if the site is Jetpack or it is Odyssey Stats.
-	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
-
-	const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
 
 	return !! (
 		( showUpgradeNoticeOnOdyssey ||
