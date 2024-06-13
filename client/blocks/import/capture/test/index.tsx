@@ -202,7 +202,7 @@ describe( 'URL Validation', () => {
 	} );
 
 	test( 'should show default error message', async () => {
-		await enterUrlAndContinue( 'invalid-url' );
+		await enterUrlAndContinue( 'example.com-' );
 
 		expect(
 			screen.getByText(
