@@ -11,7 +11,8 @@ const selectors = {
 
 	// Actions Button
 	allActionsButton: '.editor-all-actions-button',
-	viewRevisionsMenuItem: '.view-revisions-modal-button',
+	viewRevisionsModalMenuItem: '.view-revisions-modal-button',
+	viewRevisionsMenuItem: '[role=menuitem]:has-text("View revisions")',
 
 	// Revisions (before 18.4.0)
 	showRevisionButton: '.editor-post-last-revision__panel', // Revision is a link, not a panel.
@@ -361,9 +362,13 @@ export class EditorSettingsSidebarComponent {
 		// Open the all actions dropdown menu
 		await this.openAllActionsDropdown();
 
+		const menuItem = envVariables.TEST_ON_ATOMIC
+			? selectors.viewRevisionsMenuItem
+			: selectors.viewRevisionsModalMenuItem;
+
 		// Click on the revisions menu item
 		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.viewRevisionsMenuItem );
+		const locator = editorParent.locator( menuItem );
 		await locator.click();
 	}
 
