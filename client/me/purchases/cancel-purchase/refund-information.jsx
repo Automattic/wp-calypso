@@ -51,32 +51,20 @@ const CancelPurchaseRefundInformation = ( {
 		if ( isDomainRegistration( purchase ) ) {
 			// Domain bought with domain credits, so there's no refund
 			if ( ! hasAmountAvailableToRefund( purchase ) ) {
-				text = [
-					i18n.translate(
-						'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
-							'it will be removed from your site immediately.',
-						{
-							args: { refundPeriodInDays },
-						}
-					),
-				];
+				text = i18n.translate(
+					'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+						'it will be removed from your site immediately.',
+					{
+						args: { refundPeriodInDays },
+					}
+				);
 			} else {
-				text = [
-					i18n.translate(
-						'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
-							"you'll receive a refund and it will be removed from your site immediately.",
-						{
-							args: { refundPeriodInDays },
-						}
-					),
-				];
-			}
-
-			if ( isGravatarDomain ) {
-				text.push(
-					i18n.translate(
-						"This is a free Gravatar domain. If it is canceled, you won't be able to get another free domain to use with Gravatar."
-					)
+				text = i18n.translate(
+					'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+						"you'll receive a refund and it will be removed from your site immediately.",
+					{
+						args: { refundPeriodInDays },
+					}
 				);
 			}
 		}
