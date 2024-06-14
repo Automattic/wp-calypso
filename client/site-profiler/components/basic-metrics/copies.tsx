@@ -50,7 +50,7 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Excellent job maintaining low shifts!',
+					'Your site’s CLS is %(value)s, ensuring a stable layout. Excellent job maintaining low shifts!',
 					{ args: { value: clsValue } }
 				),
 				solution: translate(
@@ -61,7 +61,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
+					'Your site’s CLS is %(value)s, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
 					{
 						args: {
 							value: clsValue,
