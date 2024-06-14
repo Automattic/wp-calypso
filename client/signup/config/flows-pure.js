@@ -659,6 +659,16 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
+		},
+		{
+			name: 'email-subscription',
+			steps: [ userSocialStep ],
+			destination: getSignupDestination,
+			description:
+				'Email Subscription signup flow that signs user up to guides appointments for email campaigns',
+			lastModified: '2024-06-14',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'email', 'redirect_to', 'mailing_list' ],
 			hideProgressIndicator: true,
 			enableHotjar: true,
 		},
