@@ -83,8 +83,10 @@ const GoogleAnalyticsJetpackForm = ( {
 
 	const handleSubmitFormCustom = () => {
 		if ( isJetpackModuleAvailable ) {
-			handleFieldChange( 'is_active', !! jetpackModuleActive );
+			handleFieldChange( 'is_active', !! jetpackModuleActive, handleSubmitForm );
+			return;
 		}
+
 		handleSubmitForm();
 	};
 
