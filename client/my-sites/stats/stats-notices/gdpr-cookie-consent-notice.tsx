@@ -4,10 +4,13 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useSelector } from 'calypso/state';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { StatsNoticeProps } from './types';
 
 const GDPRCookieConsentNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
+	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
@@ -40,7 +43,11 @@ const GDPRCookieConsentNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 				'To fix, go to {{link}}Complianz settings{{/link}} use the toggle to disable Jetpack integration.',
 				{
 					components: {
-						link: <a href="/wp-admin/admin.php?page=complianz#integrations/integrations-plugins" />,
+						link: (
+							<a
+								href={ `${ adminUrl }admin.php?page=complianz#integrations/integrations-plugins` }
+							/>
+						),
 					},
 				}
 		  )
