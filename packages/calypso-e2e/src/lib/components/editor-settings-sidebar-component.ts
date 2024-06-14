@@ -13,7 +13,7 @@ const selectors = {
 	allActionsButton: '.editor-all-actions-button',
 	viewRevisionsMenuItem: '.view-revisions-modal-button',
 
-	// Revisions (before 18.5.0)
+	// Revisions (before 18.4.0)
 	showRevisionButton: '.editor-post-last-revision__panel', // Revision is a link, not a panel.
 
 	// Status & Visibility
