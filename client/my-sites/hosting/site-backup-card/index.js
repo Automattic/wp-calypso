@@ -1,4 +1,5 @@
-import { getPlan, WPCOM_FEATURES_BACKUPS, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_BACKUPS, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -62,36 +63,22 @@ const SiteBackupCard = ( { lastGoodBackup, requestBackups, siteId, siteSlug } ) 
 					</p>
 					<p>
 						{ translate(
-							// Translators: %(planName)s is the plan - Business or Creator
-							"Don't risk losing your hard work. With the %(planName)s plan, you can easily restore your site using our easy-to-use backup feature.",
-							{
-								args: {
-									planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-								},
-							}
+							'Unlock more granular control over your site, with the ability to restore it to any previous state, and export it at any time'
 						) }
 					</p>
-					<p>
-						{ translate(
-							'{{link}}Upgrade today{{/link}} to keep your site safe and your content fresh!',
-							{
-								components: {
-									link: (
-										<a
-											href={ addQueryArgs( `/checkout/${ siteSlug }/${ PLAN_BUSINESS }`, {
-												redirect_to: window.location.href.replace( window.location.origin, '' ),
-											} ) }
-											onClick={ () =>
-												dispatch(
-													recordTracksEvent( 'calypso_hosting_overview_backups_upgrade_plan_click' )
-												)
-											}
-										/>
-									),
-								},
-							}
-						) }
-					</p>
+					<Button
+						primary
+						compact
+						href={ addQueryArgs( `/plans/${ siteSlug }`, {
+							feature: WPCOM_FEATURES_BACKUPS,
+							plan: PLAN_BUSINESS,
+						} ) }
+						onClick={ () =>
+							dispatch( recordTracksEvent( 'calypso_hosting_overview_backups_upgrade_plan_click' ) )
+						}
+					>
+						{ translate( 'Upgrade your plan' ) }
+					</Button>
 				</>
 			);
 		}
