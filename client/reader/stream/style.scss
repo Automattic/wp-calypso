@@ -1006,14 +1006,19 @@
 .is-reader-page .main {
 	position: relative;
 
-	.stream__init-ovarlay {
-		background: var(--studio-white);
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
-		z-index: z-index("root", ".stream__init-overlay");
+	.stream__init-overlay {
+		display: none;
+
+		&.stream__init-ovarlay-enabled {
+			background: var(--studio-white);
+			position: absolute;
+			display: block;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			z-index: z-index("root", ".stream__init-overlay-enabled");
+		}
 	}
 }
 

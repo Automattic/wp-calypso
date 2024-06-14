@@ -212,13 +212,13 @@ class ReaderStream extends Component {
 			// Show an overlay while we are handling initial scroll and focus to prevent flashing
 			// content.
 			if ( this.overlayRef.current ) {
-				this.overlayRef.current.classList.add( 'stream__init-overlay' );
+				this.overlayRef.current.classList.add( 'stream__init-overlay-enabled' );
 			}
 			this.mountTimeout = setTimeout( () => {
 				this.scrollToSelectedPost( false );
 				this.focusSelectedPost( this.props.selectedPostKey );
 				if ( this.overlayRef.current ) {
-					this.overlayRef.current.classList.remove( 'stream__init-overlay' );
+					this.overlayRef.current.classList.remove( 'stream__init-overlay-enabled' );
 				}
 			}, 100 );
 		}
@@ -696,8 +696,7 @@ class ReaderStream extends Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ baseClassnames }>
-				{ /* This div is the .stream__init-overlay component, it only gets this class when it should be displayed */ }
-				<div ref={ this.overlayRef } />
+				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
