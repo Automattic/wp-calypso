@@ -214,29 +214,14 @@ $brand-text: "SF Pro Text", $sans;
 }
 
 .github-deployments {
-	.header-cake {
-		gap: 16px;
-		font-family: $brand-text;
-		clip-path: inset(-1px -1px 0 -1px);
-		padding-top: 20px;
-	}
-	.header-cake__title {
-		flex: none;
-		color: var(--studio-gray-80);
-		font-size: $font-body;
-		font-weight: 500;
-		padding: 0;
-	}
 	.header-cake__back {
 		color: var(--studio-gray-60);
 		font-size: $font-body-small;
 		padding: 0;
+		margin-bottom: 16px;
 		svg {
-			fill: var(--studio-gray-10);
-			width: 14px !important;
+			margin-right: 2px;
+			fill: var(--studio-gray-60);
 		}
-	}
-	.action-panel {
-		clip-path: inset(0 -1px -1px -1px);
 	}
 }

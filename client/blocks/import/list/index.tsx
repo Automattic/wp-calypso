@@ -5,8 +5,12 @@ import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import {
+	getImportersAsImporterOption,
+	type ImporterConfigPriority,
+} from 'calypso/lib/importer/importer-config';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
-import type { ImporterPlatform } from '../types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
 
 const trackEventName = 'calypso_signup_step_start';
@@ -15,10 +19,11 @@ const trackEventParams = {
 	step: 'list',
 };
 
-interface ImporterOption {
+export interface ImporterOption {
 	value: ImporterPlatform;
 	label: string;
 	icon?: string;
+	priority?: ImporterConfigPriority;
 }
 
 interface Props {
@@ -39,22 +44,14 @@ export default function ListStep( props: Props ) {
 	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
 	const backToFlow = urlQueryParams.get( 'backToFlow' );
 
-	const primaryListOptions: ImporterOption[] = [
-		{ value: 'wordpress', label: 'WordPress', icon: 'wordpress' },
-		{ value: 'blogger', label: 'Blogger', icon: 'blogger-alt' },
-		{ value: 'medium', label: 'Medium', icon: 'medium' },
-		{ value: 'squarespace', label: 'Squarespace', icon: 'squarespace' },
-	];
-
-	const secondaryListOptions: ImporterOption[] = [
-		{ value: 'blogroll', label: 'Blogroll' },
-		{ value: 'ghost', label: 'Ghost' },
-		{ value: 'livejournal', label: 'LiveJournal' },
-		{ value: 'movabletype', label: 'Movable Type & TypePad' },
-		{ value: 'substack', label: 'Substack' },
-		{ value: 'tumblr', label: 'Tumblr' },
-		{ value: 'xanga', label: 'Xanga' },
-	];
+	// We need to remove the wix importer from the primary importers list.
+	const primaryListOptions: ImporterOption[] = getImportersAsImporterOption( 'primary' ).filter(
+		( option ) => option.value !== 'wix'
+	);
+	// We need to remove the icon property for secondary importers to avoid display issues.
+	const secondaryListOptions: ImporterOption[] = getImportersAsImporterOption( 'secondary' ).map(
+		( { icon, ...rest } ) => rest
+	);
 
 	const onImporterSelect = ( platform: ImporterPlatform ): void => {
 		const importerUrl = getFinalImporterUrl(

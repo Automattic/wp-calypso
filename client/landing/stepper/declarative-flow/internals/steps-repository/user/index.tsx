@@ -7,31 +7,35 @@ import { AnyAction } from 'redux';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Step } from '../../types';
-
+import { useHandleSocialResponse } from './handle-social-response';
 import './style.scss';
+import { useSocialService } from './use-social-service';
 
 const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const { submit } = navigation;
-	const socialService = getSocialServiceFromClientId( '' );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
+	const { socialService, socialServiceResponse } = useSocialService();
 
 	useEffect( () => {
-		if ( ! isLoggedIn ) {
+		if ( isLoggedIn ) {
+			submit?.();
+		} else {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		}
-	}, [ dispatch, isLoggedIn ] );
+	}, [ dispatch, isLoggedIn, submit ] );
 
-	if ( isLoggedIn ) {
-		submit?.();
-	}
+	const loginLink = login( {
+		signupUrl: window.location.pathname + window.location.search,
+	} );
 
 	return (
 		<>
@@ -44,21 +48,24 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 					dispatch( fetchCurrentUser() as unknown as AnyAction );
 					submit?.();
 				} }
-				logInUrl={ login( {
-					signupUrl: window.location.pathname + window.location.search,
-				} ) }
-				handleSocialResponse={ () => {
-					submit?.();
-				} }
-				socialService={ socialService ?? '' }
-				socialServiceResponse={ {} }
+				logInUrl={ loginLink }
+				handleSocialResponse={ handleSocialResponse }
+				socialService={ socialService }
+				socialServiceResponse={ socialServiceResponse }
 				isReskinned
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
 				userEmail=""
-				notice={ false }
+				notice={ notice }
 				isSocialFirst
 			/>
+			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
+				<WpcomLoginForm
+					authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
+					log={ accountCreateResponse.username }
+					redirectTo={ window.location.href }
+				/>
+			) }
 		</>
 	);
 };
@@ -69,9 +76,6 @@ const UserStep: Step = function UserStep( props ) {
 	return (
 		<StepContainer
 			stepName="user"
-			goBack={ () => {
-				window.location.assign( 'https://wordpress.com/hosting' );
-			} }
 			isHorizontalLayout={ false }
 			isWideLayout={ false }
 			isFullLayout

@@ -1,7 +1,27 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography.scss";
+
+@font-face {
+	font-family: Inter;
+	font-weight: 400 700;
+	font-style: normal;
+	// stylelint-disable-next-line property-no-unknown
+	font-named-instance: "Regular";
+	src:
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2-variations&v=3.19) format("woff2-variations"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2&v=3.19) format("woff2");
+}
+
+$inter: Inter, $sans;
+$sfProText: "SF Pro Text", $sans;
+
+* {
+	font-family: $inter;
+}
 
 .blaze-pro {
 	--color-white: #fff;
+	--color-black: #1f1f1f;
 	--color-gray: #50575e;
 	--color-orange: #ff6433;
 
@@ -127,7 +147,7 @@
 		width: 360px;
 
 		h3 {
-			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+			font-family: $inter !important;
 			font-size: 2rem;
 			font-weight: 700;
 			line-height: 40px;
@@ -195,7 +215,7 @@
 		}
 
 		.continue-as-user__username {
-			color: #1f1f1f;
+			color: var(--color-black);
 			font-size: 1rem;
 			line-height: 20px;
 		}
@@ -247,15 +267,32 @@
 	}
 
 	p.verification-code-form__help-text {
+		color: var(--color-gray);
+		font-family: $sfProText !important;
 		font-size: rem(18px);
 		font-weight: 500;
+		line-height: 25px;
 		text-align: center;
+	}
+
+	.two-factor-authentication__small-print {
+		font-size: 0.75rem;
+		font-weight: 400;
+		padding-top: 4px;
+		padding-bottom: 16px;
 	}
 
 	// Sign Up styles
 
 	.auth-form__social .auth-form__social-buttons-container {
 		margin-bottom: 24px;
+
+		.social-buttons__button {
+			font-family: $inter;
+			font-size: rem(13px);
+			font-weight: 600;
+			line-height: 14px;
+		}
 	}
 
 	.auth-form__social-buttons-tos,
@@ -306,6 +343,7 @@
 				}
 
 				.formatted-header__subtitle {
+					font-family: $sfProText;
 					font-size: rem(18px);
 					font-weight: 500;
 					line-height: 25px;
@@ -330,6 +368,7 @@
 		align-items: center;
 		display: flex;
 		flex-direction: row;
+		font-family: $sfProText;
 		justify-content: center;
 		max-width: 360px;
 
@@ -364,7 +403,7 @@
 
 		.form-label {
 			color: #1e1e1e;
-			font-size: 0.75rem;
+			font-size: rem(11px);
 			line-height: 16px;
 			text-transform: uppercase;
 		}
@@ -384,6 +423,15 @@
 		}
 	}
 
+	// "Continue with a backup code" button
+	&.layout.is-white-login .wp-login__links.two-factor-authentication__actions > .button:first-of-type {
+		color: var(--color-black);
+		font-size: rem(13px);
+		font-weight: 600;
+		line-height: 14px;
+		padding: 12px 16px;
+	}
+
 	&.layout.is-white-login,
 	.card.login__form,
 	.signup-form .logged-out-form,
@@ -391,10 +439,14 @@
 		.login .button.is-primary,
 		.login .button.is-primary:hover,
 		.form-button {
-			color: var(--color-white);
 			background: var(--color-orange);
 			border-color: var(--color-orange);
 			border-radius: 4px;
+			color: var(--color-white);
+			font-size: rem(13px);
+			font-weight: 600;
+			line-height: 14px;
+			padding: 12px 16px;
 		}
 	}
 
@@ -403,6 +455,7 @@
 	}
 
 	.login__header-subtitle {
+		font-family: $sfProText !important;
 		font-size: rem(18px);
 		font-weight: 500;
 		line-height: 25px;
@@ -476,7 +529,9 @@
 
 		.login__lost-password-link {
 			color: var(--color-orange);
+			font-family: $sfProText;
 			font-size: rem(18px);
+			font-weight: 500;
 			line-height: 24px;
 		}
 	}

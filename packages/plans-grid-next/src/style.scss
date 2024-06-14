@@ -162,7 +162,7 @@ $mobile-card-max-width: 440px;
 		}
 
 		.plan-features-2023-grid__table-item {
-			&.plans-grid-next-storage-feature {
+			.plans-grid-next-storage-feature {
 				padding-top: 0;
 			}
 		}
@@ -418,9 +418,6 @@ $mobile-card-max-width: 440px;
 
 		& .plan-features-2023-grid__item-info-container {
 			display: flex;
-			.plans-grid-next-storage-feature & {
-				display: block;
-			}
 		}
 	}
 
@@ -857,7 +854,7 @@ $mobile-card-max-width: 440px;
 			text-wrap: pretty;
 		}
 
-		&:not(.has-feature):not(.has-conditional-feature) {
+		&:not(.has-feature):not(.has-feature-label) {
 			.plan-comparison-grid__plan-title,
 			.plan-comparison-grid__plan-subtitle {
 				text-decoration: line-through;
@@ -1045,6 +1042,8 @@ $mobile-card-max-width: 440px;
 }
 
 .plans-grid-next-storage-feature {
+	width: 100%;
+
 	.plan-features-2023-grid__plan-spotlight & {
 		padding-top: 0;
 		padding-bottom: 32px;

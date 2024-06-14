@@ -1,31 +1,35 @@
+export type AgencyDirectoryApplicationStatus = 'pending' | 'in-progress' | 'completed';
+
+export type DirectoryApplicationType = 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
+
 export interface AgencyDirectoryApplication {
-	status: 'pending' | 'in-progress' | 'completed';
 	products: string[];
 	services: string[];
 	directories: DirectoryApplication[];
-	feedback_url: string;
+	feedbackUrl: string;
+	status?: AgencyDirectoryApplicationStatus;
 }
 
-interface DirectoryApplication {
-	directory: 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
-	published: boolean;
-	status: 'pending' | 'approved' | 'rejected' | 'closed';
+export interface DirectoryApplication {
+	directory: DirectoryApplicationType;
 	urls: string[];
-	note: string;
+	note?: string;
+	isPublished?: boolean;
+	status?: 'pending' | 'approved' | 'rejected' | 'closed';
 }
 
 export interface AgencyDetails {
 	name: string;
 	email: string;
 	website: string;
-	bio_description: string;
-	logo_url: string;
-	landing_page_url: string;
+	bioDescription: string;
+	logoUrl: string;
+	landingPageUrl: string;
 	country: string;
-	is_available: boolean;
+	isAvailable: boolean;
 	industry: string;
 	services: string[];
 	products: string[];
-	languages_spoken: string[];
-	budget_lower_range: number;
+	languagesSpoken: string[];
+	budgetLowerRange: string;
 }

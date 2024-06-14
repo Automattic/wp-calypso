@@ -21,11 +21,12 @@ const getStatsCheckoutURL = (
 	redirectUrl: string,
 	checkoutBackUrl: string,
 	from?: string,
-	adminUrl?: string
+	adminUrl?: string,
+	isUpgrade?: boolean
 ) => {
 	const isFromJetpack = from?.startsWith( 'jetpack' );
 	// Get the checkout URL for the product, or the siteless checkout URL if from Jetpack or no siteSlug is provided
-	const checkoutType = isFromJetpack || ! siteSlug ? 'jetpack' : siteSlug;
+	const checkoutType = ( isFromJetpack && ! isUpgrade ) || ! siteSlug ? 'jetpack' : siteSlug;
 	const checkoutProductUrl = new URL(
 		`/checkout/${ checkoutType }/${ product }`,
 		'https://wordpress.com'
@@ -128,6 +129,7 @@ const gotoCheckoutPage = ( {
 	redirectUri,
 	price,
 	quantity,
+	isUpgrade = false,
 }: {
 	from: string;
 	type: 'pwyw' | 'free' | 'commercial';
@@ -136,6 +138,7 @@ const gotoCheckoutPage = ( {
 	redirectUri?: string;
 	price?: number;
 	quantity?: number;
+	isUpgrade?: boolean;
 } ) => {
 	let eventName = '';
 	let product: string;
@@ -187,7 +190,8 @@ const gotoCheckoutPage = ( {
 				redirectUrl,
 				checkoutBackUrl,
 				from,
-				adminUrl
+				adminUrl,
+				isUpgrade
 			) ),
 		250
 	);

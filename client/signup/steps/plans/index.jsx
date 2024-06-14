@@ -29,7 +29,7 @@ import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getIntervalType } from './util';
+import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -107,6 +107,7 @@ export class PlansStep extends Component {
 			selectedSite,
 			intent,
 			flowName,
+			initialContext,
 		} = this.props;
 
 		const intervalType = getIntervalType( this.props.path );
@@ -127,7 +128,12 @@ export class PlansStep extends Component {
 
 		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
-		const surveyedIntent = isOnboardingGuidedFlow( flowName ) ? segmentSlug : undefined;
+		const surveyedIntent = shouldBasePlansOnSegment(
+			flowName,
+			initialContext?.trailMapExperimentVariant
+		)
+			? segmentSlug
+			: undefined;
 
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
@@ -195,7 +201,32 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, useEmailOnboardingSubheader } = this.props;
+		const { translate, useEmailOnboardingSubheader, signupDependencies, flowName } = this.props;
+
+		const { segmentationSurveyAnswers } = signupDependencies;
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
+
+		if (
+			isOnboardingGuidedFlow( flowName ) &&
+			segmentSlug === 'plans-guided-segment-developer-or-agency'
+		) {
+			const a4aLinkButton = (
+				<Button
+					href="https://automattic.com/for-agencies/"
+					target="_blank"
+					rel="noopener noreferrer"
+					onClick={ () =>
+						this.props.recordTracksEvent( 'calypso_guided_onboarding_agency_link_click' )
+					}
+					borderless
+				/>
+			);
+
+			return translate(
+				'Are you an agency? Get bulk discounts and premier support with {{link}}Automattic for Agencies{{/link}}.',
+				{ components: { link: a4aLinkButton } }
+			);
+		}
 
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />

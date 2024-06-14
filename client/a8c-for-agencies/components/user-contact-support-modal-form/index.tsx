@@ -138,7 +138,7 @@ export default function UserContactSupportModalForm( {
 				</Button>
 
 				<h1 className="a4a-contact-support-modal-form__title">
-					{ translate( 'Contact support' ) }
+					{ translate( 'Contact sales & support' ) }
 				</h1>
 
 				<FormFieldset>

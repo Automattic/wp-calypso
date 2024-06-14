@@ -1,10 +1,8 @@
 import {
 	getPlanClass,
-	isWooExpressPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
-	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -29,7 +27,6 @@ import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-mat
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
-import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
@@ -37,9 +34,8 @@ import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import BillingTimeframe from '../shared/billing-timeframe';
+import { StorageFeature } from '../shared/storage';
 import { StickyContainer } from '../sticky-container';
-import { PlanStorageLabel, useGetAvailableStorageOptions } from '../storage';
-import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
 	GridPlan,
 	ComparisonGridProps,
@@ -551,8 +547,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	isStorageFeature,
 	intervalType,
 	activeTooltipId,
-	showUpgradeableStorage,
 	setActiveTooltipId,
+	showUpgradeableStorage,
 	onStorageAddOnClick,
 } ) => {
 	const { gridPlansIndex, enableFeatureTooltips, hideUnsupportedFeatures } = usePlansGridContext();
@@ -561,38 +557,6 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		renderedGridPlans: visibleGridPlans,
 	} );
-
-	/**
-	 * TODO: Consider centralising `canUpgradeStorageForPlan` behind `availableStorageOptions`
-	 */
-	const availableStorageOptions = useGetAvailableStorageOptions()( {
-		storageOptions: gridPlan.features.storageOptions,
-	} );
-	/**
-	 * The current plan is not marked as `availableForPurchase`, hence check on `current`.
-	 */
-	const canUpgradeStorageForPlan =
-		( gridPlan.current || gridPlan.availableForPurchase ) &&
-		isStorageUpgradeableForPlan( {
-			intervalType,
-			showUpgradeableStorage,
-			storageOptions: availableStorageOptions,
-		} );
-
-	const storageJSX = canUpgradeStorageForPlan ? (
-		<StorageAddOnDropdown
-			planSlug={ planSlug }
-			onStorageAddOnClick={ onStorageAddOnClick }
-			storageOptions={ availableStorageOptions }
-			priceOnSeparateLine
-		/>
-	) : (
-		gridPlan.features.storageOptions.map( ( storageOption ) => {
-			if ( ! storageOption?.isAddOn ) {
-				return <PlanStorageLabel storageOption={ storageOption } planSlug={ planSlug } />;
-			}
-		} )
-	);
 
 	if ( ! gridPlan ) {
 		return null;
@@ -610,11 +574,9 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 					.some( ( feature ) => feature.getSlug() === featureSlug )
 			: false );
 
-	const hasConditionalFeature = featureSlug
-		? gridPlan.features.conditionalFeatures?.some(
-				( feature ) => feature.getSlug() === featureSlug
-		  )
-		: false;
+	const featureLabel = featureSlug
+		? gridPlan?.features?.comparisonGridFeatureLabels?.[ featureSlug ]
+		: undefined;
 
 	const cellClasses = clsx(
 		'plan-comparison-grid__feature-group-row-cell',
@@ -623,9 +585,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		{
 			'popular-plan-parent-class': gridPlan.highlightLabel,
 			'has-feature': hasFeature,
-			'has-conditional-feature': hasConditionalFeature,
-			'hide-unsupported-feature':
-				hideUnsupportedFeatures && ! hasFeature && ! hasConditionalFeature,
+			'has-feature-label': !! featureLabel,
+			'hide-unsupported-feature': hideUnsupportedFeatures && ! hasFeature && ! featureLabel,
 			'title-is-subtitle': 'live-chat-support' === featureSlug,
 			'is-left-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.leftOfHighlight,
 			'is-right-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.rightOfHighlight,
@@ -641,7 +602,13 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					<div className="plans-grid-next-storage-feature">{ storageJSX }</div>
+					<StorageFeature
+						planSlug={ planSlug }
+						intervalType={ intervalType }
+						onStorageAddOnClick={ onStorageAddOnClick }
+						showUpgradeableStorage={ showUpgradeableStorage }
+						priceOnSeparateLine
+					/>
 				</>
 			) : (
 				<>
@@ -690,9 +657,9 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getCompareTitle() }
 								</span>
 							) }
-							{ hasConditionalFeature && feature?.getConditionalTitle && (
+							{ featureLabel && (
 								<span className="plan-comparison-grid__plan-conditional-title">
-									{ feature?.getConditionalTitle( planSlug ) }
+									{ featureLabel }
 								</span>
 							) }
 							{ hasFeature && feature?.getCompareSubtitle && (
@@ -700,12 +667,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getCompareSubtitle() }
 								</span>
 							) }
-							{ hasFeature && ! hasConditionalFeature && (
-								<Gridicon icon="checkmark" color="#0675C4" />
-							) }
-							{ ! hasFeature && ! hasConditionalFeature && (
-								<Gridicon icon="minus-small" color="#C3C4C7" />
-							) }
+							{ hasFeature && ! featureLabel && <Gridicon icon="checkmark" color="#0675C4" /> }
+							{ ! hasFeature && ! featureLabel && <Gridicon icon="minus-small" color="#C3C4C7" /> }
 						</>
 					) }
 				</>
@@ -748,9 +711,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
-	const hasWooExpressPlans = visibleGridPlans.some( ( { planSlug } ) =>
-		isWooExpressPlan( planSlug )
-	);
+
 	const { enableFeatureTooltips } = usePlansGridContext();
 
 	return (
@@ -782,20 +743,12 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						{ feature && (
 							<>
 								<Plans2023Tooltip
-									text={
-										enableFeatureTooltips
-											? feature.getDescription?.( {
-													planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
-											  } )
-											: undefined
-									}
+									text={ enableFeatureTooltips ? feature.getDescription?.() : undefined }
 									setActiveTooltipId={ setActiveTooltipId }
 									activeTooltipId={ activeTooltipId }
 									id={ tooltipId }
 								>
-									{ feature.getTitle( {
-										planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
-									} ) }
+									{ feature.getTitle() }
 									{ footnote && (
 										<FeatureFootnote>
 											<sup>{ footnote }</sup>

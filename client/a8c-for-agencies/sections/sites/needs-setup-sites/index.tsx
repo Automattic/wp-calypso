@@ -66,12 +66,15 @@ export default function NeedSetup() {
 	);
 
 	return (
-		<Layout className="sites-dashboard sites-dashboard__layout preview-hidden" wide title={ title }>
+		<Layout
+			className="sites-dashboard sites-dashboard__layout is-without-filters preview-hidden"
+			wide
+			title={ title }
+		>
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop>
-					<div className="sites-overview__banner">
-						<PurchaseConfirmationMessage />
-					</div>
+					<PurchaseConfirmationMessage />
+
 					<LayoutHeader>
 						<Title>{ translate( 'Sites' ) }</Title>
 						<Actions>

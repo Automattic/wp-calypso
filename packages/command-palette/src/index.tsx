@@ -13,6 +13,7 @@ import {
 	CommandPaletteContextProvider,
 	useCommandPaletteContext,
 } from './context';
+import { recordCommandPaletteOpen } from './tracks';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { useCommandPalette } from './use-command-palette';
 import { siteUsesWpAdminInterface } from './utils';
@@ -296,9 +297,7 @@ const CommandPalette = ( {
 		toggleModalOpenClassnameOnDocumentHtmlElement( true );
 
 		setIsOpenLocal( true );
-		recordTracksEvent( 'calypso_hosting_command_palette_open', {
-			current_route: currentRoute,
-		} );
+		recordCommandPaletteOpen( currentRoute, 'keyboard' );
 	}, [ currentRoute ] );
 	const close = useCallback< CommandPaletteContext[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {

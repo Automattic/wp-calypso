@@ -86,9 +86,13 @@ export const GoogleAnalyticsForm = ( props ) => {
 		setDisplayForm,
 		isAtomic,
 	};
+
 	if ( ( props.siteIsJetpack && ! isAtomic ) || ( isAtomic && isGoogleAnalyticsEligible ) ) {
 		// Google Analytics module is not available (important distinction from not active)
-		if ( ! isJetpackModuleAvailable ) {
+		if (
+			! isJetpackModuleAvailable &&
+			( ! fields.hasOwnProperty( 'wga' ) || ! fields.wga.hasOwnProperty( 'is_active' ) )
+		) {
 			return null;
 		}
 		return <GoogleAnalyticsJetpackForm { ...newProps } />;

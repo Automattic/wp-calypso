@@ -8,6 +8,10 @@
 	color: #101517;
 	background: var(--studio-white);
 
+	@media (max-width: $break-wide) {
+		padding: 40px 0 48px;
+	}
+
 	&.patterns-section--full-width-body {
 		.patterns-section__body {
 			padding: 0;
@@ -30,6 +34,10 @@
 	@include patterns-page-width;
 	padding-bottom: 48px;
 
+	@media (max-width: $break-wide) {
+		padding-bottom: 32px;
+	}
+
 	h2 {
 		font-family: $font-recoleta;
 		font-size: rem(40px);
@@ -49,15 +57,4 @@
 
 .patterns-section__body {
 	@include patterns-page-width;
-}
-
-
-@media (max-width: $break-wide) {
-	.patterns-section {
-		padding: 40px 0 48px;
-	}
-
-	.patterns-section__header {
-		padding-bottom: 32px;
-	}
 }

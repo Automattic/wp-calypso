@@ -6,11 +6,11 @@ export function getSegmentedIntent( answers: SurveyData ): SegmentedIntent {
 	const surveyedIntent = answers?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
 	// Return default wpcom plans for migration flow.
-	if ( surveyedIntent === 'migrate-or-import-site' && surveyedGoals?.includes( SKIP_ANSWER_KEY ) ) {
+	if ( surveyedIntent === 'import' && surveyedGoals?.includes( SKIP_ANSWER_KEY ) ) {
 		return { segmentSlug: undefined, segment: 'migration' };
 	}
 
-	if ( surveyedIntent === 'client' ) {
+	if ( surveyedIntent === 'host-site' ) {
 		return {
 			segmentSlug: 'plans-guided-segment-developer-or-agency',
 			segment: 'developer-or-agency',
@@ -18,7 +18,7 @@ export function getSegmentedIntent( answers: SurveyData ): SegmentedIntent {
 	}
 
 	// Handle different cases when intent is 'Create for self'
-	if ( surveyedIntent === 'myself-business-or-friend' ) {
+	if ( surveyedIntent === 'build' ) {
 		if ( surveyedGoals?.length === 0 || surveyedGoals?.includes( SKIP_ANSWER_KEY ) ) {
 			return { segmentSlug: undefined, segment: 'unknown' };
 		}
@@ -30,7 +30,7 @@ export function getSegmentedIntent( answers: SurveyData ): SegmentedIntent {
 		if ( surveyedGoals?.includes( 'sell' ) && ! surveyedGoals?.includes( 'difm' ) ) {
 			return { segmentSlug: 'plans-guided-segment-merchant', segment: 'merchant' };
 		}
-		if ( surveyedGoals?.includes( 'blog' ) ) {
+		if ( surveyedGoals?.includes( 'write' ) ) {
 			return { segmentSlug: 'plans-guided-segment-blogger', segment: 'blogger' };
 		}
 		if ( surveyedGoals?.includes( 'educational-or-nonprofit' ) ) {
