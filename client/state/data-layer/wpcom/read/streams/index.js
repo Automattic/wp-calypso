@@ -161,6 +161,7 @@ const PER_GAP = 40;
 
 export const QUERY_META = [ 'post', 'discover_original_post' ].join( ',' );
 export const getQueryString = ( extras = {} ) => {
+	console.log( 'getQueryString', extras );
 	return { orderBy: 'date', meta: QUERY_META, ...extras, content_width: 675 };
 };
 const defaultQueryFn = getQueryString;
@@ -177,6 +178,7 @@ export const SITE_LIMITER_FIELDS = [
 	'URL',
 ];
 function getQueryStringForPoll( extraFields = [], extraQueryParams = {} ) {
+	console.log( 'getQueryStringForPoll', extraFields, extraQueryParams );
 	return {
 		orderBy: 'date',
 		number: PER_POLL,
@@ -330,6 +332,7 @@ export function requestPage( action ) {
 	const {
 		payload: { streamKey, streamType, pageHandle, isPoll, gap },
 	} = action;
+	console.log( 'requestPage', action );
 	const api = streamApis[ streamType ];
 
 	if ( ! api ) {
@@ -388,6 +391,7 @@ function get_page_handle( streamType, action, data ) {
 }
 
 export function handlePage( action, data ) {
+	console.log( 'handlePage', action, data );
 	const { posts, sites, cards } = data;
 	const { streamKey, query, isPoll, gap, streamType } = action.payload;
 	const pageHandle = get_page_handle( streamType, action, data );
@@ -403,14 +407,17 @@ export function handlePage( action, data ) {
 	// If the payload has cards, then we need to extract the posts from the cards and update the post stream
 	// Cards also contain recommended sites which we need to extract and update the sites stream
 	if ( posts ) {
+		console.log( 'posts', posts );
 		const streamData = createStreamDataFromPosts( posts, dateProperty );
 		streamItems = streamData.streamItems;
 		streamPosts = streamData.streamPosts;
 	} else if ( sites ) {
+		console.log( 'sites', sites );
 		const streamData = createStreamDataFromSites( sites, dateProperty );
 		streamItems = streamData.streamItems;
 		streamPosts = streamData.streamPosts;
 	} else if ( cards ) {
+		console.log( 'cards', cards );
 		// Need to extract the posts and recommended sites from the cards
 		const streamData = createStreamDataFromCards( cards, dateProperty );
 		streamItems = streamData.streamItems;
@@ -418,6 +425,11 @@ export function handlePage( action, data ) {
 		streamSites = streamData.streamSites;
 		streamNewSites = streamData.streamNewSites;
 	}
+
+	console.log( 'streamItems', streamItems );
+	console.log( 'streamPosts', streamPosts );
+	console.log( 'streamSites', streamSites );
+	console.log( 'streamNewSites', streamNewSites );
 
 	const actions = analyticsForStream( {
 		streamKey,

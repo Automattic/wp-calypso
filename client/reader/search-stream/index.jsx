@@ -160,6 +160,10 @@ class SearchStream extends React.Component {
 
 		const fixedAreaHeight = this.fixedAreaRef && this.fixedAreaRef.clientHeight;
 
+		// Output to console the stack trace of the current function call
+		console.trace();
+		console.log( 'SearchStream', this.props, this.state );
+
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<div>
