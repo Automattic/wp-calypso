@@ -6,20 +6,19 @@ import {
 	PLAN_FREE,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
-import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
-import useSelectedStorageAddOn from '../hooks/data-store/use-selected-storage-add-on';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
 import PlanButton from './plan-button';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
+import { useDefaultStorageOption } from './shared/storage';
 import type { GridPlan, PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
@@ -57,7 +56,6 @@ const PlanFeatures2023GridActions = ( {
 	isStuck,
 	isInSignup,
 	isMonthlyPlan,
-	storageOptions,
 }: PlanFeaturesActionsButtonProps ) => {
 	const translate = useTranslate();
 	const {
@@ -71,7 +69,6 @@ const PlanFeatures2023GridActions = ( {
 		pricing: { billingPeriod, currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
 		cartItemForPlan,
-		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 	const currentPlanBillingPeriod = currentSitePlanSlug
 		? gridPlansIndex[ currentSitePlanSlug ]?.pricing.billingPeriod
@@ -80,11 +77,15 @@ const PlanFeatures2023GridActions = ( {
 		gridPlans: visibleGridPlans,
 	} );
 	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
-
-	const selectedStorageAddOn = useSelectedStorageAddOn( {
-		planSlug,
-		selectedSiteId: siteId,
-		storageAddOnsForPlan,
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
+	const selectedStorageOptionForPlan = useSelect(
+		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
+		[ planSlug ]
+	);
+	const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
+		return selectedStorageOptionForPlan && addOn
+			? addOn.featureSlugs?.includes( selectedStorageOptionForPlan )
+			: false;
 	} );
 
 	const priceString = formatCurrency(
@@ -131,19 +132,12 @@ const PlanFeatures2023GridActions = ( {
 	const busy = isFreePlan( planSlug ) && status === 'blocked';
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
-	const selectedStorageOptionForPlan = useSelect(
-		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
-		[ planSlug ]
-	);
-	const defaultStorageOption = useDefaultStorageOption( {
-		storageOptions,
-		storageAddOnsForPlan,
-	} );
-	const canPurchaseStorageAddOns = storageAddOnsForPlan?.some(
+	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
+	const canPurchaseStorageAddOns = storageAddOns?.some(
 		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
 	);
 
-	const storageAddOnCheckoutHref = storageAddOnsForPlan?.find(
+	const storageAddOnCheckoutHref = storageAddOns?.find(
 		( addOn ) =>
 			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
 	)?.checkoutLink;
@@ -169,7 +163,7 @@ const PlanFeatures2023GridActions = ( {
 
 	if (
 		( isFreePlan( planSlug ) ||
-			( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
+			( storageAddOns && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
 		isP2FreePlan( planSlug ) &&
 		current
 	) {

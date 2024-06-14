@@ -223,7 +223,7 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 		</div>
 	);
 
-	usePresalesChat( 'wpcom' );
+	usePresalesChat( 'wpcom', true, true );
 
 	return (
 		<>

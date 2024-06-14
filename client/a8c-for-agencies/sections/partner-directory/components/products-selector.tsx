@@ -1,5 +1,6 @@
 import { FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
+import { useFormSelectors } from './hooks/use-form-selectors';
 
 type Props = {
 	setProducts: ( tokens: ( string | TokenItem )[] ) => void;
@@ -7,13 +8,7 @@ type Props = {
 };
 
 const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
-	const availableProducts: Record< string, string > = {
-		wordpress: 'WordPress',
-		woocommerce: 'WooCommerce',
-		jetpack: 'Jetpack',
-		wordpress_vip: 'WordPress VIP',
-		pressable: 'Pressable',
-	};
+	const { availableProducts } = useFormSelectors();
 
 	const setTokens = ( tokens: ( string | TokenItem )[] ) => {
 		const selectedServicesByToken = tokens.filter( ( token ) => {

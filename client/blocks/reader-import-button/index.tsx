@@ -4,8 +4,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { ComponentProps, useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
+import { useResendEmailVerification } from 'calypso/landing/stepper/hooks/use-resend-email-verification';
 import wpcom from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';
@@ -28,6 +30,24 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
 	const translate = useTranslate();
 	const { hasTranslation } = useI18n();
 	const dispatch = useDispatch();
+	const resendEmailVerification = useResendEmailVerification();
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+
+	const checkUser = ( event: React.MouseEvent< HTMLButtonElement > ) => {
+		if ( ! isEmailVerified ) {
+			event?.preventDefault();
+
+			dispatch(
+				errorNotice( translate( 'Your email has not been verified yet.' ), {
+					id: 'resend-verification-email',
+					button: translate( 'Resend Email' ),
+					onClick: () => {
+						resendEmailVerification();
+					},
+				} )
+			);
+		}
+	};
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		if ( disabled ) {
@@ -82,14 +102,24 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
 		setDisabled( true );
 	};
 
+	const importLabel = hasTranslation( 'Import OPML' )
+		? translate( 'Import OPML' )
+		: translate( 'Import' );
+
 	return (
-		<Button className="reader-import-button" icon={ icon } iconSize={ iconSize }>
-			<FilePicker accept=".xml,.opml" onClick={ onClick } onPick={ onPick }>
-				{ ! icon && <Gridicon icon="cloud-upload" className="reader-import-button__icon" /> }
-				<span className="reader-import-button__label">
-					{ hasTranslation( 'Import OPML' ) ? translate( 'Import OPML' ) : translate( 'Import' ) }
-				</span>
-			</FilePicker>
+		<Button
+			className="reader-import-button"
+			icon={ icon }
+			iconSize={ iconSize }
+			onClick={ checkUser }
+		>
+			{ isEmailVerified && (
+				<FilePicker accept=".xml,.opml" onClick={ onClick } onPick={ onPick }>
+					{ ! icon && <Gridicon icon="cloud-upload" className="reader-import-button__icon" /> }
+					<span className="reader-import-button__label">{ importLabel }</span>
+				</FilePicker>
+			) }
+			{ ! isEmailVerified && <span className="reader-import-button__label">{ importLabel }</span> }
 		</Button>
 	);
 };

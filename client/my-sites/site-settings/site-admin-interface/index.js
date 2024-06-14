@@ -35,7 +35,7 @@ const FormRadioStyled = styled( FormRadio )( {
 	},
 } );
 
-const SiteAdminInterface = ( { siteId, siteSlug, isHosting } ) => {
+const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const dispatch = useDispatch();

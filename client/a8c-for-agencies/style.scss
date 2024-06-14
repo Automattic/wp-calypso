@@ -417,6 +417,15 @@
 	margin: 0;
 }
 
+.theme-a8c-for-agencies .dialog.card {
+	border-radius: 4px;
+
+	.dialog__action-buttons {
+		border: none;
+		background: var(--color-surface);
+	}
+}
+
 // Universal Text Styles
 html {
 	h2 {
@@ -547,9 +556,17 @@ html {
 		color: var(--color-accent-80);
 	}
 
-	.dataviews-view-table tr td:first-child,
-	.dataviews-view-table tr th:first-child {
-		padding-inline-start: 16px;
+	.dataviews-view-table tr {
+		td,
+		th {
+			&:first-child {
+				padding-inline-start: 16px;
+			}
+			&:last-child {
+				text-align: right;
+				padding-inline-end: 16px;
+			}
+		}
 	}
 
 	.dataviews-view-list li {
