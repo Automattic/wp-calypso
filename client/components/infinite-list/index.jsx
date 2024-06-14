@@ -108,10 +108,7 @@ export default class InfiniteList extends Component {
 		// This is a workaround to ensure the scroll container is ready by scrolling after the
 		// current callstack is executed. Some streams and device widths for the reader are not
 		// fully ready to have their scroll position set until everything is mounted, causing the
-		// stream to jump back to the top when coming back to view from a post. This is also useful for the
-		// stream component's scrollToSelectedPost functionality: when the selected item is very far
-		// down in the scroll position the method fails to work without the help of this initial
-		// setting.
+		// stream to jump back to the top when coming back to view from a post.
 		if ( this._contextLoaded() ) {
 			// Use the scrollTop setting from the time the component mounted, as this state could be
 			// changed in the initial update cycle to save scroll position before the saved position
