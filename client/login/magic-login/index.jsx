@@ -160,6 +160,11 @@ class MagicLogin extends Component {
 					'calypso_gravatar_powered_magic_login_secondary_email_options',
 					eventOptions
 				);
+
+				this.props.recordTracksEvent(
+					'calypso_gravatar_powered_magic_login_click_main_account',
+					eventOptions
+				);
 			}
 
 			// TODO: Test it
@@ -664,7 +669,8 @@ class MagicLogin extends Component {
 
 	renderGravPoweredSecondaryEmailOptions() {
 		const { oauth2Client, translate } = this.props;
-		const { usernameOrEmail, isNewAccount } = this.state;
+		const { usernameOrEmail, isNewAccount, maskedEmailAddress, username } = this.state;
+		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
 
 		return (
 			<div className="grav-powered-magic-login__content">
@@ -679,12 +685,10 @@ class MagicLogin extends Component {
 					<div className="grav-powered-magic-login__masked-email-address">
 						{ translate( 'Account: {{strong}}%(maskedEmailAddress)s{{/strong}}', {
 							components: { strong: <strong /> },
-							// TODO: Use real data
-							args: { maskedEmailAddress: 'test@gmail.com' },
+							args: { maskedEmailAddress },
 						} ) }
 					</div>
-					{ /* TODO: Use real data */ }
-					<a href="https://gravatar.com/wellyshen" target="_blank" rel="noreferrer">
+					<a href={ `https://gravatar.com/${ username }` } target="_blank" rel="noreferrer">
 						{ translate( 'Open profile' ) }
 					</a>
 				</div>
@@ -693,7 +697,14 @@ class MagicLogin extends Component {
 						className={ clsx( 'grav-powered-magic-login__account-option', {
 							'grav-powered-magic-login__account-option--selected': ! isNewAccount,
 						} ) }
-						onClick={ () => this.setState( { isNewAccount: false } ) }
+						onClick={ () => {
+							this.setState( { isNewAccount: false } );
+
+							this.props.recordTracksEvent(
+								'calypso_gravatar_powered_magic_login_click_main_account',
+								eventOptions
+							);
+						} }
 					>
 						{ translate( 'Log in with main account (recommended)' ) }
 					</button>
@@ -708,7 +719,14 @@ class MagicLogin extends Component {
 						className={ clsx( 'grav-powered-magic-login__account-option', {
 							'grav-powered-magic-login__account-option--selected': isNewAccount,
 						} ) }
-						onClick={ () => this.setState( { isNewAccount: true } ) }
+						onClick={ () => {
+							this.setState( { isNewAccount: true } );
+
+							this.props.recordTracksEvent(
+								'calypso_gravatar_powered_magic_login_click_new_account',
+								eventOptions
+							);
+						} }
 					>
 						{ translate( 'Create a new account' ) }
 					</button>
