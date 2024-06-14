@@ -217,17 +217,17 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 			</FormSection>
 
 			<div className="partner-directory-agency-cta__footer">
-				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
-					{ initialFormData
-						? translate( 'Update my expertise' )
-						: translate( 'Submit my application' ) }
-				</Button>
-
 				<Button
 					href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_DASHBOARD_SLUG }` }
 					disabled={ isSubmitting }
 				>
 					{ translate( 'Cancel' ) }
+				</Button>
+
+				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
+					{ initialFormData
+						? translate( 'Update my expertise' )
+						: translate( 'Submit my application' ) }
 				</Button>
 			</div>
 		</Form>
