@@ -28,6 +28,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 		flowName: flow.name,
 		stepSlug: step.slug,
 		skipTracking: shouldSkipRender,
+		flowVariantSlug: flow.variantSlug,
 	} );
 
 	useEffect( () => {
