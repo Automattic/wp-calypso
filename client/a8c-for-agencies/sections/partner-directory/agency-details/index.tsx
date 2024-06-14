@@ -200,7 +200,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			</FormSection>
 			<div className="partner-directory-agency-cta__footer">
 				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
-					{ translate( 'Publish public profile' ) }
+					{ translate( 'Save public profile' ) }
 				</Button>
 			</div>
 		</Form>
