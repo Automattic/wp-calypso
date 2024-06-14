@@ -1,5 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { type I18N, numberFormat } from 'i18n-calypso';
+import { type I18N } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import type { BasicMetricsScored, Metrics, Scores } from 'calypso/data/site-profiler/types';
 
@@ -28,6 +28,8 @@ type CopiesReturnValue = {
 
 export type CopiesReturnValueList = [ Metrics, CopiesProps ][];
 
+const formatValue = ( value: number ) => value.toFixed( 2 );
+
 export function getCopies(
 	basicMetrics: BasicMetricsScored,
 	translate: I18N[ 'translate' ],
@@ -36,12 +38,12 @@ export function getCopies(
 	const migrateUrl = `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }`;
 	const supportUrl = localizeUrl( 'https://wordpress.com/support' );
 
-	const clsValue = numberFormat( basicMetrics?.cls?.value, 2 );
-	const fidValue = numberFormat( basicMetrics?.fid?.value, 2 );
-	const lcpValue = numberFormat( basicMetrics?.lcp?.value, 2 );
-	const fcpValue = numberFormat( basicMetrics?.fcp?.value, 2 );
-	const ttfbValue = numberFormat( basicMetrics?.ttfb?.value, 2 );
-	const inpValue = numberFormat( basicMetrics?.inp?.value, 2 );
+	const clsValue = formatValue( basicMetrics?.cls?.value );
+	const fidValue = formatValue( basicMetrics?.fid?.value );
+	const lcpValue = formatValue( basicMetrics?.lcp?.value );
+	const fcpValue = formatValue( basicMetrics?.fcp?.value );
+	const ttfbValue = formatValue( basicMetrics?.ttfb?.value );
+	const inpValue = formatValue( basicMetrics?.inp?.value );
 
 	const cls: CopiesProps = {
 		title: translate( 'Cumulative Layout Shift (CLS)' ),
