@@ -1,9 +1,6 @@
-import { I18N } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
-export const formatMsValue = (
-	msValue: number,
-	translate: I18N[ 'translate' ]
-): React.ReactElement | string | number => {
+export const formatMsValue = ( msValue: number ): React.ReactElement | string | number => {
 	if ( msValue < 1000 ) {
 		return translate( '%(value)sms', {
 			comment: 'value to be displayed in milliseconds',

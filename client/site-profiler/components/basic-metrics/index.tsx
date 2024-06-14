@@ -38,7 +38,6 @@ type BasicMetricProps = {
 };
 
 export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetricProps ) => {
-	const translate = useTranslate();
 	const { value, score } = basicMetrics[ metric ];
 	const showMetric = value !== undefined && value !== null;
 	const isPositiveScore = score === 'good';
@@ -52,7 +51,7 @@ export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetric
 						{ name }
 					</div>
 					<div className="basic-metrics__value">
-						{ metric === 'cls' ? value.toFixed( 2 ) : formatMsValue( value, translate ) }
+						{ metric === 'cls' ? value.toFixed( 2 ) : formatMsValue( value ) }
 					</div>
 				</div>
 				<h3>{ isPositiveScore ? copies.good.diagnostic : copies.poor.diagnostic }</h3>

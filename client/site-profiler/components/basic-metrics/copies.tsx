@@ -37,11 +37,11 @@ export function getCopies(
 	const supportUrl = localizeUrl( 'https://wordpress.com/support' );
 
 	const clsValue = basicMetrics?.cls?.value.toFixed( 2 );
-	const fidValue = formatMsValue( basicMetrics?.fid?.value, translate );
-	const lcpValue = formatMsValue( basicMetrics?.lcp?.value, translate );
-	const fcpValue = formatMsValue( basicMetrics?.fcp?.value, translate );
-	const ttfbValue = formatMsValue( basicMetrics?.ttfb?.value, translate );
-	const inpValue = formatMsValue( basicMetrics?.inp?.value, translate );
+	const fidValue = formatMsValue( basicMetrics?.fid?.value );
+	const lcpValue = formatMsValue( basicMetrics?.lcp?.value );
+	const fcpValue = formatMsValue( basicMetrics?.fcp?.value );
+	const ttfbValue = formatMsValue( basicMetrics?.ttfb?.value );
+	const inpValue = formatMsValue( basicMetrics?.inp?.value );
 
 	const cls: CopiesProps = {
 		title: translate( 'Cumulative Layout Shift (CLS)' ),
