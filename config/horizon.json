@@ -91,6 +91,7 @@
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"onboarding/design-choices": true,
+		"onboarding/new-migration-instructions-step": false,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"pattern-assembler/v2": true,
