@@ -174,7 +174,8 @@ class ReaderStream extends Component {
 		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
 			selectedNode.focus();
-			const scrollContainerPosition = this.state.listContext.scrollTop;
+			const scrollContainer = this.state.listContext || window;
+			const scrollContainerPosition = scrollContainer.scrollTop;
 			const boundingClientRect = selectedNode.getBoundingClientRect();
 			const scrollY = parseInt(
 				scrollContainerPosition + boundingClientRect.top + HEADER_OFFSET,
@@ -185,10 +186,10 @@ class ReaderStream extends Component {
 					x: 0,
 					y: scrollY,
 					duration: 200,
-					container: this.state.listContext,
+					container: scrollContainer,
 				} );
 			} else {
-				window.scrollTo( 0, scrollY );
+				scrollContainer.scrollTo( 0, scrollY );
 			}
 		}
 	}
