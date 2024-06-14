@@ -136,6 +136,9 @@ function overrideRevisions( calypsoPort ) {
 				menuItem.replaceWith( replacementMenuItem );
 				replacementMenuItem.addEventListener( 'click', openRevisions );
 
+				// Add a class to uniquely identify the cloned menu item
+				replacementMenuItem.className += ' view-revisions-modal-button';
+
 				// Replicate hovering effect
 				replacementMenuItem.addEventListener( 'mouseover', () => {
 					replacementMenuItem.setAttribute( 'data-active-item', '' );
