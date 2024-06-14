@@ -79,7 +79,8 @@ export type StepperStep = DeprecatedStepperStep | AsyncStepperStep;
 
 export type Navigate< FlowSteps extends StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
-	extraData?: any
+	extraData?: any,
+	includeSearch?: false
 ) => void;
 
 /**

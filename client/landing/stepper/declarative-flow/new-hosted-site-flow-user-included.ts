@@ -63,7 +63,8 @@ const hosting: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'user': {
-					return navigate( 'plans' );
+					// the ? removes the OAuth query params.
+					return navigate( 'plans?' );
 				}
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
