@@ -3,10 +3,10 @@ import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
-import type { AccountCreateReturn, SocialAuthParams } from 'calypso/lib/signup/api/type';
+import type { AccountCreateError, SocialAuthParams } from 'calypso/lib/signup/api/type';
 
 type Props = {
-	error: ( Error & AccountCreateReturn ) | null;
+	error: ( Error & AccountCreateError ) | null;
 	recentSocialAuthAttemptParams?: SocialAuthParams;
 };
 
