@@ -1,4 +1,5 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import { findIsoCodeByLanguage } from 'calypso/a8c-for-agencies/sections/partner-directory/lib/available-languages';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
@@ -20,6 +21,14 @@ function mutationSubmitAgencyDetails(
 		throw new Error( 'Agency ID is required to update the profile' );
 	}
 
+	const languages = agencyDetails?.languagesSpoken?.reduce( ( acc: string[], language ) => {
+		const code = findIsoCodeByLanguage( language );
+		if ( code !== null ) {
+			acc.push( code );
+		}
+		return acc;
+	}, [] );
+
 	return wpcom.req.put( {
 		apiNamespace: 'wpcom/v2',
 		path: `/agency/${ agencyId }/profile`,
@@ -34,7 +43,7 @@ function mutationSubmitAgencyDetails(
 			profile_company_country: agencyDetails.country,
 			profile_listing_is_available: agencyDetails.isAvailable,
 			profile_listing_industry: agencyDetails.industry,
-			profile_listing_languages_spoken: agencyDetails.languagesSpoken,
+			profile_listing_languages_spoken: languages,
 			profile_budget_budget_lower_range: agencyDetails.budgetLowerRange,
 		},
 	} );
