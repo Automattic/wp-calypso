@@ -174,14 +174,14 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 		if ( emailRegex.test( url ) ) {
 			errorMessage = errorMessages[ 'email' ].message;
+		} else if ( isIDN( url ) ) {
+			errorMessage = errorMessages[ 'idn-url' ].message;
 		} else if ( invalidCharsRegex.test( url ) ) {
 			errorMessage = errorMessages[ 'invalid-chars' ].message;
 		} else if ( missingTLDRegex.test( removedInitialDots ) ) {
 			errorMessage = errorMessages[ 'no-tld' ].message;
 		} else if ( invalidURLProtocolRegex.test( url ) ) {
 			errorMessage = errorMessages[ 'invalid-protocol' ].message;
-		} else if ( isIDN( url ) ) {
-			errorMessage = errorMessages[ 'idn-url' ].message;
 		}
 
 		return errorMessage;

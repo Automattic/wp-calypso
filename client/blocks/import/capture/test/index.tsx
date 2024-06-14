@@ -201,6 +201,26 @@ describe( 'URL Validation', () => {
 		).toBeInTheDocument();
 	} );
 
+	test( 'should show IDN error message for punycode IDNs', async () => {
+		await enterUrlAndContinue( 'https://xn--example.com' );
+
+		expect(
+			screen.getByText(
+				'Looks like you’ve entered an internationalized domain name (IDN). Please enter a standard URL instead (e.g., example.com).'
+			)
+		).toBeInTheDocument();
+	} );
+
+	test( 'should show IDN error message for unicode IDNs', async () => {
+		await enterUrlAndContinue( 'www.例子.测试' );
+
+		expect(
+			screen.getByText(
+				'Looks like you’ve entered an internationalized domain name (IDN). Please enter a standard URL instead (e.g., example.com).'
+			)
+		).toBeInTheDocument();
+	} );
+
 	test( 'should show default error message', async () => {
 		await enterUrlAndContinue( 'example.com-' );
 
