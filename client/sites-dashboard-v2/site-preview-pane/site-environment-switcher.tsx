@@ -1,4 +1,5 @@
 import { SiteExcerptData } from '@automattic/sites';
+import { Tooltip } from '@wordpress/components';
 import { Icon, chevronDownSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useRef, useState } from 'react';
@@ -21,7 +22,14 @@ export default function SiteEnvironmentSwitcher( {
 	const popoverButtonRef = useRef( null );
 	const closeMenu = useCallback( () => setIsPopoverVisible( false ), [] );
 
-	if ( ! site.is_wpcom_staging_site && ! site.is_wpcom_atomic ) {
+	if (
+		! site.is_wpcom_staging_site &&
+		! (
+			site.is_wpcom_atomic &&
+			site.options?.wpcom_staging_blog_ids &&
+			site.options?.wpcom_staging_blog_ids.length > 0
+		)
+	) {
 		return;
 	}
 
@@ -42,22 +50,7 @@ export default function SiteEnvironmentSwitcher( {
 	};
 
 	return (
-		<div className="site-preview-pane__site-environment-switcher">
-			{ !! site.is_wpcom_staging_site && (
-				<SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge>
-			) }
-
-			{ !! site.is_wpcom_atomic &&
-				!! site.options?.wpcom_staging_blog_ids?.length &&
-				site.options?.wpcom_staging_blog_ids?.length > 0 && (
-					<SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>
-				) }
-			<Icon
-				icon={ chevronDownSmall }
-				ref={ popoverButtonRef }
-				onClick={ () => setIsPopoverVisible( ! isPopoverVisible ) }
-			/>
-
+		<>
 			<PopoverMenu
 				context={ popoverButtonRef.current }
 				onClose={ closeMenu }
@@ -71,6 +64,25 @@ export default function SiteEnvironmentSwitcher( {
 					{ __( 'Staging' ) }
 				</PopoverMenuItem>
 			</PopoverMenu>
-		</div>
+			<Tooltip text={ __( 'Select environment' ) }>
+				<div
+					tabIndex={ 0 }
+					role="button"
+					className="site-preview-pane__site-environment-switcher"
+					ref={ popoverButtonRef }
+					onClick={ () => setIsPopoverVisible( ! isPopoverVisible ) }
+					onKeyDown={ () => setIsPopoverVisible( ! isPopoverVisible ) }
+				>
+					{ !! site.is_wpcom_staging_site && (
+						<SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge>
+					) }
+
+					{ ! site.is_wpcom_staging_site && (
+						<SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>
+					) }
+					<Icon icon={ chevronDownSmall } />
+				</div>
+			</Tooltip>
+		</>
 	);
 }

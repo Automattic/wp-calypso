@@ -536,6 +536,7 @@
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 
 			.site-preview-pane__site-environment-switcher {
+				cursor: pointer;
 				display: flex;
 				align-items: center;
 			}
