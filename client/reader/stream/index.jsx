@@ -173,17 +173,19 @@ class ReaderStream extends Component {
 		const HEADER_OFFSET = -32; // a fixed position header means we can't just scroll the element into view.
 		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
-			const documentElement = document.documentElement;
 			selectedNode.focus();
-			const windowTop =
-				( window.pageYOffset || documentElement.scrollTop ) - ( documentElement.clientTop || 0 );
+			const scrollContainerPosition = this.state.listContext.scrollTop;
 			const boundingClientRect = selectedNode.getBoundingClientRect();
-			const scrollY = parseInt( windowTop + boundingClientRect.top + HEADER_OFFSET, 10 );
+			const scrollY = parseInt(
+				scrollContainerPosition + boundingClientRect.top + HEADER_OFFSET,
+				10
+			);
 			if ( animate ) {
 				scrollTo( {
 					x: 0,
 					y: scrollY,
 					duration: 200,
+					container: this.state.listContext,
 				} );
 			} else {
 				window.scrollTo( 0, scrollY );
