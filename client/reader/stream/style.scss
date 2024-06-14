@@ -1009,7 +1009,7 @@
 	.stream__init-overlay {
 		display: none;
 
-		&.stream__init-ovarlay-enabled {
+		&.stream__init-overlay-enabled {
 			background: var(--studio-white);
 			position: absolute;
 			display: block;
