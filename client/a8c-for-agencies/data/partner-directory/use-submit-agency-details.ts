@@ -44,6 +44,8 @@ function mutationSubmitAgencyDetails(
 			profile_listing_is_available: agencyDetails.isAvailable,
 			profile_listing_industry: agencyDetails.industry,
 			profile_listing_languages_spoken: languages,
+			profile_listing_services: agencyDetails.services,
+			profile_listing_products: agencyDetails.products,
 			profile_budget_budget_lower_range: agencyDetails.budgetLowerRange,
 		},
 	} );
