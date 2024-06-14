@@ -1,5 +1,7 @@
 @import "@automattic/typography/styles/variables";
 
+$blueberry-color: #3858e9;
+
 .flow-question {
 	margin: 0 10px 18px;
 	// !important needed here to override component styles
@@ -15,15 +17,15 @@
 
 	&:hover,
 	&:focus {
-		box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #3858e9);
+		box-shadow: 0 0 0 1px $blueberry-color;
 
 		svg path {
-			fill: var(--wp-admin-theme-color, #3858e9);
+			fill: $blueberry-color;
 		}
 
 		.flow-question__description,
 		.flow-question__heading {
-			color: var(--wp-admin-theme-color, #3858e9);
+			color: $blueberry-color;
 		}
 	}
 
