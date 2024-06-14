@@ -1,6 +1,7 @@
 import { FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
-import { useFormSelectors } from './hooks/use-form-selectors';
+import { useMemo } from 'react';
+import { reverseMap, useFormSelectors } from './hooks/use-form-selectors';
 
 type Props = {
 	setProducts: ( tokens: ( string | TokenItem )[] ) => void;
@@ -10,14 +11,26 @@ type Props = {
 const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
 	const { availableProducts } = useFormSelectors();
 
-	const setTokens = ( tokens: ( string | TokenItem )[] ) => {
-		const selectedServicesByToken = tokens.filter( ( token ) => {
-			return Object.keys( availableProducts ).find(
-				( key: string ) => availableProducts?.[ key ] === token
-			);
+	// Get the reverse map of available products
+	const availableProductsByLabel = useMemo(
+		() => reverseMap( availableProducts ),
+		[ availableProducts ]
+	);
+
+	// Get the selected products by label
+	const selectedProductsByLabel = selectedProducts.map( ( slug ) => {
+		const key = slug as string;
+		return availableProducts[ key ];
+	} );
+
+	// Set the selected products by slug
+	const onProductLabelsSelected = ( selectedProductLabels: ( string | TokenItem )[] ) => {
+		const selectedProductsBySlug = selectedProductLabels.map( ( label ) => {
+			const key = label as string;
+			return availableProductsByLabel[ key ];
 		} );
 
-		setProducts( selectedServicesByToken );
+		setProducts( selectedProductsBySlug );
 	};
 
 	return (
@@ -27,9 +40,9 @@ const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
 			__experimentalShowHowTo={ false }
 			__nextHasNoMarginBottom
 			label=""
-			onChange={ setTokens }
+			onChange={ onProductLabelsSelected }
 			suggestions={ Object.values( availableProducts ) }
-			value={ selectedProducts }
+			value={ selectedProductsByLabel }
 		/>
 	);
 };
