@@ -113,24 +113,38 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
-	// For Gutenberg <= 18.4.1
+	// For Gutenberg <= 18.4
+	// For Gutenberg >= 18.5.1 (see: https://github.com/WordPress/gutenberg/pull/62323)
 	addEditorListener( '[href*="revision.php"]', ( e ) => {
 		e.preventDefault();
 		openRevisions();
 	} );
 
-	// For Gutenberg >= 18.5
-	// Temporary solution to identify View Revisions menu item
-	// until the Gutenberg PR is deployed.
-	addEditorListener( 'div[id^=portal] [role=menuitem]', ( e ) => {
-		const menuItemLabel = e.target.innerText || '';
-		const viewRevisionsLabel =
-			/View revisions|Revisionen anzeigen|Visualizza revisioni|リビジョンを表示|수정본 보기|Bekijk revisies|Vezi reviziile|Visa versioner/gi;
+	// For Gutenberg >= 18.5 (see: https://github.com/WordPress/gutenberg/pull/61867)
+	// Hacky solution to identify View Revisions menu item.
+	const viewRevisionsLabel =
+		/View revisions|Revisionen anzeigen|Visualizza revisioni|リビジョンを表示|수정본 보기|Bekijk revisies|Vezi reviziile|Visa versioner/gi;
 
-		if ( menuItemLabel.match( viewRevisionsLabel ) ) {
-			e.preventDefault();
-			openRevisions();
-		}
+	// We target the menu item manually when the dropdown button is clicked.
+	// This is because we cannot rely on event.preventDefault() to prevent an event handler
+	// that was attached on core's side from executing.
+	addEditorListener( '.editor-all-actions-button', () => {
+		document.querySelectorAll( 'div[id^=portal] [role=menuitem]' ).forEach( ( menuItem ) => {
+			if ( ( menuItem.innerText || '' ).match( viewRevisionsLabel ) ) {
+				// Replace original menu item with a clone
+				const replacementMenuItem = menuItem.cloneNode( true );
+				menuItem.replaceWith( replacementMenuItem );
+				replacementMenuItem.addEventListener( 'click', openRevisions );
+
+				// Replicate hovering effect
+				replacementMenuItem.addEventListener( 'mouseover', () => {
+					replacementMenuItem.setAttribute( 'data-active-item', '' );
+				} );
+				replacementMenuItem.addEventListener( 'mouseout', () => {
+					replacementMenuItem.removeAttribute( 'data-active-item' );
+				} );
+			}
+		} );
 	} );
 
 	function openRevisions() {
