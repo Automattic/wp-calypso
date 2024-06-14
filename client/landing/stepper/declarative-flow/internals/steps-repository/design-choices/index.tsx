@@ -31,8 +31,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		[]
 	);
 
-	const isBigSkyEligible = useIsBigSkyEligible();
-
+	const { isEligible, isLoading } = useIsBigSkyEligible();
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	const handleSubmit = ( destination: string ) => {
@@ -88,7 +87,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="pattern-assembler"
 								onSelect={ handleSubmit }
 							/>
-							{ isBigSkyEligible && recordBigSkyView() && (
+							{ ! isLoading && isEligible && recordBigSkyView() && (
 								<BigSkyDisclaimerModal flow={ flow } stepName={ stepName }>
 									<DesignChoice
 										className="design-choices__try-big-sky"
