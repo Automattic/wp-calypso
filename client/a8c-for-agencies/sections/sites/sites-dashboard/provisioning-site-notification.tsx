@@ -14,7 +14,10 @@ export default function ProvisioningSiteNotification( { siteId }: Props ) {
 
 	const translate = useTranslate();
 
-	const wpHomeUrl = `https://wordpress.com/home/${ site?.url?.replace( /(^\w+:|^)\/\//, '' ) }`;
+	const wpOverviewUrl = `https://wordpress.com/overview/${ site?.url?.replace(
+		/(^\w+:|^)\/\//,
+		''
+	) }`;
 
 	return (
 		showBanner && (
@@ -30,7 +33,7 @@ export default function ProvisioningSiteNotification( { siteId }: Props ) {
 				actions={
 					isReady
 						? [
-								<Button href={ wpHomeUrl } target="_blank" rel="noreferrer">
+								<Button href={ wpOverviewUrl } target="_blank" rel="noreferrer" primary>
 									{ translate( 'Set up your site' ) }
 								</Button>,
 						  ]
@@ -43,7 +46,7 @@ export default function ProvisioningSiteNotification( { siteId }: Props ) {
 							{
 								args: { siteURL: site?.url ?? '' },
 								components: {
-									a: <a href={ wpHomeUrl } target="_blank" rel="noreferrer" />,
+									a: <a href={ wpOverviewUrl } target="_blank" rel="noreferrer" />,
 								},
 								comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
 							}
