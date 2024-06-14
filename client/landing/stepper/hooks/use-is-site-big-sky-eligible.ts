@@ -17,17 +17,20 @@ export function useIsBigSkyEligible(): boolean | null {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 		[ site ]
 	);
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_signup_onboarding_bigsky_soft_launch'
-	);
 
 	const featureFlagEnabled = config.isEnabled( 'calypso/big-sky' );
+	// For testing purposes. Will bypass the ExPlat experiment results.
+	const bypassExperiment = config.isEnabled( 'big-sky' );
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_signup_onboarding_bigsky_soft_launch',
+		{
+			isEligible: featureFlagEnabled && ! bypassExperiment,
+		}
+	);
+
 	if ( ! featureFlagEnabled ) {
 		return false;
 	}
-
-	// For testing purposes. Will bypass the ExPlat experiment results.
-	const bypassExperiment = config.isEnabled( 'big-sky-bypass' );
 
 	const variantName = experimentAssignment?.variationName;
 	const isInBigSkyExperiment = ! isLoadingExperiment && variantName === 'treatment';
