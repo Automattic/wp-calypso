@@ -67,7 +67,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 		await userEvent.type( getInput(), 'https://example.com' );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 
 		await waitFor( () => {
 			expect( submit ).toHaveBeenCalledWith(
@@ -91,7 +91,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 		await userEvent.type( getInput(), 'https://example.com' );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { platform: 'unknown' } ) )
@@ -124,7 +124,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 		await userEvent.type( getInput(), 'https://example.com' );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 
 		await waitFor( () =>
 			expect( screen.getByText( /Please enter a valid website / ) ).toBeVisible()
@@ -149,9 +149,22 @@ describe( 'SiteMigrationIdentify', () => {
 			.query( { site_url: 'https://existent-site.com' } )
 			.reply( 200, API_RESPONSE_WITH_OTHER_PLATFORM );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { platform: 'unknown' } ) )
 		);
+	} );
+
+	it( 'shows why host with us points', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
+		expect( screen.getByText( /Unmatched Reliability and Uptime/ ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				/Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure./
+			)
+		).toBeVisible();
 	} );
 } );

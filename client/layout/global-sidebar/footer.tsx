@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordCommandPaletteOpen } from '@automattic/command-palette/src/tracks';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { LocalizeProps } from 'i18n-calypso';
@@ -9,6 +10,7 @@ import QuickLanguageSwitcher from 'calypso/layout/masterbar/quick-language-switc
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
+import getCurrentRoutePattern from 'calypso/state/selectors/get-current-route-pattern';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { GLOBAL_SIDEBAR_EVENTS } from './events';
 import SidebarMenuItem from './menu-items/menu-item';
@@ -25,6 +27,8 @@ export const GlobalSidebarFooter: FC< {
 
 	const isMac = window?.navigator.userAgent && window.navigator.userAgent.indexOf( 'Mac' ) > -1;
 	const searchShortcut = isMac ? '⌘ + K' : 'Ctrl + K';
+
+	const currentRoute = useSelector( getCurrentRoutePattern ) ?? '';
 
 	return (
 		<SidebarFooter>
@@ -56,7 +60,10 @@ export const GlobalSidebarFooter: FC< {
 								  } )
 								: translate( 'Jump to…' )
 						}
-						onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.SEARCH_CLICK ) }
+						onClick={ () => {
+							recordCommandPaletteOpen( currentRoute, 'sidebar_click' );
+							recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.SEARCH_CLICK );
+						} }
 					/>
 					<SidebarNotifications
 						className="sidebar__item-notifications"

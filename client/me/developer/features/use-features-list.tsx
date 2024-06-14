@@ -1,11 +1,10 @@
-import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useHandleClickLink } from './use-handle-click-link';
 
 export const useFeaturesList = () => {
 	const translate = useTranslate();
 	const handleClickLink = useHandleClickLink();
-	const hasEnTranslation = useHasEnTranslation();
 
 	return [
 		{
@@ -38,29 +37,16 @@ export const useFeaturesList = () => {
 		},
 		{
 			id: 'multi-site-management',
-			title: hasEnTranslation( 'Multiple site management' )
-				? translate( 'Multiple site management', {
-						comment: 'Feature title',
-				  } )
-				: translate( 'Multi-site management', {
-						comment: 'Feature title',
-				  } ),
-			description: hasEnTranslation(
-				'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
-			)
-				? translate(
-						'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.',
-						{
-							comment: 'Feature description',
-						}
-				  )
-				: translate(
-						'Seamlessly manage and host multiple sites. Receive 50% revenue sharing and volume discounts when you migrate sites to our platform and refer products to clients.',
-						{
-							comment: 'Feature description',
-						}
-				  ),
-			linkLearnMore: localizeUrl( 'https://wordpress.com/for-agencies/' ),
+			title: translate( 'Multiple site management', {
+				comment: 'Feature title',
+			} ),
+			description: translate(
+				'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.',
+				{
+					comment: 'Feature description',
+				}
+			),
+			linkLearnMore: localizeUrl( 'https://wordpress.com/for-agencies?ref=wpcom-dev-dashboard' ),
 		},
 		{
 			id: 'code',

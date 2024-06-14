@@ -3,7 +3,7 @@ import {
 	makeLayout,
 	render as clientRender,
 	redirectIfCurrentUserCannot,
-	redirectToDevToolsPromoIfNotAtomic,
+	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { handleHostingPanelRedirect } from 'calypso/my-sites/hosting/controller';
@@ -18,7 +18,7 @@ export default function () {
 		'/staging-site/:site',
 		siteSelection,
 		navigation,
-		redirectToDevToolsPromoIfNotAtomic,
+		redirectToHostingPromoIfNotAtomic,
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		handleHostingPanelRedirect,
 		renderStagingSite,

@@ -515,8 +515,20 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button primary href={ siteUrl } className="rewind-flow__primary-button">
-				{ translate( 'View your website' ) }
+			<Button
+				primary
+				target="_blank"
+				href={ siteUrl }
+				className="rewind-flow__primary-button"
+				onClick={ () =>
+					dispatch(
+						recordTracksEvent( 'calypso_jetpack_backup_granular_restore_complete_view_site' )
+					)
+				}
+			>
+				{ translate( 'View your website {{externalIcon/}}', {
+					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
+				} ) }
 			</Button>
 		</>
 	);
@@ -555,10 +567,11 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			setUserHasRequestedRestore( true );
 		}
 
-		if ( isFinished ) {
+		if ( isFinished && userHasRequestedRestore ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_backup_granular_restore_completed' ) );
 			setUserHasRequestedRestore( false );
 		}
-	}, [ inProgressRewindStatus, isFinished, isInProgress, userHasRequestedRestore ] );
+	}, [ dispatch, inProgressRewindStatus, isFinished, isInProgress, userHasRequestedRestore ] );
 
 	const render = () => {
 		if ( loading ) {

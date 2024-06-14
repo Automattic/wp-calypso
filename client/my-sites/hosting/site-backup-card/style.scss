@@ -7,12 +7,6 @@
 		}
 	}
 
-	&__warning {
-		color: var(--color-text-subtle);
-		font-size: $font-body-small;
-		margin-bottom: 16px;
-	}
-
 	&__placeholder {
 		@include placeholder();
 		height: 24px;
@@ -25,10 +19,6 @@
 		&:last-child {
 			margin-bottom: 0;
 		}
-	}
-
-	&__button.hosting-overview__link-button {
-		font-size: $font-body;
 	}
 
 	&.is-disabled {

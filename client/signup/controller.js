@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isOnboardingGuidedFlow } from '@automattic/onboarding';
 import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
@@ -8,6 +9,7 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
@@ -243,6 +245,36 @@ export default {
 			initialContext.isSignupSurveyActive =
 				experiment.variationName === 'treatment' ||
 				experiment.variationName === 'treatment_scrambled';
+		}
+
+		// See: 1113-gh-Automattic/experimentation-platform for details.
+		if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
+			// use config flags to set the variants during the CFT.
+			if ( config.isEnabled( 'onboarding/guided' ) ) {
+				initialContext.trailMapExperimentVariant = 'treatment_guided';
+			} else if ( config.isEnabled( 'onboarding/guided-survey-only' ) ) {
+				initialContext.trailMapExperimentVariant = 'treatment_survey_only';
+			} else {
+				initialContext.trailMapExperimentVariant = null;
+			}
+			// `isTokenLoaded` covers users who just logged in.
+			if ( wpcom.isTokenLoaded() || userLoggedIn ) {
+				// Load both experiments in parallel for better performance.
+				await Promise.all( [
+					loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
+					loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
+				] );
+
+				// NOTE: Uncomment the following code to use the experiments.
+				// const [ _bigSkyExperiment, _trailMapExperiment ] = await Promise.all( [
+				// 	loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_bigsky_soft_launch' ),
+				// 	loadExperimentAssignment( 'explat_test_calypso_signup_onboarding_trailmap_guided_flow' ),
+				// ] );
+
+				//if ( bigSkyExperiment.variationName === 'trailmap' ) {
+				// initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
+				//}
+			}
 		}
 
 		if (

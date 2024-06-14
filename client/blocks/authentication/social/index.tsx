@@ -126,7 +126,7 @@ const SocialAuthenticationForm = ( {
 							// If we are on signup, attach the query string to the state so we can pass it back to the server to show the correct UI.
 							// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
 							queryString={
-								isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : null
+								isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : ''
 							}
 						/>
 

@@ -118,7 +118,7 @@
 	@include patterns-page-width;
 	padding-bottom: 96px;
 
-	@media (max-width: $break-wide) {
+	@media (max-width: $break-xlarge) {
 		padding-top: 24px;
 		padding-bottom: 24px;
 	}

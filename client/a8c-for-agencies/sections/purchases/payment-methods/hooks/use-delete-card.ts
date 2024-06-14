@@ -10,6 +10,7 @@ import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { isClientView } from '../lib/is-client-view';
 import { getFetchStoredCardsKey } from './use-stored-cards';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
@@ -28,6 +29,7 @@ function useDeleteCardMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIResponse, Error, DeleteCardProps, TContext >
 ): UseMutationResult< APIResponse, Error, DeleteCardProps, TContext > {
 	const agencyId = useSelector( getActiveAgencyId );
+	const isClient = isClientView();
 
 	return useMutation< APIResponse, Error, DeleteCardProps, TContext >( {
 		...options,
@@ -35,9 +37,11 @@ function useDeleteCardMutation< TContext = unknown >(
 			wpcom.req.post( {
 				method: 'DELETE',
 				apiNamespace: 'wpcom/v2',
-				path: `/jetpack-licensing/stripe/payment-method`,
+				path: isClient
+					? '/agency-client/stripe/payment-method'
+					: '/jetpack-licensing/stripe/payment-method',
 				body: {
-					...( agencyId && { agency_id: agencyId } ),
+					...( ! isClient && agencyId && { agency_id: agencyId } ),
 					payment_method_id: paymentMethodId,
 					primary_payment_method_id: primaryPaymentMethodId,
 				},

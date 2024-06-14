@@ -222,9 +222,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'dev-tools',
-		paths: [ '/dev-tools' ],
-		module: 'calypso/dev-tools',
+		name: 'hosting-features',
+		paths: [ '/hosting-features' ],
+		module: 'calypso/hosting-features',
 		group: 'sites',
 	},
 	{
@@ -831,6 +831,17 @@ const sections = [
 		module: 'calypso/a8c-for-agencies/sections/signup',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-client',
+		paths: [
+			'/client/landing',
+			'/client/subscriptions',
+			'/client/payment-methods',
+			'/client/payment-methods/add',
+		],
+		module: 'calypso/a8c-for-agencies/sections/client',
+		group: 'a8c-for-agencies',
 	},
 ];
 

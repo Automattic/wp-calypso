@@ -109,6 +109,10 @@ class ReaderStream extends Component {
 	 */
 	observer = null;
 
+	// We can use to keep track of whether we need to scroll to the selected post in the update
+	// cycle.
+	wasSelectedByOpeningPost = false;
+
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
 	};
@@ -126,7 +130,13 @@ class ReaderStream extends Component {
 		}
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
-			this.scrollToSelectedPost( true );
+			// Don't scroll to the post if it was clicked for selection. This causes the scroll to
+			// propagate into the full post screen the first time you click select an item in the
+			// reader, meaning the full post screen opens halfway scrolled down the post.
+			if ( ! this.wasSelectedByOpeningPost ) {
+				this.scrollToSelectedPost( true );
+			}
+			this.wasSelectedByOpeningPost = false;
 			this.focusSelectedPost( this.props.selectedPostKey );
 		}
 
@@ -344,6 +354,9 @@ class ReaderStream extends Component {
 			stream: { items },
 		} = this.props;
 
+		// This should already be false but this is a safety.
+		this.wasSelectedByOpeningPost = false;
+
 		// do we have a selected item? if so, just move to the next one
 		if ( this.props.selectedPostKey ) {
 			this.props.selectNextItem( { streamKey, items } );
@@ -395,6 +408,10 @@ class ReaderStream extends Component {
 			selectedPostKey,
 			stream: { items },
 		} = this.props;
+
+		// This should already be false but this is a safety.
+		this.wasSelectedByOpeningPost = false;
+
 		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
@@ -483,12 +500,22 @@ class ReaderStream extends Component {
 		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
 		const itemKey = this.getPostRef( postKey );
-		const showPost = ( args ) =>
+		const showPost = ( args ) => {
+			// Ensure the post selected becomes the selected item. It may already be the selected
+			// item through shortkeys, or not if using a mouse clicking flow. Setting the selected
+			// item this way adds consistency to scroll position when coming back from the full post
+			// view, as well as avoids conflict between our systems for preserving scroll position
+			// and scrolling to selected posts when users use a mix of shortkeys and mouse clicks.
+			if ( ! isSelected ) {
+				this.props.selectItem( { streamKey: this.props.streamKey, postKey } );
+				this.wasSelectedByOpeningPost = true;
+			}
 			this.props.showSelectedPost( {
 				...args,
 				postKey: postKey,
 				streamKey,
 			} );
+		};
 
 		return (
 			<Fragment key={ itemKey }>

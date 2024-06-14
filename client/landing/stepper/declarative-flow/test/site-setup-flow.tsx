@@ -22,6 +22,24 @@ describe( 'Site Setup Flow', () => {
 		jest.resetAllMocks();
 	} );
 
+	/**
+	 * This test is important because site-setup-wg assumes the first two steps are goals and intent capture.
+	 * It's totally fine to change this test if the flow changes. But please make sure to update and test the site-setup-wg accordingly.
+	 */
+	describe( 'First steps should be goals and intent capture', () => {
+		const steps = siteSetupFlow.useSteps();
+		const firstStep = steps[ 0 ];
+		const secondStep = steps[ 1 ];
+
+		it( 'should be goals', () => {
+			expect( firstStep.slug ).toBe( STEPS.GOALS.slug );
+		} );
+
+		it( 'should be intent capture', () => {
+			expect( secondStep.slug ).toBe( STEPS.INTENT.slug );
+		} );
+	} );
+
 	describe( 'when the current step is importListing', () => {
 		it( 'redirects the user to the site-migration-import-or-content step when the origin param is set as site-migration-identify', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );

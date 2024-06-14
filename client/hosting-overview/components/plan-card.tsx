@@ -1,21 +1,28 @@
-import { PlanSlug, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PlanSlug,
+	PRODUCT_1GB_SPACE,
+	PLAN_MONTHLY_PERIOD,
+} from '@automattic/calypso-products';
 import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
-import { formatCurrency } from '@automattic/format-currency';
+import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { HostingCard } from 'calypso/components/hosting-card';
+import { HostingCard, HostingCardLinkButton } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -24,6 +31,7 @@ import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors
 
 const PricingSection: FC = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
@@ -37,36 +45,25 @@ const PricingSection: FC = () => {
 		siteId: site?.ID,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
-	} );
+	} )?.[ planSlug ];
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! pricing || ! planData || planPurchaseLoading;
-	const billingPeriod = planPurchase?.billPeriodLabel;
+
+	const planBillingDescription = usePlanBillingDescription( {
+		siteId: site?.ID,
+		planSlug,
+		pricing: pricing ?? null,
+		isMonthlyPlan: pricing?.billingPeriod === PLAN_MONTHLY_PERIOD,
+		storageAddOnsForPlan: null,
+		useCheckPlanAvailabilityForPurchase,
+	} );
 
 	const getBillingDetails = () => {
 		if ( isFreePlan ) {
 			return null;
 		}
-		if ( ! billingPeriod ) {
-			return null;
-		}
 
-		return translate( '{{span}}%(rawPrice)s{{/span}} billed %(billingPeriod)s, excludes taxes.', {
-			args: {
-				rawPrice: formatCurrency(
-					pricing?.[ planSlug ].originalPrice.full ?? 0,
-					pricing?.[ planSlug ].purchaseCurrencyCode ?? '',
-					{
-						stripZeros: true,
-						isSmallestUnit: true,
-					}
-				),
-				billingPeriod,
-			},
-			components: {
-				span: <span />,
-			},
-			comment: 'billingPeriod e.g., every month, every year, every 3 years',
-		} );
+		return <>{ planBillingDescription || getPlan( planSlug )?.getBillingTimeFrame?.() }.</>;
 	};
 
 	const getExpireDetails = () => {
@@ -92,9 +89,9 @@ const PricingSection: FC = () => {
 				<div className="hosting-overview__plan-price-wrapper">
 					<PlanPrice
 						className="hosting-overview__plan-price"
-						currencyCode={ pricing?.[ planSlug ].purchaseCurrencyCode }
+						currencyCode={ pricing?.currencyCode }
 						isSmallestUnit
-						rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
+						rawPrice={ pricing?.originalPrice.monthly }
 					/>
 					<span className="hosting-overview__plan-price-term">
 						{ translate( '/mo', {
@@ -127,7 +124,14 @@ const PricingSection: FC = () => {
 					{ getExpireDetails() }
 					<div className="hosting-overview__plan-cta">
 						{ isFreePlan && (
-							<Button primary compact href={ `/plans/${ site?.slug }` }>
+							<Button
+								primary
+								compact
+								href={ `/plans/${ site?.slug }` }
+								onClick={ () =>
+									dispatch( recordTracksEvent( 'calypso_hosting_overview_upgrade_plan_click' ) )
+								}
+							>
 								{ translate( 'Upgrade your plan' ) }
 							</Button>
 						) }
@@ -168,6 +172,7 @@ const PlanCard: FC = () => {
 	);
 	const planPurchase = useSelector( getSelectedPurchase );
 	const isAgencyPurchase = planPurchase && isPartnerPurchase( planPurchase );
+	const isA4A = useSelector( isA4AUser );
 	// Show that this is an Agency Managed plan for agency purchases.
 	const planName = isAgencyPurchase
 		? purchaseType( planPurchase )
@@ -186,30 +191,19 @@ const PlanCard: FC = () => {
 		}
 		if ( isFreePlan ) {
 			return (
-				<Button
-					className={ clsx(
-						'hosting-overview__link-button',
-						'hosting-overview__mobile-hidden-link-button'
-					) }
-					plain
-					href={ `/add-ons/${ site?.slug }` }
-				>
+				<HostingCardLinkButton to={ `/add-ons/${ site?.slug }` } hideOnMobile>
 					{ translate( 'Manage add-ons' ) }
-				</Button>
+				</HostingCardLinkButton>
 			);
 		}
 		if ( isOwner ) {
 			return (
-				<Button
-					className={ clsx(
-						'hosting-overview__link-button',
-						'hosting-overview__mobile-hidden-link-button'
-					) }
-					plain
-					href={ getManagePurchaseUrlFor( site?.slug, planPurchaseId ?? 0 ) }
+				<HostingCardLinkButton
+					to={ getManagePurchaseUrlFor( site?.slug, planPurchaseId ?? 0 ) }
+					hideOnMobile
 				>
 					{ translate( 'Manage plan' ) }
-				</Button>
+				</HostingCardLinkButton>
 			);
 		}
 	};
@@ -252,6 +246,23 @@ const PlanCard: FC = () => {
 							) }
 						</PlanStorage>
 					</>
+				) }
+				{ isAgencyPurchase && (
+					<div className="hosting-overview__plan-agency-purchase">
+						<p>
+							{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
+								components: {
+									a: isA4A ? (
+										<a
+											href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
+										></a>
+									) : (
+										<strong></strong>
+									),
+								},
+							} ) }
+						</p>
+					</div>
 				) }
 			</HostingCard>
 		</>

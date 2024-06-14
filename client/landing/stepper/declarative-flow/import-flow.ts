@@ -2,7 +2,6 @@ import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/des
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
@@ -13,6 +12,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import CreateSite from './internals/steps-repository/create-site';
 import DesignSetup from './internals/steps-repository/design-setup';
 import ImportStep from './internals/steps-repository/import';

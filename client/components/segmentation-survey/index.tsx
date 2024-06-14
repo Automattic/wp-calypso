@@ -32,7 +32,7 @@ type SegmentationSurveyProps = {
 	/**
 	 * The alignment of the header text.
 	 */
-	headerAlign?: string;
+	headerAlign?: 'center' | 'left' | 'right';
 	/**
 	 * The configuration for the questions.
 	 */

@@ -136,11 +136,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 										</Plans2023Tooltip>
 									) : (
 										<Plans2023Tooltip
-											text={
-												enableFeatureTooltips
-													? currentFeature.getDescription?.( { planSlug } )
-													: undefined
-											}
+											text={ enableFeatureTooltips ? currentFeature.getDescription?.() : undefined }
 											activeTooltipId={ activeTooltipId }
 											setActiveTooltipId={ setActiveTooltipId }
 											id={ key }
@@ -148,7 +144,6 @@ const PlanFeatures2023GridFeatures: React.FC< {
 											<>
 												{ currentFeature.getTitle( {
 													domainName: paidDomainName,
-													planSlug,
 												} ) }
 												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
 													<ul className="plan-features-2023-grid__item-sub-feature-list">

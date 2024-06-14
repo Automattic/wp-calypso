@@ -31,6 +31,15 @@
 	display: flex;
 	align-items: center;
 	gap: 10px;
+
+	.jetpack-logo {
+		display: none;
+
+		@include break-large {
+			display: block;
+		}
+	}
+
 }
 
 .wpcom-plan-card__price-actual-value {
@@ -64,10 +73,11 @@
 	width: 100%;
 	display: grid;
 	grid-template-columns: 1fr;
-	gap: 48px;
+	gap: 4px;
 
 	@include break-large {
 		grid-template-columns: 1fr 1fr;
+		gap: 48px;
 	}
 }
 

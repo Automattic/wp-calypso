@@ -16,12 +16,14 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import MigrateNotice from 'calypso/blocks/login/migrate-notice';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { Experiment } from 'calypso/lib/explat';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
@@ -596,6 +598,10 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your email address or username' );
 		}
 
+		if ( this.props.currentQuery?.username_only === 'true' ) {
+			return this.props.translate( 'Your username' );
+		}
+
 		return this.isPasswordView() ? (
 			this.renderChangeUsername()
 		) : (
@@ -871,26 +877,40 @@ export class LoginForm extends Component {
 						/>
 
 						{ requestError && requestError.field === 'usernameOrEmail' && (
-							<FormInputValidation isError text={ requestError.message }>
-								{ 'unknown_user' === requestError.code &&
-									this.props.translate(
-										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
-										{
-											components: {
-												newAccountLink: (
-													<a
-														href={ addQueryArgs(
-															{
-																user_email: this.state.usernameOrEmail,
-															},
-															signupUrl
-														) }
-													/>
-												),
-											},
-										}
-									) }
-							</FormInputValidation>
+							<Fragment>
+								<FormInputValidation isError text={ requestError.message }>
+									{ 'unknown_user' === requestError.code &&
+										this.props.translate(
+											' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+											{
+												components: {
+													newAccountLink: (
+														<a
+															href={ addQueryArgs(
+																{
+																	user_email: this.state.usernameOrEmail,
+																},
+																signupUrl
+															) }
+														/>
+													),
+												},
+											}
+										) }
+								</FormInputValidation>
+
+								<Experiment
+									name="calypso_login_failed_show_migrate_cta_202406"
+									defaultExperience={ null }
+									loadingExperience={ null }
+									treatmentExperience={
+										<MigrateNotice
+											translate={ this.props.translate }
+											recordTracksEvent={ this.props.recordTracksEvent }
+										/>
+									}
+								/>
+							</Fragment>
 						) }
 
 						{ ! requestError && this.state.emailSuggestionError && (

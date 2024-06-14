@@ -52,10 +52,10 @@ export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetric
 					</div>
 					<div className="basic-metrics__value">
 						{ metric === 'cls'
-							? value
+							? value.toFixed( 2 )
 							: translate( '%(ms)dms', {
 									comment: 'value to be displayed in millisecond',
-									args: { ms: value },
+									args: { ms: Math.floor( value ) },
 							  } ) }
 					</div>
 				</div>

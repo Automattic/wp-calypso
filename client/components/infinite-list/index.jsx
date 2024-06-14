@@ -105,6 +105,23 @@ export default class InfiniteList extends Component {
 		this.updateScroll( {
 			triggeredByScroll: false,
 		} );
+		// This is a workaround to ensure the scroll container is ready by scrolling after the
+		// current callstack is executed. Some streams and device widths for the reader are not
+		// fully ready to have their scroll position set until everything is mounted, causing the
+		// stream to jump back to the top when coming back to view from a post.
+		if ( this._contextLoaded() ) {
+			// Use the scrollTop setting from the time the component mounted, as this state could be
+			// changed in the initial update cycle to save scroll position before the saved position
+			// is set.
+			const scrollTop = this.state.scrollTop;
+			// Apply these at the end of the callstack to ensure the scroll container is ready.
+			window.setTimeout( () => {
+				this._setContainerY( scrollTop );
+				this.updateScroll( {
+					triggeredByScroll: false,
+				} );
+			}, 0 );
+		}
 		if ( this._contextLoaded() ) {
 			this._scrollContainer.addEventListener( 'scroll', this.onScroll );
 		}

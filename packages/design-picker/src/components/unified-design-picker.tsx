@@ -28,14 +28,17 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 
 interface DesignPreviewImageProps {
 	design: Design;
+	imageOptimizationExperiment?: boolean;
 	locale?: string;
 	styleVariation?: StyleVariation;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 }
 
 const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	design,
 	locale,
 	styleVariation,
+	oldHighResImageLoading,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -44,16 +47,24 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		// We're stubbing out the high res version here as part of a size reduction experiment.
 		// See #88786 and TODO for discussion / info.
 		const themeImgSrc = photon( design.screenshot, { fit } ) || design.screenshot;
-		// const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
+		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
 
-		return (
+		if ( oldHighResImageLoading ) {
 			<img
-				loading="lazy"
 				src={ themeImgSrc }
-				srcSet={ `${ themeImgSrc }` }
+				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
 				alt={ design.description }
-			/>
-		);
+			/>;
+		} else {
+			return (
+				<img
+					loading="lazy"
+					src={ themeImgSrc }
+					srcSet={ `${ themeImgSrc }` }
+					alt={ design.description }
+				/>
+			);
+		}
 	}
 
 	return (
@@ -65,7 +76,12 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
-			options={ getMShotOptions( { scrollable: false, highRes: ! isMobile, isMobile } ) }
+			options={ getMShotOptions( {
+				scrollable: false,
+				highRes: ! isMobile,
+				isMobile,
+				oldHighResImageLoading,
+			} ) }
 			scrollable={ false }
 		/>
 	);
@@ -159,6 +175,7 @@ interface DesignCardProps {
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
@@ -170,6 +187,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onChangeVariation,
 	onPreview,
 	getBadge,
+	oldHighResImageLoading,
 } ) => {
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
@@ -195,6 +213,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					design={ design }
 					locale={ locale }
 					styleVariation={ selectedStyleVariation }
+					oldHighResImageLoading={ oldHighResImageLoading }
 				/>
 			}
 			badge={ getBadge( design.slug, isLocked ) }
@@ -221,6 +240,7 @@ interface DesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -234,6 +254,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
+	oldHighResImageLoading,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useMemo( () => {
@@ -286,6 +307,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							onChangeVariation={ onChangeVariation }
 							onPreview={ onPreview }
 							getBadge={ getBadge }
+							oldHighResImageLoading={ oldHighResImageLoading }
 						/>
 					);
 				} ) }
@@ -308,6 +330,7 @@ export interface UnifiedDesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -323,6 +346,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
+	oldHighResImageLoading,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -355,6 +379,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					getBadge={ getBadge }
+					oldHighResImageLoading={ oldHighResImageLoading }
 				/>
 				{ bottomAnchorContent }
 			</div>

@@ -1,11 +1,6 @@
 import { useState } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
-import { getQueryArg } from '@wordpress/url';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
-import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
-import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import { UpgradePlanHostingTestimonials } from './constants';
 import cwvtechReportJson from './cwvtech-report.json';
 import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
@@ -15,27 +10,7 @@ import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details
 export const UpgradePlanHostingDetails = () => {
 	const translate = useTranslate();
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
-	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
-	let importSiteHostName = '';
-
-	try {
-		importSiteHostName = new URL( importSiteQueryParam )?.hostname;
-	} catch ( e ) {}
-
 	const { list: upgradePlanHostingDetailsList, isFetching } = useUpgradePlanHostingDetailsList();
-
-	const { data: urlData } = useAnalyzeUrlQuery( importSiteQueryParam, true );
-
-	const { data: hostingProviderData } = useHostingProviderQuery( importSiteHostName, true );
-	const hostingProviderName = useHostingProviderName(
-		hostingProviderData?.hosting_provider,
-		urlData
-	);
-
-	const shouldDisplayHostIdentificationMessage =
-		hostingProviderName &&
-		hostingProviderName !== 'Unknown' &&
-		hostingProviderName !== 'WordPress.com';
 
 	let hostingDetailsItems = null;
 
@@ -73,12 +48,7 @@ export const UpgradePlanHostingDetails = () => {
 
 	return (
 		<div className="import__upgrade-plan-hosting-details">
-			<div
-				className={ clsx( 'import__upgrade-plan-hosting-details-card-container', {
-					'import__upgrade-plan-hosting-details-card-container--without-identified-host':
-						! shouldDisplayHostIdentificationMessage,
-				} ) }
-			>
+			<div className="import__upgrade-plan-hosting-details-card-container">
 				<div className="import__upgrade-plan-hosting-details-header">
 					<p className="import__upgrade-plan-hosting-details-header-main">
 						{ translate( 'Why should you host with us?' ) }
@@ -121,13 +91,6 @@ export const UpgradePlanHostingDetails = () => {
 					</div>
 				</div>
 			</div>
-			{ shouldDisplayHostIdentificationMessage && (
-				<div className="import__upgrade-plan-hosting-details-identified-host">
-					{ translate( "We've identified %(hostingProviderName)s as your host.", {
-						args: { hostingProviderName },
-					} ) }
-				</div>
-			) }
 		</div>
 	);
 };
