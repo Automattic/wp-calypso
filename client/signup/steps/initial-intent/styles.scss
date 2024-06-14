@@ -41,21 +41,6 @@
 				.flow-question {
 					max-width: 430px;
 
-					&:hover {
-						background-color: inherit;
-						box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #3858e9);
-						transition: 200ms ease-in;
-
-						svg {
-							fill: var(--wp-admin-theme-color, #3858e9);
-						}
-
-						.flow-question__heading,
-						.flow-question__description {
-							color: var(--wp-admin-theme-color, #3858e9);
-						}
-					}
-
 					.flow-question__heading {
 						margin-bottom: 4px;
 						line-height: 24px;

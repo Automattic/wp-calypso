@@ -15,22 +15,30 @@
 
 	&:hover,
 	&:focus {
-		background-color: var(--studio-gray-0);
-		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+		box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #3858e9);
+
+		svg path {
+			fill: var(--wp-admin-theme-color, #3858e9);
+		}
+
+		.flow-question__description,
+		.flow-question__heading {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
 	}
-}
 
-.flow-question__icon {
-	align-self: flex-start;
-	padding: 2px 1px 0 0;
-}
+	.flow-question__icon {
+		align-self: flex-start;
+		padding: 2px 1px 0 0;
+	}
 
-.flow-question__heading {
-	font-weight: 500;
-	font-size: $font-body-large;
-}
+	.flow-question__heading {
+		font-weight: 500;
+		font-size: $font-body-large;
+	}
 
-.flow-question__description {
-	color: var(--studio-gray-60);
-	padding-right: 10px;
+	.flow-question__description {
+		color: var(--studio-gray-60);
+		padding-right: 10px;
+	}
 }
