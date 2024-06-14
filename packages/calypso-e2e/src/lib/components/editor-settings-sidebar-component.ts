@@ -11,7 +11,7 @@ const selectors = {
 
 	// Actions Button
 	allActionsButton: '.editor-all-actions-button',
-	viewRevisionsMenuItem: '[role=menuitem]:has-text("View revisions")',
+	viewRevisionsMenuItem: '.view-revisions-modal-button',
 
 	// Revisions (before 18.5.0)
 	showRevisionButton: '.editor-post-last-revision__panel', // Revision is a link, not a panel.
