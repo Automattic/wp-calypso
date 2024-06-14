@@ -53,7 +53,6 @@ import './style.scss';
 // 64 is padding, 8 is margin
 export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
 const GUESSED_POST_HEIGHT = 600;
-const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
@@ -170,7 +169,8 @@ class ReaderStream extends Component {
 	};
 
 	scrollToSelectedPost( animate ) {
-		const HEADER_OFFSET = -32; // a fixed position header means we can't just scroll the element into view.
+		const headerOffset = -1 * this.props.fixedHeaderHeight || 0; // a fixed position header means we can't just scroll the element into view.
+		const totalOffset = headerOffset - 35; // 35px of constant offset to ensure the post isnt cramped against the top container or header border.
 		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
 			selectedNode.focus();
@@ -178,7 +178,7 @@ class ReaderStream extends Component {
 			const scrollContainerPosition = scrollContainer.scrollTop;
 			const boundingClientRect = selectedNode.getBoundingClientRect();
 			const scrollY = parseInt(
-				scrollContainerPosition + boundingClientRect.top + HEADER_OFFSET,
+				scrollContainerPosition + boundingClientRect.top + totalOffset,
 				10
 			);
 			if ( animate ) {
@@ -345,7 +345,7 @@ class ReaderStream extends Component {
 	getVisibleItemIndexes() {
 		return (
 			this.listRef.current &&
-			this.listRef.current.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } )
+			this.listRef.current.getVisibleItemIndexes( { offsetTop: this.props.fixedHeaderHeight || 0 } )
 		);
 	}
 
