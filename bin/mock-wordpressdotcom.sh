@@ -25,10 +25,10 @@ if [ $# -eq 0 ]; then
     echo "✨ Happy hacking!"
 elif [ $1 == '--unmock' ]; then
     echo "Unmocking WordPress.com locally"
-    git checkout -- client/server/boot/index.js
-    git checkout -- config/development.json
-    git checkout -- package.json
-    git checkout -- yarn.lock
+    git checkout trunk -- client/server/boot/index.js
+    git checkout trunk -- config/development.json
+    git checkout trunk -- package.json
+    git checkout trunk -- yarn.lock
     
     echo "Done!"
     echo "Make sure to remove ${GREEN}127.0.0.1 wordpress.com${NC} to your hosts file."
