@@ -154,7 +154,6 @@ function DnsMenuOptionsButton( {
 		},
 		[ dispatchApplyDnsTemplate, dispatchErrorNotice, dispatchSuccessNotice, domainName ]
 	);
-	ellipsis;
 
 	const restoreDefaultARecords = useCallback( async () => {
 		dispatchUpdateDns( domainName, [], getARecordsToRemove(), true )
