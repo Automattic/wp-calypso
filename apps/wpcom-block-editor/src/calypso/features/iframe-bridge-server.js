@@ -113,13 +113,32 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
+	// For Gutenberg <= 18.4.1
 	addEditorListener( '[href*="revision.php"]', ( e ) => {
 		e.preventDefault();
+		openRevisions();
+	} );
+
+	// For Gutenberg >= 18.5
+	// Temporary solution to identify View Revisions menu item
+	// until the Gutenberg PR is deployed.
+	addEditorListener( 'div[id^=portal] [role=menuitem]', ( e ) => {
+		const menuItemLabel = e.target.innerText || '';
+		const viewRevisionsLabel =
+			/View revisions|Revisionen anzeigen|Visualizza revisioni|リビジョンを表示|수정본 보기|Bekijk revisies|Vezi reviziile|Visa versioner/gi;
+
+		if ( menuItemLabel.match( viewRevisionsLabel ) ) {
+			e.preventDefault();
+			openRevisions();
+		}
+	} );
+
+	function openRevisions() {
 		calypsoPort.postMessage( { action: 'openRevisions' } );
 
 		calypsoPort.addEventListener( 'message', onLoadRevision, false );
 		calypsoPort.start();
-	} );
+	}
 
 	function onLoadRevision( message ) {
 		const action = get( message, 'data.action', '' );
