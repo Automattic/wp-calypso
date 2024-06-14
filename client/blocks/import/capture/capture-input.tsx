@@ -72,6 +72,35 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
+	function isIDN( url ) {
+		try {
+			// Regex to extract the hostname from the URL.
+			const urlRegex = /^(?:https?:\/\/)?(?:www\.)?([^/]+)/i;
+			const match = url.match( urlRegex );
+
+			if ( ! match ) {
+				return false;
+			}
+
+			// Extract the hostname.
+			const hostname = match[ 1 ];
+
+			// Check for non-ASCII characters
+			for ( let i = 0; i < hostname.length; i++ ) {
+				if ( hostname.charCodeAt( i ) > 127 ) {
+					return true;
+				}
+			}
+
+			// Check if the hostname starts with the Punycode prefix.
+			if ( hostname.startsWith( 'xn--' ) ) {
+				return true;
+			}
+		} catch ( e ) {
+			return false;
+		}
+	}
+
 	function validateUrl( url: string ) {
 		const isValid = CAPTURE_URL_RGX.test( url );
 		setIsValid( isValid );
@@ -109,6 +138,13 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 			messageString:
 				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).',
 		},
+		'idn-url': {
+			message: translate(
+				'Looks like you’ve entered an internationalized domain name (IDN). Please enter a standard URL instead (e.g., example.com).'
+			),
+			messageString:
+				'Looks like you’ve entered an internationalized domain name (IDN). Please enter a standard URL instead (e.g., example.com).',
+		},
 		default: {
 			message: translate(
 				'Please enter a valid website address (e.g., example.com). You can copy and paste.'
@@ -144,6 +180,8 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 			errorMessage = errorMessages[ 'no-tld' ].message;
 		} else if ( invalidURLProtocolRegex.test( url ) ) {
 			errorMessage = errorMessages[ 'invalid-protocol' ].message;
+		} else if ( isIDN( url ) ) {
+			errorMessage = errorMessages[ 'idn-url' ].message;
 		}
 
 		return errorMessage;
