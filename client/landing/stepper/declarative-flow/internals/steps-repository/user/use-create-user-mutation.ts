@@ -34,7 +34,7 @@ const adaptedCreateAccount = ( { ...props }: CreateAccountParams ) => {
 };
 
 export function useCreateAccountMutation() {
-	return useMutation( {
+	return useMutation< AccountCreateResponse, Error & AccountCreateError, CreateAccountParams >( {
 		mutationKey: [ 'create' ],
 		mutationFn: adaptedCreateAccount,
 	} );
