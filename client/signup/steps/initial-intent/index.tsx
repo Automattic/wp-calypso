@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { HOSTED_SITE_MIGRATION_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -108,7 +109,7 @@ export default function InitialIntentStep( props: Props ) {
 
 		if ( redirect ) {
 			recordCompleteEvent();
-			return window.location.assign( redirect );
+			return page( redirect );
 		}
 
 		if (
