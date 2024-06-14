@@ -99,9 +99,9 @@ function originalVisibilityFunc( {
 	isVip,
 	isP2,
 	isOwnedByTeam51,
-	hasPaidStats,
 	isSiteJetpackNotAtomic,
 	isCommercial,
+	isCommercialOwned,
 }: StatsNoticeProps ) {
 	// eslint-disable-next-line prefer-rest-params
 	console.log( 'arguments: ', arguments );
@@ -115,10 +115,9 @@ function originalVisibilityFunc( {
 		( showUpgradeNoticeOnOdyssey ||
 			showUpgradeNoticeForJetpackNotAtomic ||
 			showUpgradeNoticeForWpcomSites ) &&
-		// Show the notice if the site has not purchased the paid stats product.
-		! hasPaidStats &&
-		// Show the notice only if the site is commercial.
+		// Show the notice if the site is commercial without a commercial plan.
 		isCommercial &&
+		! isCommercialOwned &&
 		! isVip
 	);
 }
