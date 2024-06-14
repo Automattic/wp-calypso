@@ -26,7 +26,7 @@ import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/sta
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import { FlowRenderer, FlowComponent } from './declarative-flow/internals';
+import { FlowRenderer, FlowComponentRenderer } from './declarative-flow/internals';
 import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
@@ -62,7 +62,7 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 	if ( typeof flow === 'object' ) {
 		return <FlowRenderer flow={ flow } />;
 	}
-	return <FlowComponent flow={ flow } />;
+	return <FlowComponentRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
 	BUILD_TARGET?: string;
