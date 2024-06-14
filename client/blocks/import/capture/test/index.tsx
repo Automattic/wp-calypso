@@ -92,32 +92,32 @@ describe( 'URL Validation', () => {
 		{
 			input: 'myblog',
 			error:
-				'Your URL is missing a top-level domain (e.g., .com, .net, etc.). Example URL: example.com',
+				"Looks like your site address is missing its domain extension. Please try again with something like 'example.com' or 'example.net'.",
 		},
 		{
 			input: 'https://myblog',
 			error:
-				'Your URL is missing a top-level domain (e.g., .com, .net, etc.). Example URL: example.com',
+				"Looks like your site address is missing its domain extension. Please try again with something like 'example.com' or 'example.net'.",
 		},
 		{
 			input: 'user@example.com',
 			error:
-				'It looks like you’ve entered an email address. Please enter a valid URL instead (e.g., example.com).',
+				"Looks like you might have added an email address. Please use a URL instead, like 'example.com'.",
 		},
 		{
 			input: 'http://my^blog.com',
 			error:
-				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com).',
+				'Looks like your URL has some invalid characters (like ~ or ^). Please delete them and try again.',
 		},
 		{
 			input: 'ftp://example.com',
 			error:
-				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).',
+				"URLs usually start with http:// or https://, but it looks like you might have used something different (like file:// or localhost://). Please try again with something similar to 'https://example.com'",
 		},
 		{
 			input: 'file:///C:/DEVELOPER/index.html',
 			error:
-				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).',
+				"URLs usually start with http:// or https://, but it looks like you might have used something different (like file:// or localhost://). Please try again with something similar to 'https://example.com'",
 		},
 		{
 			input: 'https://xn--example.com',
@@ -131,7 +131,8 @@ describe( 'URL Validation', () => {
 		},
 		{
 			input: 'example.com-',
-			error: 'Please enter a valid website address (e.g., example.com). You can copy and paste.',
+			error:
+				"Please add a valid website address (like 'example.com'). Feel free to copy and paste it in if that helps.",
 		},
 	] )( 'shows error message "$error" when input URL is "$input"', async ( { input, error } ) => {
 		const onInputEnter = jest.fn();

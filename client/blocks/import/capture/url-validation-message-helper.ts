@@ -5,31 +5,31 @@ function getErrorMessages(
 	return {
 		'no-tld': {
 			message: translate(
-				'Your URL is missing a top-level domain (e.g., .com, .net, etc.). Example URL: example.com'
+				"Looks like your site address is missing its domain extension. Please try again with something like 'example.com' or 'example.net'."
 			),
 			messageString:
-				'Your URL is missing a top-level domain (e.g., .com, .net, etc.). Example URL: example.com',
+				"Looks like your site address is missing its domain extension. Please try again with something like 'example.com' or 'example.net'.",
 		},
 		email: {
 			message: translate(
-				'It looks like you’ve entered an email address. Please enter a valid URL instead (e.g., example.com).'
+				"Looks like you might have added an email address. Please use a URL instead, like 'example.com'."
 			),
 			messageString:
-				'It looks like you’ve entered an email address. Please enter a valid URL instead (e.g., example.com).',
+				"Looks like you might have added an email address. Please use a URL instead, like 'example.com'.",
 		},
 		'invalid-chars': {
 			message: translate(
-				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com).'
+				'Looks like your URL has some invalid characters (like ~ or ^). Please delete them and try again.'
 			),
 			messageString:
-				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com).',
+				'Looks like your URL has some invalid characters (like ~ or ^). Please delete them and try again.',
 		},
 		'invalid-protocol': {
 			message: translate(
-				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).'
+				"URLs usually start with http:// or https://, but it looks like you might have used something different (like file:// or localhost://). Please try again with something similar to 'https://example.com'"
 			),
 			messageString:
-				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).',
+				"URLs usually start with http:// or https://, but it looks like you might have used something different (like file:// or localhost://). Please try again with something similar to 'https://example.com'",
 		},
 		'idn-url': {
 			message: translate(
@@ -40,10 +40,10 @@ function getErrorMessages(
 		},
 		default: {
 			message: translate(
-				'Please enter a valid website address (e.g., example.com). You can copy and paste.'
+				"Please add a valid website address (like 'example.com'). Feel free to copy and paste it in if that helps."
 			),
 			messageString:
-				'Please enter a valid website address (e.g., example.com). You can copy and paste.',
+				"Please add a valid website address (like 'example.com'). Feel free to copy and paste it in if that helps.",
 		},
 	};
 }
