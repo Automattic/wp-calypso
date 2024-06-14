@@ -1,4 +1,6 @@
-function getErrorMessages( translate: ( key: string ) => string ): object {
+function getErrorMessages(
+	translate: ( key: string ) => string
+): Record< string, { message: string; messageString: string } > {
 	// TODO: Just return the translated string directly from getValidationMessage once we have translations for all messages.
 	return {
 		'no-tld': {
