@@ -12,6 +12,7 @@ import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import getValidationMessage from './url-validation-message-helper';
 import type { OnInputChange, OnInputEnter } from './types';
 import type { FunctionComponent, ReactNode } from 'react';
 
@@ -72,119 +73,13 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
-	function isIDN( url: string ) {
-		try {
-			// Regex to extract the hostname from the URL.
-			const urlRegex = /^(?:https?:\/\/)?(?:www\.)?([^/]+)/i;
-			const match = url.match( urlRegex );
-
-			if ( ! match ) {
-				return false;
-			}
-
-			// Extract the hostname.
-			const hostname = match[ 1 ];
-
-			// Check for non-ASCII characters
-			for ( let i = 0; i < hostname.length; i++ ) {
-				if ( hostname.charCodeAt( i ) > 127 ) {
-					return true;
-				}
-			}
-
-			// Check if the hostname starts with the Punycode prefix.
-			if ( hostname.startsWith( 'xn--' ) ) {
-				return true;
-			}
-		} catch ( e ) {
-			return false;
-		}
-	}
-
 	function validateUrl( url: string ) {
 		const isValid = CAPTURE_URL_RGX.test( url );
 		setIsValid( isValid );
-		const tempValidationMessage = isValid ? '' : getValidationMessage( url );
+		const tempValidationMessage = isValid
+			? ''
+			: getValidationMessage( url, translate, hasEnTranslation );
 		setValidationMessage( tempValidationMessage );
-	}
-
-	// TODO: Just return the translated string directly from getValidationMessage once we have translations for all messages.
-	const errorMessages = {
-		'no-tld': {
-			message: translate(
-				'Your URL is missing a top-level domain (e.g., .com, .net, etc.). Example URL: example.com'
-			),
-			messageString:
-				'Your URL is missing a top-level domain (e.g., .com, .net, etc.). Example URL: example.com',
-		},
-		email: {
-			message: translate(
-				'It looks like you’ve entered an email address. Please enter a valid URL instead (e.g., example.com).'
-			),
-			messageString:
-				'It looks like you’ve entered an email address. Please enter a valid URL instead (e.g., example.com).',
-		},
-		'invalid-chars': {
-			message: translate(
-				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com).'
-			),
-			messageString:
-				'URL contains invalid characters. Please remove special characters and enter a valid URL (e.g., example.com).',
-		},
-		'invalid-protocol': {
-			message: translate(
-				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).'
-			),
-			messageString:
-				'URLs with protocols can only start with http:// or https:// (e.g., https://example.com).',
-		},
-		'idn-url': {
-			message: translate(
-				'Looks like you’ve entered an internationalized domain name (IDN). Please enter a standard URL instead (e.g., example.com).'
-			),
-			messageString:
-				'Looks like you’ve entered an internationalized domain name (IDN). Please enter a standard URL instead (e.g., example.com).',
-		},
-		default: {
-			message: translate(
-				'Please enter a valid website address (e.g., example.com). You can copy and paste.'
-			),
-			messageString:
-				'Please enter a valid website address (e.g., example.com). You can copy and paste.',
-		},
-	};
-
-	function getValidationMessage( url: string ) {
-		const hasEnTranslationForAllMessages = Object.values( errorMessages ).every( ( message ) =>
-			hasEnTranslation( message.messageString )
-		);
-
-		if ( ! hasEnTranslationForAllMessages ) {
-			return translate( 'Please enter a valid website address. You can copy and paste.' );
-		}
-
-		const missingTLDRegex = /^(?:https?:\/\/)?(?!.*\.[a-z]{2,})([a-zA-Z0-9-_]+)$/;
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		const invalidURLProtocolRegex = /^(?!https?:\/\/)\S+:\/\//;
-		const invalidCharsRegex = /[^a-z0-9\-._~!$&'()*+,;:@/?=%[\]]/i;
-
-		const removedInitialDots = url.replace( 'www.', '' );
-
-		let errorMessage = errorMessages[ 'default' ].message;
-
-		if ( emailRegex.test( url ) ) {
-			errorMessage = errorMessages[ 'email' ].message;
-		} else if ( isIDN( url ) ) {
-			errorMessage = errorMessages[ 'idn-url' ].message;
-		} else if ( invalidCharsRegex.test( url ) ) {
-			errorMessage = errorMessages[ 'invalid-chars' ].message;
-		} else if ( missingTLDRegex.test( removedInitialDots ) ) {
-			errorMessage = errorMessages[ 'no-tld' ].message;
-		} else if ( invalidURLProtocolRegex.test( url ) ) {
-			errorMessage = errorMessages[ 'invalid-protocol' ].message;
-		}
-
-		return errorMessage;
 	}
 
 	function onChange( e: ChangeEvent< HTMLInputElement > ) {
