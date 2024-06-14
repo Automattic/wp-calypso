@@ -63,7 +63,7 @@ const SiteBackupCard = ( { lastGoodBackup, requestBackups, siteId, siteSlug } ) 
 					</p>
 					<p>
 						{ translate(
-							'Unlock more granular control over your site, with the ability to restore it to any previous state, and export it at any time'
+							'Unlock more granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
 						) }
 					</p>
 					<Button
