@@ -191,11 +191,12 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					'Optionally set your minimum budget. Clients can filter these details to find the right agency.'
 				) }
 			>
-				<div>{ translate( 'Minimum project budget' ) }</div>
-				<BudgetSelector
-					budgetLowerRange={ formData.budgetLowerRange }
-					setBudget={ ( budget: string ) => setFormFields( { budgetLowerRange: budget } ) }
-				/>
+				<FormField label={ translate( 'Minimum project budget' ) }>
+					<BudgetSelector
+						budgetLowerRange={ formData.budgetLowerRange }
+						setBudget={ ( budget: string ) => setFormFields( { budgetLowerRange: budget } ) }
+					/>
+				</FormField>
 			</FormSection>
 			<div className="partner-directory-agency-cta__footer">
 				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
