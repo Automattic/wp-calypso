@@ -33,7 +33,31 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: CommercialSiteUpgradeNotice,
 		noticeId: 'commercial_site_upgrade',
-		isVisibleFunc: shouldShowCommercialSiteUpgradeNotice,
+		isVisibleFunc: ( {
+			isOdysseyStats,
+			isWpcom,
+			isVip,
+			isP2,
+			isOwnedByTeam51,
+			isSiteJetpackNotAtomic,
+			isCommercial,
+			isCommercialOwned,
+		}: StatsNoticeProps ) => {
+			// Set up test conditions for the notice.
+			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
+			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
+			const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
+
+			return !! (
+				( showUpgradeNoticeOnOdyssey ||
+					showUpgradeNoticeForJetpackNotAtomic ||
+					showUpgradeNoticeForWpcomSites ) &&
+				// Show the notice if the site is commercial without a commercial plan.
+				isCommercial &&
+				! isCommercialOwned &&
+				! isVip
+			);
+		},
 		disabled: false,
 	},
 	{
@@ -92,31 +116,5 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		disabled: false,
 	},
 ];
-
-function shouldShowCommercialSiteUpgradeNotice( {
-	isOdysseyStats,
-	isWpcom,
-	isVip,
-	isP2,
-	isOwnedByTeam51,
-	isSiteJetpackNotAtomic,
-	isCommercial,
-	isCommercialOwned,
-}: StatsNoticeProps ) {
-	// Set up test conditions for the notice.
-	const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
-	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
-	const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
-
-	return !! (
-		( showUpgradeNoticeOnOdyssey ||
-			showUpgradeNoticeForJetpackNotAtomic ||
-			showUpgradeNoticeForWpcomSites ) &&
-		// Show the notice if the site is commercial without a commercial plan.
-		isCommercial &&
-		! isCommercialOwned &&
-		! isVip
-	);
-}
 
 export default ALL_STATS_NOTICES;
