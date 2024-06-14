@@ -200,6 +200,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					description={ translate(
 						'Great support is key to our success. Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
 					) }
+					isOptional
 				>
 					<TextControl
 						type="text"
