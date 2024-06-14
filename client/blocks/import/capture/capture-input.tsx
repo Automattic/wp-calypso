@@ -72,7 +72,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
-	function isIDN( url ) {
+	function isIDN( url: string ) {
 		try {
 			// Regex to extract the hostname from the URL.
 			const urlRegex = /^(?:https?:\/\/)?(?:www\.)?([^/]+)/i;
