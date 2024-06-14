@@ -112,14 +112,16 @@ class ReaderStream extends Component {
 	// cycle.
 	wasSelectedByOpeningPost = false;
 
+	listRef = createRef();
+	overlayRef = createRef();
+	mountTimeout = null;
+
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
 	};
 	handleSitesSelected = () => {
 		this.setState( { selectedTab: 'sites' } );
 	};
-
-	listRef = createRef();
 
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
@@ -207,9 +209,17 @@ class ReaderStream extends Component {
 		}
 
 		if ( this.props.selectedPostKey ) {
-			setTimeout( () => {
+			// Show an overlay while we are handling initial scroll and focus to prevent flashing
+			// content.
+			if ( this.overlayRef.current ) {
+				this.overlayRef.current.classList.add( 'stream__init-overlay' );
+			}
+			this.mountTimeout = setTimeout( () => {
 				this.scrollToSelectedPost( false );
 				this.focusSelectedPost( this.props.selectedPostKey );
+				if ( this.overlayRef.current ) {
+					this.overlayRef.current.classList.remove( 'stream__init-overlay' );
+				}
 			}, 100 );
 		}
 
@@ -245,6 +255,10 @@ class ReaderStream extends Component {
 
 		if ( this.observer ) {
 			this.observer.disconnect();
+		}
+
+		if ( this.mountTimeout ) {
+			clearTimeout( this.mountTimeout );
 		}
 	}
 
@@ -682,6 +696,8 @@ class ReaderStream extends Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ baseClassnames }>
+				{ /* This div is the .stream__init-overlay component, it only gets this class when it should be displayed */ }
+				<div ref={ this.overlayRef } />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
