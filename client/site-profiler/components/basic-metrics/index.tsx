@@ -55,7 +55,7 @@ export const BasicMetric = ( { metric, basicMetrics, name, copies }: BasicMetric
 							? value.toFixed( 2 )
 							: translate( '%(ms)dms', {
 									comment: 'value to be displayed in millisecond',
-									args: { ms: value.toFixed( 2 ) },
+									args: { ms: Math.floor( value ) },
 							  } ) }
 					</div>
 				</div>

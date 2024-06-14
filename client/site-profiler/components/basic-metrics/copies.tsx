@@ -28,7 +28,7 @@ type CopiesReturnValue = {
 
 export type CopiesReturnValueList = [ Metrics, CopiesProps ][];
 
-const formatValue = ( value: number ) => value.toFixed( 2 );
+const formatMsValue = ( value: number ) => Math.floor( value );
 
 export function getCopies(
 	basicMetrics: BasicMetricsScored,
@@ -38,12 +38,12 @@ export function getCopies(
 	const migrateUrl = `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }`;
 	const supportUrl = localizeUrl( 'https://wordpress.com/support' );
 
-	const clsValue = formatValue( basicMetrics?.cls?.value );
-	const fidValue = formatValue( basicMetrics?.fid?.value );
-	const lcpValue = formatValue( basicMetrics?.lcp?.value );
-	const fcpValue = formatValue( basicMetrics?.fcp?.value );
-	const ttfbValue = formatValue( basicMetrics?.ttfb?.value );
-	const inpValue = formatValue( basicMetrics?.inp?.value );
+	const clsValue = basicMetrics?.cls?.value.toFixed( 2 );
+	const fidValue = formatMsValue( basicMetrics?.fid?.value );
+	const lcpValue = formatMsValue( basicMetrics?.lcp?.value );
+	const fcpValue = formatMsValue( basicMetrics?.fcp?.value );
+	const ttfbValue = formatMsValue( basicMetrics?.ttfb?.value );
+	const inpValue = formatMsValue( basicMetrics?.inp?.value );
 
 	const cls: CopiesProps = {
 		title: translate( 'Cumulative Layout Shift (CLS)' ),
