@@ -33,7 +33,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: CommercialSiteUpgradeNotice,
 		noticeId: 'commercial_site_upgrade',
-		isVisibleFunc: originalVisibilityFunc,
+		isVisibleFunc: shouldShowCommercialSiteUpgradeNotice,
 		disabled: false,
 	},
 	{
@@ -93,7 +93,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	},
 ];
 
-function originalVisibilityFunc( {
+function shouldShowCommercialSiteUpgradeNotice( {
 	isOdysseyStats,
 	isWpcom,
 	isVip,
