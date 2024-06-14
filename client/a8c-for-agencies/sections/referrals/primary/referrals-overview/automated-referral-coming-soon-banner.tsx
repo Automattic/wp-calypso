@@ -11,7 +11,7 @@ export default function AutomatedReferralComingSoonBanner() {
 			preferenceName="a8c-automated-referral-coming-soon"
 		>
 			{ translate(
-				`Soon, you will have the ability to gather products and hosting for your clients. Send payment requests. Earn commissions. Track your client's details. All from within your Automattic for Agencies Dashboard!`
+				`Soon, you will have the ability to gather products and hosting for your clients. Send payment requests. Earn commissions. Track your clients' details. All from within your Automattic for Agencies Dashboard!`
 			) }
 		</LayoutBanner>
 	);
