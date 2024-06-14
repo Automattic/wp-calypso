@@ -1,5 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { type I18N, numberFormat } from 'i18n-calypso';
+import { type I18N } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import type { BasicMetricsScored, Metrics, Scores } from 'calypso/data/site-profiler/types';
 
@@ -28,6 +28,8 @@ type CopiesReturnValue = {
 
 export type CopiesReturnValueList = [ Metrics, CopiesProps ][];
 
+const formatMsValue = ( value: number ) => Math.floor( value );
+
 export function getCopies(
 	basicMetrics: BasicMetricsScored,
 	translate: I18N[ 'translate' ],
@@ -36,19 +38,19 @@ export function getCopies(
 	const migrateUrl = `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }`;
 	const supportUrl = localizeUrl( 'https://wordpress.com/support' );
 
-	const clsValue = numberFormat( basicMetrics?.cls?.value, 2 );
-	const fidValue = numberFormat( basicMetrics?.fid?.value, 2 );
-	const lcpValue = numberFormat( basicMetrics?.lcp?.value, 2 );
-	const fcpValue = numberFormat( basicMetrics?.fcp?.value, 2 );
-	const ttfbValue = numberFormat( basicMetrics?.ttfb?.value, 2 );
-	const inpValue = numberFormat( basicMetrics?.inp?.value, 2 );
+	const clsValue = basicMetrics?.cls?.value.toFixed( 2 );
+	const fidValue = formatMsValue( basicMetrics?.fid?.value );
+	const lcpValue = formatMsValue( basicMetrics?.lcp?.value );
+	const fcpValue = formatMsValue( basicMetrics?.fcp?.value );
+	const ttfbValue = formatMsValue( basicMetrics?.ttfb?.value );
+	const inpValue = formatMsValue( basicMetrics?.inp?.value );
 
 	const cls: CopiesProps = {
 		title: translate( 'Cumulative Layout Shift (CLS)' ),
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Excellent job maintaining low shifts!',
+					'Your site’s CLS is %(value)s, ensuring a stable layout. Excellent job maintaining low shifts!',
 					{ args: { value: clsValue } }
 				),
 				solution: translate(
@@ -59,7 +61,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
+					'Your site’s CLS is %(value)s, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
 					{
 						args: {
 							value: clsValue,
