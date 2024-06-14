@@ -15,7 +15,8 @@
 .item-preview__pane.referral-details-items {
 	.item-preview__content {
 		@media (max-width: $break-mobile) {
-			height: 70vh;
+			height: 75vh;
+			padding: 18px;
 		}
 	}
 }

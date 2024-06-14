@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -45,7 +45,6 @@ const PurchaseItem = ( { purchase, data, isFetching }: PurchaseItemProps ) => {
 				<div className="referral-purchases-mobile__content">
 					<div className="referral-purchases-mobile__header">
 						<h3>{ translate( 'Product Details' ).toUpperCase() }</h3>
-						<Gridicon icon="ellipsis" size={ 16 } />
 					</div>
 					<p className="referral-purchases-mobile__product-name">
 						{ isFetching ? <TextPlaceholder /> : product?.name }

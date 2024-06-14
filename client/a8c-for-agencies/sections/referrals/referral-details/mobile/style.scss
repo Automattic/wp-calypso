@@ -10,10 +10,6 @@
 	.referral-purchases-mobile__header {
 		display: flex;
 		justify-content: space-between;
-
-		.gridicon {
-			transform: rotate(90deg);
-		}
 	}
 
 	.referral-purchases-mobile__product-name {
@@ -24,13 +20,13 @@
 
 	h3 {
 		font-weight: 500;
-		font-size: 11px; // stylelint-disable-line declaration-property-unit-allowed-list
+		font-size: rem(11px);
 		color: var(--color-gray-80);
 	}
 
 	p {
 		font-weight: 400;
-		font-size: 13px; // stylelint-disable-line declaration-property-unit-allowed-list
+		font-size: rem(13px);
 		color: var(--color-gray-70);
 		margin: 0;
 	}

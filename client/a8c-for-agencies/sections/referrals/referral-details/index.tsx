@@ -1,4 +1,4 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import ItemPreviewPane, {
@@ -42,7 +42,7 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 		withIcon: false,
 	};
 
-	const isMobile = useMobileBreakpoint();
+	const isDesktop = useDesktopBreakpoint();
 
 	const features = useMemo(
 		() => [
@@ -52,14 +52,14 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 				true,
 				selectedReferralTab,
 				setSelectedReferralTab,
-				isMobile ? (
+				! isDesktop ? (
 					<ReferralPurchasesMobile purchases={ referral.purchases } />
 				) : (
 					<ReferralPurchases purchases={ referral.purchases } />
 				)
 			),
 		],
-		[ referral, selectedReferralTab, translate, isMobile ]
+		[ referral, selectedReferralTab, translate, isDesktop ]
 	);
 
 	return (
