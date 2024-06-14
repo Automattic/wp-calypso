@@ -1,6 +1,6 @@
 import { FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { reverseMap, useFormSelectors } from './hooks/use-form-selectors';
 
 type Props = {
@@ -24,14 +24,17 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 	} );
 
 	// Set the selected services by slug
-	const onServiceLabelsSelected = ( selectedServiceLabels: ( string | TokenItem )[] ) => {
-		const selectedServicesBySlug = selectedServiceLabels.map( ( label ) => {
-			const key = label as string;
-			return availableServicesByLabel[ key ];
-		} );
+	const onServiceLabelsSelected = useCallback(
+		( selectedServiceLabels: ( string | TokenItem )[] ) => {
+			const selectedServicesBySlug = selectedServiceLabels.map( ( label ) => {
+				const key = label as string;
+				return availableServicesByLabel[ key ];
+			} );
 
-		setServices( selectedServicesBySlug );
-	};
+			setServices( selectedServicesBySlug );
+		},
+		[ availableServicesByLabel, setServices ]
+	);
 
 	return (
 		<FormTokenField
