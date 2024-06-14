@@ -208,6 +208,7 @@ class ReaderStream extends Component {
 
 		if ( this.props.selectedPostKey ) {
 			setTimeout( () => {
+				this.scrollToSelectedPost( false );
 				this.focusSelectedPost( this.props.selectedPostKey );
 			}, 100 );
 		}
