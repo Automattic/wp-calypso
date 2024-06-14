@@ -103,6 +103,9 @@ function originalVisibilityFunc( {
 	isSiteJetpackNotAtomic,
 	isCommercial,
 }: StatsNoticeProps ) {
+	// eslint-disable-next-line prefer-rest-params
+	console.log( 'arguments: ', arguments );
+
 	// Set up test conditions for the notice.
 	const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
 	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
