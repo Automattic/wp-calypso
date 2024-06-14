@@ -91,7 +91,9 @@ const UtmBuilder: React.FC = () => {
 
 	const utmString = ! url
 		? translate( 'Fill out campaign parameters to see the URL' )
-		: `${ url }${ campaignString ? `/?${ campaignString }` : '' }`;
+		: `${ url }${
+				campaignString ? `${ url.includes( '?' ) ? '&' : '?' }${ campaignString }` : ''
+		  }`;
 
 	return (
 		<>

@@ -128,7 +128,7 @@ const StatsModuleUTM = ( {
 				emptyMessage={
 					<div>
 						{ moduleStrings.empty }
-						{ isBuilderEnabled && <UTMBuilder /> }
+						{ /* { isBuilderEnabled && <UTMBuilder /> } */ }
 					</div>
 				}
 				metricLabel={ metricLabel }
@@ -152,12 +152,15 @@ const StatsModuleUTM = ( {
 				splitHeader
 				mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 				toggleControl={
-					<UTMDropdown
-						buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-						onSelect={ setSelectedOption }
-						selectOptions={ optionLabels }
-						selected={ selectedOption }
-					/>
+					<div className="stats-module__extended-toggle">
+						{ isBuilderEnabled && <UTMBuilder /> }
+						<UTMDropdown
+							buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+							onSelect={ setSelectedOption }
+							selectOptions={ optionLabels }
+							selected={ selectedOption }
+						/>
+					</div>
 				}
 			/>
 			{ showFooterWithDownloads && (

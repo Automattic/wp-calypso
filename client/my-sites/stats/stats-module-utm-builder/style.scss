@@ -6,6 +6,14 @@
 $stats-utm-builder-modal-header-margin: 76px;
 $stats-utm-builder-help-padding: 38px;
 
+.stats-utm-builder__overlay {
+	@media (min-width: $break-large) {
+		.components-modal__frame {
+			max-height: 85%;
+		}
+	}
+}
+
 .components-modal__header {
 	font-family: $font-recoleta;
 
@@ -82,7 +90,7 @@ $stats-utm-builder-help-padding: 38px;
 
 .stats-utm-builder__trigger {
 	display: flex;
-	padding: 20px 0;
+	// padding: 20px 0;
 	justify-content: center;
 }
 
