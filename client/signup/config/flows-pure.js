@@ -694,6 +694,17 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'toStepper' ],
 			hideProgressIndicator: true,
 		},
+		{
+			name: 'onboarding-affiliate',
+			steps: [ userSocialStep, 'domains', 'plans-affiliate' ],
+			destination: getSignupDestination,
+			description: 'Affiliates flow',
+			lastModified: '2024-06-06',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
+			hideProgressIndicator: true,
+		},
 	];
 
 	// convert the array to an object keyed by `name`
