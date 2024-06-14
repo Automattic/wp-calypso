@@ -137,7 +137,9 @@ export default function UserContactSupportModalForm( {
 					<Icon size={ 24 } icon={ close } />
 				</Button>
 
-				<h1 className="a4a-contact-support-modal-form__title">{ translate( 'Contact sales' ) }</h1>
+				<h1 className="a4a-contact-support-modal-form__title">
+					{ translate( 'Contact sales & support' ) }
+				</h1>
 
 				<FormFieldset>
 					<FormLabel htmlFor="name">{ translate( 'Your name' ) }</FormLabel>

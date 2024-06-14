@@ -50,7 +50,7 @@ export default function OverviewSidebarContactSupport() {
 	return (
 		<>
 			<Button className="overview__contact-support-button" onClick={ toggleContactForm }>
-				{ translate( 'Contact Sales' ) }
+				{ translate( 'Contact sales & support' ) }
 			</Button>
 			<UserContactSupportModalForm
 				show={ showUserSupportForm }
