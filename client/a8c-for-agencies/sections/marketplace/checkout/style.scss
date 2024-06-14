@@ -233,7 +233,11 @@
 }
 
 .checkout__aside--client {
-	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: calc(100% - 64px);
+	padding-block-end: 0;
 
 	.checkout__aside-actions {
 		margin-block-start: 16px;
@@ -248,11 +252,16 @@
 
 	.checkout__summary-notice {
 		margin-block-start: 48px;
+
+		div {
+
+			margin-block-start: 8px;
+		}
 	}
 
 	.checkout__aside-footer {
-		position: absolute;
-		bottom: 32px;
+		margin-top: auto;
+		padding-bottom: 16px;
 
 		.checkout__aside-powered-by {
 			div {

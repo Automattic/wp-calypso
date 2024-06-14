@@ -43,7 +43,7 @@ export const clientPaymentMethodsAddContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Client > Payment Methods > Add" path={ context.path } />
-			<PaymentMethodAdd hideBreadcrumbs={ agencyId } />
+			<PaymentMethodAdd isClientCheckout={ agencyId } />
 		</>
 	);
 

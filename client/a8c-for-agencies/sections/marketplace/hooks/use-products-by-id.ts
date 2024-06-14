@@ -21,9 +21,13 @@ export default function useProductsById( products: ReferralProduct[] | [], isEna
 					};
 				} )
 				.filter( ( product ) => product ) as ShoppingCartItem[];
-			setReferredProducts( allProducts );
+
+			// Only update if different to prevent unnecessary re-renders
+			if ( JSON.stringify( allProducts ) !== JSON.stringify( referredProducts ) ) {
+				setReferredProducts( allProducts );
+			}
 		}
-	}, [ data, products ] );
+	}, [ data, products, referredProducts ] );
 
 	return {
 		referredProducts,

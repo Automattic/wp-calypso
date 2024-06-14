@@ -110,10 +110,11 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 							},
 						}
 					) }
-					<br />
-					{ translate(
-						`Note: You won't be charged for the first 30 days. After that, we'll charge your card every 30 days.`
-					) }
+					<div>
+						{ translate( `Note: You won't pay for the first 30 days.` ) }
+						<br />
+						{ translate( `After that, we'll charge your card every 30 days` ) }
+					</div>
 				</div>
 			) }
 
