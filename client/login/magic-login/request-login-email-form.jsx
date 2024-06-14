@@ -61,6 +61,7 @@ class RequestLoginEmailForm extends Component {
 		blogId: PropTypes.string,
 		errorMessage: PropTypes.string,
 		onErrorDismiss: PropTypes.func,
+		isSubmitButtonDisabled: PropTypes.bool,
 	};
 
 	state = {
@@ -188,6 +189,7 @@ class RequestLoginEmailForm extends Component {
 			onSubmitEmail,
 			errorMessage,
 			onErrorDismiss,
+			isSubmitButtonDisabled,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -204,7 +206,11 @@ class RequestLoginEmailForm extends Component {
 		}
 
 		const submitEnabled =
-			usernameOrEmail.length && ! isFetching && ! emailRequested && ! requestError;
+			usernameOrEmail.length &&
+			! isFetching &&
+			! emailRequested &&
+			! requestError &&
+			! isSubmitButtonDisabled;
 
 		const errorText =
 			typeof requestError === 'string' && requestError.length

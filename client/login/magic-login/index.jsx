@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import { addLocaleToPath, localizeUrl } from '@automattic/i18n-utils';
+import { addLocaleToPath, localizeUrl, getLanguage } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -22,15 +22,25 @@ import {
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
-import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import {
+	hideMagicLoginRequestForm,
+	fetchMagicLoginAuthenticate,
+} from 'calypso/state/login/magic-login/actions';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
 import { getLastCheckedUsernameOrEmail } from 'calypso/state/login/selectors';
+import {
+	infoNotice,
+	errorNotice,
+	successNotice,
+	removeNotice,
+} from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -38,6 +48,9 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
+import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
+import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import { withEnhancers } from 'calypso/state/utils';
@@ -46,6 +59,7 @@ import RequestLoginEmailForm from './request-login-email-form';
 import './style.scss';
 
 const RESEND_EMAIL_COUNTDOWN_TIME = 90; // In seconds
+const INFO_NOTICE_ID = 'sending-email-info-notice';
 
 class MagicLogin extends Component {
 	static propTypes = {
@@ -56,6 +70,11 @@ class MagicLogin extends Component {
 		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		sendEmailLogin: PropTypes.func.isRequired,
+		fetchMagicLoginAuthenticate: PropTypes.func.isRequired,
+		infoNotice: PropTypes.func.isRequired,
+		errorNotice: PropTypes.func.isRequired,
+		successNotice: PropTypes.func.isRequired,
+		removeNotice: PropTypes.func.isRequired,
 
 		// mapped to state
 		locale: PropTypes.string.isRequired,
@@ -64,6 +83,9 @@ class MagicLogin extends Component {
 		isSendingEmail: PropTypes.bool.isRequired,
 		emailRequested: PropTypes.bool.isRequired,
 		localeSuggestions: PropTypes.array,
+		isAuthenticating: PropTypes.bool,
+		isAuthenticated: PropTypes.bool,
+		authError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 
 		// From `localize`
 		translate: PropTypes.func.isRequired,
@@ -71,11 +93,18 @@ class MagicLogin extends Component {
 
 	state = {
 		usernameOrEmail: this.props.userEmail || '',
-		userEmail: '',
 		resendEmailCountdown: RESEND_EMAIL_COUNTDOWN_TIME,
 		verificationCodeInputValue: '',
-		isLoginWithMainAccount: true,
-		emailErrorMessage: null,
+		isFetchingGravatarInfo: false,
+		gravatarInfoErrorMesssage: null,
+		isRequestingEmail: false,
+		sendEmailErrorMessage: null,
+		isNewAccount: false,
+		publicToken: null,
+		showSecondaryEmailOptions: false,
+		showEmailCodeVerification: false,
+		username: null,
+		maskedEmailAddress: '',
 	};
 
 	verificationCodeInputRef = createRef();
@@ -91,9 +120,17 @@ class MagicLogin extends Component {
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		const { oauth2Client, emailRequested, localeSuggestions, path, showCheckYourEmail } =
-			this.props;
+	componentDidUpdate( prevProps, prevState ) {
+		const {
+			oauth2Client,
+			emailRequested,
+			localeSuggestions,
+			path,
+			showCheckYourEmail,
+			isAuthenticated,
+			query,
+		} = this.props;
+		const { showSecondaryEmailOptions, showEmailCodeVerification } = this.state;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			if ( prevProps.isSendingEmail && emailRequested ) {
@@ -110,18 +147,41 @@ class MagicLogin extends Component {
 				}
 			}
 
-			if ( ! prevProps.showCheckYourEmail && showCheckYourEmail ) {
+			const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
+
+			if ( prevProps.showCheckYourEmail && ! showCheckYourEmail ) {
+				this.props.recordTracksEvent(
+					'calypso_gravatar_powered_magic_login_email_form',
+					eventOptions
+				);
+			}
+
+			// TODO: Test it
+			if ( ! prevState.showSecondaryEmailOptions && showSecondaryEmailOptions ) {
+				this.props.recordTracksEvent(
+					'calypso_gravatar_powered_magic_login_secondary_email_options',
+					eventOptions
+				);
+			}
+
+			// TODO: Test it
+			if ( ! prevState.showEmailCodeVerification && showEmailCodeVerification ) {
 				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_verification', {
-					client_id: oauth2Client.id,
-					client_name: oauth2Client.name,
+					...eventOptions,
+					type: 'code',
 				} );
 			}
 
-			if ( prevProps.showCheckYourEmail && ! showCheckYourEmail ) {
-				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
-					client_id: oauth2Client.id,
-					client_name: oauth2Client.name,
+			// TODO: Test it
+			if ( ! prevProps.showCheckYourEmail && showCheckYourEmail ) {
+				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_verification', {
+					...eventOptions,
+					type: 'link',
 				} );
+			}
+
+			if ( isAuthenticated && query?.redirect_to ) {
+				window.location.replace( query.redirect_to );
 			}
 
 			this.verificationCodeInputRef.current?.focus();
@@ -233,39 +293,123 @@ class MagicLogin extends Component {
 		);
 	}
 
+	handleGravPoweredSendEmailWithCode = async ( email = this.state.usernameOrEmail ) => {
+		const { oauth2Client, query, locale, translate } = this.props;
+
+		this.setState( { isRequestingEmail: true } );
+
+		const duration = 4000;
+		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
+
+		try {
+			this.props.infoNotice( translate( 'Sending email…' ), { id: INFO_NOTICE_ID, duration } );
+
+			this.props.recordTracksEvent( 'calypso_gravatar_login_email_code_submit', eventOptions );
+
+			const { public_token } = await wpcomRequest( {
+				path: '/auth/send-login-email',
+				method: 'POST',
+				apiVersion: '1.3',
+				body: {
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+					locale,
+					lang_id: getLanguage( locale ).value,
+					email,
+					redirect_to: query?.redirect_to,
+					flow: oauth2Client.name,
+					create_account: true,
+					tos: getToSAcceptancePayload(),
+					token_type: 'code',
+				},
+			} );
+
+			this.props.removeNotice( INFO_NOTICE_ID );
+			this.props.successNotice( translate( 'Email Sent. Check your mail app!' ), { duration } );
+
+			this.props.recordTracksEvent( 'calypso_gravatar_login_email_code_success', eventOptions );
+
+			this.setState( { publicToken: public_token, showEmailCodeVerification: true } );
+		} catch ( error ) {
+			this.props.removeNotice( INFO_NOTICE_ID );
+			this.props.errorNotice( translate( 'Sorry, we couldn’t send the email.' ), { duration } );
+
+			this.props.recordTracksEvent( 'calypso_gravatar_login_email_code_failure', {
+				...eventOptions,
+				error_code: error.error,
+				error_message: error.message,
+			} );
+
+			if ( error.error ) {
+				this.setState( { sendEmailErrorMessage: error.message } );
+			} else {
+				this.setState( {
+					sendEmailErrorMessage: translate( 'Something went wrong. Please try again.' ),
+				} );
+			}
+		}
+
+		this.setState( { isRequestingEmail: false } );
+	};
+
 	handleGravPoweredEmailSubmit = async ( usernameOrEmail, e ) => {
 		e.preventDefault();
 
-		const { translate } = this.props;
+		const { translate, oauth2Client } = this.props;
+		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
 
 		if ( ! emailValidator.validate( usernameOrEmail ) ) {
-			return this.setState( { emailErrorMessage: translate( 'Invalid email' ) } );
+			return this.setState( { gravatarInfoErrorMesssage: translate( 'Invalid email' ) } );
 		}
 
+		this.setState( { isFetchingGravatarInfo: true } );
+
 		try {
-			const res = await wpcomRequest( {
+			this.props.recordTracksEvent( 'calypso_gravatar_get_gravatar_info_fetching', eventOptions );
+
+			const { is_secondary, main_username, main_email_masked } = await wpcomRequest( {
 				path: '/auth/get-gravatar-info',
 				query: { email: usernameOrEmail },
 			} );
 
-			if ( res.is_secondary ) {
-				// TODO: Handle secondary email options
-			} else {
-				// TODO: Handle primary email options
+			this.props.recordTracksEvent( 'calypso_gravatar_get_gravatar_info_success', eventOptions );
+
+			if ( is_secondary ) {
+				return this.setState( {
+					usernameOrEmail,
+					showSecondaryEmailOptions: true,
+					isFetchingGravatarInfo: false,
+					username: main_username,
+					maskedEmailAddress: main_email_masked,
+				} );
 			}
 		} catch ( error ) {
-			// TODO: Error events?
-
-			if ( error.error === 'invalid_email' ) {
-				return this.setState( { emailErrorMessage: translate( 'Invalid email' ) } );
-			}
-
-			return this.setState( {
-				emailErrorMessage: translate( 'Something went wrong. Please try again.' ),
+			this.props.recordTracksEvent( 'calypso_gravatar_get_gravatar_info_failure', {
+				...eventOptions,
+				error_code: error.error,
+				error_message: error.message,
 			} );
+
+			switch ( error.error ) {
+				case 'not_found':
+					this.setState( { isNewAccount: true } );
+					break;
+				case 'invalid_email':
+					return this.setState( {
+						gravatarInfoErrorMesssage: translate( 'Invalid email' ),
+						isFetchingGravatarInfo: false,
+					} );
+				default:
+					return this.setState( {
+						gravatarInfoErrorMesssage: translate( 'Something went wrong. Please try again.' ),
+						isFetchingGravatarInfo: false,
+					} );
+			}
 		}
 
-		this.setState( { userEmail: usernameOrEmail } );
+		this.handleGravPoweredSendEmailWithCode( usernameOrEmail );
+
+		this.setState( { usernameOrEmail, isFetchingGravatarInfo: false } );
 	};
 
 	handleVerificationCodeInputChange = ( e ) => {
@@ -281,25 +425,14 @@ class MagicLogin extends Component {
 	handleVerificationCodeSubmit = ( e ) => {
 		e.preventDefault();
 
-		// TODO: Handle verification code submission
-	};
+		const { oauth2Client, query } = this.props;
+		const { publicToken, verificationCodeInputValue } = this.state;
 
-	handleGravPoweredResendEmail = () => {
-		const { oauth2Client, query, sendEmailLogin: resendEmail } = this.props;
-		const { usernameOrEmail } = this.state;
-
-		resendEmail( usernameOrEmail, {
-			redirectTo: query?.redirect_to,
-			requestLoginEmailFormFlow: true,
-			createAccount: true,
-			flow: oauth2Client.name,
-			showGlobalNotices: true,
-		} );
-
-		this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_resend_email', {
-			client_id: oauth2Client.id,
-			client_name: oauth2Client.name,
-		} );
+		this.props.fetchMagicLoginAuthenticate(
+			`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
+			query?.redirect_to,
+			oauth2Client.name
+		);
 	};
 
 	handleGravPoweredSwitchEmail = () => {
@@ -385,14 +518,36 @@ class MagicLogin extends Component {
 	};
 
 	renderGravPoweredEmailLinkVerification() {
-		const { oauth2Client, translate, isSendingEmail } = this.props;
+		const {
+			oauth2Client,
+			translate,
+			query,
+			isSendingEmail,
+			sendEmailLogin: resendEmail,
+		} = this.props;
 		const { usernameOrEmail, resendEmailCountdown } = this.state;
 		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
 
 		const emailTextOptions = {
 			components: {
 				sendEmailButton: (
-					<button onClick={ this.handleGravPoweredResendEmail } disabled={ isSendingEmail } />
+					<button
+						onClick={ () => {
+							resendEmail( usernameOrEmail, {
+								redirectTo: query?.redirect_to,
+								requestLoginEmailFormFlow: true,
+								createAccount: true,
+								flow: oauth2Client.name,
+								showGlobalNotices: true,
+							} );
+
+							this.props.recordTracksEvent(
+								'calypso_gravatar_powered_magic_login_click_resend_email',
+								{ type: 'link', client_id: oauth2Client.id, client_name: oauth2Client.name }
+							);
+						} }
+						disabled={ isSendingEmail }
+					/>
 				),
 				showMagicLoginButton: (
 					<button
@@ -444,7 +599,7 @@ class MagicLogin extends Component {
 
 	renderGravPoweredEmailCodeVerification() {
 		const { oauth2Client, isSendingEmail, translate } = this.props;
-		const { userEmail, verificationCodeInputValue } = this.state;
+		const { usernameOrEmail, isNewAccount, verificationCodeInputValue } = this.state;
 
 		return (
 			<div className="grav-powered-magic-login__content">
@@ -455,12 +610,11 @@ class MagicLogin extends Component {
 						'Enter the verification code we’ve sent to {{strong}}%(emailAddress)s{{/strong}}. A new Gravatar account will be created.',
 						{
 							components: { strong: <strong /> },
-							args: { emailAddress: userEmail },
+							args: { emailAddress: usernameOrEmail },
 						}
 					) }
 				</p>
-				{ /* TODO: Display for new users only */ }
-				{ true && this.renderGravPoweredMagicLoginTos() }
+				{ isNewAccount && this.renderGravPoweredMagicLoginTos() }
 				<form
 					className="grav-powered-magic-login__verification-code-form"
 					onSubmit={ this.handleVerificationCodeSubmit }
@@ -487,7 +641,21 @@ class MagicLogin extends Component {
 					</button>
 				</form>
 				<footer className="grav-powered-magic-login__footer">
-					<button onClick={ this.handleGravPoweredResendEmail } disabled={ isSendingEmail }>
+					<button
+						onClick={ () => {
+							this.handleGravPoweredSendEmailWithCode();
+
+							this.props.recordTracksEvent(
+								'calypso_gravatar_powered_magic_login_click_resend_email',
+								{
+									type: 'code',
+									client_id: oauth2Client.id,
+									client_name: oauth2Client.name,
+								}
+							);
+						} }
+						disabled={ isSendingEmail }
+					>
 						{ translate( 'Send again' ) }
 					</button>
 					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
@@ -500,7 +668,7 @@ class MagicLogin extends Component {
 
 	renderGravPoweredSecondaryEmailOptions() {
 		const { oauth2Client, translate } = this.props;
-		const { userEmail, isLoginWithMainAccount } = this.state;
+		const { usernameOrEmail, isNewAccount } = this.state;
 
 		return (
 			<div className="grav-powered-magic-login__content">
@@ -527,13 +695,13 @@ class MagicLogin extends Component {
 				<div className="grav-powered-magic-login__account-options">
 					<button
 						className={ clsx( 'grav-powered-magic-login__account-option', {
-							'grav-powered-magic-login__account-option--selected': isLoginWithMainAccount,
+							'grav-powered-magic-login__account-option--selected': ! isNewAccount,
 						} ) }
-						onClick={ () => this.setState( { isLoginWithMainAccount: true } ) }
+						onClick={ () => this.setState( { isNewAccount: false } ) }
 					>
 						{ translate( 'Log in with main account (recommended)' ) }
 					</button>
-					{ isLoginWithMainAccount && (
+					{ ! isNewAccount && (
 						<div>
 							{ translate(
 								'Log in with your main account and edit there your avatar for your secondary email address.'
@@ -542,19 +710,19 @@ class MagicLogin extends Component {
 					) }
 					<button
 						className={ clsx( 'grav-powered-magic-login__account-option', {
-							'grav-powered-magic-login__account-option--selected': ! isLoginWithMainAccount,
+							'grav-powered-magic-login__account-option--selected': isNewAccount,
 						} ) }
-						onClick={ () => this.setState( { isLoginWithMainAccount: false } ) }
+						onClick={ () => this.setState( { isNewAccount: true } ) }
 					>
 						{ translate( 'Create a new account' ) }
 					</button>
-					{ ! isLoginWithMainAccount && (
+					{ isNewAccount && (
 						<div>
 							{ translate(
 								'If you continue a new account will be created, and {{strong}}%(emailAddress)s{{/strong}} will be disconnected from the current main account.',
 								{
 									components: { strong: <strong /> },
-									args: { emailAddress: userEmail },
+									args: { emailAddress: usernameOrEmail },
 								}
 							) }
 						</div>
@@ -575,6 +743,12 @@ class MagicLogin extends Component {
 
 	renderGravPoweredMagicLogin() {
 		const { oauth2Client, translate, locale, query } = this.props;
+		const {
+			isFetchingGravatarInfo,
+			gravatarInfoErrorMesssage,
+			isRequestingEmail,
+			sendEmailErrorMessage,
+		} = this.state;
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const submitButtonLabel = isGravatar
@@ -596,6 +770,12 @@ class MagicLogin extends Component {
 			}
 		}
 
+		const isSubmitButtonDisabled =
+			isFetchingGravatarInfo ||
+			!! gravatarInfoErrorMesssage ||
+			isRequestingEmail ||
+			!! sendEmailErrorMessage;
+
 		return (
 			<>
 				{ this.renderLocaleSuggestions() }
@@ -609,11 +789,14 @@ class MagicLogin extends Component {
 						inputPlaceholder={ translate( 'Enter your email address' ) }
 						submitButtonLabel={ submitButtonLabel }
 						tosComponent={ ! isGravatar && this.renderGravPoweredMagicLoginTos() }
-						onSubmitEmail={ isGravatar && this.handleGravPoweredEmailSubmit }
+						onSubmitEmail={ isGravatar ? this.handleGravPoweredEmailSubmit : undefined }
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
-						errorMessage={ this.state.emailErrorMessage }
-						onErrorDismiss={ () => this.setState( { emailErrorMessage: null } ) }
+						errorMessage={ gravatarInfoErrorMesssage || sendEmailErrorMessage }
+						onErrorDismiss={ () =>
+							this.setState( { gravatarInfoErrorMesssage: null, sendEmailErrorMessage: null } )
+						}
+						isSubmitButtonDisabled={ isSubmitButtonDisabled }
 					/>
 					{ isGravatar && (
 						<div className="grav-powered-magic-login__feature-items">
@@ -807,12 +990,24 @@ class MagicLogin extends Component {
 	};
 
 	render() {
-		const { oauth2Client, showCheckYourEmail, query, translate } = this.props;
+		const {
+			oauth2Client,
+			query,
+			translate,
+			showCheckYourEmail: showEmailLinkVerification,
+		} = this.props;
+		const { showSecondaryEmailOptions, showEmailCodeVerification } = this.state;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-			const renderEmailVerification = isGravatarOAuth2Client( oauth2Client )
-				? this.renderGravPoweredEmailCodeVerification()
-				: this.renderGravPoweredEmailLinkVerification();
+			let renderContent = this.renderGravPoweredMagicLogin();
+
+			if ( showSecondaryEmailOptions ) {
+				renderContent = this.renderGravPoweredSecondaryEmailOptions();
+			} else if ( showEmailCodeVerification ) {
+				renderContent = this.renderGravPoweredEmailCodeVerification();
+			} else if ( showEmailLinkVerification ) {
+				renderContent = this.renderGravPoweredEmailLinkVerification();
+			}
 
 			return (
 				<Main
@@ -820,7 +1015,7 @@ class MagicLogin extends Component {
 						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
-					{ showCheckYourEmail ? renderEmailVerification : this.renderGravPoweredMagicLogin() }
+					{ renderContent }
 				</Main>
 			);
 		}
@@ -890,13 +1085,21 @@ const mapState = ( state ) => ( {
 		getInitialQueryArguments( state ).email_address,
 	localeSuggestions: getLocaleSuggestions( state ),
 	isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+	isAuthenticating: isFetchingMagicLoginAuth( state ),
+	isAuthenticated: getMagicLoginRequestedAuthSuccessfully( state ),
+	authError: getMagicLoginRequestAuthError( state ),
 } );
 
 const mapDispatch = {
 	hideMagicLoginRequestForm,
 	sendEmailLogin,
+	fetchMagicLoginAuthenticate,
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
+	infoNotice,
+	errorNotice,
+	successNotice,
+	removeNotice,
 };
 
 export default connect( mapState, mapDispatch )( localize( MagicLogin ) );
