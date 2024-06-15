@@ -10,11 +10,9 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_BUSINESS_2_YEARS,
-	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_PERSONAL_3_YEARS,
 	PLAN_PREMIUM_3_YEARS,
 	PLAN_BUSINESS_3_YEARS,
-	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_STARTER,
 	PLAN_ECOMMERCE,
@@ -693,11 +691,6 @@ export function generateSteps( {
 			providesDependencies: [ 'rewindconfig' ],
 		},
 
-		'rewind-migrate': {
-			stepName: 'rewind-migrate',
-			providesDependencies: [ 'rewindconfig' ],
-		},
-
 		'rewind-were-backing': {
 			stepName: 'rewind-were-backing',
 			providesDependencies: [],
@@ -868,18 +861,6 @@ export function generateSteps( {
 				cartItem: PLAN_BUSINESS_2_YEARS,
 			},
 		},
-
-		'plans-ecommerce-2y': {
-			stepName: 'plans-ecommerce-2y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE_2_YEARS,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
-			},
-		},
 		'plans-personal-3y': {
 			stepName: 'plans-personal-3y',
 			apiRequestFunction: addPlanToCart,
@@ -891,7 +872,6 @@ export function generateSteps( {
 				cartItem: PLAN_PERSONAL_3_YEARS,
 			},
 		},
-
 		'plans-premium-3y': {
 			stepName: 'plans-premium-3y',
 			apiRequestFunction: addPlanToCart,
@@ -915,19 +895,6 @@ export function generateSteps( {
 				cartItem: PLAN_BUSINESS_3_YEARS,
 			},
 		},
-
-		'plans-ecommerce-3y': {
-			stepName: 'plans-ecommerce-3y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE_3_YEARS,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
-			},
-		},
-
 		intent: {
 			stepName: 'intent',
 			dependencies: [ 'siteSlug' ],

@@ -51,21 +51,6 @@ function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.cartItems;
 }
 
-function getSiteDestination( dependencies ) {
-	let protocol = 'https';
-
-	/**
-	 * It is possible that non-wordpress.com sites are not HTTPS ready.
-	 *
-	 * Redirect them
-	 */
-	if ( ! dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ) {
-		protocol = 'http';
-	}
-
-	return protocol + '://' + dependencies.siteSlug;
-}
-
 function getRedirectDestination( dependencies ) {
 	try {
 		if (
@@ -259,7 +244,6 @@ function getEntrepreneurFlowDestination() {
 }
 
 const flows = generateFlows( {
-	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
 	getLaunchDestination,
