@@ -32,38 +32,45 @@ const UpsellStatsCard = ( { site }: Props ) => {
 		[ translate ]
 	);
 	const footerText = translate(
-		'Commercial sites require a paid plan, which comes with priority support and access to advanced features.'
+		'Commercial sites require a paid plan, which you can purchase at a discount within {{a}}the marketplace{{/a}}.',
+		{
+			components: {
+				a: <a href="/marketplace/products?search_query=stats" />,
+			},
+		}
 	);
 	const primaryUrl = site?.url
 		? `https://${ site.url }/wp-admin/plugin-install.php?s=jetpack&tab=search&type=term`
 		: '';
 
 	return (
-		<JetpackRnaActionCard
-			headerText={ title }
-			subHeaderText={ description }
-			onCtaButtonClick={ () => {} }
-			ctaButtonURL={ primaryUrl }
-			ctaButtonLabel={ translate( 'Get Jetpack Stats' ) }
-			ctaButtonExternal
-			cardImage={ StatsImage }
-			cardImageAlt={ translate( 'Jetpack Stats Logo' ) }
-			secondaryCtaLabel={ translate( 'Learn More' ) }
-			secondaryCtaURL="https://jetpack.com/stats/"
-			secondaryCtaExternal
-			wrapperClass="upsell-stats-card__wrapper"
-		>
-			<ul className="upsell-stats-card__features">
-				{ !! features?.length &&
-					features.map( ( feature, i ) => (
-						<li className="upsell-stats-card__features-item" key={ i }>
-							<Gridicon size={ 18 } icon="checkmark" />
-							{ feature }
-						</li>
-					) ) }
-			</ul>
-			<div className="upsell-stats-card__footer">{ footerText }</div>
-		</JetpackRnaActionCard>
+		<div>
+			<JetpackRnaActionCard
+				headerText={ title }
+				subHeaderText={ description }
+				onCtaButtonClick={ () => {} }
+				ctaButtonURL={ primaryUrl }
+				ctaButtonLabel={ translate( 'Get Jetpack Stats' ) }
+				ctaButtonExternal
+				cardImage={ StatsImage }
+				cardImageAlt={ translate( 'Jetpack Stats Logo' ) }
+				secondaryCtaLabel={ translate( 'Learn more' ) }
+				secondaryCtaURL="https://jetpack.com/stats/"
+				secondaryCtaExternal
+				wrapperClass="upsell-stats-card__wrapper"
+			>
+				<ul className="upsell-stats-card__features">
+					{ !! features?.length &&
+						features.map( ( feature, i ) => (
+							<li className="upsell-stats-card__features-item" key={ i }>
+								<Gridicon size={ 24 } icon="checkmark" />
+								<div>{ feature }</div>
+							</li>
+						) ) }
+				</ul>
+				<div className="upsell-stats-card__footer">{ footerText }</div>
+			</JetpackRnaActionCard>
+		</div>
 	);
 };
 

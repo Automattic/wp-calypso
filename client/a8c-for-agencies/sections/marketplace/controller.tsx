@@ -17,7 +17,7 @@ export const marketplaceContext: Callback = () => {
 };
 
 export const marketplaceProductsContext: Callback = ( context, next ) => {
-	const { site_id, product_slug, purchase_type } = context.query;
+	const { site_id, product_slug, purchase_type, search_query } = context.query;
 	const productBrand = context.params.brand;
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
@@ -30,6 +30,7 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 				suggestedProduct={ product_slug }
 				defaultMarketplaceType={ purchaseType }
 				productBrand={ getValidBrand( productBrand ) }
+				searchQuery={ search_query }
 			/>
 		</>
 	);

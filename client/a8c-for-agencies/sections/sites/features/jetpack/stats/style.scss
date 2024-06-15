@@ -6,6 +6,8 @@
 
 	.upsell-stats-card__features-item {
 		margin-bottom: 12px;
+		display: flex;
+
 		span {
 			.is-placeholder & {
 				@include placeholder( --studio-gray-5 );
@@ -15,12 +17,14 @@
 		.gridicon {
 			fill: var(--studio-jetpack-green-50);
 			margin-right: 8px;
+			min-width: 24px;
 		}
 	}
 
 	.upsell-stats-card__footer {
-		margin-block-start: 24px;
+		margin-block-start: 32px;
 		font-weight: 400;
+		width: 110%;
 	}
 
 	.jetpack-rna-action-card__action {
@@ -50,7 +54,12 @@
 				padding: 8px 32px;
 				border-style: solid;
 				border-width: 1px;
+
+				&:hover {
+					color: var(--color-primary-70);
+				}
 			}
+
 		}
 
 		.gridicon {
