@@ -567,16 +567,6 @@ export function generateFlows( {
 			disallowResume: false,
 		},
 		{
-			name: 'ecommerce-3y',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-3y' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2024-04-17',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-
-		{
 			name: 'business-2y',
 			steps: [ userSocialStep, 'domains', 'plans-business-2y' ],
 			destination: getSignupDestination,
