@@ -12,26 +12,27 @@ import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { Step } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import './style.scss';
 import { useSocialService } from './use-social-service';
 
-const StepContent: Step = ( { flow, stepName, navigation } ) => {
-	const { submit } = navigation;
+const StepContent = ( { flow, onLogin }: { flow: string; onLogin?: () => void } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
+	const {
+		handleSocialResponse,
+		notice,
+		accountCreateResponse,
+		storedRedirectToFromBeforeLoggingIn,
+	} = useHandleSocialResponse( flow );
 	const { socialService, socialServiceResponse } = useSocialService();
 
 	useEffect( () => {
-		if ( isLoggedIn ) {
-			submit?.();
-		} else {
+		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		}
-	}, [ dispatch, isLoggedIn, submit ] );
+	}, [ dispatch, isLoggedIn ] );
 
 	const loginLink = login( {
 		signupUrl: window.location.pathname + window.location.search,
@@ -42,11 +43,11 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 			<FormattedHeader align="center" headerText={ translate( 'Create your account' ) } brandFont />
 			<SignupFormSocialFirst
 				step={ {} }
-				stepName={ stepName }
+				stepName="user"
 				flowName={ flow }
 				goToNextStep={ () => {
 					dispatch( fetchCurrentUser() as unknown as AnyAction );
-					submit?.();
+					onLogin?.();
 				} }
 				logInUrl={ loginLink }
 				handleSocialResponse={ handleSocialResponse }
@@ -63,14 +64,18 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 				<WpcomLoginForm
 					authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
 					log={ accountCreateResponse.username }
-					redirectTo={ window.location.href }
+					// We want to go back to the URL that we were at before logging in.
+					redirectTo={ storedRedirectToFromBeforeLoggingIn }
 				/>
 			) }
 		</>
 	);
 };
 
-const UserStep: Step = function UserStep( props ) {
+const UserStep: React.FC< { flow: string; onLogin?: () => void } > = function UserStep( {
+	onLogin,
+	flow,
+} ) {
 	const translate = useTranslate();
 
 	return (
@@ -81,7 +86,7 @@ const UserStep: Step = function UserStep( props ) {
 			isFullLayout
 			isLargeSkipLayout={ false }
 			hideBack
-			stepContent={ <StepContent { ...props } /> }
+			stepContent={ <StepContent flow={ flow } onLogin={ onLogin } /> }
 			recordTracksEvent={ recordTracksEvent }
 			customizedActionButtons={
 				<Button
