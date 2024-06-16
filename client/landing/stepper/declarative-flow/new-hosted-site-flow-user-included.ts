@@ -14,6 +14,7 @@ import { useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
@@ -24,7 +25,7 @@ const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	isSignupFlow: true,
 	useSteps() {
-		return [
+		return stepsWithRequiredLogin( [
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'trialAcknowledge',
@@ -38,7 +39,7 @@ const hosting: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
-		];
+		] );
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
