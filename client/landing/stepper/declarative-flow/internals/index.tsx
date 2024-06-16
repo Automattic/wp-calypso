@@ -38,6 +38,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
 	const flowSteps = flow.useSteps();
+
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 
 	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
@@ -196,4 +197,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			<AsyncCheckoutModal siteId={ site?.ID } />
 		</Suspense>
 	);
+};
+
+export const FlowComponentRenderer: React.FC< { flow: React.FC< any > } > = ( {
+	flow: FlowComponent,
+} ) => {
+	// Configure app element that React Modal will aria-hide when modal is open
+	Modal.setAppElement( '#wpcom' );
+
+	return <FlowComponent />;
 };
