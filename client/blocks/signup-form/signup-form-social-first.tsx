@@ -5,6 +5,7 @@ import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -14,7 +15,7 @@ import SocialSignupForm from './social';
 import './style.scss';
 
 interface SignupFormSocialFirst {
-	goToNextStep: () => void;
+	goToNextStep: ( data: AccountCreateReturn ) => void;
 	step: object;
 	stepName: string;
 	flowName: string;

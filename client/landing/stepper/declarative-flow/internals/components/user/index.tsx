@@ -1,13 +1,14 @@
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
+import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -16,7 +17,7 @@ import { useHandleSocialResponse } from './handle-social-response';
 import './style.scss';
 import { useSocialService } from './use-social-service';
 
-const StepContent = ( { flow, onLogin }: { flow: string; onLogin?: () => void } ) => {
+const StepContent = ( { flow }: { flow: string } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -26,12 +27,12 @@ const StepContent = ( { flow, onLogin }: { flow: string; onLogin?: () => void } 
 		accountCreateResponse,
 		storedRedirectToFromBeforeLoggingIn,
 	} = useHandleSocialResponse( flow );
+	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialService, socialServiceResponse } = useSocialService();
+	const response = wpAccountCreateResponse || accountCreateResponse;
 
 	useEffect( () => {
-		if ( ! isLoggedIn ) {
-			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		}
+		dispatch( fetchCurrentUser() as unknown as AnyAction );
 	}, [ dispatch, isLoggedIn ] );
 
 	const loginLink = login( {
@@ -45,10 +46,7 @@ const StepContent = ( { flow, onLogin }: { flow: string; onLogin?: () => void } 
 				step={ {} }
 				stepName="user"
 				flowName={ flow }
-				goToNextStep={ () => {
-					dispatch( fetchCurrentUser() as unknown as AnyAction );
-					onLogin?.();
-				} }
+				goToNextStep={ setWpAccountCreateResponse }
 				logInUrl={ loginLink }
 				handleSocialResponse={ handleSocialResponse }
 				socialService={ socialService }
@@ -60,11 +58,11 @@ const StepContent = ( { flow, onLogin }: { flow: string; onLogin?: () => void } 
 				notice={ notice }
 				isSocialFirst
 			/>
-			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
+			{ response && 'bearer_token' in response && (
 				<WpcomLoginForm
-					authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
-					log={ accountCreateResponse.username }
-					// We want to go back to the URL that we were at before logging in.
+					authorization={ 'Bearer ' + response.bearer_token }
+					log={ response.username }
+					// We want to go back to the URL that we were at before logging in. Not the current URL.
 					redirectTo={ storedRedirectToFromBeforeLoggingIn }
 				/>
 			) }
@@ -72,10 +70,7 @@ const StepContent = ( { flow, onLogin }: { flow: string; onLogin?: () => void } 
 	);
 };
 
-const UserStep: React.FC< { flow: string; onLogin?: () => void } > = function UserStep( {
-	onLogin,
-	flow,
-} ) {
+const UserStep: React.FC< { flow: string } > = function UserStep( { flow } ) {
 	const translate = useTranslate();
 
 	return (
@@ -86,7 +81,7 @@ const UserStep: React.FC< { flow: string; onLogin?: () => void } > = function Us
 			isFullLayout
 			isLargeSkipLayout={ false }
 			hideBack
-			stepContent={ <StepContent flow={ flow } onLogin={ onLogin } /> }
+			stepContent={ <StepContent flow={ flow } /> }
 			recordTracksEvent={ recordTracksEvent }
 			customizedActionButtons={
 				<Button
