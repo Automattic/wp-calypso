@@ -112,22 +112,22 @@ describe( 'URL Validation', () => {
 		{
 			input: 'ftp://example.com',
 			error:
-				"URLs usually start with http:// or https://, but it looks like you might have used something different (like file:// or localhost://). Please try again with something similar to 'https://example.com'",
+				"URLs usually start with http:// or https:// (rather than file:/, ftp://, or similar). Please try again with a URL like 'https://example.com'.",
 		},
 		{
 			input: 'file:///C:/DEVELOPER/index.html',
 			error:
-				"URLs usually start with http:// or https://, but it looks like you might have used something different (like file:// or localhost://). Please try again with something similar to 'https://example.com'",
+				"URLs usually start with http:// or https:// (rather than file:/, ftp://, or similar). Please try again with a URL like 'https://example.com'.",
 		},
 		{
 			input: 'https://xn--example.com',
 			error:
-				'Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like ‘example.com’).',
+				"Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like 'example.com').",
 		},
 		{
 			input: 'www.例子.测试',
 			error:
-				'Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like ‘example.com’).',
+				"Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like 'example.com').",
 		},
 		{
 			input: 'example.com-',

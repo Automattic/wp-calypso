@@ -26,17 +26,17 @@ function getErrorMessages(
 		},
 		'invalid-protocol': {
 			message: translate(
-				"URLs usually start with http:// or https://, but it looks like you might have used something different (like file:// or localhost://). Please try again with something similar to 'https://example.com'"
+				"URLs usually start with http:// or https:// (rather than file:/, ftp://, or similar). Please try again with a URL like 'https://example.com'."
 			),
 			messageString:
-				"URLs usually start with http:// or https://, but it looks like you might have used something different (like file:// or localhost://). Please try again with something similar to 'https://example.com'",
+				"URLs usually start with http:// or https:// (rather than file:/, ftp://, or similar). Please try again with a URL like 'https://example.com'.",
 		},
 		'idn-url': {
 			message: translate(
-				'Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like ‘example.com’).'
+				"Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like 'example.com')."
 			),
 			messageString:
-				'Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like ‘example.com’).',
+				"Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like 'example.com').",
 		},
 		default: {
 			message: translate(
