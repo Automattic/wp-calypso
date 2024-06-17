@@ -47,7 +47,7 @@ class RemoveDomainDialog extends Component {
 				{ isGravatarDomain && (
 					<p>
 						{ translate(
-							"Also, this is a free domain for your Gravatar profile. If it is deleted, you won't be able to get another free domain to use with your Gravatar profile."
+							'This domain is provided at no cost for the first year for use with your Gravatar profile. This offer is limited to one free domain per user. If you cancel this domain, you will have to pay the standard price to register another domain for your Gravatar profile.'
 						) }
 					</p>
 				) }

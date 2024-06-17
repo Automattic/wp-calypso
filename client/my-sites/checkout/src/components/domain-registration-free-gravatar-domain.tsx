@@ -20,7 +20,7 @@ export function DomainRegistrationFreeGravatarDomain(
 	return (
 		<CheckoutTermsItem>
 			{ translate(
-				"This is a free domain for your Gravatar profile. You're eligible to only one free domain for your Gravatar profile."
+				'This domain is provided at no cost for the first year for use with your Gravatar profile. This offer is limited to one free domain per user. If you cancel this domain, you will have to pay the standard price to register another domain for your Gravatar profile.'
 			) }
 		</CheckoutTermsItem>
 	);
