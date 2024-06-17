@@ -7,6 +7,7 @@ import {
 	MAP_SUBDOMAIN,
 	SETTING_PRIMARY_DOMAIN,
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
+	DOMAIN_EXPIRATION,
 } from '@automattic/urls';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
@@ -318,9 +319,38 @@ export class DomainWarnings extends PureComponent {
 					comment: '%(timeSince)s is something like "a year ago"',
 				}
 			);
+			if ( expiredDomains[ 0 ].aftermarketAuction ) {
+				text = translate(
+					'The domain {{strong}}%(domainName)s{{/strong}} expired %(timeSince)s. ' +
+						"It's no longer available to manage or renew. " +
+						'We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}. {{a}}Learn more{{/a}}',
+					{
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									href={ localizeUrl( DOMAIN_EXPIRATION ) }
+									rel="noopener noreferrer"
+									target="_blank"
+								/>
+							),
+						},
+						args: {
+							timeSince: moment( expiredDomains[ 0 ].expiry ).fromNow(),
+							domainName: expiredDomains[ 0 ].name,
+							owner: expiredDomains[ 0 ].owner,
+							aftermarketAuctionEnd: moment
+								.utc( expiredDomains[ 0 ].aftermarketAuctionEnd )
+								.format( 'LL' ),
+						},
+						context: 'Expired domain notice',
+						comment: '%(timeSince)s is something like "a year ago"',
+					}
+				);
+			}
 		} else {
 			text = translate(
-				'Some domains on this site expired recently. They can be renewed by their owners.',
+				'Some domains on this site expired recently. They can be renewed by their owners depending on the expiration date.',
 				{
 					context: 'Expired domain notice',
 				}
