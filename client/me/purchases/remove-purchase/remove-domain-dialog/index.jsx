@@ -32,7 +32,7 @@ class RemoveDomainDialog extends Component {
 	};
 
 	renderDomainDeletionWarning( productName ) {
-		const { translate, slug, currentRoute, isGravatarDOmain } = this.props;
+		const { translate, slug, currentRoute, isGravatarDomain } = this.props;
 
 		return (
 			<Fragment>
@@ -44,10 +44,10 @@ class RemoveDomainDialog extends Component {
 						}
 					) }
 				</p>
-				{ isGravatarDOmain && (
+				{ isGravatarDomain && (
 					<p>
 						{ translate(
-							"Also, this is a free Gravatar domain. If if is deleted, you won't be able to get another free domain to use with Gravatar."
+							"Also, this is a free Gravatar domain. If it is deleted, you won't be able to get another free domain to use with Gravatar."
 						) }
 					</p>
 				) }
@@ -274,7 +274,7 @@ export default connect( ( state, ownProps ) => {
 	const selectedDomainName = getName( ownProps.purchase );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 	return {
-		isGravatarDOmain: selectedDomain.isGravatarDomain,
+		isGravatarDomain: selectedDomain.isGravatarDomain,
 		hasTitanWithUs: hasTitanMailWithUs( selectedDomain ),
 		currentRoute: getCurrentRoute( state ),
 		slug: getSelectedSiteSlug( state ),
