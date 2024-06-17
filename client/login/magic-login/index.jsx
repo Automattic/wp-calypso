@@ -96,7 +96,8 @@ class MagicLogin extends Component {
 		resendEmailCountdown: RESEND_EMAIL_COUNTDOWN_TIME,
 		verificationCodeInputValue: '',
 		isRequestingEmail: false,
-		sendEmailErrorMessage: null,
+		requestEmailErrorMessage: null,
+		isSecondaryEmail: false,
 		isNewAccount: false,
 		publicToken: null,
 		showSecondaryEmailOptions: false,
@@ -296,8 +297,9 @@ class MagicLogin extends Component {
 		);
 	}
 
-	handleGravPoweredSendEmailCode = async ( email = this.state.usernameOrEmail ) => {
+	sendGravPoweredEmailCode = async ( email, cb = () => {} ) => {
 		const { oauth2Client, query, locale, translate } = this.props;
+		const { isSecondaryEmail, isNewAccount } = this.state;
 		const noticeId = 'email-code-notice';
 		const duration = 4000;
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
@@ -324,10 +326,12 @@ class MagicLogin extends Component {
 					create_account: true,
 					tos: getToSAcceptancePayload(),
 					token_type: 'code',
+					...( isSecondaryEmail ? { gravatar_main: ! isNewAccount } : {} ),
 				},
 			} );
 
 			this.setState( { publicToken: public_token, showEmailCodeVerification: true } );
+			cb();
 
 			this.props.removeNotice( noticeId );
 			this.props.successNotice( translate( 'Email Sent. Check your mail app!' ), { duration } );
@@ -335,10 +339,10 @@ class MagicLogin extends Component {
 			this.props.recordTracksEvent( 'calypso_gravatar_login_email_code_success', eventOptions );
 		} catch ( error ) {
 			if ( error.error ) {
-				this.setState( { sendEmailErrorMessage: error.message } );
+				this.setState( { requestEmailErrorMessage: error.message } );
 			} else {
 				this.setState( {
-					sendEmailErrorMessage: translate( 'Something went wrong. Please try again.' ),
+					requestEmailErrorMessage: translate( 'Something went wrong. Please try again.' ),
 				} );
 			}
 
@@ -362,7 +366,7 @@ class MagicLogin extends Component {
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
 
 		if ( ! emailValidator.validate( usernameOrEmail ) ) {
-			return this.setState( { sendEmailErrorMessage: translate( 'Invalid email.' ) } );
+			return this.setState( { requestEmailErrorMessage: translate( 'Invalid email.' ) } );
 		}
 
 		this.setState( { usernameOrEmail, isRequestingEmail: true } );
@@ -377,14 +381,15 @@ class MagicLogin extends Component {
 
 			if ( is_secondary ) {
 				this.setState( {
+					isSecondaryEmail: true,
 					usernameOrEmail,
 					showSecondaryEmailOptions: true,
-					isRequestingEmail: false,
 					username: main_username,
 					maskedEmailAddress: main_email_masked,
+					isRequestingEmail: false,
 				} );
 			} else {
-				this.handleGravPoweredSendEmailCode( usernameOrEmail );
+				this.sendGravPoweredEmailCode( usernameOrEmail );
 			}
 
 			this.props.recordTracksEvent( 'calypso_gravatar_get_gravatar_info_success', eventOptions );
@@ -392,16 +397,16 @@ class MagicLogin extends Component {
 			switch ( error.error ) {
 				case 'not_found':
 					this.setState( { isNewAccount: true } );
-					this.handleGravPoweredSendEmailCode( usernameOrEmail );
+					this.sendGravPoweredEmailCode( usernameOrEmail );
 					break;
 				case 'invalid_email':
 					this.setState( {
-						sendEmailErrorMessage: translate( 'Invalid email.' ),
+						requestEmailErrorMessage: translate( 'Invalid email.' ),
 						isRequestingEmail: false,
 					} );
 				default:
 					this.setState( {
-						sendEmailErrorMessage: translate( 'Something went wrong. Please try again.' ),
+						requestEmailErrorMessage: translate( 'Something went wrong. Please try again.' ),
 						isRequestingEmail: false,
 					} );
 			}
@@ -438,9 +443,9 @@ class MagicLogin extends Component {
 	};
 
 	handleGravPoweredSwitchEmail = () => {
-		const { hideMagicLoginRequestForm: showMagicLogin, oauth2Client } = this.props;
+		const { oauth2Client } = this.props;
 
-		showMagicLogin();
+		this.setState( { showSecondaryEmailOptions: false } );
 
 		this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_switch_email', {
 			client_id: oauth2Client.id,
@@ -521,7 +526,14 @@ class MagicLogin extends Component {
 
 	renderGravPoweredSecondaryEmailOptions() {
 		const { oauth2Client, translate } = this.props;
-		const { usernameOrEmail, isNewAccount, maskedEmailAddress, username } = this.state;
+		const {
+			usernameOrEmail,
+			isNewAccount,
+			maskedEmailAddress,
+			username,
+			isRequestingEmail,
+			requestEmailErrorMessage,
+		} = this.state;
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
 
 		return (
@@ -594,7 +606,27 @@ class MagicLogin extends Component {
 						</div>
 					) }
 				</div>
-				<button className="button form-button is-primary">{ translate( 'Continue' ) }</button>
+				{ requestEmailErrorMessage && (
+					<Notice
+						duration={ 10000 }
+						text={ requestEmailErrorMessage }
+						className="magic-login__request-login-email-form-notice"
+						showDismiss={ false }
+						onDismissClick={ () => this.setState( { requestEmailErrorMessage: null } ) }
+						status="is-transparent-info"
+					/>
+				) }
+				<button
+					className="button form-button is-primary"
+					onClick={ () =>
+						this.sendGravPoweredEmailCode( usernameOrEmail, () =>
+							this.setState( { showSecondaryEmailOptions: false } )
+						)
+					}
+					disabled={ isRequestingEmail || !! requestEmailErrorMessage }
+				>
+					{ translate( 'Continue' ) }
+				</button>
 				<footer className="grav-powered-magic-login__footer">
 					<button onClick={ this.handleGravPoweredSwitchEmail }>
 						{ translate( 'Switch email' ) }
@@ -676,7 +708,7 @@ class MagicLogin extends Component {
 				<footer className="grav-powered-magic-login__footer">
 					<button
 						onClick={ () => {
-							this.handleGravPoweredSendEmailCode();
+							this.sendGravPoweredEmailCode();
 
 							this.props.recordTracksEvent(
 								'calypso_gravatar_powered_magic_login_click_resend_email',
@@ -781,7 +813,7 @@ class MagicLogin extends Component {
 
 	renderGravPoweredMagicLogin() {
 		const { oauth2Client, translate, locale, query } = this.props;
-		const { isRequestingEmail, sendEmailErrorMessage } = this.state;
+		const { isRequestingEmail, requestEmailErrorMessage } = this.state;
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const submitButtonLabel = isGravatar
@@ -819,9 +851,9 @@ class MagicLogin extends Component {
 						onSubmitEmail={ isGravatar ? this.handleGravPoweredEmailSubmit : undefined }
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
-						errorMessage={ sendEmailErrorMessage || sendEmailErrorMessage }
-						onErrorDismiss={ () => this.setState( { sendEmailErrorMessage: null } ) }
-						isSubmitButtonDisabled={ isRequestingEmail || !! sendEmailErrorMessage }
+						errorMessage={ requestEmailErrorMessage || requestEmailErrorMessage }
+						onErrorDismiss={ () => this.setState( { requestEmailErrorMessage: null } ) }
+						isSubmitButtonDisabled={ isRequestingEmail || !! requestEmailErrorMessage }
 					/>
 					{ isGravatar && (
 						<div className="grav-powered-magic-login__feature-items">
