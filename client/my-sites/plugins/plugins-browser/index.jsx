@@ -60,7 +60,7 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isL
 	return null;
 };
 
-const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader } ) => {
+const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
@@ -163,14 +163,12 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				}
 			/>
 
-			{ ! hideHeader && (
-				<PluginsNavigationHeader
-					navigationHeaderRef={ navigationHeaderRef }
-					categoryName={ categoryName }
-					category={ category }
-					search={ search }
-				/>
-			) }
+			<PluginsNavigationHeader
+				navigationHeaderRef={ navigationHeaderRef }
+				categoryName={ categoryName }
+				category={ category }
+				search={ search }
+			/>
 			<div className="plugins-browser__content-wrapper">
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
