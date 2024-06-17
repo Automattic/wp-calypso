@@ -97,7 +97,6 @@ class MagicLogin extends Component {
 		verificationCodeInputValue: '',
 		isRequestingEmail: false,
 		requestEmailErrorMessage: null,
-		isSecondaryEmail: false,
 		isNewAccount: false,
 		publicToken: null,
 		showSecondaryEmailOptions: false,
@@ -299,7 +298,7 @@ class MagicLogin extends Component {
 
 	sendGravPoweredEmailCode = async ( email, cb = () => {} ) => {
 		const { oauth2Client, query, locale, translate } = this.props;
-		const { isSecondaryEmail, isNewAccount } = this.state;
+		const { showSecondaryEmailOptions: isSecondaryEmail, isNewAccount } = this.state;
 		const noticeId = 'email-code-notice';
 		const duration = 4000;
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
@@ -381,7 +380,6 @@ class MagicLogin extends Component {
 
 			if ( is_secondary ) {
 				this.setState( {
-					isSecondaryEmail: true,
 					usernameOrEmail,
 					showSecondaryEmailOptions: true,
 					username: main_username,
