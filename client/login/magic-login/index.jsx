@@ -59,7 +59,6 @@ import RequestLoginEmailForm from './request-login-email-form';
 import './style.scss';
 
 const RESEND_EMAIL_COUNTDOWN_TIME = 90; // In seconds
-const INFO_NOTICE_ID = 'email-code-info-notice';
 
 class MagicLogin extends Component {
 	static propTypes = {
@@ -298,13 +297,14 @@ class MagicLogin extends Component {
 
 	handleGravPoweredSendEmailWithCode = async ( email = this.state.usernameOrEmail ) => {
 		const { oauth2Client, query, locale, translate } = this.props;
+		const noticeId = 'email-code-notice';
 		const duration = 4000;
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
 
 		this.setState( { isRequestingEmail: true } );
 
 		try {
-			this.props.infoNotice( translate( 'Sending email…' ), { id: INFO_NOTICE_ID, duration } );
+			this.props.infoNotice( translate( 'Sending email…' ), { id: noticeId, duration } );
 
 			this.props.recordTracksEvent( 'calypso_gravatar_login_email_code_submit', eventOptions );
 
@@ -328,7 +328,7 @@ class MagicLogin extends Component {
 
 			this.setState( { publicToken: public_token, showEmailCodeVerification: true } );
 
-			this.props.removeNotice( INFO_NOTICE_ID );
+			this.props.removeNotice( noticeId );
 			this.props.successNotice( translate( 'Email Sent. Check your mail app!' ), { duration } );
 
 			this.props.recordTracksEvent( 'calypso_gravatar_login_email_code_success', eventOptions );
@@ -341,7 +341,7 @@ class MagicLogin extends Component {
 				} );
 			}
 
-			this.props.removeNotice( INFO_NOTICE_ID );
+			this.props.removeNotice( noticeId );
 			this.props.errorNotice( translate( 'Sorry, we couldn’t send the email.' ), { duration } );
 
 			this.props.recordTracksEvent( 'calypso_gravatar_login_email_code_failure', {
