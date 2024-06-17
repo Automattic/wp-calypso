@@ -59,27 +59,31 @@ const StepContent = ( {
 	// The adminUrl points to the .wordpress.com domain for this site, so we'll use this for the preview.
 	const iFrameURL = adminUrl ? new URL( adminUrl as string ).host : null;
 
+	const header = (
+		<>
+			<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
+			<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
+		</>
+	);
+
+	const sidebar = (
+		<Sidebar
+			sidebarDomain={ sidebarDomain }
+			launchpadKey={ launchpadKey }
+			siteSlug={ siteSlug }
+			submit={ submit }
+			goNext={ goNext }
+			goToStep={ goToStep }
+			flow={ flow }
+		/>
+	);
+
 	return (
 		<LaunchpadContainer
 			headerClassName="launchpad__sidebar-header"
 			sidebarClassName="launchpad__sidebar"
-			header={
-				<>
-					<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
-					<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
-				</>
-			}
-			sidebar={
-				<Sidebar
-					sidebarDomain={ sidebarDomain }
-					launchpadKey={ launchpadKey }
-					siteSlug={ siteSlug }
-					submit={ submit }
-					goNext={ goNext }
-					goToStep={ goToStep }
-					flow={ flow }
-				/>
-			}
+			header={ header }
+			sidebar={ sidebar }
 		>
 			<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
 		</LaunchpadContainer>

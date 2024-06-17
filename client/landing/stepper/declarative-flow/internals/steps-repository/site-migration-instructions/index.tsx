@@ -7,8 +7,10 @@ import type { Step } from '../../types';
 import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
+	const sidebar = <div>Sidebar</div>;
+
 	const stepContent = (
-		<LaunchpadContainer sidebar={ <div>Sidebar</div> }>
+		<LaunchpadContainer sidebar={ sidebar }>
 			<div>New migration instructions!</div>
 		</LaunchpadContainer>
 	);
