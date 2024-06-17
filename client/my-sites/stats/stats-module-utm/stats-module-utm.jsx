@@ -125,12 +125,7 @@ const StatsModuleUTM = ( {
 				data={ data }
 				useShortLabel={ useShortLabel }
 				title={ moduleStrings?.title }
-				emptyMessage={
-					<div>
-						{ moduleStrings.empty }
-						{ /* { isBuilderEnabled && <UTMBuilder /> } */ }
-					</div>
-				}
+				emptyMessage={ <div>{ moduleStrings.empty }</div> }
 				metricLabel={ metricLabel }
 				showMore={
 					displaySummaryLink && ! summary

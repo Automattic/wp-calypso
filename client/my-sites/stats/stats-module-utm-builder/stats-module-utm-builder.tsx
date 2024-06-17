@@ -32,7 +32,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
 				onClick={ handleClick }
 				variant="secondary"
 			>
-				{ translate( 'Open UTM Builder' ) }
+				{ translate( 'URL Builder' ) }
 			</Button>
 			{ isOpen && (
 				<Modal
