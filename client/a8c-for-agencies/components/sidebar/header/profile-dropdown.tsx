@@ -36,7 +36,7 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 		<ul className="a4a-sidebar__profile-dropdown-menu" hidden={ ! isExpanded }>
 			<li className="a4a-sidebar__profile-dropdown-menu-item">
 				<Button borderless onClick={ onGetHelp }>
-					{ translate( 'Contact sales' ) }
+					{ translate( 'Contact support' ) }
 				</Button>
 			</li>
 			<li className="a4a-sidebar__profile-dropdown-menu-item">
