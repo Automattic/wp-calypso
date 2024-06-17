@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .referral-details__subtitle {
 	margin-block-start: 16px;
 }
@@ -8,4 +10,13 @@
 	top: -1px;
 	left: 8px;
 	text-decoration: underline;
+}
+
+.item-preview__pane.referral-details-items {
+	.item-preview__content {
+		@media (max-width: $break-mobile) {
+			height: 75vh;
+			padding: 18px;
+		}
+	}
 }

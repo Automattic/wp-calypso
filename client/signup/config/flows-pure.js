@@ -186,7 +186,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding',
-			steps: [ userSocialStep, 'new-user-survey', 'domains', 'plans' ],
+			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2023-10-11',

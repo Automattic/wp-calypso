@@ -47,7 +47,6 @@ export function generateSteps( {
 	excludeStepIfEmailVerified = noop,
 	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
-	excludeSurveyStepIfInactive = noop,
 	excludeSegmentSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
@@ -249,10 +248,6 @@ export function generateSteps( {
 
 		test: {
 			stepName: 'test',
-		},
-		'new-user-survey': {
-			stepName: 'new-user-survey',
-			fulfilledStepCallback: excludeSurveyStepIfInactive,
 		},
 		plans: {
 			stepName: 'plans',
