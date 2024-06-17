@@ -130,9 +130,7 @@ class ReaderShare extends Component {
 							{ ReaderShareIcon( {
 								iconSize: this.props.iconSize,
 							} ) }
-							{ this.props.showLabel && (
-								<span className="reader-share__label">{ translate( 'Share' ) }</span>
-							) }
+							<span className="reader-share__label">{ translate( 'Share' ) }</span>
 						</>
 					) : (
 						<>
@@ -142,11 +140,9 @@ class ReaderShare extends Component {
 								title={ reblogTitle }
 								style={ { height: this.props.iconSize, width: this.props.iconSize } }
 							/>
-							{ this.props.showLabel && (
-								<span className="reader-share__label" title={ reblogTitle }>
-									{ translate( 'Reblog' ) }
-								</span>
-							) }
+							<span className="reader-share__label" title={ reblogTitle }>
+								{ translate( 'Repost' ) }
+							</span>
 						</>
 					) }
 				</Button>
