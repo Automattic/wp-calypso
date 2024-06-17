@@ -22,7 +22,16 @@ interface SignupFormSocialFirst {
 	logInUrl: string;
 	socialService: string;
 	socialServiceResponse: object;
-	handleSocialResponse: () => void;
+	handleSocialResponse: (
+		service: string,
+		access_token: string,
+		id_token: string | null,
+		userData: {
+			password: string;
+			email: string;
+			extra: { first_name: string; last_name: string; username_hint: string };
+		} | null
+	) => void;
 	isReskinned: boolean;
 	queryArgs: object;
 	userEmail: string;

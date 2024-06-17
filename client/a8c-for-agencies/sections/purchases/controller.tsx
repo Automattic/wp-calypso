@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { type Callback } from '@automattic/calypso-router';
+import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import PurchasesSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/purchases';
 import {
 	publicToInternalLicenseFilter,
@@ -11,7 +12,6 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingDashboard from './billing/billing-dashboard';
 import InvoicesOverview from './invoices/invoices-overview';
 import LicensesOverview from './licenses/licenses-overview';

@@ -21,7 +21,8 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
-import { isAnyHostingFlow } from '@automattic/onboarding';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { ONBOARDING_GUIDED_FLOW, isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
 	ComparisonGrid,
@@ -57,6 +58,7 @@ import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-ite
 import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
+import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -243,6 +245,7 @@ const PlansFeaturesMain = ( {
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
@@ -395,6 +398,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		forceDefaultIntent: shouldForceDefaultPlansBasedOnIntent( intent ),
 	} );
 
 	let highlightLabelOverrides: { [ K in PlanSlug ]?: TranslateResult } | undefined;
@@ -677,6 +681,22 @@ const PlansFeaturesMain = ( {
 		? getWooExpressFeaturesGroupedForFeaturesGrid()
 		: getPlanFeaturesGroupedForFeaturesGrid();
 
+	const getComparisonGridToggleLabel = () => {
+		if ( showPlansComparisonGrid ) {
+			return translate( 'Hide comparison' );
+		}
+		if (
+			Array.isArray( gridPlansForFeaturesGrid ) &&
+			Array.isArray( gridPlansForComparisonGrid ) &&
+			gridPlansForFeaturesGrid.length < gridPlansForComparisonGrid.length &&
+			flowName === ONBOARDING_GUIDED_FLOW &&
+			isEnglishLocale
+		) {
+			return translate( 'Compare all plans' );
+		}
+		return translate( 'Compare plans' );
+	};
+
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -798,11 +818,7 @@ const PlansFeaturesMain = ( {
 									<>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }
-											label={
-												showPlansComparisonGrid
-													? translate( 'Hide comparison' )
-													: translate( 'Compare plans' )
-											}
+											label={ getComparisonGridToggleLabel() }
 										/>
 										{ showEscapeHatch && (
 											<div className="plans-features-main__escape-hatch">

@@ -45,7 +45,7 @@ class FollowingIntro extends Component {
 			return null;
 		}
 
-		const linkElement = <a onClick={ this.handleManageLinkClick } href="/following/manage" />;
+		const linkElement = <a onClick={ this.handleManageLinkClick } href="/read/subscriptions" />;
 
 		return (
 			<header

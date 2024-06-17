@@ -1,125 +1,112 @@
-import { useCallback, useState } from 'react';
-import {
-	DIRECTORY_JETPACK,
-	DIRECTORY_PRESSABLE,
-	DIRECTORY_WOOCOMMERCE,
-	DIRECTORY_WPCOM,
-	EXPERTISE_FORM_FIELD_CUSTOMER_FEEDBACK_URL,
-	EXPERTISE_FORM_FIELD_DIRECTORIES,
-	EXPERTISE_FORM_FIELD_PRODUCTS,
-	EXPERTISE_FORM_FIELD_SERVICES,
-} from '../../constants';
+import { useCallback, useMemo, useState } from 'react';
+import { AgencyDirectoryApplication, DirectoryApplicationType } from '../../types';
 
-type Form = {
-	[ EXPERTISE_FORM_FIELD_SERVICES ]: string[];
-	[ EXPERTISE_FORM_FIELD_PRODUCTS ]: string[];
-	[ EXPERTISE_FORM_FIELD_CUSTOMER_FEEDBACK_URL ]: string;
-	[ EXPERTISE_FORM_FIELD_DIRECTORIES ]: Record< string, Directory >;
+type Props = {
+	initialFormData?: AgencyDirectoryApplication | null;
 };
 
-type Directory = {
-	selected: boolean;
-	samples: string[];
-};
+function validateURL( url: string ) {
+	return /^(https?:\/\/)?([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(:[0-9]+)?(\/[a-z0-9-]*)*$/.test( url );
+}
 
-const DEFAULT_DIRECTORY_STATE: Directory = {
-	selected: false,
-	samples: [ '', '', '', '', '' ],
-};
-
-export default function useExpertiseForm() {
-	const [ formData, setFormData ] = useState< Form >( {
-		services: [],
-		products: [],
-		customerFeedbackURL: '',
-		directories: {
-			[ DIRECTORY_WPCOM ]: { ...DEFAULT_DIRECTORY_STATE },
-			[ DIRECTORY_WOOCOMMERCE ]: { ...DEFAULT_DIRECTORY_STATE },
-			[ DIRECTORY_JETPACK ]: { ...DEFAULT_DIRECTORY_STATE },
-			[ DIRECTORY_PRESSABLE ]: { ...DEFAULT_DIRECTORY_STATE },
-		},
-	} );
-
-	const getFormValue = useCallback(
-		( key: string ) => {
-			return formData[ key as keyof Form ];
-		},
-		[ formData ]
-	);
-
-	const setFormValue = useCallback(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( key: string, value: any ) => {
-			setFormData( {
-				...formData,
-				[ key as keyof Form ]: value,
-			} );
-		},
-		[ formData ]
+export default function useExpertiseForm( { initialFormData }: Props ) {
+	const [ formData, setFormData ] = useState< AgencyDirectoryApplication >(
+		initialFormData ?? {
+			status: 'pending',
+			services: [],
+			products: [],
+			feedbackUrl: '',
+			directories: [],
+		}
 	);
 
 	const isDirectorySelected = useCallback(
-		( directory: string ) => {
-			return !! formData.directories[ directory ]?.selected;
+		( name: string ) => {
+			return !! formData.directories.some( ( { directory } ) => directory === name );
+		},
+		[ formData ]
+	);
+
+	const isDirectoryApproved = useCallback(
+		( name: string ) => {
+			return formData.directories.some(
+				( { directory, status } ) => directory === name && status === 'approved'
+			);
 		},
 		[ formData ]
 	);
 
 	const setDirectorySelected = useCallback(
-		( directory: string, selected: boolean ) => {
-			setFormValue( EXPERTISE_FORM_FIELD_DIRECTORIES, {
-				...formData.directories,
-				[ directory ]: {
-					...formData.directories[ directory ],
-					selected,
-				},
+		( name: DirectoryApplicationType, selected: boolean ) => {
+			setFormData( ( state ) => {
+				const directories = state.directories;
+
+				if ( selected ) {
+					return {
+						...state,
+						directories: [
+							...directories,
+							{
+								status: 'pending',
+								directory: name,
+								published: false,
+								urls: [ '', '', '', '', '' ],
+								note: '',
+							},
+						],
+					};
+				}
+
+				return {
+					...state,
+					directories: directories.filter( ( { directory } ) => directory !== name ),
+				};
 			} );
 		},
-		[ formData.directories, setFormValue ]
+		[]
 	);
 
-	const getDirectories = useCallback( () => {
-		return Object.keys( formData.directories );
-	}, [ formData.directories ] );
-
-	const getSelectedDirectories = useCallback( () => {
-		return Object.keys( formData.directories ).filter( ( directory ) => {
-			return formData.directories[ directory ].selected;
-		} );
-	}, [ formData.directories ] );
-
 	const getDirectoryClientSamples = useCallback(
-		( directory: string ) => {
-			return formData.directories[ directory ]?.samples;
+		( name: string ) => {
+			return formData.directories.find( ( { directory } ) => directory === name )?.urls || [];
 		},
 		[ formData.directories ]
 	);
 
-	const setDirectorClientSample = useCallback(
-		( directory: string, index: number, value: string ) => {
-			setFormValue( EXPERTISE_FORM_FIELD_DIRECTORIES, {
-				...formData.directories,
-				[ directory ]: {
-					...formData.directories[ directory ],
-					samples: [
-						...formData.directories[ directory ].samples.slice( 0, index ),
-						value,
-						...formData.directories[ directory ].samples.slice( index + 1 ),
-					],
-				},
-			} );
-		},
-		[ formData.directories, setFormValue ]
+	const setDirectorClientSample = useCallback( ( directory: string, urls: string[] ) => {
+		setFormData( ( state ) => ( {
+			...state,
+			directories: state.directories.map( ( dir ) => {
+				if ( dir.directory === directory ) {
+					return {
+						...dir,
+						urls,
+					};
+				}
+				return dir;
+			} ),
+		} ) );
+	}, [] );
+
+	const isValidFormData = useMemo(
+		(): boolean =>
+			formData.services.length > 0 &&
+			formData.products.length > 0 &&
+			formData.directories.length > 0 &&
+			// Ensure that each directory request has 5 valid URLs
+			formData.directories.every( ( { urls } ) => {
+				return urls.every( ( url ) => url && validateURL( url ) );
+			} ),
+		[ formData ]
 	);
 
 	return {
 		formData,
-		getFormValue,
-		setFormValue,
+		setFormData,
+		isValidFormData,
 		isDirectorySelected,
+		isDirectoryApproved,
 		setDirectorySelected,
-		getDirectories,
-		getSelectedDirectories,
 		getDirectoryClientSamples,
 		setDirectorClientSample,
 	};

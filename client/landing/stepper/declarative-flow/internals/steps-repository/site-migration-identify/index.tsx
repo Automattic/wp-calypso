@@ -9,11 +9,38 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
+
+interface HostingDetailsProps {
+	items: { title: string; description: string }[];
+}
+
+const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
+	const translate = useTranslate();
+
+	return (
+		<div className="import__site-identify-hosting-details">
+			<p className="import__site-identify-hosting-details--title">
+				{ translate( 'Why should you host with us?' ) }
+			</p>
+			<div className="import__site-identify-hosting-details--list">
+				{ items.map( ( item, index ) => (
+					<div key={ index } className="import__site-identify-hosting-details--list-item">
+						<p className="import__site-identify-hosting-details--list-item-title">{ item.title }</p>
+						<p className="import__site-identify-hosting-details--list-item-description">
+							{ item.description }
+						</p>
+					</div>
+				) ) }
+			</div>
+		</div>
+	);
+};
 
 interface Props {
 	hasError?: boolean;
@@ -62,8 +89,43 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		return <ScanningStep />;
 	}
 
+	// TODO: Remove extra steps and properties for non-English locales once we have translations -- hosting details.
+	const hostingDetailItems = {
+		'unmatched-uptime': {
+			title: translate( 'Unmatched Reliability and Uptime' ),
+			titleString: 'Unmatched Reliability and Uptime', // Temporary string for non-English locales. Remove once we have translations.
+			description: translate(
+				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure."
+			),
+			descriptionString:
+				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure.", // Temporary string for non-English locales. Remove once we have translations.
+		},
+		'effortless-customization': {
+			title: translate( 'Effortless Customization' ),
+			titleString: 'Effortless Customization',
+			description: translate(
+				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.'
+			),
+			descriptionString:
+				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.',
+		},
+		'blazing-fast-speed': {
+			title: translate( 'Blazing Fast Page Speed' ),
+			titleString: 'Blazing Fast Page Speed',
+			description: translate(
+				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.'
+			),
+			descriptionString:
+				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.',
+		},
+	};
+
+	const hasTranslationsForAllItems = Object.values( hostingDetailItems ).every(
+		( item ) => hasEnTranslation( item.titleString ) && hasEnTranslation( item.descriptionString )
+	);
+
 	return (
-		<div>
+		<div className="import__capture-wrapper">
 			<div className="import__heading import__heading-center">
 				<Title>{ titleInUse }</Title>
 				<SubTitle>{ subtitleInUse }</SubTitle>
@@ -84,6 +146,9 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 					{ ...nextLabelProp }
 				/>
 			</div>
+			{ hasTranslationsForAllItems && (
+				<HostingDetails items={ Object.values( hostingDetailItems ) } />
+			) }
 		</div>
 	);
 };
@@ -128,6 +193,8 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 
 		return shouldHideBasedOnRef || shouldHideBasedOnVariant;
 	};
+
+	usePresalesChat( 'wpcom', true, true );
 
 	return (
 		<>

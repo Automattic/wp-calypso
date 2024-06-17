@@ -12,9 +12,15 @@ type Props = {
 	items: ShoppingCartItem[];
 	isAutomatedReferrals?: boolean;
 	onRemoveItem?: ( item: ShoppingCartItem ) => void;
+	isClient?: boolean;
 };
 
-export default function PricingSummary( { items, onRemoveItem, isAutomatedReferrals }: Props ) {
+export default function PricingSummary( {
+	items,
+	onRemoveItem,
+	isAutomatedReferrals,
+	isClient,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -23,9 +29,6 @@ export default function PricingSummary( { items, onRemoveItem, isAutomatedReferr
 	const { getTotalInvoiceValue } = useTotalInvoiceValue();
 
 	const { discountedCost, actualCost } = getTotalInvoiceValue( userProducts, items );
-
-	// FIXME: we should update the magic numbers here with values when backend part is finished.
-	const commissionAmount = Math.floor( discountedCost * 0.5 );
 
 	const currency = items[ 0 ]?.currency ?? 'USD'; // FIXME: Fix if multiple currencies are supported
 
@@ -37,7 +40,11 @@ export default function PricingSummary( { items, onRemoveItem, isAutomatedReferr
 
 	const showLearnMoreLink = false; // FIXME: Remove this once the correct link is added
 
+	// Show actual cost if the agency is referring a client
 	const totalCost = isAutomatedReferrals ? actualCost : discountedCost;
+
+	// Agency checkout is when the user is not purchasing automated referrals and not a client
+	const isAgencyCheckout = ! isAutomatedReferrals && ! isClient;
 
 	return (
 		<div className="checkout__summary">
@@ -45,11 +52,14 @@ export default function PricingSummary( { items, onRemoveItem, isAutomatedReferr
 				<span className="checkout__summary-pricing-discounted">
 					{ formatCurrency( totalCost, currency ) }
 				</span>
-				{ ! isAutomatedReferrals && (
-					<span className="checkout__summary-pricing-original">
-						{ formatCurrency( actualCost, currency ) }
-					</span>
-				) }
+				{
+					// Show the discounted price only if it is agency checkout
+					isAgencyCheckout && (
+						<span className="checkout__summary-pricing-original">
+							{ formatCurrency( actualCost, currency ) }
+						</span>
+					)
+				}
 				<div className="checkout__summary-pricing-interval">{ translate( '/month' ) }</div>
 			</div>
 
@@ -78,42 +88,32 @@ export default function PricingSummary( { items, onRemoveItem, isAutomatedReferr
 				</span>
 			</div>
 
-			{ isAutomatedReferrals && (
-				<div className="shopping-cart__menu-commission">
-					<span>{ translate( 'Your estimated commision:' ) }</span>
-					<span>
-						{ translate( '%(total)s/mo', {
-							args: {
-								total: formatCurrency( commissionAmount, items[ 0 ]?.currency ?? 'USD' ),
-							},
-						} ) }
-					</span>
-				</div>
-			) }
-
-			{ ! isAutomatedReferrals && (
-				<div className="checkout__summary-notice">
-					{ showLearnMoreLink
-						? translate(
-								'You will be billed at the end of every month. Your first month may be less than the above amount. {{a}}Learn more{{/a}}',
-								{
-									components: {
-										a: (
-											<a
-												href={ learnMoreLink }
-												target="_blank"
-												rel="noopener noreferrer"
-												onClick={ onClickLearnMore }
-											/>
-										),
-									},
-								}
-						  )
-						: translate(
-								'You will be billed at the end of every month. Your first month may be less than the above amount.'
-						  ) }
-				</div>
-			) }
+			{
+				// Show the notice only if it is agency checkout
+				isAgencyCheckout && (
+					<div className="checkout__summary-notice">
+						{ showLearnMoreLink
+							? translate(
+									'You will be billed at the end of every month. Your first month may be less than the above amount. {{a}}Learn more{{/a}}',
+									{
+										components: {
+											a: (
+												<a
+													href={ learnMoreLink }
+													target="_blank"
+													rel="noopener noreferrer"
+													onClick={ onClickLearnMore }
+												/>
+											),
+										},
+									}
+							  )
+							: translate(
+									'You will be billed at the end of every month. Your first month may be less than the above amount.'
+							  ) }
+					</div>
+				)
+			}
 		</div>
 	);
 }

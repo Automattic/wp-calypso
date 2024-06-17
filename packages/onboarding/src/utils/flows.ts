@@ -43,6 +43,7 @@ export const GOOGLE_TRANSFER = 'google-transfer';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 export const REBLOGGING_FLOW = 'reblogging';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
+export const ONBOARDING_GUIDED_FLOW = 'guided';
 
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
@@ -166,6 +167,10 @@ export const isDesignFirstFlow = ( flowName: string | null ) => {
 
 export const isBlogOnboardingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ START_WRITING_FLOW, DESIGN_FIRST_FLOW ].includes( flowName ) );
+};
+
+export const isOnboardingGuidedFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ ONBOARDING_GUIDED_FLOW ].includes( flowName ) );
 };
 
 export const isDomainUpsellFlow = ( flowName: string | null ) => {

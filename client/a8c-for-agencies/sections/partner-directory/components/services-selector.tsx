@@ -1,39 +1,40 @@
 import { FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
-import { useTranslate } from 'i18n-calypso';
+import { useCallback, useMemo } from 'react';
+import { reverseMap, useFormSelectors } from './hooks/use-form-selectors';
 
 type Props = {
-	setServices: ( tokens: ( string | TokenItem )[] ) => void;
+	setServices: ( services: ( string | TokenItem )[] ) => void;
 	selectedServices: ( string | TokenItem )[];
 };
 
 const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
-	const translate = useTranslate();
+	const { availableServices } = useFormSelectors();
 
-	const availableServices: Record< string, string > = {
-		agricultural_services: translate( 'Agricultural services' ),
-		contracted_services: translate( 'Contracted services' ),
-		transportation_services: translate( 'Transportation services' ),
-		utility_services: translate( 'Utility services' ),
-		retail_outlet_services: translate( 'Retail outlet services' ),
-		clothing_shops: translate( 'Clothing shops' ),
-		miscellaneous_shops: translate( 'Miscellaneous shops' ),
-		business_services: translate( 'Business services' ),
-		professional_services_and_membership_organisations: translate(
-			'Professional services and membership organisations'
-		),
-		government_services: translate( 'Government services' ),
-	};
+	// Get the reverse map of available services
+	const availableServicesByLabel = useMemo(
+		() => reverseMap( availableServices ),
+		[ availableServices ]
+	);
 
-	const setTokens = ( tokens: ( string | TokenItem )[] ) => {
-		const selectedServicesByToken = tokens.filter( ( token ) => {
-			return Object.keys( availableServices ).find(
-				( key: string ) => availableServices?.[ key ] === token
-			);
-		} );
+	// Get the selected services by label
+	const selectedServicesByLabel = selectedServices.map( ( slug ) => {
+		const key = slug as string;
+		return availableServices[ key ];
+	} );
 
-		setServices( selectedServicesByToken );
-	};
+	// Set the selected services by slug
+	const onServiceLabelsSelected = useCallback(
+		( selectedServiceLabels: ( string | TokenItem )[] ) => {
+			const selectedServicesBySlug = selectedServiceLabels.map( ( label ) => {
+				const key = label as string;
+				return availableServicesByLabel[ key ];
+			} );
+
+			setServices( selectedServicesBySlug );
+		},
+		[ availableServicesByLabel, setServices ]
+	);
 
 	return (
 		<FormTokenField
@@ -42,9 +43,9 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 			__experimentalShowHowTo={ false }
 			__nextHasNoMarginBottom
 			label=""
-			onChange={ setTokens }
+			onChange={ onServiceLabelsSelected }
 			suggestions={ Object.values( availableServices ) }
-			value={ selectedServices }
+			value={ selectedServicesByLabel }
 		/>
 	);
 };

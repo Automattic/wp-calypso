@@ -1,12 +1,12 @@
 import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Card, Dialog } from '@automattic/components';
+import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import CardHeading from 'calypso/components/card-heading';
+import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -23,15 +23,14 @@ type PromoCardProps = {
 };
 
 const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
-	<Card className="hosting-features__card">
-		<CardHeading>{ title }</CardHeading>
+	<HostingCard className="hosting-features__card" title={ title }>
 		<p>{ text }</p>
 		{ translate( '{{supportLink}}Learn more{{/supportLink}}', {
 			components: {
 				supportLink: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
 			},
 		} ) }
-	</Card>
+	</HostingCard>
 );
 
 const HostingFeatures = () => {
@@ -70,16 +69,16 @@ const HostingFeatures = () => {
 			supportContext: 'site-monitoring-metrics',
 		},
 		{
-			title: translate( 'PHP Logs' ),
-			text: translate( 'View and download PHP error logs to diagnose and resolve issues quickly.' ),
+			title: translate( 'Logs' ),
+			text: translate(
+				'View and download PHP error and web server logs to diagnose and resolve issues quickly.'
+			),
 			supportContext: 'site-monitoring-logs',
 		},
 		{
-			title: translate( 'Server Logs' ),
-			text: translate(
-				'Gain full visibility into server activity, helping you manage traffic and spot security issues early.'
-			),
-			supportContext: 'site-monitoring-logs',
+			title: translate( 'Staging Site' ),
+			text: translate( 'Preview and troubleshoot changes before updating your production site.' ),
+			supportContext: 'hosting-staging-site',
 		},
 		{
 			title: hasEnTranslation( 'Server Settings' )

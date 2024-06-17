@@ -31,6 +31,7 @@ const debug = debugFactory( 'apps:site-profiler' );
 interface Props {
 	routerDomain?: string;
 	hash?: string;
+	routerOrigin?: string;
 }
 
 export default function SiteProfiler( props: Props ) {

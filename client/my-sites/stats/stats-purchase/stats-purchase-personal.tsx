@@ -15,7 +15,7 @@ import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notic
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
-import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
+import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-consts';
 import StatsPWYWUpgradeSlider from './stats-pwyw-uprade-slider';
 import { StatsPWYWSliderSettings } from './types';
 

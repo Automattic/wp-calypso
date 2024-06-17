@@ -1,6 +1,11 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
+import {
+	isSiteAssemblerFlow,
+	isTailoredSignupFlow,
+	isOnboardingGuidedFlow,
+	ONBOARDING_GUIDED_FLOW,
+} from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -24,7 +29,7 @@ import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getIntervalType } from './util';
+import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -102,6 +107,7 @@ export class PlansStep extends Component {
 			selectedSite,
 			intent,
 			flowName,
+			initialContext,
 		} = this.props;
 
 		const intervalType = getIntervalType( this.props.path );
@@ -122,7 +128,12 @@ export class PlansStep extends Component {
 
 		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
-		const surveyedIntent = flowName === 'guided' ? segmentSlug : undefined;
+		const surveyedIntent = shouldBasePlansOnSegment(
+			flowName,
+			initialContext?.trailMapExperimentVariant
+		)
+			? segmentSlug
+			: undefined;
 
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
@@ -133,7 +144,7 @@ export class PlansStep extends Component {
 		// De-emphasize the Free plan as a CTA link on the main onboarding flow, and the guided flow, when a paid domain is picked.
 		// More context can be found in p2-p5uIfZ-f5p
 		const deemphasizeFreePlan =
-			( [ 'onboarding', 'guided' ].includes( flowName ) && paidDomainName != null ) ||
+			( [ 'onboarding', ONBOARDING_GUIDED_FLOW ].includes( flowName ) && paidDomainName != null ) ||
 			deemphasizeFreePlanFromProps;
 
 		return (
@@ -190,7 +201,32 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, useEmailOnboardingSubheader } = this.props;
+		const { translate, useEmailOnboardingSubheader, signupDependencies, flowName } = this.props;
+
+		const { segmentationSurveyAnswers } = signupDependencies;
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
+
+		if (
+			isOnboardingGuidedFlow( flowName ) &&
+			segmentSlug === 'plans-guided-segment-developer-or-agency'
+		) {
+			const a4aLinkButton = (
+				<Button
+					href="https://automattic.com/for-agencies/"
+					target="_blank"
+					rel="noopener noreferrer"
+					onClick={ () =>
+						this.props.recordTracksEvent( 'calypso_guided_onboarding_agency_link_click' )
+					}
+					borderless
+				/>
+			);
+
+			return translate(
+				'Are you an agency? Get bulk discounts and premier support with {{link}}Automattic for Agencies{{/link}}.',
+				{ components: { link: a4aLinkButton } }
+			);
+		}
 
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />

@@ -4,6 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { LayoutBlock } from 'calypso/site-profiler/components/layout';
 
+interface LoadingScreenProps {
+	isSavedReport: boolean;
+}
+
 const Progress = styled( ProgressBar )`
 	div {
 		background: linear-gradient( 90deg, #3858e9 0%, #349f4b 100% );
@@ -18,15 +22,17 @@ const StyledLoadingScreen = styled.div`
 	}
 `;
 
-export const LoadingScreen = () => {
+export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	const translate = useTranslate();
 
-	const progressHeadings = [
-		translate( "Crunching your site's numbers…" ),
-		translate( 'Analyzing speed metrics…' ),
-		translate( 'Comparing with top sites…' ),
-		translate( 'Finalizing your report…' ),
-	];
+	const progressHeadings = isSavedReport
+		? [ translate( 'Getting your report…' ) ]
+		: [
+				translate( "Crunching your site's numbers…" ),
+				translate( 'Analyzing speed metrics…' ),
+				translate( 'Comparing with top sites…' ),
+				translate( 'Finalizing your report…' ),
+		  ];
 
 	const [ progress, setProgress ] = useState( 0 );
 	const [ tick, setTick ] = useState( 0 );

@@ -53,6 +53,10 @@
 	font-weight: inherit;
 	line-height: inherit;
 	text-decoration: underline;
+
+	&:hover {
+		color: inherit;
+	}
 }
 
 .plans__loading {

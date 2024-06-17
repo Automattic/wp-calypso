@@ -42,6 +42,7 @@ import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -98,6 +99,13 @@ const EMPTY_ARRAY: Design[] = [];
 const EMPTY_OBJECT = {};
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
+	// imageOptimizationExperimentAssignment, exerimentAssignment
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_design_picker_image_optimization_202406'
+	);
+	const variantName = experimentAssignment?.variationName;
+	const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
+
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
 
@@ -907,6 +915,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 			getBadge={ getBadge }
+			oldHighResImageLoading={ oldHighResImageLoading }
 		/>
 	);
 

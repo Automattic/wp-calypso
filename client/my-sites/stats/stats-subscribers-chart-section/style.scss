@@ -47,6 +47,11 @@
 		display: flex;
 		justify-content: right;
 	}
+
+	.u-value {
+		vertical-align: middle;
+		display: inline-block;
+	}
 }
 
 .subscribers-section-duration-control-with-legend > .stats__period-header {

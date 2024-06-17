@@ -154,4 +154,17 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { platform: 'unknown' } ) )
 		);
 	} );
+
+	it( 'shows why host with us points', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
+		expect( screen.getByText( /Unmatched Reliability and Uptime/ ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				/Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure./
+			)
+		).toBeVisible();
+	} );
 } );

@@ -177,6 +177,7 @@ class Login extends Component {
 				twoFactorAuthType: 'link',
 				oauth2ClientId: this.props.currentQuery?.client_id,
 				redirectTo: this.props.currentQuery?.redirect_to,
+				usernameOnly: true,
 			} );
 
 			page( magicLoginUrl );
@@ -756,8 +757,7 @@ class Login extends Component {
 		}
 
 		const tos = translate(
-			'Just a little reminder that by continuing with any of the options below, ' +
-				'you agree to our {{tosLink}}Terms of Service{{/tosLink}} and {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			'Just a little reminder that by continuing with any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			{
 				components: {
 					tosLink: (

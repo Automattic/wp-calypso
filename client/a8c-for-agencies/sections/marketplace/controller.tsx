@@ -1,7 +1,7 @@
 import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
+import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import { A4A_MARKETPLACE_HOSTING_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
@@ -51,13 +51,11 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 };
 
 export const marketplacePressableContext: Callback = ( context, next ) => {
-	const { purchase_type } = context.query;
-	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting > Pressable" path={ context.path } />
-			<PressableOverview defaultMarketplaceType={ purchaseType } />
+			<PressableOverview />
 		</>
 	);
 	next();

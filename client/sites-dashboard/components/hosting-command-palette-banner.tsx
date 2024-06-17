@@ -161,7 +161,7 @@ const AnimatedCommand = () => {
 		{ icon: <Gridicon icon="reader" />, label: __( 'Open Reader' ) },
 		{ icon: plusIcon, label: __( 'Add new post' ) },
 		{ icon: wordpressIcon, label: __( 'View my sites' ) },
-		{ icon: settingsIcon, label: __( 'Open hosting configuration' ) },
+		{ icon: settingsIcon, label: __( 'Open server settings' ) },
 		{ icon: toolIcon, label: __( 'Change PHP version' ) },
 		{ icon: toolIcon, label: __( 'Manage staging sites' ) },
 	];

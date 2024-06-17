@@ -80,8 +80,6 @@ export const OdieSendMessageButton = ( {
 		await sendMessageIfNotEmpty();
 	};
 
-	const divContainerHeight = divContainerRef?.current?.clientHeight;
-
 	const userHasAskedToContactHE = chat.messages.some(
 		( message ) => message.context?.flags?.forward_to_human_support === true
 	);
@@ -89,11 +87,7 @@ export const OdieSendMessageButton = ( {
 
 	return (
 		<>
-			<JumpToRecent
-				scrollToBottom={ scrollToRecent }
-				enableJumpToRecent={ enableJumpToRecent }
-				bottomOffset={ divContainerHeight ?? 0 }
-			/>
+			<JumpToRecent scrollToBottom={ scrollToRecent } enableJumpToRecent={ enableJumpToRecent } />
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
 					<TextareaAutosize

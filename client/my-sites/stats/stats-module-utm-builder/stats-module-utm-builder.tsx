@@ -75,7 +75,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
 									) }
 								</div>
 								<div className="stats-utm-builder__help-section-parameter-example">
-									{ translate( 'Example: newsletter, twitter, google' ) }
+									{ translate( 'Example: newsletter, X, google' ) }
 								</div>
 							</section>
 							<section>

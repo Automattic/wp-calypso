@@ -1,10 +1,10 @@
+import { BraveTick } from '@automattic/components/src/icons';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css, Global } from '@emotion/react';
 import { Icon } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
-import BraveTickIcon from './assets/icons/brave-tick';
 import './style.scss';
 
 const globalStyleOverrides = css`
@@ -55,7 +55,7 @@ export const SignupHeaderOverlayBannerWithRefundPeriod = () => {
 						icon: (
 							<Icon
 								icon={
-									<BraveTickIcon className="signup-header__overlay-banner-with-refund-period-icon" />
+									<BraveTick className="signup-header__overlay-banner-with-refund-period-icon" />
 								}
 								size={ 30 }
 							/>

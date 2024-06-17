@@ -4,9 +4,9 @@ import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/des
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -35,6 +35,7 @@ import type {
 } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
+const { goalsToIntent } = Onboard.utils;
 
 type ExitFlowOptions = {
 	skipLaunchpad?: boolean;
@@ -60,6 +61,25 @@ const siteSetupFlow: Flow = {
 				navigate( 'goals' );
 			}
 		}, [] );
+
+		const { site } = useSiteData();
+		const { setIntent, setGoals } = useDispatch( ONBOARD_STORE );
+
+		const goals = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			[]
+		);
+
+		useEffect( () => {
+			if ( goals.length ) {
+				return;
+			}
+
+			if ( site?.options?.site_goals?.length ) {
+				setIntent( goalsToIntent( site.options.site_goals ) );
+				setGoals( site.options.site_goals );
+			}
+		}, [ site, setIntent, setGoals, goals ] );
 	},
 
 	useSteps() {
