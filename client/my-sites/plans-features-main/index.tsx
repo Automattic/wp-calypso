@@ -21,7 +21,6 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ONBOARDING_GUIDED_FLOW, isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -245,7 +244,6 @@ const PlansFeaturesMain = ( {
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
-	const isEnglishLocale = useIsEnglishLocale();
 
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
@@ -689,8 +687,7 @@ const PlansFeaturesMain = ( {
 			Array.isArray( gridPlansForFeaturesGrid ) &&
 			Array.isArray( gridPlansForComparisonGrid ) &&
 			gridPlansForFeaturesGrid.length < gridPlansForComparisonGrid.length &&
-			flowName === ONBOARDING_GUIDED_FLOW &&
-			isEnglishLocale
+			flowName === ONBOARDING_GUIDED_FLOW
 		) {
 			return translate( 'Compare all plans' );
 		}
