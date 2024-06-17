@@ -266,19 +266,38 @@ const siteMigration: Flow = {
 						siteId,
 						siteSlug,
 					} );
-					// Take the user to the upgrade plan step.
-					// if ( providedDependencies?.destination === 'upgrade' ) {
-					// 	return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug, {
-					// 		siteId,
-					// 		siteSlug,
-					// 	} );
-					// }
+				}
 
-					// // Continue with the migration flow.
-					// return navigate( MIGRATION_INSTRUCTIONS_STEP.slug, {
-					// 	siteId,
-					// 	siteSlug,
-					// } );
+				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
+					// Take the user to the upgrade plan step.
+					if ( providedDependencies?.destination === 'upgrade' ) {
+						return navigate(
+							addQueryArgs(
+								{
+									siteId,
+									siteSlug,
+									from: fromQueryParam,
+									destination: providedDependencies?.destination,
+									how: providedDependencies?.how as string,
+								},
+								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+							)
+						);
+					}
+
+					// Do it for me option.
+					if ( providedDependencies?.how === 'difm' ) {
+						return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
+
+					// Continue with the migration flow.
+					return navigate( MIGRATION_INSTRUCTIONS_STEP.slug, {
+						siteId,
+						siteSlug,
+					} );
 				}
 
 				case STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug: {
@@ -294,9 +313,14 @@ const siteMigration: Flow = {
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.goToCheckout ) {
-						const redirectAfterCheckout = providedDependencies?.userAcceptedDeal
-							? STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-							: MIGRATION_INSTRUCTIONS_STEP.slug;
+						let redirectAfterCheckout = MIGRATION_INSTRUCTIONS_STEP.slug;
+
+						if (
+							providedDependencies?.userAcceptedDeal ||
+							urlQueryParams.get( 'how' ) === 'difm'
+						) {
+							redirectAfterCheckout = STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug;
+						}
 
 						const destination = addQueryArgs(
 							{

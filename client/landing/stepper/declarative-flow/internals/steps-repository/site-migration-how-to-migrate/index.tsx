@@ -1,5 +1,4 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { Badge, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -19,17 +18,19 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 
 	const options = [
 		{
-			label: translate( 'Migrate site' ),
+			label: translate( 'Do it for me' ),
 			description: translate(
-				"All your site's content, themes, plugins, users and customizations."
+				"Share your site with us, and we'll review it and handle the migration if possible."
 			),
-			value: 'migrate',
+			value: 'difm',
 			selected: true,
 		},
 		{
-			label: translate( 'Import content only' ),
-			description: translate( 'Import just posts, pages, comments and media.' ),
-			value: 'import',
+			label: translate( "I'll do it myself" ),
+			description: translate(
+				'Install the plugin yourself, find the migration key and migrate the site.'
+			),
+			value: 'myself',
 		},
 	];
 
@@ -58,12 +59,9 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 		? true
 		: false;
 
-	const handleClick = ( destination: string ) => {
-		if ( destination === 'migrate' && ! canInstallPlugins ) {
-			return navigation.submit?.( { destination: 'upgrade' } );
-		}
-
-		return navigation.submit?.( { destination } );
+	const handleClick = ( how: string ) => {
+		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
+		return navigation.submit?.( { how, destination } );
 	};
 
 	const stepContent = (
@@ -81,7 +79,7 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 				</SubTitle>
 			) }
 
-			<div className="import-or-migrate__list">
+			<div className="how-to-migrate__list">
 				{ options.map( ( option, i ) => (
 					<Card
 						tagName="button"
@@ -89,22 +87,11 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 						key={ i }
 						onClick={ () => handleClick( option.value ) }
 					>
-						<div className="import-or-migrate__header">
-							<h2 className="import-or-migrate__name">{ option.label }</h2>
-
-							{ option.value === 'migrate' && (
-								<Badge type="info-blue">
-									{
-										// translators: %(planName)s is a plan name (e.g. Commerce plan).
-										translate( 'Requires %(planName)s plan', {
-											args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-										} )
-									}
-								</Badge>
-							) }
+						<div className="how-to-migrate__header">
+							<h2 className="how-to-migrate__name">{ option.label }</h2>
 						</div>
 
-						<p className="import-or-migrate__description">{ option.description }</p>
+						<p className="how-to-migrate__description">{ option.description }</p>
 					</Card>
 				) ) }
 			</div>
@@ -115,10 +102,10 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'What do you want to do?' ) } />
+			<DocumentHead title={ translate( 'How do you want to migrate?' ) } />
 			<StepContainer
-				stepName="site-migration-import-or-migrate"
-				className="import-or-migrate"
+				stepName="site-migration-how-to-migrate"
+				className="how-to-migrate"
 				shouldHideNavButtons={ false }
 				hideSkip
 				stepContent={ stepContent }
