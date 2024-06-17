@@ -460,6 +460,17 @@ export function generateSteps( {
 				isDomainOnly: false,
 			},
 		},
+		'subscribe-email': {
+			stepName: 'subscribe-email',
+			// apiRequestFunction: createSiteWithCart,
+			dependencies: [ 'email', 'redirect_to', 'mailing_list' ],
+			providesDependencies: [],
+			optionalDependencies: [],
+			// props: {
+			// 	isDomainOnly: false,
+			// },
+			// delayApiRequestUntilComplete: true,
+		},
 		mailbox: {
 			stepName: 'mailbox',
 			dependencies: [ 'domainItem', 'siteSlug' ],
