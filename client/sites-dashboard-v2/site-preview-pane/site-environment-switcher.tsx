@@ -60,6 +60,7 @@ export default function SiteEnvironmentSwitcher( {
 				<PopoverMenuItem
 					key="environment-production"
 					onClick={ () => setEnvironment( productionSiteId ) }
+					className="site-environment-switcher__item"
 					isSelected={ ! site.is_wpcom_staging_site }
 				>
 					{ __( 'Production' ) }
@@ -67,6 +68,7 @@ export default function SiteEnvironmentSwitcher( {
 				<PopoverMenuItem
 					key="environment-staging"
 					onClick={ () => setEnvironment( stagingSiteId ) }
+					className="site-environment-switcher__item"
 					isSelected={ !! site.is_wpcom_staging_site }
 				>
 					{ __( 'Staging' ) }

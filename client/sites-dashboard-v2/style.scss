@@ -5,6 +5,11 @@
 	--color-light-backdrop: var(--studio-white);
 }
 
+button.popover__menu-item.site-environment-switcher__item:focus:not(.is-selected):not(:hover) {
+	background-color: initial;
+	color: initial;
+}
+
 .main.a4a-layout.sites-dashboard {
 	padding-block-start: 0;
 
