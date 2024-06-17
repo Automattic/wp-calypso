@@ -50,17 +50,25 @@ export default function SiteEnvironmentSwitcher( {
 	};
 
 	return (
-		<>
+		<div>
 			<PopoverMenu
 				context={ popoverButtonRef.current }
 				onClose={ closeMenu }
 				position="bottom"
 				isVisible={ isPopoverVisible }
 			>
-				<PopoverMenuItem onClick={ () => setEnvironment( productionSiteId ) }>
+				<PopoverMenuItem
+					key="environment-production"
+					onClick={ () => setEnvironment( productionSiteId ) }
+					isSelected={ ! site.is_wpcom_staging_site }
+				>
 					{ __( 'Production' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem action="B" onClick={ () => setEnvironment( stagingSiteId ) }>
+				<PopoverMenuItem
+					key="environment-staging"
+					onClick={ () => setEnvironment( stagingSiteId ) }
+					isSelected={ !! site.is_wpcom_staging_site }
+				>
 					{ __( 'Staging' ) }
 				</PopoverMenuItem>
 			</PopoverMenu>
@@ -70,7 +78,10 @@ export default function SiteEnvironmentSwitcher( {
 					role="button"
 					className="site-preview-pane__site-environment-switcher"
 					ref={ popoverButtonRef }
-					onClick={ () => setIsPopoverVisible( ! isPopoverVisible ) }
+					onClick={ ( event ) => {
+						event.stopPropagation();
+						setIsPopoverVisible( ! isPopoverVisible );
+					} }
 					onKeyDown={ () => setIsPopoverVisible( ! isPopoverVisible ) }
 				>
 					{ !! site.is_wpcom_staging_site && (
@@ -83,6 +94,6 @@ export default function SiteEnvironmentSwitcher( {
 					<Icon icon={ chevronDownSmall } />
 				</div>
 			</Tooltip>
-		</>
+		</div>
 	);
 }
