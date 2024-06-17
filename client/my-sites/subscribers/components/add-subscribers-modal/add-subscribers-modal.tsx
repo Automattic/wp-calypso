@@ -98,7 +98,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 				</>
 			) }
 
-			{ isImportInProgress && ! hasStaleImportJobs && (
+			{ ! isUploading && isImportInProgress && ! hasStaleImportJobs && (
 				<Notice
 					className="add-subscribers-modal__notice"
 					isCompact
@@ -112,7 +112,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 				</Notice>
 			) }
 
-			{ isImportInProgress && hasStaleImportJobs && (
+			{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
 				<Notice
 					className="add-subscribers-modal__notice"
 					isCompact
