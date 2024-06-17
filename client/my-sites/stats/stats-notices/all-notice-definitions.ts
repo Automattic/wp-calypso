@@ -126,7 +126,10 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: GDPRCookieConsentNotice,
 		noticeId: 'gdpr_cookie_consent',
-		isVisibleFunc: () => true,
+		isVisibleFunc: ( { isOdysseyStats } ) => {
+			// Only show the notice for Odyssey Stats since the plugin option is stored locally.
+			return isOdysseyStats;
+		},
 		disabled: false,
 	},
 ];
