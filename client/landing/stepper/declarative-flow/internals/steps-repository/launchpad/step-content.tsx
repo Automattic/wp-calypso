@@ -1,3 +1,4 @@
+import { LaunchpadContainer } from '@automattic/launchpad';
 import { useSelect } from '@wordpress/data';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
@@ -59,12 +60,16 @@ const StepContent = ( {
 	const iFrameURL = adminUrl ? new URL( adminUrl as string ).host : null;
 
 	return (
-		<main className="launchpad__container">
-			<div className="launchpad__sidebar-header">
-				<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
-				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
-			</div>
-			<div className="launchpad__content">
+		<LaunchpadContainer
+			headerClassName="launchpad__sidebar-header"
+			sidebarClassName="launchpad__sidebar"
+			header={
+				<>
+					<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
+					<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
+				</>
+			}
+			sidebar={
 				<Sidebar
 					sidebarDomain={ sidebarDomain }
 					launchpadKey={ launchpadKey }
@@ -74,9 +79,10 @@ const StepContent = ( {
 					goToStep={ goToStep }
 					flow={ flow }
 				/>
-				<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
-			</div>
-		</main>
+			}
+		>
+			<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
+		</LaunchpadContainer>
 	);
 };
 
