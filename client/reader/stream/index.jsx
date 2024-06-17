@@ -53,7 +53,6 @@ import './style.scss';
 // 64 is padding, 8 is margin
 export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
 const GUESSED_POST_HEIGHT = 600;
-const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
@@ -113,14 +112,16 @@ class ReaderStream extends Component {
 	// cycle.
 	wasSelectedByOpeningPost = false;
 
+	listRef = createRef();
+	overlayRef = createRef();
+	mountTimeout = null;
+
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
 	};
 	handleSitesSelected = () => {
 		this.setState( { selectedTab: 'sites' } );
 	};
-
-	listRef = createRef();
 
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
@@ -170,23 +171,27 @@ class ReaderStream extends Component {
 	};
 
 	scrollToSelectedPost( animate ) {
-		const HEADER_OFFSET = -32; // a fixed position header means we can't just scroll the element into view.
+		const headerOffset = -1 * this.props.fixedHeaderHeight || 0; // a fixed position header means we can't just scroll the element into view.
+		const totalOffset = headerOffset - 35; // 35px of constant offset to ensure the post isnt cramped against the top container or header border.
 		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
-			const documentElement = document.documentElement;
 			selectedNode.focus();
-			const windowTop =
-				( window.pageYOffset || documentElement.scrollTop ) - ( documentElement.clientTop || 0 );
+			const scrollContainer = this.state.listContext || window;
+			const scrollContainerPosition = scrollContainer.scrollTop;
 			const boundingClientRect = selectedNode.getBoundingClientRect();
-			const scrollY = parseInt( windowTop + boundingClientRect.top + HEADER_OFFSET, 10 );
+			const scrollY = parseInt(
+				scrollContainerPosition + boundingClientRect.top + totalOffset,
+				10
+			);
 			if ( animate ) {
 				scrollTo( {
 					x: 0,
 					y: scrollY,
 					duration: 200,
+					container: scrollContainer,
 				} );
 			} else {
-				window.scrollTo( 0, scrollY );
+				scrollContainer.scrollTo( 0, scrollY );
 			}
 		}
 	}
@@ -204,8 +209,17 @@ class ReaderStream extends Component {
 		}
 
 		if ( this.props.selectedPostKey ) {
-			setTimeout( () => {
+			// Show an overlay while we are handling initial scroll and focus to prevent flashing
+			// content.
+			if ( this.overlayRef.current ) {
+				this.overlayRef.current.classList.add( 'stream__init-overlay-enabled' );
+			}
+			this.mountTimeout = setTimeout( () => {
+				this.scrollToSelectedPost( false );
 				this.focusSelectedPost( this.props.selectedPostKey );
+				if ( this.overlayRef.current ) {
+					this.overlayRef.current.classList.remove( 'stream__init-overlay-enabled' );
+				}
 			}, 100 );
 		}
 
@@ -241,6 +255,10 @@ class ReaderStream extends Component {
 
 		if ( this.observer ) {
 			this.observer.disconnect();
+		}
+
+		if ( this.mountTimeout ) {
+			clearTimeout( this.mountTimeout );
 		}
 	}
 
@@ -342,7 +360,7 @@ class ReaderStream extends Component {
 	getVisibleItemIndexes() {
 		return (
 			this.listRef.current &&
-			this.listRef.current.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } )
+			this.listRef.current.getVisibleItemIndexes( { offsetTop: this.props.fixedHeaderHeight || 0 } )
 		);
 	}
 
@@ -678,6 +696,7 @@ class ReaderStream extends Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ baseClassnames }>
+				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
