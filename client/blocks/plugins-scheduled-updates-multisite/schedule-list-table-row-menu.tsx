@@ -1,6 +1,6 @@
 import { DropdownMenu } from '@wordpress/components';
+import { moreHorizontal } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ellipsis } from 'calypso/blocks/plugins-scheduled-updates/icons';
 import { SiteSlug } from 'calypso/types';
 import type {
 	MultisiteSchedulesUpdates,
@@ -46,7 +46,7 @@ export const ScheduleListTableRowMenu = ( {
 		<DropdownMenu
 			popoverProps={ { position: 'bottom left' } }
 			controls={ items }
-			icon={ ellipsis }
+			icon={ moreHorizontal }
 			label={ translate( 'More' ) }
 		/>
 	);
