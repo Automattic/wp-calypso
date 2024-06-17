@@ -1,4 +1,4 @@
-interface Product {
+export interface ReferralProduct {
 	date_assigned: string;
 	license_id: number;
 	license_key: string;
@@ -9,11 +9,11 @@ interface Product {
 
 export interface SubscriptionAPIResponse {
 	id: number;
-	products: Product[];
+	products: ReferralProduct[];
 	status: string;
 }
 
-export interface Subscription extends Product {
+export interface Subscription extends ReferralProduct {
 	id: number;
 	status: string;
 	referral_id: number;

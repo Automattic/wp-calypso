@@ -1225,13 +1225,6 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	flows.excludeStep( stepName );
 }
 
-export function excludeSurveyStepIfInactive( stepName, defaultDependencies, nextProps ) {
-	if ( ! nextProps.initialContext?.isSignupSurveyActive ) {
-		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
-		flows.excludeStep( stepName );
-	}
-}
-
 export function excludeSegmentSurveyStepIfInactive( stepName, _, nextProps ) {
 	// trailMapExperimentVariant = undefined | null | 'treatment_guided' | 'treatment_survey_only'
 	// null => control group.

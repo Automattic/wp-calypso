@@ -11,7 +11,7 @@ import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
-import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
@@ -229,23 +229,7 @@ export default {
 
 		store.set( 'signup-locale', localeFromParams );
 
-		/**
-		 * The experiment is only loaded on the onboarding flow
-		 * If user is logged out we load the experiment
-		 * If user is logged in we load the experiment only if the user has no sites
-		 * More info: pbxNRc-3xO-p2
-		 */
-		const isNewUser = ! getCurrentUserSiteCount( context.store.getState() );
-		initialContext.isSignupSurveyActive = false;
 		const isOnboardingFlow = flowName === 'onboarding';
-		if ( isOnboardingFlow && ( ! userLoggedIn || ( userLoggedIn && isNewUser ) ) ) {
-			const experiment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_site_goals_survey_i2'
-			);
-			initialContext.isSignupSurveyActive =
-				experiment.variationName === 'treatment' ||
-				experiment.variationName === 'treatment_scrambled';
-		}
 
 		// See: 1113-gh-Automattic/experimentation-platform for details.
 		if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
@@ -275,22 +259,6 @@ export default {
 				// initialContext.trailMapExperimentVariant = trailMapExperiment.variationName;
 				//}
 			}
-		}
-
-		if (
-			config.isEnabled( 'onboarding/new-user-survey' ) ||
-			config.isEnabled( 'onboarding/new-user-survey-scrambled' )
-		) {
-			// Force display of the new user survey for the onboarding flow
-			initialContext.isSignupSurveyActive = true;
-		}
-
-		// We have to filter out the new user survey at the beginning.
-		// Otherwise, calypso will redirect the user to the next step
-		// when they come back from the browser back button.
-		// See https://github.com/Automattic/dotcom-forge/issues/7232.
-		if ( ! initialContext.isSignupSurveyActive ) {
-			flows.excludeStep( 'new-user-survey' );
 		}
 
 		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
