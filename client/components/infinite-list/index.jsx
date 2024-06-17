@@ -94,6 +94,7 @@ export default class InfiniteList extends Component {
 	componentDidMount() {
 		this._isMounted = true;
 		if ( this._contextLoaded() ) {
+			console.log( 'InfiniteList mounted - setY' );
 			this._setContainerY( this.state.scrollTop );
 		}
 
@@ -109,19 +110,21 @@ export default class InfiniteList extends Component {
 		// current callstack is executed. Some streams and device widths for the reader are not
 		// fully ready to have their scroll position set until everything is mounted, causing the
 		// stream to jump back to the top when coming back to view from a post.
-		if ( this._contextLoaded() ) {
-			// Use the scrollTop setting from the time the component mounted, as this state could be
-			// changed in the initial update cycle to save scroll position before the saved position
-			// is set.
-			const scrollTop = this.state.scrollTop;
-			// Apply these at the end of the callstack to ensure the scroll container is ready.
-			window.setTimeout( () => {
+
+		// Use the scrollTop setting from the time the component mounted, as this state could be
+		// changed in the initial update cycle to save scroll position before the saved position
+		// is set.
+		const scrollTop = this.state.scrollTop;
+		// Apply these at the end of the callstack to ensure the scroll container is ready.
+		window.setTimeout( () => {
+			if ( this._contextLoaded() ) {
+				console.log( 'InfiniteList mounted timeout - setY' );
 				this._setContainerY( scrollTop );
 				this.updateScroll( {
 					triggeredByScroll: false,
 				} );
-			}, 0 );
-		}
+			}
+		}, 0 );
 		if ( this._contextLoaded() ) {
 			this._scrollContainer.addEventListener( 'scroll', this.onScroll );
 		}
@@ -165,7 +168,7 @@ export default class InfiniteList extends Component {
 
 			// only override browser history scroll if navigated via history
 			if ( detectHistoryNavigation.loadedViaHistory() ) {
-				this._overrideHistoryScroll();
+				// this._overrideHistoryScroll();
 			}
 		}
 
@@ -445,6 +448,7 @@ export default class InfiniteList extends Component {
 	}
 
 	_setContainerY( position ) {
+		console.log( 'SET Y' );
 		if ( this.props.context && this.props.context !== window ) {
 			this.props.context.scrollTop = position;
 			return;
@@ -470,6 +474,7 @@ export default class InfiniteList extends Component {
 			return;
 		}
 		debug( 'history setting scroll position:', event );
+		console.log( 'RESET SCROLL - setY' );
 		this._setContainerY( position );
 		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 		debug( 'override scroll position from HTML5 history popstate:', position );
@@ -480,6 +485,6 @@ export default class InfiniteList extends Component {
 	 * @returns {boolean} whether context is available
 	 */
 	_contextLoaded() {
-		return this.props.context || this.props.context === false || ! ( 'context' in this.props );
+		return this.props.context || ! ( 'context' in this.props );
 	}
 }

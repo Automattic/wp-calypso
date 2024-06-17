@@ -135,6 +135,7 @@ class ReaderStream extends Component {
 			// propagate into the full post screen the first time you click select an item in the
 			// reader, meaning the full post screen opens halfway scrolled down the post.
 			if ( ! this.wasSelectedByOpeningPost ) {
+				console.log( 'ComponentDidUpdate: scrollToSelectedPost' );
 				this.scrollToSelectedPost( true );
 			}
 			this.wasSelectedByOpeningPost = false;
@@ -166,9 +167,17 @@ class ReaderStream extends Component {
 
 	_popstate = () => {
 		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
+			console.log( '_popstate: scrollToSelectedPost' );
 			this.scrollToSelectedPost( false );
 		}
 	};
+
+	checkReccomendedPostsHeight() {
+		const recPostBlocks = document.querySelectorAll( '.reader-stream__recommended-posts' );
+		recPostBlocks.forEach( ( recPostBlock, index ) => {
+			console.log( `recPostBlock${ index }: `, recPostBlock.clientHeight );
+		} );
+	}
 
 	scrollToSelectedPost( animate ) {
 		const headerOffset = -1 * this.props.fixedHeaderHeight || 0; // a fixed position header means we can't just scroll the element into view.
@@ -183,6 +192,7 @@ class ReaderStream extends Component {
 				scrollContainerPosition + boundingClientRect.top + totalOffset,
 				10
 			);
+			this.checkReccomendedPostsHeight();
 			if ( animate ) {
 				scrollTo( {
 					x: 0,
@@ -193,6 +203,28 @@ class ReaderStream extends Component {
 			} else {
 				scrollContainer.scrollTo( 0, scrollY );
 			}
+			console.log( 'I SCROLLED TO THE POST!' );
+			console.log( 'I scrolled to: ', scrollY );
+			const scrollContainerPosition2 = scrollContainer.scrollTop;
+			const boundingClientRect2 = selectedNode.getBoundingClientRect();
+			const scrollY2 = parseInt(
+				scrollContainerPosition2 + boundingClientRect2.top + totalOffset,
+				10
+			);
+			console.log( 'Now I calculate I should go to: ', scrollY2 );
+			console.log( 'i am at: ', scrollContainerPosition2 );
+			this.checkReccomendedPostsHeight();
+			window.setTimeout( () => {
+				const scrollContainerPosition3 = scrollContainer.scrollTop;
+				const boundingClientRect3 = selectedNode.getBoundingClientRect();
+				const scrollY3 = parseInt(
+					scrollContainerPosition3 + boundingClientRect3.top + totalOffset,
+					10
+				);
+				console.log( '200ms later - Now I calculate I should go to: ', scrollY3 );
+				console.log( 'i am at: ', scrollContainerPosition3 );
+				this.checkReccomendedPostsHeight();
+			}, 200 );
 		}
 	}
 
@@ -215,6 +247,7 @@ class ReaderStream extends Component {
 				this.overlayRef.current.classList.add( 'stream__init-overlay-enabled' );
 			}
 			this.mountTimeout = setTimeout( () => {
+				console.log( 'Component did mount: scrollToSelectedPost' );
 				this.scrollToSelectedPost( false );
 				this.focusSelectedPost( this.props.selectedPostKey );
 				if ( this.overlayRef.current ) {
