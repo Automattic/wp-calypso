@@ -39,6 +39,7 @@ const siteMigration: Flow = {
 		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+			STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			MIGRATION_INSTRUCTIONS_STEP,
@@ -261,19 +262,23 @@ const siteMigration: Flow = {
 						);
 					}
 
-					// Take the user to the upgrade plan step.
-					if ( providedDependencies?.destination === 'upgrade' ) {
-						return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug, {
-							siteId,
-							siteSlug,
-						} );
-					}
-
-					// Continue with the migration flow.
-					return navigate( MIGRATION_INSTRUCTIONS_STEP.slug, {
+					return navigate( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug, {
 						siteId,
 						siteSlug,
 					} );
+					// Take the user to the upgrade plan step.
+					// if ( providedDependencies?.destination === 'upgrade' ) {
+					// 	return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug, {
+					// 		siteId,
+					// 		siteSlug,
+					// 	} );
+					// }
+
+					// // Continue with the migration flow.
+					// return navigate( MIGRATION_INSTRUCTIONS_STEP.slug, {
+					// 	siteId,
+					// 	siteSlug,
+					// } );
 				}
 
 				case STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug: {
