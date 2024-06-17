@@ -18,8 +18,6 @@ const StatsModuleUTMWrapper = ( { siteId, period, postId, query, summary, classN
 	const isFetching = isFetchingUsage || isLoadingFeatureCheck;
 	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
 
-	// TODO: trigger useUTMMetricsQuery manually once isAdvancedFeatureEnabled === true
-
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {
 		return null;

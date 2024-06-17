@@ -173,7 +173,7 @@
 		"ssr/prefetch-timebox": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/tier-upgrade-slider": true,
-		"stats/utm-builder": false,
+		"stats/utm-builder": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
