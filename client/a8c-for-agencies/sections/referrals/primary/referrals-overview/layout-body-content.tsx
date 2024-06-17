@@ -313,13 +313,6 @@ export default function LayoutBodyContent( {
 								<Button className="a8c-blue-link" borderless href={ A4A_REFERRALS_FAQ }>
 									{ translate( 'How much money will I make?' ) }
 								</Button>
-								<br />
-								{
-									// FIXME: Add link
-									<Button className="a8c-blue-link" borderless href="#">
-										{ translate( 'How does it work?' ) }
-									</Button>
-								}
 							</StepSection>
 						) }
 					</>
