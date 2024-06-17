@@ -25,6 +25,10 @@
 				justify-content: center;
 				gap: 16px;
 
+				@media (min-width: $break-large) {
+					justify-content: start;
+				}
+
 				.question-options__option-control {
 					padding: 24px;
 
