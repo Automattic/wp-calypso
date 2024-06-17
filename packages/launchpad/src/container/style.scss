@@ -1,0 +1,57 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+
+.launchpad-container {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+// Launchpad Content.
+.launchpad-container__content {
+	display: flex;
+	flex-direction: column;
+
+	@include break-large {
+		height: 100%;
+		flex-direction: row;
+	}
+}
+
+// Launchpad Sidebar.
+.launchpad-container__sidebar {
+	max-width: 100%;
+	margin: 0 16px 32px;
+	display: flex;
+	flex-direction: column;
+
+	@include break-large {
+		max-width: 360px;
+		margin: 0 20px 24px 24px;
+		gap: 80px;
+	}
+
+	// TODO: Migrate to the checklist components. The checklist could receive a special className as prop that would be responsible for this.
+	.launchpad-container .checklist__tasks .checklist-item__task-content.is-placeholder .checklist-item__content {
+		/* Override default placeholder colours to align with other elements on the page. */
+		background-color: var(--color-neutral-5);
+	}
+}
+.launchpad-container__sidebar-content-container {
+	margin-left: 0;
+	margin-top: 64px;
+	flex-grow: 1;
+
+	@include break-large {
+		margin-left: 16px;
+		margin-top: 84px;
+	}
+}
+
+// Main content.
+.launchpad-container__main-content {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
