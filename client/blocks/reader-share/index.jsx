@@ -97,6 +97,7 @@ class ReaderShare extends Component {
 			'reader-share__button': true,
 			'ignore-click': true,
 			'is-active': this.state.showingMenu,
+			tooltip: this.props.isReblogSelection,
 		} );
 
 		const popoverProps = {
@@ -106,8 +107,6 @@ class ReaderShare extends Component {
 			position: this.props.position,
 			className: 'popover reader-share__popover',
 		};
-
-		const reblogTitle = this.props.comment && translate( 'Turn this comment into its own post' );
 
 		// The event.preventDefault() on the wrapping div is needed to prevent the
 		// full post opening when a share method is selected in the popover
@@ -123,7 +122,8 @@ class ReaderShare extends Component {
 					onMouseEnter={ preloadEditor }
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
-					title={ this.props.isReblogSelection ? translate( 'Reblog' ) : translate( 'Share' ) }
+					data-tooltip={ this.props.isReblogSelection && translate( 'Repost with your thoughts' ) }
+					title={ ! this.props.isReblogSelection && translate( 'Share' ) }
 				>
 					{ ! this.props.isReblogSelection ? (
 						<>
@@ -137,12 +137,9 @@ class ReaderShare extends Component {
 							<Gridicon
 								icon="reblog"
 								size={ this.props.iconSize }
-								title={ reblogTitle }
 								style={ { height: this.props.iconSize, width: this.props.iconSize } }
 							/>
-							<span className="reader-share__label" title={ reblogTitle }>
-								{ translate( 'Repost' ) }
-							</span>
+							<span className="reader-share__label">{ translate( 'Repost' ) }</span>
 						</>
 					) }
 				</Button>
