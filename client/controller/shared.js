@@ -70,7 +70,6 @@ export function setLocaleMiddleware( param = 'lang' ) {
 			context.lang = paramsLocale;
 			context.store.dispatch( setLocale( paramsLocale ) );
 		}
-		console.log( 'setLocaleMiddleware', queryLocale, paramsLocale );
 		next();
 	};
 }
