@@ -155,8 +155,6 @@
 		"onboarding/import-light": false,
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/interval-dropdown": true,
-		"onboarding/new-user-survey": false,
-		"onboarding/new-user-survey-scrambled": false,
 		"onboarding/trail-map-feature-grid-copy": false,
 		"onboarding/trail-map-feature-grid-structure": false,
 		"onboarding/trail-map-feature-grid": false,
