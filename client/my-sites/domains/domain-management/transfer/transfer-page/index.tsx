@@ -377,7 +377,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 					<InfoNotice
 						redesigned
 						text={ __(
-							"This is a free Gravatar domain. If you transfer it to another registrar, you won't be able to get another free domain to use with Gravatar."
+							"This is a free domain for your Gravatar profile. If you transfer it to another registrar, you won't be able to get another free domain to use with your Gravatar profile."
 						) }
 					/>
 				) }

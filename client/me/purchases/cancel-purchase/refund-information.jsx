@@ -300,7 +300,7 @@ const CancelPurchaseRefundInformation = ( {
 		if ( isGravatarDomain ) {
 			text.push(
 				i18n.translate(
-					"This is a free Gravatar domain. If it expires, you won't be able to get another free domain to use with Gravatar."
+					"This is a free domain for your Gravatar profile. If it expires, you won't be able to get another free domain to use for your Gravatar profile."
 				)
 			);
 		}
