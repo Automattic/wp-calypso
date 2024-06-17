@@ -289,19 +289,12 @@ export class DomainWarnings extends PureComponent {
 			} );
 			if ( expiredDomains[ 0 ].aftermarketAuction ) {
 				text = translate(
-					'{{strong}}%(domainName)s{{/strong}} expired %(timeSince)s.' +
+					'{{strong}}%(domainName)s{{/strong}} expired %(timeSince)s. ' +
 						"It's no longer available to manage or renew. " +
-						'We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}. {{a}}Learn more{{/a}}',
+						'We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}.',
 					{
 						components: {
 							strong: <strong />,
-							a: (
-								<a
-									href={ localizeUrl( DOMAIN_EXPIRATION ) }
-									rel="noopener noreferrer"
-									target="_blank"
-								/>
-							),
 						},
 						args: {
 							timeSince: moment( expiredDomains[ 0 ].expiry ).fromNow(),
@@ -350,6 +343,7 @@ export class DomainWarnings extends PureComponent {
 
 		const { translate, moment } = this.props;
 		let text;
+		let cta;
 		if ( expiredDomains.length === 1 ) {
 			text = translate(
 				'The domain {{strong}}%(domainName)s{{/strong}} expired %(timeSince)s. ' +
@@ -369,17 +363,10 @@ export class DomainWarnings extends PureComponent {
 				text = translate(
 					'The domain {{strong}}%(domainName)s{{/strong}} expired %(timeSince)s. ' +
 						"It's no longer available to manage or renew. " +
-						'We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}. {{a}}Learn more{{/a}}',
+						'We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}.',
 					{
 						components: {
 							strong: <strong />,
-							a: (
-								<a
-									href={ localizeUrl( DOMAIN_EXPIRATION ) }
-									rel="noopener noreferrer"
-									target="_blank"
-								/>
-							),
 						},
 						args: {
 							timeSince: moment( expiredDomains[ 0 ].expiry ).fromNow(),
@@ -393,6 +380,7 @@ export class DomainWarnings extends PureComponent {
 						comment: '%(timeSince)s is something like "a year ago"',
 					}
 				);
+				cta = this.expiredDomainLink( this.onExpiredDomainsNoticeClick );
 			}
 		} else {
 			text = translate( 'Some domains on this site expired recently.', {
@@ -407,6 +395,7 @@ export class DomainWarnings extends PureComponent {
 				key={ expiredDomainsCannotManageWarning }
 				text={ text }
 			>
+				{ cta }
 				{ this.trackImpression( expiredDomainsCannotManageWarning, expiredDomains.length ) }
 			</Notice>
 		);
