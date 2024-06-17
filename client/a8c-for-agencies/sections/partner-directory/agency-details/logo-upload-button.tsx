@@ -29,7 +29,7 @@ const LogoUploadButton = ( { site, onLogoUpload }: Props ) => {
 			style={ { display: 'none' } }
 			ref={ fileInputRef }
 			type="file"
-			accept="image/*"
+			accept="image/jpg, image/jpeg, image/png"
 			onChange={ uploadFiles }
 		/>
 	);
