@@ -14,6 +14,7 @@ import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
 import {
 	isGravatarOAuth2Client,
 	isWPJobManagerOAuth2Client,
@@ -82,9 +83,9 @@ class MagicLogin extends Component {
 		isSendingEmail: PropTypes.bool.isRequired,
 		emailRequested: PropTypes.bool.isRequired,
 		localeSuggestions: PropTypes.array,
-		isAuthenticating: PropTypes.bool,
-		isAuthenticated: PropTypes.bool,
-		authError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		isValidatingCode: PropTypes.bool,
+		isCodeValidated: PropTypes.bool,
+		codeValidationError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 
 		// From `localize`
 		translate: PropTypes.func.isRequired,
@@ -124,7 +125,7 @@ class MagicLogin extends Component {
 			localeSuggestions,
 			path,
 			showCheckYourEmail,
-			isAuthenticated,
+			isCodeValidated,
 			query,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification } = this.state;
@@ -182,7 +183,7 @@ class MagicLogin extends Component {
 				} );
 			}
 
-			if ( isAuthenticated && query?.redirect_to ) {
+			if ( isCodeValidated && query?.redirect_to ) {
 				window.location.replace( query.redirect_to );
 			}
 
@@ -295,7 +296,7 @@ class MagicLogin extends Component {
 		);
 	}
 
-	handleGravPoweredSendEmailWithCode = async ( email = this.state.usernameOrEmail ) => {
+	handleGravPoweredSendEmailCode = async ( email = this.state.usernameOrEmail ) => {
 		const { oauth2Client, query, locale, translate } = this.props;
 		const noticeId = 'email-code-notice';
 		const duration = 4000;
@@ -361,7 +362,7 @@ class MagicLogin extends Component {
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
 
 		if ( ! emailValidator.validate( usernameOrEmail ) ) {
-			return this.setState( { sendEmailErrorMessage: translate( 'Invalid email' ) } );
+			return this.setState( { sendEmailErrorMessage: translate( 'Invalid email.' ) } );
 		}
 
 		this.setState( { usernameOrEmail, isRequestingEmail: true } );
@@ -383,7 +384,7 @@ class MagicLogin extends Component {
 					maskedEmailAddress: main_email_masked,
 				} );
 			} else {
-				this.handleGravPoweredSendEmailWithCode( usernameOrEmail );
+				this.handleGravPoweredSendEmailCode( usernameOrEmail );
 			}
 
 			this.props.recordTracksEvent( 'calypso_gravatar_get_gravatar_info_success', eventOptions );
@@ -391,11 +392,11 @@ class MagicLogin extends Component {
 			switch ( error.error ) {
 				case 'not_found':
 					this.setState( { isNewAccount: true } );
-					this.handleGravPoweredSendEmailWithCode( usernameOrEmail );
+					this.handleGravPoweredSendEmailCode( usernameOrEmail );
 					break;
 				case 'invalid_email':
 					this.setState( {
-						sendEmailErrorMessage: translate( 'Invalid email' ),
+						sendEmailErrorMessage: translate( 'Invalid email.' ),
 						isRequestingEmail: false,
 					} );
 				default:
@@ -518,155 +519,6 @@ class MagicLogin extends Component {
 		}, 1000 );
 	};
 
-	renderGravPoweredEmailLinkVerification() {
-		const {
-			oauth2Client,
-			translate,
-			query,
-			isSendingEmail,
-			sendEmailLogin: resendEmail,
-		} = this.props;
-		const { usernameOrEmail, resendEmailCountdown } = this.state;
-		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
-
-		const emailTextOptions = {
-			components: {
-				sendEmailButton: (
-					<button
-						onClick={ () => {
-							resendEmail( usernameOrEmail, {
-								redirectTo: query?.redirect_to,
-								requestLoginEmailFormFlow: true,
-								createAccount: true,
-								flow: oauth2Client.name,
-								showGlobalNotices: true,
-							} );
-
-							this.props.recordTracksEvent(
-								'calypso_gravatar_powered_magic_login_click_resend_email',
-								{ type: 'link', client_id: oauth2Client.id, client_name: oauth2Client.name }
-							);
-						} }
-						disabled={ isSendingEmail }
-					/>
-				),
-				showMagicLoginButton: (
-					<button
-						className="grav-powered-magic-login__show-magic-login"
-						onClick={ () => {
-							this.resetResendEmailCountdown();
-							this.handleGravPoweredSwitchEmail();
-						} }
-					/>
-				),
-			},
-		};
-
-		return (
-			<div className="grav-powered-magic-login__content">
-				<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
-				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
-				<p className="grav-powered-magic-login__sub-header">
-					{ emailAddress
-						? translate(
-								"We've sent an email with a verification link to {{strong}}%(emailAddress)s{{/strong}}",
-								{
-									components: { strong: <strong /> },
-									args: { emailAddress },
-								}
-						  )
-						: translate(
-								'We just emailed you a link. Please check your inbox and click the link to log in.'
-						  ) }
-				</p>
-				<hr className="grav-powered-magic-login__divider" />
-				<div className="grav-powered-magic-login__footer">
-					<div>{ translate( 'Are you having issues receiving it?' ) }</div>
-					<div>
-						{ resendEmailCountdown === 0
-							? translate(
-									'{{sendEmailButton}}Resend the verification email{{/sendEmailButton}} or {{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
-									emailTextOptions
-							  )
-							: translate(
-									'{{showMagicLoginButton}}Use a different email address{{/showMagicLoginButton}}.',
-									emailTextOptions
-							  ) }
-					</div>
-				</div>
-			</div>
-		);
-	}
-
-	renderGravPoweredEmailCodeVerification() {
-		const { oauth2Client, isSendingEmail, translate } = this.props;
-		const { usernameOrEmail, isNewAccount, verificationCodeInputValue } = this.state;
-
-		return (
-			<div className="grav-powered-magic-login__content">
-				<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
-				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
-				<p className="grav-powered-magic-login__sub-header">
-					{ translate(
-						'Enter the verification code we’ve sent to {{strong}}%(emailAddress)s{{/strong}}. A new Gravatar account will be created.',
-						{
-							components: { strong: <strong /> },
-							args: { emailAddress: usernameOrEmail },
-						}
-					) }
-				</p>
-				{ isNewAccount && this.renderGravPoweredMagicLoginTos() }
-				<form
-					className="grav-powered-magic-login__verification-code-form"
-					onSubmit={ this.handleVerificationCodeSubmit }
-				>
-					<label htmlFor="verification-code" hidden>
-						{ translate( 'Enter the verification code' ) }
-					</label>
-					<input
-						id="verification-code"
-						className="form-text-input"
-						type="text"
-						value={ verificationCodeInputValue }
-						onChange={ this.handleVerificationCodeInputChange }
-						placeholder={ translate( 'Verification code' ) }
-						ref={ this.verificationCodeInputRef }
-					/>
-					{ /* TODO: Handle code validation errors */ }
-					<button
-						className="button form-button is-primary"
-						type="submit"
-						disabled={ ! verificationCodeInputValue || verificationCodeInputValue.length < 6 }
-					>
-						{ translate( 'Continue' ) }
-					</button>
-				</form>
-				<footer className="grav-powered-magic-login__footer">
-					<button
-						onClick={ () => {
-							this.handleGravPoweredSendEmailWithCode();
-
-							this.props.recordTracksEvent(
-								'calypso_gravatar_powered_magic_login_click_resend_email',
-								{
-									type: 'code',
-									client_id: oauth2Client.id,
-									client_name: oauth2Client.name,
-								}
-							);
-						} }
-						disabled={ isSendingEmail }
-					>
-						{ translate( 'Send again' ) }
-					</button>
-					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
-						{ translate( 'Need help logging in?' ) }
-					</a>
-				</footer>
-			</div>
-		);
-	}
-
 	renderGravPoweredSecondaryEmailOptions() {
 		const { oauth2Client, translate } = this.props;
 		const { usernameOrEmail, isNewAccount, maskedEmailAddress, username } = this.state;
@@ -751,6 +603,178 @@ class MagicLogin extends Component {
 						{ translate( 'Need help logging in?' ) }
 					</a>
 				</footer>
+			</div>
+		);
+	}
+
+	renderGravPoweredEmailCodeVerification() {
+		const {
+			oauth2Client,
+			isSendingEmail,
+			translate,
+			isValidatingCode,
+			isCodeValidated,
+			codeValidationError,
+		} = this.props;
+		const { usernameOrEmail, isNewAccount, verificationCodeInputValue } = this.state;
+		const errorText =
+			codeValidationError === 403
+				? translate( 'Invalid code.' )
+				: translate( 'Something went wrong. Please try again.' );
+
+		return (
+			<div className="grav-powered-magic-login__content">
+				<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
+				<p className="grav-powered-magic-login__sub-header">
+					{ translate(
+						'Enter the verification code we’ve sent to {{strong}}%(emailAddress)s{{/strong}}. A new Gravatar account will be created.',
+						{
+							components: { strong: <strong /> },
+							args: { emailAddress: usernameOrEmail },
+						}
+					) }
+				</p>
+				{ isNewAccount && this.renderGravPoweredMagicLoginTos() }
+				<form
+					className="grav-powered-magic-login__verification-code-form"
+					onSubmit={ this.handleVerificationCodeSubmit }
+				>
+					<label htmlFor="verification-code" hidden>
+						{ translate( 'Enter the verification code' ) }
+					</label>
+					<input
+						id="verification-code"
+						className="form-text-input"
+						type="text"
+						value={ verificationCodeInputValue }
+						onChange={ this.handleVerificationCodeInputChange }
+						placeholder={ translate( 'Verification code' ) }
+						ref={ this.verificationCodeInputRef }
+					/>
+					{ codeValidationError && (
+						<Notice
+							text={ errorText }
+							className="magic-login__request-login-email-form-notice"
+							showDismiss={ false }
+							status="is-transparent-info"
+						/>
+					) }
+					<button
+						className="button form-button is-primary"
+						type="submit"
+						disabled={
+							! verificationCodeInputValue ||
+							verificationCodeInputValue.length < 6 ||
+							isValidatingCode ||
+							isCodeValidated
+						}
+					>
+						{ translate( 'Continue' ) }
+					</button>
+				</form>
+				<footer className="grav-powered-magic-login__footer">
+					<button
+						onClick={ () => {
+							this.handleGravPoweredSendEmailCode();
+
+							this.props.recordTracksEvent(
+								'calypso_gravatar_powered_magic_login_click_resend_email',
+								{
+									type: 'code',
+									client_id: oauth2Client.id,
+									client_name: oauth2Client.name,
+								}
+							);
+						} }
+						disabled={ isSendingEmail }
+					>
+						{ translate( 'Send again' ) }
+					</button>
+					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
+						{ translate( 'Need help logging in?' ) }
+					</a>
+				</footer>
+			</div>
+		);
+	}
+
+	renderGravPoweredEmailLinkVerification() {
+		const {
+			oauth2Client,
+			translate,
+			query,
+			isSendingEmail,
+			sendEmailLogin: resendEmail,
+		} = this.props;
+		const { usernameOrEmail, resendEmailCountdown } = this.state;
+		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
+
+		const emailTextOptions = {
+			components: {
+				sendEmailButton: (
+					<button
+						onClick={ () => {
+							resendEmail( usernameOrEmail, {
+								redirectTo: query?.redirect_to,
+								requestLoginEmailFormFlow: true,
+								createAccount: true,
+								flow: oauth2Client.name,
+								showGlobalNotices: true,
+							} );
+
+							this.props.recordTracksEvent(
+								'calypso_gravatar_powered_magic_login_click_resend_email',
+								{ type: 'link', client_id: oauth2Client.id, client_name: oauth2Client.name }
+							);
+						} }
+						disabled={ isSendingEmail }
+					/>
+				),
+				showMagicLoginButton: (
+					<button
+						className="grav-powered-magic-login__show-magic-login"
+						onClick={ () => {
+							this.resetResendEmailCountdown();
+							this.handleGravPoweredSwitchEmail();
+						} }
+					/>
+				),
+			},
+		};
+
+		return (
+			<div className="grav-powered-magic-login__content">
+				<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
+				<p className="grav-powered-magic-login__sub-header">
+					{ emailAddress
+						? translate(
+								"We've sent an email with a verification link to {{strong}}%(emailAddress)s{{/strong}}",
+								{
+									components: { strong: <strong /> },
+									args: { emailAddress },
+								}
+						  )
+						: translate(
+								'We just emailed you a link. Please check your inbox and click the link to log in.'
+						  ) }
+				</p>
+				<hr className="grav-powered-magic-login__divider" />
+				<div className="grav-powered-magic-login__footer">
+					<div>{ translate( 'Are you having issues receiving it?' ) }</div>
+					<div>
+						{ resendEmailCountdown === 0
+							? translate(
+									'{{sendEmailButton}}Resend the verification email{{/sendEmailButton}} or {{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
+									emailTextOptions
+							  )
+							: translate(
+									'{{showMagicLoginButton}}Use a different email address{{/showMagicLoginButton}}.',
+									emailTextOptions
+							  ) }
+					</div>
+				</div>
 			</div>
 		);
 	}
@@ -1086,9 +1110,9 @@ const mapState = ( state ) => ( {
 		getInitialQueryArguments( state ).email_address,
 	localeSuggestions: getLocaleSuggestions( state ),
 	isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
-	isAuthenticating: isFetchingMagicLoginAuth( state ),
-	isAuthenticated: getMagicLoginRequestedAuthSuccessfully( state ),
-	authError: getMagicLoginRequestAuthError( state ),
+	isValidatingCode: isFetchingMagicLoginAuth( state ),
+	isCodeValidated: getMagicLoginRequestedAuthSuccessfully( state ),
+	codeValidationError: getMagicLoginRequestAuthError( state ),
 } );
 
 const mapDispatch = {
