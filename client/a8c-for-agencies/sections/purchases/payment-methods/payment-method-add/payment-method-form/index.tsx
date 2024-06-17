@@ -200,18 +200,13 @@ function PaymentMethodForm() {
 		//
 		if ( returnQueryArg || products ) {
 			refetchStoredCards();
+			// If the user is in the client view, we need to redirect to the client view
+			if ( isClientView() && returnQueryArg.startsWith( A4A_CLIENT_CHECKOUT ) ) {
+				page( returnQueryArg );
+			}
+		} else {
+			page( isClientView() ? A4A_CLIENT_PAYMENT_METHODS_LINK : A4A_PAYMENT_METHODS_LINK );
 		}
-
-		// If the user is in the client view, we need to redirect to the client view
-		if ( isClientView() ) {
-			page(
-				returnQueryArg.startsWith( A4A_CLIENT_CHECKOUT )
-					? returnQueryArg
-					: A4A_CLIENT_PAYMENT_METHODS_LINK
-			);
-			return;
-		}
-		page( A4A_PAYMENT_METHODS_LINK );
 	}, [ returnQueryArg, products, refetchStoredCards ] );
 
 	useEffect( () => {
