@@ -664,8 +664,7 @@ export function generateFlows( {
 			name: 'email-subscription',
 			steps: [ userSocialStep ],
 			destination: getSignupDestination,
-			description:
-				'Email Subscription signup flow that signs user up to guides appointments for email campaigns',
+			description: 'Signup flow that subscripes user to guides appointments for email campaigns',
 			lastModified: '2024-06-14',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'email', 'redirect_to', 'mailing_list' ],
