@@ -83,6 +83,7 @@ const MobileView = ( {
 			) as FeatureGroupSlug[],
 		[ featureGroupMap ]
 	);
+	const storageFeatureGroup = featureGroupMap[ FEATURE_GROUP_STORAGE ];
 
 	return renderedGridPlans
 		.reduce( ( acc, gridPlan ) => {
@@ -114,14 +115,23 @@ const MobileView = ( {
 					) }
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
-					<PlanFeaturesItem>
-						<StorageFeature
-							planSlug={ gridPlan.planSlug }
-							intervalType={ intervalType }
-							onStorageAddOnClick={ onStorageAddOnClick }
-							showUpgradeableStorage={ showUpgradeableStorage }
-						/>
-					</PlanFeaturesItem>
+					{ storageFeatureGroup && (
+						<>
+							<PlanFeaturesItem>
+								<h2 className="plans-grid-next-features-grid__feature-group-title">
+									{ storageFeatureGroup?.getTitle() }
+								</h2>
+							</PlanFeaturesItem>
+							<PlanFeaturesItem>
+								<StorageFeature
+									planSlug={ gridPlan.planSlug }
+									intervalType={ intervalType }
+									onStorageAddOnClick={ onStorageAddOnClick }
+									showUpgradeableStorage={ showUpgradeableStorage }
+								/>
+							</PlanFeaturesItem>
+						</>
+					) }
 					<TopButtons
 						renderedGridPlans={ [ gridPlan ] }
 						isInSignup={ isInSignup }
