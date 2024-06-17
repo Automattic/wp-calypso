@@ -5,12 +5,12 @@ import { PureComponent } from 'react';
 class SubscribingEmailStepContent extends PureComponent {
 	render() {
 		return (
-			<div className="reader-landing__button-wrapper">
+			<div className="subscribing-email__button-wrapper">
 				<Button
 					primary
 					type="submit"
 					onClick={ this.props.onButtonClick }
-					className="reader-landing__button"
+					className="subscribing-email__button"
 				>
 					Create new user
 				</Button>

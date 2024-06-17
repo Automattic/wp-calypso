@@ -48,7 +48,7 @@ class SubscribingEmailStep extends Component {
 		// const { flowName, positionInFlow, stepName, translate } = this.props;
 
 		return (
-			<div className="reader-landing">
+			<div className="subscribing-email">
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
