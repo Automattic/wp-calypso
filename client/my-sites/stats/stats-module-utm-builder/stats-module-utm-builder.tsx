@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { trackStatsAnalyticsEvent } from '../utils';
-import StatsUtmBuilderForm from './stats-modeule-utm-builder-form';
+import StatsUtmBuilderForm from './stats-module-utm-builder-form';
 
 interface Props {
 	modalClassName: string;
@@ -61,7 +61,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
 									) }
 								</div>
 								<div className="stats-utm-builder__help-section-parameter-example">
-									{ translate( 'Example: newsletter, X, google' ) }
+									{ translate( 'Example: newsletter, X, Google' ) }
 								</div>
 							</section>
 							<section>

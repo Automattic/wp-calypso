@@ -2,6 +2,8 @@ import { Card, CardBody, Icon } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
 import { trackStatsAnalyticsEvent } from '../../utils';
 
+import './styles.scss';
+
 interface EmptyStateActionProps {
 	text: string;
 	icon: JSX.Element;
