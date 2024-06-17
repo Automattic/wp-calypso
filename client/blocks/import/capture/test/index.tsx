@@ -122,12 +122,12 @@ describe( 'URL Validation', () => {
 		{
 			input: 'https://xn--example.com',
 			error:
-				'Looks like you’ve entered an internationalized domain name (IDN). Please enter a standard URL instead (e.g., example.com).',
+				'Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like ‘example.com’).',
 		},
 		{
 			input: 'www.例子.测试',
 			error:
-				'Looks like you’ve entered an internationalized domain name (IDN). Please enter a standard URL instead (e.g., example.com).',
+				'Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like ‘example.com’).',
 		},
 		{
 			input: 'example.com-',

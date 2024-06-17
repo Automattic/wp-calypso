@@ -33,10 +33,10 @@ function getErrorMessages(
 		},
 		'idn-url': {
 			message: translate(
-				'Looks like you’ve entered an internationalized domain name (IDN). Please enter a standard URL instead (e.g., example.com).'
+				'Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like ‘example.com’).'
 			),
 			messageString:
-				'Looks like you’ve entered an internationalized domain name (IDN). Please enter a standard URL instead (e.g., example.com).',
+				'Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like ‘example.com’).',
 		},
 		default: {
 			message: translate(
