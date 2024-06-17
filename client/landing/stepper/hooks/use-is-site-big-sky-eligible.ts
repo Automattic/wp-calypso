@@ -10,6 +10,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 const bypassBigSkyExperiment = config.isEnabled( 'big-sky' );
 const featureFlagEnabled = config.isEnabled( 'calypso/big-sky' );
+const validGoals = [ 'other', 'promote' ];
 
 export function useIsBigSkyEligible() {
 	const { isOwner } = useIsSiteOwner();
@@ -37,7 +38,6 @@ export function useIsBigSkyEligible() {
 		return { isLoading: false, isEligible: false };
 	}
 
-	const validGoals = [ 'other', 'promote' ];
 	const hasValidGoal = goals.every( ( value ) => validGoals.includes( value ) );
 	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
 
