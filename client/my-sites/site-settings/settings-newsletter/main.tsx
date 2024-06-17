@@ -292,7 +292,7 @@ const NewsletterSettings = () => {
 	const translate = useTranslate();
 
 	return (
-		<Main>
+		<Main className="site-settings">
 			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
 			<NavigationHeader navigationItems={ [] } title={ translate( 'Newsletter Settings' ) } />
 			<SubscriptionsModuleBanner />
