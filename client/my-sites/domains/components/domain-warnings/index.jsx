@@ -104,6 +104,17 @@ export class DomainWarnings extends PureComponent {
 		);
 	}
 
+	expiredDomainLink( onClick ) {
+		const { translate } = this.props;
+		return (
+			<NoticeAction href={ DOMAIN_EXPIRATION } onClick={ onClick }>
+				{ translate( 'Learn more', {
+					context: 'Call to action link for support page of expired domains in auction.',
+				} ) }
+			</NoticeAction>
+		);
+	}
+
 	getPipe() {
 		const allRules = [
 			this.expiredDomainsCanManage,
@@ -260,6 +271,10 @@ export class DomainWarnings extends PureComponent {
 			return null;
 		}
 
+		const expiredDomainsNotAuctionLocked = expiredDomains.filter(
+			( domain ) => ! domain.aftermarketAuction
+		);
+
 		const { translate, moment } = this.props;
 		let text;
 		if ( expiredDomains.length === 1 ) {
@@ -272,6 +287,35 @@ export class DomainWarnings extends PureComponent {
 				context: 'Expired domain notice',
 				comment: '%(timeSince)s is something like "a year ago"',
 			} );
+			if ( expiredDomains[ 0 ].aftermarketAuction ) {
+				text = translate(
+					'{{strong}}%(domainName)s{{/strong}} expired %(timeSince)s.' +
+						"It's no longer available to manage or renew. " +
+						'We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}. {{a}}Learn more{{/a}}',
+					{
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									href={ localizeUrl( DOMAIN_EXPIRATION ) }
+									rel="noopener noreferrer"
+									target="_blank"
+								/>
+							),
+						},
+						args: {
+							timeSince: moment( expiredDomains[ 0 ].expiry ).fromNow(),
+							domainName: expiredDomains[ 0 ].name,
+							owner: expiredDomains[ 0 ].owner,
+							aftermarketAuctionEnd: moment
+								.utc( expiredDomains[ 0 ].aftermarketAuctionEnd )
+								.format( 'LL' ),
+						},
+						context: 'Expired domain notice',
+						comment: '%(timeSince)s is something like "a year ago"',
+					}
+				);
+			}
 		} else {
 			text = translate( 'Some of your domains have expired.', {
 				context: 'Expired domain notice',
@@ -286,7 +330,9 @@ export class DomainWarnings extends PureComponent {
 				key={ expiredDomainsCanManageWarning }
 				text={ text }
 			>
-				{ this.renewLink( expiredDomains, this.onExpiredDomainsNoticeClick ) }
+				{ expiredDomainsNotAuctionLocked.length
+					? this.renewLink( expiredDomainsNotAuctionLocked, this.onExpiredDomainsNoticeClick )
+					: this.expiredDomainLink( this.onExpiredDomainsNoticeClick ) }
 				{ this.trackImpression( expiredDomainsCanManageWarning, expiredDomains.length ) }
 			</Notice>
 		);
@@ -349,12 +395,9 @@ export class DomainWarnings extends PureComponent {
 				);
 			}
 		} else {
-			text = translate(
-				'Some domains on this site expired recently. They can be renewed by their owners depending on the expiration date.',
-				{
-					context: 'Expired domain notice',
-				}
-			);
+			text = translate( 'Some domains on this site expired recently.', {
+				context: 'Expired domain notice',
+			} );
 		}
 
 		return (
