@@ -20,10 +20,6 @@ $brand-display: "SF Pro Display", sans-serif;
 		box-sizing: border-box;
 		column-gap: 10px;
 		flex: 1;
-		@media screen and (min-width: $break-xhuge) {
-			max-width: 1400px;
-			padding-inline: 64px;
-		}
 		button {
 			padding: 8px 14px;
 		}
@@ -171,6 +167,17 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		.validation-msg {
 			width: 100%;
+		}
+	}
+}
+
+main.scheduled-updates-list {
+	.plugins-update-manager-multisite {
+		&__header-main {
+			@media screen and (min-width: $break-xhuge) {
+				max-width: 1400px;
+				padding-inline: 64px;
+			}
 		}
 	}
 }
