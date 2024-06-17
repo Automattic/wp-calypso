@@ -921,9 +921,16 @@ class SignupForm extends Component {
 		}
 
 		if ( this.props.isBlazePro ) {
-			tosText = this.props.translate(
-				'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				options
+			tosText = (
+				<>
+					{ this.props.translate(
+						'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+						options
+					) }{ ' ' }
+					{ this.props.translate(
+						'Blaze Pro uses WordPress.com accounts under the hood. Tumblr, Blaze Pro, and WordPress.com are properties of Automattic, Inc.'
+					) }
+				</>
 			);
 		}
 
