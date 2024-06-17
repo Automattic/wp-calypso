@@ -11,6 +11,8 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import type { Step } from '../../types';
 
+import './style.scss';
+
 const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const site = useSite();
