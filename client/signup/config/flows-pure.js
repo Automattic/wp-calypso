@@ -662,7 +662,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'email-subscription',
-			steps: [ 'subscribe-email' ],
+			steps: [ 'subscribing-email' ],
 			destination: getSignupDestination,
 			description: 'Signup flow that subscripes user to guides appointments for email campaigns',
 			lastModified: '2024-06-17',

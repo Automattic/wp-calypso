@@ -460,8 +460,8 @@ export function generateSteps( {
 				isDomainOnly: false,
 			},
 		},
-		'subscribe-email': {
-			stepName: 'subscribe-email',
+		'subscribing-email': {
+			stepName: 'subscribing-email',
 			// apiRequestFunction: createSiteWithCart,
 			dependencies: [ 'email', 'redirect_to', 'mailing_list' ],
 			providesDependencies: [],

@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import SubscribeEmailStepContent from './content';
+import SubscribingEmailStepContent from './content';
 import './style.scss';
 
-class SubscribeEmailStep extends Component {
+class SubscribingEmailStep extends Component {
 	handleButtonClick = () => {
 		// this.props.recordTracksEvent( 'calypso_signup_reader_landing_cta' );
 		// this.props.submitSignupStep( { stepName: this.props.stepName } );
@@ -28,7 +28,7 @@ class SubscribeEmailStep extends Component {
 					// subHeaderText={ translate(
 					// 	'Read posts from all the sites you follow, find great new reads, and stay up-to-date on comments and replies in one convenient place: the WordPress.com Reader.'
 					// ) }
-					stepContent={ <SubscribeEmailStepContent onButtonClick={ this.handleButtonClick } /> }
+					stepContent={ <SubscribingEmailStepContent onButtonClick={ this.handleButtonClick } /> }
 				/>
 			</div>
 		);
@@ -36,5 +36,5 @@ class SubscribeEmailStep extends Component {
 }
 
 export default connect( null, { recordTracksEvent, submitSignupStep } )(
-	localize( SubscribeEmailStep )
+	localize( SubscribingEmailStep )
 );

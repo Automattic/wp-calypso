@@ -19,7 +19,7 @@ const stepNameToModuleName = {
 	'domains-theme-preselected': 'domains',
 	'mailbox-domain': 'domains',
 	emails: 'emails',
-	'subscribe-email': 'subscribe-email',
+	'subscribing-email': 'subscribing-email',
 	mailbox: 'emails',
 	launch: 'launch-site',
 	'mailbox-plan': 'plans',
