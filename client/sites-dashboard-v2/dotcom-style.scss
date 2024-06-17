@@ -248,8 +248,8 @@
 		align-items: center;
 		// Places search above filters
 		z-index: 1;
+		margin-top: 1px;
 		border-radius: 4px;
-		border: 1px solid var(--studio-gray-10);
 		background-color: var(--color-surface, $white);
 
 		.components-input-control__input {
@@ -266,6 +266,10 @@
 		.components-input-control__suffix {
 			color: var(--studio-gray-40);
 			margin-right: 4px;
+		}
+
+		.components-input-control__backdrop {
+			box-shadow: 0 0 0 1px var(--studio-gray-10);
 		}
 	}
 }
