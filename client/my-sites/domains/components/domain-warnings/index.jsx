@@ -7,7 +7,7 @@ import {
 	MAP_SUBDOMAIN,
 	SETTING_PRIMARY_DOMAIN,
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
-	DOMAIN_EXPIRATION,
+	DOMAIN_EXPIRATION_AUCTION,
 } from '@automattic/urls';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
@@ -107,7 +107,7 @@ export class DomainWarnings extends PureComponent {
 	expiredDomainLink( onClick ) {
 		const { translate } = this.props;
 		return (
-			<NoticeAction href={ DOMAIN_EXPIRATION } onClick={ onClick }>
+			<NoticeAction href={ DOMAIN_EXPIRATION_AUCTION } onClick={ onClick }>
 				{ translate( 'Learn more', {
 					context: 'Call to action link for support page of expired domains in auction.',
 				} ) }
