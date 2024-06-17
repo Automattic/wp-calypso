@@ -216,7 +216,7 @@ export default function ShoppingCartForDIFM( {
 						<div className="page-picker__value">{ total }*</div>
 						<RefundText>
 							<StyledBraveTickIcon />
-							{ translate( '%(days)d day money back guarantee', {
+							{ translate( '%(days)d-day money-back guarantee', {
 								args: { days: 14 },
 							} ) }
 						</RefundText>
