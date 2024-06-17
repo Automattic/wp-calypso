@@ -122,14 +122,16 @@ const MobileView = ( {
 									{ storageFeatureGroup?.getTitle() }
 								</h2>
 							</PlanFeaturesItem>
-							<PlanFeaturesItem>
-								<StorageFeature
-									planSlug={ gridPlan.planSlug }
-									intervalType={ intervalType }
-									onStorageAddOnClick={ onStorageAddOnClick }
-									showUpgradeableStorage={ showUpgradeableStorage }
-								/>
-							</PlanFeaturesItem>
+							<div className="plan-features-2023-grid__highlighted-feature">
+								<PlanFeaturesItem>
+									<StorageFeature
+										planSlug={ gridPlan.planSlug }
+										intervalType={ intervalType }
+										onStorageAddOnClick={ onStorageAddOnClick }
+										showUpgradeableStorage={ showUpgradeableStorage }
+									/>
+								</PlanFeaturesItem>
+							</div>
 						</>
 					) }
 					<TopButtons
