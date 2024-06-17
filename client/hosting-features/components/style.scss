@@ -40,20 +40,6 @@
 }
 
 .hosting-features__card {
-	border-radius: 4px;
-	border: 1px solid var(--studio-gray-5);
-	box-shadow: none;
-	margin: 0;
-	padding: 24px;
-	display: flex;
-	flex-direction: column;
-
-	> .card-heading {
-		font-size: rem(16px);
-		font-weight: 500;
-		margin-bottom: 6px;
-	}
-
 	> p {
 		font-size: rem(14px);
 		margin-bottom: 20px;

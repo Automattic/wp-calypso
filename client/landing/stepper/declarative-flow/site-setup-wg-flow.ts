@@ -10,6 +10,15 @@ const siteSetupWithoutGoalsFlow: Flow = {
 	useSteps() {
 		return siteSetup.useSteps().slice( 2 );
 	},
+	useStepNavigation( currentStep, navigate ) {
+		const navigation = siteSetup.useStepNavigation( currentStep, navigate );
+		const isFirstStep = this.useSteps()[ 0 ].slug === currentStep;
+		// Delete `goBack` function on the first step fo the flow.
+		if ( isFirstStep ) {
+			delete navigation.goBack;
+		}
+		return navigation;
+	},
 };
 
 export default siteSetupWithoutGoalsFlow;

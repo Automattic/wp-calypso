@@ -10,19 +10,22 @@ export const getReferralsQueryKey = ( agencyId?: number ) => {
 
 const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
 	const clients = referrals.reduce< { [ key: string ]: Referral } >( ( acc, referral ) => {
-		if ( ! acc[ referral.client_id ] ) {
-			acc[ referral.client_id ] = {
+		const purchases = referral.products.map( ( product ) => ( {
+			...product,
+			status: referral.status,
+		} ) );
+		if ( ! acc[ referral.client.id ] ) {
+			acc[ referral.client.id ] = {
 				id: referral.id,
-				client_id: referral.client_id,
-				client_email: referral.client_email,
-				purchases: [ ...referral.products ],
+				client: referral.client,
+				purchases: [ ...purchases ],
 				commissions: referral.commission,
 				statuses: [ referral.status ],
 			};
 		} else {
-			acc[ referral.client_id ].purchases.push( ...referral.products );
-			acc[ referral.client_id ].commissions += referral.commission;
-			acc[ referral.client_id ].statuses.push( referral.status );
+			acc[ referral.client.id ].purchases.push( ...purchases );
+			acc[ referral.client.id ].commissions += referral.commission;
+			acc[ referral.client.id ].statuses.push( referral.status );
 		}
 		return acc;
 	}, {} );

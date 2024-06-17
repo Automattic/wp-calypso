@@ -1,17 +1,17 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../../types';
 
 type Props = {
-	initialData?: AgencyDirectoryApplication;
+	initialFormData?: AgencyDirectoryApplication | null;
 };
 
 function validateURL( url: string ) {
 	return /^(https?:\/\/)?([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(:[0-9]+)?(\/[a-z0-9-]*)*$/.test( url );
 }
 
-export default function useExpertiseForm( { initialData }: Props ) {
+export default function useExpertiseForm( { initialFormData }: Props ) {
 	const [ formData, setFormData ] = useState< AgencyDirectoryApplication >(
-		initialData ?? {
+		initialFormData ?? {
 			status: 'pending',
 			services: [],
 			products: [],
@@ -88,7 +88,7 @@ export default function useExpertiseForm( { initialData }: Props ) {
 		} ) );
 	}, [] );
 
-	const isValidFormData = useCallback(
+	const isValidFormData = useMemo(
 		(): boolean =>
 			formData.services.length > 0 &&
 			formData.products.length > 0 &&

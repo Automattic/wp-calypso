@@ -12,6 +12,7 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
+	StoreSandboxHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -28,43 +29,44 @@ import { chunkCssLinks } from './utils/chunk';
 class Document extends Component {
 	render() {
 		const {
-			app,
 			accountSettingsHelper,
+			app,
 			authHelper,
-			chunkFiles,
-			commitSha,
-			buildTimestamp,
-			head,
-			i18nLocaleScript,
-			initialReduxState,
-			initialQueryState,
-			entrypoint,
-			manifests,
-			lang,
-			languageRevisions,
-			renderedLayout,
-			user,
-			sectionGroup,
-			sectionName,
-			clientData,
-			env,
 			badge,
-			preferencesHelper,
-			reactQueryDevtoolsHelper,
 			branchName,
+			buildTimestamp,
+			chunkFiles,
+			clientData,
 			commitChecksum,
+			commitSha,
 			devDocs,
 			devDocsURL,
+			entrypoint,
+			env,
+			featuresHelper,
 			feedbackURL,
+			head,
+			i18nLocaleScript,
+			initialQueryState,
+			initialReduxState,
 			inlineScriptNonce,
 			isSupportSession,
 			isWooDna,
-			requestFrom,
-			useTranslationChunks,
-			target,
-			featuresHelper,
+			lang,
+			languageRevisions,
+			manifests,
 			params,
+			preferencesHelper,
 			query,
+			reactQueryDevtoolsHelper,
+			renderedLayout,
+			requestFrom,
+			sectionGroup,
+			sectionName,
+			storeSandboxHelper,
+			target,
+			user,
+			useTranslationChunks,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -184,6 +186,7 @@ class Document extends Component {
 							{ preferencesHelper && <PreferencesHelper /> }
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }
+							{ storeSandboxHelper && <StoreSandboxHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }

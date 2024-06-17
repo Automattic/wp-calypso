@@ -17,6 +17,18 @@
 	}
 }
 
+.checkout__client-referral-form-footer-error {
+	margin-block-start: 0.25rem;
+	color: var(--color-scary-40);
+	font-style: italic;
+	font-size: 0.875rem;
+	line-height: 14px;
+
+	&.hidden {
+		display: none;
+	}
+}
+
 .checkout__container {
 	display: flex;
 	flex-direction: column;
@@ -58,7 +70,8 @@
 		background: var(--color-neutral-0);
 	}
 
-	&.checkout__aside--referral {
+	&.checkout__aside--referral,
+	&.checkout__aside--client {
 		padding-block-start: 64px;
 	}
 }
@@ -230,3 +243,49 @@
 .checkout__client-referral-form {
 	padding-block-start: 48px;
 }
+
+.checkout__aside--client {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: calc(100% - 64px);
+	padding-block-end: 0;
+
+	.checkout__aside-actions {
+		margin-block-start: 16px;
+	}
+	.checkout__summary-client-payment-notice {
+		margin-block-start: 48px;
+		color: var(--color-neutral-70);
+		font-size: rem(16px);
+		font-weight: 600;
+		text-wrap: nowrap;
+	}
+
+	.checkout__summary-notice {
+		margin-block-start: 48px;
+
+		div {
+
+			margin-block-start: 8px;
+		}
+	}
+
+	.checkout__aside-footer {
+		margin-top: auto;
+		padding-bottom: 16px;
+
+		.checkout__aside-powered-by {
+			div {
+				color: var(--color-neutral-70);
+				font-size: rem(12px);
+			}
+
+			img {
+				margin-block-start: 8px;
+				width: 150px;
+			}
+		}
+	}
+}
+

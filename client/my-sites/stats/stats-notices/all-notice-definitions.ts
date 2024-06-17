@@ -39,31 +39,26 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isVip,
 			isP2,
 			isOwnedByTeam51,
-			hasPaidStats,
 			isSiteJetpackNotAtomic,
 			isCommercial,
+			isCommercialOwned,
 		}: StatsNoticeProps ) => {
-			// Gate notices for WPCOM sites behind a flag.
-			const showUpgradeNoticeForWpcomSites =
-				config.isEnabled( 'stats/paid-wpcom-stats' ) && isWpcom && ! isP2 && ! isOwnedByTeam51;
-
-			// Show the notice if the site is Jetpack or it is Odyssey Stats.
+			// Set up test conditions for the notice.
+			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
 			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
-
 			const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
 
 			return !! (
 				( showUpgradeNoticeOnOdyssey ||
 					showUpgradeNoticeForJetpackNotAtomic ||
 					showUpgradeNoticeForWpcomSites ) &&
-				// Show the notice if the site has not purchased the paid stats product.
-				! hasPaidStats &&
-				// Show the notice only if the site is commercial.
+				// Show the notice if the site is commercial without a commercial plan.
 				isCommercial &&
+				! isCommercialOwned &&
 				! isVip
 			);
 		},
-		disabled: ! config.isEnabled( 'stats/type-detection' ),
+		disabled: false,
 	},
 	{
 		component: DoYouLoveJetpackStatsNotice,
@@ -78,9 +73,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isSiteJetpackNotAtomic,
 			isCommercial,
 		}: StatsNoticeProps ) => {
-			// Gate notices for WPCOM sites behind a flag.
-			const showUpgradeNoticeForWpcomSites =
-				config.isEnabled( 'stats/paid-wpcom-stats' ) && isWpcom && ! isP2 && ! isOwnedByTeam51;
+			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
 
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
 			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
@@ -94,7 +87,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				// Show the notice if the site has not purchased the paid stats product.
 				! hasPaidStats &&
 				// Show the notice if the site is not commercial.
-				( ! config.isEnabled( 'stats/type-detection' ) || ! isCommercial ) &&
+				! isCommercial &&
 				! isVip
 			);
 		},

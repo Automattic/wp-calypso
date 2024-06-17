@@ -1,4 +1,3 @@
-import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -9,8 +8,6 @@ import SiteBackupCard from 'calypso/my-sites/hosting/site-backup-card';
 import SupportCard from 'calypso/my-sites/hosting/support-card';
 import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -18,11 +15,6 @@ import './style.scss';
 const HostingOverview: FC = () => {
 	const site = useSelector( getSelectedSite );
 	const isJetpackNotAtomic = site && isNotAtomicJetpack( site );
-	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, site?.ID || -1 ) );
-	const hasAtomicFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID || -1, WPCOM_FEATURES_ATOMIC )
-	);
-
 	const subtitle = isJetpackNotAtomic
 		? translate( 'Get a quick glance at your plans and upgrades.' )
 		: translate( 'Get a quick glance at your plans, storage, and domains.' );
@@ -36,7 +28,7 @@ const HostingOverview: FC = () => {
 			/>
 			<PlanCard />
 			<QuickActionsCard />
-			<SiteBackupCard disabled={ ! hasAtomicFeature || ! isSiteAtomic } />
+			<SiteBackupCard />
 			<SupportCard />
 			<ActiveDomainsCard />
 		</div>

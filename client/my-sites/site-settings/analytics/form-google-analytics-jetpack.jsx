@@ -52,6 +52,7 @@ const GoogleAnalyticsJetpackForm = ( {
 	sitePlugins,
 	translate,
 	isAtomic,
+	isJetpackModuleAvailable,
 } ) => {
 	const upsellHref = `/checkout/${ site.slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_GOOGLE_ANALYTICS ] }`;
 	const analyticsSupportUrl = isAtomic
@@ -80,19 +81,28 @@ const GoogleAnalyticsJetpackForm = ( {
 		handleToggleChange( 'anonymize_ip' );
 	};
 
+	const handleSubmitFormCustom = () => {
+		if ( isJetpackModuleAvailable ) {
+			handleFieldChange( 'is_active', !! jetpackModuleActive, handleSubmitForm );
+			return;
+		}
+
+		handleSubmitForm();
+	};
+
 	const renderForm = () => {
 		return (
 			<form
 				aria-label="Google Analytics Site Settings"
 				id="analytics"
-				onSubmit={ handleSubmitForm }
+				onSubmit={ handleSubmitFormCustom }
 			>
 				<QueryJetpackModules siteId={ siteId } />
 
 				<SettingsSectionHeader
 					disabled={ isSubmitButtonDisabled }
 					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
+					onButtonClick={ handleSubmitFormCustom }
 					showButton
 					title={ translate( 'Google' ) }
 				/>

@@ -96,6 +96,7 @@ window.AppBoot = async () => {
 	setupLocale( user, reduxStore );
 
 	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );

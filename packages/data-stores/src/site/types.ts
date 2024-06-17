@@ -1,3 +1,4 @@
+import { SiteGoal } from '../onboard';
 import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
@@ -270,6 +271,7 @@ export interface SiteDetailsOptions {
 	selected_features?: FeatureId[];
 	show_on_front?: string;
 	site_intent?: string;
+	site_goals?: SiteGoal[];
 	site_segment?: string | null;
 	site_vertical_id?: string | null;
 	software_version?: string;

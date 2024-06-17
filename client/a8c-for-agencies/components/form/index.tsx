@@ -5,7 +5,7 @@ import './style.scss';
 
 type Props = {
 	title?: string;
-	description?: string;
+	description?: string | ReactNode;
 	children: ReactNode;
 	className?: string;
 };

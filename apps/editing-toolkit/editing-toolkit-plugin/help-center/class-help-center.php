@@ -7,6 +7,8 @@
 
 namespace A8C\FSE;
 
+use Automattic\Jetpack\Connection\Manager as Connection_Manager;
+
 /**
  * Class Help_Center
  */
@@ -46,7 +48,8 @@ class Help_Center {
 			return;
 		}
 
-		$this->asset_file = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
+		$file             = $this->is_jetpack_disconnected() ? 'dist/help-center-disconnected.asset.php' : 'dist/help-center.asset.php';
+		$this->asset_file = include plugin_dir_path( __FILE__ ) . $file;
 		$this->version    = $this->asset_file['version'];
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
@@ -85,9 +88,11 @@ class Help_Center {
 	public function enqueue_script() {
 		$script_dependencies = $this->asset_file['dependencies'];
 
+		// If the user is not connected, the Help Center icon will link to the support page.
+		// The disconnected version is significantly smaller than the connected version.
 		wp_enqueue_script(
 			'help-center-script',
-			plugins_url( 'dist/help-center.min.js', __FILE__ ),
+			plugins_url( $this->is_jetpack_disconnected() ? 'dist/help-center-disconnected.min.js' : 'dist/help-center.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$this->version,
 			true
@@ -280,6 +285,43 @@ class Help_Center {
 	}
 
 	/**
+	 * Returns true if the current user is connected through Jetpack
+	 */
+	public function is_jetpack_disconnected() {
+		$user_id = get_current_user_id();
+		$blog_id = get_current_blog_id();
+
+		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+			return ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
+		}
+
+		if ( true === apply_filters( 'is_jetpack_site', false, $blog_id ) ) {
+			return ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns the URL for the Help Center redirect.
+	 * Used for the Help Center when disconnected.
+	 */
+	public function get_help_center_url() {
+		// phpcs:ignore WPCOM.I18nRules.LocalizedUrl.LocalizedUrlAssignedToVariable
+		$help_url = 'https://wordpress.com/help';
+
+		if ( ! $this->is_jetpack_disconnected() ) {
+			return false;
+		}
+
+		if ( function_exists( 'localized_wpcom_url' ) ) {
+			return localized_wpcom_url( $help_url );
+		}
+
+		return $help_url;
+	}
+
+	/**
 	 * Add icon to WP-ADMIN admin bar.
 	 */
 	public function enqueue_wp_admin_scripts() {
@@ -300,7 +342,7 @@ class Help_Center {
 			);
 		}
 
-		// Crazy high number inorder to prevent Jetpack removing it
+		// Crazy high number to prevent Jetpack removing it
 		// https://github.com/Automattic/jetpack/blob/30213ee594cd06ca27199f73b2658236fda24622/projects/plugins/jetpack/modules/masterbar/masterbar/class-masterbar.php#L196.
 		add_action(
 			'wp_before_admin_bar_render',
@@ -320,9 +362,11 @@ class Help_Center {
 						'id'     => 'help-center',
 						'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 						'parent' => 'top-secondary',
+						'href'   => $this->get_help_center_url(),
 						'meta'   => array(
-							'html'  => '<div id="help-center-masterbar" />',
-							'class' => 'menupop',
+							'html'   => '<div id="help-center-masterbar" />',
+							'class'  => 'menupop',
+							'target' => '_blank',
 						),
 					)
 				);

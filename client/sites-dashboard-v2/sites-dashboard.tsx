@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	SitesSortKey,
 	useSitesListFiltering,
@@ -279,9 +280,14 @@ const SitesDashboardV2 = ( {
 									'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
 								) }
 								dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
+								event="learn-more"
 								horizontal
-								href="https://wordpress.com/for-agencies"
+								href={ localizeUrl(
+									'https://wordpress.com/for-agencies?ref=wpcom-sites-dashboard'
+								) }
+								target="_blank"
 								title={ translate( 'Managing multiple sites? Meet our agency hosting' ) }
+								tracksClickName="calypso_sites_dashboard_a4a_banner_click"
 							/>
 						</div>
 					) }

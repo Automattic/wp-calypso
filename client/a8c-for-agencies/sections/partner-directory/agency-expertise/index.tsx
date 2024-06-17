@@ -1,11 +1,19 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { CheckboxControl, TextControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import { ReactNode, useCallback } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
-import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+	A4A_PARTNER_DIRECTORY_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
+import { Agency } from 'calypso/state/a8c-for-agencies/types';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
 import {
@@ -54,11 +62,34 @@ const DirectoryClientSamples = ( { label, samples, onChange }: DirectoryClientSa
 };
 
 type Props = {
-	initialData?: AgencyDirectoryApplication;
+	initialFormData: AgencyDirectoryApplication | null;
 };
 
-const AgencyExpertise = ( { initialData }: Props ) => {
+const AgencyExpertise = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
+
+	const onSubmitSuccess = useCallback(
+		( response: Agency ) => {
+			response && reduxDispatch( setActiveAgency( response ) );
+
+			reduxDispatch(
+				successNotice( translate( 'Your Partner Directory application was submitted!' ), {
+					displayOnNextPage: true,
+					duration: 6000,
+				} )
+			);
+			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
+		},
+		[ page, reduxDispatch, translate ]
+	);
+
+	const onSubmitError = useCallback( () => {
+		reduxDispatch(
+			errorNotice( translate( 'Something went wrong submitting your application!' ), {
+				duration: 6000,
+			} )
+		);
+	}, [ page, reduxDispatch, translate ] );
 
 	const {
 		formData,
@@ -69,9 +100,9 @@ const AgencyExpertise = ( { initialData }: Props ) => {
 		setDirectorySelected,
 		getDirectoryClientSamples,
 		setDirectorClientSample,
-	} = useExpertiseForm( { initialData } );
+	} = useExpertiseForm( { initialFormData } );
 
-	const { onSubmit, isSubmitting } = useSubmitForm( { formData } );
+	const { onSubmit, isSubmitting } = useSubmitForm( { formData, onSubmitSuccess, onSubmitError } );
 
 	const { services, products, directories, feedbackUrl } = formData;
 
@@ -169,6 +200,7 @@ const AgencyExpertise = ( { initialData }: Props ) => {
 					description={ translate(
 						'Great support is key to our success. Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
 					) }
+					isOptional
 				>
 					<TextControl
 						type="text"
@@ -184,16 +216,18 @@ const AgencyExpertise = ( { initialData }: Props ) => {
 				</FormField>
 			</FormSection>
 
-			<div className="partner-directory-agency-expertise__footer">
-				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData() || isSubmitting }>
-					{ translate( 'Submit my application' ) }
-				</Button>
-
+			<div className="partner-directory-agency-cta__footer">
 				<Button
 					href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_DASHBOARD_SLUG }` }
 					disabled={ isSubmitting }
 				>
 					{ translate( 'Cancel' ) }
+				</Button>
+
+				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
+					{ initialFormData
+						? translate( 'Update my expertise' )
+						: translate( 'Submit my application' ) }
 				</Button>
 			</div>
 		</Form>

@@ -255,7 +255,8 @@
 		"site-selected",
 		"guided",
 		"domain-for-gravatar",
-		"plans-first"
+		"plans-first",
+		"onboarding-affiliate"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

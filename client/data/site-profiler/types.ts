@@ -125,6 +125,7 @@ export type PerformanceReport = {
 	performance: number;
 	overall_score: number;
 	is_wpcom: boolean;
+	is_wordpress: boolean;
 } & BasicMetrics;
 
 export interface UrlPerformanceMetricsQueryResponse {

@@ -63,6 +63,7 @@ import {
 import { DIFMUpsell } from './difm-upsell-banner';
 import Masterbar from './masterbar';
 import SiteAdminInterface from './site-admin-interface';
+import SiteAdminInterfaceExperiment from './site-admin-interface/experiment';
 import SiteIconSetting from './site-icon-setting';
 import LaunchSite from './site-visibility/launch-site';
 import wrapSettingsForm from './wrap-settings-form';
@@ -552,16 +553,14 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderAdminInterface() {
-		const { site, isSimple } = this.props;
-		if (
-			! isEnabled( 'layout/wpcom-admin-interface' ) &&
-			( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) ||
-				( isEnabled( 'layout/dotcom-nav-redesign-v2' ) && isSimple ) )
-		) {
-			return null;
+		const { site, siteSlug, isSimple } = this.props;
+		if ( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) || isSimple ) {
+			return isEnabled( 'layout/wpcom-admin-interface' ) ? (
+				<SiteAdminInterfaceExperiment siteId={ site.ID } siteSlug={ siteSlug } />
+			) : null;
 		}
 
-		return <SiteAdminInterface siteId={ site.ID } />;
+		return <SiteAdminInterface siteId={ site.ID } siteSlug={ siteSlug } />;
 	}
 
 	render() {

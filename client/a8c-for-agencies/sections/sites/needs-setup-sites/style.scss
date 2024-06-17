@@ -62,3 +62,13 @@
 	margin-block-end: 24px;
 	padding-inline: 64px;
 }
+
+.sites-dashboard.is-without-filters {
+	.dataviews-view-table {
+		margin-block-start: 32px;
+	}
+
+	.dataviews-filters__view-actions {
+		display: none;
+	}
+}

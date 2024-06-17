@@ -5,7 +5,8 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, close, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { FeatureName, FeatureList, ImporterPlatform, UrlData } from '../types';
+import { FeatureName, FeatureList, UrlData } from '../types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import type * as React from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

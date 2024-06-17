@@ -1,7 +1,7 @@
 import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
+import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import { A4A_MARKETPLACE_HOSTING_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';

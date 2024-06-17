@@ -122,6 +122,11 @@ export default function SubscribersChartSection( {
 	}, [ status, isError ] );
 
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
+
+	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
+	const isPaidSubscriptionProductsLoading = ! products;
+	const isChartLoading = isLoading || isPaidSubscriptionProductsLoading;
+
 	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
 	const chartData = transformData( data?.data || [], hasAddedPaidSubscriptionProduct );
 
@@ -166,14 +171,14 @@ export default function SubscribersChartSection( {
 					</div>
 				</div>
 			</div>
-			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
-			{ ! isLoading && chartData.length === 0 && (
+			{ isChartLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
+			{ ! isChartLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">
 					{ translate( 'No data available for the specified period.' ) }
 				</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
-			{ ! isLoading && chartData.length !== 0 && (
+			{ ! isChartLoading && chartData.length !== 0 && (
 				<UplotChart
 					data={ chartData }
 					legendContainer={ legendRef }
