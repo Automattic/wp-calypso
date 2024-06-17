@@ -1,4 +1,4 @@
-import { isDefaultLocale } from '@automattic/i18n-utils/dist/esm';
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { findLast, times } from 'lodash';
