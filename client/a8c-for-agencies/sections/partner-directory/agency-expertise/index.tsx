@@ -200,6 +200,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					description={ translate(
 						'Great support is key to our success. Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
 					) }
+					isOptional
 				>
 					<TextControl
 						type="text"
@@ -216,17 +217,17 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 			</FormSection>
 
 			<div className="partner-directory-agency-cta__footer">
-				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
-					{ initialFormData
-						? translate( 'Update my expertise' )
-						: translate( 'Submit my application' ) }
-				</Button>
-
 				<Button
 					href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_DASHBOARD_SLUG }` }
 					disabled={ isSubmitting }
 				>
 					{ translate( 'Cancel' ) }
+				</Button>
+
+				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
+					{ initialFormData
+						? translate( 'Update my expertise' )
+						: translate( 'Submit my application' ) }
 				</Button>
 			</div>
 		</Form>

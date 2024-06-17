@@ -53,6 +53,7 @@ export function generateFlows( {
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
 	getEntrepreneurFlowDestination = noop,
+	getGuidedOnboardingFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
@@ -185,7 +186,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding',
-			steps: [ userSocialStep, 'new-user-survey', 'domains', 'plans' ],
+			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2023-10-11',
@@ -677,7 +678,7 @@ export function generateFlows( {
 		{
 			name: ONBOARDING_GUIDED_FLOW,
 			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
-			destination: getSignupDestination,
+			destination: getGuidedOnboardingFlowDestination,
 			description: 'Choose what brings them to WordPress.com',
 			lastModified: '2024-05-15',
 			showRecaptcha: true,
@@ -692,6 +693,17 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'toStepper' ],
 			optionalDependenciesInQuery: [ 'toStepper' ],
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'onboarding-affiliate',
+			steps: [ userSocialStep, 'domains', 'plans-affiliate' ],
+			destination: getSignupDestination,
+			description: 'Affiliates flow',
+			lastModified: '2024-06-06',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 		},
 	];

@@ -47,7 +47,6 @@ export function generateSteps( {
 	excludeStepIfEmailVerified = noop,
 	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
-	excludeSurveyStepIfInactive = noop,
 	excludeSegmentSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
@@ -250,10 +249,6 @@ export function generateSteps( {
 		test: {
 			stepName: 'test',
 		},
-		'new-user-survey': {
-			stepName: 'new-user-survey',
-			fulfilledStepCallback: excludeSurveyStepIfInactive,
-		},
 		plans: {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
@@ -403,6 +398,18 @@ export function generateSteps( {
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				isLaunchPage: true,
+			},
+		},
+
+		'plans-affiliate': {
+			stepName: 'plans-affiliate',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				intent: 'plans-affiliate',
 			},
 		},
 

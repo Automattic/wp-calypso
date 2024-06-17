@@ -125,7 +125,7 @@ export default function SiteProfilerV2( props: Props ) {
 		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
 	};
 
-	const isWpCom = !! performanceMetrics?.is_wpcom;
+	const { is_wpcom: isWpCom = false, is_wordpress: isWordPress = false } = performanceMetrics ?? {};
 
 	return (
 		<div id="site-profiler-v2">
@@ -158,7 +158,7 @@ export default function SiteProfilerV2( props: Props ) {
 						<ResultsHeader
 							domain={ domain }
 							performanceCategory={ performanceCategory }
-							isWordPress={ urlData?.platform === 'wordpress' }
+							isWordPress={ isWordPress }
 							isWpCom={ isWpCom }
 							onGetReport={ () => setIsGetReportFormOpen( true ) }
 						/>

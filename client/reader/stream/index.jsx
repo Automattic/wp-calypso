@@ -53,7 +53,6 @@ import './style.scss';
 // 64 is padding, 8 is margin
 export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
 const GUESSED_POST_HEIGHT = 600;
-const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
@@ -109,14 +108,20 @@ class ReaderStream extends Component {
 	 */
 	observer = null;
 
+	// We can use to keep track of whether we need to scroll to the selected post in the update
+	// cycle.
+	wasSelectedByOpeningPost = false;
+
+	listRef = createRef();
+	overlayRef = createRef();
+	mountTimeout = null;
+
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
 	};
 	handleSitesSelected = () => {
 		this.setState( { selectedTab: 'sites' } );
 	};
-
-	listRef = createRef();
 
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
@@ -126,7 +131,13 @@ class ReaderStream extends Component {
 		}
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
-			this.scrollToSelectedPost( true );
+			// Don't scroll to the post if it was clicked for selection. This causes the scroll to
+			// propagate into the full post screen the first time you click select an item in the
+			// reader, meaning the full post screen opens halfway scrolled down the post.
+			if ( ! this.wasSelectedByOpeningPost ) {
+				this.scrollToSelectedPost( true );
+			}
+			this.wasSelectedByOpeningPost = false;
 			this.focusSelectedPost( this.props.selectedPostKey );
 		}
 
@@ -160,23 +171,27 @@ class ReaderStream extends Component {
 	};
 
 	scrollToSelectedPost( animate ) {
-		const HEADER_OFFSET = -32; // a fixed position header means we can't just scroll the element into view.
+		const headerOffset = -1 * this.props.fixedHeaderHeight || 0; // a fixed position header means we can't just scroll the element into view.
+		const totalOffset = headerOffset - 35; // 35px of constant offset to ensure the post isnt cramped against the top container or header border.
 		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
-			const documentElement = document.documentElement;
 			selectedNode.focus();
-			const windowTop =
-				( window.pageYOffset || documentElement.scrollTop ) - ( documentElement.clientTop || 0 );
+			const scrollContainer = this.state.listContext || window;
+			const scrollContainerPosition = scrollContainer.scrollTop;
 			const boundingClientRect = selectedNode.getBoundingClientRect();
-			const scrollY = parseInt( windowTop + boundingClientRect.top + HEADER_OFFSET, 10 );
+			const scrollY = parseInt(
+				scrollContainerPosition + boundingClientRect.top + totalOffset,
+				10
+			);
 			if ( animate ) {
 				scrollTo( {
 					x: 0,
 					y: scrollY,
 					duration: 200,
+					container: scrollContainer,
 				} );
 			} else {
-				window.scrollTo( 0, scrollY );
+				scrollContainer.scrollTo( 0, scrollY );
 			}
 		}
 	}
@@ -194,8 +209,17 @@ class ReaderStream extends Component {
 		}
 
 		if ( this.props.selectedPostKey ) {
-			setTimeout( () => {
+			// Show an overlay while we are handling initial scroll and focus to prevent flashing
+			// content.
+			if ( this.overlayRef.current ) {
+				this.overlayRef.current.classList.add( 'stream__init-overlay-enabled' );
+			}
+			this.mountTimeout = setTimeout( () => {
+				this.scrollToSelectedPost( false );
 				this.focusSelectedPost( this.props.selectedPostKey );
+				if ( this.overlayRef.current ) {
+					this.overlayRef.current.classList.remove( 'stream__init-overlay-enabled' );
+				}
 			}, 100 );
 		}
 
@@ -231,6 +255,10 @@ class ReaderStream extends Component {
 
 		if ( this.observer ) {
 			this.observer.disconnect();
+		}
+
+		if ( this.mountTimeout ) {
+			clearTimeout( this.mountTimeout );
 		}
 	}
 
@@ -332,7 +360,7 @@ class ReaderStream extends Component {
 	getVisibleItemIndexes() {
 		return (
 			this.listRef.current &&
-			this.listRef.current.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } )
+			this.listRef.current.getVisibleItemIndexes( { offsetTop: this.props.fixedHeaderHeight || 0 } )
 		);
 	}
 
@@ -343,6 +371,9 @@ class ReaderStream extends Component {
 			streamKey,
 			stream: { items },
 		} = this.props;
+
+		// This should already be false but this is a safety.
+		this.wasSelectedByOpeningPost = false;
 
 		// do we have a selected item? if so, just move to the next one
 		if ( this.props.selectedPostKey ) {
@@ -395,6 +426,10 @@ class ReaderStream extends Component {
 			selectedPostKey,
 			stream: { items },
 		} = this.props;
+
+		// This should already be false but this is a safety.
+		this.wasSelectedByOpeningPost = false;
+
 		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
@@ -483,12 +518,22 @@ class ReaderStream extends Component {
 		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
 		const itemKey = this.getPostRef( postKey );
-		const showPost = ( args ) =>
+		const showPost = ( args ) => {
+			// Ensure the post selected becomes the selected item. It may already be the selected
+			// item through shortkeys, or not if using a mouse clicking flow. Setting the selected
+			// item this way adds consistency to scroll position when coming back from the full post
+			// view, as well as avoids conflict between our systems for preserving scroll position
+			// and scrolling to selected posts when users use a mix of shortkeys and mouse clicks.
+			if ( ! isSelected ) {
+				this.props.selectItem( { streamKey: this.props.streamKey, postKey } );
+				this.wasSelectedByOpeningPost = true;
+			}
 			this.props.showSelectedPost( {
 				...args,
 				postKey: postKey,
 				streamKey,
 			} );
+		};
 
 		return (
 			<Fragment key={ itemKey }>
@@ -651,6 +696,7 @@ class ReaderStream extends Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ baseClassnames }>
+				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />

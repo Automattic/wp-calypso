@@ -8,6 +8,13 @@ const panel = '[aria-label="Editor settings"]';
 const selectors = {
 	section: ( name: string ) =>
 		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
+
+	// Actions Button
+	allActionsButton: '.editor-all-actions-button',
+	viewRevisionsModalMenuItem: '.view-revisions-modal-button',
+	viewRevisionsMenuItem: '[role=menuitem]:has-text("View revisions")',
+
+	// Revisions (before 18.4.0)
 	showRevisionButton: '.editor-post-last-revision__panel', // Revision is a link, not a panel.
 
 	// Status & Visibility
@@ -335,15 +342,53 @@ export class EditorSettingsSidebarComponent {
 		}
 	}
 
+	/* All Actions Dropdown */
+
+	/**
+	 * Opens the All Actions dropdown
+	 */
+	async openAllActionsDropdown(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.allActionsButton );
+		await locator.click();
+	}
+
 	/* Revisions */
 
 	/**
-	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
+	 * Clicks on the View Revisions menu itme on the All Actions dropdown
 	 */
-	async showRevisions(): Promise< void > {
+	async showRevisionsViaActionsDropdown(): Promise< void > {
+		// Open the all actions dropdown menu
+		await this.openAllActionsDropdown();
+
+		const menuItem = envVariables.TEST_ON_ATOMIC
+			? selectors.viewRevisionsMenuItem
+			: selectors.viewRevisionsModalMenuItem;
+
+		// Click on the revisions menu item
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( menuItem );
+		await locator.click();
+	}
+
+	/**
+	 * Clicks on the Revision button
+	 */
+	async showRevisionsViaButton(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const locator = editorParent.locator( selectors.showRevisionButton );
+
 		await locator.click();
+	}
+
+	/**
+	 * Opens the Revisions modal
+	 * via button for Gutenberg < 18.6.0
+	 * via actions dropdown for Gutenberg >= 18.6.0
+	 */
+	async showRevisions(): Promise< void > {
+		await Promise.race( [ this.showRevisionsViaActionsDropdown(), this.showRevisionsViaButton() ] );
 	}
 
 	/**
