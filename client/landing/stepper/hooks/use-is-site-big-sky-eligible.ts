@@ -9,6 +9,7 @@ import { useSite } from './use-site';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 const bypassBigSkyExperiment = config.isEnabled( 'big-sky' );
+const featureFlagEnabled = config.isEnabled( 'calypso/big-sky' );
 
 export function useIsBigSkyEligible() {
 	const { isOwner } = useIsSiteOwner();
@@ -20,7 +21,6 @@ export function useIsBigSkyEligible() {
 		[ site ]
 	);
 
-	const featureFlagEnabled = config.isEnabled( 'calypso/big-sky' );
 	const [ isLoading, experimentAssignment ] = useExperiment(
 		'calypso_signup_onboarding_bigsky_soft_launch',
 		{
