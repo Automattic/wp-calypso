@@ -7,6 +7,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import LicenseDetailsActions from './actions';
+import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 
 import './style.scss';
 
@@ -22,6 +23,7 @@ interface Props {
 	onCopyLicense?: () => void;
 	licenseType: LicenseType;
 	isChildLicense?: boolean;
+	referral: ReferralAPIResponse;
 }
 
 const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
@@ -39,6 +41,7 @@ export default function LicenseDetails( {
 	onCopyLicense = noop,
 	licenseType,
 	isChildLicense,
+	referral,
 }: Props ) {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
@@ -86,6 +89,13 @@ export default function LicenseDetails( {
 					<li className="license-details__list-item-small">
 						<h4 className="license-details__label">{ translate( 'Assigned on' ) }</h4>
 						<FormattedDate date={ attachedAt } format={ DETAILS_DATE_FORMAT_SHORT } />
+					</li>
+				) }
+
+				{ referral && (
+					<li className="license-details__list-item-small">
+						<h4 className="license-details__label">{ translate( 'Owned by' ) }</h4>
+						{ referral.client.email }
 					</li>
 				) }
 
