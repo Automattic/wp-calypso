@@ -607,9 +607,8 @@ $image-height: 47px;
 
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
 .layout.is-section-login.is-grav-powered-login-page {
-	background-color: #e7e9ea;
-
 	&.is-wp-job-manager {
+		background-color: #e7e9ea;
 
 		.login a,
 		.login__form-change-username {
@@ -777,6 +776,8 @@ $image-height: 47px;
 	}
 
 	@include break-small {
+		background-color: #e7e9ea;
+
 		.login {
 			padding: 40px 56px;
 		}

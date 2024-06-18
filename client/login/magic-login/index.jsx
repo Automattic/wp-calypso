@@ -967,8 +967,10 @@ class MagicLogin extends Component {
 							</div>
 						</div>
 					) }
-					<hr className="grav-powered-magic-login__divider grav-powered-magic-login__divider--email-form" />
-					<div className="grav-powered-magic-login__login-page-link">
+					{ ! isGravatar && (
+						<hr className="grav-powered-magic-login__divider grav-powered-magic-login__divider--email-form" />
+					) }
+					<footer className="grav-powered-magic-login__footer grav-powered-magic-login__footer--email-form">
 						{ translate( '{{a}}Sign in another way{{/a}}', {
 							components: {
 								a: (
@@ -984,7 +986,7 @@ class MagicLogin extends Component {
 								),
 							},
 						} ) }
-					</div>
+					</footer>
 				</div>
 				{ ! isGravatar && (
 					<div className="grav-powered-magic-login__gravatar-info">
