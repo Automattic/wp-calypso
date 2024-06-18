@@ -660,7 +660,7 @@ class MagicLogin extends Component {
 		return (
 			<div className="grav-powered-magic-login__content">
 				<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
-				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
+				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email' ) }</h1>
 				<p className="grav-powered-magic-login__sub-header">
 					{ translate(
 						'Enter the verification code we’ve sent to {{strong}}%(emailAddress)s{{/strong}}. A new Gravatar account will be created.',
