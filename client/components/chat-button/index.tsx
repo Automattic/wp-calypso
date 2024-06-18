@@ -1,6 +1,10 @@
 import { Button, Gridicon, Spinner } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { useChatStatus, useChatWidget } from '@automattic/help-center/src/hooks';
+import {
+	useChatStatus,
+	useChatWidget,
+	useCanConnectToZendesk,
+} from '@automattic/help-center/src/hooks';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -65,7 +69,6 @@ const ChatButton: FC< Props > = ( {
 
 	const messagingGroup = getMessagingGroupForIntent( chatIntent );
 	const {
-		canConnectToZendesk,
 		hasActiveChats,
 		isChatAvailable,
 		isEligibleForChat,
@@ -73,6 +76,7 @@ const ChatButton: FC< Props > = ( {
 		isPresalesChatOpen,
 	} = useChatStatus( messagingGroup );
 	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { data: canConnectToZendesk } = useCanConnectToZendesk();
 
 	function shouldShowChatButton(): boolean {
 		if ( isEligibleForChat && hasActiveChats ) {

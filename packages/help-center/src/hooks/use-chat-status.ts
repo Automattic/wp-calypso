@@ -6,7 +6,7 @@ import { useSupportAvailability } from '../data/use-support-availability';
 /**
  * Internal Dependencies
  */
-import { useZendeskConfig, useMessagingAvailability } from './';
+import { useMessagingAvailability } from './';
 import type { MessagingGroup } from './use-messaging-availability';
 
 export default function useChatStatus(
@@ -28,10 +28,7 @@ export default function useChatStatus(
 	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
 		useMessagingAvailability( group, checkAgentAvailability && isEligibleForChat );
 
-	const { status: zendeskStatus } = useZendeskConfig( isEligibleForChat );
-
 	return {
-		canConnectToZendesk: zendeskStatus !== 'error',
 		hasActiveChats,
 		isChatAvailable: Boolean( chatAvailability?.is_available ),
 		isEligibleForChat,

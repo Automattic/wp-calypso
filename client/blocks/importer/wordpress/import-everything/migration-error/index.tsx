@@ -1,5 +1,9 @@
 import { HelpCenter, MigrationStatusError } from '@automattic/data-stores';
-import { useChatStatus, useChatWidget } from '@automattic/help-center/src/hooks';
+import {
+	useChatStatus,
+	useChatWidget,
+	useCanConnectToZendesk,
+} from '@automattic/help-center/src/hooks';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -34,7 +38,8 @@ export const MigrationError = ( props: Props ) => {
 		goToImportContentOnlyPage,
 	} = props;
 	const translate = useTranslate();
-	const { isChatAvailable, isEligibleForChat, canConnectToZendesk } = useChatStatus();
+	const { isChatAvailable, isEligibleForChat } = useChatStatus();
+	const { data: canConnectToZendesk } = useCanConnectToZendesk();
 	const { openChatWidget, isOpeningChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
 		isEligibleForChat
