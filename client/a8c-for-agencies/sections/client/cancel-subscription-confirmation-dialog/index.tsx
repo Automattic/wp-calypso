@@ -35,7 +35,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 	const onConfirm = () => {
 		cancelSubscription( {
-			subscriptionId: subscription.id,
+			licenseKey: subscription.license_key,
 		} );
 	};
 
