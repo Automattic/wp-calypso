@@ -14,7 +14,7 @@ export default function useChatStatus(
 	checkAgentAvailability = true
 ) {
 	const { data: supportStatus } = useSupportStatus();
-	const availability = supportStatus.availability;
+	const availability = supportStatus?.availability;
 
 	// All paying customers are eligible for chat.
 	// See: pdDR7T-1vN-p2
