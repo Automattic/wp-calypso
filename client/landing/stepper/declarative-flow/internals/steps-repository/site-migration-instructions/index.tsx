@@ -21,7 +21,7 @@ const SiteMigrationInstructions: Step = function () {
 		<StepContainer
 			stepName="site-migration-instructions"
 			isFullLayout
-			className="is-step-site-migration-instructions"
+			className="is-step-site-migration-instructions site-migration-instructions--launchpad"
 			hideSkip
 			hideBack
 			stepContent={ stepContent }
