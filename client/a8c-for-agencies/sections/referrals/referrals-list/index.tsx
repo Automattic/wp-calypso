@@ -33,6 +33,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 		() =>
 			dataViewsState.selectedItem || ! isDesktop
 				? [
+						// Show the client column as a button on mobile
 						{
 							id: 'client',
 							header: translate( 'Client' ).toUpperCase(),
@@ -53,6 +54,30 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							enableHiding: false,
 							enableSorting: false,
 						},
+						// Only show the actions column only on mobile
+						...( ! dataViewsState.selectedItem
+							? [
+									{
+										id: 'actions',
+										header: null,
+										render: ( { item }: { item: Referral } ) => {
+											return (
+												<div>
+													<Button
+														className="view-details-button"
+														onClick={ () => openSitePreviewPane( item ) }
+														borderless
+													>
+														<Gridicon icon="chevron-right" />
+													</Button>
+												</div>
+											);
+										},
+										enableHiding: false,
+										enableSorting: false,
+									},
+							  ]
+							: [] ),
 				  ]
 				: [
 						{
@@ -102,7 +127,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 								return (
 									<div>
 										<Button
-											className="view-details-button"
+											className="view-details-button action-button"
 											onClick={ () => openSitePreviewPane( item ) }
 											borderless
 										>

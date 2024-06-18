@@ -210,7 +210,7 @@ export default function LayoutBodyContent( {
 								}
 								description={
 									isAutomatedReferral
-										? translate( 'With {{a}}Tipalti ↗{{/a}}, our secure platform.', {
+										? translate( 'With {{a}}Tipalti{{/a}} ↗, our secure platform.', {
 												components: {
 													a: (
 														<a
@@ -308,7 +308,7 @@ export default function LayoutBodyContent( {
 						{ isAutomatedReferral && (
 							<StepSection
 								className="referrals-overview__step-section-learn-more"
-								heading={ translate( 'Find out more about the program' ) }
+								heading={ translate( 'Find out more' ) }
 							>
 								<Button className="a8c-blue-link" borderless href={ A4A_REFERRALS_FAQ }>
 									{ translate( 'How much money will I make?' ) }
