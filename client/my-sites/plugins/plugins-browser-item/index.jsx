@@ -5,8 +5,8 @@ import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import clsx from 'clsx';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useMemo, useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
@@ -19,6 +19,8 @@ import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plug
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import { setLastVisitedPlugin } from 'calypso/state/plugins/last-visited/actions';
+import { isLastVisitedPlugin as getIsLastVisitedPlugin } from 'calypso/state/plugins/last-visited/selectors';
 import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
 	isSaasProduct as isSaasProductSelector,
@@ -43,9 +45,11 @@ const PluginsBrowserListElement = ( props ) => {
 		currentSites,
 	} = props;
 
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	const { localizePath } = useLocalizedPlugins();
+	const cardRef = useRef( null );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -107,6 +111,12 @@ const PluginsBrowserListElement = ( props ) => {
 		}
 	}, [ site, plugin, selectedSite, props.listName ] );
 
+	const onClickItem = useCallback( () => {
+		dispatch( setLastVisitedPlugin( plugin.slug ) );
+
+		trackPluginLinkClick();
+	}, [ trackPluginLinkClick, dispatch, plugin.slug ] );
+
 	const isWpcomPreinstalled = useMemo( () => {
 		if ( plugin.isPreinstalled ) {
 			return true;
@@ -151,6 +161,16 @@ const PluginsBrowserListElement = ( props ) => {
 
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
 	}, [ selectedSite, plugin ] );
+
+	const isLastVisitedPlugin = useSelector( ( state ) =>
+		getIsLastVisitedPlugin( state, plugin.slug )
+	);
+
+	useEffect( () => {
+		if ( isLastVisitedPlugin && cardRef.current ) {
+			cardRef.current.scrollIntoView( { behavior: 'auto', block: 'center' } );
+		}
+	}, [ isLastVisitedPlugin ] );
 
 	const jetpackNonAtomic = useSelector(
 		( state ) =>
@@ -197,9 +217,9 @@ const PluginsBrowserListElement = ( props ) => {
 			<a
 				href={ localizePath( pluginLink ) }
 				className="plugins-browser-item__link"
-				onClick={ trackPluginLinkClick }
+				onClick={ onClickItem }
 			>
-				<div className="plugins-browser-item__info">
+				<div className="plugins-browser-item__info" ref={ isLastVisitedPlugin ? cardRef : null }>
 					<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
 					<div className="plugins-browser-item__title">{ plugin.name }</div>
 					{ variant === PluginsBrowserElementVariant.Extended && (
