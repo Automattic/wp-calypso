@@ -174,12 +174,13 @@ class ReaderStream extends Component {
 	};
 
 	scrollToSelectedPost( animate ) {
+		const scrollContainer = this.state.listContext || window;
+		const containerOffset = scrollContainer.getBoundingClientRect?.().top || 0;
 		const headerOffset = -1 * this.props.fixedHeaderHeight || 0; // a fixed position header means we can't just scroll the element into view.
-		const totalOffset = headerOffset - 35; // 35px of constant offset to ensure the post isnt cramped against the top container or header border.
+		const totalOffset = headerOffset - containerOffset - 20; // 20px of constant offset to ensure the post isnt cramped against the top container or header border.
 		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
 			selectedNode.focus();
-			const scrollContainer = this.state.listContext || window;
 			const scrollContainerPosition = scrollContainer.scrollTop;
 			const boundingClientRect = selectedNode.getBoundingClientRect();
 			const scrollY = parseInt(
