@@ -36,7 +36,12 @@ import {
 	fetchMagicLoginAuthenticate,
 } from 'calypso/state/login/magic-login/actions';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
-import { getLastCheckedUsernameOrEmail } from 'calypso/state/login/selectors';
+import {
+	getLastCheckedUsernameOrEmail,
+	getTwoFactorNotificationSent,
+	isTwoFactorEnabled,
+	getRedirectToSanitized,
+} from 'calypso/state/login/selectors';
 import {
 	infoNotice,
 	errorNotice,
@@ -87,7 +92,10 @@ class MagicLogin extends Component {
 		localeSuggestions: PropTypes.array,
 		isValidatingCode: PropTypes.bool,
 		isCodeValidated: PropTypes.bool,
-		codeValidationError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		codeValidationError: PropTypes.number,
+		twoFactorEnabled: PropTypes.bool,
+		twoFactorNotificationSent: PropTypes.string,
+		redirectToSanitized: PropTypes.string,
 
 		// From `localize`
 		translate: PropTypes.func.isRequired,
@@ -129,6 +137,9 @@ class MagicLogin extends Component {
 			path,
 			showCheckYourEmail,
 			isCodeValidated,
+			twoFactorEnabled,
+			twoFactorNotificationSent,
+			redirectToSanitized,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification } = this.state;
 
@@ -185,8 +196,21 @@ class MagicLogin extends Component {
 				} );
 			}
 
+			// Proceed to the next step if the code is validated
 			if ( isCodeValidated ) {
-				this.props.rebootAfterLogin( { magic_login: 1 } );
+				if ( ! twoFactorEnabled ) {
+					this.props.rebootAfterLogin( { magic_login: 1 } );
+				} else {
+					page(
+						login( {
+							// If no notification is sent, the user is using the authenticator for 2FA by default
+							twoFactorAuthType: twoFactorNotificationSent.replace( 'none', 'authenticator' ),
+							redirectTo: redirectToSanitized,
+							oauth2ClientId: oauth2Client.id,
+							locale: this.props.locale,
+						} )
+					);
+				}
 			}
 
 			this.verificationCodeInputRef.current?.focus();
@@ -298,7 +322,7 @@ class MagicLogin extends Component {
 		);
 	}
 
-	sendGravPoweredEmailCode = async ( email, cb = () => {} ) => {
+	handleGravPoweredSendEmailCode = async ( email, cb = () => {} ) => {
 		const { oauth2Client, query, locale, translate } = this.props;
 		const { isSecondaryEmail, isNewAccount } = this.state;
 		const noticeId = 'email-code-notice';
@@ -390,7 +414,7 @@ class MagicLogin extends Component {
 					isRequestingEmail: false,
 				} );
 			} else {
-				this.sendGravPoweredEmailCode( usernameOrEmail );
+				this.handleGravPoweredSendEmailCode( usernameOrEmail );
 			}
 
 			this.props.recordTracksEvent( 'calypso_gravatar_get_gravatar_info_success', eventOptions );
@@ -398,7 +422,7 @@ class MagicLogin extends Component {
 			switch ( error.error ) {
 				case 'not_found':
 					this.setState( { isNewAccount: true } );
-					this.sendGravPoweredEmailCode( usernameOrEmail );
+					this.handleGravPoweredSendEmailCode( usernameOrEmail );
 					break;
 				case 'invalid_email':
 					this.setState( {
@@ -620,7 +644,7 @@ class MagicLogin extends Component {
 				<button
 					className="button form-button is-primary"
 					onClick={ () =>
-						this.sendGravPoweredEmailCode( usernameOrEmail, () =>
+						this.handleGravPoweredSendEmailCode( usernameOrEmail, () =>
 							this.setState( { showSecondaryEmailOptions: false } )
 						)
 					}
@@ -718,7 +742,7 @@ class MagicLogin extends Component {
 				<footer className="grav-powered-magic-login__footer">
 					<button
 						onClick={ () => {
-							this.sendGravPoweredEmailCode( usernameOrEmail );
+							this.handleGravPoweredSendEmailCode( usernameOrEmail );
 
 							this.props.recordTracksEvent(
 								'calypso_gravatar_powered_magic_login_click_resend_email',
@@ -1155,19 +1179,22 @@ const mapState = ( state ) => ( {
 	isValidatingCode: isFetchingMagicLoginAuth( state ),
 	isCodeValidated: getMagicLoginRequestedAuthSuccessfully( state ),
 	codeValidationError: getMagicLoginRequestAuthError( state ),
+	twoFactorEnabled: isTwoFactorEnabled( state ),
+	twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+	redirectToSanitized: getRedirectToSanitized( state ),
 } );
 
 const mapDispatch = {
 	hideMagicLoginRequestForm,
 	sendEmailLogin,
 	fetchMagicLoginAuthenticate,
+	rebootAfterLogin,
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
 	infoNotice,
 	errorNotice,
 	successNotice,
 	removeNotice,
-	rebootAfterLogin,
 };
 
 export default connect( mapState, mapDispatch )( localize( MagicLogin ) );
