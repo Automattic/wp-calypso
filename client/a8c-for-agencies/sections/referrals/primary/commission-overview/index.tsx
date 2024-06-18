@@ -69,7 +69,11 @@ export default function CommissionOverview( {
 				{ isAutomatedReferral && (
 					<>
 						<div className="commission-overview__section-heading">
-							{ translate( 'Referrals and commissions Frequently Asked Questions (FAQ)' ) }
+							{ translate( 'Referrals and commissions Frequently Asked Questions{{nbsp/}}(FAQ)', {
+								components: {
+									nbsp: <>&nbsp;</>,
+								},
+							} ) }
 						</div>
 						<div className="commission-overview__section-subtitle">
 							{ translate(

@@ -5,8 +5,12 @@ import { useMemo, useCallback, ReactNode, useEffect } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SubscriptionStatus from './subscription-status';
 import type { Referral } from '../types';
+
+import './style.scss';
 
 interface Props {
 	referrals: Referral[];
@@ -17,6 +21,7 @@ interface Props {
 export default function ReferralList( { referrals, dataViewsState, setDataViewsState }: Props ) {
 	const isDesktop = useDesktopBreakpoint();
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const openSitePreviewPane = useCallback(
 		( referral: Referral ) => {
@@ -25,8 +30,9 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 				selectedItem: referral,
 				type: DATAVIEWS_LIST,
 			} ) );
+			dispatch( recordTracksEvent( 'calypso_a4a_referrals_list_view_details_click' ) );
 		},
-		[ setDataViewsState ]
+		[ dispatch, setDataViewsState ]
 	);
 
 	const fields = useMemo(
@@ -41,7 +47,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							render: ( { item }: { item: Referral } ): ReactNode => {
 								return (
 									<Button
-										className="view-details-button"
+										className="view-details-button client-email-button"
 										data-client-id={ item.client.id }
 										onClick={ () => openSitePreviewPane( item ) }
 										borderless

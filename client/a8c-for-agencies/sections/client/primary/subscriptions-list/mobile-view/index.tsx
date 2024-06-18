@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import {
 	SubscriptionAction,
 	SubscriptionPrice,
@@ -60,13 +59,16 @@ const SubscriptionsListMobileView = ( {
 	subscriptions,
 	title,
 	onCancelSubscription,
+	isFetchingProducts,
+	products,
 }: {
 	subscriptions?: Subscription[];
 	title: string;
 	onCancelSubscription: () => void;
+	isFetchingProducts: boolean;
+	products?: APIProductFamilyProduct[];
 } ) => {
 	const translate = useTranslate();
-	const { data, isFetching } = useProductsQuery();
 
 	return (
 		<div className="subscriptions-mobile__wrapper">
@@ -75,8 +77,8 @@ const SubscriptionsListMobileView = ( {
 				? subscriptions.map( ( subscription ) => (
 						<SubscriptionItem
 							subscription={ subscription }
-							products={ data }
-							isFetching={ isFetching }
+							products={ products }
+							isFetching={ isFetchingProducts }
 							onCancelSubscription={ onCancelSubscription }
 						/>
 				  ) )

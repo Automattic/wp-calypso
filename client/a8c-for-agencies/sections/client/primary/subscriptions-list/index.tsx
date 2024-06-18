@@ -134,6 +134,8 @@ export default function SubscriptionsList() {
 						subscriptions={ data }
 						title={ title }
 						onCancelSubscription={ onCancelSubscription }
+						isFetchingProducts={ isFetchingProducts }
+						products={ products }
 					/>
 				) }
 			</LayoutBody>

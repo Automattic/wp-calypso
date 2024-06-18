@@ -160,7 +160,12 @@ export default function LayoutBodyContent( {
 			<div className="referrals-overview__section-subtitle">
 				{ isAutomatedReferral ? (
 					translate(
-						'Make money when your clients buy Automattic products, hosting, or use WooPayments. No promo codes needed.'
+						'Make money when your clients buy Automattic products, hosting, or use WooPayments. No promo codes{{nbsp/}}needed.',
+						{
+							components: {
+								nbsp: <>&nbsp;</>,
+							},
+						}
 					)
 				) : (
 					<>
@@ -210,7 +215,7 @@ export default function LayoutBodyContent( {
 								}
 								description={
 									isAutomatedReferral
-										? translate( 'With {{a}}Tipalti{{/a}} ↗, our secure platform.', {
+										? translate( 'With {{a}}Tipalti{{/a}}↗, our secure platform.', {
 												components: {
 													a: (
 														<a
