@@ -90,6 +90,25 @@ const GoogleAnalyticsJetpackForm = ( {
 		handleSubmitForm();
 	};
 
+	const handleSettingsToggleChange = ( value ) => {
+		recordTracksEvent( 'calypso_google_analytics_setting_changed', { key: 'is_active', path } );
+		handleFieldChange( 'is_active', value, handleSubmitForm );
+	};
+
+	const renderSettingsToggle = () => {
+		return (
+			<span className="jetpack-module-toggle">
+				<ToggleControl
+					id={ `${ siteId }-ga-settings-toggle` }
+					checked={ fields?.wga?.is_active }
+					onChange={ handleSettingsToggleChange }
+					label={ translate( 'Add Google' ) }
+					disabled={ isRequestingSettings || isSavingSettings }
+				/>
+			</span>
+		);
+	};
+
 	const renderForm = () => {
 		return (
 			<form
@@ -237,12 +256,16 @@ const GoogleAnalyticsJetpackForm = ( {
 									) }
 									link="https://jetpack.com/support/google-analytics/"
 								/>
-								<JetpackModuleToggle
-									siteId={ siteId }
-									moduleSlug="google-analytics"
-									label={ translate( 'Add Google' ) }
-									disabled={ isRequestingSettings || isSavingSettings }
-								/>
+								{ isJetpackModuleAvailable ? (
+									<JetpackModuleToggle
+										siteId={ siteId }
+										moduleSlug="google-analytics"
+										label={ translate( 'Add Google' ) }
+										disabled={ isRequestingSettings || isSavingSettings }
+									/>
+								) : (
+									renderSettingsToggle()
+								) }
 							</FormFieldset>
 						</div>
 					</CompactCard>
