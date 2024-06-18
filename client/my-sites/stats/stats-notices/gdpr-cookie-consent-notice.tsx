@@ -17,7 +17,8 @@ const GDPRCookieConsentNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 		siteId,
 		'gdpr_cookie_consent',
 		'postponed',
-		7 * 24 * 3600
+		// Postpone for 2 months to avoid bothering users too often.
+		60 * 24 * 3600
 	);
 
 	const dismissNotice = () => {
