@@ -159,6 +159,7 @@
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
+		"start-with/square-payments": false,
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
