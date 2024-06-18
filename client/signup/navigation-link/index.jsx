@@ -85,9 +85,9 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const fallbackQueryParams = Object.fromEntries(
-			new URLSearchParams( window.location.search ).entries()
-		);
+		const fallbackQueryParams = window.location.search
+			? Object.fromEntries( new URLSearchParams( window.location.search ).entries() )
+			: undefined;
 
 		const {
 			flowName,
