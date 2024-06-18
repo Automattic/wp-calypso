@@ -28,7 +28,7 @@ type Fields = {
 type SiteSettingsSectionProps = {
 	fields: Fields;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
-	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
+	handleSubmitForm: () => void;
 	handleToggle?: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
 	disabled?: boolean;
 	isRequestingSettings?: boolean;
@@ -62,7 +62,7 @@ export const SiteSettingsSection = ( {
 			<SettingsSectionHeader
 				title={ translate( 'Site settings' ) }
 				showButton
-				onButtonClick={ () => handleSubmitForm }
+				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
