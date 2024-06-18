@@ -1,11 +1,11 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { A4A_PARTNER_DIRECTORY_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { StickyCard } from 'calypso/a8c-for-agencies/components/sticky-card';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { usePartnerDirectoryOnboardingCard } from './hooks/use-partner-directory-onboard-card';
 import banner from './partner-directories-banner.png';
 
 import './style.scss';
@@ -14,20 +14,20 @@ export default function PartnerDirectoryOnboardingCard() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ showOnboardingCard, setShowOnboardingCard ] = useState( true );
+	const { isActive, hideCard } = usePartnerDirectoryOnboardingCard();
 
-	if ( ! showOnboardingCard ) {
+	if ( ! isActive ) {
 		return null;
 	}
 
 	const onDismiss = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_partner_directory_onboarding_card_dismiss' ) );
-		setShowOnboardingCard( false );
+		hideCard();
 	};
 
 	const onActivate = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_partner_directory_onboarding_card_activate' ) );
-		setShowOnboardingCard( false );
+		hideCard();
 		page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
 	};
 
