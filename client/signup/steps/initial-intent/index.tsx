@@ -144,7 +144,6 @@ export default function InitialIntentStep( props: Props ) {
 					questionConfiguration={ QUESTION_CONFIGURATION }
 					questionComponentMap={ flowQuestionComponentMap }
 					onGoToPage={ ( stepSectionName: number ) => {
-						submitSignupStep( { flowName, stepName }, {} );
 						props.goToStep( stepName, stepSectionName );
 					} }
 					providedPage={ currentPage }
