@@ -292,13 +292,14 @@ export default {
 			initialContext = context;
 		}
 
-		const { query } = initialContext;
+		const { query, trailMapExperimentVariant } = initialContext;
 
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
 
 		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, {
 			flow: flowName,
+			trailmap_variant: trailMapExperimentVariant,
 		} );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
