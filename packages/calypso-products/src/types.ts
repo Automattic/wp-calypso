@@ -332,10 +332,10 @@ export type Plan = BillingTerm & {
 	 */
 	getPlanComparisonFeatureLabels?: () => Record< Feature, TranslateResult >;
 
-	get2023PricingGridSignupStorageOptions?: (
+	getStorageFeature?: (
 		showLegacyStorageFeature?: boolean,
 		isCurrentPlan?: boolean
-	) => StorageOption[];
+	) => WPComPlanStorageFeatureSlug;
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
