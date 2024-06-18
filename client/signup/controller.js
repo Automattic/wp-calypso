@@ -299,6 +299,7 @@ export default {
 
 		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, {
 			flow: flowName,
+			// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
 			trailmap_variant: trailMapExperimentVariant,
 		} );
 
