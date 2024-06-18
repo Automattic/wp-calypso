@@ -6,7 +6,7 @@ import { StickyCard } from 'calypso/a8c-for-agencies/components/sticky-card';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { usePartnerDirectoryOnboardingCard } from './hooks/use-partner-directory-onboard-card';
-import banner from './partner-directories-banner.png';
+import banner from './partner-directories-banner.jpg';
 
 import './style.scss';
 
