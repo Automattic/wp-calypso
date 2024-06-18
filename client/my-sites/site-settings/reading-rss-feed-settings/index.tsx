@@ -33,11 +33,10 @@ export const RssFeedSettingsSection = ( {
 
 	return (
 		<>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				title={ translate( 'RSS feed settings' ) }
 				showButton
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ () => handleSubmitForm }
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>

@@ -58,12 +58,11 @@ const SiteSettingPrivacy = ( {
 
 	return (
 		<>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				id="site-privacy-settings"
 				disabled={ isRequestingSettings || isSavingSettings }
 				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ () => handleSubmitForm }
 				showButton
 				title={ translate(
 					'Privacy {{infoPopover}} Control who can view your site. {{a}}Learn more{{/a}}. {{/infoPopover}}',

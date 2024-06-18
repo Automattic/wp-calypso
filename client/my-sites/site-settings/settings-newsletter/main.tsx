@@ -164,7 +164,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	return (
 		<form onSubmit={ handleSubmitForm }>
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="subscriptions"
@@ -212,7 +212,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					</>
 				) }
 			</Card>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="email-settings"
@@ -251,7 +251,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				/>
 			</Card>
 
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				id="newsletter-categories-settings"
 				title={ translate( 'Newsletter categories' ) }
@@ -268,7 +267,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				updateFields={ updateFields }
 			/>
 
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="messages"

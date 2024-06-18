@@ -59,11 +59,10 @@ export const SiteSettingsSection = ( {
 
 	return (
 		<>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				title={ translate( 'Site settings' ) }
 				showButton
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ () => handleSubmitForm }
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
