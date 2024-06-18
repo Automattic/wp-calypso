@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import HostingFeaturesIcon from 'calypso/hosting-features/components/hosting-features-icon';
+import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import SiteEnvironmentSwitcher from 'calypso/sites-dashboard-v2/site-preview-pane/site-environment-switcher';
 import {
 	DOTCOM_HOSTING_CONFIG,
@@ -157,6 +158,15 @@ const DotcomPreviewPane = ( {
 			document.removeEventListener( 'keydown', handleKeydown, true );
 		};
 	}, [ closeSitePreviewPane ] );
+
+	const { data: stagingSites } = useStagingSite( site.ID, {
+		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
+	} );
+
+	if ( site.options ) {
+		site.options.wpcom_staging_blog_ids =
+			stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
+	}
 
 	return (
 		<ItemPreviewPane
