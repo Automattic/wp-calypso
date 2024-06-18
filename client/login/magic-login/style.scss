@@ -341,6 +341,10 @@
 			padding-left: 30px;
 			padding-right: 30px;
 			border-radius: 2px;
+
+			button:disabled {
+				opacity: 0.3;
+			}
 		}
 
 		.grav-powered-magic-login__header,
@@ -391,12 +395,19 @@
 		}
 	}
 
-	button.form-button.is-primary,
 	button[type="submit"].form-button.is-primary,
 	.magic-login__form-action button[type="submit"].form-button.is-primary {
 		width: 100%;
 		height: 56px;
 		margin-top: 30px;
+
+		&.is-busy {
+			background-image: linear-gradient(-45deg, #1d4fc4 28%, darken(#1d4fc4, 10%) 28%, darken(#1d4fc4, 10%) 72%, #1d4fc4 72%);
+		}
+
+		&:disabled {
+			color: #fff;
+		}
 	}
 
 	.grav-powered-magic-login__content,
@@ -419,7 +430,7 @@
 		}
 
 		button:disabled {
-			opacity: 0.3;
+			opacity: 0.5;
 			cursor: not-allowed;
 		}
 	}
@@ -479,10 +490,6 @@
 
 	.magic-login__form-action {
 		margin-top: 0;
-	}
-
-	.form-button.is-primary:disabled {
-		color: #fff;
 	}
 
 	.grav-powered-magic-login__feature-items {

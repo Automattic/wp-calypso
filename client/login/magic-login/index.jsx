@@ -601,6 +601,7 @@ class MagicLogin extends Component {
 								eventOptions
 							);
 						} }
+						disabled={ isRequestingEmail }
 					>
 						{ translate( 'Log in with main account (recommended)' ) }
 					</button>
@@ -623,6 +624,7 @@ class MagicLogin extends Component {
 								eventOptions
 							);
 						} }
+						disabled={ isRequestingEmail }
 					>
 						{ translate( 'Create a new account' ) }
 					</button>
@@ -648,17 +650,17 @@ class MagicLogin extends Component {
 						status="is-transparent-info"
 					/>
 				) }
-				<button
-					className="button form-button is-primary"
+				<FormButton
 					onClick={ () =>
 						this.handleGravPoweredSendEmailCode( usernameOrEmail, () =>
 							this.setState( { showSecondaryEmailOptions: false } )
 						)
 					}
 					disabled={ isRequestingEmail || !! requestEmailErrorMessage }
+					busy={ isRequestingEmail }
 				>
 					{ translate( 'Continue' ) }
-				</button>
+				</FormButton>
 				<footer className="grav-powered-magic-login__footer">
 					<button onClick={ this.handleGravPoweredSwitchEmail }>
 						{ translate( 'Switch email' ) }
@@ -687,6 +689,7 @@ class MagicLogin extends Component {
 			usernameOrEmail,
 			verificationCodeInputValue,
 		} = this.state;
+		const isProcessingCode = isValidatingCode || isCodeValidated;
 
 		return (
 			<div className="grav-powered-magic-login__content">
@@ -717,6 +720,7 @@ class MagicLogin extends Component {
 						value={ verificationCodeInputValue }
 						onChange={ this.handleVerificationCodeInputChange }
 						placeholder={ translate( 'Verification code' ) }
+						disabled={ isProcessingCode }
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					/>
 					{ codeValidationError && (
@@ -736,9 +740,9 @@ class MagicLogin extends Component {
 						disabled={
 							! verificationCodeInputValue ||
 							verificationCodeInputValue.length < 6 ||
-							isValidatingCode ||
-							isCodeValidated
+							isProcessingCode
 						}
+						busy={ isProcessingCode }
 					>
 						{ translate( 'Continue' ) }
 					</FormButton>
@@ -885,7 +889,9 @@ class MagicLogin extends Component {
 						createAccountForNewUser
 						errorMessage={ requestEmailErrorMessage || requestEmailErrorMessage }
 						onErrorDismiss={ () => this.setState( { requestEmailErrorMessage: null } ) }
+						isEmailInputDisabled={ isRequestingEmail }
 						isSubmitButtonDisabled={ isRequestingEmail || !! requestEmailErrorMessage }
+						isSubmitButtonBusy={ isRequestingEmail }
 					/>
 					{ isGravatar && (
 						<div className="grav-powered-magic-login__feature-items">

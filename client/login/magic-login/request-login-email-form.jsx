@@ -61,7 +61,9 @@ class RequestLoginEmailForm extends Component {
 		blogId: PropTypes.string,
 		errorMessage: PropTypes.string,
 		onErrorDismiss: PropTypes.func,
+		isEmailInputDisabled: PropTypes.bool,
 		isSubmitButtonDisabled: PropTypes.bool,
+		isSubmitButtonBusy: PropTypes.bool,
 	};
 
 	state = {
@@ -189,7 +191,9 @@ class RequestLoginEmailForm extends Component {
 			onSubmitEmail,
 			errorMessage,
 			onErrorDismiss,
+			isEmailInputDisabled,
 			isSubmitButtonDisabled,
+			isSubmitButtonBusy,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -265,7 +269,7 @@ class RequestLoginEmailForm extends Component {
 						<FormTextInput
 							autoCapitalize="off"
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-							disabled={ isFetching || emailRequested }
+							disabled={ isFetching || emailRequested || isEmailInputDisabled }
 							value={ usernameOrEmail }
 							name="usernameOrEmail"
 							ref={ this.usernameOrEmailRef }
@@ -294,7 +298,7 @@ class RequestLoginEmailForm extends Component {
 							/>
 						) }
 						<div className="magic-login__form-action">
-							<FormButton primary disabled={ ! submitEnabled }>
+							<FormButton primary disabled={ ! submitEnabled } busy={ isSubmitButtonBusy }>
 								{ submitButtonLabel || buttonLabel }
 							</FormButton>
 						</div>
