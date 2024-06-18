@@ -30,6 +30,7 @@ import {
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { rebootAfterLogin } from 'calypso/state/login/actions';
 import {
 	hideMagicLoginRequestForm,
 	fetchMagicLoginAuthenticate,
@@ -75,6 +76,7 @@ class MagicLogin extends Component {
 		errorNotice: PropTypes.func.isRequired,
 		successNotice: PropTypes.func.isRequired,
 		removeNotice: PropTypes.func.isRequired,
+		rebootAfterLogin: PropTypes.func.isRequired,
 
 		// mapped to state
 		locale: PropTypes.string.isRequired,
@@ -127,7 +129,6 @@ class MagicLogin extends Component {
 			path,
 			showCheckYourEmail,
 			isCodeValidated,
-			query,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification } = this.state;
 
@@ -184,8 +185,8 @@ class MagicLogin extends Component {
 				} );
 			}
 
-			if ( isCodeValidated && query?.redirect_to ) {
-				window.location.replace( query.redirect_to );
+			if ( isCodeValidated ) {
+				this.props.rebootAfterLogin( { magic_login: 1 } );
 			}
 
 			this.verificationCodeInputRef.current?.focus();
@@ -1166,6 +1167,7 @@ const mapDispatch = {
 	errorNotice,
 	successNotice,
 	removeNotice,
+	rebootAfterLogin,
 };
 
 export default connect( mapState, mapDispatch )( localize( MagicLogin ) );
