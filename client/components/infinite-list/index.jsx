@@ -483,6 +483,6 @@ export default class InfiniteList extends Component {
 	 * @returns {boolean} whether context is available
 	 */
 	_contextLoaded() {
-		return this.props.context || ! ( 'context' in this.props );
+		return this.props.context || this.props.context === false || ! ( 'context' in this.props );
 	}
 }
