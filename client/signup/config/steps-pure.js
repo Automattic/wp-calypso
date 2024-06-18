@@ -266,21 +266,6 @@ export function generateSteps( {
 			stepName: 'hosting-decider',
 			providesDependencies: [ 'stepperHostingFlow' ],
 		},
-		'plans-hosting': {
-			stepName: 'plans',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isPlanFulfilled,
-			props: {
-				hideFreePlan: true,
-				hidePremiumPlan: true,
-				hidePersonalPlan: true,
-				hideEnterprisePlan: true,
-				shouldHideNavButtons: true,
-			},
-		},
 
 		'plans-new': {
 			stepName: 'plans',
