@@ -167,7 +167,6 @@ class MagicLogin extends Component {
 				);
 			}
 
-			// TODO: Test it
 			if ( ! prevState.showSecondaryEmailOptions && showSecondaryEmailOptions ) {
 				this.props.recordTracksEvent(
 					'calypso_gravatar_powered_magic_login_secondary_email_options',
@@ -180,7 +179,6 @@ class MagicLogin extends Component {
 				);
 			}
 
-			// TODO: Test it
 			if ( ! prevState.showEmailCodeVerification && showEmailCodeVerification ) {
 				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_verification', {
 					...eventOptions,
@@ -188,7 +186,6 @@ class MagicLogin extends Component {
 				} );
 			}
 
-			// TODO: Test it
 			if ( ! prevProps.showCheckYourEmail && showCheckYourEmail ) {
 				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_verification', {
 					...eventOptions,
@@ -746,11 +743,7 @@ class MagicLogin extends Component {
 
 							this.props.recordTracksEvent(
 								'calypso_gravatar_powered_magic_login_click_resend_email',
-								{
-									type: 'code',
-									client_id: oauth2Client.id,
-									client_name: oauth2Client.name,
-								}
+								{ type: 'code', client_id: oauth2Client.id, client_name: oauth2Client.name }
 							);
 						} }
 						disabled={ isSendingEmail }
