@@ -336,10 +336,13 @@ export class EditorToolbarComponent {
 		const translatedCloseSettingsName = await this.translateFromPage( 'Close Settings' );
 		const translatedCloseJetpackSettingsName = await this.translateFromPage( 'Close plugin' );
 
+		const buttonNames =
+			envVariables.VIEWPORT_NAME === 'mobile'
+				? `Settings`
+				: `${ translatedCloseJetpackSettingsName }|${ translatedCloseSettingsName }`;
+
 		const button = editorParent.getByRole( 'button', {
-			name: new RegExp(
-				`${ translatedCloseJetpackSettingsName }|${ translatedCloseSettingsName }`
-			),
+			name: new RegExp( buttonNames ),
 		} );
 
 		if ( ! ( await this.targetIsOpen( button ) ) ) {
