@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { recordCommandPaletteOpen } from '@automattic/command-palette/src/tracks';
+import { Button } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { LocalizeProps } from 'i18n-calypso';
@@ -32,12 +33,19 @@ export const GlobalSidebarFooter: FC< {
 
 	return (
 		<SidebarFooter>
+			<Button
+				className="sidebar__footer-link sidebar__footer-write-post"
+				href="#"
+				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.WRITE_POST_CLICK ) }
+			>
+				{ translate( 'Write a post' ) }
+			</Button>
 			<SidebarMenuItem
 				url="/me"
 				className="sidebar__footer-link sidebar__footer-profile"
 				tooltip={ translate( 'Profile' ) }
 				tooltipPlacement="top"
-				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.PROFILE_CLICK ) }
+				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.WRITE_POST_CLICK ) }
 				icon={ <Gravatar user={ user } size={ 20 } /> }
 			/>
 			<AsyncLoad
