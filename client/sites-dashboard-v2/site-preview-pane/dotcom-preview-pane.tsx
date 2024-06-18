@@ -163,7 +163,7 @@ const DotcomPreviewPane = ( {
 		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
 	} );
 
-	if ( site.options ) {
+	if ( site.options && site.is_wpcom_atomic ) {
 		site.options.wpcom_staging_blog_ids =
 			stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
 	}
