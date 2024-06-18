@@ -610,6 +610,7 @@ export interface ResponseCartProductExtra {
 	receipt_for_domain?: number;
 	domain_registration_agreement_url?: string;
 	legal_agreements?: never[] | DomainLegalAgreements;
+	is_gravatar_domain?: boolean;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.
