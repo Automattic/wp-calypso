@@ -704,10 +704,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
-		'p2-get-started': {
-			stepName: 'p2-get-started',
-		},
-
 		'p2-confirm-email': {
 			stepName: 'p2-confirm-email',
 			fulfilledStepCallback: excludeStepIfEmailVerified,
