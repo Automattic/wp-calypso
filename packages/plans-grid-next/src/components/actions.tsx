@@ -97,6 +97,11 @@ const PlanFeatures2023GridActions = ( {
 		}
 	);
 
+	// availableForPurchase ultimately comes from use-check-plan-availability-for-purchase.ts
+	// which considers the plan of the current site. This is not appropriate for flows
+	// that are creating a new site, like /setup/new-hosted-site, so we override this value here.
+	availableForPurchase = availableForPurchase || ! currentSitePlanSlug;
+
 	const {
 		primary: { callback, text, status },
 		postButtonText,

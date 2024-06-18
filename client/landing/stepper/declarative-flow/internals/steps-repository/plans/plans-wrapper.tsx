@@ -44,6 +44,10 @@ interface Props {
 	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
 	selectedSiteId: number | null;
 	setSelectedSiteId: ( siteId: number ) => void;
+	// used to decide whether to load the plan for the existing site.
+	// if true, we don't consider the existing plan when showing grid
+	// actions, which ultimately allows the user to buy any plan on the flow.
+	isSiteCreationFlow?: boolean;
 }
 
 function getPlansIntent( flowName: string | null ): PlansIntent | null {
@@ -76,13 +80,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
-	const { flowName, selectedSiteId, setSelectedSiteId } = props;
+	const { flowName, selectedSiteId, setSelectedSiteId, isSiteCreationFlow } = props;
 
 	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
 		useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
-	const siteId = site?.ID;
+	const siteId = isSiteCreationFlow ? null : site?.ID;
 	const currentPath = window.location.pathname + window.location.search;
 
 	useSaveHostingFlowPathStep( flowName, currentPath );
@@ -171,7 +175,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		return (
 			<div>
 				<PlansFeaturesMain
-					siteId={ site?.ID }
+					siteId={ siteId }
 					displayedIntervals={ [ 'yearly', '2yearly', '3yearly', 'monthly' ] }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
