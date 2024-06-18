@@ -24,7 +24,7 @@ interface Props {
 	onCopyLicense?: () => void;
 	licenseType: LicenseType;
 	isChildLicense?: boolean;
-	referral: ReferralAPIResponse;
+	referral?: ReferralAPIResponse | null;
 }
 
 const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';

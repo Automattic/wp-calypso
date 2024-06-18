@@ -48,7 +48,7 @@ interface Props {
 	parentLicenseId?: number | null;
 	quantity?: number | null;
 	isChildLicense?: boolean;
-	referral: ReferralAPIResponse;
+	referral?: ReferralAPIResponse | null;
 }
 
 export default function LicensePreview( {

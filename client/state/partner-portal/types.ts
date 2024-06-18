@@ -251,7 +251,7 @@ export interface License {
 	ownerType: string | null;
 	quantity: number | null;
 	parentLicenseId: number | null;
-	referral: ReferralAPIResponse;
+	referral: ReferralAPIResponse | null;
 }
 
 export interface LicenseCounts {
