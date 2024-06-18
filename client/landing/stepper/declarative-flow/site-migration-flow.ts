@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
@@ -21,6 +22,12 @@ import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
+const MIGRATION_INSTRUCTIONS_STEP = config.isEnabled(
+	'migration-flow/new-migration-instructions-step'
+)
+	? STEPS.SITE_MIGRATION_INSTRUCTIONS
+	: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2;
+
 const FLOW_NAME = 'site-migration';
 
 const siteMigration: Flow = {
@@ -33,7 +40,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
-			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
+			MIGRATION_INSTRUCTIONS_STEP,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
@@ -262,7 +269,7 @@ const siteMigration: Flow = {
 					}
 
 					// Continue with the migration flow.
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug, {
+					return navigate( MIGRATION_INSTRUCTIONS_STEP.slug, {
 						siteId,
 						siteSlug,
 					} );
@@ -273,7 +280,7 @@ const siteMigration: Flow = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug, {
+					return navigate( MIGRATION_INSTRUCTIONS_STEP.slug, {
 						siteId,
 						siteSlug,
 					} );
@@ -283,7 +290,7 @@ const siteMigration: Flow = {
 					if ( providedDependencies?.goToCheckout ) {
 						const redirectAfterCheckout = providedDependencies?.userAcceptedDeal
 							? STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-							: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug;
+							: MIGRATION_INSTRUCTIONS_STEP.slug;
 
 						const destination = addQueryArgs(
 							{
