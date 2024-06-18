@@ -284,9 +284,22 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 	const planSlug = getPlanCartItem( cartItems )?.product_slug;
 	const planType = getPlan( planSlug )?.type;
 
-	// Blog setup
-	if ( onboardingSegment === 'blogger' ) {
+	// Blog and Merchant setup without Entrepreneur/Ecommerce Plan
+	if (
+		( onboardingSegment === 'blogger' || onboardingSegment === 'merchant' ) &&
+		planType !== TYPE_ECOMMERCE
+	) {
 		return addQueryArgs( queryParams, `/setup/site-setup-wg/options` );
+	}
+
+	// Not Blog, Merchant, nor Developer/Agency without Entrepreneur/Ecommerce Plan
+	if (
+		onboardingSegment !== 'blogger' &&
+		onboardingSegment !== 'merchant' &&
+		onboardingSegment !== 'developer-or-agency' &&
+		planType !== TYPE_ECOMMERCE
+	) {
+		return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
 	}
 
 	// Entrepreneur/Ecommerce Plan
