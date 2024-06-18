@@ -81,7 +81,8 @@ export type MessageType =
 	| 'placeholder'
 	| 'dislike-feedback'
 	| 'help-link'
-	| 'introduction';
+	| 'introduction'
+	| 'screenshot';
 
 export type Message = {
 	content: string;

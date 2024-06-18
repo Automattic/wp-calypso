@@ -7,6 +7,7 @@ import {
 } from '../data';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
+import useScreenshot from './useScreenshot';
 import type { Chat, Context, CurrentUser, Message, Nudge, OdieAllowedBots } from '../types/';
 import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
@@ -25,6 +26,9 @@ type OdieAssistantContextInterface = {
 	botNameSlug: OdieAllowedBots;
 	chat: Chat;
 	clearChat: () => void;
+	clearScreenShot: () => void;
+	createScreenShot: () => Promise< string >;
+	screenShot?: string;
 	currentUser: CurrentUser;
 	initialUserMessage: string | null | undefined;
 	isLoading: boolean;
@@ -33,7 +37,6 @@ type OdieAssistantContextInterface = {
 	isMinimized?: boolean;
 	isUserElegible: boolean;
 	isNudging: boolean;
-	isVisible: boolean;
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
 	lastMessageInView?: boolean;
@@ -46,9 +49,11 @@ type OdieAssistantContextInterface = {
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
 	setContext: ( context: Context ) => void;
+	setContainerVisibility?: ( isVisible: boolean ) => void;
 	setIsNudging: ( isNudging: boolean ) => void;
-	setIsVisible: ( isVisible: boolean ) => void;
+	setIsMinimized: ( isMinimized: boolean ) => void;
 	setIsLoading: ( isLoading: boolean ) => void;
+	setScreenShot: ( screenShot: string | undefined ) => void;
 	setScrollToLastMessage: ( scrollToLastMessage: ScrollToLastMessageType ) => void;
 	scrollToLastMessage: ScrollToLastMessageType | null;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
@@ -62,13 +67,14 @@ const defaultContextInterfaceValues = {
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
 	chat: { context: { section_name: '', site_id: null }, messages: [] },
 	clearChat: noop,
+	clearScreenShot: noop,
+	createScreenShot: async () => '',
 	initialUserMessage: null,
 	isLoading: false,
 	isLoadingEnvironment: false,
 	isLoadingExistingChat: false,
 	isMinimized: false,
 	isNudging: false,
-	isVisible: false,
 	isUserElegible: false,
 	lastNudge: null,
 	lastMessageRef: null,
@@ -80,9 +86,10 @@ const defaultContextInterfaceValues = {
 	setChat: noop,
 	setMessageLikedStatus: noop,
 	setContext: noop,
+	setIsMinimized: noop,
 	setIsNudging: noop,
-	setIsVisible: noop,
 	setIsLoading: noop,
+	setScreenShot: noop,
 	setScrollToLastMessage: noop,
 	scrollToLastMessage: noop,
 	trackEvent: noop,
@@ -116,6 +123,7 @@ type OdieAssistantProviderProps = {
 	navigateToContactOptions?: () => void;
 	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	selectedSiteId?: number | null;
+	setIsMinimized?: ( isVisible: boolean ) => void;
 	version?: string | null;
 	children?: ReactNode;
 } & PropsWithChildren;
@@ -139,16 +147,25 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	children,
 } ) => {
-	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
+	const [ screenShot, setScreenShot ] = useState< string | undefined >( undefined );
+	const screenShotHandler = useCallback(
+		( screenShot: string | undefined ) => {
+			setScreenShot( screenShot );
+		},
+		[ setScreenShot ]
+	);
+
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
 
 	const [ lastMessageInView, setLastMessageInView ] = useState( true );
 
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
+	const { createScreenShot } = useScreenshot( screenShotHandler );
+	const clearScreenShot = useCallback( () => setScreenShot( undefined ), [] );
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
 	const { chat: existingChat, isLoading: isLoadingExistingChat } = useLoadPreviousChat( {
@@ -257,32 +274,35 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	return (
 		<OdieAssistantContext.Provider
 			value={ {
+				createScreenShot,
 				addMessage,
 				botName,
 				botNameSlug,
 				chat,
 				clearChat,
+				clearScreenShot,
 				currentUser,
 				extraContactOptions,
 				initialUserMessage,
 				isLoading: isLoading,
 				isMinimized,
 				isNudging,
-				isVisible,
 				lastNudge,
 				lastMessageInView,
 				navigateToContactOptions,
 				navigateToSupportDocs,
 				odieClientId,
+				screenShot,
 				selectedSiteId,
 				sendNudge: setLastNudge,
 				setChat,
 				setMessageLikedStatus,
 				setLastMessageInView,
 				setContext: noop,
+				setIsMinimized: noop,
 				setIsLoading,
 				setIsNudging,
-				setIsVisible,
+				setScreenShot,
 				setScrollToLastMessage: setScrollToLastMessage ?? noop,
 				scrollToLastMessage: scrollToLastMessage ?? noop,
 				trackEvent,
