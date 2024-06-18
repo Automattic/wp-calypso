@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
-import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getName,
 	hasAmountAvailableToRefund,
@@ -18,11 +17,9 @@ import {
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
-	isGravatarDomain,
 	isJetpackPurchase,
 	includedDomainPurchase,
 	cancelBundledDomain,
@@ -290,20 +287,10 @@ const CancelPurchaseRefundInformation = ( {
 			);
 		}
 	} else if ( isDomainRegistration( purchase ) ) {
-		text = [
-			i18n.translate(
-				'When you cancel your domain, it will remain registered and active until the registration expires, ' +
-					'at which point it will be automatically removed from your site.'
-			),
-		];
-
-		if ( isGravatarDomain ) {
-			text.push(
-				i18n.translate(
-					'This domain is provided at no cost for the first year for use with your Gravatar profile. This offer is limited to one free domain per user. If you cancel this domain, you will have to pay the standard price to register another domain for your Gravatar profile.'
-				)
-			);
-		}
+		text = i18n.translate(
+			'When you cancel your domain, it will remain registered and active until the registration expires, ' +
+				'at which point it will be automatically removed from your site.'
+		);
 	} else if (
 		isSubscription( purchase ) &&
 		includedDomainPurchase &&
@@ -395,13 +382,6 @@ CancelPurchaseRefundInformation.propTypes = {
 	onCancelConfirmationStateChange: PropTypes.func,
 };
 
-export default connect( ( state, props ) => {
-	const domains = getDomainsBySiteId( state, props.purchase.siteId );
-	const selectedDomainName = getName( props.purchase );
-	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
-
-	return {
-		includedDomainPurchase: getIncludedDomainPurchase( state, props.purchase ),
-		isGravatarDomain: selectedDomain.isGravatarDomain,
-	};
-} )( CancelPurchaseRefundInformation );
+export default connect( ( state, props ) => ( {
+	includedDomainPurchase: getIncludedDomainPurchase( state, props.purchase ),
+} ) )( CancelPurchaseRefundInformation );
