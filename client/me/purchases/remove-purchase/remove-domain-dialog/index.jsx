@@ -274,7 +274,7 @@ export default connect( ( state, ownProps ) => {
 	const selectedDomainName = getName( ownProps.purchase );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 	return {
-		isGravatarDomain: selectedDomain.isGravatarDomain,
+		isGravatarDomain: selectedDomain?.isGravatarDomain,
 		hasTitanWithUs: hasTitanMailWithUs( selectedDomain ),
 		currentRoute: getCurrentRoute( state ),
 		slug: getSelectedSiteSlug( state ),
