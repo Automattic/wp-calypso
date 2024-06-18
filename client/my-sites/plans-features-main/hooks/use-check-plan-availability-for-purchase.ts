@@ -6,6 +6,7 @@ import type { PlanSlug } from '@automattic/calypso-products';
 
 interface Props {
 	planSlugs: PlanSlug[];
+	siteId?: number | null;
 }
 
 type PlanAvailabilityForPurchase = {
@@ -21,8 +22,9 @@ type PlanAvailabilityForPurchase = {
  */
 const useCheckPlanAvailabilityForPurchase = ( {
 	planSlugs,
+	siteId,
 }: Props ): PlanAvailabilityForPurchase => {
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteId = useSelector( getSelectedSiteId ) || siteId;
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
 
 	return useSelector( ( state ) =>
