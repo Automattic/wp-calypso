@@ -426,14 +426,6 @@ export function generateSteps( {
 			},
 			delayApiRequestUntilComplete: true,
 		},
-		emails: {
-			stepName: 'emails',
-			dependencies: [ 'domainItem', 'siteSlug' ],
-			providesDependencies: [ 'domainItem', 'emailItem' ],
-			props: {
-				isDomainOnly: false,
-			},
-		},
 		'subscribing-email': {
 			stepName: 'subscribing-email',
 			// apiRequestFunction: createSiteWithCart,

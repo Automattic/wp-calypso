@@ -16,7 +16,6 @@ const stepNameToModuleName = {
 	'hosting-decider': 'hosting-decider',
 	'domains-theme-preselected': 'domains',
 	'mailbox-domain': 'domains',
-	emails: 'emails',
 	'subscribing-email': 'subscribing-email',
 	mailbox: 'emails',
 	launch: 'launch-site',
