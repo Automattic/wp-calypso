@@ -19,6 +19,7 @@ import {
 	LicenseCounts,
 	PaginatedItems,
 } from 'calypso/state/partner-portal/types';
+import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
@@ -39,6 +40,7 @@ interface APILicense {
 	owner_type: string | null;
 	quantity: number | null;
 	parent_license_id: number | null;
+	referral: ReferralAPIResponse | null;
 }
 
 interface APIPaginatedItems< T > {
@@ -115,6 +117,7 @@ export function formatLicenses( items: APILicense[] ): License[] {
 		ownerType: item.owner_type,
 		quantity: item.quantity,
 		parentLicenseId: item.parent_license_id,
+		referral: item.referral,
 	} ) );
 }
 

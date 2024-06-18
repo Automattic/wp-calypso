@@ -106,19 +106,18 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"
-						headerText={ translate( 'Take your site to the next level' ) }
+						headerText={
+							hasEnTranslation( 'The plan you need' )
+								? translate( 'The plan you need' )
+								: translate( 'Take your site to the next level' )
+						}
 						subHeaderText={
-							hasEnTranslation(
-								'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.'
-							)
-								? translate(
-										'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.',
-										{
-											args: {
-												planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-											},
-										}
-								  )
+							hasEnTranslation( 'Migrations are exclusive to the %(planName)s plan.' )
+								? translate( 'Migrations are exclusive to the %(planName)s plan.', {
+										args: {
+											planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+										},
+								  } )
 								: translate(
 										'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
 								  )

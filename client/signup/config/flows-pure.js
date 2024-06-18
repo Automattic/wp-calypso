@@ -540,8 +540,9 @@ export function generateFlows( {
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2024-05-16',
+			lastModified: '2024-06-14',
 			enablePresales: false,
+			enableHotjar: true,
 		},
 
 		{
@@ -551,8 +552,9 @@ export function generateFlows( {
 			description: 'A flow to collect DIFM lite site content',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2023-10-11',
+			lastModified: '2024-06-14',
 			hideProgressIndicator: true,
+			enableHotjar: true,
 		},
 		{
 			name: 'woocommerce-install',
@@ -658,6 +660,7 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
+			enableHotjar: true,
 		},
 	];
 

@@ -176,7 +176,7 @@ $brand-display: "SF Pro Display", sans-serif;
 		margin-bottom: 1.5rem;
 
 		.components-input-control__container {
-			border: solid 1px var(--studio-gray-10);
+			border-radius: 4px;
 			background-color: var(--studio-white);
 		}
 
@@ -186,6 +186,10 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		.components-input-control__suffix svg {
 			fill: var(--studio-gray-30);
+		}
+
+		.components-input-control__backdrop {
+			box-shadow: 0 0 0 1px var(--studio-gray-10);
 		}
 	}
 }

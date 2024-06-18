@@ -276,7 +276,7 @@ export class UserStep extends Component {
 					}
 				);
 			} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-				subHeaderText = translate( 'To get started create a new account with WordPress.com.' );
+				subHeaderText = translate( 'Create your new Blaze Pro account.' );
 			} else {
 				subHeaderText = translate(
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',

@@ -1,3 +1,4 @@
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { findLast, times } from 'lodash';
@@ -41,6 +42,7 @@ import {
 } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
@@ -145,6 +147,7 @@ class ReaderStream extends Component {
 			this.props.requestPage( {
 				streamKey: this.props.recsStreamKey,
 				pageHandle: this.props.recsStream.pageHandle,
+				localeSlug: this.props.localeSlug,
 			} );
 		}
 	}
@@ -439,8 +442,8 @@ class ReaderStream extends Component {
 	};
 
 	poll = () => {
-		const { streamKey } = this.props;
-		this.props.requestPage( { streamKey, isPoll: true } );
+		const { streamKey, localeSlug } = this.props;
+		this.props.requestPage( { streamKey, isPoll: true, localeSlug: localeSlug } );
 	};
 
 	getPageHandle = ( pageHandle, startDate ) => {
@@ -453,7 +456,7 @@ class ReaderStream extends Component {
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		const { streamKey, stream, startDate } = props;
+		const { streamKey, stream, startDate, localeSlug } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
@@ -461,7 +464,7 @@ class ReaderStream extends Component {
 			props.trackScrollPage( pageId );
 		}
 		const pageHandle = this.getPageHandle( stream.pageHandle, startDate );
-		props.requestPage( { streamKey, pageHandle } );
+		props.requestPage( { streamKey, pageHandle, localeSlug } );
 	};
 
 	showUpdates = () => {
@@ -591,7 +594,8 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
+			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		let body;
@@ -632,7 +636,8 @@ class ReaderStream extends Component {
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 					className="stream__list"
-					context={ this.state.listContext ?? false }
+					context={ this.state.listContext }
+					selectedItem={ selectedPostKey }
 				/>
 			);
 
@@ -714,6 +719,11 @@ export default connect(
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
 
+		let localeSlug = getCurrentLocaleSlug( state );
+		if ( isDefaultLocale( localeSlug ) ) {
+			localeSlug = null;
+		}
+
 		return {
 			blockedSites: getBlockedSites( state ),
 			items: getTransformedStreamItems( state, {
@@ -731,6 +741,7 @@ export default connect(
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
+			localeSlug,
 		};
 	},
 	{
