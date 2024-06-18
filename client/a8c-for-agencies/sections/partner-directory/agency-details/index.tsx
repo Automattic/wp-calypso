@@ -204,6 +204,11 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					/>
 				</FormField>
 			</FormSection>
+
+			<div className="partner-directory-agency-cta__required-information">
+				{ translate( '* indicates a required information' ) }
+			</div>
+
 			<div className="partner-directory-agency-cta__footer">
 				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
 					{ translate( 'Save public profile' ) }

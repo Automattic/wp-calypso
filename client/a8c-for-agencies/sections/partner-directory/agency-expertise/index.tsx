@@ -211,6 +211,10 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				</FormField>
 			</FormSection>
 
+			<div className="partner-directory-agency-cta__required-information">
+				{ translate( '* indicates a required information' ) }
+			</div>
+
 			<div className="partner-directory-agency-cta__footer">
 				<Button
 					href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_DASHBOARD_SLUG }` }
