@@ -4,7 +4,6 @@ const stepNameToModuleName = {
 	'clone-destination': 'clone-destination',
 	'clone-credentials': 'clone-credentials',
 	'clone-point': 'clone-point',
-	'clone-jetpack': 'clone-jetpack',
 	'clone-ready': 'clone-ready',
 	'clone-cloning': 'clone-cloning',
 	courses: 'courses',

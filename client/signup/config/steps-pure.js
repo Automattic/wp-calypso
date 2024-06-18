@@ -709,11 +709,6 @@ export function generateSteps( {
 			providesDependencies: [ 'clonePoint' ],
 		},
 
-		'clone-jetpack': {
-			stepName: 'clone-jetpack',
-			providesDependencies: [ 'cloneJetpack' ],
-		},
-
 		'clone-ready': {
 			stepName: 'clone-ready',
 			providesDependencies: [],
