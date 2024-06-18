@@ -6,6 +6,9 @@ import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard
 import HostingFeaturesIcon from 'calypso/hosting-features/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import SiteEnvironmentSwitcher from 'calypso/sites-dashboard-v2/site-preview-pane/site-environment-switcher';
+import { useSelector } from 'calypso/state';
+import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
+import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -168,6 +171,10 @@ const DotcomPreviewPane = ( {
 			stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
 	}
 
+	const stagingStatus = useSelector( ( state ) => getStagingSiteStatus( state, site.ID ) );
+	const isStagingStatusFinished =
+		stagingStatus === StagingSiteStatus.COMPLETE || stagingStatus === StagingSiteStatus.NONE;
+
 	return (
 		<ItemPreviewPane
 			itemData={ itemData }
@@ -178,9 +185,10 @@ const DotcomPreviewPane = ( {
 				externalIconSize: 16,
 				siteIconFallback: 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
-				subtitleExtra: () => (
-					<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />
-				),
+				subtitleExtra: () =>
+					( site.is_wpcom_staging_site || isStagingStatusFinished ) && (
+						<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />
+					),
 			} }
 		/>
 	);

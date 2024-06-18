@@ -10,6 +10,10 @@ button.popover__menu-item.site-environment-switcher__item:focus:not(.is-selected
 	color: initial;
 }
 
+button.popover__menu-item.site-environment-switcher__item:hover {
+	background-color: var(--color-primary-light);
+}
+
 .main.a4a-layout.sites-dashboard {
 	padding-block-start: 0;
 
