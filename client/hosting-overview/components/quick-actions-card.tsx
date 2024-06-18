@@ -24,7 +24,7 @@ interface ActionProps {
 const Action: FC< ActionProps > = ( { icon, href, text } ) => {
 	return (
 		<li className="hosting-overview__action">
-			<Button className="hosting-overview__action-button" plain href={ href }>
+			<Button className="hosting-overview__action-button" plain href={ href } disabled={ ! href }>
 				<span className="hosting-overview__action-text">
 					{ icon }
 					{ text }

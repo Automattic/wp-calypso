@@ -283,19 +283,30 @@ a.hosting-overview__action-button {
 	}
 
 	&:hover {
-		color: var(--color-primary-60);
 		svg {
 			color: var(--color-primary-60);
 			fill: var(--color-primary-60);
 		}
 
-		.hosting-overview__action-button,
-		.hosting-overview__action-text,
-		.hosting-overview__dashicon {
-			color: var(--color-primary-60);
-			svg {
+		.hosting-overview__action-button:not([disabled]) {
+			.hosting-overview__action-text,
+			.hosting-overview__dashicon {
 				color: var(--color-primary-60);
+				svg {
+					color: var(--color-primary-60);
+					fill: var(--color-primary-60);
+				}
 			}
+		}
+	}
+
+	button.hosting-overview__action-button {
+		display: inline-flex;
+		justify-content: space-between;
+		width: 100%;
+		&[disabled] {
+			opacity: 0.5;
+			cursor: not-allowed;
 		}
 	}
 }
