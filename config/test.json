@@ -115,7 +115,7 @@
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
 		"stats/tier-upgrade-slider": true,
-		"stats/utm-builder": false,
+		"stats/utm-builder": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"themes/premium": true,

@@ -143,3 +143,10 @@
 		border-radius: 50%;
 	}
 }
+
+.stats-module__extended-toggle {
+	display: flex;
+	gap: 0 5px;
+	justify-content: center;
+	padding-top: 2px; // for focus ring for Jetpack
+}

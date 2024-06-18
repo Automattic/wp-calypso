@@ -125,12 +125,7 @@ const StatsModuleUTM = ( {
 				data={ data }
 				useShortLabel={ useShortLabel }
 				title={ moduleStrings?.title }
-				emptyMessage={
-					<div>
-						{ moduleStrings.empty }
-						{ isBuilderEnabled && <UTMBuilder /> }
-					</div>
-				}
+				emptyMessage={ <div>{ moduleStrings.empty }</div> }
 				metricLabel={ metricLabel }
 				showMore={
 					displaySummaryLink && ! summary
@@ -152,12 +147,15 @@ const StatsModuleUTM = ( {
 				splitHeader
 				mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 				toggleControl={
-					<UTMDropdown
-						buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-						onSelect={ setSelectedOption }
-						selectOptions={ optionLabels }
-						selected={ selectedOption }
-					/>
+					<div className="stats-module__extended-toggle">
+						{ isBuilderEnabled && <UTMBuilder /> }
+						<UTMDropdown
+							buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+							onSelect={ setSelectedOption }
+							selectOptions={ optionLabels }
+							selected={ selectedOption }
+						/>
+					</div>
 				}
 			/>
 			{ showFooterWithDownloads && (
