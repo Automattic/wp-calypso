@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -17,7 +18,7 @@ export function usePartnerDirectoryOnboardingCard() {
 	}, [ dispatch ] );
 
 	return {
-		isActive: ! hasPreference,
+		isActive: ! hasPreference && isSectionNameEnabled( 'a8c-for-agencies-partner-directory' ),
 		hideCard,
 	};
 }
