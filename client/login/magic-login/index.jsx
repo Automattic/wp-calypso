@@ -193,7 +193,7 @@ class MagicLogin extends Component {
 				);
 			}
 
-			// Proceed to the next step if the code is validated
+			// Proceed to the next step if the magic code is validated
 			if ( isCodeValidated ) {
 				if ( ! twoFactorEnabled ) {
 					this.props.rebootAfterLogin( { magic_login: 1 } );
