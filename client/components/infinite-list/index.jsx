@@ -30,6 +30,7 @@ export default class InfiniteList extends Component {
 		renderLoadingPlaceholders: PropTypes.func.isRequired,
 		renderTrailingItems: PropTypes.func,
 		context: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedItem: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -94,7 +95,6 @@ export default class InfiniteList extends Component {
 	componentDidMount() {
 		this._isMounted = true;
 		if ( this._contextLoaded() ) {
-			console.log( 'InfiniteList mounted - setY' );
 			this._setContainerY( this.state.scrollTop );
 		}
 
@@ -118,7 +118,6 @@ export default class InfiniteList extends Component {
 		// Apply these at the end of the callstack to ensure the scroll container is ready.
 		window.setTimeout( () => {
 			if ( this._contextLoaded() ) {
-				console.log( 'InfiniteList mounted timeout - setY' );
 				this._setContainerY( scrollTop );
 				this.updateScroll( {
 					triggeredByScroll: false,
@@ -168,7 +167,7 @@ export default class InfiniteList extends Component {
 
 			// only override browser history scroll if navigated via history
 			if ( detectHistoryNavigation.loadedViaHistory() ) {
-				// this._overrideHistoryScroll();
+				this._overrideHistoryScroll();
 			}
 		}
 
@@ -448,7 +447,6 @@ export default class InfiniteList extends Component {
 	}
 
 	_setContainerY( position ) {
-		console.log( 'SET Y' );
 		if ( this.props.context && this.props.context !== window ) {
 			this.props.context.scrollTop = position;
 			return;
@@ -462,7 +460,7 @@ export default class InfiniteList extends Component {
 	 * HTML5 history.
 	 */
 	_overrideHistoryScroll() {
-		if ( ! this._contextLoaded() ) {
+		if ( ! this._contextLoaded() || this.props.selectedItem ) {
 			return;
 		}
 		this._scrollContainer.addEventListener( 'scroll', this._resetScroll );
@@ -474,7 +472,6 @@ export default class InfiniteList extends Component {
 			return;
 		}
 		debug( 'history setting scroll position:', event );
-		console.log( 'RESET SCROLL - setY' );
 		this._setContainerY( position );
 		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 		debug( 'override scroll position from HTML5 history popstate:', position );
