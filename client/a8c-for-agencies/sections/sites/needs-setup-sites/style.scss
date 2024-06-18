@@ -6,12 +6,6 @@
 	flex-direction: row;
 	gap: 12px;
 	align-items: center;
-	padding-inline: 8px;
-	flex-wrap: wrap;
-
-	@include break-medium {
-		flex-wrap: unset;
-	}
 }
 
 .plan-field__icon {
@@ -44,15 +38,11 @@
 }
 
 .plan-field__button {
-	padding: 1px;
+	padding: 8px 16px;
 	text-decoration: underline;
 	font-size: rem(13px);
 	font-weight: 400;
 	cursor: pointer;
-
-	@include break-medium {
-		padding: 8px 16px;
-	}
 }
 
 .plan-field__loader {
@@ -86,6 +76,23 @@
 }
 
 .has-product-referral {
+	.plan-field {
+		padding-inline: 8px;
+		flex-wrap: wrap;
+
+		@include break-medium {
+			flex-wrap: unset;
+		}
+	}
+
+	.plan-field__button {
+		padding: 1px;
+
+		@include break-medium {
+			padding: 8px 16px;
+		}
+	}
+
 	.plan-field__content {
 		width: 250px;
 

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
@@ -39,6 +40,8 @@ type NeedsSetupSite = {
 export default function NeedSetup( { licenseKey }: Props ) {
 	const translate = useTranslate();
 
+	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
+
 	const title = translate( 'Sites' );
 
 	const { data: pendingSites, isFetching, refetch: refetchPendingSites } = useFetchPendingSites();
@@ -53,8 +56,8 @@ export default function NeedSetup( { licenseKey }: Props ) {
 
 	// Filter out sites that have a referral
 	const availableSites =
-		allAvailableSites.filter(
-			( { features }: NeedsSetupSite ) => ! features.wpcom_atomic.referral
+		allAvailableSites.filter( ( { features }: NeedsSetupSite ) =>
+			isAutomatedReferralsEnabled ? ! features.wpcom_atomic.referral : true
 		) ?? [];
 
 	// Find the site license by license key
@@ -62,14 +65,17 @@ export default function NeedSetup( { licenseKey }: Props ) {
 		( { features }: NeedsSetupSite ) => features.wpcom_atomic.license_key === licenseKey
 	);
 
-	const hasReferral = !! foundSiteLicenseByLicenseKey?.features.wpcom_atomic.referral;
+	const hasReferral =
+		isAutomatedReferralsEnabled && !! foundSiteLicenseByLicenseKey?.features.wpcom_atomic.referral;
 
 	// Filter out the site license we found by license key
-	const otherReferralSites = allAvailableSites.filter(
-		( { features }: NeedsSetupSite ) =>
-			!! features.wpcom_atomic.referral &&
-			( hasReferral ? features.wpcom_atomic.license_key !== licenseKey : true )
-	);
+	const otherReferralSites = isAutomatedReferralsEnabled
+		? allAvailableSites.filter(
+				( { features }: NeedsSetupSite ) =>
+					!! features.wpcom_atomic.referral &&
+					( hasReferral ? features.wpcom_atomic.license_key !== licenseKey : true )
+		  )
+		: [];
 
 	const availablePlans: AvailablePlans[] = availableSites.length
 		? [
@@ -139,7 +145,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 			className={ clsx(
 				'sites-dashboard sites-dashboard__layout is-without-filters preview-hidden',
 				{
-					'has-product-referral': !! otherReferralSites.length || !! hasReferral,
+					'has-product-referral': !! otherReferralSites.length || hasReferral,
 				}
 			) }
 			wide
