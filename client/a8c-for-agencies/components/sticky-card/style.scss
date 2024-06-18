@@ -8,7 +8,7 @@
 	background-color: var(--color-surface);
 
 	box-shadow: 0 4px 15.7px 0 #0000001a;
-	z-index: 1000;
+	z-index: 999999999;
 	animation: appear 0.3s ease-in-out;
 
 	&.is-positioned-top-left {
