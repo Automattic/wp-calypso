@@ -33,8 +33,8 @@ export function StickyCard( {
 			<div className="sticky-card__heading">
 				<div className="sticky-card__heading-title">{ title }</div>
 				{ dismissable && (
-					<Button plain>
-						<Icon icon={ close } onClick={ onClose } size={ 24 } />
+					<Button className="sticky-card__dismiss-button" plain>
+						<Icon className="gridicon" icon={ close } onClick={ onClose } size={ 14 } />
 					</Button>
 				) }
 			</div>

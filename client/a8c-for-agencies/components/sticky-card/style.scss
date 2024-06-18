@@ -5,10 +5,11 @@
 	position: absolute;
 	border-radius: 4px;
 	min-width: 420px;
+	background-color: var(--color-surface);
 
 	box-shadow: 0 4px 15.7px 0 #0000001a;
 	z-index: 1000;
-
+	animation: appear 0.3s ease-in-out;
 
 	&.is-positioned-top-left {
 		top: var(--margin-spacing);
@@ -43,3 +44,17 @@
 	justify-content: space-between;
 }
 
+.sticky-card__heading-title {
+	font-size: rem(14px);
+	font-weight: 500;
+}
+
+.sticky-card__dismiss-button {
+	cursor: pointer;
+
+	&:hover {
+		.gridicon {
+			fill: var(--color-primary);
+		}
+	}
+}
