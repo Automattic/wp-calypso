@@ -53,6 +53,11 @@
 	font-size: 2.25rem;
 	line-height: 1.1;
 	font-weight: 600;
+	margin-block-start: 32px;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		margin-block-start: 0;
+	}
 }
 
 .checkout__main-list {
@@ -259,7 +264,10 @@
 		color: var(--color-neutral-70);
 		font-size: rem(16px);
 		font-weight: 600;
-		text-wrap: nowrap;
+
+		@include break-large {
+			text-wrap: nowrap;
+		}
 	}
 
 	.checkout__summary-notice {
@@ -272,8 +280,12 @@
 	}
 
 	.checkout__aside-footer {
-		margin-top: auto;
-		padding-bottom: 16px;
+		margin-block-start: 32px;
+		padding-block-end: 16px;
+
+		@include breakpoint-deprecated( ">960px" ) {
+			margin-block-start: auto;
+		}
 
 		.checkout__aside-powered-by {
 			div {

@@ -28,6 +28,8 @@ $sfProText: "SF Pro Text", $sans;
 	background: var(--color-white);
 	min-height: 100%;
 
+	$login-form-max-width: 327px;
+
 	.masterbar__blaze-pro-nav {
 		display: flex;
 		flex-direction: row;
@@ -364,7 +366,8 @@ $sfProText: "SF Pro Text", $sans;
 		}
 	}
 
-	.logged-out-form__links {
+	.logged-out-form__links,
+	.login__lost-password-footer {
 		align-items: center;
 		display: flex;
 		flex-direction: row;
@@ -380,13 +383,15 @@ $sfProText: "SF Pro Text", $sans;
 			color: var(--studio-gray-60);
 		}
 
-		a.logged-out-form__link-item {
+		a.logged-out-form__link-item,
+		a {
 			color: var(--color-orange);
 			padding: 0;
 			text-decoration: none;
 		}
 
 		a.logged-out-form__link-item,
+		a,
 		span {
 			font-size: rem(18px);
 			font-weight: 500;
@@ -394,10 +399,16 @@ $sfProText: "SF Pro Text", $sans;
 		}
 	}
 
+	.login__lost-password-footer {
+		max-width: $login-form-max-width;
+		margin: 0 auto;
+	}
+
 	// Log in Styles
 
 	.card.login__form,
 	.signup-form .logged-out-form,
+	.login__lostpassword-form,
 	.two-factor-authentication__verification-code-form-wrapper {
 		box-shadow: none;
 
@@ -435,6 +446,7 @@ $sfProText: "SF Pro Text", $sans;
 	&.layout.is-white-login,
 	.card.login__form,
 	.signup-form .logged-out-form,
+	.login__lostpassword-form,
 	.two-factor-authentication__verification-code-form-wrapper {
 		.login .button.is-primary,
 		.login .button.is-primary:hover,
@@ -455,6 +467,7 @@ $sfProText: "SF Pro Text", $sans;
 	}
 
 	.login__header-subtitle {
+		color: var(--color-neutral-50);
 		font-family: $sfProText !important;
 		font-size: rem(18px);
 		font-weight: 500;
@@ -464,6 +477,10 @@ $sfProText: "SF Pro Text", $sans;
 		a:visited {
 			color: var(--color-orange);
 		}
+	}
+
+	.login__lostpassword-subtitle {
+		width: 360px;
 	}
 
 	&.two-factor-auth-enabled {
@@ -481,8 +498,6 @@ $sfProText: "SF Pro Text", $sans;
 	}
 
 	.login form.is-blaze-pro {
-		$max-width: 327px;
-
 		display: flex;
 		flex-direction: row;
 		margin-top: 48px;
@@ -500,12 +515,12 @@ $sfProText: "SF Pro Text", $sans;
 			flex-direction: column;
 			justify-content: center;
 			width: 100%;
-			max-width: $max-width;
+			max-width: $login-form-max-width;
 			margin: 0;
 
 			~ .auth-form__social.card {
 				width: 100%;
-				max-width: $max-width;
+				max-width: $login-form-max-width;
 				margin: 0;
 			}
 		}
@@ -514,6 +529,15 @@ $sfProText: "SF Pro Text", $sans;
 			@media screen and (min-width: $break-medium) {
 				margin-block: 0;
 			}
+		}
+	}
+
+	.login__lostpassword-form {
+		max-width: $login-form-max-width;
+		margin-bottom: 32px;
+
+		.login__form-userdata {
+			margin-bottom: 20px;
 		}
 	}
 

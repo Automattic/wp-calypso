@@ -307,7 +307,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( isReactLostPasswordScreenEnabled() && this.props.isWoo ) {
+		if ( isReactLostPasswordScreenEnabled() && ( this.props.isWoo || this.props.isBlazePro ) ) {
 			return (
 				<a
 					className="login__lost-password-link"

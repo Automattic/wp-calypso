@@ -93,6 +93,7 @@ export default function LicenseList() {
 								}
 								quantity={ license.quantity }
 								isChildLicense={ !! license.parentLicenseId }
+								referral={ license.referral }
 							/>
 						</LicenseTransition>
 					) ) }
