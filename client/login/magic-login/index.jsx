@@ -1,15 +1,17 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, FormLabel } from '@automattic/components';
 import { addLocaleToPath, localizeUrl, getLanguage } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, createRef } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
 import AppPromo from 'calypso/blocks/app-promo';
+import FormButton from 'calypso/components/forms/form-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
@@ -116,8 +118,6 @@ class MagicLogin extends Component {
 		maskedEmailAddress: '',
 	};
 
-	verificationCodeInputRef = createRef();
-
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 
@@ -209,8 +209,6 @@ class MagicLogin extends Component {
 					);
 				}
 			}
-
-			this.verificationCodeInputRef.current?.focus();
 		}
 	}
 
@@ -711,17 +709,15 @@ class MagicLogin extends Component {
 					className="grav-powered-magic-login__verification-code-form"
 					onSubmit={ this.handleVerificationCodeSubmit }
 				>
-					<label htmlFor="verification-code" hidden>
+					<FormLabel htmlFor="verification-code" hidden>
 						{ translate( 'Enter the verification code' ) }
-					</label>
-					<input
+					</FormLabel>
+					<FormTextInput
 						id="verification-code"
-						className="form-text-input"
-						type="text"
 						value={ verificationCodeInputValue }
 						onChange={ this.handleVerificationCodeInputChange }
 						placeholder={ translate( 'Verification code' ) }
-						ref={ this.verificationCodeInputRef }
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					/>
 					{ codeValidationError && (
 						<Notice
@@ -735,9 +731,8 @@ class MagicLogin extends Component {
 							status="is-transparent-info"
 						/>
 					) }
-					<button
-						className="button form-button is-primary"
-						type="submit"
+					<FormButton
+						primary
 						disabled={
 							! verificationCodeInputValue ||
 							verificationCodeInputValue.length < 6 ||
@@ -746,7 +741,7 @@ class MagicLogin extends Component {
 						}
 					>
 						{ translate( 'Continue' ) }
-					</button>
+					</FormButton>
 				</form>
 				<footer className="grav-powered-magic-login__footer">
 					<button
