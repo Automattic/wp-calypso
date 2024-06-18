@@ -295,6 +295,16 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
+		name: 'pao-landing',
+		paths: [ '/pao-landing', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/pao-landing` ],
+		module: 'calypso/pao-landing',
+		enableLoggedOut: true,
+		group: 'pao-landing',
+		isomorphic: true,
+		title: 'PAO Landing',
+		trackLoadPerformance: true,
+	},
+	{
 		name: 'site-profiler',
 		paths: [ '/site-profiler', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/site-profiler` ],
 		module: 'calypso/site-profiler',
