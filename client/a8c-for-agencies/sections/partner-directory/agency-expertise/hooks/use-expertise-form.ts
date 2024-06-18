@@ -9,6 +9,11 @@ function validateURL( url: string ) {
 	return /^(https?:\/\/)?([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(:[0-9]+)?(\/[a-z0-9-]*)*$/.test( url );
 }
 
+function areURLsUnique( urls: string[] ) {
+	const urlSet = new Set( urls );
+	return urlSet.size === urls.length;
+}
+
 export default function useExpertiseForm( { initialFormData }: Props ) {
 	const [ formData, setFormData ] = useState< AgencyDirectoryApplication >(
 		initialFormData ?? {
@@ -95,7 +100,7 @@ export default function useExpertiseForm( { initialFormData }: Props ) {
 			formData.directories.length > 0 &&
 			// Ensure that each directory request has 5 valid URLs
 			formData.directories.every( ( { urls } ) => {
-				return urls.every( ( url ) => url && validateURL( url ) );
+				return urls.every( ( url ) => url && validateURL( url ) ) && areURLsUnique( urls );
 			} ),
 		[ formData ]
 	);
