@@ -24,7 +24,7 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 	const { mutate, isPending, status, error } = useSubmitPaymentInfoMutation();
 	const { agencyId, referralId, secret } = getClientReferralQueryArgs();
 
-	const termsLink = '#'; // TODO: Add link to terms and conditions
+	const termsLink = 'https://automattic.com/for-agencies/platform-agreement/';
 
 	const handleTermsClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_terms_click' ) );
