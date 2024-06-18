@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { HOSTED_SITE_MIGRATION_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import SegmentationSurvey from 'calypso/components/segmentation-survey';
 import { SKIP_ANSWER_KEY } from 'calypso/components/segmentation-survey/constants';
@@ -38,8 +38,8 @@ const QUESTION_CONFIGURATION: QuestionConfiguration = {
 };
 
 export default function InitialIntentStep( props: Props ) {
-	const { submitSignupStep, stepName, signupDependencies, flowName, progress } = props;
-	const currentPage = progress[ stepName ]?.stepSectionName ?? 1;
+	const { submitSignupStep, stepName, signupDependencies, flowName } = props;
+	const [ currentPage, setCurrentPage ] = useState< number >( 1 );
 	const currentAnswers = signupDependencies.segmentationSurveyAnswers || {};
 	const translate = useTranslate();
 	const headerText = translate( 'What brings you to WordPress.com?' );
@@ -136,9 +136,10 @@ export default function InitialIntentStep( props: Props ) {
 					skipNextNavigation={ skipNextNavigation }
 					questionConfiguration={ QUESTION_CONFIGURATION }
 					questionComponentMap={ flowQuestionComponentMap }
-					onGoToPage={ ( stepSectionName: number ) =>
-						submitSignupStep( { flowName, stepName, stepSectionName }, {} )
-					}
+					onGoToPage={ ( stepSectionName: number ) => {
+						setCurrentPage( stepSectionName );
+						submitSignupStep( { flowName, stepName, stepSectionName }, {} );
+					} }
 					providedPage={ currentPage }
 				/>
 			}
