@@ -23,7 +23,7 @@ import {
 	isEmpty,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, useEffect } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
@@ -973,21 +973,7 @@ class SignupForm extends Component {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			return this.globalNotice( this.props.step.errors[ 0 ], 'is-error' );
 		}
-		if ( this.userCreationComplete() ) {
-			return (
-				<TrackRender eventName="calypso_signup_account_already_created_show">
-					{ this.globalNotice(
-						{
-							info: true,
-							message: this.props.translate(
-								'Your account has already been created. You can change your email, username, and password later.'
-							),
-						},
-						'is-info'
-					) }
-				</TrackRender>
-			);
-		}
+
 		return false;
 	}
 
@@ -1387,14 +1373,6 @@ class SignupForm extends Component {
 			</div>
 		);
 	}
-}
-
-function TrackRender( { children, eventName } ) {
-	useEffect( () => {
-		recordTracksEvent( eventName );
-	}, [ eventName ] );
-
-	return children;
 }
 
 export default connect(
