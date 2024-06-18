@@ -38,7 +38,7 @@ export function HelpCenterOdie(): JSX.Element {
 						onClick={ handleCreateScreenshot }
 						className="help-center__container-header-menu-item"
 					>
-						<Gridicon icon="comment" />
+						<Gridicon icon="computer" />
 						{ __( 'Attach screenshot' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem
