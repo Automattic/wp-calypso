@@ -20,6 +20,7 @@ There are also three optional properties:
 - `description` is a brief description of what the flow is for.
 - `lastModified` is a date stamp for when the flow was last updated.
 - `disallowResume` is a boolean that, when true, will send you back to step 1 if you refreshed the page
+- `resetSignUpStorePostCompletion` is a boolean, when true, will wipe-out the signup store **after** flow completion.
 
 Example:
 

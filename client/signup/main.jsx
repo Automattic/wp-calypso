@@ -389,6 +389,14 @@ class Signup extends Component {
 			const siteId = dependencies && dependencies.siteId;
 			await flow.postCompleteCallback( { siteId, flowName: this.props.flowName } );
 		}
+
+		if ( flow.resetSignUpStorePostCompletion ) {
+			this.signupFlowController.reset();
+
+			if ( ! this.state.controllerHasReset ) {
+				this.setState( { controllerHasReset: true } );
+			}
+		}
 	};
 
 	handleSignupFlowControllerCompletion = async ( dependencies, destination ) => {

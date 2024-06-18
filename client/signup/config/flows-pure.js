@@ -638,6 +638,7 @@ export function generateFlows( {
 			lastModified: '2024-05-15',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			resetSignUpStorePostCompletion: true,
 		},
 		{
 			name: 'entrepreneur',
