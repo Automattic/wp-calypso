@@ -80,14 +80,14 @@ export interface MessagingAvailability {
 export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 interface Availability {
-	presale: boolean;
-	precancellation: boolean;
+	is_presales_chat_open: boolean;
+	is_precancellation_chat_open: boolean;
+	force_email_support: boolean;
 }
 
-export interface ChatAvailability {
-	locale: string;
+interface Eligibility {
 	is_user_eligible: boolean;
-	supportLevel:
+	support_level:
 		| 'free'
 		| 'personal'
 		| 'personal-with-legacy-chat'
@@ -98,15 +98,11 @@ export interface ChatAvailability {
 		| 'ecommerce'
 		| 'jetpack-paid'
 		| 'p2-plus';
-	nickname: string;
-	availability: Availability;
-	is_presales_chat_open: boolean;
-	is_precancellation_chat_open: boolean;
-	force_email_contact_form: boolean;
 }
 
-export interface EmailSupportStatus {
-	force_email_contact_form: boolean;
+export interface SupportStatus {
+	eligibility: Eligibility;
+	availability: Availability;
 }
 
 export interface SupportActivity {
