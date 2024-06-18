@@ -28,7 +28,6 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
 	setStoreFeatures = noop,
 	setIntentOnSite = noop,
@@ -46,21 +45,6 @@ export function generateSteps( {
 	excludeSegmentSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
-		// `themes` does not update the theme for an existing site as we normally
-		// do this when the site is created. In flows where a site is merely being
-		// updated, we need to use a different API request function.
-		'themes-site-selected': {
-			stepName: 'themes-site-selected',
-			dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
-			apiRequestFunction: setThemeOnSite,
-			props: {
-				get headerText() {
-					return i18n.translate( 'Choose a theme for your new site.' );
-				},
-			},
-		},
-
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
