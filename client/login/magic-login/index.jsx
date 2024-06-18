@@ -193,14 +193,14 @@ class MagicLogin extends Component {
 				);
 			}
 
-			// Proceed to the next step if the magic code is validated
+			// Proceed to the next step if the magic code is validated.
 			if ( isCodeValidated ) {
 				if ( ! twoFactorEnabled ) {
 					this.props.rebootAfterLogin( { magic_login: 1 } );
 				} else {
 					page(
 						login( {
-							// If no notification is sent, the user is using the authenticator for 2FA by default
+							// If no notification is sent, the user is using the authenticator for 2FA by default.
 							twoFactorAuthType: twoFactorNotificationSent.replace( 'none', 'authenticator' ),
 							redirectTo: redirectToSanitized,
 							oauth2ClientId: oauth2Client.id,
