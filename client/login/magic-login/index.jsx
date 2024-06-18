@@ -97,6 +97,7 @@ class MagicLogin extends Component {
 		verificationCodeInputValue: '',
 		isRequestingEmail: false,
 		requestEmailErrorMessage: null,
+		isSecondaryEmail: false,
 		isNewAccount: false,
 		publicToken: null,
 		showSecondaryEmailOptions: false,
@@ -298,7 +299,7 @@ class MagicLogin extends Component {
 
 	sendGravPoweredEmailCode = async ( email, cb = () => {} ) => {
 		const { oauth2Client, query, locale, translate } = this.props;
-		const { showSecondaryEmailOptions: isSecondaryEmail, isNewAccount } = this.state;
+		const { isSecondaryEmail, isNewAccount } = this.state;
 		const noticeId = 'email-code-notice';
 		const duration = 4000;
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
@@ -381,6 +382,7 @@ class MagicLogin extends Component {
 			if ( is_secondary ) {
 				this.setState( {
 					usernameOrEmail,
+					isSecondaryEmail: true,
 					showSecondaryEmailOptions: true,
 					username: main_username,
 					maskedEmailAddress: main_email_masked,
@@ -646,11 +648,13 @@ class MagicLogin extends Component {
 			isCodeValidated,
 			codeValidationError,
 		} = this.props;
-		const { usernameOrEmail, isNewAccount, verificationCodeInputValue } = this.state;
-		const errorText =
-			codeValidationError === 403
-				? translate( 'Invalid code.' )
-				: translate( 'Something went wrong. Please try again.' );
+		const {
+			isSecondaryEmail,
+			isNewAccount,
+			maskedEmailAddress,
+			usernameOrEmail,
+			verificationCodeInputValue,
+		} = this.state;
 
 		return (
 			<div className="grav-powered-magic-login__content">
@@ -661,7 +665,10 @@ class MagicLogin extends Component {
 						'Enter the verification code we’ve sent to {{strong}}%(emailAddress)s{{/strong}}. A new Gravatar account will be created.',
 						{
 							components: { strong: <strong /> },
-							args: { emailAddress: usernameOrEmail },
+							args: {
+								emailAddress:
+									isSecondaryEmail && ! isNewAccount ? maskedEmailAddress : usernameOrEmail,
+							},
 						}
 					) }
 				</p>
@@ -684,7 +691,11 @@ class MagicLogin extends Component {
 					/>
 					{ codeValidationError && (
 						<Notice
-							text={ errorText }
+							text={
+								codeValidationError === 403
+									? translate( 'Invalid code.' )
+									: translate( 'Something went wrong. Please try again.' )
+							}
 							className="magic-login__request-login-email-form-notice"
 							showDismiss={ false }
 							status="is-transparent-info"
@@ -706,7 +717,7 @@ class MagicLogin extends Component {
 				<footer className="grav-powered-magic-login__footer">
 					<button
 						onClick={ () => {
-							this.sendGravPoweredEmailCode();
+							this.sendGravPoweredEmailCode( usernameOrEmail );
 
 							this.props.recordTracksEvent(
 								'calypso_gravatar_powered_magic_login_click_resend_email',
