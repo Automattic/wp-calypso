@@ -144,7 +144,7 @@ describe( 'Hosted site Migration Flow', () => {
 				state: null,
 			} );
 		} );
-		it( 'migrate redirects from the import-from page to new instructions if flag enabled', () => {
+		it( 'migrate redirects from the import-from page to how-to-migrate page', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -152,7 +152,7 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`,
+				path: `/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }`,
 				state: {
 					siteSlug: 'example.wordpress.com',
 				},
@@ -184,7 +184,7 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'upgrade redirects from the import-from page to site-migration-upgrade-plan page', () => {
+		it( 'upgrade redirects from the import-from page to site-migration-how-to-migrate', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -195,7 +195,7 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/site-migration-upgrade-plan',
+				path: '/site-migration-how-to-migrate',
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );
