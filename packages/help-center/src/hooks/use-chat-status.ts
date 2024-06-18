@@ -6,7 +6,6 @@ import { useSupportAvailability } from '../data/use-support-availability';
 /**
  * Internal Dependencies
  */
-import { isWapuuFlagSetInURL } from './use-still-need-help-url';
 import { useZendeskConfig, useMessagingAvailability } from './';
 import type { MessagingGroup } from './use-messaging-availability';
 
@@ -31,8 +30,6 @@ export default function useChatStatus(
 
 	const { status: zendeskStatus } = useZendeskConfig( isEligibleForChat );
 
-	const isWapuuFlagPresent = isWapuuFlagSetInURL();
-
 	return {
 		canConnectToZendesk: zendeskStatus !== 'error',
 		hasActiveChats,
@@ -43,6 +40,5 @@ export default function useChatStatus(
 		isPrecancellationChatOpen: Boolean( chatStatus?.is_precancellation_chat_open ),
 		supportActivity,
 		supportLevel: chatStatus?.supportLevel,
-		wapuuAssistantEnabled: chatStatus?.wapuu_assistant_enabled || isWapuuFlagPresent,
 	};
 }
