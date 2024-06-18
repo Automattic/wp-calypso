@@ -25,7 +25,6 @@ const plans: Step = function Plans( { navigation, flow } ) {
 	};
 
 	const isAllowedToGoBack = isDomainUpsellFlow( flow ) || isNewHostedSiteCreationFlow( flow );
-	const isSiteCreationFlow = isNewHostedSiteCreationFlow( flow );
 
 	return (
 		<StepContainer
@@ -42,7 +41,6 @@ const plans: Step = function Plans( { navigation, flow } ) {
 					flowName={ flow }
 					onSubmit={ handleSubmit }
 					shouldIncludeFAQ={ isNewHostedSiteCreationFlow( flow ) }
-					isSiteCreationFlow={ isSiteCreationFlow }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
