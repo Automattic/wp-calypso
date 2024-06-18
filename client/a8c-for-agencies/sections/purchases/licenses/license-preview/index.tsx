@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
@@ -67,6 +68,8 @@ export default function LicensePreview( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
 
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
@@ -169,7 +172,7 @@ export default function LicensePreview( {
 				<div>
 					<span className="license-preview__product">
 						{ productTitle }
-						{ referral && (
+						{ isAutomatedReferralsEnabled && referral && (
 							<div className="license-preview__client-email">
 								<ClientSite referral={ referral } />
 							</div>
