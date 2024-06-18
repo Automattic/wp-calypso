@@ -90,21 +90,12 @@ const SearchCategories: FC< {
 	searchRef: MutableRefObject< ImperativeHandle >;
 	searchTerm: string;
 	searchTerms: string[];
-	stickySearchBoxRef: RefObject< HTMLDivElement >;
 	width: number;
-} > = ( {
-	category,
-	isSearching,
-	isSticky,
-	searchRef,
-	searchTerm,
-	searchTerms,
-	stickySearchBoxRef,
-	width,
-} ) => {
+} > = ( { category, isSearching, isSticky, searchRef, searchTerm, searchTerms, width } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
 	const categoriesRef = useRef< HTMLDivElement >( null );
+
 	// We hide these special categories from the category selector
 	const displayCategories = ALLOWED_CATEGORIES.filter(
 		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
@@ -120,45 +111,42 @@ const SearchCategories: FC< {
 	}, [ searchRef, searchTerm ] );
 
 	return (
-		<>
-			<div className={ clsx( 'search-categories', { 'fixed-top': isSticky } ) }>
-				<SearchBox
-					isSearching={ isSearching }
-					searchBoxRef={ searchRef }
-					searchTerm={ searchTerm }
-					categoriesRef={ categoriesRef }
-					searchTerms={ searchTerms }
-				/>
+		<div className={ clsx( 'search-categories', { 'fixed-top': isSticky } ) }>
+			<SearchBox
+				isSearching={ isSearching }
+				searchBoxRef={ searchRef }
+				searchTerm={ searchTerm }
+				categoriesRef={ categoriesRef }
+				searchTerms={ searchTerms }
+			/>
 
-				{ isDesktop() ? (
-					<>
-						<div className="search-categories__vertical-separator" />
+			{ isDesktop() ? (
+				<>
+					<div className="search-categories__vertical-separator" />
 
-						<ScrollableHorizontalNavigation
-							className="search-categories__categories"
-							onTabClick={ ( tabSlug ) => {
-								dispatch(
-									recordTracksEvent( 'calypso_plugins_category_select', {
-										tag: tabSlug,
-									} )
-								);
+					<ScrollableHorizontalNavigation
+						className="search-categories__categories"
+						onTabClick={ ( tabSlug ) => {
+							dispatch(
+								recordTracksEvent( 'calypso_plugins_category_select', {
+									tag: tabSlug,
+								} )
+							);
 
-								page( getCategoryUrl( tabSlug ) );
-							} }
-							selectedTab={ category ?? categories[ 0 ].slug }
-							tabs={ categories }
-							titleField="menu"
-							width={ width }
-						/>
-					</>
-				) : (
-					<div ref={ categoriesRef }>
-						<Categories selected={ category } noSelection={ searchTerm ? true : false } />
-					</div>
-				) }
-			</div>
-			<div className="search-categories__sticky-ref" ref={ stickySearchBoxRef } />
-		</>
+							page( getCategoryUrl( tabSlug ) );
+						} }
+						selectedTab={ category ?? categories[ 0 ].slug }
+						tabs={ categories }
+						titleField="menu"
+						width={ width }
+					/>
+				</>
+			) : (
+				<div ref={ categoriesRef }>
+					<Categories selected={ category } noSelection={ searchTerm ? true : false } />
+				</div>
+			) }
+		</div>
 	);
 };
 

@@ -16,6 +16,7 @@ import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
+import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visible';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
@@ -68,6 +69,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	} = useScrollAboveElement();
 	const searchRef = useRef( null );
 	const categoriesRef = useRef();
+	const stickySearchBoxRef = useRef( null );
+	const isVisible = useIsVisible( stickySearchBoxRef );
+	const isStickyHeader = isVisible === false;
 	//  another temporary solution until phase 4 is merged
 	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
 
@@ -177,11 +181,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					<SearchCategories
 						category={ category }
 						isSearching={ isFetchingPluginsBySearchTerm }
-						isSticky={ isAboveElement }
+						isSticky={ isStickyHeader }
 						searchRef={ searchRef }
 						searchTerm={ search }
 						searchTerms={ searchTerms }
-						stickySearchBoxRef={ searchHeaderRef }
 					/>
 				) : (
 					<>
@@ -216,6 +219,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 						</div>
 					</>
 				) }
+				<div ref={ stickySearchBoxRef } />
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
 					<div className="plugins-browser__marketplace-footer">
