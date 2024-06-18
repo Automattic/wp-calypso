@@ -633,7 +633,7 @@ class ReaderStream extends Component {
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 					className="stream__list"
-					context={ this.state.listContext ?? false }
+					context={ this.state.listContext }
 					selectedItem={ selectedPostKey }
 				/>
 			);
