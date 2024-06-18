@@ -7,7 +7,7 @@ type Props = {
 	label: string;
 	sub?: string;
 	description?: string;
-	isOptional?: boolean;
+	showOptionalLabel?: boolean;
 	children: ReactNode;
 	isRequired?: boolean;
 };
@@ -17,7 +17,7 @@ export default function FormField( {
 	sub,
 	children,
 	description,
-	isOptional,
+	showOptionalLabel,
 	isRequired,
 }: Props ) {
 	const translate = useTranslate();
@@ -27,7 +27,7 @@ export default function FormField( {
 			<div className="a4a-form__section-field-heading">
 				<h3 className="a4a-form__section-field-label">
 					{ label } { isRequired && <span className="a4a-form__section-field-required">*</span> }
-					{ isOptional && (
+					{ showOptionalLabel && (
 						<span className="a4a-form__section-field-optional">({ translate( 'optional' ) })</span>
 					) }
 				</h3>

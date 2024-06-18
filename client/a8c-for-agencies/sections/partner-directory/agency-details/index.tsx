@@ -113,7 +113,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					description={ translate(
 						"Optional: Include your custom landing page for leads from Automattic platforms. We'll direct clients to this page."
 					) }
-					isOptional
+					showOptionalLabel
 				>
 					<TextControl
 						value={ formData.landingPageUrl }
