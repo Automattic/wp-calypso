@@ -13,8 +13,6 @@ import {
 	PLAN_PERSONAL_3_YEARS,
 	PLAN_PREMIUM_3_YEARS,
 	PLAN_BUSINESS_3_YEARS,
-	PLAN_WPCOM_PRO,
-	PLAN_WPCOM_STARTER,
 	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
@@ -348,30 +346,6 @@ export function generateSteps( {
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,
-			},
-		},
-
-		'plans-pro': {
-			stepName: 'plans-pro',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_WPCOM_PRO,
-			},
-		},
-
-		'plans-starter': {
-			stepName: 'plans-starter',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_WPCOM_STARTER,
 			},
 		},
 
