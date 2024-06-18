@@ -180,17 +180,17 @@ class MagicLogin extends Component {
 			}
 
 			if ( ! prevState.showEmailCodeVerification && showEmailCodeVerification ) {
-				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_verification', {
-					...eventOptions,
-					type: 'code',
-				} );
+				this.props.recordTracksEvent(
+					'calypso_gravatar_powered_magic_login_email_code_verification',
+					eventOptions
+				);
 			}
 
 			if ( ! prevProps.showCheckYourEmail && showCheckYourEmail ) {
-				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_verification', {
-					...eventOptions,
-					type: 'link',
-				} );
+				this.props.recordTracksEvent(
+					'calypso_gravatar_powered_magic_login_email_link_verification',
+					eventOptions
+				);
 			}
 
 			// Proceed to the next step if the code is validated
@@ -331,7 +331,10 @@ class MagicLogin extends Component {
 		try {
 			this.props.infoNotice( translate( 'Sending email…' ), { id: noticeId, duration } );
 
-			this.props.recordTracksEvent( 'calypso_gravatar_login_email_code_submit', eventOptions );
+			this.props.recordTracksEvent(
+				'calypso_gravatar_powered_magic_login_email_code_requesting',
+				eventOptions
+			);
 
 			const { public_token } = await wpcomRequest( {
 				path: '/auth/send-login-email',
@@ -358,7 +361,10 @@ class MagicLogin extends Component {
 			this.props.removeNotice( noticeId );
 			this.props.successNotice( translate( 'Email Sent. Check your mail app!' ), { duration } );
 
-			this.props.recordTracksEvent( 'calypso_gravatar_login_email_code_success', eventOptions );
+			this.props.recordTracksEvent(
+				'calypso_gravatar_powered_magic_login_email_code_success',
+				eventOptions
+			);
 		} catch ( error ) {
 			if ( error.error ) {
 				this.setState( { requestEmailErrorMessage: error.message } );
@@ -371,7 +377,7 @@ class MagicLogin extends Component {
 			this.props.removeNotice( noticeId );
 			this.props.errorNotice( translate( 'Sorry, we couldn’t send the email.' ), { duration } );
 
-			this.props.recordTracksEvent( 'calypso_gravatar_login_email_code_failure', {
+			this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_code_failure', {
 				...eventOptions,
 				error_code: error.error,
 				error_message: error.message,
@@ -394,7 +400,10 @@ class MagicLogin extends Component {
 		this.setState( { usernameOrEmail, isRequestingEmail: true } );
 
 		try {
-			this.props.recordTracksEvent( 'calypso_gravatar_get_gravatar_info_fetching', eventOptions );
+			this.props.recordTracksEvent(
+				'calypso_gravatar_powered_magic_login_gravatar_info_fetching',
+				eventOptions
+			);
 
 			const { is_secondary, main_username, main_email_masked } = await wpcomRequest( {
 				path: '/auth/get-gravatar-info',
@@ -414,7 +423,10 @@ class MagicLogin extends Component {
 				this.handleGravPoweredSendEmailCode( usernameOrEmail );
 			}
 
-			this.props.recordTracksEvent( 'calypso_gravatar_get_gravatar_info_success', eventOptions );
+			this.props.recordTracksEvent(
+				'calypso_gravatar_powered_magic_login_gravatar_info_success',
+				eventOptions
+			);
 		} catch ( error ) {
 			switch ( error.error ) {
 				case 'not_found':
@@ -433,7 +445,7 @@ class MagicLogin extends Component {
 					} );
 			}
 
-			this.props.recordTracksEvent( 'calypso_gravatar_get_gravatar_info_failure', {
+			this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_gravatar_info_failure', {
 				...eventOptions,
 				error_code: error.error,
 				error_message: error.message,
