@@ -17,12 +17,13 @@ interface Props {
 	flowName: string;
 	stepName: string;
 	goToNextStep: () => void;
+	goToStep: ( stepName: string, stepSectionName: number ) => void;
 	submitSignupStep: ( step: any, deps: any ) => void;
 	signupDependencies: {
 		segmentationSurveyAnswers: SurveyData;
 		onboardingSegment: string;
 	};
-	progress: Record< string, any >;
+	stepSectionName: string | undefined;
 }
 
 const QUESTION_CONFIGURATION: QuestionConfiguration = {
@@ -38,8 +39,14 @@ const QUESTION_CONFIGURATION: QuestionConfiguration = {
 };
 
 export default function InitialIntentStep( props: Props ) {
-	const { submitSignupStep, stepName, signupDependencies, flowName, progress } = props;
-	const currentPage = progress[ stepName ]?.stepSectionName ?? 1;
+	const {
+		submitSignupStep,
+		stepName,
+		signupDependencies,
+		flowName,
+		stepSectionName: currentPageString,
+	} = props;
+	const currentPage = currentPageString ? Number( currentPageString ) : 1;
 	const currentAnswers = signupDependencies.segmentationSurveyAnswers || {};
 	const translate = useTranslate();
 	const headerText = translate( 'What brings you to WordPress.com?' );
@@ -136,9 +143,10 @@ export default function InitialIntentStep( props: Props ) {
 					skipNextNavigation={ skipNextNavigation }
 					questionConfiguration={ QUESTION_CONFIGURATION }
 					questionComponentMap={ flowQuestionComponentMap }
-					onGoToPage={ ( stepSectionName: number ) =>
-						submitSignupStep( { flowName, stepName, stepSectionName }, {} )
-					}
+					onGoToPage={ ( stepSectionName: number ) => {
+						submitSignupStep( { flowName, stepName }, {} );
+						props.goToStep( stepName, stepSectionName );
+					} }
 					providedPage={ currentPage }
 				/>
 			}
