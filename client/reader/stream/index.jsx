@@ -183,7 +183,6 @@ class ReaderStream extends Component {
 				scrollContainerPosition + boundingClientRect.top + totalOffset,
 				10
 			);
-			this.checkReccomendedPostsHeight();
 			if ( animate ) {
 				scrollTo( {
 					x: 0,
