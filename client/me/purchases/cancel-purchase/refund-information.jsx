@@ -402,6 +402,6 @@ export default connect( ( state, props ) => {
 
 	return {
 		includedDomainPurchase: getIncludedDomainPurchase( state, props.purchase ),
-		isGravatarDomain: selectedDomain.isGravatarDomain,
+		isGravatarDomain: selectedDomain?.isGravatarDomain,
 	};
 } )( CancelPurchaseRefundInformation );
