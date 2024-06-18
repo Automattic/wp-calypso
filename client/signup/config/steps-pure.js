@@ -481,37 +481,6 @@ export function generateSteps( {
 			},
 		},
 
-		'domains-store': {
-			stepName: 'domains',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'siteUrl',
-				'lastDomainSearched',
-				'isManageSiteFlow',
-				'shouldHideFreePlan',
-				'signupDomainOrigin',
-				'useThemeHeadstart',
-				'domainCart',
-			],
-			optionalDependencies: [
-				'siteUrl',
-				'lastDomainSearched',
-				'isManageSiteFlow',
-				'shouldHideFreePlan',
-				'signupDomainOrigin',
-				'useThemeHeadstart',
-			],
-			props: {
-				isDomainOnly: false,
-				forceDesignType: 'store',
-			},
-			delayApiRequestUntilComplete: true,
-		},
-
 		'domains-theme-preselected': {
 			stepName: 'domains-theme-preselected',
 			apiRequestFunction: createSiteWithCart,

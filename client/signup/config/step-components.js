@@ -13,7 +13,6 @@ const stepNameToModuleName = {
 	domains: 'domains',
 	'domain-only': 'domains',
 	'domains-launch': 'domains',
-	'domains-store': 'domains',
 	'hosting-decider': 'hosting-decider',
 	'domains-theme-preselected': 'domains',
 	'mailbox-domain': 'domains',
