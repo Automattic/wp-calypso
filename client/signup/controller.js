@@ -297,11 +297,16 @@ export default {
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
 
-		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, {
+		const params = {
 			flow: flowName,
-			// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
-			trailmap_variant: trailMapExperimentVariant || 'control',
-		} );
+		};
+
+		// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
+		if ( isOnboardingGuidedFlow( flowName ) ) {
+			params.trailmap_variant = trailMapExperimentVariant || 'control';
+		}
+
+		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, params );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
