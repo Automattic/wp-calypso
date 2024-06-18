@@ -338,7 +338,7 @@ export class EditorToolbarComponent {
 
 		const button = editorParent.getByRole( 'button', {
 			name: new RegExp(
-				`${ translatedCloseJetpackSettingsName }|${ translatedCloseSettingsName }`
+				`Settings|${ translatedCloseJetpackSettingsName }|${ translatedCloseSettingsName }`
 			),
 		} );
 
