@@ -378,10 +378,16 @@ class ReaderStream extends Component {
 		// This should already be false but this is a safety.
 		this.wasSelectedByOpeningPost = false;
 
-		// do we have a selected item? if so, just move to the next one
-		if ( this.props.selectedPostKey ) {
-			this.props.selectNextItem( { streamKey, items } );
-			return;
+		// If the selected item is visible, select the next item.
+		// Otherwise, rely on 'magic' behavior below...
+		const selectedItem = this.state.listContext?.querySelector( '.card.is-selected' );
+		if ( selectedItem ) {
+			const itemRect = selectedItem?.getBoundingClientRect();
+			const containerRect = this.state.listContext?.getBoundingClientRect();
+			if ( itemRect.bottom > containerRect.top && itemRect.top < containerRect.bottom ) {
+				this.props.selectNextItem( { streamKey, items } );
+				return;
+			}
 		}
 
 		const visibleIndexes = this.getVisibleItemIndexes();
