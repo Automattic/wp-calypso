@@ -117,6 +117,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					description={ translate(
 						'We allow each agency to offer up to five services to help you focus on what you do best.'
 					) }
+					isRequired
 				>
 					<ServicesSelector
 						selectedServices={ services }
@@ -129,7 +130,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					/>
 				</FormField>
 
-				<FormField label={ translate( 'What products do you work with?' ) }>
+				<FormField label={ translate( 'What products do you work with?' ) } isRequired>
 					<ProductsSelector
 						selectedProducts={ products }
 						setProducts={ ( value ) =>
@@ -146,6 +147,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Automattic Partner Directories' ) }
 					sub={ translate( 'Select the Automattic directories you would like to appear on.' ) }
+					isRequired
 				>
 					<div className="partner-directory-agency-expertise__directory-options">
 						{ directoryOptions.map( ( directory ) => (
@@ -166,6 +168,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						sub={ translate(
 							"For each directory you selected, provide URLs of 5 client sites you've worked on. This helps us gauge your expertise."
 						) }
+						isRequired
 					>
 						<div className="partner-directory-agency-expertise__directory-client-sites">
 							{ directories.map( ( { directory } ) => (
