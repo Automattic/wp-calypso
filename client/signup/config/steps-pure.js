@@ -242,9 +242,6 @@ export function generateSteps( {
 			optionalDependencies: [ 'startingPoint' ],
 		},
 
-		test: {
-			stepName: 'test',
-		},
 		plans: {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
