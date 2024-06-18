@@ -17,10 +17,11 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 	const translate = useTranslate();
 	const product = data?.find( ( product ) => product.product_id === purchase.product_id );
 	const isWPCOMLicense = product?.family_slug === 'wpcom-hosting';
-	const redirectUrl = isWPCOMLicense
-		? A4A_SITES_LINK_NEEDS_SETUP
-		: purchase.license_key &&
-		  addQueryArgs( { key: purchase.license_key }, '/marketplace/assign-license' );
+	const redirectUrl =
+		purchase.license_key &&
+		( isWPCOMLicense
+			? addQueryArgs( { license_key: purchase.license_key }, A4A_SITES_LINK_NEEDS_SETUP )
+			: addQueryArgs( { key: purchase.license_key }, '/marketplace/assign-license' ) );
 
 	const isDisabled = purchase.status !== 'active' || isFetching || ! product || ! redirectUrl;
 
