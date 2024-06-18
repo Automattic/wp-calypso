@@ -568,6 +568,11 @@ html {
 				justify-content: flex-end;
 				width: 100%;
 				padding-inline-end: 12px;
+
+				.gridicon {
+					margin-top: 0;
+					top: 0;
+				}
 			}
 			&:first-child {
 				text-align: left;
