@@ -48,7 +48,7 @@ export const GlobalSidebarFooter: FC< {
 				className="sidebar__footer-link sidebar__footer-profile"
 				tooltip={ translate( 'Profile' ) }
 				tooltipPlacement="top"
-				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.WRITE_POST_CLICK ) }
+				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.PROFILE_CLICK ) }
 				icon={ <Gravatar user={ user } size={ 20 } /> }
 			/>
 			<AsyncLoad
