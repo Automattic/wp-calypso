@@ -118,6 +118,7 @@
 		"reader/public-tag-pages": true,
 		"redirect-fallback-browsers": true,
 		"safari-idb-mitigation": true,
+		"start-with/square-payments": false,
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
