@@ -137,11 +137,16 @@ class MagicLogin extends Component {
 	renderLinks() {
 		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWoo, query } = this.props;
 
+		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com' ) ?? false;
+
 		if ( isWoo ) {
 			return null;
 		}
 
 		if ( showCheckYourEmail ) {
+			if ( isA4A ) {
+				return null;
+			}
 			return (
 				<AppPromo
 					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
@@ -179,14 +184,16 @@ class MagicLogin extends Component {
 						{ linkBack }
 					</a>
 				</div>
-				<AppPromo
-					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
-					campaign="calypso-login-link"
-					className="magic-link-app-promo"
-					iconSize={ 32 }
-					hasQRCode
-					hasGetAppButton={ false }
-				/>
+				{ ! isA4A && (
+					<AppPromo
+						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
+						campaign="calypso-login-link"
+						className="magic-link-app-promo"
+						iconSize={ 32 }
+						hasQRCode
+						hasGetAppButton={ false }
+					/>
+				) }
 			</>
 		);
 	}
