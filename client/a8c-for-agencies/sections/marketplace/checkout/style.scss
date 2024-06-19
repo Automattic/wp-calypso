@@ -1,20 +1,27 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.checkout .a4a-layout__container,
 .checkout .a4a-layout__body,
 .checkout .a4a-layout__body-wrapper {
-	height: 100%;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px;
 }
 
+.a4a-layout__container {
+	height: 100%;
+}
+
 .checkout .a4a-layout__body {
 	padding: 0;
+	flex-grow: 1;
 
 	@include break-large {
 		background: linear-gradient(to right, var(--color-surface) 0%, var(--color-surface) 70%, var(--color-neutral-0) 70%, var(--color-neutral-0) 100%);
 	}
+}
+
+.checkout .a4a-layout__body-wrapper {
+	height: 100%;
 }
 
 .checkout__client-referral-form-footer-error {
@@ -36,7 +43,7 @@
 
 	@include break-large {
 		flex-direction: row;
-		height: 100%;
+		min-height: 100%;
 	}
 }
 
