@@ -214,3 +214,9 @@ $data-view-border-color: #f1f1f1;
 .referrals-layout:not(.referrals-layout--has-selected) .notice-banner {
 	display: flex;
 }
+
+.referrals-layout .item-preview__pane {
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 32px);
+}
