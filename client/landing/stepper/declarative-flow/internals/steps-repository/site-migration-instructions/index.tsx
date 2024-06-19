@@ -4,6 +4,7 @@ import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Questions } from './questions';
 import { Sidebar } from './sidebar';
+import { SitePreview } from './site-preview';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -12,7 +13,7 @@ const SiteMigrationInstructions: Step = function () {
 
 	const stepContent = (
 		<LaunchpadContainer sidebar={ sidebar }>
-			<div>New migration instructions!</div>
+			<SitePreview />
 		</LaunchpadContainer>
 	);
 
