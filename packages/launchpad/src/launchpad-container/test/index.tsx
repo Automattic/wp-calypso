@@ -1,11 +1,11 @@
 import { render } from '@testing-library/react';
 import React from 'react';
-import Container from '../';
+import LaunchpadContainer from '../';
 
-describe( 'Checklist', () => {
+describe( 'LaunchpadContainer', () => {
 	it( 'renders the container with sidebar and content', () => {
 		const { getByText } = render(
-			<Container sidebar={ <div>Sidebar</div> }>My Content</Container>
+			<LaunchpadContainer sidebar={ <div>Sidebar</div> }>My Content</LaunchpadContainer>
 		);
 
 		expect( getByText( 'Sidebar' ) ).toBeInTheDocument();
@@ -14,9 +14,9 @@ describe( 'Checklist', () => {
 
 	it( 'renders the container with header', () => {
 		const { getByText } = render(
-			<Container sidebar={ <div>Sidebar</div> } header={ <div>Header</div> }>
+			<LaunchpadContainer sidebar={ <div>Sidebar</div> } header={ <div>Header</div> }>
 				My Content
-			</Container>
+			</LaunchpadContainer>
 		);
 
 		expect( getByText( 'Header' ) ).toBeInTheDocument();
@@ -24,7 +24,7 @@ describe( 'Checklist', () => {
 
 	it( 'renders the container without header', () => {
 		const { container } = render(
-			<Container sidebar={ <div>Sidebar</div> }>My Content</Container>
+			<LaunchpadContainer sidebar={ <div>Sidebar</div> }>My Content</LaunchpadContainer>
 		);
 
 		expect( container.querySelector( '.launchpad-container__header' ) ).not.toBeInTheDocument();
@@ -32,7 +32,7 @@ describe( 'Checklist', () => {
 
 	it( 'renders the container with custom classes', () => {
 		const { container } = render(
-			<Container
+			<LaunchpadContainer
 				className="classname"
 				headerClassName="header-classname"
 				sidebarClassName="sidebar-classname"
@@ -40,7 +40,7 @@ describe( 'Checklist', () => {
 				header={ <div>Header</div> }
 			>
 				My Content
-			</Container>
+			</LaunchpadContainer>
 		);
 
 		expect(

@@ -12,7 +12,7 @@ export interface ContainerProps {
 	children: React.ReactNode;
 }
 
-const Container: React.FunctionComponent< ContainerProps > = ( {
+const LaunchpadContainer: React.FunctionComponent< ContainerProps > = ( {
 	className,
 	headerClassName,
 	sidebarClassName,
@@ -36,4 +36,4 @@ const Container: React.FunctionComponent< ContainerProps > = ( {
 	);
 };
 
-export default Container;
+export default LaunchpadContainer;
