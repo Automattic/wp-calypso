@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
-import { useSupportAvailability } from '../data/use-support-availability';
+import { useSupportStatus } from '../data/use-support-status';
 
 function isWapuuFlagSetInURL(): boolean {
 	const currentUrl = window.location.href;
@@ -9,10 +9,10 @@ function isWapuuFlagSetInURL(): boolean {
 }
 
 export const useShouldUseWapuu = () => {
-	const { data: supportAvailability } = useSupportAvailability();
+	const { data: supportStatus } = useSupportStatus();
 
 	// All users eligible for support should see the Wapuu assistant.
-	const isEligibleForSupport = Boolean( supportAvailability?.is_user_eligible );
+	const isEligibleForSupport = Boolean( supportStatus?.eligibility?.is_user_eligible );
 
 	// Force Wapuu via URL flag (config is not available in wp-admin)
 	const isFlagSetInURL = isWapuuFlagSetInURL();

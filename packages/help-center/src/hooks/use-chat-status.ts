@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { useSupportActivity } from '../data/use-support-activity';
-import { useSupportAvailability } from '../data/use-support-availability';
+import { useSupportStatus } from '../data/use-support-status';
 /**
  * Internal Dependencies
  */
@@ -13,11 +13,12 @@ export default function useChatStatus(
 	group: MessagingGroup = 'wpcom_messaging',
 	checkAgentAvailability = true
 ) {
-	const { data: chatStatus } = useSupportAvailability();
+	const { data: supportStatus } = useSupportStatus();
+	const availability = supportStatus?.availability;
 
 	// All paying customers are eligible for chat.
 	// See: pdDR7T-1vN-p2
-	const isEligibleForChat = Boolean( chatStatus?.is_user_eligible );
+	const isEligibleForChat = Boolean( supportStatus?.eligibility?.is_user_eligible );
 
 	const { data: supportActivity, isInitialLoading: isLoadingSupportActivity } =
 		useSupportActivity( isEligibleForChat );
@@ -36,9 +37,9 @@ export default function useChatStatus(
 		isChatAvailable: Boolean( chatAvailability?.is_available ),
 		isEligibleForChat,
 		isLoading: isLoadingAvailability || isLoadingSupportActivity,
-		isPresalesChatOpen: Boolean( chatStatus?.is_presales_chat_open ),
-		isPrecancellationChatOpen: Boolean( chatStatus?.is_precancellation_chat_open ),
+		isPresalesChatOpen: Boolean( availability?.is_presales_chat_open ),
+		isPrecancellationChatOpen: Boolean( availability?.is_precancellation_chat_open ),
 		supportActivity,
-		supportLevel: chatStatus?.supportLevel,
+		supportLevel: supportStatus?.eligibility?.support_level,
 	};
 }

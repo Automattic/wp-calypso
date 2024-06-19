@@ -1,14 +1,14 @@
 /* eslint-disable no-restricted-imports */
 
-import { useSupportAvailability } from '../data/use-support-availability';
+import { useSupportStatus } from '../data/use-support-status';
 import { useShouldUseWapuu } from './use-should-use-wapuu';
 
 export function useStillNeedHelpURL() {
-	const { data: supportAvailability, isLoading } = useSupportAvailability();
+	const { data: supportStatus, isLoading } = useSupportStatus();
 	const shouldUseWapuu = useShouldUseWapuu();
-	const isFreeUser = ! supportAvailability?.is_user_eligible;
+	const isEligibleForSupport = Boolean( supportStatus?.eligibility?.is_user_eligible );
 
-	if ( ! isFreeUser ) {
+	if ( isEligibleForSupport ) {
 		const url = shouldUseWapuu ? '/odie' : '/contact-options';
 		return { url, isLoading: false };
 	}
