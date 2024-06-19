@@ -358,6 +358,9 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 				}
+				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
+					return navigate( STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug );
+				}
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					if ( urlQueryParams.get( 'ref' ) === GUIDED_ONBOARDING_FLOW_REFERRER ) {
 						window.location.assign( '/start/guided/initial-intent' );
