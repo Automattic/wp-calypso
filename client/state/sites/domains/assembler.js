@@ -141,7 +141,7 @@ export const createSiteDomainObject = ( domain ) => {
 		pendingRegistrationTime: String( domain.pending_registration_time ),
 		pendingTransfer: domain.pending_transfer,
 		pointsToWpcom: Boolean( domain.points_to_wpcom ),
-		productSlug: String( domain.product_slug ),
+		productSlug: ! domain.product_slug ? null : String( domain.product_slug ),
 		privateDomain: domain.private_domain,
 		privacyAvailable: Boolean( domain.privacy_available ),
 		registeredViaTrustee: Boolean( domain.registered_via_trustee ),
