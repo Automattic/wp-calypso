@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .search-categories {
 	display: flex;
 	align-items: center;
@@ -157,7 +160,7 @@
 	}
 
 	&.fixed-top {
-		@media (min-width: 783px) {
+		@include break-medium {
 			position: fixed;
 			z-index: 20;
 			top: 16px;
@@ -175,9 +178,18 @@
 	}
 
 	.plugins-browser--site-view &.fixed-top {
-		@media (min-width: 783px) {
-			top: var(--masterbar-height);
-			box-sizing: content-box;
+		top: var(--masterbar-height);
+		box-sizing: content-box;
+
+		@include break-medium {
+			padding: 10px max(2rem, calc((100% - var(--sidebar-width-max) - (1040px - 2 * 2rem)) / 2));
+
+			.layout__secondary ~ .layout__primary & {
+				width: calc(100vw - var(--sidebar-width-max) - 2 * 2rem);
+			}
+		}
+
+		@include break-wide {
 			padding: 10px calc((100% - var(--sidebar-width-max) - (1040px - 2 * 2rem)) / 2);
 
 			.layout__secondary ~ .layout__primary & {
