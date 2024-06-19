@@ -289,7 +289,7 @@ export class DomainWarnings extends PureComponent {
 			} );
 			if ( expiredDomains[ 0 ].aftermarketAuction ) {
 				text = translate(
-					'{{strong}}%(domainName)s{{/strong}} expired %(timeSince)s. ' +
+					'The domain {{strong}}%(domainName)s{{/strong}} expired %(timeSince)s. ' +
 						"It's no longer available to manage or renew. " +
 						'We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}.',
 					{
@@ -323,7 +323,7 @@ export class DomainWarnings extends PureComponent {
 				key={ expiredDomainsCanManageWarning }
 				text={ text }
 			>
-				{ expiredDomainsNotAuctionLocked.length
+				{ expiredDomainsNotAuctionLocked.length > 0
 					? this.renewLink( expiredDomainsNotAuctionLocked, this.onExpiredDomainsNoticeClick )
 					: this.expiredDomainLink( this.onExpiredDomainsNoticeClick ) }
 				{ this.trackImpression( expiredDomainsCanManageWarning, expiredDomains.length ) }
