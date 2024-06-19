@@ -379,7 +379,7 @@ class MagicLogin extends Component {
 
 			this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_code_failure', {
 				...eventOptions,
-				error_code: error.error,
+				error_code: error.status,
 				error_message: error.message,
 			} );
 		}
@@ -448,7 +448,7 @@ class MagicLogin extends Component {
 
 			this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_gravatar_info_failure', {
 				...eventOptions,
-				error_code: error.error,
+				error_code: error.status,
 				error_message: error.message,
 			} );
 		}
