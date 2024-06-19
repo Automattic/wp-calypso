@@ -196,16 +196,6 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 		return ( shouldHideBasedOnRef || shouldHideBasedOnVariant ) && ! shouldNotHideBasedOnRef;
 	};
 
-	const handleGoBack = () => {
-		const ref = urlQueryParams.get( 'ref' ) || '';
-
-		if ( ref === GUIDED_ONBOARDING_FLOW_REFERRER ) {
-			window.location.href = '/start/guided/initial-intent';
-		} else {
-			navigation?.goBack && navigation.goBack();
-		}
-	};
-
 	usePresalesChat( 'wpcom', true, true );
 
 	return (
@@ -218,7 +208,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 				hideBack={ shouldHideBackButton() }
 				hideSkip
 				hideFormattedHeader
-				goBack={ handleGoBack }
+				goBack={ navigation?.goBack }
 				goNext={ navigation?.submit }
 				isFullLayout
 				stepContent={
