@@ -359,10 +359,6 @@
 
 		.grav-powered-magic-login__sub-header {
 			margin-bottom: 52px;
-
-			strong {
-				font-weight: 700;
-			}
 		}
 
 		.grav-powered-magic-login__tos {
@@ -449,8 +445,24 @@
 		margin-bottom: 24px;
 	}
 
+	.grav-powered-magic-login__sub-header strong,
+	.grav-powered-magic-login__masked-email-address strong {
+		font-weight: 700;
+	}
+
 	.grav-powered-magic-login__sub-header {
 		margin-bottom: 30px;
+	}
+
+	.grav-powered-magic-login__account-info {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+
+	.grav-powered-magic-login__masked-email-address {
+		margin-right: 10px;
+		word-break: break-word;
 	}
 
 	.magic-login__form-header {
@@ -525,48 +537,37 @@
 		margin-top: 30px;
 	}
 
-	.grav-powered-magic-login__account-info {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-
-		.grav-powered-magic-login__masked-email-address {
-			margin-right: 10px;
-			word-break: break-word;
-		}
-	}
-
 	.grav-powered-magic-login__account-options {
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
 		margin: 30px 0;
 		padding: 20px 0;
+	}
 
-		.grav-powered-magic-login__account-option {
-			display: flex;
-			align-items: center;
-			padding: 20px;
-			border: 1px solid #f0f0f0;
-			border-radius: 4px;
-			gap: 20px;
-			cursor: pointer;
+	.grav-powered-magic-login__account-option {
+		display: flex;
+		align-items: center;
+		padding: 20px;
+		border: 1px solid #f0f0f0;
+		border-radius: 4px;
+		gap: 20px;
+		cursor: pointer;
+
+		&::before {
+			content: "";
+			display: inline-block;
+			min-width: 19px;
+			min-height: 20px;
+			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMCAyMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC41IiB5PSIxIiB3aWR0aD0iMTkiIGhlaWdodD0iMTkiIHJ4PSI5LjUiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjAuNSIgeT0iMSIgd2lkdGg9IjE5IiBoZWlnaHQ9IjE5IiByeD0iOS41IiBzdHJva2U9IiM5NDk0OTQiLz4KPC9zdmc+Cg==);
+			background-size: cover;
+		}
+
+		&.grav-powered-magic-login__account-option--selected {
+			background: #f0f0f0;
 
 			&::before {
-				content: "";
-				display: inline-block;
-				min-width: 19px;
-				min-height: 20px;
-				background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMCAyMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC41IiB5PSIxIiB3aWR0aD0iMTkiIGhlaWdodD0iMTkiIHJ4PSI5LjUiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjAuNSIgeT0iMSIgd2lkdGg9IjE5IiBoZWlnaHQ9IjE5IiByeD0iOS41IiBzdHJva2U9IiM5NDk0OTQiLz4KPC9zdmc+Cg==);
-				background-size: cover;
-			}
-
-			&.grav-powered-magic-login__account-option--selected {
-				background: #f0f0f0;
-
-				&::before {
-					background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMCAyMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeT0iMC41IiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHJ4PSIxMCIgZmlsbD0iIzM4NThFOSIvPgo8cmVjdCB4PSI2IiB5PSI2LjUiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHJ4PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K);
-				}
+				background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMCAyMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeT0iMC41IiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHJ4PSIxMCIgZmlsbD0iIzM4NThFOSIvPgo8cmVjdCB4PSI2IiB5PSI2LjUiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHJ4PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K);
 			}
 		}
 	}
