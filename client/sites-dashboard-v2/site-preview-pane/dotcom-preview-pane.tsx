@@ -173,7 +173,9 @@ const DotcomPreviewPane = ( {
 
 	const stagingStatus = useSelector( ( state ) => getStagingSiteStatus( state, site.ID ) );
 	const isStagingStatusFinished =
-		stagingStatus === StagingSiteStatus.COMPLETE || stagingStatus === StagingSiteStatus.NONE;
+		stagingStatus === StagingSiteStatus.COMPLETE ||
+		stagingStatus === StagingSiteStatus.NONE ||
+		stagingStatus === StagingSiteStatus.UNSET;
 
 	return (
 		<ItemPreviewPane

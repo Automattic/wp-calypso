@@ -5,13 +5,10 @@
 	--color-light-backdrop: var(--studio-white);
 }
 
-button.popover__menu-item.site-environment-switcher__item:focus:not(.is-selected):not(:hover) {
-	background-color: initial;
-	color: initial;
-}
-
-button.popover__menu-item.site-environment-switcher__item:hover {
-	background-color: var(--color-primary-light);
+.site-preview-pane__site-switcher-dropdown-menu {
+	.components-popover__content {
+		width: 189px;
+	}
 }
 
 .main.a4a-layout.sites-dashboard {
@@ -548,6 +545,12 @@ button.popover__menu-item.site-environment-switcher__item:hover {
 				cursor: pointer;
 				display: flex;
 				align-items: center;
+				.components-button.has-icon {
+					width: 24px;
+					height: 24px;
+					padding: 0;
+					min-width: initial;
+				}
 			}
 
 			.preview-pane__navigation {
