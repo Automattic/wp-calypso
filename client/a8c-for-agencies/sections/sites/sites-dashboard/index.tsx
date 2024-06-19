@@ -54,6 +54,7 @@ export default function SitesDashboard() {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const recentlyCreatedSite = getQueryArg( window.location.href, 'created_site' ) ?? null;
+	const migrationIntent = getQueryArg( window.location.href, 'migration' ) ?? null;
 
 	const {
 		dataViewsState,
@@ -223,7 +224,10 @@ export default function SitesDashboard() {
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
 						{ recentlyCreatedSite && (
-							<ProvisioningSiteNotification siteId={ Number( recentlyCreatedSite ) } />
+							<ProvisioningSiteNotification
+								siteId={ Number( recentlyCreatedSite ) }
+								migrationIntent={ !! migrationIntent }
+							/>
 						) }
 
 						<LayoutHeader>

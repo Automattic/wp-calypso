@@ -13,6 +13,7 @@ type Props = {
 	isLoading?: boolean;
 	provisioning?: boolean;
 	onCreateSite: ( id: number ) => void;
+	onMigrateSite: ( id: number ) => void;
 };
 
 export default function NeedSetupTable( {
@@ -20,6 +21,7 @@ export default function NeedSetupTable( {
 	isLoading,
 	provisioning,
 	onCreateSite,
+	onMigrateSite,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -38,7 +40,12 @@ export default function NeedSetupTable( {
 				}
 
 				return (
-					<PlanField { ...item } provisioning={ provisioning } onCreateSite={ onCreateSite } />
+					<PlanField
+						{ ...item }
+						provisioning={ provisioning }
+						onCreateSite={ onCreateSite }
+						onMigrateSite={ onMigrateSite }
+					/>
 				);
 			},
 			enableHiding: false,
