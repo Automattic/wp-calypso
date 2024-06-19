@@ -1,6 +1,23 @@
 .global-sidebar .sidebar--plugins {
 	.sidebar__back-link {
-		margin-bottom: 1rem;
+		margin-bottom: 0;
+		a {
+			padding-inline: 0;
+		}
+		.sidebar__site-title {
+			font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-weight: 500;
+		}
+	}
+
+	.sidebar__sub-heading {
+		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		padding-left: 20px;
+		margin-top: 4px;
+		margin-bottom: 13px;
+		display: flex;
+		align-items: center;
+		gap: 4px;
 	}
 }
 

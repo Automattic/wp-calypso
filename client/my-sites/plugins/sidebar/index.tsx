@@ -20,6 +20,10 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 			siteTitle={ ! isCollapsed && translate( 'Plugins' ) }
 			requireBackLink
 			backLinkHref="/sites"
+			subHeading={
+				! isCollapsed &&
+				translate( "Access plugins that enhance your site's functionality and features." )
+			}
 		>
 			<SidebarMenu>
 				<SidebarItem
