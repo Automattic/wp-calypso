@@ -90,11 +90,15 @@ export const UpgradePlanDetails = ( props: Props ) => {
 						<PlanPrice rawPrice={ rawPrice ?? undefined } currencyCode={ currencyCode } />
 						<span className="plan-time-frame">
 							<small>{ plan?.getBillingTimeFrame() }</small>
-							<small>{ __( 'Refundable within 14 days. No questions asked.' ) }</small>
 						</span>
 					</div>
 
-					<div className="import__upgrade-plan-cta">{ children }</div>
+					<div>
+						<div className="import__upgrade-plan-cta">{ children }</div>
+						<div className="import__upgrade-plan-refund-sub-text">
+							{ __( 'Refundable within 14 days. No questions asked.' ) }
+						</div>
+					</div>
 
 					<div className="import__upgrade-plan-features-list">
 						<UpgradePlanFeatureList

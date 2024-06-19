@@ -210,6 +210,12 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							path,
 						} );
 						break;
+					case 'jetpack_verbum_subscription_modal':
+						trackTracksEvent( 'calypso_settings_verbum_subscription_modal_updated', {
+							value: fields.jetpack_verbum_subscription_modal,
+							path,
+						} );
+						break;
 					case 'jetpack_subscriptions_from_name':
 						trackTracksEvent( 'calypso_setting_jetpack_subscriptions_from_name_updated', {
 							value: fields.jetpack_subscriptions_from_name,

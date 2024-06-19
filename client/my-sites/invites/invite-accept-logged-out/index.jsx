@@ -215,7 +215,6 @@ class InviteAcceptLoggedOut extends Component {
 							}
 						) }
 						submitButtonLabel={ this.props.translate( 'Create an account' ) }
-						isInviteLoggedOutForm
 						labelText={ this.props.translate( 'Your email address' ) }
 					/>
 					{ this.state.userData && this.loginUser() }

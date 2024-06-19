@@ -38,6 +38,7 @@ export interface PreviewPaneProps {
 	hasError?: boolean;
 	addTourDetails?: { id: string; tourId: string };
 	itemPreviewPaneHeaderExtraProps?: ItemPreviewPaneHeaderExtraProps;
+	hideNavIfSingleTab?: boolean;
 }
 
 export interface ItemPreviewPaneHeaderExtraProps {

@@ -22,14 +22,14 @@ function requestMessagingAvailability( { queryKey }: QueryFunctionContext ) {
 	const wpcomParams = new URLSearchParams( params );
 	return canAccessWpcomApis()
 		? wpcomRequest< MessagingAvailability >( {
-				path: '/help/messaging/is-available',
+				path: '/help/support-status/messaging',
 				query: wpcomParams.toString(),
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 				method: 'GET',
 		  } )
 		: apiFetch< MessagingAvailability >( {
-				path: addQueryArgs( '/help-center/support-availability/messaging', params ),
+				path: addQueryArgs( '/help-center/support-status/messaging', params ),
 				method: 'GET',
 				global: true,
 		  } as APIFetchOptions );

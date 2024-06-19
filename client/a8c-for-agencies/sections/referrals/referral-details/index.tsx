@@ -68,6 +68,7 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 			itemData={ itemData }
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
+			hideNavIfSingleTab
 		/>
 	);
 }
