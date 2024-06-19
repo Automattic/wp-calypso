@@ -73,6 +73,9 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
 	const hasSubscriberLimit = ( isFreeSite || isBusinessTrial ) && ! hasUnlimitedSubscribers;
 	const isWPCOMSite = ! site?.jetpack || site?.is_wpcom_atomic;
+	const supportLink = site?.jetpack
+		? localizeUrl( 'https://jetpack.com/contact-support' )
+		: localizeUrl( 'https://wordpress.com/support/help-support-options' );
 
 	return (
 		<Modal
@@ -127,9 +130,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
 						) }
 					</span>
-					<InlineSupportLink
-						supportLink={ localizeUrl( 'https://wordpress.com/support/help-support-options' ) }
-					/>
+					<InlineSupportLink supportLink={ supportLink } />
 				</Notice>
 			) }
 
