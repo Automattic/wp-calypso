@@ -351,6 +351,7 @@ export interface Domain {
 	private_domain: boolean;
 	partner_domain: boolean;
 	wpcom_domain: boolean;
+	has_pending_contact_update: boolean;
 	has_zone: boolean;
 	is_renewable: boolean;
 	is_redeemable: boolean;

@@ -103,6 +103,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		titanMailSubscription: assembleGoogleAppsSubscription(
 			domain.titan_mail_subscription
 		) as TitanEmailSubscription,
+		hasPendingContactUpdate: Boolean( domain.has_pending_contact_update ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
