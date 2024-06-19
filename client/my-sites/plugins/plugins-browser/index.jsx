@@ -218,7 +218,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 						</div>
 					</>
 				) }
-				<div ref={ loggedInSearchBoxRef } />
+				{ isLoggedIn && <div ref={ loggedInSearchBoxRef } /> }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
 					<div className="plugins-browser__marketplace-footer">
