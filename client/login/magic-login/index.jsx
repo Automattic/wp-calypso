@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import wpcomRequest from 'wpcom-proxy-request';
 import AppPromo from 'calypso/blocks/app-promo';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -26,6 +25,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
+import wpcom from 'calypso/lib/wp';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
@@ -334,11 +334,10 @@ class MagicLogin extends Component {
 				eventOptions
 			);
 
-			const { public_token } = await wpcomRequest( {
-				path: '/auth/send-login-email',
-				method: 'POST',
-				apiVersion: '1.3',
-				body: {
+			const { public_token } = await wpcom.req.post(
+				'/auth/send-login-email',
+				{ apiVersion: '1.3' },
+				{
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
 					locale,
@@ -350,8 +349,8 @@ class MagicLogin extends Component {
 					tos: getToSAcceptancePayload(),
 					token_type: 'code',
 					...( isSecondaryEmail ? { gravatar_main: ! isNewAccount } : {} ),
-				},
-			} );
+				}
+			);
 
 			this.setState( { publicToken: public_token, showEmailCodeVerification: true } );
 			cb();
@@ -403,10 +402,10 @@ class MagicLogin extends Component {
 				eventOptions
 			);
 
-			const { is_secondary, main_username, main_email_masked } = await wpcomRequest( {
-				path: '/auth/get-gravatar-info',
-				query: { email: usernameOrEmail },
-			} );
+			const { is_secondary, main_username, main_email_masked } = await wpcom.req.get(
+				'/auth/get-gravatar-info',
+				{ apiVersion: '1', email: usernameOrEmail }
+			);
 
 			if ( is_secondary ) {
 				this.setState( {
@@ -436,6 +435,7 @@ class MagicLogin extends Component {
 						requestEmailErrorMessage: translate( 'Invalid email.' ),
 						isRequestingEmail: false,
 					} );
+					break;
 				default:
 					this.setState( {
 						requestEmailErrorMessage: translate( 'Something went wrong. Please try again.' ),
