@@ -69,9 +69,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	} = useScrollAboveElement();
 	const searchRef = useRef( null );
 	const categoriesRef = useRef();
-	const stickySearchBoxRef = useRef( null );
-	const isVisible = useIsVisible( stickySearchBoxRef );
-	const isStickyHeader = isVisible === false;
+	const loggedInSearchBoxRef = useRef( null );
+	const isLoggedInSearchBoxSticky = useIsVisible( loggedInSearchBoxRef ) === false;
 	//  another temporary solution until phase 4 is merged
 	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
 
@@ -181,7 +180,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					<SearchCategories
 						category={ category }
 						isSearching={ isFetchingPluginsBySearchTerm }
-						isSticky={ isStickyHeader }
+						isSticky={ isLoggedInSearchBoxSticky }
 						searchRef={ searchRef }
 						searchTerm={ search }
 						searchTerms={ searchTerms }
@@ -219,7 +218,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 						</div>
 					</>
 				) }
-				<div ref={ stickySearchBoxRef } />
+				<div ref={ loggedInSearchBoxRef } />
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
 					<div className="plugins-browser__marketplace-footer">
