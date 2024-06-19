@@ -931,6 +931,7 @@ class Login extends Component {
 						<ContinueAsUser
 							onChangeAccount={ this.handleContinueAsAnotherUser }
 							isWooOAuth2Client={ isWoo }
+							isBlazePro={ isBlazePro }
 						/>
 						<LoginForm
 							disableAutoFocus={ disableAutoFocus }
@@ -956,7 +957,7 @@ class Login extends Component {
 					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
 							onChangeAccount={ this.handleContinueAsAnotherUser }
-							isBlazeProOAuth2Client={ isBlazePro }
+							isBlazePro={ isBlazePro }
 						/>
 						<LoginForm
 							disableAutoFocus={ disableAutoFocus }

@@ -46,6 +46,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
@@ -494,9 +495,13 @@ export class UserStep extends Component {
 			wccomFrom,
 			isSocialFirst,
 			userLoggedIn,
+			isBlazePro,
 		} = this.props;
 
 		if ( userLoggedIn ) {
+			if ( isBlazePro ) {
+				return translate( 'Log in to your Blaze Pro account' );
+			}
 			return translate( 'Is this you?' );
 		}
 
@@ -776,6 +781,7 @@ const ConnectedUser = connect(
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
 			isWooPasswordless: getIsWooPasswordless( state ),
+			isBlazePro: getIsBlazePro( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};
