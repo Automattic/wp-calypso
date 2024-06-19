@@ -2,7 +2,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PlanSlug,
-	StorageOption,
+	WPComPlanStorageFeatureSlug,
 } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
@@ -13,19 +13,22 @@ import useIsLargeCurrency from '../../../../hooks/use-is-large-currency';
 import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
 
 interface Props {
-	storageOption: StorageOption;
 	planSlug: PlanSlug;
 }
 
 const ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
-const PlanStorageLabel = ( { storageOption, planSlug }: Props ) => {
+const PlanStorageFeatureLabel = ( { planSlug }: Props ) => {
 	const translate = useTranslate();
 	const { siteId, gridPlansIndex } = usePlansGridContext();
-	const currencyCode = gridPlansIndex[ planSlug ].pricing.currencyCode;
+	const {
+		pricing: { currencyCode },
+		features: { storageFeature },
+	} = gridPlansIndex[ planSlug ];
+	const storageSlug = storageFeature?.getSlug() as WPComPlanStorageFeatureSlug | undefined;
 	const storageStringFromFeature = useStorageStringFromFeature( {
 		siteId,
-		storageFeature: storageOption.slug,
+		storageSlug,
 		planSlug,
 	} );
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
@@ -50,7 +53,7 @@ const PlanStorageLabel = ( { storageOption, planSlug }: Props ) => {
 	} );
 
 	const volumeJSX = (
-		<div className="plan-features-2023-grid__storage-buttons" key={ storageOption.slug }>
+		<div className="plan-features-2023-grid__storage-buttons" key={ storageSlug }>
 			{ storageStringFromFeature }
 		</div>
 	);
@@ -69,4 +72,4 @@ const PlanStorageLabel = ( { storageOption, planSlug }: Props ) => {
 	);
 };
 
-export default PlanStorageLabel;
+export default PlanStorageFeatureLabel;

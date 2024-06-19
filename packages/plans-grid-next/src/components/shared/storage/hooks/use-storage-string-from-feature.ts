@@ -12,6 +12,8 @@ import {
 	PlanSlug,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	WPComStorageAddOnSlug,
+	WPComPlanStorageFeatureSlug,
 } from '@automattic/calypso-products';
 import { Purchases } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
@@ -19,11 +21,11 @@ import { useTranslate } from 'i18n-calypso';
 const ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
 const useStorageStringFromFeature = ( {
-	storageFeature,
+	storageSlug,
 	siteId,
 	planSlug,
 }: {
-	storageFeature: string;
+	storageSlug?: WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	siteId?: null | number | string;
 	planSlug: PlanSlug;
 } ) => {
@@ -38,7 +40,7 @@ const useStorageStringFromFeature = ( {
 		  }, 0 )
 		: 0;
 
-	switch ( storageFeature ) {
+	switch ( storageSlug ) {
 		case FEATURE_1GB_STORAGE:
 			return translate( '1 GB' );
 		case FEATURE_6GB_STORAGE:

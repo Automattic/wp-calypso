@@ -37,7 +37,6 @@ type PlanFeaturesListProps = {
 		isTableCell?: boolean;
 	};
 	featureGroupSlug?: FeatureGroupSlug;
-	intervalType: string;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	showUpgradeableStorage: boolean;
 };
@@ -51,7 +50,6 @@ const PlanFeaturesList = ( {
 	renderedGridPlans,
 	selectedFeature,
 	featureGroupSlug,
-	intervalType,
 	onStorageAddOnClick,
 	showUpgradeableStorage = false,
 }: PlanFeaturesListProps ) => {
@@ -99,7 +97,6 @@ const PlanFeaturesList = ( {
 							<StorageFeature
 								planSlug={ planSlug }
 								options={ { isTableCell: true } }
-								intervalType={ intervalType }
 								onStorageAddOnClick={ onStorageAddOnClick }
 								showUpgradeableStorage={ showUpgradeableStorage }
 							/>

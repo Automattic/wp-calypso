@@ -2,15 +2,14 @@ import {
 	type PlanSlug,
 	WPComStorageAddOnSlug,
 	isWpcomEnterpriseGridPlan,
+	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
+import { PLAN_ECOMMERCE } from '@automattic/data-stores/src/plans/constants';
 import { usePlansGridContext } from '../../../../grid-context';
-import { isStorageUpgradeableForPlan } from '../../../../lib/is-storage-upgradeable-for-plan';
-import useAvailableStorageOptions from '../hooks/use-available-storage-options';
-import PlanStorageLabel from './plan-storage-label';
-import StorageAddOnDropdown from './storage-add-on-dropdown';
+import PlanStorageFeatureLabel from './plan-storage-feature-label';
+import StorageDropdown from './storage-dropdown';
 
 type Props = {
-	intervalType: string;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	showUpgradeableStorage: boolean;
 	planSlug: PlanSlug;
@@ -20,8 +19,9 @@ type Props = {
 	priceOnSeparateLine?: boolean;
 };
 
+const ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
+
 const StorageFeature = ( {
-	intervalType,
 	onStorageAddOnClick,
 	planSlug,
 	options,
@@ -30,11 +30,6 @@ const StorageFeature = ( {
 }: Props ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const { availableForPurchase, current } = gridPlansIndex[ planSlug ];
-
-	/**
-	 * TODO: Consider centralising `canUpgradeStorageForPlan` behind `availableStorageOptions`
-	 */
-	const availableStorageOptions = useAvailableStorageOptions( { planSlug } );
 
 	if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;
@@ -45,28 +40,22 @@ const StorageFeature = ( {
 	 */
 	const canUpgradeStorageForPlan =
 		( current || availableForPurchase ) &&
-		isStorageUpgradeableForPlan( {
-			intervalType,
-			showUpgradeableStorage,
-			storageOptions: availableStorageOptions,
-		} );
+		showUpgradeableStorage &&
+		ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug );
 
-	const storageJSX = canUpgradeStorageForPlan ? (
-		<StorageAddOnDropdown
-			planSlug={ planSlug }
-			onStorageAddOnClick={ onStorageAddOnClick }
-			storageOptions={ availableStorageOptions }
-			priceOnSeparateLine={ priceOnSeparateLine }
-		/>
-	) : (
-		availableStorageOptions.map( ( storageOption ) => {
-			if ( ! storageOption?.isAddOn ) {
-				return <PlanStorageLabel storageOption={ storageOption } planSlug={ planSlug } />;
-			}
-		} )
+	return (
+		<div className="plans-grid-next-storage-feature">
+			{ canUpgradeStorageForPlan ? (
+				<StorageDropdown
+					planSlug={ planSlug }
+					onStorageAddOnClick={ onStorageAddOnClick }
+					priceOnSeparateLine={ priceOnSeparateLine }
+				/>
+			) : (
+				<PlanStorageFeatureLabel planSlug={ planSlug } />
+			) }
+		</div>
 	);
-
-	return <div className="plans-grid-next-storage-feature">{ storageJSX }</div>;
 };
 
 export default StorageFeature;

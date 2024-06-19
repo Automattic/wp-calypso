@@ -32,7 +32,6 @@ type MobileViewProps = {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
@@ -64,7 +63,6 @@ const MobileView = ( {
 	gridPlanForSpotlight,
 	renderedGridPlans,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
@@ -126,7 +124,6 @@ const MobileView = ( {
 								<PlanFeaturesItem>
 									<StorageFeature
 										planSlug={ gridPlan.planSlug }
-										intervalType={ intervalType }
 										onStorageAddOnClick={ onStorageAddOnClick }
 										showUpgradeableStorage={ showUpgradeableStorage }
 									/>
@@ -169,7 +166,6 @@ const MobileView = ( {
 									generatedWPComSubdomain={ generatedWPComSubdomain }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 									featureGroupSlug={ featureGroupSlug }
-									intervalType={ intervalType }
 									onStorageAddOnClick={ onStorageAddOnClick }
 									showUpgradeableStorage={ showUpgradeableStorage }
 								/>
@@ -187,7 +183,6 @@ type TabletViewProps = {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
@@ -206,7 +201,6 @@ const TabletView = ( {
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
@@ -230,7 +224,6 @@ const TabletView = ( {
 		generatedWPComSubdomain,
 		gridPlanForSpotlight,
 		hideUnavailableFeatures,
-		intervalType,
 		isCustomDomainAllowedOnFreePlan,
 		isInSignup,
 		onStorageAddOnClick,
@@ -264,7 +257,6 @@ const FeaturesGrid = ( {
 	gridPlans,
 	gridSize,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
@@ -279,7 +271,6 @@ const FeaturesGrid = ( {
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
 		gridPlanForSpotlight,
-		intervalType,
 		isInSignup,
 		onStorageAddOnClick,
 		planActionOverrides,
