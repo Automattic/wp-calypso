@@ -594,3 +594,28 @@ html {
 		width: 100%;
 	}
 }
+
+.full-width-layout-with-table {
+	.a4a-layout__body-wrapper {
+		max-width: 100%;
+		padding-inline: 0;
+	}
+
+	.redesigned-a8c-table .dataviews-view-table tr {
+		td:first-child,
+		th:first-child {
+			padding-inline-start: 16px;
+
+			@include breakpoint-deprecated( ">660px" ) {
+				padding-inline-start: 64px;
+			}
+		}
+		td:last-child,
+		th:last-child {
+			padding-inline-end: 16px;
+			@include breakpoint-deprecated( ">660px" ) {
+				padding-inline-end: 64px;
+			}
+		}
+	}
+}

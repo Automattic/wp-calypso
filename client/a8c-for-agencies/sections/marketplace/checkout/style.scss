@@ -262,6 +262,11 @@
 	justify-content: space-between;
 	padding-block-end: 0;
 
+	@include breakpoint-deprecated( ">960px" ) {
+		width: 400px;
+	}
+
+
 	.checkout__aside-actions {
 		margin-block-start: 16px;
 	}
@@ -270,10 +275,6 @@
 		color: var(--color-neutral-70);
 		font-size: rem(16px);
 		font-weight: 600;
-
-		@include break-large {
-			text-wrap: nowrap;
-		}
 	}
 
 	.checkout__summary-notice {

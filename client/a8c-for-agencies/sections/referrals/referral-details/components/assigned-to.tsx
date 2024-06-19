@@ -23,7 +23,8 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 			? addQueryArgs( { license_key: purchase.license_key }, A4A_SITES_LINK_NEEDS_SETUP )
 			: addQueryArgs( { key: purchase.license_key }, '/marketplace/assign-license' ) );
 
-	const isDisabled = purchase.status !== 'active' || isFetching || ! product || ! redirectUrl;
+	const showAssignButton = purchase.status === 'active' && redirectUrl;
+	const isAwaitingPayment = purchase.status === 'pending';
 
 	return purchase.site_assigned ? (
 		<Button
@@ -35,16 +36,22 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 		</Button>
 	) : (
 		<>
-			<StatusBadge statusProps={ { children: translate( 'Unassigned' ), type: 'warning' } } />
-
-			<Button
-				disabled={ isDisabled }
-				className="referrals-purchases__assign-button"
-				borderless
-				onClick={ () => handleAssignToSite( redirectUrl ) }
-			>
-				{ isWPCOMLicense ? translate( 'Create site' ) : translate( 'Assign to site' ) }
-			</Button>
+			<StatusBadge
+				statusProps={ {
+					children: isAwaitingPayment ? translate( 'Awaiting payment' ) : translate( 'Unassigned' ),
+					type: 'warning',
+				} }
+			/>
+			{ showAssignButton && (
+				<Button
+					disabled={ isFetching }
+					className="referrals-purchases__assign-button"
+					borderless
+					onClick={ () => handleAssignToSite( redirectUrl ) }
+				>
+					{ isWPCOMLicense ? translate( 'Create site' ) : translate( 'Assign to site' ) }
+				</Button>
+			) }
 		</>
 	);
 };

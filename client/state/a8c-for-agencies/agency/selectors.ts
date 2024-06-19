@@ -28,7 +28,5 @@ export function getAgencyRequestError( state: A4AStore ): APIError | null {
 
 export function hasAgency( state: A4AStore ): boolean {
 	const agencies = state.a8cForAgencies.agencies.agencies;
-	const hasAgency = Array.isArray( agencies ) && agencies.length > 0;
-	const isClient = true; // TODO: Remove this line once all the APIs are in place.
-	return hasAgency && ! isClient;
+	return Array.isArray( agencies ) && agencies.length > 0;
 }

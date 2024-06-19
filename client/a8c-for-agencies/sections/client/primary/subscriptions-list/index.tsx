@@ -95,7 +95,7 @@ export default function SubscriptionsList() {
 
 	return (
 		<Layout
-			className={ clsx( 'subscriptions-list__layout', {
+			className={ clsx( 'subscriptions-list__layout full-width-layout-with-table', {
 				'is-mobile-view': ! isDesktop,
 			} ) }
 			title={ title }

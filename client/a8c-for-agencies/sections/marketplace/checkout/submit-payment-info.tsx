@@ -90,7 +90,11 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 		<>
 			{ paymentMethodRequired ? (
 				<div className="checkout__summary-client-payment-notice">
-					{ translate( 'Before making a payment, add your payment method.' ) }
+					{ translate( 'Before making a payment, add your payment{{nbsp/}}method.', {
+						components: {
+							nbsp: <>&nbsp;</>,
+						},
+					} ) }
 				</div>
 			) : (
 				<div className="checkout__summary-notice">
@@ -113,7 +117,7 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 					<div>
 						{ translate( `Note: You won't pay for the first 30 days.` ) }
 						<br />
-						{ translate( `After that, we'll charge your card every 30 days` ) }
+						{ translate( `After that, we'll charge your card every 30 days.` ) }
 					</div>
 				</div>
 			) }
