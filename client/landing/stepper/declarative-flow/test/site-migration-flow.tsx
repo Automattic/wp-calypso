@@ -202,6 +202,60 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
+		it( 'migrate redirects from the how-to-migrate (myself) page page to instructions page', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
+				dependencies: {
+					destination: 'migrate',
+					how: 'myself',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`,
+				state: {
+					siteSlug: 'example.wordpress.com',
+				},
+			} );
+		} );
+
+		it( 'migrate redirects from the how-to-migrate (do it for me) page to assisted migration page', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
+				dependencies: {
+					destination: 'migrate',
+					how: 'difm',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }`,
+				state: {
+					siteSlug: 'example.wordpress.com',
+				},
+			} );
+		} );
+
+		it( 'migrate redirects from the how-to-migrate (upgrade needed) page to site-migration-upgrade-plan step', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
+				dependencies: {
+					destination: 'upgrade',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&destination=upgrade`,
+				state: null,
+			} );
+		} );
+
 		it( 'redirects the user to the checkout page with the correct destination params', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
