@@ -97,7 +97,9 @@ class RequestLoginEmailForm extends Component {
 			this.props.hideMagicLoginRequestNotice();
 		}
 
-		this.props.onErrorDismiss?.();
+		if ( this.props.errorMessage ) {
+			this.props.onErrorDismiss?.();
+		}
 	};
 
 	onNoticeDismiss = () => {
