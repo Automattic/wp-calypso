@@ -753,3 +753,12 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 .verbum-comments-toggle {
 	flex-direction: column;
 }
+
+.site-settings__firewall-settings .card:not(:last-child) {
+	margin-bottom: 0;
+}
+
+.site-settings__security-settings-firewall-nudge {
+	margin-bottom: 0;
+	z-index: 1;
+}
