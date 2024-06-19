@@ -1,0 +1,45 @@
+@import "@automattic/components/src/styles/typography";
+
+// stylelint-disable declaration-property-unit-allowed-list
+.start-with-square-payments {
+	max-width: 1280px;
+	display: flex;
+	flex-direction: row;
+
+	.left-column {
+		display: flex;
+		flex-direction: column;
+		gap: 46px;
+
+		h1 {
+			color: var(--studio-gray-80);
+			font-family: $font-recoleta;
+			font-size: 79px;
+			line-height: 105%;
+		}
+
+		p {
+			color: #000;
+			font-family: $font-sf-pro-display;
+			font-size: $font-body;
+			font-style: normal;
+			line-height: 150%;
+		}
+
+		.start-store-cta {
+			width: fit-content;
+			background: #3858e9;
+			color: #fff;
+			border-radius: 3px;
+			padding: 9px 20px;
+			font-size: $font-body;
+			font-weight: 500;
+			line-height: 150%;
+		}
+	}
+
+	.right-column {
+		flex-shrink: 0;
+	}
+}
+// stylelint-enable declaration-property-unit-allowed-list

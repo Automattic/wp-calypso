@@ -1,0 +1,13 @@
+.layout.is-section-start-with {
+	height: 100%;
+
+	.layout__content {
+		height: calc(100% - var(--masterbar-height));
+		padding: 0;
+		background: #fdfdfd;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+}
