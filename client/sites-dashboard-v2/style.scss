@@ -8,6 +8,16 @@
 .site-preview-pane__site-switcher-dropdown-menu {
 	.components-popover__content {
 		width: 189px;
+		padding: calc(4px* 1);
+	}
+
+	.components-dropdown-menu__menu-item.is-active {
+		background-color: var(--color-primary);
+		color: var(--color-light-backdrop);
+	}
+
+	.components-dropdown-menu__menu-item:focus {
+		box-shadow: initial;
 	}
 }
 

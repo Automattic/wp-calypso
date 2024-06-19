@@ -66,21 +66,23 @@ export default function SiteEnvironmentSwitcher( {
 			) }
 			<DropdownMenu
 				icon={ chevronDownSmall }
-				label="Select environment"
+				label={ __( 'Select environment' ) }
 				popoverProps={ {
-					focusOnMount: false,
 					position: 'bottom',
 					className: 'site-preview-pane__site-switcher-dropdown-menu',
 					anchor: popoverButtonRef.current,
+					onFocusOutside: () => setIsPopoverVisible( false ),
 				} }
 				controls={ [
 					{
 						title: __( 'Production' ),
 						onClick: () => setEnvironment( productionSiteId ),
+						isActive: ! site.is_wpcom_staging_site,
 					},
 					{
 						title: __( 'Staging' ),
 						onClick: () => setEnvironment( stagingSiteId ),
+						isActive: site.is_wpcom_staging_site,
 					},
 				] }
 				onToggle={ () => setIsPopoverVisible( ! isPopoverVisible ) }
