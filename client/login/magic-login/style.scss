@@ -445,13 +445,12 @@
 		margin-bottom: 24px;
 	}
 
-	.grav-powered-magic-login__sub-header strong,
-	.grav-powered-magic-login__masked-email-address strong {
-		font-weight: 700;
-	}
-
 	.grav-powered-magic-login__sub-header {
 		margin-bottom: 30px;
+
+		strong {
+			font-weight: 700;
+		}
 	}
 
 	.grav-powered-magic-login__account-info {
@@ -463,6 +462,10 @@
 	.grav-powered-magic-login__masked-email-address {
 		margin-right: 10px;
 		word-break: break-word;
+
+		strong {
+			font-weight: 700;
+		}
 	}
 
 	.magic-login__form-header {
