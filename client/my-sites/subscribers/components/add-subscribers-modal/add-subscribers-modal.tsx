@@ -2,12 +2,14 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
@@ -120,9 +122,14 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					status="is-warning"
 					showDismiss={ false }
 				>
-					{ translate(
-						'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
-					) }
+					<span className="add-subscribers-modal__notice-text">
+						{ translate(
+							'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
+						) }
+					</span>
+					<InlineSupportLink
+						supportLink={ localizeUrl( 'https://wordpress.com/support/help-support-options' ) }
+					/>
 				</Notice>
 			) }
 
