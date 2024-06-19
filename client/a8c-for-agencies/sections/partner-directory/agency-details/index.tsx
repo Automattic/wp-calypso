@@ -136,7 +136,9 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				</FormField>
 				<FormField
 					label={ translate( 'Company logo' ) }
-					description={ translate( 'Upload your agency logo sized at 800px by 320px.' ) }
+					description={ translate(
+						'Upload your agency logo sized at 800px by 320px. Format allowed: JPG, PNG'
+					) }
 				>
 					<TextControl
 						value={ formData.logoUrl }
