@@ -341,10 +341,6 @@
 			padding-left: 30px;
 			padding-right: 30px;
 			border-radius: 2px;
-
-			button:disabled {
-				opacity: 0.3;
-			}
 		}
 
 		.grav-powered-magic-login__header,
@@ -383,6 +379,7 @@
 			gap: 16px;
 			font-size: 15px;
 			color: #949494;
+			margin-top: 0;
 
 			&.grav-powered-magic-login__footer--email-form {
 				font-size: 16px;
@@ -426,7 +423,7 @@
 		}
 
 		button:disabled {
-			opacity: 0.5;
+			opacity: 0.3;
 			cursor: not-allowed;
 		}
 	}
@@ -447,6 +444,7 @@
 
 	.grav-powered-magic-login__sub-header {
 		margin-bottom: 30px;
+		word-break: break-word;
 
 		strong {
 			font-weight: 700;
@@ -566,6 +564,10 @@
 			background-size: cover;
 		}
 
+		&:disabled {
+			opacity: 0.5;
+		}
+
 		&.grav-powered-magic-login__account-option--selected {
 			background: #f0f0f0;
 
@@ -629,7 +631,6 @@
 		&.grav-powered-magic-login--wp-job-manager {
 			.grav-powered-magic-login__header,
 			.magic-login__form-header {
-				font-size: 40px;
 				margin-top: 48px;
 			}
 

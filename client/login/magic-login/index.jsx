@@ -699,15 +699,20 @@ class MagicLogin extends Component {
 				<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email' ) }</h1>
 				<p className="grav-powered-magic-login__sub-header">
-					{ translate(
-						'Enter the verification code we’ve sent to {{strong}}%(emailAddress)s{{/strong}}. A new Gravatar account will be created.',
-						{
-							components: { strong: <strong /> },
-							args: {
-								emailAddress:
-									isSecondaryEmail && ! isNewAccount ? maskedEmailAddress : usernameOrEmail,
-							},
-						}
+					<span>
+						{ translate(
+							'Enter the verification code we’ve sent to {{strong}}%(emailAddress)s{{/strong}}.',
+							{
+								components: { strong: <strong /> },
+								args: {
+									emailAddress:
+										isSecondaryEmail && ! isNewAccount ? maskedEmailAddress : usernameOrEmail,
+								},
+							}
+						) }
+					</span>
+					{ isNewAccount && (
+						<span>{ translate( ' A new Gravatar account will be created.' ) }</span>
 					) }
 				</p>
 				{ isNewAccount && this.renderGravPoweredMagicLoginTos() }
