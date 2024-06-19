@@ -37,6 +37,7 @@ export const GlobalSidebarFooter: FC< {
 			<Button
 				className="sidebar__footer-link sidebar__footer-write-post"
 				href="/post/"
+				target="_blank"
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.WRITE_POST_CLICK ) }
 			>
 				<ReaderWriteIcon />
