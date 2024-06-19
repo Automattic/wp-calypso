@@ -292,7 +292,9 @@ export default function LayoutBodyContent( {
 								}
 								description={
 									isAutomatedReferral
-										? translate( 'Receive a rev share of 0.05% per sale.' )
+										? translate(
+												'Receive a revenue share of 5 basis points on the total payments volume.'
+										  )
 										: translate(
 												'Receive a revenue share of 5 basis points (0.05%) on new WooPayments total payments volume (TPV) on clients’ sites.'
 										  )
