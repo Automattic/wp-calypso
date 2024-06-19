@@ -711,8 +711,11 @@ class MagicLogin extends Component {
 							}
 						) }
 					</span>
-					{ isNewAccount && (
+					{ isSecondaryEmail && isNewAccount && (
 						<span>{ translate( ' A new Gravatar account will be created.' ) }</span>
+					) }
+					{ isSecondaryEmail && ! isNewAccount && (
+						<span>{ translate( ' This email already exists and is synced with Gravatar.' ) }</span>
 					) }
 				</p>
 				{ isNewAccount && this.renderGravPoweredMagicLoginTos() }
