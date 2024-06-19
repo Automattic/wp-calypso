@@ -105,6 +105,13 @@
 	}
 }
 
+// Launchpad - Content
+.launchpad__content {
+	@include break-large {
+		min-height: initial;
+	}
+}
+
 // Launchpad - Sidebar
 .launchpad__sidebar {
 	margin: 0 16px 32px;

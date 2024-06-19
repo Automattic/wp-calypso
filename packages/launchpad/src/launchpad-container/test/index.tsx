@@ -35,6 +35,7 @@ describe( 'LaunchpadContainer', () => {
 			<LaunchpadContainer
 				className="classname"
 				headerClassName="header-classname"
+				contentClassName="content-classname"
 				sidebarClassName="sidebar-classname"
 				mainContentClassName="main-content-classname"
 				sidebar={ <div>Sidebar</div> }
@@ -51,6 +52,11 @@ describe( 'LaunchpadContainer', () => {
 			container
 				.querySelector( '.launchpad-container__header' )
 				?.classList.contains( 'header-classname' )
+		).toBeTruthy();
+		expect(
+			container
+				.querySelector( '.launchpad-container__content' )
+				?.classList.contains( 'content-classname' )
 		).toBeTruthy();
 		expect(
 			container
