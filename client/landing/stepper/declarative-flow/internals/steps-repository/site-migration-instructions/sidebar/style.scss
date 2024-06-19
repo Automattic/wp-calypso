@@ -1,0 +1,11 @@
+@import "@automattic/typography/styles/fonts";
+
+.migration-instructions-sidebar__title {
+	font-family: $brand-serif;
+	font-size: 2rem;
+	margin-bottom: 1rem;
+}
+
+.migration-instructions-sidebar__description {
+	margin-bottom: 2rem;
+}

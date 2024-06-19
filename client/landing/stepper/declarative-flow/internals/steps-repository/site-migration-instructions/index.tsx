@@ -3,11 +3,12 @@ import { StepContainer } from '@automattic/onboarding';
 import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Questions } from './questions';
+import { Sidebar } from './sidebar';
 import type { Step } from '../../types';
 import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
-	const sidebar = <div>Sidebar</div>;
+	const sidebar = <Sidebar />;
 
 	const stepContent = (
 		<LaunchpadContainer sidebar={ sidebar }>
