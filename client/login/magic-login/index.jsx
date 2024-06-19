@@ -320,7 +320,7 @@ class MagicLogin extends Component {
 		);
 	}
 
-	handleGravPoweredSendEmailCode = async ( email, cb = () => {} ) => {
+	handleGravPoweredEmailCodeSend = async ( email, cb = () => {} ) => {
 		const { oauth2Client, query, locale, translate } = this.props;
 		const { isSecondaryEmail, isNewAccount } = this.state;
 		const noticeId = 'email-code-notice';
@@ -420,7 +420,7 @@ class MagicLogin extends Component {
 					isRequestingEmail: false,
 				} );
 			} else {
-				this.handleGravPoweredSendEmailCode( usernameOrEmail );
+				this.handleGravPoweredEmailCodeSend( usernameOrEmail );
 			}
 
 			this.props.recordTracksEvent(
@@ -431,7 +431,7 @@ class MagicLogin extends Component {
 			switch ( error.error ) {
 				case 'not_found':
 					this.setState( { isNewAccount: true } );
-					this.handleGravPoweredSendEmailCode( usernameOrEmail );
+					this.handleGravPoweredEmailCodeSend( usernameOrEmail );
 					break;
 				case 'invalid_email':
 					this.setState( {
@@ -655,7 +655,7 @@ class MagicLogin extends Component {
 				) }
 				<FormButton
 					onClick={ () =>
-						this.handleGravPoweredSendEmailCode( usernameOrEmail, () =>
+						this.handleGravPoweredEmailCodeSend( usernameOrEmail, () =>
 							this.setState( { showSecondaryEmailOptions: false } )
 						)
 					}
@@ -753,7 +753,7 @@ class MagicLogin extends Component {
 				<footer className="grav-powered-magic-login__footer">
 					<button
 						onClick={ () => {
-							this.handleGravPoweredSendEmailCode( usernameOrEmail );
+							this.handleGravPoweredEmailCodeSend( usernameOrEmail );
 
 							this.props.recordTracksEvent(
 								'calypso_gravatar_powered_magic_login_click_resend_email',
