@@ -105,6 +105,18 @@
 	}
 }
 
+// Launchpad - Sidebar
+.launchpad__sidebar-content-container {
+	margin-left: 0;
+	margin-top: 64px;
+	flex-grow: 1;
+
+	@include break-large {
+		margin-left: 16px;
+		margin-top: 84px;
+	}
+}
+
 // Launchpad - Sidebar heading text
 .start-writing,
 .design-first,

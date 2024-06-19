@@ -28,7 +28,7 @@ const Container: React.FunctionComponent< ContainerProps > = ( {
 
 			<div className="launchpad-container__content">
 				<div className={ clsx( 'launchpad-container__sidebar', sidebarClassName ) }>
-					<div className="launchpad-container__sidebar-content-container">{ sidebar }</div>
+					{ sidebar }
 				</div>
 				<div className="launchpad-container__main-content">{ children }</div>
 			</div>

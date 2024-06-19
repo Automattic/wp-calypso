@@ -37,16 +37,6 @@
 		background-color: var(--color-neutral-5);
 	}
 }
-.launchpad-container__sidebar-content-container {
-	margin-left: 0;
-	margin-top: 64px;
-	flex-grow: 1;
-
-	@include break-large {
-		margin-left: 16px;
-		margin-top: 84px;
-	}
-}
 
 // Main content.
 .launchpad-container__main-content {
