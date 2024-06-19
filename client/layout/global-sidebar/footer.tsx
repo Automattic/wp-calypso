@@ -10,6 +10,7 @@ import Gravatar from 'calypso/components/gravatar';
 import QuickLanguageSwitcher from 'calypso/layout/masterbar/quick-language-switcher';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import { UserData } from 'calypso/lib/user/user';
+import ReaderWriteIcon from 'calypso/reader/components/icons/write-icon';
 import { useSelector } from 'calypso/state';
 import getCurrentRoutePattern from 'calypso/state/selectors/get-current-route-pattern';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -35,9 +36,10 @@ export const GlobalSidebarFooter: FC< {
 		<SidebarFooter>
 			<Button
 				className="sidebar__footer-link sidebar__footer-write-post"
-				href="#"
+				href="/post/"
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.WRITE_POST_CLICK ) }
 			>
+				<ReaderWriteIcon />
 				{ translate( 'Write a post' ) }
 			</Button>
 			<SidebarMenuItem
