@@ -178,10 +178,10 @@
 		@media (min-width: 783px) {
 			top: var(--masterbar-height);
 			box-sizing: content-box;
-			padding: 10px calc((100% - var(--sidebar-width-max) - 1040px) / 2);
+			padding: 10px calc((100% - var(--sidebar-width-max) - (1040px - 2 * 2rem)) / 2);
 
 			.layout__secondary ~ .layout__primary & {
-				width: 1040px;
+				width: calc(1040px - 2 * 2rem);
 			}
 		}
 	}
