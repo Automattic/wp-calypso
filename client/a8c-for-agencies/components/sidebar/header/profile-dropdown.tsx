@@ -40,13 +40,11 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 			{
 				// Show the "Contact support" button if the user is not a client
 				! isClient && (
-					<>
-						<li className="a4a-sidebar__profile-dropdown-menu-item">
-							<Button borderless onClick={ onGetHelp }>
-								{ translate( 'Contact support' ) }
-							</Button>
-						</li>
-					</>
+					<li className="a4a-sidebar__profile-dropdown-menu-item">
+						<Button borderless onClick={ onGetHelp }>
+							{ translate( 'Contact support' ) }
+						</Button>
+					</li>
 				)
 			}
 			<li className="a4a-sidebar__profile-dropdown-menu-item">
