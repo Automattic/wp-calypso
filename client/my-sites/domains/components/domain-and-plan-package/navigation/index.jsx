@@ -7,10 +7,13 @@ export default function DomainAndPlanPackageNavigation( props ) {
 	const translate = useTranslate();
 
 	const goBack = () => {
+		if ( window.history.length > 1 ) {
+			window.history.go( -1 );
+			return;
+		}
+
 		if ( props.goBackLink ) {
 			window.location.assign( props.goBackLink );
-		} else {
-			window.history.go( -1 );
 		}
 	};
 
@@ -20,8 +23,7 @@ export default function DomainAndPlanPackageNavigation( props ) {
 		args: { currentStep: step, stepCount: 3 },
 	} );
 
-	const buttonText =
-		props.goBackText || ( props.step !== 1 ? translate( 'Back' ) : translate( 'Home' ) );
+	const buttonText = props.goBackText || translate( 'Back' );
 
 	return (
 		<div className="domain-and-plan-package-navigation">
