@@ -15,7 +15,6 @@ import './style.scss';
 
 interface SignupFormSocialFirst {
 	goToNextStep: () => void;
-	step: object;
 	stepName: string;
 	flowName: string;
 	redirectToAfterLoginUrl: string;
@@ -60,7 +59,6 @@ const options = {
 
 const SignupFormSocialFirst = ( {
 	goToNextStep,
-	step,
 	stepName,
 	flowName,
 	redirectToAfterLoginUrl,
@@ -159,7 +157,6 @@ const SignupFormSocialFirst = ( {
 			return (
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
-						step={ step }
 						stepName={ stepName }
 						flowName={ flowName }
 						goToNextStep={ goToNextStep }

@@ -41,7 +41,6 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 		<>
 			<FormattedHeader align="center" headerText={ translate( 'Create your account' ) } brandFont />
 			<SignupFormSocialFirst
-				step={ {} }
 				stepName={ stepName }
 				flowName={ flow }
 				goToNextStep={ () => {
