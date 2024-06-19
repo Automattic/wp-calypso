@@ -378,8 +378,11 @@ class ReaderStream extends Component {
 		// This should already be false but this is a safety.
 		this.wasSelectedByOpeningPost = false;
 
+		// If the currently selected item is too far away in scroll position to be rendered by the
+		// infinite list, lets fall back to the magic selection functionality noted below.
+		const selectedItem = this.state.listContext?.querySelector( '.card.is-selected' );
 		// do we have a selected item? if so, just move to the next one
-		if ( this.props.selectedPostKey ) {
+		if ( this.props.selectedPostKey && selectedItem ) {
 			this.props.selectNextItem( { streamKey, items } );
 			return;
 		}
