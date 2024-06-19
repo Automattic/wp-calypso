@@ -890,7 +890,7 @@ class MagicLogin extends Component {
 						onSubmitEmail={ isGravatar ? this.handleGravPoweredEmailSubmit : undefined }
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
-						errorMessage={ requestEmailErrorMessage || requestEmailErrorMessage }
+						errorMessage={ requestEmailErrorMessage }
 						onErrorDismiss={ () => this.setState( { requestEmailErrorMessage: null } ) }
 						isEmailInputDisabled={ isRequestingEmail }
 						isSubmitButtonDisabled={ isRequestingEmail || !! requestEmailErrorMessage }
