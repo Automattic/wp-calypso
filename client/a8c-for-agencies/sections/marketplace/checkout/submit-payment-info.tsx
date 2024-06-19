@@ -127,7 +127,7 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 				>
 					{ paymentMethodRequired
 						? translate( 'Add my payment method' )
-						: translate( 'Submit my payment information' ) }
+						: translate( 'Submit purchase' ) }
 				</Button>
 			</div>
 			<div className="checkout__aside-footer">
