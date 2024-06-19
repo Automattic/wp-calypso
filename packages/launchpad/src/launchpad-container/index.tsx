@@ -7,6 +7,7 @@ export interface ContainerProps {
 	className?: string;
 	headerClassName?: string;
 	sidebarClassName?: string;
+	mainContentClassName?: string;
 	header?: React.ReactNode;
 	sidebar: React.ReactNode;
 	children: React.ReactNode;
@@ -16,6 +17,7 @@ const LaunchpadContainer: React.FunctionComponent< ContainerProps > = ( {
 	className,
 	headerClassName,
 	sidebarClassName,
+	mainContentClassName,
 	header,
 	sidebar,
 	children,
@@ -30,7 +32,9 @@ const LaunchpadContainer: React.FunctionComponent< ContainerProps > = ( {
 				<div className={ clsx( 'launchpad-container__sidebar', sidebarClassName ) }>
 					{ sidebar }
 				</div>
-				<div className="launchpad-container__main-content">{ children }</div>
+				<div className={ clsx( 'launchpad-container__main-content', mainContentClassName ) }>
+					{ children }
+				</div>
 			</div>
 		</main>
 	);

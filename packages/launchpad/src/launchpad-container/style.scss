@@ -20,15 +20,12 @@
 
 // Launchpad Sidebar.
 .launchpad-container__sidebar {
-	max-width: 100%;
-	margin: 0 16px 32px;
 	display: flex;
 	flex-direction: column;
+	max-width: 100%;
 
 	@include break-large {
 		max-width: 360px;
-		margin: 0 20px 24px 24px;
-		gap: 80px;
 	}
 
 	// TODO: Migrate to the checklist components. The checklist could receive a special className as prop that would be responsible for this.
@@ -43,4 +40,14 @@
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
+}
+
+// Container spacings.
+.launchpad-container__sidebar,
+.launchpad-container__main-content {
+	padding: 16px;
+
+	@include break-large {
+		padding: 40px;
+	}
 }

@@ -82,6 +82,7 @@ const StepContent = ( {
 		<LaunchpadContainer
 			headerClassName="launchpad__sidebar-header"
 			sidebarClassName="launchpad__sidebar"
+			mainContentClassName="launchpad__main-content"
 			header={ header }
 			sidebar={ sidebar }
 		>
