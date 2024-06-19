@@ -404,7 +404,7 @@ class MagicLogin extends Component {
 
 			const { is_secondary, main_username, main_email_masked } = await wpcom.req.get(
 				'/auth/get-gravatar-info',
-				{ apiVersion: '1', email: usernameOrEmail }
+				{ email: usernameOrEmail }
 			);
 
 			if ( is_secondary ) {
