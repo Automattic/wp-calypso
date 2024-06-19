@@ -454,7 +454,7 @@ class MagicLogin extends Component {
 		}
 	};
 
-	handleVerificationCodeInputChange = ( e ) => {
+	handleGravPoweredCodeInputChange = ( e ) => {
 		let value = e.target.value.toUpperCase();
 
 		if ( ! /^[A-Z0-9]*$/.test( value ) || value.length > 6 ) {
@@ -464,7 +464,7 @@ class MagicLogin extends Component {
 		this.setState( { verificationCodeInputValue: value } );
 	};
 
-	handleVerificationCodeSubmit = ( e ) => {
+	handleGravPoweredCodeSubmit = ( e ) => {
 		e.preventDefault();
 
 		const { oauth2Client, query } = this.props;
@@ -477,7 +477,7 @@ class MagicLogin extends Component {
 		);
 	};
 
-	handleGravPoweredSwitchEmail = () => {
+	handleGravPoweredEmailSwitch = () => {
 		const { oauth2Client } = this.props;
 
 		this.setState( { showSecondaryEmailOptions: false } );
@@ -665,7 +665,7 @@ class MagicLogin extends Component {
 					{ translate( 'Continue' ) }
 				</FormButton>
 				<footer className="grav-powered-magic-login__footer">
-					<button onClick={ this.handleGravPoweredSwitchEmail }>
+					<button onClick={ this.handleGravPoweredEmailSwitch }>
 						{ translate( 'Switch email' ) }
 					</button>
 					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
@@ -713,7 +713,7 @@ class MagicLogin extends Component {
 				{ isNewAccount && this.renderGravPoweredMagicLoginTos() }
 				<form
 					className="grav-powered-magic-login__verification-code-form"
-					onSubmit={ this.handleVerificationCodeSubmit }
+					onSubmit={ this.handleGravPoweredCodeSubmit }
 				>
 					<FormLabel htmlFor="verification-code" hidden>
 						{ translate( 'Enter the verification code' ) }
@@ -721,7 +721,7 @@ class MagicLogin extends Component {
 					<FormTextInput
 						id="verification-code"
 						value={ verificationCodeInputValue }
-						onChange={ this.handleVerificationCodeInputChange }
+						onChange={ this.handleGravPoweredCodeInputChange }
 						placeholder={ translate( 'Verification code' ) }
 						disabled={ isProcessingCode }
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
@@ -809,7 +809,7 @@ class MagicLogin extends Component {
 						className="grav-powered-magic-login__show-magic-login"
 						onClick={ () => {
 							this.resetResendEmailCountdown();
-							this.handleGravPoweredSwitchEmail();
+							this.handleGravPoweredEmailSwitch();
 						} }
 					/>
 				),
