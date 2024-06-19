@@ -158,13 +158,9 @@
 
 	&.fixed-top {
 		@media (min-width: 783px) {
-			margin-top: 0;
 			position: fixed;
 			z-index: 20;
 			top: 16px;
-			left: 0;
-			width: 100%;
-			max-width: 100%;
 			padding: 10px 32px;
 			box-sizing: border-box;
 			border-top-left-radius: 4px;
@@ -174,6 +170,16 @@
 			.layout__secondary ~ .layout__primary & {
 				left: var(--sidebar-width-max);
 				width: calc(100% - var(--sidebar-width-max) - 31px);
+			}
+		}
+	}
+
+	.plugins-browser--site-view &.fixed-top {
+		@media (min-width: 783px) {
+			top: var(--masterbar-height);
+
+			.layout__secondary ~ .layout__primary & {
+				width: calc(100% - var(--sidebar-width-max));
 			}
 		}
 	}
