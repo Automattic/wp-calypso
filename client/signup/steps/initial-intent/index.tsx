@@ -70,12 +70,12 @@ export default function InitialIntentStep( props: Props ) {
 
 		if ( _answerKeys.includes( 'import' ) ) {
 			redirect = `/setup/${ HOSTED_SITE_MIGRATION_FLOW }`;
-		} else if ( _answerKeys.includes( 'newsletter' ) ) {
-			redirect = `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
 		} else if ( _answerKeys.includes( 'sell' ) && _answerKeys.includes( 'difm' ) ) {
 			redirect = '/start/do-it-for-me-store';
 		} else if ( _answerKeys.includes( 'difm' ) ) {
 			redirect = '/start/do-it-for-me';
+		} else if ( _answerKeys.includes( 'newsletter' ) ) {
+			redirect = `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
 		}
 
 		if ( redirect ) {
