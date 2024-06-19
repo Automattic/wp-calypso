@@ -68,6 +68,8 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
+	const hideCloseButton = true; // currently hiding close button and dismiss click functionality is disabled for all commerical upgrade notices. To add more specific conditionals later, we can modify here
+
 	return (
 		<div
 			className={ `inner-notice-container has-odyssey-stats-bg-color ${
@@ -77,7 +79,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 			<NoticeBanner
 				level="info"
 				title={ translate( 'Upgrade to Stats Commercial' ) }
-				onClose={ dismissNotice }
+				onClose={ hideCloseButton ? () => {} : dismissNotice }
 				hideCloseButton
 			>
 				{ translate(
