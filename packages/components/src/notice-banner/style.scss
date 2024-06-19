@@ -56,6 +56,10 @@ $banner-title-height: 22px;
 			box-shadow: none;
 		}
 
+		&.notice-banner__action-link--inline {
+			margin-left: 0;
+		}
+
 		& > span {
 			border-bottom: 1.5px solid var(--jp-black);
 		}
