@@ -39,18 +39,20 @@ export default function PartnerDirectoryOnboardingCard() {
 			dismissable
 			onClose={ onDismiss }
 		>
-			<img className="partner-director-onboarding-card__banner" src={ banner } alt="" />
+			<div className="partner-director-onboarding-card__top">
+				<img className="partner-director-onboarding-card__banner" src={ banner } alt="" />
 
-			<div className="partner-directory-onboarding-card__content">
-				<h1 className="partner-directory-onboarding-card__content-title">
-					{ translate( 'Boost your agency’s visibility across Automattic platforms' ) }
-				</h1>
+				<div className="partner-directory-onboarding-card__content">
+					<h1 className="partner-directory-onboarding-card__content-title">
+						{ translate( 'Boost your agency’s visibility across Automattic platforms' ) }
+					</h1>
 
-				<p className="partner-directory-onboarding-card__content-description">
-					{ translate(
-						'Complete your agency profile on our platform to be featured in our partner directories.'
-					) }
-				</p>
+					<p className="partner-directory-onboarding-card__content-description">
+						{ translate(
+							'Complete your agency profile on our platform to be featured in our partner directories.'
+						) }
+					</p>
+				</div>
 			</div>
 
 			<div className="partner-directory-onboarding-card__footer">
