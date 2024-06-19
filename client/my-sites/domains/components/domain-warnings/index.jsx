@@ -91,9 +91,10 @@ export class DomainWarnings extends PureComponent {
 		} );
 		const domain = domains[ 0 ].name;
 		const subscriptionId = domains[ 0 ].subscriptionId;
+		const productSlug = domains[ 0 ].productSlug;
 		const link =
 			count === 1
-				? `/checkout/domain_map:${ domain }/renew/${ subscriptionId }/${ selectedSite.slug }`
+				? `/checkout/${ productSlug }:${ domain }/renew/${ subscriptionId }/${ selectedSite.slug }`
 				: purchasesRoot;
 
 		return (
