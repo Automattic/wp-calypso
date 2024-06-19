@@ -114,7 +114,7 @@ class MagicLogin extends Component {
 		publicToken: null,
 		showSecondaryEmailOptions: false,
 		showEmailCodeVerification: false,
-		username: null,
+		mainUsername: null,
 		maskedEmailAddress: '',
 	};
 
@@ -412,7 +412,7 @@ class MagicLogin extends Component {
 					usernameOrEmail,
 					isSecondaryEmail: true,
 					showSecondaryEmailOptions: true,
-					username: main_username,
+					mainUsername: main_username,
 					maskedEmailAddress: main_email_masked,
 					isRequestingEmail: false,
 				} );
@@ -562,7 +562,7 @@ class MagicLogin extends Component {
 			usernameOrEmail,
 			isNewAccount,
 			maskedEmailAddress,
-			username,
+			mainUsername,
 			isRequestingEmail,
 			requestEmailErrorMessage,
 		} = this.state;
@@ -584,7 +584,7 @@ class MagicLogin extends Component {
 							args: { maskedEmailAddress },
 						} ) }
 					</div>
-					<a href={ `https://gravatar.com/${ username }` } target="_blank" rel="noreferrer">
+					<a href={ `https://gravatar.com/${ mainUsername }` } target="_blank" rel="noreferrer">
 						{ translate( 'Open profile' ) }
 					</a>
 				</div>
