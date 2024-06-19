@@ -110,7 +110,6 @@ export interface CommonGridProps {
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	planActionOverrides?: PlanActionOverrides;
-
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown

@@ -6,8 +6,8 @@ import {
 } from '@automattic/calypso-products';
 import { PLAN_ECOMMERCE } from '@automattic/data-stores/src/plans/constants';
 import { usePlansGridContext } from '../../../../grid-context';
-import PlanStorageFeatureLabel from './plan-storage-feature-label';
-import StorageDropdown from './storage-dropdown';
+import StorageFeatureDropdown from './storage-feature-dropdown';
+import StorageFeatureLabel from './storage-feature-label';
 
 type Props = {
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
@@ -46,13 +46,13 @@ const StorageFeature = ( {
 	return (
 		<div className="plans-grid-next-storage-feature">
 			{ canUpgradeStorageForPlan ? (
-				<StorageDropdown
+				<StorageFeatureDropdown
 					planSlug={ planSlug }
 					onStorageAddOnClick={ onStorageAddOnClick }
 					priceOnSeparateLine={ priceOnSeparateLine }
 				/>
 			) : (
-				<PlanStorageFeatureLabel planSlug={ planSlug } />
+				<StorageFeatureLabel planSlug={ planSlug } />
 			) }
 		</div>
 	);
