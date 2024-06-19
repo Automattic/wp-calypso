@@ -160,7 +160,10 @@ class MagicLogin extends Component {
 
 			const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
 
-			if ( prevProps.showCheckYourEmail && ! showCheckYourEmail ) {
+			if (
+				( prevProps.showCheckYourEmail && ! showCheckYourEmail ) ||
+				( prevState.showSecondaryEmailOptions && ! showSecondaryEmailOptions )
+			) {
 				this.props.recordTracksEvent(
 					'calypso_gravatar_powered_magic_login_email_form',
 					eventOptions
