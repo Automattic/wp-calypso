@@ -1,10 +1,11 @@
 import { Card } from '@automattic/components';
 import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
-import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
@@ -16,25 +17,29 @@ import './style.scss';
 const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const site = useSite();
-	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
+	const importSiteQueryParam = useQuery().get( 'from' ) || '';
+	usePresalesChat( 'wpcom', true, true );
 
-	const options = [
-		{
-			label: translate( 'Do it for me' ),
-			description: translate(
-				"Share your site with us, and we'll review it and handle the migration if possible."
-			),
-			value: 'difm',
-			selected: true,
-		},
-		{
-			label: translate( "I'll do it myself" ),
-			description: translate(
-				'Install the plugin yourself, find the migration key and migrate the site.'
-			),
-			value: 'myself',
-		},
-	];
+	const options = useMemo(
+		() => [
+			{
+				label: translate( 'Do it for me' ),
+				description: translate(
+					"Share your site with us, and we'll review it and handle the migration if possible."
+				),
+				value: 'difm',
+				selected: true,
+			},
+			{
+				label: translate( "I'll do it myself" ),
+				description: translate(
+					'Install the plugin yourself, find the migration key and migrate the site.'
+				),
+				value: 'myself',
+			},
+		],
+		[ translate ]
+	);
 
 	let importSiteHostName = '';
 
@@ -99,8 +104,6 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 			</div>
 		</>
 	);
-
-	usePresalesChat( 'wpcom', true, true );
 
 	return (
 		<>
