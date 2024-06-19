@@ -178,6 +178,14 @@ $business-plan-color: #7f54b3;
 		margin-bottom: 2.5rem;
 	}
 
+	.import__upgrade-plan-refund-sub-text {
+		color: $business-plan-color;
+		font-size: 0.75rem;
+		font-weight: 500;
+		margin-top: 0.5rem;
+		text-align: center;
+	}
+
 	.import__upgrade-plan-features-list {
 		flex-direction: column;
 

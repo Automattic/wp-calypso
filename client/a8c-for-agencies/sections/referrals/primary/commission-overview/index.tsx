@@ -69,7 +69,11 @@ export default function CommissionOverview( {
 				{ isAutomatedReferral && (
 					<>
 						<div className="commission-overview__section-heading">
-							{ translate( 'Referrals and commissions Frequently Asked Questions (FAQ)' ) }
+							{ translate( 'Referrals and commissions Frequently Asked Questions{{nbsp/}}(FAQ)', {
+								components: {
+									nbsp: <>&nbsp;</>,
+								},
+							} ) }
 						</div>
 						<div className="commission-overview__section-subtitle">
 							{ translate(
@@ -92,8 +96,8 @@ export default function CommissionOverview( {
 							summary={ false }
 						>
 							{ translate(
-								'You will receive a revenue share of 5 basis points (0.05%) on new WooPayments gross merchandise value (“GMV”) on client sites through June 30, 2025.' +
-									' For example, if your client’s store generates $1M in GMV per year, your revenue share for that year would be $500.'
+								'You will receive a revenue share of 5 basis points (bps) on new WooPayments total payments volume (“TPV”) on client sites through June 30, 2025.' +
+									' For example, if your client’s store generates $1M in TPV per year, your revenue share for that year would be $500.'
 							) }
 						</FoldableCard>
 

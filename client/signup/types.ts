@@ -20,6 +20,9 @@ export interface Flow {
 	disallowResume?: boolean;
 	showRecaptcha?: boolean;
 	enableBranchSteps?: boolean;
+	hideProgressIndicator?: boolean;
+	enablePresales?: boolean;
+	enableHotjar?: boolean;
 	onEnterFlow?: ( flowName: string ) => void;
 }
 

@@ -25,6 +25,10 @@
 				justify-content: center;
 				gap: 16px;
 
+				@media (min-width: $break-large) {
+					justify-content: start;
+				}
+
 				.question-options__option-control {
 					padding: 24px;
 
@@ -40,10 +44,12 @@
 
 				.flow-question {
 					max-width: 430px;
+
 					.flow-question__heading {
 						margin-bottom: 4px;
 						line-height: 24px;
 					}
+
 					.flow-question__description {
 						line-height: 20px;
 						letter-spacing: -0.15px;

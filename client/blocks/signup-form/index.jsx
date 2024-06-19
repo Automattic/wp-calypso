@@ -23,7 +23,7 @@ import {
 	isEmpty,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, useEffect } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
@@ -921,9 +921,16 @@ class SignupForm extends Component {
 		}
 
 		if ( this.props.isBlazePro ) {
-			tosText = this.props.translate(
-				'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				options
+			tosText = (
+				<>
+					{ this.props.translate(
+						'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+						options
+					) }{ ' ' }
+					{ this.props.translate(
+						'Blaze Pro uses WordPress.com accounts under the hood. Tumblr, Blaze Pro, and WordPress.com are properties of Automattic, Inc.'
+					) }
+				</>
 			);
 		}
 
@@ -973,21 +980,7 @@ class SignupForm extends Component {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			return this.globalNotice( this.props.step.errors[ 0 ], 'is-error' );
 		}
-		if ( this.userCreationComplete() ) {
-			return (
-				<TrackRender eventName="calypso_signup_account_already_created_show">
-					{ this.globalNotice(
-						{
-							info: true,
-							message: this.props.translate(
-								'Your account has already been created. You can change your email, username, and password later.'
-							),
-						},
-						'is-info'
-					) }
-				</TrackRender>
-			);
-		}
+
 		return false;
 	}
 
@@ -1387,14 +1380,6 @@ class SignupForm extends Component {
 			</div>
 		);
 	}
-}
-
-function TrackRender( { children, eventName } ) {
-	useEffect( () => {
-		recordTracksEvent( eventName );
-	}, [ eventName ] );
-
-	return children;
 }
 
 export default connect(

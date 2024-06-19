@@ -9,11 +9,6 @@ import ClientLanding from './client-landing';
 import ClientCheckout from './primary/checkout';
 import SubscriptionsList from './primary/subscriptions-list';
 
-export const clientContext: Callback = ( context, next ) => {
-	context.secondary = <ClientSidebar path={ context.path } />;
-	next();
-};
-
 export const clientLandingContext: Callback = ( context, next ) => {
 	context.primary = <ClientLanding />;
 	context.secondary = <SidebarPlaceholder />;
@@ -21,7 +16,12 @@ export const clientLandingContext: Callback = ( context, next ) => {
 };
 
 export const clientSubscriptionsContext: Callback = ( context, next ) => {
-	context.primary = <SubscriptionsList />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Client > Subscriptions" path={ context.path } />
+			<SubscriptionsList />
+		</>
+	);
 	context.secondary = <ClientSidebar path={ context.path } />;
 	next();
 };
