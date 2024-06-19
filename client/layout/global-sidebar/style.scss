@@ -315,6 +315,14 @@ $brand-text: "SF Pro Text", $sans;
 			text-align: center;
 			gap: 4px;
 			color: var(--studio-gray-50);
+			border-radius: 2px;
+
+			&:hover,
+			&.is-active {
+				background-color: var(--color-surface);
+				border-radius: 2px;
+				color: var(--studio-gray-100);
+			}
 		}
 	}
 
