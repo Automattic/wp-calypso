@@ -6137,17 +6137,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.16.1":
+"@remix-run/router@npm:1.16.1, @remix-run/router@npm:^1.5.0":
   version: 1.16.1
   resolution: "@remix-run/router@npm:1.16.1"
   checksum: 5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
-  languageName: node
-  linkType: hard
-
-"@remix-run/router@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "@remix-run/router@npm:1.5.0"
-  checksum: 63c3695df0470943213f8144183501bbb6a8176671f2ed4547ffa1852f79fd71054b4b4a715795e9e250198991d9e6e121b3fcab9c27df37871dcdfbc8de83a1
   languageName: node
   linkType: hard
 
