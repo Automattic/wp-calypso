@@ -291,13 +291,17 @@ export default function LayoutBodyContent( {
 										: translate( 'Install WooPayments on your clients’ online stores' )
 								}
 								description={
-									isAutomatedReferral
-										? translate(
-												'Receive a revenue share of 5 basis points on the total payments volume.'
-										  )
-										: translate(
-												'Receive a revenue share of 5 basis points (0.05%) on new WooPayments total payments volume (TPV) on clients’ sites.'
-										  )
+									isAutomatedReferral ? (
+										<>
+											{ translate( 'Receive a revenue share of 5 basis points on the' ) }
+											<br />
+											{ translate( 'total payments volume.' ) }
+										</>
+									) : (
+										translate(
+											'Receive a revenue share of 5 basis points (0.05%) on new WooPayments total payments volume (TPV) on clients’ sites.'
+										)
+									)
 								}
 								buttonProps={ {
 									children: isAutomatedReferral
