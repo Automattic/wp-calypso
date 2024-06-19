@@ -140,17 +140,20 @@ export default function NeedSetup( { licenseKey }: Props ) {
 		[ createWPCOMSite, refetchPendingSites ]
 	);
 
-	const onMigrateSite = useCallback( ( id: number ) => {
-		createWPCOMSite(
-			{ id },
-			{
-				onSuccess: () => {
-					refetchPendingSites();
-					page( addQueryArgs( A4A_SITES_LINK, { created_site: id, migration: true } ) );
-				},
-			}
-		);
-	} );
+	const onMigrateSite = useCallback(
+		( id: number ) => {
+			createWPCOMSite(
+				{ id },
+				{
+					onSuccess: () => {
+						refetchPendingSites();
+						page( addQueryArgs( A4A_SITES_LINK, { created_site: id, migration: true } ) );
+					},
+				}
+			);
+		},
+		[ createWPCOMSite, refetchPendingSites ]
+	);
 
 	return (
 		<Layout
