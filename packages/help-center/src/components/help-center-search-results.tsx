@@ -22,16 +22,15 @@ import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
@@ -112,9 +111,9 @@ function HelpSearchResults( {
 	currentRoute,
 }: HelpSearchResultsProps ) {
 	const dispatch = useDispatch();
-	const hasPurchases = useSelector( hasCancelableUserPurchases );
-	const sectionName = useSelector( getSectionName );
-	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
+	const { hasPurchases, sectionName } = useHelpCenterContext();
+
+	const adminResults = useAdminResults( searchQuery );
 
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = useSiteOption( 'site_intent' );

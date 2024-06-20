@@ -11,10 +11,6 @@ declare module 'calypso/components/search-card' {
 	const SearchCard: FC;
 	export = SearchCard;
 }
-declare module 'calypso/blocks/inline-help/inline-help-search-card' {
-	const InlineHelpSearchCard: FC;
-	export = InlineHelpSearchCard;
-}
 
 declare module 'calypso/blocks/inline-help/inline-help-search-results' {
 	const InlineHelpSearchResults: FC;

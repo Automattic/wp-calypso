@@ -16,13 +16,12 @@ import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { FC, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
 import { BackButton } from '..';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import {
 	useChatStatus,
 	useChatWidget,
@@ -85,8 +84,9 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		isEligibleForChat || hasActiveChats
 	);
 
+	const helpCenterContext = useHelpCenterContext();
+	const sectionName = helpCenterContext.sectionName;
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
-	const sectionName = useSelector( getSectionName );
 	const currentSite = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.getSite();
@@ -284,7 +284,8 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { url, isLoading } = useStillNeedHelpURL();
-	const sectionName = useSelector( getSectionName );
+	const helpCenterContext = useHelpCenterContext();
+	const sectionName = helpCenterContext.sectionName;
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
 	const trackContactButtonClicked = () => {

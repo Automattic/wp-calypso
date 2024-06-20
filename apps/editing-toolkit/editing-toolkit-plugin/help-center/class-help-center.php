@@ -124,11 +124,21 @@ class Help_Center {
 			'before'
 		);
 
+		$user_id         = get_current_user_id();
+		$user            = get_userdata( $user_id );
+		$primary_site_id = $user->primary_blog;
+		$user_email      = $user->user_email;
+
 		wp_localize_script(
 			'help-center-script',
 			'helpCenterData',
 			array(
-				'currentSite' => $this->get_current_site(),
+				'currentSite'   => $this->get_current_site(),
+				'adminUrl'      => admin_url(),
+				'locale'        => get_locale(),
+				'currentUserId' => get_current_user_id(),
+				'primarySiteId' => $primary_site_id,
+				'userEmail'     => $user_email,
 			)
 		);
 

@@ -5,7 +5,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback } from '@wordpress/element';
 import * as ReactDOM from 'react-dom';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
-import CalypsoStateProvider from './CalypsoStateProvider';
 
 function AdminHelpCenterContent() {
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
@@ -34,15 +33,27 @@ function AdminHelpCenterContent() {
 
 	button.onclick = handleToggleHelpCenter;
 
-	return <HelpCenter handleClose={ closeCallback } />;
+	return (
+		<HelpCenter
+			adminUrl={ window.helpCenterData.admin_url }
+			isJetpackSite={ window.helpCenterData.currentSite.jetpack }
+			locale={ window.helpCenterData.locale }
+			sectionName="wp-admin"
+			currentUserId={ window.helpCenterData.current_user_id }
+			currentUserEmail={ window.helpCenterData.userEmail }
+			isBusinessOrEcomPlanUser={ window.helpCenterData.is_business_or_ecommerce_plan_user }
+			selectedSiteId={ window.helpCenterData.current }
+			hasPurchases={ false }
+			primarySiteId={ window.helpCenterData.primary_site_id }
+			handleClose={ closeCallback }
+		/>
+	);
 }
 
 if ( window?.helpCenterAdminBar?.isLoaded ) {
 	ReactDOM.render(
 		<QueryClientProvider client={ whatsNewQueryClient }>
-			<CalypsoStateProvider>
-				<AdminHelpCenterContent />
-			</CalypsoStateProvider>
+			<AdminHelpCenterContent />
 		</QueryClientProvider>,
 		document.getElementById( 'help-center-masterbar' )
 	);

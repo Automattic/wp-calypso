@@ -1,14 +1,12 @@
 /* eslint-disable no-restricted-imports */
 import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import useSupportArticleAlternatesQuery from 'calypso/data/support-article-alternates/use-support-article-alternates-query';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { usePostByKey } from '../hooks/use-post-by-key';
 import ArticleContent from './help-center-article-content';
-
 // import './style.scss';
 import './help-center-article-content.scss';
 
@@ -36,7 +34,7 @@ interface ArticleFetchingContentProps {
 
 const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetchingContentProps ) => {
 	const postKey = useSupportArticleAlternatePostKey( +( blogId ?? SUPPORT_BLOG_ID ), postId );
-	const post = useSelector( ( state ) => getPostByKey( state, postKey ) );
+	const post = usePostByKey( postKey ).data;
 	const isLoading = ! post?.content || ! postKey;
 	const siteId = post?.site_ID;
 	const shouldQueryReaderPost = ! post && postKey;

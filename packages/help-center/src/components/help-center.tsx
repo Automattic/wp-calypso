@@ -4,12 +4,14 @@
  */
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
-import { useSelector } from 'react-redux';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import {
+	HelpCenterRequiredContextProvider,
+	useHelpCenterContext,
+	type HelpCenterRequiredInformation,
+} from '../contexts/HelpCenterContext';
 import { useChatStatus, useZendeskMessaging, useStillNeedHelpURL } from '../hooks';
 import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
 import { Container } from '../types';
@@ -84,9 +86,7 @@ const HelpCenter: React.FC< Container > = ( {
 		};
 	}, [] );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
-
-	const siteId = useSelector( getSelectedSiteId );
-	const primarySiteId = useSelector( getPrimarySiteId );
+	const { selectedSiteId, primarySiteId } = useHelpCenterContext();
 
 	useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] );
 
@@ -98,8 +98,8 @@ const HelpCenter: React.FC< Container > = ( {
 	const backendProvidedSite = window?.helpCenterData?.currentSite;
 
 	const site = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( siteId || primarySiteId ),
-		[ siteId || primarySiteId ]
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( selectedSiteId || primarySiteId ),
+		[ selectedSiteId || primarySiteId ]
 	);
 
 	const usedSite = backendProvidedSite || site;
@@ -144,4 +144,12 @@ const HelpCenter: React.FC< Container > = ( {
 	);
 };
 
-export default HelpCenter;
+export default function ContextualizedHelpCenter(
+	props: Container & HelpCenterRequiredInformation
+) {
+	return (
+		<HelpCenterRequiredContextProvider value={ props }>
+			<HelpCenter { ...props } />
+		</HelpCenterRequiredContextProvider>
+	);
+}

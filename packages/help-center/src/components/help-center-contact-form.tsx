@@ -14,17 +14,15 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
@@ -94,7 +92,8 @@ type HelpCenterContactFormProps = {
 
 export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { search } = useLocation();
-	const sectionName = useSelector( getSectionName );
+	const helpCenterContext = useHelpCenterContext();
+	const sectionName = helpCenterContext.sectionName;
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const { onSubmit } = props;
@@ -106,11 +105,11 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const locale = useLocale();
 	const { isPending: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isPending: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
-	const userId = useSelector( getCurrentUserId );
+	const userId = helpCenterContext?.currentUserId;
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;
 	const queryClient = useQueryClient();
-	const email = useSelector( getCurrentUserEmail );
+	const email = helpCenterContext.currentUserEmail;
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);

@@ -4,11 +4,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE, SITE_STORE } from '../stores';
 import { SearchResult } from '../types';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
@@ -28,6 +27,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const query = params.get( 'query' );
+	const { sectionName } = useHelpCenterContext();
 
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
@@ -46,10 +46,12 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[ setSubject, setMessage, onSearchChange ]
 	);
 
-	const siteId = useSelector( getSelectedSiteId );
+	const { selectedSiteId } = useHelpCenterContext();
+
 	const site = useSelect(
-		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
-		[ siteId ]
+		( select ) =>
+			selectedSiteId && ( select( SITE_STORE ) as SiteSelect ).getSite( selectedSiteId ),
+		[ selectedSiteId ]
 	);
 	let launchpadEnabled = site && site?.options?.launchpad_screen === 'full';
 
@@ -109,6 +111,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 				location="help-center"
 				isVisible
 				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
+				sectionName={ sectionName }
 			/>
 			<HelpCenterSearchResults
 				onSelect={ redirectToArticle }
