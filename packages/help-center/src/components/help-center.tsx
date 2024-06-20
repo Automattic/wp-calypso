@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
@@ -86,7 +87,13 @@ const HelpCenter: React.FC< Container > = ( {
 		};
 	}, [] );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
-	const { selectedSiteId, primarySiteId } = useHelpCenterContext();
+	const { selectedSiteId, primarySiteId, currentUserId } = useHelpCenterContext();
+
+	useEffect( () => {
+		if ( currentUserId ) {
+			initializeAnalytics( { ID: currentUserId }, null );
+		}
+	}, [ currentUserId ] );
 
 	useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] );
 
