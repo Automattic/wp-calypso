@@ -419,7 +419,7 @@ export default function AgencyDetailsForm( {
 					<div className="company-details-form__tos">
 						<p>
 							{ translate(
-								'By clicking ‘Continue’, you agree to the{{break}}{{/break}}{{link}}%(link_text)s{{icon}}{{/icon}}{{/link}}.',
+								'By clicking ‘Continue’, you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Partnership Agreement{{icon}}{{/icon}}{{/link}}.',
 								{
 									components: {
 										break: <br />,
@@ -432,7 +432,6 @@ export default function AgencyDetailsForm( {
 										),
 										icon: <Gridicon icon="external" size={ 18 } />,
 									},
-									args: { link_text: 'Terms of the Automattic for Agencies Partnership Agreement' },
 								}
 							) }
 						</p>
