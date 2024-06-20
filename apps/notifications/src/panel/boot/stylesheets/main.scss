@@ -538,13 +538,27 @@ $with-sidebar-min-page-width: 1114px;
 			text-align: left;
 			position: sticky;
 
-			.wpnc__settings {
+			.wpnc__settings, .wpnc__keyboard-shortcuts-button {
 				display: flex;
 				flex-grow: 1;
 
 				&:focus svg {
 					outline: var(--color-primary-light) solid 2px;
 				}
+			}
+
+			.wpnc__keyboard-shortcuts-button {
+				flex-grow: 0;
+				padding-right: 8px;
+			}
+
+			.wpnc__keyboard-shortcuts-popover {
+				position: absolute;
+				background-color: var(--color-surface);
+				height: 200px;
+				z-index: ;
+				top: 70px;
+				right: 8px;
 			}
 		}
 	}
