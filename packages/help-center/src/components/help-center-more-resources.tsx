@@ -52,7 +52,6 @@ export const HelpCenterMoreResources = () => {
 
 	const trackMoreResourcesButtonClick = ( resource: string ) => {
 		recordTracksEvent( 'calypso_help_moreresources_click', {
-			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 			resource: resource,
 			force_site_id: true,
 			location: 'help-center',

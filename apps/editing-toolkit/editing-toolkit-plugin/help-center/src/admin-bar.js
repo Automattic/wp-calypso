@@ -40,7 +40,6 @@ function AdminHelpCenterContent() {
 			locale={ window.helpCenterData.locale }
 			sectionName="wp-admin"
 			currentUserId={ window.helpCenterData.current_user_id }
-			isBusinessOrEcomPlanUser={ window.helpCenterData.is_business_or_ecommerce_plan_user }
 			selectedSiteId={ window.helpCenterData.current }
 			hasPurchases={ false }
 			primarySiteId={ window.helpCenterData.primary_site_id }

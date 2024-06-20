@@ -9,10 +9,10 @@ export type HelpCenterRequiredInformation = {
 	hasPurchases: boolean;
 	primarySiteId: number;
 	getGoogleMailServiceFamily: string;
+	isBusinessOrEcomPlanUser?: boolean;
 	onboardingUrl: string;
 	isJetpackSite: boolean;
 	adminUrl: string;
-	isBusinessOrEcomPlanUser: boolean;
 };
 
 const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInformation >( {
@@ -22,11 +22,11 @@ const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInforma
 	selectedSiteId: 0,
 	hasPurchases: false,
 	primarySiteId: 0,
+	isBusinessOrEcomPlanUser: false,
 	getGoogleMailServiceFamily: '',
 	onboardingUrl: '',
 	isJetpackSite: false,
 	adminUrl: '',
-	isBusinessOrEcomPlanUser: false,
 } );
 
 export const HelpCenterRequiredContextProvider: React.FC< {
