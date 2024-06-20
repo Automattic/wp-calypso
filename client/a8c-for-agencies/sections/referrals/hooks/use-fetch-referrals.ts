@@ -12,7 +12,6 @@ const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
 	const clients = referrals.reduce< { [ key: string ]: Referral } >( ( acc, referral ) => {
 		const purchases = referral.products.map( ( product ) => ( {
 			...product,
-			status: referral.status,
 			referral_id: referral.id, // referral id is needed for the purchase to be unique
 		} ) );
 		if ( ! acc[ referral.client.id ] ) {
