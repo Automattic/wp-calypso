@@ -108,21 +108,25 @@
 	// position: fixed;
 	text-align: center;
 
-	@include breakpoint-deprecated( ">1280px" ) {
-		left: calc(50% - 490px);
-	}
-
-	@include breakpoint-deprecated( "1040px-1280px" ) {
-		left: calc(50% - 480px);
-	}
-
-	@include breakpoint-deprecated( "660px-1040px" ) {
-		left: 20px;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
+	@media (max-width: 1270px) {
 		display: none;
 	}
+
+	// @include breakpoint-deprecated( ">1270px" ) {
+	// 	left: calc(50% - 490px);
+	// }
+
+	// @include breakpoint-deprecated( "1040px-1280px" ) {
+	// 	left: calc(50% - 480px);
+	// }
+
+	// @include breakpoint-deprecated( "660px-1040px" ) {
+	// 	left: 20px;
+	// }
+
+	// @include breakpoint-deprecated( "<660px" ) {
+	// 	display: none;
+	// }
 }
 
 .reader-full-post__seen-button {
