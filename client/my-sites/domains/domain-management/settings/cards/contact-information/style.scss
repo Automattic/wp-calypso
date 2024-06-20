@@ -24,7 +24,8 @@
 			}
 		}
 
-		.contact-information__transfer-warn {
+		.contact-information__transfer-warn,
+		.contact-information__pending-update-warn {
 			margin-top: 1em;
 			margin-bottom: 0;
 			color: var(--studio-red-50);
