@@ -57,7 +57,7 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 		if ( status === 'success' ) {
 			dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_submit_payment_info_success' ) );
 			dispatch(
-				successNotice( translate( 'Payment information submitted successfully.' ), {
+				successNotice( translate( 'Thank you for your purchase!' ), {
 					displayOnNextPage: true,
 				} )
 			);
