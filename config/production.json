@@ -156,6 +156,7 @@
 		"reader/full-errors": false,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
+		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
