@@ -134,7 +134,6 @@ describe( 'index', () => {
 	test( 'there should be no unused steps', () => {
 		const flowDefinitions = generateFlows();
 		const allStepDefinitions = generateSteps();
-		console.log( Object.keys( flowDefinitions ) );
 		const definedSteps = new Set( Object.keys( allStepDefinitions ) );
 
 		Object.values( flowDefinitions ).forEach( ( flow ) => {
