@@ -1,8 +1,8 @@
 import { SiteExcerptData } from '@automattic/sites';
-import { DropdownMenu } from '@wordpress/components';
+import { DropdownMenu, Button } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useRef, useState } from 'react';
+import clsx from 'clsx';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 
@@ -15,9 +15,7 @@ export default function SiteEnvironmentSwitcher( {
 	onChange,
 	site,
 }: SiteEnvironmentSwitcherProps ) {
-	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
 	const { __ } = useI18n();
-	const popoverButtonRef = useRef< HTMLInputElement >( null );
 
 	if (
 		! site.is_wpcom_staging_site &&
@@ -47,47 +45,56 @@ export default function SiteEnvironmentSwitcher( {
 	};
 
 	return (
-		<div
-			tabIndex={ 0 }
-			role="button"
-			className="site-preview-pane__site-environment-switcher"
-			ref={ popoverButtonRef }
-			onClick={ () => {
-				setIsPopoverVisible( ! isPopoverVisible );
+		<DropdownMenu
+			icon={ chevronDownSmall }
+			label={ __( 'Select environment' ) }
+			toggleProps={ {
+				as: ( props ) => (
+					<ToggleComponent isStaging={ !! site.is_wpcom_staging_site } { ...props } />
+				),
 			} }
-			onKeyDown={ () => setIsPopoverVisible( ! isPopoverVisible ) }
-		>
-			{ !! site.is_wpcom_staging_site && (
-				<SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge>
-			) }
+			popoverProps={ {
+				position: 'bottom',
+				className: 'site-preview-pane__site-switcher-dropdown-menu',
+			} }
+			controls={ [
+				{
+					title: __( 'Production' ),
+					onClick: () => setEnvironment( productionSiteId ),
+					isActive: ! site.is_wpcom_staging_site,
+				},
+				{
+					title: __( 'Staging' ),
+					onClick: () => setEnvironment( stagingSiteId ),
+					isActive: site.is_wpcom_staging_site,
+				},
+			] }
+		/>
+	);
+}
 
-			{ ! site.is_wpcom_staging_site && (
-				<SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>
-			) }
-			<DropdownMenu
-				icon={ chevronDownSmall }
-				label={ __( 'Select environment' ) }
-				popoverProps={ {
-					position: 'bottom',
-					className: 'site-preview-pane__site-switcher-dropdown-menu',
-					anchor: popoverButtonRef.current,
-					onFocusOutside: () => setIsPopoverVisible( false ),
-				} }
-				controls={ [
-					{
-						title: __( 'Production' ),
-						onClick: () => setEnvironment( productionSiteId ),
-						isActive: ! site.is_wpcom_staging_site,
-					},
-					{
-						title: __( 'Staging' ),
-						onClick: () => setEnvironment( stagingSiteId ),
-						isActive: site.is_wpcom_staging_site,
-					},
-				] }
-				onToggle={ () => setIsPopoverVisible( ! isPopoverVisible ) }
-				open={ isPopoverVisible }
-			/>
-		</div>
+function ToggleComponent( {
+	isStaging,
+	className,
+	...props
+}: {
+	isStaging: boolean;
+	className: never;
+} ) {
+	const { __ } = useI18n();
+
+	const mergedClasses = clsx( 'site-preview-pane__site-environment-switcher', className );
+
+	return (
+		<Button
+			className={ mergedClasses }
+			{ ...props }
+			iconPosition="right"
+			style={ { padding: 0, height: 'auto' } }
+		>
+			{ isStaging && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
+
+			{ ! isStaging && <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge> }
+		</Button>
 	);
 }
