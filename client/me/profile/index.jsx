@@ -69,7 +69,7 @@ class Profile extends Component {
 				<Banner
 					disableHref
 					title={ this.props.translate(
-						'These settings are applied to all of your sites that use the Default admin interface style. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'These settings are applied to sites using the Default admin interface style. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
 								learnMoreLink: (
