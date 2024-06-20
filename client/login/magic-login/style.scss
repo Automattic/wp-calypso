@@ -534,8 +534,11 @@
 	.grav-powered-magic-login__verification-code-form {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
 		margin-top: 30px;
+
+		button[type="submit"].form-button.is-primary {
+			margin-top: 20px;
+		}
 	}
 
 	.grav-powered-magic-login__account-options {
