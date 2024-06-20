@@ -7,7 +7,7 @@ import OdieAssistantProvider, { useSetOdieStorage } from '@automattic/odie-clien
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
@@ -46,9 +46,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const location = useLocation();
 	const navigate = useNavigate();
 	const containerRef = useRef< HTMLDivElement >( null );
-	//const {}
 
-	const { sectionName, selectedSiteId } = useHelpCenterContext();
+	const { sectionName, selectedSiteId, currentUserId, userEmail, avatarUrl, displayName } =
+		useHelpCenterContext();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const { isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -56,6 +56,16 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
+
+	const currentUser = useMemo(
+		() => ( {
+			id: currentUserId,
+			display_name: displayName,
+			email: userEmail,
+			avatar_URL: avatarUrl,
+		} ),
+		[ currentUserId, userEmail, avatarUrl, displayName ]
+	);
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -121,6 +131,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								botNameSlug="wpcom-support-chat"
 								botName="Wapuu"
 								enabled={ shouldUseWapuu }
+								currentUser={ currentUser }
 								isMinimized={ isMinimized }
 								initialUserMessage={ searchTerm }
 								logger={ trackEvent }

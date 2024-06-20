@@ -4,10 +4,14 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
 import AsyncLoad from 'calypso/components/async-load';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserDisplayName,
+	getCurrentUserEmail,
+	getCurrentUserId,
+} from 'calypso/state/current-user/selectors';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSection, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -24,7 +28,10 @@ const AsyncHelpCenter = () => {
 	const currentUserId = useSelector( getCurrentUserId );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const userPurchases = useSelector( getUserPurchases );
-	const hasPurchases = useSelector( hasCancelableUserPurchases );
+	const user = useSelector( getCurrentUser );
+	const displayName = useSelector( getCurrentUserDisplayName );
+	const userEmail = useSelector( getCurrentUserEmail );
+	const avatarUrl = user?.avatar_URL;
 	const primarySiteId = useSelector( getPrimarySiteId );
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSiteId ) );
 	const isJetpack = useSelector( ( state ) =>
@@ -54,7 +61,9 @@ const AsyncHelpCenter = () => {
 			currentUserId={ currentUserId }
 			selectedSiteId={ selectedSiteId }
 			userPurchases={ userPurchases }
-			hasPurchases={ hasPurchases }
+			avatarUrl={ avatarUrl }
+			displayName={ displayName }
+			userEmail={ userEmail }
 			primarySiteId={ primarySiteId }
 			placeholder={ null }
 			handleClose={ handleClose }

@@ -39,6 +39,8 @@ import {
 	isUserLoggedIn,
 	getCurrentUserEmail,
 	getCurrentUserId,
+	getCurrentUserDisplayName,
+	getCurrentUser,
 } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
@@ -156,6 +158,10 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	const isJetpack = useSelector( ( state ) =>
 		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
 	);
+	const displayName = useSelector( getCurrentUserDisplayName );
+	const userEmail = useSelector( getCurrentUserEmail );
+	const user = useSelector( getCurrentUser );
+	const avatarUrl = user?.avatar_URL;
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -173,6 +179,9 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 			sectionName={ sectionName }
 			currentUserId={ currentUserId }
 			currentUserEmail={ currentUserEmail }
+			avatarUrl={ avatarUrl }
+			displayName={ displayName }
+			userEmail={ userEmail }
 			selectedSiteId={ selectedSiteId }
 			userPurchases={ userPurchases }
 			hasPurchases={ hasPurchases }

@@ -40,6 +40,9 @@ function AdminHelpCenterContent() {
 			locale={ window.helpCenterData.locale }
 			sectionName="wp-admin"
 			currentUserId={ window.helpCenterData.current_user_id }
+			avatarUrl={ window.helpCenterData.avatarUrl }
+			displayName={ window.helpCenterData.displayName }
+			userEmail={ window.helpCenterData.userEmail }
 			selectedSiteId={ window.helpCenterData.current }
 			hasPurchases={ false }
 			primarySiteId={ window.helpCenterData.primary_site_id }

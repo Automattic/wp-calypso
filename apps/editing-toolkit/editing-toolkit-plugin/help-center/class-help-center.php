@@ -128,6 +128,7 @@ class Help_Center {
 		$user            = get_userdata( $user_id );
 		$primary_site_id = $user->primary_blog;
 		$user_email      = $user->user_email;
+		$avatar_url      = function_exists( 'wpcom_get_avatar_url' ) ? wpcom_get_avatar_url( $user_email, 64, '', true )[0] : null;
 
 		wp_localize_script(
 			'help-center-script',
@@ -139,6 +140,8 @@ class Help_Center {
 				'currentUserId' => get_current_user_id(),
 				'primarySiteId' => $primary_site_id,
 				'userEmail'     => $user_email,
+				'avatarUrl'     => $avatar_url,
+				'displayName'   => $user->display_name,
 			)
 		);
 

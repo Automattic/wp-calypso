@@ -9,8 +9,11 @@ export type HelpCenterRequiredInformation = {
 	hasPurchases: boolean;
 	primarySiteId: number;
 	getGoogleMailServiceFamily: string;
+	avatarUrl: string | undefined;
+	userEmail: string;
 	isBusinessOrEcomPlanUser?: boolean;
 	onboardingUrl: string;
+	displayName: string;
 	isJetpackSite: boolean;
 	adminUrl: string;
 };
@@ -22,6 +25,9 @@ const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInforma
 	selectedSiteId: 0,
 	hasPurchases: false,
 	primarySiteId: 0,
+	userEmail: '',
+	displayName: '',
+	avatarUrl: undefined,
 	isBusinessOrEcomPlanUser: false,
 	getGoogleMailServiceFamily: '',
 	onboardingUrl: '',

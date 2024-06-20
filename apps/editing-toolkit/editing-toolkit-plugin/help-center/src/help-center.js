@@ -69,6 +69,9 @@ function HelpCenterContent() {
 				sectionName="gutenberg-editor"
 				currentUserId={ window.helpCenterData.current_user_id }
 				selectedSiteId={ window.helpCenterData.current }
+				avatarUrl={ window.helpCenterData.avatarUrl }
+				displayName={ window.helpCenterData.displayName }
+				userEmail={ window.helpCenterData.userEmail }
 				hasPurchases={ false }
 				primarySiteId={ window.helpCenterData.primary_site_id }
 				handleClose={ closeCallback }
