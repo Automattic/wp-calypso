@@ -309,8 +309,8 @@
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
 .grav-powered-magic-login {
 	max-width: 480px;
-	line-height: 1.5;
 	font-size: 14px;
+	line-height: 1.5;
 
 	&.grav-powered-magic-login--wp-job-manager {
 		max-width: 560px;
@@ -378,6 +378,7 @@
 			align-items: start;
 			gap: 16px;
 			font-size: 15px;
+			line-height: 1.5;
 			color: #949494;
 			margin-top: 0;
 
@@ -404,6 +405,7 @@
 	}
 
 	.grav-powered-magic-login__content,
+	.grav-powered-magic-login__footer,
 	.grav-powered-magic-login__gravatar-info,
 	input[type="text"].form-text-input,
 	button {
@@ -632,6 +634,11 @@
 
 	@include break-small {
 		&.grav-powered-magic-login--wp-job-manager {
+			.grav-powered-magic-login__content {
+				padding-left: 56px;
+				padding-right: 56px;
+			}
+
 			.grav-powered-magic-login__header,
 			.magic-login__form-header {
 				font-size: 40px;
