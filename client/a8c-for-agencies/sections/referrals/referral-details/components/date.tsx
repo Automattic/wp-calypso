@@ -6,8 +6,8 @@ type Props = {
 };
 
 const DateAssigned = ( { purchase }: Props ) => {
-	return purchase.date_assigned ? (
-		new Date( purchase.date_assigned ).toLocaleDateString()
+	return purchase.license?.attached_at ? (
+		new Date( purchase.license.attached_at ).toLocaleDateString()
 	) : (
 		<Gridicon icon="minus" />
 	);

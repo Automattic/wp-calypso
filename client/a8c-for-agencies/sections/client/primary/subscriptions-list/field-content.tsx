@@ -36,14 +36,14 @@ export function SubscriptionAction( {
 } ) {
 	const status = subscription.status;
 	const isActive = status === 'active';
-	return isActive ? (
-		<span className="action-button">
-			<CancelSubscriptionAction
-				subscription={ subscription }
-				onCancelSubscription={ onCancelSubscription }
-			/>
-		</span>
-	) : (
-		'-'
+	return (
+		isActive && (
+			<span className="action-button">
+				<CancelSubscriptionAction
+					subscription={ subscription }
+					onCancelSubscription={ onCancelSubscription }
+				/>
+			</span>
+		)
 	);
 }

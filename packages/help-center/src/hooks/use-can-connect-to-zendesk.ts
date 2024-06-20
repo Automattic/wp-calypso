@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
-function requestZendeskConfig() {
-	return window.fetch( 'https://wpcom.zendesk.com/embeddable/config' );
-}
-
-export default function useZendeskConfig( enabled: boolean ) {
+export function useCanConnectToZendesk( enabled = true ) {
 	return useQuery( {
-		queryKey: [ 'getZendeskConfig' ],
-		queryFn: requestZendeskConfig,
+		queryKey: [ 'canConnectToZendesk' ],
+		queryFn: async () => {
+			const config = await fetch( 'https://wpcom.zendesk.com/embeddable/config' );
+
+			return config.ok;
+		},
 		staleTime: Infinity,
 		retry: false,
 		refetchOnMount: false,

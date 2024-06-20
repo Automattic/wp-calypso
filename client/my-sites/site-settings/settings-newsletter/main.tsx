@@ -302,7 +302,13 @@ const NewsletterSettings = () => {
 	return (
 		<Main className="site-settings">
 			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
-			<NavigationHeader navigationItems={ [] } title={ translate( 'Newsletter Settings' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Newsletter Settings' ) }
+				subtitle={ translate(
+					'Transform your blog posts into newsletters to easily reach your subscribers.'
+				) }
+			/>
 			<SubscriptionsModuleBanner />
 			<NewsletterSettingsForm />
 		</Main>

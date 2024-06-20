@@ -30,7 +30,12 @@ import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
 import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
 import { useUserSites } from '../data/use-user-sites';
-import { useChatStatus, useContactFormTitle, useChatWidget } from '../hooks';
+import {
+	useChatStatus,
+	useContactFormTitle,
+	useChatWidget,
+	useCanConnectToZendesk,
+} from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SearchResult } from '../types';
@@ -123,12 +128,8 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
 
-	const {
-		canConnectToZendesk,
-		hasActiveChats,
-		isEligibleForChat,
-		isLoading: isLoadingChatStatus,
-	} = useChatStatus();
+	const { data: canConnectToZendesk } = useCanConnectToZendesk();
+	const { hasActiveChats, isEligibleForChat, isLoading: isLoadingChatStatus } = useChatStatus();
 	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats

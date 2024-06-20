@@ -3,16 +3,8 @@
  */
 import { useSupportActivity } from '../data/use-support-activity';
 import { useSupportStatus } from '../data/use-support-status';
-/**
- * Internal Dependencies
- */
-import { useZendeskConfig, useMessagingAvailability } from './';
-import type { MessagingGroup } from './use-messaging-availability';
 
-export default function useChatStatus(
-	group: MessagingGroup = 'wpcom_messaging',
-	checkAgentAvailability = true
-) {
+export default function useChatStatus() {
 	const { data: supportStatus } = useSupportStatus();
 	const availability = supportStatus?.availability;
 
@@ -26,17 +18,10 @@ export default function useChatStatus(
 		supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' )
 	);
 
-	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
-		useMessagingAvailability( group, checkAgentAvailability && isEligibleForChat );
-
-	const { status: zendeskStatus } = useZendeskConfig( isEligibleForChat );
-
 	return {
-		canConnectToZendesk: zendeskStatus !== 'error',
 		hasActiveChats,
-		isChatAvailable: Boolean( chatAvailability?.is_available ),
 		isEligibleForChat,
-		isLoading: isLoadingAvailability || isLoadingSupportActivity,
+		isLoading: isLoadingSupportActivity,
 		isPresalesChatOpen: Boolean( availability?.is_presales_chat_open ),
 		isPrecancellationChatOpen: Boolean( availability?.is_precancellation_chat_open ),
 		supportActivity,
