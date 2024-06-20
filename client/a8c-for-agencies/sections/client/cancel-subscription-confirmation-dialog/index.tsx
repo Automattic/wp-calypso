@@ -24,7 +24,11 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 	const { mutate: cancelSubscription, isPending } = useCancelClientSubscription( {
 		onSuccess: () => {
-			dispatch( successNotice( translate( 'The subscription was successfully cancelled.' ) ) );
+			dispatch(
+				successNotice( translate( 'The subscription was successfully canceled.' ), {
+					id: 'a8c-cancel-subscription-success',
+				} )
+			);
 			onCancelSubscription?.( subscription );
 			setIsVisible( false );
 		},
@@ -42,7 +46,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 	};
 
 	const handleClose = () => {
-		dispatch( recordTracksEvent( 'calypso_a8c_client_subscription_cancel_cancelled' ) );
+		dispatch( recordTracksEvent( 'calypso_a8c_client_subscription_cancel_canceled' ) );
 		setIsVisible( false );
 	};
 
