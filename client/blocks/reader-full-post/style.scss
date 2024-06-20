@@ -18,9 +18,7 @@
 }
 
 .reader-full-post__content {
-	margin: 0 auto;
 	display: flex;
-	width: auto;
 	justify-content: space-around;
 	flex-wrap: wrap;
 
@@ -144,6 +142,7 @@
 
 .reader-full-post__story {
 	max-width: 720px;
+	padding: 0 10px;
 
 	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body;
