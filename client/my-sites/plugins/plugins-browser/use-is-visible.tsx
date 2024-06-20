@@ -6,17 +6,22 @@ export default function useIsVisible(
 ) {
 	const [ isIntersecting, setIntersecting ] = useState< boolean | undefined >( undefined );
 
-	const observer = useMemo(
-		() =>
-			new IntersectionObserver( ( [ entry ] ) => setIntersecting( entry.isIntersecting ), options ),
-		[ options ]
-	);
+	const observer = useMemo( () => {
+		if ( typeof window === 'undefined' ) {
+			return;
+		}
+
+		return new IntersectionObserver(
+			( [ entry ] ) => setIntersecting( entry.isIntersecting ),
+			options
+		);
+	}, [ options ] );
 
 	useEffect( () => {
 		if ( ref && ref.current ) {
-			observer.observe( ref.current );
+			observer?.observe( ref.current );
 		}
-		return () => observer.disconnect();
+		return () => observer?.disconnect();
 	}, [ observer, ref ] );
 
 	return isIntersecting;
