@@ -1,13 +1,24 @@
 .layout.is-section-start-with {
 	height: 100%;
+	display: grid;
+	grid-template-rows: max-content 1fr;
 
 	.layout__content {
-		height: calc(100% - var(--masterbar-height));
+		height: 100%;
+		width: 100%;
 		padding: 0;
 		background: #fdfdfd;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+
+
+		.layout__primary,
+		.main {
+			height: 100%;
+			width: 100%;
+			padding: 0;
+		}
 	}
 }
