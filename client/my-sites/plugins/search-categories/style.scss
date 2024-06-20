@@ -1,11 +1,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+$search-categories-padding-top: 40px;
+
 .search-categories {
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	padding-top: 40px;
+	padding-top: $search-categories-padding-top;
 
 	@media (max-width: 660px) {
 		padding: 0 16px;
@@ -197,4 +199,10 @@
 			}
 		}
 	}
+}
+
+.search-categories__sticky-placeholder {
+	// This is the height + padding of the .search-categories box when it's not fixed to the top
+	// We add this whitespace so the content doesn't jump when the search box becomes fixed
+	height: calc(#{$search-categories-padding-top} + 16px);
 }

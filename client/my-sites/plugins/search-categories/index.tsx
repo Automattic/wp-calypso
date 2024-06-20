@@ -111,42 +111,45 @@ const SearchCategories: FC< {
 	}, [ searchRef, searchTerm ] );
 
 	return (
-		<div className={ clsx( 'search-categories', { 'fixed-top': isSticky } ) }>
-			<SearchBox
-				isSearching={ isSearching }
-				searchBoxRef={ searchRef }
-				searchTerm={ searchTerm }
-				categoriesRef={ categoriesRef }
-				searchTerms={ searchTerms }
-			/>
+		<>
+			<div className={ clsx( 'search-categories', { 'fixed-top': isSticky } ) }>
+				<SearchBox
+					isSearching={ isSearching }
+					searchBoxRef={ searchRef }
+					searchTerm={ searchTerm }
+					categoriesRef={ categoriesRef }
+					searchTerms={ searchTerms }
+				/>
 
-			{ isDesktop() ? (
-				<>
-					<div className="search-categories__vertical-separator" />
+				{ isDesktop() ? (
+					<>
+						<div className="search-categories__vertical-separator" />
 
-					<ScrollableHorizontalNavigation
-						className="search-categories__categories"
-						onTabClick={ ( tabSlug ) => {
-							dispatch(
-								recordTracksEvent( 'calypso_plugins_category_select', {
-									tag: tabSlug,
-								} )
-							);
+						<ScrollableHorizontalNavigation
+							className="search-categories__categories"
+							onTabClick={ ( tabSlug ) => {
+								dispatch(
+									recordTracksEvent( 'calypso_plugins_category_select', {
+										tag: tabSlug,
+									} )
+								);
 
-							page( getCategoryUrl( tabSlug ) );
-						} }
-						selectedTab={ category ?? categories[ 0 ].slug }
-						tabs={ categories }
-						titleField="menu"
-						width={ width }
-					/>
-				</>
-			) : (
-				<div ref={ categoriesRef }>
-					<Categories selected={ category } noSelection={ searchTerm ? true : false } />
-				</div>
-			) }
-		</div>
+								page( getCategoryUrl( tabSlug ) );
+							} }
+							selectedTab={ category ?? categories[ 0 ].slug }
+							tabs={ categories }
+							titleField="menu"
+							width={ width }
+						/>
+					</>
+				) : (
+					<div ref={ categoriesRef }>
+						<Categories selected={ category } noSelection={ searchTerm ? true : false } />
+					</div>
+				) }
+			</div>
+			{ isSticky && <div className="search-categories__sticky-placeholder" /> }
+		</>
 	);
 };
 
