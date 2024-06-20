@@ -1063,12 +1063,15 @@ a.masterbar__quick-language-switcher {
 	.masterbar__item-all-sites {
 		gap: 2px;
 
+
 		@media only screen and (min-width: 783px) {
 			padding: 0 8px 0 4px;
 		}
 
 		svg {
 			fill: var(--color-masterbar-icon);
+			width: 20px;
+			padding-inline: 2px;
 		}
 
 		&:hover {
