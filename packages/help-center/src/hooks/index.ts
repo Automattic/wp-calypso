@@ -5,7 +5,7 @@ export { useStillNeedHelpURL } from './use-still-need-help-url';
 export { default as useMessagingAuth } from './use-messaging-auth';
 export { default as useMessagingAvailability } from './use-messaging-availability';
 export { default as useTyper } from './use-typer';
-export { default as useZendeskConfig } from './use-zendesk-config';
+export { useCanConnectToZendesk } from './use-can-connect-to-zendesk';
 export { default as useZendeskMessaging } from './use-zendesk-messaging';
 export { default as useChatStatus } from './use-chat-status';
 export { default as useChatWidget } from './use-chat-widget';
