@@ -6,7 +6,7 @@ import { getThemeTierForTheme } from 'calypso/state/themes/selectors';
 export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string ) {
 	const isThemeAllowed = useSelector( ( state ) => {
 		const themeTier = getThemeTierForTheme( state, themeId );
-		const features = themeTier?.featureList ?? [ themeTier?.feature ] ?? [ null ];
+		const features = themeTier?.featureList ?? [ themeTier?.feature ?? null ];
 
 		return features.some(
 			( feature: string | null | undefined ) =>
@@ -18,8 +18,8 @@ export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string 
 
 	const hasFeature = useSelector( ( state ) => {
 		const retainedFeatures = retainedBenefits?.tier?.featureList ?? [
-				retainedBenefits?.tier?.feature,
-			] ?? [ null ];
+			retainedBenefits?.tier?.feature ?? null,
+		];
 
 		return retainedFeatures.some(
 			( feature: string | null | undefined ) =>
