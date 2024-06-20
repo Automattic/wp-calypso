@@ -798,7 +798,13 @@ $image-height: 47px;
 		background-color: #e7e9ea;
 
 		&.is-wp-job-manager {
+			.login {
+				padding-top: 40px;
+				padding-bottom: 40px;
+			}
+
 			.login__form-header {
+				font-size: 40px;
 				margin-top: 48px;
 			}
 
