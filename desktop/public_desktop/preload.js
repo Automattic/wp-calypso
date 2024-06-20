@@ -71,6 +71,8 @@ function fflagOverrides() {
 	};
 	const features = fflagOverrides();
 	contextBridge.exposeInMainWorld( 'electron', {
+		performWebAuthn: () => ipcRenderer.invoke( 'perform-web-authn' ),
+
 		send: ( channel, ...args ) => {
 			if ( sendChannels.includes( channel ) ) {
 				ipcRenderer.send( channel, ...args );

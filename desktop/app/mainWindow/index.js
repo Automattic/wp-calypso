@@ -1,3 +1,4 @@
+const path = require( 'path' );
 const { app, BrowserWindow, BrowserView, ipcMain: ipc } = require( 'electron' );
 const appInstance = require( '../lib/app-instance' );
 const { getPath } = require( '../lib/assets' );
@@ -8,7 +9,6 @@ const SessionManager = require( '../lib/session' );
 const Settings = require( '../lib/settings' );
 const settingConstants = require( '../lib/settings/constants' );
 const System = require( '../lib/system' );
-
 /**
  * Module variables
  */
@@ -177,3 +177,11 @@ module.exports = function () {
 		app.on( 'ready', showAppWindow );
 	}
 };
+
+ipc.handle( 'perform-web-authn', () => {
+	const nativeModule = require(
+		path.resolve( __dirname, '../../build/Release/native_module.node' )
+	);
+	const nativeWindowHandle = mainWindow.getNativeWindowHandle();
+	return nativeModule.performWebAuthn( nativeWindowHandle );
+} );
