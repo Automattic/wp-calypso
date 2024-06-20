@@ -1,6 +1,6 @@
 import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import StatsButton from '../components/stats-button';
@@ -14,6 +14,7 @@ type InputFieldProps = {
 	placeholder: string;
 	value: string;
 	onChange: ( e: React.ChangeEvent< HTMLInputElement > ) => void;
+	inputReference?: React.RefObject< HTMLInputElement >;
 };
 
 const utmKeys = [ 'url', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term' ];
@@ -30,6 +31,7 @@ const InputField: React.FC< InputFieldProps > = ( {
 	placeholder,
 	value,
 	onChange,
+	inputReference,
 } ) => {
 	return (
 		<div className="stats-utm-builder__form-field">
@@ -41,6 +43,7 @@ const InputField: React.FC< InputFieldProps > = ( {
 				value={ value }
 				onChange={ onChange }
 				placeholder={ placeholder }
+				inputRef={ inputReference }
 			/>
 		</div>
 	);
@@ -54,6 +57,12 @@ const UtmBuilder: React.FC = () => {
 		utm_medium: '',
 		utm_campaign: '',
 	} );
+	// Focus the initial input field when rendered.
+	const initialInputReference = useRef< HTMLInputElement >( null );
+
+	useEffect( () => {
+		initialInputReference.current!.focus();
+	}, [] );
 
 	const fromLabels: formLabelsType = {
 		url: {
@@ -106,6 +115,7 @@ const UtmBuilder: React.FC = () => {
 						placeholder={ fromLabels.url.placeholder }
 						value={ url }
 						onChange={ ( e ) => setUrl( e.target.value ) }
+						inputReference={ initialInputReference }
 					/>
 					{ Object.keys( inputValues ).map( ( key ) => (
 						<InputField
