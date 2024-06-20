@@ -6,7 +6,6 @@ import { Questions } from './questions';
 import { Sidebar } from './sidebar';
 import { SitePreview } from './site-preview';
 import type { Step } from '../../types';
-import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
 	const sidebar = <Sidebar />;
