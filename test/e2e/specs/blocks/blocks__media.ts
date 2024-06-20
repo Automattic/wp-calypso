@@ -140,8 +140,13 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 
 	describe( 'Validate published post', function () {
 		it( `Image with reserved characters in filename is visible`, async function () {
-			await ImageBlock.validatePublishedContent( page, [
-				testFiles.imageReservedName.filename.replace( /[^a-zA-Z ]/g, '' ),
+			await Promise.any( [
+				// WP < 6.6
+				ImageBlock.validatePublishedContent( page, [
+					testFiles.imageReservedName.filename.replace( /[^a-zA-Z ]/g, '' ),
+				] ),
+				// WP 6.6+, see https://github.com/WordPress/wordpress-develop/commit/2358de1767168232ff0e7c17e550b8a99f96002e
+				ImageBlock.validatePublishedContent( page, [ testFiles.imageReservedName.filename ] ),
 			] );
 		} );
 
