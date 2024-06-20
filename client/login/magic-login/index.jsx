@@ -137,7 +137,7 @@ class MagicLogin extends Component {
 	renderLinks() {
 		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWoo, query } = this.props;
 
-		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com' ) ?? false;
+		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
 
 		if ( isWoo ) {
 			return null;
