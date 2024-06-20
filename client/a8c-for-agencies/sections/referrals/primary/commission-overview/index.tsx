@@ -88,7 +88,7 @@ export default function CommissionOverview( {
 							header={
 								<div className="commission-overview__heading">
 									<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
-									{ translate( 'Woo Payments revenue share' ) }
+									{ translate( 'WooPayments revenue share' ) }
 								</div>
 							}
 							expanded

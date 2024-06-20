@@ -42,7 +42,7 @@ $data-view-border-color: #f1f1f1;
 	gap: 48px;
 }
 
-.referrals-layout .a4a-layout__body-wrapper {
+.referrals-layout:not(.full-width-layout-with-table) .a4a-layout__body-wrapper {
 	max-width: 900px;
 }
 
@@ -69,14 +69,8 @@ $data-view-border-color: #f1f1f1;
 		margin-block-end: 32px;
 	}
 
-	.a4a-layout__body-wrapper {
+	&:not(.full-width-layout-with-table) .a4a-layout__body-wrapper {
 		max-width: 700px;
-	}
-
-	&.referrals-layout--full-width {
-		.a4a-layout__body-wrapper {
-			max-width: 100%;
-		}
 	}
 
 	.referrals-overview__step-section-woo-payments {
