@@ -1,4 +1,4 @@
-import { filterListBySearchTerm } from 'calypso/blocks/inline-help/admin-sections';
+import { filterListBySearchTerm } from '@automattic/help-center';
 
 describe( 'filterListBySearchTerm()', () => {
 	const mockCollection = [

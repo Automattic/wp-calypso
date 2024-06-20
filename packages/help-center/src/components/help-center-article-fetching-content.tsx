@@ -49,12 +49,16 @@ const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetching
 		}
 	}, [ articleUrl, post ] );
 
+	if ( ! post ) {
+		return null;
+	}
+
 	return (
 		<>
 			<ArticleContent
-				content={ post?.content }
-				title={ post?.title }
-				link={ post?.link }
+				content={ post.content }
+				title={ post.title }
+				link={ post.link }
 				isLoading={ isLoading }
 				postId={ postId }
 				blogId={ blogId }

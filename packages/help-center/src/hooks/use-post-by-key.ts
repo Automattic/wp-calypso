@@ -1,17 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { ArticleContentProps } from '../types';
 
 function fetchForKey( postKey: { blogId: number; postId: number } ) {
 	return canAccessWpcomApis()
-		? wpcomRequest( {
+		? wpcomRequest< ArticleContentProps >( {
 				path: `help/article/${ encodeURIComponent( postKey.blogId ) }/${ encodeURIComponent(
 					postKey.postId
 				) }`,
 				apiNamespace: 'wpcom/v2/',
 				apiVersion: '2',
 		  } )
-		: apiFetch( {
+		: apiFetch< ArticleContentProps >( {
 				path: `/help-center/fetch-post?post_id=${ encodeURIComponent(
 					postKey.postId
 				) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,

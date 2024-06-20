@@ -115,7 +115,7 @@ function HelpSearchResults( {
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = useSiteIntent();
 	const rawContextualResults = useMemo(
-		() => getContextResults( sectionName, siteIntent ),
+		() => getContextResults( sectionName || 'gutenberg-editor', siteIntent ?? 'build' ),
 		[ sectionName, siteIntent ]
 	);
 
