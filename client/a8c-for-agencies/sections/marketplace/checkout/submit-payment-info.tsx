@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	A4A_CLIENT_PAYMENT_METHODS_ADD_LINK,
 	A4A_CLIENT_SUBSCRIPTIONS_LINK,
@@ -19,10 +19,25 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { paymentMethodRequired } = usePaymentMethod();
+	const [ refetchInterval, setRefetchInterval ] = useState< number | undefined >( undefined );
+
+	const { paymentMethodRequired } = usePaymentMethod( refetchInterval );
 
 	const { mutate, isPending, status, error } = useSubmitPaymentInfoMutation();
-	const { agencyId, referralId, secret } = getClientReferralQueryArgs();
+	const { agencyId, referralId, secret, paymentMethodAdded } = getClientReferralQueryArgs();
+
+	// Set refetch interval when payment method is added and remove the query arg
+	useEffect( () => {
+		if ( paymentMethodAdded ) {
+			setRefetchInterval( 2000 );
+			page.redirect(
+				removeQueryArgs( window.location.pathname + window.location.search, 'payment_method_added' )
+			);
+		}
+		return () => {
+			clearInterval( refetchInterval );
+		};
+	}, [ paymentMethodAdded, refetchInterval ] );
 
 	const termsLink = 'https://automattic.com/for-agencies/platform-agreement/';
 
