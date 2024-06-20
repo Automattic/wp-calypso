@@ -57,7 +57,7 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 				}
 				href={ siteError ? '' : noBoostHrefOption }
 				target="_blank"
-				disabled={ siteError }
+				disabled={ siteError || site.sticker.includes( 'migration-in-progress' ) }
 				onClick={ () =>
 					recordEvent( 'boost_column_score_click', {
 						score: overallScore,

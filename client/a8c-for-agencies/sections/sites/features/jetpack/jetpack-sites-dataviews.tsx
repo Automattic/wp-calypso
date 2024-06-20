@@ -68,6 +68,10 @@ export const JetpackSitesDataViews = ( {
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
+			if ( site.sticker.includes( 'migration-in-progress' ) ) {
+				return;
+			}
+
 			if ( site.is_connection_healthy ) {
 				setDataViewsState( ( prevState: DataViewsState ) => ( {
 					...prevState,
@@ -380,19 +384,23 @@ export const JetpackSitesDataViews = ( {
 								onClick={ ( e: MouseEvent ) => e.stopPropagation() }
 								onKeyDown={ ( e: KeyboardEvent ) => e.stopPropagation() }
 							>
-								<SiteActions
-									isLargeScreen={ isLargeScreen }
-									site={ item.site }
-									siteError={ item.site.error }
-								/>
-								<Button
-									onClick={ () => openSitePreviewPane( item.site.value ) }
-									className="site-preview__open"
-									borderless
-									ref={ ( ref ) => setActionsRef( ( current ) => current || ref ) }
-								>
-									<Gridicon icon="chevron-right" />
-								</Button>
+								{ ! item.site.value.sticker.includes( 'migration-in-progress' ) && (
+									<>
+										<SiteActions
+											isLargeScreen={ isLargeScreen }
+											site={ item.site }
+											siteError={ item.site.error }
+										/>
+										<Button
+											onClick={ () => openSitePreviewPane( item.site.value ) }
+											className="site-preview__open"
+											borderless
+											ref={ ( ref ) => setActionsRef( ( current ) => current || ref ) }
+										>
+											<Gridicon icon="chevron-right" />
+										</Button>
+									</>
+								) }
 							</div>
 						</>
 					);
