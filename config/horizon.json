@@ -116,6 +116,7 @@
 		"reader/first-posts-stream": true,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
+		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"safari-idb-mitigation": true,
 		"start-with/square-payments": false,
