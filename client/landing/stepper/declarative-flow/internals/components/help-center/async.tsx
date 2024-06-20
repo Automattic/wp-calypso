@@ -4,7 +4,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
 import AsyncLoad from 'calypso/components/async-load';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
@@ -22,7 +22,6 @@ const AsyncHelpCenter = () => {
 	const locale = useLocale();
 	const sectionName = useSelector( getSection );
 	const currentUserId = useSelector( getCurrentUserId );
-	const currentUserEmail = useSelector( getCurrentUserEmail );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const userPurchases = useSelector( getUserPurchases );
 	const hasPurchases = useSelector( hasCancelableUserPurchases );
@@ -53,7 +52,6 @@ const AsyncHelpCenter = () => {
 			locale={ locale }
 			sectionName={ sectionName }
 			currentUserId={ currentUserId }
-			currentUserEmail={ currentUserEmail }
 			selectedSiteId={ selectedSiteId }
 			userPurchases={ userPurchases }
 			hasPurchases={ hasPurchases }

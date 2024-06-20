@@ -5,7 +5,6 @@ export type HelpCenterRequiredInformation = {
 	locale: string;
 	sectionName: string;
 	currentUserId: number;
-	currentUserEmail: string;
 	selectedSiteId: number;
 	hasPurchases: boolean;
 	primarySiteId: number;
@@ -20,7 +19,6 @@ const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInforma
 	locale: '',
 	sectionName: '',
 	currentUserId: 0,
-	currentUserEmail: '',
 	selectedSiteId: 0,
 	hasPurchases: false,
 	primarySiteId: 0,

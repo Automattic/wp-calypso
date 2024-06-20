@@ -92,8 +92,7 @@ type HelpCenterContactFormProps = {
 
 export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { search } = useLocation();
-	const helpCenterContext = useHelpCenterContext();
-	const sectionName = helpCenterContext.sectionName;
+	const { sectionName, currentUserId } = useHelpCenterContext();
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const { onSubmit } = props;
@@ -105,11 +104,9 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const locale = useLocale();
 	const { isPending: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isPending: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
-	const userId = helpCenterContext?.currentUserId;
-	const { data: userSites } = useUserSites( userId );
+	const { data: userSites } = useUserSites( currentUserId );
 	const userWithNoSites = userSites?.sites.length === 0;
 	const queryClient = useQueryClient();
-	const email = helpCenterContext.currentUserEmail;
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
@@ -156,7 +153,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
 		// pass user email as query cache key
-		userId,
+		currentUserId,
 		userDeclaredSiteUrl,
 		sitePickerChoice === 'OTHER_SITE'
 	);
@@ -393,7 +390,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 								// wait 30 seconds until support-history endpoint actually updates
 								// yup, it takes that long (tried 5, and 10)
 								queryClient.invalidateQueries( {
-									queryKey: [ 'help-support-history', 'ticket', email ],
+									queryKey: [ 'help-support-history', 'ticket', currentUserId ],
 								} );
 							}, 30000 );
 						} )
