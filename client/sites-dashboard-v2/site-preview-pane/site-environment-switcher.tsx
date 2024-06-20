@@ -6,6 +6,8 @@ import clsx from 'clsx';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 
+import './site-environment-switcher.scss';
+
 interface SiteEnvironmentSwitcherProps {
 	onChange: ( siteId: number ) => void;
 	site: SiteExcerptData;

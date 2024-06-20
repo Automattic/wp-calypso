@@ -5,22 +5,6 @@
 	--color-light-backdrop: var(--studio-white);
 }
 
-.site-preview-pane__site-switcher-dropdown-menu {
-	.components-popover__content {
-		width: 189px;
-		padding: calc(4px* 1);
-	}
-
-	.components-dropdown-menu__menu-item.is-active {
-		background-color: var(--color-primary);
-		color: var(--color-light-backdrop);
-	}
-
-	.components-dropdown-menu__menu-item:focus {
-		box-shadow: initial;
-	}
-}
-
 .main.a4a-layout.sites-dashboard {
 	padding-block-start: 0;
 
@@ -550,18 +534,6 @@
 			background: var(--color-light-backdrop);
 			max-height: calc(100vh - 32px - var(--masterbar-height));
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-
-			.site-preview-pane__site-environment-switcher {
-				cursor: pointer;
-				display: flex;
-				align-items: center;
-				.components-button.has-icon {
-					width: 24px;
-					height: 24px;
-					padding: 0;
-					min-width: initial;
-				}
-			}
 
 			.preview-pane__navigation {
 				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);
