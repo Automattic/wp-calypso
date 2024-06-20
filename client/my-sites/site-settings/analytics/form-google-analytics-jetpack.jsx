@@ -64,12 +64,13 @@ const GoogleAnalyticsJetpackForm = ( {
 	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.sites[ siteId ].active : false;
 
 	useEffect( () => {
-		if ( jetpackModuleActive ) {
+		// Show the form if GA module is active, or it's been removed but GA is activated via the Legacy Plugin.
+		if ( jetpackModuleActive || ( ! isJetpackModuleAvailable && fields?.wga?.is_active ) ) {
 			setDisplayForm( true );
 		} else {
 			setDisplayForm( false );
 		}
-	}, [ jetpackModuleActive, setDisplayForm ] );
+	}, [ jetpackModuleActive, setDisplayForm, isJetpackModuleAvailable, fields?.wga?.is_active ] );
 
 	const handleToggleChange = ( key ) => {
 		const value = fields.wga ? ! fields.wga[ key ] : false;
