@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { defer } from 'lodash';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad } from 'calypso/reader/controller-helper';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const analyticsPageTitle = 'Reader';
@@ -27,7 +28,11 @@ export function blogPost( context, next ) {
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
 	const lastRoute = context.lastRoute || '/';
-	function closer() {
+	function closer( post ) {
+		recordAction( 'full_post_close' );
+		recordGaEvent( 'Closed Full Post Dialog' );
+		recordTrackForPost( 'calypso_reader_article_closed', post );
+
 		page.back( lastRoute );
 	}
 
@@ -50,6 +55,8 @@ export function blogPost( context, next ) {
 				placeholder={ null }
 				returnPath={ lastRoute }
 				onClose={ closer }
+				postId={ postId }
+				blogId={ blogId }
 			/>
 		);
 	}
@@ -67,7 +74,11 @@ export function feedPost( context, next ) {
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
 	const lastRoute = context.lastRoute || '/';
-	function closer() {
+	function closer( post ) {
+		recordAction( 'full_post_close' );
+		recordGaEvent( 'Closed Full Post Dialog' );
+		recordTrackForPost( 'calypso_reader_article_closed', post );
+
 		page.back( lastRoute );
 	}
 
@@ -89,6 +100,8 @@ export function feedPost( context, next ) {
 				placeholder={ null }
 				returnPath={ lastRoute }
 				onClose={ closer }
+				postId={ postId }
+				feedId={ feedId }
 			/>
 		);
 	}

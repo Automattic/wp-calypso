@@ -214,11 +214,7 @@ export class FullPostView extends Component {
 
 	handleBack = ( event ) => {
 		event.preventDefault();
-		recordAction( 'full_post_close' );
-		recordGaEvent( 'Closed Full Post Dialog' );
-		recordTrackForPost( 'calypso_reader_article_closed', this.props.post );
-
-		this.props.onClose && this.props.onClose();
+		this.props.onClose && this.props.onClose( this.props.post );
 	};
 
 	handleCommentClick = () => {
