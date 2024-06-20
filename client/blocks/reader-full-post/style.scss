@@ -19,6 +19,10 @@
 
 .reader-full-post__content {
 	margin: 0 auto;
+	display: flex;
+	width: auto;
+	justify-content: space-around;
+	flex-wrap: wrap;
 
 	.comment-button__icon path,
 	.conversation-follow-button path {
@@ -26,23 +30,23 @@
 	}
 
 	@include breakpoint-deprecated( ">1280px" ) {
-		width: 720px;
-		padding-left: 260px;
+		// width: 720px;
+		// padding-left: 260px;
 	}
 
 	@include breakpoint-deprecated( "1040px-1280px" ) {
-		width: 720px;
-		padding-left: 240px;
+		// width: 720px;
+		// padding-left: 240px;
 	}
 
 	@include breakpoint-deprecated( "660px-1040px" ) {
-		width: auto;
+		// width: auto;
 		margin: 0;
-		padding-left: 240px;
+		// padding-left: 240px;
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
-		width: auto;
+		// width: auto;
 		padding: 0 20px;
 
 		.reader-post-card__tags {
@@ -103,7 +107,7 @@
 
 .reader-full-post__sidebar {
 	width: 220px;
-	position: fixed;
+	// position: fixed;
 	text-align: center;
 
 	@include breakpoint-deprecated( ">1280px" ) {
