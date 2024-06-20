@@ -7,7 +7,6 @@ import {
 	EXTENSION_THRESHOLD_IN_MILLION,
 	default as useAvailableUpgradeTiers,
 } from 'calypso/my-sites/stats/hooks/use-available-upgrade-tiers';
-import useStatsPurchases from 'calypso/my-sites/stats/hooks/use-stats-purchases';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -94,8 +93,7 @@ function StatsCommercialUpgradeSlider( {
 
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const { isCommercialOwned } = useStatsPurchases( siteId );
-	const tiers = useAvailableUpgradeTiers( siteId, isCommercialOwned );
+	const tiers = useAvailableUpgradeTiers( siteId );
 	const uiStrings = useTranslatedStrings();
 
 	// Show a message with a tooltip for the first tier when it's over 10k views,

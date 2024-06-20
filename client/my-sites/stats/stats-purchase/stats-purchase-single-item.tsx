@@ -147,7 +147,7 @@ const StatsCommercialPurchase = ( {
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 	const { isCommercialOwned } = useStatsPurchases( siteId );
-	const tiers = useAvailableUpgradeTiers( siteId, isCommercialOwned ) || [];
+	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
