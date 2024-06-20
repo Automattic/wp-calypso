@@ -2,13 +2,11 @@ import config from '@automattic/calypso-config';
 import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useSelect } from '@wordpress/data';
-import { useExperiment } from 'calypso/lib/explat';
 import { useIsSiteOwner } from '../hooks/use-is-site-owner';
 import { ONBOARD_STORE } from '../stores';
 import { useSite } from './use-site';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-const bypassBigSkyExperiment = config.isEnabled( 'big-sky' );
 const featureFlagEnabled = config.isEnabled( 'calypso/big-sky' );
 const validGoals = [ 'other', 'promote' ];
 
@@ -21,22 +19,6 @@ export function useIsBigSkyEligible() {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 		[ site ]
 	);
-
-	const [ isLoading, experimentAssignment ] = useExperiment(
-		'calypso_signup_onboarding_bigsky_soft_launch',
-		{
-			isEligible: featureFlagEnabled && ! bypassBigSkyExperiment,
-		}
-	);
-
-	if ( isLoading ) {
-		return { isLoading, isEligible: false };
-	}
-
-	const isInBigSkyExperiment = experimentAssignment?.variationName === 'treatment';
-	if ( ! isInBigSkyExperiment && ! bypassBigSkyExperiment ) {
-		return { isLoading: false, isEligible: false };
-	}
 
 	const hasValidGoal = goals.every( ( value ) => validGoals.includes( value ) );
 	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
