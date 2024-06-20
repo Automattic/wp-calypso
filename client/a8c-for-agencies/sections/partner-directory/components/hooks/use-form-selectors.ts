@@ -9,14 +9,15 @@ export function useFormSelectors() {
 	const translate = useTranslate();
 
 	const availableServices: Record< string, string > = {
-		seo_advertising: translate( 'SEO & Advertising' ),
-		email_social_media_marketing: translate( 'Email & social media marketing' ),
-		content_marketing: translate( 'Content marketing' ),
-		conversion_checkout_optimization: translate( 'Conversion & checkout optimization' ),
-		site_optimization: translate( 'Site optimization' ),
-		plugin_site_updates: translate( 'Plugin site updates' ),
-		store_build_migration: translate( 'Store build & migration' ),
-		consulting: translate( 'Consulting' ),
+		seo: translate( 'Search Engine Optimization (SEO)' ),
+		email_marketing_social_media: translate( 'Email Marketing & Social Media' ),
+		content_strategy_development: translate( 'Content Strategy & Development' ),
+		paid_advertising: translate( 'Paid Advertising' ),
+		website_online_store_development: translate( 'Website or Online Store Development' ),
+		site_migration_platform_integration: translate( 'Site Migration and Platform Integration' ),
+		site_maintenance_platform_integration: translate( 'Site Maintenance & Plugin Management' ),
+		website_performance_optimization: translate( 'Website Performance Optimization' ),
+		conversion_rate_checkout_optimization: translate( 'Conversion Rate & Checkout Optimization' ),
 		ecommerce_consulting: translate( 'eCommerce consulting' ),
 		growth_consultation: translate( 'Growth consultation' ),
 		accessibility_audit: translate( 'Accessibility audit' ),
