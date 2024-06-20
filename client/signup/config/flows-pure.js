@@ -39,7 +39,7 @@ const getP2Flows = () => {
 };
 
 const getEmailSubscriptionFlow = () => {
-	return isEnabled( 'email-subscription-flow' )
+	return isEnabled( 'signup/email-subscription-flow' )
 		? [
 				{
 					name: 'email-subscription',
