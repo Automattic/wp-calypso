@@ -38,6 +38,11 @@ import SearchCategories from '../search-categories';
 
 import './style.scss';
 
+const THRESHOLD = 10;
+const SEARCH_CATEGORIES_HEIGHT = 36;
+const LAYOUT_PADDING = 16;
+const MASTERBAR_HEIGHT = 32;
+
 const searchTerms = [ 'woocommerce', 'seo', 'file manager', 'jetpack', 'ecommerce', 'form' ];
 
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isLoggedIn } ) => {
@@ -69,13 +74,22 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	} = useScrollAboveElement();
 	const searchRef = useRef( null );
 	const categoriesRef = useRef();
-	const loggedInSearchBoxRef = useRef( null );
-	const isLoggedInSearchBoxSticky = useIsVisible( loggedInSearchBoxRef ) === false;
 	//  another temporary solution until phase 4 is merged
 	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
+
+	const loggedInSearchBoxRef = useRef( null );
+	const isLoggedInSearchBoxSticky =
+		useIsVisible( loggedInSearchBoxRef, {
+			rootMargin: `${
+				-1 *
+				( THRESHOLD +
+					SEARCH_CATEGORIES_HEIGHT +
+					( selectedSite ? MASTERBAR_HEIGHT : LAYOUT_PADDING ) )
+			}px 0px 0px 0px`,
+		} ) === false;
 
 	const jetpackNonAtomic = useSelector(
 		( state ) =>

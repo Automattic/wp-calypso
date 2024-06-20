@@ -1,11 +1,15 @@
 import { RefObject, useEffect, useMemo, useState } from 'react';
 
-export default function useIsVisible( ref: RefObject< HTMLElement > ) {
+export default function useIsVisible(
+	ref: RefObject< HTMLElement >,
+	options?: IntersectionObserverInit
+) {
 	const [ isIntersecting, setIntersecting ] = useState< boolean | undefined >( undefined );
 
 	const observer = useMemo(
-		() => new IntersectionObserver( ( [ entry ] ) => setIntersecting( entry.isIntersecting ) ),
-		[]
+		() =>
+			new IntersectionObserver( ( [ entry ] ) => setIntersecting( entry.isIntersecting ), options ),
+		[ options ]
 	);
 
 	useEffect( () => {
