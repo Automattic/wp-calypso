@@ -3,6 +3,7 @@ import {
 	useChatStatus,
 	useChatWidget,
 	useCanConnectToZendesk,
+	useMessagingAvailability,
 } from '@automattic/help-center/src/hooks';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -27,6 +28,7 @@ interface Props {
 	goToImportCapturePage: () => void;
 	goToImportContentOnlyPage: () => void;
 }
+
 export const MigrationError = ( props: Props ) => {
 	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const {
@@ -38,8 +40,12 @@ export const MigrationError = ( props: Props ) => {
 		goToImportContentOnlyPage,
 	} = props;
 	const translate = useTranslate();
-	const { isChatAvailable, isEligibleForChat } = useChatStatus();
+	const { isEligibleForChat } = useChatStatus();
 	const { data: canConnectToZendesk } = useCanConnectToZendesk();
+	const { data: isMessagingAvailable } = useMessagingAvailability(
+		'wpcom_messaging',
+		isEligibleForChat
+	);
 	const { openChatWidget, isOpeningChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
 		isEligibleForChat
@@ -48,7 +54,7 @@ export const MigrationError = ( props: Props ) => {
 		useErrorDetails( status, sourceSiteUrl, targetSiteUrl );
 
 	const getHelp = useCallback( () => {
-		if ( isChatAvailable && canConnectToZendesk ) {
+		if ( isMessagingAvailable && canConnectToZendesk ) {
 			openChatWidget( {
 				siteUrl: targetSiteUrl,
 				message: `${ status }: Import onboarding flow; migration failed`,
@@ -61,7 +67,7 @@ export const MigrationError = ( props: Props ) => {
 		openChatWidget,
 		targetSiteUrl,
 		status,
-		isChatAvailable,
+		isMessagingAvailable,
 		canConnectToZendesk,
 		setInitialRoute,
 		setShowHelpCenter,

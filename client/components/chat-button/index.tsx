@@ -4,6 +4,7 @@ import {
 	useChatStatus,
 	useChatWidget,
 	useCanConnectToZendesk,
+	useMessagingAvailability,
 } from '@automattic/help-center/src/hooks';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -66,15 +67,13 @@ const ChatButton: FC< Props > = ( {
 	withHelpCenter = true,
 } ) => {
 	const { __ } = useI18n();
-
+	const { hasActiveChats, isEligibleForChat, isPrecancellationChatOpen, isPresalesChatOpen } =
+		useChatStatus();
 	const messagingGroup = getMessagingGroupForIntent( chatIntent );
-	const {
-		hasActiveChats,
-		isChatAvailable,
-		isEligibleForChat,
-		isPrecancellationChatOpen,
-		isPresalesChatOpen,
-	} = useChatStatus( messagingGroup );
+	const { data: isMessagingAvailable } = useMessagingAvailability(
+		messagingGroup,
+		isEligibleForChat
+	);
 	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { data: canConnectToZendesk } = useCanConnectToZendesk();
 
@@ -99,7 +98,7 @@ const ChatButton: FC< Props > = ( {
 				break;
 		}
 
-		if ( isEligibleForChat && isChatAvailable && ( canConnectToZendesk || withHelpCenter ) ) {
+		if ( isEligibleForChat && isMessagingAvailable && ( canConnectToZendesk || withHelpCenter ) ) {
 			return true;
 		}
 
