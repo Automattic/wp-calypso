@@ -143,7 +143,7 @@ export const Variant = styled.div`
 export const Label = styled.span`
 	display: flex;
 	white-space: nowrap;
-	font-size: inherit;
+	font-size: 14px;
 
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
@@ -165,6 +165,6 @@ export const IntroPricingText = styled.span`
 `;
 
 export const PriceTextContainer = styled.span`
-	font-size: inherit;
+	font-size: 14px;
 	text-align: right;
 `;
