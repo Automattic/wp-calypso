@@ -44,6 +44,16 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 	const showAssignButton = purchase.status === 'active' && redirectUrl;
 	const [ statusType, statusText ] = getPurchaseStatus( purchase, translate );
 
+	let tooltip = '';
+
+	const isAwaitingPayment = purchase.status === 'pending';
+
+	if ( isAwaitingPayment ) {
+		tooltip = isWPCOMLicense
+			? translate( 'When your client pays, you can initiate this site.' )
+			: translate( 'When your client pays, you can assign this product to a site.' );
+	}
+
 	return purchase.site_assigned ? (
 		<Button
 			className="referrals-purchases__assign-button"
@@ -58,6 +68,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 				statusProps={ {
 					children: statusText,
 					type: statusType,
+					tooltip,
 				} }
 			/>
 			{ showAssignButton && (
