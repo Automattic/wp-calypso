@@ -25,6 +25,7 @@ import {
 	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -268,7 +269,9 @@ export class Login extends Component {
 							this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' )
 						}
 					>
-						{ translate( 'Email me a login link.' ) }
+						{ isGravatarOAuth2Client( oauth2Client )
+							? translate( 'Email me a login code.' )
+							: translate( 'Email me a login link.' ) }
 					</a>
 					<a
 						href={ lostPasswordUrl }
