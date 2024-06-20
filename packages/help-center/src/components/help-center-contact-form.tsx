@@ -13,12 +13,12 @@ import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
+import { getQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import { getQueryArgs } from 'calypso/lib/query-args';
 /**
  * Internal Dependencies
  */
@@ -353,7 +353,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 						`Plan: ${ productId } - ${ productName } (${ productTerm })`,
 					];
 
-					if ( getQueryArgs()?.ref === 'woocommerce-com' ) {
+					if ( getQueryArgs( window.location.href )?.ref === 'woocommerce-com' ) {
 						ticketMeta.push(
 							`Created during store setup on ${
 								isWcMobileApp() ? 'Woo mobile app' : 'Woo browser'
