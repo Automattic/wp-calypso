@@ -41,7 +41,7 @@ const GDPRCookieConsentNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 
 	const bannerBody = isOdysseyStats
 		? translate(
-				'To fix, go to {{link}}Complianz settings{{/link}} use the toggle to disable Jetpack integration.',
+				'Your site visitors must now consent to be tracked in Jetpack Stats, which might result in a decrease in reported statistics as some visitors may not give consent. To adjust this, go to {{link}}Complianz settings{{/link}} to manage the Jetpack integration.',
 				{
 					components: {
 						link: (
@@ -59,10 +59,8 @@ const GDPRCookieConsentNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 	return (
 		<div className={ classNames }>
 			<NoticeBanner
-				level="warning"
-				title={ translate(
-					'Complianz - GDBR/CCPA Cookie Consent plugin is not allowing Jetpack Stats to update'
-				) }
+				level="info"
+				title={ translate( 'Complianz - GDBR/CCPA Cookie Consent plugin impact on site stats' ) }
 				onClose={ dismissNotice }
 			>
 				<p>{ bannerBody }</p>
