@@ -3,16 +3,10 @@ import SignupForm from 'calypso/blocks/signup-form';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 
 function SubscribingEmailStepContent( props ) {
-	const { flowName, isAttemptingSubscription, queryParams } = props;
+	const { flowName, isLoading, queryParams } = props;
 
-	if ( isAttemptingSubscription ) {
-		return (
-			<ReskinnedProcessingScreen
-				flowName={ flowName }
-				hasPaidDomain={ false }
-				// isDestinationSetupSiteFlow={ destination.startsWith( '/setup' ) }
-			/>
-		);
+	if ( isLoading ) {
+		return <ReskinnedProcessingScreen flowName={ flowName } hasPaidDomain={ false } />;
 	}
 
 	return (
