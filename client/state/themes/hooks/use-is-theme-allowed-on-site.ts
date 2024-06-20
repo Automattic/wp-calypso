@@ -9,7 +9,7 @@ export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string 
 		const features = themeTier?.featureList ?? [ themeTier?.feature ] ?? [ null ];
 
 		return features.some(
-			( feature: string ) => ! feature || siteHasFeature( state, siteId, feature )
+			( feature: string | null ) => ! feature || siteHasFeature( state, siteId, feature )
 		);
 	} );
 
@@ -21,7 +21,7 @@ export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string 
 			] ?? [ null ];
 
 		return retainedFeatures.some(
-			( feature: string ) => ! feature || siteHasFeature( state, siteId, feature )
+			( feature: string | null ) => ! feature || siteHasFeature( state, siteId, feature )
 		);
 	} );
 
