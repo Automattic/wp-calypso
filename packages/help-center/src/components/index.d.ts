@@ -16,23 +16,6 @@ declare module 'calypso/blocks/inline-help/inline-help-search-results' {
 	const InlineHelpSearchResults: FC;
 	export = InlineHelpSearchResults;
 }
-
-declare module 'calypso/components/data/query-user-purchases' {
-	const QueryUserPurchases: () => null;
-	export const purchases: void;
-	export = QueryUserPurchases;
-}
-
-declare module 'calypso/components/data/query-reader-post' {
-	const QueryReaderPost: FC;
-	export default QueryReaderPost;
-}
-
-declare module 'calypso/components/data/query-reader-site' {
-	const QueryReaderSite: FC;
-	export default QueryReaderSite;
-}
-
 declare module 'calypso/components/embed-container' {
 	const EmbedContainer: FC;
 	export default EmbedContainer;

@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import {
@@ -22,16 +23,13 @@ import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useSiteOption } from 'calypso/state/sites/hooks';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
+import { useSiteIntent } from '../hooks/use-site-intent';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
@@ -110,13 +108,12 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 	currentRoute,
 }: HelpSearchResultsProps ) {
-	const dispatch = useDispatch();
 	const { hasPurchases, sectionName } = useHelpCenterContext();
 
 	const adminResults = useAdminResults( searchQuery );
 
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
-	const siteIntent = useSiteOption( 'site_intent' );
+	const siteIntent = useSiteIntent();
 	const rawContextualResults = useMemo(
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
@@ -176,14 +173,12 @@ function HelpSearchResults( {
 		// check and catch admin section links.
 		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
 			// record track-event.
-			dispatch(
-				recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
-					link: link,
-					search_term: searchQuery,
-					location,
-					section: sectionName,
-				} )
-			);
+			recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
+				link: link,
+				search_term: searchQuery,
+				location,
+				section: sectionName,
+			} );
 
 			// push state only if it's internal link.
 			if ( ! /^http/.test( link ) ) {
@@ -209,7 +204,7 @@ function HelpSearchResults( {
 			? 'calypso_inlinehelp_tailored_article_select'
 			: 'calypso_inlinehelp_article_select';
 
-		dispatch( recordTracksEvent( eventName, eventData ) );
+		recordTracksEvent( eventName, eventData );
 		onSelect( event, result );
 	};
 
@@ -359,12 +354,7 @@ function HelpSearchResults( {
 		);
 	};
 
-	return (
-		<>
-			<QueryUserPurchases />
-			{ renderSearchResults() }
-		</>
-	);
+	return renderSearchResults();
 }
 
 HelpSearchResults.propTypes = {

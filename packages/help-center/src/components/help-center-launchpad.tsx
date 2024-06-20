@@ -4,12 +4,11 @@ import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
 import { useLaunchpad } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useSelect } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { SITE_STORE } from '../stores';
-import type { SiteSelect } from '@automattic/data-stores';
+import { useSiteIntent } from '../hooks/use-site-intent';
+import { useSiteSlug } from '../hooks/use-site-slug';
 
 const getEnvironmentHostname = () => {
 	try {
@@ -29,18 +28,10 @@ const getEnvironmentHostname = () => {
 
 export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
-	const { selectedSiteId, sectionName } = useHelpCenterContext();
+	const { sectionName } = useHelpCenterContext();
 
-	const site = useSelect(
-		( select ) => {
-			if ( selectedSiteId ) {
-				return ( select( SITE_STORE ) as SiteSelect ).getSite( selectedSiteId );
-			}
-		},
-		[ selectedSiteId ]
-	);
-	let siteIntent = site && site?.options?.site_intent;
-	let siteSlug = site && new URL( site.URL ).host;
+	let siteIntent = useSiteIntent();
+	let siteSlug = useSiteSlug();
 
 	if ( ! siteIntent || ! siteSlug ) {
 		siteIntent = window?.helpCenterData?.currentSite?.site_intent;
