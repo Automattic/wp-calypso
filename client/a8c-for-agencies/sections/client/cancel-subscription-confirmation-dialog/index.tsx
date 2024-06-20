@@ -36,7 +36,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 	const onConfirm = () => {
 		cancelSubscription( {
-			licenseKey: subscription.license_key,
+			licenseKey: subscription.license.license_key,
 		} );
 		dispatch( recordTracksEvent( 'calypso_a8c_client_subscription_cancel_confirmed' ) );
 	};
