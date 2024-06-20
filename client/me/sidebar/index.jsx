@@ -172,15 +172,6 @@ class MeSidebar extends Component {
 					/>
 
 					<SidebarItem
-						link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
-						label={ translate( 'Manage Blogs' ) }
-						materialIcon="apps"
-						onNavigate={ ( event, urlPath ) => {
-							this.handleGlobalSidebarMenuItemClick( urlPath );
-						} }
-					/>
-
-					<SidebarItem
 						selected={ itemLinkMatches( '/notifications', path ) }
 						link="/me/notifications"
 						label={ translate( 'Notification Settings' ) }
