@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { PLAN_ECOMMERCE } from '@automattic/data-stores/src/plans/constants';
 import { usePlansGridContext } from '../../../../grid-context';
-import StorageFeatureDropdown from './storage-feature-dropdown';
+import StorageDropdown from './storage-dropdown';
 import StorageFeatureLabel from './storage-feature-label';
 
 type Props = {
@@ -21,7 +21,7 @@ type Props = {
 
 const ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
-const StorageFeature = ( {
+const PlanStorage = ( {
 	onStorageAddOnClick,
 	planSlug,
 	options,
@@ -44,9 +44,9 @@ const StorageFeature = ( {
 		ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug );
 
 	return (
-		<div className="plans-grid-next-storage-feature">
+		<div className="plans-grid-next-plan-storage">
 			{ canUpgradeStorageForPlan ? (
-				<StorageFeatureDropdown
+				<StorageDropdown
 					planSlug={ planSlug }
 					onStorageAddOnClick={ onStorageAddOnClick }
 					priceOnSeparateLine={ priceOnSeparateLine }
@@ -58,4 +58,4 @@ const StorageFeature = ( {
 	);
 };
 
-export default StorageFeature;
+export default PlanStorage;

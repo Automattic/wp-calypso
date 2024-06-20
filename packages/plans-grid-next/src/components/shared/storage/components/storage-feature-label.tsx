@@ -48,12 +48,12 @@ const StorageFeatureLabel = ( { planSlug }: Props ) => {
 		currencyCode: currencyCode ?? 'USD',
 	} );
 
-	const containerClasses = clsx( 'plans-grid-next-plan-storage-label__container', {
+	const containerClasses = clsx( 'plans-grid-next-storage-feature-label__container', {
 		'is-row': ! isLargeCurrency,
 	} );
 
 	const volumeJSX = (
-		<div className="plan-features-2023-grid__storage-buttons" key={ storageSlug }>
+		<div className="plans-grid-next-storage-feature-label__volume-badge" key={ storageSlug }>
 			{ storageStringFromFeature }
 		</div>
 	);
@@ -61,7 +61,7 @@ const StorageFeatureLabel = ( { planSlug }: Props ) => {
 	return formattedMonthlyAddedCost && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) ? (
 		<div className={ containerClasses }>
 			{ volumeJSX }
-			<div className="plans-grid-next-plan-storage-label__offset-price">
+			<div className="plans-grid-next-storage-feature-label__offset-price">
 				{ translate( '+ %(formattedMonthlyAddedCost)s/month', {
 					args: { formattedMonthlyAddedCost },
 				} ) }

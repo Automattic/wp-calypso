@@ -162,7 +162,7 @@ $mobile-card-max-width: 440px;
 		}
 
 		.plan-features-2023-grid__table-item {
-			.plans-grid-next-storage-feature {
+			.plans-grid-next-plan-storage {
 				padding-top: 0;
 			}
 		}
@@ -589,7 +589,7 @@ $mobile-card-max-width: 440px;
 			padding: 24px 0 6px 20px;
 		}
 
-		&.plans-grid-next-storage-feature {
+		&.plans-grid-next-plan-storage {
 			padding: 24px 20px 38px 20px;
 		}
 
@@ -951,7 +951,7 @@ $mobile-card-max-width: 440px;
  * Storage Add-On Dropdown parts *
  *********************************/
 
-.plans-grid-next-plan-storage-label__container {
+.plans-grid-next-storage-feature-label__container {
 	display: flex;
 	gap: 5px;
 	flex-direction: column;
@@ -971,32 +971,32 @@ $mobile-card-max-width: 440px;
 	}
 }
 
-.plans-grid-next-plan-storage-label__offset-price {
+.plans-grid-next-storage-feature-label__offset-price {
 	color: var(--studio-green-50);
 	font-size: $font-body-extra-small;
 	font-weight: 500;
 }
 
-.storage-add-on-dropdown__offset-price-container {
+.plans-grid-next-storage-dropdown__addon-offset-price-container {
 	width: 100%;
 	margin-top: 8px;
 	text-align: left;
 
-	.storage-add-on-dropdown__offset-price {
+	.plans-grid-next-storage-dropdown__addon-offset-price {
 		color: var(--studio-green-50);
 		font-size: $font-body-extra-small;
 		font-weight: 500;
 	}
 }
 
-.storage-add-on-dropdown-option {
+.plans-grid-next-storage-dropdown__option {
 	display: inline-block;
 	line-height: 20px;
 	min-height: 30px;
 	padding-top: 5px;
 }
 
-.storage-add-on-dropdown-option__title {
+.plans-grid-next-storage-dropdown__option-title {
 	color: var(--color-text);
 	font-weight: 500;
 
@@ -1005,19 +1005,19 @@ $mobile-card-max-width: 440px;
 	}
 }
 
-.storage-add-on-dropdown-option__price,
-.storage-add-on-dropdown-option__per-month {
+.plans-grid-next-storage-dropdown__option-price,
+.plans-grid-next-storage-dropdown__option-per-month {
 	display: inline-block;
 
 	font-size: 0.75rem;
 	font-weight: 500;
 }
 
-.storage-add-on-dropdown-option__price {
+.plans-grid-next-storage-dropdown__option-price {
 	margin-left: 4px;
 }
 
-.plan-features-2023-grid__storage-buttons {
+.plans-grid-next-storage-feature-label__volume-badge {
 	background: #f2f2f2;
 	color: var(--studio-gray-90);
 	/* stylelint-disable-next-line */
@@ -1041,7 +1041,7 @@ $mobile-card-max-width: 440px;
 	}
 }
 
-.plans-grid-next-storage-feature {
+.plans-grid-next-plan-storage {
 	width: 100%;
 
 	.plan-features-2023-grid__plan-spotlight & {

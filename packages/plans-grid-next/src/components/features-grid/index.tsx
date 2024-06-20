@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import { PlanFeaturesItem } from '../item';
-import { StorageFeature } from '../shared/storage';
+import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
 import PartnerLogos from './partner-logos';
@@ -122,7 +122,7 @@ const MobileView = ( {
 							</PlanFeaturesItem>
 							<div className="plan-features-2023-grid__highlighted-feature">
 								<PlanFeaturesItem>
-									<StorageFeature
+									<PlanStorage
 										planSlug={ gridPlan.planSlug }
 										onStorageAddOnClick={ onStorageAddOnClick }
 										showUpgradeableStorage={ showUpgradeableStorage }
