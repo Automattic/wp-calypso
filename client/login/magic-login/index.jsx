@@ -478,9 +478,10 @@ class MagicLogin extends Component {
 	};
 
 	handleGravPoweredEmailSwitch = () => {
-		const { oauth2Client } = this.props;
+		const { oauth2Client, hideMagicLoginRequestForm: showEmailForm } = this.props;
 
 		this.setState( { showSecondaryEmailOptions: false } );
+		showEmailForm();
 
 		this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_switch_email', {
 			client_id: oauth2Client.id,
