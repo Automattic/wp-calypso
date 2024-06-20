@@ -64,6 +64,9 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 				{ title: __( 'Closing the loop' ) },
 			];
 			break;
+		case 'email-subscription':
+			steps = [ { title: __( 'Subscribing to magic' ) } ];
+			break;
 		default:
 			steps = [
 				! isDestinationSetupSiteFlow && { title: __( 'Building your site' ) },

@@ -1,22 +1,47 @@
-import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { PureComponent } from 'react';
+import SignupForm from 'calypso/blocks/signup-form';
+import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 
-class SubscribingEmailStepContent extends PureComponent {
-	render() {
+function SubscribingEmailStepContent( props ) {
+	const { flowName, isAttemptingSubscription, queryParams } = props;
+
+	if ( isAttemptingSubscription ) {
 		return (
-			<div className="subscribing-email__button-wrapper">
-				<Button
-					primary
-					type="submit"
-					onClick={ this.props.onButtonClick }
-					className="subscribing-email__button"
-				>
-					Create new user
-				</Button>
-			</div>
+			<ReskinnedProcessingScreen
+				flowName={ flowName }
+				hasPaidDomain={ false }
+				// isDestinationSetupSiteFlow={ destination.startsWith( '/setup' ) }
+			/>
 		);
 	}
+
+	return (
+		<>
+			<SignupForm
+				step={ props.step }
+				email={ queryParams?.email || '' }
+				// redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
+				// disabled={ this.userCreationStarted() }
+				// submitting={ this.userCreationStarted() }
+				// save={ this.save }
+				// submitForm={ this.submitForm }
+				// submitButtonText={ this.submitButtonText() }
+				// suggestedUsername={ this.props.suggestedUsername }
+				// handleSocialResponse={ this.handleSocialResponse }
+				isPasswordless
+				queryArgs={ props.initialContext?.query || {} }
+				isSocialSignupEnabled={ false }
+				// socialService={ socialService }
+				// socialServiceResponse={ socialServiceResponse }
+				// recaptchaClientId={ this.state.recaptchaClientId }
+				horizontal
+				isReskinned
+				shouldDisplayUserExistsError
+				isSocialFirst={ false }
+				labelText={ props.isWooPasswordless ? props.translate( 'Your email' ) : null }
+			/>
+		</>
+	);
 }
 
 export default localize( SubscribingEmailStepContent );
