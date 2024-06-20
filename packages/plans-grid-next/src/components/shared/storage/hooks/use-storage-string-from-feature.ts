@@ -8,7 +8,6 @@ import {
 	FEATURE_P2_13GB_STORAGE,
 	PRODUCT_1GB_SPACE,
 	PlanSlug,
-	WPComStorageAddOnSlug,
 	WPComPlanStorageFeatureSlug,
 } from '@automattic/calypso-products';
 import { Purchases, AddOns } from '@automattic/data-stores';
@@ -20,7 +19,7 @@ const useStorageStringFromFeature = ( {
 	siteId,
 	planSlug,
 }: {
-	storageSlug?: WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug;
+	storageSlug?: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	siteId?: null | number | string;
 	planSlug: PlanSlug;
 } ) => {

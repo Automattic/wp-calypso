@@ -85,6 +85,8 @@ export type FeatureList = {
  * features via their `featuresSlugs` prop. So `WPCOM_STORAGE_ADD_ONS` being a list of feature slugs
  * used to individually refer to actual Add-Ons is likely a mistake.
  */
+
+// TODO clk REMOVE
 const WPCOM_STORAGE_ADD_ONS = < const >[
 	FEATURE_50GB_STORAGE_ADD_ON,
 	FEATURE_100GB_STORAGE_ADD_ON,
@@ -105,6 +107,7 @@ export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
 export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
 export type WPComPlanStorageFeatureSlug = ( typeof WPCOM_PLAN_STORAGE_FEATURES )[ number ];
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
+// TODO clk REMOVE
 export type WPComStorageAddOnSlug = ( typeof WPCOM_STORAGE_ADD_ONS )[ number ];
 // WPCOM Space Upgrade Products
 // - Special products that do not yet map to the exported `PRODUCTS_LIST` in @automattic/calypso-products

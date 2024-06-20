@@ -1,6 +1,5 @@
 import {
 	PlanSlug,
-	WPComStorageAddOnSlug,
 	WPComPlanStorageFeatureSlug,
 } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
@@ -20,7 +19,7 @@ interface Props {
  */
 const useAvailableStorageDropdownOptions = ( {
 	planSlug,
-}: Props ): ( WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug )[] | null => {
+}: Props ): ( AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug )[] | null => {
 	const { siteId, gridPlansIndex } = usePlansGridContext();
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
 
@@ -39,7 +38,7 @@ const useAvailableStorageDropdownOptions = ( {
 					 */
 					...( ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) && availableStorageAddOns
 						? availableStorageAddOns.map(
-								( addOn ) => addOn?.featureSlugs?.[ 0 ] as WPComStorageAddOnSlug
+								( addOn ) => addOn?.featureSlugs?.[ 0 ] as AddOns.StorageAddOnSlug
 						  )
 						: [] ),
 			  ]

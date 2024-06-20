@@ -4,7 +4,6 @@ import type {
 	UrlFriendlyTermType,
 	PlanSlug,
 	FeatureList,
-	WPComStorageAddOnSlug,
 	FeatureObject,
 	FeatureGroupMap,
 	Feature,
@@ -105,7 +104,7 @@ export interface CommonGridProps {
 	isInSignup: boolean;
 	isInAdmin: boolean;
 	isReskinned?: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	planActionOverrides?: PlanActionOverrides;
