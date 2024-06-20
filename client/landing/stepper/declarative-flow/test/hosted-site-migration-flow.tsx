@@ -7,6 +7,7 @@ import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
+import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { goToCheckout } from '../../utils/checkout';
 import hostedSiteMigrationFlow from '../hosted-site-migration-flow';
 import { STEPS } from '../internals/steps';
@@ -185,7 +186,7 @@ describe( 'Hosted site Migration Flow', () => {
 				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
 				dependencies: {
 					destination: 'migrate',
-					how: 'difm',
+					how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 				},
 			} );
 

@@ -11,6 +11,7 @@ import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from 'calypso/lib/url';
 import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
+import { HOW_TO_MIGRATE_OPTIONS } from '../constants';
 import { useIsSiteAdmin } from '../hooks/use-is-site-admin';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
@@ -286,7 +287,7 @@ const siteMigration: Flow = {
 					}
 
 					// Do it for me option.
-					if ( providedDependencies?.how === 'difm' ) {
+					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 						return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
 							siteId,
 							siteSlug,
@@ -317,7 +318,7 @@ const siteMigration: Flow = {
 
 						if (
 							providedDependencies?.userAcceptedDeal ||
-							urlQueryParams.get( 'how' ) === 'difm'
+							urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
 						) {
 							redirectAfterCheckout = STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug;
 						}

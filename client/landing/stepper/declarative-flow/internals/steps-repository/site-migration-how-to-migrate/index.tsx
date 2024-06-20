@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
+import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -27,7 +28,7 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 				description: translate(
 					"Share your site with us, and we'll review it and handle the migration if possible."
 				),
-				value: 'difm',
+				value: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 				selected: true,
 			},
 			{
@@ -35,7 +36,7 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 				description: translate(
 					'Install the plugin yourself, find the migration key and migrate the site.'
 				),
-				value: 'myself',
+				value: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF,
 			},
 		],
 		[ translate ]

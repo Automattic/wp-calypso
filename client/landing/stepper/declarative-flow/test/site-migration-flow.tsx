@@ -9,6 +9,7 @@ import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-tri
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from '../../../../lib/url';
+import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
 import siteMigrationFlow from '../site-migration-flow';
@@ -228,7 +229,7 @@ describe( 'Site Migration Flow', () => {
 				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
 				dependencies: {
 					destination: 'migrate',
-					how: 'difm',
+					how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 				},
 			} );
 
