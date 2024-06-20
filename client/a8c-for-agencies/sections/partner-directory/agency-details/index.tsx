@@ -75,6 +75,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 		<Form
 			className="partner-directory-agency-details"
 			title={ translate( 'Finish adding details to your public profile' ) }
+			autocomplete="off"
 			description={
 				<>
 					Add details to your agency's public profile for clients to see.{ ' ' }

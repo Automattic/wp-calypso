@@ -547,6 +547,16 @@ const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, acti
 	return state;
 };
 
+const partnerBundle: Reducer< string | null, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_PARTNER_BUNDLE' ) {
+		return action.partnerBundle;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
@@ -592,6 +602,7 @@ const reducer = combineReducers( {
 	pluginsToVerify,
 	profilerData,
 	paidSubscribers,
+	partnerBundle,
 } );
 
 export type State = ReturnType< typeof reducer >;

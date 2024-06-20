@@ -117,6 +117,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 		<Form
 			className="partner-directory-agency-expertise"
 			title={ translate( 'Share your expertise' ) }
+			autocomplete="off"
 			description={ translate( "Pick your agency's specialties and choose your directories." ) }
 		>
 			<FormSection title={ translate( 'Product and Service' ) }>
