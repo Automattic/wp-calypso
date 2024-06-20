@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { defer } from 'lodash';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad } from 'calypso/reader/controller-helper';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const analyticsPageTitle = 'Reader';
 
@@ -13,6 +14,7 @@ const scrollTopIfNoHash = () =>
 	} );
 
 export function blogPost( context, next ) {
+	const state = context.store.getState();
 	const blogId = context.params.blog;
 	const postId = context.params.post;
 	const basePath = '/read/blogs/:blog_id/posts/:post_id';
@@ -24,6 +26,11 @@ export function blogPost( context, next ) {
 	}
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
+	const lastRoute = context.lastRoute || '/';
+	function closer() {
+		page.back( lastRoute );
+	}
+
 	context.primary = (
 		<AsyncLoad
 			require="calypso/blocks/reader-full-post"
@@ -31,16 +38,27 @@ export function blogPost( context, next ) {
 			postId={ postId }
 			referral={ referral }
 			referralStream={ context.lastRoute }
-			onClose={ function () {
-				page.back( context.lastRoute || '/' );
-			} }
+			onClose={ closer }
 		/>
 	);
+
+	if ( isUserLoggedIn( state ) ) {
+		context.secondary = (
+			<AsyncLoad
+				require="calypso/reader/sidebar"
+				path={ context.path }
+				placeholder={ null }
+				returnPath={ lastRoute }
+				onClose={ closer }
+			/>
+		);
+	}
 	scrollTopIfNoHash();
 	next();
 }
 
 export function feedPost( context, next ) {
+	const state = context.store.getState();
 	const feedId = context.params.feed;
 	const postId = context.params.post;
 	const basePath = '/read/feeds/:feed_id/posts/:feed_item_id';
@@ -48,8 +66,9 @@ export function feedPost( context, next ) {
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
+	const lastRoute = context.lastRoute || '/';
 	function closer() {
-		page.back( context.lastRoute || '/' );
+		page.back( lastRoute );
 	}
 
 	context.primary = (
@@ -61,6 +80,19 @@ export function feedPost( context, next ) {
 			referralStream={ context.lastRoute }
 		/>
 	);
+
+	if ( isUserLoggedIn( state ) ) {
+		context.secondary = (
+			<AsyncLoad
+				require="calypso/reader/sidebar"
+				path={ context.path }
+				placeholder={ null }
+				returnPath={ lastRoute }
+				onClose={ closer }
+			/>
+		);
+	}
+
 	scrollTopIfNoHash();
 	next();
 }
