@@ -127,9 +127,10 @@ export default function CommissionOverview( {
 								<div className="commission-overview__heading">
 									<JetpackLogo className="jetpack-logo" size={ 24 } />
 									<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
-									{ translate( 'Jetpack products and Woo-owned{{nbsp/}}extensions', {
+									{ translate( 'Jetpack products and Woo{{8209/}}owned{{nbsp/}}extensions', {
 										components: {
 											nbsp: <>&nbsp;</>,
+											8209: <>&#8209;</>,
 										},
 									} ) }
 								</div>
