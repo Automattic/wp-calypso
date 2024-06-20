@@ -12,27 +12,33 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 		status: string | null;
 		type: 'warning' | 'success' | 'info' | null;
 	} => {
-		const activeStatuses = item.statuses.filter( ( status ) => status === 'active' );
-		const pendingStatuses = item.statuses.filter( ( status ) => status === 'pending' );
-		const canceledStatuses = item.statuses.filter( ( status ) => status === 'canceled' );
+		if ( ! item.statuses.length ) {
+			return {
+				status: null,
+				type: null,
+			};
+		}
 
-		switch ( item.statuses.length ) {
-			case 0:
-				return {
-					status: null,
-					type: null,
-				};
-			case activeStatuses.length:
+		const status = item.statuses.reduce( ( prev, curr ) => {
+			if ( prev === curr ) {
+				return curr;
+			}
+
+			return 'mixed';
+		}, item.statuses[ 0 ] );
+
+		switch ( status ) {
+			case 'active':
 				return {
 					status: translate( 'Active' ),
 					type: 'success',
 				};
-			case pendingStatuses.length:
+			case 'pending':
 				return {
 					status: translate( 'Pending' ),
 					type: 'warning',
 				};
-			case canceledStatuses.length:
+			case 'canceled':
 				return {
 					status: translate( 'Canceled' ),
 					type: 'info',

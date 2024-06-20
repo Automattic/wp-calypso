@@ -42,11 +42,11 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 		cancelSubscription( {
 			licenseKey: subscription.license.license_key,
 		} );
-		dispatch( recordTracksEvent( 'calypso_a8c_client_subscription_cancel_confirmed' ) );
+		dispatch( recordTracksEvent( 'calypso_a8c_client_subscription_cancel_confirm' ) );
 	};
 
 	const handleClose = () => {
-		dispatch( recordTracksEvent( 'calypso_a8c_client_subscription_cancel_canceled' ) );
+		dispatch( recordTracksEvent( 'calypso_a8c_client_subscription_cancel_dismiss' ) );
 		setIsVisible( false );
 	};
 
