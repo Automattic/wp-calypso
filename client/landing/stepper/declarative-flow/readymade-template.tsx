@@ -7,7 +7,9 @@ import { useSelector } from 'react-redux';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -22,6 +24,8 @@ import {
 	ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -29,6 +33,8 @@ const readymadeTemplateFlow: Flow = {
 	name: READYMADE_TEMPLATE_FLOW,
 	isSignupFlow: true,
 	useSideEffect() {
+		const reduxDispatch = useReduxDispatch();
+		const { assembleSite, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
@@ -39,7 +45,6 @@ const readymadeTemplateFlow: Flow = {
 
 		// We have to query theme for the Jetpack site.
 		useQueryTheme( 'wpcom', selectedTheme );
-
 		useEffect( () => {
 			if ( ! theme ) {
 				// eslint-disable-next-line no-console
@@ -58,7 +63,16 @@ const readymadeTemplateFlow: Flow = {
 				design_type: 'assembler',
 			} );
 
-			setIntent( SiteIntent.WpAdmin );
+			setIntent( SiteIntent.ReadyMadeTemplate );
+
+			enableAssemblerThemeAndConfigureTemplates(
+				theme.id,
+				'',
+				assembleSite,
+				setPendingAction,
+				reduxDispatch,
+				''
+			);
 		}, [ theme ] );
 	},
 
@@ -103,7 +117,7 @@ const readymadeTemplateFlow: Flow = {
 			const selectedSiteSlug = providedDependencies?.siteSlug as string;
 			const selectedSiteId = providedDependencies?.siteId as string;
 			setSelectedSite( selectedSiteId );
-			setIntentOnSite( selectedSiteSlug, SiteIntent.WpAdmin );
+			setIntentOnSite( selectedSiteSlug, SiteIntent.ReadyMadeTemplate );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
 
 			const params = new URLSearchParams( {
@@ -299,5 +313,43 @@ const readymadeTemplateFlow: Flow = {
 		return result;
 	},
 };
+
+function enableAssemblerThemeAndConfigureTemplates(
+	themeId,
+	siteId,
+	assembleSite,
+	setPendingAction,
+	reduxDispatch,
+	siteSlugOrId
+) {
+	setPendingAction( () =>
+		Promise.resolve()
+			.then( () =>
+				reduxDispatch(
+					activateOrInstallThenActivate( themeId, siteId, 'assembler', false ) as ThunkAction<
+						PromiseLike< string >,
+						any,
+						any,
+						AnyAction
+					>
+				)
+			)
+			.then( ( activeThemeStylesheet: string ) =>
+				assembleSite( siteSlugOrId, activeThemeStylesheet, {
+					homeHtml: '',
+					headerHtml: '',
+					footerHtml: '',
+					pages: [],
+					globalStyles: {},
+					// Newly created sites can have the content replaced when necessary,
+					// e.g. when the homepage has a blog pattern, we replace the posts with the content from theme demo site.
+					// TODO: Ask users whether they want that.
+					canReplaceContent: true,
+					// All sites using the assembler set the option wpcom_site_setup
+					siteSetupOption: 'assembler',
+				} )
+			)
+	);
+}
 
 export default readymadeTemplateFlow;
