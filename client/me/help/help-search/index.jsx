@@ -1,10 +1,10 @@
 import { CompactCard } from '@automattic/components';
+import { useHelpSearchQuery } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
-import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query-v1';
 import HelpResults from 'calypso/me/help/help-results';
 import NoResults from 'calypso/my-sites/no-results';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

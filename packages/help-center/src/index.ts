@@ -8,3 +8,4 @@ export { default as Mail } from './icons/mail';
 export { default as NewReleases } from './icons/new-releases';
 export * from './support-variations';
 export * from './hooks/use-admin-results';
+export { useHelpSearchQuery } from './hooks/use-help-search-query';
