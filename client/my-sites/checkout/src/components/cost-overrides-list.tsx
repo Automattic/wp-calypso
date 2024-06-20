@@ -5,13 +5,15 @@ import {
 	isTriennially,
 	isYearly,
 } from '@automattic/calypso-products';
-import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
+import { CheckoutModal, FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import {
 	type ResponseCart,
 	type RemoveCouponFromCart,
 	type ResponseCartProduct,
+	removeProductFromCart,
 	useShoppingCart,
+	RemoveProductFromCart,
 } from '@automattic/shopping-cart';
 import {
 	LineItemPrice,
@@ -261,6 +263,60 @@ export function LineItemCostOverrides( {
 	);
 }
 
+const ProductMetaAreaForCostOverridesList = ( {
+	removeProductFromCart,
+	setIsModalVisible,
+	isModalVisible,
+	modalCopy,
+	isDisabled,
+	label,
+}: {
+	removeProductFromCart: RemoveProductFromCart;
+	setIsModalVisible: ( isModalVisible: boolean ) => void;
+	isModalVisible: boolean;
+	modalCopy: { title: string; description: string };
+	isDisabled: boolean;
+	label: string;
+} ) => {
+	const translate = useTranslate();
+
+	return (
+		<>
+			<DeleteButton
+				className="checkout-line-item__remove-product"
+				buttonType="text-button"
+				aria-label={ String(
+					translate( 'Remove %s from cart', {
+						args: label,
+					} )
+				) }
+				disabled={ isDisabled }
+				onClick={ () => {
+					setIsModalVisible( true );
+				} }
+			>
+				{ translate( 'Remove' ) }
+			</DeleteButton>
+
+			<CheckoutModal
+				isVisible={ isModalVisible }
+				closeModal={ () => {
+					setIsModalVisible( false );
+				} }
+				secondaryAction={ () => {
+					setIsModalVisible( false );
+				} }
+				primaryAction={ () => {
+					removeProductFromCart();
+				} }
+				secondaryButtonCTA={ String( 'Cancel' ) }
+				title={ modalCopy.title }
+				copy={ modalCopy.description }
+			/>
+		</>
+	);
+};
+
 const ProductsAndCostOverridesListWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -284,10 +340,24 @@ const ProductTitleAreaForCostOverridesList = styled.div`
 	gap: 0.5em;
 `;
 
-function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
+function SingleProductAndCostOverridesList( {
+	product,
+	removeProductFromCart,
+	setIsModalVisible,
+	isModalVisible,
+	modalCopy,
+}: {
+	product: ResponseCartProduct;
+	removeProductFromCart: RemoveProductFromCart;
+	setIsModalVisible: ( isModalVisible: boolean ) => void;
+	isModalVisible: boolean;
+	modalCopy: { title: string; description: string };
+} ) {
 	const translate = useTranslate();
 	const costOverridesList = filterCostOverridesForLineItem( product, translate );
 	const label = getLabel( product );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
 	const actualAmountDisplay = formatCurrency(
 		product.item_original_subtotal_integer,
 		product.currency,
@@ -302,6 +372,16 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 				<span className="cost-overrides-list-product__title">{ label }</span>
 				<LineItemPrice actualAmount={ actualAmountDisplay } />
 			</ProductTitleAreaForCostOverridesList>
+
+			<ProductMetaAreaForCostOverridesList
+				removeProductFromCart={ removeProductFromCart }
+				setIsModalVisible={ setIsModalVisible }
+				isModalVisible={ isModalVisible }
+				modalCopy={ modalCopy }
+				isDisabled={ isDisabled }
+				label={ label }
+			/>
+
 			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
 		</SingleProductAndCostOverridesListWrapper>
 	);
@@ -356,11 +436,24 @@ export function CouponCostOverride( {
 	);
 }
 
-export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
+export function ProductsAndCostOverridesList( {
+	removeProductFromCart,
+	responseCart,
+}: {
+	removeProductFromCart: removeProductFromCart;
+	responseCart: ResponseCart;
+} ) {
 	return (
 		<ProductsAndCostOverridesListWrapper>
 			{ responseCart.products.map( ( product ) => (
-				<SingleProductAndCostOverridesList product={ product } key={ product.uuid } />
+				<SingleProductAndCostOverridesList
+					product={ product }
+					key={ product.uuid }
+					removeProductFromCart={ removeProductFromCart }
+					setIsModalVisible={ () => {} }
+					isModalVisible={ false }
+					modalCopy={ { title: 'title', description: 'description' } }
+				/>
 			) ) }
 			<CouponCostOverride responseCart={ responseCart } />
 		</ProductsAndCostOverridesListWrapper>

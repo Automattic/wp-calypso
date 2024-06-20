@@ -58,7 +58,11 @@ import getPlanFeatures from '../lib/get-plan-features';
 import { CheckIcon } from './check-icon';
 import { ProductsAndCostOverridesList } from './cost-overrides-list';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type {
+	RemoveProductFromCart,
+	ResponseCart,
+	ResponseCartProduct,
+} from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
@@ -78,6 +82,7 @@ export function WPCheckoutOrderSummary( {
 	siteId,
 	onChangeSelection,
 	showFeaturesList,
+	removeProductFromCart,
 }: {
 	siteId: number | undefined;
 	onChangeSelection: (
@@ -87,6 +92,7 @@ export function WPCheckoutOrderSummary( {
 		volume?: number
 	) => void;
 	showFeaturesList?: boolean;
+	removeProductFromCart: RemoveProductFromCart;
 } ) {
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
@@ -109,7 +115,7 @@ export function WPCheckoutOrderSummary( {
 				/>
 			) }
 
-			<CheckoutSummaryPriceList />
+			<CheckoutSummaryPriceList removeProductFromCart={ removeProductFromCart } />
 		</CheckoutSummaryCard>
 	);
 }
@@ -174,7 +180,11 @@ export function CheckoutSummaryFeaturedList( {
 		</>
 	);
 }
-function CheckoutSummaryPriceList() {
+function CheckoutSummaryPriceList( {
+	removeProductFromCart,
+}: {
+	removeProductFromCart: RemoveProductFromCart;
+} ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
@@ -186,7 +196,11 @@ function CheckoutSummaryPriceList() {
 
 	return (
 		<>
-			{ ! shouldUseCheckoutV2 && <ProductsAndCostOverridesList responseCart={ responseCart } /> }
+			<ProductsAndCostOverridesList
+				removeProductFromCart={ removeProductFromCart }
+				responseCart={ responseCart }
+			/>
+
 			<CheckoutSummaryAmountWrapper>
 				<CheckoutSubtotalSection>
 					<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
