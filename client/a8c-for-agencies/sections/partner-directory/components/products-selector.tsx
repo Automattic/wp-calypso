@@ -43,7 +43,7 @@ const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
 			__nextHasNoMarginBottom
 			label=""
 			onChange={ onProductLabelsSelected }
-			suggestions={ Object.values( availableProducts ) }
+			suggestions={ Object.values( availableProducts ).sort() }
 			value={ selectedProductsByLabel }
 		/>
 	);
