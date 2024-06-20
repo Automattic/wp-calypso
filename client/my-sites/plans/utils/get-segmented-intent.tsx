@@ -37,7 +37,7 @@ export function getSegmentedIntent( answers: SurveyData ): SegmentedIntent {
 			return { segmentSlug: 'plans-guided-segment-nonprofit', segment: 'nonprofit' };
 		}
 
-		if ( surveyedGoals?.includes( 'newsletter' ) ) {
+		if ( surveyedGoals?.includes( 'newsletter' ) && surveyedGoals?.length === 1 ) {
 			return { segmentSlug: undefined, segment: 'newsletter' };
 		}
 
