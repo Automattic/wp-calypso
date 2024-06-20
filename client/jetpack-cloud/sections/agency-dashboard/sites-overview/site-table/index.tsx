@@ -1,6 +1,7 @@
 import { Icon, starFilled, info } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useContext, useState, forwardRef, Ref } from 'react';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import AddNewSiteTourStep2 from 'calypso/jetpack-cloud/sections/onboarding-tours/add-new-site-tour-step-2';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
@@ -42,6 +43,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 
 	return (
 		<>
+			<QueryReaderTeams />
 			<table ref={ ref } className="site-table__table">
 				<thead>
 					<tr>
