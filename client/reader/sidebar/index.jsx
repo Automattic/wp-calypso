@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { hasTranslation } from '@wordpress/i18n';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
-import { defer, pickBy, startsWith } from 'lodash';
+import { defer, startsWith } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderLists from 'calypso/components/data/query-reader-lists';
@@ -33,7 +33,6 @@ import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selecto
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import {
 	toggleReaderSidebarLists,
 	toggleReaderSidebarTags,
@@ -298,7 +297,7 @@ export class ReaderSidebar extends Component {
 			requireBackLink: true,
 			siteTitle: i18n.translate( 'Reader' ),
 			backLinkHref: this.props.returnPath || '/sites',
-			onClose: this.props.onClose && ( () => this.props.onClose( this.props.post ) ),
+			onClose: this.props.onClose && ( () => this.props.onClose() ),
 		};
 		return (
 			<GlobalSidebar { ...props }>
@@ -334,7 +333,7 @@ export class ReaderSidebar extends Component {
 
 export default withCurrentRoute(
 	connect(
-		( state, { currentSection, postId, blogId, feedId } ) => {
+		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
 			const sectionName = currentSection?.name ?? null;
 			const siteId = getSelectedSiteId( state );
@@ -344,8 +343,6 @@ export default withCurrentRoute(
 				sectionGroup,
 				sectionName
 			);
-			const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
-			const post = getPostByKey( state, postKey ) || { _state: 'pending' };
 
 			return {
 				isListsOpen: isListsOpen( state ),
@@ -354,7 +351,6 @@ export default withCurrentRoute(
 				teams: getReaderTeams( state ),
 				organizations: getReaderOrganizations( state ),
 				shouldShowGlobalSidebar,
-				post,
 			};
 		},
 		{

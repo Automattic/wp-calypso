@@ -214,7 +214,7 @@ export class FullPostView extends Component {
 
 	handleBack = ( event ) => {
 		event.preventDefault();
-		this.props.onClose && this.props.onClose( this.props.post );
+		this.props.onClose && this.props.onClose();
 	};
 
 	handleCommentClick = () => {
