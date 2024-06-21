@@ -766,7 +766,11 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
-		const isFromAutomatticForAgenciesReferralClient = isA4AOAuth2Client( oauth2Client );
+		const isFromAutomatticForAgenciesReferralClient =
+			isA4AOAuth2Client( oauth2Client ) &&
+			currentQuery &&
+			currentQuery.redirect_to &&
+			currentQuery.redirect_to.includes( '/client/' );
 
 		const signupUrl = this.getSignupUrl();
 
