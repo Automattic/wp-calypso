@@ -49,7 +49,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
-		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-backgrounds": "^7.6.19",
 		"typescript": "^5.3.3"
