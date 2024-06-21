@@ -17,6 +17,7 @@ import SegmentedControl from '@automattic/components/src/segmented-control/docs/
 import SelectDropdown from '@automattic/components/src/select-dropdown/docs/example';
 import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
+import Swipeable from '@automattic/components/src/swipeable/docs/example';
 import Tooltip from '@automattic/components/src/tooltip/docs/example';
 import clsx from 'clsx';
 import { trim } from 'lodash';
@@ -104,7 +105,6 @@ import Spotlight from 'calypso/components/spotlight/docs/example';
 import StepProgress from 'calypso/components/step-progress/docs/example';
 import SuggestionSearchExample from 'calypso/components/suggestion-search/docs/example';
 import SupportInfoExample from 'calypso/components/support-info/docs/example';
-import Swipeable from 'calypso/components/swipeable/docs/example';
 import TextDiff from 'calypso/components/text-diff/docs/example';
 import TextareaAutosize from 'calypso/components/textarea-autosize/docs/example';
 import TileGrid from 'calypso/components/tile-grid/docs/example';

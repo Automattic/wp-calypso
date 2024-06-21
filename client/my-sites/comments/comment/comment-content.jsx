@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import EmbedContainer from '@automattic/components/src/embed-container';
 import DOMPurify from 'dompurify';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -7,7 +8,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryComment from 'calypso/components/data/query-comment';
-import EmbedContainer from 'calypso/components/embed-container';
 import { stripHTML, decodeEntities } from 'calypso/lib/formatting';
 import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
 import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';

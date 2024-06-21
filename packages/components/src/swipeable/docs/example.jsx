@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Swipeable from 'calypso/components/swipeable';
+import Swipeable from '../index';
 
 const SwipeableExample = () => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );

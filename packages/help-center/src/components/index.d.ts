@@ -179,7 +179,6 @@ declare module 'calypso/state/selectors/get-admin-help-results' {
 }
 
 declare module 'calypso/lib/formatting' {
-	export const decodeEntities: ( text: string ) => string;
 	export const preventWidows: ( text: string, wordsToKeep?: number ) => string;
 }
 

@@ -1,5 +1,5 @@
+import DotPager from '@automattic/components/src/dot-pager';
 import { useTranslate } from 'i18n-calypso';
-import DotPager from 'calypso/components/dot-pager';
 
 import './style.scss';
 

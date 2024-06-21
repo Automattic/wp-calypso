@@ -645,6 +645,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.0.0"
     canvas-confetti: "npm:^1.6.0"
     clsx: "npm:^2.1.1"
+    debug: "npm:^4.3.3"
     gridicons: "npm:^3.4.2"
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
