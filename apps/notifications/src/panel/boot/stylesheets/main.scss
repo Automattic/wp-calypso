@@ -556,7 +556,7 @@ $with-sidebar-min-page-width: 1114px;
 			.wpnc__keyboard-shortcuts-popover {
 				font-family: $sans;
 				font-weight: normal;
-				font-size: 0.75rem;
+				font-size: $wpnc__font-size;
 				position: absolute;
 				height: 200px;
 				z-index: 1000;
@@ -594,14 +594,16 @@ $with-sidebar-min-page-width: 1114px;
 							border-radius: 4px;
 							min-width: 25px;
 							min-height: 25px;
-							line-height: 25px;
 
 							&.letter {
 								font-weight: bold;
+								line-height: 25px;
 							}
 
 							&.has-icon {
-								padding: 2px 2px 0 2px;
+								svg {
+									margin-top: 3px;
+								}
 							}
 						}
 					}
