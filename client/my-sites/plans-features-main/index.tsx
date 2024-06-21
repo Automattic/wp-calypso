@@ -322,12 +322,7 @@ const PlansFeaturesMain = ( {
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
 
-	const {
-		isLoading: isTrailMapExperimentLoading,
-		isTrailMapAny,
-		isTrailMapCopy,
-		isTrailMapStructure,
-	} = useExperimentForTrailMap( {
+	const { isLoading: isTrailMapExperimentLoading, isTrailMap } = useExperimentForTrailMap( {
 		flowName,
 		isInSignup,
 		intent,
@@ -400,7 +395,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	let highlightLabelOverrides: { [ K in PlanSlug ]?: TranslateResult } | undefined;
-	if ( isTrailMapAny ) {
+	if ( isTrailMap ) {
 		highlightLabelOverrides = {
 			[ PLAN_ECOMMERCE ]: translate( 'Best for eCommerce' ),
 		};
@@ -751,7 +746,7 @@ const PlansFeaturesMain = ( {
 					offeringFreePlan={ offeringFreePlan }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
-					showPlanBenefits={ isInSignup && isTrailMapAny }
+					showPlanBenefits={ isInSignup && isTrailMap }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -789,7 +784,7 @@ const PlansFeaturesMain = ( {
 										isInAdmin={ ! isInSignup }
 										isInSignup={ isInSignup }
 										onStorageAddOnClick={ handleStorageAddOnClick }
-										paidDomainName={ isTrailMapCopy ? undefined : paidDomainName }
+										paidDomainName={ isTrailMap ? undefined : paidDomainName }
 										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }
 										selectedFeature={ selectedFeature }
@@ -800,8 +795,8 @@ const PlansFeaturesMain = ( {
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 										useAction={ useAction }
-										enableFeatureTooltips={ ! isTrailMapCopy }
-										enableCategorisedFeatures={ isTrailMapStructure }
+										enableFeatureTooltips={ ! isTrailMap }
+										enableCategorisedFeatures={ isTrailMap }
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
 									/>
 								) }
@@ -873,9 +868,9 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
-													enableFeatureTooltips={ ! isTrailMapCopy }
+													enableFeatureTooltips={ ! isTrailMap }
 													featureGroupMap={ featureGroupMapForComparisonGrid }
-													hideUnsupportedFeatures={ isTrailMapStructure }
+													hideUnsupportedFeatures={ isTrailMap }
 												/>
 											) }
 											<ComparisonGridToggle

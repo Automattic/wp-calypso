@@ -103,25 +103,10 @@ export const TrailMapControl = {
 	},
 } satisfies Story;
 
-export const TrailMapStructure = {
-	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_structure',
-		hideUnsupportedFeatures: true,
-	},
-} satisfies Story;
-
-export const TrailMapCopy = {
-	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_copy',
-	},
-} satisfies Story;
-
 export const TrailMapCopyAndStructure = {
 	args: {
 		...TrailMapControl.args,
-		trailMapVariant: 'treatment_copy_and_structure',
+		trailMapVariant: 'treatment',
 		hideUnsupportedFeatures: true,
 	},
 } satisfies Story;
