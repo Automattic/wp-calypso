@@ -1,4 +1,5 @@
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .layout.is-section-start-with {
 	height: 100%;
@@ -119,7 +120,7 @@
 	}
 	// stylelint-enable declaration-property-unit-allowed-list
 
-	@media (max-width: 1380px) {
+	@media (max-width: $break-huge) {
 		.container {
 			.content {
 				max-width: calc(100vw - 100px);
@@ -151,7 +152,7 @@
 	}
 
 
-	@media (max-width: 1192px) {
+	@media (max-width: $break-wide) {
 		.container {
 			.footer {
 				.text {
@@ -167,7 +168,7 @@
 		}
 	}
 
-	@media (max-width: 1060px) {
+	@media (max-width: $break-xlarge) {
 		.container {
 			.footer {
 				.text {
@@ -183,7 +184,7 @@
 		}
 	}
 
-	@media (max-width: 980px) {
+	@media (max-width: $break-large) {
 		.container {
 			.content {
 				flex-direction: column-reverse;
@@ -221,7 +222,7 @@
 		}
 	}
 
-	@media (max-width: 720px) {
+	@media (max-width: $break-medium) {
 		.container {
 			.content {
 				gap: 5px;
@@ -257,7 +258,7 @@
 		}
 	}
 
-	@media (max-height: 740px) {
+	@media (max-height: $break-medium) {
 		.container .content {
 			.left-column {
 				padding-top: 60px;
