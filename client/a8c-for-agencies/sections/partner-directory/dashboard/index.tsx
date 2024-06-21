@@ -84,6 +84,10 @@ const PartnerDirectoryDashboard = () => {
 		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_finish_profile_click' ) );
 	}, [ dispatch ] );
 
+	const onPublishProfileClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_publish_profile_click' ) );
+	}, [ dispatch ] );
+
 	const onEditExpertiseClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_edit_expertise_click' ) );
 	}, [ dispatch ] );
