@@ -28,15 +28,6 @@
 	.conversation-follow-button path {
 		fill: var(--color-neutral-0);
 	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		padding: 0 20px;
-
-		.reader-post-card__tags {
-			margin-left: 0;
-			width: 100%;
-		}
-	}
 }
 
 .reader-full-post__visit-site-container {
@@ -94,7 +85,7 @@
 	margin-top: 55px;
 
 	// hide the sidebar when it cannot fit to the side of the content.
-	@media (max-width: 1282px) {
+	@media (max-width: 1298px) {
 		display: none;
 	}
 }
@@ -116,7 +107,7 @@
 
 .reader-full-post__story {
 	max-width: 720px;
-	padding: 0 16px;
+	padding: 0 24px;
 
 	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body;
