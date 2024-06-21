@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import { useHelpSearchQuery } from '@automattic/help-center';
+import { useHelpSearchQuery } from '@automattic/help-center/src/hooks/use-help-search-query';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
