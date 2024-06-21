@@ -63,17 +63,17 @@ function HelpCenterContent() {
 		<>
 			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter
-				adminUrl={ window.helpCenterData.admin_url }
+				adminUrl={ window.helpCenterData.adminUrl }
 				isJetpackSite={ window.helpCenterData.currentSite.jetpack }
 				locale={ window.helpCenterData.locale }
 				sectionName="gutenberg-editor"
-				currentUserId={ window.helpCenterData.current_user_id }
+				currentUserId={ window.helpCenterData.currentUserId }
 				selectedSiteId={ window.helpCenterData.current }
 				avatarUrl={ window.helpCenterData.avatarUrl }
 				displayName={ window.helpCenterData.displayName }
 				userEmail={ window.helpCenterData.userEmail }
 				hasPurchases={ false }
-				primarySiteId={ window.helpCenterData.primary_site_id }
+				primarySiteId={ window.helpCenterData.primarySiteId }
 				handleClose={ closeCallback }
 			/>
 		</>
