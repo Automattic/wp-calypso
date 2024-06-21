@@ -10,7 +10,7 @@ export function startWithSquarePaymentsContext( context: Context, next: () => vo
 	}
 
 	context.primary = (
-		<Main wideLayout>
+		<Main fullWidthLayout>
 			<StartWithSquarePayments />
 		</Main>
 	);
