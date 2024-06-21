@@ -538,7 +538,8 @@ $with-sidebar-min-page-width: 1114px;
 			text-align: left;
 			position: sticky;
 
-			.wpnc__settings, .wpnc__keyboard-shortcuts-button {
+			.wpnc__settings,
+			.wpnc__keyboard-shortcuts-button {
 				display: flex;
 				flex-grow: 1;
 
@@ -553,12 +554,92 @@ $with-sidebar-min-page-width: 1114px;
 			}
 
 			.wpnc__keyboard-shortcuts-popover {
+				font-size: 0.75rem;
 				position: absolute;
-				background-color: var(--color-surface);
 				height: 200px;
-				z-index: ;
-				top: 70px;
+				z-index: 1000;
+				top: 72px;
 				right: 8px;
+				text-transform: none;
+
+				.content {
+					background-color: var(--color-surface);
+					border: 1px solid var(--color-neutral-10);
+					border-radius: 2px;
+					box-shadow: 0 2px 5px #0000001a, 0 0 56px rgba(0, 0, 0, 0.075);
+					position: relative;
+					text-align: center;
+
+					h2 {
+						padding: 10px 8px;
+						border-bottom: 1px solid var(--color-neutral-10);
+					}
+
+					ul {
+						padding: 10px 8px;
+					}
+
+					li {
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+						margin-bottom: 8px;
+
+						.shortcut {
+							border: 1px solid var(--color-neutral-10);
+							border-radius: 2px;
+
+							&.letter {
+								padding: 3px 7px;
+							}
+
+							&.has-icon {
+								padding: 2px 2px 0 2px;
+							}
+						}
+					}
+				}
+
+				.arrow {
+					border: 10px dashed var(--color-neutral-10);
+					height: 0;
+					line-height: 0;
+					position: absolute;
+					width: 0;
+					z-index: 1;
+				}
+
+				&.is-bottom-left {
+					padding-left: 0;
+					padding-right: 0;
+
+					.arrow {
+						border-bottom-style: solid;
+						border-left-color: #0000;
+						border-right-color: #0000;
+						border-top: none;
+						margin-left: -10px;
+						top: -9px;
+						left: 129px;
+						right: 5px;
+
+						&::before {
+							border-bottom: 10px solid var(--color-border-inverted);
+							border-left: 10px solid #0000;
+							border-right: 10px solid #0000;
+							border-top: none;
+							content: " ";
+							left: 50%;
+							margin-left: -10px;
+							position: absolute;
+							top: 2px;
+						}
+					}
+
+					.content {
+						left: 7px;
+					}
+				}
 			}
 		}
 	}

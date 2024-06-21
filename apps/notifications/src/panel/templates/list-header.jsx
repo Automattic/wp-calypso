@@ -19,14 +19,33 @@ export const ListHeader = ( { isFirst, title, viewSettings } ) => {
 	const renderShortcutsPopover = () => {
 		// Render the keyboard shortcuts list
 		return (
-			<div className="wpnc__keyboard-shortcuts-popover">
-				<h2>{ translate( 'Keyboard Shortcuts' ) }</h2>
-				<ul>
-					<li>
-						<span className="shortcut">?</span>
-						<span>{ translate( 'Show this help' ) }</span>
-					</li>
-				</ul>
+			<div className="wpnc__keyboard-shortcuts-popover is-bottom-left">
+				<div className="arrow" />
+				<div className="content">
+					<h2>{ translate( 'Keyboard Shortcuts' ) }</h2>
+					<ul>
+						<li>
+							<span className="description">{ translate( 'Toggle Panel' ) }</span>
+							<span className="shortcut letter">n</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'Next' ) }</span>
+							<span className="shortcut has-icon">
+								<Gridicon icon="arrow-down" size={ 18 } />
+							</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'Previous' ) }</span>
+							<span className="shortcut has-icon">
+								<Gridicon icon="arrow-up" size={ 18 } />
+							</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'View All' ) }</span>
+							<span className="shortcut letter">a</span>
+						</li>
+					</ul>
+				</div>
 			</div>
 		);
 	};
@@ -66,9 +85,9 @@ export const ListHeader = ( { isFirst, title, viewSettings } ) => {
 						>
 							<Gridicon icon="info-outline" size={ 18 } />
 						</span>
-						{ shortcutsVisible && renderShortcutsPopover() }
 					</>
 				) }
+				{ shortcutsVisible && renderShortcutsPopover() }
 			</div>
 		</li>
 	);
