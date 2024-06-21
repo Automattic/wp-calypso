@@ -28,7 +28,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const query = params.get( 'query' );
-	const { sectionName } = useHelpCenterContext();
+	const { sectionName, selectedSiteId } = useHelpCenterContext();
 
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
@@ -46,8 +46,6 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		},
 		[ setSubject, setMessage, onSearchChange ]
 	);
-
-	const { selectedSiteId } = useHelpCenterContext();
 
 	const site = useSelect(
 		( select ) =>
