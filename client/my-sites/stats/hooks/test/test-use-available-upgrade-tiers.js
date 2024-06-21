@@ -16,13 +16,43 @@ describe( 'getAvailableUpgradeTiers', () => {
 		expect( extendedTiers[ 5 ].views ).toEqual( 2_000_000 );
 	} );
 	it( 'should return 250k~4m tiers if purchased with little monthly views', () => {
-		const usageData = { views_limit: 100_000, billableMonthlyViews: 0 };
+		const usageData = {
+			views_limit: 100_000,
+			current_tier: { limit: 100_000 },
+			billableMonthlyViews: 0,
+		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
 		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
 		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 2 ].maximum_units );
 		expect( extendedTiers[ 0 ].minimum_price ).toEqual( tiers[ 2 ].minimum_price );
 		expect( extendedTiers[ 5 ].views ).toEqual( 4_000_000 );
+	} );
+	it( 'should return commerical tiers only considering current tier but not bundled plans like Complete - 10k', () => {
+		const usageData = {
+			views_limit: 110_000,
+			current_tier: { limit: 10_000 },
+			billableMonthlyViews: 0,
+		};
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 1 ].maximum_units );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( tiers[ 1 ].minimum_price );
+		expect( extendedTiers[ 5 ].views ).toEqual( 3_000_000 );
+	} );
+	it( 'should return commerical tiers only considering current tier but not bundled plans like Complete - no tier', () => {
+		const usageData = {
+			views_limit: 100_000,
+			current_tier: { limit: null },
+			billableMonthlyViews: 0,
+		};
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 0 ].maximum_units );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( tiers[ 0 ].minimum_price );
+		expect( extendedTiers[ 5 ].views ).toEqual( 2_000_000 );
 	} );
 	it( 'should return 100k~3m tiers if not purchased with higer monthly views', () => {
 		const usageData = { views_limit: null, billableMonthlyViews: 10_000 };
