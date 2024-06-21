@@ -29,24 +29,7 @@
 		fill: var(--color-neutral-0);
 	}
 
-	@include breakpoint-deprecated( ">1280px" ) {
-		// width: 720px;
-		// padding-left: 260px;
-	}
-
-	@include breakpoint-deprecated( "1040px-1280px" ) {
-		// width: 720px;
-		// padding-left: 240px;
-	}
-
-	@include breakpoint-deprecated( "660px-1040px" ) {
-		// width: auto;
-		margin: 0;
-		// padding-left: 240px;
-	}
-
 	@include breakpoint-deprecated( "<660px" ) {
-		// width: auto;
 		padding: 0 20px;
 
 		.reader-post-card__tags {
@@ -107,7 +90,6 @@
 
 .reader-full-post__sidebar {
 	width: 220px;
-	// position: fixed;
 	text-align: center;
 	margin-top: 55px;
 
@@ -115,22 +97,6 @@
 	@media (max-width: 1282px) {
 		display: none;
 	}
-
-	// @include breakpoint-deprecated( ">1270px" ) {
-	// 	left: calc(50% - 490px);
-	// }
-
-	// @include breakpoint-deprecated( "1040px-1280px" ) {
-	// 	left: calc(50% - 480px);
-	// }
-
-	// @include breakpoint-deprecated( "660px-1040px" ) {
-	// 	left: 20px;
-	// }
-
-	// @include breakpoint-deprecated( "<660px" ) {
-	// 	display: none;
-	// }
 }
 
 .reader-full-post__seen-button {
@@ -157,9 +123,6 @@
 		line-height: 24px;
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
-		// margin-top: -35px;
-	}
 	.comment-button__label {
 		position: relative;
 		top: -1px;
