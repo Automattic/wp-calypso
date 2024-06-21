@@ -20,10 +20,14 @@ export default function NewReferralOrderNotification( { email, onClose }: Props 
 	return (
 		showBanner && (
 			<LayoutBanner level="success" onClose={ onCloseClick }>
-				{ translate( 'Your referral order was emailed to %(referralEmail)s for payment.', {
-					args: { referralEmail: email },
-					comment: 'The %(referralEmail)s is the email where referral order was sent.',
-				} ) }
+				{ translate(
+					'Your referral order was emailed to %(referralEmail)s for payment.{{br/}}Once they pay you can assign the items that were purchased.',
+					{
+						components: { br: <br /> },
+						args: { referralEmail: email },
+						comment: 'The %(referralEmail)s is the email where referral order was sent.',
+					}
+				) }
 			</LayoutBanner>
 		)
 	);

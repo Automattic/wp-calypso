@@ -29,6 +29,8 @@ You can search for feature flags by partial string or regular expression with th
 
 Run `yarn feature-search [search]` from the root calypso directory to see example searches.
 
+You can also activate feature flags only in your development environment. To do this, create a `.env` file in the root folder of the cloned repository. Add the variable `ACTIVE_FEATURE_FLAGS`, and specify the feature flags you want to activate, as a string separated by commas. For more details of how to create the `.env` file, see <https://github.com/mrsteele/dotenv-webpack#create-a-env-file>.
+
 ### Progression of Environments
 
 When working with feature flags, there is a progression of environments that should be considered.

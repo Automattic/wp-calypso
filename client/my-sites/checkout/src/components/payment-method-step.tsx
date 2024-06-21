@@ -9,7 +9,6 @@ import {
 	getSubtotalWithoutDiscounts,
 	getTotalDiscountsWithoutCredits,
 	filterAndGroupCostOverridesForDisplay,
-	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -104,33 +103,29 @@ export default function BeforeSubmitCheckoutHeader() {
 		} ),
 	};
 
-	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
-
 	return (
 		<>
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 
-			{ ! shouldUseCheckoutV2 && (
-				<WPOrderReviewSection>
-					<NonTotalPrices>
-						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-						{ costOverridesList.length > 0 && (
-							<NonProductLineItem subtotal lineItem={ discountLineItem } />
-						) }
-						{ taxLineItems.map( ( taxLineItem ) => (
-							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-						) ) }
-						{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-							<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-						) }
-					</NonTotalPrices>
-					<TotalPrice>
-						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
-					</TotalPrice>
-				</WPOrderReviewSection>
-			) }
+			<WPOrderReviewSection>
+				<NonTotalPrices>
+					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
+					{ costOverridesList.length > 0 && (
+						<NonProductLineItem subtotal lineItem={ discountLineItem } />
+					) }
+					{ taxLineItems.map( ( taxLineItem ) => (
+						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+					) ) }
+					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+						<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+					) }
+				</NonTotalPrices>
+				<TotalPrice>
+					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+				</TotalPrice>
+			</WPOrderReviewSection>
 		</>
 	);
 }

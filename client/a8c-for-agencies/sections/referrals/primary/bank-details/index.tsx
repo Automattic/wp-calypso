@@ -90,7 +90,7 @@ export default function ReferralsBankDetails( {
 							</div>
 							<div className="bank-details__subheading">
 								{ translate(
-									'Enter your bank details to start receiving payments through {{a}}Tipalti ↗{{/a}}, our secure payments platform.',
+									'Enter your bank details to start receiving payments through {{a}}Tipalti{{/a}}↗, our secure payments platform.',
 									{
 										components: {
 											a: (

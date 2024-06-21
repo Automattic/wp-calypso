@@ -160,7 +160,7 @@ function Checkout( { isClient }: { isClient?: boolean } ) {
 			wide
 			withBorder={ ! isClient }
 			compact
-			sidebarNavigation={ <MobileSidebarNavigation /> }
+			sidebarNavigation={ ! isClient && <MobileSidebarNavigation /> }
 		>
 			{ isClient ? null : (
 				<LayoutTop>

@@ -53,7 +53,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 
 	const hasCompletedForm = !! email && !! message;
 
-	const learnMoreLink = ''; //FIXME: Add link for A4A;
+	const learnMoreLink = 'https://agencieshelp.automattic.com/knowledge-base/billing-and-payments';
 
 	const productIds = checkoutItems.map( ( item ) => item.product_id ).join( ',' );
 

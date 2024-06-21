@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -18,6 +19,12 @@ import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
+const MIGRATION_INSTRUCTIONS_STEP = config.isEnabled(
+	'migration-flow/new-migration-instructions-step'
+)
+	? STEPS.SITE_MIGRATION_INSTRUCTIONS
+	: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2;
+
 const FLOW_NAME = MIGRATION_SIGNUP_FLOW;
 
 const migrationSignup: Flow = {
@@ -36,7 +43,7 @@ const migrationSignup: Flow = {
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
+			MIGRATION_INSTRUCTIONS_STEP,
 			STEPS.ERROR,
 		];
 	},
@@ -230,7 +237,7 @@ const migrationSignup: Flow = {
 								siteSlug,
 								from: fromQueryParam,
 							},
-							`/setup/${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`
+							`/setup/${ FLOW_NAME }/${ MIGRATION_INSTRUCTIONS_STEP.slug }`
 						);
 						goToCheckout( {
 							flowName: FLOW_NAME,

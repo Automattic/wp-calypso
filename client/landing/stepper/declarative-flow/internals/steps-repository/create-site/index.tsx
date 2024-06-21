@@ -67,7 +67,11 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation();
+	const partnerBundle = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPartnerBundle(),
+		[]
+	);
+	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 
 	const urlData = useSelector( getUrlData );
 

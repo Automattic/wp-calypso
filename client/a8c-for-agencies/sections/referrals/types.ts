@@ -1,20 +1,25 @@
 interface ReferralPurchaseAPIResponse {
-	license_id: number;
-	quantity: number;
+	status: string;
 	product_id: number;
-	date_assigned: string;
+	quantity: number;
+	license: {
+		license_key: string;
+		attached_at: string | null;
+		revoked_at: string | null;
+	};
 	site_assigned: string;
-	license_key: string;
 }
 export interface ReferralPurchase extends ReferralPurchaseAPIResponse {
 	status: string;
+	referral_id: number;
+}
+export interface ReferralClient {
+	id: number;
+	email: string;
 }
 export interface Referral {
-	id: number;
-	client: {
-		id: number;
-		email: string;
-	};
+	id: string;
+	client: ReferralClient;
 	purchases: ReferralPurchase[];
 	commissions: number;
 	statuses: string[];
@@ -22,10 +27,7 @@ export interface Referral {
 
 export interface ReferralAPIResponse {
 	id: number;
-	client: {
-		id: number;
-		email: string;
-	};
+	client: ReferralClient;
 	products: ReferralPurchaseAPIResponse[];
 	commission: number;
 	status: string;

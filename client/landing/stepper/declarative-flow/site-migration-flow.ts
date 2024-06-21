@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
@@ -9,6 +10,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from 'calypso/lib/url';
+import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
 import { useIsSiteAdmin } from '../hooks/use-is-site-admin';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
@@ -20,6 +22,12 @@ import { type SiteMigrationIdentifyAction } from './internals/steps-repository/s
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+
+const MIGRATION_INSTRUCTIONS_STEP = config.isEnabled(
+	'migration-flow/new-migration-instructions-step'
+)
+	? STEPS.SITE_MIGRATION_INSTRUCTIONS
+	: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2;
 
 const FLOW_NAME = 'site-migration';
 
@@ -33,7 +41,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
-			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
+			MIGRATION_INSTRUCTIONS_STEP,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
@@ -262,7 +270,7 @@ const siteMigration: Flow = {
 					}
 
 					// Continue with the migration flow.
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug, {
+					return navigate( MIGRATION_INSTRUCTIONS_STEP.slug, {
 						siteId,
 						siteSlug,
 					} );
@@ -273,7 +281,7 @@ const siteMigration: Flow = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug, {
+					return navigate( MIGRATION_INSTRUCTIONS_STEP.slug, {
 						siteId,
 						siteSlug,
 					} );
@@ -283,7 +291,7 @@ const siteMigration: Flow = {
 					if ( providedDependencies?.goToCheckout ) {
 						const redirectAfterCheckout = providedDependencies?.userAcceptedDeal
 							? STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-							: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug;
+							: MIGRATION_INSTRUCTIONS_STEP.slug;
 
 						const destination = addQueryArgs(
 							{
@@ -322,6 +330,9 @@ const siteMigration: Flow = {
 					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 				}
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
+					if ( urlQueryParams.get( 'ref' ) === GUIDED_ONBOARDING_FLOW_REFERRER ) {
+						window.location.assign( '/start/guided/initial-intent' );
+					}
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}
 

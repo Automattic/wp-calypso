@@ -38,6 +38,7 @@
 		"dev/preferences-helper": true,
 		"oauth": true,
 		"a4a/site-details-pane": true,
+		"a4a/site-migration": true,
 		"a4a-logged-out-signup": true,
 		"a4a-automated-referrals": true
 	},

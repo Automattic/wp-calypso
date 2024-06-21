@@ -68,8 +68,21 @@ const config =
  */
 const isEnabled =
 	( data: ConfigData ) =>
-	( feature: string ): boolean =>
-		( data.features && !! data.features[ feature ] ) || false;
+	( feature: string ): boolean => {
+		// Feature flags activated from environment variables.
+		if (
+			process.env.ACTIVE_FEATURE_FLAGS &&
+			typeof process.env.ACTIVE_FEATURE_FLAGS === 'string'
+		) {
+			const env_active_feature_flags = process.env.ACTIVE_FEATURE_FLAGS?.split( ',' );
+
+			if ( env_active_feature_flags.includes( feature ) ) {
+				return true;
+			}
+		}
+
+		return ( data.features && !! data.features[ feature ] ) || false;
+	};
 
 /**
  * Gets a list of all enabled features.

@@ -32,6 +32,7 @@ const ensureOnlyOneNoticeVisible = (
 	noticeOptions: StatsNoticeProps
 ) => {
 	const calculatedNoticesVisibility = { ...serverNoticesVisibility };
+
 	ALL_STATS_NOTICES.forEach(
 		( notice ) =>
 			( calculatedNoticesVisibility[ notice.noticeId ] =
@@ -39,6 +40,7 @@ const ensureOnlyOneNoticeVisible = (
 				serverNoticesVisibility[ notice.noticeId ] &&
 				notice.isVisibleFunc( noticeOptions ) )
 	);
+
 	return processConflictNotices( calculatedNoticesVisibility );
 };
 

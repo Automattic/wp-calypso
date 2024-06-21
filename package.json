@@ -256,6 +256,7 @@
 		"chroma-js": "^2.1.2",
 		"css-loader": "^6.11.0",
 		"doctrine": "^3.0.0",
+		"dotenv-webpack": "^8.1.0",
 		"eslint": "^8.57.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-nibble": "^8.1.0",

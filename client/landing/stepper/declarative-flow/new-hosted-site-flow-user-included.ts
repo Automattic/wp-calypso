@@ -4,6 +4,7 @@ import { NEW_HOSTED_SITE_FLOW_USER_INCLUDED } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
+import { useDispatch as reduxUseDispatch } from 'react-redux';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import {
 	setSignupCompleteSlug,
@@ -12,6 +13,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { setSelectedSiteId } from 'calypso/state/ui/actions/index';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -125,6 +127,7 @@ const hosting: Flow = {
 	},
 	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+		const dispatch = reduxUseDispatch();
 		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 		const userIsLoggedIn = useSelect(
@@ -153,6 +156,7 @@ const hosting: Flow = {
 				if ( currentStepSlug === undefined ) {
 					resetOnboardStore();
 				}
+				dispatch( setSelectedSiteId( null ) );
 			},
 			// We only need to reset the store and/or check the `campaign` param when the flow is mounted.
 			// eslint-disable-next-line react-hooks/exhaustive-deps

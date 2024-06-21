@@ -16,11 +16,11 @@ export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitErro
 				if ( onSubmitSuccess && data?.profile.partner_directory_application?.status ) {
 					onSubmitSuccess( data );
 				} else {
-					onSubmitError && onSubmitError();
+					onSubmitError?.();
 				}
 			},
 			onError: () => {
-				onSubmitError && onSubmitError();
+				onSubmitError?.();
 			},
 		}
 	);
