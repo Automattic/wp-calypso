@@ -5,7 +5,7 @@ import {
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useMemo, Suspense, lazy } from 'react';
+import React, { useEffect, useMemo, lazy } from 'react';
 import Modal from 'react-modal';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -17,6 +17,7 @@ import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { StepRoute, StepperLoader } from './components';
+import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
@@ -141,7 +142,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	useSignUpStartTracking( { flow, currentStepRoute: currentStepRoute } );
 
 	return (
-		<Suspense fallback={ <StepperLoader /> }>
+		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 			<Routes>
 				{ flowSteps.map( ( step ) => (
@@ -161,6 +162,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				<Route path="/:flow/:lang?" element={ <RedirectToStep slug={ stepPaths[ 0 ] } /> } />
 			</Routes>
 			<AsyncCheckoutModal siteId={ site?.ID } />
-		</Suspense>
+		</Boot>
 	);
 };
