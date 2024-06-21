@@ -2,7 +2,6 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-p
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { useSelector } from 'calypso/state';
@@ -69,7 +68,7 @@ const AsyncHelpCenter = () => {
 			primarySiteId={ primarySiteId }
 			placeholder={ null }
 			handleClose={ handleClose }
-			onboardingUrl={ addQueryArgs( onboardingUrl(), { ref: 'calypso-inline-help' } ) }
+			onboardingUrl={ onboardingUrl() }
 		/>
 	);
 };
