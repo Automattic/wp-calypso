@@ -74,7 +74,7 @@ export const JetpackSitesDataViews = ( {
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
-			if ( site.sticker.includes( 'migration-in-progress' ) && ! isTeamMember ) {
+			if ( site.sticker?.includes( 'migration-in-progress' ) && ! isTeamMember ) {
 				return;
 			}
 
@@ -390,7 +390,7 @@ export const JetpackSitesDataViews = ( {
 								onClick={ ( e: MouseEvent ) => e.stopPropagation() }
 								onKeyDown={ ( e: KeyboardEvent ) => e.stopPropagation() }
 							>
-								{ ( ! item.site.value.sticker.includes( 'migration-in-progress' ) ||
+								{ ( ! item.site.value.sticker?.includes( 'migration-in-progress' ) ||
 									isTeamMember ) && (
 									<>
 										<SiteActions

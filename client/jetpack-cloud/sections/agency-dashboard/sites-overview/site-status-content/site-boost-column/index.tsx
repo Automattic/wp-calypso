@@ -42,7 +42,7 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 		recordEvent( 'boost_column_get_score_click' );
 	};
 
-	const isSiteMigrationInProgress = site.sticker.includes( 'migration-in-progress' );
+	const isSiteMigrationInProgress = site.sticker?.includes( 'migration-in-progress' );
 
 	const noBoostHrefOption = site.is_atomic ? jetpackHref : addBoostHref;
 	if ( overallScore && ! hasBoost ) {

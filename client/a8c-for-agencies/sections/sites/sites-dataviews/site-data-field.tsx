@@ -15,7 +15,7 @@ const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProp
 		return <TextPlaceholder />;
 	}
 
-	const migrationInProgress = site.sticker.includes( 'migration-in-progress' );
+	const migrationInProgress = site.sticker?.includes( 'migration-in-progress' );
 
 	return (
 		<Button
