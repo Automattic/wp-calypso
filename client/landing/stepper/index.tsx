@@ -68,8 +68,7 @@ interface AppWindow extends Window {
 const DEFAULT_FLOW = 'site-setup';
 
 const getFlowFromURL = () => {
-	const fromPath = matchPath( { path: '/setup/:flow/:lang?' }, window.location.pathname )?.params
-		?.flow;
+	const fromPath = matchPath( { path: '/setup/:flow/*' }, window.location.pathname )?.params?.flow;
 	// backward support the old Stepper URL structure (?flow=something)
 	const fromQuery = new URLSearchParams( window.location.search ).get( 'flow' );
 	return fromPath || fromQuery;
@@ -77,6 +76,7 @@ const getFlowFromURL = () => {
 
 window.AppBoot = async () => {
 	const flowName = getFlowFromURL();
+
 	if ( ! flowName ) {
 		// Stop the boot process if we can't determine the flow, reducing the number of edge cases
 		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
