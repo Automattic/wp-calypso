@@ -31,7 +31,11 @@ import {
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isA4AOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -762,6 +766,11 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
+		const isFromAutomatticForAgenciesReferralClient =
+			isA4AOAuth2Client( oauth2Client ) &&
+			currentQuery &&
+			currentQuery.redirect_to &&
+			currentQuery.redirect_to.includes( '/client/' );
 
 		const signupUrl = this.getSignupUrl();
 
@@ -1032,26 +1041,28 @@ export class LoginForm extends Component {
 					) }
 				</Card>
 
-				{ config.isEnabled( 'signup/social' ) && ! isCoreProfilerLostPasswordFlow && (
-					<Fragment>
-						<FormDivider />
-						<SocialLoginForm
-							linkingSocialService={
-								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
-							}
-							onSuccess={ this.props.onSuccess }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-							shouldRenderToS={
-								this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
-							}
-							isSocialFirst={ isSocialFirst }
-						>
-							{ loginButtons }
-						</SocialLoginForm>
-					</Fragment>
-				) }
+				{ ! isFromAutomatticForAgenciesReferralClient &&
+					config.isEnabled( 'signup/social' ) &&
+					! isCoreProfilerLostPasswordFlow && (
+						<Fragment>
+							<FormDivider />
+							<SocialLoginForm
+								linkingSocialService={
+									this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
+								}
+								onSuccess={ this.props.onSuccess }
+								socialService={ this.props.socialService }
+								socialServiceResponse={ this.props.socialServiceResponse }
+								uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
+								shouldRenderToS={
+									this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
+								}
+								isSocialFirst={ isSocialFirst }
+							>
+								{ loginButtons }
+							</SocialLoginForm>
+						</Fragment>
+					) }
 
 				{ this.showJetpackConnectSiteOnly() && (
 					<JetpackConnectSiteOnly
