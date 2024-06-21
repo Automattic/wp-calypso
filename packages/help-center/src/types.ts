@@ -19,16 +19,6 @@ export interface ArticleContentProps {
 	slug?: string;
 }
 
-export interface ArticleContentProps {
-	content: string;
-	title: string;
-	link: string;
-	isLoading?: boolean;
-	postId: number;
-	blogId?: string | null;
-	slug?: string;
-}
-
 export interface Header {
 	isMinimized?: boolean;
 	onMinimize?: () => void;
