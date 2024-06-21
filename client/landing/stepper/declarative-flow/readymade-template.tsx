@@ -1,16 +1,20 @@
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { READYMADE_TEMPLATE_FLOW } from '@automattic/onboarding';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import wpcom from 'calypso/lib/wp';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getTheme } from 'calypso/state/themes/selectors';
+import { CalypsoDispatch } from 'calypso/state/types';
 import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
@@ -94,6 +98,9 @@ const readymadeTemplateFlow: Flow = {
 		const selectedTheme = getAssemblerDesign().slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
+		const { value: readymadeTemplateId } = useUrlQueryParam( 'readymadeTemplateId' );
+		const { data: readymadeTemplate } = useReadymadeTemplate( readymadeTemplateId );
+
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
 				return new Promise( () => {
@@ -106,17 +113,19 @@ const readymadeTemplateFlow: Flow = {
 
 		const handleSelectSite = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const selectedSiteSlug = providedDependencies?.siteSlug as string;
-			const selectedSiteId = providedDependencies?.siteId as string;
+			const selectedSiteId = providedDependencies?.siteId as number;
 			setSelectedSite( selectedSiteId );
 			setIntentOnSite( selectedSiteSlug, SiteIntent.ReadyMadeTemplate );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
 
-			enableAssemblerThemeAndConfigureTemplates(
-				theme.id,
-				selectedSiteId,
-				assembleSite,
-				setPendingAction,
-				reduxDispatch
+			setPendingAction(
+				enableAssemblerThemeAndConfigureTemplates(
+					theme.id,
+					selectedSiteId,
+					readymadeTemplate,
+					assembleSite,
+					reduxDispatch
+				)
 			);
 
 			navigate( 'processing' );
@@ -206,10 +215,6 @@ const readymadeTemplateFlow: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
-				case 'site-picker': {
-					return navigate( 'new-or-existing-site' );
-				}
-
 				case 'freePostSetup':
 				case 'domains': {
 					return navigate( 'launchpad' );
@@ -239,8 +244,8 @@ const readymadeTemplateFlow: Flow = {
 		const currentPath = window.location.pathname;
 		const isCreateSite =
 			currentPath.endsWith( `setup/${ flowName }` ) ||
-			currentPath.endsWith( `setup/${ flowName }/` ) ||
-			currentPath.includes( `setup/${ flowName }/check-sites` );
+			currentPath.endsWith( `setup/${ flowName }/` );
+
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
 		const locale = useFlowLocale();
@@ -253,8 +258,6 @@ const readymadeTemplateFlow: Flow = {
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
 				window.location.assign( logInUrl );
-			} else if ( isCreateSite && ! userAlreadyHasSites ) {
-				window.location.assign( `/setup/${ flowName }/create-site` );
 			}
 		}, [] );
 
@@ -277,13 +280,39 @@ const readymadeTemplateFlow: Flow = {
 };
 
 function enableAssemblerThemeAndConfigureTemplates(
-	themeId,
-	siteId,
-	assembleSite,
-	setPendingAction,
-	reduxDispatch
+	themeId: string,
+	siteId: number,
+	readymadeTemplate: { content: string },
+	assembleSite: (
+		arg0: any,
+		arg1: string,
+		arg2: {
+			/**
+			 * @todo Separate the content in 3 sections. Ideally the entire template configuration should be done one the server, see the above comment.
+			 *
+			 * For now we piggyback on Site Assembler's API endpoint to apply the template on the site.
+			 */
+			homeHtml: any;
+			headerHtml: string;
+			footerHtml: string;
+			pages: never[];
+			globalStyles: object;
+			canReplaceContent: boolean;
+			// All sites using the assembler set the option wpcom_site_setup
+			siteSetupOption: string;
+		}
+	) => Promise< never >,
+	reduxDispatch: CalypsoDispatch
 ) {
-	setPendingAction( () =>
+	/**
+	 * This is not optimal. We should have one request for all of it that simply passes the readyMadeTemplateId.
+	 *
+	 * Right now we make 3 requests:
+	 * - Set the theme
+	 * - Get the Readymade template (with content)
+	 * - Apply the changes on the site (with the content that can be a large payload).
+	 */
+	return () =>
 		Promise.resolve()
 			.then( () =>
 				reduxDispatch(
@@ -297,21 +326,31 @@ function enableAssemblerThemeAndConfigureTemplates(
 			)
 			.then( ( activeThemeStylesheet: string ) =>
 				assembleSite( siteId, activeThemeStylesheet, {
-					homeHtml: 'hehehehehe',
+					/**
+					 * @todo Separate the content in 3 sections. Ideally the entire template configuration should be done one the server, see the above comment.
+					 *
+					 * For now we piggyback on Site Assembler's API endpoint to apply the template on the site.
+					 */
+					homeHtml: readymadeTemplate.content,
 					headerHtml: '',
 					footerHtml: '',
 					pages: [],
 					globalStyles: {},
-					// Newly created sites can have the content replaced when necessary,
-					// e.g. when the homepage has a blog pattern, we replace the posts with the content from theme demo site.
-					// TODO: Ask users whether they want that.
 					canReplaceContent: true,
 					// All sites using the assembler set the option wpcom_site_setup
 					siteSetupOption: 'assembler',
 				} )
 			)
-			.then( () => window.location.assign( `/site-editor/${ siteId }?canvas=edit&assembler=1` ) )
-	);
+			.then( () => window.location.assign( `/site-editor/${ siteId }?canvas=edit&assembler=1` ) );
+}
+
+function useReadymadeTemplate( templateId: number, options: object = { enabled: true } ) {
+	return useQuery( {
+		...options,
+		queryKey: [ 'readymade-templates', templateId ],
+		queryFn: async () =>
+			wpcom.req.get( `/themes/readymade-templates/${ templateId }`, { apiNamespace: 'wpcom/v2' } ),
+	} );
 }
 
 export default readymadeTemplateFlow;
