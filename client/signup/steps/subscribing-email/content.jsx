@@ -28,7 +28,6 @@ function SubscribingEmailStepContent( props ) {
 				// socialService={ socialService }
 				// socialServiceResponse={ socialServiceResponse }
 				// recaptchaClientId={ this.state.recaptchaClientId }
-				horizontal
 				isReskinned
 				shouldDisplayUserExistsError
 				isSocialFirst={ false }
