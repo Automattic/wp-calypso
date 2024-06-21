@@ -6,7 +6,7 @@
 .wpcom-domain-upsell-callout {
 	font-size: $font-body-extra-small;
 	font-style: normal;
-	padding: 15px;
+	padding: 15px 110px;
 	line-height: normal;
 	position: absolute;
 	display: flex;
@@ -14,6 +14,8 @@
 	left: 50%;
 	transform: translateX(-50%);
 	top: 0;
+	background: $studio-white;
+
 	@media (max-width: $break-xlarge) {
 		display: none;
 	}
