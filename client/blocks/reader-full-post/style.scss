@@ -21,6 +21,8 @@
 	display: flex;
 	justify-content: space-around;
 	flex-wrap: wrap;
+	max-width: 1200px;
+	margin: 0 auto;
 
 	.comment-button__icon path,
 	.conversation-follow-button path {
@@ -107,6 +109,7 @@
 	width: 220px;
 	// position: fixed;
 	text-align: center;
+	margin-top: 55px;
 
 	@media (max-width: 1270px) {
 		display: none;
@@ -146,7 +149,7 @@
 
 .reader-full-post__story {
 	max-width: 720px;
-	padding: 0 10px;
+	padding: 0 16px;
 
 	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body;
@@ -154,7 +157,7 @@
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
-		margin-top: -35px;
+		// margin-top: -35px;
 	}
 	.comment-button__label {
 		position: relative;
