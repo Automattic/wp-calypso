@@ -6,6 +6,6 @@ import {
 } from 'calypso/start-with/controller';
 
 export default function () {
-	page( '/start-with', redirectToSquarePayments );
 	page( '/start-with/square-payments', startWithSquarePaymentsContext, makeLayout, clientRender );
+	page( '/start-with*', redirectToSquarePayments );
 }
