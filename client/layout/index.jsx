@@ -5,6 +5,7 @@ import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/vie
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
 import { useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useEffect, useState } from 'react';
@@ -189,7 +190,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 			primarySiteId={ primarySiteId }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
-			onboardingUrl={ onboardingUrl() }
+			onboardingUrl={ addQueryArgs( onboardingUrl(), { ref: 'calypso-inline-help' } ) }
 		/>
 	);
 }
