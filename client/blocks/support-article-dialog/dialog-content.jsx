@@ -1,4 +1,5 @@
-import { useSupportArticleAlternatesQuery } from '@automattic/help-center';
+import { SupportArticleHeader } from '@automattic/help-center/src/components/help-center-support-article-header';
+import { useSupportArticleAlternatesQuery } from '@automattic/help-center/src/hooks/use-support-article-alternates-query';
 import { useLocale } from '@automattic/i18n-utils';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
@@ -8,7 +9,6 @@ import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import EmbedContainer from 'calypso/components/embed-container';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import SupportArticleHeader from './header';
 import Placeholders from './placeholders';
 
 import './style.scss';

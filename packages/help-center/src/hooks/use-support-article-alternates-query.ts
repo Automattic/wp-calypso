@@ -1,0 +1,25 @@
+import { isDefaultLocale } from '@automattic/i18n-utils';
+import { useQuery } from '@tanstack/react-query';
+import wpcomRequest from 'wpcom-proxy-request';
+
+export function useSupportArticleAlternatesQuery(
+	blogId: number,
+	postId: number,
+	locale: string,
+	queryOptions = {}
+) {
+	return useQuery( {
+		queryKey: [ 'support-article-alternates', blogId, postId ],
+		queryFn: () =>
+			wpcomRequest< Record< string, { blog_id: number; page_id: number } > >( {
+				path: `/support/alternates/${ blogId }/posts/${ postId }`,
+			} ),
+		...queryOptions,
+		enabled: ! isDefaultLocale( locale ) && !! ( blogId && postId ),
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+		select: ( data ) => {
+			return data[ locale ];
+		},
+	} );
+}

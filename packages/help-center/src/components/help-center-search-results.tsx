@@ -134,7 +134,6 @@ function HelpSearchResults( {
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
 		debouncedQuery || contextSearch, // If there's a query, we don't context search
 		locale,
-		{},
 		sectionName,
 		debouncedQuery
 			? undefined // If there's a query, we don't need tailored articles

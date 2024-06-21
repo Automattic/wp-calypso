@@ -91,9 +91,9 @@ const fetchArticlesAPI = async (
 export const useHelpSearchQuery = (
 	search: string,
 	locale = 'en',
-	queryOptions: Record< string, unknown > = {},
 	sectionName = '',
-	tailoredArticles?: TailoredArticles
+	tailoredArticles?: TailoredArticles,
+	queryOptions: Record< string, unknown > = {}
 ) => {
 	return useQuery< any >( {
 		queryKey: [ 'help-center-search', search, locale, sectionName, tailoredArticles ],
