@@ -31,11 +31,7 @@ import {
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import {
-	isCrowdsignalOAuth2Client,
-	isWooOAuth2Client,
-	isA4AOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -73,7 +69,7 @@ import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
-
+import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
 import './login-form.scss';
 
 export class LoginForm extends Component {
@@ -766,11 +762,10 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
-		const isFromAutomatticForAgenciesReferralClient =
-			isA4AOAuth2Client( oauth2Client ) &&
-			currentQuery &&
-			currentQuery.redirect_to &&
-			decodeURIComponent( currentQuery.redirect_to ).includes( '/client/' );
+		const isFromAutomatticForAgenciesReferralClient = isA4AReferralClient(
+			currentQuery,
+			oauth2Client
+		);
 
 		const signupUrl = this.getSignupUrl();
 
