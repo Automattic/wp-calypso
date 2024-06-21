@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { availableLanguages } from '../../lib/available-languages';
+import { DirectoryApplicationType } from '../../types';
 
 export function reverseMap< T >( obj: Record< string, T > ): Record< string, string > {
 	return Object.fromEntries( Object.entries( obj ).map( ( [ key, value ] ) => [ value, key ] ) );
@@ -32,9 +33,17 @@ export function useFormSelectors() {
 		pressable: 'Pressable',
 	};
 
+	const availableDirectories: Record< DirectoryApplicationType, string > = {
+		wordpress: 'WordPress.com',
+		woocommerce: 'WooCommerce.com',
+		jetpack: 'Jetpack.com',
+		pressable: 'Pressable.com',
+	};
+
 	return {
 		availableServices,
 		availableLanguages,
 		availableProducts,
+		availableDirectories,
 	};
 }
