@@ -45,7 +45,7 @@ const RegularTimeFrame: React.FC< RegularTimeFrameProps & A11yProps > = ( {
 	const billingTermText = useMemo( () => {
 		if ( billingTerm === TERM_MONTHLY ) {
 			return {
-				normal: translate( '/month, billed monthly' ),
+				normal: translate( 'per month, billed monthly' ),
 				compact: translate( '/mo, billed monthly', {
 					comment: '/mo should be as compact as possible',
 				} ),
@@ -53,7 +53,7 @@ const RegularTimeFrame: React.FC< RegularTimeFrameProps & A11yProps > = ( {
 		}
 
 		return {
-			normal: translate( '/month, billed yearly' ),
+			normal: translate( 'per month, billed yearly' ),
 			compact: translate( '/mo, billed yearly', {
 				comment: '/mo should be as compact as possible',
 			} ),
