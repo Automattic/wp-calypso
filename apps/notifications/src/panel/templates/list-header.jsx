@@ -44,6 +44,26 @@ export const ListHeader = ( { isFirst, title, viewSettings } ) => {
 							<span className="description">{ translate( 'View All' ) }</span>
 							<span className="shortcut letter">a</span>
 						</li>
+						<li>
+							<span className="description">{ translate( 'View Unread' ) }</span>
+							<span className="shortcut letter">u</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'View Comments' ) }</span>
+							<span className="shortcut letter">c</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'View Subscribers' ) }</span>
+							<span className="shortcut letter">f</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'View Likes' ) }</span>
+							<span className="shortcut letter">l</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'Toggle Shortcuts Info' ) }</span>
+							<span className="shortcut letter">i</span>
+						</li>
 					</ul>
 				</div>
 			</div>

@@ -554,6 +554,8 @@ $with-sidebar-min-page-width: 1114px;
 			}
 
 			.wpnc__keyboard-shortcuts-popover {
+				font-family: $sans;
+				font-weight: normal;
 				font-size: 0.75rem;
 				position: absolute;
 				height: 200px;
@@ -563,6 +565,7 @@ $with-sidebar-min-page-width: 1114px;
 				text-transform: none;
 
 				.content {
+					width: 250px;
 					background-color: var(--color-surface);
 					border: 1px solid var(--color-neutral-10);
 					border-radius: 2px;
@@ -573,6 +576,7 @@ $with-sidebar-min-page-width: 1114px;
 					h2 {
 						padding: 10px 8px;
 						border-bottom: 1px solid var(--color-neutral-10);
+						text-align: left;
 					}
 
 					ul {
@@ -587,10 +591,13 @@ $with-sidebar-min-page-width: 1114px;
 
 						.shortcut {
 							border: 1px solid var(--color-neutral-10);
-							border-radius: 2px;
+							border-radius: 4px;
+							min-width: 25px;
+							min-height: 25px;
+							line-height: 25px;
 
 							&.letter {
-								padding: 3px 7px;
+								font-weight: bold;
 							}
 
 							&.has-icon {
@@ -620,7 +627,7 @@ $with-sidebar-min-page-width: 1114px;
 						border-top: none;
 						margin-left: -10px;
 						top: -9px;
-						left: 129px;
+						left: 243px;
 						right: 5px;
 
 						&::before {
