@@ -824,11 +824,6 @@ export class LoginForm extends Component {
 			} );
 		}
 
-		// eslint-disable-next-line no-console
-		console.log( 'CURRENT QUERY' );
-		// eslint-disable-next-line no-console
-		console.log( currentQuery );
-
 		return (
 			<form
 				className={ clsx( {
