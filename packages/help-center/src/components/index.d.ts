@@ -21,15 +21,6 @@ declare module 'calypso/components/embed-container' {
 	export default EmbedContainer;
 }
 
-declare module 'calypso/data/support-article-alternates/use-support-article-alternates-query' {
-	const useSupportArticleAlternatesQuery: (
-		blogId: number,
-		postId: number,
-		locale: string
-	) => { isInitialLoading: boolean; data?: { blog_id: number; page_id: number; locale: string } };
-	export default useSupportArticleAlternatesQuery;
-}
-
 declare module 'calypso/state/data-layer/wpcom-api-middleware' {
 	const WpcomApiMiddleware = ( Function ) => Function;
 	export const WpcomApiMiddleware;

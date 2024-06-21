@@ -3,10 +3,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { useNavigate, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE, SITE_STORE } from '../stores';
 import { SearchResult } from '../types';

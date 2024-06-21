@@ -1,3 +1,4 @@
+import { useSupportArticleAlternatesQuery } from '@automattic/help-center';
 import { useLocale } from '@automattic/i18n-utils';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
@@ -6,7 +7,6 @@ import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import EmbedContainer from 'calypso/components/embed-container';
-import useSupportArticleAlternatesQuery from 'calypso/data/support-article-alternates/use-support-article-alternates-query';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import SupportArticleHeader from './header';
 import Placeholders from './placeholders';

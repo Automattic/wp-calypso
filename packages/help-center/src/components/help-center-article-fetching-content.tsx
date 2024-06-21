@@ -1,9 +1,9 @@
 /* eslint-disable no-restricted-imports */
 import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
-import useSupportArticleAlternatesQuery from 'calypso/data/support-article-alternates/use-support-article-alternates-query';
 import { SUPPORT_BLOG_ID } from '../constants';
 import { usePostByKey } from '../hooks/use-post-by-key';
+import { useSupportArticleAlternatesQuery } from '../hooks/use-support-article-alternates-query';
 import ArticleContent from './help-center-article-content';
 import './help-center-article-content.scss';
 
