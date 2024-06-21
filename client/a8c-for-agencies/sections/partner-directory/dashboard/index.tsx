@@ -316,6 +316,13 @@ const PartnerDirectoryDashboard = () => {
 					description={ translate(
 						'Your agency will appear in the partner directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
 					) }
+					buttonProps={ {
+						children: translate( 'Publish' ),
+						onClick: onPublishProfileClick,
+						primary: isSubmitted,
+						disabled: ! isSubmitted || ! showFinishProfileButton || ! isValidFormData,
+						compact: true,
+					} }
 				/>
 			</StepSection>
 			{ displayProgramLinks && programLinks }
