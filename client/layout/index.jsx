@@ -27,6 +27,7 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import { onboardingUrl } from 'calypso/lib/paths';
@@ -190,6 +191,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
+			googleMailServiceFamily={ getGoogleMailServiceFamily() }
 		/>
 	);
 }

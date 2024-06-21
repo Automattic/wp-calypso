@@ -40,7 +40,7 @@ function AdminHelpCenterContent() {
 			locale={ window.helpCenterData.locale }
 			sectionName="gutenberg-editor"
 			currentUserId={ window.helpCenterData.currentUserId }
-			selectedSiteId={ window.helpCenterData.current }
+			selectedSiteId={ window.helpCenterData.currentSite.ID }
 			avatarUrl={ window.helpCenterData.avatarUrl }
 			displayName={ window.helpCenterData.displayName }
 			userEmail={ window.helpCenterData.userEmail }

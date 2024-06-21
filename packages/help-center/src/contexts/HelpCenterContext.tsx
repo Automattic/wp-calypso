@@ -8,7 +8,7 @@ export type HelpCenterRequiredInformation = {
 	selectedSiteId: number;
 	hasPurchases: boolean;
 	primarySiteId: number;
-	getGoogleMailServiceFamily: string;
+	googleMailServiceFamily: string;
 	avatarUrl: string | undefined;
 	userEmail: string;
 	isBusinessOrEcomPlanUser?: boolean;
@@ -29,7 +29,7 @@ const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInforma
 	displayName: '',
 	avatarUrl: undefined,
 	isBusinessOrEcomPlanUser: false,
-	getGoogleMailServiceFamily: '',
+	googleMailServiceFamily: '',
 	onboardingUrl: '',
 	isJetpackSite: false,
 	adminUrl: '',

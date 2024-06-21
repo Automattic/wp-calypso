@@ -3,6 +3,7 @@ import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
 import AsyncLoad from 'calypso/components/async-load';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { useSelector } from 'calypso/state';
 import {
@@ -69,6 +70,7 @@ const AsyncHelpCenter = () => {
 			placeholder={ null }
 			handleClose={ handleClose }
 			onboardingUrl={ onboardingUrl() }
+			googleMailServiceFamily={ getGoogleMailServiceFamily() }
 		/>
 	);
 };

@@ -66,13 +66,13 @@ export function filterListBySearchTerm(
 export function useAdminResults( searchTerm: string ) {
 	const siteSlug = useSiteSlug();
 	const customizerUrls = useCustomizerUrls();
+	const { googleMailServiceFamily, locale, onboardingUrl } = useHelpCenterContext();
 
-	const { getGoogleMailServiceFamily, locale, onboardingUrl } = useHelpCenterContext();
 	if ( siteSlug ) {
 		const sections = generateAdminSections(
 			siteSlug,
 			customizerUrls,
-			getGoogleMailServiceFamily,
+			googleMailServiceFamily,
 			onboardingUrl
 		);
 		const filteredSections = filterListBySearchTerm( searchTerm, sections, 4, locale );
