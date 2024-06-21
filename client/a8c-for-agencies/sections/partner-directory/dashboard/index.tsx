@@ -305,7 +305,7 @@ const PartnerDirectoryDashboard = () => {
 						`When approved, add details to your agency's public profile for clients to see.`
 					) }
 					buttonProps={ {
-						children: translate( 'Finish profile' ),
+						children: isValidFormData ? translate( 'Edit profile' ) : translate( 'Finish profile' ),
 						href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
 						onClick: onFinishProfileClick,
 						primary: isSubmitted,
