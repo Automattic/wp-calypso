@@ -87,13 +87,14 @@ const HelpCenter: React.FC< Container > = ( {
 		};
 	}, [] );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
-	const { selectedSiteId, primarySiteId, currentUserId } = useHelpCenterContext();
+	const { selectedSiteId, primarySiteId, currentUserId, userEmail, displayName } =
+		useHelpCenterContext();
 
 	useEffect( () => {
 		if ( currentUserId ) {
-			initializeAnalytics( { ID: currentUserId }, null );
+			initializeAnalytics( { ID: currentUserId, email: userEmail, username: displayName }, null );
 		}
-	}, [ currentUserId ] );
+	}, [ currentUserId, userEmail, displayName ] );
 
 	useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] );
 
