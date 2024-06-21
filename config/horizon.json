@@ -13,6 +13,7 @@
 		"ad-tracking": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": true,
+		"calypso/big-sky": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,

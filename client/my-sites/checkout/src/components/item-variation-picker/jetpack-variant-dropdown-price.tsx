@@ -1,6 +1,5 @@
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { Discount, Label, Price, PriceTextContainer, Variant } from './styles';
 import type { WPCOMProductVariant } from './types';
@@ -43,7 +42,6 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 	allVariants: WPCOMProductVariant[];
 } > = ( { variant, allVariants } ) => {
 	const isMobile = useMobileBreakpoint();
-	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	// We offer a free month trial for selected yearly plans (for now, only Social Advanced)
 
@@ -60,8 +58,8 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 	const showIntroOffer = variant.introductoryInterval > 0 && variant.termIntervalInMonths === 12;
 
 	return (
-		<Variant shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-			<Label shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+		<Variant>
+			<Label>
 				{ variant.variantLabel }
 				{ isMobile && discountInteger > 0 && (
 					<JetpackDiscountDisplay
@@ -71,7 +69,7 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 					/>
 				) }
 			</Label>
-			<PriceTextContainer shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+			<PriceTextContainer>
 				{ ! isMobile && discountInteger > 0 && (
 					<JetpackDiscountDisplay
 						finalPriceInteger={ variant.priceInteger }
@@ -81,14 +79,12 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 						isFirstMonthTrial={ isFirstMonthTrial( variant ) }
 					/>
 				) }
-				{ ! shouldUseCheckoutV2 && (
-					<Price aria-hidden={ variant.introductoryInterval > 0 }>
-						{ formatCurrency( variant.priceInteger, variant.currency, {
-							stripZeros: true,
-							isSmallestUnit: true,
-						} ) }
-					</Price>
-				) }
+				<Price aria-hidden={ variant.introductoryInterval > 0 }>
+					{ formatCurrency( variant.priceInteger, variant.currency, {
+						stripZeros: true,
+						isSmallestUnit: true,
+					} ) }
+				</Price>
 			</PriceTextContainer>
 		</Variant>
 	);
