@@ -770,9 +770,7 @@ export class LoginForm extends Component {
 			isA4AOAuth2Client( oauth2Client ) &&
 			currentQuery &&
 			currentQuery.redirect_to &&
-			( currentQuery.redirect_to.includes( '/client/' ) ||
-				currentQuery.redirect_to.includes( '%2Fclient%2F' ) ||
-				currentQuery.redirect_to.includes( '%2fclient%2f' ) );
+			decodeURIComponent( currentQuery.redirect_to ).includes( '/client/' );
 
 		const signupUrl = this.getSignupUrl();
 
