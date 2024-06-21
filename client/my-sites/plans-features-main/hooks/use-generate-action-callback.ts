@@ -9,6 +9,9 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
+import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -118,14 +121,20 @@ function useGenerateActionCallback( {
 	siteSlug?: string | null;
 	withDiscount?: string;
 } ): UseActionCallback {
+	const { setShowHelpCenter, setInitialRoute } = useDispatch( HELP_CENTER_STORE );
+	const { url: stillNeedHelpUrl } = useStillNeedHelpURL();
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
 	} );
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const handleUpgrade = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
+	const handleDowngradeClick = useCallback( () => {
+		setInitialRoute( stillNeedHelpUrl );
+		setShowHelpCenter( true );
+	}, [ setInitialRoute, setShowHelpCenter, stillNeedHelpUrl ] );
 
-	return ( { planSlug, cartItemForPlan, selectedStorageAddOn } ) => {
+	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) => {
 		return () => {
 			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
@@ -159,6 +168,11 @@ function useGenerateActionCallback( {
 				} else {
 					page.redirect( currentPlanManageHref );
 				}
+				return;
+			}
+
+			if ( sitePlanSlug && ! availableForPurchase ) {
+				handleDowngradeClick();
 				return;
 			}
 
