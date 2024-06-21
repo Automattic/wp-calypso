@@ -37,11 +37,6 @@ declare module 'calypso/components/data/query-reader-site' {
 	export default QueryReaderSite;
 }
 
-declare module 'calypso/components/embed-container' {
-	const EmbedContainer: FC;
-	export default EmbedContainer;
-}
-
 declare module 'calypso/data/support-article-alternates/use-support-article-alternates-query' {
 	const useSupportArticleAlternatesQuery: (
 		blogId: number,
