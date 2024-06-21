@@ -8,6 +8,7 @@ export { recordViewCheckout } from './record-view-checkout';
 export { retarget } from './retarget';
 export { retargetViewPlans } from './retarget-view-plans';
 export { tracksAnonymousUserId } from './track-anonymous-user-id';
+export * as GA4 from './google-analytics-4';
 export {
 	trackCustomFacebookConversionEvent,
 	trackCustomAdWordsRemarketingEvent,

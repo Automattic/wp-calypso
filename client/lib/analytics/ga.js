@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import debug from 'debug';
-import * as GA4 from 'calypso/lib/analytics/ad-tracking/google-analytics-4';
+import { GA4 } from 'calypso/lib/analytics/ad-tracking';
 import isAkismetCheckout from '../akismet/is-akismet-checkout';
 import isJetpackCheckout from '../jetpack/is-jetpack-checkout';
 import isJetpackCloud from '../jetpack/is-jetpack-cloud';
@@ -53,6 +53,8 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
 			useJetpackGoogleAnalytics +
 			'] [useAksiemtGoogleAnalytics: ' +
 			useAkismetGoogleAnalytics +
+			'] [useA8CForAgenciesGoogleAnalytics: ' +
+			useA8CForAgenciesGoogleAnalytics +
 			']'
 	);
 	const getGa4PropertyGtag = () => {
