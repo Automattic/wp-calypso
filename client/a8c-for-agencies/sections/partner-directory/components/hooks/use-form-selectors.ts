@@ -18,11 +18,11 @@ export function useFormSelectors() {
 		site_maintenance_platform_integration: translate( 'Site Maintenance & Plugin Management' ),
 		website_performance_optimization: translate( 'Website Performance Optimization' ),
 		conversion_rate_checkout_optimization: translate( 'Conversion Rate & Checkout Optimization' ),
-		ecommerce_consulting: translate( 'eCommerce consulting' ),
-		growth_consultation: translate( 'Growth consultation' ),
-		accessibility_audit: translate( 'Accessibility audit' ),
-		security_audit: translate( 'Security audit' ),
-		cross_border_multilingual_consultation: translate( 'Cross Border / Multilingual Consultation' ),
+		ecommerce_consulting: translate( 'eCommerce Consulting' ),
+		growth_consulting: translate( 'Growth Consulting' ),
+		accessibility_consulting: translate( 'Accessibility Consulting' ),
+		security_consulting: translate( 'Security Consulting' ),
+		international_multilingual_consulting: translate( 'International and Multilingual Consulting' ),
 	};
 
 	const availableProducts: Record< string, string > = {
