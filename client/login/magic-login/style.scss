@@ -312,6 +312,7 @@
 	font-size: 14px;
 	line-height: 1.5;
 
+	&.grav-powered-magic-login--gravatar-magic-link,
 	&.grav-powered-magic-login--wp-job-manager {
 		max-width: 560px;
 		font-size: 16px;
@@ -386,6 +387,27 @@
 				align-items: center;
 			}
 		}
+	}
+
+	&.grav-powered-magic-login--gravatar-magic-link {
+		a,
+		.grav-powered-magic-login__content a,
+		.grav-powered-magic-login__footer button {
+			color: #1d4fc4;
+		}
+
+		.magic-login__form-action button[type="submit"].form-button.is-primary {
+			&,
+			&:disabled {
+				background-color: #1d4fc4;
+			}
+
+			&:hover:not(&:disabled),
+			&:focus {
+				background-color: darken(#1d4fc4, 10%);
+			}
+		}
+
 	}
 
 	button[type="submit"].form-button.is-primary,
@@ -632,6 +654,7 @@
 	}
 
 	@include break-small {
+		&.grav-powered-magic-login--gravatar-magic-link,
 		&.grav-powered-magic-login--wp-job-manager {
 			.grav-powered-magic-login__content {
 				padding-left: 56px;
