@@ -86,6 +86,7 @@
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"p2-enabled": false,
+		"pattern-library/readymade-templates": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

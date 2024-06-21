@@ -61,3 +61,10 @@ export type PatternGalleryFC = React.FC< PatternGalleryProps >;
 
 export type PatternType = 'pattern' | 'page-layout';
 export type PatternView = 'grid' | 'list';
+
+export type ReadymadeTemplate = {
+	template_id: number;
+	title: string;
+	description: string;
+	content: string;
+};

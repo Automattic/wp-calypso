@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import {
@@ -16,6 +17,7 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
+import { ReadymadeTemplates } from 'calypso/my-sites/patterns/components/readymade-templates';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { TypeToggle } from 'calypso/my-sites/patterns/components/type-toggle';
 import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
@@ -357,7 +359,13 @@ export const PatternLibrary = ( {
 					</PatternLibraryBody>
 				) }
 
-				{ isHomePage && <PatternsCopyPasteInfo /> }
+				{ isEnabled( 'pattern-library/readymade-templates' ) && isHomePage && (
+					<ReadymadeTemplates />
+				) }
+
+				{ ! isEnabled( 'pattern-library/readymade-templates' ) && isHomePage && (
+					<PatternsCopyPasteInfo theme="dark" />
+				) }
 
 				{ isHomePage && (
 					<CategoryGallery
@@ -368,6 +376,10 @@ export const PatternLibrary = ( {
 						categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
 						patternTypeFilter={ PatternTypeFilter.PAGES }
 					/>
+				) }
+
+				{ isEnabled( 'pattern-library/readymade-templates' ) && isHomePage && (
+					<PatternsCopyPasteInfo />
 				) }
 			</div>
 

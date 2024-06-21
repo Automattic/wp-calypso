@@ -1,0 +1,47 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.readymade-templates {
+	display: flex;
+	gap: 24px;
+	padding: 16px 110px 24px;
+	overflow: auto;
+	mask-image: linear-gradient(to right, transparent, #fff 110px, #fff calc(100% - 110px), transparent);
+
+	@media (max-width: $break-wide) {
+		padding-left: 24px;
+		padding-right: 24px;
+		mask-image: none;
+	}
+
+	@media (max-width: $break-medium) {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+}
+
+.readymade-template__content {
+	--readymade-template-width: 390px;
+	width: var(--readymade-template-width);
+	height: calc(var(--readymade-template-width) * 1.4);
+	background-color: #fff;
+	margin-bottom: 24px;
+	overflow: hidden;
+	border-radius: 2px;
+
+	@media (max-width: $break-huge) {
+		--readymade-template-width: calc(100vw / 3 - 90px);
+	}
+
+	@media (max-width: $break-wide) {
+		--readymade-template-width: calc(100vw / 3 - 50px);
+	}
+
+	@media (max-width: $break-medium) {
+		--readymade-template-width: calc(100vw / 2 - 72px);
+	}
+}
+
+.readymade-template__title {
+	font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+	line-height: 26px;
+}

@@ -130,6 +130,7 @@
 		"p2-enabled": true,
 		"page/export": true,
 		"pattern-assembler/v2": true,
+		"pattern-library/readymade-templates": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
