@@ -13,6 +13,7 @@ export function useSupportArticleAlternatesQuery(
 		queryFn: () =>
 			wpcomRequest< Record< string, { blog_id: number; page_id: number } > >( {
 				path: `/support/alternates/${ blogId }/posts/${ postId }`,
+				apiVersion: '1.1',
 			} ),
 		...queryOptions,
 		enabled: ! isDefaultLocale( locale ) && !! ( blogId && postId ),
