@@ -111,7 +111,8 @@
 	text-align: center;
 	margin-top: 55px;
 
-	@media (max-width: 1270px) {
+	// hide the sidebar when it cannot fit to the side of the content.
+	@media (max-width: 1282px) {
 		display: none;
 	}
 
@@ -199,8 +200,13 @@
 }
 
 .reader-full-post .back-button {
-	@include breakpoint-deprecated( "<660px" ) {
-		display: none;
+	display: none;
+	position: absolute;
+	top: 0;
+
+	// We will display this when the sidebar disappears @781 px.
+	@media (max-width: 781px) {
+		display: inline-block;
 	}
 }
 
