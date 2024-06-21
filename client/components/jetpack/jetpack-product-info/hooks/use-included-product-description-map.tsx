@@ -110,6 +110,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 			...setProductDescription( JETPACK_STATS_PRODUCTS, {
 				value: statsDescription,
+				calloutText: translate( '100k views/mo' ),
 			} ),
 
 			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
