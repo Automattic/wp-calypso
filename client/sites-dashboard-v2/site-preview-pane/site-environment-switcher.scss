@@ -22,11 +22,9 @@
 	cursor: pointer;
 	display: flex;
 	align-items: center;
-
-	.components-button.has-icon {
-		width: 24px;
-		height: 24px;
-		padding: 0;
-		min-width: initial;
-	}
 }
+
+.site-preview-pane__site-environment-switcher.components-button.has-icon.has-text {
+	gap: 0;
+}
+
