@@ -73,7 +73,7 @@ export default function InitialIntentStep( props: Props ) {
 			redirect = '/start/do-it-for-me-store';
 		} else if ( _answerKeys.includes( 'difm' ) ) {
 			redirect = '/start/do-it-for-me';
-		} else if ( _answerKeys.includes( 'newsletter' ) ) {
+		} else if ( _answerKeys.includes( 'newsletter' ) && _answerKeys.length === 1 ) {
 			redirect = `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
 		}
 

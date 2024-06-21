@@ -60,7 +60,7 @@ const GDPRCookieConsentNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 		<div className={ classNames }>
 			<NoticeBanner
 				level="info"
-				title={ translate( 'Complianz - GDBR/CCPA Cookie Consent plugin impact on site stats' ) }
+				title={ translate( 'Complianz - GDPR/CCPA Cookie Consent plugin impact on site stats' ) }
 				onClose={ dismissNotice }
 			>
 				<p>{ bannerBody }</p>

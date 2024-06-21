@@ -44,7 +44,7 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 			__nextHasNoMarginBottom
 			label=""
 			onChange={ onServiceLabelsSelected }
-			suggestions={ Object.values( availableServices ) }
+			suggestions={ Object.values( availableServices ).sort() }
 			value={ selectedServicesByLabel }
 		/>
 	);

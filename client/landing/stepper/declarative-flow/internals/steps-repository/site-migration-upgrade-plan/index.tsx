@@ -15,7 +15,6 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
 import type { Step } from '../../types';
 
@@ -34,8 +33,6 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const plan = selectedPlanPathSlug
 		? getPlanByPathSlug( selectedPlanPathSlug )
 		: getPlan( PLAN_BUSINESS );
-
-	usePresalesChat( 'wpcom', true, true );
 
 	if ( ! siteItem || ! siteSlug || ! plan ) {
 		return;

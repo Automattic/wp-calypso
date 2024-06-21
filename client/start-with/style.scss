@@ -1,0 +1,120 @@
+@import "@automattic/components/src/styles/typography";
+
+.layout.is-section-start-with {
+	height: 100%;
+	display: grid;
+	grid-template-rows: max-content 1fr;
+
+	.layout__content {
+		height: 100%;
+		width: 100%;
+		padding: 0;
+		background: #fdfdfd;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+
+		.layout__primary,
+		.main {
+			height: 100%;
+			width: 100%;
+			padding: 0;
+		}
+	}
+
+
+	// stylelint-disable declaration-property-unit-allowed-list
+	.container {
+		height: 100%;
+		display: grid;
+		align-items: center;
+		justify-items: center;
+		grid-template-rows: 1fr 128px;
+
+		.content {
+			max-width: 1280px;
+			display: flex;
+			flex-direction: row;
+
+			.left-column {
+				display: flex;
+				flex-direction: column;
+				gap: 46px;
+
+				.title {
+					color: var(--studio-gray-80);
+					font-family: $font-recoleta;
+					font-size: 79px;
+					line-height: 105%;
+				}
+
+				.subtitle {
+					color: #000;
+					font-family: $font-sf-pro-display;
+					font-size: $font-body;
+					font-style: normal;
+					line-height: 162.5%;
+					width: 530px;
+					margin-bottom: 0;
+				}
+
+				.start-store-cta {
+					width: fit-content;
+					background: #3858e9;
+					color: #fff;
+					border-radius: 3px;
+					padding: 9px 20px;
+					font-size: $font-body;
+					font-weight: 500;
+					line-height: 150%;
+				}
+			}
+
+			.right-column {
+				flex-shrink: 0;
+			}
+		}
+
+		.footer {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			align-items: center;
+
+			.text {
+				width: 1358px;
+				color: var(--studio-gray-40);
+				font-family: $font-sf-pro-display;
+				font-size: $font-body;
+				font-style: normal;
+				line-height: 150%;
+				margin-bottom: 18px;
+			}
+
+			.brands {
+				width: 100%;
+				background-color: var(--studio-gray-80);
+				display: flex;
+				align-items: center;
+				flex-direction: column;
+				justify-content: center;
+
+
+				.brands-container {
+					width: 1380px;
+					padding: 25px 0;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					gap: 50px;
+				}
+			}
+		}
+	}
+	// stylelint-enable declaration-property-unit-allowed-list
+
+}

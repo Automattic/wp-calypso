@@ -58,13 +58,16 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 	const isWpMobileAppUser = isWpMobileApp();
 	const group = getGroupName( keyType );
 
-	const { data: canConnectToZendesk } = useCanConnectToZendesk();
-
+	const { data: canConnectToZendesk } = useCanConnectToZendesk(
+		enabled && ! skipAvailabilityCheck
+	);
 	const isEligibleForPresalesChat =
 		enabled && isEnglishLocale && canConnectToZendesk && ! isWpMobileAppUser;
 
-	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
-		useMessagingAvailability( group, isEligibleForPresalesChat && ! skipAvailabilityCheck );
+	const { data: chatAvailability, isLoading: isLoadingAvailability } = useMessagingAvailability(
+		group,
+		isEligibleForPresalesChat && ! skipAvailabilityCheck
+	);
 
 	const isPresalesChatAvailable =
 		skipAvailabilityCheck || Boolean( chatAvailability?.is_available );
