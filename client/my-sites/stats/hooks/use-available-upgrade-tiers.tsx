@@ -72,7 +72,7 @@ function filterLowerTiers(
 	} else {
 		// Filter out tiers that have been purchased or lower than the current usage.
 		tiers = availableTiers.filter( ( availableTier ) => {
-			// `usageData?.current_tier?.limit` is used here to filter out the purchased tier without considering buildled views from Complete plans.
+			// `usageData?.current_tier?.limit` is used here to filter out the purchased tier without considering bundled views from Complete plans.
 			return (
 				!! availableTier.transform_quantity_divide_by ||
 				( availableTier?.views as number ) >
