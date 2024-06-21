@@ -580,7 +580,7 @@ class MasterbarLoggedIn extends Component {
 		const { isActionSearchVisible } = this.state;
 
 		if ( ! isWordPressActionSearchFeatureEnabled || ! isActionSearchVisible ) {
-			return null;
+			// return null;
 		}
 
 		return (
