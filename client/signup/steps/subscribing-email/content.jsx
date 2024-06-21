@@ -14,24 +14,25 @@ function SubscribingEmailStepContent( props ) {
 			<SignupForm
 				step={ props.step }
 				email={ queryParams?.email || '' }
+				// TODO: Implement actual redirect url
+				redirectToAfterLoginUrl="https://wordpress.com"
 				// redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
 				// disabled={ this.userCreationStarted() }
 				// submitting={ this.userCreationStarted() }
 				// save={ this.save }
 				// submitForm={ this.submitForm }
 				// submitButtonText={ this.submitButtonText() }
-				// suggestedUsername={ this.props.suggestedUsername }
+				suggestedUsername=""
 				// handleSocialResponse={ this.handleSocialResponse }
 				isPasswordless
 				queryArgs={ props.initialContext?.query || {} }
 				isSocialSignupEnabled={ false }
-				// socialService={ socialService }
-				// socialServiceResponse={ socialServiceResponse }
 				// recaptchaClientId={ this.state.recaptchaClientId }
 				isReskinned
 				shouldDisplayUserExistsError
 				isSocialFirst={ false }
 				labelText={ props.isWooPasswordless ? props.translate( 'Your email' ) : null }
+				submitButtonText={ props.translate( 'Create an account' ) }
 			/>
 		</>
 	);

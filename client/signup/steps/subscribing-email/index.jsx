@@ -10,7 +10,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SubscribingEmailStepContent from './content';
 
-// const createNewAccount = async ( props, setIsLoading ) => {
+// const createNewAccount = async ( props, setIsLoading, setDisplayUserExistsError ) => {
 // 	const email = props.queryParams.email;
 // 	try {
 // 		// eslint-disable-next-line no-undef
@@ -54,9 +54,8 @@ function SubscribingEmailStep( props ) {
 	return (
 		<div className="subscribing-email">
 			<StepWrapper
-				hideFormattedHeader
 				flowName={ flowName }
-				stepName={ stepName }
+				hideFormattedHeader
 				positionInFlow={ positionInFlow }
 				stepContent={
 					<SubscribingEmailStepContent
@@ -65,6 +64,7 @@ function SubscribingEmailStep( props ) {
 						isLoading={ isLoading }
 					/>
 				}
+				stepName={ stepName }
 			/>
 		</div>
 	);
