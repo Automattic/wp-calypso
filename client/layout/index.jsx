@@ -29,6 +29,7 @@ import OfflineStatus from 'calypso/layout/offline-status';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { onboardingUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
@@ -188,6 +189,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 			primarySiteId={ primarySiteId }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
+			onboardingUrl={ onboardingUrl() }
 		/>
 	);
 }

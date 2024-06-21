@@ -3,6 +3,7 @@ import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
 import AsyncLoad from 'calypso/components/async-load';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { useSelector } from 'calypso/state';
 import {
 	getCurrentUser,
@@ -67,6 +68,7 @@ const AsyncHelpCenter = () => {
 			primarySiteId={ primarySiteId }
 			placeholder={ null }
 			handleClose={ handleClose }
+			onboardingUrl={ onboardingUrl() }
 		/>
 	);
 };

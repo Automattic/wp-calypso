@@ -47,6 +47,7 @@ function AdminHelpCenterContent() {
 			hasPurchases={ false }
 			primarySiteId={ window.helpCenterData.primarySiteId }
 			handleClose={ closeCallback }
+			onboardingUrl="https://wordpress.com/start?ref=calypso-inline-help"
 		/>
 	);
 }
