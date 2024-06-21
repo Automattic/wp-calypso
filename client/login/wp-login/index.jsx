@@ -15,7 +15,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
-import TranslatorInvite from 'calypso/components/translator-invite';
 import {
 	getSignupUrl,
 	isReactLostPasswordScreenEnabled,
@@ -307,7 +306,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( isReactLostPasswordScreenEnabled() && this.props.isWoo ) {
+		if ( isReactLostPasswordScreenEnabled() && ( this.props.isWoo || this.props.isBlazePro ) ) {
 			return (
 				<a
 					className="login__lost-password-link"
@@ -433,7 +432,6 @@ export class Login extends Component {
 			twoFactorAuthType,
 			locale,
 			isLoginView,
-			path,
 			signupUrl,
 			isWooCoreProfilerFlow,
 			isWooPasswordless,
@@ -450,7 +448,6 @@ export class Login extends Component {
 			return (
 				<>
 					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />
-					<TranslatorInvite path={ path } />
 				</>
 			);
 		}
@@ -459,7 +456,6 @@ export class Login extends Component {
 			return (
 				<>
 					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
-					{ isLoginView && <TranslatorInvite path={ path } /> }
 				</>
 			);
 		}
@@ -491,12 +487,11 @@ export class Login extends Component {
 						getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
 						renderSignUpLink={ this.renderSignUpLink.bind( this ) }
 					/>
-					{ isLoginView && <TranslatorInvite path={ path } /> }
 				</>
 			);
 		}
 
-		return isLoginView ? <TranslatorInvite path={ path } /> : null;
+		return null;
 	}
 
 	renderContent( isSocialFirst ) {

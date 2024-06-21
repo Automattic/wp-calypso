@@ -328,7 +328,7 @@ const streamApis = {
  */
 export function requestPage( action ) {
 	const {
-		payload: { streamKey, streamType, pageHandle, isPoll, gap },
+		payload: { streamKey, streamType, pageHandle, isPoll, gap, localeSlug },
 	} = action;
 	const api = streamApis[ streamType ];
 
@@ -352,7 +352,10 @@ export function requestPage( action ) {
 	// eslint-disable-next-line no-extra-boolean-cast
 	const number = !! gap ? PER_GAP : fetchCount;
 
-	const lang = i18n.getLocaleSlug();
+	// Set lang to the localeSlug if it is provided, otherwise use the default locale
+	// There is a race condition in switchLocale when retrieving the language file
+	// The stream request can occur before the language file is loaded, so we need a way to explicitly set the lang in the request
+	const lang = localeSlug || i18n.getLocaleSlug();
 
 	return http( {
 		method: 'GET',

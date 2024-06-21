@@ -1,19 +1,21 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import SubscriptionStatus from '../referrals-list/subscription-status';
+import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
 import type { Referral } from '../types';
 import type { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+
+import './style.scss';
 
 interface Props {
 	referral: Referral;
 	closeSitePreviewPane: () => void;
 }
-
-import './style.scss';
 
 const REFERRAL_PURCHASES_ID = 'referral-purchases';
 
@@ -40,6 +42,8 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 		withIcon: false,
 	};
 
+	const isDesktop = useDesktopBreakpoint();
+
 	const features = useMemo(
 		() => [
 			createFeaturePreview(
@@ -48,17 +52,23 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 				true,
 				selectedReferralTab,
 				setSelectedReferralTab,
-				<ReferralPurchases purchases={ referral.purchases } />
+				! isDesktop ? (
+					<ReferralPurchasesMobile purchases={ referral.purchases } />
+				) : (
+					<ReferralPurchases purchases={ referral.purchases } />
+				)
 			),
 		],
-		[ referral, selectedReferralTab, translate ]
+		[ referral, selectedReferralTab, translate, isDesktop ]
 	);
 
 	return (
 		<ItemPreviewPane
+			className="referral-details-items"
 			itemData={ itemData }
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
+			hideNavIfSingleTab
 		/>
 	);
 }

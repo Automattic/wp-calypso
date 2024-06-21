@@ -1269,10 +1269,7 @@ export class RenderDomainsStep extends Component {
 		}
 
 		return (
-			<div
-				key={ this.props.step + this.props.stepSectionName }
-				className="domains__step-content domains__step-content-domain-step"
-			>
+			<div className="domains__step-content domains__step-content-domain-step">
 				{ this.props.isSideContentExperimentLoading ? (
 					<Spinner width="100" />
 				) : (
@@ -1379,7 +1376,8 @@ export class RenderDomainsStep extends Component {
 		} else if ( 'plans-first' === flowName ) {
 			backUrl = getStepUrl( flowName, previousStepName );
 		} else if ( isOnboardingGuidedFlow( flowName ) ) {
-			backUrl = getStepUrl( flowName, previousStepName );
+			// Let the framework decide the back url.
+			backUrl = undefined;
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 

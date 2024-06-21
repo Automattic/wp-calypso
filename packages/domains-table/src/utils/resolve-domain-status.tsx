@@ -3,7 +3,7 @@ import {
 	SETTING_PRIMARY_DOMAIN,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	GDPR_POLICIES,
-	DOMAIN_EXPIRATION,
+	DOMAIN_EXPIRATION_AUCTION,
 } from '@automattic/urls';
 import moment from 'moment';
 import {
@@ -189,7 +189,7 @@ export function resolveDomainStatus(
 								strong: <strong />,
 								a: (
 									<a
-										href={ localizeUrl( DOMAIN_EXPIRATION ) }
+										href={ localizeUrl( DOMAIN_EXPIRATION_AUCTION ) }
 										rel="noopener noreferrer"
 										target="_blank"
 									/>

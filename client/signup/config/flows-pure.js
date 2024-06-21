@@ -39,7 +39,6 @@ const getP2Flows = () => {
 };
 
 export function generateFlows( {
-	getSiteDestination = noop,
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getLaunchDestination = noop,
@@ -128,24 +127,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'pro',
-			steps: [ userSocialStep, 'domains', 'plans-pro' ],
-			destination: getSignupDestination,
-			description: 'Create an account and a blog and then add the pro plan to the users cart.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'starter',
-			steps: [ userSocialStep, 'domains', 'plans-starter' ],
-			destination: getSignupDestination,
-			description: 'Create an account and a blog and then add the starter plan to the users cart.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'free',
 			steps: [ userSocialStep, 'domains' ],
 			destination: getSignupDestination,
@@ -205,15 +186,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'onboarding-2023-pricing-grid',
-			steps: [ userSocialStep, 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
 		{
@@ -301,15 +273,6 @@ export function generateFlows( {
 			lastModified: '2017-11-20',
 			disallowResume: true,
 			hideProgressIndicator: true,
-		},
-		{
-			name: 'rewind-switch',
-			steps: [ 'rewind-migrate', 'rewind-were-backing' ],
-			destination: '/activity-log',
-			description:
-				'Allows users with Jetpack plan with VaultPress credentials to migrate credentials',
-			lastModified: '2018-01-27',
-			disallowResume: true,
 		},
 		{
 			name: 'rewind-setup',
@@ -447,14 +410,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'plan-no-domain',
-			steps: [ 'user', 'site', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Allow users to select a plan without a domain',
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		},
-		{
 			name: 'launch-only',
 			steps: [ 'launch' ],
 			destination: getLaunchDestination,
@@ -567,8 +522,9 @@ export function generateFlows( {
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2024-05-16',
+			lastModified: '2024-06-14',
 			enablePresales: false,
+			enableHotjar: true,
 		},
 
 		{
@@ -578,8 +534,9 @@ export function generateFlows( {
 			description: 'A flow to collect DIFM lite site content',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2023-10-11',
+			lastModified: '2024-06-14',
 			hideProgressIndicator: true,
+			enableHotjar: true,
 		},
 		{
 			name: 'woocommerce-install',
@@ -594,26 +551,6 @@ export function generateFlows( {
 			lastModified: '2021-12-21',
 			disallowResume: false,
 		},
-
-		{
-			name: 'ecommerce-2y',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-2y' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'ecommerce-3y',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-3y' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2024-04-17',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-
 		{
 			name: 'business-2y',
 			steps: [ userSocialStep, 'domains', 'plans-business-2y' ],
@@ -705,6 +642,7 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
+			enableHotjar: true,
 		},
 	];
 

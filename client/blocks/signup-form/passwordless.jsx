@@ -27,7 +27,6 @@ class PasswordlessSignupForm extends Component {
 		submitButtonLoadingLabel: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 		userEmail: PropTypes.string,
 		labelText: PropTypes.string,
-		isInviteLoggedOutForm: PropTypes.bool,
 		onInputBlur: PropTypes.func,
 		onInputChange: PropTypes.func,
 		onCreateAccountError: PropTypes.func,
@@ -307,18 +306,6 @@ class PasswordlessSignupForm extends Component {
 		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
 	}
 
-	getFormButtonAndToS() {
-		return this.props.isInviteLoggedOutForm ? (
-			<>
-				{ this.formFooter() } { this.props.renderTerms?.() }
-			</>
-		) : (
-			<>
-				{ this.props.renderTerms?.() } { this.formFooter() }
-			</>
-		);
-	}
-
 	render() {
 		const { errorMessages, isSubmitting } = this.state;
 
@@ -344,7 +331,8 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.getFormButtonAndToS() }
+					{ this.props.renderTerms?.() }
+					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>
 		);

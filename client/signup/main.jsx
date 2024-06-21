@@ -250,9 +250,7 @@ class Signup extends Component {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 
-		if (
-			[ 'website-design-services', 'site-content-collection' ].includes( this.props.flowName )
-		) {
+		if ( flows.getFlow( this.props.flowName, this.props.isLoggedIn )?.enableHotjar ) {
 			addHotJarScript();
 		}
 

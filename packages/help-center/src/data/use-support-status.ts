@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { ChatAvailability } from '../types';
+import { SupportStatus } from '../types';
 
 // Bump me to invalidate the cache.
 const VERSION = 2;
@@ -11,18 +11,18 @@ interface APIFetchOptions {
 	path: string;
 }
 
-export function useSupportAvailability( enabled = true ) {
-	return useQuery< ChatAvailability, Error >( {
-		queryKey: [ 'support-availability', VERSION ],
+export function useSupportStatus( enabled = true ) {
+	return useQuery< SupportStatus, Error >( {
+		queryKey: [ 'support-status', VERSION ],
 		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
-						path: `help/eligibility/chat/mine`,
+						path: `help/support-status`,
 						apiNamespace: 'wpcom/v2/',
 						apiVersion: '2',
 				  } )
 				: await apiFetch( {
-						path: `help-center/support-availability/chat`,
+						path: `help-center/support-status`,
 						global: true,
 				  } as APIFetchOptions ),
 		enabled,
