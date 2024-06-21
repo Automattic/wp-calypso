@@ -254,14 +254,9 @@ function useGenerateActionHook( {
 			} );
 		}
 
-		if ( isFreePlan( planSlug ) ) {
-			text = translate( 'Contact support', { context: 'verb' } );
-			status = 'disabled';
-
-			if ( current ) {
-				text = translate( 'Manage add-ons', { context: 'verb' } );
-				status = 'enabled';
-			}
+		if ( isFreePlan( planSlug ) && current ) {
+			text = translate( 'Manage add-ons', { context: 'verb' } );
+			status = 'enabled';
 		} else if (
 			availableForPurchase &&
 			sitePlanSlug &&
