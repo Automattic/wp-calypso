@@ -6,14 +6,12 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
-import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
-import { getTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch } from 'calypso/state/types';
 import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -37,36 +35,9 @@ const readymadeTemplateFlow: Flow = {
 	name: READYMADE_TEMPLATE_FLOW,
 	isSignupFlow: true,
 	useSideEffect() {
-		const selectedDesign = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-			[]
-		);
-		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
-		const selectedTheme = getAssemblerDesign().slug;
-		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
-
+		const { setIntent } = useDispatch( ONBOARD_STORE );
 		// We have to query theme for the Jetpack site.
-		useQueryTheme( 'wpcom', selectedTheme );
-		useEffect( () => {
-			if ( ! theme ) {
-				// eslint-disable-next-line no-console
-				console.log( `The ${ selectedTheme } theme is loading...` );
-				return;
-			}
-
-			setSelectedDesign( {
-				...selectedDesign,
-				slug: theme.id,
-				title: theme.name,
-				recipe: {
-					...selectedDesign?.recipe,
-					stylesheet: theme.stylesheet,
-				},
-				design_type: 'assembler',
-			} );
-
-			setIntent( SiteIntent.ReadyMadeTemplate );
-		}, [ theme ] );
+		setIntent( SiteIntent.ReadyMadeTemplate );
 	},
 
 	useSteps() {
@@ -96,7 +67,6 @@ const readymadeTemplateFlow: Flow = {
 		const reduxDispatch = useReduxDispatch();
 
 		const selectedTheme = getAssemblerDesign().slug;
-		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
 		const { value: readymadeTemplateId } = useUrlQueryParam( 'readymadeTemplateId' );
 		const { data: readymadeTemplate } = useReadymadeTemplate( readymadeTemplateId );
@@ -120,7 +90,7 @@ const readymadeTemplateFlow: Flow = {
 
 			setPendingAction(
 				enableAssemblerThemeAndConfigureTemplates(
-					theme.id,
+					selectedTheme,
 					selectedSiteId,
 					readymadeTemplate,
 					assembleSite,
