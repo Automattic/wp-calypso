@@ -33,8 +33,6 @@ const readymadeTemplateFlow: Flow = {
 	name: READYMADE_TEMPLATE_FLOW,
 	isSignupFlow: true,
 	useSideEffect() {
-		const reduxDispatch = useReduxDispatch();
-		const { assembleSite, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
@@ -64,23 +62,11 @@ const readymadeTemplateFlow: Flow = {
 			} );
 
 			setIntent( SiteIntent.ReadyMadeTemplate );
-
-			enableAssemblerThemeAndConfigureTemplates(
-				theme.id,
-				'',
-				assembleSite,
-				setPendingAction,
-				reduxDispatch,
-				''
-			);
 		}, [ theme ] );
 	},
 
 	useSteps() {
 		return [
-			STEPS.CHECK_SITES,
-			STEPS.NEW_OR_EXISTING_SITE,
-			STEPS.SITE_PICKER,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
@@ -100,8 +86,13 @@ const readymadeTemplateFlow: Flow = {
 			[]
 		);
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
-		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
+		const { saveSiteSettings, setIntentOnSite, assembleSite } = useDispatch( SITE_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
+
+		const reduxDispatch = useReduxDispatch();
+
+		const selectedTheme = getAssemblerDesign().slug;
+		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -120,11 +111,15 @@ const readymadeTemplateFlow: Flow = {
 			setIntentOnSite( selectedSiteSlug, SiteIntent.ReadyMadeTemplate );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
 
-			const params = new URLSearchParams( {
-				canvas: 'edit',
-			} );
+			enableAssemblerThemeAndConfigureTemplates(
+				theme.id,
+				selectedSiteId,
+				assembleSite,
+				setPendingAction,
+				reduxDispatch
+			);
 
-			return exitFlow( `/site-editor/${ selectedSiteSlug }?${ params }` );
+			navigate( 'processing' );
 		};
 
 		const submit = async (
@@ -134,29 +129,8 @@ const readymadeTemplateFlow: Flow = {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
-				case 'check-sites': {
-					// Check for unlaunched sites
-					if ( providedDependencies?.filteredSitesCount === 0 ) {
-						// No unlaunched sites, redirect to new site creation step
-						return navigate( 'create-site' );
-					}
-					// With unlaunched sites, continue to new-or-existing-site step
-					return navigate( 'new-or-existing-site' );
-				}
-
-				case 'new-or-existing-site': {
-					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
-						return navigate( 'create-site' );
-					}
-					return navigate( 'site-picker' );
-				}
-
 				case 'create-site': {
 					return navigate( 'processing' );
-				}
-
-				case 'site-picker': {
-					return handleSelectSite( providedDependencies );
 				}
 
 				case 'freePostSetup': {
@@ -195,10 +169,6 @@ const readymadeTemplateFlow: Flow = {
 					} );
 
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
-				}
-
-				case 'pattern-assembler': {
-					return navigate( 'processing' );
 				}
 
 				case 'launchpad': {
@@ -243,14 +213,6 @@ const readymadeTemplateFlow: Flow = {
 				case 'freePostSetup':
 				case 'domains': {
 					return navigate( 'launchpad' );
-				}
-
-				case 'pattern-assembler': {
-					const params = new URLSearchParams( window.location.search );
-					params.delete( 'siteSlug' );
-					params.delete( 'siteId' );
-					setSelectedSite( null );
-					return navigate( `site-picker?${ params }` );
 				}
 			}
 		};
@@ -319,8 +281,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 	siteId,
 	assembleSite,
 	setPendingAction,
-	reduxDispatch,
-	siteSlugOrId
+	reduxDispatch
 ) {
 	setPendingAction( () =>
 		Promise.resolve()
@@ -335,8 +296,8 @@ function enableAssemblerThemeAndConfigureTemplates(
 				)
 			)
 			.then( ( activeThemeStylesheet: string ) =>
-				assembleSite( siteSlugOrId, activeThemeStylesheet, {
-					homeHtml: '',
+				assembleSite( siteId, activeThemeStylesheet, {
+					homeHtml: 'hehehehehe',
 					headerHtml: '',
 					footerHtml: '',
 					pages: [],
@@ -349,6 +310,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 					siteSetupOption: 'assembler',
 				} )
 			)
+			.then( () => window.location.assign( `/site-editor/${ siteId }?canvas=edit&assembler=1` ) )
 	);
 }
 
