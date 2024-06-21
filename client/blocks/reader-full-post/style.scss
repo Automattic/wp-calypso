@@ -203,6 +203,8 @@
 	display: none;
 	position: absolute;
 	top: 0;
+	left: 0;
+	right: unset;
 
 	// We will display this when the sidebar disappears @781 px.
 	@media (max-width: 781px) {
