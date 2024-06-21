@@ -41,7 +41,10 @@ export function useCustomizerUrls() {
 	return panels.reduce(
 		( acc, panel ) => {
 			if ( ! isJetpackSite && siteSlug ) {
-				const url = [ '' ].concat( [ 'customize', panel, siteSlug ].filter( Boolean ) ).join( '/' );
+				const panelPath = panel === 'root' ? '' : panel;
+				const url = [ '' ]
+					.concat( [ 'customize', panelPath, siteSlug ].filter( Boolean ) )
+					.join( '/' );
 				acc[ panel ] = addQueryArgs( url, {
 					return: returnUrl,
 				} );
