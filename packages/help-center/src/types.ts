@@ -10,9 +10,9 @@ export interface Container {
 }
 
 export interface ArticleContentProps {
-	content: string;
-	title: string;
-	link: string;
+	content: string | undefined;
+	title: string | undefined;
+	link: string | undefined;
 	isLoading?: boolean;
 	postId: number;
 	blogId?: string | null;

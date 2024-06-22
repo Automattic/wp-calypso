@@ -7,9 +7,9 @@ import Placeholders from './placeholder-lines';
 import './help-center-article-content.scss';
 
 const ArticleContent = ( {
-	content,
-	title,
-	link,
+	content = '',
+	title = '',
+	link = '',
 	postId,
 	blogId,
 	isLoading = false,
@@ -18,7 +18,7 @@ const ArticleContent = ( {
 	const post = { title, link };
 	return (
 		<article className="help-center-article-content__story">
-			{ isLoading ? (
+			{ isLoading || ! post ? (
 				<Placeholders lines={ 8 } />
 			) : (
 				<>
