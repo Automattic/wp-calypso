@@ -114,18 +114,11 @@ function shouldShowCommercialSiteUpgradeNotice( {
 	isCommercial,
 	hasPWYWPlanOnly,
 }: StatsNoticeProps ) {
-	// Log all the things!
-	// eslint-disable-next-line no-console, prefer-rest-params
-	console.log( 'args: ', arguments );
-
 	const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
-
-	// Show the notice if the site is Jetpack or it is Odyssey Stats.
 	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
-
 	const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
 
-	// Test specific to self-hosted sites with PWYW plans.
+	// Test specific to commercial self-hosted sites with PWYW plans.
 	// They should see the upgrade notice!
 	if ( showUpgradeNoticeOnOdyssey || showUpgradeNoticeForJetpackNotAtomic ) {
 		if ( isCommercial && hasPWYWPlanOnly ) {

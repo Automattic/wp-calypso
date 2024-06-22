@@ -15,7 +15,6 @@ function hasSiteProductJetpackStatsPWYWOnly(
 		( product ) =>
 			productHasStats( camelOrSnakeSlug( product ), true ) && product.expiryStatus !== 'expired'
 	);
-	console.log( 'plansSupportingStats: ', plansSupportingStats.length );
 
 	if ( plansSupportingStats.length === 0 ) {
 		return false;
@@ -25,7 +24,6 @@ function hasSiteProductJetpackStatsPWYWOnly(
 	const plansPWYWStats = plansSupportingStats?.filter( ( product ) =>
 		product.productSlug.includes( 'pwyw' )
 	);
-	console.log( 'plansPWYWStats: ', plansPWYWStats.length );
 
 	// If the arrays are equal, the site has only PWYW stats.
 	return plansSupportingStats.length === plansPWYWStats.length;
