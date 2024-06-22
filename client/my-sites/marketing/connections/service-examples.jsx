@@ -349,16 +349,11 @@ class SharingServiceExamples extends Component {
 
 	threads() {
 		const label = this.props.translate(
-			'{{strong}}Connect{{/strong}} to automatically share posts to your Threads profile.',
-			{
-				components: {
-					strong: <strong />,
-				},
-			}
+			'Increase your presence in social media by sharing your posts automatically to Threads.'
 		);
 		const image = {
 			src: threadsExample,
-			alt: this.props.translate( 'Share posts to your Threads profile.', {
+			alt: this.props.translate( 'Share posts to your Threads feed.', {
 				textOnly: true,
 			} ),
 		};
