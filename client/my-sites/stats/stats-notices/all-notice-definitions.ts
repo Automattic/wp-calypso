@@ -112,6 +112,7 @@ function shouldShowCommercialSiteUpgradeNotice( {
 	hasPaidStats,
 	isSiteJetpackNotAtomic,
 	isCommercial,
+	hasPWYWPlanOnly,
 }: StatsNoticeProps ) {
 	// Log all the things!
 	// eslint-disable-next-line no-console, prefer-rest-params
@@ -126,7 +127,6 @@ function shouldShowCommercialSiteUpgradeNotice( {
 
 	// Test specific to self-hosted sites with PWYW plans.
 	// They should see the upgrade notice!
-	const hasPWYWPlanOnly = true;
 	if ( showUpgradeNoticeOnOdyssey || showUpgradeNoticeForJetpackNotAtomic ) {
 		if ( isCommercial && hasPWYWPlanOnly ) {
 			return true;

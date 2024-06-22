@@ -91,6 +91,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	const { isRequestingSitePurchases, isCommercialOwned } = useStatsPurchases( siteId );
 
+	// Looks like we'll need a new selector to check for this state.
+	const hasPWYWPlanOnly = true;
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
@@ -104,6 +107,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		statsPurchaseSuccess,
 		isCommercial,
 		isCommercialOwned,
+		hasPWYWPlanOnly,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
