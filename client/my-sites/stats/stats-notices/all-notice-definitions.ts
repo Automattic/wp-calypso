@@ -34,34 +34,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: CommercialSiteUpgradeNotice,
 		noticeId: 'commercial_site_upgrade',
-		isVisibleFunc: ( {
-			isOdysseyStats,
-			isWpcom,
-			isVip,
-			isP2,
-			isOwnedByTeam51,
-			hasPaidStats,
-			isSiteJetpackNotAtomic,
-			isCommercial,
-		}: StatsNoticeProps ) => {
-			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
-
-			// Show the notice if the site is Jetpack or it is Odyssey Stats.
-			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
-
-			const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
-
-			return !! (
-				( showUpgradeNoticeOnOdyssey ||
-					showUpgradeNoticeForJetpackNotAtomic ||
-					showUpgradeNoticeForWpcomSites ) &&
-				// Show the notice if the site has not purchased the paid stats product.
-				! hasPaidStats &&
-				// Show the notice only if the site is commercial.
-				isCommercial &&
-				! isVip
-			);
-		},
+		isVisibleFunc: shouldShowCommercialSiteUpgradeNotice,
 		disabled: false,
 	},
 	{
@@ -129,5 +102,38 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		disabled: false,
 	},
 ];
+
+function shouldShowCommercialSiteUpgradeNotice( {
+	isOdysseyStats,
+	isWpcom,
+	isVip,
+	isP2,
+	isOwnedByTeam51,
+	hasPaidStats,
+	isSiteJetpackNotAtomic,
+	isCommercial,
+}: StatsNoticeProps ) {
+	// Log all the things!
+	// eslint-disable-next-line no-console, prefer-rest-params
+	console.log( 'args: ', arguments );
+
+	const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
+
+	// Show the notice if the site is Jetpack or it is Odyssey Stats.
+	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
+
+	const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
+
+	return !! (
+		( showUpgradeNoticeOnOdyssey ||
+			showUpgradeNoticeForJetpackNotAtomic ||
+			showUpgradeNoticeForWpcomSites ) &&
+		// Show the notice if the site has not purchased the paid stats product.
+		! hasPaidStats &&
+		// Show the notice only if the site is commercial.
+		isCommercial &&
+		! isVip
+	);
+}
 
 export default ALL_STATS_NOTICES;
