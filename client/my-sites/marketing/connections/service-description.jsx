@@ -243,7 +243,7 @@ class SharingServiceDescription extends Component {
 			},
 			threads() {
 				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Sharing posts to your Threads feed.' );
+					return this.props.translate( 'Sharing posts to Threads.' );
 				}
 				return this.props.translate( 'Share posts to your Threads feed.' );
 			},
