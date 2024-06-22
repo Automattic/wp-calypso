@@ -124,6 +124,15 @@ function shouldShowCommercialSiteUpgradeNotice( {
 
 	const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
 
+	// Test specific to self-hosted sites with PWYW plans.
+	// They should see the upgrade notice!
+	const hasPWYWPlanOnly = true;
+	if ( showUpgradeNoticeOnOdyssey || showUpgradeNoticeForJetpackNotAtomic ) {
+		if ( isCommercial && hasPWYWPlanOnly ) {
+			return true;
+		}
+	}
+
 	return !! (
 		( showUpgradeNoticeOnOdyssey ||
 			showUpgradeNoticeForJetpackNotAtomic ||
