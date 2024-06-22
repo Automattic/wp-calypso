@@ -17,7 +17,7 @@ import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { isRefundable } from 'calypso/lib/purchases';
+import { isAgencyPartnerType, isPartnerPurchase, isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -68,10 +68,18 @@ class CancelPurchaseForm extends Component {
 	};
 
 	getAllSurveySteps() {
-		const { willAtomicSiteRevert } = this.props;
+		const { willAtomicSiteRevert, purchase } = this.props;
 		let steps = [ FEEDBACK_STEP ];
 
-		if ( ! isPlan( this.props.purchase ) ) {
+		if ( isPartnerPurchase( purchase ) && isAgencyPartnerType( purchase.partnerType ) ) {
+			/**
+			 * We don't want to display the cancellation survey for sites purchased
+			 * through partners (e.g., A4A.)
+			 *
+			 * Let's jump right to the confirmation step.
+			 */
+			steps = [];
+		} else if ( ! isPlan( purchase ) ) {
 			steps = [ NEXT_ADVENTURE_STEP ];
 		} else if ( this.state.upsell ) {
 			steps = [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
