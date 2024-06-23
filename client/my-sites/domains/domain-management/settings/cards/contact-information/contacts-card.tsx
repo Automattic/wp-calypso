@@ -188,7 +188,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 						<Button
 							disabled={ disableEdit || readOnly || pendingContactUpdate }
 							href={
-								disableEdit || readOnly
+								disableEdit || readOnly || pendingContactUpdate
 									? ''
 									: domainManagementEditContactInfo(
 											props.selectedSite.slug,
@@ -222,7 +222,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 					{ pendingContactUpdate && (
 						<p className="contact-information__pending-update-warn">
 							{ translate(
-								"This domain has a pending contact information update. You will be able to update your contact information once the update is complete. If you don't confirm the update, the pending request will be canceled after 5 days."
+								"This domain has a pending contact information update. You will be able to update your contact information once the pending update is complete. If you don't confirm the update, the pending request will be canceled after 5 days."
 							) }
 						</p>
 					) }
