@@ -31,6 +31,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		props.selectedDomainName
 	);
 	const disableEdit = !! ( isLoading || data?.email );
+	const pendingContactUpdate = props.hasPendingContactUpdate;
 
 	const togglePrivacy = () => {
 		const { selectedSite, privateDomain, selectedDomainName: name } = props;
@@ -185,9 +186,9 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 					<ContactDisplay selectedDomainName={ selectedDomainName } />
 					<div className="contact-information__button-container">
 						<Button
-							disabled={ disableEdit || readOnly }
+							disabled={ disableEdit || readOnly || pendingContactUpdate }
 							href={
-								disableEdit || readOnly
+								disableEdit || readOnly || pendingContactUpdate
 									? ''
 									: domainManagementEditContactInfo(
 											props.selectedSite.slug,
@@ -215,6 +216,13 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 						<p className="contact-information__transfer-warn">
 							{ translate(
 								'Contact modifications are disabled while domain transfers are pending.'
+							) }
+						</p>
+					) }
+					{ pendingContactUpdate && (
+						<p className="contact-information__pending-update-warn">
+							{ translate(
+								"This domain has a pending contact information update. You will be able to update your contact information once the pending update is complete. If you don't confirm the update, the pending request will be canceled after 5 days."
 							) }
 						</p>
 					) }

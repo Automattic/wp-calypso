@@ -84,6 +84,7 @@ export type ResponseDomain = {
 	gdprConsentStatus: GDPRConsentStatus;
 	googleAppsSubscription: GoogleEmailSubscription | null;
 	hasEmailForwardsDnsRecords?: boolean | null;
+	hasPendingContactUpdate: boolean;
 	hasRegistration: boolean;
 	hasWpcomNameservers: boolean;
 	hasZone: boolean;
