@@ -43,7 +43,6 @@ export interface DomainData {
 	partner_domain: boolean;
 	wpcom_domain: boolean;
 	has_zone: boolean;
-	has_pending_contact_update: boolean;
 	is_gravatar_domain: boolean;
 	is_renewable: boolean;
 	is_redeemable: boolean;
