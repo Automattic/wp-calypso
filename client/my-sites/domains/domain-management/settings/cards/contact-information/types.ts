@@ -30,7 +30,6 @@ export type ContactsCardPassedProps = {
 	canManageConsent: boolean;
 	contactInfoDisclosureAvailable: boolean;
 	contactInfoDisclosed: boolean;
-	hasPendingContactUpdate: boolean;
 	isPendingIcannVerification: boolean;
 	readOnly: boolean | undefined;
 	registeredViaTrustee: boolean;
