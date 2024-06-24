@@ -101,7 +101,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
-	}, [ params.step ] );
+	}, [ currentStepRoute ] );
 
 	const assertCondition = flow.useAssertConditions?.( navigate ) ?? {
 		state: AssertConditionState.SUCCESS,
