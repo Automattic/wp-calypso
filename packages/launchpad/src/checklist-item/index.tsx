@@ -18,15 +18,6 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 	const isRtl = useRtl();
 	const { id, completed, disabled = false, title, subtitle, actionDispatch } = task;
 
-	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
-	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text;
-
-	// Display task counter if task is incomplete and has the count properties;
-	const shouldDisplayTaskCounter =
-		task.target_repetitions &&
-		null !== task.repetition_count &&
-		undefined !== task.repetition_count;
-
 	// If the task says we should use the Calypso path, ensure we use that link for the button's href.
 	// This allows the UI routing code to hook into the URL changes and should reduce full-page (re)loads
 	// when clicking on the task list items.
@@ -38,7 +29,21 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 		disabled,
 		...( disabled ? {} : { href: buttonHref } ),
 	};
+
 	const onClickHandler = onClick || actionDispatch;
+	const isClickable = !! ( buttonProps.href || onClickHandler );
+
+	// Display chevron if task is incomplete.
+	// Don't display chevron and badge at the same time.
+	// Don't display chevron if item is not clickable.
+	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text && isClickable;
+
+	// Display task counter if task is incomplete and has the count properties;
+	const shouldDisplayTaskCounter =
+		task.target_repetitions &&
+		null !== task.repetition_count &&
+		undefined !== task.repetition_count;
+
 	return (
 		<li
 			className={ clsx( 'checklist-item__task', {
@@ -46,6 +51,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 				pending: ! completed,
 				enabled: ! disabled,
 				disabled: disabled,
+				clickable: isClickable,
 			} ) }
 		>
 			{ isPrimaryAction ? (
