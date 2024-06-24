@@ -54,6 +54,10 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 		null !== task.repetition_count &&
 		undefined !== task.repetition_count;
 
+	// Make sure the button keeps the button styles if it is not clickable.
+	const buttonClassName = isClickable ? '' : 'components-button';
+	const ButtonElement = isClickable ? Button : 'div';
+
 	return (
 		<li
 			className={ clsx( 'checklist-item__task', {
@@ -61,22 +65,21 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 				pending: ! completed,
 				enabled: ! disabled,
 				disabled: disabled,
-				clickable: isClickable,
 				expanded: expandable && expandable.isOpen,
 			} ) }
 		>
 			{ isPrimaryAction ? (
-				<Button
-					className="checklist-item__checklist-primary-button"
+				<ButtonElement
+					className={ clsx( 'checklist-item__checklist-primary-button', buttonClassName ) }
 					data-task={ id }
 					onClick={ onClickHandler }
 					{ ...buttonProps }
 				>
 					{ title }
-				</Button>
+				</ButtonElement>
 			) : (
-				<Button
-					className="checklist-item__task-content"
+				<ButtonElement
+					className={ clsx( 'checklist-item__task-content', buttonClassName ) }
 					data-task={ id }
 					onClick={ onClickHandler }
 					{ ...buttonProps }
@@ -108,7 +111,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 						/>
 					) }
 					{ subtitle && <p className="checklist-item__subtext">{ subtitle }</p> }
-				</Button>
+				</ButtonElement>
 			) }
 			{ expandable && expandable.isOpen && (
 				<div className="checklist-item__expanded-content">

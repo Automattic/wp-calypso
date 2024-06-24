@@ -16,7 +16,6 @@
 	margin: 0;
 	color: var(--color-neutral-100);
 	height: auto;
-	cursor: pointer;
 	font-family: $sans;
 	font-size: $font-body-small;
 	line-height: 22px;
@@ -24,6 +23,14 @@
 	overflow: hidden;
 	text-decoration: none;
 	padding-left: 2px;
+
+	&:is(button, a) {
+		cursor: pointer;
+	}
+
+	&:is(div) {
+		cursor: default;
+	}
 
 	&:visited {
 		color: var(--color-neutral-100);
@@ -80,15 +87,11 @@
 
 .checklist-item__task-content.components-button:hover:not([disabled]),
 .checklist-item__task-content.components-button:focus:not([disabled]) {
-	&.clickable {
+	&:is(button, a) {
 		fill: var(--studio-blue-50);
 		color: var(--studio-blue-50);
 	}
 	border-bottom: 1px solid var(--studio-gray-5);
-}
-
-.checklist-item__task:not(.clickable) .components-button {
-	cursor: default;
 }
 
 .checklist-item__task-content.components-button[disabled],
@@ -198,10 +201,10 @@
 }
 
 // pending tasks and completed enabled
-.checklist-item__task.clickable.completed.enabled button:hover,
-.checklist-item__task.clickable.pending button:hover,
-.checklist-item__task.clickable.completed.enabled > a:focus,
-.checklist-item__task.clickable.pending > a:focus {
+.checklist-item__task.completed.enabled > button:hover,
+.checklist-item__task.pending > button:hover,
+.checklist-item__task.completed.enabled > a:focus,
+.checklist-item__task.pending > a:focus {
 	.checklist-item__text {
 		color: var(--studio-blue-50);
 	}
