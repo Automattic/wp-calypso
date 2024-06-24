@@ -81,7 +81,7 @@ function filterLowerTiers(
 						// Offset the billable monthly views by the views already included in plans, e.g. COmplete.
 						usageData?.billableMonthlyViews -
 							( usageData.views_limit ?? 0 ) +
-							( usageData?.current_tier?.limit ?? 0 ),
+							( usageData.current_tier?.limit ?? 0 ),
 						0
 					)
 			);
