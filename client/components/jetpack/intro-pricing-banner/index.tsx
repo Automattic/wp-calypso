@@ -91,7 +91,7 @@ const IntroPricingBanner: React.FC = () => {
 						<img className="intro-pricing-banner__item-icon" src={ rocket } alt="" />
 						<span className="intro-pricing-banner__item-label">
 							{ preventWidows(
-								translate( 'Get %(percent)d% off your first year', {
+								translate( 'Get up to %(percent)d% off your first year', {
 									args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE },
 								} )
 							) }
