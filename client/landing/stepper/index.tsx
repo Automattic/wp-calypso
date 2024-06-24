@@ -74,6 +74,12 @@ const getFlowFromURL = () => {
 	return fromPath || fromQuery;
 };
 
+const initializeHotJar = ( flowName: string ) => {
+	if ( flowName === IMPORT_HOSTED_SITE_FLOW ) {
+		addHotJarScript();
+	}
+};
+
 window.AppBoot = async () => {
 	const flowName = getFlowFromURL();
 
@@ -82,8 +88,7 @@ window.AppBoot = async () => {
 		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
 	}
 
-	flowName === IMPORT_HOSTED_SITE_FLOW && addHotJarScript();
-
+	initializeHotJar( flowName );
 	// put the proxy iframe in "all blog access" mode
 	// see https://github.com/Automattic/wp-calypso/pull/60773#discussion_r799208216
 	requestAllBlogsAccess();
