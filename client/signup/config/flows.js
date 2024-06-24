@@ -241,8 +241,8 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 	return `/setup/${ stepperHostingFlow }`;
 }
 
-function getEntrepreneurFlowDestination() {
-	return '/setup/entrepreneur/trialAcknowledge';
+function getEntrepreneurFlowDestination( { redirect_to } ) {
+	return redirect_to || '/setup/entrepreneur/trialAcknowledge';
 }
 
 function getGuidedOnboardingFlowDestination( dependencies ) {
