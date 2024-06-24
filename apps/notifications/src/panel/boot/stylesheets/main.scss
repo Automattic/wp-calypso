@@ -996,14 +996,18 @@ $with-sidebar-min-page-width: 1114px;
 }
 
 .wpnc__keyboard-shortcuts-popover.popover {
+	font: {
+		family: $sans;
+		size: $wpnc__capital-font-size;
+	}
+
 	.popover__arrow {
 		z-index: 1000;
 	}
 	.popover__inner {
 		width: 250px;
-		font: $sans;
 		z-index: 999;
-		font-size: $wpnc__capital-font-size;
+		left: 0;
 
 		h2 {
 			padding: 10px;
@@ -1011,6 +1015,7 @@ $with-sidebar-min-page-width: 1114px;
 			border-bottom: 1px solid var(--color-neutral-10);
 			text-align: left;
 			font-weight: bold;
+			font-size: $wpnc__capital-font-size;
 		}
 
 		ul {
