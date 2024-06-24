@@ -39,6 +39,10 @@
 	@media (max-width: $break-medium) {
 		--readymade-template-width: calc(100vw / 2 - 72px);
 	}
+
+	@media (max-width: $break-small) {
+		--readymade-template-width: calc(100vw - 170px);
+	}
 }
 
 .readymade-template__title {
