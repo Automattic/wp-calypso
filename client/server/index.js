@@ -5,12 +5,21 @@ import fs from 'fs';
 import config from '@automattic/calypso-config';
 import boot from './boot';
 import { getLogger } from './lib/logger';
-
 const logger = getLogger();
 const start = Date.now();
-const protocol = config( 'protocol' );
-const port = config( 'port' );
-const host = config( 'hostname' );
+
+let protocol = config( 'protocol' );
+let port = config( 'port' );
+let host = config( 'hostname' );
+
+// Mock WordPress.com locally for auth development.
+if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
+	protocol = 'https';
+	port = 443;
+	host = 'wordpress.com';
+	logger.warn( 'Ignoring protocol, port, and hostname configs to mock WordPress.com' );
+}
+
 const app = boot();
 
 function sendBootStatus( status ) {
