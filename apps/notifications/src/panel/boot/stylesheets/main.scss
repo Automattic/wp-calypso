@@ -1001,8 +1001,9 @@ $with-sidebar-min-page-width: 1114px;
 	}
 	.popover__inner {
 		width: 250px;
-		font-family: $sans;
+		font: $sans;
 		z-index: 999;
+		font-size: $wpnc__capital-font-size;
 
 		h2 {
 			padding: 10px;
