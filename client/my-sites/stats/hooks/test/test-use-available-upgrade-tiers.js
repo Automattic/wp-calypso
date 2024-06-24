@@ -169,4 +169,20 @@ describe( 'getAvailableUpgradeTiers', () => {
 		expect( extendedTiers[ 5 ].minimum_price ).toEqual( 220_000 );
 		expect( extendedTiers[ 5 ].upgrade_price ).toEqual( 210_000 );
 	} );
+	it( 'should return proper upgrade tiers for sites with bundled plans', () => {
+		const usageData = {
+			views_limit: 110_000,
+			current_tier: { minimum_price: 10000, limit: 10_000 },
+			billableMonthlyViews: 1_000_010,
+		};
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( 1_000_000 );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 70_000 );
+		expect( extendedTiers[ 0 ].upgrade_price ).toEqual( 60_000 );
+		expect( extendedTiers[ 5 ].views ).toEqual( 6_000_000 );
+		expect( extendedTiers[ 5 ].minimum_price ).toEqual( 195_000 );
+		expect( extendedTiers[ 5 ].upgrade_price ).toEqual( 185_000 );
+	} );
 } );
