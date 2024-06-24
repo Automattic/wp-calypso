@@ -166,6 +166,18 @@
 	}
 }
 
+.checklist-item__task.expanded {
+	.checklist-item__task-content,
+	.checklist-item__task-content:hover,
+	.checklist-item__task-content:focus {
+		border-bottom: none;
+	}
+
+	.checklist-item__task-content {
+		padding-bottom: 0;
+	}
+}
+
 // completed tasks (both enabled and disabled)
 .checklist-item__task.completed.disabled,
 .checklist-item__task.completed.enabled {
@@ -263,5 +275,15 @@
 		&:hover {
 			color: var(--color-text-inverted);
 		}
+	}
+}
+
+.checklist-item__expanded-content {
+	padding-left: 2px;
+	font-family: $sans;
+	font-size: $font-body-small;
+
+	p {
+		margin: 12px 0;
 	}
 }

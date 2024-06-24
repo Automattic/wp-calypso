@@ -7,14 +7,24 @@ import type { FC, Key } from 'react';
 
 import './style.scss';
 
+interface Expandable {
+	isOpen: boolean;
+	content: JSX.Element;
+	action?: {
+		label: string;
+		onClick: () => void;
+	};
+}
+
 interface Props {
 	key?: Key;
 	task: Task;
 	isPrimaryAction?: boolean;
+	expandable?: Expandable;
 	onClick?: () => void;
 }
 
-const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
+const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClick } ) => {
 	const isRtl = useRtl();
 	const { id, completed, disabled = false, title, subtitle, actionDispatch } = task;
 
@@ -52,6 +62,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 				enabled: ! disabled,
 				disabled: disabled,
 				clickable: isClickable,
+				expanded: expandable && expandable.isOpen,
 			} ) }
 		>
 			{ isPrimaryAction ? (
@@ -98,6 +109,19 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 					) }
 					{ subtitle && <p className="checklist-item__subtext">{ subtitle }</p> }
 				</Button>
+			) }
+			{ expandable && expandable.isOpen && (
+				<div className="checklist-item__expanded-content">
+					{ expandable.content }
+					{ expandable.action && (
+						<Button
+							className="checklist-item__checklist-primary-button"
+							onClick={ expandable.action.onClick }
+						>
+							{ expandable.action.label }
+						</Button>
+					) }
+				</div>
 			) }
 		</li>
 	);
