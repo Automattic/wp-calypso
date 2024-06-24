@@ -248,6 +248,10 @@ function getEntrepreneurFlowDestination( { redirect_to } ) {
 function getGuidedOnboardingFlowDestination( dependencies ) {
 	const { onboardingSegment, siteSlug, siteId, domainItem, cartItems, refParameter } = dependencies;
 
+	if ( ! onboardingSegment ) {
+		return getSignupDestination( dependencies );
+	}
+
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
