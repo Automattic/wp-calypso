@@ -559,7 +559,9 @@ function getAvailabilityNotice(
 			break;
 
 		case 'gravatar_tld_restriction':
-			message = translate( 'Gravatar only supports .link domains right now.' );
+			message = translate(
+				'Gravatar is currently offering free .link domains. Additional domain extensions may become available for a fee in the future.'
+			);
 			severity = 'info';
 			break;
 
