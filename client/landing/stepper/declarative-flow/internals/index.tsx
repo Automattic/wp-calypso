@@ -10,6 +10,7 @@ import Modal from 'react-modal';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { startPerformanceTracking } from 'calypso/lib/performance-tracking/lib';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -141,6 +142,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useSignUpStartTracking( { flow, currentStepRoute: currentStepRoute } );
 
+	startPerformanceTracking( window.location.pathname, { fullPageLoad: false } );
 	return (
 		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />

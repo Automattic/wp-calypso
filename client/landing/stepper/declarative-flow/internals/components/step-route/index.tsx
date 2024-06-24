@@ -1,3 +1,4 @@
+import { start, stop } from '@automattic/browser-data-collector';
 import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
@@ -16,6 +17,14 @@ type StepRouteProps = {
 	renderStep: ( step: StepperStep ) => JSX.Element | null;
 };
 
+const PerformanceTrackingStop = () => {
+	useEffect( () => {
+		stop( window.location.pathname );
+	}, [ window.location.pathname ] );
+
+	return null;
+};
+
 //TODO: Check we can move RenderStep function to here and remove the renderStep prop
 const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
@@ -30,6 +39,10 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 		skipTracking: shouldSkipRender,
 		flowVariantSlug: flow.variantSlug,
 	} );
+
+	useEffect( () => {
+		start( window.location.pathname, { fullPageLoad: false } );
+	}, [] );
 
 	useEffect( () => {
 		if ( shouldRedirectToLogin ) {
@@ -54,6 +67,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 			{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
 			{ stepContent && <SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } /> }
 			{ stepContent }
+			{ stepContent && <PerformanceTrackingStop /> }
 		</div>
 	);
 };
