@@ -43,6 +43,7 @@ export function getSegmentedIntent( answers: SurveyData ): SegmentedIntent {
 
 		// Catch-all case for when none of the specific goals are met
 		// This will also account for "( ! DIFM && ! Sell ) = Consumer / Business" condition
+
 		return {
 			segmentSlug: 'plans-guided-segment-consumer-or-business',
 			segment: 'consumer-or-business',
