@@ -369,41 +369,6 @@ export class EditorToolbarComponent {
 		await target.click();
 	}
 
-	/* Navigation sidebar */
-
-	/**
-	 * Opens the nav sidebar.
-	 */
-	async openNavSidebar(): Promise< void > {
-		const editorParent = await this.editor.parent();
-
-		const target = editorParent.getByRole( 'button', {
-			name: 'Block editor sidebar',
-		} );
-		if ( await this.targetIsOpen( target ) ) {
-			return;
-		}
-
-		await target.click();
-	}
-
-	/**
-	 * Closes the nav sidebar.
-	 */
-	async closeNavSidebar(): Promise< void > {
-		const editorParent = await this.editor.parent();
-
-		const target = editorParent.getByRole( 'button', {
-			name: 'Block editor sidebar',
-		} );
-
-		if ( ! ( await this.targetIsOpen( target ) ) ) {
-			return;
-		}
-
-		await target.click();
-	}
-
 	/* List view */
 
 	/**
