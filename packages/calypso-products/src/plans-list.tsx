@@ -452,7 +452,7 @@ import {
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_HELP_CENTER_SUPPORT,
 } from './constants';
-import { getTrailMapExperiment, isTrailMapCopyVariant } from './experiments';
+import { isTrailMapVariant } from './experiments';
 import {
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
@@ -577,10 +577,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_FREE_THEMES_SIGNUP,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => {
-		if (
-			getTrailMapExperiment() === 'treatment_copy' ||
-			getTrailMapExperiment() === 'treatment_copy_and_structure'
-		) {
+		if ( isTrailMapVariant() ) {
 			return [
 				FEATURE_WP_SUBDOMAIN_SIGNUP,
 				FEATURE_USERS,
@@ -595,21 +592,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_POST_EDITS_HISTORY,
 				FEATURE_PAYMENT_TRANSACTION_FEES_10,
 				FEATURE_HELP_CENTER_SUPPORT,
-			];
-		}
-
-		if ( getTrailMapExperiment() === 'treatment_structure' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_BEAUTIFUL_THEMES,
-				FEATURE_USERS,
-				FEATURE_PAGES,
-				FEATURE_POST_EDITS_HISTORY,
-				FEATURE_NEWSLETTERS_RSS,
-				FEATURE_SECURITY_BRUTE_FORCE,
-				FEATURE_SMART_REDIRECTS,
-				FEATURE_ALWAYS_ONLINE,
-				FEATURE_PAYMENT_TRANSACTION_FEES_10,
 			];
 		}
 
@@ -628,7 +610,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	},
 
 	get2023PlanComparisonFeatureOverride: () => {
-		if ( isTrailMapCopyVariant() ) {
+		if ( isTrailMapVariant() ) {
 			return [
 				FEATURE_USERS,
 				FEATURE_1_WEBSITE,
@@ -638,21 +620,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_CDN,
 				FEATURE_POST_EDITS_HISTORY,
 				FEATURE_HELP_CENTER_SUPPORT,
-				FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
-			];
-		}
-
-		if ( getTrailMapExperiment() === 'treatment_structure' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_BEAUTIFUL_THEMES,
-				FEATURE_USERS,
-				FEATURE_PAGES,
-				FEATURE_POST_EDITS_HISTORY,
-				FEATURE_NEWSLETTERS_RSS,
-				FEATURE_SECURITY_BRUTE_FORCE,
-				FEATURE_SMART_REDIRECTS,
-				FEATURE_ALWAYS_ONLINE,
 				FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 			];
 		}
@@ -681,8 +648,9 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PricingGridSignupJetpackFeatures: () =>
-		getTrailMapExperiment() === 'control'
-			? [
+		isTrailMapVariant()
+			? []
+			: [
 					FEATURE_PAID_SUBSCRIBERS_JP,
 					FEATURE_PREMIUM_CONTENT_JP,
 					FEATURE_DONATIONS_AND_TIPS_JP,
@@ -690,10 +658,9 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 					FEATURE_STATS_JP,
 					FEATURE_LTD_SOCIAL_MEDIA_JP,
 					FEATURE_CONTACT_FORM_JP,
-			  ]
-			: [],
+			  ],
 	get2023PlanComparisonJetpackFeatureOverride: () =>
-		isTrailMapCopyVariant()
+		isTrailMapVariant()
 			? []
 			: [
 					FEATURE_PAID_SUBSCRIBERS_JP,
@@ -879,15 +846,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => {
-		if ( getTrailMapExperiment() === 'treatment_copy' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_20_PREMIUM_THEMES,
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_PAYMENT_TRANSACTION_FEES_8,
-			];
-		}
-		if ( getTrailMapExperiment() === 'treatment_copy_and_structure' ) {
+		if ( isTrailMapVariant() ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
 				FEATURE_USERS,
@@ -904,22 +863,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_HELP_CENTER_SUPPORT,
 			];
 		}
-		if ( getTrailMapExperiment() === 'treatment_structure' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-				FEATURE_USERS,
-				FEATURE_PAGES,
-				FEATURE_POST_EDITS_HISTORY,
-				FEATURE_NEWSLETTERS_RSS,
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_SECURITY_BRUTE_FORCE,
-				FEATURE_SMART_REDIRECTS,
-				FEATURE_ALWAYS_ONLINE,
-				FEATURE_FAST_DNS,
-				FEATURE_PAYMENT_TRANSACTION_FEES_8,
-			];
-		}
+
 		return [
 			FEATURE_CUSTOM_DOMAIN,
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
@@ -929,30 +873,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PlanComparisonFeatureOverride: () => {
-		if ( isTrailMapCopyVariant() ) {
-			return [
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_HELP_CENTER_SUPPORT,
-				FEATURE_PREMIUM_THEMES,
-			];
-		}
-
-		if ( getTrailMapExperiment() === 'treatment_structure' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-				FEATURE_USERS,
-				FEATURE_PAGES,
-				FEATURE_POST_EDITS_HISTORY,
-				FEATURE_NEWSLETTERS_RSS,
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_SECURITY_BRUTE_FORCE,
-				FEATURE_SMART_REDIRECTS,
-				FEATURE_ALWAYS_ONLINE,
-				FEATURE_FAST_DNS,
-				FEATURE_PREMIUM_THEMES,
-			];
+		if ( isTrailMapVariant() ) {
+			return [ FEATURE_AD_FREE_EXPERIENCE, FEATURE_CUSTOM_DOMAIN, FEATURE_HELP_CENTER_SUPPORT ];
 		}
 
 		return [
@@ -1121,15 +1043,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			PREMIUM_DESIGN_FOR_STORES,
 		].filter( isValueTruthy ),
 	get2023PricingGridSignupWpcomFeatures: () => {
-		if ( getTrailMapExperiment() === 'treatment_copy' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_PAYMENT_TRANSACTION_FEES_0,
-				FEATURE_STORE_DESIGN,
-				FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
-			];
-		}
-		if ( getTrailMapExperiment() === 'treatment_copy_and_structure' ) {
+		if ( isTrailMapVariant() ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
 				FEATURE_USERS,
@@ -1164,67 +1078,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
-		if ( getTrailMapExperiment() === 'treatment_structure' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_PLUGINS_THEMES,
-				FEATURE_USERS,
-				FEATURE_PAGES,
-				FEATURE_POST_EDITS_HISTORY,
-				FEATURE_NEWSLETTERS_RSS,
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_STYLE_CUSTOMIZATION,
-				FEATURE_WORDADS,
-				FEATURE_UNLIMITED_TRAFFIC,
-				FEATURE_SECURITY_BRUTE_FORCE,
-				FEATURE_SMART_REDIRECTS,
-				FEATURE_ALWAYS_ONLINE,
-				FEATURE_FAST_DNS,
-				FEATURE_BANDWIDTH,
-				FEATURE_GLOBAL_EDGE_CACHING,
-				FEATURE_BURST,
-				FEATURE_WAF_V2,
-				FEATURE_CDN,
-				FEATURE_CPUS,
-				FEATURE_DATACENTRE_FAILOVER,
-				FEATURE_ISOLATED_INFRA,
-				FEATURE_SECURITY_MALWARE,
-				FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
-				FEATURE_REAL_TIME_SECURITY_SCANS,
-				FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
-				FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
-				FEATURE_UNLIMITED_PRODUCTS,
-				/***
-				 * Probably should be moved to Jetpack Features
-				 */
-				FEATURE_SPAM_JP,
-				FEATURE_SECURITY_DDOS,
-				FEATURE_DEV_TOOLS,
-				FEATURE_SITE_STAGING_SITES,
-				FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
-				FEATURE_WP_UPDATES,
-				FEATURE_MULTI_SITE,
-				FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
-				FEATURE_WOOCOMMERCE_HOSTING,
-				FEATURE_PREMIUM_STORE_THEMES,
-				FEATURE_STORE_DESIGN,
-				FEATURE_DISPLAY_PRODUCTS_BRAND,
-				FEATURE_PRODUCT_ADD_ONS,
-				FEATURE_ASSEMBLED_KITS,
-				FEATURE_MIN_MAX_ORDER_QUANTITY,
-				FEATURE_STOCK_NOTIFS,
-				FEATURE_DYNAMIC_UPSELLS,
-				FEATURE_LOYALTY_PROG,
-				FEATURE_CUSTOM_MARKETING_AUTOMATION,
-				FEATURE_BULK_DISCOUNTS,
-				FEATURE_INVENTORY_MGMT,
-				FEATURE_STREAMLINED_CHECKOUT,
-				FEATURE_SELL_60_COUNTRIES,
-				FEATURE_SHIPPING_INTEGRATIONS,
-				FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
-				FEATURE_PRIORITY_24_7_SUPPORT,
-			];
-		}
+
 		return [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_WOOCOMMERCE_HOSTING,
@@ -1248,70 +1102,11 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PlanComparisonFeatureOverride: () => {
-		if ( isTrailMapCopyVariant() ) {
+		if ( isTrailMapVariant() ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
 				FEATURE_STORE_DESIGN,
 				FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
-			];
-		}
-
-		if ( getTrailMapExperiment() === 'treatment_structure' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_PLUGINS_THEMES,
-				FEATURE_USERS,
-				FEATURE_PAGES,
-				FEATURE_POST_EDITS_HISTORY,
-				FEATURE_NEWSLETTERS_RSS,
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_STYLE_CUSTOMIZATION,
-				FEATURE_WORDADS,
-				FEATURE_UNLIMITED_TRAFFIC,
-				FEATURE_SECURITY_BRUTE_FORCE,
-				FEATURE_SMART_REDIRECTS,
-				FEATURE_ALWAYS_ONLINE,
-				FEATURE_FAST_DNS,
-				FEATURE_BANDWIDTH,
-				FEATURE_GLOBAL_EDGE_CACHING,
-				FEATURE_BURST,
-				FEATURE_WAF_V2,
-				FEATURE_CDN,
-				FEATURE_CPUS,
-				FEATURE_DATACENTRE_FAILOVER,
-				FEATURE_ISOLATED_INFRA,
-				FEATURE_SECURITY_MALWARE,
-				FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
-				FEATURE_REAL_TIME_SECURITY_SCANS,
-				FEATURE_UNLIMITED_PRODUCTS,
-				/***
-				 * Probably should be moved to Jetpack Features
-				 */
-				FEATURE_SPAM_JP,
-				FEATURE_SECURITY_DDOS,
-				FEATURE_DEV_TOOLS,
-				FEATURE_SITE_STAGING_SITES,
-				FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
-				FEATURE_WP_UPDATES,
-				FEATURE_MULTI_SITE,
-				FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
-				FEATURE_WOOCOMMERCE_HOSTING,
-				FEATURE_PREMIUM_STORE_THEMES,
-				FEATURE_STORE_DESIGN,
-				FEATURE_DISPLAY_PRODUCTS_BRAND,
-				FEATURE_PRODUCT_ADD_ONS,
-				FEATURE_ASSEMBLED_KITS,
-				FEATURE_MIN_MAX_ORDER_QUANTITY,
-				FEATURE_STOCK_NOTIFS,
-				FEATURE_DYNAMIC_UPSELLS,
-				FEATURE_LOYALTY_PROG,
-				FEATURE_CUSTOM_MARKETING_AUTOMATION,
-				FEATURE_BULK_DISCOUNTS,
-				FEATURE_INVENTORY_MGMT,
-				FEATURE_STREAMLINED_CHECKOUT,
-				FEATURE_SELL_60_COUNTRIES,
-				FEATURE_SHIPPING_INTEGRATIONS,
-				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
 
@@ -1684,18 +1479,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
 	get2023PricingGridSignupWpcomFeatures: () => {
-		if ( getTrailMapExperiment() === 'treatment_copy' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_48_PREMIUM_THEMES,
-				FEATURE_REAL_TIME_STATS,
-				FEATURE_STYLE_CUSTOMIZATION,
-				FEATURE_VIDEOPRESS_JP,
-				FEATURE_PAYMENT_TRANSACTION_FEES_4,
-				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-			];
-		}
-		if ( getTrailMapExperiment() === 'treatment_copy_and_structure' ) {
+		if ( isTrailMapVariant() ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
 				FEATURE_USERS,
@@ -1714,25 +1498,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
-		if ( getTrailMapExperiment() === 'treatment_structure' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-				FEATURE_USERS,
-				FEATURE_PAGES,
-				FEATURE_POST_EDITS_HISTORY,
-				FEATURE_NEWSLETTERS_RSS,
-				FEATURE_SECURITY_BRUTE_FORCE,
-				FEATURE_SMART_REDIRECTS,
-				FEATURE_ALWAYS_ONLINE,
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_STYLE_CUSTOMIZATION,
-				FEATURE_WORDADS,
-				FEATURE_FAST_DNS,
-				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-				FEATURE_PAYMENT_TRANSACTION_FEES_4,
-			];
-		}
 
 		return [
 			FEATURE_CUSTOM_DOMAIN,
@@ -1744,31 +1509,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PlanComparisonFeatureOverride: () => {
-		if ( isTrailMapCopyVariant() ) {
+		if ( isTrailMapVariant() ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
 				FEATURE_REAL_TIME_STATS,
 				FEATURE_STYLE_CUSTOMIZATION,
 				FEATURE_VIDEOPRESS_JP,
-				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-			];
-		}
-
-		if ( getTrailMapExperiment() === 'treatment_structure' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-				FEATURE_USERS,
-				FEATURE_PAGES,
-				FEATURE_POST_EDITS_HISTORY,
-				FEATURE_NEWSLETTERS_RSS,
-				FEATURE_SECURITY_BRUTE_FORCE,
-				FEATURE_SMART_REDIRECTS,
-				FEATURE_ALWAYS_ONLINE,
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_STYLE_CUSTOMIZATION,
-				FEATURE_WORDADS,
-				FEATURE_FAST_DNS,
 				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			];
 		}
@@ -1787,14 +1533,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 	],
 	get2023PricingGridSignupJetpackFeatures: () =>
-		getTrailMapExperiment() === 'control'
-			? [
+		isTrailMapVariant()
+			? []
+			: [
 					FEATURE_VIDEOPRESS_JP,
 					FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 					FEATURE_SITE_ACTIVITY_LOG_JP,
 					FEATURE_STATS_PAID,
-			  ]
-			: [],
+			  ],
 	get2023PricingGridSignupStorageOptions: () => {
 		return [
 			{
@@ -1809,7 +1555,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '4%' ),
 	} ),
 	get2023PlanComparisonJetpackFeatureOverride: () =>
-		isTrailMapCopyVariant() ? [] : [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP, FEATURE_STATS_PAID ],
+		isTrailMapVariant() ? [] : [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP, FEATURE_STATS_PAID ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1925,30 +1671,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SFTP_DATABASE,
 		].filter( isValueTruthy ),
 	get2023PricingGridSignupWpcomFeatures: () => {
-		if ( getTrailMapExperiment() === 'treatment_copy' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_INSTALL_PLUGINS,
-				FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
-				FEATURE_REAL_TIME_SECURITY_SCANS,
-				FEATURE_SITE_BACKUPS_AND_RESTORE,
-				FEATURE_FREE_MIGRATIONS,
-				FEATURE_AUTOMATED_BURST_SCALING,
-				FEATURE_WAF_V2,
-				FEATURE_SECURITY_DDOS,
-				FEATURE_FULL_DATA_CENTER_REDUNDANCIES,
-				FEATURE_REAL_TIME_SECURITY_SCANS,
-				FEATURE_SITE_STAGING_SITES,
-				FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT,
-				FEATURE_GITHUB_DEPLOYMENTS,
-				FEATURE_DEV_TOOLS,
-				FEATURE_DATABASE_ACCESS,
-				FEATURE_WEB_SERVER_SETTINGS,
-				FEATURE_PAYMENT_TRANSACTION_FEES_2,
-				FEATURE_PRIORITY_24_7_SUPPORT,
-			];
-		}
-		if ( getTrailMapExperiment() === 'treatment_copy_and_structure' ) {
+		if ( isTrailMapVariant() ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
 				FEATURE_USERS,
@@ -1981,49 +1704,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_PRIORITY_24_7_SUPPORT,
 			];
 		}
-		if ( getTrailMapExperiment() === 'treatment_structure' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_PLUGINS_THEMES,
-				FEATURE_USERS,
-				FEATURE_PAGES,
-				FEATURE_POST_EDITS_HISTORY,
-				FEATURE_NEWSLETTERS_RSS,
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_STYLE_CUSTOMIZATION,
-				FEATURE_WORDADS,
-				FEATURE_UNLIMITED_TRAFFIC,
-				FEATURE_SECURITY_BRUTE_FORCE,
-				FEATURE_SMART_REDIRECTS,
-				FEATURE_ALWAYS_ONLINE,
-				FEATURE_FAST_DNS,
-				FEATURE_BANDWIDTH,
-				FEATURE_GLOBAL_EDGE_CACHING,
-				FEATURE_BURST,
-				FEATURE_WAF_V2,
-				FEATURE_CDN,
-				FEATURE_CPUS,
-				FEATURE_DATACENTRE_FAILOVER,
-				FEATURE_ISOLATED_INFRA,
-				FEATURE_SECURITY_MALWARE,
-				FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
-				FEATURE_REAL_TIME_SECURITY_SCANS,
-				/***
-				 * Probably should be moved to Jetpack Features
-				 */
-				FEATURE_SPAM_JP,
-				FEATURE_SECURITY_DDOS,
-				FEATURE_DEV_TOOLS,
-				FEATURE_SITE_STAGING_SITES,
-				FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
-				FEATURE_WP_UPDATES,
-				FEATURE_MULTI_SITE,
-				FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
-				FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
-				FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
-				FEATURE_PRIORITY_24_7_SUPPORT,
-			];
-		}
+
 		return [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_PRIORITY_24_7_SUPPORT,
@@ -2056,7 +1737,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PlanComparisonFeatureOverride: () => {
-		if ( isTrailMapCopyVariant() ) {
+		if ( isTrailMapVariant() ) {
 			return [
 				FEATURE_CUSTOM_DOMAIN,
 				FEATURE_INSTALL_PLUGINS,
@@ -2075,49 +1756,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_DEV_TOOLS,
 				FEATURE_DATABASE_ACCESS,
 				FEATURE_WEB_SERVER_SETTINGS,
-				FEATURE_PRIORITY_24_7_SUPPORT,
-				FEATURE_COMMISSION_FEE_WOO_FEATURES,
-			];
-		}
-
-		if ( getTrailMapExperiment() === 'treatment_structure' ) {
-			return [
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_PLUGINS_THEMES,
-				FEATURE_USERS,
-				FEATURE_PAGES,
-				FEATURE_POST_EDITS_HISTORY,
-				FEATURE_NEWSLETTERS_RSS,
-				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_STYLE_CUSTOMIZATION,
-				FEATURE_WORDADS,
-				FEATURE_UNLIMITED_TRAFFIC,
-				FEATURE_SECURITY_BRUTE_FORCE,
-				FEATURE_SMART_REDIRECTS,
-				FEATURE_ALWAYS_ONLINE,
-				FEATURE_FAST_DNS,
-				FEATURE_BANDWIDTH,
-				FEATURE_GLOBAL_EDGE_CACHING,
-				FEATURE_BURST,
-				FEATURE_WAF_V2,
-				FEATURE_CDN,
-				FEATURE_CPUS,
-				FEATURE_DATACENTRE_FAILOVER,
-				FEATURE_ISOLATED_INFRA,
-				FEATURE_SECURITY_MALWARE,
-				FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
-				FEATURE_REAL_TIME_SECURITY_SCANS,
-				/***
-				 * Probably should be moved to Jetpack Features
-				 */
-				FEATURE_SPAM_JP,
-				FEATURE_SECURITY_DDOS,
-				FEATURE_DEV_TOOLS,
-				FEATURE_SITE_STAGING_SITES,
-				FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
-				FEATURE_WP_UPDATES,
-				FEATURE_MULTI_SITE,
-				FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 				FEATURE_PRIORITY_24_7_SUPPORT,
 				FEATURE_COMMISSION_FEE_WOO_FEATURES,
 			];
@@ -2166,16 +1804,16 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_STAGING_SITES,
 	],
 	get2023PricingGridSignupJetpackFeatures: () =>
-		getTrailMapExperiment() === 'control'
-			? [
+		isTrailMapVariant()
+			? []
+			: [
 					FEATURE_REALTIME_BACKUPS_JP,
 					FEATURE_ONE_CLICK_RESTORE_V2,
 					FEATURE_UPTIME_MONITOR_JP,
 					FEATURE_ES_SEARCH_JP,
 					FEATURE_PLUGIN_AUTOUPDATE_JP,
 					FEATURE_SEO_JP,
-			  ]
-			: [],
+			  ],
 	getPlanComparisonFeatureLabels: () => {
 		const featureLabels: Record< Feature, TranslateResult > = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Unlimited premium themes' ),
@@ -2198,7 +1836,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '2%' ),
 			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: i18n.translate( '0%' ),
 		};
-		if ( ! isTrailMapCopyVariant() ) {
+		if ( ! isTrailMapVariant() ) {
 			featureLabels[ FEATURE_STORE_DESIGN ] = i18n.translate( 'Available with plugins' );
 		}
 

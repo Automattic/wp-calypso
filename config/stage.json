@@ -169,6 +169,7 @@
 		"signup/professional-email-step": false,
 		"signup/social": true,
 		"signup/social-first": true,
+		"signup/email-subscription-flow": false,
 		"site-indicator": true,
 		"site-profiler/metrics": false,
 		"ssr/prefetch-timebox": true,

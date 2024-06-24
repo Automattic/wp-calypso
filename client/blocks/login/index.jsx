@@ -537,7 +537,11 @@ class Login extends Component {
 
 			if ( isA4AOAuth2Client( oauth2Client ) ) {
 				headerText = translate(
-					'Howdy! Log in to Automattic for Agencies with your WordPress.com account.'
+					'Howdy! Log in to Automattic for Agencies with your WordPress.com{{nbsp/}}account.',
+					{
+						components: { nbsp: <>&nbsp;</> },
+						comment: 'The {{nbsp/}} is a non-breaking space',
+					}
 				);
 				preHeader = (
 					<div>
