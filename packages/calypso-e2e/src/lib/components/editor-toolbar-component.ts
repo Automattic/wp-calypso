@@ -351,6 +351,24 @@ export class EditorToolbarComponent {
 		await button.click();
 	}
 
+	/**
+	 * Closes the editor.
+	 *
+	 * Clicks the `W` logo in the corner to close the editor.
+	 */
+	async closeEditor(): Promise< void > {
+		const editorParent = await this.editor.parent();
+
+		const target = editorParent.getByRole( 'link', {
+			name: 'View Posts',
+		} );
+		if ( await this.targetIsOpen( target ) ) {
+			return;
+		}
+
+		await target.click();
+	}
+
 	/* Navigation sidebar */
 
 	/**
