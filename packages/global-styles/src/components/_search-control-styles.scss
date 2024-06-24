@@ -3,7 +3,7 @@
  * You can use this mixin to apply the WP.com styles to the search control component
 
  * Usage:
- * @import "@automattic/global-styles/src/components/_search-control-styles";
+ * @import "@automattic/global-styles/src/components/search-control-styles";
  * @include search-control-wpcom-styles;
  */
 @mixin search-control-wpcom-styles {
