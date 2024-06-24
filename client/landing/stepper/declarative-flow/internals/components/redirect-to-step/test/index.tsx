@@ -4,9 +4,9 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { RedirectToStep } from '../';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 jest.mock( 'calypso/state/current-user/selectors' );
 
