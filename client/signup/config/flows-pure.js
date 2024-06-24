@@ -38,6 +38,24 @@ const getP2Flows = () => {
 		: [];
 };
 
+const getEmailSubscriptionFlow = () => {
+	return isEnabled( 'signup/email-subscription-flow' )
+		? [
+				{
+					name: 'email-subscription',
+					steps: [ 'subscribing-email' ],
+					destination: '/',
+					description:
+						'Signup flow that subscripes user to guides appointments for email campaigns',
+					lastModified: '2024-06-17',
+					showRecaptcha: true,
+					providesDependenciesInQuery: [ 'email', 'redirect_to', 'mailing_list' ],
+					hideProgressIndicator: true,
+				},
+		  ]
+		: [];
+};
+
 export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
@@ -56,6 +74,7 @@ export function generateFlows( {
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
+	const emailSubscriptionFlow = getEmailSubscriptionFlow();
 
 	const flows = [
 		{
@@ -124,24 +143,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'pro',
-			steps: [ userSocialStep, 'domains', 'plans-pro' ],
-			destination: getSignupDestination,
-			description: 'Create an account and a blog and then add the pro plan to the users cart.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'starter',
-			steps: [ userSocialStep, 'domains', 'plans-starter' ],
-			destination: getSignupDestination,
-			description: 'Create an account and a blog and then add the starter plan to the users cart.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
 		{
@@ -662,6 +663,7 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 			enableHotjar: true,
 		},
+		...emailSubscriptionFlow,
 	];
 
 	// convert the array to an object keyed by `name`

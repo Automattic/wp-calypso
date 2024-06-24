@@ -18,4 +18,5 @@ export const GLOBAL_SIDEBAR_EVENTS = {
 	HELPCENTER_CLICK: 'calypso_global_sidebar_helpcenter_click',
 	PROFILE_CLICK: 'calypso_global_sidebar_profile_click',
 	READER_CLICK: 'calypso_global_sidebar_reader_click',
+	WRITE_POST_CLICK: 'calypso_global_sidebar_write_post_click',
 };

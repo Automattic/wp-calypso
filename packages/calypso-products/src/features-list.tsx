@@ -329,7 +329,7 @@ import {
 	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	FEATURE_PRIORITY_24_7_SUPPORT,
 } from './constants';
-import { getTrailMapExperiment, isTrailMapCopyVariant } from './experiments';
+import { isTrailMapVariant } from './experiments';
 import type { FeatureList } from './types';
 
 const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
@@ -362,7 +362,7 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 			);
 
 		default:
-			return isTrailMapCopyVariant()
+			return isTrailMapVariant()
 				? i18n.translate(
 						'Accept payments (%(commission)d%% fee) {{br}}{{/br}}(+ standard processing fee)',
 						{
@@ -611,7 +611,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_FREE_WORDPRESS_THEMES ]: {
 		getSlug: () => FEATURE_FREE_WORDPRESS_THEMES,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'All free themes' )
 				: i18n.translate( 'Free WordPress Themes' ),
 	},
@@ -733,7 +733,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_VIDEO_UPLOADS ]: {
 		getSlug: () => FEATURE_VIDEO_UPLOADS,
 		getTitle: () =>
-			getTrailMapExperiment()
+			isTrailMapVariant()
 				? i18n.translate( 'Upload 4K video with VideoPress' )
 				: i18n.translate( 'VideoPress support' ),
 		getDescription: () =>
@@ -835,7 +835,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_INSTALL_PLUGINS ]: {
 		getSlug: () => FEATURE_INSTALL_PLUGINS,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( '50,000+ plugins and themes' )
 				: i18n.translate(
 						'Access to more than 50,000 WordPress plugins to extend functionality for your site'
@@ -931,7 +931,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
 		getSlug: () => FEATURE_COMMUNITY_SUPPORT,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Help center support' )
 				: i18n.translate( 'Community support' ),
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
@@ -1085,7 +1085,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
 		getSlug: () => FEATURE_SITE_BACKUPS_AND_RESTORE,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Real time full-site backup/restore' )
 				: i18n.translate( 'Automated site backups and one-click restore' ),
 	},
@@ -1730,7 +1730,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate(
 						'Accept payments (%(commission)d%% fee, %(wooCommerceCommission)d%% for WooCommerce) {{br}}{{/br}}(+ standard processing fee)',
 						{
@@ -1747,7 +1747,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate(
 						'Accept payments (%(commission)d%% fee) {{br}}{{/br}}(+ standard processing fee)',
 						{
@@ -1790,7 +1790,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Unlimited traffic' )
 				: i18n.translate( 'No limitations on site visitors' ),
 		getDescription: () =>
@@ -1835,7 +1835,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_USERS ]: {
 		getSlug: () => FEATURE_USERS,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Unlimited collaborators' )
 				: i18n.translate( 'Unlimited users' ),
 		getCompareTitle: () => i18n.translate( 'Invite others to contribute to your site.' ),
@@ -1851,7 +1851,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_POST_EDITS_HISTORY ]: {
 		getSlug: () => FEATURE_POST_EDITS_HISTORY,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Version history and restore' )
 				: i18n.translate( 'Time machine for post edits' ),
 		getDescription: () =>
@@ -1919,7 +1919,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Unmetered bandwidth' )
 				: i18n.translate( 'Unrestricted bandwidth' ),
 		getDescription: () =>
@@ -1936,7 +1936,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WAF_V2 ]: {
 		getSlug: () => FEATURE_WAF_V2,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Web application firewall' )
 				: i18n.translate( 'Web application firewall (WAF)' ),
 		getDescription: () =>
@@ -1945,7 +1945,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Global CDN with 28+ locations' )
 				: i18n.translate( 'Global CDN' ),
 		getCompareTitle: () =>
@@ -1998,7 +1998,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SECURITY_DDOS ]: {
 		getSlug: () => FEATURE_SECURITY_DDOS,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'DDoS protection' )
 				: i18n.translate( 'DDoS protection and mitigation' ),
 		getDescription: () =>
@@ -2007,7 +2007,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'SFTP/SSH, WP-CLI' )
 				: i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
 		getDescription: () =>
@@ -2016,7 +2016,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Staging site' )
 				: i18n.translate( 'Free staging site' ),
 		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
@@ -2080,7 +2080,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
 		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Back-in-stock notifications' )
 				: i18n.translate( 'Back in stock emails' ),
 		getDescription: () =>
@@ -2157,7 +2157,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
 		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Min/max order quantities' )
 				: i18n.translate( 'Min/max order quantity' ),
 		getDescription: () =>
@@ -2406,7 +2406,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_STOCK_NOTIFS ]: {
 		getSlug: () => FEATURE_STOCK_NOTIFS,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Stock notifications' )
 				: i18n.translate( 'Back-in-stock notifications' ),
 		getDescription: () =>
@@ -2443,7 +2443,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BULK_DISCOUNTS ]: {
 		getSlug: () => FEATURE_BULK_DISCOUNTS,
 		getTitle: () =>
-			isTrailMapCopyVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Bulk discounts' )
 				: i18n.translate( 'Offer bulk discounts' ),
 		getDescription: () => i18n.translate( 'Offer personalized packages and bulk discounts.' ),
@@ -2532,9 +2532,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_FREE_SSL_CERTIFICATE ]: {
 		getSlug: () => FEATURE_FREE_SSL_CERTIFICATE,
 		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Free SSL' )
-				: i18n.translate( 'Free SSL certificate' ),
+			isTrailMapVariant() ? i18n.translate( 'Free SSL' ) : i18n.translate( 'Free SSL certificate' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_GOOGLE_ANALYTICS_V3 ]: {

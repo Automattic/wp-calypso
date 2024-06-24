@@ -48,6 +48,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -208,6 +209,7 @@ export class UserStep extends Component {
 			userLoggedIn,
 			wccomFrom,
 			isReskinned,
+			isOnboardingAffiliateFlow,
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
@@ -330,6 +332,12 @@ export class UserStep extends Component {
 					);
 				}
 			}
+		}
+
+		if ( isOnboardingAffiliateFlow ) {
+			subHeaderText = translate(
+				"Thanks for stopping by! You're a few steps away from building your perfect website. Let's do this."
+			);
 		}
 
 		if ( this.props.userLoggedIn ) {
@@ -778,6 +786,7 @@ const ConnectedUser = connect(
 			isWooPasswordless: getIsWooPasswordless( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
+			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
 		};
 	},
 	{

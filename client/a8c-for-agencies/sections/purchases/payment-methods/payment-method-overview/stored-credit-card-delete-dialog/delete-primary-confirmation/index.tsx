@@ -1,5 +1,6 @@
 import { PaymentLogo } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { isClientView } from '../../../lib/is-client-view';
 import type { PaymentMethodCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
 import './style.scss';
@@ -12,6 +13,8 @@ interface Props {
 
 const DeletePrimaryCardConfirmation = ( { card, altCard, isFetching }: Props ) => {
 	const translate = useTranslate();
+
+	const isClient = isClientView();
 
 	if ( isFetching ) {
 		return (
@@ -26,9 +29,13 @@ const DeletePrimaryCardConfirmation = ( { card, altCard, isFetching }: Props ) =
 			<div className="delete-primary-card-confirmation">
 				<div className="delete-primary-card-confirmation__card">
 					<p className="delete-primary-card-confirmation__notice">
-						{ translate(
-							'Issuing new licenses will be paused until you add a new primary payment method. Additionally, the existing licenses will be revoked at the end of their respective terms.'
-						) }
+						{ isClient
+							? translate(
+									'Any items that you bought will be canceled and stop working at the end of their terms.'
+							  )
+							: translate(
+									'Issuing new licenses will be paused until you add a new primary payment method. Additionally, the existing licenses will be revoked at the end of their respective terms.'
+							  ) }
 					</p>
 				</div>
 			</div>

@@ -77,46 +77,47 @@ export default function NeedSetup( { licenseKey }: Props ) {
 		  )
 		: [];
 
-	const availablePlans: AvailablePlans[] = availableSites.length
-		? [
-				// If the site license we found by license key has a referral, we should show it first
-				...( hasReferral
-					? [
-							{
-								name: translate( 'WordPress.com' ),
-								available: 1,
-								subTitle: (
-									<ClientSite
-										referral={ foundSiteLicenseByLicenseKey.features.wpcom_atomic.referral }
-									/>
-								),
-								ids: [ foundSiteLicenseByLicenseKey.id ],
-							},
-					  ]
-					: [] ),
-				// If there are other referral sites, we should show them next
-				...( otherReferralSites.length
-					? otherReferralSites.map( ( { features, id }: NeedsSetupSite ) => ( {
-							name: translate( 'WordPress.com' ),
-							available: 1,
-							subTitle: <ClientSite referral={ features.wpcom_atomic.referral } />,
-							ids: [ id ],
-					  } ) )
-					: [] ),
-				// Finally, show the other available sites
-				{
+	const availablePlans: AvailablePlans[] = [
+		// If the site license we found by license key has a referral, we should show it first
+		...( hasReferral
+			? [
+					{
+						name: translate( 'WordPress.com' ),
+						available: 1,
+						subTitle: (
+							<ClientSite
+								referral={ foundSiteLicenseByLicenseKey.features.wpcom_atomic.referral }
+							/>
+						),
+						ids: [ foundSiteLicenseByLicenseKey.id ],
+					},
+			  ]
+			: [] ),
+		// If there are other referral sites, we should show them next
+		...( otherReferralSites.length
+			? otherReferralSites.map( ( { features, id }: NeedsSetupSite ) => ( {
 					name: translate( 'WordPress.com' ),
-					subTitle: translate( '%(count)d site available', '%(count)d sites available', {
-						args: {
+					available: 1,
+					subTitle: <ClientSite referral={ features.wpcom_atomic.referral } />,
+					ids: [ id ],
+			  } ) )
+			: [] ),
+		...( availableSites.length
+			? [
+					{
+						name: translate( 'WordPress.com' ),
+						subTitle: translate( '%(count)d site available', '%(count)d sites available', {
+							args: {
+								count: availableSites.length,
+							},
 							count: availableSites.length,
-						},
-						count: availableSites.length,
-						comment: 'The `count` is the number of available sites.',
-					} ),
-					ids: availableSites.map( ( { id }: { id: number } ) => id ),
-				},
-		  ]
-		: [];
+							comment: 'The `count` is the number of available sites.',
+						} ),
+						ids: availableSites.map( ( { id }: { id: number } ) => id ),
+					},
+			  ]
+			: [] ),
+	];
 
 	const isProvisioning =
 		isCreatingSite ||
@@ -133,6 +134,21 @@ export default function NeedSetup( { licenseKey }: Props ) {
 					onSuccess: () => {
 						refetchPendingSites();
 						page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
+					},
+				}
+			);
+		},
+		[ createWPCOMSite, refetchPendingSites ]
+	);
+
+	const onMigrateSite = useCallback(
+		( id: number ) => {
+			createWPCOMSite(
+				{ id },
+				{
+					onSuccess: () => {
+						refetchPendingSites();
+						page( addQueryArgs( A4A_SITES_LINK, { created_site: id, migration: true } ) );
 					},
 				}
 			);
@@ -169,6 +185,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 					isLoading={ isFetching }
 					provisioning={ isProvisioning }
 					onCreateSite={ onCreateSite }
+					onMigrateSite={ onMigrateSite }
 				/>
 			</LayoutColumn>
 		</Layout>

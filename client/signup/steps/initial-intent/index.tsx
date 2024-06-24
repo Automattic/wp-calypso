@@ -9,7 +9,7 @@ import { flowQuestionComponentMap } from 'calypso/components/survey-container/co
 import { QuestionConfiguration } from 'calypso/components/survey-container/types';
 import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from './constants';
+import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY, GUIDED_ONBOARDING_FLOW_REFERRER } from './constants';
 import { SurveyData } from './types';
 import './styles.scss';
 
@@ -65,7 +65,6 @@ export default function InitialIntentStep( props: Props ) {
 	}, [] );
 
 	const getRedirectForAnswers = ( _answerKeys: string[] ): string => {
-		const referrer = 'guided-onboarding';
 		let redirect = '';
 
 		if ( _answerKeys.includes( 'import' ) ) {
@@ -74,12 +73,12 @@ export default function InitialIntentStep( props: Props ) {
 			redirect = '/start/do-it-for-me-store';
 		} else if ( _answerKeys.includes( 'difm' ) ) {
 			redirect = '/start/do-it-for-me';
-		} else if ( _answerKeys.includes( 'newsletter' ) ) {
+		} else if ( _answerKeys.includes( 'newsletter' ) && _answerKeys.length === 1 ) {
 			redirect = `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
 		}
 
 		if ( redirect ) {
-			return `${ redirect }?ref=${ referrer }`;
+			return `${ redirect }?ref=${ GUIDED_ONBOARDING_FLOW_REFERRER }`;
 		}
 
 		return redirect;
