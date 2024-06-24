@@ -16,11 +16,6 @@ $inter: Inter, $sans;
 $sfProText: "SF Pro Text", $sans;
 $colorBlack: #1f1f1f;
 
-.blaze-pro,
-.is-blaze-pro {
-	font-family: $inter;
-}
-
 body.is-section-signup {
 	--font-inter:
 		"Inter",
@@ -50,6 +45,7 @@ body.is-section-signup {
 
 .blaze-pro,
 .is-blaze-pro { // is-blaze-pro is used by Sign Up flow (for logged in users)
+	font-family: $inter;
 	--color-white: #fff;
 	--color-black: $colorBlack;
 	--color-gray: #50575e;

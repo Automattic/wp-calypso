@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -22,9 +23,6 @@ import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-o
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { useSelector } from 'calypso/state';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
 import { AllowedTypes, Site, SiteData } from '../../types';
@@ -69,12 +67,11 @@ export const JetpackSitesDataViews = ( {
 		[]
 	);
 
-	const teams = useSelector( getReaderTeams );
-	const isTeamMember = isAutomatticTeamMember( teams );
+	const isNotProduction = config( 'env_id' ) !== 'a8c-for-agencies-production';
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
-			if ( site.sticker?.includes( 'migration-in-progress' ) && ! isTeamMember ) {
+			if ( site.sticker?.includes( 'migration-in-progress' ) && ! isNotProduction ) {
 				return;
 			}
 
@@ -391,7 +388,7 @@ export const JetpackSitesDataViews = ( {
 								onKeyDown={ ( e: KeyboardEvent ) => e.stopPropagation() }
 							>
 								{ ( ! item.site.value.sticker?.includes( 'migration-in-progress' ) ||
-									isTeamMember ) && (
+									isNotProduction ) && (
 									<>
 										<SiteActions
 											isLargeScreen={ isLargeScreen }
