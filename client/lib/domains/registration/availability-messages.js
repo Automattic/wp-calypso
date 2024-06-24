@@ -558,6 +558,11 @@ function getAvailabilityNotice(
 			);
 			break;
 
+		case 'gravatar_tld_restriction':
+			message = translate( 'Gravatar only supports .link domains right now.' );
+			severity = 'info';
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
