@@ -1,4 +1,4 @@
-import EmbedContainer from '@automattic/components/src/embed-container';
+import { EmbedContainer } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';

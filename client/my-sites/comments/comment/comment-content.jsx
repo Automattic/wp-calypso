@@ -1,5 +1,4 @@
-import { Gridicon } from '@automattic/components';
-import EmbedContainer from '@automattic/components/src/embed-container';
+import { Gridicon, EmbedContainer } from '@automattic/components';
 import DOMPurify from 'dompurify';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';

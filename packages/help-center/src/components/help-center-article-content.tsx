@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import EmbedContainer from '@automattic/components/src/embed-container';
+import { EmbedContainer } from '@automattic/components';
 import SupportArticleHeader from 'calypso/blocks/support-article-dialog/header';
 import HelpCenterFeedbackForm from './help-center-feedback-form';
 import Placeholders from './placeholder-lines';

@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
-import EmbedContainer from '@automattic/components/src/embed-container';
+import { Gridicon, EmbedContainer } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
