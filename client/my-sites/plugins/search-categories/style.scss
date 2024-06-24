@@ -25,16 +25,6 @@ $search-categories-padding-top: 40px;
 			max-width: none;
 		}
 
-		&.is-open.has-focus {
-			&,
-			&:hover {
-				border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-				box-shadow:
-					0 0 0 0.5px
-					var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-			}
-		}
-
 		box-shadow: 0 0 0 1px var(--studio-gray-10);
 
 		.search-component__icon-navigation:focus {
@@ -73,11 +63,12 @@ $search-categories-padding-top: 40px;
 		}
 
 		.search-component__open-icon {
-			height: 28px;
+			height: 24px;
 			margin-right: -9px;
 		}
 
 		.search-component__close-icon {
+			height: 20px;
 			margin-left: -9px;
 			margin-right: -10px;
 		}
