@@ -79,8 +79,11 @@ function filterLowerTiers(
 					Math.max(
 						usageData?.current_tier?.limit ?? 0,
 						// Offset the billable monthly views by the views already included in plans, e.g. Complete.
+						/* Billable views count */
 						usageData?.billableMonthlyViews -
+							/* Total views limit including bundled in the Complete/Professional plan and Stats commercial product */
 							( usageData.views_limit ?? 0 ) +
+							/* Current tier views limit of Stats commercial product */
 							( usageData.current_tier?.limit ?? 0 ),
 						0
 					)
