@@ -434,6 +434,13 @@ export function generateSteps( {
 				isDomainOnly: false,
 			},
 		},
+		'subscribing-email': {
+			stepName: 'subscribing-email',
+			// apiRequestFunction: createSiteWithCart,
+			dependencies: [ 'email', 'redirect_to', 'mailing_list' ],
+			providesDependencies: [],
+			optionalDependencies: [],
+		},
 		mailbox: {
 			stepName: 'mailbox',
 			dependencies: [ 'domainItem', 'siteSlug' ],
