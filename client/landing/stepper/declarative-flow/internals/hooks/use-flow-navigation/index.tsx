@@ -23,11 +23,9 @@ const addQueryParams = ( uri: string, params?: URLSearchParams | null ) => {
 
 interface FlowNavigation {
 	navigate: Navigate< StepperStep[] >;
-
 	params: {
 		flow: string | null;
 		step: string | null;
-		lang: string | null;
 	};
 	search: URLSearchParams;
 }
@@ -71,7 +69,6 @@ export const useFlowNavigation = (): FlowNavigation => {
 		params: {
 			flow,
 			step: currentStepSlug,
-			lang,
 		},
 		search: currentSearchParams,
 	};

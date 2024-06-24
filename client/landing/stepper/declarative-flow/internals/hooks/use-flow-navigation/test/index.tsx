@@ -43,21 +43,12 @@ const getStepData = () => JSON.parse( screen.getByTestId( 'step-data' ).textCont
 
 describe( 'useFlowNavigation', () => {
 	describe( 'params', () => {
-		it( 'returns the flow, step and lang based on the url', () => {
+		it( 'returns the flow and step the url', () => {
 			const { result } = render( { initialEntry: '/setup/some-flow/some-step/es' } );
 
 			expect( result.current.params ).toMatchObject( {
 				flow: 'some-flow',
 				step: 'some-step',
-				lang: 'es',
-			} );
-		} );
-
-		it( 'returns lang null when it is not available', () => {
-			const { result } = render( { initialEntry: '/setup/some-flow/some-step' } );
-
-			expect( result.current.params ).toMatchObject( {
-				lang: null,
 			} );
 		} );
 	} );
