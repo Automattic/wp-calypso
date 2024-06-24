@@ -12,7 +12,7 @@ const ReadymadeTemplatePreview = ( readymadeTemplate: ReadymadeTemplate ) => {
 	const { data: renderedPatterns = {} } = useRenderReadymadeTemplate( readymadeTemplate );
 
 	return (
-		<PatternsRendererContext.Provider value={ { renderedPatterns } }>
+		<PatternsRendererContext.Provider value={ { renderedPatterns, shouldShufflePosts: false } }>
 			{ Object.keys( renderedPatterns ).map( ( pattern ) => (
 				<PatternRenderer patternId={ pattern } viewportWidth={ 1200 } />
 			) ) }
