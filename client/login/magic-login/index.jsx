@@ -363,6 +363,7 @@ class MagicLogin extends Component {
 			);
 
 			this.setState( { publicToken: public_token, showEmailCodeVerification: true } );
+			this.startResendEmailCountdown();
 			cb();
 
 			this.props.removeNotice( noticeId );
@@ -690,22 +691,27 @@ class MagicLogin extends Component {
 	}
 
 	renderGravPoweredEmailCodeVerification() {
-		const {
-			oauth2Client,
-			isSendingEmail,
-			translate,
-			isValidatingCode,
-			isCodeValidated,
-			codeValidationError,
-		} = this.props;
+		const { oauth2Client, translate, isValidatingCode, isCodeValidated, codeValidationError } =
+			this.props;
 		const {
 			isSecondaryEmail,
 			isNewAccount,
+			isRequestingEmail,
 			maskedEmailAddress,
 			usernameOrEmail,
 			verificationCodeInputValue,
+			resendEmailCountdown,
 		} = this.state;
 		const isProcessingCode = isValidatingCode || isCodeValidated;
+		let errorText = translate( 'Something went wrong. Please try again.' );
+
+		if ( codeValidationError === 403 ) {
+			errorText = translate(
+				'Invalid code. If the error persists, please request a new code and try again.'
+			);
+		} else if ( codeValidationError === 429 ) {
+			errorText = translate( 'Please wait a minute before trying again.' );
+		}
 
 		return (
 			<div className="grav-powered-magic-login__content">
@@ -749,11 +755,7 @@ class MagicLogin extends Component {
 					/>
 					{ codeValidationError && (
 						<Notice
-							text={
-								codeValidationError === 403
-									? translate( 'Invalid code.' )
-									: translate( 'Something went wrong. Please try again.' )
-							}
+							text={ errorText }
 							className="magic-login__request-login-email-form-notice"
 							showDismiss={ false }
 							status="is-transparent-info"
@@ -781,9 +783,13 @@ class MagicLogin extends Component {
 								{ type: 'code', client_id: oauth2Client.id, client_name: oauth2Client.name }
 							);
 						} }
-						disabled={ isSendingEmail }
+						disabled={ isRequestingEmail || resendEmailCountdown }
 					>
-						{ translate( 'Send again' ) }
+						{ resendEmailCountdown === 0
+							? translate( 'Send again' )
+							: translate( 'Send again (%(countdown)d)', {
+									args: { countdown: resendEmailCountdown },
+							  } ) }
 					</button>
 					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
 						{ translate( 'Need help logging in?' ) }

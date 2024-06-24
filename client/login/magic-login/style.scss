@@ -606,6 +606,7 @@
 	.grav-powered-magic-login__footer {
 		display: flex;
 		flex-direction: column;
+		flex-wrap: wrap;
 		align-items: center;
 		line-height: 1;
 		margin-top: 30px;
@@ -615,6 +616,7 @@
 		button {
 			color: #1d4fc4;
 			font-size: inherit;
+			text-align: left;
 			cursor: pointer;
 			text-decoration: underline;
 		}
