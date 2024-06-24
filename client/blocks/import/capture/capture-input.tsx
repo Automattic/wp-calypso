@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, FormLabel } from '@automattic/components';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
@@ -43,7 +42,6 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	} = props;
 
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
@@ -76,9 +74,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	function validateUrl( url: string ) {
 		const isValid = CAPTURE_URL_RGX.test( url );
 		setIsValid( isValid );
-		const tempValidationMessage = isValid
-			? ''
-			: getValidationMessage( url, translate, hasEnTranslation );
+		const tempValidationMessage = isValid ? '' : getValidationMessage( url, translate );
 		setValidationMessage( tempValidationMessage );
 	}
 
