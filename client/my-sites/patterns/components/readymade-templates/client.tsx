@@ -7,7 +7,7 @@ const renderPreview = ( readymadeTemplate: ReadymadeTemplate ) => (
 	<BlockRendererContainer viewportWidth={ 1200 }>
 		<div
 			// eslint-disable-next-line react/no-danger
-			dangerouslySetInnerHTML={ { __html: readymadeTemplate.content } }
+			dangerouslySetInnerHTML={ { __html: readymadeTemplate.html } }
 		/>
 	</BlockRendererContainer>
 );
