@@ -1,5 +1,6 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useCallback } from 'react';
 import { generatePath, useMatch, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
@@ -42,25 +43,28 @@ export const useFlowNavigation = (): FlowNavigation => {
 	const { flow = null, step: currentStepSlug = null, lang = null } = match?.params || {};
 	const [ currentSearchParams ] = useSearchParams();
 
-	const customNavigate: Navigate< StepperStep[] > = ( nextStep: string, extraData = {} ) => {
-		const hasQueryParams = nextStep.includes( '?' );
-		const queryParams = ! hasQueryParams ? currentSearchParams : null;
+	const customNavigate = useCallback< Navigate< StepperStep[] > >(
+		( nextStep: string, extraData = {} ) => {
+			const hasQueryParams = nextStep.includes( '?' );
+			const queryParams = ! hasQueryParams ? currentSearchParams : null;
 
-		setStepData( {
-			path: nextStep,
-			intent: intent,
-			previousStep: currentStepSlug,
-			...extraData,
-		} );
+			setStepData( {
+				path: nextStep,
+				intent: intent,
+				previousStep: currentStepSlug,
+				...extraData,
+			} );
 
-		const newPath = generatePath( `/:flow/:step/:lang?`, {
-			flow,
-			lang,
-			step: nextStep,
-		} );
+			const newPath = generatePath( `/:flow/:step/:lang?`, {
+				flow,
+				lang,
+				step: nextStep,
+			} );
 
-		navigate( addQueryParams( newPath, queryParams ) );
-	};
+			navigate( addQueryParams( newPath, queryParams ) );
+		},
+		[ currentSearchParams, flow, intent, lang, navigate, setStepData, currentStepSlug ]
+	);
 
 	return {
 		navigate: customNavigate,
