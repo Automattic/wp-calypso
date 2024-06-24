@@ -1036,45 +1036,4 @@ $with-sidebar-min-page-width: 1114px;
 			}
 		}
 	}
-
-	//.arrow {
-	//	border: 10px dashed var(--color-neutral-10);
-	//	height: 0;
-	//	line-height: 0;
-	//	position: absolute;
-	//	width: 0;
-	//	z-index: 1;
-	//}
-	//
-	//&.is-bottom-left {
-	//	padding-left: 0;
-	//	padding-right: 0;
-	//
-	//	.arrow {
-	//		border-bottom-style: solid;
-	//		border-left-color: #0000;
-	//		border-right-color: #0000;
-	//		border-top: none;
-	//		margin-left: -10px;
-	//		top: -9px;
-	//		left: 243px;
-	//		right: 5px;
-	//
-	//		&::before {
-	//			border-bottom: 10px solid var(--color-border-inverted);
-	//			border-left: 10px solid #0000;
-	//			border-right: 10px solid #0000;
-	//			border-top: none;
-	//			content: " ";
-	//			left: 50%;
-	//			margin-left: -10px;
-	//			position: absolute;
-	//			top: 2px;
-	//		}
-	//	}
-	//
-	//	.content {
-	//		left: 7px;
-	//	}
-	//}
 }
