@@ -39,7 +39,7 @@ function useReferralsGuide() {
 			{
 				title: translate( 'Review your selection during checkout' ),
 				description: translate(
-					`During checkout, add your clients' email address and a note about the invoice for the selected products.`
+					`During checkout, add your client's email address and a note about the invoice for the selected products.`
 				),
 				preview: (
 					<video
