@@ -5,7 +5,6 @@ import envVariables from '../../env-variables';
 import {
 	EditorComponent,
 	EditorPublishPanelComponent,
-	EditorNavSidebarComponent,
 	EditorToolbarComponent,
 	EditorSettingsSidebarComponent,
 	EditorGutenbergComponent,
@@ -51,7 +50,6 @@ export class EditorPage {
 	private page: Page;
 	private editor: EditorComponent;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
-	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	private editorGutenbergComponent: EditorGutenbergComponent;
@@ -78,7 +76,6 @@ export class EditorPage {
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
