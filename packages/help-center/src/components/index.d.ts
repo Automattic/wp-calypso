@@ -11,9 +11,9 @@ declare module 'calypso/components/search-card' {
 	const SearchCard: FC;
 	export = SearchCard;
 }
-declare module '@automattic/components/src/embed-container' {
-	const SearchCard: FC;
-	export = SearchCard;
+declare module '@automattic/components' {
+	const EmbedContainer: FC;
+	export { EmbedContainer };
 }
 
 declare module 'calypso/blocks/inline-help/inline-help-search-card' {
