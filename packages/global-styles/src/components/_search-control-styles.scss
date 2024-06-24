@@ -8,11 +8,15 @@
  */
 @mixin search-control-wpcom-styles {
 	.components-search-control {
-		min-width: 225px;
+		min-width: 250px;
 
 		.components-input-control__container {
 			background: var(--studio-white);
 			border-radius: 4px;
+
+			.components-input-control__suffix svg {
+				fill: var(--studio-gray-30);
+			}
 
 			.components-input-control__backdrop {
 				box-shadow: 0 0 0 1px var(--studio-gray-10);
