@@ -72,5 +72,5 @@ export type ReadymadeTemplate = {
 	title: string;
 	description: string;
 	content: string;
-	html: string;
+	pattern_ids: number[];
 };
