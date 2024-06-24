@@ -27,7 +27,7 @@ export default function FormField( {
 			<div className="a4a-form__section-field-heading">
 				<h3 className="a4a-form__section-field-label">
 					{ label } { isRequired && <span className="a4a-form__section-field-required">*</span> }
-					{ showOptionalLabel && (
+					{ ! isRequired && showOptionalLabel && (
 						<span className="a4a-form__section-field-optional">({ translate( 'optional' ) })</span>
 					) }
 				</h3>
