@@ -14,15 +14,44 @@
 
 $inter: Inter, $sans;
 $sfProText: "SF Pro Text", $sans;
+$colorBlack: #1f1f1f;
 
 .blaze-pro,
 .is-blaze-pro {
 	font-family: $inter;
 }
 
-.blaze-pro {
+body.is-section-signup {
+	--font-inter:
+		"Inter",
+		-apple-system,
+		system-ui,
+		blinkmacsystemfont,
+		"Segoe UI",
+		"Roboto",
+		"Oxygen-Sans",
+		"Ubuntu",
+		"Cantarell",
+		"Helvetica Neue",
+		sans-serif;
+
+	&:has(.is-blaze-pro) {
+		background: #fff;
+
+		.layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header .formatted-header__title {
+			color: $colorBlack;
+			font-family: var(--font-inter);
+			font-size: 2rem;
+			font-weight: 700;
+			line-height: 40px;
+		}
+	}
+}
+
+.blaze-pro,
+.is-blaze-pro { // is-blaze-pro is used by Sign Up flow (for logged in users)
 	--color-white: #fff;
-	--color-black: #1f1f1f;
+	--color-black: $colorBlack;
 	--color-gray: #50575e;
 	--color-orange: #ff6433;
 
@@ -219,16 +248,20 @@ $sfProText: "SF Pro Text", $sans;
 
 		.continue-as-user__username {
 			color: var(--color-black);
+			font-family: $inter;
 			font-size: 1rem;
+			font-weight: 600;
 			line-height: 20px;
 		}
 
 		.continue-as-user__email {
-			font-size: 0.875rem;
-			line-height: 20px;
 			color: var(--studio-gray-60);
-			text-align: center;
+			font-family: $inter;
+			font-size: 0.875rem;
+			font-weight: 500;
+			line-height: 20px;
 			margin: 0;
+			text-align: center;
 		}
 
 		.continue-as-user__not-you {
@@ -244,12 +277,13 @@ $sfProText: "SF Pro Text", $sans;
 		}
 
 		.continue-as-user__change-user-link {
-			text-decoration: none;
 			color: var(--color-orange);
+			font-family: $inter;
 			font-size: 0.875rem;
 			font-style: normal;
 			font-weight: 500;
 			line-height: 20px;
+			text-decoration: none;
 
 			&:hover {
 				color: var(--color-orange);
@@ -257,10 +291,15 @@ $sfProText: "SF Pro Text", $sans;
 		}
 
 		.continue-as-user__continue-button {
-			margin-top: 24px;
 			background: var(--color-orange);
 			border-color: var(--color-orange);
 			border-radius: 4px;
+			font-family: $inter;
+			font-size: rem(13px);
+			font-weight: 600;
+			line-height: 14px;
+			margin-top: 24px;
+			padding: 12px 16px;
 			width: 326px;
 		}
 	}
@@ -559,5 +598,28 @@ $sfProText: "SF Pro Text", $sans;
 			font-weight: 500;
 			line-height: 24px;
 		}
+	}
+}
+
+// Hacks for Continue-as-a-user for Sign Up (but user is already logged in)
+.is-blaze-pro {
+	.step-wrapper__content {
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+	}
+
+	&.layout:not(.dops) .step-wrapper .step-wrapper__header {
+		margin-top: 0;
+	}
+
+	// Do not show ToS twice for Sign In...
+	&.layout.is-section-login .continue-as-user .auth-form__social-buttons-tos {
+		display: none;
+	}
+
+	// ... though ToS should be shown for Sign Up (for logged in users)
+	&.layout.is-section-signup.is-logged-in .continue-as-user .auth-form__social-buttons-tos {
+		margin-top: 24px;
 	}
 }
