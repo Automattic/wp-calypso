@@ -17,13 +17,13 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
-import { ReadymadeTemplates } from 'calypso/my-sites/patterns/components/readymade-templates';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { TypeToggle } from 'calypso/my-sites/patterns/components/type-toggle';
 import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
 import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import { filterPatternsByType } from 'calypso/my-sites/patterns/lib/filter-patterns-by-type';
@@ -35,6 +35,7 @@ import {
 	PatternView,
 	CategoryGalleryFC,
 	PatternGalleryFC,
+	ReadymadeTemplatesFC,
 } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -75,11 +76,13 @@ function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowT
 type PatternLibraryProps = {
 	categoryGallery: CategoryGalleryFC;
 	patternGallery: PatternGalleryFC;
+	readymadeTemplates: ReadymadeTemplatesFC;
 };
 
 export const PatternLibrary = ( {
 	categoryGallery: CategoryGallery,
 	patternGallery: PatternGallery,
+	readymadeTemplates: ReadymadeTemplates,
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
@@ -96,6 +99,7 @@ export const PatternLibrary = ( {
 		category,
 		{ enabled: Boolean( category || searchTerm ) }
 	);
+	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
 
 	const patterns = searchTerm
 		? filterPatternsByTerm( rawPatterns, searchTerm )
@@ -359,11 +363,11 @@ export const PatternLibrary = ( {
 					</PatternLibraryBody>
 				) }
 
-				{ isEnabled( 'pattern-library/readymade-templates' ) && isHomePage && (
-					<ReadymadeTemplates />
+				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
+					<ReadymadeTemplates readymadeTemplates={ readymadeTemplates } />
 				) }
 
-				{ ! isEnabled( 'pattern-library/readymade-templates' ) && isHomePage && (
+				{ ! isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
 					<PatternsCopyPasteInfo theme="dark" />
 				) }
 
@@ -378,9 +382,7 @@ export const PatternLibrary = ( {
 					/>
 				) }
 
-				{ isEnabled( 'pattern-library/readymade-templates' ) && isHomePage && (
-					<PatternsCopyPasteInfo />
-				) }
+				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && <PatternsCopyPasteInfo /> }
 			</div>
 
 			<PatternsGetStarted />
