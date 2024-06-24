@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import nextdoorExample from 'calypso/assets/images/connections/connections-nextdoor.png';
+import threadsExample from 'calypso/assets/images/connections/connections-threads.png';
 import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -38,6 +39,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'tumblr',
 	'nextdoor',
 	'twitter',
+	'threads',
 	'google_photos',
 	'google-drive',
 	'mailchimp',
@@ -332,6 +334,26 @@ class SharingServiceExamples extends Component {
 		const image = {
 			src: nextdoorExample,
 			alt: this.props.translate( 'Share posts with your local community on Nextdoor.', {
+				textOnly: true,
+			} ),
+		};
+		return [
+			{
+				label,
+			},
+			{
+				image,
+			},
+		];
+	}
+
+	threads() {
+		const label = this.props.translate(
+			'Increase your presence in social media by sharing your posts automatically to Threads.'
+		);
+		const image = {
+			src: threadsExample,
+			alt: this.props.translate( 'Share posts to your Threads feed.', {
 				textOnly: true,
 			} ),
 		};

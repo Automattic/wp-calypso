@@ -31,7 +31,6 @@ export default function useDetailsForm( { initialFormData }: Props ) {
 			formData.website.length > 0 &&
 			formData.bioDescription.length > 0 &&
 			formData.logoUrl.length > 0 &&
-			formData.landingPageUrl.length > 0 &&
 			formData.country?.length > 0 &&
 			formData.industry.length > 0 &&
 			formData.services.length > 0 &&

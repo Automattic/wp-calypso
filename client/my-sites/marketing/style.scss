@@ -42,6 +42,10 @@
 	&.threads {
 		.sharing-service__logo {
 			color: var(--color-threads);
+			// This is to fix the logo being too big
+			// See Nextdoor below for similar details
+			width: 40px;
+			padding-inline: 4px;
 		}
 	}
 

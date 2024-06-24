@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm } from '@automattic/subscriber';
@@ -106,20 +107,24 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 			{ ! isUploading && isImportInProgress && ! hasStaleImportJobs && (
 				<Notice
 					className="add-subscribers-modal__notice"
+					icon={ <Gridicon icon="info" /> }
 					isCompact
 					isReskinned
 					status="is-info"
 					showDismiss={ false }
 				>
-					{ translate(
-						'Your subscribers are being imported. This may take a few minutes. You can close this window and we’ll notify you when the import is complete.'
-					) }
+					<span className="add-subscribers-modal__notice-text">
+						{ translate(
+							'Your subscribers are being imported. This may take a few minutes. You can close this window and we’ll notify you when the import is complete.'
+						) }
+					</span>
 				</Notice>
 			) }
 
 			{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
 				<Notice
 					className="add-subscribers-modal__notice"
+					icon={ <Gridicon icon="notice" /> }
 					isCompact
 					isReskinned
 					status="is-warning"

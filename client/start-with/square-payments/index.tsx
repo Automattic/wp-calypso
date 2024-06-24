@@ -42,10 +42,13 @@ export const StartWithSquarePayments: React.FC = () => {
 					</Button>
 				</div>
 				<div className="right-column">
-					<img src={ DotcomWooSquareImage } width={ 500 } alt="" />
+					<img
+						src={ DotcomWooSquareImage }
+						alt={ translate( 'WordPress.com, Square and Woocommerce partneship logo' ) }
+					/>
 				</div>
 			</div>
-			<div className="footer">
+			<footer className="footer">
 				<div className="text">{ translate( 'Trusted by 160 million worldwide' ) }</div>
 				<div className="brands">
 					<div className="brands-container">
@@ -61,7 +64,7 @@ export const StartWithSquarePayments: React.FC = () => {
 						<img src={ CondeNast } alt={ translate( 'Conde Nast Logo' ) } />
 					</div>
 				</div>
-			</div>
+			</footer>
 		</div>
 	);
 };

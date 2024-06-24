@@ -98,6 +98,7 @@ export default function useExpertiseForm( { initialFormData }: Props ) {
 			formData.services.length > 0 &&
 			formData.products.length > 0 &&
 			formData.directories.length > 0 &&
+			formData.feedbackUrl.length > 0 &&
 			// Ensure that each directory request has 5 valid URLs
 			formData.directories.every( ( { urls } ) => {
 				return urls.every( ( url ) => url && validateURL( url ) ) && areURLsUnique( urls );

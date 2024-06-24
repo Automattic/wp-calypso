@@ -38,6 +38,24 @@ const getP2Flows = () => {
 		: [];
 };
 
+const getEmailSubscriptionFlow = () => {
+	return isEnabled( 'signup/email-subscription-flow' )
+		? [
+				{
+					name: 'email-subscription',
+					steps: [ 'subscribing-email' ],
+					destination: '/',
+					description:
+						'Signup flow that subscripes user to guides appointments for email campaigns',
+					lastModified: '2024-06-17',
+					showRecaptcha: true,
+					providesDependenciesInQuery: [ 'email', 'redirect_to', 'mailing_list' ],
+					hideProgressIndicator: true,
+				},
+		  ]
+		: [];
+};
+
 export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
@@ -56,6 +74,7 @@ export function generateFlows( {
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
+	const emailSubscriptionFlow = getEmailSubscriptionFlow();
 
 	const flows = [
 		{
@@ -628,8 +647,8 @@ export function generateFlows( {
 			description: 'Entrepreneur Trial signup flow that goes through the trialAcknowledge step',
 			lastModified: '2024-05-29',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
+			providesDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
+			optionalDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -644,6 +663,7 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 			enableHotjar: true,
 		},
+		...emailSubscriptionFlow,
 	];
 
 	// convert the array to an object keyed by `name`
