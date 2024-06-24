@@ -39,7 +39,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	Modal.setAppElement( '#wpcom' );
 	const flowSteps = flow.useSteps();
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
-	const { navigate, params } = useFlowNavigation( stepPaths );
+	const { navigate, params } = useFlowNavigation();
 	const currentStepRoute = params.step || '';
 
 	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(

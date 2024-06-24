@@ -30,15 +30,11 @@ interface FlowNavigation {
 	};
 	search: URLSearchParams;
 }
-//TODO: Check why we need the stepPaths because there is no reference to it in the codebase.
-// If we don't need it, we might call this hook directly from the flow files, instead of drilling the navigate function, reducing the complexity and rerenders.
+
 /**
  *  Hook to manage the navigation between steps in the flow
- * @param stepPaths
- * @returns
  */
-
-export const useFlowNavigation = ( stepPaths: string[] ): FlowNavigation => {
+export const useFlowNavigation = (): FlowNavigation => {
 	const intent = useOnboardingIntent();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const navigate = useNavigate();
@@ -48,7 +44,6 @@ export const useFlowNavigation = ( stepPaths: string[] ): FlowNavigation => {
 
 	const customNavigate: Navigate< StepperStep[] > = ( nextStep: string, extraData = {} ) => {
 		const hasQueryParams = nextStep.includes( '?' );
-
 		const queryParams = ! hasQueryParams ? currentSearchParams : null;
 
 		setStepData( {
@@ -64,7 +59,7 @@ export const useFlowNavigation = ( stepPaths: string[] ): FlowNavigation => {
 			step: nextStep,
 		} );
 
-		navigate( addQueryParams( newPath, queryParams ), { state: stepPaths } );
+		navigate( addQueryParams( newPath, queryParams ) );
 	};
 
 	return {

@@ -34,7 +34,7 @@ const Wrapper =
 	);
 
 const render = ( { initialEntry = '/setup/some-flow/some-step' } = {} ) => {
-	return renderHookWithProvider( () => useFlowNavigation( [ 'step1', 'step2' ] ), {
+	return renderHookWithProvider( () => useFlowNavigation(), {
 		wrapper: Wrapper( initialEntry ),
 	} );
 };
