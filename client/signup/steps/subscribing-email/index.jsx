@@ -13,53 +13,61 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SubscribingEmailStepContent from './content';
 
-const createNewAccount = async ( props, setIsLoading ) => {
-	const email = props.queryParams.email;
-	const redirectUrl = props.queryParams.redirect_to;
-
+const createNewAccount = async ( {
+	email,
+	redirectUrl,
+	flowName,
+	// recordTracksEvent,
+	setIsLoading,
+} ) => {
 	try {
 		// eslint-disable-next-line no-undef
 		await wpcom.req.post( '/users/new', {
 			email: typeof email === 'string' ? email.trim() : '',
 			is_passwordless: true,
-			signup_flow_name: props.flowName,
+			signup_flow_name: flowName,
 			validate: false,
 			locale: getLocaleSlug(),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 			anon_id: getTracksAnonymousUserId(),
 		} );
-		// // Do stuff with response and redirect
-		// props.recordTracksEvent( 'calypso_signup_reader_landing_cta' );
-		// props.submitSignupStep( { stepName: props.stepName } );
-		// props.goToNextStep();
-		if ( isExternal( redirectUrl ) ) {
-			window.location.replace( addQueryArgs( redirectUrl, { subscribed: true } ) );
-		}
-		page.redirect( redirectUrl );
-		throw new TypeError( { error: 'already_taken' } );
+
+		// TODO: Add slug for email campaign
+		// recordTracksEvent( 'calypso_signup_new_email_subscription_success', {} );
+
+		return isExternal( redirectUrl )
+			? window.location.assign( addQueryArgs( redirectUrl, { subscribed: true } ) )
+			: page.redirect( redirectUrl );
 	} catch ( error ) {
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-			// Subscribe existing user to guides emails through API endpoint https://github.com/Automattic/martech/issues/3090
+			// 1. Subscribe existing user to guides emails through API endpoint https://github.com/Automattic/martech/issues/3090
+			// 2. Submit tracks event
+			// 3. Redirect to next step
+
+			// recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {} );
+			return isExternal( redirectUrl )
+				? window.location.assign( addQueryArgs( redirectUrl, { subscribed: true } ) )
+				: page.redirect( redirectUrl );
 		}
+
 		setIsLoading( false );
+		// setSubmitting && setSubmitting( false );
 	}
 };
 
 function SubscribingEmailStep( props ) {
-	const handleButtonClick = async () => {};
+	const { flowName, queryParams, stepName } = props;
 
-	const { flowName, positionInFlow, queryParams, stepName } = props;
 	const [ isLoading, setIsLoading ] = useState( true );
+	const [ submitting, setSubmitting ] = useState( false );
 
 	useEffect( () => {
-		const email = queryParams.email;
-
-		if ( emailValidator.validate( email ) ) {
-			createNewAccount( props, setIsLoading );
+		if ( emailValidator.validate( queryParams.email ) ) {
+			createNewAccount( { ...props, setIsLoading } );
+		} else {
+			setIsLoading( false );
 		}
-
-		setIsLoading( false );
 	}, [] );
 
 	return (
@@ -67,12 +75,15 @@ function SubscribingEmailStep( props ) {
 			<StepWrapper
 				flowName={ flowName }
 				hideFormattedHeader
-				positionInFlow={ positionInFlow }
 				stepContent={
 					<SubscribingEmailStepContent
 						{ ...props }
-						handleButtonClick={ handleButtonClick }
+						handleSubmitSignup={ ( form ) => {
+							setSubmitting( true );
+							createNewAccount( { ...props, email: form.email }, setIsLoading, setSubmitting );
+						} }
 						isLoading={ isLoading }
+						submitting={ submitting }
 					/>
 				}
 				stepName={ stepName }
