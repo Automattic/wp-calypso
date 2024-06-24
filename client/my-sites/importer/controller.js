@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { camelCase } from 'lodash';
 import { BrowserRouter } from 'react-router-dom';
@@ -90,6 +91,23 @@ export function importerList( context, next ) {
 					} }
 				/>
 			</div>
+		</BrowserRouter>
+	);
+	next();
+}
+
+export function importNewsletterSite( context, next ) {
+	if ( ! config.isEnabled( 'importers/newsletter' ) ) {
+		page.redirect( '/import' );
+		return;
+	}
+
+	const state = context.store.getState();
+	const siteSlug = getSelectedSiteSlug( state );
+
+	context.primary = (
+		<BrowserRouter>
+			<div className="import__onboarding-page">Howdy substacker! { siteSlug }</div>
 		</BrowserRouter>
 	);
 	next();
