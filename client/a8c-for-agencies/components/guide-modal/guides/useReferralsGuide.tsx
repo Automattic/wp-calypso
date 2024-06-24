@@ -80,7 +80,7 @@ function useReferralsGuide() {
 	);
 
 	const guideModal = isModalOpen ? (
-		<GuideModal steps={ steps } onClose={ () => setIsModalOpen( false ) } />
+		<GuideModal steps={ steps } onClose={ () => setIsModalOpen( false ) } dismissable />
 	) : null;
 
 	return {

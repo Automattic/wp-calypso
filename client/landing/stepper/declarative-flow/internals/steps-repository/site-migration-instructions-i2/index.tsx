@@ -9,7 +9,6 @@ import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-pr
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { MaybeLink } from './maybe-link';
 import { PendingActions } from './pending-actions';
 import { ShowHideInput } from './show-hide-input';
@@ -222,8 +221,6 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 			{ showSupportMessage && <ContactSupportMessage /> }
 		</div>
 	);
-
-	usePresalesChat( 'wpcom', true, true );
 
 	return (
 		<>

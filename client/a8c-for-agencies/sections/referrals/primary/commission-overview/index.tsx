@@ -106,7 +106,11 @@ export default function CommissionOverview( {
 								<div className="commission-overview__heading">
 									<img src={ pressableIcon } alt="Pressable" />
 									<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
-									{ translate( 'Hosting revenue share (WordPress.com and Pressable)' ) }
+									{ translate( 'Hosting revenue share (WordPress.com and{{nbsp/}}Pressable)', {
+										components: {
+											nbsp: <>&nbsp;</>,
+										},
+									} ) }
 								</div>
 							}
 							expanded
@@ -123,7 +127,12 @@ export default function CommissionOverview( {
 								<div className="commission-overview__heading">
 									<JetpackLogo className="jetpack-logo" size={ 24 } />
 									<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
-									{ translate( 'Jetpack products and Woo-owned extensions' ) }
+									{ translate( 'Jetpack products and Woo{{8209/}}owned{{nbsp/}}extensions', {
+										components: {
+											nbsp: <>&nbsp;</>,
+											8209: <>&#8209;</>,
+										},
+									} ) }
 								</div>
 							}
 							expanded

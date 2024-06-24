@@ -10,15 +10,13 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	${ ( props ) =>
-		props.shouldUseCheckoutV2 ? `padding: 10px; min-height: 40px` : `padding:14px 16px` };
+	padding: 14px 16px;
 	width: 100%;
 	cursor: pointer;
 
 	.gridicon {
 		fill: #a7aaad;
-		${ ( props ) =>
-			props.shouldUseCheckoutV2 ? `margin-inline-start: 0;` : `margin-inline-start: 14px;` };
+		margin-inline-start: 14px;
 	}
 
 	${ ( props ) =>
@@ -36,17 +34,10 @@ export const Option = styled.li< OptionProps >`
 	font-size: ${ ( props ) => props.theme.fontSize.small };
 	font-weight: ${ ( props ) => props.theme.weights.normal };
 	cursor: pointer;
-
-	${ ( props ) =>
-		props.shouldUseCheckoutV2
-			? `flex-direction: column; justify-content: center;
-		align-items: flex-start;
-		padding: 10px; min-height: 40px;`
-			: `flex-direction: row;
-		justify-content: space-between; align-items: center;
-		/* the calc aligns the price with the price in CurrentOption */
-		padding: 10px calc( 14px + 24px + 16px ) 10px 16px;` }
-
+	flex-direction: row;
+	justify-content: space-between; align-items: center;
+	/* the calc aligns the price with the price in CurrentOption */
+	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
 
 	&:hover {
 		var( --studio-blue-0 );
@@ -58,10 +49,11 @@ export const Option = styled.li< OptionProps >`
 	}
 `;
 
-export const Dropdown = styled.div< { shouldUseCheckoutV2: boolean } >`
+export const Dropdown = styled.div`
 	position: relative;
 	width: 100%;
-	margin: ${ ( props ) => ( props.shouldUseCheckoutV2 ? null : '16px 0' ) };
+	margin: 16px 0;
+
 	> ${ Option } {
 		border-radius: 3px;
 	}
@@ -131,7 +123,7 @@ export const Price = styled.span`
 	}
 `;
 
-export const Variant = styled.div< { shouldUseCheckoutV2: boolean } >`
+export const Variant = styled.div`
 	display: flex;
 	align-items: center;
 	font-size: 14px;
@@ -140,25 +132,18 @@ export const Variant = styled.div< { shouldUseCheckoutV2: boolean } >`
 	line-height: 20px;
 	width: 100%;
 	column-gap: 20px;
-
-	${ ( props ) =>
-		props.shouldUseCheckoutV2
-			? `flex-direction: column; align-items: left`
-			: `flex-direciton: row; align-items: center` }
+	flex-direciton: row;
+	align-items: center;
 
 	.item-variant-option--selected & {
 		color: var( --studio-white );
 	}
 `;
 
-export const Label = styled.span< { shouldUseCheckoutV2: boolean } >`
+export const Label = styled.span`
 	display: flex;
 	white-space: nowrap;
-
-	${ ( props ) =>
-		props.shouldUseCheckoutV2
-			? 'font-size: 14px; white-space: normal; text-align: start'
-			: 'font-size: inherit' };
+	font-size: 14px;
 
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
@@ -179,9 +164,7 @@ export const IntroPricingText = styled.span`
 	margin-bottom: 0rem;
 `;
 
-export const PriceTextContainer = styled.span< { shouldUseCheckoutV2: boolean } >`
-	${ ( props ) =>
-		props.shouldUseCheckoutV2
-			? 'font-size: 12px; text-align: initial;'
-			: 'font-size: inherit;	text-align: right;' };
+export const PriceTextContainer = styled.span`
+	font-size: 14px;
+	text-align: right;
 `;

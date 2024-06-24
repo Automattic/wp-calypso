@@ -44,7 +44,9 @@ const entrepreneurFlow: Flow = {
 
 		const params = new URLSearchParams( window.location.search );
 		const partnerBundle = params.get( 'partnerBundle' );
-		setPartnerBundle( partnerBundle );
+		if ( partnerBundle ) {
+			setPartnerBundle( partnerBundle );
+		}
 
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),

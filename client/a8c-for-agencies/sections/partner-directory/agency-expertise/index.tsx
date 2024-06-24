@@ -14,17 +14,11 @@ import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { useFormSelectors } from '../components/hooks/use-form-selectors';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
-import {
-	DIRECTORY_JETPACK,
-	DIRECTORY_PRESSABLE,
-	DIRECTORY_WOOCOMMERCE,
-	DIRECTORY_WPCOM,
-	PARTNER_DIRECTORY_DASHBOARD_SLUG,
-} from '../constants';
+import { PARTNER_DIRECTORY_DASHBOARD_SLUG } from '../constants';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../types';
-import { getPartnerDirectoryLabel } from '../utils/get-partner-directory-label';
 import useExpertiseForm from './hooks/use-expertise-form';
 import useSubmitForm from './hooks/use-submit-form';
 
@@ -68,6 +62,8 @@ type Props = {
 const AgencyExpertise = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
 
+	const { availableDirectories } = useFormSelectors();
+
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
 			response && reduxDispatch( setActiveAgency( response ) );
@@ -106,12 +102,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 
 	const { services, products, directories, feedbackUrl } = formData;
 
-	const directoryOptions: DirectoryApplicationType[] = [
-		DIRECTORY_WPCOM,
-		DIRECTORY_WOOCOMMERCE,
-		DIRECTORY_JETPACK,
-		DIRECTORY_PRESSABLE,
-	];
+	const directoryOptions = Object.keys( availableDirectories ) as DirectoryApplicationType[];
 
 	return (
 		<Form
@@ -160,7 +151,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						{ directoryOptions.map( ( directory ) => (
 							<CheckboxControl
 								key={ `directory-${ directory }` }
-								label={ getPartnerDirectoryLabel( directory ) }
+								label={ availableDirectories[ directory ] }
 								checked={ isDirectorySelected( directory ) }
 								onChange={ ( value ) => setDirectorySelected( directory, value ) }
 								disabled={ isDirectoryApproved( directory ) }
@@ -182,7 +173,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 									key={ `directory-samples-${ directory }` }
 									label={ translate( 'Relevant examples for %(directory)s', {
 										args: {
-											directory: getPartnerDirectoryLabel( directory ),
+											directory: availableDirectories[ directory ],
 										},
 										comment: '%(directory)s is the directory name, e.g. "WordPress.com"',
 									} ) }
@@ -199,7 +190,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Share customer feedback' ) }
 					description={ translate(
-						'Great support is key to our success. Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
+						'Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
 					) }
 					isOptional
 				>
