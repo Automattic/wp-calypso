@@ -212,7 +212,7 @@ export class PlansStep extends Component {
 		) {
 			const a4aLinkButton = (
 				<Button
-					href="https://automattic.com/for-agencies/"
+					href="https://wordpress.com/for-agencies?ref=onboarding"
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ () =>
