@@ -192,12 +192,10 @@ export class EditorPage {
 	 * This method will attempt to close the following panels:
 	 * 	- Publish Panel (including pre-publish checklist)
 	 * 	- Editor Settings Panel
-	 * 	- Editor Navigation Sidebar
 	 */
 	async closeAllPanels(): Promise< void > {
 		await Promise.allSettled( [
 			this.editorPublishPanelComponent.closePanel(),
-			this.editorToolbarComponent.closeNavSidebar(),
 			this.editorToolbarComponent.closeSettings(),
 		] );
 	}
