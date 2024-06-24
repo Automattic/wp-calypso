@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
+	type SiteExcerptData,
 	SitesSortKey,
 	useSitesListFiltering,
 	useSitesListGrouping,
@@ -100,9 +101,14 @@ const SitesDashboardV2 = ( {
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+	const { data: allSitesIncludingStagingSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
+	);
+
+	const allSites = useMemo(
+		() => allSitesIncludingStagingSites.filter( ( site ) => ! site.is_wpcom_staging_site ),
+		[ allSitesIncludingStagingSites ]
 	);
 
 	useShowSiteCreationNotice( allSites, newSiteID );
@@ -236,6 +242,24 @@ const SitesDashboardV2 = ( {
 		}
 	}, [ dataViewsState, setDataViewsState ] );
 
+	const openSitePreviewPane = useCallback(
+		( site: SiteExcerptData ) => {
+			setDataViewsState( ( prevState: DataViewsState ) => ( {
+				...prevState,
+				selectedItem: site,
+				type: 'list',
+			} ) );
+		},
+		[ setDataViewsState ]
+	);
+
+	const changeSitePreviewPane = ( siteId: number ) => {
+		const targetSite = allSitesIncludingStagingSites.find( ( site ) => site.ID === siteId );
+		if ( targetSite ) {
+			openSitePreviewPane( targetSite );
+		}
+	};
+
 	// todo: temporary mock data
 	const hideListing = false;
 	const isNarrowView = false;
@@ -292,6 +316,7 @@ const SitesDashboardV2 = ( {
 						</div>
 					) }
 					<DotcomSitesDataViews
+						selectedSite={ dataViewsState.selectedItem }
 						sites={ paginatedSites }
 						isLoading={ isLoading || ! initialSortApplied }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
@@ -314,6 +339,7 @@ const SitesDashboardV2 = ( {
 							selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
 							setSelectedSiteFeature={ setSelectedSiteFeature }
 							closeSitePreviewPane={ closeSitePreviewPane }
+							changeSitePreviewPane={ changeSitePreviewPane }
 						/>
 					</LayoutColumn>
 					<GuidedTour defaultTourId="siteManagementTour" />
