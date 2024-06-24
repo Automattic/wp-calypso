@@ -42,6 +42,7 @@ const readymadeTemplateFlow: Flow = {
 
 	useSteps() {
 		return [
+			STEPS.CHECK_SITES,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
@@ -108,6 +109,13 @@ const readymadeTemplateFlow: Flow = {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
+				/**
+				 * Check sites resets the onboarding store.
+				 */
+				case STEPS.CHECK_SITES.slug: {
+					return navigate( 'create-site' );
+				}
+
 				case 'create-site': {
 					return navigate( 'processing' );
 				}
