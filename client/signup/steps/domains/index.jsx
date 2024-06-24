@@ -42,7 +42,6 @@ import {
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
-import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
@@ -402,14 +401,6 @@ export class RenderDomainsStep extends Component {
 			: undefined;
 
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
-
-		maybeExcludeEmailsStep( {
-			domainItem,
-			resetSignupStep: this.props.removeStep,
-			siteUrl: suggestion?.domain_name,
-			stepName: 'emails',
-			submitSignupStep: this.props.submitSignupStep,
-		} );
 
 		this.props.submitSignupStep(
 			Object.assign(

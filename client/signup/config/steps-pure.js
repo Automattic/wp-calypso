@@ -28,7 +28,6 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
 	setStoreFeatures = noop,
 	setIntentOnSite = noop,
@@ -46,21 +45,6 @@ export function generateSteps( {
 	excludeSegmentSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
-		// `themes` does not update the theme for an existing site as we normally
-		// do this when the site is created. In flows where a site is merely being
-		// updated, we need to use a different API request function.
-		'themes-site-selected': {
-			stepName: 'themes-site-selected',
-			dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
-			apiRequestFunction: setThemeOnSite,
-			props: {
-				get headerText() {
-					return i18n.translate( 'Choose a theme for your new site.' );
-				},
-			},
-		},
-
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
@@ -242,9 +226,6 @@ export function generateSteps( {
 			optionalDependencies: [ 'startingPoint' ],
 		},
 
-		test: {
-			stepName: 'test',
-		},
 		plans: {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
@@ -265,21 +246,6 @@ export function generateSteps( {
 		'hosting-decider': {
 			stepName: 'hosting-decider',
 			providesDependencies: [ 'stepperHostingFlow' ],
-		},
-		'plans-hosting': {
-			stepName: 'plans',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isPlanFulfilled,
-			props: {
-				hideFreePlan: true,
-				hidePremiumPlan: true,
-				hidePersonalPlan: true,
-				hideEnterprisePlan: true,
-				shouldHideNavButtons: true,
-			},
 		},
 
 		'plans-new': {
@@ -426,14 +392,6 @@ export function generateSteps( {
 			},
 			delayApiRequestUntilComplete: true,
 		},
-		emails: {
-			stepName: 'emails',
-			dependencies: [ 'domainItem', 'siteSlug' ],
-			providesDependencies: [ 'domainItem', 'emailItem' ],
-			props: {
-				isDomainOnly: false,
-			},
-		},
 		'subscribing-email': {
 			stepName: 'subscribing-email',
 			// apiRequestFunction: createSiteWithCart,
@@ -479,37 +437,6 @@ export function generateSteps( {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 			},
-		},
-
-		'domains-store': {
-			stepName: 'domains',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'siteUrl',
-				'lastDomainSearched',
-				'isManageSiteFlow',
-				'shouldHideFreePlan',
-				'signupDomainOrigin',
-				'useThemeHeadstart',
-				'domainCart',
-			],
-			optionalDependencies: [
-				'siteUrl',
-				'lastDomainSearched',
-				'isManageSiteFlow',
-				'shouldHideFreePlan',
-				'signupDomainOrigin',
-				'useThemeHeadstart',
-			],
-			props: {
-				isDomainOnly: false,
-				forceDesignType: 'store',
-			},
-			delayApiRequestUntilComplete: true,
 		},
 
 		'domains-theme-preselected': {
@@ -709,11 +636,6 @@ export function generateSteps( {
 			providesDependencies: [ 'clonePoint' ],
 		},
 
-		'clone-jetpack': {
-			stepName: 'clone-jetpack',
-			providesDependencies: [ 'cloneJetpack' ],
-		},
-
 		'clone-ready': {
 			stepName: 'clone-ready',
 			providesDependencies: [],
@@ -746,10 +668,6 @@ export function generateSteps( {
 			stepName: 'p2-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
-		},
-
-		'p2-get-started': {
-			stepName: 'p2-get-started',
 		},
 
 		'p2-confirm-email': {
