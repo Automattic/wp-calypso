@@ -76,7 +76,13 @@ function filterLowerTiers(
 			return (
 				!! availableTier.transform_quantity_divide_by ||
 				( availableTier?.views as number ) >
-					Math.max( usageData?.current_tier?.limit ?? 0, usageData?.billableMonthlyViews, 0 )
+					Math.max(
+						usageData?.current_tier?.limit ?? 0,
+						usageData?.billableMonthlyViews -
+							( usageData.views_limit ?? 0 ) +
+							( usageData?.current_tier?.limit ?? 0 ),
+						0
+					)
 			);
 		} );
 	}
