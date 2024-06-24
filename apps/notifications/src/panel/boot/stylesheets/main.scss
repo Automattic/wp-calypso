@@ -996,9 +996,13 @@ $with-sidebar-min-page-width: 1114px;
 }
 
 .wpnc__keyboard-shortcuts-popover.popover {
+	.popover__arrow {
+		z-index: 1000;
+	}
 	.popover__inner {
 		width: 250px;
 		font-family: $sans;
+		z-index: 999;
 
 		h2 {
 			padding: 10px;
