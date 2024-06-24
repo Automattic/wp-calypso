@@ -1,4 +1,4 @@
-import DotPager from '@automattic/components/src/dot-pager';
+import { DotPager } from '@automattic/components';
 import { createElement, useEffect } from 'react';
 import {
 	SECTION_BLOGGING_PROMPT,

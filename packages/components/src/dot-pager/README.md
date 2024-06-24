@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-import DotPager from '@automattic/components/src/dot-pager';
+import { DotPager } from '@automattic/components';
 
 function myDotPager() {
 	return (

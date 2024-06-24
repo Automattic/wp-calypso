@@ -1,4 +1,4 @@
-import DotPager from '@automattic/components/src/dot-pager';
+import { DotPager } from '@automattic/components';
 import clsx from 'clsx';
 import { createElement, useEffect, useRef } from 'react';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';

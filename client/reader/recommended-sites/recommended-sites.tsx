@@ -1,5 +1,5 @@
 import { Railcar } from '@automattic/calypso-analytics';
-import DotPager from '@automattic/components/src/dot-pager';
+import { DotPager } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';

@@ -4,8 +4,8 @@ import {
 	formattedNumber,
 	percentCalculator,
 	ShortenedNumber,
+	DotPager,
 } from '@automattic/components';
-import DotPager from '@automattic/components/src/dot-pager';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';

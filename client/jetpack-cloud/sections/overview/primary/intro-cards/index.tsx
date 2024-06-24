@@ -1,4 +1,4 @@
-import DotPager from '@automattic/components/src/dot-pager';
+import { DotPager } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

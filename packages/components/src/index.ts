@@ -87,4 +87,5 @@ export { default as WooLogo } from './logos/woo-logo';
 export { default as WordPressLogo } from './wordpress-logo';
 export { default as WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
 export { default as Swipeable } from './swipeable';
+export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';

@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_PREMIUM, getPlan, isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
-import DotPager from '@automattic/components/src/dot-pager';
+import { DotPager } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';

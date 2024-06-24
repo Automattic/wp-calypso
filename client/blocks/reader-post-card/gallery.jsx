@@ -1,4 +1,4 @@
-import DotPager from '@automattic/components/src/dot-pager';
+import { DotPager } from '@automattic/components';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import cssSafeUrl from 'calypso/lib/css-safe-url';

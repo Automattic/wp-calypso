@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { AppPromoCard } from '@automattic/components';
-import DotPager from '@automattic/components/src/dot-pager';
+import { AppPromoCard, DotPager } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';

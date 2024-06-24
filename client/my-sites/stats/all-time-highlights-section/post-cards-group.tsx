@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
-import { PostStatsCard, ComponentSwapper } from '@automattic/components';
-import DotPager from '@automattic/components/src/dot-pager';
+import { PostStatsCard, ComponentSwapper, DotPager } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';

@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import DotPager from '@automattic/components/src/dot-pager';
+import { DotPager } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { createElement, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
