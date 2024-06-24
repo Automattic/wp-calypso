@@ -206,7 +206,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			</FormSection>
 
 			<div className="partner-directory-agency-cta__required-information">
-				{ translate( '* indicates a required information' ) }
+				{ translate( '* indicates required information' ) }
 			</div>
 
 			<div className="partner-directory-agency-cta__footer">
