@@ -14,7 +14,7 @@ export const useRenderReadymadeTemplate = ( readymadeTemplate: ReadymadeTemplate
 					apiNamespace: 'wpcom/v2',
 				},
 				{
-					pattern_ids: readymadeTemplate.pattern_ids.join( ',' ),
+					pattern_ids: readymadeTemplate.patterns.map( ( { id } ) => id ).join( ',' ),
 					site_title: readymadeTemplate.title,
 				}
 			);
