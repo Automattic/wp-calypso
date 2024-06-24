@@ -938,10 +938,7 @@ export class EditorPage {
 			const navbarComponent = new NavbarComponent( this.page );
 			actions.push( navbarComponent.clickMySites() );
 		} else {
-			actions.push(
-				this.editorToolbarComponent.openNavSidebar(),
-				this.editorNavSidebarComponent.exitEditor()
-			);
+			actions.push( this.editorToolbarComponent.closeEditor() );
 		}
 
 		// Perform the actions and resolve promises.
