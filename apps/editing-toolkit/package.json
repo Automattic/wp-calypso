@@ -34,7 +34,6 @@
 		"build:wpcom-block-editor-nav-sidebar": "calypso-build --env source='wpcom-block-editor-nav-sidebar'",
 		"build:wpcom-block-editor-nux": "calypso-build --env source='wpcom-block-editor-nux'",
 		"build:wpcom-documentation-links": "calypso-build --env source='wpcom-documentation-links'",
-		"build:wpcom-domain-upsell-callout": "calypso-build --env source='wpcom-domain-upsell-callout'",
 		"build:wpcom-global-styles": "calypso-build --env source='wpcom-global-styles','wpcom-global-styles/wpcom-global-styles-view'",
 		"clean": "rm -rf dist editing-toolkit-plugin/*/dist || true",
 		"dev": "yarn run calypso-apps-builder --localPath editing-toolkit-plugin --remotePath /home/wpcom/public_html/wp-content/plugins/editing-toolkit-plugin/dev",
