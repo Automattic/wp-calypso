@@ -7,7 +7,9 @@ const meta: Meta< typeof ChecklistItem > = {
 	decorators: [
 		( Story ) => (
 			<div style={ { width: 300 } }>
-				<Story />
+				<ul className="checklist__tasks">
+					<Story />
+				</ul>
 			</div>
 		),
 	],
