@@ -30,10 +30,10 @@ export function getSegmentedIntent( answers: SurveyData ): SegmentedIntent {
 		if ( surveyedGoals?.includes( 'sell' ) && ! surveyedGoals?.includes( 'difm' ) ) {
 			return { segmentSlug: 'plans-guided-segment-merchant', segment: 'merchant' };
 		}
-		if ( surveyedGoals?.includes( 'write' ) ) {
+		if ( surveyedGoals?.includes( 'write' ) && surveyedGoals?.length === 1 ) {
 			return { segmentSlug: 'plans-guided-segment-blogger', segment: 'blogger' };
 		}
-		if ( surveyedGoals?.includes( 'educational-or-nonprofit' ) ) {
+		if ( surveyedGoals?.includes( 'educational-or-nonprofit' ) && surveyedGoals?.length === 1 ) {
 			return { segmentSlug: 'plans-guided-segment-nonprofit', segment: 'nonprofit' };
 		}
 

@@ -110,12 +110,12 @@ const PartnerDirectoryDashboard = () => {
 			isValidFormData ) ??
 		false;
 
-	const { availableProducts } = useFormSelectors();
+	const { availableDirectories } = useFormSelectors();
 
 	const directoryApplicationStatuses =
 		applicationData?.directories?.reduce( ( statuses: DirectoryApplicationStatus[], directory ) => {
 			statuses.push( {
-				brand: availableProducts[ directory.directory ],
+				brand: availableDirectories[ directory.directory ],
 				status: applicationStatusTypeMap[ directory.status || 'unknown' ].label,
 				type: applicationStatusTypeMap[ directory.status || 'unknown' ].type,
 				key: applicationStatusTypeMap[ directory.status || 'unknown' ].key,
