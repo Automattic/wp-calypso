@@ -39,7 +39,7 @@ export const useFlowNavigation = (): FlowNavigation => {
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const navigate = useNavigate();
 	const match = useMatch( '/:flow/:step/:lang?' );
-	const { flow = null, step: currentStep = null, lang = null } = match?.params || {};
+	const { flow = null, step: currentStepSlug = null, lang = null } = match?.params || {};
 	const [ currentSearchParams ] = useSearchParams();
 
 	const customNavigate: Navigate< StepperStep[] > = ( nextStep: string, extraData = {} ) => {
@@ -49,7 +49,7 @@ export const useFlowNavigation = (): FlowNavigation => {
 		setStepData( {
 			path: nextStep,
 			intent: intent,
-			previousStep: currentStep,
+			previousStep: currentStepSlug,
 			...extraData,
 		} );
 
@@ -66,7 +66,7 @@ export const useFlowNavigation = (): FlowNavigation => {
 		navigate: customNavigate,
 		params: {
 			flow,
-			step: currentStep,
+			step: currentStepSlug,
 			lang,
 		},
 		search: currentSearchParams,
