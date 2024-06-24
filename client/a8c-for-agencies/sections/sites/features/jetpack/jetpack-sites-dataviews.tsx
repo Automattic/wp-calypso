@@ -22,6 +22,9 @@ import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-o
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { useSelector } from 'calypso/state';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
 import { AllowedTypes, Site, SiteData } from '../../types';
@@ -66,8 +69,15 @@ export const JetpackSitesDataViews = ( {
 		[]
 	);
 
+	const teams = useSelector( getReaderTeams );
+	const isTeamMember = isAutomatticTeamMember( teams );
+
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
+			if ( site.sticker?.includes( 'migration-in-progress' ) && ! isTeamMember ) {
+				return;
+			}
+
 			if ( site.is_connection_healthy ) {
 				setDataViewsState( ( prevState: DataViewsState ) => ( {
 					...prevState,
@@ -380,19 +390,24 @@ export const JetpackSitesDataViews = ( {
 								onClick={ ( e: MouseEvent ) => e.stopPropagation() }
 								onKeyDown={ ( e: KeyboardEvent ) => e.stopPropagation() }
 							>
-								<SiteActions
-									isLargeScreen={ isLargeScreen }
-									site={ item.site }
-									siteError={ item.site.error }
-								/>
-								<Button
-									onClick={ () => openSitePreviewPane( item.site.value ) }
-									className="site-preview__open"
-									borderless
-									ref={ ( ref ) => setActionsRef( ( current ) => current || ref ) }
-								>
-									<Gridicon icon="chevron-right" />
-								</Button>
+								{ ( ! item.site.value.sticker?.includes( 'migration-in-progress' ) ||
+									isTeamMember ) && (
+									<>
+										<SiteActions
+											isLargeScreen={ isLargeScreen }
+											site={ item.site }
+											siteError={ item.site.error }
+										/>
+										<Button
+											onClick={ () => openSitePreviewPane( item.site.value ) }
+											className="site-preview__open"
+											borderless
+											ref={ ( ref ) => setActionsRef( ( current ) => current || ref ) }
+										>
+											<Gridicon icon="chevron-right" />
+										</Button>
+									</>
+								) }
 							</div>
 						</>
 					);
