@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -66,11 +67,11 @@ export const JetpackSitesDataViews = ( {
 		[]
 	);
 
-	const isProxied = window.configData?.env_id !== 'a8c-for-agencies-production';
+	const isNotProduction = config( 'env_id' ) !== 'a8c-for-agencies-production';
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
-			if ( site.sticker?.includes( 'migration-in-progress' ) && ! isProxied ) {
+			if ( site.sticker?.includes( 'migration-in-progress' ) && ! isNotProduction ) {
 				return;
 			}
 
@@ -387,7 +388,7 @@ export const JetpackSitesDataViews = ( {
 								onKeyDown={ ( e: KeyboardEvent ) => e.stopPropagation() }
 							>
 								{ ( ! item.site.value.sticker?.includes( 'migration-in-progress' ) ||
-									isProxied ) && (
+									isNotProduction ) && (
 									<>
 										<SiteActions
 											isLargeScreen={ isLargeScreen }
