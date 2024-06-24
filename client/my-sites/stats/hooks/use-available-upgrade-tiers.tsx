@@ -78,7 +78,7 @@ function filterLowerTiers(
 				( availableTier?.views as number ) >
 					Math.max(
 						usageData?.current_tier?.limit ?? 0,
-						// Offset the billable monthly views by the views already included in plans, e.g. COmplete.
+						// Offset the billable monthly views by the views already included in plans, e.g. Complete.
 						usageData?.billableMonthlyViews -
 							( usageData.views_limit ?? 0 ) +
 							( usageData.current_tier?.limit ?? 0 ),
