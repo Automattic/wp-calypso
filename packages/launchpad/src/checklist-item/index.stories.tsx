@@ -20,39 +20,83 @@ const baseTask = {
 	completed: false,
 	disabled: false,
 };
+const baseArgs = {
+	onClick: () => {},
+};
 
 export const Default: Story = {
 	args: {
+		...baseArgs,
 		task: baseTask,
 	},
 };
 
 export const Completed: Story = {
 	args: {
+		...baseArgs,
 		task: { ...baseTask, completed: true },
 	},
 };
 
 export const Disabled: Story = {
 	args: {
+		...baseArgs,
 		task: { ...baseTask, disabled: true },
 	},
 };
+
 export const WithBadgetText: Story = {
 	args: {
+		...baseArgs,
 		task: { ...baseTask, badge_text: 'Upgrade plan' },
 	},
 };
 
 export const WithTaskCounter: Story = {
 	args: {
+		...baseArgs,
 		task: { ...baseTask, repetition_count: 1, target_repetitions: 3 },
 	},
 };
 
 export const WithSubtitle: Story = {
 	args: {
+		...baseArgs,
 		task: { ...baseTask, subtitle: 'This is a subtitle' },
+	},
+};
+
+export const NotClickable: Story = {
+	args: {
+		...baseArgs,
+		task: { ...baseTask },
+		onClick: undefined,
+	},
+};
+
+export const Expanded: Story = {
+	args: {
+		...baseArgs,
+		task: baseTask,
+		expandable: {
+			content: <p>This is the expanded content.</p>,
+			isOpen: true,
+		},
+	},
+};
+
+export const ExpandedWithAction: Story = {
+	args: {
+		...baseArgs,
+		task: baseTask,
+		expandable: {
+			content: <p>This is the expanded content.</p>,
+			isOpen: true,
+			action: {
+				label: 'Next',
+				onClick: () => {},
+			},
+		},
 	},
 };
 
