@@ -203,6 +203,17 @@ $section-border: solid 1px var(--color-neutral-5);
 			border-radius: 30%;
 		}
 	}
+
+	&:has(.threads) {
+		&::before {
+			border-radius: 40%;
+		}
+	}
+
+	svg.threads {
+		width: 20px;
+		height: 20px;
+	}
 }
 
 .post-share__service .social-logo {

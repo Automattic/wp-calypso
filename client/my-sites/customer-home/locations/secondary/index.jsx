@@ -88,9 +88,6 @@ const Secondary = ( { cards, siteId, trackFirstCardAsPrimary = false } ) => {
 							onPageSelected={ trackInnerCardImpression }
 						>
 							{ card.map( ( innerCard, innerIndex ) => {
-								if ( CARD_COMPONENTS[ innerCard ].isDisabled === true ) {
-									return null;
-								}
 								return (
 									<SecondaryCard
 										key={ 'my_home_secondary_pager_' + index + '_' + card + '_' + innerIndex }

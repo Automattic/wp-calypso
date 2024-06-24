@@ -117,6 +117,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					description={ translate(
 						'We allow each agency to offer up to five services to help you focus on what you do best.'
 					) }
+					isRequired
 				>
 					<ServicesSelector
 						selectedServices={ services }
@@ -129,7 +130,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					/>
 				</FormField>
 
-				<FormField label={ translate( 'What products do you work with?' ) }>
+				<FormField label={ translate( 'What products do you work with?' ) } isRequired>
 					<ProductsSelector
 						selectedProducts={ products }
 						setProducts={ ( value ) =>
@@ -146,6 +147,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Automattic Partner Directories' ) }
 					sub={ translate( 'Select the Automattic directories you would like to appear on.' ) }
+					isRequired
 				>
 					<div className="partner-directory-agency-expertise__directory-options">
 						{ directoryOptions.map( ( directory ) => (
@@ -166,6 +168,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						sub={ translate(
 							"For each directory you selected, provide URLs of 5 client sites you've worked on. This helps us gauge your expertise."
 						) }
+						isRequired
 					>
 						<div className="partner-directory-agency-expertise__directory-client-sites">
 							{ directories.map( ( { directory } ) => (
@@ -192,7 +195,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					description={ translate(
 						'Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
 					) }
-					isOptional
+					isRequired
 				>
 					<TextControl
 						type="text"
@@ -207,6 +210,10 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					/>
 				</FormField>
 			</FormSection>
+
+			<div className="partner-directory-agency-cta__required-information">
+				{ translate( '* indicates a required information' ) }
+			</div>
 
 			<div className="partner-directory-agency-cta__footer">
 				<Button
