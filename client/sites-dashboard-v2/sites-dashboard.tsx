@@ -101,14 +101,9 @@ const SitesDashboardV2 = ( {
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 
-	const { data: allSitesIncludingStagingSites = [], isLoading } = useSiteExcerptsQuery(
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
-	);
-
-	const allSites = useMemo(
-		() => allSitesIncludingStagingSites.filter( ( site ) => ! site.is_wpcom_staging_site ),
-		[ allSitesIncludingStagingSites ]
 	);
 
 	useShowSiteCreationNotice( allSites, newSiteID );
@@ -254,7 +249,7 @@ const SitesDashboardV2 = ( {
 	);
 
 	const changeSitePreviewPane = ( siteId: number ) => {
-		const targetSite = allSitesIncludingStagingSites.find( ( site ) => site.ID === siteId );
+		const targetSite = allSites.find( ( site ) => site.ID === siteId );
 		if ( targetSite ) {
 			openSitePreviewPane( targetSite );
 		}
@@ -316,7 +311,6 @@ const SitesDashboardV2 = ( {
 						</div>
 					) }
 					<DotcomSitesDataViews
-						selectedSite={ dataViewsState.selectedItem }
 						sites={ paginatedSites }
 						isLoading={ isLoading || ! initialSortApplied }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
