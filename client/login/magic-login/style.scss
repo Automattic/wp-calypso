@@ -707,6 +707,12 @@
 			flex-direction: row;
 			justify-content: space-between;
 			gap: 0;
+
+			&.grav-powered-magic-login__footer--vertical {
+				flex-direction: column;
+				align-items: start;
+				gap: 20px;
+			}
 		}
 
 		.grav-powered-magic-login__show-magic-login {

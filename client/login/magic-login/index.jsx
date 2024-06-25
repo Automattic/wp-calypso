@@ -488,7 +488,7 @@ class MagicLogin extends Component {
 	handleGravPoweredEmailSwitch = () => {
 		const { oauth2Client, hideMagicLoginRequestForm: showEmailForm } = this.props;
 
-		this.setState( { showSecondaryEmailOptions: false } );
+		this.setState( { showSecondaryEmailOptions: false, showEmailCodeVerification: false } );
 		showEmailForm();
 
 		this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_switch_email', {
@@ -691,8 +691,14 @@ class MagicLogin extends Component {
 	}
 
 	renderGravPoweredEmailCodeVerification() {
-		const { oauth2Client, translate, isValidatingCode, isCodeValidated, codeValidationError } =
-			this.props;
+		const {
+			oauth2Client,
+			translate,
+			isValidatingCode,
+			isCodeValidated,
+			codeValidationError,
+			query,
+		} = this.props;
 		const {
 			isSecondaryEmail,
 			isNewAccount,
@@ -702,6 +708,7 @@ class MagicLogin extends Component {
 			verificationCodeInputValue,
 			resendEmailCountdown,
 		} = this.state;
+		const is3rdPartyApp = query.gravatar_from === '3rd-party';
 		const isProcessingCode = isValidatingCode || isCodeValidated;
 		let errorText = translate( 'Something went wrong. Please try again.' );
 
@@ -773,7 +780,11 @@ class MagicLogin extends Component {
 						{ translate( 'Continue' ) }
 					</FormButton>
 				</form>
-				<footer className="grav-powered-magic-login__footer">
+				<footer
+					className={ clsx( 'grav-powered-magic-login__footer', {
+						'grav-powered-magic-login__footer--vertical': ! is3rdPartyApp,
+					} ) }
+				>
 					<button
 						onClick={ () => {
 							this.handleGravPoweredEmailCodeSend( usernameOrEmail );
@@ -791,6 +802,16 @@ class MagicLogin extends Component {
 									args: { countdown: resendEmailCountdown },
 							  } ) }
 					</button>
+					{ ! is3rdPartyApp && (
+						<button
+							onClick={ () => {
+								this.resetResendEmailCountdown();
+								this.handleGravPoweredEmailSwitch();
+							} }
+						>
+							{ translate( 'Switch email' ) }
+						</button>
+					) }
 					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
 						{ translate( 'Need help logging in?' ) }
 					</a>
