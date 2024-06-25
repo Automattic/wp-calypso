@@ -58,6 +58,7 @@ export interface Agency {
 				is_published?: boolean;
 			}[];
 			feedback_url: string;
+			is_published?: boolean;
 		};
 	};
 }
