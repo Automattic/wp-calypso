@@ -2,9 +2,8 @@ import {
 	type PlanSlug,
 	WPComStorageAddOnSlug,
 	isWpcomEnterpriseGridPlan,
-	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
-import { PLAN_ECOMMERCE } from '@automattic/data-stores/src/plans/constants';
+import { AddOns } from '@automattic/data-stores';
 import { usePlansGridContext } from '../../../../grid-context';
 import StorageDropdown from './storage-dropdown';
 import StorageFeatureLabel from './storage-feature-label';
@@ -19,8 +18,6 @@ type Props = {
 	priceOnSeparateLine?: boolean;
 };
 
-const ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
-
 const PlanStorage = ( {
 	onStorageAddOnClick,
 	planSlug,
@@ -28,8 +25,9 @@ const PlanStorage = ( {
 	showUpgradeableStorage,
 	priceOnSeparateLine,
 }: Props ) => {
-	const { gridPlansIndex } = usePlansGridContext();
+	const { siteId, gridPlansIndex } = usePlansGridContext();
 	const { availableForPurchase, current } = gridPlansIndex[ planSlug ];
+	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { planSlug, siteId } );
 
 	if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;
@@ -39,9 +37,7 @@ const PlanStorage = ( {
 	 * The current plan is not marked as `availableForPurchase`, hence check on `current`.
 	 */
 	const canUpgradeStorageForPlan =
-		( current || availableForPurchase ) &&
-		showUpgradeableStorage &&
-		ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug );
+		( current || availableForPurchase ) && showUpgradeableStorage && availableStorageAddOns;
 
 	return (
 		<div className="plans-grid-next-plan-storage">

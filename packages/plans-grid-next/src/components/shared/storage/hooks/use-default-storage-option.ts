@@ -2,8 +2,6 @@ import {
 	type PlanSlug,
 	type WPComStorageAddOnSlug,
 	type WPComPlanStorageFeatureSlug,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { usePlansGridContext } from '../../../../grid-context';
@@ -11,8 +9,6 @@ import { usePlansGridContext } from '../../../../grid-context';
 type Props = {
 	planSlug: PlanSlug;
 };
-
-const ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
 /**
  * Returns the storage add-on upsell option to display to
@@ -30,7 +26,7 @@ export default function useDefaultStorageOption( {
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const purchasedAddOn = storageAddOns?.find( ( storageAddOn ) => storageAddOn?.purchased );
 
-	return purchasedAddOn && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
+	return purchasedAddOn && AddOns.ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
 		? ( purchasedAddOn?.featureSlugs?.[ 0 ] as WPComStorageAddOnSlug )
 		: ( storageFeature?.getSlug() as WPComPlanStorageFeatureSlug );
 }

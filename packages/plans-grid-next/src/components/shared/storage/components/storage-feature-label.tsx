@@ -1,9 +1,4 @@
-import {
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PlanSlug,
-	WPComPlanStorageFeatureSlug,
-} from '@automattic/calypso-products';
+import { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import clsx from 'clsx';
@@ -15,8 +10,6 @@ import useStorageStringFromFeature from '../hooks/use-storage-string-from-featur
 interface Props {
 	planSlug: PlanSlug;
 }
-
-const ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
 const StorageFeatureLabel = ( { planSlug }: Props ) => {
 	const translate = useTranslate();
@@ -58,7 +51,8 @@ const StorageFeatureLabel = ( { planSlug }: Props ) => {
 		</div>
 	);
 
-	return formattedMonthlyAddedCost && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) ? (
+	return formattedMonthlyAddedCost &&
+		AddOns.ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) ? (
 		<div className={ containerClasses }>
 			{ volumeJSX }
 			<div className="plans-grid-next-storage-feature-label__offset-price">
