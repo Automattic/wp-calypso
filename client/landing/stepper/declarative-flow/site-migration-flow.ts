@@ -263,7 +263,23 @@ const siteMigration: Flow = {
 						);
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug, {
+					if ( config.isEnabled( 'migration-flow/enable-migration-assistant' ) ) {
+						return navigate( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
+
+					// Take the user to the upgrade plan step.
+					if ( providedDependencies?.destination === 'upgrade' ) {
+						return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
+
+					// Continue with the migration flow.
+					return navigate( MIGRATION_INSTRUCTIONS_STEP.slug, {
 						siteId,
 						siteSlug,
 					} );
