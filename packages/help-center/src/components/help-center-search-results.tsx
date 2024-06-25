@@ -216,7 +216,8 @@ function HelpSearchResults( {
 		const { result, type, index } = props;
 		const { link, title, icon } = result;
 
-		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
+		const external =
+			externalLinks || ( type !== SUPPORT_TYPE_ADMIN_SECTION && ! openAdminInNewTab );
 
 		const LinkIcon = () => {
 			if ( type === 'admin_section' ) {
