@@ -130,19 +130,20 @@ class Help_Center {
 		$user_email      = $user->user_email;
 		$avatar_url      = function_exists( 'wpcom_get_avatar_url' ) ? wpcom_get_avatar_url( $user_email, 64, '', true )[0] : null;
 
-		wp_localize_script(
+		wp_add_inline_script(
 			'help-center-script',
-			'helpCenterData',
-			array(
-				'currentSite'   => $this->get_current_site(),
-				'adminUrl'      => admin_url(),
-				'locale'        => get_locale(),
-				'currentUserId' => get_current_user_id(),
-				'primarySiteId' => $primary_site_id,
-				'userEmail'     => $user_email,
-				'avatarUrl'     => $avatar_url,
-				'displayName'   => $user->display_name,
-			)
+			'const helpCenterData = ' . wp_json_encode(
+				array(
+					'currentSite'   => $this->get_current_site(),
+					'locale'        => get_locale(),
+					'currentUserId' => get_current_user_id(),
+					'primarySiteId' => $primary_site_id,
+					'userEmail'     => $user_email,
+					'avatarUrl'     => $avatar_url,
+					'displayName'   => $user->display_name,
+				)
+			),
+			'before'
 		);
 
 		$current_user = wp_get_current_user();
@@ -188,21 +189,24 @@ class Help_Center {
 		$plan    = array_pop( $bundles );
 
 		$return_data = array(
-			'ID'               => $site,
-			'name'             => get_bloginfo( 'name' ),
-			'URL'              => get_bloginfo( 'url' ),
-			'plan'             => array(
+			'ID'              => $site,
+			'name'            => get_bloginfo( 'name' ),
+			'URL'             => get_bloginfo( 'url' ),
+			'plan'            => array(
 				'product_slug' => isset( $plan->product_slug ) ? $plan->product_slug : null,
 			),
-			'is_wpcom_atomic'  => defined( 'IS_ATOMIC' ) && IS_ATOMIC,
-			'jetpack'          => true === apply_filters( 'is_jetpack_site', false, $site ),
-			'logo'             => array(
+			'is_wpcom_atomic' => defined( 'IS_ATOMIC' ) && IS_ATOMIC,
+			'jetpack'         => true === apply_filters( 'is_jetpack_site', false, $site ),
+			'logo'            => array(
 				'id'    => $logo_id,
 				'sizes' => array(),
 				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0] ?? '',
 			),
-			'launchpad_screen' => get_option( 'launchpad_screen' ),
-			'site_intent'      => get_option( 'site_intent' ),
+			'options'         => array(
+				'launchpad_screen' => get_option( 'launchpad_screen' ),
+				'site_intent'      => get_option( 'site_intent' ),
+				'admin_url'        => get_admin_url(),
+			),
 		);
 
 		if ( $is_support_site ) {

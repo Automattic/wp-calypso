@@ -1,3 +1,4 @@
+/* global helpCenterData */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -63,19 +64,14 @@ function HelpCenterContent() {
 		<>
 			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter
-				adminUrl={ window.helpCenterData.adminUrl }
-				isJetpackSite={ window.helpCenterData.currentSite.jetpack }
-				locale={ window.helpCenterData.locale }
+				locale={ helpCenterData.locale }
 				sectionName="gutenberg-editor"
-				currentUserId={ window.helpCenterData.currentUserId }
-				selectedSiteId={ window.helpCenterData.currentSite.ID }
-				avatarUrl={ window.helpCenterData.avatarUrl }
-				displayName={ window.helpCenterData.displayName }
-				userEmail={ window.helpCenterData.userEmail }
+				currentUser={ helpCenterData.currentUser }
+				site={ helpCenterData.currentSite }
 				hasPurchases={ false }
-				primarySiteId={ window.helpCenterData.primarySiteId }
-				handleClose={ closeCallback }
 				onboardingUrl="https://wordpress.com/start"
+				adminUrl={ helpCenterData.adminUrl }
+				handleClose={ closeCallback }
 			/>
 		</>
 	);

@@ -28,14 +28,8 @@ const getEnvironmentHostname = () => {
 export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
 	const { sectionName, site } = useHelpCenterContext();
-
-	let siteIntent = site.options.site_intent;
-	let siteSlug = useSiteSlug();
-
-	if ( ! siteIntent || ! siteSlug ) {
-		siteIntent = window?.helpCenterData?.currentSite?.site_intent;
-		siteSlug = window?.location?.host;
-	}
+	const siteIntent = site.options.site_intent;
+	const siteSlug = useSiteSlug();
 
 	const { data } = useLaunchpad( siteSlug, siteIntent );
 	const totalLaunchpadSteps = data?.checklist?.length || 4;
