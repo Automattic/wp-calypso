@@ -42,7 +42,6 @@ function AdminHelpCenterContent() {
 			site={ helpCenterData.currentSite }
 			hasPurchases={ false }
 			onboardingUrl="https://wordpress.com/start"
-			adminUrl={ helpCenterData.adminUrl }
 			handleClose={ closeCallback }
 		/>
 	);
