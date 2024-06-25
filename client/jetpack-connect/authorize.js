@@ -859,10 +859,7 @@ export class JetpackAuthorize extends Component {
 		if ( this.isWooCoreProfiler() ) {
 			return (
 				<>
-					{ translate( 'Connecting as %(user)s', {
-						args: { user: this.props.user.display_name },
-					} ) }
-					<br />
+					<strong>{ this.props.user.display_name }</strong>
 					<small>{ this.props.user.email }</small>
 				</>
 			);
