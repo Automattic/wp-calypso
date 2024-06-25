@@ -21,7 +21,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useLayoutEffect } from 'react';
-import { connect } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -273,6 +272,4 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	);
 };
 
-export default connect( () => {
-	return {};
-}, {} )( localize( PlansWrapper ) );
+export default localize( PlansWrapper );
