@@ -22,6 +22,7 @@ import { isWcMobileApp } from 'calypso/lib/mobile-app';
 /**
  * Internal Dependencies
  */
+import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useSiteAnalysis } from '../data/use-site-analysis';
@@ -62,24 +63,8 @@ const fakeFaces = [
 ].map( ( name ) => `https://s0.wp.com/i/support-engineers/${ name }.jpg` );
 const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
 
-const getSupportedLanguages = ( supportType: string, locale: string ) => {
-	const isLiveChatLanguageSupported = (
-		config( 'livechat_support_locales' ) as Array< string >
-	 ).includes( locale );
-
-	const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
-		locale
-	);
-
-	switch ( supportType ) {
-		case 'CHAT':
-			return ! isLiveChatLanguageSupported;
-		case 'EMAIL':
-			return ! isLanguageSupported && ! [ 'en', 'en-gb' ].includes( locale );
-
-		default:
-			return false;
-	}
+const isLocaleNotSupportedInEmailSupport = ( locale: string ) => {
+	return ! EMAIL_SUPPORT_LOCALES.includes( locale );
 };
 
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
@@ -453,7 +438,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		);
 	};
 
-	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale );
+	const shouldShowHelpLanguagePrompt = isLocaleNotSupportedInEmailSupport( locale );
 
 	const getHEsTraySection = () => {
 		return (
