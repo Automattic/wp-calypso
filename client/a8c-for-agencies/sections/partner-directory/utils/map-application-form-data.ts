@@ -21,6 +21,7 @@ export function mapApplicationFormData( agency: Agency | null ): AgencyDirectory
 			} )
 		),
 		feedbackUrl: agency.profile.partner_directory_application.feedback_url,
+		isPublished: !! agency.profile.partner_directory_application.is_published,
 	};
 }
 
