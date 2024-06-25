@@ -228,7 +228,7 @@
 				gap: 5px;
 
 				.left-column {
-					gap: 10px;
+					gap: 16px;
 
 					.title {
 						font-size: $font-headline-small;
@@ -260,9 +260,10 @@
 
 	@media (max-height: $break-medium) {
 		.container .content {
-			.left-column {
-				padding-top: 60px;
-			}
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			height: 100%;
 
 			.right-column {
 				display: none;

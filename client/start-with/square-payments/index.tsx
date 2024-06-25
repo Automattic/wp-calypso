@@ -14,6 +14,7 @@ import TechCrunchImage from 'calypso/assets/images/start-with/Tech_Crunch.svg';
 import TimeLogo from 'calypso/assets/images/start-with/Time.svg';
 import USATodayImage from 'calypso/assets/images/start-with/USA_Today.svg';
 import DotcomWooSquareImage from 'calypso/assets/images/start-with/dotcom-woo-square.png';
+import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import 'calypso/start-with/style.scss';
 
@@ -26,6 +27,7 @@ export const StartWithSquarePayments: React.FC = () => {
 
 	return (
 		<div className="container">
+			<DocumentHead title={ translate( 'Square Payments' ) } />
 			<PageViewTracker path="/start-with/square-payments" title="Start with > Square Payments" />
 			<div className="content">
 				<div className="left-column">
