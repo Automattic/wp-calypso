@@ -1,8 +1,62 @@
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "calypso/my-sites/patterns/mixins";
 
-.readymade-template-details {
-	@include patterns-page-width;
-	background: #1d2327;
+.readymade-template-details-wrapper {
+	background: var(--studio-gray-90);
 	color: var(--studio-white);
+	padding-top: 16px;
+	padding-bottom: 48px;
+}
+
+.readymade-template-details-section {
+	@include patterns-page-width;
+}
+
+a.readymade-template-details-back {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+	line-height: 26px;
+	color: var(--studio-gray-20);
+
+	svg {
+		fill: var(--studio-gray-20);
+	}
+
+	&:hover {
+		color: var(--studio-gray-10);
+
+		svg {
+			fill: var(--studio-gray-10);
+		}
+	}
+}
+
+.readymade-template-details {
+	padding-top: 40px;
+	display: flex;
+	gap: 64px;
+}
+
+.readymade-template-details-content {
+	width: 40%;
+}
+
+.readymade-template-details-preview {
+	width: 60%;
+}
+
+.readymade-template-details-header {
+	margin-bottom: 40px;
+	display: flex;
+}
+
+.readymade-template-details-title {
+	font-family: $font-recoleta;
+	font-size: 2.5rem; /* stylelint-disable-line scales/font-sizes */
+	line-height: 1.2;
+	letter-spacing: 0.185px;
+	margin-bottom: 0;
 }
