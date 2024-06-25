@@ -52,10 +52,22 @@ export const keyboardShortcutsAreEnabled = ( state = false, action ) => {
 export const filterName = ( state = 'all', { type, filterName } ) =>
 	SET_FILTER === type ? filterName : state;
 
+export const shortcutsPopoverIsOpen = ( state = false, { type } ) => {
+	switch ( type ) {
+		case 'TOGGLE_SHORTCUTS_POPOVER':
+			return ! state;
+		case 'CLOSE_SHORTCUTS_POPOVER':
+			return false;
+		default:
+			return state;
+	}
+};
+
 export default combineReducers( {
 	isLoading,
 	isPanelOpen,
 	selectedNoteId,
 	filterName,
 	keyboardShortcutsAreEnabled,
+	shortcutsPopoverIsOpen,
 } );

@@ -56,6 +56,8 @@ const customMiddleware = {
 			} ),
 	],
 	VIEW_SETTINGS: [ () => window.open( 'https://wordpress.com/me/notifications' ) ],
+	CLOSE_SHORTCUTS_POPOVER: [ () => sendMessage( { action: 'closeShortcutsPopover' } ) ],
+	TOGGLE_SHORTCUTS_POPOVER: [ () => sendMessage( { action: 'toggleShortcutsPopover' } ) ],
 	EDIT_COMMENT: [
 		( st, { siteId, postId, commentId, href } ) => {
 			sendMessage( { action: 'editComment', siteId, postId, commentId } );
@@ -73,6 +75,7 @@ const customMiddleware = {
 const NotesWrapper = ( { wpcom } ) => {
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
+	const [ isShortcutsPopoverVisible, setShortcutsPopoverVisible ] = useState( false );
 
 	debug( 'wrapper state update', { isShowing, isVisible } );
 
@@ -82,6 +85,10 @@ const NotesWrapper = ( { wpcom } ) => {
 			return prevIsVisible;
 		} );
 	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
+
+	const refreshShortcutsPopover = ( type ) => {
+		store.dispatch( { type } );
+	};
 
 	const handleMessages = ( { action, hidden, showing } ) => {
 		debug( 'message received', {
@@ -98,6 +105,16 @@ const NotesWrapper = ( { wpcom } ) => {
 				return showing;
 			} );
 			refresh();
+		}
+
+		if ( 'closeShortcutsPopover' === action ) {
+			setShortcutsPopoverVisible( false );
+			refreshShortcutsPopover( 'CLOSE_SHORTCUTS_POPOVER' );
+		}
+
+		if ( 'toggleShortcutsPopover' === action ) {
+			setShortcutsPopoverVisible( ! isShortcutsPopoverVisible );
+			refreshShortcutsPopover( 'TOGGLE_SHORTCUTS_POPOVER' );
 		}
 
 		if ( 'toggleVisibility' === action ) {
