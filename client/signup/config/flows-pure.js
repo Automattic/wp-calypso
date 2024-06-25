@@ -249,16 +249,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'with-add-ons',
-			steps: [ userSocialStep, 'domains', 'plans', 'add-ons' ],
-			destination: getSignupDestination,
-			description:
-				'Copy of the onboarding flow that includes an add-ons step; the flow is used for AB testing (ExPlat) add-ons in signup',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'onboarding-with-email',
 			steps: [ userSocialStep, 'mailbox-domain', 'mailbox', 'mailbox-plan' ],
 			destination: getEmailSignupFlowDestination,

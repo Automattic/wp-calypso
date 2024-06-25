@@ -1228,23 +1228,6 @@ export function excludeStepIfProfileComplete( stepName, defaultDependencies, nex
 	}
 }
 
-export function isAddOnsFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { store, submitSignupStep } = nextProps;
-
-	const state = store.getState();
-	const cartItem = get( getSignupDependencyStore( state ), 'cartItem', null );
-	let fulfilledDependencies = [];
-
-	if ( cartItem ) {
-		submitSignupStep( { stepName, cartItem: [], wasSkipped: true }, { cartItem: [] } );
-		fulfilledDependencies = [ 'cartItem' ];
-	}
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-		flows.excludeStep( stepName );
-	}
-}
-
 export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextProps ) {
 	const { submitSignupStep, sitePlanSlug, store } = nextProps;
 	const fulfilledDependencies = [];
