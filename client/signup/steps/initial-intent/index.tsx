@@ -151,7 +151,6 @@ export default function InitialIntentStep( props: Props ) {
 			}
 			align="center"
 			hideSkip
-			hideBack
 			{ ...props }
 		/>
 	);
