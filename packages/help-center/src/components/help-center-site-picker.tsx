@@ -1,6 +1,7 @@
-import { TextControl } from '@wordpress/components';
+import { TextControl, SelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { useSiteSlug } from '../hooks/use-site-slug';
 import { HELP_CENTER_STORE } from '../stores';
 import { SitePicker } from '../types';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
@@ -8,46 +9,32 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 
 export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	ownershipResult,
-	sitePickerChoice,
-	setSitePickerChoice,
-	currentSite,
-	siteId,
-	sitePickerEnabled,
+	isSelfDeclaredSite,
+	onSelfDeclaredSite,
 } ) => {
-	const { setSite, setUserDeclaredSiteUrl } = useDispatch( HELP_CENTER_STORE );
+	const { setUserDeclaredSiteUrl } = useDispatch( HELP_CENTER_STORE );
 	const userDeclaredSiteUrl = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.getUserDeclaredSiteUrl();
 	}, [] );
 
-	const otherSite = {
-		name: __( 'Other site', __i18n_text_domain__ ),
-		ID: 0,
-		logo: { id: '', sizes: [] as never[], url: '' },
-		URL: '',
-	} as const;
-
-	const options: ( SitePickerSite | undefined )[] = [ currentSite, otherSite ];
+	const siteSlug = useSiteSlug();
 
 	return (
 		<>
-			{ sitePickerEnabled && (
-				<section>
-					<SitePickerDropDown
-						enabled
-						onPickSite={ ( id: string | number ) => {
-							if ( id !== 0 ) {
-								setSite( currentSite );
-							}
-							setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
-						} }
-						options={ options }
-						siteId={ siteId }
-					/>
-				</section>
-			) }
-
-			{ sitePickerChoice === 'OTHER_SITE' && (
+			<section>
+				<SelectControl
+					label="Site"
+					options={ [
+						{ label: siteSlug, value: 'current' },
+						{ label: 'Another site', value: 'another_site' },
+					] }
+					onChange={ ( value ) => {
+						onSelfDeclaredSite( value === 'another_site' );
+					} }
+				></SelectControl>
+			</section>
+			{ isSelfDeclaredSite && (
 				<section>
 					<TextControl
 						label={ __( 'Site address', __i18n_text_domain__ ) }

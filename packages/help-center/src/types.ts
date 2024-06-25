@@ -28,11 +28,8 @@ export interface Header {
 
 export interface SitePicker {
 	ownershipResult: AnalysisReport;
-	setSitePickerChoice: any;
-	sitePickerChoice: string;
-	currentSite: HelpCenterSite | undefined;
-	siteId: string | number | null | undefined;
-	sitePickerEnabled: boolean;
+	isSelfDeclaredSite: boolean;
+	onSelfDeclaredSite: ( selfDeclared: boolean ) => void;
 }
 
 export interface Article {

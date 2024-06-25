@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
+import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useGetOdieStorage } from '@automattic/odie-client';
@@ -46,8 +46,6 @@ import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
 import type { AnalysisReport } from '../types';
 import type { HelpCenterSelect, SiteDetails, HelpCenterSite } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
-
-export const SITE_STORE = 'automattic/site';
 
 const fakeFaces = [
 	'john',
@@ -107,9 +105,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { data: userSites } = useUserSites( currentUser.ID );
 	const userWithNoSites = userSites?.sites.length === 0;
 	const queryClient = useQueryClient();
-	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
-		'CURRENT_SITE'
-	);
+	const [ isSelfDeclaredSite, setIsSelfDeclaredSite ] = useState< boolean >( false );
 	const [ gptResponse, setGptResponse ] = useState< JetpackSearchAIResult >();
 	const { subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -144,7 +140,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 	useEffect( () => {
 		if ( userWithNoSites ) {
-			setSitePickerChoice( 'OTHER_SITE' );
+			setIsSelfDeclaredSite( true );
 		}
 	}, [ userWithNoSites ] );
 
@@ -154,14 +150,14 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		// pass user email as query cache key
 		currentUser.ID,
 		userDeclaredSiteUrl,
-		sitePickerChoice === 'OTHER_SITE'
+		isSelfDeclaredSite
 	);
 
 	const ownershipStatusLoading = ownershipResult?.result === 'LOADING';
 	const isSubmitting = submittingTicket || submittingTopic || isOpeningChatWidget;
 
 	// if the user picked a site from the picker, we don't need to analyze the ownership
-	if ( site && sitePickerChoice === 'CURRENT_SITE' ) {
+	if ( site && ! isSelfDeclaredSite ) {
 		ownershipResult = {
 			result: 'OWNED_BY_USER',
 			isWpcom: true,
@@ -172,15 +168,15 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 	// record the resolved site
 	useEffect( () => {
-		if ( ownershipResult?.site && sitePickerChoice === 'OTHER_SITE' ) {
+		if ( ownershipResult?.site && isSelfDeclaredSite ) {
 			setUserDeclaredSite( ownershipResult?.site as SiteDetails );
 		}
-	}, [ ownershipResult, setUserDeclaredSite, sitePickerChoice ] );
+	}, [ ownershipResult, setUserDeclaredSite, isSelfDeclaredSite ] );
 
 	let supportSite: SiteDetails | HelpCenterSite;
 
 	// if the user picked "other site", force them to declare a site
-	if ( sitePickerChoice === 'OTHER_SITE' ) {
+	if ( isSelfDeclaredSite ) {
 		supportSite = ownershipResult?.site as SiteDetails;
 	} else {
 		supportSite = site as HelpCenterSite;
@@ -635,15 +631,8 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 			<HelpCenterSitePicker
 				ownershipResult={ ownershipResult }
-				sitePickerChoice={ sitePickerChoice }
-				setSitePickerChoice={ setSitePickerChoice }
-				currentSite={ site }
-				siteId={ sitePickerChoice === 'CURRENT_SITE' ? site?.ID : 0 }
-				sitePickerEnabled={
-					mode === 'FORUM' &&
-					Boolean( supportSite?.plan?.product_slug ) &&
-					isFreePlanProduct( { product_slug: supportSite.plan?.product_slug as string } )
-				}
+				isSelfDeclaredSite={ isSelfDeclaredSite }
+				onSelfDeclaredSite={ setIsSelfDeclaredSite }
 			/>
 
 			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
