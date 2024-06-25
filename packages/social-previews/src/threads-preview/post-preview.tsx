@@ -24,9 +24,13 @@ export const ThreadsPostPreview: React.FC< ThreadsPreviewProps > = ( {
 
 	const displayAsCard = url && image && ! hasMedia;
 
+	let textToDisplay = text || title;
+
 	// Attach the URL to the text if not displaying as a card and it's not already in the text.
-	const textToDisplay =
-		! displayAsCard && text && url && ! text.includes( url ) ? `${ text } ${ url }` : text;
+	textToDisplay =
+		! displayAsCard && textToDisplay && url && ! textToDisplay.includes( url )
+			? `${ textToDisplay } ${ url }`
+			: textToDisplay;
 
 	return (
 		<div className="threads-preview__wrapper">
