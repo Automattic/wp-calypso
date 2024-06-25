@@ -180,6 +180,7 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
+		"stats/empty-module-traffic": false,
 		"stats/paid-wpcom-v2": true,
 		"stats/tier-upgrade-slider": true,
 		"stats/utm-builder": true,

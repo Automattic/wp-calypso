@@ -210,6 +210,7 @@
 		"site-indicator": true,
 		"site-profiler/metrics": true,
 		"ssr/prefetch-timebox": false,
+		"stats/empty-module-traffic": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/tier-upgrade-slider": true,
 		"stats/utm-builder": true,
