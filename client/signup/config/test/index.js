@@ -1,5 +1,6 @@
 import { intersection, isEmpty, keys } from 'lodash';
 import flows from '../flows';
+import { generateFlows } from '../flows-pure';
 import { getStepModuleMap } from '../step-components';
 import steps from '../steps';
 import { generateSteps } from '../steps-pure';
@@ -11,6 +12,9 @@ jest.mock( 'calypso/lib/explat', () => {
 		return [ false, null ];
 	};
 } );
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: () => true,
+} ) );
 
 describe( 'index', () => {
 	// eslint-disable-next-line jest/expect-expect
@@ -125,5 +129,20 @@ describe( 'index', () => {
 						} );
 					} );
 			} );
+	} );
+
+	test( 'there should be no unused steps', () => {
+		const flowDefinitions = generateFlows();
+		const allStepDefinitions = generateSteps();
+		const definedSteps = new Set( Object.keys( allStepDefinitions ) );
+
+		Object.values( flowDefinitions ).forEach( ( flow ) => {
+			flow.steps.forEach( ( step ) => definedSteps.delete( step ) );
+		} );
+
+		// Remove the `site` step manually since it is used in tests.
+		definedSteps.delete( 'site' );
+
+		expect( definedSteps ).toEqual( new Set() );
 	} );
 } );

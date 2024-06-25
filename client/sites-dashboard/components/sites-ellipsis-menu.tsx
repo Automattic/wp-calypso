@@ -303,7 +303,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 			{
 				condition: hasStagingSitesFeature,
 				label: __( 'Staging site' ),
-				href: `/hosting-config/${ siteSlug }#staging-site`,
+				href: `/staging-site/${ siteSlug }`,
 				sectionName: 'staging_site',
 			},
 			{

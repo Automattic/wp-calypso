@@ -647,8 +647,8 @@ export function generateFlows( {
 			description: 'Entrepreneur Trial signup flow that goes through the trialAcknowledge step',
 			lastModified: '2024-05-29',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
+			providesDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
+			optionalDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
 			hideProgressIndicator: true,
 		},
 		{
