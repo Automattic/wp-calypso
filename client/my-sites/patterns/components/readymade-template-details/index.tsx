@@ -2,6 +2,8 @@ import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-sta
 import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
 import { ReadymadeTemplateDetailsFC } from 'calypso/my-sites/patterns/types';
 
+import './style.scss';
+
 export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) => {
 	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
 	if ( ! readymadeTemplates.length ) {

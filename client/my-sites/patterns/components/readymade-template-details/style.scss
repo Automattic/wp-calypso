@@ -1,0 +1,8 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/patterns/mixins";
+
+.readymade-template-details {
+	@include patterns-page-width;
+	background: #1d2327;
+	color: var(--studio-white);
+}
