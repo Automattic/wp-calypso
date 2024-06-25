@@ -1,11 +1,13 @@
+import type { Window } from '../types';
+
 export const getCalypsoVersion = (): string => {
-	return window?.COMMIT_SHA;
+	return ( window as Window )?.COMMIT_SHA;
 };
 
 export const getEnvironment = (): string => {
-	return window?.configData?.env_id;
+	return ( window as Window )?.configData?.env_id;
 };
 
 export const getTarget = (): string => {
-	return window?.BUILD_TARGET;
+	return ( window as Window )?.BUILD_TARGET;
 };
