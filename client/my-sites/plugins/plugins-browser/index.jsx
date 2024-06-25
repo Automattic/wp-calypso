@@ -180,12 +180,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				}
 			/>
 
-			<PluginsNavigationHeader
-				navigationHeaderRef={ navigationHeaderRef }
-				categoryName={ categoryName }
-				category={ category }
-				search={ search }
-			/>
+			<PluginsNavigationHeader navigationHeaderRef={ navigationHeaderRef } />
 			<div className="plugins-browser__content-wrapper">
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />

@@ -6,14 +6,10 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { useLocalizedPlugins, useServerEffect } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { appendBreadcrumb, resetBreadcrumbs } from 'calypso/state/breadcrumb/actions';
-import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -80,8 +76,7 @@ const ManageButton = ( {
 	);
 };
 
-const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category, search } ) => {
-	const dispatch = useDispatch();
+const PluginsNavigationHeader = ( { navigationHeaderRef } ) => {
 	const translate = useTranslate();
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -107,63 +102,6 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	const shouldShowManageButton = useMemo( () => {
 		return jetpackNonAtomic || ( isJetpack && ( hasInstallPurchasedPlugins || hasManagePlugins ) );
 	}, [ jetpackNonAtomic, isJetpack, hasInstallPurchasedPlugins, hasManagePlugins ] );
-	const { localizePath } = useLocalizedPlugins();
-
-	const setBreadcrumbs = ( breadcrumbs = [] ) => {
-		const pluginsBreadcrumb = {
-			label: translate( 'Plugins' ),
-			href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
-			id: 'plugins',
-		};
-
-		if ( breadcrumbs?.length === 0 || ( ! category && ! search ) ) {
-			dispatch( resetBreadcrumbs() );
-			dispatch( appendBreadcrumb( pluginsBreadcrumb ) );
-		}
-
-		if ( category ) {
-			resetBreadcrumbs();
-			dispatch( appendBreadcrumb( pluginsBreadcrumb ) );
-			dispatch(
-				appendBreadcrumb( {
-					label: categoryName,
-					href: localizePath( `/plugins/browse/${ category }/${ selectedSite?.slug || '' }` ),
-					id: 'category',
-				} )
-			);
-		}
-
-		if ( search ) {
-			dispatch( resetBreadcrumbs() );
-			dispatch( appendBreadcrumb( pluginsBreadcrumb ) );
-			dispatch(
-				appendBreadcrumb( {
-					label: translate( 'Search Results' ),
-					href: localizePath( `/plugins/${ selectedSite?.slug || '' }?s=${ search }` ),
-					id: 'plugins-search',
-				} )
-			);
-		}
-	};
-
-	const previousRoute = useSelector( getPreviousRoute );
-	useEffect( () => {
-		/* If translatations change, reset and update the breadcrumbs */
-		if ( ! previousRoute ) {
-			setBreadcrumbs();
-		}
-	}, [ translate ] );
-
-	useServerEffect( () => {
-		setBreadcrumbs();
-	} );
-
-	/* We need to get the breadcrumbs after the server has set them */
-	const breadcrumbs = useSelector( getBreadcrumbs );
-
-	useEffect( () => {
-		setBreadcrumbs( breadcrumbs );
-	}, [ selectedSite?.slug, search, category, categoryName, dispatch, localizePath ] );
 
 	return (
 		<NavigationHeader
