@@ -25,7 +25,7 @@ import getRequest from 'calypso/state/selectors/get-request';
 import { isFetchingAtomicHostingGeoAffinity } from 'calypso/state/selectors/is-fetching-atomic-hosting-geo-affinity';
 import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fetching-atomic-hosting-wp-version';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -58,6 +58,7 @@ const WebServerSettingsCard = ( {
 	isUpdatingWpVersion,
 	isWpcomStagingSite,
 	siteId,
+	selectedSiteSlug,
 	geoAffinity,
 	staticFile404,
 	translate,
@@ -138,7 +139,7 @@ const WebServerSettingsCard = ( {
 								'For testing purposes, you can switch to the beta version of the next WordPress release on {{a}}your staging site{{/a}}.',
 							{
 								components: {
-									a: <a href="#staging-site" />,
+									a: <a href={ `/staging-site/${ selectedSiteSlug }` } />,
 								},
 							}
 						) }
@@ -431,6 +432,7 @@ export default connect(
 				getRequest( state, updateAtomicWpVersion( siteId, null ) )?.isLoading ?? false,
 			isWpcomStagingSite,
 			siteId,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
 			geoAffinity,
 			staticFile404,
 			phpVersion,

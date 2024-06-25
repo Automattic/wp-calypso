@@ -1194,7 +1194,7 @@ export function excludeSegmentSurveyStepIfInactive( stepName, _, nextProps ) {
 	// trailMapExperimentVariant = undefined | null | 'treatment_guided' | 'treatment_survey_only'
 	// null => control group.
 	const { trailMapExperimentVariant } = nextProps?.initialContext ?? {};
-	// The check has to be null to make we don't remove the step before the experiment loads.
+	// The check has to be null to make sure we don't remove the step before the experiment loads.
 	if ( trailMapExperimentVariant === null ) {
 		nextProps.submitSignupStep(
 			{ stepName, wasSkipped: true },

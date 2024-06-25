@@ -8,6 +8,7 @@ import {
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
+import { ReadymadeTemplatesServer } from 'calypso/my-sites/patterns/components/readymade-templates/server';
 import { PatternsContext } from 'calypso/my-sites/patterns/context';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
@@ -40,6 +41,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 				<PatternLibrary
 					categoryGallery={ CategoryGalleryServer }
 					patternGallery={ PatternGalleryServer }
+					readymadeTemplates={ ReadymadeTemplatesServer }
 				/>
 			</PatternsWrapper>
 		</PatternsContext.Provider>

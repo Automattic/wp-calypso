@@ -14,16 +14,19 @@ import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
 import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
-import { displaySiteUrl, isNotAtomicJetpack, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
+import {
+	displaySiteUrl,
+	isNotAtomicJetpack,
+	isStagingSite,
+	MEDIA_QUERIES,
+} from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
-	isStagingEnabled: boolean;
 	site: SiteExcerptData;
 	openSitePreviewPane?: ( site: SiteExcerptData ) => void;
 };
@@ -55,7 +58,7 @@ const ListTileTitle = styled.div`
 	align-items: center;
 `;
 
-const SiteField = ( { site, openSitePreviewPane, isStagingEnabled }: Props ) => {
+const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const { __ } = useI18n();
 
 	// Todo: This hook is used by the SiteItemThumbnail component below, in a prop showPlaceholder={ ! inView }.
@@ -70,16 +73,8 @@ const SiteField = ( { site, openSitePreviewPane, isStagingEnabled }: Props ) => 
 	const title = __( 'View Site Details' );
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site.ID );
 
-	const stagingSiteSlug = useSelector( ( state ) => {
-		const stagingBlogId = site.options?.wpcom_staging_blog_ids?.[ 0 ] ?? null;
-		if ( ! stagingBlogId ) {
-			return false;
-		}
-
-		return getSiteSlug( state, stagingBlogId );
-	} );
-
 	const isP2Site = site.options?.is_wpforteams_site;
+	const isWpcomStagingSite = isStagingSite( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
 
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
@@ -121,7 +116,7 @@ const SiteField = ( { site, openSitePreviewPane, isStagingEnabled }: Props ) => 
 							<Truncated>{ site.title }</Truncated>
 						</SiteName>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-						{ isStagingEnabled && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
+						{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 						{ isTrialSitePlan && (
 							<SitesMigrationTrialBadge>{ __( 'Trial' ) }</SitesMigrationTrialBadge>
 						) }
@@ -151,13 +146,6 @@ const SiteField = ( { site, openSitePreviewPane, isStagingEnabled }: Props ) => 
 							<a className="sites-dataviews__site-wp-admin-url" href={ adminUrl }>
 								<Truncated>{ adminLabel }</Truncated>
 							</a>
-							{ stagingSiteSlug && (
-								<button
-									tabIndex={ -1 }
-									data-site-slug={ stagingSiteSlug }
-									className="site-dataviews__staging-site"
-								></button>
-							) }
 						</>
 					)
 				}
