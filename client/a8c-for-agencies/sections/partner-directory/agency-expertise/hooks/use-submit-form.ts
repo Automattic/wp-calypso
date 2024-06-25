@@ -4,7 +4,7 @@ import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { AgencyDirectoryApplication } from '../../types';
 
 type Props = {
-	formData: AgencyDirectoryApplication;
+	formData: AgencyDirectoryApplication | null;
 	onSubmitSuccess?: ( data: Agency ) => void;
 	onSubmitError?: () => void;
 };
@@ -25,9 +25,16 @@ export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitErro
 		}
 	);
 
-	const onSubmit = useCallback( () => {
-		submit( formData );
-	}, [ formData, submit ] );
+	const onSubmit = useCallback(
+		( application?: AgencyDirectoryApplication ) => {
+			if ( application ) {
+				submit( application );
+			} else {
+				formData && submit( formData );
+			}
+		},
+		[ formData, submit ]
+	);
 
 	return {
 		onSubmit,
