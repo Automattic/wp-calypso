@@ -1,9 +1,14 @@
+import { StatsCard } from '@automattic/components';
+import { trendingUp, megaphone, starEmpty } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
+import EmptyStateAction from '../../../components/empty-state-action';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 
@@ -25,6 +30,7 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 	moduleStrings,
 	className,
 } ) => {
+	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopPosts';
 
@@ -36,11 +42,51 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
+	const handleClick = () => {
+		//console.log( 'do things' );
+	};
+
 	return (
 		<>
 			{ /* This will be replaced with ghost loaders, fallback to the current implementation until then. */ }
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && <div>Nice empty states</div> }
+			{ ( ! data || ! data?.length ) && (
+				<StatsCard
+					className={ className }
+					title={ moduleStrings.title }
+					isEmpty
+					emptyMessage={
+						<EmptyModuleCard
+							icon={ trendingUp }
+							description={ moduleStrings.empty }
+							cards={
+								<>
+									<EmptyStateAction
+										icon={ starEmpty }
+										text={ translate( 'Craft engaging content with Jetpack AI assistant' ) }
+										analyticsDetails={ {
+											from: 'module_top_posts',
+											feature: 'ai_assistant',
+										} }
+										onClick={ handleClick }
+									/>
+									<EmptyStateAction
+										icon={ megaphone }
+										text={ translate( 'Share on social media with one click' ) }
+										analyticsDetails={ {
+											from: 'module_top_posts',
+											feature: 'social_sharing',
+										} }
+										onClick={ handleClick }
+									/>
+								</>
+							}
+						/>
+					}
+				>
+					<div>empty</div>
+				</StatsCard>
+			) }
 			{ /* TODO: consider supressing <StatsModule /> empty state */ }
 			{ data && !! data.length && (
 				<StatsModule
