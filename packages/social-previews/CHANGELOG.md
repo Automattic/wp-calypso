@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.0
+
+- Added Threads preview
+
 ## v2.0.1 (2024-06-10)
 
 - Added Mastodon, Instagram and Nextdoor previews.
