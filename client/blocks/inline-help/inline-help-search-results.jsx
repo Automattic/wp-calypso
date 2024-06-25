@@ -79,7 +79,6 @@ function HelpSearchResults( {
 	const { data: searchData, isInitialLoading: isSearching } = useHelpSearchQuery(
 		searchQuery,
 		getLocaleSlug(),
-		{},
 		sectionName
 	);
 
