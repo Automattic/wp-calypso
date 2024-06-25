@@ -558,6 +558,13 @@ function getAvailabilityNotice(
 			);
 			break;
 
+		case 'gravatar_tld_restriction':
+			message = translate(
+				'Gravatar is currently offering free .link domains. Additional domain extensions may become available for a fee in the future.'
+			);
+			severity = 'info';
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'

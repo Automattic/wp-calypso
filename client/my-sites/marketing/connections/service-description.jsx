@@ -241,6 +241,12 @@ class SharingServiceDescription extends Component {
 				}
 				return this.props.translate( 'Share posts with your local community on Nextdoor.' );
 			},
+			threads() {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Sharing posts to Threads.' );
+				}
+				return this.props.translate( 'Share posts to your Threads feed.' );
+			},
 		} ),
 		numberOfConnections: 0,
 	};

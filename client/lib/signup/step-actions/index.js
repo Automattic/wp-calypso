@@ -1134,41 +1134,6 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
-export function maybeExcludeEmailsStep( {
-	domainItem,
-	resetSignupStep,
-	siteUrl,
-	stepName,
-	submitSignupStep,
-} ) {
-	const isEmailStepExcluded = flows.excludedSteps.includes( stepName );
-
-	/* If we have a domain, make sure the step isn't excluded */
-	if ( domainItem ) {
-		if ( ! isEmailStepExcluded ) {
-			return;
-		}
-
-		resetSignupStep( stepName );
-		flows.resetExcludedStep( stepName );
-
-		return;
-	}
-
-	/* We don't have a domain, so exclude the step if it hasn't been excluded yet */
-	if ( isEmailStepExcluded ) {
-		return;
-	}
-
-	const emailItem = undefined;
-
-	submitSignupStep( { stepName, emailItem, wasSkipped: true }, { emailItem } );
-
-	recordExcludeStepEvent( stepName, siteUrl );
-
-	flows.excludeStep( stepName );
-}
-
 export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {
 	if ( 'onboarding-registrationless' !== nextProps.flowName ) {
 		return;

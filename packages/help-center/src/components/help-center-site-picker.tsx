@@ -1,4 +1,3 @@
-import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
 import { TextControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';

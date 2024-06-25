@@ -49,4 +49,5 @@ export interface ItemPreviewPaneHeaderExtraProps {
 		itemData: ItemData;
 		closeSitePreviewPane: () => void;
 	} >;
+	subtitleExtra?: string | React.ComponentType;
 }

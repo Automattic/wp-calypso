@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -66,8 +67,14 @@ export const JetpackSitesDataViews = ( {
 		[]
 	);
 
+	const isNotProduction = config( 'env_id' ) !== 'a8c-for-agencies-production';
+
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
+			if ( site.sticker?.includes( 'migration-in-progress' ) && ! isNotProduction ) {
+				return;
+			}
+
 			if ( site.is_connection_healthy ) {
 				setDataViewsState( ( prevState: DataViewsState ) => ( {
 					...prevState,
@@ -380,19 +387,24 @@ export const JetpackSitesDataViews = ( {
 								onClick={ ( e: MouseEvent ) => e.stopPropagation() }
 								onKeyDown={ ( e: KeyboardEvent ) => e.stopPropagation() }
 							>
-								<SiteActions
-									isLargeScreen={ isLargeScreen }
-									site={ item.site }
-									siteError={ item.site.error }
-								/>
-								<Button
-									onClick={ () => openSitePreviewPane( item.site.value ) }
-									className="site-preview__open"
-									borderless
-									ref={ ( ref ) => setActionsRef( ( current ) => current || ref ) }
-								>
-									<Gridicon icon="chevron-right" />
-								</Button>
+								{ ( ! item.site.value.sticker?.includes( 'migration-in-progress' ) ||
+									isNotProduction ) && (
+									<>
+										<SiteActions
+											isLargeScreen={ isLargeScreen }
+											site={ item.site }
+											siteError={ item.site.error }
+										/>
+										<Button
+											onClick={ () => openSitePreviewPane( item.site.value ) }
+											className="site-preview__open"
+											borderless
+											ref={ ( ref ) => setActionsRef( ( current ) => current || ref ) }
+										>
+											<Gridicon icon="chevron-right" />
+										</Button>
+									</>
+								) }
 							</div>
 						</>
 					);

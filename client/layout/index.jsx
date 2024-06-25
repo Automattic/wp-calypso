@@ -47,6 +47,7 @@ import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tour
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -338,6 +339,9 @@ class Layout extends Component {
 				<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
 			);
 		}
+		if ( this.props.isBlazePro ) {
+			return <AsyncLoad require="calypso/layout/masterbar/blaze-pro" placeholder={ null } />;
+		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
@@ -378,6 +382,7 @@ class Layout extends Component {
 			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
 			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
 			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
+			'is-blaze-pro': this.props.isBlazePro,
 		} );
 
 		const optionalBodyProps = () => {
@@ -519,6 +524,7 @@ export default withCurrentRoute(
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
+		const isBlazePro = getIsBlazePro( state );
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 			state,
 			siteId,
@@ -545,7 +551,9 @@ export default withCurrentRoute(
 		const noMasterbarForSection =
 			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 			! sectionName ||
-			( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
+			( ! isWooCoreProfilerFlow &&
+				! isBlazePro &&
+				[ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const isFromAutomatticForAgenciesPlugin =
 			'automattic-for-agencies-client' === currentQuery?.from;
 		const masterbarIsHidden =
@@ -592,6 +600,7 @@ export default withCurrentRoute(
 			isWooCoreProfilerFlow,
 			isFromAutomatticForAgenciesPlugin,
 			isEligibleForJITM,
+			isBlazePro,
 			oauth2Client,
 			wccomFrom,
 			isLoggedIn: isUserLoggedIn( state ),
