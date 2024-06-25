@@ -137,6 +137,11 @@ class PasswordlessSignupForm extends Component {
 				isSubmitting: false,
 			} );
 		}
+
+		// TODO: Figure out how to appropriately update submitting property
+		this.setState( {
+			isSubmitting: false,
+		} );
 		this.props.onCreateAccountError?.( error, this.state.email );
 	};
 

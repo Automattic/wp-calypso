@@ -39,7 +39,7 @@ const createNewAccount = async ( {
 		} );
 		submitSignupStep(
 			{ stepName: 'subscribing-email' },
-			{ redirectUrl: addQueryArgs( redirect_to, { subscribed: true } ) }
+			{ redirect: addQueryArgs( redirect_to, { subscribed: true } ) }
 		);
 		goToNextStep();
 		return;
@@ -53,7 +53,7 @@ const createNewAccount = async ( {
 
 			submitSignupStep(
 				{ stepName: 'subscribing-email' },
-				{ redirectUrl: addQueryArgs( redirect_to, { subscribed: true } ) }
+				{ redirect: addQueryArgs( redirect_to, { subscribed: true } ) }
 			);
 			goToNextStep();
 		}

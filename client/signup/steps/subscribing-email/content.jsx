@@ -1,11 +1,23 @@
+import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import SignupForm from 'calypso/blocks/signup-form';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 
 function SubscribingEmailStepContent( props ) {
-	const { flowName, handleSubmitSignup, isLoading, stepName, step, translate, queryParams } = props;
+	const {
+		flowName,
+		handleSubmitSignup,
+		isLoading,
+		stepName,
+		step,
+		translate,
+		queryParams,
+		goToNextStep,
+	} = props;
 
-	const redirectUrl = queryParams?.redirect_to || 'https://wordpress.com';
+	const redirect_to = queryParams?.redirect_to
+		? addQueryArgs( queryParams.redirect_to, { subscribed: true } )
+		: 'https://wordpress.com';
 	const email = queryParams?.email;
 
 	if ( isLoading ) {
@@ -19,11 +31,12 @@ function SubscribingEmailStepContent( props ) {
 				stepName={ stepName }
 				flowName={ flowName }
 				email={ email || '' }
-				redirectToAfterLoginUrl={ redirectUrl }
+				goToNextStep={ goToNextStep }
 				displayUsernameInput={ false }
+				redirectToAfterLoginUrl={ redirect_to }
 				suggestedUsername=""
 				isPasswordless
-				queryArgs={ { user_email: email } || {} }
+				queryArgs={ { user_email: email, redirect_to } || {} }
 				isSocialSignupEnabled={ false }
 				// recaptchaClientId={ this.state.recaptchaClientId }
 				isReskinned
@@ -32,6 +45,9 @@ function SubscribingEmailStepContent( props ) {
 				labelText={ translate( 'Your email' ) }
 				submitButtonText={ translate( 'Create an account' ) }
 				submitForm={ handleSubmitSignup }
+				onPasswordlessCreateAccountError={ () => {} }
+				// TODO: Do we need the save property?
+				save={ () => {} }
 			/>
 		</>
 	);

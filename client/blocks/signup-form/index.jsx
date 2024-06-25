@@ -1302,16 +1302,11 @@ class SignupForm extends Component {
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
 						onCreateAccountError={ ( error, email ) => {
-							if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-								page(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-										},
-										logInUrl
-									)
-								);
+							// TODO: Determine if there's a better way to handle a custom create account error
+							if ( this.props.onPasswordlessCreateAccountError ) {
+								this.props.onPasswordlessCreateAccountError( error, email );
+								this.setState( { disabled: false, submitting: false } );
+								return;
 							}
 						} }
 						{ ...formProps }
