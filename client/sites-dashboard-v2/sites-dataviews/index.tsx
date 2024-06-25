@@ -27,7 +27,6 @@ import type {
 import './style.scss';
 
 type Props = {
-	selectedSite: SiteExcerptData | null;
 	sites: SiteExcerptData[];
 	isLoading: boolean;
 	paginationInfo: DataViewsPaginationInfo;
@@ -44,7 +43,6 @@ export const siteStatusGroups = [
 ];
 
 const DotcomSitesDataViews = ( {
-	selectedSite,
 	sites,
 	isLoading,
 	paginationInfo,
@@ -126,16 +124,7 @@ const DotcomSitesDataViews = ( {
 				width: getSiteNameColWidth( isDesktop, isWide ),
 				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
 				render: ( { item }: { item: SiteInfo } ) => {
-					const isStagingEnabled =
-						!! selectedSite &&
-						!! item.options?.wpcom_staging_blog_ids?.find( ( id ) => id === selectedSite.ID );
-					return (
-						<SiteField
-							site={ item }
-							isStagingEnabled={ isStagingEnabled }
-							openSitePreviewPane={ openSitePreviewPane }
-						/>
-					);
+					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
