@@ -1,3 +1,5 @@
+import { formatCurrency } from '@automattic/format-currency';
+import { useTranslate } from 'i18n-calypso';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
 import CancelSubscriptionAction from '../../cancel-subscription-confirmation-dialog';
@@ -13,7 +15,15 @@ export function SubscriptionPurchase( { isFetching, name }: Props & { name?: str
 }
 
 export function SubscriptionPrice( { isFetching, amount }: Props & { amount?: string } ) {
-	return isFetching ? <TextPlaceholder /> : `$${ amount }`;
+	const translate = useTranslate();
+
+	return isFetching ? (
+		<TextPlaceholder />
+	) : (
+		translate( '%(price)s per month', {
+			args: { price: formatCurrency( Number( amount ?? 0 ), 'USD' ) },
+		} )
+	);
 }
 
 export function SubscriptionStatus( {
