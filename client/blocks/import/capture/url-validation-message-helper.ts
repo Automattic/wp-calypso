@@ -38,7 +38,7 @@ export default function getValidationMessage( url: string, translate: ( key: str
 	const missingTLDRegex = /^(?:https?:\/\/)?(?!.*\.[a-z]{2,})([a-zA-Z0-9-_]+)$/;
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	const invalidURLProtocolRegex = /^(?!https?:\/\/)\S+:\/\//;
-	const invalidCharsRegex = /[^a-z0-9\-._~!$&'()*+,;:@/?=%[\]]/i;
+	const invalidCharsRegex = /[^a-z0-9\-._!$&'()*+,;:@/?=%[\]]/i;
 
 	const removedInitialDots = url.replace( 'www.', '' );
 
