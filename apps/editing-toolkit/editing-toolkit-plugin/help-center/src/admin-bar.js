@@ -37,7 +37,7 @@ function AdminHelpCenterContent() {
 	return (
 		<HelpCenter
 			locale={ helpCenterData.locale }
-			sectionName="gutenberg-editor"
+			sectionName="wp-admin"
 			currentUser={ helpCenterData.currentUser }
 			site={ helpCenterData.currentSite }
 			hasPurchases={ false }
