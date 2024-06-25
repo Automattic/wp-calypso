@@ -3,9 +3,10 @@ import SignupForm from 'calypso/blocks/signup-form';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 
 function SubscribingEmailStepContent( props ) {
-	const { flowName, handleSubmitSignup, isLoading, submitting, queryParams } = props;
+	const { flowName, handleSubmitSignup, isLoading, stepName, step, translate, queryParams } = props;
 
 	const redirectUrl = queryParams?.redirect_to || 'https://wordpress.com';
+	const email = queryParams?.email;
 
 	if ( isLoading ) {
 		return <ReskinnedProcessingScreen flowName={ flowName } hasPaidDomain={ false } />;
@@ -14,22 +15,22 @@ function SubscribingEmailStepContent( props ) {
 	return (
 		<>
 			<SignupForm
-				step={ props.step }
-				email={ queryParams?.email || '' }
+				step={ step }
+				stepName={ stepName }
+				flowName={ flowName }
+				email={ email || '' }
 				redirectToAfterLoginUrl={ redirectUrl }
-				disabled={ submitting }
-				submitting={ submitting }
 				displayUsernameInput={ false }
 				suggestedUsername=""
 				isPasswordless
-				queryArgs={ { user_email: queryParams?.email } || {} }
+				queryArgs={ { user_email: email } || {} }
 				isSocialSignupEnabled={ false }
 				// recaptchaClientId={ this.state.recaptchaClientId }
 				isReskinned
 				shouldDisplayUserExistsError
 				isSocialFirst={ false }
-				labelText={ props.isWooPasswordless ? props.translate( 'Your email' ) : null }
-				submitButtonText={ props.translate( 'Create an account' ) }
+				labelText={ translate( 'Your email' ) }
+				submitButtonText={ translate( 'Create an account' ) }
 				submitForm={ handleSubmitSignup }
 			/>
 		</>

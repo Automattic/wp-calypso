@@ -18,7 +18,7 @@ const createNewAccount = async ( {
 	goToNextStep,
 	// recordTracksEvent,
 	setIsLoading,
-	submitSignupStep,
+	// submitSignupStep,
 } ) => {
 	const { email, mailing_list, redirect_to } = queryParams;
 
@@ -34,11 +34,9 @@ const createNewAccount = async ( {
 			client_secret: config( 'wpcom_signup_key' ),
 			anon_id: getTracksAnonymousUserId(),
 		} );
-
-		// recordTracksEvent( 'calypso_signup_new_email_subscription_success', {
-		// 	mailing_list,
-		// } );
-
+		recordTracksEvent( 'calypso_signup_new_email_subscription_success', {
+			mailing_list,
+		} );
 		submitSignupStep(
 			{ stepName: 'subscribing-email' },
 			{ redirectUrl: addQueryArgs( redirect_to, { subscribed: true } ) }
@@ -68,7 +66,6 @@ function SubscribingEmailStep( props ) {
 	const { flowName, queryParams, stepName } = props;
 
 	const [ isLoading, setIsLoading ] = useState( true );
-	const [ submitting, setSubmitting ] = useState( false );
 
 	useEffect( () => {
 		if ( emailValidator.validate( queryParams.email ) ) {
@@ -83,17 +80,7 @@ function SubscribingEmailStep( props ) {
 			<StepWrapper
 				flowName={ flowName }
 				hideFormattedHeader
-				stepContent={
-					<SubscribingEmailStepContent
-						{ ...props }
-						handleSubmitSignup={ () => {
-							// setSubmitting( true );
-							// createNewAccount( { ...props, email: form.email }, setIsLoading, setSubmitting );
-						} }
-						isLoading={ isLoading }
-						submitting={ submitting }
-					/>
-				}
+				stepContent={ <SubscribingEmailStepContent { ...props } isLoading={ isLoading } /> }
 				stepName={ stepName }
 			/>
 		</div>
