@@ -4,7 +4,7 @@ import s from './styles.module.scss';
 type EmptyModuleCardProps = {
 	className?: string;
 	icon?: React.ReactNode;
-	description?: string;
+	description?: string | React.ReactNode;
 	cards?: React.ReactNode;
 	children?: React.ReactNode;
 };

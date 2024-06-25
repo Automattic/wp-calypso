@@ -1,4 +1,5 @@
 import { StatsCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { trendingUp, megaphone, starEmpty } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -9,6 +10,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import EmptyStateAction from '../../../components/empty-state-action';
+import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 
@@ -23,6 +25,11 @@ type StatsTopPostsProps = {
 		empty: string;
 	};
 };
+
+// TODO: move to a shared file if this is the final URL
+const JETPACK_SUPPORT_AI_URL =
+	'https://jetpack.com/support/jetpack-blocks/jetpack-ai-assistant-block/';
+const JETPACK_SUPPORT_SOCIAL_URL = 'https://jetpack.com/support/jetpack-social/';
 
 const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 	period,
@@ -42,9 +49,37 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
-	const handleClick = () => {
-		//console.log( 'do things' );
-	};
+	const cardActions = [
+		{
+			icon: starEmpty,
+			text: translate( 'Craft engaging content with Jetpack AI assistant' ),
+			onClick: () => {
+				// analytics event tracting handled in EmptyStateAction component
+
+				setTimeout( () => ( window.location.href = localizeUrl( JETPACK_SUPPORT_AI_URL ) ), 250 );
+			},
+			analyticsDetails: {
+				from: 'module_top_posts',
+				feature: 'ai_assistant',
+			},
+		},
+		{
+			icon: megaphone,
+			text: translate( 'Share on social media with one click' ),
+			onClick: () => {
+				// analytics event tracting handled in EmptyStateAction component
+
+				setTimeout(
+					() => ( window.location.href = localizeUrl( JETPACK_SUPPORT_SOCIAL_URL ) ),
+					250
+				);
+			},
+			analyticsDetails: {
+				from: 'module_top_posts',
+				feature: 'social_sharing',
+			},
+		},
+	];
 
 	return (
 		<>
@@ -58,29 +93,25 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 					emptyMessage={
 						<EmptyModuleCard
 							icon={ trendingUp }
-							description={ moduleStrings.empty }
-							cards={
-								<>
-									<EmptyStateAction
-										icon={ starEmpty }
-										text={ translate( 'Craft engaging content with Jetpack AI assistant' ) }
-										analyticsDetails={ {
-											from: 'module_top_posts',
-											feature: 'ai_assistant',
-										} }
-										onClick={ handleClick }
-									/>
-									<EmptyStateAction
-										icon={ megaphone }
-										text={ translate( 'Share on social media with one click' ) }
-										analyticsDetails={ {
-											from: 'module_top_posts',
-											feature: 'social_sharing',
-										} }
-										onClick={ handleClick }
-									/>
-								</>
-							}
+							description={ translate(
+								'Your top {{link}}posts and pages{{/link}} will display here and learn what content resonates the most. Start creating and sharing!',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#posts-amp-pages` ) } />,
+									},
+									context: 'Stats: Info box label when the Posts & Pages module is empty',
+								}
+							) }
+							cards={ cardActions.map( ( action, index ) => (
+								<EmptyStateAction
+									key={ index }
+									icon={ action.icon }
+									text={ action.text }
+									analyticsDetails={ action.analyticsDetails }
+									onClick={ action.onClick }
+								/>
+							) ) }
 						/>
 					}
 				>
