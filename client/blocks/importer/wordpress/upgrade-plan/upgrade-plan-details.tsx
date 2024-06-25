@@ -1,21 +1,20 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
+import { SiteDetails } from '@automattic/data-stores';
+import { useSitePlans } from '@automattic/data-stores/src/plans';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
-import QueryPlans from 'calypso/components/data/query-plans';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface Props {
+	site: SiteDetails;
 	children: React.ReactNode;
 }
 
@@ -24,15 +23,13 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ showFeatures, setShowFeatures ] = useState( false );
 
-	const { children } = props;
+	const { children, site } = props;
 	const [ selectedPlan, setSelectedPlan ] = useState<
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
 	>( PLAN_BUSINESS );
 	const plan = getPlan( selectedPlan );
-	const planId = plan?.getProductId();
-
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planId as number, true ) );
+	const sitePlans = useSitePlans( { siteId: site.ID } );
+	const pricing = sitePlans?.data ? sitePlans?.data[ selectedPlan ].pricing : undefined;
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
 
@@ -46,8 +43,6 @@ export const UpgradePlanDetails = ( props: Props ) => {
 
 	return (
 		<div className="import__upgrade-plan-details">
-			<QueryPlans />
-
 			<div className="import__upgrade-plan-period-switcher">
 				<ButtonGroup>
 					<Button
@@ -87,7 +82,11 @@ export const UpgradePlanDetails = ( props: Props ) => {
 					</div>
 
 					<div className="import__upgrade-plan-price">
-						<PlanPrice rawPrice={ rawPrice ?? undefined } currencyCode={ currencyCode } />
+						<PlanPrice
+							rawPrice={ pricing?.originalPrice.monthly ?? undefined }
+							currencyCode={ pricing?.currencyCode }
+							isSmallestUnit
+						/>
 						<span className="plan-time-frame">
 							<small>{ plan?.getBillingTimeFrame() }</small>
 						</span>

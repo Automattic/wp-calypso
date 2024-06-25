@@ -180,7 +180,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				/>
 			) }
 
-			<UpgradePlanDetails>{ renderCTAs() }</UpgradePlanDetails>
+			<UpgradePlanDetails site={ site }>{ renderCTAs() }</UpgradePlanDetails>
 		</div>
 	);
 };
