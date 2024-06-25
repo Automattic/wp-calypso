@@ -7,7 +7,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useSiteIntent } from '../hooks/use-site-intent';
 import { useSiteSlug } from '../hooks/use-site-slug';
 
 const getEnvironmentHostname = () => {
@@ -28,9 +27,9 @@ const getEnvironmentHostname = () => {
 
 export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
-	const { sectionName } = useHelpCenterContext();
+	const { sectionName, site } = useHelpCenterContext();
 
-	let siteIntent = useSiteIntent();
+	let siteIntent = site.options.site_intent;
 	let siteSlug = useSiteSlug();
 
 	if ( ! siteIntent || ! siteSlug ) {

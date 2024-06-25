@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
@@ -9,14 +9,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { HELP_CENTER_STORE, SITE_STORE } from '../stores';
+import { HELP_CENTER_STORE } from '../stores';
 import { SearchResult } from '../types';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
-import type { SiteSelect } from '@automattic/data-stores';
 
 type HelpCenterSearchProps = {
 	onSearchChange?: ( query: string ) => void;
@@ -28,7 +27,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const query = params.get( 'query' );
-	const { sectionName, selectedSiteId } = useHelpCenterContext();
+	const { sectionName, site } = useHelpCenterContext();
 
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
@@ -47,11 +46,6 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[ setSubject, setMessage, onSearchChange ]
 	);
 
-	const site = useSelect(
-		( select ) =>
-			selectedSiteId && ( select( SITE_STORE ) as SiteSelect ).getSite( selectedSiteId ),
-		[ selectedSiteId ]
-	);
 	let launchpadEnabled = site && site?.options?.launchpad_screen === 'full';
 
 	if ( ! launchpadEnabled ) {

@@ -1,37 +1,56 @@
 import * as React from 'react';
 import { useContext } from 'react';
+import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
 	locale: string;
 	sectionName: string;
-	currentUserId: number;
-	selectedSiteId: number;
-	hasPurchases: boolean;
+	currentUser: CurrentUser;
+	site: HelpCenterSite;
+	hasPurchases: false;
 	primarySiteId: number;
 	googleMailServiceFamily: string;
-	avatarUrl: string | undefined;
-	userEmail: string;
-	isBusinessOrEcomPlanUser?: boolean;
 	onboardingUrl: string;
-	displayName: string;
-	isJetpackSite: boolean;
 	adminUrl: string;
 };
 
 const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInformation >( {
 	locale: '',
 	sectionName: '',
-	currentUserId: 0,
-	selectedSiteId: 0,
+	currentUser: {
+		ID: 0,
+		display_name: '',
+		username: '',
+		email: '',
+		language: '',
+		localeSlug: '',
+		locale_variant: '',
+		localeVariant: '',
+		site_count: 0,
+	},
+	site: {
+		ID: 0,
+		URL: '',
+		jetpack: false,
+		is_wpcom_atomic: false,
+		name: '',
+		plan: {
+			product_slug: '',
+		},
+		logo: {
+			id: 0,
+			sizes: [],
+			url: '',
+		},
+		options: {
+			launchpad_screen: '',
+			site_intent: '',
+		},
+	},
 	hasPurchases: false,
 	primarySiteId: 0,
-	userEmail: '',
-	displayName: '',
-	avatarUrl: undefined,
-	isBusinessOrEcomPlanUser: false,
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
-	isJetpackSite: false,
 	adminUrl: '',
 } );
 

@@ -92,7 +92,7 @@ type HelpCenterContactFormProps = {
 
 export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { search } = useLocation();
-	const { sectionName, currentUserId } = useHelpCenterContext();
+	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const { onSubmit } = props;
@@ -104,17 +104,16 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const locale = useLocale();
 	const { isPending: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isPending: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
-	const { data: userSites } = useUserSites( currentUserId );
+	const { data: userSites } = useUserSites( currentUser.ID );
 	const userWithNoSites = userSites?.sites.length === 0;
 	const queryClient = useQueryClient();
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
 	const [ gptResponse, setGptResponse ] = useState< JetpackSearchAIResult >();
-	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+	const { subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			currentSite: helpCenterSelect.getSite(),
 			subject: helpCenterSelect.getSubject(),
 			message: helpCenterSelect.getMessage(),
 			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
@@ -153,7 +152,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
 		// pass user email as query cache key
-		currentUserId,
+		currentUser.ID,
 		userDeclaredSiteUrl,
 		sitePickerChoice === 'OTHER_SITE'
 	);
@@ -162,12 +161,12 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const isSubmitting = submittingTicket || submittingTopic || isOpeningChatWidget;
 
 	// if the user picked a site from the picker, we don't need to analyze the ownership
-	if ( currentSite && sitePickerChoice === 'CURRENT_SITE' ) {
+	if ( site && sitePickerChoice === 'CURRENT_SITE' ) {
 		ownershipResult = {
 			result: 'OWNED_BY_USER',
 			isWpcom: true,
-			siteURL: currentSite.URL,
-			site: currentSite,
+			siteURL: site.URL,
+			site: site,
 		};
 	}
 
@@ -184,7 +183,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	if ( sitePickerChoice === 'OTHER_SITE' ) {
 		supportSite = ownershipResult?.site as SiteDetails;
 	} else {
-		supportSite = currentSite as HelpCenterSite;
+		supportSite = site as HelpCenterSite;
 	}
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
@@ -390,7 +389,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 								// wait 30 seconds until support-history endpoint actually updates
 								// yup, it takes that long (tried 5, and 10)
 								queryClient.invalidateQueries( {
-									queryKey: [ 'help-support-history', 'ticket', currentUserId ],
+									queryKey: [ 'help-support-history', 'ticket', currentUser.ID ],
 								} );
 							}, 30000 );
 						} )
@@ -638,8 +637,8 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 				ownershipResult={ ownershipResult }
 				sitePickerChoice={ sitePickerChoice }
 				setSitePickerChoice={ setSitePickerChoice }
-				currentSite={ currentSite }
-				siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
+				currentSite={ site }
+				siteId={ sitePickerChoice === 'CURRENT_SITE' ? site?.ID : 0 }
 				sitePickerEnabled={
 					mode === 'FORUM' &&
 					Boolean( supportSite?.plan?.product_slug ) &&

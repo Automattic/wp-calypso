@@ -29,7 +29,6 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
-import { useSiteIntent } from '../hooks/use-site-intent';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
@@ -108,12 +107,12 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 	currentRoute,
 }: HelpSearchResultsProps ) {
-	const { hasPurchases, sectionName } = useHelpCenterContext();
+	const { hasPurchases, sectionName, site } = useHelpCenterContext();
 
 	const adminResults = useAdminResults( searchQuery );
 
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
-	const siteIntent = useSiteIntent();
+	const siteIntent = site.options?.site_intent;
 	const rawContextualResults = useMemo(
 		() => getContextResults( sectionName || 'gutenberg-editor', siteIntent ?? 'build' ),
 		[ sectionName, siteIntent ]
