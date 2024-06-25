@@ -94,14 +94,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			<div>
 				<SectionHeader label={ translate( 'Settings' ) }>
 					{ isMembershipsSandboxed === 'sandbox' && (
-						<Badge
-							type="warning"
-							className={ `memberships__settings-sandbox-warning${
-								! hasConnectedAccount ? ' stripe-disconnected' : ''
-							}` }
-						>
-							{ translate( 'Memberships Sandbox Active' ) }
-						</Badge>
+						<Badge type="warning">{ translate( 'Memberships Sandbox Active' ) }</Badge>
 					) }
 					{ ! hasConnectedAccount && (
 						<Button
