@@ -39,7 +39,7 @@ function AdminHelpCenterContent() {
 			locale={ helpCenterData.locale }
 			sectionName="wp-admin"
 			currentUser={ helpCenterData.currentUser }
-			site={ helpCenterData.currentSite }
+			site={ helpCenterData.site }
 			hasPurchases={ false }
 			onboardingUrl="https://wordpress.com/start"
 			handleClose={ closeCallback }
@@ -47,7 +47,7 @@ function AdminHelpCenterContent() {
 	);
 }
 
-if ( window?.helpCenterAdminBar?.isLoaded ) {
+if ( helpCenterData.isAdminBar ) {
 	ReactDOM.render(
 		<QueryClientProvider client={ whatsNewQueryClient }>
 			<AdminHelpCenterContent />

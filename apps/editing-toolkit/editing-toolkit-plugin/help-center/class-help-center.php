@@ -124,37 +124,25 @@ class Help_Center {
 			'before'
 		);
 
-		$user_id         = get_current_user_id();
-		$user            = get_userdata( $user_id );
-		$primary_site_id = $user->primary_blog;
-		$user_email      = $user->user_email;
-		$avatar_url      = function_exists( 'wpcom_get_avatar_url' ) ? wpcom_get_avatar_url( $user_email, 64, '', true )[0] : null;
+		$current_user = wp_get_current_user();
+		$user_id      = $current_user->data->ID;
+		$username     = $current_user->data->user_login;
+		$user_email   = $current_user->data->user_email;
 
 		wp_add_inline_script(
 			'help-center-script',
 			'const helpCenterData = ' . wp_json_encode(
 				array(
-					'currentSite'   => $this->get_current_site(),
-					'locale'        => get_locale(),
-					'currentUserId' => get_current_user_id(),
-					'primarySiteId' => $primary_site_id,
-					'userEmail'     => $user_email,
-					'avatarUrl'     => $avatar_url,
-					'displayName'   => $user->display_name,
+					'currentUser' => array(
+						'ID'       => $user_id,
+						'username' => $username,
+						'email'    => $user_email,
+					),
+					'site'        => $this->get_current_site(),
+					'locale'      => get_locale(),
 				)
 			),
 			'before'
-		);
-
-		$current_user = wp_get_current_user();
-
-		wp_localize_script(
-			'help-center-script',
-			'odieUserData',
-			array(
-				'displayName' => $current_user->data->display_name,
-				'email'       => $current_user->data->user_email,
-			)
 		);
 
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
@@ -366,12 +354,10 @@ class Help_Center {
 			function () {
 				global $wp_admin_bar;
 
-				wp_localize_script(
+				wp_add_inline_script(
 					'help-center-script',
-					'helpCenterAdminBar',
-					array(
-						'isLoaded' => true,
-					)
+					'helpCenterData.isAdminBar = true;',
+					'before'
 				);
 
 				$wp_admin_bar->add_menu(

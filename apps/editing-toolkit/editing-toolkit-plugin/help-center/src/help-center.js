@@ -67,7 +67,7 @@ function HelpCenterContent() {
 				locale={ helpCenterData.locale }
 				sectionName="gutenberg-editor"
 				currentUser={ helpCenterData.currentUser }
-				site={ helpCenterData.currentSite }
+				site={ helpCenterData.site }
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
