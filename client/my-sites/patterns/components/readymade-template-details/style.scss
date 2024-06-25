@@ -5,8 +5,8 @@
 .readymade-template-details-wrapper {
 	background: var(--studio-gray-90);
 	color: var(--studio-white);
-	padding-top: 16px;
-	padding-bottom: 48px;
+	padding-top: 24px;
+	padding-bottom: 64px;
 }
 
 .readymade-template-details-section {
@@ -37,20 +37,27 @@ a.readymade-template-details-back {
 .readymade-template-details {
 	padding-top: 40px;
 	display: flex;
-	gap: 64px;
+	gap: 48px;
 }
 
 .readymade-template-details-content {
-	width: 40%;
+	width: 45%;
 }
 
 .readymade-template-details-preview {
-	width: 60%;
+	width: 55%;
 }
 
 .readymade-template-details-header {
 	margin-bottom: 40px;
 	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.readymade-template-details-actions {
+	display: flex;
+	gap: 16px;
 }
 
 .readymade-template-details-title {

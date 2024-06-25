@@ -1,4 +1,5 @@
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { Icon, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -39,6 +40,10 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 						<div className="readymade-template-details-content">
 							<div className="readymade-template-details-header">
 								<h1 className="readymade-template-details-title">{ readymadeTemplate.title }</h1>
+								<div className="readymade-template-details-actions">
+									<Button variant="secondary">{ translate( 'Copy layout' ) }</Button>
+									<Button variant="primary">{ translate( 'Pick this layout' ) }</Button>
+								</div>
 							</div>
 							<div
 								className="readymade-template-details-description"
