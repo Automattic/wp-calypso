@@ -95,7 +95,24 @@ function shouldShowCommercialSiteUpgradeNotice( {
 	);
 }
 
-function shouldShowDoYouLoveJetpackStatsNotice( {
+function shouldShowDoYouLoveJetpackStatsNotice( state: StatsNoticeProps ) {
+	// Base considerations for notice eligibility.
+	const { isCommercial, isWpcom, isP2, isOwnedByTeam51 } = state;
+	if ( isCommercial || isWpcom || isP2 || isOwnedByTeam51 ) {
+		return false;
+	}
+
+	// Test for paid plans.
+	const { hasPaidStats } = state;
+	if ( hasPaidStats ) {
+		return false;
+	}
+
+	// return true;
+	return shouldShowDoYouLoveJetpackStatsNotice2( state );
+}
+
+function shouldShowDoYouLoveJetpackStatsNotice2( {
 	isOdysseyStats,
 	isWpcom,
 	isVip,
