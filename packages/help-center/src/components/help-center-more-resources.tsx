@@ -25,8 +25,8 @@ type CoreDataPlaceholder = {
 
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
-	const { sectionName, isBusinessOrEcomPlanUser, selectedSiteId } = useHelpCenterContext();
-	const { data } = useWhatsNewAnnouncementsQuery( selectedSiteId?.toString() );
+	const { sectionName, site } = useHelpCenterContext();
+	const { data } = useWhatsNewAnnouncementsQuery( site.ID.toString() );
 
 	const showWhatsNewItem = data && data.length > 0;
 
@@ -61,7 +61,6 @@ export const HelpCenterMoreResources = () => {
 
 	const trackLearnButtonClick = ( resourceType: string ) => {
 		recordTracksEvent( 'calypso_help_courses_click', {
-			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
@@ -147,10 +146,7 @@ export const HelpCenterMoreResources = () => {
 				) }
 			</ul>
 			{ showGuide && (
-				<WhatsNewGuide
-					onClose={ () => setShowGuide( false ) }
-					siteId={ selectedSiteId?.toString() || '' }
-				/>
+				<WhatsNewGuide onClose={ () => setShowGuide( false ) } siteId={ site.ID.toString() } />
 			) }
 		</>
 	);

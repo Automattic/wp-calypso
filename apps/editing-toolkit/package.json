@@ -62,7 +62,6 @@
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/page-pattern-modal": "workspace:^",
 		"@automattic/plans-grid": "workspace:^",
-		"@automattic/site-picker": "workspace:^",
 		"@automattic/tour-kit": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",

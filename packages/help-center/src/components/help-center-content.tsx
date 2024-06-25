@@ -7,7 +7,7 @@ import OdieAssistantProvider, { useSetOdieStorage } from '@automattic/odie-clien
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
@@ -47,8 +47,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const navigate = useNavigate();
 	const containerRef = useRef< HTMLDivElement >( null );
 
-	const { sectionName, selectedSiteId, currentUserId, userEmail, avatarUrl, displayName } =
-		useHelpCenterContext();
+	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const { isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -56,16 +55,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
-
-	const currentUser = useMemo(
-		() => ( {
-			id: currentUserId,
-			display_name: displayName,
-			email: userEmail,
-			avatar_URL: avatarUrl,
-		} ),
-		[ currentUserId, userEmail, avatarUrl, displayName ]
-	);
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -136,7 +125,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								initialUserMessage={ searchTerm }
 								logger={ trackEvent }
 								loggerEventNamePrefix="calypso_odie"
-								selectedSiteId={ selectedSiteId }
+								selectedSiteId={ site.ID as number }
 								extraContactOptions={
 									<HelpCenterContactPage
 										hideHeaders
