@@ -53,7 +53,7 @@ import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-u
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getSiteAdminUrl, getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -144,9 +144,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	}, [ setShowHelpCenter ] );
 
 	const locale = useLocale();
-	const selectedSiteId = useSelector( getSelectedSiteId );
 	const hasPurchases = useSelector( hasCancelableUserPurchases );
-	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSiteId ) );
 	const user = useSelector( getCurrentUser );
 	const selectedSite = useSelector( getSelectedSite );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
@@ -159,7 +157,6 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	return (
 		<AsyncLoad
 			require="@automattic/help-center"
-			adminUrl={ adminUrl }
 			placeholder={ null }
 			handleClose={ handleClose }
 			currentRoute={ currentRoute }

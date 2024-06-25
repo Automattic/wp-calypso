@@ -31,6 +31,7 @@ export interface HelpCenterSite {
 	options: {
 		launchpad_screen: string;
 		site_intent: string;
+		admin_url: string;
 	};
 }
 

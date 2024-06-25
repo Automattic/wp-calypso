@@ -11,7 +11,6 @@ export type HelpCenterRequiredInformation = {
 	primarySiteId: number;
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
-	adminUrl: string;
 };
 
 const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInformation >( {
@@ -45,13 +44,13 @@ const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInforma
 		options: {
 			launchpad_screen: '',
 			site_intent: '',
+			admin_url: '',
 		},
 	},
 	hasPurchases: false,
 	primarySiteId: 0,
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
-	adminUrl: '',
 } );
 
 export const HelpCenterRequiredContextProvider: React.FC< {

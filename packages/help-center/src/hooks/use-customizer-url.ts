@@ -21,13 +21,13 @@ export function getCustomizerFocus( panel: string ) {
 const panels = [ 'root', 'homepage', 'identity', 'menus' ] as const;
 
 export function useCustomizerUrls() {
-	const { adminUrl, isJetpackSite } = useHelpCenterContext();
+	const { site } = useHelpCenterContext();
 	const siteSlug = useSiteSlug();
 	const returnUrl = window.location.href;
 
 	return panels.reduce(
 		( acc, panel ) => {
-			if ( ! isJetpackSite && siteSlug ) {
+			if ( ! site.jetpack && siteSlug ) {
 				const panelPath = panel === 'root' ? '' : panel;
 				const url = [ '' ]
 					.concat( [ 'customize', panelPath, siteSlug ].filter( Boolean ) )
@@ -36,7 +36,7 @@ export function useCustomizerUrls() {
 					return: returnUrl,
 				} );
 			} else {
-				const customizerUrl = adminUrl + 'customize.php';
+				const customizerUrl = site.options.admin_url + 'customize.php';
 
 				acc[ panel ] = addQueryArgs( customizerUrl, {
 					return: returnUrl,
