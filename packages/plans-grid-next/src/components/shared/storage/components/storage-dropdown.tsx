@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../../grid-context';
 import useIsLargeCurrency from '../../../../hooks/use-is-large-currency';
 import DropdownOption from '../../../dropdown-option';
-import useAvailableStorageOptions from '../hooks/use-available-storage-options';
+import useAvailableStorageOptions from '../hooks/use-available-storage-dropdown-options';
 import useDefaultStorageOption from '../hooks/use-default-storage-option';
 import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
 import type {
