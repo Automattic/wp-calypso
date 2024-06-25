@@ -1,4 +1,3 @@
-import { isDefaultLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
@@ -16,7 +15,7 @@ export function useSupportArticleAlternatesQuery(
 				apiVersion: '1.1',
 			} ),
 		...queryOptions,
-		enabled: ! isDefaultLocale( locale ) && !! ( blogId && postId ),
+		enabled: locale !== 'en' && !! ( blogId && postId ),
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
 		select: ( data ) => {
