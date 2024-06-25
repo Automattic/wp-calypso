@@ -22,7 +22,9 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 			backLinkHref="/sites"
 			subHeading={
 				! isCollapsed &&
-				translate( "Access plugins that enhance your site's functionality and features." )
+				translate(
+					"Enhance your site's features with plugins, or schedule updates to fit your needs."
+				)
 			}
 		>
 			<SidebarMenu>
