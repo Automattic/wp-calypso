@@ -1120,7 +1120,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	.jetpack-connect__site.card {
-		border: 1px solid $gray-400;
+		border: 1px solid $gray-300;
 		border-radius: 2px;
 		background: #fff;
 		display: flex;
@@ -1142,7 +1142,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.site-icon {
-			border-radius: 50%;
+			border-radius: 4px;
 			margin-right: 16px;
 			height: 40px !important;
 			width: 40px !important;
@@ -1164,14 +1164,48 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			line-height: 24px;
 			color: $gray-700;
 		}
+
+		img.gravatar {
+			width: 80px;
+			height: 80px;
+		}
+
+		.jetpack-connect__logged-in-form-user {
+			flex-direction: column;
+		}
+
+		a.logged-out-form__link-item {
+			margin: 0;
+			font-size: 0.875rem;
+			font-weight: 400;
+			line-height: 24px;
+		}
+
+		.jetpack-connect__logged-in-form-user-text {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-bottom: 13.5px;
+			strong {
+				font-size: 1rem;
+				font-weight: 500;
+				line-height: 24px;
+				letter-spacing: -0.008px;
+			}
+			small {
+				font-size: 0.875rem;
+				font-weight: 400;
+				line-height: 24px;
+			}
+		}
 	}
 
 	.jetpack-connect__logged-in-card {
 		display: flex;
 		flex-direction: column;
-		padding: 16px 24px;
+		padding: 32px 24px;
 		background: #fff;
-		border: 1px solid $gray-400;
+		border: 1px solid $gray-300;
 		border-radius: 2px;
 		max-width: 405px;
 		margin: 0;
@@ -1234,7 +1268,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	.jetpack-connect__tos-link {
-		margin: 40px auto 70px;
+		margin: 24px auto 70px;
 		letter-spacing: -0.08px;
 		line-height: 18px;
 		color: $gray-700;
