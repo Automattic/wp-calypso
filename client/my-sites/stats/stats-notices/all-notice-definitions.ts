@@ -115,21 +115,15 @@ function shouldShowCommercialSiteUpgradeNotice( {
 	hasPWYWPlanOnly,
 }: StatsNoticeProps ) {
 	const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
-	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
-	const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
+	const showUpgradeNoticeForJetpackSites = isOdysseyStats || isSiteJetpackNotAtomic;
 
 	// Test specific to commercial self-hosted sites with PWYW plans.
-	// They should see the upgrade notice!
-	if ( showUpgradeNoticeOnOdyssey || showUpgradeNoticeForJetpackNotAtomic ) {
-		if ( isCommercial && hasPWYWPlanOnly ) {
-			return true;
-		}
+	if ( showUpgradeNoticeForJetpackSites && isCommercial && hasPWYWPlanOnly ) {
+		return true;
 	}
 
 	return !! (
-		( showUpgradeNoticeOnOdyssey ||
-			showUpgradeNoticeForJetpackNotAtomic ||
-			showUpgradeNoticeForWpcomSites ) &&
+		( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) &&
 		// Show the notice if the site has not purchased the paid stats product.
 		! hasPaidStats &&
 		// Show the notice only if the site is commercial.
