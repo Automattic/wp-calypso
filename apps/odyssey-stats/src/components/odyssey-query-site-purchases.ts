@@ -23,9 +23,8 @@ async function queryOdysseyQuerySitePurchases( siteId: number | null ) {
 	return wpcom.req
 		.get( {
 			path: getApiPath( '/site/purchases', { siteId } ),
-			apiNamespace: getApiNamespace(),
+			apiNamespace: getApiNamespace( 'my-jetpack/v1' ),
 		} )
-		.then( ( res: { data: string } ) => JSON.parse( res.data ) )
 		.catch( ( error: APIError ) => error );
 }
 /**
@@ -63,26 +62,11 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 		}
 
 		if ( isError( purchases ) || hasOtherErrors ) {
-			if ( ( purchases as APIError ).status !== 403 ) {
-				// Dispatch to the Purchases reducer for error status
-				reduxDispatch( {
-					type: PURCHASES_SITE_FETCH_FAILED,
-					error: 'purchase_fetch_failed',
-				} );
-			} else {
-				// TODO: Remove this after fixing the API permission issue from Jetpack.
-				reduxDispatch( {
-					type: PURCHASES_SITE_FETCH_COMPLETED,
-					siteId,
-					purchases: [
-						{
-							expiry_status: 'active',
-							product_slug: 'jetpack_stats_pwyw_yearly',
-							blog_id: siteId,
-						},
-					],
-				} );
-			}
+			// Dispatch to the Purchases reducer for error status
+			reduxDispatch( {
+				type: PURCHASES_SITE_FETCH_FAILED,
+				error: 'purchase_fetch_failed',
+			} );
 		} else {
 			// Dispatch to the Purchases reducer for consistent requesting status
 			reduxDispatch( {
