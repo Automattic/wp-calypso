@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import {
 	isRequestingSiteStatsForQuery,
@@ -9,6 +8,7 @@ import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 
 type StatsTopPostsProps = {
+	className?: string;
 	period: string;
 	query: string;
 	moduleStrings: {
@@ -19,7 +19,12 @@ type StatsTopPostsProps = {
 	};
 };
 
-const StatsTopPosts: React.FC< StatsTopPostsProps > = ( { period, query, moduleStrings } ) => {
+const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
+	period,
+	query,
+	moduleStrings,
+	className,
+} ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopPosts';
 
@@ -43,13 +48,9 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( { period, query, moduleS
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
-					statType="statsTopPosts"
+					statType={ statType }
 					showSummaryLink
-					className={ clsx(
-						'stats__flexible-grid-item--60',
-						'stats__flexible-grid-item--full--large',
-						'stats__flexible-grid-item--full--medium'
-					) }
+					className={ className } // TODO: extend with a base class after adding skeleton loaders
 				/>
 			) }
 		</>
