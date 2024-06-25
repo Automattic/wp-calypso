@@ -22,7 +22,7 @@ export default function () {
 	);
 
 	page(
-		'/import/newsletter/substack/:site_id',
+		'/import/newsletter/substack/:site_id/:step?',
 		siteSelection,
 		navigation,
 		redirectWithoutSite( '/import' ),

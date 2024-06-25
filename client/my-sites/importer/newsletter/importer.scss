@@ -1,0 +1,54 @@
+.newsletter-importer {
+	margin: 0 auto;
+	max-width: 720px;
+
+	.step-progress {
+		margin-bottom: 20px;
+	}
+
+	.card {
+		h2 {
+			font-size: rem(16px);
+			font-weight: 500;
+			line-height: 19px;
+			letter-spacing: 0.15px;
+			padding-bottom: 20px;
+		}
+
+		p {
+			font-size: rem(14px);
+			line-height: 20px;
+			color: var(--studio-gray-50);
+		}
+
+		hr {
+			margin: 32px 0;
+			color: var(--studio-gray-5);
+			background-color: var(--studio-gray-5);
+		}
+	}
+}
+
+.logo-chain {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
+}
+
+.logo-chain__logo {
+	width: 56px;
+	height: 56px;
+	margin: 0 -16px 0 0;
+	border-radius: 50%;
+	overflow: hidden;
+}
+
+.logo-chain__logo .importer__service-icon.wordpress {
+	background-color: #3858e9;
+}
+
+.logo-chain__logo .importer__service-icon.substack-logo {
+	width: 46px;
+	height: 46px;
+	margin-top: 5px;
+}
