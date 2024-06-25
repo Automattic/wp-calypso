@@ -5,7 +5,7 @@ import {
 	getJetpackProductOrPlanDisplayName,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, Card, FormLabel, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
+import { Button, Card, FormLabel, Gridicon, Spinner } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -75,7 +75,6 @@ import {
 	REMOTE_PATH_AUTH,
 } from './constants';
 import Disclaimer from './disclaimer';
-import { JetpackFeatures } from './features';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
@@ -1003,34 +1002,6 @@ export class JetpackAuthorize extends Component {
 	renderContent() {
 		const { translate, user, authQuery } = this.props;
 		if ( this.isWooCoreProfiler() ) {
-			let col1Features = [];
-			let col2Features = [];
-			if ( authQuery.plugin_name === 'jetpack-boost' ) {
-				col1Features = [
-					translate( 'Speed up your store' ),
-					translate( 'Optimize CSS loading' ),
-					translate( 'Defer non-essential Javascript' ),
-				];
-				col2Features = [
-					translate( 'Lazy image loading' ),
-					translate( 'Site performance scores' ),
-					translate( 'Improve SEO' ),
-				];
-			} else {
-				col1Features = [
-					translate( 'Speed up content creation' ),
-					translate( 'Prompt based AI assistant' ),
-					translate( 'Adaptive tone adjustment' ),
-					translate( 'Generate text, tables, and lists' ),
-				];
-				col2Features = [
-					translate( 'Quota of 20 requests' ),
-					translate( 'Title and summary generation' ),
-					translate( 'Translate content to multiple languages' ),
-					translate( 'Spelling and grammar correction' ),
-				];
-			}
-
 			return (
 				<Fragment>
 					<div className="jetpack-connect__logged-in-content">
@@ -1052,16 +1023,11 @@ export class JetpackAuthorize extends Component {
 						</Card>
 						<div className="jetpack-connect__logged-in-bottom">
 							{ this.renderStateAction() }
-							<JetpackFeatures col1Features={ col1Features } col2Features={ col2Features } />
 							<Disclaimer
 								siteName={ decodeEntities( authQuery.blogname ) }
 								companyName={ this.getCompanyName() }
 								from={ authQuery.from }
 							/>
-							<div className="jetpack-connect__jetpack-logo-wrapper">
-								<JetpackLogo monochrome size={ 18 } />{ ' ' }
-								<span>{ translate( 'Jetpack powered' ) }</span>
-							</div>
 						</div>
 					</div>
 					{ authQuery.installedExtSuccess && <WooInstallExtSuccessNotice /> }
