@@ -168,7 +168,6 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	return (
 		<NavigationHeader
 			className="plugins-navigation-header"
-			navigationItems={ breadcrumbs }
 			compactBreadcrumb={ isMobile }
 			ref={ navigationHeaderRef }
 			title={ translate( 'Plugins {{wbr}}{{/wbr}}marketplace', {
