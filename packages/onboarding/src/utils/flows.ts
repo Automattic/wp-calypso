@@ -42,7 +42,7 @@ export const GOOGLE_TRANSFER = 'google-transfer';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 export const REBLOGGING_FLOW = 'reblogging';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
-export const ONBOARDING_GUIDED_FLOW = 'guided';
+export const ONBOARDING_GUIDED_FLOW = 'onboarding';
 
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
