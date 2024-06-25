@@ -27,7 +27,7 @@ export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 					label="Site"
 					options={ [
 						{ label: siteSlug, value: 'current' },
-						{ label: 'Another site', value: 'another_site' },
+						{ label: __( 'Another site' ), value: 'another_site' },
 					] }
 					onChange={ ( value ) => {
 						onSelfDeclaredSite( value === 'another_site' );
