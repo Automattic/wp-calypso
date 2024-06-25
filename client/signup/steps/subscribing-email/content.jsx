@@ -5,6 +5,8 @@ import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-scree
 function SubscribingEmailStepContent( props ) {
 	const { flowName, handleSubmitSignup, isLoading, submitting, queryParams } = props;
 
+	const redirectUrl = queryParams?.redirect_to || 'https://wordpress.com';
+
 	if ( isLoading ) {
 		return <ReskinnedProcessingScreen flowName={ flowName } hasPaidDomain={ false } />;
 	}
@@ -14,9 +16,7 @@ function SubscribingEmailStepContent( props ) {
 			<SignupForm
 				step={ props.step }
 				email={ queryParams?.email || '' }
-				// TODO: Implement actual redirect url
-				redirectToAfterLoginUrl="https://wordpress.com"
-				// redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
+				redirectToAfterLoginUrl={ redirectUrl }
 				disabled={ submitting }
 				submitting={ submitting }
 				displayUsernameInput={ false }

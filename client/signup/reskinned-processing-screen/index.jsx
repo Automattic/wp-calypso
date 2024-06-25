@@ -65,11 +65,7 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 			];
 			break;
 		case 'email-subscription':
-			steps = [
-				{ title: __( 'Turning on the lights' ) },
-				{ title: __( 'Making you cookies' ) },
-				{ title: __( 'Subscribing to magic' ) },
-			];
+			steps = [ { title: __( 'Subscribing to magic' ) }, { title: __( 'Turning on the lights' ) } ];
 			break;
 		default:
 			steps = [

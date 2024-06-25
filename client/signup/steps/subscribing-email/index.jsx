@@ -1,25 +1,27 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { useEffect, useState } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import { isExternal } from 'calypso/lib/url';
+// import { isExternal } from 'calypso/lib/url';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SubscribingEmailStepContent from './content';
 
 const createNewAccount = async ( {
-	email,
-	redirectUrl,
+	queryParams,
 	flowName,
+	goToNextStep,
 	// recordTracksEvent,
 	setIsLoading,
+	submitSignupStep,
 } ) => {
+	const { email, mailing_list, redirect_to } = queryParams;
+
 	try {
 		// eslint-disable-next-line no-undef
 		await wpcom.req.post( '/users/new', {
@@ -33,26 +35,32 @@ const createNewAccount = async ( {
 			anon_id: getTracksAnonymousUserId(),
 		} );
 
-		// TODO: Add slug for email campaign
-		// recordTracksEvent( 'calypso_signup_new_email_subscription_success', {} );
+		// recordTracksEvent( 'calypso_signup_new_email_subscription_success', {
+		// 	mailing_list,
+		// } );
 
-		return isExternal( redirectUrl )
-			? window.location.assign( addQueryArgs( redirectUrl, { subscribed: true } ) )
-			: page.redirect( redirectUrl );
+		submitSignupStep(
+			{ stepName: 'subscribing-email' },
+			{ redirectUrl: addQueryArgs( redirect_to, { subscribed: true } ) }
+		);
+		goToNextStep();
+		return;
 	} catch ( error ) {
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-			// 1. Subscribe existing user to guides emails through API endpoint https://github.com/Automattic/martech/issues/3090
-			// 2. Submit tracks event
-			// 3. Redirect to next step
+			// TODO: Subscribe existing user to guides emails through API endpoint https://github.com/Automattic/martech/issues/3090
 
-			// recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {} );
-			return isExternal( redirectUrl )
-				? window.location.assign( addQueryArgs( redirectUrl, { subscribed: true } ) )
-				: page.redirect( redirectUrl );
+			recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {
+				mailing_list,
+			} );
+
+			submitSignupStep(
+				{ stepName: 'subscribing-email' },
+				{ redirectUrl: addQueryArgs( redirect_to, { subscribed: true } ) }
+			);
+			goToNextStep();
 		}
 
 		setIsLoading( false );
-		// setSubmitting && setSubmitting( false );
 	}
 };
 
@@ -78,9 +86,9 @@ function SubscribingEmailStep( props ) {
 				stepContent={
 					<SubscribingEmailStepContent
 						{ ...props }
-						handleSubmitSignup={ ( form ) => {
-							setSubmitting( true );
-							createNewAccount( { ...props, email: form.email }, setIsLoading, setSubmitting );
+						handleSubmitSignup={ () => {
+							// setSubmitting( true );
+							// createNewAccount( { ...props, email: form.email }, setIsLoading, setSubmitting );
 						} }
 						isLoading={ isLoading }
 						submitting={ submitting }
