@@ -29,12 +29,11 @@ export default function useDetailsForm( { initialFormData }: Props ) {
 		(): boolean =>
 			formData.name.length > 0 &&
 			formData.email.length > 0 &&
-			formData.website.length > 0 &&
+			validateURL( formData.website ) &&
 			formData.bioDescription.length > 0 &&
-			formData.logoUrl.length > 0 &&
 			validateURL( formData.logoUrl ) &&
-			formData.landingPageUrl.length > 0 &&
-			validateURL( formData.landingPageUrl ) &&
+			// landingPageUrl is optional
+			( formData.landingPageUrl.length === 0 || validateURL( formData.landingPageUrl ) ) &&
 			formData.country?.length > 0 &&
 			formData.industry.length > 0 &&
 			formData.services.length > 0 &&
