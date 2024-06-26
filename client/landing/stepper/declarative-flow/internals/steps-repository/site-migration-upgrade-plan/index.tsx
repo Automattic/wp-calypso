@@ -138,11 +138,21 @@ const SiteMigrationUpgradePlanWithMigrationSticker: Step = function ( props ) {
 	// TODO: Handle siteId 0.
 	const siteId = Number( useSiteIdParam() ) ?? 0;
 
-	const { addMigrationSticker } = useMigrationStickerMutation();
+	const { addMigrationSticker, isPending, isError } = useMigrationStickerMutation();
 
 	useEffect( () => {
 		addMigrationSticker( siteId );
 	}, [ addMigrationSticker, siteId ] );
+
+	if ( isPending ) {
+		// TODO: Improve loading state.
+		return <div>Activating special offer...</div>;
+	}
+
+	if ( isError ) {
+		// TODO: Improve error state.
+		return <div>Error. Try again!</div>;
+	}
 
 	return <SiteMigrationUpgradePlan { ...props } />;
 };
