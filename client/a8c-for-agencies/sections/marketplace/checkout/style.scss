@@ -160,20 +160,32 @@
 .checkout__summary-notice {
 	color: var(--color-neutral-50);
 	font-size: rem(12px);
-	margin-block-end: 16px;
+	margin-block-end: 1rem;
 
 	a {
 		text-decoration: underline;
-		color: var(--color-black);
+		color: var(--color-text-black);
 	}
 
 	&.margin-top {
 		margin-block-start: 16px;
 	}
+
+	h3 {
+		margin-block: 24px;
+		font-weight: 500;
+		font-size: 1rem;
+		color: var(--color-neutral-70);
+	}
+
+	.checkout__summary-notice-item {
+		font-size: 0.75rem;
+		color: var(--color-neutral-50);
+		margin-block-end: 0.5rem;
+	}
 }
 
 .checkout__aside-actions {
-	margin-block-start: 32px;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;

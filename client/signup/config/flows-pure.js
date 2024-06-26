@@ -185,7 +185,19 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'onboarding',
+			name: ONBOARDING_GUIDED_FLOW,
+			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
+			destination: getGuidedOnboardingFlowDestination,
+			description: 'Choose what brings them to WordPress.com',
+			lastModified: '2024-06-19',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
+			hideProgressIndicator: true,
+			onEnterFlow: onEnterOnboarding,
+		},
+		{
+			name: 'onboarding_not_guided',
 			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
@@ -249,16 +261,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'with-add-ons',
-			steps: [ userSocialStep, 'domains', 'plans', 'add-ons' ],
-			destination: getSignupDestination,
-			description:
-				'Copy of the onboarding flow that includes an add-ons step; the flow is used for AB testing (ExPlat) add-ons in signup',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'onboarding-with-email',
 			steps: [ userSocialStep, 'mailbox-domain', 'mailbox', 'mailbox-plan' ],
 			destination: getEmailSignupFlowDestination,
@@ -274,14 +276,6 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
 			lastModified: '2020-06-26',
-			showRecaptcha: true,
-		},
-		{
-			name: 'desktop',
-			steps: [ 'user' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for desktop app',
-			lastModified: '2021-03-26',
 			showRecaptcha: true,
 		},
 		{
@@ -628,15 +622,6 @@ export function generateFlows( {
 			description:
 				'Create an account and a blog and then add the personal 3y plan to the users cart.',
 			lastModified: '2024-04-17',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
-			name: ONBOARDING_GUIDED_FLOW,
-			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
-			destination: getGuidedOnboardingFlowDestination,
-			description: 'Choose what brings them to WordPress.com',
-			lastModified: '2024-05-15',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},

@@ -116,6 +116,7 @@
 		"signup/email-subscription-flow": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
+		"stats/empty-module-traffic": false,
 		"stats/tier-upgrade-slider": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,

@@ -1194,7 +1194,7 @@ export function excludeSegmentSurveyStepIfInactive( stepName, _, nextProps ) {
 	// trailMapExperimentVariant = undefined | null | 'treatment_guided' | 'treatment_survey_only'
 	// null => control group.
 	const { trailMapExperimentVariant } = nextProps?.initialContext ?? {};
-	// The check has to be null to make we don't remove the step before the experiment loads.
+	// The check has to be null to make sure we don't remove the step before the experiment loads.
 	if ( trailMapExperimentVariant === null ) {
 		nextProps.submitSignupStep(
 			{ stepName, wasSkipped: true },
@@ -1224,23 +1224,6 @@ export function excludeStepIfProfileComplete( stepName, defaultDependencies, nex
 		debug( 'Skipping P2 complete profile step' );
 		recordTracksEvent( 'calypso_signup_p2_complete_profile_autoskip' );
 		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
-		flows.excludeStep( stepName );
-	}
-}
-
-export function isAddOnsFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { store, submitSignupStep } = nextProps;
-
-	const state = store.getState();
-	const cartItem = get( getSignupDependencyStore( state ), 'cartItem', null );
-	let fulfilledDependencies = [];
-
-	if ( cartItem ) {
-		submitSignupStep( { stepName, cartItem: [], wasSkipped: true }, { cartItem: [] } );
-		fulfilledDependencies = [ 'cartItem' ];
-	}
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
 	}
 }
