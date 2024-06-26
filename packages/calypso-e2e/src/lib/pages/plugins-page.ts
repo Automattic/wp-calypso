@@ -361,6 +361,13 @@ export class PluginsPage {
 	}
 
 	/**
+	 * Click on a category
+	 */
+	async clickCategory( name: string ): Promise< void > {
+		await this.page.getByRole( 'radio', { name } ).click();
+	}
+
+	/**
 	 * Open the categories dropdown, shown on mobile
 	 */
 	async openCategoriesDropdown(): Promise< void > {

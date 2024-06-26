@@ -59,9 +59,9 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		await pluginsPage.validateHasHeaderTitle( PluginsPage.freeSection );
 	} );
 
-	it( 'Can return via breadcrumb', async function () {
+	it( 'Can return via category', async function () {
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-			await pluginsPage.clickPluginsBreadcrumb();
+			await pluginsPage.clickCategory( 'Discover' );
 		} else {
 			await pluginsPage.clickDropdownCategory( 'Discover' );
 		}
