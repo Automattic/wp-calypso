@@ -62,6 +62,7 @@ class RequestLoginEmailForm extends Component {
 		errorMessage: PropTypes.string,
 		onErrorDismiss: PropTypes.func,
 		isEmailInputDisabled: PropTypes.bool,
+		isEmailInputError: PropTypes.bool,
 		isSubmitButtonDisabled: PropTypes.bool,
 		isSubmitButtonBusy: PropTypes.bool,
 	};
@@ -192,6 +193,7 @@ class RequestLoginEmailForm extends Component {
 			errorMessage,
 			onErrorDismiss,
 			isEmailInputDisabled,
+			isEmailInputError,
 			isSubmitButtonDisabled,
 			isSubmitButtonBusy,
 		} = this.props;
@@ -275,6 +277,7 @@ class RequestLoginEmailForm extends Component {
 							ref={ this.usernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
 							placeholder={ inputPlaceholder }
+							isError={ isEmailInputError }
 						/>
 						{ tosComponent }
 						{ requestError && (

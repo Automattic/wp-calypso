@@ -358,6 +358,14 @@
 			margin-bottom: 52px;
 		}
 
+		.notice__icon-wrapper {
+			display: flex;
+		}
+
+		.notice__content {
+			padding-left: 13px;
+		}
+
 		.grav-powered-magic-login__tos {
 			margin: 32px 0 20px;
 			text-align: center;
@@ -517,6 +525,14 @@
 		&::placeholder {
 			color: #9ea4a8;
 		}
+	}
+
+	.notice__icon-wrapper {
+		display: none;
+	}
+
+	.notice__content {
+		padding-left: 0;
 	}
 
 	.grav-powered-magic-login__tos {

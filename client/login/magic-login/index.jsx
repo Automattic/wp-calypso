@@ -758,6 +758,7 @@ class MagicLogin extends Component {
 						onChange={ this.handleGravPoweredCodeInputChange }
 						placeholder={ translate( 'Verification code' ) }
 						disabled={ isProcessingCode }
+						isError={ codeValidationError }
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					/>
 					{ codeValidationError && (
@@ -943,6 +944,7 @@ class MagicLogin extends Component {
 						errorMessage={ requestEmailErrorMessage }
 						onErrorDismiss={ () => this.setState( { requestEmailErrorMessage: null } ) }
 						isEmailInputDisabled={ isRequestingEmail }
+						isEmailInputError={ !! requestEmailErrorMessage }
 						isSubmitButtonDisabled={ isRequestingEmail || !! requestEmailErrorMessage }
 						isSubmitButtonBusy={ isRequestingEmail }
 					/>
