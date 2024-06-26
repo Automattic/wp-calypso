@@ -40,7 +40,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 						href={ addLocaleToPathLocaleInFront( '/patterns' ) }
 						className="readymade-template-details-back"
 					>
-						<Icon icon={ arrowLeft } size={ 24 } /> { translate( 'Back to patterns' ) }
+						<Icon icon={ arrowLeft } size={ 24 } /> { translate( 'Back' ) }
 					</a>
 					<div className="readymade-template-details">
 						<div className="readymade-template-details-content">
