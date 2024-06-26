@@ -4,6 +4,7 @@ import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
+import { isRedirectAllowed } from 'calypso/lib/url/is-redirect-allowed';
 import useCreateNewAccountMutation from 'calypso/signup/hooks/use-create-new-account';
 import useSubscribeToMailingList from 'calypso/signup/hooks/use-subscribe-to-mailing-list';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -11,8 +12,14 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SubscribingEmailStepContent from './content';
 
-function isHttpsOrHttp( url ) {
-	return ( !! url && url.startsWith( 'https://' ) ) || url.startsWith( 'http://' );
+function sanitizeRedirectUrl( redirect ) {
+	const isHttpOrHttps =
+		!! redirect && ( redirect.startsWith( 'https://' ) || redirect.startsWith( 'http://' ) );
+	const redirectUrl = isHttpOrHttps
+		? addQueryArgs( redirect, { subscribed: true } )
+		: addQueryArgs( 'https://' + redirect, { subscribed: true } );
+
+	return isRedirectAllowed( redirectUrl ) ? redirectUrl : 'https://wordpress.com/';
 }
 
 /**
@@ -23,9 +30,7 @@ function isHttpsOrHttp( url ) {
  */
 function SubscribingEmailStep( props ) {
 	const { flowName, goToNextStep, queryParams, stepName } = props;
-	const redirectUrl = isHttpsOrHttp( queryParams.redirect_to )
-		? addQueryArgs( queryParams.redirect_to, { subscribed: true } )
-		: addQueryArgs( 'https://' + queryParams.redirect_to, { subscribed: true } );
+	const redirectUrl = sanitizeRedirectUrl( queryParams.redirect_to );
 
 	const { mutate: subscribeToMailingList, isPending: isSubscribeToMailingListPending } =
 		useSubscribeToMailingList( {
