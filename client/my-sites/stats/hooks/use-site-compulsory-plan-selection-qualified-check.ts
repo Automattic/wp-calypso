@@ -21,7 +21,7 @@ export default function useSiteCompulsoryPlanSelectionQualifiedCheck( siteId: nu
 	const isNewSite =
 		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-31' ); // Targeting new sites
 	const isExceedingTrafficThreshold =
-		( usageInfo?.billableMonthlyViews ?? 0 ) > MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL; // Targeting all existing sites with views higher than 1000/mth.
+		( usageInfo?.validMonthlyViews ?? 0 ) > MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL; // Targeting all existing sites with views higher than 1000/mth.
 
 	// Show paywall if the site exceeds the traffic threshold. Exempt VIP sites.
 	const shouldShowPaywall = ! isVip && ! isPending && ( isNewSite || isExceedingTrafficThreshold );
