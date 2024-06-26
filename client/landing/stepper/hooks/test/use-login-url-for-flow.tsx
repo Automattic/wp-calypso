@@ -40,6 +40,34 @@ describe( 'useLoginUrlForFlow', () => {
 		);
 	} );
 
+	it( 'returns the login with with extra params', () => {
+		const flowWithExtraParams = {
+			...flow,
+			useLoginParams: () => ( {
+				foo: 'bar',
+				bar: 'baz',
+			} ),
+		} satisfies Flow;
+
+		const { result } = renderHookWithProvider(
+			() => useLoginUrlForFlow( { flow: flowWithExtraParams } ),
+			{
+				wrapper: Wrapper( 'setup' ),
+			}
+		);
+
+		expect( result.current ).toEqual(
+			addQueryArgs( '/start/account/user-social', {
+				variationName: 'some-flow',
+				redirect_to: '/setup/site-migration-flow',
+				pageTitle: 'some-title',
+				toStepper: true,
+				foo: 'bar',
+				bar: 'baz',
+			} )
+		);
+	} );
+
 	// Inside the react-router-dom the useLocation.pathname doesn't include the basename
 	it( 'returns the login URL for the flow considering the basename', () => {
 		const { result } = renderHookWithProvider( () => useLoginUrlForFlow( { flow } ), {
