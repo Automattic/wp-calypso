@@ -725,7 +725,8 @@ class MagicLogin extends Component {
 			verificationCodeInputValue,
 			resendEmailCountdown,
 		} = this.state;
-		const is3rdPartyApp = query.gravatar_from === '3rd-party';
+		const is3rdPartyApp =
+			isGravatarOAuth2Client( oauth2Client ) && query.gravatar_from === '3rd-party';
 		const isProcessingCode = isValidatingCode || isCodeValidated;
 		let errorText = translate( 'Something went wrong. Please try again.' );
 
