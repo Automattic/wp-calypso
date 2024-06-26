@@ -24,11 +24,6 @@ function getStatsCheckoutURL(
 	adminUrl?: string,
 	isUpgrade?: boolean
 ) {
-	// eslint-disable-next-line no-console
-	console.log( 'from: ', from );
-	// eslint-disable-next-line no-console, prefer-rest-params
-	console.log( 'arguments: ', arguments );
-
 	const useLoggedOutFlow = from === 'jetpack-my-jetpack' || from === 'jetpack-stats-upgrade-notice';
 	// const isFromJetpack = from?.startsWith( 'jetpack' );
 	// Get the checkout URL for the product, or the siteless checkout URL if from Jetpack or no siteSlug is provided
@@ -187,17 +182,6 @@ const gotoCheckoutPage = ( {
 	const redirectUrl = getRedirectUrl( { from, type, adminUrl, redirectUri, siteSlug } );
 	const checkoutBackUrl = getCheckoutBackUrl( { from, adminUrl, siteSlug } );
 
-	const newCheckoutURL = getStatsCheckoutURL(
-		siteSlug,
-		product,
-		redirectUrl,
-		checkoutBackUrl,
-		from,
-		adminUrl,
-		isUpgrade
-	);
-	console.log( 'newCheckoutURL: ', newCheckoutURL );
-	return;
 	// Allow some time for the event to be recorded before redirecting.
 	setTimeout(
 		() =>
