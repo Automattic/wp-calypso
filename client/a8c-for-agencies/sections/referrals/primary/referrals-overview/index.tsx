@@ -70,6 +70,8 @@ export default function ReferralsOverview( {
 	const { data: referrals, isFetching: isFetchingReferrals } =
 		useFetchReferrals( isAutomatedReferral );
 
+	const hasActivePayeeAcount = tipaltiData?.Status === 'Active';
+
 	const hasReferrals = !! referrals?.length;
 
 	const actionRequiredNotice =
@@ -128,7 +130,7 @@ export default function ReferralsOverview( {
 
 					<LayoutHeader>
 						<Title>{ title } </Title>
-						{ isAutomatedReferral && (
+						{ isAutomatedReferral && hasActivePayeeAcount && (
 							<Actions>
 								<MobileSidebarNavigation />
 								<span
