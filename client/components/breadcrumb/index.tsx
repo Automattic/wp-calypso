@@ -142,8 +142,4 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	return null;
 };
 
-Breadcrumb.defaultProps = {
-	items: [],
-};
-
 export default Breadcrumb;
