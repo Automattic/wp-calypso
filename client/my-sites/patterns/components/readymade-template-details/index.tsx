@@ -62,6 +62,9 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 									</Button>
 								</div>
 							</div>
+							<div className="readymade-template-details-preview-mobile">
+								<img src={ readymadeTemplate.screenshot } alt="" />
+							</div>
 							<div
 								className="readymade-template-details-description"
 								// eslint-disable-next-line react/no-danger
