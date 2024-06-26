@@ -4,6 +4,7 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect } from 'react';
 import useReferralsGuide from 'calypso/a8c-for-agencies/components/guide-modal/guides/useReferralsGuide';
+import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hooks/use-get-tipalti-payee';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -15,6 +16,9 @@ const PREFERENCE_NAME = 'a4a-marketplace-referral-guide-seen';
 
 const ReferralToggle = () => {
 	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
+	const { data: tipaltiData } = useGetTipaltiPayee();
+	const hasActivePayeeAcount = tipaltiData?.Status === 'Active';
+
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { marketplaceType, toggleMarketplaceType } = useContext( MarketplaceTypeContext );
@@ -28,7 +32,7 @@ const ReferralToggle = () => {
 		}
 	}, [ dispatch, guideModalSeen, marketplaceType, openGuide ] );
 
-	if ( ! isAutomatedReferrals ) {
+	if ( ! isAutomatedReferrals || ! hasActivePayeeAcount ) {
 		return null;
 	}
 

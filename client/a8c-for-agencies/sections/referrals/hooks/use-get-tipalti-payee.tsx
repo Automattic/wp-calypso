@@ -19,6 +19,7 @@ export default function useGetTipaltiPayee() {
 			} ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
+		staleTime: 5 * 60 * 1000,
 	} );
 
 	return data;
