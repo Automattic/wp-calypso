@@ -7,7 +7,7 @@ function SubscribingEmailStepContent( props ) {
 	const {
 		flowName,
 		handleSubmitSignup,
-		isLoading,
+		isPending,
 		stepName,
 		step,
 		translate,
@@ -20,7 +20,7 @@ function SubscribingEmailStepContent( props ) {
 		: 'https://wordpress.com';
 	const email = queryParams?.email;
 
-	if ( isLoading ) {
+	if ( isPending ) {
 		return <ReskinnedProcessingScreen flowName={ flowName } hasPaidDomain={ false } />;
 	}
 

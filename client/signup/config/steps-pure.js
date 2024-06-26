@@ -396,6 +396,7 @@ export function generateSteps( {
 			stepName: 'subscribing-email',
 			dependencies: [ 'email', 'redirect_to', 'mailing_list' ],
 			providesDependencies: [ 'redirect', 'username', 'marketing_price_group', 'bearer_token' ],
+			optionalDependencies: [ 'username', 'marketing_price_group', 'bearer_token' ],
 		},
 		mailbox: {
 			stepName: 'mailbox',
