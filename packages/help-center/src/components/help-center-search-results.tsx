@@ -11,6 +11,7 @@ import {
 } from '@automattic/data-stores';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import {
 	Icon,
@@ -24,7 +25,7 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';

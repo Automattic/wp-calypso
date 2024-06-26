@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-import DotPager from 'calypso/components/dot-pager';
+import { DotPager } from '@automattic/components';
 
 function myDotPager() {
 	return (

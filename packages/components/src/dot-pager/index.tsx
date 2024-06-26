@@ -1,12 +1,23 @@
-import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
-import { Children, useState, useEffect } from 'react';
-import Swipeable from '../swipeable';
+import { Children, useState, useEffect, ReactNode } from 'react';
+// REPLACE ME WITH WP BUTTON. THIS BUTTON IS BAD (has aggressive styles with generic class names).
+import Button from '../button';
+import { Swipeable } from '../swipeable';
 
 import './style.scss';
+
+type ControlsProps = {
+	showControlLabels?: boolean;
+	currentPage: number;
+	numberOfPages: number;
+	setCurrentPage: ( page: number ) => void;
+	navArrowSize: number;
+	tracksPrefix: string;
+	tracksFn: ( eventName: string, data?: any ) => void;
+};
 
 const Controls = ( {
 	showControlLabels = false,
@@ -16,7 +27,7 @@ const Controls = ( {
 	navArrowSize,
 	tracksPrefix,
 	tracksFn,
-} ) => {
+}: ControlsProps ) => {
 	const translate = useTranslate();
 	const isRtl = useRtl();
 	if ( numberOfPages < 2 ) {
@@ -34,9 +45,11 @@ const Controls = ( {
 							'dot-pager__control-current': page === currentPage,
 						} ) }
 						disabled={ page === currentPage }
-						aria-label={ translate( 'Page %(page)d of %(numberOfPages)d', {
-							args: { page: page + 1, numberOfPages },
-						} ) }
+						aria-label={
+							translate( 'Page %(page)d of %(numberOfPages)d', {
+								args: { page: page + 1, numberOfPages },
+							} ) as string
+						}
 						onClick={ () => {
 							tracksFn( tracksPrefix + '_dot_click', {
 								current_page: currentPage,
@@ -68,7 +81,7 @@ const Controls = ( {
 						fill="currentColor"
 						style={
 							/* Flip the icon for languages with LTR direction. */
-							! isRtl ? { transform: 'scaleX(-1)' } : null
+							! isRtl ? { transform: 'scaleX(-1)' } : undefined
 						}
 					/>
 					{ showControlLabels && translate( 'Previous' ) }
@@ -95,7 +108,7 @@ const Controls = ( {
 						fill="currentColor"
 						style={
 							/* Flip the icon for languages with RTL direction. */
-							isRtl ? { transform: 'scaleX(-1)' } : null
+							isRtl ? { transform: 'scaleX(-1)' } : undefined
 						}
 					/>
 				</button>
@@ -104,12 +117,29 @@ const Controls = ( {
 	);
 };
 
-export const DotPager = ( {
+type DotPagerProps = {
+	showControlLabels?: boolean;
+	hasDynamicHeight?: boolean;
+	children: ReactNode;
+	className?: string;
+	onPageSelected?: ( index: number ) => void;
+	isClickEnabled?: boolean;
+	rotateTime?: number;
+	navArrowSize?: number;
+	tracksPrefix?: string;
+	tracksFn?: ( eventName: string, data?: Record< string, unknown > ) => void;
+	includePreviousButton?: boolean;
+	includeNextButton?: boolean;
+	includeFinishButton?: boolean;
+	onFinish?: () => void;
+};
+
+const DotPager = ( {
 	showControlLabels = false,
 	hasDynamicHeight = false,
 	children,
 	className = '',
-	onPageSelected = null,
+	onPageSelected,
 	isClickEnabled = false,
 	rotateTime = 0,
 	navArrowSize = 18,
@@ -120,7 +150,7 @@ export const DotPager = ( {
 	includeFinishButton = false,
 	onFinish = () => {},
 	...props
-} ) => {
+}: DotPagerProps ) => {
 	const translate = useTranslate();
 
 	// Filter out the empty children
@@ -146,7 +176,7 @@ export const DotPager = ( {
 		}
 	}, [ currentPage, numPages, rotateTime ] );
 
-	const handleSelectPage = ( index ) => {
+	const handleSelectPage = ( index: number ) => {
 		setCurrentPage( index );
 		onPageSelected?.( index );
 	};

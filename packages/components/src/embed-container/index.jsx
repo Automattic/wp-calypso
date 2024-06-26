@@ -1,12 +1,11 @@
-import { loadScript } from '@automattic/load-script';
+import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { filter, forEach } from 'lodash';
 import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import DotPager from 'calypso/components/dot-pager';
-import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
+import DotPager from '../dot-pager';
 
 const noop = () => {};
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -223,7 +222,7 @@ function embedSlideshow( domNode ) {
 		} );
 	} else {
 		// Neither exist
-		loadjQueryDependentScriptDesktopWrapper( SLIDESHOW_URLS.CYCLE_JS, () => {
+		loadjQueryDependentScript( SLIDESHOW_URLS.CYCLE_JS, () => {
 			createSlideshow();
 		} );
 	}

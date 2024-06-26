@@ -11,13 +11,14 @@ import { useGetOdieStorage } from '@automattic/odie-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { getQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 /**
  * Internal Dependencies
