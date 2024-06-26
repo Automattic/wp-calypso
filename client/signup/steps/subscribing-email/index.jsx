@@ -9,6 +9,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SubscribingEmailStepContent from './content';
 
+function isHttpsOrHttp( url ) {
+	return ( !! url && url.startsWith( 'https://' ) ) || url.startsWith( 'http://' );
+}
+
 function SubscribingEmailStep( props ) {
 	const { flowName, goToNextStep, queryParams, stepName } = props;
 	const {
@@ -19,10 +23,16 @@ function SubscribingEmailStep( props ) {
 		error,
 	} = useCreateNewAccountMutation();
 
+	const redirectUrl = isHttpsOrHttp( queryParams?.redirect_to )
+		? addQueryArgs( queryParams.redirect_to, { subscribed: true } )
+		: addQueryArgs( 'https://' + queryParams.redirect_to, { subscribed: true } );
+
 	useEffect( () => {
-		if ( emailValidator.validate( queryParams.email ) ) {
+		if ( emailValidator.validate( queryParams.user_email ) ) {
 			createNewAccount( {
-				userData: { email: typeof queryParams.email === 'string' ? queryParams.email.trim() : '' },
+				userData: {
+					email: typeof queryParams.user_email === 'string' ? queryParams.user_email.trim() : '',
+				},
 				flowName,
 				isPasswordless: true,
 			} );
@@ -33,10 +43,7 @@ function SubscribingEmailStep( props ) {
 		props.recordTracksEvent( 'calypso_signup_new_email_subscription_success', {
 			mailing_list: queryParams.mailing_list,
 		} );
-		props.submitSignupStep(
-			{ stepName: 'subscribing-email' },
-			{ redirect: addQueryArgs( queryParams.redirect_to, { subscribed: true } ) }
-		);
+		props.submitSignupStep( { stepName: 'subscribing-email' }, { redirect: redirectUrl } );
 		goToNextStep();
 	} else if ( isError ) {
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
@@ -45,10 +52,7 @@ function SubscribingEmailStep( props ) {
 			props.recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {
 				mailing_list: queryParams.mailing_list,
 			} );
-			props.submitSignupStep(
-				{ stepName: 'subscribing-email' },
-				{ redirect: addQueryArgs( queryParams.redirect_to, { subscribed: true } ) }
-			);
+			props.submitSignupStep( { stepName: 'subscribing-email' }, { redirect: redirectUrl } );
 			goToNextStep();
 		}
 	}
@@ -58,7 +62,13 @@ function SubscribingEmailStep( props ) {
 			<StepWrapper
 				flowName={ flowName }
 				hideFormattedHeader
-				stepContent={ <SubscribingEmailStepContent { ...props } isPending={ isPending } /> }
+				stepContent={
+					<SubscribingEmailStepContent
+						{ ...props }
+						isPending={ isPending }
+						redirectUrl={ redirectUrl }
+					/>
+				}
 				stepName={ stepName }
 			/>
 		</div>

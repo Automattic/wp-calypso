@@ -1,4 +1,3 @@
-import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import SignupForm from 'calypso/blocks/signup-form';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
@@ -6,18 +5,16 @@ import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-scree
 function SubscribingEmailStepContent( props ) {
 	const {
 		flowName,
+		goToNextStep,
 		handleSubmitSignup,
 		isPending,
-		stepName,
-		step,
-		translate,
 		queryParams,
-		goToNextStep,
+		redirectUrl,
+		step,
+		stepName,
+		translate,
 	} = props;
 
-	const redirect_to = queryParams?.redirect_to
-		? addQueryArgs( queryParams.redirect_to, { subscribed: true } )
-		: 'https://wordpress.com';
 	const user_email = queryParams?.user_email;
 
 	if ( isPending ) {
@@ -27,25 +24,25 @@ function SubscribingEmailStepContent( props ) {
 	return (
 		<>
 			<SignupForm
+				displayUsernameInput={ false }
+				email={ user_email || '' }
+				flowName={ flowName }
+				goToNextStep={ goToNextStep }
+				handleCreateAccountError={ () => {} }
+				isPasswordless
+				isReskinned
+				isSocialFirst={ false }
+				isSocialSignupEnabled={ false }
+				labelText={ translate( 'Your email' ) }
+				queryArgs={ { user_email, redirect_to: redirectUrl } }
+				// recaptchaClientId={ this.state.recaptchaClientId }
+				redirectToAfterLoginUrl={ redirectUrl }
+				shouldDisplayUserExistsError
 				step={ step }
 				stepName={ stepName }
-				flowName={ flowName }
-				email={ user_email || '' }
-				goToNextStep={ goToNextStep }
-				displayUsernameInput={ false }
-				redirectToAfterLoginUrl={ redirect_to }
-				suggestedUsername=""
-				isPasswordless
-				queryArgs={ { user_email, redirect_to } }
-				isSocialSignupEnabled={ false }
-				// recaptchaClientId={ this.state.recaptchaClientId }
-				isReskinned
-				shouldDisplayUserExistsError
-				isSocialFirst={ false }
-				labelText={ translate( 'Your email' ) }
 				submitButtonText={ translate( 'Create an account' ) }
 				submitForm={ handleSubmitSignup }
-				handleCreateAccountError={ () => {} }
+				suggestedUsername=""
 			/>
 		</>
 	);
