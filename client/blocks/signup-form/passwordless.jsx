@@ -134,14 +134,13 @@ class PasswordlessSignupForm extends Component {
 						'Sorry, something went wrong when trying to create your account. Please try again.'
 					),
 				],
-				isSubmitting: false,
 			} );
 		}
 
-		// TODO: Figure out how to appropriately update submitting property
 		this.setState( {
 			isSubmitting: false,
 		} );
+
 		this.props.onCreateAccountError?.( error, this.state.email );
 	};
 

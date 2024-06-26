@@ -12,7 +12,7 @@ import SubscribingEmailStepContent from './content';
 function SubscribingEmailStep( props ) {
 	const { flowName, goToNextStep, queryParams, stepName } = props;
 	const {
-		mutate: createNewAccout,
+		mutate: createNewAccount,
 		isError,
 		isSuccess,
 		isPending,
@@ -21,7 +21,7 @@ function SubscribingEmailStep( props ) {
 
 	useEffect( () => {
 		if ( emailValidator.validate( queryParams.email ) ) {
-			createNewAccout( {
+			createNewAccount( {
 				userData: { email: typeof queryParams.email === 'string' ? queryParams.email.trim() : '' },
 				flowName,
 				isPasswordless: true,

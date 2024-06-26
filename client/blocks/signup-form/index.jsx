@@ -119,6 +119,7 @@ class SignupForm extends Component {
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
 		submitForm: PropTypes.func,
+		handleCreateAccountError: PropTypes.func,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -1136,6 +1137,24 @@ class SignupForm extends Component {
 			: formState.getFieldValue( this.state.form, 'email' );
 	};
 
+	handleCreateAccountError = ( error, email ) => {
+		if ( this.props.handleCreateAccountError ) {
+			return this.props.handleCreateAccountError( error, email );
+		}
+
+		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+			page(
+				addQueryArgs(
+					{
+						email_address: email,
+						is_signup_existing_account: true,
+					},
+					this.getLoginLink()
+				)
+			);
+		}
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
@@ -1301,14 +1320,7 @@ class SignupForm extends Component {
 						labelText={ this.props.labelText }
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
-						onCreateAccountError={ ( error, email ) => {
-							// TODO: Determine if there's a better way to handle a custom create account error
-							if ( this.props.onPasswordlessCreateAccountError ) {
-								this.props.onPasswordlessCreateAccountError( error, email );
-								this.setState( { disabled: false, submitting: false } );
-								return;
-							}
-						} }
+						onCreateAccountError={ this.handleCreateAccountError }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (
