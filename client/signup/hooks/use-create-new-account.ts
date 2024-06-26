@@ -1,9 +1,13 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
 import { CreateWPCOMAccountParams } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
+
+interface APIResponse {
+	success: boolean;
+}
 
 function mutationCreateNewAccount( {
 	userData,
@@ -34,7 +38,9 @@ function mutationCreateNewAccount( {
 	);
 }
 
-export default function useCreateNewAccountMutation( options ) {
+export default function useCreateNewAccountMutation< TContext = unknown >(
+	options?: UseMutationOptions< APIResponse, Error, CreateWPCOMAccountParams, TContext >
+): UseMutationResult< APIResponse, Error, CreateWPCOMAccountParams, TContext > {
 	return useMutation( {
 		...options,
 		mutationFn: mutationCreateNewAccount,
