@@ -113,6 +113,18 @@
 	}
 }
 
+.jetpack-product-store__products-list {
+	.item-price .display-price {
+		&:not(.is-placeholder) {
+			max-height: none;
+
+			.display-price__billing-time-frame {
+				line-height: 1.2;
+			}
+		}
+	}
+}
+
 .jetpack-product-store__items-tabs [role="tab"] {
 	display: initial;
 	flex-grow: 1;
