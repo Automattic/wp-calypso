@@ -12,6 +12,7 @@ import wpcom from 'calypso/lib/wp';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
+import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
 import { CalypsoDispatch } from 'calypso/state/types';
 import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -26,6 +27,7 @@ import {
 	ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 
@@ -70,7 +72,7 @@ const readymadeTemplateFlow: Flow = {
 		const selectedTheme = getAssemblerDesign().slug;
 
 		const { value: readymadeTemplateId } = useUrlQueryParam( 'readymadeTemplateId' );
-		const { data: readymadeTemplate } = useReadymadeTemplate( readymadeTemplateId );
+		const readymadeTemplate = useReadymadeTemplate( readymadeTemplateId );
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -260,7 +262,7 @@ const readymadeTemplateFlow: Flow = {
 function enableAssemblerThemeAndConfigureTemplates(
 	themeId: string,
 	siteId: number,
-	readymadeTemplate: { content: string },
+	readymadeTemplate: { content: string; globalStyles: GlobalStylesObject },
 	assembleSite: (
 		arg0: any,
 		arg1: string,
@@ -313,7 +315,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 					headerHtml: '',
 					footerHtml: '',
 					pages: [],
-					globalStyles: {},
+					globalStyles: readymadeTemplate.globalStyles,
 					canReplaceContent: true,
 					siteSetupOption: 'readymade-template',
 				} )
@@ -322,12 +324,31 @@ function enableAssemblerThemeAndConfigureTemplates(
 }
 
 function useReadymadeTemplate( templateId: number, options: object = { enabled: true } ) {
-	return useQuery( {
+	const { data: readymadeTemplate } = useQuery( {
 		...options,
 		queryKey: [ 'readymade-templates', templateId ],
 		queryFn: async () =>
 			wpcom.req.get( `/themes/readymade-templates/${ templateId }`, { apiNamespace: 'wpcom/v2' } ),
 	} );
+
+	const { data: assemblerTheme } = useThemeDetails( 'assembler' );
+
+	if ( ! readymadeTemplate || ! assemblerTheme ) {
+		return null;
+	}
+
+	readymadeTemplate.globalStyles = {};
+
+	if ( readymadeTemplate.style_variation ) {
+		const styleVariation = assemblerTheme.style_variations.find(
+			( sv ) => sv.title === readymadeTemplate.style_variation
+		);
+		if ( styleVariation ) {
+			readymadeTemplate.globalStyles = styleVariation;
+		}
+	}
+
+	return readymadeTemplate;
 }
 
 export default readymadeTemplateFlow;
