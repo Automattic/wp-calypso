@@ -3,6 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import useCreateNewAccountMutation from 'calypso/signup/hooks/use-create-new-account';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -49,7 +50,7 @@ function SubscribingEmailStep( props ) {
 		props.submitSignupStep( { stepName: 'subscribing-email' }, { redirect: redirectUrl } );
 		goToNextStep();
 	} else if ( isError ) {
-		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+		if ( isExistingAccountError( error.error ) ) {
 			// TODO: Subscribe existing user to guides emails through API endpoint https://github.com/Automattic/martech/issues/3090
 
 			props.recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {

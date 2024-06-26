@@ -48,6 +48,7 @@ import {
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isP2Flow } from 'calypso/signup/is-flow';
@@ -1142,7 +1143,7 @@ class SignupForm extends Component {
 			return this.props.handleCreateAccountError( error, email );
 		}
 
-		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+		if ( isExistingAccountError( error.error ) ) {
 			page(
 				addQueryArgs(
 					{
