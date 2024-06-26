@@ -29,8 +29,10 @@ function getStatsCheckoutURL(
 	// eslint-disable-next-line no-console, prefer-rest-params
 	console.log( 'arguments: ', arguments );
 
+	const useLoggedOutFlow = from === 'jetpack-my-jetpack' || from === 'jetpack-stats-upgrade-notice';
+	// const isFromJetpack = from?.startsWith( 'jetpack' );
 	// Get the checkout URL for the product, or the siteless checkout URL if from Jetpack or no siteSlug is provided
-	const checkoutType = ( isFromJetpack && ! isUpgrade ) || ! siteSlug ? 'jetpack' : siteSlug;
+	const checkoutType = ( useLoggedOutFlow && ! isUpgrade ) || ! siteSlug ? 'jetpack' : siteSlug;
 	const checkoutProductUrl = new URL(
 		`/checkout/${ checkoutType }/${ product }`,
 		'https://wordpress.com'
@@ -40,7 +42,7 @@ function getStatsCheckoutURL(
 	setUrlParam( checkoutProductUrl, 'redirect_to', redirectUrl );
 	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
 
-	if ( isFromJetpack && siteSlug ) {
+	if ( useLoggedOutFlow && siteSlug ) {
 		setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
 		setUrlParam( checkoutProductUrl, 'admin_url', adminUrl );
 		setUrlParam( checkoutProductUrl, 'from_site_slug', siteSlug );
