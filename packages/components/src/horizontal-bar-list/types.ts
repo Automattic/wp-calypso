@@ -63,7 +63,7 @@ export type StatsCardProps = {
 	className?: string;
 	headerClassName?: string;
 	title: string;
-	titleURL: string;
+	titleURL?: string;
 	titleAriaLevel?: number;
 	footerAction?: {
 		label?: string;

@@ -74,6 +74,7 @@ const domainSearch = ( context, next ) => {
 				<DomainSearch
 					basePath={ sectionify( context.path ) }
 					context={ context }
+					isAddNewDomainContext={ context.path.includes( 'domains/add' ) }
 					domainAndPlanUpsellFlow={
 						context.query.domainAndPlanPackage !== undefined
 							? context.query.domainAndPlanPackage === 'true'

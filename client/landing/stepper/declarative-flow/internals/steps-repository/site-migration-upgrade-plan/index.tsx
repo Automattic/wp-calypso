@@ -87,6 +87,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				} }
 				hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
 				trackingEventsProps={ customTracksEventProps }
+				visiblePlan={ plan.getStoreSlug() }
 			/>
 		</>
 	);

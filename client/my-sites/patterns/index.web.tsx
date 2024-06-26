@@ -9,7 +9,6 @@ import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/cate
 import { PatternsCategoryNotFound } from 'calypso/my-sites/patterns/components/category-not-found';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
-import { ReadymadeTemplatesClient } from 'calypso/my-sites/patterns/components/readymade-templates/client';
 import { PatternsContext } from 'calypso/my-sites/patterns/context';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { extractPatternIdFromHash } from 'calypso/my-sites/patterns/lib/extract-pattern-id-from-hash';
@@ -50,7 +49,6 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 					<PatternLibrary
 						categoryGallery={ CategoryGalleryClient }
 						patternGallery={ PatternGalleryClient }
-						readymadeTemplates={ ReadymadeTemplatesClient }
 					/>
 				</PatternsWrapper>
 			</PatternsContext.Provider>

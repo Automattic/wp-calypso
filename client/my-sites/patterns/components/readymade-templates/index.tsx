@@ -1,17 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { ReadymadeTemplate, ReadymadeTemplatesProps } from 'calypso/my-sites/patterns/types';
+import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
+
 import './style.scss';
 
-type ReadymadeTemplatesSectionProps = ReadymadeTemplatesProps & {
-	renderPreview?: ( readymadeTemplate: ReadymadeTemplate ) => ReactNode;
-};
-
-export const ReadymadeTemplatesSection = ( {
-	readymadeTemplates,
-	renderPreview,
-}: ReadymadeTemplatesSectionProps ) => {
+export const ReadymadeTemplates = () => {
+	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
 	const translate = useTranslate();
 
 	if ( ! readymadeTemplates.length ) {
@@ -31,7 +25,7 @@ export const ReadymadeTemplatesSection = ( {
 				{ readymadeTemplates.map( ( readymadeTemplate ) => (
 					<div className="readymade-template" key={ readymadeTemplate.template_id }>
 						<div className="readymade-template__content">
-							{ renderPreview?.( readymadeTemplate ) }
+							<img src={ readymadeTemplate.screenshot } alt="" />
 						</div>
 						<div className="readymade-template__title">{ readymadeTemplate.title }</div>
 					</div>
