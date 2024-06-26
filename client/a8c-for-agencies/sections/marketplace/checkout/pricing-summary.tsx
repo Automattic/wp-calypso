@@ -83,7 +83,7 @@ export default function PricingSummary( {
 				isAgencyCheckout && (
 					<div className="checkout__summary-notice">
 						<h3>{ translate( 'When you purchase:' ) }</h3>
-						<p>
+						<div className="checkout__summary-notice-item">
 							{ translate(
 								'You agree to our {{a}}Terms of Service{{/a}}, and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time.',
 								{
@@ -98,8 +98,8 @@ export default function PricingSummary( {
 									},
 								}
 							) }
-						</p>
-						<p>
+						</div>
+						<div className="checkout__summary-notice-item">
 							{ translate(
 								'You understand {{a}}how your subscription works{{/a}} and {{a}}how to cancel{{/a}}.',
 								{
@@ -116,12 +116,12 @@ export default function PricingSummary( {
 									},
 								}
 							) }
-						</p>
-						<p>
+						</div>
+						<div className="checkout__summary-notice-item">
 							{ translate(
 								'You will be billed on the first of every month. Your first bill will include a prorated amount for the current month, depending on which day you purchased these products.'
 							) }
-						</p>
+						</div>
 					</div>
 				)
 			}
