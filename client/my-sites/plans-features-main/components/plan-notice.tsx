@@ -1,7 +1,5 @@
 import { PlanSlug, isProPlan, isStarterPlan } from '@automattic/calypso-products';
 import { Site, SiteMediaStorage } from '@automattic/data-stores';
-import { formatCurrency } from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
@@ -11,10 +9,10 @@ import { getDiscountByName } from 'calypso/lib/discounts';
 import { ActiveDiscount } from 'calypso/lib/discounts/active-discounts';
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlan, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import PlanNoticeCreditUpgrade from './plan-notice-credit-update';
 
 export type PlanNoticeProps = {
 	siteId: number;
@@ -101,8 +99,6 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 	let activeDiscount =
 		discountInformation &&
 		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
-	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	switch ( noticeType ) {
 		case NO_NOTICE:
@@ -169,39 +165,14 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				</Notice>
 			);
 		case PLAN_UPGRADE_CREDIT_NOTICE:
-			return planUpgradeCreditsApplicable ? (
-				<Notice
+			return (
+				<PlanNoticeCreditUpgrade
 					className="plan-features-main__notice"
-					showDismiss
 					onDismissClick={ handleDismissNotice }
-					icon="info-outline"
-					status="is-success"
-					isReskinned
-				>
-					{ translate(
-						'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!',
-						{
-							args: {
-								amountInCurrency: formatCurrency(
-									planUpgradeCreditsApplicable,
-									currencyCode ?? ''
-								),
-							},
-							components: {
-								b: <strong />,
-								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
-										) }
-										className="get-apps__desktop-link"
-									/>
-								),
-							},
-						}
-					) }
-				</Notice>
-			) : null;
+					siteId={ siteId }
+					visiblePlans={ visiblePlans }
+				/>
+			);
 		case PLAN_RETIREMENT_NOTICE:
 			return (
 				<Notice
