@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
