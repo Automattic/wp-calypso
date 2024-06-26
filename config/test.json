@@ -83,6 +83,7 @@
 		"me/account-close": true,
 		"me/vat-details": true,
 		"migration-flow/new-migration-instructions-step": false,
+		"migration-flow/enable-migration-assistant": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"p2-enabled": false,
