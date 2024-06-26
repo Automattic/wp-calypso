@@ -388,6 +388,12 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( urlQueryParams.has( 'showModal' ) || ! isFromSiteWordPress ) {
 						urlQueryParams.delete( 'showModal' );
+						if ( config.isEnabled( 'migration-flow/enable-migration-assistant' ) ) {
+							return navigate(
+								`${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }`
+							);
+						}
+
 						return navigate(
 							`${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }`
 						);
