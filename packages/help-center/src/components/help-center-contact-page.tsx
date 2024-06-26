@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice, FormInputValidation } from '@automattic/components';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
@@ -19,6 +18,7 @@ import { Link } from 'react-router-dom';
  * Internal Dependencies
  */
 import { BackButton } from '..';
+import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import {
 	useChatStatus,
@@ -119,9 +119,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 			return __( 'Email', __i18n_text_domain__ );
 		}
 
-		const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
-			locale
-		);
+		const isLanguageSupported = EMAIL_SUPPORT_LOCALES.includes( locale );
 
 		if ( isLanguageSupported ) {
 			const language = getLanguage( locale )?.name;
