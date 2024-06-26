@@ -45,6 +45,8 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 							{ formatCurrency( actualCost, item.currency ) }
 						</span>
 					) }
+					{ /* translators: means per month (eg $25/mo)*/ }
+					<span>{ translate( '/mo' ) }</span>
 				</div>
 			</div>
 			{ onRemoveItem && (
