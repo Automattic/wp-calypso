@@ -257,7 +257,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					value={ jetpack_subscriptions_reply_to }
 				/>
 			</Card>
-
 			<SettingsSectionHeader
 				id="newsletter-categories-settings"
 				title={ translate( 'Newsletter categories' ) }
@@ -273,7 +272,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				handleToggle={ handleToggle }
 				updateFields={ updateFields }
 			/>
-
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="messages"
