@@ -15,7 +15,7 @@ const setUrlParam = ( url: URL, paramName: string, paramValue?: string | null ):
 	}
 };
 
-const getStatsCheckoutURL = (
+function getStatsCheckoutURL(
 	siteSlug: string,
 	product: string,
 	redirectUrl: string,
@@ -23,8 +23,12 @@ const getStatsCheckoutURL = (
 	from?: string,
 	adminUrl?: string,
 	isUpgrade?: boolean
-) => {
-	const isFromJetpack = from?.startsWith( 'jetpack' );
+) {
+	// eslint-disable-next-line no-console
+	console.log( 'from: ', from );
+	// eslint-disable-next-line no-console, prefer-rest-params
+	console.log( 'arguments: ', arguments );
+
 	// Get the checkout URL for the product, or the siteless checkout URL if from Jetpack or no siteSlug is provided
 	const checkoutType = ( isFromJetpack && ! isUpgrade ) || ! siteSlug ? 'jetpack' : siteSlug;
 	const checkoutProductUrl = new URL(
@@ -43,7 +47,7 @@ const getStatsCheckoutURL = (
 	}
 
 	return checkoutProductUrl.toString();
-};
+}
 
 const getYearlyPrice = ( monthlyPrice: number ) => {
 	return monthlyPrice * 12;
@@ -181,6 +185,17 @@ const gotoCheckoutPage = ( {
 	const redirectUrl = getRedirectUrl( { from, type, adminUrl, redirectUri, siteSlug } );
 	const checkoutBackUrl = getCheckoutBackUrl( { from, adminUrl, siteSlug } );
 
+	const newCheckoutURL = getStatsCheckoutURL(
+		siteSlug,
+		product,
+		redirectUrl,
+		checkoutBackUrl,
+		from,
+		adminUrl,
+		isUpgrade
+	);
+	console.log( 'newCheckoutURL: ', newCheckoutURL );
+	return;
 	// Allow some time for the event to be recorded before redirecting.
 	setTimeout(
 		() =>
