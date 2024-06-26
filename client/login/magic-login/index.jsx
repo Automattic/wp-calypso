@@ -758,7 +758,7 @@ class MagicLogin extends Component {
 						onChange={ this.handleGravPoweredCodeInputChange }
 						placeholder={ translate( 'Verification code' ) }
 						disabled={ isProcessingCode }
-						isError={ codeValidationError }
+						isError={ !! codeValidationError }
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					/>
 					{ codeValidationError && (
