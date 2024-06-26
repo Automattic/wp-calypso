@@ -7331,6 +7331,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.48.0":
+  version: 5.48.0
+  resolution: "@tanstack/query-core@npm:5.48.0"
+  checksum: 7c21d91e326fdfe89077832d050cd13eac0e55796d88b6978ccc6e0d85571b22596c1f9364e2ac39a00739e1e63be559d2cf9d8faf0a954bdd25b0a55daa3311
+  languageName: node
+  linkType: hard
+
 "@tanstack/query-devtools@npm:5.17.7":
   version: 5.17.7
   resolution: "@tanstack/query-devtools@npm:5.17.7"
@@ -7389,6 +7396,17 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
   checksum: fe9c3c37594cddda1a3c3ec7f489243b5d8117af07cb7096a82ea644c248b31c8c3b9e248fef59ee9d41ff78663e87dd900d17da2b7f95d9b9171479a7c2d4da
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.48.0":
+  version: 5.48.0
+  resolution: "@tanstack/react-query@npm:5.48.0"
+  dependencies:
+    "@tanstack/query-core": "npm:5.48.0"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: dd4a6f9efaa4eda6767a0059da59d8a89a543d92f9f2236797f3a4dde6422b178a88c4051feac2d08bf4a469187a743330b45bf2bac53c36f5fa3459c9dd55ac
   languageName: node
   linkType: hard
 
@@ -34094,6 +34112,20 @@ __metadata:
   checksum: dceb44c28578b31641e13695d200d34ec4ab3966a5729814d5445b194933c096b7ced71494ce53a0e8820685d1d010df8b2422e5bf2cdea7e469d97ffbea306f
   languageName: node
   linkType: hard
+
+"zendesk-client@workspace:packages/zendesk-client":
+  version: 0.0.0-use.local
+  resolution: "zendesk-client@workspace:packages/zendesk-client"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@tanstack/react-query": "npm:^5.48.0"
+    "@wordpress/api-fetch": "npm:^7.2.0"
+    "@wordpress/element": "npm:^6.2.0"
+    "@wordpress/url": "npm:^4.2.0"
+    typescript: "npm:^5.3.3"
+    wpcom-proxy-request: "workspace:^"
+  languageName: unknown
+  linkType: soft
 
 "zero-fill@npm:^2.2.1":
   version: 2.2.3

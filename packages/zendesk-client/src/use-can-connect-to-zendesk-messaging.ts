@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-export function useCanConnectToZendesk( enabled = true ) {
+export function useCanConnectToZendeskMessaging( enabled = true ) {
 	return useQuery( {
 		queryKey: [ 'canConnectToZendesk' ],
 		queryFn: async () => {
