@@ -267,14 +267,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'desktop',
-			steps: [ 'user' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for desktop app',
-			lastModified: '2021-03-26',
-			showRecaptcha: true,
-		},
-		{
 			name: 'pressable-nux',
 			steps: [ 'creds-permission', 'creds-confirm', 'creds-complete' ],
 			destination: '/stats',
