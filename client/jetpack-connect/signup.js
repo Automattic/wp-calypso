@@ -510,6 +510,7 @@ export class JetpackSignup extends Component {
 						isWooOnboarding={ this.isWooOnboarding() }
 						isWooCoreProfiler={ this.isWooCoreProfiler() }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
+						hideSiteCard={ isWooCoreProfiler }
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
