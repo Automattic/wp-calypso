@@ -10,8 +10,9 @@ import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin'
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import {
 	AssertConditionState,
@@ -19,7 +20,7 @@ import {
 	ProvidedDependencies,
 	AssertConditionResult,
 } from './internals/types';
-import type { OnboardSelect } from '@automattic/data-stores';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
 
 const importFlow: Flow = {
@@ -27,7 +28,7 @@ const importFlow: Flow = {
 	isSignupFlow: true,
 
 	useSteps() {
-		return [
+		return stepsWithRequiredLogin( [
 			STEPS.IMPORT,
 			STEPS.IMPORT_LIST,
 			STEPS.IMPORT_READY,
@@ -50,20 +51,24 @@ const importFlow: Flow = {
 			STEPS.VERIFY_EMAIL,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.MIGRATION_ERROR,
-		];
+		] );
 	},
 
 	useAssertConditions(): AssertConditionResult {
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+
 		const { isAdmin, isFetching } = useIsSiteAdmin();
-		const result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		useEffect( () => {
-			if ( isAdmin === false && ! isFetching ) {
+			if ( userIsLoggedIn && isAdmin === false && ! isFetching ) {
 				window.location.assign( `/setup/${ this.name }/import` );
 			}
-		}, [ isAdmin, isFetching ] );
+		}, [ isAdmin, isFetching, userIsLoggedIn ] );
 
-		return result;
+		return { state: AssertConditionState.SUCCESS };
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
