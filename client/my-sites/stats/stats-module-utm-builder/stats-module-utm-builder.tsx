@@ -36,7 +36,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
 			</Button>
 			{ isOpen && (
 				<Modal
-					title={ translate( 'UTM Builder' ) }
+					title={ translate( 'URL Builder' ) }
 					onRequestClose={ closeModal }
 					overlayClassName="stats-utm-builder__overlay"
 				>
@@ -50,7 +50,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
 						<div className="stats-utm-builder__help">
 							<div className="stats-utm-builder__help-bg"></div>
 							<div className="stats-utm-builder__description">
-								{ translate( 'More information and parameter example.' ) }
+								{ translate( 'Parameter descriptions and examples.' ) }
 							</div>
 							<section>
 								<div className="stats-utm-builder__label">{ translate( 'Campaign Source' ) }</div>
