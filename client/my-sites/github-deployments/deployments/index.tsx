@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useI18n } from '@wordpress/react-i18n';
 import { HostingCard } from 'calypso/components/hosting-card';
@@ -47,11 +46,7 @@ export function GitHubDeployments() {
 
 	return (
 		<PageShell
-			pageTitle={
-				isEnabled( 'layout/dotcom-nav-redesign-v2' )
-					? __( 'Deployments' )
-					: __( 'GitHub Deployments' )
-			}
+			pageTitle={ __( 'Deployments' ) }
 			topRightButton={
 				deployments &&
 				deployments?.length > 0 && (

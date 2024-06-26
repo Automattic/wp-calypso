@@ -554,10 +554,8 @@ export class SiteSettingsFormGeneral extends Component {
 
 	renderAdminInterface() {
 		const { site, siteSlug, isSimple } = this.props;
-		if ( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) || isSimple ) {
-			return isEnabled( 'layout/wpcom-admin-interface' ) ? (
-				<SiteAdminInterfaceExperiment siteId={ site.ID } siteSlug={ siteSlug } />
-			) : null;
+		if ( isSimple ) {
+			return <SiteAdminInterfaceExperiment siteId={ site.ID } siteSlug={ siteSlug } />;
 		}
 
 		return <SiteAdminInterface siteId={ site.ID } siteSlug={ siteSlug } />;

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -163,17 +162,13 @@ function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless 
 					<Button
 						primary
 						onClick={ () => {
-							if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-								navigate(
-									`/overview/${ urlToSlug( productionSite.url ) }?search=${ urlToSlug(
-										productionSite.url
-									) }`,
-									false,
-									true
-								);
-							} else {
-								navigate( `/hosting-config/${ urlToSlug( productionSite.url ) }` );
-							}
+							navigate(
+								`/overview/${ urlToSlug( productionSite.url ) }?search=${ urlToSlug(
+									productionSite.url
+								) }`,
+								false,
+								true
+							);
 						} }
 						disabled={ disabled || isSyncInProgress }
 					>
