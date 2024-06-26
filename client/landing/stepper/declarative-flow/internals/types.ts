@@ -115,6 +115,12 @@ export type Flow = {
 	 */
 	isSignupFlow: boolean;
 	useSignupStartEventProps?: () => Record< string, string | number >;
+
+	/**
+	 *  You can use this hook to add extra params to the login url.
+	 * @returns An object describing extra params should be sent to the login page.
+	 */
+	useLoginParams?: () => Record< string, string | number >;
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;
