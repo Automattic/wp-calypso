@@ -135,7 +135,7 @@ export const ManageStagingSiteCardContent = ( {
 						if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 							navigate(
 								`/overview/${ urlToSlug( stagingSite.url ) }?search=${ urlToSlug(
-									stagingSite.url
+									productionSiteUrl as string
 								) }`,
 								false,
 								true

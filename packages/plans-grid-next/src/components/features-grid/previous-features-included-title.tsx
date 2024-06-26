@@ -6,6 +6,7 @@ import {
 import { useMemo } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 
@@ -32,14 +33,16 @@ const PreviousFeaturesIncludedTitle = ( {
 		);
 	}, [ renderedGridPlans ] );
 
+	const { gridPlans } = usePlansGridContext();
+
 	return plansWithFeatures.map( ( { planSlug } ) => {
 		const shouldShowFeatureTitle = ! isWpComFreePlan( planSlug );
-		const indexInGridPlansForFeaturesGrid = renderedGridPlans.findIndex(
+		const indexInGridPlansForFeaturesGrid = gridPlans.findIndex(
 			( { planSlug: slug } ) => slug === planSlug
 		);
 		const previousProductName =
 			indexInGridPlansForFeaturesGrid > 0
-				? renderedGridPlans[ indexInGridPlansForFeaturesGrid - 1 ].productNameShort
+				? gridPlans[ indexInGridPlansForFeaturesGrid - 1 ].productNameShort
 				: null;
 		const title =
 			previousProductName &&

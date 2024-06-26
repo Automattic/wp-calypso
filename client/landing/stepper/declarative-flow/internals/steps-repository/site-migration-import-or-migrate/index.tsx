@@ -8,7 +8,6 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import type { Step } from '../../types';
 import './style.scss';
@@ -111,8 +110,6 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 			</div>
 		</>
 	);
-
-	usePresalesChat( 'wpcom', true, true );
 
 	return (
 		<>

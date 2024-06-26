@@ -24,12 +24,7 @@ import {
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import {
-	styled,
-	joinClasses,
-	getContactDetailsType,
-	hasCheckoutVersion,
-} from '@automattic/wpcom-checkout';
+import { styled, joinClasses, getContactDetailsType } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -377,8 +372,6 @@ export default function CheckoutMainContent( {
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );
 
-	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
-
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
 	// starts collapsed and can be expanded; at wider widths (as a sidebar) it is
@@ -541,10 +534,8 @@ export default function CheckoutMainContent( {
 									</CheckoutSummaryTitlePrice>
 								</CheckoutSummaryTitleContent>
 							</CheckoutSummaryTitleLink>
-							<CheckoutSummaryBody
-								className="checkout__summary-body"
-								shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-							>
+
+							<CheckoutSummaryBody className="checkout__summary-body">
 								{ shouldShowSitePreview && (
 									<div className="checkout-site-preview">
 										<SitePreviewWrapper>
@@ -574,30 +565,30 @@ export default function CheckoutMainContent( {
 				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
-					{ ! shouldUseCheckoutV2 && (
-						<CheckoutStepBody
-							onError={ onReviewError }
-							className="wp-checkout__review-order-step"
-							stepId="review-order-step"
-							isStepActive={ false }
-							isStepComplete
-							titleContent={ <OrderReviewTitle /> }
-							completeStepContent={
-								<WPCheckoutOrderReview
-									removeProductFromCart={ removeProductFromCart }
-									replaceProductInCart={ replaceProductInCart }
-									couponFieldStateProps={ couponFieldStateProps }
-									removeCouponAndClearField={ removeCouponAndClearField }
-									isCouponFieldVisible={ isCouponFieldVisible }
-									setCouponFieldVisible={ setCouponFieldVisible }
-									onChangeSelection={ changeSelection }
-									siteUrl={ siteUrl }
-									createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-								/>
-							}
-							formStatus={ formStatus }
-						/>
-					) }
+
+					<CheckoutStepBody
+						onError={ onReviewError }
+						className="wp-checkout__review-order-step"
+						stepId="review-order-step"
+						isStepActive={ false }
+						isStepComplete
+						titleContent={ <OrderReviewTitle /> }
+						completeStepContent={
+							<WPCheckoutOrderReview
+								removeProductFromCart={ removeProductFromCart }
+								replaceProductInCart={ replaceProductInCart }
+								couponFieldStateProps={ couponFieldStateProps }
+								removeCouponAndClearField={ removeCouponAndClearField }
+								isCouponFieldVisible={ isCouponFieldVisible }
+								setCouponFieldVisible={ setCouponFieldVisible }
+								onChangeSelection={ changeSelection }
+								siteUrl={ siteUrl }
+								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							/>
+						}
+						formStatus={ formStatus }
+					/>
+
 					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
 							className="checkout-contact-form-step"
@@ -721,15 +712,15 @@ export default function CheckoutMainContent( {
 							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
 						} }
 					/>
-					{ ! shouldUseCheckoutV2 && (
-						<CouponFieldArea
-							isCouponFieldVisible={ isCouponFieldVisible }
-							setCouponFieldVisible={ setCouponFieldVisible }
-							isPurchaseFree={ isPurchaseFree }
-							couponStatus={ couponStatus }
-							couponFieldStateProps={ couponFieldStateProps }
-						/>
-					) }
+
+					<CouponFieldArea
+						isCouponFieldVisible={ isCouponFieldVisible }
+						setCouponFieldVisible={ setCouponFieldVisible }
+						isPurchaseFree={ isPurchaseFree }
+						couponStatus={ couponStatus }
+						couponFieldStateProps={ couponFieldStateProps }
+					/>
+
 					<CheckoutTermsAndCheckboxes
 						is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
 						setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }
@@ -851,27 +842,16 @@ const CheckoutSummaryTitlePrice = styled.span`
 	}
 `;
 
-const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
+const CheckoutSummaryBody = styled.div`
 	box-sizing: border-box;
 	margin: 0 auto;
 	max-width: 600px;
 	width: 100%;
 	display: none;
-
-	${ ( props ) =>
-		props.shouldUseCheckoutV2 ? `padding: 32px 24px 24px 24px;` : 'padding: 24px;' }
+	padding: 24px;
 
 	.is-visible & {
-		${ ( props ) =>
-			props.shouldUseCheckoutV2
-				? ` display: grid;
-			grid-template-areas:
-			"preview"
-			"review"
-			"summary"
-			"nudge"
-			"features";`
-				: `display: block;` };
+		display: block;
 	}
 
 	& .checkout-site-preview {
@@ -884,19 +864,7 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		${ ( props ) =>
-			props.shouldUseCheckoutV2 ? `padding: 50px 24px 24px 24px;` : 'padding: 24px;' }
-
-		.is-visible & {
-			${ ( props ) =>
-				props.shouldUseCheckoutV2 &&
-				`grid-template-areas:
-			"preview preview"
-			"review review"
-			"summary summary"
-			"features nudge"
-			` };
-		}
+		padding: 24px;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -905,17 +873,7 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 
 		.is-visible &,
 		& {
-			${ ( props ) =>
-				props.shouldUseCheckoutV2
-					? `grid-template-areas:
-					"preview"
-					"review"
-					"summary"
-					"nudge"
-					"features";
-					display: grid;
-			`
-					: `display: block;` };
+			display: block;
 		}
 
 		& .card {
@@ -1206,7 +1164,6 @@ const WPCheckoutSidebarContent = styled.div`
 		}
 	}
 `;
-
 const SitePreviewWrapper = styled.div`
 	.home-site-preview {
 		margin-bottom: 1.5em;
@@ -1215,22 +1172,18 @@ const SitePreviewWrapper = styled.div`
 			0 0 0 1px var( --color-border-subtle ),
 			rgba( 0, 0, 0, 0.2 ) 0 7px 30px -10px;
 		border-radius: 6px;
-
 		& .home-site-preview__thumbnail-wrapper {
 			aspect-ratio: 16 / 9;
 			border-radius: 6px;
 			box-shadow: none;
 			min-width: 100%;
-
 			&:hover {
 				box-shadow: unset;
-
 				& .home-site-preview__thumbnail {
 					opacity: unset;
 				}
 			}
 		}
-
 		& home-site-preview__thumbnail {
 			opacity: 1;
 		}

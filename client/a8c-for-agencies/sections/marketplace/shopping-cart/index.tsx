@@ -2,11 +2,14 @@ import page from '@automattic/calypso-router';
 import { Badge, Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useContext } from 'react';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import usePaymentMethod from '../../purchases/payment-methods/hooks/use-payment-method';
+import { MarketplaceTypeContext } from '../context';
+import { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
 import ShoppingCartIcon from './shopping-cart-icon';
 import ShoppingCartMenu from './shopping-cart-menu';
 import type { ShoppingCartItem } from '../types';
@@ -34,8 +37,11 @@ export default function ShoppingCart( {
 }: Props ) {
 	const { paymentMethodRequired } = usePaymentMethod();
 
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const isAutomatedReferrals = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
+
 	const handleOnCheckout = () => {
-		if ( paymentMethodRequired ) {
+		if ( paymentMethodRequired && ! isAutomatedReferrals ) {
 			page( `${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_MARKETPLACE_CHECKOUT_LINK }` );
 			return;
 		}

@@ -75,6 +75,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 		<Form
 			className="partner-directory-agency-details"
 			title={ translate( 'Finish adding details to your public profile' ) }
+			autocomplete="off"
 			description={
 				<>
 					Add details to your agency's public profile for clients to see.{ ' ' }
@@ -85,7 +86,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			}
 		>
 			<FormSection title={ translate( 'Agency information' ) }>
-				<FormField label={ translate( 'Company name' ) }>
+				<FormField label={ translate( 'Company name' ) } isRequired>
 					<TextControl
 						value={ formData.name }
 						onChange={ ( value ) => setFormFields( { name: value } ) }
@@ -94,13 +95,14 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Company email' ) }
 					description={ translate( 'Client inquiries and leads will go to this email.' ) }
+					isRequired
 				>
 					<TextControl
 						value={ formData.email }
 						onChange={ ( value ) => setFormFields( { email: value } ) }
 					/>
 				</FormField>
-				<FormField label={ translate( 'Company website' ) }>
+				<FormField label={ translate( 'Company website' ) } isRequired>
 					<TextControl
 						value={ formData.website }
 						onChange={ ( value ) => setFormFields( { website: value } ) }
@@ -111,19 +113,20 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					description={ translate(
 						"Optional: Include your custom landing page for leads from Automattic platforms. We'll direct clients to this page."
 					) }
+					showOptionalLabel
 				>
 					<TextControl
 						value={ formData.landingPageUrl }
 						onChange={ ( value ) => setFormFields( { landingPageUrl: value } ) }
 					/>
 				</FormField>
-				<FormField label={ translate( 'Company bio' ) }>
+				<FormField label={ translate( 'Company bio' ) } isRequired>
 					<TextareaControl
 						value={ formData.bioDescription }
 						onChange={ ( value ) => setFormFields( { bioDescription: value } ) }
 					/>
 				</FormField>
-				<FormField label={ translate( 'Company location' ) }>
+				<FormField label={ translate( 'Company location' ) } isRequired>
 					<SearchableDropdown
 						value={ formData.country }
 						onChange={ ( value ) => {
@@ -135,7 +138,10 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				</FormField>
 				<FormField
 					label={ translate( 'Company logo' ) }
-					description={ translate( 'Upload your agency logo sized at 800px by 320px.' ) }
+					description={ translate(
+						'Upload your agency logo sized at 800px by 320px. Format allowed: JPG, PNG'
+					) }
+					isRequired
 				>
 					<TextControl
 						value={ formData.logoUrl }
@@ -159,25 +165,25 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						}
 					/>
 				</FormField>
-				<FormField label={ translate( 'Industry' ) }>
+				<FormField label={ translate( 'Industry' ) } isRequired>
 					<IndustrySelector
 						industry={ formData.industry }
 						setIndustry={ ( industry ) => setFormFields( { industry: industry } ) }
 					/>
 				</FormField>
-				<FormField label={ translate( 'Services you offer' ) }>
+				<FormField label={ translate( 'Services you offer' ) } isRequired>
 					<ServicesSelector
 						selectedServices={ formData.services }
 						setServices={ ( services ) => setFormFields( { services } ) }
 					/>
 				</FormField>
-				<FormField label={ translate( 'Products you work with' ) }>
+				<FormField label={ translate( 'Products you work with' ) } isRequired>
 					<ProductsSelector
 						selectedProducts={ formData.products }
 						setProducts={ ( products ) => setFormFields( { products } ) }
 					/>
 				</FormField>
-				<FormField label={ translate( 'Languages spoken' ) }>
+				<FormField label={ translate( 'Languages spoken' ) } isRequired>
 					<LanguageSelector
 						selectedLanguages={ formData.languagesSpoken }
 						setLanguages={ ( languagesSpoken ) => setFormFields( { languagesSpoken } ) }
@@ -191,13 +197,18 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					'Optionally set your minimum budget. Clients can filter these details to find the right agency.'
 				) }
 			>
-				<FormField label={ translate( 'Minimum project budget' ) }>
+				<FormField label={ translate( 'Minimum project budget' ) } isRequired>
 					<BudgetSelector
 						budgetLowerRange={ formData.budgetLowerRange }
 						setBudget={ ( budget: string ) => setFormFields( { budgetLowerRange: budget } ) }
 					/>
 				</FormField>
 			</FormSection>
+
+			<div className="partner-directory-agency-cta__required-information">
+				{ translate( '* indicates required information' ) }
+			</div>
+
 			<div className="partner-directory-agency-cta__footer">
 				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
 					{ translate( 'Save public profile' ) }

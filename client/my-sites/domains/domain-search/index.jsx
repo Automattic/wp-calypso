@@ -46,6 +46,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	isSiteOnECommerceTrial,
@@ -120,6 +121,10 @@ class DomainSearch extends Component {
 			document.body.classList.add( 'is-domain-plan-package-flow' );
 		}
 		this.checkSiteIsUpgradeable();
+
+		if ( this.props.isAddNewDomainContext ) {
+			this.props.setCurrentFlowName( 'domains' );
+		}
 
 		this.isMounted = true;
 	}
@@ -449,5 +454,6 @@ export default connect(
 	{
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
+		setCurrentFlowName,
 	}
 )( withCartKey( withShoppingCart( localize( DomainSearch ) ) ) );

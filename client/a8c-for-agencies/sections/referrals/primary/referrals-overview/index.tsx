@@ -52,14 +52,18 @@ export default function ReferralsOverview( {
 
 	const isDesktop = useDesktopBreakpoint();
 
+	const selectedItem = dataViewsState.selectedItem;
+
 	const title =
-		isAutomatedReferral && isDesktop
+		isAutomatedReferral && isDesktop && ! selectedItem
 			? translate( 'Your referrals and commissions' )
 			: translate( 'Referrals' );
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
 	const { data: referrals, isFetching: isFetchingReferrals } =
 		useFetchReferrals( isAutomatedReferral );
+
+	const isPayable = tipaltiData?.IsPayable;
 
 	const hasReferrals = !! referrals?.length;
 
@@ -70,13 +74,11 @@ export default function ReferralsOverview( {
 
 	const isLoading = isFetching || isFetchingReferrals;
 
-	const selectedItem = dataViewsState.selectedItem;
-
 	return (
 		<Layout
 			className={ clsx( 'referrals-layout', {
 				'referrals-layout--automated': isAutomatedReferral,
-				'referrals-layout--full-width': isAutomatedReferral && hasReferrals,
+				'full-width-layout-with-table': isAutomatedReferral && hasReferrals,
 				'referrals-layout--has-selected': selectedItem,
 			} ) }
 			title={ title }
@@ -97,7 +99,7 @@ export default function ReferralsOverview( {
 
 					<LayoutHeader>
 						<Title>{ title } </Title>
-						{ isAutomatedReferral && (
+						{ isAutomatedReferral && isPayable && (
 							<Actions>
 								<MobileSidebarNavigation />
 								<Button primary href={ A4A_MARKETPLACE_PRODUCTS_LINK } onClick={ makeAReferral }>

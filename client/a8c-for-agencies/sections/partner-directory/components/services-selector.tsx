@@ -18,9 +18,10 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 	);
 
 	// Get the selected services by label
-	const selectedServicesByLabel = selectedServices.map( ( slug ) => {
+	const selectedServicesByLabel = selectedServices.flatMap( ( slug ) => {
 		const key = slug as string;
-		return availableServices[ key ];
+		const value = availableServices[ key ];
+		return value ? [ value ] : [];
 	} );
 
 	// Set the selected services by slug
@@ -44,7 +45,7 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 			__nextHasNoMarginBottom
 			label=""
 			onChange={ onServiceLabelsSelected }
-			suggestions={ Object.values( availableServices ) }
+			suggestions={ Object.values( availableServices ).sort() }
 			value={ selectedServicesByLabel }
 		/>
 	);

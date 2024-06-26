@@ -142,7 +142,8 @@ const PlanFeatures2023GridActions = ( {
 			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
 	)?.checkoutLink;
 
-	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
+	const nonDefaultStorageOptionSelected =
+		selectedStorageOptionForPlan && defaultStorageOption !== selectedStorageOptionForPlan;
 
 	let actionButton = (
 		<Plans2023Tooltip

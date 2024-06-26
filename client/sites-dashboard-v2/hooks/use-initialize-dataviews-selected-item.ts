@@ -12,17 +12,17 @@ export function useInitializeDataViewsSelectedItem( {
 	selectedSite?: SiteDetails | null;
 	paginatedSites: any;
 } ) {
-	const initialized = useRef( false );
+	const initialized = useRef( '' );
 
 	useEffect( () => {
-		if ( initialized.current || ! selectedSite ) {
+		if ( initialized.current === selectedSite?.slug || ! selectedSite ) {
 			return;
 		}
 		for ( const site of document.querySelectorAll( '.sites-dataviews__site' ) ) {
 			const slug = site.querySelector( '.sites-dataviews__site-url span' );
 			if ( selectedSite.slug === ( slug as HTMLElement )?.innerText ) {
 				( site as HTMLElement ).click?.();
-				initialized.current = true;
+				initialized.current = selectedSite.slug;
 				break;
 			}
 		}

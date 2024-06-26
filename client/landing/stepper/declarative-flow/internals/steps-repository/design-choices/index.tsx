@@ -7,6 +7,7 @@ import {
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -31,9 +32,17 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		[]
 	);
 
-	const isBigSkyEligible = useIsBigSkyEligible();
-
+	const { isEligible, isLoading } = useIsBigSkyEligible();
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+
+	useEffect( () => {
+		if ( ! isLoading && isEligible ) {
+			recordTracksEvent( 'calypso_big_sky_view_choice', {
+				flow,
+				step: stepName,
+			} );
+		}
+	}, [ isEligible, isLoading, flow, stepName ] );
 
 	const handleSubmit = ( destination: string ) => {
 		recordTracksEvent( 'calypso_signup_design_choices_submit', {
@@ -52,14 +61,6 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 
 		submit?.( { destination } );
-	};
-
-	const recordBigSkyView = () => {
-		recordTracksEvent( 'calypso_big_sky_view_choice', {
-			flow,
-			step: stepName,
-		} );
-		return true;
 	};
 
 	return (
@@ -88,7 +89,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="pattern-assembler"
 								onSelect={ handleSubmit }
 							/>
-							{ isBigSkyEligible && recordBigSkyView() && (
+							{ ! isLoading && isEligible && (
 								<BigSkyDisclaimerModal flow={ flow } stepName={ stepName }>
 									<DesignChoice
 										className="design-choices__try-big-sky"

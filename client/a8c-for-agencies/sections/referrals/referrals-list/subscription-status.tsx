@@ -10,11 +10,8 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 		item: Referral
 	): {
 		status: string | null;
-		type: 'warning' | 'success' | null;
+		type: 'warning' | 'success' | 'info' | null;
 	} => {
-		const activeStatuses = item.statuses.filter( ( status ) => status === 'active' );
-		const pendingStatuses = item.statuses.filter( ( status ) => status === 'pending' );
-
 		if ( ! item.statuses.length ) {
 			return {
 				status: null,
@@ -22,22 +19,36 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 			};
 		}
 
-		if ( activeStatuses.length === item.statuses.length ) {
-			return {
-				status: translate( 'Active' ),
-				type: 'success',
-			};
+		const status = item.statuses.reduce( ( prev, curr ) => {
+			if ( prev === curr ) {
+				return curr;
+			}
+
+			return 'mixed';
+		}, item.statuses[ 0 ] );
+
+		switch ( status ) {
+			case 'active':
+				return {
+					status: translate( 'Active' ),
+					type: 'success',
+				};
+			case 'pending':
+				return {
+					status: translate( 'Pending' ),
+					type: 'warning',
+				};
+			case 'canceled':
+				return {
+					status: translate( 'Canceled' ),
+					type: 'info',
+				};
+			default:
+				return {
+					status: translate( 'Mixed' ),
+					type: 'warning',
+				};
 		}
-		if ( pendingStatuses.length === item.statuses.length ) {
-			return {
-				status: translate( 'Pending' ),
-				type: 'warning',
-			};
-		}
-		return {
-			status: translate( 'Mixed' ),
-			type: 'warning',
-		};
 	};
 
 	const { status, type } = getStatus( item );

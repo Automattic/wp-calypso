@@ -39,16 +39,6 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 				enableSorting: false,
 			},
 			{
-				id: 'date',
-				header: translate( 'Date' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
-					return <DateAssigned purchase={ item } />;
-				},
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
 				id: 'assigned-to',
 				header: translate( 'Assigned to' ).toUpperCase(),
 				getValue: () => '-',
@@ -61,6 +51,16 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 							isFetching={ isFetching }
 						/>
 					);
+				},
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'date',
+				header: translate( 'Assigned on' ).toUpperCase(),
+				getValue: () => '-',
+				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
+					return <DateAssigned purchase={ item } />;
 				},
 				enableHiding: false,
 				enableSorting: false,

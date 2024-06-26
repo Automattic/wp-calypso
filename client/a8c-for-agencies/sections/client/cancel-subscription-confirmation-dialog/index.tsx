@@ -5,6 +5,7 @@ import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholde
 import useCancelClientSubscription from 'calypso/a8c-for-agencies/data/client/use-cancel-client-subscription';
 import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
 import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { Subscription } from '../types';
 
@@ -23,7 +24,11 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 	const { mutate: cancelSubscription, isPending } = useCancelClientSubscription( {
 		onSuccess: () => {
-			dispatch( successNotice( translate( 'The subscription was successfully cancelled.' ) ) );
+			dispatch(
+				successNotice( translate( 'The subscription was successfully canceled.' ), {
+					id: 'a8c-cancel-subscription-success',
+				} )
+			);
 			onCancelSubscription?.( subscription );
 			setIsVisible( false );
 		},
@@ -35,8 +40,14 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 	const onConfirm = () => {
 		cancelSubscription( {
-			subscriptionId: subscription.id,
+			licenseKey: subscription.license.license_key,
 		} );
+		dispatch( recordTracksEvent( 'calypso_a8c_client_subscription_cancel_confirm' ) );
+	};
+
+	const handleClose = () => {
+		dispatch( recordTracksEvent( 'calypso_a8c_client_subscription_cancel_dismiss' ) );
+		setIsVisible( false );
 	};
 
 	const productName =
@@ -52,7 +63,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 				className="cancel-subscription-confirmation-dialog"
 				isVisible={ isVisible }
 				buttons={ [
-					<Button onClick={ () => setIsVisible( false ) } disabled={ isPending }>
+					<Button onClick={ handleClose } disabled={ isPending }>
 						{ translate( 'Keep the subscription' ) }
 					</Button>,
 					<Button
@@ -66,7 +77,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 					</Button>,
 				] }
 				shouldCloseOnEsc
-				onClose={ () => setIsVisible( false ) }
+				onClose={ handleClose }
 			>
 				<h1 className="cancel-subscription-confirmation-dialog__title">
 					{ translate( 'Are you sure you want to cancel this subscription?' ) }

@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
+	type SiteExcerptData,
 	SitesSortKey,
 	useSitesListFiltering,
 	useSitesListGrouping,
@@ -236,6 +237,24 @@ const SitesDashboardV2 = ( {
 		}
 	}, [ dataViewsState, setDataViewsState ] );
 
+	const openSitePreviewPane = useCallback(
+		( site: SiteExcerptData ) => {
+			setDataViewsState( ( prevState: DataViewsState ) => ( {
+				...prevState,
+				selectedItem: site,
+				type: 'list',
+			} ) );
+		},
+		[ setDataViewsState ]
+	);
+
+	const changeSitePreviewPane = ( siteId: number ) => {
+		const targetSite = allSites.find( ( site ) => site.ID === siteId );
+		if ( targetSite ) {
+			openSitePreviewPane( targetSite );
+		}
+	};
+
 	// todo: temporary mock data
 	const hideListing = false;
 	const isNarrowView = false;
@@ -314,6 +333,7 @@ const SitesDashboardV2 = ( {
 							selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
 							setSelectedSiteFeature={ setSelectedSiteFeature }
 							closeSitePreviewPane={ closeSitePreviewPane }
+							changeSitePreviewPane={ changeSitePreviewPane }
 						/>
 					</LayoutColumn>
 					<GuidedTour defaultTourId="siteManagementTour" />

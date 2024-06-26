@@ -1,0 +1,12 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+.step-route.site-migration-instructions {
+	.step-container {
+		padding: 0 0 60px;
+
+		@include break-large {
+			padding: 0;
+		}
+	}
+}

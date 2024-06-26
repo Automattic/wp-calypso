@@ -6,10 +6,10 @@ if [ $# -eq 0 ]; then
     echo "Pulling files from ${GREEN}PR#91208${NC}"
 
     # This checks out loose files from a branch.
-    git checkout add/mock-wp.com -- client/server/boot/index.js
-    git checkout add/mock-wp.com -- config/development.json
-    git checkout add/mock-wp.com -- package.json
-    git checkout add/mock-wp.com -- yarn.lock
+    git checkout origin/add/mock-wp.com -- client/server/boot/index.js
+    git checkout origin/add/mock-wp.com -- config/development.json
+    git checkout origin/add/mock-wp.com -- package.json
+    git checkout origin/add/mock-wp.com -- yarn.lock
 
     echo "Installing dependencies..."
 
@@ -29,7 +29,7 @@ elif [ $1 == '--unmock' ]; then
     git checkout trunk -- config/development.json
     git checkout trunk -- package.json
     git checkout trunk -- yarn.lock
-    
+
     echo "Done!"
     echo "Make sure to remove ${GREEN}127.0.0.1 wordpress.com${NC} to your hosts file."
 fi

@@ -3,21 +3,28 @@ import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useIsSiteReady from 'calypso/a8c-for-agencies/data/sites/use-is-site-ready';
+import { addQueryArgs } from 'calypso/lib/url';
 
 type Props = {
 	siteId: number;
+	migrationIntent: boolean;
 };
 
-export default function ProvisioningSiteNotification( { siteId }: Props ) {
+export default function ProvisioningSiteNotification( { siteId, migrationIntent }: Props ) {
 	const { isReady, site } = useIsSiteReady( { siteId } );
 	const [ showBanner, setShowBanner ] = useState( true );
 
 	const translate = useTranslate();
 
-	const wpOverviewUrl = `https://wordpress.com/overview/${ site?.url?.replace(
-		/(^\w+:|^)\/\//,
-		''
-	) }`;
+	const siteSlug = site?.url?.replace( /(^\w+:|^)\/\//, '' );
+	const wpOverviewUrl = `https://wordpress.com/overview/${ siteSlug }`;
+	const wpMigrationUrl = addQueryArgs(
+		{
+			siteId: site?.id,
+			siteSlug,
+		},
+		'https://wordpress.com/setup/hosted-site-migration/site-migration-identify'
+	);
 
 	return (
 		showBanner && (
@@ -33,9 +40,15 @@ export default function ProvisioningSiteNotification( { siteId }: Props ) {
 				actions={
 					isReady
 						? [
-								<Button href={ wpOverviewUrl } target="_blank" rel="noreferrer" primary>
-									{ translate( 'Set up your site' ) }
-								</Button>,
+								migrationIntent ? (
+									<Button href={ wpMigrationUrl } target="_blank" rel="noreferrer" primary>
+										{ translate( 'Migrate to this site' ) }
+									</Button>
+								) : (
+									<Button href={ wpOverviewUrl } target="_blank" rel="noreferrer" primary>
+										{ translate( 'Set up your site' ) }
+									</Button>
+								),
 						  ]
 						: undefined
 				}

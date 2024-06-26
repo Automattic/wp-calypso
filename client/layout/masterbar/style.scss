@@ -1069,6 +1069,8 @@ a.masterbar__quick-language-switcher {
 
 		svg {
 			fill: var(--color-masterbar-icon);
+			width: 20px;
+			padding-inline: 2px;
 		}
 
 		&:hover {

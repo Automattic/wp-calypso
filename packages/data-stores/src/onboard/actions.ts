@@ -449,6 +449,10 @@ export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
 	paidSubscribers,
 } );
 
+export const setPartnerBundle = ( partnerBundle: string | null ) => ( {
+	type: 'SET_PARTNER_BUNDLE' as const,
+	partnerBundle,
+} );
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -505,4 +509,5 @@ export type OnboardAction = ReturnType<
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
 	| typeof setPaidSubscribers
+	| typeof setPartnerBundle
 >;
