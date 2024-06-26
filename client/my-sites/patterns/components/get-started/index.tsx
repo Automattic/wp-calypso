@@ -11,7 +11,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
-export function PatternsGetStarted() {
+export function PatternsGetStarted( { theme }: { theme?: 'dark' } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const localizeUrl = useLocalizeUrl();
@@ -22,7 +22,7 @@ export function PatternsGetStarted() {
 		<PatternsSection
 			bodyFullWidth
 			description={ translate( 'Take a look at our how-to guides to get started with patterns.' ) }
-			theme="dark"
+			theme={ theme }
 			title={ translate( 'All about patterns', {
 				comment: 'Heading text in a section with informative links about block patterns',
 				textOnly: true,

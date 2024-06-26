@@ -2,17 +2,17 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
+import { useHelpSearchQuery } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
-import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import './style.scss';
 
 export default function PopUpSearch( { onClose } ) {
 	const translate = useTranslate();
 	const [ searchQuery, setSearchQuery ] = useState( '' );
-	const { data } = useHelpSearchQuery( searchQuery );
+	const { data = [] } = useHelpSearchQuery( searchQuery );
 
 	const searchResults = data.slice( 0, 5 );
 
@@ -29,7 +29,7 @@ export default function PopUpSearch( { onClose } ) {
 
 	const onResultClick = ( link ) => {
 		onClose();
-		const linkUrlObject = new URL( window.location.origin + link );
+		const linkUrlObject = new URL( link );
 		const combinedQueryParams = mergeQueryParams( linkUrlObject.search, window.location.search );
 		linkUrlObject.search = combinedQueryParams;
 

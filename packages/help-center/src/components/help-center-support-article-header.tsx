@@ -1,7 +1,12 @@
-import PropTypes from 'prop-types';
-import ExternalLink from 'calypso/components/external-link';
+import { ExternalLink } from '@automattic/components';
 
-const SupportArticleHeader = ( { post, isLoading } ) =>
+export const SupportArticleHeader = ( {
+	post,
+	isLoading,
+}: {
+	post: { link: string; title: string };
+	isLoading: boolean;
+} ) =>
 	isLoading || ! post ? (
 		<div className="support-article-dialog__header is-placeholder">
 			<h1 className="support-article-dialog__header-title is-placeholder">Post loading…</h1>
@@ -11,7 +16,7 @@ const SupportArticleHeader = ( { post, isLoading } ) =>
 			<h1 className="support-article-dialog__header-title">
 				<ExternalLink
 					className="support-article-dialog__header-title-link"
-					href={ post.URL }
+					href={ post.link }
 					target="_blank"
 					icon={ false }
 				>
@@ -20,10 +25,3 @@ const SupportArticleHeader = ( { post, isLoading } ) =>
 			</h1>
 		</div>
 	);
-
-SupportArticleHeader.propTypes = {
-	post: PropTypes.object,
-	isLoading: PropTypes.bool,
-};
-
-export default SupportArticleHeader;
