@@ -36,7 +36,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
 			</Button>
 			{ isOpen && (
 				<Modal
-					title={ translate( 'UTM Builder' ) }
+					title={ translate( 'URL Builder' ) }
 					onRequestClose={ closeModal }
 					overlayClassName="stats-utm-builder__overlay"
 				>
