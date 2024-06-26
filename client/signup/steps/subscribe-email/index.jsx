@@ -31,6 +31,7 @@ function sanitizeRedirectUrl( redirect ) {
 function SubscribeEmailStep( props ) {
 	const { flowName, goToNextStep, queryParams, stepName } = props;
 	const redirectUrl = sanitizeRedirectUrl( queryParams.redirect_to );
+	const email = typeof queryParams.user_email === 'string' ? queryParams.user_email.trim() : '';
 
 	const { mutate: subscribeToMailingList, isPending: isSubscribeToMailingListPending } =
 		useSubscribeToMailingList( {
@@ -47,13 +48,13 @@ function SubscribeEmailStep( props ) {
 		useCreateNewAccountMutation( {
 			onSuccess: () =>
 				subscribeToMailingList( {
-					email_address: queryParams.user_email,
+					email_address: email,
 					mailing_list_category: queryParams.mailing_list,
 				} ),
 			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
 					subscribeToMailingList( {
-						email_address: queryParams.user_email,
+						email_address: email,
 						mailing_list_category: queryParams.mailing_list,
 					} );
 				}
@@ -61,8 +62,6 @@ function SubscribeEmailStep( props ) {
 		} );
 
 	useEffect( () => {
-		const email = typeof queryParams.user_email === 'string' ? queryParams.user_email.trim() : '';
-
 		if ( emailValidator.validate( email ) ) {
 			createNewAccount( {
 				userData: {
@@ -72,7 +71,7 @@ function SubscribeEmailStep( props ) {
 				isPasswordless: true,
 			} );
 		}
-	}, [ createNewAccount, flowName, queryParams.user_email ] );
+	}, [ createNewAccount, flowName, email ] );
 
 	return (
 		<div className="subscribe-email">
@@ -82,8 +81,10 @@ function SubscribeEmailStep( props ) {
 				stepContent={
 					<SubscribeEmailStepContent
 						{ ...props }
+						email={ email }
 						isPending={ isCreateNewAccountPending || isSubscribeToMailingListPending }
 						redirectUrl={ redirectUrl }
+						subscribeToMailingList={ subscribeToMailingList }
 					/>
 				}
 				stepName={ stepName }
