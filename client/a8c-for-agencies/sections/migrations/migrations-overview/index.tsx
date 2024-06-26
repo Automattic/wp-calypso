@@ -26,7 +26,7 @@ export default function MigrationsOverview() {
 	const dispatch = useDispatch();
 	const title = translate( 'Migrations' );
 
-	const { data } = useGetTipaltiPayee( true );
+	const { data } = useGetTipaltiPayee();
 	const accountStatus = getAccountStatus( data, translate );
 	const statusProps = {
 		children: accountStatus?.status,
