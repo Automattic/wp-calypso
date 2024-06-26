@@ -1164,40 +1164,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			line-height: 24px;
 			color: $gray-700;
 		}
-
-		img.gravatar {
-			width: 80px;
-			height: 80px;
-		}
-
-		.jetpack-connect__logged-in-form-user {
-			flex-direction: column;
-		}
-
-		a.logged-out-form__link-item {
-			margin: 0;
-			font-size: 0.875rem;
-			font-weight: 400;
-			line-height: 24px;
-		}
-
-		.jetpack-connect__logged-in-form-user-text {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			margin-bottom: 13.5px;
-			strong {
-				font-size: 1rem;
-				font-weight: 500;
-				line-height: 24px;
-				letter-spacing: -0.008px;
-			}
-			small {
-				font-size: 0.875rem;
-				font-weight: 400;
-				line-height: 24px;
-			}
-		}
 	}
 
 	.jetpack-connect__logged-in-card {
@@ -1205,6 +1171,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		flex-direction: column;
 		padding: 32px 24px;
 		background: #fff;
+		align-items: center;
 		border: 1px solid $gray-300;
 		border-radius: 2px;
 		max-width: 405px;
@@ -1214,10 +1181,23 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			max-width: 100%;
 		}
 
+		a.logged-out-form__link-item {
+			margin: 0;
+			font-size: 0.875rem;
+			font-weight: 400;
+			line-height: 24px;
+		}
+
+		img.gravatar {
+			width: 80px;
+			height: 80px;
+		}
+
 		.jetpack-connect__logged-in-form-user {
 			display: flex;
 			gap: 16px;
 			align-items: center;
+			flex-direction: column;
 		}
 
 		.gravatar {
@@ -1225,6 +1205,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.jetpack-connect__logged-in-form-user-text {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-bottom: 13.5px;
 			color: var(--studio-gray-100);
 			font-size: 1rem;
 			font-weight: 500;
@@ -1235,6 +1219,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				line-height: 24px;
 				font-weight: 400;
 				color: $gray-700;
+			}
+
+			strong {
+				font-size: 1rem;
+				font-weight: 500;
+				line-height: 24px;
+				letter-spacing: -0.008px;
+				display: block;
 			}
 		}
 
