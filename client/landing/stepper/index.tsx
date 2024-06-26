@@ -33,6 +33,7 @@ import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
+import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
 
@@ -81,6 +82,9 @@ const initializeHotJar = ( flowName: string ) => {
 };
 
 window.AppBoot = async () => {
+	// Start tracking performance, bearing in mind this is a full page load.
+	startStepperPerformanceTracking( { fullPageLoad: true } );
+
 	const flowName = getFlowFromURL();
 
 	if ( ! flowName ) {
