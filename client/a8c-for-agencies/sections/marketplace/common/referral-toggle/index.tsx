@@ -16,8 +16,8 @@ const PREFERENCE_NAME = 'a4a-marketplace-referral-guide-seen';
 
 const ReferralToggle = () => {
 	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
-	const { data: tipaltiData } = useGetTipaltiPayee();
-	const hasActivePayeeAcount = tipaltiData?.Status === 'Active';
+	const { data: tipaltiData } = useGetTipaltiPayee( true );
+	const isPayable = tipaltiData?.IsPayable;
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const ReferralToggle = () => {
 		}
 	}, [ dispatch, guideModalSeen, marketplaceType, openGuide ] );
 
-	if ( ! isAutomatedReferrals || ! hasActivePayeeAcount ) {
+	if ( ! isAutomatedReferrals || ! isPayable ) {
 		return null;
 	}
 

@@ -17,15 +17,16 @@ function withMarketplaceType< T >(
 ): ComponentType< T & ContextProps > {
 	return ( props ) => {
 		const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
-		const { data: tipaltiData } = useGetTipaltiPayee();
-		const hasActivePayeeAcount = tipaltiData?.Status === 'Active';
+		const { data: tipaltiData } = useGetTipaltiPayee( true );
+		const isPayable = tipaltiData?.IsPayable;
+
 		const usedMarketplaceType =
 			props.defaultMarketplaceType ??
 			( sessionStorage.getItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY ) as MarketplaceType ) ??
 			MARKETPLACE_TYPE_REGULAR;
 
 		const defaultType =
-			isAutomatedReferrals && hasActivePayeeAcount ? usedMarketplaceType : MARKETPLACE_TYPE_REGULAR;
+			isAutomatedReferrals && isPayable ? usedMarketplaceType : MARKETPLACE_TYPE_REGULAR;
 		const [ marketplaceType, setMarketplaceType ] = useState( defaultType );
 
 		const updateMarketplaceType = ( type: MarketplaceType ) => {
@@ -34,7 +35,7 @@ function withMarketplaceType< T >(
 		};
 
 		const toggleMarketplaceType = () => {
-			if ( ! isAutomatedReferrals || ! hasActivePayeeAcount ) {
+			if ( ! isAutomatedReferrals || ! isPayable ) {
 				return;
 			}
 			const nextType =
