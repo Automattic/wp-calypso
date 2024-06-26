@@ -32,6 +32,85 @@ import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
+type HelpLinkProps = {
+	result: SearchResult;
+	type: string;
+	index: number;
+	onLinkClickHandler: (
+		event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
+		result: SearchResult,
+		type: string
+	) => void;
+	externalLinks?: boolean;
+};
+
+const isResultFromDeveloperWordpress = ( url: string ) => {
+	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
+	return developerSiteRegex.test( url );
+};
+
+const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
+	const { result, type, index, onLinkClickHandler, externalLinks } = props;
+	const { link, title, icon } = result;
+	const { sectionName } = useHelpCenterContext();
+	const isRtl = useRtl();
+
+	const wpAdminSections = [ 'wp-admin', 'gutenberg-editor' ].includes( sectionName );
+	const external = wpAdminSections || ( externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION );
+
+	const LinkIcon = () => {
+		if ( type === 'admin_section' ) {
+			return <Icon icon={ arrowRight } />;
+		}
+
+		if ( icon ) {
+			return <Gridicon icon={ icon } />;
+		}
+
+		return <Icon icon={ pageIcon } />;
+	};
+
+	const DeveloperResourceIndicator = () => {
+		return (
+			<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
+		);
+	};
+
+	return (
+		<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
+			<li className="help-center-search-results__item">
+				<div className="help-center-search-results__cell">
+					<a
+						href={ localizeUrl( link ) }
+						onClick={ ( event ) => {
+							if ( ! external ) {
+								event.preventDefault();
+							}
+							onLinkClickHandler( event, result, type );
+						} }
+						{ ...( external && {
+							target: '_blank',
+							rel: 'noreferrer',
+						} ) }
+					>
+						{ isResultFromDeveloperWordpress( result.link ) ? (
+							<DeveloperResourceIndicator />
+						) : (
+							<LinkIcon />
+						) }
+						<span>{ preventWidows( decodeEntities( title ) ) }</span>
+						<Icon
+							width={ 20 }
+							height={ 20 }
+							icon={ result.post_id ? chevronRight : externalIcon }
+						/>
+					</a>
+				</div>
+			</li>
+		</Fragment>
+	);
+};
+
 interface SearchResultsSectionProps {
 	type: string;
 	title: string;
@@ -41,11 +120,6 @@ interface SearchResultsSectionProps {
 
 const noop = () => {
 	return;
-};
-
-const isResultFromDeveloperWordpress = ( url: string ) => {
-	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
-	return developerSiteRegex.test( url );
 };
 
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
@@ -118,7 +192,6 @@ function HelpSearchResults( {
 		[ sectionName, siteIntent ]
 	);
 
-	const isRtl = useRtl();
 	const locale = useLocale();
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
@@ -206,72 +279,6 @@ function HelpSearchResults( {
 		onSelect( event, result );
 	};
 
-	type HelpLinkProps = {
-		result: SearchResult;
-		type: string;
-		index: number;
-	};
-
-	const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
-		const { result, type, index } = props;
-		const { link, title, icon } = result;
-
-		const external =
-			externalLinks || ( type !== SUPPORT_TYPE_ADMIN_SECTION && ! openAdminInNewTab );
-
-		const LinkIcon = () => {
-			if ( type === 'admin_section' ) {
-				return <Icon icon={ arrowRight } />;
-			}
-
-			if ( icon ) {
-				return <Gridicon icon={ icon } />;
-			}
-
-			return <Icon icon={ pageIcon } />;
-		};
-
-		const DeveloperResourceIndicator = () => {
-			return (
-				<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
-			);
-		};
-
-		return (
-			<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
-				<li className="help-center-search-results__item">
-					<div className="help-center-search-results__cell">
-						<a
-							href={ localizeUrl( link ) }
-							onClick={ ( event ) => {
-								if ( ! external ) {
-									event.preventDefault();
-								}
-								onLinkClickHandler( event, result, type );
-							} }
-							{ ...( external && {
-								target: '_blank',
-								rel: 'noreferrer',
-							} ) }
-						>
-							{ isResultFromDeveloperWordpress( result.link ) ? (
-								<DeveloperResourceIndicator />
-							) : (
-								<LinkIcon />
-							) }
-							<span>{ preventWidows( decodeEntities( title ) ) }</span>
-							<Icon
-								width={ 20 }
-								height={ 20 }
-								icon={ result.post_id ? chevronRight : externalIcon }
-							/>
-						</a>
-					</div>
-				</li>
-			</Fragment>
-		);
-	};
-
 	const renderSearchResultsSection = ( {
 		type,
 		title,
@@ -297,6 +304,8 @@ function HelpSearchResults( {
 							result={ result }
 							type={ type }
 							index={ index }
+							onLinkClickHandler={ onLinkClickHandler }
+							externalLinks={ externalLinks }
 						/>
 					) ) }
 				</ul>
@@ -304,56 +313,48 @@ function HelpSearchResults( {
 		) : null;
 	};
 
-	const renderSearchSections = () => {
-		const sections = [
-			{
-				type: SUPPORT_TYPE_API_HELP,
-				title: __( 'Recommended Resources', __i18n_text_domain__ ),
-				results: searchResults.slice( 0, 5 ),
-				condition: ! isSearching && searchResults.length > 0,
-			},
-			{
-				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? __( 'Recommended Resources', __i18n_text_domain__ ) : '',
-				results: contextualResults.slice( 0, 6 ),
-				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
-			},
-			{
-				type: SUPPORT_TYPE_ADMIN_SECTION,
-				title: __( 'Show me where to', __i18n_text_domain__ ),
-				results: adminResults,
-				condition: !! searchQuery && adminResults.length > 0,
-			},
-		];
-
-		return sections.map( renderSearchResultsSection );
-	};
+	const sections = [
+		{
+			type: SUPPORT_TYPE_API_HELP,
+			title: __( 'Recommended Resources', __i18n_text_domain__ ),
+			results: searchResults.slice( 0, 5 ),
+			condition: ! isSearching && searchResults.length > 0,
+		},
+		{
+			type: SUPPORT_TYPE_CONTEXTUAL_HELP,
+			title: ! searchQuery.length ? __( 'Recommended Resources', __i18n_text_domain__ ) : '',
+			results: contextualResults.slice( 0, 6 ),
+			condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
+		},
+		{
+			type: SUPPORT_TYPE_ADMIN_SECTION,
+			title: __( 'Show me where to', __i18n_text_domain__ ),
+			results: adminResults,
+			condition: !! searchQuery && adminResults.length > 0,
+		},
+	].map( renderSearchResultsSection );
 
 	const resultsLabel = hasAPIResults
 		? __( 'Search Results', __i18n_text_domain__ )
 		: __( 'Helpful resources for this section', __i18n_text_domain__ );
 
-	const renderSearchResults = () => {
-		return (
-			<>
-				{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
-				{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
-					<p className="help-center-search-results__empty-results">
-						{ __(
-							'Sorry, there were no matches. Here are some of the most searched for help pages for this section:',
-							__i18n_text_domain__
-						) }
-					</p>
-				) : null }
+	return (
+		<>
+			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
+			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
+				<p className="help-center-search-results__empty-results">
+					{ __(
+						'Sorry, there were no matches. Here are some of the most searched for help pages for this section:',
+						__i18n_text_domain__
+					) }
+				</p>
+			) : null }
 
-				<div className="help-center-search-results__results" aria-label={ resultsLabel }>
-					{ renderSearchSections() }
-				</div>
-			</>
-		);
-	};
-
-	return renderSearchResults();
+			<div className="help-center-search-results__results" aria-label={ resultsLabel }>
+				{ sections }
+			</div>
+		</>
+	);
 }
 
 HelpSearchResults.propTypes = {
