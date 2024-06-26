@@ -19,6 +19,7 @@ import LanguageSelector from '../components/languages-selector';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
 import { PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG } from '../constants';
+import { validateURL } from '../utils/tools';
 import { useCountryList } from './hooks/use-country-list';
 import useDetailsForm from './hooks/use-details-form';
 import useSubmitForm from './hooks/use-submit-form';
@@ -102,7 +103,15 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						onChange={ ( value ) => setFormFields( { email: value } ) }
 					/>
 				</FormField>
-				<FormField label={ translate( 'Company website' ) } isRequired>
+				<FormField
+					label={ translate( 'Company website' ) }
+					validationText={
+						formData.logoUrl.length < 3 || validateURL( formData.website )
+							? ''
+							: translate( 'Invalid URL' )
+					}
+					isRequired
+				>
 					<TextControl
 						value={ formData.website }
 						onChange={ ( value ) => setFormFields( { website: value } ) }
@@ -113,7 +122,11 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					description={ translate(
 						"Optional: Include your custom landing page for leads from Automattic platforms. We'll direct clients to this page."
 					) }
-					showOptionalLabel
+					validationText={
+						formData.landingPageUrl.length < 3 || validateURL( formData.landingPageUrl )
+							? ''
+							: translate( 'Invalid URL' )
+					}
 				>
 					<TextControl
 						value={ formData.landingPageUrl }
@@ -141,6 +154,11 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					description={ translate(
 						'Upload your agency logo sized at 800px by 320px. Format allowed: JPG, PNG'
 					) }
+					validationText={
+						formData.logoUrl.length < 3 || validateURL( formData.logoUrl )
+							? ''
+							: translate( 'Invalid URL' )
+					}
 					isRequired
 				>
 					<TextControl

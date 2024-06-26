@@ -10,6 +10,7 @@ import {
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_PARTNER_DIRECTORY_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { validateURL } from 'calypso/a8c-for-agencies/sections/partner-directory/utils/tools';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
@@ -195,6 +196,9 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					description={ translate(
 						'Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
 					) }
+					validationText={
+						feedbackUrl.length < 3 || validateURL( feedbackUrl ) ? '' : translate( 'Invalid URL' )
+					}
 					isRequired
 				>
 					<TextControl
