@@ -140,6 +140,7 @@ class Help_Center {
 						'username'     => $username,
 						'display_name' => $display_name,
 						'avatar_URL'   => $avatar_url,
+						'email'        => $user_email,
 					),
 					'site'        => $this->get_current_site(),
 					'locale'      => get_locale(),
