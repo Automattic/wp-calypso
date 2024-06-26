@@ -23,12 +23,16 @@ export const ReadymadeTemplates = () => {
 		>
 			<div className="readymade-templates">
 				{ readymadeTemplates.map( ( readymadeTemplate ) => (
-					<div className="readymade-template" key={ readymadeTemplate.template_id }>
+					<a
+						href={ `/patterns/site-layouts/${ readymadeTemplate.template_id } ` }
+						className="readymade-template"
+						key={ readymadeTemplate.template_id }
+					>
 						<div className="readymade-template__content">
 							<img src={ readymadeTemplate.screenshot } alt="" />
 						</div>
 						<div className="readymade-template__title">{ readymadeTemplate.title }</div>
-					</div>
+					</a>
 				) ) }
 			</div>
 		</PatternsSection>
