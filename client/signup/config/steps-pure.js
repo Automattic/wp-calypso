@@ -391,8 +391,8 @@ export function generateSteps( {
 			},
 			delayApiRequestUntilComplete: true,
 		},
-		'subscribing-email': {
-			stepName: 'subscribing-email',
+		subscribing: {
+			stepName: 'subscribing',
 			providesDependencies: [ 'redirect', 'username', 'marketing_price_group', 'bearer_token' ],
 			optionalDependencies: [ 'username', 'marketing_price_group', 'bearer_token' ],
 		},

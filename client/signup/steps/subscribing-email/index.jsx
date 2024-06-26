@@ -33,7 +33,7 @@ function SubscribingEmailStep( props ) {
 				props.recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {
 					mailing_list: queryParams.mailing_list,
 				} );
-				props.submitSignupStep( { stepName: 'subscribing-email' }, { redirect: redirectUrl } );
+				props.submitSignupStep( { stepName: 'subscribing' }, { redirect: redirectUrl } );
 				goToNextStep();
 			},
 		} );
