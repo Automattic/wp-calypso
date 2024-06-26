@@ -117,10 +117,6 @@
 	.item-price .display-price {
 		&:not(.is-placeholder) {
 			max-height: none;
-
-			.display-price__billing-time-frame {
-				line-height: 1.2;
-			}
 		}
 	}
 }
