@@ -220,7 +220,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				title={ translate( 'Paid Newsletter' ) }
 			/>
 			<PaidNewsletterSection />
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="email-settings"
