@@ -24,9 +24,12 @@ function getStatsCheckoutURL(
 	adminUrl?: string,
 	isUpgrade?: boolean
 ) {
+	// Get the checkout URL for the product.
+	// The following cases get the logged out flow:
+	// - If the user is coming from My Jetpack
+	// - If no siteSlug is provided
+	// - If it's not an upgrade (currently causes errors in the logged in flow)
 	const useLoggedOutFlow = from === 'jetpack-my-jetpack' || from === 'jetpack-stats-upgrade-notice';
-	// const isFromJetpack = from?.startsWith( 'jetpack' );
-	// Get the checkout URL for the product, or the siteless checkout URL if from Jetpack or no siteSlug is provided
 	const checkoutType = ( useLoggedOutFlow && ! isUpgrade ) || ! siteSlug ? 'jetpack' : siteSlug;
 	const checkoutProductUrl = new URL(
 		`/checkout/${ checkoutType }/${ product }`,
