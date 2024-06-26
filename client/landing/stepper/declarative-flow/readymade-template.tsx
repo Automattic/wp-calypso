@@ -315,8 +315,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 					pages: [],
 					globalStyles: {},
 					canReplaceContent: true,
-					// All sites using the assembler set the option wpcom_site_setup
-					siteSetupOption: 'assembler',
+					siteSetupOption: 'readymade-template',
 				} )
 			)
 			.then( () => window.location.assign( `/site-editor/${ siteId }?canvas=edit&assembler=1` ) );
