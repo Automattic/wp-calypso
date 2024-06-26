@@ -10,7 +10,10 @@ interface MigrationStickerMutationOptions {
 export const useMigrationStickerMutation = () => {
 	const mutation = useMutation( {
 		mutationFn: ( { targetBlogId }: MigrationStickerMutationOptions ) =>
-			wp.req.post( `/sites/${ targetBlogId }/migration-flow` ),
+			wp.req.post( {
+				path: `/sites/${ targetBlogId }/migration-flow`,
+				apiNamespace: 'wpcom/v2',
+			} ),
 	} );
 
 	const { mutate } = mutation;
