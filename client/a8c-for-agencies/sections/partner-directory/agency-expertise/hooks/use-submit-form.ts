@@ -25,16 +25,9 @@ export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitErro
 		}
 	);
 
-	const onSubmit = useCallback(
-		( application?: AgencyDirectoryApplication ) => {
-			if ( application ) {
-				submit( application );
-			} else {
-				formData && submit( formData );
-			}
-		},
-		[ formData, submit ]
-	);
+	const onSubmit = useCallback( () => {
+		formData && submit( formData );
+	}, [ formData, submit ] );
 
 	return {
 		onSubmit,

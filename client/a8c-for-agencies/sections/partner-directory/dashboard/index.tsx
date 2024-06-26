@@ -1,13 +1,17 @@
+import page from '@automattic/calypso-router';
 import { BadgeType, Button } from '@automattic/components';
 import { Icon, external, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { AgencyDirectoryApplication } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { useDispatch, useSelector } from 'calypso/state';
+import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import StepSection from '../../referrals/common/step-section';
 import StepSectionItem from '../../referrals/common/step-section-item';
 import useDetailsForm from '../agency-details/hooks/use-details-form';
@@ -18,6 +22,7 @@ import {
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
 } from '../constants';
 import { getBrandMeta } from '../lib/get-brand-meta';
+import { AgencyDirectoryApplication } from '../types';
 import {
 	mapAgencyDetailsFormData,
 	mapApplicationFormData,
@@ -83,9 +88,27 @@ const PartnerDirectoryDashboard = () => {
 		};
 	}, [ translate ] );
 
-	const { onSubmit: submitPublishProfile } = useSubmitExpertiseForm( {
-		formData: applicationData,
-	} );
+	const [ shouldSubmitPublishProfile, setShouldSubmitPublishProfile ] = useState( false );
+
+	const onSubmitPublishProfileSuccess = useCallback(
+		( response: Agency ) => {
+			// Update the store with the new agency data
+			response && reduxDispatch( setActiveAgency( response ) );
+
+			reduxDispatch(
+				successNotice( translate( 'Your profile has been published!' ), {
+					duration: 6000,
+				} )
+			);
+		},
+		[ page, reduxDispatch, translate ]
+	);
+
+	const { onSubmit: submitPublishProfile, isSubmitting: isSubmittingPublishProfile } =
+		useSubmitExpertiseForm( {
+			formData: applicationData,
+			onSubmitSuccess: onSubmitPublishProfileSuccess,
+		} );
 
 	const onApplyNowClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_apply_now_click' ) );
@@ -104,10 +127,11 @@ const PartnerDirectoryDashboard = () => {
 				...state,
 				isPublished: true,
 			};
-			submitPublishProfile( newState );
 
 			return newState;
 		} );
+
+		setShouldSubmitPublishProfile( true );
 
 		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_publish_profile_click' ) );
 	}, [ dispatch, setApplicationData ] );
@@ -129,11 +153,20 @@ const PartnerDirectoryDashboard = () => {
 		document.querySelector( '.partner-directory__body' )?.scrollTo( 0, 0 );
 	}, [] );
 
+	useEffect( () => {
+		if ( shouldSubmitPublishProfile ) {
+			submitPublishProfile();
+			setShouldSubmitPublishProfile( false );
+		}
+	}, [ shouldSubmitPublishProfile, submitPublishProfile ] );
+
 	const { isValidFormData } = useDetailsForm( { initialFormData: agencyDetailsData } );
 
 	const isCompleted =
-		( applicationData?.directories?.every( ( directory ) => directory.status !== 'pending' ) &&
-			isValidFormData ) ??
+		( applicationData?.isPublished &&
+			applicationData.directories?.some(
+				( directory ) => directory.status === 'approved' && directory.isPublished
+			) ) ??
 		false;
 
 	const { availableDirectories } = useFormSelectors();
@@ -198,6 +231,7 @@ const PartnerDirectoryDashboard = () => {
 		</StepSection>
 	);
 
+	// The Agency application is completed: At least a directory was approved and published
 	if ( isCompleted ) {
 		return (
 			<div className="partner-directory-dashboard__completed-section">
@@ -374,7 +408,11 @@ const PartnerDirectoryDashboard = () => {
 						children: translate( 'Publish' ),
 						onClick: onPublishProfileClick,
 						primary: applicationWasSubmitted,
-						disabled: ! applicationWasSubmitted || ! hasDirectoryApproval || ! isValidFormData,
+						disabled:
+							! applicationWasSubmitted ||
+							! hasDirectoryApproval ||
+							! isValidFormData ||
+							isSubmittingPublishProfile,
 						compact: true,
 					} }
 				/>
