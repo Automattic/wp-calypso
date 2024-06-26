@@ -14,7 +14,7 @@
 }
 
 a.readymade-template-details-back {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	gap: 10px;
 	font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
@@ -23,14 +23,6 @@ a.readymade-template-details-back {
 
 	svg {
 		fill: var(--studio-gray-20);
-	}
-
-	&:hover {
-		color: var(--studio-gray-10);
-
-		svg {
-			fill: var(--studio-gray-10);
-		}
 	}
 }
 
@@ -58,6 +50,39 @@ a.readymade-template-details-back {
 .readymade-template-details-actions {
 	display: flex;
 	gap: 16px;
+
+	.components-button {
+		box-shadow: none;
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled) {
+			box-shadow: none;
+		}
+
+		&.is-primary {
+			background-color: var(--studio-white);
+			border: none;
+			color: var(--studio-gray-90);
+
+			&:hover:not(:disabled),
+			&:focus:not(:disabled),
+			&:active:not(:disabled) {
+				background-color: var(--studio-gray-5);
+				color: var(--studio-gray-90);
+			}
+		}
+
+		&.is-secondary {
+			background-color: transparent;
+			border: 1px solid var(--studio-white);
+			color: var(--studio-white);
+
+			&:hover:not(:disabled) {
+				color: var(--studio-gray-5);
+				border-color: var(--studio-gray-5);
+			}
+		}
+	}
 }
 
 .readymade-template-details-title {
