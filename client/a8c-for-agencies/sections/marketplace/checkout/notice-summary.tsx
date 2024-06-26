@@ -80,9 +80,11 @@ export default function NoticeSummary( { type }: Props ) {
 							components: {
 								subscriptionInfoLink: (
 									<a
-										href={ localizeUrl(
-											'https://agencieshelp.automattic.com/knowledge-base/client-billing/#how-subscriptions-work'
-										) }
+										href={
+											type === 'client-purchase'
+												? 'https://agencieshelp.automattic.com/knowledge-base/client-billing/#how-subscriptions-work'
+												: 'https://agencieshelp.automattic.com/knowledge-base/billing-and-payments'
+										}
 										onClick={ handleSubscriptionInfoLinkClick }
 										target="_blank"
 										rel="noreferrer noopener"
@@ -90,9 +92,11 @@ export default function NoticeSummary( { type }: Props ) {
 								),
 								cancellationInfoLink: (
 									<a
-										href={ localizeUrl(
-											'https://agencieshelp.automattic.com/knowledge-base/client-billing/#how-to-cancel'
-										) }
+										href={
+											type === 'client-purchase'
+												? 'https://agencieshelp.automattic.com/knowledge-base/client-billing/#how-to-cancel'
+												: 'https://agencieshelp.automattic.com/knowledge-base/purchases/#canceling-purchases'
+										}
 										onClick={ handleCancellationInfoLinkClick }
 										target="_blank"
 										rel="noreferrer noopener"

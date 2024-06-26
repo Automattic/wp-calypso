@@ -104,14 +104,12 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 
 			<div className="checkout__aside-actions">
 				<Button
-					primary={ ! paymentMethodRequired }
 					onClick={ handleSubmitPaymentInfo }
 					disabled={ isPending || disableButton }
 					busy={ isPending }
+					primary
 				>
-					{ paymentMethodRequired
-						? translate( 'Add my payment method' )
-						: translate( 'Submit purchase' ) }
+					{ paymentMethodRequired ? translate( 'Add payment method' ) : translate( 'Purchase' ) }
 				</Button>
 			</div>
 			<div className="checkout__aside-footer">
