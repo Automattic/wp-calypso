@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../../grid-context';
 import useIsLargeCurrency from '../../../../hooks/use-is-large-currency';
+import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
 import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
 
 interface Props {
@@ -51,8 +52,7 @@ const StorageFeatureLabel = ( { planSlug }: Props ) => {
 		</div>
 	);
 
-	return formattedMonthlyAddedCost &&
-		AddOns.ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) ? (
+	return formattedMonthlyAddedCost && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) ? (
 		<div className={ containerClasses }>
 			{ volumeJSX }
 			<div className="plans-grid-next-storage-feature-label__offset-price">

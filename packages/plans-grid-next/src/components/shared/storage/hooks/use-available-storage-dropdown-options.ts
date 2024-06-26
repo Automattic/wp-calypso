@@ -6,6 +6,7 @@ import {
 import { AddOns } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { usePlansGridContext } from '../../../../grid-context';
+import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
 
 interface Props {
 	planSlug: PlanSlug;
@@ -21,7 +22,7 @@ const useAvailableStorageDropdownOptions = ( {
 	planSlug,
 }: Props ): ( WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug )[] | null => {
 	const { siteId, gridPlansIndex } = usePlansGridContext();
-	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { planSlug, siteId } );
+	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
 
 	const {
 		features: { storageFeature },
@@ -31,14 +32,19 @@ const useAvailableStorageDropdownOptions = ( {
 		return storageFeature || availableStorageAddOns
 			? [
 					...( storageFeature ? [ storageFeature?.getSlug() as WPComPlanStorageFeatureSlug ] : [] ),
-					...( availableStorageAddOns
+					/**
+					 * ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE check here is redundant, as the call is already for plans that are eligible.
+					 * But being extra cautious here (in case the call is made elsewhere in the future, where it might not be redundant)
+					 * TODO: Also planning to refactor this closer to the data layer e.g. plans having a "storage-upgradeable" flag.
+					 */
+					...( ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) && availableStorageAddOns
 						? availableStorageAddOns.map(
 								( addOn ) => addOn?.featureSlugs?.[ 0 ] as WPComStorageAddOnSlug
 						  )
 						: [] ),
 			  ]
 			: null;
-	}, [ storageFeature, availableStorageAddOns ] );
+	}, [ storageFeature, availableStorageAddOns, planSlug ] );
 };
 
 export default useAvailableStorageDropdownOptions;

@@ -5,6 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { usePlansGridContext } from '../../../../grid-context';
+import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
 
 type Props = {
 	planSlug: PlanSlug;
@@ -26,7 +27,7 @@ export default function useDefaultStorageOption( {
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const purchasedAddOn = storageAddOns?.find( ( storageAddOn ) => storageAddOn?.purchased );
 
-	return purchasedAddOn && AddOns.ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
+	return purchasedAddOn && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
 		? ( purchasedAddOn?.featureSlugs?.[ 0 ] as WPComStorageAddOnSlug )
 		: ( storageFeature?.getSlug() as WPComPlanStorageFeatureSlug );
 }

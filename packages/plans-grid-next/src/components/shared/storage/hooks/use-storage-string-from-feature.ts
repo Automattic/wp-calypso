@@ -13,8 +13,9 @@ import {
 	WPComStorageAddOnSlug,
 	WPComPlanStorageFeatureSlug,
 } from '@automattic/calypso-products';
-import { Purchases, AddOns } from '@automattic/data-stores';
+import { Purchases } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
+import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
 
 const useStorageStringFromFeature = ( {
 	storageSlug,
@@ -49,7 +50,7 @@ const useStorageStringFromFeature = ( {
 			 */
 			return translate( '%(quantity)d GB', {
 				args: {
-					quantity: AddOns.ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
+					quantity: ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
 						? purchasedQuantityTotal + 50
 						: 50,
 				},
