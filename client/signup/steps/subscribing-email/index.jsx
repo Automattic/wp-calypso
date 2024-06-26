@@ -46,7 +46,7 @@ function SubscribingEmailStep( props ) {
 					mailing_list_category: queryParams.mailing_list,
 				} ),
 			onError: ( error ) => {
-				if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+				if ( isExistingAccountError( error.error ) ) {
 					subscribeToMailingList( {
 						email_address: queryParams.user_email,
 						mailing_list_category: queryParams.mailing_list,
