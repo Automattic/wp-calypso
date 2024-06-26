@@ -525,6 +525,7 @@ class Layout extends Component {
 								global={ this.props.global }
 								note={ currentNote }
 								selectedNote={ this.state.selectedNote }
+								handleFocus={ () => {} }
 							/>
 						</ol>
 					) }

@@ -53,6 +53,18 @@ export const ShortcutsPopover = ( {
 						</span>
 					</li>
 					<li>
+						<span className="description">{ translate( 'Left' ) }</span>
+						<span className="shortcut has-icon">
+							<Gridicon icon="arrow-left" size={ 16 } />
+						</span>
+					</li>
+					<li>
+						<span className="description">{ translate( 'Right' ) }</span>
+						<span className="shortcut has-icon">
+							<Gridicon icon="arrow-right" size={ 16 } />
+						</span>
+					</li>
+					<li>
 						<span className="description">{ translate( 'View All' ) }</span>
 						<span className="shortcut letter">a</span>
 					</li>

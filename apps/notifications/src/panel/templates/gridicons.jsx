@@ -237,6 +237,16 @@ export default class extends Component {
 					</svg>
 				);
 
+			case 'gridicons-arrow-right':
+				return (
+					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+						<title>Arrow Left</title>
+						<g>
+							<path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z" />
+						</g>
+					</svg>
+				);
+
 			case 'gridicons-cross':
 				return (
 					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
