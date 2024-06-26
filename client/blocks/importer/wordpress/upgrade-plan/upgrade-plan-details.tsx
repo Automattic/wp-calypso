@@ -1,13 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
+import { SiteDetails } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
-import QueryPlans from 'calypso/components/data/query-plans';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -16,6 +17,7 @@ import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface Props {
+	site: SiteDetails;
 	children: React.ReactNode;
 }
 
@@ -24,7 +26,10 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ showFeatures, setShowFeatures ] = useState( false );
 
-	const { children } = props;
+	const {
+		children,
+		site: { ID: siteId },
+	} = props;
 	const [ selectedPlan, setSelectedPlan ] = useState<
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
 	>( PLAN_BUSINESS );
@@ -46,7 +51,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 
 	return (
 		<div className="import__upgrade-plan-details">
-			<QueryPlans />
+			<QuerySitePlans siteId={ siteId } />
 
 			<div className="import__upgrade-plan-period-switcher">
 				<ButtonGroup>
