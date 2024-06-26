@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { TextareaControl, TextControl, ToggleControl } from '@wordpress/components';
+import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
@@ -96,6 +97,11 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Company email' ) }
 					description={ translate( 'Client inquiries and leads will go to this email.' ) }
+					validationText={
+						formData.email.length < 3 || emailValidator.validate( formData.email )
+							? ''
+							: translate( 'Invalid email' )
+					}
 					isRequired
 				>
 					<TextControl
@@ -106,7 +112,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Company website' ) }
 					validationText={
-						formData.logoUrl.length < 3 || validateURL( formData.website )
+						formData.website.length < 3 || validateURL( formData.website )
 							? ''
 							: translate( 'Invalid URL' )
 					}
