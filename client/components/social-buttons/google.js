@@ -74,7 +74,7 @@ class GoogleSocialButton extends Component {
 		this.client = googleSignIn.initCodeClient( {
 			client_id: this.props.clientId,
 			scope: this.props.scope,
-			ux_mode: this.props.uxMode,
+			ux_mode: 'redirect',
 			redirect_uri: this.props.redirectUri,
 			state: state,
 			callback: ( response ) => {

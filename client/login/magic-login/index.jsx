@@ -572,6 +572,10 @@ class MagicLogin extends Component {
 	};
 
 	emailToSha256 = async ( email ) => {
+		if ( ! window.crypto?.subtle ) {
+			return null;
+		}
+
 		const data = new TextEncoder().encode( email );
 		const hashBuffer = await crypto.subtle.digest( 'SHA-256', data );
 
