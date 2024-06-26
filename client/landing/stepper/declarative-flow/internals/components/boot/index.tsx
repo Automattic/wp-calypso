@@ -30,6 +30,7 @@ export const Boot: FC< Props > = ( { children, fallback } ) => {
 		}
 	}, [ locale, newLocale, isReady ] );
 
+	// Continue to show the fallback UI while we are still loading the new locale or when we're first transitioning to the new locale (i.e. the transition is still in process)
 	if ( ! isReady || isPending ) {
 		return fallback;
 	}
