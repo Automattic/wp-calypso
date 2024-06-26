@@ -38,7 +38,7 @@ export const TumblrPostPreview: React.FC< TumblrPreviewProps > = ( {
 									<source src={ mediaItem.url } type={ mediaItem.type } />
 								</video>
 							) : (
-								<img className="tumblr-preview__image" src={ image } alt="" />
+								<img className="tumblr-preview__image" src={ mediaItem.url } alt="" />
 							) }
 						</div>
 					) : (
