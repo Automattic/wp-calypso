@@ -28,10 +28,12 @@ function SubscribingEmailStep( props ) {
 		: addQueryArgs( 'https://' + queryParams.redirect_to, { subscribed: true } );
 
 	useEffect( () => {
-		if ( emailValidator.validate( queryParams.user_email ) ) {
+		const email = typeof queryParams.user_email === 'string' ? queryParams.user_email.trim() : '';
+
+		if ( emailValidator.validate( email ) ) {
 			createNewAccount( {
 				userData: {
-					email: typeof queryParams.user_email === 'string' ? queryParams.user_email.trim() : '',
+					email,
 				},
 				flowName,
 				isPasswordless: true,
@@ -41,7 +43,6 @@ function SubscribingEmailStep( props ) {
 
 	if ( isSuccess ) {
 		// TODO: Subscribe existing user to guides emails through API endpoint https://github.com/Automattic/martech/issues/3090
-
 		props.recordTracksEvent( 'calypso_signup_new_email_subscription_success', {
 			mailing_list: queryParams.mailing_list,
 		} );
