@@ -131,4 +131,8 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	);
 };
 
-export default SiteMigrationUpgradePlan;
+const SiteMigrationUpgradePlanWithMigrationSticker: Step = function ( props ) {
+	return <SiteMigrationUpgradePlan { ...props } />;
+};
+
+export default SiteMigrationUpgradePlanWithMigrationSticker;
