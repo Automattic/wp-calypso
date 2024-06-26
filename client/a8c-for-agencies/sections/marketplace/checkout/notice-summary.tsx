@@ -49,28 +49,16 @@ export default function NoticeSummary( { type }: Props ) {
 						'You agree to our {{a/}}, and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time.',
 						{
 							components: {
-								a:
-									type === 'client-purchase' ? (
-										<a
-											href={ localizeUrl( 'https://wordpress.com/tos' ) }
-											onClick={ handleClientTermsClick }
-											target="_blank"
-											rel="noreferrer noopener"
-										>
-											{ translate( 'Terms of Service' ) }
-										</a>
-									) : (
-										<a
-											href={ localizeUrl(
-												'https://automattic.com/for-agencies/platform-agreement/'
-											) }
-											onClick={ handleAgencyTermsClick }
-											target="_blank"
-											rel="noreferrer noopener"
-										>
-											{ translate( 'Platform agreement' ) }
-										</a>
-									),
+								a: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/tos' ) }
+										onClick={ handleClientTermsClick }
+										target="_blank"
+										rel="noreferrer noopener"
+									>
+										{ translate( 'Terms of Service' ) }
+									</a>
+								),
 							},
 						}
 					),
