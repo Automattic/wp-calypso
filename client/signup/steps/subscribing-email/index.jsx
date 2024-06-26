@@ -69,6 +69,25 @@ function SubscribingEmailStep( props ) {
 		}
 	}, [ createNewAccount, flowName, queryParams.user_email ] );
 
+	if ( isSuccess ) {
+		// TODO: Subscribe existing user to guides emails through API endpoint https://github.com/Automattic/martech/issues/3090
+		props.recordTracksEvent( 'calypso_signup_new_email_subscription_success', {
+			mailing_list: queryParams.mailing_list,
+		} );
+		props.submitSignupStep( { stepName: 'subscribing-email' }, { redirect: redirectUrl } );
+		goToNextStep();
+	} else if ( isError ) {
+		if ( isExistingAccountError( error.error ) ) {
+			// TODO: Subscribe existing user to guides emails through API endpoint https://github.com/Automattic/martech/issues/3090
+
+			props.recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {
+				mailing_list: queryParams.mailing_list,
+			} );
+			props.submitSignupStep( { stepName: 'subscribing-email' }, { redirect: redirectUrl } );
+			goToNextStep();
+		}
+	}
+
 	return (
 		<div className="subscribing-email">
 			<StepWrapper

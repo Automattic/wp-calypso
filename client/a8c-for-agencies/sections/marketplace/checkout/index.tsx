@@ -26,6 +26,7 @@ import useProductsBySlug from '../hooks/use-products-by-slug';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
 import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
+import NoticeSummary from './notice-summary';
 import PricingSummary from './pricing-summary';
 import ProductInfo from './product-info';
 import RequestClientPayment from './request-client-payment';
@@ -121,28 +122,32 @@ function Checkout( { isClient }: { isClient?: boolean } ) {
 	const title = isAutomatedReferrals ? translate( 'Referral checkout' ) : translate( 'Checkout' );
 
 	let actionContent = (
-		<div className="checkout__aside-actions">
-			<Button
-				primary
-				onClick={ onCheckout }
-				disabled={ ! checkoutItems.length || ! isReady }
-				busy={ ! isReady }
-			>
-				{ translate( 'Purchase' ) }
-			</Button>
+		<>
+			<NoticeSummary type="agency-purchase" />
 
-			{ siteId ? (
-				<Button onClick={ cancelPurchase }>{ translate( 'Cancel' ) }</Button>
-			) : (
-				<>
-					<Button onClick={ onContinueShopping }>{ translate( 'Continue shopping' ) }</Button>
+			<div className="checkout__aside-actions">
+				<Button
+					primary
+					onClick={ onCheckout }
+					disabled={ ! checkoutItems.length || ! isReady }
+					busy={ ! isReady }
+				>
+					{ translate( 'Purchase' ) }
+				</Button>
 
-					<Button borderless onClick={ onEmptyCart }>
-						{ translate( 'Empty cart' ) }
-					</Button>
-				</>
-			) }
-		</div>
+				{ siteId ? (
+					<Button onClick={ cancelPurchase }>{ translate( 'Cancel' ) }</Button>
+				) : (
+					<>
+						<Button onClick={ onContinueShopping }>{ translate( 'Continue shopping' ) }</Button>
+
+						<Button borderless onClick={ onEmptyCart }>
+							{ translate( 'Empty cart' ) }
+						</Button>
+					</>
+				) }
+			</div>
+		</>
 	);
 
 	if ( isAutomatedReferrals ) {
