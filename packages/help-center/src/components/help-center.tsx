@@ -87,7 +87,7 @@ const HelpCenter: React.FC< Container > = ( {
 
 	useEffect( () => {
 		if ( currentUser ) {
-			initializeAnalytics( { currentUser }, null );
+			initializeAnalytics( currentUser, null );
 		}
 	}, [ currentUser ] );
 
