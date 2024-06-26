@@ -161,7 +161,6 @@ export class EditorToolbarComponent {
 		// be able to perform the click action.
 		// See https://github.com/Automattic/wp-calypso/pull/76987
 		await Promise.any( [
-			editorParent.locator( '.wpcom-domain-upsell-callout__dismiss-icon' ).click(),
 			editorParent.getByRole( 'button', { name: 'Save draft' } ).click( { trial: true } ),
 		] );
 
