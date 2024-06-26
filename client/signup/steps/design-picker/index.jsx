@@ -7,8 +7,6 @@ import DesignPicker, {
 	isBlankCanvasDesign,
 	useCategorization,
 	useThemeDesignsQuery,
-	PREMIUM_THEME,
-	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -107,8 +105,8 @@ export default function DesignPickerStep( props ) {
 		theme: design?.stylesheet ?? `pub/${ design?.theme }`,
 		template: design?.template,
 		tier: design?.design_tier,
-		is_premium: design?.design_tier === PREMIUM_THEME,
-		is_externally_managed: design?.design_tier === MARKETPLACE_THEME,
+		is_premium: design?.design_tier === 'premium',
+		is_externally_managed: design?.design_tier === 'partner',
 		flow: flowName,
 		intent: dependencies.intent,
 	} );
