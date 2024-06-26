@@ -35,6 +35,9 @@ export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const ASSEMBLER_FIRST_FLOW = 'assembler-first';
+
+export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
+
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 export const DOMAIN_TRANSFER = 'domain-transfer';
@@ -185,6 +188,8 @@ export const isSiteAssemblerFlow = ( flowName: string | null ) => {
 
 	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
 };
+
+export const isReadymadeFlow = ( flowName: string | null ) => flowName === READYMADE_TEMPLATE_FLOW;
 
 export const isWithThemeAssemblerFlow = ( flowName: string | null ) => {
 	return !! flowName && WITH_THEME_ASSEMBLER_FLOW === flowName;

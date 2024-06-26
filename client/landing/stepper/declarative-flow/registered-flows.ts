@@ -74,6 +74,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'assembler-first': () =>
 		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
 
+	'readymade-template': () =>
+		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
+
 	[ AI_ASSEMBLER_FLOW ]: () =>
 		import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
 
