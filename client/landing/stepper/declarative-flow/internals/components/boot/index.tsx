@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import {
-	ComponentProps,
+	type ComponentProps,
 	Suspense,
 	useEffect,
 	useState,
