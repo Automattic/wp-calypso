@@ -71,7 +71,8 @@ const isEnabled =
 	( feature: string ): boolean => {
 		// Feature flags activated from environment variables.
 		if (
-			process.env.ACTIVE_FEATURE_FLAGS &&
+			typeof process !== 'undefined' &&
+			process?.env?.ACTIVE_FEATURE_FLAGS &&
 			typeof process.env.ACTIVE_FEATURE_FLAGS === 'string'
 		) {
 			const env_active_feature_flags = process.env.ACTIVE_FEATURE_FLAGS?.split( ',' );

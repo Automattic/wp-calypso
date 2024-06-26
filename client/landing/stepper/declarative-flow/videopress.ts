@@ -2,12 +2,12 @@ import config from '@automattic/calypso-config';
 import { PlansSelect, SiteSelect } from '@automattic/data-stores';
 import { TIMELESS_PLAN_BUSINESS, TIMELESS_PLAN_PREMIUM } from '@automattic/data-stores/src/plans';
 import { StyleVariation } from '@automattic/design-picker';
-import { useLocale } from '@automattic/i18n-utils';
 import { VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -82,7 +82,7 @@ const videopress: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
 			[]
 		);
-		const locale = useLocale();
+		const locale = useFlowLocale();
 
 		const { createVideoPressSite, setSelectedSite, setPendingAction, setProgress } =
 			useDispatch( ONBOARD_STORE );

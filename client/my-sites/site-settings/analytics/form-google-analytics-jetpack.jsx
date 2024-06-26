@@ -64,12 +64,13 @@ const GoogleAnalyticsJetpackForm = ( {
 	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.sites[ siteId ].active : false;
 
 	useEffect( () => {
-		if ( jetpackModuleActive ) {
+		// Show the form if GA module is active, or it's been removed but GA is activated via the Legacy Plugin.
+		if ( jetpackModuleActive || ( ! isJetpackModuleAvailable && fields?.wga?.is_active ) ) {
 			setDisplayForm( true );
 		} else {
 			setDisplayForm( false );
 		}
-	}, [ jetpackModuleActive, setDisplayForm ] );
+	}, [ jetpackModuleActive, setDisplayForm, isJetpackModuleAvailable, fields?.wga?.is_active ] );
 
 	const handleToggleChange = ( key ) => {
 		const value = fields.wga ? ! fields.wga[ key ] : false;
@@ -88,6 +89,25 @@ const GoogleAnalyticsJetpackForm = ( {
 		}
 
 		handleSubmitForm();
+	};
+
+	const handleSettingsToggleChange = ( value ) => {
+		recordTracksEvent( 'calypso_google_analytics_setting_changed', { key: 'is_active', path } );
+		handleFieldChange( 'is_active', value, handleSubmitForm );
+	};
+
+	const renderSettingsToggle = () => {
+		return (
+			<span className="jetpack-module-toggle">
+				<ToggleControl
+					id={ `${ siteId }-ga-settings-toggle` }
+					checked={ fields?.wga?.is_active }
+					onChange={ handleSettingsToggleChange }
+					label={ translate( 'Add Google' ) }
+					disabled={ isRequestingSettings || isSavingSettings }
+				/>
+			</span>
+		);
 	};
 
 	const renderForm = () => {
@@ -237,12 +257,16 @@ const GoogleAnalyticsJetpackForm = ( {
 									) }
 									link="https://jetpack.com/support/google-analytics/"
 								/>
-								<JetpackModuleToggle
-									siteId={ siteId }
-									moduleSlug="google-analytics"
-									label={ translate( 'Add Google' ) }
-									disabled={ isRequestingSettings || isSavingSettings }
-								/>
+								{ isJetpackModuleAvailable ? (
+									<JetpackModuleToggle
+										siteId={ siteId }
+										moduleSlug="google-analytics"
+										label={ translate( 'Add Google' ) }
+										disabled={ isRequestingSettings || isSavingSettings }
+									/>
+								) : (
+									renderSettingsToggle()
+								) }
 							</FormFieldset>
 						</div>
 					</CompactCard>

@@ -18,6 +18,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
+import hasSiteProductJetpackStatsPWYWOnly from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-pwyw-only';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import useStatsPurchases from '../hooks/use-stats-purchases';
@@ -91,6 +92,10 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	const { isRequestingSitePurchases, isCommercialOwned } = useStatsPurchases( siteId );
 
+	const hasPWYWPlanOnly = useSelector( ( state ) =>
+		hasSiteProductJetpackStatsPWYWOnly( state, siteId )
+	);
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
@@ -104,6 +109,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		statsPurchaseSuccess,
 		isCommercial,
 		isCommercialOwned,
+		hasPWYWPlanOnly,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
