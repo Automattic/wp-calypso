@@ -21,6 +21,7 @@ const {
 	ExperimentalBlockEditorProvider,
 	GlobalStylesContext: UntypedGSContext,
 	useGlobalStylesOutput,
+	useGlobalStylesOutputWithConfig,
 	useGlobalSetting,
 	useGlobalStyle,
 } = unlock( blockEditorPrivateApis );
@@ -54,12 +55,24 @@ const useSafeGlobalStylesOutput = () => {
 	}
 };
 
+const useSafeGlobalStylesOutputWithConfig = ( config: GlobalStylesObject | undefined ) => {
+	try {
+		return useGlobalStylesOutputWithConfig( config );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Error: Unable to get the output of global styles. Reason: %s', error );
+		captureException( error );
+		return [];
+	}
+};
+
 export {
 	cleanEmptyObject,
 	ExperimentalBlockEditorProvider,
 	GlobalStylesContext,
 	transformStyles,
 	useSafeGlobalStylesOutput,
+	useSafeGlobalStylesOutputWithConfig,
 	useGlobalSetting,
 	useGlobalStyle,
 	mergeBaseAndUserConfigs,
