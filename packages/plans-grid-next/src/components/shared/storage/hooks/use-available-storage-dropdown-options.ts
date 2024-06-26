@@ -1,7 +1,4 @@
-import {
-	PlanSlug,
-	WPComPlanStorageFeatureSlug,
-} from '@automattic/calypso-products';
+import { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { usePlansGridContext } from '../../../../grid-context';

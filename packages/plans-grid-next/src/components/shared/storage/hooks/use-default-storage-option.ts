@@ -1,7 +1,4 @@
-import {
-	type PlanSlug,
-	type WPComPlanStorageFeatureSlug,
-} from '@automattic/calypso-products';
+import { type PlanSlug, type WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { usePlansGridContext } from '../../../../grid-context';
 import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
