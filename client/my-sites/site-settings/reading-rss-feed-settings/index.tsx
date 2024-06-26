@@ -12,7 +12,7 @@ type Fields = {
 type RssFeedSettingsSectionProps = {
 	fields: Fields;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
-	handleSubmitForm: () => void;
+	handleSubmitForm: ( event?: React.FormEvent< HTMLFormElement > ) => void;
 	updateFields: ( fields: Fields ) => void;
 	disabled?: boolean;
 	siteUrl?: string;
@@ -36,7 +36,7 @@ export const RssFeedSettingsSection = ( {
 			<SettingsSectionHeader
 				title={ translate( 'RSS feed settings' ) }
 				showButton
-				onButtonClick={ handleSubmitForm }
+				onButtonClick={ () => handleSubmitForm() }
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
