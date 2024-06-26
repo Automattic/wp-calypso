@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import s from './styles.module.scss';
+import './styles.scss';
 
 type EmptyModuleCardProps = {
 	className?: string;
@@ -17,11 +17,11 @@ const EmptyModuleCard = ( {
 	children,
 }: EmptyModuleCardProps ) => {
 	return (
-		<div className={ clsx( className, s[ 'stats-empty-module-card' ] ) }>
-			<div className={ s[ 'stats-empty-module-card__icon' ] }>{ icon }</div>
-			<div className={ s[ 'stats-empty-module-card__content' ] }>
-				<div className={ s[ 'stats-empty-module-card__description' ] }>{ description }</div>
-				<div className={ s[ 'stats-empty-module-card__cards' ] }>{ cards }</div>
+		<div className={ clsx( className, 'stats-empty-module-card' ) }>
+			<div className="stats-empty-module-card__icon">{ icon }</div>
+			<div className="stats-empty-module-card__content">
+				<div className="stats-empty-module-card__description">{ description }</div>
+				<div className="stats-empty-module-card__cards">{ cards }</div>
 				{ children }
 			</div>
 		</div>
