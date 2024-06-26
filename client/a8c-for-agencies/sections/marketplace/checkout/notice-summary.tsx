@@ -46,7 +46,7 @@ export default function NoticeSummary( { type }: Props ) {
 			case 'agency-purchase':
 				return [
 					translate(
-						'You agree to our {{a/}}, and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time.',
+						'You agree to our {{a}}Terms of Service{{/a}}, and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time.',
 						{
 							components: {
 								a: (
@@ -55,9 +55,7 @@ export default function NoticeSummary( { type }: Props ) {
 										onClick={ handleClientTermsClick }
 										target="_blank"
 										rel="noreferrer noopener"
-									>
-										{ translate( 'Terms of Service' ) }
-									</a>
+									/>
 								),
 							},
 						}
