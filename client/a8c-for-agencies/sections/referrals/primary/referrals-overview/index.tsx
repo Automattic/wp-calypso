@@ -63,6 +63,8 @@ export default function ReferralsOverview( {
 	const { data: referrals, isFetching: isFetchingReferrals } =
 		useFetchReferrals( isAutomatedReferral );
 
+	const isPayable = tipaltiData?.IsPayable;
+
 	const hasReferrals = !! referrals?.length;
 
 	const makeAReferral = useCallback( () => {
@@ -97,7 +99,7 @@ export default function ReferralsOverview( {
 
 					<LayoutHeader>
 						<Title>{ title } </Title>
-						{ isAutomatedReferral && (
+						{ isAutomatedReferral && isPayable && (
 							<Actions>
 								<MobileSidebarNavigation />
 								<Button primary href={ A4A_MARKETPLACE_PRODUCTS_LINK } onClick={ makeAReferral }>
