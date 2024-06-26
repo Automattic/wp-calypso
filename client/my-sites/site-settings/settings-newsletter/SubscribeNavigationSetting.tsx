@@ -32,6 +32,7 @@ export const SubscribeNavigationSetting = ( {
 		return addQueryArgs( siteEditorUrl, {
 			postType: 'wp_template',
 			postId: `${ themeSlug }//index`,
+			canvas: 'edit',
 		} );
 	};
 
