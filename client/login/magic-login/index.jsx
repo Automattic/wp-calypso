@@ -114,8 +114,8 @@ class MagicLogin extends Component {
 		publicToken: null,
 		showSecondaryEmailOptions: false,
 		showEmailCodeVerification: false,
-		mainUsername: null,
 		maskedEmailAddress: '',
+		hashedEmail: null,
 	};
 
 	componentDidMount() {
@@ -413,17 +413,15 @@ class MagicLogin extends Component {
 				eventOptions
 			);
 
-			const { is_secondary, main_username, main_email_masked } = await wpcom.req.get(
-				'/auth/get-gravatar-info',
-				{ email: usernameOrEmail }
-			);
+			const { is_secondary, main_email_masked } = await wpcom.req.get( '/auth/get-gravatar-info', {
+				email: usernameOrEmail,
+			} );
 
 			if ( is_secondary ) {
 				this.setState( {
 					usernameOrEmail,
 					isSecondaryEmail: true,
 					showSecondaryEmailOptions: true,
-					mainUsername: main_username,
 					maskedEmailAddress: main_email_masked,
 					isRequestingEmail: false,
 				} );
@@ -573,17 +571,30 @@ class MagicLogin extends Component {
 		}, 1000 );
 	};
 
+	emailToSha256 = async ( email ) => {
+		const data = new TextEncoder().encode( email );
+		const hashBuffer = await crypto.subtle.digest( 'SHA-256', data );
+
+		return Array.from( new Uint8Array( hashBuffer ) )
+			.map( ( byte ) => byte.toString( 16 ).padStart( 2, '0' ) )
+			.join( '' );
+	};
+
 	renderGravPoweredSecondaryEmailOptions() {
 		const { oauth2Client, translate } = this.props;
 		const {
 			usernameOrEmail,
 			isNewAccount,
 			maskedEmailAddress,
-			mainUsername,
 			isRequestingEmail,
 			requestEmailErrorMessage,
+			hashedEmail,
 		} = this.state;
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
+
+		this.emailToSha256( usernameOrEmail ).then( ( email ) =>
+			this.setState( { hashedEmail: email } )
+		);
 
 		return (
 			<div className="grav-powered-magic-login__content">
@@ -601,9 +612,11 @@ class MagicLogin extends Component {
 							args: { maskedEmailAddress },
 						} ) }
 					</div>
-					<a href={ `https://gravatar.com/${ mainUsername }` } target="_blank" rel="noreferrer">
-						{ translate( 'Open profile' ) }
-					</a>
+					{ hashedEmail && (
+						<a href={ `https://gravatar.com/${ hashedEmail }` } target="_blank" rel="noreferrer">
+							{ translate( 'Open profile' ) }
+						</a>
+					) }
 				</div>
 				<div className="grav-powered-magic-login__account-options">
 					<button
