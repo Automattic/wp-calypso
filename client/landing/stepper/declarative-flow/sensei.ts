@@ -1,8 +1,8 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { SENSEI_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useFlowLocale } from '../hooks/use-flow-locale';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { redirect } from './internals/steps-repository/import/util';
 import Intro from './internals/steps-repository/intro';
@@ -40,7 +40,7 @@ const sensei: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const locale = useLocale();
+		const locale = useFlowLocale();
 		const siteSlug = useSiteSlug();
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -79,7 +79,7 @@ const sensei: Flow = {
 		const currentPath = window.location.pathname;
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const isPlanStep = currentPath.endsWith( `setup/${ this.name }/senseiPlan` );
-		const locale = useLocale();
+		const locale = useFlowLocale();
 
 		let result = { state: AssertConditionState.SUCCESS };
 

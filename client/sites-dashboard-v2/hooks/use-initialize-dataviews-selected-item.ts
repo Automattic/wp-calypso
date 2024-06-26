@@ -12,25 +12,17 @@ export function useInitializeDataViewsSelectedItem( {
 	selectedSite?: SiteDetails | null;
 	paginatedSites: any;
 } ) {
-	const initialized = useRef( false );
+	const initialized = useRef( '' );
 
 	useEffect( () => {
-		if ( initialized.current || ! selectedSite ) {
+		if ( initialized.current === selectedSite?.slug || ! selectedSite ) {
 			return;
 		}
-
-		const selector = selectedSite.is_wpcom_staging_site
-			? '.site-dataviews__staging-site'
-			: '.sites-dataviews__site';
-
-		for ( const site of document.querySelectorAll( selector ) ) {
-			const slug = selectedSite.is_wpcom_staging_site
-				? site.getAttribute( 'data-site-slug' )
-				: ( site.querySelector( '.sites-dataviews__site-url span' ) as HTMLElement )?.innerText;
-
-			if ( selectedSite.slug === slug ) {
+		for ( const site of document.querySelectorAll( '.sites-dataviews__site' ) ) {
+			const slug = site.querySelector( '.sites-dataviews__site-url span' );
+			if ( selectedSite.slug === ( slug as HTMLElement )?.innerText ) {
 				( site as HTMLElement ).click?.();
-				initialized.current = true;
+				initialized.current = selectedSite.slug;
 				break;
 			}
 		}

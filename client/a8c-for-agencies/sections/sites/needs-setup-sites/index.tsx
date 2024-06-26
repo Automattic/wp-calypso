@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { Modal } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -37,8 +38,15 @@ type NeedsSetupSite = {
 	id: number;
 };
 
+const isA4aSiteCreationConfigurationsEnabled = config.isEnabled(
+	'a4a-site-creation-configurations'
+);
+
 export default function NeedSetup( { licenseKey }: Props ) {
 	const translate = useTranslate();
+	const [ displaySiteConfigurationModal, setDisplaySiteConfigurationModal ] = useState( false );
+
+	const toggleModal = () => setDisplaySiteConfigurationModal( ! displaySiteConfigurationModal );
 
 	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
 
@@ -179,12 +187,16 @@ export default function NeedSetup( { licenseKey }: Props ) {
 						</Actions>
 					</LayoutHeader>
 				</LayoutTop>
-
+				{ displaySiteConfigurationModal && (
+					<Modal title={ translate( 'Configure your site' ) } onRequestClose={ toggleModal }>
+						<h1>Configure your site placeholder modal</h1>
+					</Modal>
+				) }
 				<NeedSetupTable
 					availablePlans={ availablePlans }
 					isLoading={ isFetching }
 					provisioning={ isProvisioning }
-					onCreateSite={ onCreateSite }
+					onCreateSite={ isA4aSiteCreationConfigurationsEnabled ? toggleModal : onCreateSite }
 					onMigrateSite={ onMigrateSite }
 				/>
 			</LayoutColumn>

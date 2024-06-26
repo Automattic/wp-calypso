@@ -118,7 +118,6 @@
 		"ssr/prefetch-timebox": true,
 		"stats/empty-module-traffic": false,
 		"stats/tier-upgrade-slider": true,
-		"stats/utm-builder": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"themes/premium": true,
