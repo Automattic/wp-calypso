@@ -36,7 +36,7 @@ function SubscribingEmailStepContent( props ) {
 				redirectToAfterLoginUrl={ redirect_to }
 				suggestedUsername=""
 				isPasswordless
-				queryArgs={ { user_email, redirect_to } || {} }
+				queryArgs={ { user_email, redirect_to } }
 				isSocialSignupEnabled={ false }
 				// recaptchaClientId={ this.state.recaptchaClientId }
 				isReskinned
@@ -45,7 +45,7 @@ function SubscribingEmailStepContent( props ) {
 				labelText={ translate( 'Your email' ) }
 				submitButtonText={ translate( 'Create an account' ) }
 				submitForm={ handleSubmitSignup }
-				onPasswordlessCreateAccountError={ () => {} }
+				handleCreateAccountError={ () => {} }
 			/>
 		</>
 	);
