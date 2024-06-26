@@ -52,7 +52,7 @@ const DotcomPreviewPane = ( {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
-	const isSimpleSite = ! site.jetpack;
+	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
