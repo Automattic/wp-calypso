@@ -29,3 +29,9 @@
 .a4a-form__section-field-required {
 	color: var(--color-neutral-50);
 }
+
+.a4a-form__section-field-validation {
+	margin-inline-start: 16px;
+	font-size: rem(12px);
+	color: var(--color-error);
+}
