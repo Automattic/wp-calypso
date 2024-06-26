@@ -95,7 +95,7 @@ interface Props {
 
 const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
-	const { items, mobileItem, compact = false, hideWhenOnlyOneLevel } = props;
+	const { items = [], mobileItem, compact = false, hideWhenOnlyOneLevel } = props;
 
 	if ( items.length === 1 ) {
 		if ( hideWhenOnlyOneLevel ) {
