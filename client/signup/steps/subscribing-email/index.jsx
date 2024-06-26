@@ -40,6 +40,8 @@ function SubscribingEmailStep( props ) {
 	}, [] );
 
 	if ( isSuccess ) {
+		// TODO: Subscribe existing user to guides emails through API endpoint https://github.com/Automattic/martech/issues/3090
+
 		props.recordTracksEvent( 'calypso_signup_new_email_subscription_success', {
 			mailing_list: queryParams.mailing_list,
 		} );
