@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -98,7 +99,7 @@ class Sitemaps extends Component {
 
 		return (
 			<div>
-				{ this.renderInfoLink( 'https://wordpress.com/support/sitemaps/', false ) }
+				{ this.renderInfoLink( localizeUrl( 'https://wordpress.com/support/sitemaps/' ), false ) }
 
 				{ this.isSitePublic() ? (
 					<div>

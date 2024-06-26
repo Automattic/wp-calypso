@@ -1,6 +1,5 @@
-import { CompactCard } from '@automattic/components';
-import classnames from 'classnames';
-import MaterialIcon from 'calypso/components/material-icon';
+import { CompactCard, MaterialIcon } from '@automattic/components';
+import clsx from 'clsx';
 import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
 import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/email-plan-warnings';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
@@ -39,7 +38,7 @@ const EmailPlanHeader = ( {
 		isLoadingEmails
 	);
 
-	const cardClasses = classnames( 'email-plan-header', statusClass );
+	const cardClasses = clsx( 'email-plan-header', statusClass );
 
 	return (
 		<>

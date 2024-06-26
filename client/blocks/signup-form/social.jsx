@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -7,6 +8,7 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -98,18 +100,44 @@ class SocialSignupForm extends Component {
 
 	getRedirectUri = ( socialService ) => {
 		const origin = typeof window !== 'undefined' && window.location.origin;
+		const pathname = typeof window !== 'undefined' && window.location.pathname;
 
 		// If the user is in the WPCC flow, we want to redirect user to login callback so that we can automatically log them in.
-		return isWpccFlow( this.props.flowName )
-			? `${ origin + login( { socialService } ) }`
-			: `${ origin }/start/user`;
+		if ( isWpccFlow( this.props.flowName ) ) {
+			return `${ origin + login( { socialService } ) }`;
+		}
+
+		if ( socialService === 'github' ) {
+			return `${ origin }${ pathname }`;
+		}
+
+		return `${ origin }/start/user`;
 	};
 
 	trackLoginAndRememberRedirect = ( service ) => {
 		this.trackSocialSignup( service );
 
-		if ( this.props.redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
-			window.sessionStorage.setItem( 'signup_redirect_to', this.props.redirectToAfterLoginUrl );
+		try {
+			if ( this.props.redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
+				window.sessionStorage.setItem( 'signup_redirect_to', this.props.redirectToAfterLoginUrl );
+			}
+		} catch ( error ) {
+			this.props.showErrorNotice(
+				this.props.translate(
+					'Error accessing sessionStorage. {{a}}Please check your browser settings{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/support/browser-issues/' ) }
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				)
+			);
 		}
 	};
 
@@ -137,15 +165,16 @@ class SocialSignupForm extends Component {
 export default connect(
 	( state ) => {
 		const query = getCurrentQueryArguments( state );
+		const isDevAccount = query?.ref === 'hosting-lp' || query?.ref === 'developer-lp';
 
 		return {
 			currentRoute: getCurrentRoute( state ),
 			oauth2Client: getCurrentOAuth2Client( state ),
-			isDevAccount: query?.ref === 'developer-lp',
+			isDevAccount: isDevAccount,
 			isWoo:
 				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
 				isWooCommerceCoreProfilerFlow( state ),
 		};
 	},
-	{ recordTracksEvent }
+	{ recordTracksEvent, showErrorNotice: errorNotice }
 )( localize( SocialSignupForm ) );

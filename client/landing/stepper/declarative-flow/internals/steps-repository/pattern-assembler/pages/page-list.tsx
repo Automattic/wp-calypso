@@ -7,7 +7,7 @@ import {
 	__unstableCompositeItem as CompositeItem,
 	FlexItem,
 } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import './page-list.scss';
 
@@ -20,7 +20,7 @@ interface PageListItemProps {
 const PageListItem = ( { label, isSelected, isDisabled }: PageListItemProps ) => {
 	return (
 		<HStack
-			className={ classnames( 'page-list-item', {
+			className={ clsx( 'page-list-item', {
 				'page-list-item--selected': isSelected,
 				'page-list-item--disabled': isDisabled,
 			} ) }
@@ -58,8 +58,8 @@ const PageList = ( { pagesToShow, onSelectPage }: PageListProps ) => {
 					{ ...composite }
 					role="checkbox"
 					as="button"
-					disabled={ true }
-					focusable={ true }
+					disabled
+					focusable
 					aria-checked="true"
 				>
 					<PageListItem label={ translate( 'Homepage' ) } isDisabled />

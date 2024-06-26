@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useLocale } from '@automattic/i18n-utils';
 import { SENSEI_FLOW, setThemeOnSite } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -121,6 +120,30 @@ export const useCreateSenseiSite = () => {
 		] );
 
 		setProgress( {
+			percentage: 75,
+			title: styleProgressTitle,
+		} );
+
+		if ( siteId ) {
+			await setThemeOnSite( siteId.toString(), COURSE_THEME );
+			wait( 1200 );
+			const selectedStyleVariationTitle = getSelectedStyleVariation()?.title;
+			const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
+				getStyleVariations( siteId, COURSE_THEME ),
+				getSiteTheme( siteId, COURSE_THEME ),
+			] );
+			const userGlobalStylesLink: string =
+				theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href || '';
+			const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
+			const styleVariation = styleVariations.find(
+				( variation ) => variation.title === selectedStyleVariationTitle
+			);
+			if ( styleVariation && userGlobalStylesId ) {
+				await updateGlobalStyles( siteId, userGlobalStylesId, styleVariation );
+			}
+		}
+
+		setProgress( {
 			percentage: 100,
 			title: styleProgressTitle,
 		} );
@@ -143,4 +166,3 @@ export const useCreateSenseiSite = () => {
 
 	return { createAndConfigureSite, progress, setCourseThemeAndVariation };
 };
-/* eslint-enable */

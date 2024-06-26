@@ -1,6 +1,10 @@
+import { __ } from '@wordpress/i18n';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+
 export const DeployStatus = {
 	STATUS_PENDING: 'pending',
-	STATUS_QUEUED: 'queue',
+	STATUS_QUEUED: 'queued',
 	STATUS_RUNNING: 'running',
 	STATUS_SUCCESS: 'success',
 	STATUS_FAILED: 'failed',
@@ -13,12 +17,44 @@ export type DeploymentStatusValue = ValueOf< typeof DeployStatus >;
 
 interface DeploymentStatusProps {
 	status: DeploymentStatusValue;
+	href?: string;
 }
 
-export const DeploymentStatus = ( { status }: DeploymentStatusProps ) => {
+function getText( status: DeploymentStatusValue ) {
+	switch ( status ) {
+		case 'pending':
+			return __( 'Pending' );
+		case 'queued':
+			return __( 'Queued' );
+		case 'running':
+			return __( 'Deploying' );
+		case 'success':
+			return __( 'Deployed' );
+		case 'warnings':
+			return __( 'Warnings' );
+		case 'failed':
+			return __( 'Error' );
+		default:
+			return status;
+	}
+}
+
+export const DeploymentStatus = ( { status, href }: DeploymentStatusProps ) => {
+	const dispatch = useDispatch();
+
 	return (
-		<div className={ `github-deployments-status github-deployments-status__${ status }` }>
-			<span>{ status }</span>
-		</div>
+		<a
+			onClick={ () =>
+				dispatch(
+					recordTracksEvent( 'calypso_hosting_github_log_status_click', {
+						status,
+					} )
+				)
+			}
+			href={ href }
+			className={ `github-deployments-status github-deployments-status__${ status }` }
+		>
+			<span>{ getText( status ) }</span>
+		</a>
 	);
 };

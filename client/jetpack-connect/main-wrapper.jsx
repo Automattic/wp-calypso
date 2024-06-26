@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -34,6 +34,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			isWooOnboarding,
 			isWooCoreProfiler,
 			isWpcomMigration,
+			isFromAutomatticForAgenciesPlugin,
 			className,
 			children,
 			partnerSlug,
@@ -44,19 +45,20 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 		const isWooDna = wooDnaConfig && wooDnaConfig.isWooDnaFlow();
 
-		const wrapperClassName = classNames( 'jetpack-connect__main', {
+		const wrapperClassName = clsx( 'jetpack-connect__main', {
 			'is-wide': isWide,
 			'is-woocommerce': isWooOnboarding || isWooDna || isWooCoreProfiler,
 			'is-woocommerce-core-profiler-flow': isWooCoreProfiler,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-wpcom-migration': isWpcomMigration,
+			'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 		} );
 
 		const width = isWooOnboarding || isWooDna ? 200 : undefined;
 		const darkColorScheme = false;
 
 		return (
-			<Main className={ classNames( className, wrapperClassName ) }>
+			<Main className={ clsx( className, wrapperClassName ) }>
 				<DocumentHead
 					title={ pageTitle || translate( 'Jetpack Connect' ) }
 					skipTitleFormatting={ Boolean( pageTitle ) }
@@ -65,6 +67,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					{ ! isWpcomMigration && (
 						<JetpackHeader
 							partnerSlug={ partnerSlug }
+							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 							isWooOnboarding={ isWooOnboarding }
 							isWooCoreProfiler={ isWooCoreProfiler }
 							isWooDna={ isWooDna }

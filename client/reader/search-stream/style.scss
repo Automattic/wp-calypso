@@ -19,9 +19,22 @@
 	margin-bottom: 4px;
 }
 
+.layout.has-header-section.is-section-reader {
+
+	.layout__content {
+		background: var(--studio-white);
+	}
+	.main.search-stream {
+		padding-inline: 0;
+	}
+}
+
 
 .is-reader-page .main.search-stream {
 	max-width: 905px;
+	margin: 0 auto;
+	padding-inline: 24px;
+	padding-top: 0 !important;
 }
 
 .search-stream__intro {
@@ -57,15 +70,14 @@
 }
 
 .is-reader-page .search-stream__fixed-area {
-	background: var(--color-neutral-0);
-	position: fixed;
+	background: var(--studio-white);
+	position: sticky;
 	top: 0;
-	margin-top: var(--masterbar-height);
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 
-	@include breakpoint-deprecated( ">660px" ) {
-		padding-top: 30px;
+	@media only screen and (min-width: 601px) and (max-width: 660px) {
+		width: calc(100% - 96px);
 	}
 }
 
@@ -355,6 +367,11 @@
 
 .search-stream__single-column-results .reader-infinite-stream__row-wrapper {
 	margin-top: 20px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 20px 16px 0;
+		width: calc(100% - 32px) !important;
+	}
 }
 
 .search-stream__single-column-results .reader-subscription-list-item__options {

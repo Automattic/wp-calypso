@@ -1,9 +1,10 @@
 import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
+import { usePlansGridContext } from '../grid-context';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject, DataResponse } from '../types';
@@ -23,11 +24,11 @@ const SubdomainSuggestion = styled.div`
 
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
-	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
-	isCustomDomainAllowedOnFreePlan: boolean;
+	generatedWPComSubdomain?: DataResponse< { domain_name: string } >;
+	isCustomDomainAllowedOnFreePlan?: boolean;
 } > = ( { paidDomainName, generatedWPComSubdomain, isCustomDomainAllowedOnFreePlan } ) => {
 	const translate = useTranslate();
-	const isLoading = generatedWPComSubdomain.isLoading;
+	const isLoading = generatedWPComSubdomain?.isLoading;
 	return (
 		<SubdomainSuggestion>
 			{ isLoading && <LoadingPlaceholder /> }
@@ -42,7 +43,7 @@ const FreePlanCustomDomainFeature: React.FC< {
 				) : (
 					<>
 						<div className="is-domain-name">{ paidDomainName }</div>
-						<div>{ generatedWPComSubdomain.result?.domain_name }</div>
+						<div>{ generatedWPComSubdomain?.result?.domain_name }</div>
 					</>
 				) ) }
 		</SubdomainSuggestion>
@@ -53,10 +54,10 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planSlug: string;
 	paidDomainName?: string;
-	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
+	generatedWPComSubdomain?: DataResponse< { domain_name: string } >;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
-	isCustomDomainAllowedOnFreePlan: boolean;
+	isCustomDomainAllowedOnFreePlan?: boolean;
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 } > = ( {
@@ -71,6 +72,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
+	const { enableFeatureTooltips } = usePlansGridContext();
 
 	return (
 		<>
@@ -91,18 +93,18 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const isHighlightedFeature = selectedFeature
 					? currentFeature.getSlug() === selectedFeature
 					: currentFeature?.isHighlighted ||
-					  currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN ||
+					  ( currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && paidDomainName ) ||
 					  ! currentFeature.availableForCurrentPlan;
 
-				const divClasses = classNames( '', getPlanClass( planSlug ), {
+				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 				} );
-				const spanClasses = classNames( 'plan-features-2023-grid__item-info', {
+				const spanClasses = clsx( 'plan-features-2023-grid__item-info', {
 					'is-annual-plan-feature': currentFeature.availableOnlyForAnnualPlans,
 					'is-available':
 						isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan,
 				} );
-				const itemTitleClasses = classNames( 'plan-features-2023-grid__item-title', {
+				const itemTitleClasses = clsx( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
 				} );
 
@@ -113,10 +115,14 @@ const PlanFeatures2023GridFeatures: React.FC< {
 								<span className={ itemTitleClasses }>
 									{ isFreePlanAndCustomDomainFeature ? (
 										<Plans2023Tooltip
-											text={ translate( '%s is not included', {
-												args: [ paidDomainName as string ],
-												comment: '%s is a domain name.',
-											} ) }
+											text={
+												enableFeatureTooltips
+													? translate( '%s is not included', {
+															args: [ paidDomainName as string ],
+															comment: '%s is a domain name.',
+													  } )
+													: undefined
+											}
 											activeTooltipId={ activeTooltipId }
 											setActiveTooltipId={ setActiveTooltipId }
 											id={ key }
@@ -130,12 +136,23 @@ const PlanFeatures2023GridFeatures: React.FC< {
 										</Plans2023Tooltip>
 									) : (
 										<Plans2023Tooltip
-											text={ currentFeature.getDescription?.( { planSlug } ) }
+											text={ enableFeatureTooltips ? currentFeature.getDescription?.() : undefined }
 											activeTooltipId={ activeTooltipId }
 											setActiveTooltipId={ setActiveTooltipId }
 											id={ key }
 										>
-											{ currentFeature.getTitle( { domainName: paidDomainName, planSlug } ) }
+											<>
+												{ currentFeature.getTitle( {
+													domainName: paidDomainName,
+												} ) }
+												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
+													<ul className="plan-features-2023-grid__item-sub-feature-list">
+														{ currentFeature.getSubFeatureObjects().map( ( subFeature ) => (
+															<li>{ subFeature?.getTitle() }</li>
+														) ) }
+													</ul>
+												) : null }
+											</>
 										</Plans2023Tooltip>
 									) }
 								</span>

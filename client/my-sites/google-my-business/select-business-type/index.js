@@ -90,9 +90,9 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					forceReconnect
 					primary
 				>
-					{ translate( 'Connect to Google My Business', {
+					{ translate( 'Connect to Google Business Profile', {
 						comment:
-							'Call to Action to connect the site to a business listing in Google My Business',
+							'Call to Action to connect the site to a business listing in Google Business Profile',
 					} ) }
 				</KeyringConnectButton>
 			);
@@ -105,7 +105,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					onClick={ this.trackCreateListingClick }
 				>
 					{ translate( 'Create Listing', {
-						comment: 'Call to Action to add a business listing to Google My Business',
+						comment: 'Call to Action to add a business listing to Google Business Profile',
 					} ) }{ ' ' }
 					<Gridicon icon="external" />
 				</Button>
@@ -158,17 +158,17 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker
 					path="/google-my-business/select-business-type/:site"
-					title="Google My Business > Select Business Type"
+					title="Google Business Profile > Select Business Type"
 				/>
 
-				<DocumentHead title={ translate( 'Google My Business' ) } />
+				<DocumentHead title={ translate( 'Google Business Profile' ) } />
 
 				<QueryKeyringServices />
 				<QuerySiteKeyrings siteId={ siteId } />
 				<QueryKeyringConnections />
 
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
+					{ translate( 'Google Business Profile' ) }
 				</HeaderCake>
 
 				<Card className="gmb-select-business-type__explanation">
@@ -179,7 +179,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 
 						<p>
 							{ translate(
-								'{{link}}Google My Business{{/link}} lists your local business on Google Search and Google Maps. ' +
+								'{{link}}Google Business Profile{{/link}} lists your local business on Google Search and Google Maps. ' +
 									'It works for businesses that have a physical location, or serve a local area.',
 								{
 									components: {
@@ -188,7 +188,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 												href="https://www.google.com/business/"
 												target="_blank"
 												rel="noopener noreferrer"
-												icon={ true }
+												icon
 												onClick={ this.trackGoogleMyBusinessClick }
 											/>
 										),

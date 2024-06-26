@@ -1,10 +1,10 @@
 import { Button, FoldableCard } from '@automattic/components';
+import { Site } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryMediaExport from 'calypso/components/data/query-media-export';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getMediaExportUrl from 'calypso/state/selectors/get-media-export-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -12,8 +12,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 function ExportMediaCard() {
 	const siteId = useSelector( getSelectedSiteId );
 	const mediaExportUrl = useSelector( getMediaExportUrl );
-	const { data: mediaStorage } = useMediaStorageQuery( siteId );
-	const hasNoMediaFiles = mediaStorage?.storage_used_bytes === 0;
+	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
+	const hasNoMediaFiles = mediaStorage?.storageUsedBytes === 0;
 	const dispatch = useDispatch();
 	const recordMediaExportClick = () =>
 		dispatch( recordTracksEvent( 'calypso_export_media_download_button_click' ) );

@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { modifierKeyIsActive } from '../helpers/input';
 import actions from '../state/actions';
@@ -67,6 +66,7 @@ class Layout extends Component {
 		navigationEnabled: true,
 		previousDetailScrollTop: 0,
 		previouslySelectedNoteId: null,
+		/** The note that will be open in the detail view */
 		selectedNote: null,
 	};
 
@@ -80,19 +80,19 @@ class Layout extends Component {
 			this.props.global.navigation = {};
 
 			/* Keyboard shortcutes */
-			this.props.enableKeyboardShortcuts();
 			this.props.global.input = {
 				lastInputWasKeyboard: false,
 			};
 		}
+		this.props.enableKeyboardShortcuts();
 
 		window.addEventListener( 'keydown', this.handleKeyDown, false );
 	}
 
 	componentDidMount() {
 		window.addEventListener( 'resize', this.redraw );
-		if ( this.noteList ) {
-			this.height = ReactDOM.findDOMNode( this.noteList ).clientHeight;
+		if ( this.noteListElement ) {
+			this.height = this.noteListElement.clientHeight;
 		}
 	}
 
@@ -125,7 +125,7 @@ class Layout extends Component {
 	UNSAFE_componentWillUpdate( nextProps ) {
 		const { selectedNoteId: nextNote } = nextProps;
 		const { selectedNoteId: prevNote } = this.props;
-		const noteList = ReactDOM.findDOMNode( this.noteList );
+		const noteList = this.noteListElement;
 
 		// jump to detail view
 		if ( nextNote && null === prevNote ) {
@@ -164,6 +164,7 @@ class Layout extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.redraw );
+		window.removeEventListener( 'keydown', this.handleKeyDown );
 	}
 
 	navigateByDirection = ( direction ) => {
@@ -289,6 +290,18 @@ class Layout extends Component {
 		this.navigateByDirection( -1 );
 	};
 
+	navigateToNoteById = ( noteId ) => {
+		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
+		const newIndex = filteredNotes.findIndex( ( { id } ) => id === noteId );
+		this.setState(
+			{
+				selectedNote: filteredNotes[ newIndex ].id,
+				lastSelectedIndex: newIndex,
+			},
+			this.noteListVisibilityUpdater
+		);
+	};
+
 	toggleNavigation = ( navigationEnabled ) => {
 		return 'boolean' === typeof navigationEnabled && this.setState( { navigationEnabled } );
 	};
@@ -302,8 +315,8 @@ class Layout extends Component {
 
 		requestAnimationFrame( () => ( this.isRefreshing = false ) );
 
-		if ( this.noteList ) {
-			this.height = ReactDOM.findDOMNode( this.noteList ).clientHeight;
+		if ( this.noteListElement ) {
+			this.height = this.noteListElement.clientHeight;
 		}
 		this.forceUpdate();
 	};
@@ -324,7 +337,7 @@ class Layout extends Component {
 		}
 
 		/* ESC is a super-action, always treat it */
-		if ( KEY_ESC === event.keyCode ) {
+		if ( KEY_ESC === event.keyCode && ! this.props.selectedNoteId ) {
 			this.props.closePanel();
 			stopEvent();
 			return;
@@ -348,6 +361,7 @@ class Layout extends Component {
 		const activateKeyboard = () => ( this.props.global.input.lastInputWasKeyboard = true );
 
 		switch ( event.keyCode ) {
+			case KEY_ESC:
 			case KEY_RIGHT:
 				activateKeyboard();
 				this.props.unselectNote();
@@ -423,6 +437,10 @@ class Layout extends Component {
 		this.noteList = ref;
 	};
 
+	storeNoteListElement = ( ref ) => {
+		this.noteListElement = ref;
+	};
+
 	storeDetailViewRef = ( ref ) => {
 		this.detailView = ref;
 	};
@@ -447,6 +465,7 @@ class Layout extends Component {
 				{ ! this.props.error && (
 					<NoteList
 						ref={ this.storeNoteList }
+						listElementRef={ this.storeNoteListElement }
 						storeVisibilityUpdater={ this.storeNoteListVisibilityUpdater }
 						client={ this.props.client }
 						filterController={ this.filterController }
@@ -456,6 +475,7 @@ class Layout extends Component {
 						notes={ filteredNotes }
 						selectedNote={ this.state.selectedNote }
 						closePanel={ this.props.closePanel }
+						navigateToNoteById={ this.navigateToNoteById }
 					/>
 				) }
 
@@ -501,7 +521,7 @@ class Layout extends Component {
 								key={ 'note-' + currentNote.id }
 								client={ this.props.client }
 								currentNote={ this.props.selectedNoteId }
-								detailView={ true }
+								detailView
 								global={ this.props.global }
 								note={ currentNote }
 								selectedNote={ this.state.selectedNote }

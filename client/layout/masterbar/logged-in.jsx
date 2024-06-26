@@ -1,13 +1,16 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products/src';
 import page from '@automattic/calypso-router';
+import { PromptIcon } from '@automattic/command-palette';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Site from 'calypso/blocks/site';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
@@ -15,6 +18,8 @@ import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { openCommandPalette } from 'calypso/state/command-palette/actions';
+import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import {
 	getCurrentUser,
 	getCurrentUserDate,
@@ -23,6 +28,7 @@ import {
 import {
 	getShouldShowGlobalSidebar,
 	getShouldShowGlobalSiteSidebar,
+	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
@@ -37,7 +43,14 @@ import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migratio
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
-import { getSiteSlug, isJetpackSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	isJetpackSite,
+	getSitePlanSlug,
+	getSiteTitle,
+	getSiteUrl,
+	getSiteAdminUrl,
+} from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -72,7 +85,6 @@ class MasterbarLoggedIn extends Component {
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
 		isEcommerce: PropTypes.bool,
-		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
@@ -202,6 +214,10 @@ class MasterbarLoggedIn extends Component {
 		preload( this.props.domainOnlySite ? 'domains' : 'stats' );
 	};
 
+	preloadAllSites = () => {
+		preload( 'sites' );
+	};
+
 	preloadReader = () => {
 		preload( 'reader' );
 	};
@@ -284,28 +300,22 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	getHomeUrl() {
+		const { hasNoSites, siteSlug, isCustomerHomeEnabled, isSiteTrialExpired } = this.props;
+		// eslint-disable-next-line no-nested-ternary
+		return hasNoSites || isSiteTrialExpired
+			? '/sites'
+			: isCustomerHomeEnabled
+			? `/home/${ siteSlug }`
+			: getStatsPathForTab( 'day', siteSlug );
+	}
+
 	// will render as back button on mobile and in editor
 	renderMySites() {
-		const {
-			domainOnlySite,
-			hasNoSites,
-			hasMoreThanOneSite,
-			siteSlug,
-			translate,
-			isCustomerHomeEnabled,
-			section,
-			currentRoute,
-			isSiteTrialExpired,
-		} = this.props;
+		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
-		const homeUrl =
-			// eslint-disable-next-line no-nested-ternary
-			hasNoSites || isSiteTrialExpired
-				? '/sites'
-				: isCustomerHomeEnabled
-				? `/home/${ siteSlug }`
-				: getStatsPathForTab( 'day', siteSlug );
+		const homeUrl = this.getHomeUrl();
 
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
@@ -331,11 +341,7 @@ class MasterbarLoggedIn extends Component {
 				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
 				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
-			>
-				{ hasNoSites || hasMoreThanOneSite
-					? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-					: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-			</Item>
+			/>
 		);
 	}
 
@@ -489,7 +495,7 @@ class MasterbarLoggedIn extends Component {
 		const { translate } = this.props;
 		return (
 			<Notifications
-				isShowing={ true }
+				isShowing
 				isActive={ this.isActive( 'notifications' ) }
 				className="masterbar__item-notifications"
 				tooltip={ translate( 'Manage your notifications' ) }
@@ -500,6 +506,23 @@ class MasterbarLoggedIn extends Component {
 					} ) }
 				</span>
 			</Notifications>
+		);
+	}
+
+	renderCommandPaletteSearch() {
+		const handleClick = () => {
+			this.props.recordTracksEvent( 'calypso_masterbar_command_palette_search_clicked' );
+			this.props.openCommandPalette();
+		};
+
+		return (
+			<Item
+				className="masterbar__item-menu"
+				icon={ <PromptIcon /> }
+				tooltip={ this.props.translate( 'Command Palette' ) }
+				isActive={ this.props.isCommandPaletteOpen }
+				onClick={ handleClick }
+			/>
 		);
 	}
 
@@ -590,9 +613,57 @@ class MasterbarLoggedIn extends Component {
 		return null;
 	}
 
+	renderWordPressIcon() {
+		const { siteAdminUrl } = this.props;
+		return (
+			<Item
+				url={ siteAdminUrl }
+				className="masterbar__item-wordpress"
+				icon={ <span className="dashicons-before dashicons-wordpress" /> }
+			/>
+		);
+	}
+
+	renderAllSites() {
+		const { translate } = this.props;
+		return (
+			<Item
+				url="/sites"
+				className="masterbar__item-all-sites"
+				tipTarget="my-sites"
+				icon={ <Icon icon={ category } /> }
+				tooltip={ translate( 'Manage your sites' ) }
+				preloadSection={ this.preloadAllSites }
+			>
+				{ translate( 'All Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+			</Item>
+		);
+	}
+
+	renderCurrentSite() {
+		const { translate, siteTitle, siteUrl } = this.props;
+		return (
+			<Item
+				className="masterbar__item-current-site"
+				url={ siteUrl }
+				icon={ <span className="dashicons-before dashicons-admin-home" /> }
+				tooltip={ translate( 'Visit your site' ) }
+			>
+				{ siteTitle }
+			</Item>
+		);
+	}
+
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
-			this.props;
+		const {
+			isInEditor,
+			isCheckout,
+			isCheckoutPending,
+			isCheckoutFailed,
+			loadHelpCenterIcon,
+			currentSelectedSiteId,
+			isGlobalSiteView,
+		} = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -602,18 +673,47 @@ class MasterbarLoggedIn extends Component {
 		if ( this.props.isMobileGlobalNavVisible ) {
 			return (
 				<>
-					<Masterbar>
+					<Masterbar className="masterbar__global-nav">
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderSidebarMobileMenu() }
 							{ this.renderGlobalMySites() }
+							{ isGlobalSiteView && currentSelectedSiteId && (
+								<Site
+									siteId={ currentSelectedSiteId }
+									href={ this.getHomeUrl() }
+									isSelected
+									inlineBadges
+								/>
+							) }
 						</div>
 						<div className="masterbar__section masterbar__section--right">
 							{ this.renderSearch() }
 							{ this.renderCart() }
+							{ this.renderCommandPaletteSearch() }
 							{ this.renderNotifications() }
 						</div>
 					</Masterbar>
 				</>
+			);
+		}
+
+		if ( this.props.isUnifiedSiteView ) {
+			return (
+				<Masterbar className="masterbar__unified">
+					<div className="masterbar__section masterbar__section--left">
+						{ this.state.isResponsiveMenu
+							? this.renderSidebarMobileMenu()
+							: this.renderWordPressIcon() }
+						{ this.renderAllSites() }
+						{ this.renderCurrentSite() }
+					</div>
+					<div className="masterbar__section masterbar__section--right">
+						{ this.renderCart() }
+						{ loadHelpCenterIcon && this.renderHelpCenter() }
+						{ this.renderNotifications() }
+						{ this.renderMe() }
+					</div>
+				</Masterbar>
 			);
 		}
 
@@ -680,6 +780,8 @@ class MasterbarLoggedIn extends Component {
 export default connect(
 	( state ) => {
 		const sectionGroup = getSectionGroup( state );
+		const sectionName = getSectionName( state );
+
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );
@@ -693,12 +795,20 @@ export default connect(
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 			state,
 			currentSelectedSiteId,
-			sectionGroup
+			sectionGroup,
+			sectionName
 		);
 		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
 			state,
 			currentSelectedSiteId,
-			sectionGroup
+			sectionGroup,
+			sectionName
+		);
+		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
+			state,
+			currentSelectedSiteId,
+			sectionGroup,
+			sectionName
 		);
 		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
@@ -706,10 +816,12 @@ export default connect(
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
 			siteSlug: getSiteSlug( state, siteId ),
+			siteTitle: getSiteTitle( state, siteId ),
+			siteUrl: getSiteUrl( state, siteId ),
+			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
-			hasMoreThanOneSite: siteCount > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
 			isInEditor: getSectionName( state ) === 'gutenberg-editor',
@@ -731,8 +843,11 @@ export default connect(
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
-			isMobileGlobalNavVisible:
-				( shouldShowGlobalSidebar || shouldShowGlobalSiteSidebar ) && ! isDesktop,
+			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
+			isGlobalView: shouldShowGlobalSidebar,
+			isGlobalSiteView: shouldShowGlobalSiteSidebar,
+			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
+			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 		};
 	},
 	{
@@ -741,5 +856,6 @@ export default connect(
 		updateSiteMigrationMeta,
 		activateNextLayoutFocus,
 		savePreference,
+		openCommandPalette,
 	}
 )( localize( MasterbarLoggedIn ) );

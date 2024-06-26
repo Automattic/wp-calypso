@@ -1,5 +1,6 @@
 import { Spinner } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
 
@@ -7,7 +8,7 @@ import './style.scss';
 
 type Props = {
 	title: string;
-	subtitle?: string | React.ReactNode;
+	subtitle: string;
 	className?: string;
 	data: Array< {
 		name: string;
@@ -31,16 +32,13 @@ export const SiteMonitoringPieChart = ( {
 	}
 
 	return (
-		<div className={ classnames( classes ) }>
-			<header className="site-monitoring__chart-header">
-				<h2 className="site-monitoring__chart-title">{ title }</h2>
-				{ subtitle && <p className="site-monitoring__chart-subtitle">{ subtitle }</p> }
-			</header>
+		<HostingCard className={ clsx( classes ) } title={ title }>
+			<HostingCardDescription>{ subtitle }</HostingCardDescription>
 			<div className="site-monitoring__chart-container">
 				{ ! data.length ? <Spinner /> : null }
 				<PieChart data={ data } donut startAngle={ 0 } />
 			</div>
 			<PieChartLegend data={ data } onlyPercent fixedOrder={ fixedOrder } />
-		</div>
+		</HostingCard>
 	);
 };

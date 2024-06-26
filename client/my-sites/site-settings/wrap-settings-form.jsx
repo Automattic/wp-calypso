@@ -31,7 +31,7 @@ import {
 	getSiteSettings,
 } from 'calypso/state/site-settings/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const debug = debugFactory( 'calypso:site-settings' );
 
@@ -198,6 +198,42 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							path,
 						} );
 						break;
+					case 'jetpack_subscribe_overlay_enabled':
+						trackTracksEvent( 'calypso_settings_subscription_overlay_updated', {
+							value: fields.jetpack_subscribe_overlay_enabled,
+							path,
+						} );
+						break;
+					case 'jetpack_subscriptions_subscribe_post_end_enabled':
+						trackTracksEvent( 'calypso_settings_subscribe_post_end_updated', {
+							value: fields.jetpack_subscriptions_subscribe_post_end_enabled,
+							path,
+						} );
+						break;
+					case 'jetpack_verbum_subscription_modal':
+						trackTracksEvent( 'calypso_settings_verbum_subscription_modal_updated', {
+							value: fields.jetpack_verbum_subscription_modal,
+							path,
+						} );
+						break;
+					case 'jetpack_subscriptions_from_name':
+						trackTracksEvent( 'calypso_setting_jetpack_subscriptions_from_name_updated', {
+							value: fields.jetpack_subscriptions_from_name,
+							path,
+						} );
+						break;
+					case 'jetpack_subscriptions_subscribe_navigation_enabled':
+						trackTracksEvent( 'calypso_settings_subscribe_navigation_updated', {
+							value: fields.jetpack_subscriptions_subscribe_navigation_enabled,
+							path,
+						} );
+						break;
+					case 'jetpack_subscriptions_login_navigation_enabled':
+						trackTracksEvent( 'calypso_settings_subscriber_login_navigation_updated', {
+							value: fields.jetpack_subscriptions_login_navigation_enabled,
+							path,
+						} );
+						break;
 					case 'subscription_options':
 						if ( fields.subscription_options.welcome !== settings.subscription_options.welcome ) {
 							trackTracksEvent( 'calypso_settings_subscription_options_welcome_updated', {
@@ -352,6 +388,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 	const connectComponent = connect(
 		( state, { fields } ) => {
 			const siteId = getSelectedSiteId( state );
+			const siteSlug = getSelectedSiteSlug( state );
 			let isSavingSettings = isSavingSiteSettings( state, siteId );
 			const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 			let settings = getSiteSettings( state, siteId );
@@ -407,6 +444,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				settings,
 				settingsFields,
 				siteId,
+				siteSlug,
 				saveInstantSearchRequest,
 			};
 		},

@@ -36,7 +36,7 @@ exports[`<SitesGridItem> Custom render 1`] = `
       className="css-1xtz7v6-primaryContainer"
     >
       <a
-        className="css-6u0p2y-SiteName esmj6c50"
+        className="css-jjnk6s-SiteName esmj6c50"
         fontSize={16}
         href="/home/test_slug"
         title="Visit Dashboard"
@@ -48,7 +48,7 @@ exports[`<SitesGridItem> Custom render 1`] = `
       className="css-130wc7-SitesGridItemSecondary eke2d2q1"
     >
       <a
-        className="components-external-link css-d9p5eo-SiteUrl ejzgyku1"
+        className="components-external-link css-bnpe5v-SiteUrl ejzgyku1"
         href=""
         onClick={[Function]}
         rel="external noreferrer noopener"
@@ -56,43 +56,18 @@ exports[`<SitesGridItem> Custom render 1`] = `
         title=""
       >
         <span
-          className="css-1i2o39r-Truncated ejzgyku0"
-        />
-        <span
-          className="components-visually-hidden css-1mm2cvy-View e19lxcc00"
-          data-wp-c16t={true}
-          data-wp-component="VisuallyHidden"
-          style={
-            Object {
-              "WebkitClipPath": "inset( 50% )",
-              "border": 0,
-              "clip": "rect(1px, 1px, 1px, 1px)",
-              "clipPath": "inset( 50% )",
-              "height": "1px",
-              "margin": "-1px",
-              "overflow": "hidden",
-              "padding": 0,
-              "position": "absolute",
-              "width": "1px",
-              "wordWrap": "normal",
-            }
-          }
+          className="components-external-link__contents"
         >
-          (opens in a new tab)
-        </span>
-        <svg
-          aria-hidden={true}
-          className="components-external-link__icon css-16iaek2-StyledIcon esh4a730"
-          focusable={false}
-          height={24}
-          viewBox="0 0 24 24"
-          width={24}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M19.5 4.5h-7V6h4.44l-5.97 5.97 1.06 1.06L18 7.06v4.44h1.5v-7Zm-13 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3H17v3a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h3V5.5h-3Z"
+          <span
+            className="css-1hljes5-Truncated ejzgyku0"
           />
-        </svg>
+        </span>
+        <span
+          aria-label="(opens in a new tab)"
+          className="components-external-link__icon"
+        >
+          ↗
+        </span>
       </a>
     </div>
   </div>
@@ -131,7 +106,7 @@ exports[`<SitesGridItem> Custom render 2 1`] = `
       className="css-1xtz7v6-primaryContainer"
     >
       <a
-        className="css-6u0p2y-SiteName esmj6c50"
+        className="css-jjnk6s-SiteName esmj6c50"
         fontSize={16}
       >
         The example site
@@ -141,7 +116,7 @@ exports[`<SitesGridItem> Custom render 2 1`] = `
       className="css-130wc7-SitesGridItemSecondary eke2d2q1"
     >
       <a
-        className="components-external-link css-d9p5eo-SiteUrl ejzgyku1"
+        className="components-external-link css-bnpe5v-SiteUrl ejzgyku1"
         href=""
         onClick={[Function]}
         rel="external noreferrer noopener"
@@ -149,43 +124,18 @@ exports[`<SitesGridItem> Custom render 2 1`] = `
         title=""
       >
         <span
-          className="css-1i2o39r-Truncated ejzgyku0"
-        />
-        <span
-          className="components-visually-hidden css-1mm2cvy-View e19lxcc00"
-          data-wp-c16t={true}
-          data-wp-component="VisuallyHidden"
-          style={
-            Object {
-              "WebkitClipPath": "inset( 50% )",
-              "border": 0,
-              "clip": "rect(1px, 1px, 1px, 1px)",
-              "clipPath": "inset( 50% )",
-              "height": "1px",
-              "margin": "-1px",
-              "overflow": "hidden",
-              "padding": 0,
-              "position": "absolute",
-              "width": "1px",
-              "wordWrap": "normal",
-            }
-          }
+          className="components-external-link__contents"
         >
-          (opens in a new tab)
-        </span>
-        <svg
-          aria-hidden={true}
-          className="components-external-link__icon css-16iaek2-StyledIcon esh4a730"
-          focusable={false}
-          height={24}
-          viewBox="0 0 24 24"
-          width={24}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M19.5 4.5h-7V6h4.44l-5.97 5.97 1.06 1.06L18 7.06v4.44h1.5v-7Zm-13 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3H17v3a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h3V5.5h-3Z"
+          <span
+            className="css-1hljes5-Truncated ejzgyku0"
           />
-        </svg>
+        </span>
+        <span
+          aria-label="(opens in a new tab)"
+          className="components-external-link__icon"
+        >
+          ↗
+        </span>
       </a>
     </div>
   </div>
@@ -228,7 +178,7 @@ exports[`<SitesGridItem> Default render 1`] = `
       className="css-1xtz7v6-primaryContainer"
     >
       <a
-        className="css-6u0p2y-SiteName esmj6c50"
+        className="css-jjnk6s-SiteName esmj6c50"
         fontSize={16}
         href="/home/test_slug"
         title="Visit Dashboard"
@@ -247,7 +197,7 @@ exports[`<SitesGridItem> Default render 1`] = `
       className="css-130wc7-SitesGridItemSecondary eke2d2q1"
     >
       <a
-        className="components-external-link css-d9p5eo-SiteUrl ejzgyku1"
+        className="components-external-link css-bnpe5v-SiteUrl ejzgyku1"
         href=""
         onClick={[Function]}
         rel="external noreferrer noopener"
@@ -255,43 +205,18 @@ exports[`<SitesGridItem> Default render 1`] = `
         title=""
       >
         <span
-          className="css-1i2o39r-Truncated ejzgyku0"
-        />
-        <span
-          className="components-visually-hidden css-1mm2cvy-View e19lxcc00"
-          data-wp-c16t={true}
-          data-wp-component="VisuallyHidden"
-          style={
-            Object {
-              "WebkitClipPath": "inset( 50% )",
-              "border": 0,
-              "clip": "rect(1px, 1px, 1px, 1px)",
-              "clipPath": "inset( 50% )",
-              "height": "1px",
-              "margin": "-1px",
-              "overflow": "hidden",
-              "padding": 0,
-              "position": "absolute",
-              "width": "1px",
-              "wordWrap": "normal",
-            }
-          }
+          className="components-external-link__contents"
         >
-          (opens in a new tab)
-        </span>
-        <svg
-          aria-hidden={true}
-          className="components-external-link__icon css-16iaek2-StyledIcon esh4a730"
-          focusable={false}
-          height={24}
-          viewBox="0 0 24 24"
-          width={24}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M19.5 4.5h-7V6h4.44l-5.97 5.97 1.06 1.06L18 7.06v4.44h1.5v-7Zm-13 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3H17v3a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h3V5.5h-3Z"
+          <span
+            className="css-1hljes5-Truncated ejzgyku0"
           />
-        </svg>
+        </span>
+        <span
+          aria-label="(opens in a new tab)"
+          className="components-external-link__icon"
+        >
+          ↗
+        </span>
       </a>
     </div>
   </div>

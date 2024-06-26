@@ -1,5 +1,5 @@
 import { requestProductsList, receiveProductsListFailure, receiveProductsList } from '../actions';
-import { ProductsList } from '../types';
+import { RawAPIProductsList } from '../types';
 
 describe( 'actions', () => {
 	it( 'should return a PRODUCTS_LIST_REQUEST action', () => {
@@ -29,6 +29,7 @@ describe( 'actions', () => {
 				available: true,
 				combined_cost_display: '$20.00',
 				cost: 20,
+				cost_smallest_unit: 2000,
 				cost_display: '$20.00',
 				currency_code: 'USD',
 				description: 'test product',
@@ -43,7 +44,7 @@ describe( 'actions', () => {
 				product_term: 'year',
 				product_type: 'space',
 			},
-		} as ProductsList;
+		} as RawAPIProductsList;
 
 		const expected = {
 			type: 'PRODUCTS_LIST_RECEIVE',

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
 import { css } from '@emotion/css';
@@ -6,10 +5,8 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import {
 	displaySiteUrl,
@@ -31,6 +28,7 @@ import SitesStagingBadge from './sites-staging-badge';
 import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
 import { WithAtomicTransfer } from './with-atomic-transfer';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const SIZES_ATTR = [
 	'(min-width: 1345px) calc((1280px - 64px) / 3)',
@@ -118,7 +116,6 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
-	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site.ID ) );
 	const wpAdminUrl = getSiteWpAdminUrl( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
@@ -127,9 +124,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const siteDashboardUrlProps = showThumbnailLink
 		? {
 				href:
-					isAtomicSite &&
-					siteDefaultInterface( site ) === 'wp-admin' &&
-					! isEnabled( 'layout/dotcom-nav-redesign' )
+					siteDefaultInterface( site ) === 'wp-admin'
 						? wpAdminUrl || getDashboardUrl( site.slug )
 						: getDashboardUrl( site.slug ),
 				title: __( 'Visit Dashboard' ),
@@ -184,11 +179,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 					) }
 					{ onSiteSelectBtnClick && (
 						<div className={ selectAction }>
-							<Button
-								compact={ true }
-								primary={ true }
-								onClick={ () => onSiteSelectBtnClick( site ) }
-							>
+							<Button compact primary onClick={ () => onSiteSelectBtnClick( site ) }>
 								{ __( 'Select this site' ) }
 							</Button>
 						</div>

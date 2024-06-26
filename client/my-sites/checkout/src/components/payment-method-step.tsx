@@ -5,7 +5,6 @@ import {
 	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	NonProductLineItem,
-	hasCheckoutVersion,
 	LineItemType,
 	getSubtotalWithoutDiscounts,
 	getTotalDiscountsWithoutCredits,
@@ -28,14 +27,6 @@ const CheckoutTermsWrapper = styled.div`
 		margin: 16px 0;
 		padding-right: 24px;
 		padding-left: 0;
-	}
-
-	& > div:first-of-type {
-		padding-right: 0;
-		padding-left: 0;
-		margin-right: 0;
-		margin-left: 0;
-		margin-top: 0;
 	}
 
 	a {
@@ -118,25 +109,23 @@ export default function BeforeSubmitCheckoutHeader() {
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 
-			{ ! hasCheckoutVersion( '2' ) && (
-				<WPOrderReviewSection>
-					<NonTotalPrices>
-						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-						{ costOverridesList.length > 0 && (
-							<NonProductLineItem subtotal lineItem={ discountLineItem } />
-						) }
-						{ taxLineItems.map( ( taxLineItem ) => (
-							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-						) ) }
-						{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-							<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-						) }
-					</NonTotalPrices>
-					<TotalPrice>
-						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
-					</TotalPrice>
-				</WPOrderReviewSection>
-			) }
+			<WPOrderReviewSection>
+				<NonTotalPrices>
+					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
+					{ costOverridesList.length > 0 && (
+						<NonProductLineItem subtotal lineItem={ discountLineItem } />
+					) }
+					{ taxLineItems.map( ( taxLineItem ) => (
+						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+					) ) }
+					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+						<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+					) }
+				</NonTotalPrices>
+				<TotalPrice>
+					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+				</TotalPrice>
+			</WPOrderReviewSection>
 		</>
 	);
 }

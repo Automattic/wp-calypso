@@ -3,9 +3,9 @@
  */
 import React from 'react';
 import renderer from 'react-test-renderer';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { SitesGridItem } from 'calypso/sites-dashboard/components/sites-grid-item';
 import { useCheckSiteTransferStatus } from '../../hooks/use-check-site-transfer-status';
+import type { SiteExcerptData } from '@automattic/sites';
 
 function makeTestSite( { title = 'test', is_coming_soon = false, lang = 'en' } = {} ) {
 	return {
@@ -53,7 +53,7 @@ describe( '<SitesGridItem>', () => {
 					site={ makeTestSite( { title: 'The example site' } ) as SiteExcerptData }
 					showLaunchNag={ false }
 					showBadgeSection={ false }
-					showThumbnailLink={ true }
+					showThumbnailLink
 					showSiteRenewLink={ false }
 				/>
 			)

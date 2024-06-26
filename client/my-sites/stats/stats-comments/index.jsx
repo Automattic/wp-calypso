@@ -1,5 +1,6 @@
 import { SimplifiedSegmentedControl } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -32,6 +33,7 @@ class StatsComments extends Component {
 		recordGoogleEvent: PropTypes.func,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
+		className: PropTypes.string,
 	};
 
 	state = {
@@ -104,6 +106,7 @@ class StatsComments extends Component {
 			requestingCommentsStats,
 			siteId,
 			translate,
+			className,
 		} = this.props;
 		const commentsAuthors = get( commentsStatsData, 'authors' );
 		const commentsPosts = get( commentsStatsData, 'posts' );
@@ -165,7 +168,7 @@ class StatsComments extends Component {
 					toggleControl={
 						<SimplifiedSegmentedControl options={ selectOptions } onSelect={ this.changeFilter } />
 					}
-					className="stats__modernised-comments"
+					className={ clsx( 'stats__modernised-comments', className ) }
 					showLeftIcon
 				/>
 			</>

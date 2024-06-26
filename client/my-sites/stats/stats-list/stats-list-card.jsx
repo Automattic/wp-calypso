@@ -6,7 +6,7 @@ import {
 	StatsCardAvatar,
 } from '@automattic/components';
 import { Icon, tag, file } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
@@ -26,18 +26,19 @@ const StatsListCard = ( {
 	useShortLabel,
 	useShortNumber,
 	error,
-	heroElement,
-	metricLabel,
-	splitHeader,
+	heroElement, // a node placed before the list
+	metricLabel, // a label to use for the values on the right side of the bars - `Views` by default
+	splitHeader, // instead of using a simple header containing the name of the card use additional columns and header items
 	mainItemLabel,
-	additionalColumns,
-	toggleControl,
+	additionalColumns, // additional columns to be displayed next to the default `views` column
+	toggleControl, // component to be placed in a split header
 	className,
 	usePlainCard,
 	showLeftIcon,
 	isLinkUnderlined,
 	listItemClassName,
-	overlay,
+	overlay, // an overlay used to hide the module behind a blur overlay
+	hasNoBackground,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -134,7 +135,8 @@ const StatsListCard = ( {
 			}
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
-			className={ classNames( `list-${ moduleType }`, className ) }
+			isNew={ [ 'utm', 'devices' ].includes( moduleType ) }
+			className={ clsx( `list-${ moduleType }`, className ) }
 			headerClassName={ listItemClassName }
 			metricLabel={ metricLabel }
 			heroElement={ heroElement }
@@ -151,7 +153,7 @@ const StatsListCard = ( {
 					{ data?.map( ( item, index ) => {
 						const leftSideItem = generateLeftItem( item );
 						const isInteractive = item?.link || item?.page || item?.children;
-						const key = item?.id || index; // not every item has an id
+						const key = item?.id ?? index; // not every item has an id
 
 						return (
 							<HorizontalBarListItem
@@ -172,6 +174,7 @@ const StatsListCard = ( {
 								usePlainCard={ usePlainCard }
 								isLinkUnderlined={ isLinkUnderlined }
 								leftGroupToggle={ item?.children && moduleType === 'tags-categories' } // tags and categories show toggle on the oposite side
+								hasNoBackground={ hasNoBackground }
 							/>
 						);
 					} ) }

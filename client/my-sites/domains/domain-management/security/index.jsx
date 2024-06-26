@@ -1,20 +1,19 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, MaterialIcon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import { ECOMMERCE, FORMS } from '@automattic/urls';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
-import MaterialIcon from 'calypso/components/material-icon';
 import SupportButton from 'calypso/components/support-button';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { sslStatuses } from 'calypso/lib/domains/constants';
-import { ECOMMERCE, FORMS } from 'calypso/lib/url/support';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
@@ -69,7 +68,7 @@ class Security extends Component {
 				break;
 		}
 
-		const statusClassNames = classNames( 'security__status', sslStatus );
+		const statusClassNames = clsx( 'security__status', sslStatus );
 
 		return (
 			<span className={ statusClassNames }>

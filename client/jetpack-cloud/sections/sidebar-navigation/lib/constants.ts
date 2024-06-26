@@ -4,8 +4,11 @@ export const JETPACK_MANAGE_SITES_LINK_NEEDS_ATTENTION = '/sites?issue_types=all
 export const JETPACK_MANAGE_SITES_LINK_FAVORITES = '/sites/favorites';
 export const JETPACK_MANAGE_PLUGINS_LINK = '/plugins/manage';
 export const JETPACK_CLOUD_ACTIVITY_LOG_LINK = '/activity-log';
+export const JETPACK_CLOUD_SCAN_HISTORY_LINK = '/scan/history';
 export const JETPACK_CLOUD_SEARCH_LINK = '/jetpack-search';
 export const JETPACK_CLOUD_SOCIAL_LINK = '/jetpack-social';
+export const JETPACK_CLOUD_SUBSCRIBERS_LINK = '/subscribers';
+export const JETPACK_CLOUD_MONETIZE_LINK = '/monetize';
 export const JETPACK_MANAGE_OVERVIEW_LINK = '/overview';
 export const JETPACK_MANAGE_PARTNER_PORTAL_LINK = '/partner-portal';
 export const JETPACK_MANAGE_LICENCES_LINK = `${ JETPACK_MANAGE_PARTNER_PORTAL_LINK }/licenses`;

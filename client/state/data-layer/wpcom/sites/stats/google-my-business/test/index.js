@@ -3,7 +3,7 @@ import { receiveGoogleMyBusinessStats } from 'calypso/state/google-my-business/a
 import { fetchStats, receiveStats } from '..';
 
 describe( '#fetchStats', () => {
-	test( 'should dispatch HTTP request to Google My Business stats endpoint', () => {
+	test( 'should dispatch HTTP request to Google Business Profile stats endpoint', () => {
 		const action = {
 			siteId: 12345,
 			statType: 'queries',

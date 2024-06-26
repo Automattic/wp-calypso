@@ -5,18 +5,15 @@ import {
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
-import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import { useEffect, useCallback } from 'react';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
@@ -28,6 +25,8 @@ import type {
 	RemoveProductFromCart,
 	ReplaceProductInCart,
 	CouponStatus,
+	SetCouponFieldVisible,
+	RemoveCouponAndClearField,
 } from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
@@ -46,11 +45,18 @@ const SiteSummary = styled.div`
 `;
 
 const CouponLinkWrapper = styled.div`
-	${ hasCheckoutVersion( '2' ) ? `font-size: 12px;` : `font-size: 14px;` }
+	font-size: 14px;
 `;
 
 const CouponAreaWrapper = styled.div`
-	padding-bottom: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
+	padding-bottom: 12px;
+	padding-top: 28px;
+	align-self: stretch;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-inline-start: 40px;
+		padding-inline-end: 0;
+	}
 `;
 
 const CouponField = styled( Coupon )``;
@@ -58,51 +64,21 @@ const CouponField = styled( Coupon )``;
 const CouponEnableButton = styled.button`
 	cursor: pointer;
 	text-decoration: underline;
-	color: ${ ( props ) => props.theme.colors.highlight };
+	color: ${ ( props ) => props.theme.colors.textColorLight };
 
 	&.wp-checkout-order-review__show-coupon-field-button {
-		${ hasCheckoutVersion( '2' ) ? `font-size: 12px` : `font-size: 14px;` }
+		font-size: 14px;
 	}
 	:hover {
 		text-decoration: none;
 	}
 `;
 
-const SitePreviewWrapper = styled.div`
-	.home-site-preview {
-		margin-bottom: 1.5em;
-		padding: 0.5em;
-		box-shadow:
-			0 0 0 1px var( --color-border-subtle ),
-			rgba( 0, 0, 0, 0.2 ) 0 7px 30px -10px;
-		border-radius: 6px;
-
-		& .home-site-preview__thumbnail-wrapper {
-			aspect-ratio: 16 / 9;
-			border-radius: 6px;
-			box-shadow: none;
-			min-width: 100%;
-
-			&:hover {
-				box-shadow: unset;
-
-				& .home-site-preview__thumbnail {
-					opacity: unset;
-				}
-			}
-		}
-
-		& home-site-preview__thumbnail {
-			opacity: 1;
-		}
-	}
-`;
-
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
+	removeCouponAndClearField,
 	replaceProductInCart,
-	couponFieldStateProps,
 	onChangeSelection,
 	siteUrl,
 	isSummary,
@@ -110,18 +86,19 @@ export default function WPCheckoutOrderReview( {
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
-	replaceProductInCart?: ReplaceProductInCart;
+	replaceProductInCart: ReplaceProductInCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangeSelection?: OnChangeItemVariant;
+	removeCouponAndClearField: RemoveCouponAndClearField;
+	isCouponFieldVisible: boolean;
+	setCouponFieldVisible: SetCouponFieldVisible;
 	siteUrl?: string;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ) {
 	const translate = useTranslate();
-	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
 	const cartKey = useCartKey();
-	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
-	const isPurchaseFree = responseCart.total_cost_integer === 0;
+	const { responseCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 
 	const onRemoveProductCancel = useCallback( () => {
@@ -149,20 +126,9 @@ export default function WPCheckoutOrderReview( {
 	);
 
 	const selectedSiteData = useSelector( getSelectedSite );
-	const wpcomDomain = useSelector( ( state ) =>
-		getWpComDomainBySiteId( state, selectedSiteData?.ID )
-	);
-	const searchParams = new URLSearchParams( window.location.search );
-	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
-
-	const removeCouponAndClearField = () => {
-		couponFieldStateProps.setCouponFieldValue( '' );
-		setCouponFieldVisible( false );
-		return removeCoupon();
-	};
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
 
@@ -173,14 +139,6 @@ export default function WPCheckoutOrderReview( {
 
 	return (
 		<>
-			{ /** Only show the site preview for WPCOM domains that have a site connected to the site id **/ }
-			{ hasCheckoutVersion( '2' ) && selectedSiteData && wpcomDomain && ! isSignupCheckout && (
-				<div className="checkout-site-preview">
-					<SitePreviewWrapper>
-						<SitePreview showEditSite={ false } showSiteDetails={ false } />
-					</SitePreviewWrapper>
-				</div>
-			) }
 			<div
 				className={ joinClasses( [
 					className,
@@ -215,22 +173,12 @@ export default function WPCheckoutOrderReview( {
 						onRemoveProductCancel={ onRemoveProductCancel }
 					/>
 				</WPOrderReviewSection>
-
-				{ ! isAkismetCheckout() && (
-					<CouponFieldArea
-						isCouponFieldVisible={ isCouponFieldVisible }
-						setCouponFieldVisible={ setCouponFieldVisible }
-						isPurchaseFree={ isPurchaseFree }
-						couponStatus={ couponStatus }
-						couponFieldStateProps={ couponFieldStateProps }
-					/>
-				) }
 			</div>
 		</>
 	);
 }
 
-function CouponFieldArea( {
+export function CouponFieldArea( {
 	isCouponFieldVisible,
 	setCouponFieldVisible,
 	isPurchaseFree,
@@ -274,12 +222,11 @@ function CouponFieldArea( {
 	return (
 		<CouponAreaWrapper>
 			<CouponLinkWrapper>
-				{ translate( 'Have a coupon? ' ) }{ ' ' }
 				<CouponEnableButton
 					className="wp-checkout-order-review__show-coupon-field-button"
 					onClick={ () => setCouponFieldVisible( true ) }
 				>
-					{ translate( 'Add a coupon code' ) }
+					{ translate( 'Have a coupon?' ) }
 				</CouponEnableButton>
 			</CouponLinkWrapper>
 		</CouponAreaWrapper>
@@ -307,8 +254,8 @@ function getDomainToDisplayInCheckoutHeader(
 		return domainUrl;
 	}
 
-	if ( responseCart.gift_details?.receiver_blog_url ) {
-		return responseCart.gift_details.receiver_blog_url;
+	if ( responseCart.gift_details?.receiver_blog_slug ) {
+		return responseCart.gift_details.receiver_blog_slug;
 	}
 
 	if (

@@ -1,3 +1,7 @@
+## 2.1.1
+
+- Fix import path in post-stats-card/index.tsx and fix can't resolve "assets" error #90267.
+
 ## 2.1.0
 
 - Update social-logos to ^2.5.2 (#72876)

@@ -2,14 +2,19 @@
 @import "@wordpress/base-styles/mixins";
 
 .themes-list {
-	$theme-item-min-width: 320px;
-	$theme-item-horizontal-margin: 32px; // Keep using margin as there might be an empty row
-
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax($theme-item-min-width + $theme-item-horizontal-margin, 1fr));
+	grid-template-columns: 100%;
 	list-style: none;
 	padding: 0;
 	margin: 0 -10px; // items flush against list edge
+
+	@include break-small {
+		$theme-item-min-width: 320px;
+		$theme-item-horizontal-margin: 32px; // Keep using margin as there might be an empty row
+
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax($theme-item-min-width + $theme-item-horizontal-margin, 1fr));
+	}
 
 	.feature-example & {
 		max-width: 1000px;

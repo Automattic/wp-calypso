@@ -24,6 +24,7 @@ const linkInBio: Flow = {
 	get title() {
 		return translate( 'Link in Bio' );
 	},
+	isSignupFlow: true,
 	useSteps() {
 		return [
 			{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },

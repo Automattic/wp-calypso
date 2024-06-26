@@ -47,6 +47,8 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 	const previousRouteWithArgs = useSelector( getPreviousRoute );
 	const siteSlug = site?.slug;
 	const previousRoute = removeQueryArgs( previousRouteWithArgs, KEY_PRODUCTS );
+	const hostingIntent = getQueryArg( window.location.href, 'hosting_intent' ) as string;
+
 	const redirectTo =
 		( getQueryArg( window.location.href, 'redirect_to' ) as string ) || previousRouteWithArgs;
 	const cancelTo =
@@ -114,6 +116,7 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 							isInModal
 							disabledThankYouPage
 							onAfterPaymentComplete={ handleAfterPaymentComplete }
+							hostingIntent={ hostingIntent }
 						/>
 					</RazorpayHookProvider>
 				</StripeHookProvider>

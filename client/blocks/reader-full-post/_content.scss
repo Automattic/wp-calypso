@@ -14,6 +14,7 @@
 
 .reader-full-post__story-content {
 	@extend %rendered-block-content;
+	font-family: $sans;
 	padding-top: 16px;
 	line-height: 1.7;
 }
@@ -143,7 +144,7 @@
 	margin-right: 8px;
 	transition: transform 0.1s ease;
 }
-@media ( prefers-reduced-motion: reduce ) {
+@media (prefers-reduced-motion: reduce) {
 	.wp-social-link {
 		transition-duration: 0s;
 	}

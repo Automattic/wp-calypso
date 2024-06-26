@@ -3,12 +3,12 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { AUTO_RENEWAL } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
@@ -353,13 +353,6 @@ function triggerPostRedirectNotices( {
 		} );
 		return;
 	}
-
-	reduxDispatch(
-		successNotice( translate( 'Your purchase has been completed!' ), {
-			id: 'checkout-thank-you-success',
-			displayOnNextPage: true,
-		} )
-	);
 }
 
 function displayRenewalSuccessNotice( {

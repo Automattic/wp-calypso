@@ -1,0 +1,105 @@
+@import "calypso/my-sites/patterns/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography";
+
+.patterns-get-access-modal {
+	box-shadow: none;
+
+	.dialog__content {
+		padding: 0;
+	}
+}
+
+.patterns-get-access-modal__backdrop.dialog__backdrop {
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.patterns-get-access-modal__content {
+	position: relative;
+	padding-right: 400px;
+	background-image: url(./images/background.png);
+	background-color: #1d2327;
+	background-repeat: no-repeat;
+	background-position: right top;
+	background-size: 50% auto;
+
+	.patterns-get-access-modal__close {
+		position: absolute;
+		top: 32px;
+		right: 32px;
+		width: 24px;
+		height: 24px;
+		cursor: pointer;
+
+		svg {
+			fill: var(--studio-white);
+		}
+	}
+}
+
+.patterns-get-access-modal__inner {
+	background-color: var(--studio-white);
+	padding: 48px;
+	max-width: 400px;
+	box-sizing: border-box;
+
+	.patterns-get-access-modal__title {
+		font-family: $font-recoleta;
+		font-size: rem(32px);
+		color: #101517;
+		line-height: 1.25;
+		letter-spacing: -0.32px;
+		padding-bottom: 16px;
+	}
+
+	.patterns-get-access-modal__description {
+		font-family: $font-sf-pro-text;
+		font-size: rem(16px);
+		color: #2c3338;
+		line-height: 1.5;
+		letter-spacing: -0.32px;
+		padding-bottom: 24px;
+	}
+
+	.patterns-get-access-modal__upgrade-buttons {
+		display: flex;
+		gap: 16px;
+		flex-wrap: wrap;
+		--color: #3858e9;
+
+		.is-primary {
+			background: var(--color);
+			border-color: var(--color);
+		}
+
+		.is-transparent {
+			border-color: var(--color);
+			color: var(--color);
+		}
+	}
+}
+
+@media (max-width: $break-large) {
+	.patterns-get-access-modal {
+		border-radius: 4px;
+	}
+
+	.patterns-get-access-modal__inner {
+		padding: 32px;
+	}
+
+	.patterns-get-access-modal__content {
+		padding: 0;
+		background: none;
+
+		.patterns-get-access-modal__close {
+			right: 24px;
+			top: 24px;
+
+			svg {
+				fill: var(--studio-black);
+			}
+		}
+	}
+}
+

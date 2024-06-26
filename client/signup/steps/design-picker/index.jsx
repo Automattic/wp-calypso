@@ -8,9 +8,9 @@ import DesignPicker, {
 	useCategorization,
 	useThemeDesignsQuery,
 } from '@automattic/design-picker';
-import { englishLocales, translationExists } from '@automattic/i18n-utils';
+import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
@@ -93,10 +93,13 @@ export default function DesignPickerStep( props ) {
 		};
 	}, [ props.stepSectionName ] );
 
-	const designs = useMemo(
-		() => shuffle( apiThemes.filter( ( theme ) => ! isBlankCanvasDesign( theme ) ) ),
-		[ apiThemes ]
-	);
+	const designs = useMemo( () => {
+		const filteredThemes = apiThemes.filter( ( theme ) => ! isBlankCanvasDesign( theme ) );
+		if ( useDIFMThemes ) {
+			return filteredThemes;
+		}
+		return shuffle( filteredThemes );
+	}, [ apiThemes, useDIFMThemes ] );
 
 	const getEventPropsByDesign = ( design ) => ( {
 		theme: design?.stylesheet ?? `pub/${ design?.theme }`,
@@ -180,7 +183,7 @@ export default function DesignPickerStep( props ) {
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
 					onUpgrade={ upgradePlanFromDesignPicker }
-					className={ classnames( {
+					className={ clsx( {
 						'design-picker-step__has-categories': showDesignPickerCategories,
 					} ) }
 					highResThumbnails
@@ -222,6 +225,10 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function headerText() {
+		if ( useDIFMThemes ) {
+			return translate( 'Design' );
+		}
+
 		if ( showDesignPickerCategories ) {
 			return translate( 'Themes' );
 		}
@@ -236,8 +243,10 @@ export default function DesignPickerStep( props ) {
 			);
 		}
 
-		if ( useDIFMThemes && translationExists( 'Select a theme to suggest a style.' ) ) {
-			return translate( 'Select a theme to suggest a style.' );
+		if ( useDIFMThemes ) {
+			return translate(
+				'We create a custom design based on the content you submit after checkout. Optionally, select a design to suggest inspiration.'
+			);
 		}
 
 		const text = translate( 'Choose a starting theme. You can change it later.' );
@@ -276,7 +285,7 @@ export default function DesignPickerStep( props ) {
 	return (
 		<StepWrapper
 			{ ...props }
-			className={ classnames( {
+			className={ clsx( {
 				'design-picker__has-categories': showDesignPickerCategories,
 				'design-picker__hide-category-column': useDIFMThemes || 'sell' === intent,
 			} ) }

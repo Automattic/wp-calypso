@@ -3,7 +3,7 @@ import { DomainData, SiteDetails } from '@automattic/data-stores';
 import { CheckboxControl, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import DomainsTableHeaderLoading from './header-loading';
 import type { ReactNode } from 'react';
 
@@ -66,7 +66,7 @@ export const DomainsTableHeader = ( {
 	isLoadingDomains,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
-	const listHeaderClasses = classNames( 'domains-table-header', headerClasses || '' );
+	const listHeaderClasses = clsx( 'domains-table-header', headerClasses || '' );
 
 	const renderSortIcon = (
 		column: DomainsTableColumn,
@@ -97,7 +97,7 @@ export const DomainsTableHeader = ( {
 		<thead className={ listHeaderClasses }>
 			<tr>
 				{ canSelectAnyDomains && (
-					<th>
+					<th className="domains-table-checkbox-th">
 						<CheckboxControl
 							data-testid="domains-select-all-checkbox"
 							__nextHasNoMarginBottom
@@ -118,7 +118,7 @@ export const DomainsTableHeader = ( {
 							<Button
 								plain
 								onClick={ () => onChangeSortOrder( column ) }
-								className={ classNames( 'list__header-column', {
+								className={ clsx( 'list__header-column', {
 									'is-sortable': column?.isSortable,
 								} ) }
 								tabIndex={ column?.isSortable ? 0 : -1 }

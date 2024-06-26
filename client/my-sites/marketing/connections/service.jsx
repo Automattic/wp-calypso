@@ -3,7 +3,7 @@ import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products
 import { Badge, FoldableCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Notice from 'calypso/components/notice';
 import SocialLogo from 'calypso/components/social-logo';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices/actions';
@@ -532,7 +533,7 @@ export class SharingService extends Component {
 		const serviceStatus = this.props.service.status ?? 'ok';
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID, serviceStatus );
 		const earliestExpiry = this.getConnectionExpiry();
-		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
+		const classNames = clsx( 'sharing-service', this.props.service.ID, connectionStatus, {
 			'is-open': this.state.isOpen,
 		} );
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
@@ -601,10 +602,10 @@ export class SharingService extends Component {
 									a: (
 										<ExternalLink
 											target="_blank"
-											icon={ true }
+											icon
 											iconSize={ 14 }
 											href={ localizeUrl(
-												this.props.isJetpack
+												this.props.isJetpack || isJetpackCloud()
 													? 'https://jetpack.com/2023/04/29/the-end-of-twitter-auto-sharing/'
 													: 'https://wordpress.com/blog/2023/04/29/why-twitter-auto-sharing-is-coming-to-an-end/'
 											) }
@@ -642,7 +643,7 @@ export class SharingService extends Component {
 					}
 				>
 					<div
-						className={ classnames( 'sharing-service__content', {
+						className={ clsx( 'sharing-service__content', {
 							'is-placeholder': this.props.isFetching,
 						} ) }
 					>

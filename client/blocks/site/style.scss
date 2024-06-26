@@ -80,6 +80,25 @@
 			margin-top: 0;
 		}
 	}
+
+	&.inline-badges .site__domain-and-badges {
+		display: flex;
+		align-items: flex-start;
+
+		.site__badge {
+			margin: -2px 0 0 3px;
+			padding: 0;
+			background: inherit;
+			color: var(--studio-blue-40);
+			text-wrap: nowrap;
+
+			&::before {
+				content: "•";
+				color: var(--studio-white);
+				padding-right: 3px;
+			}
+		}
+	}
 }
 
 // Wraps the anchor element

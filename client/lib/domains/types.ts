@@ -63,6 +63,8 @@ export type ResponseDomain = {
 	cannotManageNameServersReason: string | null;
 	cannotUpdateContactInfoReason: string | null;
 	canSetAsPrimary: boolean;
+	canTransferToOtherSite: boolean;
+	canTransferToAnyUser: boolean;
 	canUpdateContactInfo: boolean;
 	connectionMode: string;
 	contactInfoDisclosed: boolean;
@@ -88,6 +90,7 @@ export type ResponseDomain = {
 	isAutoRenewing: boolean;
 	isEligibleForInboundTransfer: boolean;
 	isIcannVerificationSuspended: boolean;
+	isGravatarDomain: boolean;
 	isLocked: boolean;
 	isMappedToAtomicSite: boolean;
 	isMoveToNewSitePending: boolean;
@@ -201,5 +204,6 @@ export type DomainDiagnostics = {
 		is_using_wpcom_name_servers: boolean;
 		all_essential_email_dns_records_are_correct: boolean;
 		dismissed_email_dns_issues_notice: boolean;
+		should_offer_automatic_fixes: boolean;
 	};
 };

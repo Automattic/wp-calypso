@@ -112,13 +112,17 @@ Changes function to treat number as an integer in the currency's smallest unit.
 
 Since rounding errors are common in floating point math, sometimes a price is provided as an integer in the smallest unit of a currency (eg: cents in USD or yen in JPY). If this option is false, the function will format the amount `1025` in `USD` as `$1,025.00`, but when the option is true, it will return `$10.25` instead.
 
+### `signForPositive?: boolean`
+
+If the number is greater than 0, setting this to true will include its sign (eg: `+$35.00`). Has no effect on negative numbers or 0.
+
 ## CurrencyObject
 
 An object with the following properties:
 
-### `sign: '-'|''`
+### `sign: '-' | '+' | ''`
 
-The symbol to use for negative values.
+The negative sign for the price, if it is negative, or the positive sign if `signForPositive` is set.
 
 ### `symbol: string`
 

@@ -1,8 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
@@ -15,12 +15,19 @@ import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/s
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
-function getHoldMessages(
-	context: string | null,
-	translate: LocalizeProps[ 'translate' ],
-	billingPeriod?: string,
-	isMarketplace?: boolean
-) {
+function getHoldMessages( {
+	context,
+	translate,
+	billingPeriod,
+	isMarketplace,
+	hasEnTranslation,
+}: {
+	context: string | null;
+	translate: LocalizeProps[ 'translate' ];
+	billingPeriod?: string;
+	isMarketplace?: boolean;
+	hasEnTranslation: ( arg: string ) => boolean;
+} ) {
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
@@ -36,26 +43,46 @@ function getHoldMessages(
 			} )(),
 			description: ( function () {
 				if ( context === 'themes' ) {
-					return translate(
-						"You'll also get to install custom plugins, have more storage, and access live support."
-					);
+					return hasEnTranslation(
+						"You'll also get to install custom plugins, have more storage, and access priority 24/7 support."
+					)
+						? translate(
+								"You'll also get to install custom plugins, have more storage, and access priority 24/7 support."
+						  )
+						: translate(
+								"You'll also get to install custom plugins, have more storage, and access live support."
+						  );
 				}
 
 				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
-					return translate(
-						"You'll also get a free domain for one year, and access email support."
-					);
+					return hasEnTranslation(
+						"You'll also get a free domain for one year, and access fast support."
+					)
+						? translate( "You'll also get a free domain for one year, and access fast support." )
+						: translate( "You'll also get a free domain for one year, and access email support." );
 				}
 
 				if ( billingPeriod === IntervalLength.MONTHLY ) {
-					return translate(
-						"You'll also get to install custom themes, have more storage, and access email support."
-					);
+					return hasEnTranslation(
+						"You'll also get to install custom themes, have more storage, and access fast support."
+					)
+						? translate(
+								"You'll also get to install custom themes, have more storage, and access fast support."
+						  )
+						: translate(
+								"You'll also get to install custom themes, have more storage, and access email support."
+						  );
 				}
 
-				return translate(
-					"You'll also get to install custom themes, have more storage, and access live support."
-				);
+				return hasEnTranslation(
+					"You'll also get to install custom themes, have more storage, and access priority 24/7 support."
+				)
+					? translate(
+							"You'll also get to install custom themes, have more storage, and access priority 24/7 support."
+					  )
+					: translate(
+							"You'll also get to install custom themes, have more storage, and access live support."
+					  );
 			} )(),
 			supportUrl: null,
 		},
@@ -106,6 +133,13 @@ function getHoldMessages(
 			} ),
 			description: <ExcessiveDiskSpace />,
 			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
+		},
+		IS_STAGING_SITE: {
+			title: translate( 'Create a new staging site' ),
+			description: translate(
+				'Hosting features cannot be activated for a staging site. Create a new staging site to continue.'
+			),
+			supportUrl: null,
 		},
 	};
 }
@@ -218,8 +252,16 @@ export const HardBlockingNotice = ( {
 };
 
 export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
+	const hasEnTranslation = useHasEnTranslation();
+
 	const billingPeriod = useSelector( getBillingInterval );
-	const holdMessages = getHoldMessages( context, translate, billingPeriod, isMarketplace );
+	const holdMessages = getHoldMessages( {
+		context,
+		translate,
+		billingPeriod,
+		isMarketplace,
+		hasEnTranslation,
+	} );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
@@ -235,7 +277,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 				/>
 			) }
 			<div
-				className={ classNames( 'eligibility-warnings__hold-list', {
+				className={ clsx( 'eligibility-warnings__hold-list', {
 					'eligibility-warnings__hold-list-dim': hasValidBlockingHold,
 				} ) }
 				data-testid="HoldList-Card"

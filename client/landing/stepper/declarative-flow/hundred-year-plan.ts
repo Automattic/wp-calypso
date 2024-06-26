@@ -20,6 +20,7 @@ const HundredYearPlanFlow: Flow = {
 	get title() {
 		return translate( '100-year Plan' );
 	},
+	isSignupFlow: true,
 	useSteps() {
 		const currentUser = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),

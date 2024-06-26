@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -26,7 +27,7 @@ function Portfolios( {
 				link={
 					siteIsJetpack && ! isAtomic
 						? 'https://jetpack.com/support/custom-content-types/'
-						: 'https://wordpress.com/support/portfolios/'
+						: localizeUrl( 'https://wordpress.com/support/portfolios/' )
 				}
 				privacyLink={ siteIsJetpack && ! isAtomic }
 			/>

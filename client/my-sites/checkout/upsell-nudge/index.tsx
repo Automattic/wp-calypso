@@ -11,7 +11,7 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { isURL } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize, useTranslate } from 'i18n-calypso';
 import { pick } from 'lodash';
@@ -135,7 +135,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				: parseInt( String( selectedSiteId ), 10 );
 		return (
 			<Main
-				className={ classnames( styleClass, {
+				className={ clsx( styleClass, {
 					'is-wide-layout': BUSINESS_PLAN_UPGRADE_UPSELL === upsellType,
 				} ) }
 			>
@@ -231,9 +231,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				);
 
 			case BUSINESS_PLAN_UPGRADE_UPSELL:
-				return isLoading ? (
-					this.renderGenericPlaceholder()
-				) : (
+				return (
 					<BusinessPlanUpgradeUpsell
 						currencyCode={ currencyCode }
 						planRawPrice={ planRawPrice }
@@ -243,6 +241,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+						isLoading={ isLoading }
 					/>
 				);
 			case PROFESSIONAL_EMAIL_UPSELL:

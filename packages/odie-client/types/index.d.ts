@@ -73,3 +73,10 @@ declare module 'calypso/components/async-load' {
 
 	export default AsyncLoad;
 }
+
+interface Window {
+	odieUserData: {
+		displayName: string;
+		email?: string;
+	};
+}

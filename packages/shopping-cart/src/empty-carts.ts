@@ -19,6 +19,7 @@ export function getEmptyResponseCart(): ResponseCart {
 		allowed_payment_methods: [],
 		coupon: '',
 		is_coupon_applied: false,
+		has_auto_renew_coupon_been_automatically_applied: false,
 		locale: 'en-us',
 		tax: { location: {}, display_taxes: false },
 		is_signup: false,
@@ -57,5 +58,6 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		product_type: 'test',
 		included_domain_purchase_amount: 0,
 		product_variants: [],
+		cost_overrides: [],
 	};
 }

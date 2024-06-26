@@ -9,7 +9,7 @@ export const SiteName = styled.a< { fontSize?: number } >`
 	font-size: ${ ( props ) => `${ props.fontSize }px` };
 	letter-spacing: -0.4px;
 
-	&:hover {
+	&:is( a ):hover {
 		text-decoration: underline;
 	}
 

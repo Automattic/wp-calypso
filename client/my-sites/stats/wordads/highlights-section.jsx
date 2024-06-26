@@ -1,4 +1,4 @@
-import { Popover } from '@automattic/components';
+import { ComponentSwapper, MobileHighlightCardListing, Popover } from '@automattic/components';
 import CountCard from '@automattic/components/src/highlight-cards/count-card';
 import formatCurrency from '@automattic/format-currency';
 import { Icon, info, payment, receipt, tip } from '@wordpress/icons';
@@ -23,21 +23,21 @@ function useHighlights( earnings ) {
 		const highlights = [
 			{
 				heading: translate( 'Earnings', { comment: 'Total WordAds earnings to date' } ),
-				icon: <Icon icon={ payment } />,
+				svgIcon: payment,
 				value: getAmountAsFormattedString( total ),
 			},
 			{
 				heading: translate( 'Paid', {
 					comment: 'Total WordAds earnings that have been paid out',
 				} ),
-				icon: <Icon icon={ receipt } />,
+				svgIcon: receipt,
 				value: getAmountAsFormattedString( paid ),
 			},
 			{
 				heading: translate( 'Outstanding amount', {
 					comment: 'Total WordAds earnings currently unpaid',
 				} ),
-				icon: <Icon icon={ tip } />,
+				svgIcon: tip,
 				value: getAmountAsFormattedString( owed ),
 			},
 		];
@@ -124,15 +124,14 @@ function HighlightsSectionHeader( props ) {
 	);
 }
 
-function HighlightsListing( props ) {
-	const highlights = useHighlights( props.earnings );
+function HighlightsListing( { highlights } ) {
 	return (
 		<div className="highlight-cards-list">
 			{ highlights.map( ( highlight ) => (
 				<CountCard
 					key={ highlight.id }
 					heading={ highlight.heading }
-					icon={ highlight.icon }
+					icon={ highlight.svgIcon }
 					value={ highlight.value }
 				/>
 			) ) }
@@ -140,15 +139,32 @@ function HighlightsListing( props ) {
 	);
 }
 
+function HighlightsListingMobile( { highlights } ) {
+	// Convert the highlights data for the MobileHighlightCardListing component.
+	// Use preformattedValue property as an override to the count value.
+	const mobileHighlights = highlights.map( ( highlight ) => {
+		return {
+			count: 0,
+			heading: highlight.heading,
+			icon: highlight.svgIcon,
+			preformattedValue: highlight.value,
+		};
+	} );
+	return <MobileHighlightCardListing highlights={ mobileHighlights } />;
+}
+
 export default function HighlightsSection( props ) {
 	const earningsData = useSelector( ( state ) => getWordAdsEarnings( state, props.siteId ) );
+	const highlights = useHighlights( earningsData );
 
-	// TODO: Retain business logic here and refactor presentational logic into highlight-cards.
-	//       Maybe name it wordads-highlight-cards?
 	return (
 		<div className="highlight-cards wordads has-odyssey-stats-bg-color">
 			<HighlightsSectionHeader earnings={ earningsData } />
-			<HighlightsListing earnings={ earningsData } />
+			<ComponentSwapper
+				breakpoint="<660px"
+				breakpointActiveComponent={ <HighlightsListingMobile highlights={ highlights } /> }
+				breakpointInactiveComponent={ <HighlightsListing highlights={ highlights } /> }
+			/>
 		</div>
 	);
 }

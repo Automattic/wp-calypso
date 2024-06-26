@@ -1,6 +1,5 @@
 import {
 	PHOTO_GALLERY_PAGE,
-	VIDEO_GALLERY_PAGE,
 	PORTFOLIO_PAGE,
 	PageId,
 	CUSTOM_PAGE,
@@ -121,15 +120,12 @@ export function getSingleMediaPlaceholder( mediaType: MediaUploadType ) {
 
 function getMediaPlaceholders( pageId: PageId ): Array< Media > {
 	switch ( pageId ) {
-		case VIDEO_GALLERY_PAGE:
-			return Array( 4 ).fill( getSingleMediaPlaceholder( 'VIDEO' ) );
 		case PORTFOLIO_PAGE:
 		case PHOTO_GALLERY_PAGE:
-			return Array( 8 ).fill( getSingleMediaPlaceholder( 'IMAGE' ) );
 		case CUSTOM_PAGE:
 			return Array( 8 ).fill( getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ) );
 		default:
-			return Array( 4 ).fill( getSingleMediaPlaceholder( 'IMAGE' ) );
+			return Array( 4 ).fill( getSingleMediaPlaceholder( 'IMAGE-AND-VIDEO' ) );
 	}
 }
 

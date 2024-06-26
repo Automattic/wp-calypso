@@ -22,6 +22,7 @@ import {
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
 	TYPE_100_YEAR,
+	TYPE_STARTER,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -206,7 +207,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain
 					selectedSite={ selectedSite }
 					hasDomainCredit={ planHasDomainCredit }
-					onlyBlogDomain={ true }
+					onlyBlogDomain
 				/>
 				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<SiteActivity />
@@ -360,6 +361,20 @@ export class ProductPurchaseFeaturesList extends Component {
 		);
 	}
 
+	// Features of the legacy Starter plan in WPCOM that was launched along with the Pro plan in 2022.
+	getWPCOMLegacyStarterFeatures() {
+		const { selectedSite, planHasDomainCredit } = this.props;
+
+		return (
+			<Fragment>
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<SiteActivity />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+			</Fragment>
+		);
+	}
+
 	getFeatures() {
 		const { plan, isPlaceholder } = this.props;
 
@@ -379,6 +394,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),
 				[ TYPE_PRO ]: () => this.getProFeatuers(),
 				[ TYPE_100_YEAR ]: () => this.getBusinessFeatures(),
+				[ TYPE_STARTER ]: () => this.getWPCOMLegacyStarterFeatures(),
 			},
 			[ GROUP_JETPACK ]: {
 				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),

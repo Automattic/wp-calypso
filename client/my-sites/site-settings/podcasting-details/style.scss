@@ -60,7 +60,7 @@
 .podcasting-details__title-subtitle-wrapper {
 	@include breakpoint-deprecated( ">960px" ) {
 		float: left;
-		width: 75%;
+		width: 80%;
 	}
 }
 
@@ -71,7 +71,10 @@
 	}
 
 	.form-select {
+		margin-right: 12px;
+
 		@include breakpoint-deprecated( "<480px" ) {
+			margin-right: 0;
 			width: 100%;
 		}
 	}

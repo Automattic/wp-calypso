@@ -1,10 +1,10 @@
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { bumpTwoStepAuthMCStat } from 'calypso/lib/two-step-authorization';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
 import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-list';
 import Security2faProgress from 'calypso/me/security-2fa-progress';

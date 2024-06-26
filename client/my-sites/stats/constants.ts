@@ -40,6 +40,7 @@ export const STAT_TYPE_VISITS = 'statsVisits';
 export const STAT_TYPE_TAGS_LIST = 'tagsList';
 export const STAT_TYPE_USERS_LIST = 'usersList';
 export const STAT_TYPE_WPCOM_PLUGINS_LIST = 'wpcomPluginsList';
+export const STATS_TYPE_DEVICE_STATS = 'stats_devices_module';
 
 // stats feature are for more granular control, string value is based on component name
 export const STATS_FEATURE_DATE_CONTROL = 'StatsDateControl';
@@ -60,6 +61,8 @@ export const STATS_FEATURE_SUMMARY_LINKS_30_DAYS = 'StatsModuleSummaryLinks/30_d
 export const STATS_FEATURE_SUMMARY_LINKS_QUARTER = 'StatsModuleSummaryLinks/quarter';
 export const STATS_FEATURE_SUMMARY_LINKS_YEAR = 'StatsModuleSummaryLinks/year';
 export const STATS_FEATURE_SUMMARY_LINKS_ALL = 'StatsModuleSummaryLinks/all';
+// UTM Stats which is already in use, so didn't align with the naming convertion.
+export const STATS_FEATURE_UTM_STATS = 'stats_utm';
 
 // other
 export const STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE = 'DoYouLoveJetpackStatsNotice';

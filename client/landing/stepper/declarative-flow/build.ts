@@ -14,6 +14,7 @@ const build: Flow = {
 	get title() {
 		return 'WordPress';
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [
 			{ slug: 'launchpad', component: LaunchPad },

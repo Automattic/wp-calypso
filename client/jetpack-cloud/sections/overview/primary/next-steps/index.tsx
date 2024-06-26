@@ -49,7 +49,9 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '/dashboard?tour=add-new-site',
+			calypso_path: isEnabled( 'jetpack/manage-sites-v2-menu' )
+				? '/sites?tour=add-new-site'
+				: '/dashboard?tour=add-new-site',
 			completed: checkTourCompletion( 'addSiteStep1' ),
 			disabled: false,
 			actionDispatch: () => {

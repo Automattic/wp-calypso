@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, ProgressBar, Gridicon, Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,6 +16,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -340,7 +341,7 @@ class ScanPage extends Component< Props > {
 
 		return (
 			<Main
-				className={ classNames( mainClass, {
+				className={ clsx( mainClass, {
 					is_jetpackcom: isJetpackPlatform,
 				} ) }
 			>
@@ -348,7 +349,7 @@ class ScanPage extends Component< Props > {
 				{ isJetpackPlatform && <SidebarNavigation /> }
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-				{ ! isJetpackPlatform && (
+				{ ! ( isJetpackPlatform || isA8CForAgencies() ) && (
 					<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
 				) }
 

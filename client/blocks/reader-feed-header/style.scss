@@ -2,6 +2,10 @@
 	display: flex;
 	margin-bottom: 16px;
 	z-index: z-index(".reader-feed-header", ".reader-feed-header__site");
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-bottom: 16px;
+	}
 }
 
 .reader-feed-header.is-wide-display .reader-feed-header__site {
@@ -95,6 +99,10 @@
 		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 		margin-bottom: 12px;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px;
 	}
 }
 

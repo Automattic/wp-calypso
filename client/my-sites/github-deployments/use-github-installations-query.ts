@@ -16,6 +16,8 @@ const GITHUB_DEPLOYMENTS_INSTALLATIONS_QUERY_KEY = [
 export interface GitHubInstallationData {
 	external_id: number;
 	account_name: string;
+	management_url: string;
+	repository_selection: 'all' | 'selected';
 }
 
 export const useGithubInstallationsQuery = (

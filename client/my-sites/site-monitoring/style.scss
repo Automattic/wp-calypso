@@ -6,16 +6,16 @@
 
 $section-max-width: 1224px;
 
-.is-section-site-monitoring.theme-default {
+.is-section-site-monitoring.theme-default:not(:has(.is-global-sidebar-visible)) {
 	background-color: var(--studio-white);
 	.focus-content:not(.has-no-sidebar) .layout__content {
-		@media screen and ( max-width: 782px ) {
+		@media screen and (max-width: 782px) {
 			padding-top: 71px;
 		}
 	}
 }
 
-.is-section-site-monitoring {
+div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	// this overrides the default .layout__content that adds unwanted padding
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
@@ -26,7 +26,7 @@ $section-max-width: 1224px;
 			padding-bottom: 88px;
 		}
 
-		@media ( min-width: 782px ) {
+		@media (min-width: 782px) {
 			padding-inline-start: calc(var(--sidebar-width-max) + 1px);
 		}
 	}
@@ -41,7 +41,7 @@ $section-max-width: 1224px;
 	}
 	& .site-logs-container {
 		padding: 0 max(calc(50% - #{math.div( $section-max-width, 2 )}), 32px);
-		@media screen and ( max-width: 782px ) {
+		@media screen and (max-width: 782px) {
 			padding: 0;
 			margin-left: 16px;
 			margin-right: 16px;
@@ -70,11 +70,6 @@ $section-max-width: 1224px;
 	.site-monitoring__chart {
 		border: 0;
 		padding: 0;
-		margin: 0 -24px 24px -50px;
-
-		.site-monitoring__chart-header {
-			padding: 0 24px 0 50px;
-		}
 	}
 
 	.u-legend {
@@ -91,11 +86,6 @@ $section-max-width: 1224px;
 			align-items: center;
 		}
 	}
-
-	.site-monitoring__chart-header {
-		margin-bottom: 12px;
-	}
-
 }
 
 .site-monitoring {
@@ -139,7 +129,6 @@ $section-max-width: 1224px;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 24px;
 }
 
 .site-monitoring-time-controls__title {
@@ -153,10 +142,6 @@ $section-max-width: 1224px;
 }
 
 .site-monitoring__chart {
-	padding: 24px;
-	border: 1px solid var(--studio-gray-5);
-	border-radius: 5px; /* stylelint-disable-line scales/radii */
-	background-color: var(--studio-white);
 	position: relative;
 
 	.components-spinner {
@@ -274,5 +259,21 @@ $section-max-width: 1224px;
 .site-monitoring-bar-chart {
 	tr.u-series th {
 		font-weight: 400;
+	}
+}
+
+.site-monitoring__navigation-header.navigation-header {
+	width: auto;
+	padding-bottom: 0;
+	margin-bottom: 16px;
+
+	@media (max-width: $break-medium) {
+		margin-bottom: 8px;
+	}
+}
+
+.site-logs-container {
+	@media (max-width: $break-small) {
+		margin-top: -12px !important;
 	}
 }

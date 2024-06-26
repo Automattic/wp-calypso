@@ -1,0 +1,52 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.listing-section {
+	margin-block-end: 20px;
+	scroll-margin-block-start: 16px;
+}
+
+h2.listing-section-title {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+	margin-block-end: 10px;
+	font-size: rem(20px);
+	font-weight: 600;
+	line-height: 1.2;
+
+	hr {
+		color: var(--color-gray-5);
+		width: 1px;
+		flex-grow: 1;
+		margin: 0;
+	}
+}
+
+p.listing-section-description {
+	font-size: rem(14px);
+	font-weight: 400;
+	line-height: 1.2;
+	margin-block-end: 32px;
+}
+
+.listing-section-content {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: 1fr;
+
+	@include break-large {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@include break-huge {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.listing-section.is-two-columns .listing-section-content {
+	@include break-wide {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}

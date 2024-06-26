@@ -81,6 +81,12 @@ body.is-mobile-app-view {
 		color: var(--color-checkout-masterbar-text);
 		height: var(--masterbar-height);
 		position: absolute;
+		padding-inline-end: 1.5em;
+
+		&.masterbar--is-akismet,
+		&.masterbar--is-jetpack {
+			padding-inline-start: 1.5em;
+		}
 
 		@include break-mobile {
 			height: var(--masterbar-checkout-height);
@@ -92,7 +98,7 @@ body.is-mobile-app-view {
 	}
 
 	// stylelint-disable-next-line unit-allowed-list
-	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+	@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
 		body.font-smoothing-antialiased & {
 			text-rendering: optimizeLegibility;
 			-moz-osx-font-smoothing: grayscale;
@@ -148,6 +154,12 @@ body.is-mobile-app-view {
 					border-color: #a2aab2;
 				}
 			}
+		}
+	}
+	.masterbar__item-notifications {
+		svg.sidebar_svg-notifications {
+			margin: 0;
+			fill: none;
 		}
 	}
 }
@@ -243,6 +255,7 @@ body.is-mobile-app-view {
 	.masterbar--is-checkout & {
 		height: var(--masterbar-height);
 		line-height: var(--masterbar-height);
+		padding: 0;
 		@include break-mobile {
 			height: var(--masterbar-checkout-height);
 			line-height: var(--masterbar-checkout-height);
@@ -278,14 +291,39 @@ body.is-mobile-app-view {
 		padding: 0 0 0 6px;
 	}
 
+	svg {
+		fill: var(--color-masterbar-text);
+	}
+
+	.dashicons-before {
+		height: 20px;
+		color: var(--color-masterbar-icon);
+	}
+
+	// The hover colors are supposed to be the same as those in wp-admin.
 	&:hover {
 		@include breakpoint-deprecated( ">480px" ) {
 			background: var(--color-masterbar-item-hover-background);
-			color: var(--color-masterbar-text);
-
+			color: var(--color-masterbar-highlight);
 			.masterbar--is-checkout & {
 				background: var(--color-checkout-masterbar-item-hover-background);
 				color: var(--color-checkout-masterbar-text);
+			}
+			.masterbar__item-content {
+				color: var(--color-masterbar-highlight);
+			}
+			.dashicons-before {
+				color: var(--color-masterbar-highlight);
+			}
+		}
+	}
+	// Reader icon is only available on Default interface sites, so we apply the Calypso color for consistency.
+	// https://github.com/Automattic/wp-calypso/pull/90136#issuecomment-2089512298
+	&.masterbar__reader:hover {
+		@include breakpoint-deprecated( ">480px" ) {
+			color: var(--color-masterbar-text);
+			.masterbar__item-content {
+				color: var(--color-masterbar-text);
 			}
 		}
 	}
@@ -343,7 +381,7 @@ body.is-mobile-app-view {
 		background: var(--studio-orange-70);
 	}
 
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		font-size: $masterbar-mobile-font-size;
 	}
 
@@ -356,7 +394,8 @@ body.is-mobile-app-view {
 		.masterbar__item-content {
 			display: none;
 		}
-		&.masterbar__item--always-show-content .masterbar__item-content {
+		&.masterbar__item--always-show-content .masterbar__item-content,
+		&.masterbar__item-me .masterbar__item-content {
 			display: block;
 		}
 	}
@@ -382,6 +421,10 @@ body.is-mobile-app-view {
 		width: 150px;
 		height: 25px;
 		margin: 0 5px;
+
+		.masterbar--is-checkout & {
+			margin: 0;
+		}
 	}
 
 	@include breakpoint-deprecated( "<480px" ) {
@@ -395,6 +438,10 @@ body.is-mobile-app-view {
 			width: 24px;
 			margin-left: 5px;
 			fill: var(--color-text-inverted);
+
+			.masterbar--is-checkout & {
+				margin-left: 0;
+			}
 		}
 
 		.masterbar__wpcom-wordmark {
@@ -431,7 +478,7 @@ body.is-mobile-app-view {
 	}
 }
 .masterbar__item-action-search {
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		display: none !important; //Mobile styles not yet handled
 	}
 
@@ -485,7 +532,7 @@ body.is-mobile-app-view {
 	transition: all 0.2s ease-out;
 	font-size: $masterbar-font-size;
 
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		height: 34px;
 		margin-top: 6px;
 		margin-right: 9px;
@@ -593,7 +640,7 @@ body.is-mobile-app-view {
 
 		border: 2px solid var(--color-border-inverted);
 
-		@media only screen and ( max-width: 782px ) {
+		@media only screen and (max-width: 782px) {
 			width: 22px;
 			height: 22px;
 		}
@@ -605,7 +652,7 @@ body.is-mobile-app-view {
 	}
 
 	.gridicon {
-		@media only screen and ( max-width: 782px ) {
+		@media only screen and (max-width: 782px) {
 			position: relative;
 			left: 4px;
 		}
@@ -614,7 +661,7 @@ body.is-mobile-app-view {
 			display: block;
 			padding: 0;
 
-			@media only screen and ( max-width: 782px ) {
+			@media only screen and (max-width: 782px) {
 				padding-left: 8px;
 			}
 		}
@@ -646,7 +693,7 @@ body.is-mobile-app-view {
 		margin-right: auto;
 	}
 
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		.gridicon + .masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -664,7 +711,7 @@ body.is-mobile-app-view {
 		border-bottom: 1px solid #646970;
 	}
 
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		.masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -682,7 +729,7 @@ body.is-mobile-app-view {
 	color: $masterbar-color-primary;
 	font-size: $masterbar-font-size;
 
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		height: 34px;
 		margin-top: 6px;
 		margin-right: 9px;
@@ -888,48 +935,56 @@ a.masterbar__quick-language-switcher {
 .masterbar__secure-checkout {
 	display: flex;
 	align-items: center;
-	margin-left: 24px;
+
+	.masterbar--is-akismet &,
+	.masterbar--is-jetpack & {
+		column-gap: 1em;
+	}
 
 	.masterbar__wpcom-wordmark {
 		color: var(--color-checkout-masterbar-text);
 		fill: var(--color-checkout-masterbar-text);
-		margin-right: 5px;
 	}
 
 	.masterbar__jetpack-wordmark {
 		height: 25px;
-		margin: 0 5px;
+
 	}
 
-	.masterbar__akismet-wordmark {
-		margin: 0 5px;
-	}
+	/* empty for now, saved for future use if needed
+		.masterbar__akismet-wordmark {
+		}
+	*/
 
 	.masterbar__close-button {
 		flex: initial;
 		width: initial;
-		margin-right: 10px;
+		padding: 1em;
 
-		@include break-mobile {
-			margin-right: 0;
+		@include breakpoint-deprecated( ">480px" ) {
+			padding: 1.5em;
 		}
 	}
 
 	.masterbar__secure-checkout-text {
 		color: var(--color-checkout-masterbar-text);
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.2em;
 		font-size: 0.75rem;
-		margin-left: 5px;
+		position: relative;
+		top: -0.5px;
+
+		/* Hide the secure checkout text on very small devices */
+		@media screen and (max-width: 300px) {
+			display: none;
+		}
 
 		@include breakpoint-deprecated( ">480px" ) {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 100%;
-			margin-left: 0;
 		}
 
+
 		.masterbar--is-jetpack & {
-			transform: translateY(-1px);
+			transform: translateY(0.5px);
 		}
 
 		.masterbar--is-akismet & {
@@ -953,5 +1008,79 @@ a.masterbar__quick-language-switcher {
 
 	100% {
 		opacity: 1;
+	}
+}
+
+.masterbar__global-nav {
+	background: var(--color-global-masterbar-background);
+	border-bottom: 1 px solid var(--color-global-masterbar-background);
+
+	.masterbar__section--left {
+		flex: 10;
+	}
+	.masterbar__item.is-active {
+		background-color: var(--color-global-masterbar-background);
+	}
+
+	.masterbar__item .gridicon {
+		fill: var(--color-global-masterbar-gridicon-fill);
+	}
+
+	.masterbar__item,
+	.site {
+		color: var(--color-global-masterbar-text);
+		&:hover {
+			background-color: var(--color-global-masterbar-hover-background);
+		}
+		.site__info .site__domain-and-badges .site__badge {
+			&::before {
+				color: var(--color-global-masterbar-text);
+			}
+		}
+	}
+
+	.site {
+		.site-icon {
+			align-self: center;
+		}
+		.site__title,
+		.site__domain {
+			color: var(--color-global-masterbar-text);
+		}
+	}
+}
+
+.masterbar__unified {
+	.masterbar__item {
+		gap: 6px;
+		padding: 0 7px;
+	}
+
+	.masterbar__item-me {
+		gap: 0;
+	}
+
+	.masterbar__item-all-sites {
+		gap: 2px;
+
+		@media only screen and (min-width: 783px) {
+			padding: 0 8px 0 4px;
+		}
+
+		svg {
+			fill: var(--color-masterbar-icon);
+			width: 20px;
+			padding-inline: 2px;
+		}
+
+		&:hover {
+			svg {
+				fill: var(--color-masterbar-highlight);
+			}
+		}
+	}
+
+	.masterbar__item-notifications {
+		margin-right: 0;
 	}
 }

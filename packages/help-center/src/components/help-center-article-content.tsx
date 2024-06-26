@@ -1,10 +1,9 @@
-import { useRef, useEffect } from '@wordpress/element';
 /* eslint-disable no-restricted-imports */
 import SupportArticleHeader from 'calypso/blocks/support-article-dialog/header';
 import EmbedContainer from 'calypso/components/embed-container';
+import HelpCenterFeedbackForm from './help-center-feedback-form';
 import Placeholders from './placeholder-lines';
 
-// import './style.scss';
 import './help-center-article-content.scss';
 
 interface ArticleContentProps {
@@ -12,28 +11,20 @@ interface ArticleContentProps {
 	title: string;
 	link: string;
 	isLoading?: boolean;
+	postId: number;
+	blogId?: string | null;
+	slug?: string;
 }
 
-interface ContentWithExternalLinks {
-	content: string;
-	className?: string;
-}
-
-const ContentWithExternalLinks = ( { content, className }: ContentWithExternalLinks ) => {
-	const contentRef = useRef< HTMLDivElement >( null );
-
-	useEffect( () => {
-		if ( contentRef.current && content.length ) {
-			contentRef.current.innerHTML = content;
-			const externalLinks = contentRef.current.querySelectorAll( 'a[href*="http"]' );
-			externalLinks.forEach( ( l ) => l.setAttribute( 'target', '_blank' ) );
-		}
-	}, [ contentRef, content ] );
-
-	return <div ref={ contentRef } className={ className } />;
-};
-
-const ArticleContent = ( { content, title, link, isLoading = false }: ArticleContentProps ) => {
+const ArticleContent = ( {
+	content,
+	title,
+	link,
+	postId,
+	blogId,
+	isLoading = false,
+	slug,
+}: ArticleContentProps ) => {
 	const post = { title: title, url: link };
 	return (
 		<article className="help-center-article-content__story">
@@ -43,10 +34,12 @@ const ArticleContent = ( { content, title, link, isLoading = false }: ArticleCon
 				<>
 					<SupportArticleHeader post={ post } isLoading={ false } />
 					<EmbedContainer>
-						<ContentWithExternalLinks
+						<div
 							className="help-center-article-content__story-content"
-							content={ content }
+							// eslint-disable-next-line react/no-danger
+							dangerouslySetInnerHTML={ { __html: content } }
 						/>
+						<HelpCenterFeedbackForm postId={ postId } blogId={ blogId } slug={ slug } />
 					</EmbedContainer>
 				</>
 			) }

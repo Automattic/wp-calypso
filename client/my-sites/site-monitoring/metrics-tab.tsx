@@ -1,7 +1,10 @@
 import { useI18n } from '@wordpress/react-i18n';
+import { translate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
 import {
@@ -217,7 +220,14 @@ export interface HTTPCodeSerie {
 	fill: string;
 	label: string;
 	stroke: string;
+	showInLegend?: boolean;
+	showInTooltip?: boolean;
 }
+
+const seriesDefaultProps = {
+	fill: 'rgba(196, 196, 196, 0.1)',
+	stroke: 'rgba(196, 196, 196, 1)',
+};
 
 const useSuccessHttpCodeSeries = () => {
 	const { __ } = useI18n();
@@ -227,18 +237,24 @@ const useSuccessHttpCodeSeries = () => {
 			fill: 'rgba(104, 179, 232, 0.1)',
 			label: __( '200: OK Response' ),
 			stroke: 'rgba(104, 179, 232, 1)',
+			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 301,
 			fill: 'rgba(235, 101, 148, 0.2)',
 			label: __( '301: Moved Permanently' ),
 			stroke: 'rgba(235, 101, 148, 1)',
+			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 302,
 			fill: 'rgba(9, 181, 133, 0.1)',
 			label: __( '302: Moved Temporarily' ),
 			stroke: 'rgba(9, 181, 133, 1)',
+			showInLegend: true,
+			showInTooltip: true,
 		},
 	];
 	const statusCodes = series.map( ( { statusCode } ) => statusCode );
@@ -248,35 +264,226 @@ const useSuccessHttpCodeSeries = () => {
 const useErrorHttpCodeSeries = () => {
 	const { __ } = useI18n();
 	const series: HTTPCodeSerie[] = [
+		// most common 4xx errors
 		{
 			statusCode: 400,
 			fill: 'rgba(242, 215, 107, 0.1)',
 			label: __( '400: Bad Request' ),
 			stroke: 'rgba(242, 215, 107, 1)',
+			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 401,
 			fill: 'rgba(140, 143, 148, 0.1)',
-			label: __( '401: Unauthorized Request' ),
+			label: __( '401: Unauthorized' ),
 			stroke: 'rgba(140, 143, 148, 1)',
+			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 403,
 			fill: 'rgba(104, 179, 232, 0.1)',
-			label: __( '403: Forbidden Request' ),
+			label: __( '403: Forbidden' ),
 			stroke: 'rgba(104, 179, 232, 1)',
+			showInLegend: true,
+			showInTooltip: true,
 		},
 		{
 			statusCode: 404,
 			fill: 'rgba(9, 181, 133, 0.1)',
-			label: __( '404: Not Found Request' ),
+			label: __( '404: Not Found' ),
 			stroke: 'rgba(9, 181, 133, 1)',
+			showInLegend: true,
+			showInTooltip: true,
 		},
+		// most common 5xx errors
 		{
 			statusCode: 500,
 			fill: 'rgba(235, 101, 148, 0.1)',
-			label: __( '500: Internal server error' ),
+			label: __( '500: Internal Server Error' ),
 			stroke: 'rgba(235, 101, 148, 1)',
+			showInLegend: true,
+			showInTooltip: true,
+		},
+		// label for other 4xx and 5xx errors
+		{
+			...seriesDefaultProps,
+			statusCode: 0,
+			label: __( 'Other 4xx and 5xx errors' ),
+			showInLegend: true,
+		},
+		// remaining 4xx errors
+		{
+			...seriesDefaultProps,
+			statusCode: 402,
+			label: __( '402 Payment Required' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 405,
+			label: __( '405: Method Not Allowed' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 406,
+			label: __( '406: Not Acceptable' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 407,
+			label: __( '407: Proxy Authentication Required' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 408,
+			label: __( '408: Request Timeout' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 409,
+			label: __( '409: Conflict' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 410,
+			label: __( '410: Gone' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 411,
+			label: __( '411: Length Required' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 412,
+			label: __( '412: Precondition Failed' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 413,
+			label: __( '413: Content Too Large' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 414,
+			label: __( '414: URI Too Long' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 415,
+			label: __( '415: Unsupported Media Type' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 416,
+			label: __( '416: Range Not Satisfiable' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 417,
+			label: __( '417: Expectation Failed' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 421,
+			label: __( '421: Misdirected Request' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 422,
+			label: __( '422: Unprocessable Content' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 423,
+			label: __( '423: Locked' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 424,
+			label: __( '424: Failed Dependency' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 425,
+			label: __( '425: Too Early' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 426,
+			label: __( '426: Upgrade Required' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 428,
+			label: __( '428: Precondition Required' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 429,
+			label: __( '429: Too Many Requests' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 431,
+			label: __( '431: Request Header Fields Too Large' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 451,
+			label: __( '451: Unavailable For Legal Reasons' ),
+		},
+		// remaining 5xx errors
+		{
+			...seriesDefaultProps,
+			statusCode: 501,
+			label: __( '501: Not Implemented' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 502,
+			label: __( '502: Bad Gateway' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 503,
+			label: __( '503: Service Unavailable' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 504,
+			label: __( '504: Gateway Timeout' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 505,
+			label: __( '505: HTTP Version Not Supported' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 506,
+			label: __( '506: Variant Also Negotiates' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 507,
+			label: __( '507: Insufficient Storage' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 508,
+			label: __( '508: Loop Detected ' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 510,
+			label: __( '510: Not Extended' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 511,
+			label: __( '511: Network Authentication Required ' ),
 		},
 	];
 	const statusCodes = series.map( ( { statusCode } ) => statusCode );
@@ -284,7 +491,7 @@ const useErrorHttpCodeSeries = () => {
 };
 
 export const MetricsTab = () => {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 	const moment = useLocalizedMoment();
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
@@ -332,7 +539,20 @@ export const MetricsTab = () => {
 	return (
 		<div className="site-monitoring-metrics-tab">
 			<div className="site-monitoring-time-controls__container">
-				<div className="site-monitoring-time-controls__title">{ dateRange }</div>
+				<NavigationHeader
+					className="site-monitoring__navigation-header"
+					title={
+						<>
+							{ translate( 'Monitoring: ' ) }
+							{ dateRange }
+						</>
+					}
+					subtitle={ translate( 'Monitor your site’s performance. {{link}}Learn more.{{/link}}', {
+						components: {
+							link: <InlineSupportLink supportContext="site-monitoring" showIcon={ false } />,
+						},
+					} ) }
+				/>
 				<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			</div>
 			<SiteMonitoringLineChart
@@ -394,11 +614,15 @@ export const MetricsTab = () => {
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
 						php: {
-							name: 'Dynamic',
+							name:
+								/* translators: Page response type */
+								_x( 'Dynamic', 'response type' ),
 							className: 'dynamic',
 						},
 						static: {
-							name: 'Static',
+							name:
+								/* translators: Page response type */
+								_x( 'Static', 'response type' ),
 							className: 'static',
 						},
 					} ) }

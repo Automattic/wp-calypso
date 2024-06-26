@@ -1,19 +1,19 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
-import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
-import { CreateRepository } from 'calypso/my-sites/github-deployments/components/repositories/create-repository/index';
-import { DeploymentRunsLogs } from 'calypso/my-sites/github-deployments/deployment-run-logs/index';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { canCurrentUser } from '../../state/selectors/can-current-user';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { GitHubDeploymentCreation } from './deployment-creation';
 import { GitHubDeploymentManagement } from './deployment-management';
+import { DeploymentRunsLogs } from './deployment-run-logs';
 import { GitHubDeployments } from './deployments';
 import { indexPage } from './routes';
-import {
-	GitHubDeploymentsAvailableResponse,
-	gitHubDeploymentsAvailableQueryOptions,
-} from './use-is-feature-available';
 import type { Callback } from '@automattic/calypso-router';
 
 export const deploymentsList: Callback = ( context, next ) => {
@@ -34,10 +34,7 @@ export const deploymentCreation: Callback = ( context, next ) => {
 				title="Create GitHub Deployments"
 				delay={ 500 }
 			/>
-			<GitHubDeploymentCreation
-				installationId={ parseInt( context.query.installation_id, 10 ) || undefined }
-				repositoryId={ parseInt( context.query.repository_id, 10 ) || undefined }
-			/>
+			<GitHubDeploymentCreation />
 		</>
 	);
 	next();
@@ -60,20 +57,6 @@ export const deploymentManagement: Callback = ( context, next ) => {
 				delay={ 500 }
 			/>
 			<GitHubDeploymentManagement codeDeploymentId={ codeDeploymentId } />
-		</>
-	);
-	next();
-};
-
-export const createNewRepository: Callback = ( context, next ) => {
-	context.primary = (
-		<>
-			<PageViewTracker
-				path="/github-deployments/:site/create-new-repository"
-				title="Create Repository"
-				delay={ 500 }
-			/>
-			<CreateRepository />
 		</>
 	);
 	next();
@@ -105,6 +88,18 @@ export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
+	const site = getSelectedSite( state );
+	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+	const isJetpackNonAtomic = ! isAtomicSite && !! site?.jetpack;
+
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		if ( isJetpackNonAtomic ) {
+			context.page.replace( `/overview/${ site?.slug }` );
+			return;
+		}
+		next();
+		return;
+	}
 
 	if ( ! siteId ) {
 		context.page.replace( `/home/${ siteSlug }` );
@@ -128,16 +123,5 @@ export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 		return;
 	}
 
-	context.queryClient
-		.fetchQuery( gitHubDeploymentsAvailableQueryOptions( { siteId } ) )
-		.then( ( result: GitHubDeploymentsAvailableResponse ) => {
-			if ( result.available ) {
-				next();
-			} else {
-				context.page.replace( `/home/${ siteSlug }` );
-			}
-		} )
-		.catch( () => {
-			context.page.replace( `/home/${ siteSlug }` );
-		} );
+	next();
 };

@@ -125,20 +125,6 @@ export const getTitanSetUpMailboxPath: EmailPathUtilityFunction = (
 	urlParameters
 ) => getPath( siteName, domainName, 'titan/set-up-mailbox', relativeTo, urlParameters );
 
-export const getTitanSetUpThankYouPath = (
-	siteName: string | null | undefined,
-	domainName: string | null | undefined,
-	emailAddress?: string | null,
-	relativeTo?: string
-) =>
-	getPath(
-		siteName,
-		domainName,
-		'titan/set-up-mailbox/thank-you',
-		relativeTo,
-		emailAddress ? { email: emailAddress } : {}
-	);
-
 export const getTitanControlPanelRedirectPath: EmailPathUtilityFunction = (
 	siteName,
 	domainName,
@@ -146,6 +132,7 @@ export const getTitanControlPanelRedirectPath: EmailPathUtilityFunction = (
 	urlParameters
 ) => getPath( siteName, domainName, 'titan/control-panel', relativeTo, urlParameters );
 
+// Generates URL: /email/:domain/manage/:site
 export const getEmailManagementPath: EmailPathUtilityFunction = (
 	siteName,
 	domainName,

@@ -68,14 +68,14 @@ function FooBar() {
 				steps,
 				currentStepIndex,
 				setInitialFocusedElement,
-				onNext,
-				onPrevious,
+				onNextStep,
+				onPreviousStep,
 				onDismiss,
 			} ) => {
 				return (
 					<>
-						<button onClick={ onPrevious }>Previous</button>
-						<button onClick={ onNext } ref={ setInitialFocusedElement }>
+						<button onClick={ onPreviousStep }>Previous</button>
+						<button onClick={ onNextStep } ref={ setInitialFocusedElement }>
 							Next
 						</button>
 						<button onClick={ onDismiss( 'close-btn' ) }>Close</button>
@@ -138,8 +138,8 @@ The main API for configuring a tour is the config object. See example usage and 
   - `steps`: The steps defined for the tour.
   - `currentStepIndex`
   - `onDismiss`: Handler that dismissed/closes the tour.
-  - `onNext`: Handler that progresses the tour to the next step.
-  - `onPrevious`: Handler that takes the tour to the previous step.
+  - `onNextStep`: Handler that progresses the tour to the next step.
+  - `onPreviousStep`: Handler that takes the tour to the previous step.
   - `onMinimize`: Handler that minimizes the tour (passes rendering to `tourMinimized`).
   - `setInitialFocusedElement`: A dispatcher that assigns an element to be initially focused when a step renders (see examples).
   - `onGoToStep`: Handler that progresses the tour to a given step index.

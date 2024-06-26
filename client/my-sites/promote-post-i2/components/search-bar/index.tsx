@@ -1,10 +1,9 @@
 import config from '@automattic/calypso-config';
-import { SelectDropdown } from '@automattic/components';
+import { SelectDropdown, SegmentedControl } from '@automattic/components';
 import Search, { SearchIcon } from '@automattic/search';
 import { useMediaQuery } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useRef } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
 import CampaignsFilter, { CampaignsFilterType } from '../campaigns-filter';
 import './style.scss';
 
@@ -312,10 +311,10 @@ export default function SearchBar( props: Props ) {
 				searchIcon={ <SearchIcon /> }
 				className="promote-post-i2__search-bar-search"
 				defaultValue={ searchInput }
-				disableAutocorrect={ true }
+				disableAutocorrect
 				value={ searchInput }
 				placeholder={ translate( 'Search…' ) }
-				delaySearch={ true }
+				delaySearch
 				delayTimeout={ 500 }
 				isReskinned
 				onSearch={ ( inputValue: string ) => {

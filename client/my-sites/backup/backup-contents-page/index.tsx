@@ -52,7 +52,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 					className="backup-contents-page__back-button is-borderless"
 					href={ backupMainPath( siteSlug ) }
 				>
-					<Icon icon={ arrowLeft } size={ 16 } /> { translate( 'Go Back' ) }
+					<Icon icon={ arrowLeft } size={ 16 } /> { translate( 'Go back' ) }
 				</Button>
 				<Card>
 					<div className="backup-contents-page__header daily-backup-status status-card">

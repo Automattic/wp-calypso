@@ -31,6 +31,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	selected,
 	sidebarCollapsed,
 	shouldOpenExternalLinksInCurrentTab,
+	isUnifiedSiteSidebarVisible,
 	...props
 } ) => {
 	const reduxDispatch = useDispatch();
@@ -91,6 +92,13 @@ export const MySitesSidebarUnifiedMenu = ( {
 		reduxDispatch( toggleSection( sectionId ) );
 	};
 
+	const shouldForceShowExternalIcon = ( item ) => {
+		if ( ! isUnifiedSiteSidebarVisible ) {
+			return false;
+		}
+		return item?.parent === 'jetpack' && item?.url?.startsWith( 'https://jetpack.com' );
+	};
+
 	return (
 		<li>
 			<ExpandableSidebarMenu
@@ -100,7 +108,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
 				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
 				count={ count }
-				hideExpandableIcon={ true }
+				hideExpandableIcon
 				inlineText={ props.inlineText }
 				href={ link }
 				{ ...props }
@@ -110,14 +118,16 @@ export const MySitesSidebarUnifiedMenu = ( {
 						return;
 					}
 					const isSelected = selectedMenuItem?.url === item.url;
+
 					return (
 						<MySitesSidebarUnifiedItem
 							key={ item.title }
 							{ ...item }
 							selected={ isSelected }
 							trackClickEvent={ trackClickEvent }
-							isSubItem={ true }
+							isSubItem
 							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+							forceShowExternalIcon={ shouldForceShowExternalIcon( item ) }
 						/>
 					);
 				} ) }

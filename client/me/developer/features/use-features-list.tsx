@@ -8,7 +8,7 @@ export const useFeaturesList = () => {
 
 	return [
 		{
-			id: 'sftp-ssh-wp-cli',
+			id: 'connect-to-ssh-on-wordpress-com',
 			title: translate( 'SFTP, SSH, and WP-CLI', {
 				comment: 'Feature title',
 			} ),
@@ -18,10 +18,10 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl( 'https://wordpress.com/support/connect-to-ssh-on-wordpress-com' ),
+			linkLearnMore: localizeUrl( 'https://developer.wordpress.com/docs/developer-tools/wp-cli/' ),
 		},
 		{
-			id: 'staging-sites',
+			id: 'how-to-create-a-staging-site',
 			title: translate( 'Staging sites', {
 				comment: 'Feature title',
 			} ),
@@ -31,10 +31,25 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl( 'https://wordpress.com/support/how-to-create-a-staging-site/' ),
+			linkLearnMore: localizeUrl(
+				'https://developer.wordpress.com/docs/developer-tools/staging-sites/'
+			),
 		},
 		{
-			id: 'custom-code',
+			id: 'multi-site-management',
+			title: translate( 'Multiple site management', {
+				comment: 'Feature title',
+			} ),
+			description: translate(
+				'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.',
+				{
+					comment: 'Feature description',
+				}
+			),
+			linkLearnMore: localizeUrl( 'https://wordpress.com/for-agencies?ref=wpcom-dev-dashboard' ),
+		},
+		{
+			id: 'code',
 			title: translate( 'Custom code', {
 				comment: 'Feature title',
 			} ),
@@ -47,7 +62,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( 'https://wordpress.com/support/code' ),
 		},
 		{
-			id: 'free-ssl-certificates',
+			id: 'https-ssl',
 			title: translate( 'Free SSL certificates', {
 				comment: 'Feature title',
 			} ),
@@ -60,7 +75,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( 'https://wordpress.com/support/domains/https-ssl' ),
 		},
 		{
-			id: 'expert-support',
+			id: 'help-support-options',
 			title: translate( '24/7 expert support', {
 				comment: 'Feature title',
 			} ),
@@ -70,7 +85,7 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl( 'https://wordpress.com/support/help-support-options' ),
+			linkLearnMore: localizeUrl( 'https://developer.wordpress.com/docs/support/' ),
 		},
 		{
 			id: 'malware-scanning-removal',
@@ -84,7 +99,10 @@ export const useFeaturesList = () => {
 					components: {
 						backupsLink: (
 							<a
-								href={ localizeUrl( 'https://wordpress.com/support/restore' ) }
+								id="restore"
+								href={ localizeUrl(
+									'https://developer.wordpress.com/docs/platform-features/real-time-backup-restore/'
+								) }
 								target="_blank"
 								rel="noopener noreferrer"
 								onClick={ handleClickLink }
@@ -92,7 +110,10 @@ export const useFeaturesList = () => {
 						),
 						malwareScanningLink: (
 							<a
-								href={ localizeUrl( 'https://wordpress.com/support/malware-and-site-security' ) }
+								id="malware-and-site-security"
+								href={ localizeUrl(
+									'https://developer.wordpress.com/docs/platform-features/jetpack-scan/'
+								) }
 								target="_blank"
 								rel="noopener noreferrer"
 								onClick={ handleClickLink }
@@ -100,7 +121,10 @@ export const useFeaturesList = () => {
 						),
 						siteMonitoringLink: (
 							<a
-								href={ localizeUrl( 'https://wordpress.com/support/site-monitoring' ) }
+								id="site-monitoring"
+								href={ localizeUrl(
+									'https://developer.wordpress.com/docs/troubleshooting/site-monitoring/'
+								) }
 								target="_blank"
 								rel="noopener noreferrer"
 								onClick={ handleClickLink }

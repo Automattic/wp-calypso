@@ -2,7 +2,7 @@
  * Source: https://github.com/Automattic/wp-calypso/blob/HEAD/client/components/spinner/index.jsx
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -17,7 +17,7 @@ export default class Spinner extends PureComponent {
 	};
 
 	render() {
-		const className = classNames( 'wpnc__spinner', this.props.className );
+		const className = clsx( 'wpnc__spinner', this.props.className );
 
 		const style = {
 			width: this.props.size,
@@ -27,7 +27,9 @@ export default class Spinner extends PureComponent {
 
 		return (
 			<div className={ className }>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="wpnc__spinner__outer" style={ style }>
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="wpnc__spinner__inner" />
 				</div>
 			</div>

@@ -407,11 +407,9 @@ function PrimaryButton( {
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
-
-	//only show free trial button for free plugins to logged out users
-	const { monthly, yearly } = plugin?.variations ?? {};
-	const shouldStartFreeTrial = ! monthly?.product_id && ! yearly?.product_id;
+	const isIncompatibleForAtomic = isAtomic && 'vaultpress' === plugin.slug;
 
 	const onClick = useCallback( () => {
 		dispatch(
@@ -433,7 +431,6 @@ function PrimaryButton( {
 		return (
 			<GetStartedButton
 				onClick={ onClick }
-				startFreeTrial={ shouldStartFreeTrial }
 				plugin={ plugin }
 				isMarketplaceProduct={ isMarketplaceProduct }
 			/>
@@ -457,7 +454,12 @@ function PrimaryButton( {
 		<CTAButton
 			plugin={ plugin }
 			hasEligibilityMessages={ hasEligibilityMessages }
-			disabled={ incompatiblePlugin || userCantManageTheSite || isDisabledForWpcomStaging }
+			disabled={
+				incompatiblePlugin ||
+				userCantManageTheSite ||
+				isDisabledForWpcomStaging ||
+				isIncompatibleForAtomic
+			}
 		/>
 	);
 }

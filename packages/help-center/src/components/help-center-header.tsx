@@ -2,7 +2,7 @@ import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useCallback } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { HELP_CENTER_STORE } from '../stores';
@@ -34,7 +34,7 @@ const SupportModeTitle = () => {
 			return (
 				<>
 					<Icon icon={ commentContent } />
-					{ __( 'Start live chat', __i18n_text_domain__ ) }
+					{ __( 'Contact WordPress.com Support', __i18n_text_domain__ ) }
 				</>
 			);
 		case 'EMAIL': {
@@ -54,7 +54,7 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
 		[]
 	);
-	const classNames = classnames( 'help-center__container-header' );
+	const classNames = clsx( 'help-center__container-header' );
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 

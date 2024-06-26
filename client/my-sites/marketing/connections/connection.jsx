@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { ScreenReaderText, FormLabel, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -83,6 +83,8 @@ class SharingConnection extends Component {
 			facebook: 'user',
 			'instagram-business': 'user',
 			mastodon: 'user',
+			threads: 'user',
+			nextdoor: 'user',
 		},
 	};
 
@@ -243,10 +245,10 @@ class SharingConnection extends Component {
 
 	render() {
 		const connectionSitewideElement = this.getConnectionSitewideElement();
-		const connectionClasses = classNames( 'sharing-connection', {
+		const connectionClasses = clsx( 'sharing-connection', {
 			disabled: this.props.isDisconnecting || this.props.isRefreshing,
 		} );
-		const statusClasses = classNames( 'sharing-connection__account-status', {
+		const statusClasses = clsx( 'sharing-connection__account-status', {
 			'is-shareable': undefined !== connectionSitewideElement,
 		} );
 

@@ -1,7 +1,7 @@
+import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from '@automattic/urls';
 import { __ } from '@wordpress/i18n';
 import connectIllustration from 'calypso/assets/images/domains/connect.svg';
 import transferIllustration from 'calypso/assets/images/domains/transfer.svg';
-import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 
 const optionTitleText = {
 	get transfer() {

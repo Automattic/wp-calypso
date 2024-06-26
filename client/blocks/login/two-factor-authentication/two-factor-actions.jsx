@@ -44,6 +44,15 @@ class TwoFactorActions extends Component {
 
 		this.props.switchTwoFactorAuthType( 'authenticator' );
 	};
+
+	recordBackupLinkClick = ( event ) => {
+		event.preventDefault();
+
+		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_backup_link_click' );
+
+		this.props.switchTwoFactorAuthType( 'backup' );
+	};
+
 	recordSecurityKey = ( event ) => {
 		event.preventDefault();
 		this.props.switchTwoFactorAuthType( 'webauthn' );
@@ -52,6 +61,7 @@ class TwoFactorActions extends Component {
 	render() {
 		const {
 			isAuthenticatorSupported,
+			isBackupCodeSupported,
 			isSecurityKeySupported,
 			isSmsSupported,
 			translate,
@@ -59,12 +69,18 @@ class TwoFactorActions extends Component {
 		} = this.props;
 
 		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
+		const isBackupCodeAvailable = isBackupCodeSupported && twoFactorAuthType !== 'backup';
 		const isAuthenticatorAvailable =
 			isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
 		const isSecurityKeyAvailable =
 			isWebAuthnSupported() && isSecurityKeySupported && twoFactorAuthType !== 'webauthn';
 
-		if ( ! isSmsAvailable && ! isAuthenticatorAvailable && ! isSecurityKeyAvailable ) {
+		if (
+			! isSmsAvailable &&
+			! isAuthenticatorAvailable &&
+			! isSecurityKeyAvailable &&
+			! isBackupCodeAvailable
+		) {
 			return null;
 		}
 
@@ -89,6 +105,12 @@ class TwoFactorActions extends Component {
 							{ translate( 'Continue with your authenticator\u00A0app' ) }
 						</Button>
 					) }
+
+					{ isBackupCodeAvailable && (
+						<Button onClick={ this.recordBackupLinkClick }>
+							{ translate( 'Continue with a backup code' ) }
+						</Button>
+					) }
 				</Card>
 			</Fragment>
 		);
@@ -98,6 +120,7 @@ class TwoFactorActions extends Component {
 export default connect(
 	( state ) => ( {
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
+		isBackupCodeSupported: isTwoFactorAuthTypeSupported( state, 'backup' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		isWoo:

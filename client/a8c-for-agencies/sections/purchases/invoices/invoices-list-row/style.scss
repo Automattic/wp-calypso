@@ -1,0 +1,30 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
+.invoices-list-row__header {
+	display: none;
+
+	* {
+		font-weight: 400;
+		font-size: 0.875rem;
+		color: var(--color-neutral-70);
+	}
+
+	@include break-xlarge() {
+		display: block;
+	}
+}
+
+.invoices-list-row__content {
+	display: grid;
+	grid-template-columns: calc(34% - 16px) calc(34% - 16px) calc(34% - 16px);
+	align-items: center;
+	grid-gap: 24px;
+	font-size: 1.25rem;
+
+	@include break-xlarge() {
+		grid-template-columns: 160px 1fr 100px 100px 128px;
+	}
+}
+

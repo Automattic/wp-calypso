@@ -36,6 +36,12 @@ export interface Article {
 	is_external?: boolean;
 }
 
+export interface TailoredArticles {
+	post_ids: Array< number >;
+	blog_id: number;
+	locale: string;
+}
+
 export interface FeatureFlags {
 	loadNextStepsTutorial: boolean;
 }
@@ -74,14 +80,14 @@ export interface MessagingAvailability {
 export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 interface Availability {
-	presale: boolean;
-	precancellation: boolean;
+	is_presales_chat_open: boolean;
+	is_precancellation_chat_open: boolean;
+	force_email_support: boolean;
 }
 
-export interface ChatAvailability {
-	locale: string;
+interface Eligibility {
 	is_user_eligible: boolean;
-	supportLevel:
+	support_level:
 		| 'free'
 		| 'personal'
 		| 'personal-with-legacy-chat'
@@ -92,17 +98,11 @@ export interface ChatAvailability {
 		| 'ecommerce'
 		| 'jetpack-paid'
 		| 'p2-plus';
-	nickname: string;
-	availability: Availability;
-	is_presales_chat_open: boolean;
-	is_precancellation_chat_open: boolean;
-	wapuu_assistant_enabled: boolean;
 }
 
-export interface OtherSupportAvailability {
-	is_user_eligible_for_upwork: boolean;
-	is_user_eligible_for_tickets: boolean;
-	is_user_eligible_for_chat: boolean;
+export interface SupportStatus {
+	eligibility: Eligibility;
+	availability: Availability;
 }
 
 export interface SupportActivity {

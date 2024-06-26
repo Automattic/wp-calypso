@@ -9,11 +9,16 @@
 	font-size: 0.75rem;
 	font-weight: 600;
 	border-radius: 4px;
-	max-width: calc(100vw - 250px);
 	text-overflow: ellipsis;
 	overflow: hidden;
 	display: inline-block;
 	vertical-align: middle;
+	text-align: center;
+
+	@include break-small {
+		max-width: calc(100vw - 400px);
+		text-align: left;
+	}
 }
 
 .cancel-purchase-form__feedback,
@@ -212,7 +217,7 @@
 
 	.blank-canvas__header {
 		padding: 0 1rem;
-		margin-bottom: 4rem;
+		margin-bottom: 3rem;
 		box-shadow: none;
 
 		.wordpress-logo {
@@ -226,7 +231,7 @@
 
 	.blank-canvas__header-title {
 		z-index: 0;
-		top: 5rem;
+		top: 3rem;
 		left: 1rem;
 
 		@include break-small {

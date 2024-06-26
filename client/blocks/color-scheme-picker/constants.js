@@ -26,11 +26,11 @@ import sunsetImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnai
 export default function ( translate ) {
 	return [
 		{
-			label: translate( 'Default' ),
-			value: 'classic-dark',
+			label: translate( 'Modern' ),
+			value: 'modern',
 			thumbnail: {
-				cssClass: 'is-classic-dark',
-				imageUrl: classicDarkImg,
+				cssClass: 'is-modern',
+				imageUrl: modernImg,
 			},
 		},
 		{
@@ -63,6 +63,14 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-classic-bright',
 				imageUrl: classicBrightImg,
+			},
+		},
+		{
+			label: translate( 'Classic Dark' ),
+			value: 'classic-dark',
+			thumbnail: {
+				cssClass: 'is-classic-dark',
+				imageUrl: classicDarkImg,
 			},
 		},
 		{
@@ -103,14 +111,6 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-midnight',
 				imageUrl: midnightImg,
-			},
-		},
-		{
-			label: translate( 'Modern' ),
-			value: 'modern',
-			thumbnail: {
-				cssClass: 'is-modern',
-				imageUrl: modernImg,
 			},
 		},
 		{

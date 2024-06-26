@@ -21,23 +21,72 @@ import type { ReactNode } from 'react';
 
 export { createCreditCardPaymentMethodStore } from './store';
 
+function CreditCardSummary() {
+	const fields: CardFieldState = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
+		[]
+	);
+	const cardholderName = fields.cardholderName;
+	const brand: string = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
+		[]
+	);
+
+	return (
+		<SummaryDetails>
+			<SummaryLine>{ cardholderName?.value }</SummaryLine>
+			<SummaryLine>
+				{ brand !== 'unknown' && '****' } <PaymentLogo brand={ brand } isSummary />
+			</SummaryLine>
+		</SummaryDetails>
+	);
+}
+
+const CreditCardLabel: React.FC< { hasExistingCardMethods: boolean | undefined } > = ( {
+	hasExistingCardMethods,
+} ) => {
+	const { __ } = useI18n();
+	return (
+		<Fragment>
+			{ hasExistingCardMethods ? (
+				<span>{ __( 'New credit or debit card' ) }</span>
+			) : (
+				<span>{ __( 'Credit or debit card' ) }</span>
+			) }
+			<CreditCardLogos />
+		</Fragment>
+	);
+};
+
+function CreditCardLogos() {
+	return (
+		<PaymentMethodLogos className="credit-card__logo payment-logos">
+			<VisaLogo />
+			<MastercardLogo />
+			<AmexLogo />
+		</PaymentMethodLogos>
+	);
+}
+
 export function createCreditCardMethod( {
 	store,
 	shouldUseEbanx,
 	shouldShowTaxFields,
 	submitButtonContent,
 	allowUseForAllSubscriptions,
+	hasExistingCardMethods,
 }: {
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
 	shouldShowTaxFields?: boolean;
 	submitButtonContent: ReactNode;
 	allowUseForAllSubscriptions?: boolean;
+	hasExistingCardMethods?: boolean | undefined;
 } ): PaymentMethod {
 	return {
 		id: 'card',
 		paymentProcessorId: 'card',
-		label: <CreditCardLabel />,
+		label: <CreditCardLabel hasExistingCardMethods={ hasExistingCardMethods } />,
 		hasRequiredFields: true,
 		activeContent: (
 			<CreditCardFields
@@ -56,45 +105,4 @@ export function createCreditCardMethod( {
 		inactiveContent: <CreditCardSummary />,
 		getAriaLabel: ( __: ( text: string ) => string ) => __( 'Credit Card' ),
 	};
-}
-
-function CreditCardSummary() {
-	const fields: CardFieldState = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
-		[]
-	);
-	const cardholderName = fields.cardholderName;
-	const brand: string = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
-		[]
-	);
-
-	return (
-		<SummaryDetails>
-			<SummaryLine>{ cardholderName?.value }</SummaryLine>
-			<SummaryLine>
-				{ brand !== 'unknown' && '****' } <PaymentLogo brand={ brand } isSummary={ true } />
-			</SummaryLine>
-		</SummaryDetails>
-	);
-}
-
-function CreditCardLabel() {
-	const { __ } = useI18n();
-	return (
-		<Fragment>
-			<span>{ __( 'Credit or debit card' ) }</span>
-			<CreditCardLogos />
-		</Fragment>
-	);
-}
-
-function CreditCardLogos() {
-	return (
-		<PaymentMethodLogos className="credit-card__logo payment-logos">
-			<VisaLogo />
-			<MastercardLogo />
-			<AmexLogo />
-		</PaymentMethodLogos>
-	);
 }

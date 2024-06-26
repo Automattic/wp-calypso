@@ -8,6 +8,7 @@ import { DefaultMasterbarContact } from './default-contact';
 const MasterbarStyledBlock = styled( Masterbar )`
 	--color-masterbar-background: var( --studio-white );
 	--color-masterbar-text: var( --studio-gray-60 );
+	padding-right: 24px;
 	border-bottom: 0;
 `;
 
@@ -30,7 +31,11 @@ const ItemStyled = styled( Item )`
 
 	&:hover {
 		background: var( --studio-white );
-		text-decoration: underline;
+
+		.masterbar__item-content {
+			color: var( --color-masterbar-text );
+			text-decoration: underline;
+		}
 	}
 	.gridicon {
 		height: 17px;

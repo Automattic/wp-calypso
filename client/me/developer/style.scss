@@ -1,9 +1,12 @@
 @import "@wordpress/base-styles/breakpoints.scss";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/mixins";
 
 .navigation-header.developer__header {
-	margin-top: 50px;
+	@include break-small {
+		margin-top: 50px;
+	}
 
 	.formatted-header__title {
 		font-family: $brand-serif;
@@ -23,7 +26,7 @@
 		text-align: center;
 	}
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		padding: 40px 32px 24px;
 
 		.formatted-header__title {
@@ -37,13 +40,16 @@
 	}
 }
 
+.developer__form {
+	text-align: center;
+}
+
 .form-fieldset.developer__is_dev_account-fieldset {
 	border-radius: 2px;
 	background: var(--color-link-0);
 	padding: 16px;
-	text-align: center;
-	max-width: 750px;
 	margin: 0 auto 30px;
+	display: inline-block;
 
 	.components-toggle-control {
 		font-family: $font-sf-pro-text;
@@ -72,7 +78,7 @@
 		}
 	}
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		position: fixed;
 		left: 0;
 		bottom: 0;

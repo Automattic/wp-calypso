@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	siteLaunchStatusGroupValues,
@@ -8,12 +7,8 @@ import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
-import { hideMasterbar } from 'calypso/state/ui/actions';
-import { HostingFlowForkingPage } from './components/hosting-flow-forking-page';
 import { SitesDashboard } from './components/sites-dashboard';
-import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 const getStatusFilterValue = ( status?: string ) => {
@@ -48,119 +43,80 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 	next();
 }
 
-export function maybeSitesDashboard( context: PageJSContext, next: () => void ) {
-	if ( context.query[ 'hosting-flow' ] ) {
-		return hostingFlowForkingPage( context, next );
-	}
-
-	return sitesDashboard( context, next );
-}
-
-function hostingFlowForkingPage( context: PageJSContext, next: () => void ) {
-	context.store.dispatch( hideMasterbar() );
-	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
-
-	const hostingFlowForkingPageGlobalStyles = css`
+export function sitesDashboard( context: PageJSContext, next: () => void ) {
+	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
-			background: #fff;
-
-			.layout__primary {
-				margin: 100px 24px;
-			}
+			background: var( --studio-gray-0 );
 
 			.layout__content {
-				padding: 0 !important; /* this is overriden by other styles being injected on the page */
-				min-height: auto; /* browsing a different page might inject this style on the page */
+				// Add border around everything
+				overflow: hidden;
+				min-height: 100vh;
+				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
 			}
 
-			.button.is-primary {
-				min-width: 160px;
-				background-color: var( --studio-blue-50 );
-				border-color: var( --studio-blue-50 );
+			.layout__secondary .global-sidebar {
+				border: none;
 			}
+		}
 
-			.button.is-primary:active:not( :disabled ),
-			.button.is-primary:hover:not( :disabled ),
-			.button.is-primary:focus:not( :disabled ) {
-				background-color: var( --studio-blue-60 );
-				border-color: var( --studio-blue-60 );
-				box-shadow: 0 0 0 2px var( --studio-blue-60 );
+		body.is-group-sites-dashboard.rtl .layout__content {
+			padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;
+		}
+
+		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
+			height: calc( 100vh - 32px );
+			padding-bottom: 0;
+			box-shadow: none;
+		}
+
+		div.is-group-sites-dashboard:not( .has-no-masterbar ) {
+			.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
+				// Fix for scrollbars when global-sidebar is not visible because masterbar is visible
+				height: calc( 100vh - 95px );
 			}
+		}
 
-			${ MEDIA_QUERIES.mediumOrLarger } {
-				height: 100vh;
+		// Update body margin to account for the sidebar width
+		@media only screen and ( min-width: 782px ) {
+			div.layout.is-global-sidebar-visible {
+				.layout__primary > main {
+					background: var( --color-surface );
+					border-radius: 8px;
+					box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
+					height: calc( 100vh - 32px );
+					overflow: auto;
+				}
+			}
+		}
 
-				.wpcom-site {
-					display: flex;
-					align-items: center;
-					justify-content: center;
+		@media only screen and ( max-width: 781px ) {
+			div.layout.is-global-sidebar-visible {
+				.layout__primary {
+					overflow-x: auto;
 				}
 			}
 		}
 	`;
+	context.secondary = <MySitesNavigation path={ context.path } />;
 
-	context.primary = (
-		<>
-			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
-			<Global styles={ hostingFlowForkingPageGlobalStyles } />
-			<HostingFlowForkingPage siteCount={ siteCount } />
-		</>
-	);
-
-	return next();
-}
-
-function sitesDashboard( context: PageJSContext, next: () => void ) {
-	let sitesDashboardGlobalStyles = css`
-		body.is-group-sites-dashboard {
-			background: #ffffff;
-
-			.layout__content {
-				// The page header background extends all the way to the edge of the screen
-				padding-inline: 0;
-
-				// Prevents the status dropdown from being clipped when the page content
-				// isn't tall enough
-				overflow: inherit;
-			}
-		}
-	`;
-
-	// Update body margin to account for the sidebar width if the new nav is enabled
-	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
-		sitesDashboardGlobalStyles = css`
-			${ sitesDashboardGlobalStyles }
-			@media only screen and ( min-width: 782px ) {
-				div.layout.is-global-sidebar-visible {
-					.layout__primary {
-						margin-left: var( --sidebar-width-max );
-					}
-				}
-			}
-		`;
-	}
-	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
-		context.secondary = <MySitesNavigation path={ context.path } />;
-	}
+	const queryParams = {
+		page: context.query.page ? parseInt( context.query.page ) : undefined,
+		perPage: context.query[ 'per-page' ] ? parseInt( context.query[ 'per-page' ] ) : undefined,
+		search: context.query.search,
+		status: context.query.status,
+		newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
+	};
 
 	context.primary = (
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			<SitesDashboard
-				queryParams={ {
-					page: context.query.page ? parseInt( context.query.page ) : undefined,
-					perPage: context.query[ 'per-page' ]
-						? parseInt( context.query[ 'per-page' ] )
-						: undefined,
-					search: context.query.search,
-					status: context.query.status,
-					newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
-				} }
-			/>
+			<SitesDashboard queryParams={ queryParams } />
 		</>
 	);
+
 	next();
 }
 

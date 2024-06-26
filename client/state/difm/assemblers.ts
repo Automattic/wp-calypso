@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { addQueryArgs } from 'calypso/lib/url';
 import type {
 	DIFMDependencies,
@@ -7,9 +9,27 @@ import type {
 } from 'calypso/state/signup/steps/website-content/types';
 import type { SiteSlug } from 'calypso/types';
 
+const logValidationFailure = (
+	message: string,
+	context: string,
+	dependencies: Partial< DIFMDependencies >
+) => {
+	logToLogstash( {
+		feature: 'calypso_client',
+		message,
+		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+		properties: {
+			type: 'calypso_difm_extras_validation_failure',
+			dependencies: JSON.stringify( dependencies ),
+			context,
+		},
+	} );
+};
+
 export function buildDIFMCartExtrasObject(
 	dependencies: Partial< DIFMDependencies >,
-	siteSlug: SiteSlug
+	siteSlug: SiteSlug,
+	context: string
 ) {
 	const {
 		newOrExistingSiteChoice,
@@ -31,9 +51,17 @@ export function buildDIFMCartExtrasObject(
 		isStoreFlow,
 	} = dependencies;
 
+	if ( ! siteTitle ) {
+		logValidationFailure( 'siteTitle does not exist', context, dependencies );
+	}
+
+	if ( ! selectedPageTitles?.length ) {
+		logValidationFailure( 'selectedPageTitles does not exist', context, dependencies );
+	}
+
 	return {
 		new_or_existing_site_choice: newOrExistingSiteChoice,
-		site_title: siteTitle,
+		site_title: siteTitle || 'NO_SITE_TITLE',
 		site_description: siteDescription || tagline,
 		search_terms: searchTerms,
 		selected_design: selectedDesign?.theme,
@@ -60,7 +88,14 @@ export function buildDIFMWebsiteContentRequestDTO(
 		siteInformationSection: { siteLogoUrl: site_logo_url, searchTerms: search_terms },
 		feedbackSection: { genericFeedback: generic_feedback },
 	} = websiteContent;
-	const pagesDTO = pages.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
+	const pagesDTO = pages
+		.map( ( page ) => {
+			return {
+				...page,
+				media: page.media.filter( ( mediaItem ) => !! mediaItem.url ),
+			};
+		} )
+		.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
 	return {
 		pages: pagesDTO,
 		site_logo_url: site_logo_url ?? '',

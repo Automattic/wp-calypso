@@ -3,13 +3,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
-import GlobalSidebar from 'calypso/layout/global-sidebar';
+import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import SitePicker from 'calypso/my-sites/picker';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
+	getShouldShowCollapsedGlobalSidebar,
 	getShouldShowGlobalSidebar,
-	getShouldShowGlobalSiteSidebar,
+	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MySitesNavigation extends Component {
@@ -20,11 +23,19 @@ class MySitesNavigation extends Component {
 		event.stopPropagation();
 	};
 
+	handleGlobalSidebarMenuItemClick = ( path ) => {
+		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
+			section: 'sites',
+			path: path.replace( this.props.siteDomain, ':site' ),
+		} );
+	};
+
 	renderSidebar() {
 		const asyncProps = {
 			placeholder: null,
 			path: this.props.path,
 			siteBasePath: this.props.siteBasePath,
+			isUnifiedSiteSidebarVisible: this.props.isUnifiedSiteSidebarVisible,
 		};
 
 		let asyncSidebar = null;
@@ -46,6 +57,8 @@ class MySitesNavigation extends Component {
 				showManageSitesButton: false,
 				showHiddenSites: false,
 			};
+		} else if ( this.props.isGlobalSidebarVisible ) {
+			return this.renderGlobalSidebar();
 		} else {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
 
@@ -78,44 +91,54 @@ class MySitesNavigation extends Component {
 		};
 		return (
 			<GlobalSidebar { ...asyncProps }>
-				<MySitesSidebarUnifiedBody path={ this.props.path } />
-			</GlobalSidebar>
-		);
-	}
-
-	// TODO: Add styles
-	renderGlobalSiteSidebar() {
-		return (
-			<GlobalSidebar path={ this.props.path }>
-				<MySitesSidebarUnifiedBody path={ this.props.path } />
+				<MySitesSidebarUnifiedBody
+					isGlobalSidebarCollapsed={ this.props.isGlobalSidebarCollapsed }
+					path={ this.props.path }
+					onMenuItemClick={ this.handleGlobalSidebarMenuItemClick }
+				/>
 			</GlobalSidebar>
 		);
 	}
 
 	render() {
-		if ( this.props.isGlobalSidebarVisible ) {
-			return this.renderGlobalSidebar();
-		}
-		if ( this.props.isGlobalSiteSidebarVisible ) {
-			return this.renderGlobalSiteSidebar();
-		}
 		return this.renderSidebar();
 	}
 }
 
 export default withCurrentRoute(
-	connect( ( state, { currentSection } ) => {
-		const sectionGroup = currentSection?.group ?? null;
-		const siteId = getSelectedSiteId( state );
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
-			state,
-			siteId,
-			sectionGroup
-		);
-		return {
-			isGlobalSidebarVisible: shouldShowGlobalSidebar,
-			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
-		};
-	}, null )( MySitesNavigation )
+	connect(
+		( state, { currentSection } ) => {
+			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
+			const siteId = getSelectedSiteId( state );
+			const siteDomain = getSiteDomain( state, siteId );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
+			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
+			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
+			return {
+				siteDomain,
+				isGlobalSidebarVisible: shouldShowGlobalSidebar,
+				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar,
+				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar,
+			};
+		},
+		{
+			recordTracksEvent,
+		}
+	)( MySitesNavigation )
 );

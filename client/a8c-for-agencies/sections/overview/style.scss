@@ -1,0 +1,27 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.a4a-overview-content {
+	padding-block-start: 1rem;
+}
+
+.a4a-overview-header {
+	padding-block-end: 32px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		padding-block-end: 0;
+	}
+}
+
+.a4a-overview__header-actions {
+	@include breakpoint-deprecated( "<660px" ) {
+		.split-button__toggle {
+			border: 1px solid var(--color-neutral-20);
+			border-radius: 4px;
+		}
+
+		.current-section button {
+			border: none;
+		}
+	}
+}

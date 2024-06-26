@@ -1,6 +1,5 @@
 import { Button } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { hasCheckoutVersion } from './checkout-version-checker';
 import type { ReactNode } from 'react';
 
 // Disabling this to make migrating files easier
@@ -100,7 +99,10 @@ const Label = styled.label< { disabled?: boolean } >`
 	}
 `;
 
-const Input = styled.input< { isError?: boolean; icon?: ReactNode } >`
+const Input = styled.input< {
+	isError?: boolean;
+	icon?: ReactNode;
+} >`
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
@@ -108,8 +110,7 @@ const Input = styled.input< { isError?: boolean; icon?: ReactNode } >`
 		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
 	padding: 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 7px 10px;
 	line-height: 1.5;
-
-	${ hasCheckoutVersion( '2' ) ? `font-size: 14px;` : `font-size: 16px;` }
+	font-size: 14px;
 
 	.rtl & {
 		padding: 7px 10px 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };

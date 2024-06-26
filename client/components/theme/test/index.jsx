@@ -9,7 +9,6 @@ import { Theme } from '../';
 jest.mock( 'calypso/components/popover-menu', () => 'components--popover--menu' );
 jest.mock( 'calypso/components/popover-menu/item', () => 'components--popover--menu-item' );
 jest.mock( 'calypso/components/theme-tier/theme-tier-badge', () => 'components--theme-tier-badge' );
-jest.mock( 'calypso/components/theme-type-badge', () => 'components--theme-type-badge' );
 
 describe( 'Theme', () => {
 	const props = {
@@ -33,13 +32,13 @@ describe( 'Theme', () => {
 
 		test( 'should render a screenshot', () => {
 			render( <Theme { ...props } /> );
-			const img = screen.getByRole( 'img' );
+			const img = screen.getByRole( 'presentation' );
 			expect( img ).toHaveAttribute( 'src', expect.stringContaining( '/screenshot.png' ) );
 		} );
 
 		test( 'should include photon parameters', () => {
 			render( <Theme { ...props } /> );
-			const img = screen.getByRole( 'img' );
+			const img = screen.getByRole( 'presentation' );
 			const { query } = parse( img.getAttribute( 'src' ), true );
 
 			expect( query ).toMatchObject( {
@@ -51,7 +50,7 @@ describe( 'Theme', () => {
 			const onScreenshotClick = jest.fn();
 			render( <Theme { ...props } onScreenshotClick={ onScreenshotClick } index={ 1 } /> );
 
-			const img = screen.getByRole( 'img' );
+			const img = screen.getByRole( 'presentation' );
 			await userEvent.click( img );
 			expect( onScreenshotClick ).toHaveBeenCalledTimes( 1 );
 			expect( onScreenshotClick ).toHaveBeenCalledWith( props.theme.id, 1 );

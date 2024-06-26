@@ -2,11 +2,10 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { useGlobalStyle } from '@automattic/global-styles';
 import { Popover } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useEffect, useState, useMemo, CSSProperties, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { DEFAULT_VIEWPORT_WIDTH } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternActionBar from './pattern-action-bar';
@@ -156,7 +155,7 @@ const PatternLargePreview = ( {
 			<li
 				key={ clientId }
 				aria-label={ pattern.title }
-				className={ classnames( 'pattern-large-preview__pattern', {
+				className={ clsx( 'pattern-large-preview__pattern', {
 					'pattern-large-preview__pattern--active': isActive,
 				} ) }
 				data-client-id={ clientId }
@@ -168,7 +167,6 @@ const PatternLargePreview = ( {
 						key={ device }
 						patternId={ encodePatternId( pattern.ID ) }
 						viewportHeight={ viewportHeight }
-						viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
 						// Disable default max-height
 						maxHeight="none"
 						transformHtml={ transformPatternHtml }
@@ -221,7 +219,7 @@ const PatternLargePreview = ( {
 		const hasPlaceholder = sections.length === 0;
 		return (
 			<ul
-				className={ classnames( 'pattern-large-preview__patterns', {
+				className={ clsx( 'pattern-large-preview__patterns', {
 					'pattern-large-preview__patterns--has-placeholder': hasPlaceholder,
 				} ) }
 				style={ patternLargePreviewStyle }

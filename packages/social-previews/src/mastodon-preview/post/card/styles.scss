@@ -6,17 +6,23 @@
 	margin-top: 1rem;
 	margin-bottom: 1rem;
 
-	border: solid 1px #ccd7e0;
-	border-radius: 4px;
+	border: solid 1px #d9e1e8;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px;
+	overflow: hidden;
 	color: $mastodon-body-text-color;
+
+	&.has-image {
+		flex-direction: column;
+	}
+
+	&.has-image &-img {
+		width: 100%;
+	}
 }
 
 .mastodon-preview__card-img {
-	width: 60px;
 	min-height: 60px;
-
-	border-start-start-radius: inherit;
-	border-end-start-radius: inherit;
 
 	img {
 		display: block;
@@ -28,25 +34,43 @@
 		border-start-start-radius: inherit;
 		border-end-start-radius: inherit;
 	}
+
+	&--fallback {
+		aspect-ratio: 1;
+		background: #c0cdd9;
+		position: relative;
+		width: 120px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
 
 .mastodon-preview__card-text {
 	display: flex;
 	flex-direction: column;
-	gap: 0.25rem;
-
-	padding: 0.625rem 0.5rem;
+	gap: 0.5rem;
+	padding: 1rem;
+	overflow: hidden;
 }
 
 .mastodon-preview__card-title {
 	color: #282c37;
 
-	font-size: 0.875rem;
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 1.187rem;
 	font-weight: 700;
-	line-height: 1.3;
+	line-height: 1.4;
 }
 
 .mastodon-preview__card-site {
-	/* stylelint-disable-next-line scales/font-sizes */
-	font-size: 0.8125rem;
+	font-size: 0.875rem;
+	display: block;
+}
+
+.mastodon-preview__card-description {
+	font-size: 0.875rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

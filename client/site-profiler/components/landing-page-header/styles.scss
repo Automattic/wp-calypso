@@ -1,0 +1,124 @@
+@import "@wordpress/base-styles/breakpoints";
+
+@mixin input-style {
+	background: #fff;
+	box-sizing: border-box;
+	box-shadow: 0 5px 10px 0 #0000000d;
+	border: 1px solid transparent;
+	/* stylelint-disable-next-line */
+	border-radius: 8px;
+	padding: 0.625rem 1.5rem;
+}
+
+.landing-page-header {
+	p + .landing-page-header--form {
+		margin-top: 2.5rem;
+
+		@media (max-width: $break-small) {
+			margin-top: 2.25rem;
+		}
+	}
+
+	// subtract the height of the landing-page-header--msg hidden element
+	margin-bottom: -1.5rem;
+}
+
+.landing-page-header--form-container {
+	display: flex;
+
+	@media (min-width: $break-small + 1px) {
+		@include input-style;
+		gap: 1rem;
+
+		.col-1 {
+			flex: 1;
+		}
+
+		.col-2 {
+			display: flex;
+			align-items: center;
+			width: fit-content;
+		}
+	}
+
+	@media (max-width: $break-small) {
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 1.5rem;
+
+		.button-action {
+			width: 100%;
+			justify-content: center;
+		}
+	}
+
+	input {
+		width: 100%;
+		border: none;
+		padding: 0;
+		font-family: "SF Pro Text", $sans;
+		font-size: 2.75rem;
+		/* stylelint-disable-next-line */
+		line-height: 155%;
+		color: var(--studio-gray-100);
+
+		&::placeholder {
+			color: var(--studio-gray-40);
+		}
+
+		&:focus {
+			outline: none;
+		}
+
+		@media (max-width: $break-small) {
+			@include input-style;
+			font-size: 1.5rem;
+			line-height: 2;
+		}
+	}
+}
+
+.landing-page-header--form {
+	&.is-error {
+		@media (min-width: $break-small + 1px) {
+			.landing-page-header--form-container {
+				border: 1px solid var(--studio-red-50);
+			}
+		}
+
+		@media (max-width: $break-small) {
+			input {
+				border: 1px solid var(--studio-red-50);
+			}
+		}
+	}
+}
+
+
+.landing-page-header--msg {
+	margin-top: 1rem;
+
+	p {
+		font-size: 1rem !important;
+		margin: 0;
+	}
+
+	.center {
+		text-align: center;
+	}
+
+	.vis-hidden {
+		visibility: hidden;
+	}
+
+	.error {
+		color: var(--studio-red-50) !important;
+
+		svg {
+			top: 4px;
+			position: relative;
+			fill: var(--studio-red-50);
+			transform: rotate(180deg);
+		}
+	}
+}

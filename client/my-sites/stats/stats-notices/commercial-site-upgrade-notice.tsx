@@ -8,11 +8,12 @@ import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { trackStatsAnalyticsEvent } from '../utils';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/type-detection,stats/paid-wpcom-stats&from=${ from }-stats-commercial-site-upgrade-notice&productType=commercial`;
+	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-stats-commercial-site-upgrade-notice&productType=commercial`;
 	return purchasePath;
 };
 
@@ -42,6 +43,11 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 					'jetpack_odyssey_stats_commercial_site_upgrade_notice_support_button_clicked'
 			  )
 			: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_support_button_clicked' );
+
+		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
+			type: 'notice-commercial',
+		} );
+
 		// Allow some time for the event to be recorded before redirecting.
 		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
 	};
@@ -72,6 +78,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 				level="info"
 				title={ translate( 'Upgrade to Stats Commercial' ) }
 				onClose={ dismissNotice }
+				hideCloseButton
 			>
 				{ translate(
 					'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',

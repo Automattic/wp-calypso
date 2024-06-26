@@ -6,9 +6,9 @@ import { GITHUB_DEPLOYMENTS_QUERY_KEY } from './constants';
 const GITHUB_BRANCHES_QUERY_KEY = 'github-repository-branches';
 
 export const useGithubRepositoryBranchesQuery = (
-	installationId: number,
-	repositoryOwner: string,
-	repositoryName: string
+	installationId?: number,
+	repositoryOwner?: string,
+	repositoryName?: string
 ) => {
 	return useQuery< string[] >( {
 		queryKey: [
@@ -30,5 +30,6 @@ export const useGithubRepositoryBranchesQuery = (
 		meta: {
 			persist: false,
 		},
+		enabled: !! installationId,
 	} );
 };

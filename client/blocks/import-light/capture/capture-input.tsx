@@ -4,7 +4,7 @@ import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
@@ -46,7 +46,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	}
 
 	return (
-		<form className={ classnames( 'import-light__capture' ) } onSubmit={ onFormSubmit }>
+		<form className={ clsx( 'import-light__capture' ) } onSubmit={ onFormSubmit }>
 			<FormFieldset>
 				<FormLabel>
 					{ createInterpolateElement(
@@ -58,7 +58,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</FormLabel>
 				<FormTextInput
 					type="text"
-					className={ classnames( { 'is-error': showValidationMsg } ) }
+					className={ clsx( { 'is-error': showValidationMsg } ) }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus
 					autoComplete="off"
@@ -75,14 +75,14 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					onChange={ onInputChange }
 				/>
 				<Button
-					borderless={ true }
+					borderless
 					className="action-buttons__importer-list"
 					onClick={ onDontHaveSiteAddressClick }
 				>
 					{ translate( "Don't have a site address?" ) }
 				</Button>
 				<FormSettingExplanation>
-					<span className={ classnames( { 'is-error': showValidationMsg } ) }>
+					<span className={ clsx( { 'is-error': showValidationMsg } ) }>
 						{ ! showValidationMsg && (
 							<>
 								<Icon icon={ bulb } size={ 20 } />{ ' ' }

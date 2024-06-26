@@ -1,9 +1,9 @@
+import { JETPACK_CONTACT_SUPPORT_NO_ASSISTANT } from '@automattic/urls';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
-import { JETPACK_CONTACT_SUPPORT_NO_ASSISTANT } from 'calypso/lib/url/support';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { parseQueryStringProducts } from '../../../lib/querystring-products';

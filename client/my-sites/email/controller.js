@@ -14,7 +14,6 @@ import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import MailboxesManagement from 'calypso/my-sites/email/mailboxes';
 import * as paths from 'calypso/my-sites/email/paths';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
-import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 
 export default {
 	emailManagementAddEmailForwards( pageContext, next ) {
@@ -185,25 +184,6 @@ export default {
 				domainName={ pageContext.params.domain }
 				siteSlug={ pageContext.params.site }
 			/>
-		);
-
-		next();
-	},
-
-	emailManagementTitanSetUpThankYou( pageContext, next ) {
-		pageContext.primary = (
-			<>
-				<PageViewTracker
-					path={ paths.getTitanSetUpThankYouPath( ':site', ':domain' ) }
-					title="Checkout > Purchased Titan mailbox"
-				/>
-
-				<TitanSetUpThankYou
-					containerClassName="titan-set-up-thank-you__container_wrapped"
-					domainName={ pageContext.params.domain }
-					emailAddress={ pageContext.query.email }
-				/>
-			</>
 		);
 
 		next();

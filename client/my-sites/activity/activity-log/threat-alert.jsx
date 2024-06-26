@@ -1,6 +1,7 @@
 import { Button, Card, Spinner, FoldableCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +13,6 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import TimeSince from 'calypso/components/time-since';
 import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { fixThreatAlert, ignoreThreatAlert } from 'calypso/state/jetpack/site-alerts/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
@@ -334,7 +334,7 @@ export class ThreatAlert extends Component {
 	render() {
 		const { threat, translate } = this.props;
 		const inProgress = this.state.requesting || threat.fixer_status === 'in_progress';
-		const className = classNames( {
+		const className = clsx( {
 			'activity-log__threat-alert': true,
 			'activity-log__threat-alert-database': 'database' === this.getDetailType(),
 		} );
@@ -345,7 +345,7 @@ export class ThreatAlert extends Component {
 					<FoldableCard
 						className={ className }
 						compact
-						clickableHeader={ true }
+						clickableHeader
 						actionButton={ <span /> }
 						header={
 							<Fragment>

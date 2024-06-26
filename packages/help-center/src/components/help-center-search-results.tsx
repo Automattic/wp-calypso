@@ -18,6 +18,7 @@ import {
 	chevronRight,
 	external as externalIcon,
 } from '@wordpress/icons';
+import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
@@ -44,6 +45,11 @@ interface SearchResultsSectionProps {
 
 const noop = () => {
 	return;
+};
+
+const isResultFromDeveloperWordpress = ( url: string ) => {
+	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
+	return developerSiteRegex.test( url );
 };
 
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
@@ -116,6 +122,8 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
+
+	const isRtl = useRtl();
 	const locale = useLocale();
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
@@ -123,15 +131,18 @@ function HelpSearchResults( {
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 
-	const routeToQueryMapping = useContextBasedSearchMapping( currentRoute );
+	const { contextSearch, tailoredArticles } = useContextBasedSearchMapping( currentRoute, locale );
 
 	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		debouncedQuery || routeToQueryMapping,
+		debouncedQuery || contextSearch, // If there's a query, we don't context search
 		locale,
 		{},
-		sectionName
+		sectionName,
+		debouncedQuery
+			? undefined // If there's a query, we don't need tailored articles
+			: tailoredArticles
 	);
 
 	const searchResults = searchData ?? [];
@@ -185,18 +196,21 @@ function HelpSearchResults( {
 			return;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_inlinehelp_article_select', {
-				link,
-				post_id,
-				blog_id,
-				source,
-				search_term: searchQuery,
-				location,
-				section: sectionName,
-			} )
-		);
+		const eventData = {
+			link,
+			post_id,
+			blog_id,
+			source,
+			search_term: searchQuery,
+			location,
+			section: sectionName,
+		};
 
+		const eventName = tailoredArticles?.post_ids.includes( post_id ?? 0 )
+			? 'calypso_inlinehelp_tailored_article_select'
+			: 'calypso_inlinehelp_article_select';
+
+		dispatch( recordTracksEvent( eventName, eventData ) );
 		onSelect( event, result );
 	};
 
@@ -224,6 +238,12 @@ function HelpSearchResults( {
 			return <Icon icon={ pageIcon } />;
 		};
 
+		const DeveloperResourceIndicator = () => {
+			return (
+				<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
+			);
+		};
+
 		return (
 			<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
 				<li className="help-center-search-results__item">
@@ -241,7 +261,11 @@ function HelpSearchResults( {
 								rel: 'noreferrer',
 							} ) }
 						>
-							<LinkIcon />
+							{ isResultFromDeveloperWordpress( result.link ) ? (
+								<DeveloperResourceIndicator />
+							) : (
+								<LinkIcon />
+							) }
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 							<Icon
 								width={ 20 }

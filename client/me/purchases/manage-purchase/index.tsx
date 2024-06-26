@@ -35,8 +35,6 @@ import {
 	AKISMET_UPGRADES_PRODUCTS_MAP,
 	JETPACK_STARTER_UPGRADE_MAP,
 	is100Year,
-	isJetpackAISlug,
-	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -48,10 +46,12 @@ import {
 	ProductIcon,
 	Gridicon,
 	PlanPrice,
+	MaterialIcon,
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
-import { localize, LocalizeProps, numberFormat, useTranslate } from 'i18n-calypso';
+import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
+import clsx from 'clsx';
+import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -64,7 +64,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
-import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
@@ -97,7 +96,6 @@ import {
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
-import { DOMAIN_CANCEL, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
@@ -1157,27 +1155,6 @@ class ManagePurchase extends Component<
 			return '';
 		}
 
-		if ( isJetpackAISlug( purchase.productSlug ) && purchase.purchaseRenewalQuantity ) {
-			return translate( '%(productName)s (%(quantity)d requests per month)', {
-				args: {
-					productName: getDisplayName( purchase ),
-					quantity: purchase.purchaseRenewalQuantity,
-				},
-			} );
-		}
-
-		if (
-			isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
-			purchase.purchaseRenewalQuantity
-		) {
-			return translate( '%(productName)s (%(quantity)s views per month)', {
-				args: {
-					productName: getDisplayName( purchase ),
-					quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
-				},
-			} );
-		}
-
 		if ( ! plan || ! isWpComMonthlyPlan( purchase.productSlug ) ) {
 			return getDisplayName( purchase );
 		}
@@ -1222,7 +1199,7 @@ class ManagePurchase extends Component<
 
 		const isActive100YearPurchase = is100Year( purchase ) && ! isCloseToExpiration( purchase );
 
-		const classes = classNames( 'manage-purchase__info', {
+		const classes = clsx( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': purchase && isPersonal( purchase ),
 			'is-premium': purchase && isPremium( purchase ),
@@ -1247,7 +1224,7 @@ class ManagePurchase extends Component<
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (
 								<div className="manage-purchase__contact-partner">
-									{ translate( 'Please contact your site host %(partnerName)s for details', {
+									{ translate( 'Please contact %(partnerName)s for details', {
 										args: {
 											partnerName: getPartnerName( purchase ) ?? '',
 										},
@@ -1454,7 +1431,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 
 	const BBESupportLink = (
 		<a
-			href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+			href={ `mailto:services+express@wordpress.com?subject=${ encodeURIComponent(
 				`I have a question about my project: ${ siteSlug }`
 			) }` }
 		/>
@@ -1462,7 +1439,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 
 	return (
 		<div
-			className={ classNames( 'manage-purchase__description', {
+			className={ clsx( 'manage-purchase__description', {
 				'is-placeholder': isLoading,
 			} ) }
 		>

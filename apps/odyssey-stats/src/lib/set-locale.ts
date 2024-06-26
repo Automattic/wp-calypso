@@ -1,21 +1,75 @@
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-import moment from 'moment';
-
+import moment, { LongDateFormatKey } from 'moment';
+import { phpToMomentMapping } from 'calypso/my-sites/site-settings/date-time-format/utils';
 const debug = debugFactory( 'apps:odyssey' );
 
 const DEFAULT_LANGUAGE = 'en';
 const DEFAULT_MOMENT_LOCALE = 'en';
-const ALWAYS_LOAD_WITH_LOCALE = [ 'zh' ];
+// Only Simple Site has the default locale as 'en'. For atomic/jetpack sites the default locale is 'en-us'.
+const SIMPLE_SITE_DEFAULT_LOCALE = 'en';
+const ALWAYS_LOAD_WITH_LOCALE = [ 'pt', 'zh' ];
 
 const getLanguageCodeFromLocale = ( localeSlug: string ) => {
+	debug( localeSlug );
 	if ( localeSlug.indexOf( '-' ) > -1 ) {
 		return localeSlug.split( '-' )[ 0 ];
 	}
 	return localeSlug;
 };
 
-const loadMomentLocale = ( localeSlug: string, languageCode: string ) => {
+const convertPhpToMomentFormat = ( phpFormat: string ): string => {
+	const phpToMomentMap = phpToMomentMapping as {
+		[ key: string ]: string;
+	};
+
+	let momentFormat = '';
+
+	for ( let i = 0; i < phpFormat.length; i++ ) {
+		const char = phpFormat.charAt( i );
+		if ( phpToMomentMap[ char ] ) {
+			momentFormat += phpToMomentMap[ char ];
+		} else {
+			momentFormat += char;
+		}
+	}
+
+	return momentFormat;
+};
+
+/**
+ * WordPress core replaces the longDateFormat with the PHP date format.
+ * https://github.com/WordPress/wordpress-develop/blob/1393dc25b54479314acd2162fc39befd84dc46eb/src/wp-includes/script-loader.php#L155
+ * This function will convert it back to the moment format.
+ *
+ * So for Simple sites, the longDateFormat for en is changed to a PHP date format.
+ */
+const fixLongDateFormatForEn = ( localeSlug: string ) => {
+	if ( localeSlug === SIMPLE_SITE_DEFAULT_LOCALE ) {
+		const keysReplacedByWordPressCore: LongDateFormatKey[] = [
+			'LTS',
+			'LT',
+			'L',
+			'LL',
+			'LLL',
+			'LLLL',
+		];
+		const currentLocaleData = moment.localeData();
+		const momentLongDateFormat: Partial< { [ key in LongDateFormatKey ]: string } > = {};
+		keysReplacedByWordPressCore.forEach( ( key ) => {
+			if ( currentLocaleData.longDateFormat( key ) ) {
+				momentLongDateFormat[ key ] = convertPhpToMomentFormat(
+					currentLocaleData.longDateFormat( key )
+				);
+			}
+		} );
+		moment.updateLocale( localeSlug, {
+			longDateFormat: momentLongDateFormat as { [ key in LongDateFormatKey ]: string },
+		} );
+	}
+};
+
+const loadMomentLocale = async ( localeSlug: string, languageCode: string ) => {
 	return import( `moment/locale/${ localeSlug }` )
 		.catch( ( error: Error ) => {
 			debug(
@@ -37,6 +91,7 @@ const loadMomentLocale = ( localeSlug: string, languageCode: string ) => {
 			);
 			// Fallback 2 to the default US date time format.
 			// Interestingly `en` here represents `en-us` locale.
+			fixLongDateFormatForEn( localeSlug );
 			localeSlug = DEFAULT_MOMENT_LOCALE;
 		} )
 		.then( () => moment.locale( localeSlug ) );

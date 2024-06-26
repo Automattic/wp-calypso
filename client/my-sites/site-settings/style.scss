@@ -670,9 +670,9 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		padding-inline-end: 24px;
 	}
 	.banner__icon-no-circle {
-		img {
-			max-height: 32px;
-			max-width: 32px;
+		.wordpress-logo {
+			fill: var(--color-neutral-100);
+			margin: 0;
 		}
 	}
 	.banner__action {
@@ -744,10 +744,12 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 
 .support-info + .jetpack-module-toggle,
 .support-info + .components-toggle-control,
-.support-info + .custom-content-types__module-settings {
+.support-info + .custom-content-types__module-settings,
+.support-info + .verbum-comments-toggle {
 	display: flex;
 }
 
-.jetpack-module-toggle {
+.jetpack-module-toggle,
+.verbum-comments-toggle {
 	flex-direction: column;
 }

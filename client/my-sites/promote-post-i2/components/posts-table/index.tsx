@@ -10,10 +10,11 @@ interface Props {
 	type: string;
 	isLoading: boolean;
 	isFetchingPageResults: boolean;
+	hasPaymentsBlocked: boolean;
 }
 
 export default function PostsTable( props: Props ) {
-	const { posts, type, isLoading, isFetchingPageResults } = props;
+	const { posts, type, isLoading, isFetchingPageResults, hasPaymentsBlocked } = props;
 	const isRunningInWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	return (
@@ -25,7 +26,14 @@ export default function PostsTable( props: Props ) {
 				) : (
 					<>
 						{ posts.map( ( post: BlazablePost ) => {
-							return <PostItem key={ `post-id${ post.ID }` } post={ post } filterType={ type } />;
+							return (
+								<PostItem
+									key={ `post-id${ post.ID }` }
+									post={ post }
+									filterType={ type }
+									hasPaymentsBlocked={ hasPaymentsBlocked }
+								/>
+							);
 						} ) }
 						{ isFetchingPageResults && <SingleItemLoading /> }
 					</>

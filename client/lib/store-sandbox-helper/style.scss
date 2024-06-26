@@ -1,0 +1,17 @@
+.store-sandbox-helper__menu-item.is-enabled {
+	color: var(--studio-red);
+}
+
+.store-sandbox-helper__popover {
+	display: none;
+}
+
+.environment.is-store-sandbox:hover .store-sandbox-helper__popover {
+	display: block;
+	position: absolute;
+	bottom: 100%;
+	padding: 12px 12px 0 12px;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	width: 200px;
+}

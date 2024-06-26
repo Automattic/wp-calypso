@@ -1,70 +1,76 @@
 import {
-	TERM_MONTHLY,
+	FEATURE_JETPACK_SEARCH,
+	FEATURE_JETPACK_SEARCH_MONTHLY,
+	GROUP_JETPACK,
+	GROUP_P2,
+	GROUP_WPCOM,
+	JETPACK_RESET_PLANS,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
-	TERM_TRIENNIALLY,
+	TERM_CENTENNIALLY,
+	TERM_DECENNIALLY,
+	TERM_MONTHLY,
+	TERM_NOVENNIALLY,
+	TERM_OCTENNIALLY,
 	TERM_QUADRENNIALLY,
 	TERM_QUINQUENNIALLY,
-	TERM_SEXENNIALLY,
 	TERM_SEPTENNIALLY,
-	TERM_OCTENNIALLY,
-	TERM_NOVENNIALLY,
-	TERM_DECENNIALLY,
-	TYPE_BUSINESS,
+	TERM_SEXENNIALLY,
+	TERM_TRIENNIALLY,
 	TYPE_100_YEAR,
-	TYPE_ECOMMERCE,
-	TYPE_PRO,
-	TYPE_FREE,
-	TYPE_FLEXIBLE,
-	TYPE_JETPACK_STARTER,
-	TYPE_STARTER,
+	TYPE_ALL,
 	TYPE_BLOGGER,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
+	TYPE_ENTERPRISE_GRID_WPCOM,
+	TYPE_FLEXIBLE,
+	TYPE_FREE,
+	TYPE_JETPACK_STARTER,
+	TYPE_P2_PLUS,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	TYPE_PRO,
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
-	TYPE_ALL,
-	GROUP_WPCOM,
-	GROUP_JETPACK,
-	JETPACK_RESET_PLANS,
-	FEATURE_JETPACK_SEARCH,
-	FEATURE_JETPACK_SEARCH_MONTHLY,
-	TYPE_P2_PLUS,
-	TYPE_ENTERPRISE_GRID_WPCOM,
-	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-	PLAN_WOOEXPRESS_MEDIUM,
-	PLAN_WOOEXPRESS_SMALL,
-	PLAN_WOOEXPRESS_SMALL_MONTHLY,
-	PLAN_WOOEXPRESS_PLUS,
+	TYPE_STARTER,
 	WOO_EXPRESS_PLANS,
-	TERM_CENTENNIALLY,
-	PLAN_HOSTING_TRIAL_MONTHLY,
-	PLAN_MIGRATION_TRIAL_MONTHLY,
-	GROUP_P2,
 } from './constants';
-import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
+import {
+	resolveFeatureGroupsForComparisonGrid,
+	resolveFeatureGroupsForFeaturesGrid,
+	resolveWooExpressFeatureGroupsForComparisonGrid,
+} from './feature-group-plan-map';
+import { FEATURES_LIST } from './features-list';
 import { PLANS_LIST } from './plans-list';
 import {
-	isJetpackBusiness,
+	getProductFromSlug,
 	isBusiness,
-	isEnterprise,
 	isEcommerce,
+	isEnterprise,
+	isJetpackBusiness,
 	isPro,
 	isVipPlan,
-	getProductFromSlug,
 } from '.';
 import type {
-	Product,
-	Plan,
+	FeatureGroupMap,
+	FeatureList,
 	JetpackPlan,
-	WPComPlan,
+	Plan,
 	PlanMatchesQuery,
 	PlanSlug,
+	Product,
 	WithCamelCaseSlug,
 	WithSnakeCaseSlug,
-	FeatureGroupMap,
+	WPComPlan,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -72,12 +78,21 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
-export function getPlanFeaturesGrouped(): Partial< FeatureGroupMap > {
-	return featureGroups;
+export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForFeaturesGrid();
 }
 
-export function getWooExpressFeaturesGrouped(): Partial< FeatureGroupMap > {
-	return wooExpressFeatureGroups;
+export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForComparisonGrid();
+}
+
+export function getWooExpressFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	// Same as getPlanFeaturesGroupedForFeaturesGrid() for now
+	return getPlanFeaturesGroupedForFeaturesGrid();
+}
+
+export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
+	return resolveWooExpressFeatureGroupsForComparisonGrid();
 }
 
 export function getPlansSlugs(): string[] {
@@ -851,7 +866,7 @@ export const chooseDefaultCustomerType = ( {
 }: {
 	currentCustomerType: string;
 	selectedPlan?: string;
-	currentPlan: { productSlug: PlanSlug };
+	currentPlan: { productSlug: PlanSlug | undefined };
 } ): string => {
 	if ( currentCustomerType ) {
 		return currentCustomerType;
@@ -908,4 +923,23 @@ export function planHasJetpackClassicSearch(
 			isPro( plan ) ||
 			isVipPlan( plan ) )
 	);
+}
+
+export function getFeaturesList(): FeatureList {
+	return FEATURES_LIST;
+}
+
+export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {
+	if ( ! planFeaturesList ) {
+		return [];
+	}
+	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
+};
+
+export function isValidFeatureKey( feature: string ) {
+	return !! FEATURES_LIST[ feature ];
+}
+
+export function getFeatureByKey( feature: string ) {
+	return FEATURES_LIST[ feature ];
 }

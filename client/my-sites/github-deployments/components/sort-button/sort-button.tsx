@@ -30,7 +30,11 @@ export const SortButton = ( {
 	return (
 		<Button plain onClick={ handleClick } className="github-deployments-sort-button">
 			{ children }
-			{ isActive && <Icon icon={ icon } size={ 16 } /> }
+			<Icon
+				icon={ icon }
+				size={ 16 }
+				css={ { verticalAlign: 'middle', visibility: isActive ? 'visible' : 'hidden' } }
+			/>
 		</Button>
 	);
 };

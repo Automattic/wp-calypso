@@ -23,7 +23,6 @@ export const ExcerptSetting = ( {
 				{ translate( 'For each new post email, include' ) }
 			</FormLabel>
 			<FormLabel>
-				{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 				<FormRadio
 					checked={ ! value }
 					onChange={ () => updateFields?.( { wpcom_subscription_emails_use_excerpt: false } ) }
@@ -32,7 +31,6 @@ export const ExcerptSetting = ( {
 				/>
 			</FormLabel>
 			<FormLabel>
-				{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 				<FormRadio
 					checked={ value }
 					onChange={ () => updateFields?.( { wpcom_subscription_emails_use_excerpt: true } ) }

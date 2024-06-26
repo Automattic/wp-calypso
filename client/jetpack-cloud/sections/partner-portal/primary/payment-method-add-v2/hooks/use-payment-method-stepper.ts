@@ -12,7 +12,12 @@ export function usePaymentMethodStepper( { withAssignLicense }: { withAssignLice
 	const isIssueLicenseFlow = !! products;
 	const isSiteCreationFlow = source === 'create-site' && !! product;
 
+	const isCheckoutFlow = source === 'sitesdashboard';
+
 	return useMemo( () => {
+		if ( isCheckoutFlow ) {
+			return null;
+		}
 		if ( isIssueLicenseFlow ) {
 			const steps = [
 				translate( 'Select licenses' ),
@@ -42,5 +47,5 @@ export function usePaymentMethodStepper( { withAssignLicense }: { withAssignLice
 		}
 
 		return null;
-	}, [ isIssueLicenseFlow, isSiteCreationFlow, translate, withAssignLicense ] );
+	}, [ isCheckoutFlow, isIssueLicenseFlow, isSiteCreationFlow, translate, withAssignLicense ] );
 }

@@ -34,6 +34,53 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 				'permission_callback' => array( $this, 'permission_callback' ),
 			)
 		);
+		register_rest_route(
+			$this->namespace,
+			'/articles',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_blog_post_articles' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+				'args'                => array(
+					'blog_id'  => array(
+						'type'     => 'number',
+						'required' => true,
+					),
+					'post_ids' => array(
+						'type'     => 'array',
+						'required' => true,
+						'items'    => array(
+							'type' => 'string',
+						),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Should return blog post articles
+	 *
+	 * @param \WP_REST_Request $request    The request sent to the API.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_blog_post_articles( \WP_REST_Request $request ) {
+		$query_parameters = array(
+			'blog_id'  => $request['blog_id'],
+			'post_ids' => $request['post_ids'],
+		);
+		$body             = Client::wpcom_json_api_request_as_user(
+			'/help/articles?' . http_build_query( $query_parameters )
+		);
+
+		if ( is_wp_error( $body ) ) {
+			return $body;
+		}
+
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
+
+		return rest_ensure_response( $response );
 	}
 
 	/**

@@ -1,4 +1,5 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import PlanStorage from 'calypso/blocks/plan-storage';
 import { useSelector } from 'calypso/state';
@@ -33,7 +34,27 @@ const ExcessiveDiskSpace = ( { translate }: { translate: LocalizeProps[ 'transla
 						},
 					}
 				) }
-			{ ! displayUpgradeLink && translate( 'Please contact our support team for help.' ) }
+			{ ! displayUpgradeLink && (
+				<span>
+					{ translate(
+						'You can either {{a}}buy additional storage{{/a}} or {{b}}delete media files{{/b}} until you have less than 95% space usage.',
+						{
+							components: {
+								a: <a href={ `/add-ons/${ siteSlug }` } />,
+								b: (
+									<a
+										target="_blank"
+										href={ localizeUrl(
+											'https://wordpress.com/support/media/#delete-files-from-media'
+										) }
+										rel="noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</span>
+			) }
 		</div>
 	);
 };

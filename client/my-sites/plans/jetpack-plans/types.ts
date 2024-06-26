@@ -118,6 +118,7 @@ export type SelectorProductFeatures = {
 
 export interface SelectorProduct extends SelectorProductCost {
 	productSlug: string;
+	productAlias?: string;
 	annualOptionSlug?: string;
 	monthlyOptionSlug?: string;
 	iconSlug: string;
@@ -159,6 +160,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	forceNoYearlyUpgrade?: boolean;
 	moreAboutUrl?: string;
 	indirectCheckoutUrl?: string;
+	quantity?: number | null;
 }
 
 export interface PartnerSelectorProduct {

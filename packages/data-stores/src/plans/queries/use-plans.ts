@@ -26,6 +26,7 @@ function usePlans( {
 	const params = new URLSearchParams();
 	coupon && params.append( 'coupon_code', coupon );
 	params.append( 'locale', locale );
+	params.append( 'eligible_request_for_experiment', 'true' );
 
 	return useQuery( {
 		queryKey: queryKeys.plans( coupon ),

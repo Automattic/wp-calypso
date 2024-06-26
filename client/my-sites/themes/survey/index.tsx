@@ -6,6 +6,7 @@ import './survey.scss';
 export enum SurveyType {
 	DECEMBER_2023 = 'DECEMBER_2023',
 	FEBRUARY_2024 = 'FEBRUARY_2024',
+	MARCH_2024 = 'MARCH_2024',
 }
 
 const surveys = new Map< SurveyType, { eventName: string; eventUrl: string } >( [
@@ -21,6 +22,13 @@ const surveys = new Map< SurveyType, { eventName: string; eventUrl: string } >( 
 		{
 			eventName: 'theme-showcase-february-2024',
 			eventUrl: 'https://automattic.survey.fm/lits-survey-v2',
+		},
+	],
+	[
+		SurveyType.MARCH_2024,
+		{
+			eventName: 'theme-showcase-march-2024',
+			eventUrl: 'https://automattic.survey.fm/lits-survey-v2-march',
 		},
 	],
 ] );
@@ -69,8 +77,8 @@ const Survey = ( { survey, condition, title = null }: SurveyProps ) => {
 				setIsDismissed( true );
 				isGloballyDismissed = true;
 			} }
-			dismissWithoutSavingPreference={ true }
-			dismissTemporary={ true }
+			dismissWithoutSavingPreference
+			dismissTemporary
 			disableHref
 			showIcon={ false }
 			showLinkIcon={ false }

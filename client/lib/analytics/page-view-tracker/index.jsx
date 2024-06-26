@@ -9,6 +9,7 @@ import {
 	enhanceWithSiteMainProduct,
 	enhanceWithSiteType,
 	enhanceWithUserIsDevAccount,
+	enhanceWithGlobalSiteViewEnabled,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -21,7 +22,7 @@ import { withEnhancers } from 'calypso/state/utils';
 const debug = debugFactory( 'calypso:analytics:PageViewTracker' );
 const noop = () => {};
 
-export class PageViewTracker extends Component {
+export class UnconnectedPageViewTracker extends Component {
 	static displayName = 'PageViewTracker';
 
 	static propTypes = {
@@ -119,7 +120,8 @@ const mapDispatchToProps = {
 		enhanceWithSiteType,
 		enhanceWithSiteMainProduct,
 		enhanceWithUserIsDevAccount,
+		enhanceWithGlobalSiteViewEnabled,
 	] ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );
+export default connect( mapStateToProps, mapDispatchToProps )( UnconnectedPageViewTracker );

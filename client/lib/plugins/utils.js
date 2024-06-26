@@ -12,6 +12,7 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 } from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
@@ -380,7 +381,7 @@ export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
  * @returns The URL to use for managing a connection.
  */
 export const getManageConnectionHref = ( siteSlug ) => {
-	return isJetpackCloud()
+	return isJetpackCloud() || isA8CForAgencies()
 		? `https://wordpress.com/settings/manage-connection/${ siteSlug }`
 		: `/settings/manage-connection/${ siteSlug }`;
 };

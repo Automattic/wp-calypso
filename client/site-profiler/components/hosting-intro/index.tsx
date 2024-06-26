@@ -10,7 +10,7 @@ export default function HostingIntro() {
 	return (
 		<div className="l-block-col-2">
 			<div className="l-block-content">
-				<h2>{ translate( 'The best WordPress Hosting on the planet' ) }</h2>
+				<h2>{ translate( 'The best WordPress hosting on the planet' ) }</h2>
 				<p>
 					{ translate(
 						'Whatever you’re building, WordPress.com has everything you need: ' +

@@ -1,7 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useContext } from 'react';
-import { useDispatch } from 'calypso/state';
+import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_DOWNTIME_MONITORING_DURATION } from '../constants';
@@ -23,7 +27,32 @@ export default function useUpdateMonitorSettings(
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
+
+	const { dataViewsState, showOnlyFavorites } = useContext( SitesDashboardContext );
+
+	const agencyId = useSelector( getActiveAgencyId );
+
+	const queryKey = isA8CForAgencies()
+		? [
+				'jetpack-agency-dashboard-sites',
+				dataViewsState.search,
+				dataViewsState.page,
+				{
+					issueTypes: getSelectedFilters( dataViewsState.filters ),
+					showOnlyFavorites: showOnlyFavorites || false,
+				},
+				dataViewsState.sort,
+				dataViewsState.perPage,
+				...( agencyId ? [ agencyId ] : [] ),
+		  ]
+		: [
+				'jetpack-agency-dashboard-sites',
+				search,
+				currentPage,
+				filter,
+				sort,
+				...( agencyId ? [ agencyId ] : [] ),
+		  ];
 
 	const [ status, setStatus ] = useState( 'idle' );
 

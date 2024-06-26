@@ -25,6 +25,7 @@ import {
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import config from './lib/config-api';
+import { getApiNamespace, getApiPath } from './lib/get-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
 import 'calypso/my-sites/stats/style.scss';
 
@@ -46,8 +47,24 @@ const siteSelection = ( context: Context, next: () => void ) => {
 
 	dispatch( { type: SITE_REQUEST, siteId: siteId } );
 	wpcom.req
-		.get( { path: '/site', apiNamespace: 'jetpack/v4' } )
-		.then( ( site: { data: string } ) => JSON.parse( site.data ) )
+		.get(
+			{
+				path: getApiPath( '/site', { siteId } ),
+				apiNamespace: getApiNamespace(),
+			},
+			{
+				// Only add the http_envelope flag if it's a Simple Classic site.
+				http_envelope: ! config.isEnabled( 'is_running_in_jetpack_site' ),
+			}
+		)
+		.then( ( data: { data: string } | SiteDetails ) => {
+			// For Jetpack/Atomic sites, data format is { data: JSON string of SiteDetails }
+			if ( config.isEnabled( 'is_running_in_jetpack_site' ) && 'data' in data ) {
+				return JSON.parse( data.data );
+			}
+			// For Simple sites, data is SiteDetails, so we directly pass it.
+			return data;
+		} )
 		.then( ( site: SiteDetails ) => {
 			dispatch( { type: ODYSSEY_SITE_RECEIVE, site } );
 			dispatch( { type: SITE_REQUEST_SUCCESS, siteId } );
@@ -81,6 +98,8 @@ export default function ( pageBase = '/' ) {
 		'filedownloads',
 		'searchterms',
 		'annualstats',
+		'utm',
+		'devices',
 	].join( '|' );
 
 	page.base( pageBase );

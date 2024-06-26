@@ -3,12 +3,6 @@
 
 .signup__step.is-website-content {
 	.step-wrapper {
-		@include break-small {
-			&.is-horizontal-layout {
-				margin-top: 17vh;
-			}
-		}
-
 		body.is-section-signup .layout:not(.dops) & {
 			max-width: 1440px;
 			@include break-small {
@@ -19,6 +13,17 @@
 		.step-wrapper__content {
 			flex-basis: 55%;
 			margin-bottom: 64px;
+		}
+
+		&.is-horizontal-layout {
+			@include break-small {
+				display: block;
+				margin-top: initial;
+			}
+			@include break-wide {
+				display: flex;
+				margin-top: 17vh;
+			}
 		}
 	}
 }

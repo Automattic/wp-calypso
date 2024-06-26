@@ -228,14 +228,38 @@ export const useComparisonData = () => {
 						icon: StatsIcon,
 						info: {
 							FREE: {
-								content: translate( 'Basic Stats' ),
+								content: (
+									<>
+										{ translate( 'Basic stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(Personal sites only)' ) }
+									</>
+								),
 							},
 							SECURITY: {
-								content: translate( 'Basic Stats' ),
+								content: (
+									<>
+										{ translate( 'Basic stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(Personal sites only)' ) }
+									</>
+								),
 							},
 							COMPLETE: {
 								highlight: true,
-								content: translate( 'All Stats' ),
+								content: (
+									<>
+										{ translate( 'Advanced stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(100k page views)' ) }
+									</>
+								),
 							},
 						},
 					},
@@ -347,16 +371,6 @@ export const useComparisonData = () => {
 				sectionName: translate( 'Design' ),
 				icon: DesignIcon,
 				features: [
-					{
-						id: 'themes',
-						name: translate( 'Themes' ),
-						url: links.themes,
-						info: {
-							FREE: { content: translate( 'Starter Themes' ) },
-							SECURITY: { content: translate( 'Starter Themes' ) },
-							COMPLETE: { content: translate( 'Starter Themes' ) },
-						},
-					},
 					{
 						id: 'related_posts',
 						name: translate( 'Related posts' ),

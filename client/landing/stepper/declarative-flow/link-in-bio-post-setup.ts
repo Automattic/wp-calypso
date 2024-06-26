@@ -11,6 +11,7 @@ const linkInBioPostSetup: Flow = {
 	get title() {
 		return translate( 'Link in Bio' );
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [ { slug: 'linkInBioPostSetup', component: LinkInBioPostSetup } ];
 	},

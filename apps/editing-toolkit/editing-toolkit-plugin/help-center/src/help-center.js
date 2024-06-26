@@ -7,20 +7,12 @@ import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
 import useActionHooks from './use-action-hooks';
-
-// Implement PinnedItems to avoid importing @wordpress/interface.
-// Because @wordpress/interface depends on @wordpress/preferences which is not always available outside the editor,
-// causing the script to not be enqueued due to the missing dependency.
-// check https://github.com/Automattic/wp-calypso/pull/74122 for more details.
-function PinnedItems( { scope, ...props } ) {
-	return <Fill name={ `PinnedItems/${ scope }` } { ...props } />;
-}
 
 function HelpCenterContent() {
 	const [ helpIconRef, setHelpIconRef ] = useState();
@@ -53,7 +45,7 @@ function HelpCenterContent() {
 	const content = (
 		<>
 			<Button
-				className={ cx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
+				className={ clsx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
 				onClick={ handleToggleHelpCenter }
 				icon={
 					<HelpIcon
@@ -67,19 +59,14 @@ function HelpCenterContent() {
 				label="Help"
 				aria-pressed={ show ? true : false }
 				aria-expanded={ show ? true : false }
+				size="compact"
 			/>
 		</>
 	);
 
 	return (
 		<>
-			{ isDesktop && showHelpIcon && (
-				<>
-					<PinnedItems scope="core/edit-post">{ content }</PinnedItems>
-					<PinnedItems scope="core/edit-site">{ content }</PinnedItems>
-					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
-				</>
-			) }
+			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter handleClose={ closeCallback } />
 		</>
 	);
@@ -90,7 +77,7 @@ registerPlugin( 'etk-help-center', {
 		return (
 			<QueryClientProvider client={ whatsNewQueryClient }>
 				<CalypsoStateProvider>
-					<LocaleProvider localeSlug={ window.helpCenterLocale }>
+					<LocaleProvider localeSlug={ window.helpCenterLocale?.locale }>
 						<HelpCenterContent />
 					</LocaleProvider>
 				</CalypsoStateProvider>

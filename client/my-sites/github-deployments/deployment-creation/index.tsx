@@ -1,61 +1,28 @@
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
+import HeaderCakeBack from 'calypso/components/header-cake/back';
+import { HostingCard } from 'calypso/components/hosting-card';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import ActionPanel from '../../../components/action-panel';
-import HeaderCake from '../../../components/header-cake';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { PageShell } from '../components/page-shell';
-import { GitHubBrowseRepositories } from '../components/repositories/browse-repositories';
-import { createDeploymentPage, indexPage } from '../routes';
+import { useCodeDeploymentsQuery } from '../deployments/use-code-deployments-query';
+import { indexPage } from '../routes';
 import { GitHubDeploymentCreationForm } from './deployment-creation-form';
 
-interface GitHubConnectedProps {
-	installationId?: number;
-	repositoryId?: number;
-}
-
-export const GitHubDeploymentCreation = ( {
-	installationId,
-	repositoryId,
-}: GitHubConnectedProps ) => {
+export const GitHubDeploymentCreation = () => {
+	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const goToDeployments = () => {
-		page( indexPage( siteSlug! ) );
-	};
+	const { data } = useCodeDeploymentsQuery( siteId! );
 
-	const renderContent = () => {
-		return (
-			<>
-				{ installationId && repositoryId ? (
-					<GitHubDeploymentCreationForm
-						installationId={ installationId }
-						repositoryId={ repositoryId }
-						onConnected={ goToDeployments }
-					/>
-				) : (
-					<GitHubBrowseRepositories
-						initialInstallationId={ installationId }
-						onSelectRepository={ ( installation, repository ) => {
-							page.replace(
-								createDeploymentPage( siteSlug!, {
-									installationId: installation.external_id,
-									repositoryId: repository.id,
-								} )
-							);
-						} }
-					/>
-				) }
-			</>
-		);
-	};
+	const goToDeployments = () => page( indexPage( siteSlug! ) );
 
 	return (
 		<PageShell pageTitle={ __( 'Connect GitHub repository' ) }>
-			<HeaderCake onClick={ goToDeployments } isCompact>
-				<h1>{ __( 'Connect repository' ) }</h1>
-			</HeaderCake>
-			<ActionPanel>{ renderContent() }</ActionPanel>
+			<HeaderCakeBack icon="chevron-left" onClick={ data?.length ? goToDeployments : undefined } />
+			<HostingCard>
+				<GitHubDeploymentCreationForm onConnected={ goToDeployments } />
+			</HostingCard>
 		</PageShell>
 	);
 };

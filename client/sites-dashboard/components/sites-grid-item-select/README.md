@@ -5,8 +5,8 @@ Renders a SitesGridItem component with site selection option.
 ## How to use
 
 ```jsx
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import SitesGridItem from 'calypso/sites-dashboard/components/sites-grid-item';
+import type { SiteExcerptData } from '@automattic/sites';
 
 function render() {
 	const site = {};

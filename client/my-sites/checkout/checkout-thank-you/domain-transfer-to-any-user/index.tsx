@@ -22,7 +22,7 @@ const DomainTransferToAnyUser: React.FC< DomainTransferToAnyUserContainerProps >
 					'Domain transfers can take a few minutes, we’ll email you once it’s set up.'
 				) }
 				products={ <ThankYouDomainProduct domainName={ domain } /> }
-				footerDetails={ getDomainFooterDetails() }
+				footerDetails={ getDomainFooterDetails( 'transfer-to-user' ) }
 			/>
 		</Main>
 	);

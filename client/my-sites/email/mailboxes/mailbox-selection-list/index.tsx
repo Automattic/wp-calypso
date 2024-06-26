@@ -1,4 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useEffect } from 'react';
@@ -23,7 +24,6 @@ import { getGmailUrl } from 'calypso/lib/gsuite';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import NewMailboxUpsell from 'calypso/my-sites/email/mailboxes/new-mailbox-upsell';
 import { getMailboxesPath } from 'calypso/my-sites/email/paths';

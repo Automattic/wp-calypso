@@ -1,0 +1,60 @@
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+
+.hosting-card {
+	width: 100%;
+	margin: 0;
+	padding: 22px;
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 4px;
+	box-shadow: none;
+	font-family: $font-sf-pro-text;
+
+	&.is-borderless {
+		border: none;
+	}
+
+	.form-label {
+		font-weight: 500;
+	}
+
+	.form-text-input,
+	.form-select {
+		font-size: rem(14px) !important;
+	}
+}
+
+h3.hosting-card__title {
+	font-size: rem(16px);
+	font-weight: 500;
+	color: var(--studio-gray-80);
+	line-height: 24px;
+	margin-bottom: 12px;
+}
+
+.hosting-card__heading {
+	display: flex;
+	gap: var(--grid-unit-15, 12px);
+
+	h3.hosting-card__title {
+		flex: 1;
+	}
+}
+
+p.hosting-card__description {
+	font-size: rem(14px);
+	font-weight: 400;
+	line-height: 20px;
+}
+
+a.hosting-card__link-button {
+	font-size: $font-body-extra-small;
+	line-height: 16px;
+	color: var(--color-link);
+}
+
+@media (max-width: $break-xlarge) {
+	.hosting-card__link-button--hide-on-mobile {
+		display: none;
+	}
+}

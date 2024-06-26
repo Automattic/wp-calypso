@@ -12,9 +12,8 @@
 	padding-bottom: $vertical-margin;
 
 	.stats > & {
-		@media ( max-width: $break-small ) {
-			padding-left: 0;
-			padding-right: 0;
+		@media (max-width: $break-small) {
+			padding-top: $mobile-highlights-section-top-padding;
 		}
 	}
 
@@ -35,7 +34,7 @@
 		column-gap: 10px;
 		overflow-x: auto;
 
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			display: block;
 			padding: 0;
 
@@ -65,7 +64,7 @@
 		max-height: unset;
 		min-width: 770px;
 
-		@media ( max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			gap: 24px 12px;
 		}
 	}
@@ -73,7 +72,7 @@
 	.post-stats-card__thumbnail {
 		max-height: 300px;
 
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			max-height: unset;
 		}
 	}

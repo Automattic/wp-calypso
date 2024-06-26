@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
 const InviteStatus = ( {
@@ -9,26 +9,21 @@ const InviteStatus = ( {
 	handleDelete,
 	resendSuccess,
 	requestingResend,
-	inviteWasDeleted,
 	deletingInvite,
 } ) => {
 	const translate = useTranslate();
 	const { isPending } = invite;
 
-	if ( invite && inviteWasDeleted ) {
-		return null;
-	}
-
 	return (
 		<div
-			className={ classNames( 'people-list-item__invite-status', {
+			className={ clsx( 'people-list-item__invite-status', {
 				'is-pending': isPending,
 				'is-invite-details': type === 'invite-details',
 			} ) }
 		>
 			{ isPending && (
 				<Button
-					className={ classNames( 'people-list-item__invite-resend', {
+					className={ clsx( 'people-list-item__invite-resend', {
 						'is-success': resendSuccess,
 					} ) }
 					onClick={ onResend }

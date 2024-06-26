@@ -24,21 +24,21 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
 		"@automattic/tour-kit": "workspace:^",
-		"@wordpress/dom": "^3.51.0",
-		"@wordpress/i18n": "^4.51.0",
-		"@wordpress/icons": "^9.42.0",
-		"classnames": "^2.3.2"
+		"@wordpress/dom": "^4.0.0",
+		"@wordpress/i18n": "^5.0.0",
+		"@wordpress/icons": "^10.0.0",
+		"clsx": "^2.1.1"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.21.0",
+		"@wordpress/data": "^10.0.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.4.1",
-		"@testing-library/react": "^14.2.1",
+		"@testing-library/jest-dom": "^6.4.5",
+		"@testing-library/react": "^15.0.7",
 		"typescript": "^5.3.3"
 	},
 	"scripts": {

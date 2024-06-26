@@ -3,9 +3,10 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { isValueTruthy, getContactDetailsType } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
+import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
@@ -40,7 +41,6 @@ import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
-import getContactDetailsType from '../lib/get-contact-details-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { pixProcessor } from '../lib/pix-processor';
@@ -50,21 +50,17 @@ import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
+import CheckoutMainContent from './checkout-main-content';
 import { OnChangeItemVariant } from './item-variation-picker';
 import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
 import PrePurchaseNotices from './prepurchase-notices';
-import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	CheckoutPageErrorCallback,
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type {
-	CountryListItem,
-	CheckoutPaymentMethodSlug,
-	SitelessCheckoutType,
-} from '@automattic/wpcom-checkout';
+import type { CheckoutPaymentMethodSlug, SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:checkout-main' );
@@ -74,7 +70,6 @@ export interface CheckoutMainProps {
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
 	productSourceFromUrl?: string;
-	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
 	plan?: string | undefined;
@@ -107,6 +102,7 @@ export interface CheckoutMainProps {
 	 */
 	fromSiteSlug?: string;
 	adminUrl?: string;
+	hostingIntent?: string | undefined;
 }
 
 export default function CheckoutMain( {
@@ -114,7 +110,6 @@ export default function CheckoutMain( {
 	siteId,
 	productAliasFromUrl,
 	productSourceFromUrl,
-	overrideCountryList,
 	redirectTo,
 	feature,
 	plan,
@@ -137,6 +132,7 @@ export default function CheckoutMain( {
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
+	hostingIntent,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -192,7 +188,7 @@ export default function CheckoutMain( {
 		isUserComingFromLoginForm,
 	} );
 
-	const countriesList = useCountryList( overrideCountryList );
+	const countriesList = useCountryList();
 
 	const {
 		productsForCart,
@@ -213,6 +209,7 @@ export default function CheckoutMain( {
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
 		isGiftPurchase,
+		hostingIntent,
 	} );
 
 	const cartKey = useCartKey();
@@ -538,6 +535,8 @@ export default function CheckoutMain( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
+	const isCheckoutV2ExperimentLoading = false;
+
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
 	//
@@ -561,6 +560,7 @@ export default function CheckoutMain( {
 			isLoading: responseCart.products.length < 1,
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
+		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
 	];
 	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
 		( condition ) => condition.isLoading
@@ -693,9 +693,13 @@ export default function CheckoutMain( {
 			transactionError: string | null;
 			paymentMethodId: string | null;
 		} ) => {
-			reduxDispatch(
-				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			const errorNoticeText = transactionError ? (
+				<div dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( transactionError ) } } /> // eslint-disable-line react/no-danger -- The API response can contain anchor elements that we need to parse so they are rendered properly
+			) : (
+				translate( 'An error occurred during your purchase.' )
 			);
+
+			reduxDispatch( errorNotice( errorNoticeText ) );
 
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_payment_error', {
@@ -748,7 +752,7 @@ export default function CheckoutMain( {
 				theme={ theme }
 				selectFirstAvailablePaymentMethod
 			>
-				<WPCheckout
+				<CheckoutMainContent
 					loadingHeader={
 						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
 					}

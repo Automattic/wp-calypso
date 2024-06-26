@@ -28,6 +28,7 @@ export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
 export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
 export { default as WordPressWordmark } from './wordpress-wordmark';
+export { default as MaterialIcon } from './material-icon';
 export { ListTile } from './list-tile';
 export { LoadingPlaceholder } from './loading-placeholder';
 export {
@@ -48,6 +49,7 @@ export {
 	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
 	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
 } from './highlight-cards/weekly-highlight-cards';
+export { default as MobileHighlightCardListing } from './highlight-cards/mobile-highlight-cards';
 export { default as AppPromoCard } from './app-promo-card';
 export { default as ShortenedNumber } from './number-formatters';
 export { default as formattedNumber } from './number-formatters/formatted-number';
@@ -62,6 +64,8 @@ export { default as Tooltip } from './tooltip';
 export { default as SegmentedControl } from './segmented-control';
 export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
 export { default as PlanPrice } from './plan-price';
+export { default as ExternalLink } from './external-link';
+export { default as ExternalLinkWithTracking } from './external-link/with-tracking';
 export * from './theme-type-badge';
 
 // Types

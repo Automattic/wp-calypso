@@ -1,9 +1,9 @@
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
 
 const TransferLock = ( props ) => {
 	const translate = useTranslate();

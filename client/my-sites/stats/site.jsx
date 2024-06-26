@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { PAST_SEVEN_DAYS, PAST_THIRTY_DAYS } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
@@ -14,7 +14,6 @@ import illustration404 from 'calypso/assets/images/illustrations/illustration-40
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
-import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -45,15 +44,21 @@ import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
+import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import PromoCards from './promo-cards';
+import StatsCardUpgradeJepackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsModuleDevices from './stats-module-devices';
+import StatsModuleUpgradeOverlay from './stats-module-devices/stats-module-upgrade-overlay';
 import StatsModuleEmails from './stats-module-emails';
 import StatsModuleUTM from './stats-module-utm';
+import StatsModuleUTMOverlay from './stats-module-utm/stats-module-utm-overlay';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -196,7 +201,7 @@ class StatsSite extends Component {
 		}
 	}
 
-	renderStats() {
+	renderStats( isInternal ) {
 		const {
 			date,
 			siteId,
@@ -209,11 +214,16 @@ class StatsSite extends Component {
 			moduleSettings,
 			supportsPlanUsage,
 			supportsEmailStats,
+			supportsUTMStatsFeature,
+			supportsDevicesStatsFeature,
+			isOldJetpack,
 		} = this.props;
-
+		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
+		const supportsUTMStats = supportsUTMStatsFeature || isInternal;
+		const supportsDevicesStats = supportsDevicesStatsFeature || isInternal;
 
 		// Set the current period based on the module settings.
 		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
@@ -225,55 +235,47 @@ class StatsSite extends Component {
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
-		// For the new date picker
-		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
-
 		// Set up a custom range for the chart.
 		// Dependant on new date range picker controls.
 		let customChartRange = null;
-		let customChartQuantity;
 
-		if ( isDateControlEnabled ) {
-			// Sort out end date for chart.
-			const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+		// Sort out end date for chart.
+		const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
 
-			if ( chartEnd ) {
-				customChartRange = { chartEnd };
-			} else {
-				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
-			}
-
-			// Find the quantity of bars for the chart.
-			let daysInRange = this.getDefaultDaysForPeriod( period );
-			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
-			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
-
-			if ( chartStart && isSameOrBefore ) {
-				// Add one to calculation to include the start date.
-				daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
-				customChartRange.chartStart = chartStart;
-			} else {
-				// if start date is missing let the frequency of data take over to avoid showing one bar
-				// (e.g. months defaulting to 30 days and showing one point)
-				customChartRange.chartStart = moment()
-					.subtract( daysInRange, 'days' )
-					.format( 'YYYY-MM-DD' );
-			}
-
-			// Calculate diff between requested start and end in `priod` units.
-			// Move end point (most recent) to the end of period to account for partial periods
-			// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
-			const adjustedChartEndDate =
-				period === 'day'
-					? moment( customChartRange.chartEnd )
-					: moment( customChartRange.chartEnd ).endOf( period );
-
-			customChartQuantity = Math.ceil(
-				adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
-			);
-
-			customChartRange.daysInRange = daysInRange;
+		if ( chartEnd ) {
+			customChartRange = { chartEnd };
+		} else {
+			customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
 		}
+
+		// Find the quantity of bars for the chart.
+		let daysInRange = this.getDefaultDaysForPeriod( period );
+		const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
+		const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
+
+		if ( chartStart && isSameOrBefore ) {
+			// Add one to calculation to include the start date.
+			daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
+			customChartRange.chartStart = chartStart;
+		} else {
+			// if start date is missing let the frequency of data take over to avoid showing one bar
+			// (e.g. months defaulting to 30 days and showing one point)
+			customChartRange.chartStart = moment().subtract( daysInRange, 'days' ).format( 'YYYY-MM-DD' );
+		}
+
+		// Calculate diff between requested start and end in `priod` units.
+		// Move end point (most recent) to the end of period to account for partial periods
+		// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
+		const adjustedChartEndDate =
+			period === 'day'
+				? moment( customChartRange.chartEnd )
+				: moment( customChartRange.chartEnd ).endOf( period );
+
+		const customChartQuantity = Math.ceil(
+			adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
+		);
+
+		customChartRange.daysInRange = daysInRange;
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
@@ -287,22 +289,19 @@ class StatsSite extends Component {
 			this.state.activeTab ? this.state.activeTab.attr : 'views'
 		}`;
 
-		const wrapperClass = classNames( 'stats-content', {
+		const wrapperClass = clsx( 'stats-content', {
 			'is-period-year': period === 'year',
 		} );
 
-		const moduleListClasses = classNames(
+		const moduleListClasses = clsx(
 			'is-events',
 			'stats__module-list',
 			'stats__module-list--traffic',
 			'stats__module--unified',
-			// @TODO: Refactor hidden modules with a more flexible layout (e.g., Flexbox) to fit mass configuration to moduels in the future.
+			'stats__flexible-grid-container',
 			{
 				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
 				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
-			},
-			{
-				'stats__flexible-grid-container': config.isEnabled( 'stats/flexible-grid' ),
 			}
 		);
 
@@ -333,6 +332,7 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+				<div id="jp-admin-notices"></div>
 				<StatsNotices
 					siteId={ siteId }
 					isOdysseyStats={ isOdysseyStats }
@@ -353,7 +353,7 @@ class StatsSite extends Component {
 								activeTab={ getActiveTab( this.props.chartTab ) }
 								activeLegend={ this.state.activeLegend }
 								onChangeLegend={ this.onChangeLegend }
-								isWithNewDateControl={ isDateControlEnabled }
+								isWithNewDateControl
 								slug={ slug }
 								dateRange={ customChartRange }
 							>
@@ -367,9 +367,6 @@ class StatsSite extends Component {
 									isShort
 								/>
 							</StatsPeriodNavigation>
-							{ ! isDateControlEnabled && (
-								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-							) }
 						</StatsPeriodHeader>
 
 						<ChartTabs
@@ -385,26 +382,40 @@ class StatsSite extends Component {
 							chartTab={ this.props.chartTab }
 							customQuantity={ customChartQuantity }
 							customRange={ customChartRange }
-							hideLegend={ isDateControlEnabled }
+							hideLegend
 						/>
 					</>
 
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
 					<div className={ moduleListClasses }>
-						<StatsModule
-							path="posts"
-							moduleStrings={ moduleStrings.posts }
-							period={ this.props.period }
-							query={ query }
-							statType="statsTopPosts"
-							showSummaryLink
-							className={ classNames(
-								'stats__flexible-grid-item--two-thirds',
-								'stats__flexible-grid-item--full--large',
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
+						{ ! isNewStateEnabled && (
+							<StatsModule
+								path="posts"
+								moduleStrings={ moduleStrings.posts }
+								period={ this.props.period }
+								query={ query }
+								statType="statsTopPosts"
+								showSummaryLink
+								className={ clsx(
+									'stats__flexible-grid-item--60',
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+						{ isNewStateEnabled && (
+							<StatsModuleTopPosts
+								moduleStrings={ moduleStrings.posts }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									'stats__flexible-grid-item--60',
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 						<StatsModule
 							path="referrers"
 							moduleStrings={ moduleStrings.referrers }
@@ -412,8 +423,8 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsReferrers"
 							showSummaryLink
-							className={ classNames(
-								'stats__flexible-grid-item--one-third--once-space',
+							className={ clsx(
+								'stats__flexible-grid-item--40--once-space',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
 							) }
@@ -424,9 +435,64 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							query={ query }
 							summary={ false }
-							className={ classNames( 'stats__flexible-grid-item--full' ) }
+							className={ clsx( 'stats__flexible-grid-item--full' ) }
 						/>
 
+						{ /* If UTM if supported display the module or update Jetpack plugin card */ }
+						{ supportsUTMStats && ! isOldJetpack && (
+							<StatsModuleUTM
+								siteId={ siteId }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									'stats__flexible-grid-item--60',
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+
+						{ supportsUTMStats && isOldJetpack && (
+							<StatsModuleUTMOverlay
+								siteId={ siteId }
+								className={ clsx(
+									'stats__flexible-grid-item--60',
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+								overlay={
+									<StatsCardUpgradeJepackVersion
+										className="stats-module__upsell stats-module__upgrade"
+										siteId={ siteId }
+										statType="utm"
+									/>
+								}
+							/>
+						) }
+
+						{ /* If UTM card or update card is not visible, shift "Clicks" and reduct to 1/2 for easier stacking */ }
+						<StatsModule
+							path="clicks"
+							moduleStrings={ moduleStrings.clicks }
+							period={ this.props.period }
+							query={ query }
+							statType="statsClicks"
+							showSummaryLink
+							className={ clsx(
+								{
+									'stats__flexible-grid-item--40--once-space': supportsUTMStats,
+									'stats__flexible-grid-item--full--large': supportsUTMStats,
+									'stats__flexible-grid-item--full--medium': supportsUTMStats,
+								},
+								{
+									'stats__flexible-grid-item--half': ! supportsUTMStats,
+									'stats__flexible-grid-item--full--large': ! supportsUTMStats,
+								},
+								'stats__flexible-grid-item--full--medium'
+							) }
+						/>
+
+						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
 						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModule
 								path="authors"
@@ -434,13 +500,36 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsTopAuthors"
-								className={ classNames(
-									'stats__author-views',
-									'stats__flexible-grid-item--one-third--two-spaces',
-									'stats__flexible-grid-item--half--large',
-									'stats__flexible-grid-item--full--medium'
+								className={ clsx(
+									{
+										'stats__author-views': ! supportsUTMStats,
+									},
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large'
 								) }
 								showSummaryLink
+							/>
+						) }
+
+						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
+						{ supportsEmailStats && (
+							<StatsModuleEmails
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									{
+										// half if odd number of modules after countries - UTM + Clicks + Authors or Clicks
+										'stats__flexible-grid-item--half':
+											( supportsUTMStats && ! this.isModuleHidden( 'authors' ) ) ||
+											( ! supportsUTMStats && this.isModuleHidden( 'authors' ) ),
+										// full if even number of modules after countries - UTM + Clicks or Authors + Clicks
+										'stats__flexible-grid-item--full':
+											( supportsUTMStats && this.isModuleHidden( 'authors' ) ) ||
+											( ! supportsUTMStats && ! this.isModuleHidden( 'authors' ) ),
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
 							/>
 						) }
 
@@ -451,34 +540,26 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsSearchTerms"
 							showSummaryLink
-							className={ classNames(
+							className={ clsx(
 								{
+									// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
 									'stats__flexible-grid-item--one-third--two-spaces':
-										! this.isModuleHidden( 'authors' ),
-									'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
-									'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
+										! isJetpack && ! this.isModuleHidden( 'videos' ),
+								},
+								{
+									'stats__flexible-grid-item--full--large':
+										isJetpack && this.isModuleHidden( 'videos' ),
+								},
+								{
+									// 1/2 for all other cases to stack with Devices or empty space
+									'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+									// Avoid 1/3 on smaller screen if Videos is visible
+									'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
 								},
 								'stats__flexible-grid-item--full--medium'
 							) }
 						/>
 
-						<StatsModule
-							path="clicks"
-							moduleStrings={ moduleStrings.clicks }
-							period={ this.props.period }
-							query={ query }
-							statType="statsClicks"
-							showSummaryLink
-							className={ classNames(
-								{
-									'stats__flexible-grid-item--one-third--two-spaces':
-										! this.isModuleHidden( 'authors' ),
-									'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
-									'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
-								},
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
 						{ ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
 								path="videoplays"
@@ -487,20 +568,10 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsVideoPlays"
 								showSummaryLink
-								className={ classNames(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-						{ supportsEmailStats && (
-							<StatsModuleEmails
-								period={ this.props.period }
-								query={ query }
-								className={ classNames(
+								className={ clsx(
 									{
-										'stats__flexible-grid-item--half': ! this.isModuleHidden( 'videos' ),
-										'stats__flexible-grid-item--full': this.isModuleHidden( 'videos' ),
+										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
+										'stats__flexible-grid-item--half': isJetpack,
 									},
 									'stats__flexible-grid-item--full--large',
 									'stats__flexible-grid-item--full--medium'
@@ -519,26 +590,53 @@ class StatsSite extends Component {
 									query={ query }
 									statType="statsFileDownloads"
 									showSummaryLink
-									useShortLabel={ true }
-									className={ classNames(
-										'stats__flexible-grid-item--half',
-										'stats__flexible-grid-item--full--large'
+									useShortLabel
+									className={ clsx(
+										{
+											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										},
+										{
+											'stats__flexible-grid-item--one-third--two-spaces':
+												! this.isModuleHidden( 'videos' ),
+										},
+
+										{
+											// Avoid 1/3 on smaller screen if Videos is visible
+											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+										},
+										'stats__flexible-grid-item--full--medium'
 									) }
 								/>
 							)
 						}
+						{ supportsDevicesStats && ! isOldJetpack && (
+							<StatsModuleDevices
+								siteId={ siteId }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large'
+								) }
+							/>
+						) }
+						{ ! supportsDevicesStats && isOldJetpack && (
+							<StatsModuleUpgradeOverlay
+								className={ clsx(
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large'
+								) }
+								siteId={ siteId }
+								overlay={
+									<StatsCardUpgradeJepackVersion
+										className="stats-module__upsell stats-module__upgrade"
+										siteId={ siteId }
+										statType="devices"
+									/>
+								}
+							/>
+						) }
 					</div>
-
-					{
-						// TODO: Move this under the Countries module.
-						// - Will require some reworking of the CSS to work correctly though.
-						// - Because of the visibility toggles for Authors and Videos, we require multiple
-						// copies of the Grid CSS.
-						// - May have to move from grid to flexbox.
-					 }
-					{ config.isEnabled( 'stats/utm-module' ) && (
-						<StatsModuleUTM period={ this.props.period } query={ query } />
-					) }
 				</div>
 				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
@@ -600,14 +698,14 @@ class StatsSite extends Component {
 		);
 	}
 
-	renderBody() {
+	renderBody( isInternal ) {
 		if ( ! this.props.canUserViewStats ) {
 			return this.renderInsufficientPermissionsPage();
 		} else if ( this.props.showEnableStatsModule ) {
 			return this.renderEnableStatsModule();
 		}
 
-		return this.renderStats();
+		return this.renderStats( isInternal );
 	}
 
 	render() {
@@ -623,7 +721,7 @@ class StatsSite extends Component {
 				{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
 					<QuerySiteFeatures siteIds={ [ siteId ] } />
 				) }
-				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
+				{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>
 						<QueryKeyringConnections />
@@ -637,7 +735,9 @@ class StatsSite extends Component {
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
-				{ this.renderBody() }
+				<StatsGlobalValuesContext.Consumer>
+					{ ( isInternal ) => this.renderBody( isInternal ) }
+				</StatsGlobalValuesContext.Consumer>
 			</Main>
 		);
 	}
@@ -679,10 +779,14 @@ export default connect(
 		const slug = getSelectedSiteSlug( state );
 		const upsellModalView =
 			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
-		const { supportsPlanUsage, supportsEmailStats } = getEnvStatsFeatureSupportChecks(
-			state,
-			siteId
-		);
+
+		const {
+			supportsPlanUsage,
+			supportsEmailStats,
+			supportsUTMStats,
+			supportsDevicesStats,
+			isOldJetpack,
+		} = getEnvStatsFeatureSupportChecks( state, siteId );
 
 		return {
 			canUserViewStats,
@@ -700,6 +804,9 @@ export default connect(
 			statsAdminVersion,
 			supportsEmailStats,
 			supportsPlanUsage,
+			supportsUTMStatsFeature: supportsUTMStats,
+			supportsDevicesStatsFeature: supportsDevicesStats,
+			isOldJetpack,
 		};
 	},
 	{

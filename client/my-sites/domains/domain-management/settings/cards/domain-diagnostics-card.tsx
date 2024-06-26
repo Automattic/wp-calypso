@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -8,7 +9,6 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
-import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { fetchDns } from 'calypso/state/domains/dns/actions';
@@ -118,16 +118,6 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 		return null;
 	};
 
-	const renderFixInstructions = () => {
-		return (
-			<p>
-				{ translate(
-					"To fix these issues, you should go to your domain's DNS provider and add the records above to your domain's DNS settings."
-				) }
-			</p>
-		);
-	};
-
 	const fixDnsIssues = () => {
 		setIsRestoringDefaultRecords( true );
 
@@ -142,7 +132,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			.then( () => {
 				dispatch(
 					successNotice(
-						translate( 'The default email DNS records were successfully fixed!' ),
+						translate( 'The default email DNS records were successfully restored!' ),
 						noticeOptions
 					)
 				);
@@ -163,19 +153,6 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			} );
 	};
 
-	const renderFixButton = () => {
-		return (
-			<Button
-				busy={ isRestoringDefaultRecords }
-				disabled={ isRestoringDefaultRecords }
-				onClick={ fixDnsIssues }
-				primary
-			>
-				{ translate( 'Fix DNS issues automatically' ) }
-			</Button>
-		);
-	};
-
 	const noticeText = translate(
 		'If you use this domain name to send email from your WordPress.com website, the following email records are required. {{a}}Learn more{{/a}}.',
 		{
@@ -184,6 +161,31 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			},
 		}
 	);
+
+	const renderFixInstructions = () => {
+		if ( ! emailDnsDiagnostics.is_using_wpcom_name_servers ) {
+			return (
+				<p>
+					{ translate(
+						"To fix these issues, you should go to your domain's DNS provider and add the records above to your domain's DNS settings."
+					) }
+				</p>
+			);
+		}
+
+		if ( emailDnsDiagnostics.should_offer_automatic_fixes ) {
+			return (
+				<Button
+					busy={ isRestoringDefaultRecords }
+					disabled={ isRestoringDefaultRecords }
+					onClick={ fixDnsIssues }
+					primary
+				>
+					{ translate( 'Fix DNS issues automatically' ) }
+				</Button>
+			);
+		}
+	};
 
 	return (
 		<>
@@ -208,9 +210,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 						) }
 					</Notice>
 					<ul>{ recordsToCheck.map( renderDiagnosticForRecord ) }</ul>
-					{ emailDnsDiagnostics.is_using_wpcom_name_servers
-						? renderFixButton()
-						: renderFixInstructions() }
+					{ renderFixInstructions() }
 				</div>
 			</Accordion>
 		</>

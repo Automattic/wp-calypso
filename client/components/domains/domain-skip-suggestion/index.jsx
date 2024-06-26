@@ -18,7 +18,7 @@ class DomainSkipSuggestion extends Component {
 				buttonContent={ buttonContent }
 				buttonStyles={ { borderless: true } }
 				extraClasses="is-visible domain-skip-suggestion"
-				hidePrice={ true }
+				hidePrice
 				onButtonClick={ this.props.onButtonClick }
 				showChevron
 				// tracksButtonClickSource={ this.props.tracksButtonClickSource }

@@ -88,7 +88,7 @@ class Help extends PureComponent {
 			},
 			{
 				link: localizeUrl( 'https://wordpress.com/support/settings/privacy-settings/' ),
-				title: this.props.translate( 'Privacy Settings' ),
+				title: this.props.translate( 'Privacy Settings', { context: 'Site visibility settings' } ),
 				description: this.props.translate(
 					'Limit your site’s visibility or make it completely private.'
 				),
@@ -163,9 +163,7 @@ class Help extends PureComponent {
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.props.translate( 'Courses' ) }</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
-								'Enroll in a course taught by WordPress experts, and become a part of its community.'
-							) }
+							{ this.props.translate( 'Enroll in a course taught by WordPress experts.' ) }
 						</p>
 					</div>
 				</CompactCard>

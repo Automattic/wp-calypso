@@ -50,7 +50,9 @@ class RequestLoginEmailForm extends Component {
 
 		tosComponent: PropTypes.node,
 		headerText: PropTypes.string,
+		subHeaderText: PropTypes.string,
 		hideSubHeaderText: PropTypes.bool,
+		customFormLabel: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
 		onSendEmailLogin: PropTypes.func,
@@ -119,8 +121,12 @@ class RequestLoginEmailForm extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, locale } = this.props;
+		const { translate, locale, subHeaderText } = this.props;
 		const siteName = this.state.site?.name;
+
+		if ( subHeaderText ) {
+			return subHeaderText;
+		}
 
 		// If we have a siteName and new translation is available
 		if (
@@ -171,6 +177,7 @@ class RequestLoginEmailForm extends Component {
 			inputPlaceholder,
 			submitButtonLabel,
 			locale,
+			customFormLabel,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -199,9 +206,11 @@ class RequestLoginEmailForm extends Component {
 				? translate( 'Send link' )
 				: translate( 'Get Link' );
 
-		const formLabel = hasTranslation( 'Email address or username' )
-			? this.props.translate( 'Email address or username' )
-			: this.props.translate( 'Email Address or Username' );
+		const formLabel =
+			customFormLabel ||
+			( hasTranslation( 'Email address or username' )
+				? this.props.translate( 'Email address or username' )
+				: this.props.translate( 'Email Address or Username' ) );
 
 		return (
 			<div className="magic-login__form">
@@ -218,16 +227,6 @@ class RequestLoginEmailForm extends Component {
 				<h1 className="magic-login__form-header">
 					{ headerText || translate( 'Email me a login link' ) }
 				</h1>
-				{ requestError && (
-					<Notice
-						duration={ 10000 }
-						text={ errorText }
-						className="magic-login__request-login-email-form-notice"
-						showDismiss={ true }
-						onDismissClick={ this.onNoticeDismiss }
-						status="is-error"
-					/>
-				) }
 				{ currentUser && currentUser.username && (
 					<p>
 						{ translate( 'NOTE: You are already logged in as user: %(user)s', {
@@ -254,6 +253,16 @@ class RequestLoginEmailForm extends Component {
 							placeholder={ inputPlaceholder }
 						/>
 						{ tosComponent }
+						{ requestError && (
+							<Notice
+								duration={ 10000 }
+								text={ errorText }
+								className="magic-login__request-login-email-form-notice"
+								showDismiss={ false }
+								onDismissClick={ this.onNoticeDismiss }
+								status="is-transparent-info"
+							/>
+						) }
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
 								{ submitButtonLabel || buttonLabel }

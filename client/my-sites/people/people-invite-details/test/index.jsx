@@ -89,7 +89,7 @@ describe( 'PeopleInviteDetails', () => {
 				deleteInvite={ mockDeleteInvite }
 				translate={ mockTranslate }
 				moment={ moment }
-				canViewPeople={ true }
+				canViewPeople
 			/>
 		);
 
@@ -116,7 +116,7 @@ describe( 'PeopleInviteDetails', () => {
 				deleteInvite={ mockDeleteInvite }
 				translate={ mockTranslate }
 				moment={ moment }
-				canViewPeople={ true }
+				canViewPeople
 			/>
 		);
 
@@ -149,11 +149,6 @@ describe( 'PeopleInviteDetails', () => {
 		rerender( <PeopleInviteDetails { ...props } deleting={ false } deleteSuccess /> );
 		expect( mockGoBack ).toHaveBeenCalledTimes( 1 );
 		expect( mockGoBack ).toHaveBeenCalledWith( '/people/invites/' + siteObject.slug );
-
-		// Verify that a placeholder is rendered while waiting for `page.back`
-		// to take effect.
-		const loadingUsersEl2 = screen.queryByText( 'Loading Users' );
-		expect( loadingUsersEl2 ).toBeInTheDocument();
 
 		// Change another prop and verify that `page.back` isn't called again.
 		rerender( <PeopleInviteDetails { ...props } invite={ { ...acceptedInviteObject } } /> );

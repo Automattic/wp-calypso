@@ -191,6 +191,7 @@ const actions = {
 
 	loadLogoHistory( siteId: string ) {
 		const history = getSiteLogoHistory( siteId );
+
 		return {
 			type: ACTION_SET_SITE_HISTORY,
 			history,

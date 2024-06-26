@@ -61,7 +61,9 @@ export const TimeFormatOption = ( {
 			/>
 			<FormSettingExplanation>
 				<ExternalLink
-					href={ localizeUrl( 'https://wordpress.com/support/settings/time-settings/' ) }
+					href={ localizeUrl(
+						'https://wordpress.org/documentation/article/customize-date-and-time-format/'
+					) }
 					icon
 					target="_blank"
 				>

@@ -6,7 +6,7 @@
  * These two cases might be to be split up?
  */
 
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -26,8 +26,10 @@ export const MySitesSidebarUnifiedItem = ( {
 	url,
 	className = '',
 	shouldOpenExternalLinksInCurrentTab,
+	showTooltip = false,
 	forceExternalLink = false,
 	forceShowExternalIcon = false,
+	forceChevronIcon = false,
 	trackClickEvent,
 } ) => {
 	const reduxDispatch = useDispatch();
@@ -46,6 +48,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			badge={ badge }
 			count={ count }
 			label={ title }
+			tooltip={ showTooltip && title }
 			link={ url }
 			onNavigate={ onNavigate }
 			selected={ selected }
@@ -53,7 +56,8 @@ export const MySitesSidebarUnifiedItem = ( {
 			forceInternalLink={ shouldOpenExternalLinksInCurrentTab }
 			forceExternalLink={ forceExternalLink }
 			forceShowExternalIcon={ forceShowExternalIcon }
-			className={ classnames(
+			forceChevronIcon={ forceChevronIcon }
+			className={ clsx(
 				isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent',
 				className
 			) }
@@ -66,14 +70,16 @@ export const MySitesSidebarUnifiedItem = ( {
 MySitesSidebarUnifiedItem.propTypes = {
 	badge: PropTypes.string,
 	count: PropTypes.number,
-	icon: PropTypes.string,
+	icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 	sectionId: PropTypes.string,
 	slug: PropTypes.string,
 	title: PropTypes.string,
+	showTooltip: PropTypes.bool,
 	url: PropTypes.string,
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
 	forceExternalLink: PropTypes.bool,
 	forceShowExternalIcon: PropTypes.bool,
+	forceChevronIcon: PropTypes.bool,
 	trackClickEvent: PropTypes.func,
 };
 

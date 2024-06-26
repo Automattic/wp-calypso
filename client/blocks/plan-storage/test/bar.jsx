@@ -22,8 +22,8 @@ describe( 'PlanStorageBar basic tests', () => {
 	const props = {
 		translate,
 		mediaStorage: {
-			storage_used_bytes: 100,
-			max_storage_bytes: 1000,
+			storageUsedBytes: 100,
+			maxStorageBytes: 1000,
 		},
 		siteSlug: 'example.com',
 		sitePlanSlug: PLAN_FREE,
@@ -88,19 +88,19 @@ describe( 'PlanStorageBar basic tests', () => {
 		expect( ecom2Container.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should not render when storage has valid max_storage_bytes', () => {
+	test( 'should not render when storage has valid maxStorageBytes', () => {
 		const { container: storage1 } = render(
-			<PlanStorageBar { ...props } mediaStorage={ { max_storage_bytes: 1 } } />
+			<PlanStorageBar { ...props } mediaStorage={ { maxStorageBytes: 1 } } />
 		);
 		expect( storage1.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 1 );
 
 		const { container: storage0 } = render(
-			<PlanStorageBar { ...props } mediaStorage={ { max_storage_bytes: 0 } } />
+			<PlanStorageBar { ...props } mediaStorage={ { maxStorageBytes: 0 } } />
 		);
 		expect( storage0.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 1 );
 
 		const { container: storage50 } = render(
-			<PlanStorageBar { ...props } mediaStorage={ { max_storage_bytes: 50 } } />
+			<PlanStorageBar { ...props } mediaStorage={ { maxStorageBytes: 50 } } />
 		);
 		expect( storage50.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 1 );
 	} );
@@ -120,13 +120,13 @@ describe( 'PlanStorageBar basic tests', () => {
 		expect( storageNull.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 0 );
 
 		const { container: storageUnlimited } = render(
-			<PlanStorageBar { ...props } mediaStorage={ { max_storage_bytes: -1 } } />
+			<PlanStorageBar { ...props } mediaStorage={ { maxStorageBytes: -1 } } />
 		);
 		expect( storageUnlimited.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should include upgrade link when displayUpgradeLink is true', () => {
-		const { container } = render( <PlanStorageBar { ...props } displayUpgradeLink={ true } /> );
+		const { container } = render( <PlanStorageBar { ...props } displayUpgradeLink /> );
 		expect( container.getElementsByClassName( 'plan-storage__storage-link' ) ).toHaveLength( 1 );
 	} );
 

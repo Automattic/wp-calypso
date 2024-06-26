@@ -74,6 +74,7 @@ button {
 .import-hosted-site,
 .site-setup,
 .site-migration,
+.migration-signup,
 .import-focused,
 .plugin-bundle,
 .newsletter-setup,
@@ -102,7 +103,8 @@ button {
 .update-design,
 .update-options,
 .hundred-year-plan,
-.link-in-bio-tld {
+.link-in-bio-tld,
+.entrepreneur {
 	box-sizing: border-box;
 
 	&.step-route {
@@ -480,4 +482,22 @@ button {
 		width: 500px;
 	}
 
+}
+
+/*
+ * Site Migration flow adjustments
+ */
+
+.site-migration {
+	.step-container.site-picker {
+		max-width: 1280px;
+	}
+
+	.step-container.site-picker .step-container__content {
+		max-width: 100%;
+
+		svg {
+			fill: none;
+		}
+	}
 }

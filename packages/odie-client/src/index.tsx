@@ -22,7 +22,6 @@ export const OdieAssistant: React.FC = () => {
 	const chatboxMessagesRef = useRef< HTMLDivElement | null >( null );
 	const { ref: bottomRef, entry: lastMessageElement, inView } = useInView( { threshold: 0 } );
 	const [ stickToBottom, setStickToBottom ] = useState( true );
-
 	const scrollToBottom = useCallback(
 		( force = false ) => {
 			if ( force || stickToBottom ) {
@@ -31,7 +30,7 @@ export const OdieAssistant: React.FC = () => {
 						lastMessageElement.target.scrollIntoView( {
 							behavior: 'auto',
 							block: 'end',
-							inline: 'end',
+							inline: 'nearest',
 						} );
 					}
 				} );
@@ -106,5 +105,5 @@ export const OdieAssistant: React.FC = () => {
 
 export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';
-export { clearOdieStorage, setOdieStorage, useOdieStorage, getOdieStorage } from './data';
+export { useSetOdieStorage, useGetOdieStorage } from './data';
 export { EllipsisMenu } from './components/ellipsis-menu';

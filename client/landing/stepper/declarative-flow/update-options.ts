@@ -8,6 +8,7 @@ import type { Flow } from './internals/types';
 
 const updateOptions: Flow = {
 	name: 'update-options',
+	isSignupFlow: false,
 	useSteps() {
 		return [ STEPS.OPTIONS, STEPS.PROCESSING, STEPS.ERROR ];
 	},

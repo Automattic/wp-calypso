@@ -113,13 +113,49 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
+	// For Gutenberg <= 18.4
+	// For Gutenberg >= 18.5.1 (see: https://github.com/WordPress/gutenberg/pull/62323)
 	addEditorListener( '[href*="revision.php"]', ( e ) => {
 		e.preventDefault();
+		openRevisions();
+	} );
+
+	// For Gutenberg >= 18.5 (see: https://github.com/WordPress/gutenberg/pull/61867)
+	// Hacky solution to identify View Revisions menu item.
+	const viewRevisionsLabel =
+		/View revisions|Revisionen anzeigen|Visualizza revisioni|リビジョンを表示|수정본 보기|Bekijk revisies|Vezi reviziile|Visa versioner/gi;
+
+	// We target the menu item manually when the dropdown button is clicked.
+	// This is because we cannot rely on event.preventDefault() to prevent an event handler
+	// that was attached on core's side from executing.
+	addEditorListener( '.editor-all-actions-button', () => {
+		document.querySelectorAll( 'div[id^=portal] [role=menuitem]' ).forEach( ( menuItem ) => {
+			if ( ( menuItem.innerText || '' ).match( viewRevisionsLabel ) ) {
+				// Replace original menu item with a clone
+				const replacementMenuItem = menuItem.cloneNode( true );
+				menuItem.replaceWith( replacementMenuItem );
+				replacementMenuItem.addEventListener( 'click', openRevisions );
+
+				// Add a class to uniquely identify the cloned menu item
+				replacementMenuItem.className += ' view-revisions-modal-button';
+
+				// Replicate hovering effect
+				replacementMenuItem.addEventListener( 'mouseover', () => {
+					replacementMenuItem.setAttribute( 'data-active-item', '' );
+				} );
+				replacementMenuItem.addEventListener( 'mouseout', () => {
+					replacementMenuItem.removeAttribute( 'data-active-item' );
+				} );
+			}
+		} );
+	} );
+
+	function openRevisions() {
 		calypsoPort.postMessage( { action: 'openRevisions' } );
 
 		calypsoPort.addEventListener( 'message', onLoadRevision, false );
 		calypsoPort.start();
-	} );
+	}
 
 	function onLoadRevision( message ) {
 		const action = get( message, 'data.action', '' );
@@ -1020,39 +1056,6 @@ function handleCheckoutModal( calypsoPort ) {
 }
 
 /**
- * Handles the back to Dashboard link after the removal of the previously-used Portal in Gutenberg 14.5
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-function handleSiteEditorBackButton( calypsoPort ) {
-	// We use the traversal helper because the target element may be the SVG or an SVG element inside.
-	function traverseToFindLink( element, link, depth = 2 ) {
-		let foundLink = false;
-		while ( depth >= 0 ) {
-			if ( element.tagName.toLowerCase() === 'a' && element?.href === link ) {
-				foundLink = true;
-				break;
-			}
-			element = element.parentElement;
-			depth--;
-		}
-		return foundLink;
-	}
-
-	// have to do this event delegation style because the Editor isn't fully initialized yet.
-	document.getElementById( 'wpwrap' ).addEventListener( 'click', ( event ) => {
-		const dashboardLink = select( 'core/edit-site' )?.getSettings?.().__experimentalDashboardLink;
-		// The link has changed. Pray it doesn't change any further.
-		// This is how to find it in Gutenberg 15.2.
-		const isDashboardLink = traverseToFindLink( event.target, dashboardLink );
-
-		if ( isDashboardLink ) {
-			event.preventDefault();
-			calypsoPort.postMessage( { action: 'navigateToHome' } );
-		}
-	} );
-}
-
-/**
  * If WelcomeTour is set to show, check if the App Banner is visible.
  * If App Banner is visible, we set the Welcome Tour to not show.
  * When the App Banner gets dismissed, we set the Welcome Tour to show.
@@ -1184,8 +1187,6 @@ function initPort( message ) {
 		handleCheckoutModal( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
-
-		handleSiteEditorBackButton( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

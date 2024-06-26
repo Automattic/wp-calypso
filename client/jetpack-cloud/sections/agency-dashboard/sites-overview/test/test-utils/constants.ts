@@ -51,9 +51,17 @@ const site: Site = {
 		desktop: 85,
 	},
 	php_version_num: 7.4,
-	is_connected: true,
+	php_version: '7.4.3',
+	wordpress_version: '6.5',
 	has_paid_agency_monitor: true,
 	has_pending_boost_one_time_score: false,
+	sticker: [],
+	blogname: 'test',
+	is_atomic: false,
+	has_vulnerable_plugins: false,
+	latest_scan_has_threats_found: false,
+	active_paid_subscription_slugs: [],
+	hosting_provider_guess: 'automattic',
 };
 
 export { site };

@@ -1,5 +1,5 @@
 import { loadScript } from '@automattic/load-script';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { filter, forEach } from 'lodash';
 import { PureComponent } from 'react';
@@ -25,7 +25,7 @@ const embedsToLookFor = {
 	'.wp-embedded-content': embedWordPressPost,
 	'a[data-pin-do="embedPin"]': embedPinterest,
 	'div.embed-issuu': embedIssuu,
-	a: embedLink, // process plain links last
+	'a[href^="http://"], a[href^="https://"]': embedLink, // process plain links last
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -245,7 +245,7 @@ function embedCarousel( domNode ) {
 						return (
 							<div
 								key={ index }
-								className={ classNames( 'carousel-slide', item?.className ) }
+								className={ clsx( 'carousel-slide', item?.className ) }
 								// eslint-disable-next-line react/no-danger
 								dangerouslySetInnerHTML={ { __html: item?.innerHTML } }
 							/>

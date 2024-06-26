@@ -1,0 +1,140 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
+.license-details {
+	margin: 0;
+
+	.license-details__list {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-column-gap: 16px;
+		grid-row-gap: 16px;
+		padding: 0;
+		margin: 0;
+		list-style-type: none;
+
+		@include break-xlarge() {
+			grid-template-columns: 3fr 1fr 1fr;
+			grid-column-gap: 32px;
+			grid-row-gap: 32px;
+		}
+	}
+
+	.license-details__list-item,
+	.license-details__list-item-small {
+		font-size: 1rem;
+
+		&--wide {
+			@include break-xlarge() {
+				grid-column-start: span 2;
+			}
+		}
+	}
+
+	.license-details__list-item-small {
+		@include break-xlarge() {
+			display: none;
+		}
+	}
+
+	.license-details__license-key-row {
+		display: flex;
+	}
+
+	.license-details__license-key {
+		flex: 0 1 auto;
+		padding: 6px;
+		font-size: 0.875rem;
+		background: var(--color-neutral-0);
+		color: var(--color-neutral-70);
+		overflow: hidden;
+		word-break: break-all;
+	}
+
+	.license-details__clipboard-button {
+		flex: 0 0 auto;
+		position: relative;
+		top: -1px;
+		margin-inline-start: 8px;
+
+		// Overpower specificity of the button component styles.
+		&.button.button {
+			color: var(--color-neutral-70);
+		}
+	}
+
+	.license-details__label {
+		margin-block-end: 8px;
+		font-size: 1rem;
+		font-weight: bold;
+	}
+
+	.license-details__actions {
+		margin-block-start: 1rem;
+		display: flex;
+		flex-wrap: wrap;
+
+		@include break-xlarge {
+			flex-wrap: nowrap;
+		}
+
+		.button {
+			flex: 0 0 100%;
+		}
+
+		.button:not(:last-child) {
+			margin-block-end: 0.5rem;
+		}
+
+		@include break-large {
+			.button {
+				flex: 0 0 auto;
+			}
+
+			.button:not(:last-child) {
+				margin-inline-end: 1rem;
+				margin-block-end: 0;
+			}
+		}
+	}
+
+	.license-details__assign-button {
+		@include break-large {
+			display: none;
+		}
+	}
+}
+
+.license-details--child-license {
+	&,
+	.license-details__actions a:not(.license-details__assign-button),
+	.license-details__actions button {
+		background-color: var(--color-accent-0);
+	}
+}
+
+.license-details__actions .button.is-compact {
+	padding: 8px 14px;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.375;
+
+	@include break-large {
+		padding: 7px;
+		font-size: 0.75rem;
+		line-height: 1;
+	}
+}
+
+.bundle-details__footer {
+	padding: 16px 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.bundle-details__footer,
+.bundle-details .license-preview.license-preview--placeholder .license-preview__card {
+	background-color: #fafafa;
+}

@@ -1,58 +1,46 @@
 interface OpenPopupOptions {
 	url: string;
-	popupId: string;
-	expectedEvent: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	onMessage( message: any, popup: Window ): void;
 }
 
-export const openPopup = < T = void >( { url, popupId, expectedEvent }: OpenPopupOptions ) => {
-	return new Promise< T >( ( resolve, reject ) => {
-		let popup: Window | null;
+export const openPopup = ( { url, onMessage }: OpenPopupOptions ) => {
+	let popup: Window | null;
 
-		try {
-			popup = window.open( url, popupId, 'height=600,width=700' );
-		} catch {
-			return reject();
+	try {
+		const width = 700;
+		const height = 600;
+
+		const top = window.screen.height / 2 - height / 2;
+		const left = window.screen.width / 2 - width / 2;
+
+		popup = window.open(
+			url,
+			undefined,
+			`popup=1,width=${ width },height=${ height },top=${ top },left=${ left }`
+		);
+	} catch {
+		return false;
+	}
+
+	const handleMessage = ( event: MessageEvent ) => {
+		const { data } = event;
+
+		if ( ! data || ! popup ) {
+			return;
 		}
 
-		if ( ! popup ) {
-			return reject();
+		onMessage( data, popup );
+	};
+
+	window.addEventListener( 'message', handleMessage );
+
+	const interval = window.setInterval( () => {
+		if ( ! popup || popup.closed ) {
+			clearInterval( interval );
+			window.removeEventListener( 'message', handleMessage );
 		}
+	}, 500 );
 
-		let interval: number | null = null;
-		let handleMessage: Window[ 'onmessage' ] | null = null;
-		let hasResolved = false;
-
-		const clearListeners = () => {
-			if ( null !== interval ) {
-				clearInterval( interval );
-			}
-
-			if ( null !== handleMessage ) {
-				window.removeEventListener( 'message', handleMessage );
-			}
-		};
-
-		handleMessage = ( event: MessageEvent ) => {
-			const { data } = event;
-
-			if ( ! data ) {
-				return;
-			}
-
-			if ( expectedEvent === data.type ) {
-				clearListeners();
-				hasResolved = true;
-				resolve( data );
-			}
-		};
-
-		interval = window.setInterval( () => {
-			if ( popup?.closed && ! hasResolved ) {
-				clearListeners();
-				reject();
-			}
-		}, 500 );
-
-		window.addEventListener( 'message', handleMessage );
-	} );
+	return true;
 };

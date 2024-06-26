@@ -10,6 +10,7 @@ import notices from './notices/reducer';
 import paidStatsUpsell from './paid-stats-upsell/reducer';
 import posts from './posts/reducer';
 import recentPostViews from './recent-post-views/reducer';
+import utmMetrics from './utm-metrics/reducer';
 
 const combinedReducer = combineReducers( {
 	chartTabs,
@@ -22,6 +23,7 @@ const combinedReducer = combineReducers( {
 	recentPostViews,
 	paidStatsUpsell,
 	notices,
+	utmMetrics,
 } );
 const statsReducer = withStorageKey( 'stats', combinedReducer );
 

@@ -5,6 +5,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
+import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
 import { hideFractionNumber } from './chart-utils';
@@ -17,6 +20,7 @@ interface SubscribersData {
 	period: PeriodType;
 	subscribers: number;
 	subscribers_change: number;
+	subscribers_paid: number;
 }
 
 interface SubscribersDataResult {
@@ -35,18 +39,32 @@ interface QuantityDefaultType {
 export type PeriodType = 'day' | 'week' | 'month' | 'year';
 
 // New Subscriber Stats
-function transformData( data: SubscribersData[] ): uPlot.AlignedData {
+function transformData(
+	data: SubscribersData[],
+	hasAddedPaidSubscriptionProduct: boolean
+): uPlot.AlignedData {
 	// Transform the data into the format required by uPlot.
 	//
 	// Note that the incoming data is ordered ascending (newest to oldest)
 	// but uPlot expects descending in its deafult configuration.
 	const x: number[] = data.map( ( point ) => Number( new Date( point.period ) ) / 1000 ).reverse();
 	// Reserve null values for points with no data.
-	const y: Array< number | null > = data
+	const y1: Array< number | null > = data
 		.map( ( point ) => ( point.subscribers === null ? null : Number( point.subscribers ) ) )
 		.reverse();
 
-	return [ x, y ];
+	// Add a second line for paid subscribers to the chart when users have added a paid subscription product.
+	if ( hasAddedPaidSubscriptionProduct ) {
+		const y2: Array< number | null > = data
+			.map( ( point ) =>
+				point.subscribers_paid === null ? null : Number( point.subscribers_paid )
+			)
+			.reverse();
+
+		return [ x, y1, y2 ];
+	}
+
+	return [ x, y1 ];
 }
 
 export default function SubscribersChartSection( {
@@ -84,6 +102,9 @@ export default function SubscribersChartSection( {
 		queryDate
 	) as UseQueryResult< SubscribersDataResult >;
 
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId || 0 ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+
 	const handleDateChange = useCallback(
 		( newDate: Date ) => setQueryDate( new Date( newDate.getTime() ) ), // unless new Date is created, the component won't rerender
 		[ setQueryDate ]
@@ -100,7 +121,14 @@ export default function SubscribersChartSection( {
 		}
 	}, [ status, isError ] );
 
-	const chartData = transformData( data?.data || [] );
+	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
+
+	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
+	const isPaidSubscriptionProductsLoading = ! products;
+	const isChartLoading = isLoading || isPaidSubscriptionProductsLoading;
+
+	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
+	const chartData = transformData( data?.data || [], hasAddedPaidSubscriptionProduct );
 
 	const subscribers = {
 		label: 'Subscribers',
@@ -110,6 +138,10 @@ export default function SubscribersChartSection( {
 	const slugPath = slug ? `/${ slug }` : '';
 	const pathTemplate = `${ subscribers.path }{{ interval }}${ slugPath }`;
 
+	const subscribersUrl =
+		isAtomic || isJetpack
+			? `https://cloud.jetpack.com/subscribers/${ slug }`
+			: `/people/subscribers/${ slug }`;
 	return (
 		<div className="subscribers-section">
 			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
@@ -118,7 +150,7 @@ export default function SubscribersChartSection( {
 					{ translate( 'Subscribers' ) }{ ' ' }
 					{ isOdysseyStats ? null : (
 						<small>
-							<a className="highlight-cards-heading-wrapper" href={ '/people/subscribers/' + slug }>
+							<a className="highlight-cards-heading-wrapper" href={ subscribersUrl }>
 								{ translate( 'View all subscribers' ) }
 							</a>
 						</small>
@@ -133,20 +165,20 @@ export default function SubscribersChartSection( {
 					/>
 					<div className="subscribers-section-duration-control-with-legend">
 						<StatsPeriodHeader>
-							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
+							<Intervals selected={ period } pathTemplate={ pathTemplate } compact />
 						</StatsPeriodHeader>
 						<div className="subscribers-section-legend" ref={ legendRef }></div>
 					</div>
 				</div>
 			</div>
-			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
-			{ ! isLoading && chartData.length === 0 && (
+			{ isChartLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
+			{ ! isChartLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">
 					{ translate( 'No data available for the specified period.' ) }
 				</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
-			{ ! isLoading && chartData.length !== 0 && (
+			{ ! isChartLoading && chartData.length !== 0 && (
 				<UplotChart
 					data={ chartData }
 					legendContainer={ legendRef }

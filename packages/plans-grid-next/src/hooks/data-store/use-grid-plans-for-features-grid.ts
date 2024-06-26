@@ -1,30 +1,53 @@
-import { FeatureList } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import { GridPlan, PlansIntent } from '../../types';
+import useGridPlans from './use-grid-plans';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
-
-interface Params {
-	allFeaturesList: FeatureList;
-	availableGridPlans: Omit< GridPlan, 'features' >[];
-	gridPlans: Omit< GridPlan, 'features' >[];
-	intent?: PlansIntent;
-	isInSignup?: boolean;
-	selectedFeature?: string | null;
-	showLegacyStorageFeature?: boolean;
-}
+import type { UseGridPlansParams } from './types';
+import type { GridPlan } from '../../types';
 
 const useGridPlansForFeaturesGrid = ( {
 	allFeaturesList,
-	availableGridPlans,
-	gridPlans,
+	coupon,
+	eligibleForFreeHostingTrial,
+	hasRedeemedDomainCredit,
+	hiddenPlans,
 	intent,
+	isDisplayingPlansNeededForFeature,
 	isInSignup,
+	isSubdomainNotGenerated,
 	selectedFeature,
+	selectedPlan,
 	showLegacyStorageFeature,
-}: Params ): GridPlan[] => {
+	siteId,
+	storageAddOns,
+	term,
+	useCheckPlanAvailabilityForPurchase,
+	useFreeTrialPlanSlugs,
+	highlightLabelOverrides,
+}: UseGridPlansParams ): GridPlan[] | null => {
+	const gridPlans = useGridPlans( {
+		allFeaturesList,
+		coupon,
+		eligibleForFreeHostingTrial,
+		hasRedeemedDomainCredit,
+		hiddenPlans,
+		intent,
+		isDisplayingPlansNeededForFeature,
+		isSubdomainNotGenerated,
+		selectedFeature,
+		selectedPlan,
+		showLegacyStorageFeature,
+		siteId,
+		storageAddOns,
+		term,
+		useCheckPlanAvailabilityForPurchase,
+		useFreeTrialPlanSlugs,
+		highlightLabelOverrides,
+	} );
+
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		allFeaturesList,
-		gridPlans: availableGridPlans,
+		gridPlans: gridPlans || [],
+		hasRedeemedDomainCredit,
 		intent,
 		isInSignup,
 		selectedFeature,
@@ -32,6 +55,10 @@ const useGridPlansForFeaturesGrid = ( {
 	} );
 
 	return useMemo( () => {
+		if ( ! gridPlans ) {
+			return null;
+		}
+
 		return gridPlans.reduce( ( acc, gridPlan ) => {
 			if ( gridPlan.isVisible ) {
 				return [

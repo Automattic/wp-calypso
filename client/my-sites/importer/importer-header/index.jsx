@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -32,7 +32,7 @@ class ImporterHeader extends PureComponent {
 		const { importerStatus, icon, title, description } = this.props;
 		const { importerState } = importerStatus;
 		const showStart = includes( startStates, importerState );
-		const headerClasses = classnames( 'importer-header', {
+		const headerClasses = clsx( 'importer-header', {
 			'importer-header__is-start': showStart,
 		} );
 

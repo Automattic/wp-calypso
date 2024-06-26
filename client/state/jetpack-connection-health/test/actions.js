@@ -79,7 +79,7 @@ describe( 'action', () => {
 				},
 			} );
 			mockFetchHealthStatus( siteId ).reply( 200, {
-				isHealthy: true,
+				is_healthy: true,
 			} );
 			await requestJetpackConnectionHealthStatus( siteId )( dispatchSpy, stateSpy );
 			expect( dispatchSpy ).toHaveBeenNthCalledWith( 1, {
@@ -106,7 +106,7 @@ describe( 'action', () => {
 				},
 			} );
 			mockFetchHealthStatus( siteId ).reply( 200, {
-				isHealthy: false,
+				is_healthy: false,
 				error: 'foo_bar',
 			} );
 			await requestJetpackConnectionHealthStatus( siteId )( dispatchSpy, stateSpy );

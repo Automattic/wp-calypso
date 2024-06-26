@@ -1,11 +1,12 @@
+import { useFuzzySearch } from '@automattic/search';
 import { useState } from 'react';
 import { SortDirection, useSort } from '../components/sort-button/use-sort';
 import { SearchDeployments } from './deployments-list-search';
 import { DeploymentsListTable } from './deployments-list-table';
+import { NoResults } from './no-results';
 import { CodeDeploymentData } from './use-code-deployments-query';
 
 import './styles.scss';
-
 interface GitHubDeploymentsListProps {
 	deployments: CodeDeploymentData[];
 }
@@ -65,19 +66,33 @@ export const GitHubDeploymentsList = ( { deployments }: GitHubDeploymentsListPro
 	const { key, direction, handleSortChange } = useSort( 'name' );
 	const [ query, setQuery ] = useState( '' );
 
+	const filteredDeployments = useFuzzySearch( {
+		data: deployments,
+		keys: [ 'repository_name' ],
+		query,
+	} );
+
+	const getContent = () => {
+		if ( filteredDeployments.length === 0 ) {
+			return <NoResults />;
+		}
+
+		return (
+			<DeploymentsListTable
+				deployments={ applySort( filteredDeployments, key, direction ) }
+				sortKey={ key }
+				sortDirection={ direction }
+				onSortChange={ handleSortChange }
+			/>
+		);
+	};
+
 	return (
 		<div className="github-deployments-list">
 			<div className="github-deployments-list__header">
 				<SearchDeployments value={ query } onChange={ setQuery } />
 			</div>
-			<div className="github-deployments__body">
-				<DeploymentsListTable
-					deployments={ applySort( deployments, key, direction ) }
-					sortKey={ key }
-					sortDirection={ direction }
-					onSortChange={ handleSortChange }
-				/>
-			</div>
+			<div className="github-deployments__body">{ getContent() }</div>
 		</div>
 	);
 };

@@ -4,7 +4,7 @@ import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -15,7 +15,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
-import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -84,19 +84,19 @@ export default function SitesOverview() {
 		setIsBulkManagementActive,
 	} = useContext( SitesOverviewContext );
 
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded,
-		search,
+		searchQuery: search,
 		currentPage,
 		filter,
-		sort
-	);
+		sort,
+	} );
 
 	const {
 		data: verifiedContacts,
 		refetch: refetchContacts,
 		isError: fetchContactFailed,
-	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
+	} = useFetchMonitorVerifiedContacts( isPartnerOAuthTokenLoaded );
 
 	const { data: products } = useProductsQuery();
 
@@ -346,17 +346,17 @@ export default function SitesOverview() {
 							selectedText={
 								<span>
 									{ selectedTab.label }
-									<Count count={ selectedTab.count } compact={ true } />
+									<Count count={ selectedTab.count } compact />
 								</span>
 							}
 							selectedCount={ selectedTab.count }
-							className={ classNames(
+							className={ clsx(
 								isMobile && highlightTab && isFavoritesTab && 'sites-overview__highlight-tab'
 							) }
 						>
 							<NavTabs selectedText={ selectedTab.label } selectedCount={ selectedTab.count }>
 								{ navItems.map( ( props ) => (
-									<NavItem { ...props } compactCount={ true } />
+									<NavItem { ...props } compactCount />
 								) ) }
 							</NavTabs>
 						</SectionNav>

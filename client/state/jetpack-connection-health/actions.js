@@ -80,11 +80,11 @@ export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, ge
 			apiNamespace: 'wpcom/v2',
 		} )
 		.then( ( response ) => {
-			const { isHealthy, error } = response;
-			if ( isHealthy && reduxIsUnhealthy ) {
+			const { is_healthy, error } = response;
+			if ( is_healthy && reduxIsUnhealthy ) {
 				dispatch( setJetpackConnectionHealthy( siteId ) );
 			}
-			if ( ! isHealthy && ! reduxIsUnhealthy ) {
+			if ( ! is_healthy && ! reduxIsUnhealthy ) {
 				dispatch( setJetpackConnectionUnhealthy( siteId, error ) );
 			}
 		} )

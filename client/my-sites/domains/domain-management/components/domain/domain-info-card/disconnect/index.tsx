@@ -1,9 +1,9 @@
 import { Dialog } from '@automattic/components';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { type as domainType } from 'calypso/lib/domains/constants';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

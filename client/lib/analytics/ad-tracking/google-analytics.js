@@ -1,5 +1,4 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { getGaGtag } from '../utils/get-ga-gtag';
 import * as GA4 from './google-analytics-4';
 
 // Ensure setup has run.
@@ -7,8 +6,6 @@ import './setup';
 
 export function setupGoogleAnalyticsGtag( params ) {
 	GA4.setup( params );
-
-	window.gtag( 'config', getGaGtag(), params );
 }
 
 /**
@@ -41,7 +38,8 @@ export function fireGoogleAnalyticsPageView(
 	urlPath,
 	pageTitle,
 	useJetpackGoogleAnalytics = false,
-	useAkismetGoogleAnalytics = false
+	useAkismetGoogleAnalytics = false,
+	useA8CForAgenciesGoogleAnalytics = false
 ) {
 	const getGa4PropertyGtag = () => {
 		if ( useJetpackGoogleAnalytics ) {
@@ -50,23 +48,14 @@ export function fireGoogleAnalyticsPageView(
 		if ( useAkismetGoogleAnalytics ) {
 			return GA4.Ga4PropertyGtag.AKISMET;
 		}
+		if ( useA8CForAgenciesGoogleAnalytics ) {
+			return GA4.Ga4PropertyGtag.A8C_FOR_AGENCIES;
+		}
 		return GA4.Ga4PropertyGtag.WPCOM;
 	};
 
 	const ga4PropertyGtag = getGa4PropertyGtag();
 	GA4.firePageView( pageTitle, urlPath, ga4PropertyGtag );
-
-	const params = {
-		...getGoogleAnalyticsDefaultConfig(),
-		page_path: urlPath,
-		page_title: pageTitle,
-	};
-
-	window.gtag(
-		'config',
-		getGaGtag( useJetpackGoogleAnalytics, useAkismetGoogleAnalytics ),
-		params
-	);
 }
 
 /**

@@ -28,6 +28,7 @@ export const SITE_REQUEST_FIELDS = [
 	'was_hosting_trial',
 	'description',
 	'user_interactions',
+	'is_deleted',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [
@@ -84,5 +85,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'wpcom_staging_blog_ids',
 	'can_blaze',
 	'is_commercial',
+	'is_commercial_reasons',
 	'wpcom_admin_interface',
+	'wpcom_classic_early_release',
 ].join();

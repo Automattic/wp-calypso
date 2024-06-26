@@ -1,5 +1,6 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import classnames from 'classnames';
+import { DNS_TXT_RECORD_CHAR_LIMIT } from '@automattic/urls';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -8,7 +9,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import { DNS_TXT_RECORD_CHAR_LIMIT } from 'calypso/lib/url/support';
 
 class TxtRecord extends Component {
 	static propTypes = {
@@ -41,7 +41,7 @@ class TxtRecord extends Component {
 
 	render() {
 		const { fieldValues, isValid, onChange, selectedDomainName, show, translate } = this.props;
-		const classes = classnames( { 'is-hidden': ! show } );
+		const classes = clsx( { 'is-hidden': ! show } );
 		const isNameValid = isValid( 'name' );
 		const isDataValid = isValid( 'data' );
 		const isTTLValid = isValid( 'ttl' );

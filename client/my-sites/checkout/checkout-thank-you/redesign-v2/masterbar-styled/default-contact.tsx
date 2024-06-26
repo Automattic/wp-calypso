@@ -16,8 +16,6 @@ const ContactContainer = styled.div`
 	display: flex;
 	align-items: center;
 	column-gap: 8px;
-	padding-right: 24px;
-	padding-left: 24px;
 	font-size: 14px;
 	line-height: 20px;
 	font-weight: 500;
@@ -37,6 +35,7 @@ const ContactContainer = styled.div`
 	span {
 		display: none;
 	}
+
 	@media ( min-width: 600px ) {
 		.gridicon {
 			display: none;

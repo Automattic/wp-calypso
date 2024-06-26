@@ -15,7 +15,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
 import SitePicker from './site-picker';
 import type { Step } from '../../types';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 import './styles.scss';
 

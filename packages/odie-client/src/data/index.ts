@@ -1,87 +1,67 @@
-import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
+import { useEffect } from 'react';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { Message } from '../types';
 
 type OdieStorageKey = 'chat_id' | 'last_chat_id';
 
 const buildOdieStorageKey = ( key: OdieStorageKey ) => `odie_${ key }`;
 
-const storageEventName = 'odieStorageEvent';
 const messageEventName = 'odieMessageEvent';
 const clearChatEventName = 'clearChatEvent';
 
-export const getOdieStorage = ( key: OdieStorageKey ) => {
+export const useGetOdieStorage = ( key: OdieStorageKey ) => {
 	const storageKey = buildOdieStorageKey( key );
-	return localStorage.getItem( storageKey );
+	const { data } = useQuery( {
+		queryKey: [ storageKey ],
+		queryFn: () => {
+			if ( canAccessWpcomApis() ) {
+				return wpcomRequest< Record< string, string > >( {
+					path: '/me/preferences',
+					apiVersion: 'v2',
+					apiNamespace: 'wpcom/v2',
+				} ).then( ( response ) => response[ storageKey ] );
+			}
+			return apiFetch< Record< string, string > >( {
+				global: true,
+				path: `/help-center/odie/history/last-chat-id`,
+			} as APIFetchOptions ).then( ( res ) => res[ storageKey ] );
+		},
+	} );
+	return data;
 };
 
-export const setOdieStorage = ( key: OdieStorageKey, value: string ) => {
+export const useSetOdieStorage = ( key: OdieStorageKey ) => {
 	const storageKey = buildOdieStorageKey( key );
-	localStorage.setItem( storageKey, value );
-
-	// Duplicate the value to last_chat_id
-	if ( key === 'chat_id' ) {
-		localStorage.setItem( buildOdieStorageKey( 'last_chat_id' ), value );
-		window.dispatchEvent(
-			new CustomEvent( storageEventName, {
-				detail: {
-					key: buildOdieStorageKey( 'last_chat_id' ),
-					value: value,
-				},
-			} )
-		);
-	}
-
-	const event = new CustomEvent( storageEventName, {
-		detail: {
-			key: storageKey,
-			value: value,
+	const client = useQueryClient();
+	const mutation = useMutation( {
+		mutationFn: ( value: string | null ) => {
+			if ( canAccessWpcomApis() ) {
+				return wpcomRequest< { calypso_preferences: Record< string, string > } >( {
+					path: '/me/preferences',
+					apiVersion: 'v2',
+					apiNamespace: 'wpcom/v2',
+					method: 'PUT',
+					// Empty string is a way to delete the value.
+					body: { calypso_preferences: { [ storageKey ]: value ?? '' } },
+				} );
+			}
+			return apiFetch< { calypso_preferences: Record< string, string > } >( {
+				global: true,
+				path: `/help-center/odie/history/last-chat-id`,
+				method: 'POST',
+				data: { [ storageKey ]: value },
+			} as APIFetchOptions );
+		},
+		onSuccess: ( response ) => {
+			client.setQueryData( [ storageKey ], () => {
+				return response.calypso_preferences[ storageKey ] ?? '';
+			} );
 		},
 	} );
 
-	window.dispatchEvent( event );
-};
-
-export const clearOdieStorage = ( key: OdieStorageKey ) => {
-	const storageKey = buildOdieStorageKey( key );
-	localStorage.removeItem( storageKey );
-
-	const event = new CustomEvent( storageEventName, {
-		detail: {
-			key: storageKey,
-			value: null,
-		},
-	} );
-
-	window.dispatchEvent( event );
-};
-
-export const useOdieStorage = ( key: OdieStorageKey ) => {
-	const storageKey = buildOdieStorageKey( key );
-	const [ value, setValue ] = useState( getOdieStorage( key ) );
-	useEffect( () => {
-		const storageListener = ( e: StorageEvent ) => {
-			if ( e.key === storageKey ) {
-				setValue( e.newValue );
-			}
-		};
-
-		const customStorageListener = ( e: Event ) => {
-			const detail = ( e as CustomEvent ).detail;
-			if ( detail.key === storageKey ) {
-				setValue( detail.value );
-			}
-		};
-
-		window.addEventListener( 'storage', storageListener );
-		window.addEventListener( storageEventName, customStorageListener );
-
-		return () => {
-			window.removeEventListener( 'storage', storageListener );
-			window.removeEventListener( storageEventName, customStorageListener );
-		};
-	}, [ key, storageKey ] );
-
-	return value;
+	return mutation.mutate;
 };
 
 export const broadcastOdieMessage = ( message: Message, origin: string ) => {

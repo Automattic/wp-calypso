@@ -1,0 +1,18 @@
+@import "@automattic/typography/styles/variables";
+
+:root {
+	--jp-green-40: #069e08;
+}
+
+.badge--success.stats-card__badge--success {
+	font-family: Inter, $sans;
+	height: auto;
+	padding: 2px 8px;
+	font-weight: 500;
+	font-size: $font-body-extra-small;
+	line-height: 16px;
+	color: var(--color-success-40);
+	background-color: var(--color-text-inverted);
+	border: 1px solid var(--jp-green-40);
+	border-radius: 4px;
+}

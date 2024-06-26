@@ -8,7 +8,8 @@ import configureStore from 'redux-mock-store';
 import { transferStates } from '../../../state/automated-transfer/constants';
 import HostingActivateStatus from '../hosting-activate-status';
 
-const initialState = {
+const mockTransferStatus = transferStates.NONE;
+const mockInitialState = {
 	sites: {
 		items: [],
 		requesting: {},
@@ -26,29 +27,50 @@ const initialState = {
 	notices: {
 		items: [],
 	},
+	automatedTransfer: {
+		[ 1 ]: {
+			status: mockTransferStatus,
+		},
+	},
 };
 
-let mockIsTransferring = true;
-let mockTransferStatus = '';
-
-jest.mock( 'calypso/state/atomic-transfer/use-atomic-transfer-query', () => {
-	return {
-		useAtomicTransferQuery: ( siteId ) => {
-			if ( siteId === initialState.ui.selectedSiteId ) {
-				return {
-					isTransferring: mockIsTransferring,
-					transferStatus: mockTransferStatus,
-				};
-			}
-		},
-	};
-} );
-
 describe( 'index', () => {
-	test( 'Should show the transferring notice when the site is transferring to Atomic based on context', async () => {
-		mockTransferStatus = transferStates.PENDING;
+	test( 'Transfer status COMPLETED should return isTransferCompleted true', async () => {
+		mockInitialState.automatedTransfer[ 1 ].status = transferStates.COMPLETED;
 		const mockStore = configureStore();
-		const store = mockStore( initialState );
+		const store = mockStore( mockInitialState );
+
+		const onTick = jest.fn();
+
+		render(
+			<Provider store={ store }>
+				<HostingActivateStatus onTick={ onTick } context="hosting" />
+			</Provider>
+		);
+
+		expect( onTick ).toHaveBeenCalledWith( false, false, true );
+	} );
+
+	test( 'Transfer status NONE should return isTransferCompleted true', async () => {
+		mockInitialState.automatedTransfer[ 1 ].status = transferStates.NONE;
+		const mockStore = configureStore();
+		const store = mockStore( mockInitialState );
+
+		const onTick = jest.fn();
+
+		render(
+			<Provider store={ store }>
+				<HostingActivateStatus onTick={ onTick } context="hosting" />
+			</Provider>
+		);
+
+		expect( onTick ).toHaveBeenCalledWith( false, false, true );
+	} );
+
+	test( 'Should show the transferring notice when the site is transferring to Atomic based on context', async () => {
+		mockInitialState.automatedTransfer[ 1 ].status = transferStates.PENDING;
+		const mockStore = configureStore();
+		const store = mockStore( mockInitialState );
 
 		render(
 			<Provider store={ store }>
@@ -81,10 +103,8 @@ describe( 'index', () => {
 
 	test( 'Should show error status and the transfer fails', async () => {
 		const mockStore = configureStore();
-		const store = mockStore( initialState );
-
-		mockIsTransferring = true;
-		mockTransferStatus = transferStates.ERROR;
+		mockInitialState.automatedTransfer[ 1 ].status = transferStates.ERROR;
+		const store = mockStore( mockInitialState );
 
 		render(
 			<Provider store={ store }>

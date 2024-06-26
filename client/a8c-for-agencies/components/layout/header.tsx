@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Children, ReactNode, useLayoutEffect, useState } from 'react';
 import Breadcrumb, { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
@@ -6,6 +6,7 @@ import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 type Props = {
 	showStickyContent?: boolean;
 	children: ReactNode;
+	className?: string;
 };
 
 export function LayoutHeaderTitle( { children }: Props ) {
@@ -16,8 +17,9 @@ export function LayoutHeaderSubtitle( { children }: Props ) {
 	return <h2 className="a4a-layout__header-subtitle">{ children }</h2>;
 }
 
-export function LayoutHeaderActions( { children }: Props ) {
-	return <div className="a4a-layout__header-actions">{ children }</div>;
+export function LayoutHeaderActions( { children, className }: Props ) {
+	const wrapperClass = clsx( className, 'a4a-layout__header-actions' );
+	return <div className={ wrapperClass }>{ children }</div>;
 }
 
 export function LayoutHeaderBreadcrumb( { items }: { items: BreadcrumbItem[] } ) {
@@ -28,7 +30,7 @@ export function LayoutHeaderBreadcrumb( { items }: { items: BreadcrumbItem[] } )
 	);
 }
 
-export default function LayoutHeader( { showStickyContent, children }: Props ) {
+export default function LayoutHeader( { showStickyContent, children, className }: Props ) {
 	const headerBreadcrumb = Children.toArray( children ).find(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( child: any ) => child.type === LayoutHeaderBreadcrumb
@@ -52,6 +54,7 @@ export default function LayoutHeader( { showStickyContent, children }: Props ) {
 	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
 
 	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
+	const wrapperClass = clsx( className, 'a4a-layout__viewport' );
 
 	const [ minHeaderHeight, setMinHeaderHeight ] = useState( 0 );
 
@@ -79,17 +82,17 @@ export default function LayoutHeader( { showStickyContent, children }: Props ) {
 
 	return (
 		<div
-			className="a4a-layout__viewport"
+			className={ wrapperClass }
 			{ ...outerDivProps }
 			style={ showStickyContent ? { minHeight: `${ minHeaderHeight }px` } : {} }
 		>
 			<div
-				className={ classNames( {
+				className={ clsx( {
 					'a4a-layout__sticky-header': showStickyContent && hasCrossed,
 				} ) }
 			>
 				<div
-					className={ classNames( 'a4a-layout__header', {
+					className={ clsx( 'a4a-layout__header', {
 						'has-actions': !! headerActions,
 					} ) }
 				>

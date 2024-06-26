@@ -106,6 +106,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Promotions' );
 		} else if ( 'reports' === category ) {
 			return this.props.translate( 'Reports' );
+		} else if ( 'scheduled_updates' === category ) {
+			return this.props.translate( 'Scheduled Updates' );
 		} else if ( 'learn' === category ) {
 			return this.props.translate( 'Learn Faster to Grow Faster' );
 		} else if ( 'jetpack_marketing' === category ) {
@@ -124,6 +126,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Akismet Marketing' );
 		} else if ( 'woopay_marketing' === category ) {
 			return this.props.translate( 'WooPay Marketing' );
+		} else if ( 'gravatar_onboarding' === category ) {
+			return this.props.translate( 'Gravatar Onboarding' );
 		}
 
 		return category;
@@ -157,6 +161,8 @@ class MainComponent extends Component {
 			return this.props.translate(
 				'Complimentary reports and updates regarding site performance and traffic.'
 			);
+		} else if ( 'scheduled_updates' === category ) {
+			return this.props.translate( 'Complimentary reports regarding scheduled plugin updates.' );
 		} else if ( 'learn' === category ) {
 			return this.props.translate(
 				'Take your WordPress.com site to new heights with expert webinars, courses, and community forums.'
@@ -181,6 +187,10 @@ class MainComponent extends Component {
 			);
 		} else if ( 'woopay_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of WooPay.' );
+		} else if ( 'gravatar_onboarding' === category ) {
+			return this.props.translate(
+				'Get tips and reminders to optimize your Gravatar profile setup.'
+			);
 		}
 
 		return null;
@@ -282,14 +292,19 @@ class MainComponent extends Component {
 					) }
 				</Card>
 
-				<p className="mailing-lists__manage-link">
-					<button
-						className="mailing-lists__manage-button button is-link"
-						onClick={ this.onManageUpdatesClick }
-					>
-						{ translate( 'Manage all your email subscriptions' ) }
-					</button>
-				</p>
+				{
+					// Don't show the manage link for Gravatar-related categories.
+					! this.getCategoryFromMessageTypeId()?.startsWith( 'gravatar_' ) && (
+						<p className="mailing-lists__manage-link">
+							<button
+								className="mailing-lists__manage-button button is-link"
+								onClick={ this.onManageUpdatesClick }
+							>
+								{ translate( 'Manage all your email subscriptions' ) }
+							</button>
+						</p>
+					)
+				}
 			</div>
 		);
 	}

@@ -1,49 +1,46 @@
-//import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
+import { HelpIcon } from '@automattic/help-center';
 import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
-import { Icon, help } from '@wordpress/icons';
-import classnames from 'classnames';
-//import { useRef } from 'react';
-//import { useSelector } from 'react-redux';
-//import { getSectionName } from 'calypso/state/ui/selectors';
+import clsx from 'clsx';
+import { useRef } from 'react';
 import SidebarMenuItem from '../menu-item';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SidebarHelpCenter = ( { tooltip, tooltipPlacement } ) => {
-	//const helpIconRef = useRef();
-	//const sectionName = useSelector( getSectionName );
+const SidebarHelpCenter = ( { tooltip, onClick } ) => {
+	const helpIconRef = useRef();
+	const { show, isMinimized } = useDateStoreSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE );
+		return {
+			show: store.isHelpCenterShown(),
+			isMinimized: store.getIsMinimized(),
+		};
+	}, [] );
 
-	const helpCenterVisible = useDateStoreSelect(
-		( select ) => select( HELP_CENTER_STORE ).isHelpCenterShown(),
-		[]
-	);
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setIsMinimized } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const handleToggleHelpCenter = () => {
-		// TODO: track this event when sidebar dev is ready
-		// recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
-		// 	force_site_id: true,
-		// 	location: 'help-center',
-		// 	section: sectionName,
-		// } );
-
-		setShowHelpCenter( ! helpCenterVisible );
+		if ( isMinimized ) {
+			setIsMinimized( false );
+		} else {
+			setShowHelpCenter( ! show );
+		}
+		onClick();
 	};
 
 	return (
 		<>
 			<SidebarMenuItem
 				onClick={ handleToggleHelpCenter }
-				className={ classnames( 'sidebar__item-help', {
-					'is-active': helpCenterVisible,
+				className={ clsx( 'sidebar__item-help', {
+					'is-active': show,
 				} ) }
 				tooltip={ tooltip }
-				tooltipPlacement={ tooltipPlacement }
-				icon={ <Icon icon={ help } size={ 28 } /> }
+				tooltipPlacement="top"
+				icon={ <HelpIcon ref={ helpIconRef } /> }
 			/>
 		</>
 	);

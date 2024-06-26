@@ -15,12 +15,25 @@ export const GitHubRepositoryListItem = ( {
 	onSelect,
 }: GitHubRepositoryListItemProps ) => {
 	const locale = useLocale();
+
+	const repoUrl = `https://github.com/${ repository.owner }/${ repository.name }`;
+
 	return (
 		<tr>
 			<td>
-				<div className="github-deployments-repository-list__name">
-					{ repository.name } { repository.private && <Icon icon={ lock } size={ 16 } /> }
-				</div>
+				<span css={ { fontWeight: 500 } }>
+					<a
+						className="github-deployments-repository-list-table__repo-name"
+						href={ repoUrl }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ repository.name }
+					</a>{ ' ' }
+					{ repository.private && (
+						<Icon icon={ lock } size={ 16 } css={ { verticalAlign: 'middle' } } />
+					) }
+				</span>
 			</td>
 			<td>{ formatDate( locale, new Date( repository.updated_at ) ) }</td>
 			<td>

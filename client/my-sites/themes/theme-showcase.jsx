@@ -4,7 +4,7 @@ import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { SelectDropdown } from '@automattic/components';
 import { isAssemblerSupported } from '@automattic/design-picker';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
@@ -16,6 +16,8 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
+import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-modal';
+import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
@@ -24,9 +26,9 @@ import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
-import ThemeShowcaseSurvey, { SurveyType } from 'calypso/my-sites/themes/survey';
+import ThemeShowcaseSurvey from 'calypso/my-sites/themes/survey';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -53,6 +55,7 @@ import {
 	localizeThemesPath,
 	isStaticFilter,
 	constructThemeShowcaseUrl,
+	shouldSelectSite,
 } from './helpers';
 import PatternAssemblerButton from './pattern-assembler-button';
 import ThemePreview from './theme-preview';
@@ -88,6 +91,11 @@ const defaultStaticFilter = Object.values( staticFilters ).find(
 );
 
 class ThemeShowcase extends Component {
+	state = {
+		isDesignThemeModalVisible: false,
+		isSiteSelectorModalVisible: false,
+	};
+
 	constructor( props ) {
 		super( props );
 		this.scrollRef = createRef();
@@ -98,9 +106,7 @@ class ThemeShowcase extends Component {
 	}
 
 	static propTypes = {
-		tier: config.isEnabled( 'themes/tiers' )
-			? PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] )
-			: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
+		tier: PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] ),
 		search: PropTypes.string,
 		isCollectionView: PropTypes.bool,
 		pathName: PropTypes.string,
@@ -110,6 +116,7 @@ class ThemeShowcase extends Component {
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
 		siteCanInstallThemes: PropTypes.bool,
+		siteCount: PropTypes.number,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
 		loggedOutComponent: PropTypes.bool,
@@ -198,42 +205,22 @@ class ThemeShowcase extends Component {
 	};
 
 	getTiers = () => {
-		const { isSiteWooExpressOrEcomFreeTrial, themeTiers } = this.props;
+		const { themeTiers } = this.props;
 
-		if ( config.isEnabled( 'themes/tiers' ) ) {
-			const tiers = Object.keys( themeTiers ).reduce( ( availableTiers, tier ) => {
-				if ( ! THEME_TIERS[ tier ]?.isFilterable ) {
-					return availableTiers;
-				}
-				return [
-					...availableTiers,
-					{
-						value: tier,
-						label: THEME_TIERS[ tier ].label,
-					},
-				];
-			}, [] );
+		const tiers = Object.keys( themeTiers ).reduce( ( availableTiers, tier ) => {
+			if ( ! THEME_TIERS[ tier ]?.isFilterable ) {
+				return availableTiers;
+			}
+			return [
+				...availableTiers,
+				{
+					value: tier,
+					label: THEME_TIERS[ tier ].label,
+				},
+			];
+		}, [] );
 
-			return [ { value: 'all', label: translate( 'All' ) }, ...tiers ];
-		}
-
-		const tiers = [
-			{ value: 'all', label: this.props.translate( 'All' ) },
-			{ value: 'free', label: this.props.translate( 'Free' ) },
-		];
-
-		if ( ! isSiteWooExpressOrEcomFreeTrial ) {
-			tiers.push( { value: 'premium', label: this.props.translate( 'Premium' ) } );
-		}
-
-		tiers.push( {
-			value: 'marketplace',
-			label: this.props.translate( 'Partner', {
-				context: 'This theme is developed and supported by a theme partner',
-			} ),
-		} );
-
-		return tiers;
+		return [ { value: 'all', label: translate( 'All' ) }, ...tiers ];
 	};
 
 	findTabFilter = ( tabFilters, filterKey ) =>
@@ -383,11 +370,28 @@ class ThemeShowcase extends Component {
 	};
 
 	onDesignYourOwnClick = () => {
-		const { isLoggedIn, site: selectedSite, siteEditorUrl } = this.props;
-		const shouldGoToAssemblerStep = isAssemblerSupported();
+		const { isLoggedIn } = this.props;
+
 		recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_top_button_click', {
 			is_logged_in: isLoggedIn,
 		} );
+
+		this.onDesignYourOwnCallback();
+	};
+
+	onDesignYourOwnCallback = () => {
+		const { isLoggedIn, siteCount, siteId } = this.props;
+
+		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
+			this.setState( { isDesignThemeModalVisible: true } );
+		} else {
+			this.redirectToSiteAssembler();
+		}
+	};
+
+	redirectToSiteAssembler = ( selectedSite = this.props.site ) => {
+		const { isLoggedIn, siteEditorUrl } = this.props;
+		const shouldGoToAssemblerStep = isAssemblerSupported();
 
 		const destinationUrl = getSiteAssemblerUrl( {
 			isLoggedIn,
@@ -422,13 +426,14 @@ class ThemeShowcase extends Component {
 			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
 		};
 
-		const themeCollection = config.isEnabled( 'themes/tiers' )
-			? THEME_COLLECTIONS.partner
-			: THEME_COLLECTIONS.marketplace;
+		const themeCollection = THEME_COLLECTIONS.partner;
 
 		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection { ...themesSelectionProps }>
+				<ThemesSelection
+					{ ...themesSelectionProps }
+					onDesignYourOwnClick={ this.onDesignYourOwnCallback }
+				>
 					{ this.shouldShowCollections() && (
 						<>
 							<ShowcaseThemeCollection
@@ -505,12 +510,49 @@ class ThemeShowcase extends Component {
 		return upsellBanner;
 	};
 
+	renderSiteAssemblerSelectorModal = () => {
+		const { isDesignThemeModalVisible, isSiteSelectorModalVisible } = this.state;
+
+		return (
+			<>
+				<ThemeSiteSelectorModal
+					isOpen={ isSiteSelectorModalVisible }
+					navigateOnClose={ false }
+					onClose={ ( args ) => {
+						if ( args?.siteSlug ) {
+							this.redirectToSiteAssembler( { slug: args.siteSlug } );
+						}
+
+						this.setState( { isSiteSelectorModalVisible: false } );
+					} }
+				/>
+				<ThemeDesignYourOwnModal
+					isOpen={ isDesignThemeModalVisible }
+					onClose={ () => {
+						this.setState( { isDesignThemeModalVisible: false } );
+					} }
+					onCreateNewSite={ () => {
+						this.redirectToSiteAssembler();
+					} }
+					onSelectSite={ () => {
+						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
+					} }
+				/>
+			</>
+		);
+	};
+
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
-				return <ThemesSelection { ...themeProps } />;
+				return (
+					<ThemesSelection
+						{ ...themeProps }
+						onDesignYourOwnClick={ this.onDesignYourOwnCallback }
+					/>
+				);
 			default:
 				return this.allThemes( { themeProps } );
 		}
@@ -602,7 +644,7 @@ class ThemeShowcase extends Component {
 		const tabFilters = this.getTabFilters();
 		const tiers = this.getTiers();
 
-		const classnames = classNames( 'theme-showcase', {
+		const classnames = clsx( 'theme-showcase', {
 			'is-collection-view': isCollectionView,
 		} );
 
@@ -624,11 +666,9 @@ class ThemeShowcase extends Component {
 					isSiteWooExpressOrEcomFreeTrial={ isSiteWooExpressOrEcomFreeTrial }
 					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
 				/>
+				{ this.renderSiteAssemblerSelectorModal() }
 				{ isLoggedIn && (
-					<ThemeShowcaseSurvey
-						survey={ SurveyType.FEBRUARY_2024 }
-						condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
-					/>
+					<ThemeShowcaseSurvey condition={ () => lastNonEditorRoute.includes( 'theme/' ) } />
 				) }
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
@@ -667,7 +707,7 @@ class ThemeShowcase extends Component {
 								) }
 							</div>
 							<div
-								className={ classNames( 'themes__filters', {
+								className={ clsx( 'themes__filters', {
 									'is-woo-express': isSiteWooExpress,
 								} ) }
 							>
@@ -726,6 +766,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		site: getSite( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
+		siteCount: getCurrentUserSiteCount( state ),
 		siteEditorUrl: getSiteEditorUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},

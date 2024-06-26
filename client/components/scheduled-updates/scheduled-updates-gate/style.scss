@@ -1,0 +1,14 @@
+.scheduled-updates-gate__content {
+	position: relative;
+	pointer-events: none;
+	opacity: 0.33;
+}
+
+.is-section-plugins .main {
+	.scheduled-updates-gate {
+		.scheduled-updates-upsell-nudge.is-jetpack {
+			margin-top: 16px;
+			margin-bottom: 16px;
+		}
+	}
+}

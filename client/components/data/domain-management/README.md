@@ -22,7 +22,6 @@ export default MyComponent;
 
 Currently we use Redux. Props for loading data:
 
-- `needsContactDetails` - Loads Contact Details for current user
 - `needsDomains` - Loads domain for currently selected site
 - `needsPlans` - Loads plans for given site
 - `needsProductsList` - Loads products list

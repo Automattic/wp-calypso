@@ -1,3 +1,10 @@
+import {
+	isBiennially,
+	isDIFMProduct,
+	isMonthlyProduct,
+	isTriennially,
+	isYearly,
+} from '@automattic/calypso-products';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import {
@@ -7,41 +14,32 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import {
-	LineItemBillingInterval,
+	LineItemPrice,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
-	hasCheckoutVersion,
+	doesIntroductoryOfferHavePriceIncrease,
+	filterCostOverridesForLineItem,
+	getLabel,
+	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from '../../use-cart-key';
 import type { Theme } from '@automattic/composite-checkout';
-import type {
-	CostOverrideForDisplay,
-	LineItemCostOverrideForDisplay,
-} from '@automattic/wpcom-checkout';
+import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
 
 const CostOverridesListStyle = styled.div`
-	grid-area: discounts;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	font-size: 12px;
 	font-weight: 400;
+	gap: 2px;
 
 	& .cost-overrides-list-item {
 		display: grid;
 		justify-content: space-between;
 		grid-template-columns: auto auto;
-		margin-top: 4px;
 		gap: 0 16px;
-	}
-
-	& .cost-overrides-list-item--coupon {
-		margin-top: 16px;
-	}
-
-	& .cost-overrides-list-item:nth-of-type( 1 ) {
-		margin-top: 0;
 	}
 
 	& .cost-overrides-list-item__actions {
@@ -54,7 +52,7 @@ const CostOverridesListStyle = styled.div`
 		color: #787c82;
 	}
 
-	& .cost-overrides-list-item__reason {
+	& .cost-overrides-list-item__reason--is-discount {
 		color: #008a20;
 	}
 
@@ -65,112 +63,54 @@ const CostOverridesListStyle = styled.div`
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
-	font-size: ${ hasCheckoutVersion( '2' ) ? '12px' : 'inherit' };
+	font-size: '12px';
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
-export function CostOverridesList( {
-	costOverridesList,
-	currency,
-	removeCoupon,
-	couponCode,
-	showOnlyCoupons,
+/**
+ * Introductory offers sometimes have complex pricing plans that are not easy
+ * to display as a simple discount. This component displays more details about
+ * certain offers.
+ */
+function LineItemIntroOfferCostOverrideDetail( {
+	product,
+	costOverride,
 }: {
-	costOverridesList: Array< CostOverrideForDisplay >;
-	currency: string;
-	removeCoupon?: RemoveCouponFromCart;
-	couponCode: ResponseCart[ 'coupon' ];
-	showOnlyCoupons?: boolean;
+	product: ResponseCartProduct;
+	costOverride: LineItemCostOverrideForDisplay;
 } ) {
-	const translate = useTranslate();
-	// Let's put the coupon code last because it will have its own "Remove" button.
-	const nonCouponOverrides = costOverridesList.filter(
-		( override ) => override.overrideCode !== 'coupon-discount'
-	);
-	const couponOverrides = costOverridesList.filter(
-		( override ) => override.overrideCode === 'coupon-discount'
-	);
-	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== FormStatus.READY;
-	return (
-		<CostOverridesListStyle>
-			{ ! showOnlyCoupons &&
-				nonCouponOverrides.map( ( costOverride ) => {
-					return (
-						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-							<span className="cost-overrides-list-item__reason">
-								{ costOverride.humanReadableReason }
-							</span>
-							<span className="cost-overrides-list-item__discount">
-								{ formatCurrency( -costOverride.discountAmount, currency, {
-									isSmallestUnit: true,
-								} ) }
-							</span>
-						</div>
-					);
-				} ) }
-			{ ! removeCoupon &&
-				couponOverrides.map( ( costOverride ) => {
-					return (
-						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-							<span className="cost-overrides-list-item__reason">
-								{ couponCode.length > 0
-									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
-									: costOverride.humanReadableReason }
-							</span>
-							<span className="cost-overrides-list-item__discount">
-								{ formatCurrency( -costOverride.discountAmount, currency, {
-									isSmallestUnit: true,
-								} ) }
-							</span>
-						</div>
-					);
-				} ) }
-			{ removeCoupon &&
-				couponOverrides.map( ( costOverride ) => {
-					return (
-						<div
-							className="cost-overrides-list-item cost-overrides-list-item--coupon"
-							key={ costOverride.humanReadableReason }
-						>
-							<span className="cost-overrides-list-item__reason">
-								{ couponCode.length > 0
-									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
-									: costOverride.humanReadableReason }
-							</span>
-							<span className="cost-overrides-list-item__discount">
-								{ formatCurrency( -costOverride.discountAmount, currency, {
-									isSmallestUnit: true,
-								} ) }
-							</span>
-							<span className="cost-overrides-list-item__actions">
-								<DeleteButton
-									buttonType="text-button"
-									disabled={ isDisabled }
-									className="cost-overrides-list-item__actions-remove"
-									onClick={ removeCoupon }
-									aria-label={ translate( 'Remove coupon' ) }
-								>
-									{ translate( 'Remove' ) }
-								</DeleteButton>
-							</span>
-						</div>
-					);
-				} ) }
-		</CostOverridesListStyle>
-	);
-}
-
-function LineItemCostOverrideIntroOfferDueDate( { product }: { product: ResponseCartProduct } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
-	if ( ! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
+
+	if ( ! isOverrideCodeIntroductoryOffer( costOverride.overrideCode ) ) {
+		return false;
+	}
+
+	// We only want to display this info for introductory offers which have
+	// pricing that is difficult to display as a simple discount. Currently
+	// that is offers with different term lengths or price increases.
+	if (
+		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+			product.cost_overrides,
+			product.introductory_offer_terms,
+			product.months_per_bill_period
+		) &&
+		! doesIntroductoryOfferHavePriceIncrease( product )
+	) {
 		return null;
 	}
+
+	// Introductory offer manual renewals often have prorated prices that are
+	// difficult to display as a simple discount so we keep their display
+	// simple.
+	if ( product.is_renewal ) {
+		return null;
+	}
+
 	const tosData = responseCart.terms_of_service?.find( ( tos ) => {
 		if ( ! new RegExp( `product_id:${ product.product_id }` ).test( tos.key ) ) {
 			return false;
@@ -180,19 +120,32 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 		}
 		return true;
 	} )?.args;
-	const dueDate = tosData?.subscription_auto_renew_date;
+	const dueDate =
+		tosData && 'subscription_auto_renew_date' in tosData
+			? tosData.subscription_auto_renew_date
+			: undefined;
 	const dueAmount = tosData?.renewal_price_integer;
 	const renewAmount = tosData?.regular_renewal_price_integer;
+	const dueTodayAmount =
+		product.cost_overrides?.find(
+			( override ) => override.override_code === costOverride.overrideCode
+		)?.new_subtotal_integer ?? product.item_subtotal_integer;
 	if ( ! dueDate || ! dueAmount || ! renewAmount ) {
 		return null;
 	}
+
+	const shouldShowDueDate = doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+		product.cost_overrides,
+		product.introductory_offer_terms,
+		product.months_per_bill_period
+	);
 
 	return (
 		<div>
 			<div>
 				{ translate( 'Due today: %(price)s', {
 					args: {
-						price: formatCurrency( product.item_subtotal_integer, product.currency, {
+						price: formatCurrency( dueTodayAmount, product.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ),
@@ -200,20 +153,21 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 				} ) }
 			</div>
 			<div>
-				{ translate( 'Billed %(dueDate)s: %(price)s', {
-					args: {
-						dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
-							dateStyle: 'long',
-						} ),
-						price: formatCurrency( dueAmount, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				{ shouldShowDueDate &&
+					translate( 'Billed %(dueDate)s: %(price)s', {
+						args: {
+							dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
+								dateStyle: 'long',
+							} ),
+							price: formatCurrency( dueAmount, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
 			</div>
 			<div>
-				<LineItemBillingInterval product={ product } />{ ' ' }
+				<IntroOfferBillingInterval product={ product } />{ ' ' }
 				<span>
 					{ formatCurrency( renewAmount, product.currency, {
 						isSmallestUnit: true,
@@ -225,6 +179,34 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 	);
 }
 
+export function IntroOfferBillingInterval( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+
+	if ( isDIFMProduct( product ) ) {
+		return <span>{ translate( 'One-time fee' ) }</span>;
+	}
+
+	if ( product.is_included_for_100yearplan ) {
+		return null;
+	}
+
+	if ( isMonthlyProduct( product ) ) {
+		return <span>{ translate( 'Billed every month' ) }</span>;
+	}
+
+	if ( isYearly( product ) ) {
+		return <span>{ translate( 'Billed every year' ) }</span>;
+	}
+
+	if ( isBiennially( product ) ) {
+		return <>{ translate( 'Billed every two years' ) }</>;
+	}
+
+	if ( isTriennially( product ) ) {
+		return <>{ translate( 'Billed every three years' ) }</>;
+	}
+}
+
 function LineItemCostOverride( {
 	costOverride,
 	product,
@@ -232,16 +214,27 @@ function LineItemCostOverride( {
 	costOverride: LineItemCostOverrideForDisplay;
 	product: ResponseCartProduct;
 } ) {
+	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
+	if ( isPriceIncrease ) {
+		return (
+			<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+				<LineItemIntroOfferCostOverrideDetail product={ product } costOverride={ costOverride } />
+			</div>
+		);
+	}
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-			<span className="cost-overrides-list-item__reason">{ costOverride.humanReadableReason }</span>
+			<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
+				{ costOverride.humanReadableReason }
+			</span>
 			<span className="cost-overrides-list-item__discount">
 				{ costOverride.discountAmount &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
 						isSmallestUnit: true,
+						signForPositive: true,
 					} ) }
 			</span>
-			<LineItemCostOverrideIntroOfferDueDate product={ product } />
+			<LineItemIntroOfferCostOverrideDetail product={ product } costOverride={ costOverride } />
 		</div>
 	);
 }
@@ -263,5 +256,113 @@ export function LineItemCostOverrides( {
 				/>
 			) ) }
 		</CostOverridesListStyle>
+	);
+}
+
+const ProductsAndCostOverridesListWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+`;
+
+const SingleProductAndCostOverridesListWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	font-size: 12px;
+	font-weight: 400;
+	gap: 2px;
+`;
+
+const ProductTitleAreaForCostOverridesList = styled.div`
+	word-break: break-word;
+	font-size: 14px;
+	display: flex;
+	justify-content: space-between;
+	gap: 0.5em;
+
+	& .cost-overrides-list-product__title {
+		flex: 1 1 min-content;
+	}
+`;
+
+function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+	const costOverridesList = filterCostOverridesForLineItem( product, translate );
+	const label = getLabel( product );
+	const actualAmountDisplay = formatCurrency(
+		product.item_original_subtotal_integer,
+		product.currency,
+		{
+			isSmallestUnit: true,
+			stripZeros: true,
+		}
+	);
+	return (
+		<SingleProductAndCostOverridesListWrapper>
+			<ProductTitleAreaForCostOverridesList>
+				<span className="cost-overrides-list-product__title">{ label }</span>
+				<LineItemPrice actualAmount={ actualAmountDisplay } />
+			</ProductTitleAreaForCostOverridesList>
+			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
+		</SingleProductAndCostOverridesListWrapper>
+	);
+}
+
+export function CouponCostOverride( {
+	responseCart,
+	removeCoupon,
+}: {
+	responseCart: ResponseCart;
+	removeCoupon?: RemoveCouponFromCart;
+} ) {
+	const translate = useTranslate();
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+
+	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
+		return null;
+	}
+	// translators: The label of the coupon line item in checkout, including the coupon code
+	const label = translate( 'Coupon: %(couponCode)s', {
+		args: { couponCode: responseCart.coupon },
+	} );
+	return (
+		<CostOverridesListStyle>
+			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
+				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
+					{ label }
+				</span>
+				<span className="cost-overrides-list-item__discount">
+					{ formatCurrency( -responseCart.coupon_savings_total_integer, responseCart.currency, {
+						isSmallestUnit: true,
+					} ) }
+				</span>
+			</div>
+			{ removeCoupon && (
+				<span className="cost-overrides-list-item__actions">
+					<DeleteButton
+						buttonType="text-button"
+						disabled={ isDisabled }
+						className="cost-overrides-list-item__actions-remove"
+						onClick={ removeCoupon }
+						aria-label={ translate( 'Remove coupon' ) }
+					>
+						{ translate( 'Remove' ) }
+					</DeleteButton>
+				</span>
+			) }
+		</CostOverridesListStyle>
+	);
+}
+
+export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
+	return (
+		<ProductsAndCostOverridesListWrapper>
+			{ responseCart.products.map( ( product ) => (
+				<SingleProductAndCostOverridesList product={ product } key={ product.uuid } />
+			) ) }
+			<CouponCostOverride responseCart={ responseCart } />
+		</ProductsAndCostOverridesListWrapper>
 	);
 }

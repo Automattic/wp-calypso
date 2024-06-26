@@ -1,11 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
-import { Icon, reusableBlock as cacheIcon } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	useEdgeCacheQuery,
@@ -28,14 +27,7 @@ const Hr = styled.hr( {
 	color: '#e0e0e0',
 } );
 
-const EdgeCacheDescription = styled.p( {
-	fontSize: '16px',
-	marginBottom: '16px',
-} );
-
 const EdgeCacheNotice = styled.p( {
-	fontSize: '14px',
-	fontStyle: 'italic',
 	color: '#646970',
 	marginTop: '18px',
 } );
@@ -137,19 +129,15 @@ export const CacheCard = ( {
 
 	//autorenew
 	return (
-		<Card className="cache-card">
-			<Icon className="card-icon" icon={ cacheIcon } size={ 32 } />
-			<CardHeading id="cache" size={ 20 }>
-				{ translate( 'Cache' ) }
-			</CardHeading>
+		<HostingCard className="cache-card" headingId="cache" title={ translate( 'Cache' ) }>
 			<CardBody>
-				<EdgeCacheDescription>
+				<HostingCardDescription>
 					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
 						components: {
 							a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
 						},
 					} ) }
-				</EdgeCacheDescription>
+				</HostingCardDescription>
 				<ToggleContainer>
 					{ getEdgeCacheInitialLoading ? (
 						<EdgeCacheLoadingPlaceholder />
@@ -183,7 +171,7 @@ export const CacheCard = ( {
 				</ToggleContainer>
 				{ getClearCacheContent() }
 			</CardBody>
-		</Card>
+		</HostingCard>
 	);
 };
 

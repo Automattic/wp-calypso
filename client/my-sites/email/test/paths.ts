@@ -11,7 +11,6 @@ import {
 	getManageTitanMailboxesPath,
 	getNewTitanAccountPath,
 	getTitanSetUpMailboxPath,
-	getTitanSetUpThankYouPath,
 	getTitanControlPanelRedirectPath,
 	getEmailManagementPath,
 	getForwardingPath,
@@ -103,20 +102,6 @@ describe( 'path helper functions', () => {
 		);
 		expect( getTitanSetUpMailboxPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
 		expect( getTitanSetUpMailboxPath( null, null ) ).toEqual( '/email' );
-	} );
-
-	it( 'getTitanSetUpThankYouPath', () => {
-		expect( getTitanSetUpThankYouPath( siteName, domainName, 'info@example.com' ) ).toEqual(
-			`/email/${ domainName }/titan/set-up-mailbox/thank-you/${ siteName }?email=info%40example.com`
-		);
-		expect( getTitanSetUpThankYouPath( siteName, domainName ) ).toEqual(
-			`/email/${ domainName }/titan/set-up-mailbox/thank-you/${ siteName }`
-		);
-		expect(
-			getTitanSetUpThankYouPath( ':site', ':domain', null, emailManagementAllSitesPrefix )
-		).toEqual( '/email/all/:domain/titan/set-up-mailbox/thank-you/:site' );
-		expect( getTitanSetUpThankYouPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
-		expect( getTitanSetUpThankYouPath( null, null ) ).toEqual( '/email' );
 	} );
 
 	it( 'getTitanControlPanelRedirectPath', () => {

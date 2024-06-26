@@ -39,6 +39,7 @@ const SiteIntent = Onboard.SiteIntent;
 
 const pluginBundleFlow: Flow = {
 	name: 'plugin-bundle',
+	isSignupFlow: false,
 
 	useSteps() {
 		const pluginSlug = useSitePluginSlug();

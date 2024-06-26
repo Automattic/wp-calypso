@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
-import i18n, { localize } from 'i18n-calypso';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withCurrentRoute } from 'calypso/components/route';
-import GlobalSidebar from 'calypso/layout/global-sidebar';
+import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -16,7 +16,7 @@ import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import ProfileGravatar from 'calypso/me/profile-gravatar';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
@@ -28,9 +28,22 @@ import './style.scss';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 
 class MeSidebar extends Component {
-	onNavigate = () => {
+	handleGlobalSidebarMenuItemClick = ( path ) => {
+		if ( ! this.props.shouldShowGlobalSidebar ) {
+			return;
+		}
+
+		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
+			section: 'me',
+			path,
+		} );
+	};
+
+	onNavigate = ( event, path ) => {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
+
+		this.handleGlobalSidebarMenuItemClick( path );
 	};
 
 	onSignOut = async () => {
@@ -62,9 +75,11 @@ class MeSidebar extends Component {
 	};
 
 	renderGlobalSidebar() {
+		const { context } = this.props;
 		const props = {
-			path: this.props.path,
+			path: context.path,
 			requireBackLink: true,
+			siteTitle: this.props.translate( 'Profile' ),
 		};
 		return <GlobalSidebar { ...props }>{ this.renderMenu( { isGlobal: true } ) }</GlobalSidebar>;
 	}
@@ -81,7 +96,7 @@ class MeSidebar extends Component {
 	}
 
 	renderMenu( options = {} ) {
-		const { context, locale, translate } = this.props;
+		const { context, translate } = this.props;
 		const path = context.path.replace( '/me', '' ); // Remove base path.
 
 		const { isGlobal } = options;
@@ -160,17 +175,10 @@ class MeSidebar extends Component {
 						link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
 						label={ translate( 'Manage Blogs' ) }
 						materialIcon="apps"
+						onNavigate={ ( event, urlPath ) => {
+							this.handleGlobalSidebarMenuItemClick( urlPath );
+						} }
 					/>
-
-					{ ( englishLocales.includes( locale ) ||
-						i18n.hasTranslation( 'Manage All Domains' ) ) && (
-						<SidebarItem
-							link="/domains/manage"
-							label={ translate( 'Manage All Domains' ) }
-							materialIcon="language"
-							forceExternalLink
-						/>
-					) }
 
 					<SidebarItem
 						selected={ itemLinkMatches( '/notifications', path ) }
@@ -222,8 +230,14 @@ export default withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
 			const siteId = getSelectedSiteId( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
 			return {
 				currentUser: getCurrentUser( state ),
 				shouldShowGlobalSidebar,
@@ -232,6 +246,7 @@ export default withCurrentRoute(
 		{
 			logoutUser,
 			recordGoogleEvent,
+			recordTracksEvent,
 			redirectToLogout,
 			setNextLayoutFocus,
 		}

@@ -1,9 +1,9 @@
 import { css } from '@emotion/css';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesGridItem } from './sites-grid-item';
 import { SitesGridItemLoading } from './sites-grid-item-loading';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const N_LOADING_ROWS = 3;
 
@@ -43,7 +43,7 @@ export const SitesGrid = ( props: SitesGridProps ) => {
 		: {};
 
 	return (
-		<div className={ classnames( container, className ) }>
+		<div className={ clsx( container, className ) }>
 			{ isLoading
 				? Array( N_LOADING_ROWS )
 						.fill( null )

@@ -210,7 +210,11 @@ export async function fetchPlugin( context, next ) {
 export function validatePlugin( { path, params: { plugin } }, next ) {
 	const siteFragment = getSiteFragment( path );
 
-	if ( siteFragment || Number.isInteger( parseInt( plugin, 10 ) ) ) {
+	if (
+		plugin === 'scheduled-updates' ||
+		siteFragment ||
+		Number.isInteger( parseInt( plugin, 10 ) )
+	) {
 		return next( 'route' );
 	}
 	next();

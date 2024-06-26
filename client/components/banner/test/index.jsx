@@ -133,13 +133,13 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should render Card with no href if href prop is passed but disableHref is true', () => {
-		const { container } = render( <Banner { ...props } href="/" disableHref={ true } /> );
+		const { container } = render( <Banner { ...props } href="/" disableHref /> );
 		expect( container.firstChild ).toHaveClass( 'card' );
 		expect( container.firstChild ).not.toHaveAttribute( 'href' );
 	} );
 
 	test( 'should render Card with href if href prop is passed but disableHref is true and forceHref is true', () => {
-		const { container } = render( <Banner { ...props } href="/" disableHref={ true } forceHref /> );
+		const { container } = render( <Banner { ...props } href="/" disableHref forceHref /> );
 		expect( container.firstChild ).toHaveClass( 'card' );
 		expect( container.firstChild ).toHaveAttribute( 'href', '/' );
 	} );

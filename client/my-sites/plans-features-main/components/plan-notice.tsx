@@ -1,23 +1,25 @@
 import { PlanSlug, isProPlan, isStarterPlan } from '@automattic/calypso-products';
-import { formatCurrency } from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { Site, SiteMediaStorage } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { ActiveDiscount } from 'calypso/lib/discounts/active-discounts';
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlan, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import PlanNoticeCreditUpgrade from './plan-notice-credit-update';
 
 export type PlanNoticeProps = {
 	siteId: number;
 	visiblePlans: PlanSlug[];
 	isInSignup?: boolean;
+	showLegacyStorageFeature?: boolean;
+	mediaStorage?: SiteMediaStorage;
 	discountInformation?: {
 		withDiscount: string;
 		discountEndDate: Date;
@@ -30,6 +32,7 @@ const PLAN_UPGRADE_CREDIT_NOTICE = 'plan-upgrade-credit-notice';
 const MARKETING_NOTICE = 'marketing-notice';
 const PLAN_RETIREMENT_NOTICE = 'plan-retirement-notice';
 const CURRENT_PLAN_IN_APP_PURCHASE_NOTICE = 'current-plan-in-app-purchase-notice';
+const PLAN_LEGACY_STORAGE_NOTICE = 'plan-legacy-storage-notice';
 
 export type PlanNoticeTypes =
 	| typeof NO_NOTICE
@@ -38,10 +41,17 @@ export type PlanNoticeTypes =
 	| typeof PLAN_UPGRADE_CREDIT_NOTICE
 	| typeof MARKETING_NOTICE
 	| typeof PLAN_RETIREMENT_NOTICE
-	| typeof CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
+	| typeof CURRENT_PLAN_IN_APP_PURCHASE_NOTICE
+	| typeof PLAN_LEGACY_STORAGE_NOTICE;
 
 function useResolveNoticeType(
-	{ siteId, isInSignup, visiblePlans = [], discountInformation }: PlanNoticeProps,
+	{
+		showLegacyStorageFeature,
+		siteId,
+		isInSignup,
+		visiblePlans = [],
+		discountInformation,
+	}: PlanNoticeProps,
 	isNoticeDismissed: boolean
 ): PlanNoticeTypes {
 	const canUserPurchasePlan = useSelector(
@@ -68,6 +78,8 @@ function useResolveNoticeType(
 		return PLAN_RETIREMENT_NOTICE;
 	} else if ( currentPurchase?.isInAppPurchase ) {
 		return CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
+	} else if ( showLegacyStorageFeature ) {
+		return PLAN_LEGACY_STORAGE_NOTICE;
 	} else if ( activeDiscount ) {
 		return ACTIVE_DISCOUNT_NOTICE;
 	} else if ( planUpgradeCreditsApplicable ) {
@@ -81,12 +93,12 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 	const translate = useTranslate();
 	const [ isNoticeDismissed, setIsNoticeDismissed ] = useState( false );
 	const noticeType = useResolveNoticeType( props, isNoticeDismissed );
+	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
+	const usedGigabytes = useStorageText( mediaStorage?.storageUsedBytes ?? 0 );
 	const handleDismissNotice = () => setIsNoticeDismissed( true );
 	let activeDiscount =
 		discountInformation &&
 		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
-	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	switch ( noticeType ) {
 		case NO_NOTICE:
@@ -95,14 +107,40 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 			return (
 				<Notice
 					className="plan-features-main__notice"
-					showDismiss={ true }
+					showDismiss
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-success"
-					isReskinned={ true }
+					isReskinned
 				>
 					{ translate(
 						'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+					) }
+				</Notice>
+			);
+		case PLAN_LEGACY_STORAGE_NOTICE:
+			return (
+				<Notice
+					className="plan-features-main__notice"
+					showDismiss
+					onDismissClick={ handleDismissNotice }
+					icon="info-outline"
+					status="is-warning"
+					isReskinned
+				>
+					{ translate(
+						'Your plan currently has a legacy feature that provides 200GB of space. ' +
+							'You are currently using {{b}}%(usedGigabytes)s{{/b}} of space. ' +
+							'Switching to a different plan or billing interval will lower the amount of available storage to 50GB. ' +
+							'Please keep in mind that the change will be irreversible.',
+						{
+							args: {
+								usedGigabytes: usedGigabytes ?? '',
+							},
+							components: {
+								b: <strong />,
+							},
+						}
 					) }
 				</Notice>
 			);
@@ -111,11 +149,11 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 			return (
 				<Notice
 					className="plan-features-main__notice"
-					showDismiss={ true }
+					showDismiss
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-success"
-					isReskinned={ true }
+					isReskinned
 				>
 					{ activeDiscount.plansPageNoticeTextTitle && (
 						<strong>
@@ -127,45 +165,20 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				</Notice>
 			);
 		case PLAN_UPGRADE_CREDIT_NOTICE:
-			return planUpgradeCreditsApplicable ? (
-				<Notice
+			return (
+				<PlanNoticeCreditUpgrade
 					className="plan-features-main__notice"
-					showDismiss={ true }
 					onDismissClick={ handleDismissNotice }
-					icon="info-outline"
-					status="is-success"
-					isReskinned={ true }
-				>
-					{ translate(
-						'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!',
-						{
-							args: {
-								amountInCurrency: formatCurrency(
-									planUpgradeCreditsApplicable,
-									currencyCode ?? ''
-								),
-							},
-							components: {
-								b: <strong />,
-								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
-										) }
-										className="get-apps__desktop-link"
-									/>
-								),
-							},
-						}
-					) }
-				</Notice>
-			) : null;
+					siteId={ siteId }
+					visiblePlans={ visiblePlans }
+				/>
+			);
 		case PLAN_RETIREMENT_NOTICE:
 			return (
 				<Notice
 					className="plan-features-main__notice"
 					showDismiss={ false }
-					isReskinned={ true }
+					isReskinned
 					icon="info-outline"
 					status="is-error"
 					text={ translate(
@@ -181,7 +194,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				<Notice
 					className="plan-features-main__notice"
 					showDismiss={ false }
-					isReskinned={ true }
+					isReskinned
 					icon="info-outline"
 					status="is-error"
 					text={ translate(

@@ -1,11 +1,12 @@
 import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
+import { Banner } from 'calypso/components/banner';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -48,7 +49,7 @@ class Profile extends Component {
 		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
 
 		return (
-			<Main className="profile">
+			<Main wideLayout className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<NavigationHeader
@@ -60,6 +61,19 @@ class Profile extends Component {
 							components: {
 								learnMoreLink: (
 									<InlineSupportLink supportContext="manage-profile" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				/>
+				<Banner
+					disableHref
+					title={ this.props.translate(
+						'These settings are applied to sites using the Default admin interface style. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
 								),
 							},
 						}
@@ -122,7 +136,7 @@ class Profile extends Component {
 						</FormFieldset>
 
 						<FormFieldset
-							className={ classnames( {
+							className={ clsx( {
 								'profile__gravatar-fieldset-is-loading': this.props.isFetchingUserSettings,
 							} ) }
 						>

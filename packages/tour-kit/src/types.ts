@@ -62,6 +62,7 @@ export interface Callbacks {
 	onNextStep?: Callback;
 	onPreviousStep?: Callback;
 	onStepViewOnce?: Callback;
+	onStepView?: Callback;
 }
 
 export interface Options {

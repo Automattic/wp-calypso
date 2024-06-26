@@ -2,8 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
-	getProductFromSlug,
-	getJetpackProductDisplayName,
+	getJetpackProductOrPlanDisplayName,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, FormLabel, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
@@ -69,6 +68,7 @@ import {
 	XMLRPC_ERROR,
 } from './connection-notice-types';
 import {
+	JPC_A4A_PATH,
 	JPC_JETPACK_MANAGE_PATH,
 	JPC_PATH_PLANS,
 	JPC_PATH_PLANS_COMPLETE,
@@ -89,6 +89,7 @@ import {
 	retrieveSource,
 	clearSource,
 } from './persistence-utils';
+import AuthorizationScreenReaderIndicator from './screen-reader-indicator';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
@@ -274,6 +275,11 @@ export class JetpackAuthorize extends Component {
 				JPC_JETPACK_MANAGE_PATH
 			);
 			navigate( urlRedirect );
+			return;
+		} else if ( source === 'a8c-for-agencies' ) {
+			const urlRedirect = addQueryArgs( { site_connected: urlToSlug( homeUrl ) }, JPC_A4A_PATH );
+			navigate( urlRedirect );
+			return;
 		}
 
 		if ( this.isJetpackPartnerCoupon() ) {
@@ -303,7 +309,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackSocialPlugin() ||
 			this.isFromJetpackSearchPlugin() ||
 			this.isFromJetpackVideoPressPlugin() ||
-			( this.isFromJetpackBackupPlugin() && siteHasBackups )
+			( this.isFromJetpackBackupPlugin() && siteHasBackups ) ||
+			this.isFromAutomatticForAgenciesPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -463,6 +470,11 @@ export class JetpackAuthorize extends Component {
 		return startsWith( from, 'wpcom-migration' );
 	}
 
+	isFromAutomatticForAgenciesPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'automattic-for-agencies-client' );
+	}
+
 	shouldRedirectJetpackStart( props = this.props ) {
 		const { partnerSlug, partnerID } = props;
 
@@ -472,6 +484,10 @@ export class JetpackAuthorize extends Component {
 	isFromMyJetpackConnectAfterCheckout( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'connect-after-checkout' );
+	}
+
+	getCompanyName() {
+		return this.isFromAutomatticForAgenciesPlugin() ? 'Automattic, Inc.' : 'WordPress.com';
 	}
 
 	handleSignIn = async ( e, loginURL ) => {
@@ -722,6 +738,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getButtonText() {
+		// Update getScreenReaderAuthMessage if you change this function.
+		// TODO: extract actual status messages from button labels so getScreenReaderAuthMessage can use them.
 		const { translate } = this.props;
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
@@ -771,6 +789,48 @@ export class JetpackAuthorize extends Component {
 
 		if ( ! this.retryingAuth ) {
 			return translate( 'Approve' );
+		}
+	}
+
+	getScreenReaderAuthMessage() {
+		// Copied from getButtonText. Buttons labels have been removed and actual status messages kept.
+		const { translate } = this.props;
+		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const { alreadyAuthorized } = this.props.authQuery;
+
+		if ( this.isFromMigrationPlugin() ) {
+			if ( this.props.isFetchingAuthorizationSite ) {
+				return translate( 'Preparing authorization' );
+			}
+
+			return;
+		}
+
+		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
+			return;
+		}
+
+		if ( authorizeError && ! this.retryingAuth ) {
+			return;
+		}
+
+		if ( this.props.isFetchingAuthorizationSite ) {
+			return translate( 'Preparing authorization' );
+		}
+
+		if ( authorizeSuccess && this.redirecting ) {
+			return;
+		}
+
+		if ( authorizeSuccess ) {
+			return translate( 'Finishing up!', {
+				context:
+					'Shown during a jetpack authorization process, while we retrieve the info we need to show the last page',
+			} );
+		}
+
+		if ( isAuthorizing || this.retryingAuth ) {
+			return translate( 'Authorizing your connection' );
 		}
 	}
 
@@ -842,9 +902,13 @@ export class JetpackAuthorize extends Component {
 		const { searchParams } = getUrlParts( redirectAfterAuth );
 		const productSlug = searchParams.get( 'productSlug' );
 		const siteSlug = searchParams.get( 'fromSiteSlug' );
-		const product = getProductFromSlug( productSlug );
-		const productName = getJetpackProductDisplayName( product );
 		const siteName = formatSlugToURL( siteSlug ).replace( /^https?:\/\//, '' );
+		const productName = getJetpackProductOrPlanDisplayName( productSlug );
+
+		// Do nothing if we don't have a product name here
+		if ( ! productName ) {
+			return null;
+		}
 
 		if ( authorizeSuccess || isAlreadyOnSitesList ) {
 			return translate(
@@ -989,7 +1053,11 @@ export class JetpackAuthorize extends Component {
 						<div className="jetpack-connect__logged-in-bottom">
 							{ this.renderStateAction() }
 							<JetpackFeatures col1Features={ col1Features } col2Features={ col2Features } />
-							<Disclaimer siteName={ decodeEntities( authQuery.blogname ) } />
+							<Disclaimer
+								siteName={ decodeEntities( authQuery.blogname ) }
+								companyName={ this.getCompanyName() }
+								from={ authQuery.from }
+							/>
 							<div className="jetpack-connect__jetpack-logo-wrapper">
 								<JetpackLogo monochrome size={ 18 } />{ ' ' }
 								<span>{ translate( 'Jetpack powered' ) }</span>
@@ -1140,10 +1208,14 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		const { blogname } = this.props.authQuery;
+		const { blogname, from } = this.props.authQuery;
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				<Disclaimer siteName={ decodeEntities( blogname ) } />
+				<Disclaimer
+					siteName={ decodeEntities( blogname ) }
+					companyName={ this.getCompanyName() }
+					from={ from }
+				/>
 				<Button
 					primary
 					disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
@@ -1183,6 +1255,7 @@ export class JetpackAuthorize extends Component {
 				isWooOnboarding={ this.isWooOnboarding() }
 				isWooCoreProfiler={ this.isWooCoreProfiler() }
 				isWpcomMigration={ this.isFromMigrationPlugin() }
+				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 				wooDnaConfig={ wooDna }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
@@ -1201,12 +1274,14 @@ export class JetpackAuthorize extends Component {
 							isWooOnboarding={ this.isWooOnboarding() }
 							isWooCoreProfiler={ this.isWooCoreProfiler() }
 							isWpcomMigration={ this.isFromMigrationPlugin() }
+							isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 							wooDnaConfig={ wooDna }
 						/>
 						{ this.renderContent() }
 						{ this.renderFooterLinks() }
 					</div>
 				</div>
+				<AuthorizationScreenReaderIndicator message={ this.getScreenReaderAuthMessage() } />
 			</MainWrapper>
 		);
 	}

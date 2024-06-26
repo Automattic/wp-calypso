@@ -26,7 +26,7 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
-		selectedSiteId,
+		siteId: selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,

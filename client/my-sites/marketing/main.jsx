@@ -12,11 +12,17 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
+	isJetpackSite,
+	getSiteAdminUrl,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
@@ -35,6 +41,13 @@ export const Sharing = ( {
 	translate,
 	premiumPlanName,
 } ) => {
+	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
+		getIsGlobalSiteViewEnabled( state, siteId )
+	);
+	const isJetpackClassic = isJetpack && isGlobalSiteViewEnabled;
+
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 	let filters = [];
 
@@ -44,23 +57,13 @@ export const Sharing = ( {
 		title: translate( 'Marketing Tools' ),
 	} );
 
-	// Include SEO link if a site is selected and the
-	// required Jetpack module is active
-	if ( showTraffic ) {
+	// Include Business Tools link if a site is selected and the
+	// site is not VIP
+	if ( ! isVip && showBusinessTools ) {
 		filters.push( {
-			id: 'traffic',
-			route: '/marketing/traffic' + pathSuffix,
-			title: translate( 'Traffic' ),
-			description: translate(
-				'Manage settings and tools related to the traffic your website receives. {{learnMoreLink/}}',
-				{
-					components: {
-						learnMoreLink: (
-							<InlineSupportLink key="traffic" supportContext="traffic" showIcon={ false } />
-						),
-					},
-				}
-			),
+			id: 'business-buttons',
+			route: '/marketing/business-tools' + pathSuffix,
+			title: translate( 'Business Tools' ),
 		} );
 	}
 
@@ -85,12 +88,38 @@ export const Sharing = ( {
 		filters.push( connectionsFilter );
 	}
 
+	// Include SEO link if a site is selected and the
+	// required Jetpack module is active
+	if ( showTraffic ) {
+		filters.push( {
+			id: 'traffic',
+			route: isJetpackClassic
+				? siteAdminUrl + 'admin.php?page=jetpack#/traffic'
+				: '/marketing/traffic' + pathSuffix,
+			isExternalLink: isJetpackClassic,
+			title: translate( 'Traffic' ),
+			description: translate(
+				'Manage settings and tools related to the traffic your website receives. {{learnMoreLink/}}',
+				{
+					components: {
+						learnMoreLink: (
+							<InlineSupportLink key="traffic" supportContext="traffic" showIcon={ false } />
+						),
+					},
+				}
+			),
+		} );
+	}
+
 	// Include Sharing Buttons link if a site is selected and the
 	// required Jetpack module is active
 	if ( showButtons ) {
 		filters.push( {
 			id: 'sharing-buttons',
-			route: '/marketing/sharing-buttons' + pathSuffix,
+			route: isJetpackClassic
+				? siteAdminUrl + 'admin.php?page=jetpack#/sharing'
+				: '/marketing/sharing-buttons' + pathSuffix,
+			isExternalLink: isJetpackClassic,
 			title: translate( 'Sharing Buttons' ),
 			description: translate(
 				'Make it easy for your readers to share your content online. {{learnMoreLink/}}',
@@ -105,20 +134,14 @@ export const Sharing = ( {
 		} );
 	}
 
-	// Include Business Tools link if a site is selected and the
-	// site is not VIP
-	if ( ! isVip && showBusinessTools ) {
-		filters.push( {
-			id: 'business-buttons',
-			route: '/marketing/business-tools' + pathSuffix,
-			title: translate( 'Business Tools' ),
-		} );
-	}
-
-	// For p2 hub sites show only connections tab
 	let titleHeader = translate( 'Marketing and Integrations' );
 
+	if ( isGlobalSiteViewEnabled ) {
+		titleHeader = translate( 'Marketing' );
+	}
+
 	if ( isP2Hub ) {
+		// For p2 hub sites show only connections tab.
 		filters = [ connectionsFilter ];
 		titleHeader = translate( 'Integrations' );
 	}
@@ -142,8 +165,13 @@ export const Sharing = ( {
 			{ filters.length > 0 && (
 				<SectionNav selectedText={ selected?.title ?? '' }>
 					<NavTabs>
-						{ filters.map( ( { id, route, title } ) => (
-							<NavItem key={ id } path={ route } selected={ pathname === route }>
+						{ filters.map( ( { id, route, isExternalLink, title } ) => (
+							<NavItem
+								key={ id }
+								path={ route }
+								isExternalLink={ isExternalLink }
+								selected={ pathname === route }
+							>
 								{ title }
 							</NavItem>
 						) ) }
@@ -160,7 +188,7 @@ export const Sharing = ( {
 					} ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
-					showIcon={ true }
+					showIcon
 				/>
 			) }
 			{ contentComponent }

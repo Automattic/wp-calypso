@@ -139,7 +139,9 @@ Created this definition in color-studio to generate 0-100 shades:
 	/* Masterbar */
 	--color-masterbar-background: var(--theme-base-color);
 	--color-masterbar-border: var(--theme-submenu-background-color);
-	--color-masterbar-text: var(--studio-white);
+	--color-masterbar-text: var(--theme-text-color);
+	--color-masterbar-icon: var(--theme-icon-color);
+	--color-masterbar-highlight: var(--theme-highlight-color);
 	--color-masterbar-unread-dot-background: var(--theme-notification-color);
 
 	--color-masterbar-item-hover-background: var(--theme-submenu-background-color);
@@ -178,6 +180,12 @@ Created this definition in color-studio to generate 0-100 shades:
 	--color-sidebar-submenu-text: var(--theme-submenu-text-color);
 	--color-sidebar-submenu-hover-background: transparent;
 	--color-sidebar-submenu-hover-text: var(--theme-highlight-color);
+
+	/* Sidebar Submenu - Nav Redesign */
+	--color-navredesign-sidebar-submenu-text: var(--color-sidebar-submenu-text);
+	--color-navredesign-sidebar-menu-selected-text: var(--theme-text-color);
+	--color-navredesign-sidebar-submenu-selected-text: var(--theme-text-color);
+	--color-navredesign-sidebar-submenu-hover-text: var(--theme-highlight-color);
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--theme-base-color);

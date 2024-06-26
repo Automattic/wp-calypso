@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -17,7 +18,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -199,7 +199,7 @@ class GoogleMyBusinessStats extends Component {
 			<Main fullWidthLayout>
 				<PageViewTracker
 					path="/google-my-business/stats/:site"
-					title="Google My Business > Stats"
+					title="Google Business Profile > Stats"
 				/>
 
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
@@ -237,7 +237,7 @@ class GoogleMyBusinessStats extends Component {
 						<Notice
 							status="is-error"
 							showDismiss={ false }
-							text={ translate( 'There is an error with your Google My Business account.' ) }
+							text={ translate( 'There is an error with your Google Business Profile account.' ) }
 						>
 							<NoticeAction href={ CALYPSO_CONTACT }>
 								{ translate( 'Contact Support' ) }

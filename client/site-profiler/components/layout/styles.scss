@@ -23,7 +23,7 @@
 
 	&.width-medium {
 		.l-block-wrapper {
-			max-width: 1015px;
+			max-width: 1056px; // matches the .lpc-footer-nav-wrapper max-width
 		}
 	}
 }
@@ -31,7 +31,7 @@
 .l-block-wrapper {
 	max-width: 1224px;
 	margin: 0 auto;
-	padding: 0 1.5rem;
+	padding: 0 20px; // matches .lpc-footer-nav padding
 
 	.l-block-col-2 {
 		gap: 5rem;
@@ -56,6 +56,10 @@
 				width: 100%;
 			}
 		}
+	}
+
+	@media (max-width: $break-small) {
+		padding: 0 16px; // matches .lpc-footer-nav padding
 	}
 }
 

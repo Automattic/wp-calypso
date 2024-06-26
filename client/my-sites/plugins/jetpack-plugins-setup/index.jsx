@@ -1,6 +1,12 @@
 import page from '@automattic/calypso-router';
 import { CompactCard, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import {
+	JETPACK_CONTACT_SUPPORT,
+	JETPACK_SERVICE_AKISMET,
+	JETPACK_SERVICE_VAULTPRESS,
+	JETPACK_SUPPORT,
+} from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { filter, get, range } from 'lodash';
 import { Component } from 'react';
@@ -13,12 +19,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
-import {
-	JETPACK_CONTACT_SUPPORT,
-	JETPACK_SERVICE_AKISMET,
-	JETPACK_SERVICE_VAULTPRESS,
-	JETPACK_SUPPORT,
-} from 'calypso/lib/url/support';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
 import {
@@ -250,7 +250,7 @@ class PlansSetup extends Component {
 							{ hidden ? (
 								<Notice
 									key={ 0 }
-									isCompact={ true }
+									isCompact
 									showDismiss={ false }
 									icon="plugins"
 									text={ this.props.translate( 'Waiting to install' ) }
@@ -311,7 +311,7 @@ class PlansSetup extends Component {
 			return (
 				<Notice
 					showDismiss={ false }
-					isCompact={ true }
+					isCompact
 					status="is-info"
 					text={ translate( 'This plugin is already registered with another plan.' ) }
 				>

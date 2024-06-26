@@ -1,5 +1,5 @@
 import { Card, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -31,9 +31,11 @@ class SecurityKeyForm extends Component {
 		isAuthenticating: false,
 	};
 
-	initiateSecurityKeyAuthentication = ( event ) => {
-		event.preventDefault();
+	componentDidMount() {
+		this.initiateSecurityKeyAuthentication();
+	}
 
+	initiateSecurityKeyAuthentication = () => {
 		const { onSuccess } = this.props;
 		this.setState( { isAuthenticating: true } );
 		this.props
@@ -47,10 +49,13 @@ class SecurityKeyForm extends Component {
 
 		return (
 			<form
-				className={ classNames( 'two-factor-authentication__verification-code-form-wrapper', {
+				className={ clsx( 'two-factor-authentication__verification-code-form-wrapper', {
 					isWoo: isWoo,
 				} ) }
-				onSubmit={ this.initiateSecurityKeyAuthentication }
+				onSubmit={ ( event ) => {
+					event.preventDefault();
+					this.initiateSecurityKeyAuthentication();
+				} }
 			>
 				<Card compact className="two-factor-authentication__verification-code-form">
 					{ ! this.state.isAuthenticating && (

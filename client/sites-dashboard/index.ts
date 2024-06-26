@@ -1,10 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import sitesDashboardV2 from 'calypso/sites-dashboard-v2';
 import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import {
 	maybeRemoveCheckoutSuccessNotice,
 	sanitizeQueryParameters,
-	maybeSitesDashboard,
+	sitesDashboard,
 } from './controller';
 
 export default function () {
@@ -17,11 +19,16 @@ export default function () {
 		page.redirect( getSiteHomeUrl( state, siteId ) );
 	} );
 
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		sitesDashboardV2();
+		return;
+	}
+
 	page(
 		'/sites',
 		maybeRemoveCheckoutSuccessNotice,
 		sanitizeQueryParameters,
-		maybeSitesDashboard,
+		sitesDashboard,
 		makeLayout,
 		clientRender
 	);

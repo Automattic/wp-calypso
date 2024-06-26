@@ -1,3 +1,4 @@
+import { FEATURE_SFTP } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -33,7 +34,7 @@ import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id'
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
@@ -89,19 +90,18 @@ class PluginUpload extends Component {
 	};
 
 	renderUploadCard() {
-		const { inProgress, complete, isJetpack, isAtomic } = this.props;
+		const { inProgress, complete, isJetpack, hasSftpFeature } = this.props;
 
 		const uploadAction = isJetpack
 			? this.props.uploadPlugin
 			: this.props.initiateAutomatedTransferWithPluginZip;
 
-		const WrapperComponent = ! isAtomic ? FeatureExample : Fragment;
-
+		const WrapperComponent = ! hasSftpFeature ? FeatureExample : Fragment;
 		return (
 			<WrapperComponent>
 				<Card>
 					{ ! inProgress && ! complete && (
-						<UploadDropZone doUpload={ uploadAction } disabled={ ! isAtomic } />
+						<UploadDropZone doUpload={ uploadAction } disabled={ ! hasSftpFeature } />
 					) }
 				</Card>
 			</WrapperComponent>
@@ -197,12 +197,14 @@ const mapStateToProps = ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
+	const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	const isEligibleForHostingTrial =
-		isUserEligibleForFreeHostingTrial( state ) && site?.plan?.is_free;
+	// This value is hardcoded to 'false' to disable the free trial banner
+	// see https://github.com/Automattic/wp-calypso/pull/89217
+	const isEligibleForHostingTrial = false;
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
@@ -212,6 +214,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug: getSelectedSiteSlug( state ),
 		isJetpack,
 		isAtomic,
+		hasSftpFeature,
 		inProgress: isPluginUploadInProgress( state, siteId ),
 		complete: isPluginUploadComplete( state, siteId ),
 		failed: !! error,

@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 
 function WhatsNewMenuItem() {
+	const siteId = window.whatsNewData?.currentSiteId;
 	const [ showGuide, setShowGuide ] = useState( false );
 	const { setHasSeenWhatsNewModal } = useDispatch( 'automattic/help-center' );
 
@@ -33,7 +34,7 @@ function WhatsNewMenuItem() {
 			<Fill name="ToolsMoreMenuGroup">
 				<MenuItem onClick={ openWhatsNew }>{ __( "What's new", 'full-site-editing' ) }</MenuItem>
 			</Fill>
-			{ showGuide && <WhatsNewGuide onClose={ closeWhatsNew } /> }
+			{ showGuide && <WhatsNewGuide onClose={ closeWhatsNew } siteId={ siteId } /> }
 		</>
 	);
 }

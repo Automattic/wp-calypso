@@ -1,0 +1,197 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.dataviews-wrapper {
+	tr.dataviews-view-table__row {
+		background: var(--studio-white);
+
+		.components-checkbox-control__input {
+			opacity: 0;
+		}
+		.components-checkbox-control__input:checked,
+		.components-checkbox-control__input:indeterminate, {
+			opacity: 1;
+		}
+
+		.dataviews-view-table-selection-checkbox {
+			padding-left: 12px;
+			&.is-selected {
+				.components-checkbox-control__input {
+					opacity: 1;
+				}
+			}
+		}
+
+		&:hover {
+			background: var(--color-neutral-0);
+
+			.site-set-favorite__favorite-icon,
+			.components-checkbox-control__input {
+				opacity: 1;
+			}
+		}
+
+		th {
+			padding: 13px 4px 13px 48px;
+			border-bottom: 1px solid var(--color-neutral-5);
+			font-size: rem(13px);
+			font-weight: 400;
+			vertical-align: middle;
+		}
+
+		td {
+			padding: 16px 4px 16px 48px;
+			border-bottom: 1px solid var(--color-neutral-5);
+			vertical-align: middle;
+
+			&:has(.sites-dataviews__site) {
+				padding: 8px 16px 8px 4px;
+				width: 20%;
+			}
+		}
+
+		.dataviews-view-table__cell-content-wrapper {
+			font-size: rem(13px);
+		}
+
+		.dataviews-view-table__checkbox-column,
+		.components-checkbox-control__input {
+			label.components-checkbox-control__label {
+				display: none;
+			}
+			&[type="checkbox"] {
+				border-color: var(--color-neutral-5);
+			}
+		}
+
+		.site-sort__clickable {
+			cursor: pointer;
+		}
+	}
+
+	ul.dataviews-view-list {
+		li:hover {
+			background: var(--color-neutral-0);
+		}
+		.is-selected {
+			background-color: var(--color-neutral-0);
+		}
+	}
+
+	.components-checkbox-control__input[type="checkbox"]:focus {
+		box-shadow: 0 0 0 var(--studio-jetpack-green-50) #fff, 0 0 0 calc(2* var(--studio-jetpack-green-50)) var(--studio-jetpack-green-50);
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+
+	.components-checkbox-control__input[type="checkbox"]:checked,
+	.components-checkbox-control__input[type="checkbox"]:indeterminate {
+		background: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
+		border-color: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
+	}
+
+	.components-search-control input[type="search"].components-search-control__input {
+		background: var(--studio-white);
+		border: 1px solid var(--color-neutral-5);
+	}
+
+	.dataviews-bulk-edit-button.components-button.is-tertiary:active:not(:disabled),
+	.dataviews-bulk-edit-button.components-button.is-tertiary:hover:not(:disabled) {
+		box-shadow: none;
+		background-color: transparent;
+		color: var(--studio-jetpack-green-50);
+	}
+
+	.dataviews-view-table__actions-column {
+		display: none;
+	}
+
+	thead .dataviews-view-table__row th {
+		span,
+		button {
+			font-size: rem(11px);
+			font-weight: 500;
+			line-height: 20px;
+			color: var(--color-accent-80);
+			text-transform: uppercase;
+		}
+
+		svg {
+			&:not(:last-child) {
+				margin-right: 4px;
+				vertical-align: middle;
+			}
+		}
+
+		.dataviews-view-table-header-button {
+			margin: 0 -12px;
+			color: inherit;
+		}
+	}
+
+	.sites-dataviews__actions {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: end;
+		flex-wrap: nowrap;
+
+		@media (min-width: 1080px) {
+			.site-actions__actions-large-screen {
+				float: none;
+				margin-inline-end: 20px;
+			}
+		}
+
+		> *:not(:last-child) {
+			margin-inline-end: 10px;
+		}
+
+		.components-dropdown-menu__toggle,
+		.site-preview__open {
+			.gridicon {
+				width: 18px;
+				height: 18px;
+			}
+		}
+
+		&.sites-dataviews__actions-error {
+			svg {
+				color: var(--color-accent-5);
+			}
+		}
+	}
+
+	.dataviews-no-results,
+	.dataviews-loading {
+		padding-top: 1rem;
+		text-align: center;
+	}
+
+	.spinner-wrapper {
+		display: none;
+	}
+}
+
+.dataviews-wrapper:has(.dataviews-loading) {
+	.spinner-wrapper {
+		display: block;
+	}
+	.dataviews-loading p {
+		display: none;
+	}
+
+	.dataviews-view-table-wrapper {
+		height: 0 !important;
+	}
+
+	.dataviews-pagination {
+		display: none;
+	}
+}
+
+.dataviews-wrapper:has(.dataviews-no-results) {
+	.spinner-wrapper {
+		display: none;
+	}
+}

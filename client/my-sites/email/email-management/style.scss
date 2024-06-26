@@ -472,3 +472,17 @@
 		}
 	}
 }
+
+.is-section-email {
+	.empty-content {
+		.empty-content__illustration {
+			margin-top: 100px;
+		}
+
+		.empty-content__title,
+		.empty-content__line,
+		.empty-content__action {
+			margin-top: 32px;
+		}
+	}
+}

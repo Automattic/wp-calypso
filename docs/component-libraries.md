@@ -12,4 +12,4 @@ When figuring out which `<Button>` component to use, here are some guidelines yo
 
 There may also be a more specific component library for the project you're working on (e.g. `@automattic/jetpack-components` and `@woocommerce/components`).
 
-Ultimately, the correct `<Button>` component to use is dependent on the context, use case, constraints, and end goals. There isn't necessarily a correct answer. If you found it difficult to come to the right answer, feel free to ping @Automattic/team-calypso-components or @Automattic/team-calypso-frameworks, and then include your insights here for the next person.
+Ultimately, the correct `<Button>` component to use is dependent on the context, use case, constraints, and end goals. There isn't necessarily a correct answer. If you found it difficult to come to the right answer, feel free to ping @Automattic/team-calypso, and then include your insights here for the next person.

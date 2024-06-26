@@ -1,9 +1,10 @@
+import { Icon } from '@wordpress/icons';
 import { useMemo } from 'react';
 import BaseCard from './base-card';
 
 interface CountCardProps {
 	heading: React.ReactNode;
-	icon: React.ReactNode;
+	icon: JSX.Element;
 	value: number | string;
 }
 
@@ -26,7 +27,9 @@ export default function CountCard( { heading, icon, value }: CountCardProps ) {
 		<BaseCard
 			heading={
 				<>
-					<div className="highlight-card-icon">{ icon }</div>
+					<div className="highlight-card-icon">
+						<Icon icon={ icon } />
+					</div>
 					<div className="highlight-card-title">{ heading }</div>
 				</>
 			}

@@ -1,3 +1,4 @@
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const pathIncludes = ( currentPath, term, position ) =>
@@ -7,7 +8,7 @@ const fragmentIsEqual = ( path, currentPath, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ] === path.split( /[/,?]/ )?.[ position ];
 
 const isManageAllSitesPluginsPath = ( path ) =>
-	path.match( /^\/plugins\/(?:manage|active|inactive|updates)/ ) !== null;
+	path.match( /^\/plugins\/(?:manage|active|inactive|updates|scheduled-updates)/ ) !== null;
 
 /**
  * Checks if `currentPath` starts with the first fragment of `path`
@@ -38,9 +39,17 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		}
 	}
 
+	if ( pathIncludes( currentPath, 'plugins', 1 ) ) {
+		if ( pathIncludes( currentPath, 'browse', 2 ) ) {
+			return pathIncludes( path, 'plugins', 1 ) && ! pathIncludes( path, 'scheduled-updates', 2 );
+		}
+
+		return pathIncludes( path, 'plugins', 1 ) && fragmentIsEqual( path, currentPath, 2 );
+	}
+
 	if ( pathIncludes( currentPath, 'settings', 1 ) ) {
-		// Jetpack Cloud uses a simpler /settings/:site pattern for the settings page.
-		if ( isJetpackCloud() ) {
+		// Jetpack Cloud uses a simpler /settings/:site pattern, and A4A uses /settings/:tab, for the settings page.
+		if ( isJetpackCloud() || isA8CForAgencies() ) {
 			return fragmentIsEqual( path, currentPath, 1 );
 		}
 
@@ -69,6 +78,16 @@ export const itemLinkMatches = ( path, currentPath ) => {
 			return fragmentIsEqual( path, '/partner-portal/licenses', 2 );
 		}
 
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
+	// All URLs in the A4A Purchases start with 'purchases' or 'marketplace' will need to compare at the second position.
+	if (
+		isA8CForAgencies() &&
+		( pathIncludes( currentPath, 'purchases', 1 ) ||
+			pathIncludes( currentPath, 'marketplace', 1 ) ||
+			pathIncludes( currentPath, 'client', 1 ) )
+	) {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}
 

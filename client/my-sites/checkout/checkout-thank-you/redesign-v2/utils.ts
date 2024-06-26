@@ -1,6 +1,5 @@
-import { isWpComPlan, isP2Plus } from '@automattic/calypso-products';
-import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
-import { isBulkDomainTransfer, isDomainOnly } from '../utils';
+import { isDelayedDomainTransfer } from '@automattic/calypso-products';
+import { CheckoutThankYouCombinedProps, getPurchases } from '..';
 
 /**
  * Determines whether the current checkout flow renders a redesigned congrats page
@@ -10,27 +9,15 @@ import { isBulkDomainTransfer, isDomainOnly } from '../utils';
  * @returns {boolean}
  */
 export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps ) => {
-	// Fallback to old design when there is a failed purchase.
-	const failedPurchases = getFailedPurchases( props );
-	if ( failedPurchases.length > 0 ) {
+	const purchases = getPurchases( props );
+
+	if ( ! purchases.length ) {
 		return false;
 	}
 
-	const purchases = getPurchases( props );
-
-	if ( isBulkDomainTransfer( purchases ) ) {
-		return true;
+	if ( purchases.find( isDelayedDomainTransfer ) ) {
+		return false;
 	}
 
-	if ( isDomainOnly( purchases ) ) {
-		return true;
-	}
-
-	if ( purchases.length === 1 ) {
-		const purchase = purchases[ 0 ];
-
-		return isWpComPlan( purchase.productSlug ) || isP2Plus( purchase );
-	}
-
-	return false;
+	return true;
 };

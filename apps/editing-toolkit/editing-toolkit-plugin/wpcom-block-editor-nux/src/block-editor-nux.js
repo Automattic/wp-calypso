@@ -7,6 +7,7 @@ import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { registerPlugin } from '@wordpress/plugins';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { getQueryArg } from '@wordpress/url';
@@ -82,7 +83,9 @@ function WelcomeTour() {
 		}
 	}, [ fetchWelcomeGuideStatus, isLoaded ] );
 
-	if ( ! show || isNewPageLayoutModalOpen ) {
+	const filteredShow = applyFilters( 'a8c.WpcomBlockEditorWelcomeTour.show', show );
+
+	if ( ! filteredShow || isNewPageLayoutModalOpen ) {
 		return null;
 	}
 

@@ -75,6 +75,7 @@ const copySite: Flow = {
 	get title() {
 		return '';
 	},
+	isSignupFlow: false,
 
 	useSteps() {
 		return [

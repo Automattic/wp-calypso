@@ -1,18 +1,21 @@
-import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query';
+import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useRef } from 'react';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 // eslint-disable-next-line no-restricted-imports
 import wpcom from 'calypso/lib/wp';
-import { WAPUU_ERROR_MESSAGE, ODIE_THUMBS_DOWN_RATING_VALUE } from '..';
+import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
-import { broadcastOdieMessage, setOdieStorage } from '../data';
+import { broadcastOdieMessage, useSetOdieStorage } from '../data';
 import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
 const buildSendChatMessage = async (
 	message: Message,
 	botNameSlug: OdieAllowedBots,
-	chat_id?: number | null
+	chat_id?: number | null,
+	version?: string | null,
+	selectedSiteId?: number | null
 ) => {
 	const baseApiPath = '/help-center/odie/chat/';
 	const wpcomBaseApiPath = '/odie/chat/';
@@ -28,19 +31,24 @@ const buildSendChatMessage = async (
 			: `${ wpcomBaseApiPath }${ botNameSlug }`;
 
 	return canAccessWpcomApis()
-		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds )
+		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds, version, selectedSiteId )
 		: apiFetch( {
 				path: apiPathWithIds,
 				method: 'POST',
-				data: { message },
+				data: { message: message.content, version, context: { selectedSiteId } },
 		  } );
 };
 
-function odieWpcomSendSupportMessage( message: Message, path: string ) {
+function odieWpcomSendSupportMessage(
+	message: Message,
+	path: string,
+	version?: string | null,
+	selectedSiteId?: number | null
+) {
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { message: message.content },
+		body: { message: message.content, version, context: { selectedSiteId } },
 	} );
 }
 
@@ -68,8 +76,20 @@ export const useOdieSendMessage = (): UseMutationResult<
 	{ message: Message },
 	{ internal_message_id: string }
 > => {
-	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage, odieClientId } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		botNameSlug,
+		setIsLoading,
+		setChat,
+		updateMessage,
+		odieClientId,
+		selectedSiteId,
+		version,
+	} = useOdieAssistantContext();
+	const queryClient = useQueryClient();
+	const userMessage = useRef< Message | null >( null );
+	const storeChatId = useSetOdieStorage( 'chat_id' );
+
 	return useMutation<
 		{ chat_id: string; messages: Message[] },
 		unknown,
@@ -78,20 +98,44 @@ export const useOdieSendMessage = (): UseMutationResult<
 	>( {
 		mutationFn: ( { message }: { message: Message } ) => {
 			broadcastOdieMessage( message, odieClientId );
-			return buildSendChatMessage( { ...message }, botNameSlug, chat.chat_id );
+			return buildSendChatMessage(
+				{ ...message },
+				botNameSlug,
+				chat.chat_id,
+				version,
+				selectedSiteId
+			);
 		},
 		onMutate: ( { message } ) => {
 			const internal_message_id = uuid();
-			addMessage( [
+			const messages = [
 				message,
 				{
 					internal_message_id,
 					content: '...',
-					role: 'bot',
-					type: 'placeholder',
+					role: 'bot' as MessageRole,
+					type: 'placeholder' as MessageType,
 				},
-			] );
+			];
+
+			setChat( ( prevChat: Chat ) => {
+				// Normalize message to always be an array
+				const newMessages = messages;
+
+				// Filter out 'placeholder' messages if new message is not 'dislike-feedback'
+				const filteredMessages = newMessages.some( ( msg ) => msg.type === 'dislike-feedback' )
+					? prevChat.messages
+					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
+
+				// Append new messages at the end
+				return {
+					chat_id: prevChat.chat_id,
+					messages: [ ...filteredMessages, ...newMessages ],
+				};
+			} );
 			setIsLoading( true );
+			userMessage.current = message;
+
 			return { internal_message_id };
 		},
 		onSuccess: ( data, _, context ) => {
@@ -125,7 +169,26 @@ export const useOdieSendMessage = (): UseMutationResult<
 			updateMessage( message );
 
 			broadcastOdieMessage( message, odieClientId );
-			setOdieStorage( 'chat_id', data.chat_id );
+			storeChatId( data.chat_id );
+			const queryKey = [ 'chat', botNameSlug, data.chat_id, 1, 30, true ];
+
+			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
+				if ( ! currentChatCache ) {
+					return {
+						chat_id: data.chat_id,
+						messages: [ userMessage.current, message ],
+					};
+				}
+
+				return {
+					...currentChatCache,
+					messages: [
+						...currentChatCache.messages,
+						userMessage.current,
+						{ ...message, simulateTyping: false },
+					],
+				};
+			} );
 		},
 		onSettled: () => {
 			setIsLoading( false );
@@ -197,34 +260,6 @@ export const useOdieGetChat = (
 		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage, includeFeedback ),
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
-		select: ( data ) => {
-			const modifiedMessages: Message[] = [];
-
-			data.messages.forEach( ( message ) => {
-				modifiedMessages.push( message );
-
-				// Check if the message has negative feedback
-				if (
-					message.rating_value &&
-					message.rating_value === ODIE_THUMBS_DOWN_RATING_VALUE &&
-					! message.context?.flags?.forward_to_human_support
-				) {
-					// Add a new 'dislike-feedback' message right after the current message
-					const dislikeFeedbackMessage = {
-						content: '...',
-						role: 'bot' as MessageRole,
-						type: 'dislike-feedback' as MessageType,
-						simulateTyping: false,
-					};
-					modifiedMessages.push( dislikeFeedbackMessage );
-				}
-			} );
-
-			return {
-				...data,
-				messages: modifiedMessages,
-			};
-		},
 	} );
 };
 
@@ -257,6 +292,7 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 	{ rating_value: number; message: Message }
 > => {
 	const { chat, botNameSlug } = useOdieAssistantContext();
+	const queryClient = useQueryClient();
 
 	return useMutation( {
 		mutationFn: ( { rating_value, message }: { rating_value: number; message: Message } ) => {
@@ -266,6 +302,22 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 				message.message_id || 0,
 				rating_value
 			);
+		},
+		onSuccess: ( _, { rating_value, message } ) => {
+			const queryKey = [ 'chat', botNameSlug, chat.chat_id, 1, 30, true ];
+
+			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
+				if ( ! currentChatCache ) {
+					return;
+				}
+
+				return {
+					...currentChatCache,
+					messages: currentChatCache.messages.map( ( m ) =>
+						m.internal_message_id === message.internal_message_id ? { ...m, rating_value } : m
+					),
+				};
+			} );
 		},
 	} );
 };

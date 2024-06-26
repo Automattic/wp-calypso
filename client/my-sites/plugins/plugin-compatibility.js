@@ -24,6 +24,7 @@ const incompatiblePlugins = new Set( [
 	'plugins-garbage-collector',
 	'post-type-switcher',
 	'reset-wp',
+	'reset',
 	'secure-file-manager',
 	'ultimate-reset',
 	'ultimate-wp-reset',
@@ -50,7 +51,6 @@ const incompatiblePlugins = new Set( [
 	'backup-wd',
 	'backupwordpress',
 	'backwpup',
-	'jetpack-backup',
 	'wp-db-backup',
 
 	// caching

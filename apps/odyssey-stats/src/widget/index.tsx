@@ -20,7 +20,7 @@ export function init() {
 	const currentSiteId = config( 'blog_id' );
 	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
 
-	const statsBaseUrl = getSiteStatsBaseUrl( currentSiteId );
+	const statsBaseUrl = getSiteStatsBaseUrl();
 	const adminBaseUrl = getSiteAdminUrl( currentSiteId );
 
 	const queryClient = new QueryClient();

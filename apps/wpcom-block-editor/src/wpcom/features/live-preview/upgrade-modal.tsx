@@ -10,7 +10,8 @@ import './upgrade-modal.scss';
 export const LivePreviewUpgradeModal: FC< {
 	previewingTheme: ReturnType< typeof usePreviewingTheme >;
 	upgradePlan: () => void;
-} > = ( { previewingTheme, upgradePlan } ) => {
+	requiredPlanSlug: string;
+} > = ( { previewingTheme, upgradePlan, requiredPlanSlug } ) => {
 	const [ isThemeUpgradeModalOpen, setIsThemeUpgradeModalOpen ] = useState( false );
 
 	useOverrideSaveButton( { setIsThemeUpgradeModalOpen, previewingTheme } );
@@ -38,6 +39,7 @@ export const LivePreviewUpgradeModal: FC< {
 				isOpen={ isThemeUpgradeModalOpen }
 				closeModal={ closeModal }
 				checkout={ upgradePlan }
+				requiredPlan={ requiredPlanSlug }
 			/>
 		</QueryClientProvider>
 	);

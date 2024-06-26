@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { SortButton } from 'calypso/my-sites/github-deployments/components/sort-button/sort-button';
 import { SortDirection } from 'calypso/my-sites/github-deployments/components/sort-button/use-sort';
 import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
@@ -17,6 +18,12 @@ export const DeploymentsListTable = ( {
 	sortDirection,
 	onSortChange,
 }: DeploymentsListProps ) => {
+	const hasRuns = useMemo( () => {
+		return !! deployments.find(
+			( deployment ) => deployment.current_deployed_run || deployment.current_deployment_run
+		);
+	}, [ deployments ] );
+
 	return (
 		<table>
 			<thead>
@@ -31,39 +38,45 @@ export const DeploymentsListTable = ( {
 							<span>{ __( 'Repository' ) }</span>
 						</SortButton>
 					</th>
-					<th>
+					<th style={ { width: '100%' } }>
 						<span>{ __( 'Last commit' ) }</span>
 					</th>
-					<th>
-						<SortButton
-							value="status"
-							activeValue={ sortKey }
-							direction={ sortDirection }
-							onChange={ onSortChange }
-						>
-							<span>{ __( 'Status' ) }</span>
-						</SortButton>
-					</th>
-					<th>
-						<SortButton
-							value="date"
-							activeValue={ sortKey }
-							direction={ sortDirection }
-							onChange={ onSortChange }
-						>
-							<span>{ __( 'Date' ) }</span>
-						</SortButton>
-					</th>
-					<th>
-						<SortButton
-							value="duration"
-							activeValue={ sortKey }
-							direction={ sortDirection }
-							onChange={ onSortChange }
-						>
-							<span>{ __( 'Duration' ) }</span>
-						</SortButton>
-					</th>
+					{ hasRuns ? (
+						<>
+							<th>
+								<SortButton
+									value="status"
+									activeValue={ sortKey }
+									direction={ sortDirection }
+									onChange={ onSortChange }
+								>
+									<span>{ __( 'Status' ) }</span>
+								</SortButton>
+							</th>
+							<th>
+								<SortButton
+									value="date"
+									activeValue={ sortKey }
+									direction={ sortDirection }
+									onChange={ onSortChange }
+								>
+									<span>{ __( 'Date' ) }</span>
+								</SortButton>
+							</th>
+							<th>
+								<SortButton
+									value="duration"
+									activeValue={ sortKey }
+									direction={ sortDirection }
+									onChange={ onSortChange }
+								>
+									<span>{ __( 'Duration' ) }</span>
+								</SortButton>
+							</th>
+						</>
+					) : (
+						<th colSpan={ 3 } />
+					) }
 					<th> </th>
 				</tr>
 			</thead>

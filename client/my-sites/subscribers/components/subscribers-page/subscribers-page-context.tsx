@@ -7,16 +7,11 @@ import { useDebounce } from 'use-debounce';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import useManySubsSite from '../../hooks/use-many-subs-site';
-import {
-	useSubscriberCountQuery,
-	useSubscriberDetailsQuery,
-	useSubscribersQuery,
-} from '../../queries';
+import { useSubscriberCountQuery, useSubscribersQuery } from '../../queries';
 import { migrateSubscribers } from './migrate-subscribers-query';
 
 type SubscribersPageProviderProps = {
@@ -56,6 +51,7 @@ type SubscribersPageContextProps = {
 	siteId: number | null;
 	isLoading: boolean;
 	pages?: number;
+	isOwnerSubscribed: boolean;
 };
 
 const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
@@ -124,13 +120,8 @@ export const SubscribersPageProvider = ( {
 
 	// Current user is not included in the subscribers list, so we need to remove from the total
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId );
-	const userId = useSelector( getCurrentUserId ) ?? undefined;
-	const { data: isCurrentUserSubscribed } = useSubscriberDetailsQuery( siteId, undefined, userId );
 
-	const grandTotal =
-		isCurrentUserSubscribed && subscribersTotals?.email_subscribers
-			? subscribersTotals.email_subscribers - 1
-			: subscribersTotals?.email_subscribers ?? 0;
+	const grandTotal = subscribersTotals?.email_subscribers ?? 0;
 
 	const { pageChangeCallback } = usePagination(
 		pageNumber,
@@ -174,7 +165,7 @@ export const SubscribersPageProvider = ( {
 				dispatch(
 					successNotice(
 						translate(
-							'Your follower migration has been queued. You will receive an email to indicate when it starts and finishes.'
+							'Your subscriber migration has been queued. You will receive an email to indicate when it starts and finishes.'
 						),
 						{
 							duration: 8000,
@@ -203,10 +194,11 @@ export const SubscribersPageProvider = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const { total, per_page, subscribers } = subscribersQueryResult.data || {
+	const { total, per_page, subscribers, is_owner_subscribed } = subscribersQueryResult.data || {
 		total: 0,
 		per_page: DEFAULT_PER_PAGE,
 		subscribers: [],
+		is_owner_subscribed: false,
 	};
 
 	// If we receive a different perPage value from the query, update the state
@@ -240,6 +232,7 @@ export const SubscribersPageProvider = ( {
 				siteId,
 				isLoading: subscribersQueryResult.isLoading,
 				pages,
+				isOwnerSubscribed: is_owner_subscribed,
 			} }
 		>
 			{ children }

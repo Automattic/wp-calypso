@@ -70,6 +70,9 @@ const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetching
 				title={ post?.title }
 				link={ post?.link }
 				isLoading={ isLoading }
+				postId={ postId }
+				blogId={ blogId }
+				slug={ post?.slug }
 			/>
 		</>
 	);

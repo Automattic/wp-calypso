@@ -1,0 +1,32 @@
+.site-sort__icon {
+	position: relative;
+	inset-block-start: 3px;
+	inset-inline-start: 8px;
+}
+
+.site-sort__icon-large_screen {
+	&.site-sort {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		display: inline-flex;
+		align-items: center;
+		margin-inline-start: -16px;
+		padding-inline: 16px;
+	}
+
+	.site-sort__icon {
+		position: absolute;
+		inset-inline-end: 16px;
+		inset-block-start: unset;
+		inset-inline-start: unset;
+	}
+}
+
+.site-sort__icon-hidden {
+	visibility: hidden;
+}
+
+.site-sort__clickable {
+	cursor: pointer;
+}

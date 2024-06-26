@@ -1,18 +1,16 @@
 import config from '@automattic/calypso-config';
-import { Popover } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import {
 	cloneElement,
 	MouseEvent,
 	ReactElement,
 	ReactNode,
+	useCallback,
 	useEffect,
 	useRef,
-	useState,
 } from 'react';
 import GitHubIcon from 'calypso/components/social-icons/github';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isFormDisabled as isFormDisabledSelector } from 'calypso/state/login/selectors';
@@ -45,15 +43,32 @@ const GitHubLoginButton = ( {
 }: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
 
-	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial );
-	const isFormDisabled = useSelector( isFormDisabledSelector );
+	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial ) ?? {};
+	const authError = useSelector( ( state: AppState ) => {
+		const path = state?.route?.path?.current;
+		const { initial, current } = state?.route?.query ?? {};
+		const initialError = initial?.error;
+		const currentError = current?.error;
+
+		// Sign-up flow is losing the error query param when redirecting to `/start/user-social`
+		// because of that, we are returning the initial query param error.
+		if ( path?.includes( '/start/user-social' ) ) {
+			return initialError;
+		}
+		return currentError;
+	} );
+
+	const isDisabled = useSelector( isFormDisabledSelector );
 	const dispatch = useDispatch();
-
-	const [ disabledState ] = useState< boolean >( false );
-	const [ errorState ] = useState< string | null >( null );
-	const [ showError, setShowError ] = useState< boolean >( false );
-
 	const errorRef = useRef< EventTarget | null >( null );
+
+	const handleGitHubError = useCallback( () => {
+		dispatch(
+			errorNotice(
+				translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
+			)
+		);
+	}, [ dispatch, errorNotice, translate ] );
 
 	const exchangeCodeForToken = async ( auth_code: string ) => {
 		let response;
@@ -78,11 +93,7 @@ const GitHubLoginButton = ( {
 				);
 			}
 
-			dispatch(
-				errorNotice(
-					translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
-				)
-			);
+			handleGitHubError();
 			return;
 		}
 
@@ -114,7 +125,11 @@ const GitHubLoginButton = ( {
 		}
 	}, [ code, service, userHasDisconnected ] );
 
-	const isDisabled = isFormDisabled || disabledState;
+	useEffect( () => {
+		if ( authError ) {
+			handleGitHubError();
+		}
+	}, [ authError, handleGitHubError ] );
 
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
 		errorRef.current = e.currentTarget;
@@ -125,31 +140,23 @@ const GitHubLoginButton = ( {
 		}
 
 		const scope = encodeURIComponent( 'read:user,user:email' );
-		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-redirect?redirect_uri=${ stripQueryString(
+		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?redirect_uri=${ stripQueryString(
 			redirectUri
 		) }&scope=${ scope }&ux_mode=redirect`;
 	};
 
 	const eventHandlers = {
 		onClick: handleClick,
-		onMouseEnter: () => setShowError( true ),
-		onMouseLeave: () => setShowError( false ),
 	};
 
 	let customButton = null;
 	if ( children ) {
 		const childProps = {
-			className: classNames( { disabled: isDisabled } ),
+			className: clsx( { disabled: isDisabled } ),
 			...eventHandlers,
 		};
 
 		customButton = cloneElement( children as ReactElement, childProps );
-	}
-
-	// This feature is already gated inside client/blocks/authentication/social/index.tsx
-	// Adding an extra check here to prevent accidental inclusions in other parts of the app
-	if ( ! config.isEnabled( 'login/github' ) ) {
-		return;
 	}
 
 	return (
@@ -158,7 +165,7 @@ const GitHubLoginButton = ( {
 				customButton
 			) : (
 				<button
-					className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+					className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
 					{ ...eventHandlers }
 				>
 					<GitHubIcon isDisabled={ isDisabled } />
@@ -172,16 +179,6 @@ const GitHubLoginButton = ( {
 					</span>
 				</button>
 			) }
-			<Popover
-				id="social-buttons__error"
-				className="social-buttons__error"
-				isVisible={ showError }
-				onClose={ () => setShowError( false ) }
-				position="top"
-				context={ errorRef.current }
-			>
-				{ preventWidows( errorState ) }
-			</Popover>
 		</>
 	);
 };

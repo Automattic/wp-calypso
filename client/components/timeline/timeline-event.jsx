@@ -1,11 +1,12 @@
 import { Button, CompactCard, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class TimelineEvent extends PureComponent {
 	static propTypes = {
+		className: PropTypes.string,
 		actionIsBusy: PropTypes.bool,
 		actionIsDisabled: PropTypes.bool,
 		actionIsPrimary: PropTypes.bool,
@@ -29,6 +30,7 @@ class TimelineEvent extends PureComponent {
 
 	render() {
 		const {
+			className,
 			actionIsBusy,
 			actionIsDisabled,
 			actionIsPrimary,
@@ -43,8 +45,8 @@ class TimelineEvent extends PureComponent {
 			moment,
 			onActionClick,
 		} = this.props;
-		const cardClasses = classNames( 'timeline-event', { 'is-disabled': disabled } );
-		const iconClasses = classNames( 'timeline-event__icon', iconBackground );
+		const cardClasses = clsx( 'timeline-event', className, { 'is-disabled': disabled } );
+		const iconClasses = clsx( 'timeline-event__icon', iconBackground );
 
 		return (
 			<CompactCard className={ cardClasses }>

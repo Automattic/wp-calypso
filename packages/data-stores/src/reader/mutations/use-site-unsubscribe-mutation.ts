@@ -54,7 +54,8 @@ const useSiteUnsubscribeMutation = () => {
 				isLoggedIn,
 				params.blog_id,
 				params.url,
-				params.emailId
+				params.emailId,
+				params.subscriptionId
 			);
 
 			const response = await callApi< UnsubscribeResponse >( {

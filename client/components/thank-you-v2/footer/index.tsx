@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { isOutsideCalypso } from 'calypso/lib/url';
 
 import './style.scss';
@@ -23,12 +23,12 @@ const ThankYouFooterDetail = ( {
 }: ThankYouFooterDetailProps ) => {
 	let button = null;
 
-	if ( buttonText && buttonHref && buttonOnClick ) {
-		const isExternal = isOutsideCalypso( buttonHref );
+	if ( buttonText && ( buttonHref || buttonOnClick ) ) {
+		const isExternal = buttonHref && isOutsideCalypso( buttonHref );
 		button = (
 			<Button
 				className="thank-you__footer-detail-button"
-				href={ localizeUrl( buttonHref ) }
+				href={ buttonHref && localizeUrl( buttonHref ) }
 				onClick={ buttonOnClick }
 				target={ isExternal ? '_blank' : '_self' }
 				rel={ isExternal ? 'noreferrer noopener' : '' }
@@ -56,7 +56,7 @@ type ThankYouFooterProps = {
 export default function ThankYouFooter( { details }: ThankYouFooterProps ) {
 	return (
 		<div
-			className={ classNames( 'thank-you__footer', {
+			className={ clsx( 'thank-you__footer', {
 				'has-multiple-details': details && details.length > 1,
 			} ) }
 		>

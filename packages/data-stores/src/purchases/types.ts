@@ -35,11 +35,13 @@ export interface Purchase {
 	isRefundable: boolean;
 	isRenewable: boolean;
 	isRenewal: boolean;
+	isWooExpressTrial: boolean;
 	meta?: string;
 	mostRecentRenewDate?: string;
 	ownershipId?: number;
 	partnerName: string | undefined;
 	partnerSlug: string | undefined;
+	partnerType: string | undefined;
 	payment: PurchasePayment | PurchasePaymentWithCreditCard | PurchasePaymentWithPayPal;
 	pendingTransfer: boolean;
 	priceText: string;
@@ -143,6 +145,16 @@ export interface Purchase {
 	tagLine: string;
 	taxAmount: number | string | undefined;
 	taxText: string | undefined;
+
+	/**
+	 * The coupon code that will automatically apply on the next renewal.
+	 */
+	autoRenewCouponCode: string | null;
+	/**
+	 * The discount percentage applied automatically by the coupon on the next renewal.
+	 * Example: If the discount is 10%, this will have the value `10`.
+	 */
+	autoRenewCouponDiscountPercentage: number | null;
 }
 
 export interface PurchasePriceTier {
@@ -164,6 +176,8 @@ export interface RawPurchase {
 	active: boolean;
 	amount: number | string;
 	attached_to_purchase_id: number | string;
+	auto_renew_coupon_code: string | null;
+	auto_renew_coupon_discount_percentage: number | null;
 	bill_period_days: number | string;
 	bill_period_label: string;
 	most_recent_renew_date: string;
@@ -195,10 +209,12 @@ export interface RawPurchase {
 	is_refundable: boolean;
 	is_renewable: boolean;
 	is_renewal: boolean;
+	is_woo_express_trial: boolean;
 	meta: string | undefined;
 	ownership_id: number | undefined;
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
+	partner_type: string | undefined;
 	partner_key_id: number | undefined;
 	payment_name: string;
 	payment_type:

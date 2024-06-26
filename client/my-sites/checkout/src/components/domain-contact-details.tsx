@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
-import RegistrantExtraInfoForm from 'calypso/components/domains/registrant-extra-info';
+import RegistrantExtraInfoCaForm from 'calypso/components/domains/registrant-extra-info/ca-form';
+import RegistrantExtraInfoFrForm from 'calypso/components/domains/registrant-extra-info/fr-form';
+import RegistrantExtraInfoUkForm from 'calypso/components/domains/registrant-extra-info/uk-form';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -34,7 +35,6 @@ export default function DomainContactDetails( {
 	isLoggedOutCart: boolean;
 	emailOnly?: boolean;
 } ) {
-	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const needsOnlyGoogleAppsDetails =
@@ -62,45 +62,33 @@ export default function DomainContactDetails( {
 				emailOnly={ emailOnly }
 			/>
 			{ tlds.includes( 'ca' ) && (
-				<RegistrantExtraInfoForm
+				<RegistrantExtraInfoCaForm
 					contactDetails={ contactDetails }
 					ccTldDetails={ contactDetails?.extra?.ca ?? {} }
 					onContactDetailsChange={ updateDomainContactFields }
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}
-					tld="ca"
-					getDomainNames={ () => domainNames }
-					translate={ translate }
-					isManaged={ true }
 				/>
 			) }
 			{ tlds.includes( 'uk' ) && (
-				<RegistrantExtraInfoForm
+				<RegistrantExtraInfoUkForm
 					contactDetails={ contactDetails }
 					ccTldDetails={ contactDetails?.extra?.uk ?? {} }
 					onContactDetailsChange={ updateDomainContactFields }
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}
-					tld="uk"
-					getDomainNames={ () => domainNames }
-					translate={ translate }
-					isManaged={ true }
 				/>
 			) }
 			{ tlds.includes( 'fr' ) && (
-				<RegistrantExtraInfoForm
+				<RegistrantExtraInfoFrForm
 					contactDetails={ contactDetails }
 					ccTldDetails={ contactDetails?.extra?.fr ?? {} }
 					onContactDetailsChange={ updateDomainContactFields }
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}
-					tld="fr"
-					getDomainNames={ () => domainNames }
-					translate={ translate }
-					isManaged={ true }
 				/>
 			) }
 			{ isVatSupported && (

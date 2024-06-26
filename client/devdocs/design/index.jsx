@@ -5,6 +5,7 @@ import Badge from '@automattic/components/src/badge/docs/example';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
 import Count from '@automattic/components/src/count/docs/example';
+import ExternalLink from '@automattic/components/src/external-link/docs/example';
 import FoldableCard from '@automattic/components/src/foldable-card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
 import ProductLogoExample from '@automattic/components/src/logos/docs/example';
@@ -17,7 +18,7 @@ import SelectDropdown from '@automattic/components/src/select-dropdown/docs/exam
 import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import Tooltip from '@automattic/components/src/tooltip/docs/example';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { trim } from 'lodash';
 import { Component, Fragment } from 'react';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
@@ -42,7 +43,6 @@ import DotPager from 'calypso/components/dot-pager/docs/example';
 import DropZones from 'calypso/components/drop-zone/docs/example';
 import EllipsisMenu from 'calypso/components/ellipsis-menu/docs/example';
 import EmptyContent from 'calypso/components/empty-content/docs/example';
-import ExternalLink from 'calypso/components/external-link/docs/example';
 import FAQ from 'calypso/components/faq/docs/example';
 import FeatureGate from 'calypso/components/feature-example/docs/example';
 import FeatureItem from 'calypso/components/feature-item/docs/example';
@@ -140,7 +140,7 @@ export default class DesignAssets extends Component {
 		const { component } = this.props;
 		const { filter } = this.state;
 
-		const className = classnames( 'devdocs', 'devdocs__components', {
+		const className = clsx( 'devdocs', 'devdocs__components', {
 			'is-single': this.props.component,
 			'is-list': ! this.props.component,
 		} );

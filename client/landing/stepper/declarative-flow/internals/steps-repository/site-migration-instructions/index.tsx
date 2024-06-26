@@ -1,37 +1,36 @@
+import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
-import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
+import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { Questions } from './questions';
+import { Sidebar } from './sidebar';
+import { SitePreview } from './site-preview';
 import type { Step } from '../../types';
+import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
+	const sidebar = <Sidebar />;
+
 	const stepContent = (
-		<div>
-			<p>Site migration instructions go here.</p>
-		</div>
+		<LaunchpadContainer sidebar={ sidebar }>
+			<SitePreview />
+		</LaunchpadContainer>
 	);
 
+	const questions = <Questions />;
+
 	return (
-		<>
-			<DocumentHead title="Site migration instructions" />
-			<StepContainer
-				stepName="site-migration-instructions"
-				shouldHideNavButtons={ false }
-				className="is-step-site-migration-instructions"
-				hideSkip={ true }
-				hideBack={ true }
-				isHorizontalLayout
-				formattedHeader={
-					<FormattedHeader
-						id="site-migration-instructions-header"
-						headerText="Site migration instructions"
-						align="left"
-					/>
-				}
-				stepContent={ stepContent }
-				recordTracksEvent={ recordTracksEvent }
-			/>
-		</>
+		<StepContainer
+			stepName="site-migration-instructions"
+			isFullLayout
+			hideFormattedHeader
+			className="is-step-site-migration-instructions site-migration-instructions--launchpad"
+			hideSkip
+			hideBack
+			stepContent={ stepContent }
+			recordTracksEvent={ recordTracksEvent }
+			customizedActionButtons={ questions }
+		/>
 	);
 };
 

@@ -23,7 +23,7 @@ export interface DeploymentRun {
 	started_on: string;
 	completed_on: string;
 	status: DeploymentRunStatus;
-	failure_code: string;
+	failure_code: string | null;
 	triggered_by_user_id: number;
 	metadata: Metadata;
 	code_deployment?: CodeDeploymentData;
@@ -33,6 +33,12 @@ export interface Metadata {
 	commit_message: string;
 	commit_sha: string;
 	job_id: number;
+	author: {
+		avatar_url: string;
+		id: number;
+		name: string;
+		profile_url: string;
+	};
 }
 
 export const useCodeDeploymentsRunsQuery = (

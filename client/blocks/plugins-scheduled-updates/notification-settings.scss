@@ -1,0 +1,24 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+.plugins-update-manager {
+	.notification-settings-form {
+		label {
+			font-size: $font-body-small;
+			font-weight: 500;
+			color: $studio-black;
+			margin-bottom: 0.5rem;
+		}
+
+		.components-text.info-msg {
+			font-size: $font-body-small;
+			color: $studio-gray-60;
+			line-height: 20px;
+			margin-bottom: 1rem;
+		}
+
+		.form-field {
+			margin-bottom: 1.25rem;
+		}
+	}
+}

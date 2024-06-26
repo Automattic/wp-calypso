@@ -18,7 +18,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { deleteInvite } from 'calypso/state/invites/actions';
 import { getAcceptedInvitesForSite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { Member } from '../types';
+import type { Member } from '@automattic/data-stores';
 import type { Invite } from 'calypso/my-sites/people/team-invites/types';
 
 interface Props {

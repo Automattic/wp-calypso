@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import PlanPrice from '@automattic/components/src/plan-price/docs/example';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { trim } from 'lodash';
 import { Component, Fragment } from 'react';
 import AllSites from 'calypso/blocks/all-sites/docs/example';
@@ -11,6 +11,7 @@ import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/exa
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
 import CalendarButton from 'calypso/blocks/calendar-button/docs/example';
 import CalendarPopover from 'calypso/blocks/calendar-popover/docs/example';
+import { CategoryPillNavigationExample } from 'calypso/blocks/category-pill-navigation/docs/example';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import CommentButtons from 'calypso/blocks/comment-button/docs/example';
 import PostComment from 'calypso/blocks/comments/docs/post-comment-example';
@@ -81,7 +82,7 @@ export default class AppComponents extends Component {
 	};
 
 	render() {
-		const className = classnames( 'devdocs', 'devdocs__blocks', {
+		const className = clsx( 'devdocs', 'devdocs__blocks', {
 			'is-single': this.props.component,
 			'is-list': ! this.props.component,
 		} );
@@ -174,6 +175,7 @@ export default class AppComponents extends Component {
 					<UpsellNudge />
 					<JetpackReviewPrompt readmeFilePath="jetpack-review-prompt" />
 					<ReaderJoinConversationDialogExample readmeFilePath="reader-join-conversation" />
+					<CategoryPillNavigationExample readmeFilePath="category-pill-navigation" />
 				</Collection>
 			</Main>
 		);

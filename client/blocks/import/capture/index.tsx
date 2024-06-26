@@ -1,11 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Title } from '@automattic/onboarding';
+import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { isSupportedImporterEngine } from 'calypso/lib/importer/importer-config';
 import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import ScanningStep from '../scanning';
 import { GoToStep } from '../types';
 import CaptureInput from './capture-input';
@@ -63,6 +65,7 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	onImportListClick,
 } ) => {
 	const currentUser = useSelector( getCurrentUser );
+	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	const isStartingPointEventTriggeredRef = useRef( false );
 	const [ url, setUrl ] = useState( initialUrl );
 	const {
@@ -72,6 +75,12 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 		isFetchedAfterMount,
 	} = useAnalyzeUrlQuery( url );
 	const showCapture = ! isAnalyzing || ( initialUrl && isFetchedAfterMount );
+
+	useEffect( () => {
+		if ( window && window.hj ) {
+			window.hj( 'trigger', 'importer_capture_step_2' );
+		}
+	}, [ detectedCountryCode ] );
 
 	const decideStepRedirect = () => {
 		if ( ! urlData ) {
@@ -91,7 +100,11 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 				break;
 
 			default:
-				stepSectionName = 'preview';
+				if ( ! isSupportedImporterEngine( urlData.platform ) ) {
+					stepSectionName = 'not';
+				} else {
+					stepSectionName = 'preview';
+				}
 				break;
 		}
 

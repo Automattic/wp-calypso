@@ -38,7 +38,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -77,7 +77,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -116,7 +116,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -155,7 +155,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -194,7 +194,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -233,7 +233,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -272,7 +272,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -312,7 +312,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -352,7 +352,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -362,5 +362,51 @@ describe( 'PurchaseMeta', () => {
 		);
 
 		expect( screen.getByText( /Never Expires/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'does render auto renew coupon details in the price column when a auto renew coupon has been applied', () => {
+		const store = createReduxStore(
+			{
+				purchases: {
+					data: [
+						{
+							ID: 1,
+							product_slug: 'business-bundle-3y',
+							bill_period_days: 1095,
+							auto_renew_coupon_code: 'test',
+							auto_renew_coupon_discount_percentage: 10,
+						},
+					],
+				},
+				sites: {
+					requestingAll: false,
+				},
+				currentUser: {
+					id: 1,
+					user: {
+						primary_blog: 'example',
+					},
+				},
+			},
+			( state ) => state
+		);
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect(
+			screen.getByText(
+				'Coupon code "test" has been applied for the next renewal for a 10% discount.'
+			)
+		).toBeInTheDocument();
 	} );
 } );

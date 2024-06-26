@@ -1,3 +1,4 @@
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import {
 	MigrationStatus,
 	type MigrationStatusError,
@@ -8,7 +9,9 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import ImportUsers from 'calypso/blocks/importer/wordpress/import-everything/import-users';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
+import AsyncLoad from 'calypso/components/async-load';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
@@ -137,11 +140,25 @@ export class ImportEverything extends SectionMigrate {
 		}
 
 		if (
+			prevState.migrationStatus !== MigrationStatus.DONE_USER &&
+			this.state.migrationStatus === MigrationStatus.DONE_USER
+		) {
+			this.props.recordTracksEvent( 'calypso_site_importer_import_users', trackEventProps );
+		}
+
+		if (
 			prevState.migrationStatus !== MigrationStatus.DONE &&
 			this.state.migrationStatus === MigrationStatus.DONE
 		) {
 			this.props.recordTracksEvent( 'calypso_site_importer_import_success', trackEventProps );
 		}
+	};
+
+	handleFreeTrial = () => {
+		this.props.stepNavigator?.goToCheckoutPage?.( 'everything', {
+			siteSlug: this.props.targetSiteSlug,
+			plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+		} );
 	};
 
 	renderLoading() {
@@ -192,6 +209,7 @@ export class ImportEverything extends SectionMigrate {
 					startImport={ this.startMigration }
 					navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
 					onContentOnlyClick={ onContentOnlySelection }
+					onFreeTrialClick={ this.handleFreeTrial }
 				/>
 			</>
 		);
@@ -212,13 +230,9 @@ export class ImportEverything extends SectionMigrate {
 
 	renderMigrationComplete() {
 		const { isMigrateFromWp } = this.props;
-		return (
-			<Hooray>
-				{ ! isMigrateFromWp
-					? this.renderDefaultHoorayScreen()
-					: this.renderHoorayScreenWithDomainInfo() }
-			</Hooray>
-		);
+		return ! isMigrateFromWp
+			? this.renderMigrationSuccessScreen()
+			: this.renderHoorayScreenWithDomainInfo();
 	}
 
 	renderMigrationError( status: MigrationStatusError | null = null ) {
@@ -239,21 +253,14 @@ export class ImportEverything extends SectionMigrate {
 		);
 	}
 
-	renderDefaultHoorayScreen() {
-		const { translate, stepNavigator } = this.props;
-
+	renderMigrationSuccessScreen() {
+		const { targetSite, recordTracksEvent } = this.props;
 		return (
-			<div className="import__heading import__heading-center">
-				<Title>{ translate( 'Hooray!' ) }</Title>
-				<SubTitle>
-					{ translate( 'Congratulations. Your content was successfully imported.' ) }
-				</SubTitle>
-				<DoneButton
-					label={ translate( 'View site' ) }
-					onSiteViewClick={ () => {
-						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
-						stepNavigator?.goToSiteViewPage?.();
-					} }
+			<div className="import__heading import__heading-center migration-success">
+				<AsyncLoad
+					targetSite={ targetSite }
+					recordTracksEvent={ recordTracksEvent }
+					require="./migration-success"
 				/>
 			</div>
 		);
@@ -262,35 +269,51 @@ export class ImportEverything extends SectionMigrate {
 	renderHoorayScreenWithDomainInfo() {
 		const { translate, stepNavigator, targetSite } = this.props;
 		return (
-			<div className="import__heading import__heading-center">
-				<Title>{ translate( "Migration done! You're all set!" ) }</Title>
-				<SubTitle>
-					{ createInterpolateElement(
-						translate(
-							'You have a temporary domain name on WordPress.com.<br />We recommend updating your domain name.'
-						),
-						{ br: createElement( 'br' ) }
-					) }
-				</SubTitle>
-				<DomainInfo domain={ targetSite.slug } />
-				<DoneButton
-					className="is-normal-width"
-					label={ translate( 'Update domain name' ) }
-					onSiteViewClick={ () => {
-						this.props.recordTracksEvent( 'calypso_site_importer_click_add_domain' );
-						stepNavigator?.goToAddDomainPage?.();
-					} }
-				/>
-				<DoneButton
-					className="is-normal-width"
-					label={ translate( 'View your dashboard' ) }
-					isPrimary={ false }
-					onSiteViewClick={ () => {
-						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
-						stepNavigator?.goToSiteViewPage?.();
-					} }
-				/>
-			</div>
+			<Hooray>
+				<div className="import__heading import__heading-center">
+					<Title>{ translate( "Migration done! You're all set!" ) }</Title>
+					<SubTitle>
+						{ createInterpolateElement(
+							translate(
+								'You have a temporary domain name on WordPress.com.<br />We recommend updating your domain name.'
+							),
+							{ br: createElement( 'br' ) }
+						) }
+					</SubTitle>
+					<DomainInfo domain={ targetSite.slug } />
+					<DoneButton
+						className="is-normal-width"
+						label={ translate( 'Update domain name' ) }
+						onSiteViewClick={ () => {
+							this.props.recordTracksEvent( 'calypso_site_importer_click_add_domain' );
+							stepNavigator?.goToAddDomainPage?.();
+						} }
+					/>
+					<DoneButton
+						className="is-normal-width"
+						label={ translate( 'View your dashboard' ) }
+						isPrimary={ false }
+						onSiteViewClick={ () => {
+							this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
+							stepNavigator?.goToSiteViewPage?.();
+						} }
+					/>
+				</div>
+			</Hooray>
+		);
+	}
+
+	renderMigratingUsers() {
+		const { targetSite } = this.props;
+		return (
+			<ImportUsers
+				site={ targetSite }
+				onSubmit={ () =>
+					this.setState( {
+						migrationStatus: 'done-user',
+					} )
+				}
+			/>
 		);
 	}
 
@@ -313,6 +336,9 @@ export class ImportEverything extends SectionMigrate {
 				return this.renderMigrationProgress();
 
 			case MigrationStatus.DONE:
+				return this.renderMigratingUsers();
+
+			case MigrationStatus.DONE_USER:
 				return this.renderMigrationComplete();
 
 			case MigrationStatus.ERROR:

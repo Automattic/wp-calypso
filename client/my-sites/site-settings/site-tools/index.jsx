@@ -4,10 +4,8 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { errorNotice } from 'calypso/state/notices/actions';
 import {
@@ -34,10 +32,6 @@ const trackDeleteSiteOption = ( option ) => {
 };
 
 class SiteTools extends Component {
-	state = {
-		showDialog: false,
-	};
-
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.purchasesError && this.props.purchasesError ) {
 			this.props.errorNotice( this.props.purchasesError );
@@ -151,11 +145,6 @@ class SiteTools extends Component {
 						description={ manageConnectionText }
 					/>
 				) }
-				<DeleteSiteWarningDialog
-					isVisible={ this.state.showDialog }
-					p2HubP2Count={ this.props?.p2HubP2Count }
-					onClose={ this.closeDialog }
-				/>
 			</div>
 		);
 	}
@@ -167,23 +156,6 @@ class SiteTools extends Component {
 	trackStartOver() {
 		trackDeleteSiteOption( 'start-over' );
 	}
-
-	checkForSubscriptions = ( event ) => {
-		trackDeleteSiteOption( 'delete-site' );
-		const { isAtomic, hasCancelablePurchases, p2HubP2Count } = this.props;
-
-		if ( isAtomic || ( ! hasCancelablePurchases && ! p2HubP2Count ) ) {
-			return true;
-		}
-
-		event.preventDefault();
-
-		this.setState( { showDialog: true } );
-	};
-
-	closeDialog = () => {
-		this.setState( { showDialog: false } );
-	};
 }
 
 export default compose( [
@@ -229,4 +201,4 @@ export default compose( [
 			errorNotice,
 		}
 	),
-] )( localize( withSiteCopy( withP2HubP2Count( SiteTools ) ) ) );
+] )( localize( withSiteCopy( SiteTools ) ) );

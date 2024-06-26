@@ -2,13 +2,10 @@ import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
-import styled from '@emotion/styled';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -34,35 +31,8 @@ export function CheckoutSidebarPlanUpsell() {
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
+
 	const variants = useGetProductVariants( plan );
-	const translate = useTranslate();
-
-	const PromoCardV2 = styled.div`
-		position: relative;
-		background-color: #bbe0fa;
-		border-radius: 4px;
-		font-size: 12px;
-		font-weight: 500;
-		align-self: flex-end;
-
-		p {
-			margin: 0;
-			padding: 8px 16px;
-		}
-
-		&:before {
-			background-color: #bbe0fa;
-			display: block;
-			top: -5px;
-			content: '';
-			height: 8px;
-			right: 8%;
-			margin-left: -4px;
-			position: absolute;
-			transform: rotate( 225deg );
-			width: 8px;
-		}
-	`;
 
 	function isBusy() {
 		// If the FormStatus is SUBMITTING and the user has not clicked this button, we want to return false for isBusy
@@ -82,10 +52,15 @@ export function CheckoutSidebarPlanUpsell() {
 		debug( 'no plan found in cart' );
 		return null;
 	}
-
+	const annualVariant = variants?.find( ( product ) => product.termIntervalInMonths === 12 );
 	const biennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 24 );
 	const triennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 36 );
 	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
+
+	if ( ! annualVariant ) {
+		debug( 'plan in cart has no annual variant; variants are', variants );
+		return null;
+	}
 
 	if ( ! biennialVariant ) {
 		debug( 'plan in cart has no biennial variant; variants are', variants );
@@ -97,7 +72,7 @@ export function CheckoutSidebarPlanUpsell() {
 		return null;
 	}
 
-	if ( biennialVariant.productId === plan.product_id ) {
+	if ( biennialVariant.productId === plan?.product_id ) {
 		debug( 'plan in cart is already biennial' );
 		return null;
 	}
@@ -113,10 +88,27 @@ export function CheckoutSidebarPlanUpsell() {
 		if ( isFormLoading ) {
 			return;
 		}
-		const newPlan = {
-			product_slug: biennialVariant.productSlug,
-			product_id: biennialVariant.productId,
-		};
+
+		let newPlan;
+
+		if ( currentVariant.termIntervalInMonths === 1 ) {
+			newPlan = {
+				product_slug: annualVariant.productSlug,
+				product_id: annualVariant.productId,
+			};
+		}
+
+		if ( currentVariant.termIntervalInMonths === 12 ) {
+			newPlan = {
+				product_slug: biennialVariant.productSlug,
+				product_id: biennialVariant.productId,
+			};
+		}
+
+		if ( ! newPlan ) {
+			return;
+		}
+
 		debug( 'switching from', plan.product_slug, 'to', newPlan.product_slug );
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_sidebar_upsell_click', {
@@ -160,72 +152,59 @@ export function CheckoutSidebarPlanUpsell() {
 		),
 		{ strong: createElement( 'strong' ) }
 	);
-
 	return (
 		<>
-			{ plan && hasCheckoutVersion( '2' ) ? (
-				<PromoCardV2>
-					<div className="checkout-sidebar-plan-upsell__v2-wrapper">
-						<p>
-							{ translate(
-								'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
-							) }
-						</p>
+			<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
+				<div className="checkout-sidebar-plan-upsell__plan-grid">
+					{ isComparisonWithIntroOffer && (
+						<>
+							<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
+							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+								<strong>{ __( 'Two-year cost' ) }</strong>
+							</div>
+						</>
+					) }
+					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+						{ currentVariant.variantLabel }
 					</div>
-				</PromoCardV2>
-			) : (
-				<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
-					<div className="checkout-sidebar-plan-upsell__plan-grid">
-						{ isComparisonWithIntroOffer && (
-							<>
-								<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
-								<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-									<strong>{ __( 'Two-year cost' ) }</strong>
-								</div>
-							</>
-						) }
-						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-							{ currentVariant.variantLabel }
-						</div>
-						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-							{ formatCurrency(
-								currentVariant.priceInteger +
-									( isComparisonWithIntroOffer ? currentVariant.priceBeforeDiscounts : 0 ),
-								currentVariant.currency,
-								{
-									stripZeros: true,
-									isSmallestUnit: true,
-								}
-							) }
-						</div>
-						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-							{ biennialVariant.variantLabel }
-						</div>
-						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-							{ compareToPriceForVariantTerm && (
-								<del className="checkout-sidebar-plan-upsell__do-not-pay">
-									{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
-										stripZeros: true,
-										isSmallestUnit: true,
-									} ) }
-								</del>
-							) }
-							{ formatCurrency( biennialVariant.priceInteger, biennialVariant.currency, {
+					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+						{ formatCurrency(
+							currentVariant.priceInteger +
+								( isComparisonWithIntroOffer ? currentVariant.priceBeforeDiscounts : 0 ),
+							currentVariant.currency,
+							{
 								stripZeros: true,
 								isSmallestUnit: true,
-							} ) }
-						</div>
+							}
+						) }
 					</div>
-					<PromoCardCTA
-						cta={ {
-							disabled: isFormLoading,
-							busy: isBusy(),
-							text: __( 'Switch to a two-year plan' ),
-							action: onUpgradeClick,
-						} }
-					/>
-				</PromoCard>
-			) }
+					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+						{ biennialVariant.variantLabel }
+					</div>
+					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+						{ compareToPriceForVariantTerm && (
+							<del className="checkout-sidebar-plan-upsell__do-not-pay">
+								{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
+									stripZeros: true,
+									isSmallestUnit: true,
+								} ) }
+							</del>
+						) }
+						{ formatCurrency( biennialVariant.priceInteger, biennialVariant.currency, {
+							stripZeros: true,
+							isSmallestUnit: true,
+						} ) }
+					</div>
+				</div>
+				<PromoCardCTA
+					cta={ {
+						disabled: isFormLoading,
+						busy: isBusy(),
+						text: __( 'Switch to a two-year plan' ),
+						action: onUpgradeClick,
+					} }
+				/>
+			</PromoCard>
 		</>
 	);
 }

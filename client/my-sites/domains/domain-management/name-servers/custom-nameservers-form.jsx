@@ -1,11 +1,11 @@
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
-import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

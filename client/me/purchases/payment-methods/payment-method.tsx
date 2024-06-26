@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { isCreditCard } from 'calypso/lib/checkout/payment-methods';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import PaymentMethodBackupToggle from 'calypso/me/purchases/payment-methods/payment-method-backup-toggle';
@@ -13,7 +13,7 @@ import 'calypso/me/purchases/payment-methods/style.scss';
 export default function PaymentMethod( { paymentMethod }: { paymentMethod: StoredPaymentMethod } ) {
 	return (
 		<CompactCard
-			className={ classNames( 'payment-method__wrapper', {
+			className={ clsx( 'payment-method__wrapper', {
 				'payment-method__wrapper--jetpack-cloud': isJetpackCloud(),
 			} ) }
 		>
@@ -26,6 +26,7 @@ export default function PaymentMethod( { paymentMethod }: { paymentMethod: Store
 					name={ paymentMethod.name }
 					expiry={ paymentMethod.expiry }
 					isExpired={ paymentMethod.is_expired }
+					razorpayVpa={ 'razorpay_vpa' in paymentMethod ? paymentMethod.razorpay_vpa : undefined }
 				/>
 				{ isCreditCard( paymentMethod ) && <PaymentMethodBackupToggle card={ paymentMethod } /> }
 				<TaxInfoArea

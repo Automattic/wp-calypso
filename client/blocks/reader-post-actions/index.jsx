@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
@@ -22,13 +22,9 @@ const ReaderPostActions = ( props ) => {
 	const showReblog = shouldShowReblog( post, hasSites );
 	const showComments = shouldShowComments( post );
 	const showLikes = shouldShowLikes( post );
-	const numberOfActions = [ showShare, showReblog, showComments, showLikes ].filter(
-		( item ) => item
-	).length;
 
-	const listClassnames = classnames( className, {
+	const listClassnames = clsx( className, {
 		'reader-post-actions': true,
-		'space-items-apart': numberOfActions > 2,
 	} );
 
 	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
@@ -80,7 +76,7 @@ const ReaderPostActions = ( props ) => {
 						site={ site }
 						fullPost={ fullPost }
 						tagName="button"
-						forceCounter={ true }
+						forceCounter
 						iconSize={ iconSize }
 						showZeroCount={ false }
 						likeSource="reader"

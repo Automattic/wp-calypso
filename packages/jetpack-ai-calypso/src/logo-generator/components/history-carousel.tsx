@@ -3,7 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 /**
  * Internal dependencies
  */
@@ -27,17 +27,27 @@ export const HistoryCarousel: React.FC = () => {
 		setSelectedLogoIndex( index );
 	};
 
+	const thumbnailFrom = ( url: string ): string => {
+		const thumbnailURL = new URL( url );
+
+		if ( ! thumbnailURL.searchParams.has( 'resize' ) ) {
+			thumbnailURL.searchParams.append( 'resize', '48,48' );
+		}
+
+		return thumbnailURL.toString();
+	};
+
 	return (
 		<div className="jetpack-ai-logo-generator__carousel">
 			{ logos.map( ( logo, index ) => (
 				<Button
 					key={ logo.url }
-					className={ classnames( 'jetpack-ai-logo-generator__carousel-logo', {
+					className={ clsx( 'jetpack-ai-logo-generator__carousel-logo', {
 						'is-selected': logo.url === selectedLogo.url,
 					} ) }
 					onClick={ () => handleClick( index ) }
 				>
-					<img src={ logo.url } alt={ logo.description } />
+					<img src={ thumbnailFrom( logo.url ) } alt={ logo.description } />
 				</Button>
 			) ) }
 		</div>

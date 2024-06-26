@@ -1,4 +1,6 @@
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { useCallback, useMemo } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -10,35 +12,43 @@ interface propTypes {
 	givenSiteId: string | number;
 }
 
-const tabs = { highlights: 'Highlights', opens: 'Email opens', clicks: 'Email clicks' };
-
-const navItems = (
-	postId: number,
-	period: string | undefined = 'day',
-	statType: string | undefined,
-	givenSiteId: string | number
-) => {
-	return Object.keys( tabs ).map( ( item ) => {
-		const selected = statType ? statType === item : 'highlights' === item;
-		const pathParam = [ 'opens', 'clicks' ].includes( item )
-			? `email/${ item }/${ period }`
-			: `post`;
-		const attr = {
-			key: item,
-			path: `/stats/${ pathParam }/${ postId }/${ givenSiteId }`,
-			selected,
-		};
-		const label = tabs[ item as keyof typeof tabs ];
-
-		// uppercase first character of item
-		return <NavItem { ...attr }>{ label }</NavItem>;
-	} );
-};
-
 function StatsDetailsNavigation( { postId, period, statType, givenSiteId }: propTypes ) {
+	const translate = useTranslate();
+	const tabs = useMemo(
+		() => ( {
+			highlights: translate( 'Highlights' ),
+			opens: translate( 'Email opens' ),
+			clicks: translate( 'Email clicks' ),
+		} ),
+		[ translate ]
+	) as { [ key: string ]: string };
+
+	const selectedTab = statType ? statType : 'highlights';
+
+	const navItems = useCallback(
+		( postId: number, period: string | undefined = 'day', givenSiteId: string | number ) => {
+			return Object.keys( tabs ).map( ( item ) => {
+				const selected = selectedTab === item;
+				const pathParam = [ 'opens', 'clicks' ].includes( item )
+					? `email/${ item }/${ period }`
+					: `post`;
+				const attr = {
+					key: item,
+					path: `/stats/${ pathParam }/${ postId }/${ givenSiteId }`,
+					selected,
+				};
+				const label = tabs[ item as keyof typeof tabs ];
+
+				// uppercase first character of item
+				return <NavItem { ...attr }>{ label }</NavItem>;
+			} );
+		},
+		[ tabs, selectedTab ]
+	);
+
 	return (
-		<SectionNav>
-			<NavTabs label="Stats">{ navItems( postId, period, statType, givenSiteId ) }</NavTabs>
+		<SectionNav selectedText={ tabs[ selectedTab ] }>
+			<NavTabs label="Stats">{ navItems( postId, period, givenSiteId ) }</NavTabs>
 		</SectionNav>
 	);
 }

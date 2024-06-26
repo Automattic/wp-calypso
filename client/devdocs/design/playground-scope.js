@@ -4,8 +4,10 @@ export {
 	Card,
 	Count,
 	CompactCard,
+	ExternalLink,
 	FormInputValidation,
 	Gridicon,
+	MaterialIcon,
 	Popover,
 	ProgressBar,
 	Ribbon,
@@ -40,7 +42,6 @@ export { default as DiffViewer } from 'calypso/components/diff-viewer';
 export { default as DropZones } from 'calypso/components/drop-zone';
 export { default as EllipsisMenu } from 'calypso/components/ellipsis-menu';
 export { default as EmptyContent } from 'calypso/components/empty-content';
-export { default as ExternalLink } from 'calypso/components/external-link';
 export { default as FAQ } from 'calypso/components/faq';
 export { default as FeatureGate } from 'calypso/components/feature-example';
 export { default as FilePickers } from 'calypso/components/file-picker';
@@ -83,7 +84,6 @@ export { default as LanguagePicker } from 'calypso/components/language-picker';
 export { default as Layout } from 'calypso/components/layout';
 export { default as ListEnd } from 'calypso/components/list-end';
 export { default as Main } from 'calypso/components/main';
-export { default as MaterialIcon } from 'calypso/components/material-icon';
 export { default as MarkedLines } from 'calypso/components/marked-lines';
 export { default as Notices } from 'calypso/components/notice';
 export { default as Pagination } from 'calypso/components/pagination';

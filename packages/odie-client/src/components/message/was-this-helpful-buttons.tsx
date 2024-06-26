@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../';
 import { noop, useOdieAssistantContext } from '../../context';
@@ -41,37 +41,37 @@ const WasThisHelpfulButtons = ( {
 		} );
 	};
 
-	const thumbsUpClasses = classnames( {
+	const thumbsUpClasses = clsx( {
 		'odie-feedback-component-button-icon-disabled': rated && disliked,
 		'odie-feedback-component-button-icon-pressed': rated && liked,
 	} );
 
-	const thumbsDownClasses = classnames( {
+	const thumbsDownClasses = clsx( {
 		'odie-feedback-component-button-icon-disabled': rated && liked,
 		'odie-feedback-component-button-icon-pressed': rated && disliked,
 	} );
 
-	const questionClasses = classnames( 'odie-feedback-component-question', {
+	const questionClasses = clsx( 'odie-feedback-component-question', {
 		'odie-question-out': rated,
 		'odie-question-hidden': rated,
 	} );
 
-	const thanksClasses = classnames( 'odie-feedback-component-thanks', {
+	const thanksClasses = clsx( 'odie-feedback-component-thanks', {
 		'odie-thanks-in': rated,
 		'odie-thanks-hidden': ! rated,
 	} );
 
-	const buttonLikedClasses = classnames( 'odie-feedback-component-button', {
+	const buttonLikedClasses = clsx( 'odie-feedback-component-button', {
 		'odie-feedback-component-button-liked-pressed': rated && liked,
 		'odie-feedback-component-button-liked-disabled': rated && disliked,
 	} );
 
-	const buttonDislikedClasses = classnames( 'odie-feedback-component-button', {
+	const buttonDislikedClasses = clsx( 'odie-feedback-component-button', {
 		'odie-feedback-component-button-disliked-pressed': rated && disliked,
 		'odie-feedback-component-button-disliked-disabled': rated && liked,
 	} );
 
-	const containerClasses = classnames( 'odie-feedback-component-container', {
+	const containerClasses = clsx( 'odie-feedback-component-container', {
 		'odie-question-collapse': rated,
 	} );
 

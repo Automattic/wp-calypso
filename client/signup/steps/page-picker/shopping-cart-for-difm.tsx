@@ -1,5 +1,8 @@
+import { BraveTick } from '@automattic/components/src/icons';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import LoadingLine from './loading-content';
 import useCartForDIFM, { CartItem } from './use-cart-for-difm';
 
@@ -142,6 +145,24 @@ const Total = styled.div`
 	}
 `;
 
+const StyledBraveTickIcon = styled( BraveTick )`
+	margin-inline-end: 6px;
+	path {
+		fill: var( --color-accent );
+	}
+`;
+
+const RefundText = styled.div`
+	display: flex;
+	width: 100%;
+	justify-content: flex-end;
+	margin-top: 8px;
+
+	@media ( max-width: 600px ) {
+		font-size: smaller;
+	}
+`;
+
 function DummyLineItem( {
 	productDisplayCost,
 	productOriginalName,
@@ -162,19 +183,21 @@ function DummyLineItem( {
 export default function ShoppingCartForDIFM( {
 	selectedPages,
 	isStoreFlow,
-	isExistingSite,
+	currentPlanSlug,
 }: {
 	selectedPages: string[];
 	isStoreFlow: boolean;
-	isExistingSite: boolean;
+	currentPlanSlug?: string | null;
 } ) {
 	const translate = useTranslate();
-	const { items, total, effectiveCurrencyCode, isFormattedCurrencyLoading } = useCartForDIFM(
+	const { items, total, isProductsLoading } = useCartForDIFM( {
 		selectedPages,
 		isStoreFlow,
-		isExistingSite
-	);
-	return isFormattedCurrencyLoading || effectiveCurrencyCode === null ? (
+		currentPlanSlug,
+	} );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || '';
+
+	return isProductsLoading ? (
 		<LoadingContainer>
 			<LoadingLine key="plan-placeholder" />
 			<LoadingLine key="difm-placeholder" />
@@ -185,16 +208,18 @@ export default function ShoppingCartForDIFM( {
 			<Cart>
 				<LineItemsWrapper>
 					{ items.map( ( item ) => (
-						<DummyLineItem
-							key={ item.productSlug }
-							{ ...item }
-							currencyCode={ effectiveCurrencyCode }
-						/>
+						<DummyLineItem key={ item.productSlug } { ...item } currencyCode={ currencyCode } />
 					) ) }
 
 					<Total>
 						<div>{ translate( 'Total' ) }</div>
 						<div className="page-picker__value">{ total }*</div>
+						<RefundText>
+							<StyledBraveTickIcon />
+							{ translate( '%(days)d-day money-back guarantee', {
+								args: { days: 14 },
+							} ) }
+						</RefundText>
 					</Total>
 				</LineItemsWrapper>
 				<div className="page-picker__disclaimer">

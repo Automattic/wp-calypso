@@ -1,3 +1,4 @@
+import { isWpComEcommercePlan } from '@automattic/calypso-products';
 import { useLaunchpad } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useDispatch as useWPDispatch } from '@wordpress/data';
@@ -109,14 +110,16 @@ export default function ThankYouPlanProduct( {
 			details={ expirationDate }
 			actions={
 				<>
-					<Button
-						isBusy={ letsWorkButtonBusy }
-						variant="primary"
-						href={ letsWorkHref }
-						onClick={ letsWorkButtonOnClick }
-					>
-						{ translate( 'Let’s work on the site' ) }
-					</Button>
+					{ ! isWpComEcommercePlan( purchase.productSlug ) && (
+						<Button
+							isBusy={ letsWorkButtonBusy }
+							variant="primary"
+							href={ letsWorkHref }
+							onClick={ letsWorkButtonOnClick }
+						>
+							{ translate( 'Let’s work on the site' ) }
+						</Button>
+					) }
 					<Button variant="secondary" href={ `/plans/my-plan/${ siteSlug }` }>
 						{ translate( 'Manage plan' ) }
 					</Button>

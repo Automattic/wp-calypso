@@ -5,7 +5,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import { MEDIA_QUERIES } from '../utils';
 import SitesTableRow from './sites-table-row';
 import SitesTableRowLoading from './sites-table-row-loading';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const N_LOADING_ROWS = 3;
 
@@ -26,6 +26,7 @@ const THead = styled.thead< { blockOffset: number } >( ( { blockOffset } ) => ( 
 		display: 'none',
 	},
 
+	backgroundColor: 'inherit',
 	position: 'sticky',
 	zIndex: 3,
 	insetBlockStart: `${ blockOffset }px`,
@@ -61,10 +62,8 @@ const SiteTh = styled.th( {
 	},
 } );
 
-const PlanTh = styled.th( {
-	[ MEDIA_QUERIES.wide ]: {
-		width: '15%',
-	},
+const StatusTh = styled.th( {
+	width: '140px',
 } );
 
 const StatsTh = styled.th( {
@@ -147,15 +146,15 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 			>
 				<Row>
 					<SiteTh>{ __( 'Site' ) }</SiteTh>
-					<PlanTh>{ __( 'Plan' ) }</PlanTh>
-					<th>{ __( 'Status' ) }</th>
+					<th>{ __( 'Plan' ) }</th>
+					<StatusTh>{ __( 'Status' ) }</StatusTh>
 					<th>{ __( 'Last Publish' ) }</th>
 					<StatsTh>
 						<StatsThInner>
 							<JetpackLogo size={ 16 } /> <span>{ __( 'Stats' ) }</span>
 						</StatsThInner>
 					</StatsTh>
-					<th style={ { width: '24px' } }></th>
+					<th style={ { width: '36px' } }></th>
 				</Row>
 			</THead>
 			<tbody>

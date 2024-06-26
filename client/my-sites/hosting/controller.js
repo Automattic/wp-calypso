@@ -1,10 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { createElement } from 'react';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import HostingActivate from './hosting-activate';
 import Hosting from './main';
 
@@ -35,6 +36,18 @@ export async function handleHostingPanelRedirect( context, next ) {
 	await waitForState( context );
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+	const isJetpackNonAtomic = ! isAtomicSite && !! site?.jetpack;
+
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		if ( isJetpackNonAtomic ) {
+			context.page.replace( `/overview/${ site?.slug }` );
+			return;
+		}
+		next();
+		return;
+	}
 
 	if ( isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ) ) {
 		page.redirect( '/hosting-config' );

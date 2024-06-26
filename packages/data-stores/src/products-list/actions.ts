@@ -1,6 +1,6 @@
-import type { ProductsList, ProductsListFailure } from './types';
+import type { RawAPIProductsList, ProductsListFailure } from './types';
 
-export const receiveProductsList = ( productsList: ProductsList ) => {
+export const receiveProductsList = ( productsList: RawAPIProductsList ) => {
 	return {
 		type: 'PRODUCTS_LIST_RECEIVE' as const,
 		productsList,

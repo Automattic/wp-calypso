@@ -4,8 +4,9 @@
 import { screen } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { MemoryRouter, useNavigate, useLocation } from 'react-router';
+import themeReducer from 'calypso/state/themes/reducer';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
-import type { Flow } from '../../internals/types';
+import type { Flow, ProvidedDependencies } from '../../internals/types';
 
 export const getFlowLocation = () => {
 	return {
@@ -14,17 +15,34 @@ export const getFlowLocation = () => {
 	};
 };
 
+export const getAssertionConditionResult = () => {
+	return JSON.parse( screen.getByTestId( 'assertionConditionResult' ).textContent || '{}' );
+};
+
+interface RenderFlowParams {
+	currentStep: string;
+	dependencies?: ProvidedDependencies;
+	currentURL?: string;
+	method: 'submit' | 'goBack' | null;
+	cancelDestination?: string;
+}
 /** Utility to render a flow for testing purposes */
 export const renderFlow = ( flow: Flow ) => {
-	const FakeStepRender = ( { currentStep, dependencies } ) => {
+	const FakeStepRender = ( { currentStep, dependencies, method } ) => {
 		const navigate = useNavigate();
 		const location = useLocation();
 		const fakeNavigate = ( pathname, state ) => navigate( pathname, { state } );
-		const { submit } = flow.useStepNavigation( currentStep, fakeNavigate );
+		const { submit, goBack } = flow.useStepNavigation( currentStep, fakeNavigate );
+		const assertionConditionResult = flow.useAssertConditions?.() || {};
 
 		useEffect( () => {
-			if ( submit ) {
-				submit( dependencies );
+			switch ( method ) {
+				case 'submit':
+					submit?.( dependencies );
+					break;
+				case 'goBack':
+					goBack?.();
+					break;
 			}
 		}, [] );
 
@@ -33,20 +51,53 @@ export const renderFlow = ( flow: Flow ) => {
 				<p data-testid="pathname">{ `${ location.pathname }${ location.search }` }</p>
 				<p data-testid="search">{ location.search }</p>
 				<p data-testid="state">{ JSON.stringify( location.state ) }</p>
+				{ assertionConditionResult && (
+					<p data-testid="assertionConditionResult">
+						{ JSON.stringify( assertionConditionResult ) }
+					</p>
+				) }
 			</>
 		);
 	};
 
 	// The Flow>useStepNavigation>submit function needs to be called from inside a component
-	const runUseStepNavigationSubmit = ( { currentStep, dependencies } ) => {
+	const runUseStepNavigation = ( {
+		currentURL = '/some-path?siteSlug=example.wordpress.com',
+		currentStep,
+		dependencies,
+		method,
+	}: RenderFlowParams ) => {
 		renderWithProvider(
-			<MemoryRouter initialEntries={ [ '/some-path?siteSlug=example.wordpress.com' ] }>
-				<FakeStepRender currentStep={ currentStep } dependencies={ dependencies } />
-			</MemoryRouter>
+			<MemoryRouter initialEntries={ [ currentURL ] }>
+				<FakeStepRender
+					currentStep={ currentStep }
+					dependencies={ dependencies }
+					method={ method }
+				/>
+			</MemoryRouter>,
+			{
+				initialState: { themes: { queries: [] }, currentUser: { id: 'some-id' } },
+				reducers: {
+					themes: themeReducer,
+				},
+			}
 		);
+	};
+
+	const runUseStepNavigationSubmit = ( params: Omit< RenderFlowParams, 'method' > ) =>
+		runUseStepNavigation( { ...params, method: 'submit' } );
+
+	const runUseStepNavigationGoBack = ( params: Omit< RenderFlowParams, 'method' > ) =>
+		runUseStepNavigation( { ...params, method: 'goBack' } );
+
+	const runUseAssertionCondition = ( params: Omit< RenderFlowParams, 'method' > ) => {
+		runUseStepNavigation( { ...params, method: null } );
+		return getAssertionConditionResult();
 	};
 
 	return {
 		runUseStepNavigationSubmit,
+		runUseStepNavigationGoBack,
+		runUseAssertionCondition,
 	};
 };

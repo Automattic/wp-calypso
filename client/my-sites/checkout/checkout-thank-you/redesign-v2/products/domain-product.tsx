@@ -1,4 +1,4 @@
-import { isDomainTransfer } from '@automattic/calypso-products';
+import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -40,6 +40,7 @@ type ThankYouDomainProductProps = {
 	isDomainOnly?: boolean;
 	siteSlug?: string | null;
 	currency?: string;
+	isGravatarDomain?: boolean;
 };
 
 export default function ThankYouDomainProduct( {
@@ -48,6 +49,7 @@ export default function ThankYouDomainProduct( {
 	isDomainOnly,
 	siteSlug,
 	currency,
+	isGravatarDomain,
 }: ThankYouDomainProductProps ) {
 	const translate = useTranslate();
 
@@ -62,6 +64,12 @@ export default function ThankYouDomainProduct( {
 
 	if ( purchase && isDomainTransfer( purchase ) ) {
 		actions = <DomainTransferSection purchase={ purchase } currency={ currency ?? 'USD' } />;
+	} else if ( isGravatarDomain ) {
+		actions = (
+			<Button variant="primary" href="https://gravatar.com/profile">
+				{ translate( 'Return to Gravatar' ) }
+			</Button>
+		);
 	} else if ( purchase?.blogId && siteSlug ) {
 		const createSiteHref = siteSlug && createSiteFromDomainOnly( siteSlug, purchase.blogId );
 		const createSiteProps = createSiteHref ? { href: createSiteHref } : { disabled: true };
@@ -90,9 +98,12 @@ export default function ThankYouDomainProduct( {
 		);
 	}
 
+	const isDomainConnection = purchase && isDomainMapping( purchase );
+
 	return (
 		<ThankYouProduct
 			name={ domainName }
+			details={ isDomainConnection ? translate( 'Domain connection' ) : undefined }
 			isFree={ purchase?.priceInteger === 0 }
 			actions={ actions }
 		/>

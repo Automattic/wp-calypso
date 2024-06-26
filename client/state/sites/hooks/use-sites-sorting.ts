@@ -7,13 +7,18 @@ const SEPARATOR = '-' as const;
 
 type SitesSorting = `${ SitesSortKey }${ typeof SEPARATOR }${ SitesSortOrder }`;
 
-const ALPHABETICAL_SORTING = {
+export const ALPHABETICAL_SORTING = {
 	sortKey: 'alphabetically',
 	sortOrder: 'asc',
 } as const;
 
-const MAGIC_SORTING = {
+export const MAGIC_SORTING = {
 	sortKey: 'lastInteractedWith',
+	sortOrder: 'desc',
+} as const;
+
+export const LAST_PUBLISHED_SORTING = {
+	sortKey: 'updatedAt',
 	sortOrder: 'desc',
 } as const;
 

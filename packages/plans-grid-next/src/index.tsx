@@ -1,5 +1,5 @@
 import { useRef } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import PlanButton from './components/plan-button';
@@ -10,21 +10,24 @@ import useGridPlanForSpotlight from './hooks/data-store/use-grid-plan-for-spotli
 import useGridPlans from './hooks/data-store/use-grid-plans';
 import useGridPlansForComparisonGrid from './hooks/data-store/use-grid-plans-for-comparison-grid';
 import useGridPlansForFeaturesGrid from './hooks/data-store/use-grid-plans-for-features-grid';
+import usePlanBillingDescription from './hooks/data-store/use-plan-billing-description';
+import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
+import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
 import useGridSize from './hooks/use-grid-size';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
 import type { ComparisonGridExternalProps, FeaturesGridExternalProps } from './types';
 import './style.scss';
 
 const WrappedComparisonGrid = ( {
-	selectedSiteId,
+	siteId,
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
+	useAction,
 	recordTracksEvent,
 	allFeaturesList,
 	intervalType,
 	isInSignup,
-	isLaunchPage,
 	currentSitePlanSlug,
 	selectedPlan,
 	selectedFeature,
@@ -32,6 +35,10 @@ const WrappedComparisonGrid = ( {
 	onStorageAddOnClick,
 	stickyRowOffset,
 	coupon,
+	className,
+	hideUnsupportedFeatures,
+	enableFeatureTooltips,
+	featureGroupMap,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -46,7 +53,7 @@ const WrappedComparisonGrid = ( {
 		] ),
 	} );
 
-	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__comparison-grid', {
+	const classNames = clsx( 'plans-grid-next', className, {
 		'is-small': 'small' === gridSize,
 		'is-smedium': 'smedium' === gridSize,
 		'is-medium': 'medium' === gridSize,
@@ -59,19 +66,22 @@ const WrappedComparisonGrid = ( {
 		<div ref={ gridContainerRef } className={ classNames }>
 			<PlansGridContextProvider
 				intent={ intent }
-				selectedSiteId={ selectedSiteId }
+				siteId={ siteId }
 				gridPlans={ gridPlans }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				coupon={ coupon }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				featureGroupMap={ featureGroupMap }
+				hideUnsupportedFeatures={ hideUnsupportedFeatures }
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					selectedSiteId={ selectedSiteId }
+					siteId={ siteId }
 					selectedPlan={ selectedPlan }
 					selectedFeature={ selectedFeature }
 					showUpgradeableStorage={ showUpgradeableStorage }
@@ -87,14 +97,19 @@ const WrappedComparisonGrid = ( {
 
 const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 	const {
-		selectedSiteId,
+		siteId,
 		intent,
 		gridPlans,
 		useCheckPlanAvailabilityForPurchase,
+		useAction,
 		recordTracksEvent,
 		allFeaturesList,
 		coupon,
 		isInAdmin,
+		className,
+		enableFeatureTooltips,
+		enableCategorisedFeatures,
+		featureGroupMap = {},
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -107,23 +122,26 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		] ),
 	} );
 
-	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__features-grid', {
+	const classNames = clsx( 'plans-grid-next', className, {
 		'is-small': 'small' === gridSize,
 		'is-medium': 'medium' === gridSize,
 		'is-large': 'large' === gridSize,
-		'is-visible': true,
 	} );
 
 	return (
 		<div ref={ gridContainerRef } className={ classNames }>
 			<PlansGridContextProvider
 				intent={ intent }
-				selectedSiteId={ selectedSiteId }
+				siteId={ siteId }
 				gridPlans={ gridPlans }
 				coupon={ coupon }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				enableCategorisedFeatures={ enableCategorisedFeatures }
+				featureGroupMap={ featureGroupMap }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>
@@ -156,4 +174,7 @@ export {
 	useGridPlansForFeaturesGrid,
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
+	usePlanBillingDescription,
+	usePlanFeaturesForGridPlans,
+	useRestructuredPlanFeaturesForComparisonGrid,
 };

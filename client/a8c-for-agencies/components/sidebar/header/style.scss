@@ -1,6 +1,11 @@
 // Rules in this file inspired by:
 // client/components/jetpack/profile-dropdown/style.scss
 
+.a4a-sidebar__header {
+	display: flex;
+	justify-content: space-between;
+}
+
 .a4a-sidebar__profile-dropdown {
 	position: relative;
 }
@@ -25,7 +30,15 @@
 	justify-content: center;
 	align-items: flex-start;
 	gap: 4px;
+	color: var(--color-sidebar-text);
+}
 
+.a4a-sidebar__profile-dropdown-button-label-text {
+	max-width: 160px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: relative;
 }
 
 html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
@@ -57,11 +70,11 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 	padding: 8px;
 
 	background: var(--color-surface);
-	border: 1px solid var(--studio-gray-0);
-	border-radius: 2px;
+	border: 1px solid var(--color-accent-0);
+	border-radius: 4px;
 	box-shadow:
-		0 4px 6px rgba(var(--studio-gray-100-rgb), 0.1),
-		0 1px 2px rgba(var(--studio-gray-100-rgb), 0.1);
+		0 4px 6px rgba(var(--color-accent-100-rgb), 0.1),
+		0 1px 2px rgba(var(--color-accent-100-rgb), 0.1);
 	list-style-type: none;
 
 	font-size: $font-body-small;
@@ -78,7 +91,13 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 
 	&:hover,
 	&:focus {
-		background: var(--color-sidebar-menu-hover-background);
+		background: var(--wp-components-color-accent);
+
+		a.button.is-borderless,
+		button.button.is-borderless {
+			color: var(--color-text-inverted);
+			fill: var(--color-text-inverted);
+		}
 	}
 
 	a,
@@ -89,7 +108,7 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 		width: 100%;
 		height: 100%;
 
-		color: var(--color-text);
+		color: var(--color-sidebar-text);
 	}
 
 	.button {
@@ -105,6 +124,12 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 			padding-inline: 8px;
 		}
 	}
+
+	a svg.gridicon.gridicons-external {
+		width: 18px;
+		height: 18px;
+		top: 2px;
+	}
 }
 
 a.a4a-sidebar__external-link {
@@ -119,4 +144,8 @@ a.a4a-sidebar__external-link {
 		position: absolute;
 		inset-inline-end: 16px;
 	}
+}
+
+.a4a-sidebar__profile-dropdown-button-label svg {
+	fill: var(--color-sidebar-text);
 }

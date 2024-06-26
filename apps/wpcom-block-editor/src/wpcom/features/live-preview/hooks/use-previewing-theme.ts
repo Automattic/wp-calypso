@@ -1,4 +1,8 @@
-import { getPlan, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	getPlanBusinessTitle,
+	getPlanPersonalTitle,
+	getPlanPremiumTitle,
+} from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from 'react';
 import wpcom from 'calypso/lib/wp';
@@ -64,13 +68,13 @@ export const usePreviewingTheme = () => {
 	let previewingThemePlan;
 	switch ( previewingThemeType ) {
 		case WOOCOMMERCE_THEME:
-			previewingThemePlan = getPlan( PLAN_BUSINESS )?.getTitle();
+			previewingThemePlan = getPlanBusinessTitle();
 			break;
 		case PREMIUM_THEME:
-			previewingThemePlan = getPlan( PLAN_PREMIUM )?.getTitle();
+			previewingThemePlan = getPlanPremiumTitle();
 			break;
 		case PERSONAL_THEME:
-			previewingThemePlan = getPlan( PLAN_PERSONAL )?.getTitle();
+			previewingThemePlan = getPlanPersonalTitle();
 			break;
 	}
 

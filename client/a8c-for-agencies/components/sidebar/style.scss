@@ -4,24 +4,17 @@
 // This file is meant to house style rules that all implementations of the base
 // sidebar will implement by default.
 .a4a-sidebar {
-	background-color: var(--color-sidebar-background);
+	--color-sidebar-background: var(--color-primary-100);
+	--color-sidebar-menu-hover-background: var(--color-primary-80);
+	--color-sidebar-menu-hover-text: var(--color-text-inverted);
+	--color-sidebar-menu-selected-background: var(--color-primary-80);
+	--color-sidebar-menu-selected-text: var(--color-text-inverted);
+	--color-sidebar-text: var(--color-text-inverted);
+	--color-sidebar-text-alternative: var(--color-primary-5);
+	--color-sidebar-gridicon-fill: var(--color-primary-5);
 
 	.a4a-sidebar__site-selector {
 		background-color: var(--color-sidebar-background);
-	}
-
-	.sidebar-v2__menu-item {
-		svg {
-			color: var(--color-sidebar-text);
-		}
-		&.is-active {
-			background: var(--color-sidebar-menu-selected-background);
-			color: var(--color-sidebar-menu-selected-text);
-
-			svg {
-				color: var(--color-sidebar-menu-selected-text);
-			}
-		}
 	}
 
 	.sidebar__menu-icon {

@@ -67,6 +67,6 @@ export const DomainName = styled.div`
 	overflow-wrap: break-word;
 	max-width: 100%;
 	@media ( min-width: 780px ) {
-		max-width: 50%;
+		max-width: 54%;
 	}
 `;

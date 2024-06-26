@@ -119,7 +119,7 @@ export default function ToggleActivateMonitoring( {
 					borderless
 					compact
 					onClick={ handleToggleNotificationSettings }
-					disabled={ isLoading }
+					disabled={ isLoading || site.sticker?.includes( 'migration-in-progress' ) }
 					aria-label={
 						translate(
 							'The current notification schedule is set to %(currentSchedule)s. Click here to update the settings',
@@ -147,8 +147,8 @@ export default function ToggleActivateMonitoring( {
 		<ToggleControl
 			onChange={ handleToggleActivateMonitoring }
 			checked={ isChecked }
-			disabled={ site.is_atomic || isLoading || siteError }
-			label={ ! site.is_atomic && isChecked && currentSettings() }
+			disabled={ isLoading || siteError || site.sticker?.includes( 'migration-in-progress' ) }
+			label={ isChecked && currentSettings() }
 		/>
 	);
 

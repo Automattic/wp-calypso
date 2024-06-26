@@ -5,9 +5,8 @@ import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
-import { Moment } from 'moment';
+import moment from 'moment';
 import { Fragment, useMemo } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useSelector } from 'calypso/state';
@@ -26,18 +25,16 @@ import './style.scss';
 interface Props {
 	campaign: Campaign;
 }
-const getCampaignEndText = ( end_date: Moment, status: string ) => {
-	if (
-		[ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.REJECTED ].includes( status )
-	) {
+
+const getCampaignEndText = ( end_date: string, status: string, is_evergreen = 0 ) => {
+	if ( is_evergreen && [ campaignStatus.APPROVED, campaignStatus.ACTIVE ].includes( status ) ) {
+		return __( 'Until stopped' );
+	} else if ( ! end_date ) {
 		return '-';
-	} else if ( [ campaignStatus.APPROVED, campaignStatus.ACTIVE ].includes( status ) ) {
-		return __( 'Ongoing' );
-	} else if ( [ campaignStatus.CANCELED, campaignStatus.FINISHED ].includes( status ) ) {
-		// return moment in format similar to 27 June
-		return end_date.format( 'D MMMM' );
 	}
-	return '-';
+
+	// return moment in format similar to 27 June
+	return moment( end_date ).format( 'D MMMM' );
 };
 
 export default function CampaignItem( props: Props ) {
@@ -51,6 +48,7 @@ export default function CampaignItem( props: Props ) {
 		start_date,
 		campaign_stats,
 		type,
+		is_evergreen,
 	} = campaign;
 
 	const clicks_total = campaign_stats?.clicks_total ?? 0;
@@ -63,20 +61,40 @@ export default function CampaignItem( props: Props ) {
 		? `${ conversion_rate_percentage.toFixed( 2 ) }%`
 		: '-';
 
-	const moment = useLocalizedMoment();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const safeUrl = safeImageUrl( content_config.imageUrl );
 	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 
-	const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
-		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
-		[ budget_cents, end_date, spent_budget_cents, start_date ]
+	const { totalBudget, campaignDays } = useMemo(
+		() =>
+			getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents, is_evergreen ),
+		[ budget_cents, end_date, spent_budget_cents, start_date, is_evergreen ]
 	);
 
-	const budgetString =
-		campaignDays && totalBudgetLeft ? `$${ formatCents( totalBudgetLeft ) } ` : '-';
-	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
+	let budgetString = '-';
+	let budgetStringMobile = '';
+	if ( is_evergreen && campaignDays ) {
+		/* translators: Daily average spend. dailyAverageSpending is the budget */
+		budgetString = sprintf(
+			/* translators: %s is a formatted amount */
+			translate( '$%s weekly' ),
+			formatCents( totalBudget )
+		);
+		budgetStringMobile = sprintf(
+			/* translators: %s is a formatted amount */
+			translate( '$%s weekly budget' ),
+			totalBudget
+		);
+	} else if ( campaignDays ) {
+		budgetString = `$${ formatCents( totalBudget ) }`;
+		budgetStringMobile = sprintf(
+			/* translators: %s is a formatted amount */
+			translate( '$%s budget' ),
+			totalBudget
+		);
+	}
+
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	const getPostType = ( type: string ) => {
@@ -178,7 +196,9 @@ export default function CampaignItem( props: Props ) {
 				<div>{ statusBadge }</div>
 			</td>
 			<td className="campaign-item__ends">
-				<div>{ getCampaignEndText( moment( campaign.end_date ), campaign.status ) }</div>
+				<div>
+					{ getCampaignEndText( campaign.end_date, campaign.status, campaign?.is_evergreen ) }
+				</div>
 			</td>
 			<td className="campaign-item__budget">
 				<div>{ budgetString }</div>
@@ -197,7 +217,6 @@ export default function CampaignItem( props: Props ) {
 
 			<td className="campaign-item__action">
 				<Button
-					variant="secondary"
 					isBusy={ false }
 					disabled={ false }
 					onClick={ navigateToDetailsPage }

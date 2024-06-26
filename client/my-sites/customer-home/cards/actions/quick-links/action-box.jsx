@@ -1,6 +1,5 @@
-import { CompactCard, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
-import MaterialIcon from 'calypso/components/material-icon';
+import { CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
+import clsx from 'clsx';
 
 const ActionBox = ( {
 	href,
@@ -33,7 +32,7 @@ const ActionBox = ( {
 	return (
 		<CompactCard
 			{ ...buttonAction }
-			className={ classnames( 'quick-links__action-box', {
+			className={ clsx( 'quick-links__action-box', {
 				'quick-links__action-box__hide-link-indicator': hideLinkIndicator,
 			} ) }
 		>

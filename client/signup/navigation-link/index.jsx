@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -85,7 +85,17 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const { flowName, signupProgress, stepName, userLoggedIn, queryParams } = this.props;
+		const fallbackQueryParams = window.location.search
+			? Object.fromEntries( new URLSearchParams( window.location.search ).entries() )
+			: undefined;
+
+		const {
+			flowName,
+			signupProgress,
+			stepName,
+			userLoggedIn,
+			queryParams = fallbackQueryParams,
+		} = this.props;
 		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
 		const stepSectionName = get(
@@ -169,11 +179,7 @@ export class NavigationLink extends Component {
 			text = labelText ? labelText : translate( 'Skip for now' );
 		}
 
-		const buttonClasses = classnames(
-			'navigation-link',
-			this.props.direction,
-			this.props.cssClass
-		);
+		const buttonClasses = clsx( 'navigation-link', this.props.direction, this.props.cssClass );
 
 		const hrefUrl =
 			this.props.direction === 'forward' && this.props.forwardUrl

@@ -1,0 +1,243 @@
+.github-deployments-deployment-style {
+	box-sizing: border-box;
+	border-radius: 2px;
+	width: 100%;
+	height: fit-content;
+
+	&__repository {
+		label {
+			margin-bottom: 0;
+		}
+	}
+
+	.hosting-card__heading {
+		.hosting-card__title {
+			flex: unset;
+		}
+
+		.support-info {
+			height: 24px;
+			margin: 0;
+			margin-inline-start: -8px;
+			transform: translateY(2.5px);
+		}
+	}
+
+	.foldable-card {
+		overflow: hidden;
+
+		&__header {
+			min-height: auto !important;
+			padding: 12px;
+			display: flex;
+			align-items: center;
+		}
+		&__main {
+			flex: none;
+		}
+		&__action {
+			display: none;
+		}
+		&__content {
+			background-color: var(--studio-gray-0);
+			pre {
+				margin: 0;
+				padding: 0;
+				background: transparent;
+			}
+			.language-yaml {
+				color: var(--studio-wordpress-blue-60) !important;
+				text-wrap: pretty;
+			}
+			.token.key.atrule {
+				color: var(--studio-green) !important;
+			}
+		}
+	}
+
+	.advanced-option-error {
+		margin-left: -2px;
+	}
+
+	.card,
+	.foldable-card {
+		border-radius: 4px;
+
+		.foldable-card__main svg {
+			margin-right: 8px;
+		}
+
+		&.is-error {
+			box-shadow: 0 0 0 1px var(--color-error);
+			border: none;
+		}
+
+		&.is-error.is-expanded {
+			.foldable-card__header {
+				border-bottom: 1px solid var(--color-error);
+			}
+		}
+
+		.custom-icons {
+			margin-right: 6px;
+			border-radius: 50%;
+			color: #fff;
+			fill: #fff;
+
+			&.success {
+				background: var(--studio-green);
+			}
+			&.error {
+				background: var(--studio-red);
+			}
+		}
+	}
+
+	&__actions {
+		margin-top: 16px;
+
+		.form-button {
+			margin-right: 8px;
+		}
+	}
+
+	.form-radio:disabled {
+		opacity: 0.1;
+		background: transparent;
+		border-color: var(--studio-black);
+	}
+
+	.form-radios-bar .form-label:last-of-type {
+		margin-bottom: 0;
+	}
+
+	.form-radios-bar .form-label {
+		font-size: 0.875rem;
+		font-weight: 400;
+	}
+
+	.form-fieldset {
+		> .spinner {
+			margin-bottom: 1.5em;
+		}
+
+		.form-label {
+			display: inline-flex;
+			margin-top: 16px;
+			font-weight: 500;
+			color: var(--studio-black);
+		}
+	}
+
+	.support-info {
+		float: none;
+		display: inline-block;
+		margin-left: 4px;
+	}
+
+	&__workflow-select {
+		margin-top: 8px;
+	}
+
+	.form-input-validation.is-error {
+		padding: 0;
+		padding-top: 8px;
+		svg {
+			margin-left: 0;
+			margin-right: 5px;
+			transform: scale(1, -1);
+		}
+	}
+
+	.components-select-control.is-error {
+		.components-input-control__backdrop {
+			border-color: var(--color-error);
+		}
+	}
+
+	.hide-new-workflow {
+		display: none;
+	}
+
+	&__workflow-checks {
+		.form-input-validation.is-error {
+			margin-top: -8px;
+			margin-bottom: 16px;
+		}
+
+		&.form-fieldset {
+			margin-top: 24px;
+		}
+
+		&.form-fieldset .form-label {
+			margin-top: 0;
+		}
+
+		&.workflow-content pre {
+			overflow: auto;
+			max-height: 660px;
+
+			::-webkit-scrollbar {
+				width: 0.1rem !important;
+			}
+		}
+	}
+
+	&__workflow-selection {
+		.select-dropdown__container {
+			width: 100%;
+		}
+
+		.select-dropdown__header {
+			font-weight: normal;
+		}
+	}
+
+	&__workflow-recipes {
+		font-size: $font-body-small;
+		font-style: italic;
+		color: var(--color-text-subtle);
+		margin-top: 5px;
+
+		a {
+			color: var(--color-text-subtle);
+			text-decoration: underline;
+		}
+	}
+}
+
+.github-deployments-new-workflow-wizard {
+	.code-highlighter {
+		border: 1px solid var(--gray-gray-5, #dcdcde);
+	}
+
+	&__workflow-file {
+		border: 1px solid var(--gray-gray-5, #dcdcde);
+		border-radius: 2px;
+	}
+
+	&__workflow-file-name {
+		height: 48px;
+		display: flex;
+		align-items: center;
+		padding-left: 16px;
+		background-color: var(--studio-white);
+		border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
+
+		span {
+			color: var(--Gray-Gray-100, #101517);
+			font-family: monospace;
+			font-size: $font-body-extra-small;
+			font-style: normal;
+			font-weight: 400;
+			line-height: normal;
+			letter-spacing: -0.15px;
+		}
+	}
+}
+
+.github-deployments-deployments-style-popover {
+	.popover__inner {
+		max-width: 300px !important;
+	}
+}

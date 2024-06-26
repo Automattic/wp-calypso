@@ -2,6 +2,7 @@ import { calculateMonthlyPriceForPlan, getPlan, Plan } from '@automattic/calypso
 import formatCurrency from '@automattic/format-currency';
 import { useEffect, useState } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import config from '../config';
 import { ApiPricingPlan } from '../types.js';
@@ -56,9 +57,13 @@ const usePricingPlans = () => {
 		const fetchPlans = async () => {
 			setIsLoading( true );
 			setError( null );
+			const url = addQueryArgs( '/plans', {
+				locale: config.locale,
+				eligible_request_for_experiment: true, // Required for plan name change experiment, check pcNC1U-18h-p2
+			} );
 			try {
 				const data: ApiPricingPlan[] = await wpcomRequest( {
-					path: '/plans?locale=' + config.locale,
+					path: url,
 					apiVersion: '1.5',
 				} );
 				setPlans( parsePlans( data ) );

@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -145,9 +145,7 @@ const ProfessionalEmailUpsell = ( {
 							} ) }
 						</h1>
 						<h3 className="professional-email-upsell__small-subtitle">
-							{ i18n.hasTranslation( 'No setup required. Easy to manage.' )
-								? translate( 'No setup required. Easy to manage.' )
-								: null }
+							{ translate( 'No setup required. Easy to manage.' ) }
 						</h3>
 						<BillingIntervalToggle
 							intervalLength={ selectedIntervalLength }

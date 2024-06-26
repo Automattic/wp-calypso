@@ -4,16 +4,20 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Spinner, GMClosureNotice } from '@automattic/components';
-import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
+import { getPlan } from '@automattic/calypso-products';
+import { Spinner, GMClosureNotice, FormInputValidation } from '@automattic/components';
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
+import { useGetOdieStorage, useSetOdieStorage } from '@automattic/odie-client';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
-import { FC } from 'react';
+import clsx from 'clsx';
+import { FC, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -21,38 +25,28 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from '..';
 import {
 	useChatStatus,
-	useShouldRenderChatOption,
+	useChatWidget,
 	useShouldRenderEmailOption,
 	useStillNeedHelpURL,
 	useZendeskMessaging,
 } from '../hooks';
-import { Mail, Forum } from '../icons';
+import { Mail } from '../icons';
+import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
+import type { HelpCenterSite } from '@automattic/data-stores';
 
-const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
-	if ( active ) {
-		return <Link { ...props } />;
-	}
-	return <span { ...props }></span>;
-};
-
-const noop = () => {};
-type ContactOption = 'chat' | 'forum' | 'email';
+type ContactOption = 'chat' | 'email';
 const generateContactOnClickEvent = (
 	contactOption: ContactOption,
-	contactOptionEventName?: string,
-	onClick?: () => void
+	contactOptionEventName?: string
 ): ( () => void ) => {
-	if ( ! onClick || ! contactOptionEventName ) {
-		return noop;
-	}
-
 	return () => {
-		recordTracksEvent( contactOptionEventName, {
-			location: 'help-center',
-			contact_option: contactOption,
-		} );
-		onClick();
+		if ( contactOptionEventName ) {
+			recordTracksEvent( contactOptionEventName, {
+				location: 'help-center',
+				contact_option: contactOption,
+			} );
+		}
 	};
 };
 
@@ -73,15 +67,14 @@ type HelpCenterContactPageProps = {
 
 export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	hideHeaders = false,
-	onClick,
 	trackEventName,
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
+	const isEnglishLocale = useIsEnglishLocale();
 	const renderEmail = useShouldRenderEmailOption();
 	const {
 		hasActiveChats,
-		isChatAvailable,
 		isEligibleForChat,
 		isLoading: isLoadingChatStatus,
 		supportActivity,
@@ -91,10 +84,22 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		isEligibleForChat || hasActiveChats,
 		isEligibleForChat || hasActiveChats
 	);
-	const renderChat = useShouldRenderChatOption(
-		isChatAvailable || hasActiveChats,
-		isEligibleForChat
+
+	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
+	const sectionName = useSelector( getSectionName );
+	const currentSite = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return helpCenterSelect.getSite();
+	}, [] );
+
+	const wapuuChatId = useGetOdieStorage( 'chat_id' );
+	const setWapuuChatId = useSetOdieStorage( 'chat_id' );
+
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
+		'zendesk_support_chat_key',
+		isEligibleForChat || hasActiveChats
 	);
+
 	const isLoading = renderEmail.isLoading || isLoadingChatStatus;
 
 	useEffect( () => {
@@ -104,21 +109,21 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		recordTracksEvent( 'calypso_helpcenter_contact_options_impression', {
 			force_site_id: true,
 			location: 'help-center',
-			chat_available: renderChat.state === 'AVAILABLE',
+			chat_available: ! renderEmail.render,
 			email_available: renderEmail.render,
 		} );
-	}, [ isLoading, renderChat.state, renderEmail.render ] );
+	}, [ isLoading, renderEmail.render ] );
 
 	const liveChatHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Live chat (English)' ) ) {
-			return __( 'Live chat', __i18n_text_domain__ );
+		if ( isEnglishLocale || ! hasTranslation( 'Contact WordPress.com Support (English)' ) ) {
+			return __( 'Contact WordPress.com Support', __i18n_text_domain__ );
 		}
 
-		return __( 'Live chat (English)', __i18n_text_domain__ );
+		return __( 'Contact WordPress.com Support (English)', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	const emailHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) ) {
+		if ( isEnglishLocale ) {
 			return __( 'Email', __i18n_text_domain__ );
 		}
 
@@ -144,13 +149,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		return __( 'Email', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
-	const forumHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) ) {
-			return __( 'Community forums', __i18n_text_domain__ );
-		}
-		return __( 'Community forums (English)', __i18n_text_domain__ );
-	}, [ __, locale ] );
-
 	if ( isLoading ) {
 		return (
 			<div className="help-center-contact-page__loading">
@@ -159,33 +157,105 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		);
 	}
 
-	// Create URLSearchParams for forum
-	const forumUrlSearchParams = new URLSearchParams( {
-		mode: 'FORUM',
-		wapuuFlow: hideHeaders.toString(),
-	} );
-	const forumUrl = `/contact-form?${ forumUrlSearchParams.toString() }`;
-
-	// Create URLSearchParams for chat
-	const chatUrlSearchParams = new URLSearchParams( {
-		mode: 'CHAT',
-		wapuuFlow: hideHeaders.toString(),
-	} );
-	const chatUrl = `/contact-form?${ chatUrlSearchParams.toString() }`;
-
 	// Create URLSearchParams for email
 	const emailUrlSearchParams = new URLSearchParams( {
 		mode: 'EMAIL',
 		// Set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
-		overflow: ( renderChat.eligible && renderChat.state !== 'AVAILABLE' ).toString(),
+		overflow: renderEmail.render.toString(),
 		wapuuFlow: hideHeaders.toString(),
 	} );
 	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
 
 	const contactOptionsEventMap: Record< ContactOption, () => void > = {
-		chat: generateContactOnClickEvent( 'chat', trackEventName, onClick ),
-		forum: generateContactOnClickEvent( 'forum', trackEventName, onClick ),
-		email: generateContactOnClickEvent( 'email', trackEventName, onClick ),
+		chat: generateContactOnClickEvent( 'chat', trackEventName ),
+		email: generateContactOnClickEvent( 'email', trackEventName ),
+	};
+
+	const renderChatOption = () => {
+		const productSlug = ( currentSite as HelpCenterSite )?.plan?.product_slug;
+		const plan = getPlan( productSlug );
+		const productId = plan?.getProductId();
+
+		const handleOnClick = () => {
+			contactOptionsEventMap.chat();
+
+			recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+				support_variation: 'messaging',
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+			} );
+
+			recordTracksEvent( 'calypso_help_live_chat_begin', {
+				site_plan_product_id: productId,
+				is_automated_transfer: currentSite?.is_wpcom_atomic,
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+			} );
+
+			let message = '';
+			const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
+
+			if ( wapuuChatId ) {
+				message += `Support request started with <strong>Wapuu</strong><br />Wapuu Chat: <a href="https://mc.a8c.com/odie/odie-chat.php?chat_id=${ escapedWapuuChatId }">${ escapedWapuuChatId }</a><br />`;
+			}
+
+			if ( currentSite?.URL ) {
+				message += `Site: ${ encodeURIComponent( currentSite?.URL || '' ) }<br />`;
+			}
+
+			openChatWidget( {
+				aiChatId: escapedWapuuChatId,
+				message: message,
+				siteUrl: currentSite?.URL,
+				onError: () => setHasSubmittingError( true ),
+				// Reset Odie chat after passing to support
+				onSuccess: () => setWapuuChatId( null ),
+			} );
+		};
+
+		return (
+			<div>
+				<button disabled={ isOpeningChatWidget } onClick={ handleOnClick }>
+					<div className="help-center-contact-page__box chat" role="button" tabIndex={ 0 }>
+						<div className="help-center-contact-page__box-icon">
+							<Icon icon={ comment } />
+						</div>
+						<div>
+							<h2>{ liveChatHeaderText }</h2>
+							<p>{ __( 'Our Happiness team will get back to you soon', __i18n_text_domain__ ) }</p>
+						</div>
+					</div>
+				</button>
+				{ hasSubmittingError && (
+					<FormInputValidation
+						isError
+						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+					/>
+				) }
+			</div>
+		);
+	};
+
+	const renderEmailOption = () => {
+		return (
+			<Link to={ emailUrl } onClick={ contactOptionsEventMap[ 'email' ] }>
+				<div
+					className={ clsx( 'help-center-contact-page__box', 'email' ) }
+					role="button"
+					tabIndex={ 0 }
+				>
+					<div className="help-center-contact-page__box-icon">
+						<Icon icon={ <Mail /> } />
+					</div>
+					<div>
+						<h2>{ emailHeaderText }</h2>
+						<p>{ __( 'An expert will get back to you soon', __i18n_text_domain__ ) }</p>
+					</div>
+				</div>
+			</Link>
+		);
 	};
 
 	return (
@@ -200,75 +270,11 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					displayAt="2023-12-26 00:00Z"
 					closesAt="2023-12-31 00:00Z"
 					reopensAt="2024-01-02 07:00Z"
-					enabled={ renderChat.render }
+					enabled={ ! renderEmail.render }
 				/>
 
-				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
-					<Link to={ forumUrl } onClick={ contactOptionsEventMap[ 'forum' ] }>
-						<div
-							className={ classnames( 'help-center-contact-page__box', 'forum' ) }
-							role="button"
-							tabIndex={ 0 }
-						>
-							<div className="help-center-contact-page__box-icon">
-								<Icon icon={ <Forum /> } />
-							</div>
-							<div>
-								<h2>{ forumHeaderText }</h2>
-								<p>
-									{ __( 'Your question and any answers will be public', __i18n_text_domain__ ) }
-								</p>
-							</div>
-						</div>
-					</Link>
-
-					{ renderChat.render && (
-						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
-							<ConditionalLink
-								active={ renderChat.state === 'AVAILABLE' }
-								to={ chatUrl }
-								onClick={ contactOptionsEventMap[ 'chat' ] }
-							>
-								<div
-									className={ classnames( 'help-center-contact-page__box', 'chat', {
-										'is-disabled': renderChat.state !== 'AVAILABLE',
-									} ) }
-									role="button"
-									tabIndex={ 0 }
-								>
-									<div className="help-center-contact-page__box-icon">
-										<Icon icon={ comment } />
-									</div>
-									<div>
-										<h2>{ liveChatHeaderText }</h2>
-										<p>
-											{ renderChat.state !== 'AVAILABLE'
-												? __( 'Chat is unavailable right now', __i18n_text_domain__ )
-												: __( 'Get an immediate reply', __i18n_text_domain__ ) }
-										</p>
-									</div>
-								</div>
-							</ConditionalLink>
-						</div>
-					) }
-
-					{ renderEmail.render && (
-						<Link to={ emailUrl } onClick={ contactOptionsEventMap[ 'email' ] }>
-							<div
-								className={ classnames( 'help-center-contact-page__box', 'email' ) }
-								role="button"
-								tabIndex={ 0 }
-							>
-								<div className="help-center-contact-page__box-icon">
-									<Icon icon={ <Mail /> } />
-								</div>
-								<div>
-									<h2>{ emailHeaderText }</h2>
-									<p>{ __( 'An expert will get back to you soon', __i18n_text_domain__ ) }</p>
-								</div>
-							</div>
-						</Link>
-					) }
+				<div className={ clsx( 'help-center-contact-page__boxes' ) }>
+					{ renderEmail.render ? renderEmailOption() : renderChatOption() }
 				</div>
 			</div>
 		</div>

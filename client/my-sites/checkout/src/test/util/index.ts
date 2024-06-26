@@ -1717,9 +1717,8 @@ export function createTestReduxStore() {
 	return createStore( rootReducer, applyMiddleware( thunk ) );
 }
 
-export function mockGetSupportedCountriesEndpoint( response ) {
+export function mockGetSupportedCountriesEndpoint( response: CountryListItem[] ) {
 	nock( 'https://public-api.wordpress.com' )
-		.persist()
 		.get( '/rest/v1.1/me/transactions/supported-countries' )
 		.reply( 200, response );
 }
@@ -1928,6 +1927,17 @@ export function mockCachedContactDetailsEndpoint( responseData ): void {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/domain-contact-information' )
 		.reply( mockDomainContactResponse );
+}
+
+export function mockSetCachedContactDetailsEndpoint() {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/domain-contact-information', ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( 200 );
+	return endpoint;
 }
 
 export function mockContactDetailsValidationEndpoint(

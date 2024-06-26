@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
@@ -33,9 +32,7 @@ QueryThemes.propTypes = {
 		// The search string
 		search: PropTypes.string,
 		// The tier to look for -- 'free', 'premium', 'marketplace', or '' (for all themes)
-		tier: isEnabled( 'themes/tiers' )
-			? PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] )
-			: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
+		tier: PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] ),
 		// Comma-separated list of filters; see my-sites/themes/theme-filters
 		filter: PropTypes.string,
 		// Which page of the results list to display

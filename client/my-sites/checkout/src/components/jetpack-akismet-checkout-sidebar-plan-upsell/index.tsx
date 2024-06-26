@@ -4,7 +4,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useCallback, type FC, useMemo } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -119,10 +119,17 @@ const useCalculatedDiscounts = () => {
 				isDiscount: true,
 				isIntroductoryOffer: true,
 			} );
+		} else {
+			// If an annual product has a free trial and the biennial does not, show the multi-year discount instead
+			priceBreakdown.push( {
+				label: __( 'Multi-year discount' ),
+				priceInteger: originalPrice - biennial.priceInteger,
+				isDiscount: true,
+			} );
 		}
 	} else {
 		priceBreakdown.push( {
-			label: __( 'Multi-year discount*' ),
+			label: __( 'Multi-year discount' ),
 			priceInteger: originalPrice - biennial.priceInteger,
 			isDiscount: true,
 		} );
@@ -171,7 +178,7 @@ const UpsellEntry: FC< Omit< PriceBreakdown, 'priceInteger' > & { priceInteger?:
 	forceDisplay,
 } ) => {
 	const { product } = useCurrentProductWithVariants();
-	const className = classNames( 'checkout-sidebar-plan-upsell__plan-grid-cell', {
+	const className = clsx( 'checkout-sidebar-plan-upsell__plan-grid-cell', {
 		'section-bold': isBold,
 		'section-discount': isDiscount,
 	} );
@@ -226,6 +233,10 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 	}
 
 	const { percentSavings, priceBreakdown, finalBreakdown } = calculatedDiscounts;
+
+	if ( percentSavings <= 0 ) {
+		return null;
+	}
 
 	const hasIntroductoryOffers = priceBreakdown.some(
 		( breakdown ) => breakdown.isIntroductoryOffer

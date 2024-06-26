@@ -3,6 +3,8 @@
 .plan-type-selector {
 	width: fit-content;
 	min-width: 275px;
+	background-color: var(--studio-white);
+	z-index: 2;
 }
 
 .is-sticky-plan-type-selector {
@@ -108,14 +110,15 @@
 		}
 
 		.components-flex {
-			overflow: hidden;
 			width: 100%;
 			.components-input-control__container {
-				background-color: var(--studio-white);
 				.components-custom-select-control__button {
 					min-width: 225px;
-					height: auto;
 					padding: 0;
+					height: auto;
+					.is-sticky-plan-type-selector & {
+						height: 64px;
+					}
 				}
 				.components-input-control__backdrop {
 					border-color: var(--studio-gray-10);
@@ -134,6 +137,11 @@
 			box-sizing: border-box;
 			border: 1px solid var(--studio-gray-10);
 			margin-top: -2px;
+
+			.is-sticky-plan-type-selector & {
+				border-bottom-right-radius: 0;
+				border-bottom-left-radius: 0;
+			}
 		}
 		.components-custom-select-control__item {
 			grid-template-columns: auto min-content;
@@ -161,7 +169,6 @@ div.is-sticky-plan-type-selector .plan-type-selector__interval-type-dropdown {
 		// Display above sticky feature and comparison grid plan headers
 		.components-flex {
 			width: 100vw;
-			height: 64px;
 			padding: 0;
 			border-bottom: 1px solid #e0e0e0;
 			border-bottom-right-radius: 0;

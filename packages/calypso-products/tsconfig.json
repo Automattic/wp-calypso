@@ -7,5 +7,11 @@
 		"rootDir": "src"
 	},
 	"include": [ "src" ],
-	"references": [ { "path": "../calypso-config" }, { "path": "../shopping-cart" } ]
+	"references": [
+		{ "path": "../calypso-config" },
+		{ "path": "../shopping-cart" },
+		{ "path": "../components" },
+		{ "path": "../i18n-utils" },
+		{ "path": "../urls" }
+	]
 }

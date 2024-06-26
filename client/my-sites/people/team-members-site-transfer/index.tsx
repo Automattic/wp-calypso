@@ -5,7 +5,7 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListItemTransfer from './people-list-item-transfer';
 import type { UsersQuery } from './types';
-import type { Member } from '../types';
+import type { Member } from '@automattic/data-stores';
 
 import './style.scss';
 

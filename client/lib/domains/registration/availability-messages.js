@@ -1,21 +1,24 @@
 /* eslint-disable no-case-declarations */
 
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { translate } from 'i18n-calypso';
-import moment from 'moment';
-import { getTld } from 'calypso/lib/domains';
-import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS,
 	MAP_EXISTING_DOMAIN,
-} from 'calypso/lib/url/support';
+} from '@automattic/urls';
+import { translate } from 'i18n-calypso';
+import moment from 'moment';
+import { getTld } from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import SetAsPrimaryLink from 'calypso/my-sites/domains/domain-management/settings/set-as-primary/link';
 import {
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,
 	domainMapping,
 	domainTransferIn,
+	domainManagementList,
 } from 'calypso/my-sites/domains/paths';
 
 function getAvailabilityNotice(
@@ -27,7 +30,7 @@ function getAvailabilityNotice(
 	domainTld = ''
 ) {
 	const tld = domainTld || ( domain ? getTld( domain ) : null );
-	const { site, maintenanceEndTime, availabilityPreCheck } = errorData || {};
+	const { site, maintenanceEndTime, availabilityPreCheck, isSiteDomainOnly } = errorData || {};
 
 	// The message is set only when there is a valid error
 	// and the conditions of the corresponding switch block are met.
@@ -55,31 +58,52 @@ function getAvailabilityNotice(
 			);
 			break;
 		case domainAvailability.REGISTERED_SAME_SITE:
-			message = translate( '{{strong}}%(domain)s{{/strong}} is already registered on this site.', {
-				args: { domain },
-				components: {
-					strong: <strong />,
-				},
-			} );
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already registered on this site. {{a}}Are you trying to make this the primary address for your site?{{/a}}',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: (
+							<SetAsPrimaryLink
+								domainName={ domain }
+								siteIdOrSlug={ site }
+								additionalProperties={ {
+									clickOrigin: 'use-a-domain-i-own',
+								} }
+								onSuccess={ () => page( domainManagementList( domain ) ) }
+							/>
+						),
+					},
+				}
+			);
 			break;
 		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
 			if ( site ) {
-				message = translate(
-					'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to {{a}}move it to this site{{/a}}?',
-					{
-						args: { domain, site },
-						components: {
-							strong: <strong />,
-							a: (
-								<a
-									target={ linksTarget }
-									rel="noopener noreferrer"
-									href={ domainManagementTransferToOtherSite( site, domain ) }
-								/>
-							),
-						},
-					}
-				);
+				const messageOptions = {
+					args: { domain, site },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								target={ linksTarget }
+								rel="noopener noreferrer"
+								href={ domainManagementTransferToOtherSite( site, domain ) }
+							/>
+						),
+					},
+				};
+				if ( isSiteDomainOnly ) {
+					message = translate(
+						'{{strong}}%(domain)s{{/strong}} is already registered as a domain-only site. Do you want to {{a}}move it to this site{{/a}}?',
+						messageOptions
+					);
+				} else {
+					message = translate(
+						'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to {{a}}move it to this site{{/a}}?',
+						messageOptions
+					);
+				}
 			} else {
 				message = translate(
 					'{{strong}}%(domain)s{{/strong}} is already registered on another site you own.',
@@ -532,6 +556,13 @@ function getAvailabilityNotice(
 					},
 				}
 			);
+			break;
+
+		case 'gravatar_tld_restriction':
+			message = translate(
+				'Gravatar is currently offering .link domains. Additional domain extensions may become available for a fee in the future.'
+			);
+			severity = 'info';
 			break;
 
 		default:

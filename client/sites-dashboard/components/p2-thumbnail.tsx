@@ -2,7 +2,7 @@ import { DEFAULT_THUMBNAIL_SIZE } from '@automattic/components';
 import styled from '@emotion/styled';
 import { addQueryArgs } from '@wordpress/url';
 import type { SitesDisplayMode } from './sites-display-mode-switcher';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const LARGE_ICON_PX = 64;
 const SMALL_ICON_PX = 32;

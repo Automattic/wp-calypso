@@ -13,9 +13,9 @@ export const useContactFormTitle = (
 } => {
 	return {
 		CHAT: {
-			formTitle: __( 'Start live chat', __i18n_text_domain__ ),
+			formTitle: __( 'Contact WordPress.com Support', __i18n_text_domain__ ),
 			trayText: __( 'Our WordPress experts will be with you right away', __i18n_text_domain__ ),
-			buttonLabel: __( 'Chat with us', __i18n_text_domain__ ),
+			buttonLabel: __( 'Contact us', __i18n_text_domain__ ),
 			buttonSubmittingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
 		},
 		EMAIL: {

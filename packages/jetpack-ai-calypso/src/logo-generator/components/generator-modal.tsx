@@ -6,7 +6,7 @@ import { Icon, Modal, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useState, useEffect, useCallback } from 'react';
 /**
@@ -22,7 +22,7 @@ import {
 } from '../../constants';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import useRequestErrors from '../hooks/use-request-errors';
-import { isLogoHistoryEmpty } from '../lib/logo-storage';
+import { isLogoHistoryEmpty, clearDeletedMedia } from '../lib/logo-storage';
 import { STORE_NAME } from '../store';
 import { FeatureFetchFailureScreen } from './feature-fetch-failure-screen';
 import { FirstLoadScreen } from './first-load-screen';
@@ -30,6 +30,7 @@ import { HistoryCarousel } from './history-carousel';
 import { LogoPresenter } from './logo-presenter';
 import { Prompt } from './prompt';
 import { UpgradeScreen } from './upgrade-screen';
+import { VisitSiteBanner } from './visit-site-banner';
 import './generator-modal.scss';
 /**
  * Types
@@ -59,6 +60,8 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		useLogoGenerator();
 	const { featureFetchError, firstLogoPromptFetchError, clearErrors } = useRequestErrors();
 	const siteId = siteDetails?.ID;
+	const siteURL = siteDetails?.URL;
+	const [ logoAccepted, setLogoAccepted ] = useState( false );
 
 	const getFeature = useCallback( async () => {
 		setLoadingState( 'loadingFeature' );
@@ -124,6 +127,10 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 				return;
 			}
 
+			// Load the logo history and clear any deleted media.
+			await clearDeletedMedia( String( siteId ) );
+			loadLogoHistory( siteId );
+
 			// If there is any logo, we do not need to generate a first logo again.
 			if ( ! isLogoHistoryEmpty( String( siteId ) ) ) {
 				setLoadingState( null );
@@ -136,26 +143,30 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			debug( 'Error fetching feature', error );
 			setLoadingState( null );
 		}
-	}, [ siteId, getFeature, siteDetails?.domain, generateFirstLogo ] );
+	}, [ getFeature, siteId, loadLogoHistory, generateFirstLogo, siteDetails?.domain ] );
 
 	const handleModalOpen = useCallback( async () => {
 		setContext( context );
 		recordTracksEvent( EVENT_MODAL_OPEN, { context, placement: EVENT_PLACEMENT_QUICK_LINKS } );
-		loadLogoHistory( siteId );
 
 		initializeModal();
-	}, [ setContext, context, loadLogoHistory, siteId, initializeModal ] );
+	}, [ setContext, context, initializeModal ] );
 
 	const closeModal = () => {
+		onClose();
 		setLoadingState( null );
 		setNeedsFeature( false );
 		setNeedsMoreRequests( false );
 		clearErrors();
+		setLogoAccepted( false );
 		recordTracksEvent( EVENT_MODAL_CLOSE, { context, placement: EVENT_PLACEMENT_QUICK_LINKS } );
-		onClose();
 	};
 
 	const handleApplyLogo = () => {
+		setLogoAccepted( true );
+	};
+
+	const handleCloseAndReload = () => {
 		closeModal();
 
 		setTimeout( () => {
@@ -212,21 +223,42 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	} else {
 		body = (
 			<>
-				<Prompt initialPrompt={ initialPrompt } />
-				<LogoPresenter logo={ selectedLogo } onApplyLogo={ handleApplyLogo } />
-				<HistoryCarousel />
-				<div className="jetpack-ai-logo-generator__footer">
-					<Button
-						variant="link"
-						className="jetpack-ai-logo-generator__feedback-button"
-						href="https://jetpack.com/redirect/?source=jetpack-ai-feedback"
-						target="_blank"
-						onClick={ handleFeedbackClick }
-					>
-						<span>{ __( 'Provide feedback', 'jetpack' ) }</span>
-						<Icon icon={ external } className="icon" />
-					</Button>
-				</div>
+				{ ! logoAccepted && <Prompt initialPrompt={ initialPrompt } /> }
+				<LogoPresenter
+					logo={ selectedLogo }
+					onApplyLogo={ handleApplyLogo }
+					logoAccepted={ logoAccepted }
+					siteId={ String( siteId ) }
+				/>
+				{ logoAccepted ? (
+					<div className="jetpack-ai-logo-generator__accept">
+						<VisitSiteBanner siteURL={ siteURL } onVisitBlankTarget={ handleCloseAndReload } />
+						<div className="jetpack-ai-logo-generator__accept-actions">
+							<Button variant="link" onClick={ handleCloseAndReload }>
+								{ __( 'Close and refresh', 'jetpack' ) }
+							</Button>
+							<Button href={ siteURL } variant="primary">
+								{ __( 'Visit site', 'jetpack' ) }
+							</Button>
+						</div>
+					</div>
+				) : (
+					<>
+						<HistoryCarousel />
+						<div className="jetpack-ai-logo-generator__footer">
+							<Button
+								variant="link"
+								className="jetpack-ai-logo-generator__feedback-button"
+								href="https://jetpack.com/redirect/?source=jetpack-ai-feedback"
+								target="_blank"
+								onClick={ handleFeedbackClick }
+							>
+								<span>{ __( 'Provide feedback', 'jetpack' ) }</span>
+								<Icon icon={ external } className="icon" />
+							</Button>
+						</div>
+					</>
+				) }
 			</>
 		);
 	}
@@ -236,13 +268,13 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			{ isOpen && (
 				<Modal
 					className="jetpack-ai-logo-generator-modal"
-					onRequestClose={ closeModal }
+					onRequestClose={ logoAccepted ? handleCloseAndReload : closeModal }
 					shouldCloseOnClickOutside={ false }
 					shouldCloseOnEsc={ false }
 					title={ __( 'Jetpack AI Logo Generator', 'jetpack' ) }
 				>
 					<div
-						className={ classNames( 'jetpack-ai-logo-generator-modal__body', {
+						className={ clsx( 'jetpack-ai-logo-generator-modal__body', {
 							'notice-modal':
 								needsFeature || needsMoreRequests || featureFetchError || firstLogoPromptFetchError,
 						} ) }

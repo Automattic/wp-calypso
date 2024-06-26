@@ -16,12 +16,8 @@ import {
 	NonProductLineItem,
 	LineItem,
 	getPartnerCoupon,
-	hasCheckoutVersion,
-	filterAndGroupCostOverridesForDisplay,
-	filterCostOverridesForLineItem,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useMemo } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -30,7 +26,6 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
-import { CostOverridesList, LineItemCostOverrides } from './cost-overrides-list';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -43,9 +38,9 @@ import type {
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren } from 'react';
 
-const WPOrderReviewList = styled.ul< { hasCheckoutVersion2: boolean } >`
+const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
-	${ ( props ) => ( props.hasCheckoutVersion2 ? 'margin: 24px 0 0 0;' : 'margin: 24px 0;' ) }
+	margin: 24px 0 0 0;
 	padding: 0;
 `;
 
@@ -82,7 +77,7 @@ export function WPOrderReviewLineItems( {
 	className?: string;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
-	replaceProductInCart?: ReplaceProductInCart;
+	replaceProductInCart: ReplaceProductInCart;
 	removeCoupon: RemoveCouponFromCart;
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -93,7 +88,6 @@ export function WPOrderReviewLineItems( {
 	onRemoveProductCancel?: ( label: string ) => void;
 } ) {
 	const reduxDispatch = useDispatch();
-	const translate = useTranslate();
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const { formStatus } = useFormStatus();
@@ -101,7 +95,6 @@ export function WPOrderReviewLineItems( {
 	const hasPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
 	} );
-
 	const [ initialProducts ] = useState( () => responseCart.products );
 	const [ forceShowAkQuantityDropdown, setForceShowAkQuantityDropdown ] = useState( false );
 
@@ -147,8 +140,6 @@ export function WPOrderReviewLineItems( {
 		[ akQuantityOpenId, variantOpenId ]
 	);
 
-	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
-
 	const changeAkismetPro500CartQuantity = useCallback< OnChangeAkProQuantity >(
 		( uuid, productSlug, productId, prevQuantity, newQuantity ) => {
 			reduxDispatch(
@@ -158,23 +149,19 @@ export function WPOrderReviewLineItems( {
 					new_quantity: newQuantity,
 				} )
 			);
-			replaceProductInCart &&
-				replaceProductInCart( uuid, {
-					product_slug: productSlug,
-					product_id: productId,
-					quantity: newQuantity,
-				} ).catch( () => {
-					// Nothing needs to be done here. CartMessages will display the error to the user.
-				} );
+			replaceProductInCart( uuid, {
+				product_slug: productSlug,
+				product_id: productId,
+				quantity: newQuantity,
+			} ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 		},
 		[ replaceProductInCart, reduxDispatch ]
 	);
 
 	return (
-		<WPOrderReviewList
-			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
-			hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }
-		>
+		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
 					key={ product.uuid }
@@ -206,12 +193,12 @@ export function WPOrderReviewLineItems( {
 					akQuantityOpenId={ akQuantityOpenId }
 				/>
 			) ) }
-			{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
+			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<CouponLineItem
 						lineItem={ couponLineItem }
 						isSummary={ isSummary }
-						hasDeleteButton
+						hasDeleteButton={ couponLineItem.hasDeleteButton }
 						removeProductFromCart={ removeCoupon }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						isPwpoUser={ isPwpoUser }
@@ -219,7 +206,7 @@ export function WPOrderReviewLineItems( {
 					/>
 				</WPOrderReviewListItem>
 			) }
-			{ ! hasCheckoutVersion( '2' ) && creditsLineItem && responseCart.sub_total_integer > 0 && (
+			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
 				<NonProductLineItem
 					subtotal
 					lineItem={ creditsLineItem }
@@ -227,21 +214,12 @@ export function WPOrderReviewLineItems( {
 					isPwpoUser={ isPwpoUser }
 				/>
 			) }
-			{ hasCheckoutVersion( '2' ) && costOverridesList.length > 0 && (
-				<CostOverridesList
-					costOverridesList={ costOverridesList }
-					currency={ responseCart.currency }
-					removeCoupon={ removeCoupon }
-					couponCode={ responseCart.coupon }
-					showOnlyCoupons
-				/>
-			) }
 		</WPOrderReviewList>
 	);
 }
 
-const DropdownWrapper = styled.span< { hasCheckoutVersion2: boolean } >`
-	${ ( props ) => ( props.hasCheckoutVersion2 ? `width: 100%; max-width: 200px` : `width: 100%;` ) }
+const DropdownWrapper = styled.span`
+	width: 100%;
 `;
 
 function LineItemWrapper( {
@@ -291,7 +269,6 @@ function LineItemWrapper( {
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
-
 	const signupFlowName = getSignupCompleteFlowName();
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
 		isDeletable = false;
@@ -344,10 +321,6 @@ function LineItemWrapper( {
 
 	const areThereVariants = variants.length > 1;
 
-	const translate = useTranslate();
-
-	const costOverridesList = filterCostOverridesForLineItem( product, translate );
-
 	const finalShouldShowVariantSelector =
 		areThereVariants && shouldShowVariantSelector && onChangeSelection;
 
@@ -367,7 +340,7 @@ function LineItemWrapper( {
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
 			>
-				<DropdownWrapper hasCheckoutVersion2={ hasCheckoutVersion( '2' ) }>
+				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (
 						<ItemVariationPicker
 							id={ product.uuid }
@@ -379,7 +352,7 @@ function LineItemWrapper( {
 							isOpen={ variantOpenId === product.uuid }
 						/>
 					) }
-					{ isAkPro500Cart && (
+					{ ! isRenewal && isAkPro500Cart && (
 						<AkismetProQuantityDropDown
 							id={ product.uuid }
 							responseCart={ responseCart }
@@ -390,9 +363,6 @@ function LineItemWrapper( {
 						/>
 					) }
 				</DropdownWrapper>
-				{ hasCheckoutVersion( '2' ) && (
-					<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
-				) }
 			</LineItem>
 		</WPOrderReviewListItem>
 	);

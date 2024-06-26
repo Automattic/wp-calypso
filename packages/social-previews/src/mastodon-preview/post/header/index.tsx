@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import { DEFAULT_MASTODON_INSTANCE } from '../../constants';
-import MastodonPostIcon from '../icons';
+import { formatMastodonDate } from '../../../helpers';
+import { DEFAULT_AVATAR, DEFAULT_MASTODON_INSTANCE } from '../../constants';
+import { GlobeIcon } from '../icons';
 import type { MastodonPreviewProps } from '../../types';
 
 import './styles.scss';
@@ -13,7 +14,7 @@ const MastodonPostHeader: React.FC< Props > = ( { user } ) => {
 	return (
 		<div className="mastodon-preview__post-header">
 			<div className="mastodon-preview__post-header-user">
-				{ avatarUrl && <img className="mastodon-preview__post-avatar" src={ avatarUrl } alt="" /> }
+				<img className="mastodon-preview__post-avatar" src={ avatarUrl || DEFAULT_AVATAR } alt="" />
 				<div>
 					<div className="mastodon-preview__post-header-displayname">
 						{ displayName ||
@@ -21,16 +22,13 @@ const MastodonPostHeader: React.FC< Props > = ( { user } ) => {
 							__( 'anonymous-user', 'social-previews' ) }
 					</div>
 					<div className="mastodon-preview__post-header-username">
-						{ address?.replace( `@${ DEFAULT_MASTODON_INSTANCE }`, '' ) }
+						{ address?.replace( `@${ DEFAULT_MASTODON_INSTANCE }`, '' ) || '@username' }
 					</div>
 				</div>
 			</div>
 			<div className="mastodon-preview__post-header-audience">
-				<MastodonPostIcon name="globe" />
-				{
-					// translators: time elapsed since post was published (1 hour)
-					__( '1h', 'social-previews' )
-				}
+				<GlobeIcon />
+				{ formatMastodonDate( new Date() ) }
 			</div>
 		</div>
 	);

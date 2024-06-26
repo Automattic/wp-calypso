@@ -22,6 +22,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
@@ -153,6 +154,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
+	const storeSandboxHelper = config.isEnabled( 'dev/store-sandbox-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
 		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
@@ -183,6 +185,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		accountSettingsHelper,
 		authHelper,
 		preferencesHelper,
+		storeSandboxHelper,
 		featuresHelper,
 		devDocsURL: '/devdocs',
 		store: reduxStore,
@@ -501,10 +504,18 @@ function setUpCSP( req, res, next ) {
 			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
+			'use.typekit.net',
 			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
-		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
+		'style-src': [
+			"'self'",
+			'*.wp.com',
+			'https://fonts.googleapis.com',
+			'use.typekit.net',
+			// per https://helpx.adobe.com/ca/fonts/using/content-security-policy.html
+			"'unsafe-inline'",
+		],
 		'form-action': [ "'self'" ],
 		'object-src': [ "'none'" ],
 		'img-src': [
@@ -517,6 +528,7 @@ function setUpCSP( req, res, next ) {
 			'https://amplifypixel.outbrain.com',
 			'https://img.youtube.com',
 			'localhost:8888',
+			'p.typekit.net',
 		],
 		'frame-src': [
 			"'self'",
@@ -528,6 +540,7 @@ function setUpCSP( req, res, next ) {
 			"'self'",
 			'*.wp.com',
 			'https://fonts.gstatic.com',
+			'use.typekit.net',
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
@@ -899,7 +912,7 @@ export default function pages() {
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );
 
-	if ( ! ( isJetpackCloud() || config.isEnabled( 'a8c-for-agencies' ) ) ) {
+	if ( ! ( isJetpackCloud() || isA8CForAgencies() ) ) {
 		wpcomPages( app );
 	}
 

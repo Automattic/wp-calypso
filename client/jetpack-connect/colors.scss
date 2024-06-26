@@ -1,3 +1,5 @@
+@import "~@automattic/color-studio/dist/color-variables";
+
 @mixin jetpack-connect-colors() {
 	// Override accent variables with Jetpack colors
 	--color-accent: var(--studio-jetpack-green-30);
@@ -44,4 +46,22 @@
 	--color-primary: var(--studio-blue-40);
 	--color-accent-dark: var(--studio-blue-60);
 	--color-accent-60: var(--studio-blue-60);
+}
+
+@mixin automattic-for-agencies-colors() {
+	// Override accent variables with Jetpack colors
+	--color-accent: #{$studio-automattic-blue};
+	--color-accent-light: #{$studio-automattic-blue-20};
+	--color-accent-dark: #{$studio-automattic-blue-50};
+	--color-accent-60: #{$studio-automattic-blue-40};
+
+	// Override global colors with accent variables
+	--color-primary: #{$studio-automattic-blue};
+	--color-primary-light: #{$studio-automattic-blue-40};
+	--color-primary-dark: #{$studio-automattic-blue-50};
+
+	::selection {
+		color: var(--color-text-inverted);
+		background: var(--color-accent);
+	}
 }

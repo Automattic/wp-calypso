@@ -1,5 +1,5 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import { Card, ShortenedNumber, formattedNumber } from '../';
 import Popover from '../popover';
@@ -32,6 +32,44 @@ export function percentCalculator( part: number | null, whole: number | null | u
 	return Math.abs( answer ) === Infinity ? 100 : Math.round( answer );
 }
 
+type TrendComparisonProps = {
+	count: number | null;
+	previousCount?: number | null;
+};
+
+export function TrendComparison( { count, previousCount }: TrendComparisonProps ) {
+	const difference = subtract( count, previousCount );
+	const differenceMagnitude = Math.abs( difference as number );
+	const percentage = Number.isFinite( difference )
+		? percentCalculator( Math.abs( difference as number ), previousCount )
+		: null;
+
+	if ( difference === null ) {
+		return null;
+	}
+
+	return (
+		<span
+			className={ clsx( 'highlight-card-difference', {
+				'highlight-card-difference--positive': difference < 0,
+				'highlight-card-difference--negative': difference > 0,
+			} ) }
+		>
+			<span className="highlight-card-difference-icon" title={ String( difference ) }>
+				{ difference < 0 && <Icon size={ 18 } icon={ arrowDown } /> }
+				{ difference > 0 && <Icon size={ 18 } icon={ arrowUp } /> }
+			</span>
+			<span className="highlight-card-difference-absolute-value">
+				{ differenceMagnitude <= 9999 && formattedNumber( differenceMagnitude ) }
+				{ differenceMagnitude > 9999 && <ShortenedNumber value={ differenceMagnitude } /> }
+			</span>
+			{ percentage !== null && (
+				<span className="highlight-card-difference-absolute-percentage"> ({ percentage }%)</span>
+			) }
+		</span>
+	);
+}
+
 export default function CountComparisonCard( {
 	count,
 	previousCount,
@@ -41,11 +79,6 @@ export default function CountComparisonCard( {
 	note = '',
 	compact = false,
 }: CountComparisonCardProps ) {
-	const difference = subtract( count, previousCount );
-	const differenceMagnitude = Math.abs( difference as number );
-	const percentage = Number.isFinite( difference )
-		? percentCalculator( Math.abs( difference as number ), previousCount )
-		: null;
 	const textRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 
@@ -54,7 +87,7 @@ export default function CountComparisonCard( {
 			{ icon && <div className="highlight-card-icon">{ icon }</div> }
 			{ heading && <div className="highlight-card-heading">{ heading }</div> }
 			<div
-				className={ classNames( 'highlight-card-count', {
+				className={ clsx( 'highlight-card-count', {
 					'is-pointer': showValueTooltip,
 				} ) }
 				onMouseEnter={ () => setTooltipVisible( true ) }
@@ -67,29 +100,7 @@ export default function CountComparisonCard( {
 				>
 					<ShortenedNumber value={ count } />
 				</span>{ ' ' }
-				{ difference !== null ? (
-					<span
-						className={ classNames( 'highlight-card-difference', {
-							'highlight-card-difference--positive': difference < 0,
-							'highlight-card-difference--negative': difference > 0,
-						} ) }
-					>
-						<span className="highlight-card-difference-icon" title={ String( difference ) }>
-							{ difference < 0 && <Icon size={ 18 } icon={ arrowDown } /> }
-							{ difference > 0 && <Icon size={ 18 } icon={ arrowUp } /> }
-						</span>
-						<span className="highlight-card-difference-absolute-value">
-							{ differenceMagnitude <= 9999 && formattedNumber( differenceMagnitude ) }
-							{ differenceMagnitude > 9999 && <ShortenedNumber value={ differenceMagnitude } /> }
-						</span>
-						{ percentage !== null && (
-							<span className="highlight-card-difference-absolute-percentage">
-								{ ' ' }
-								({ percentage }%)
-							</span>
-						) }
-					</span>
-				) : null }
+				<TrendComparison count={ count } previousCount={ previousCount } />
 				{ showValueTooltip && (
 					<Popover
 						className="tooltip tooltip--darker highlight-card-tooltip"

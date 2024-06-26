@@ -28,7 +28,10 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	const [ isUnAuthorized, setIsUnAuthorized ] = useState( false );
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
-	const { data: sites } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
+	const { data: sites } = useSiteExcerptsQuery(
+		SITE_PICKER_FILTER_CONFIG,
+		( site ) => ! site.is_deleted
+	);
 	const { data: sourceSiteMigrationStatus, isError: isErrorSourceSiteMigrationStatus } =
 		useSourceMigrationStatusQuery( sourceSiteSlug );
 
@@ -89,9 +92,9 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 		<>
 			<DocumentHead title={ getCurrentMessage() } />
 			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
-				isWideLayout={ true }
+				shouldHideNavButtons
+				hideFormattedHeader
+				isWideLayout
 				stepName="migration-handler"
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={ renderContent() }

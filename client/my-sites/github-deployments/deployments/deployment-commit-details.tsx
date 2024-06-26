@@ -1,33 +1,42 @@
 import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import { DeploymentRun } from '../deployment-run-logs/use-code-deployment-run-query';
 
+import './styles.scss';
+
 interface DeploymentCommitDetailsProps {
 	run: DeploymentRun;
 	deployment: CodeDeploymentData;
 }
 
-export function getCommitDetails( deployment?: DeploymentRun ) {
+export function getCommitDetails( deployment: CodeDeploymentData, run?: DeploymentRun ) {
 	let message = '';
 	let sha = '';
 	let shaShort = '';
-	if ( deployment ) {
-		sha = deployment.metadata.commit_sha;
+	let path = '';
+	if ( run ) {
+		sha = run.metadata.commit_sha ?? '';
 		shaShort = sha.substring( sha.length - 7 );
-		message = deployment.metadata.commit_message;
+		message = run.metadata.commit_message;
+		const fullPath = deployment.target_dir ?? '';
+		if ( fullPath.length > 1 ) {
+			path = fullPath.substring( fullPath.lastIndexOf( '/' ) + 1 );
+		}
 	}
 
-	return { message, sha, shaShort };
+	return { message, sha, shaShort, path };
 }
 
-export const DeploymentCommitDetails = ( { run, deployment }: DeploymentCommitDetailsProps ) => {
+export const DeploymentCommitDetails = ( { deployment, run }: DeploymentCommitDetailsProps ) => {
 	const [ account, repo ] = deployment.repository_name.split( '/' );
-	const { message, sha, shaShort } = getCommitDetails( run );
+	const { message, sha, shaShort, path } = getCommitDetails( deployment, run );
 
 	return (
 		<div className="github-deployments-list__commit-details">
 			{ message }
 			<div>
 				<a
+					target="_blank"
+					rel="noopener noreferrer"
 					onClick={ ( e ) => e.stopPropagation() }
 					href={ `https://github.com/${ account }/${ repo }/commit/${ sha }` }
 				>
@@ -54,8 +63,31 @@ export const DeploymentCommitDetails = ( { run, deployment }: DeploymentCommitDe
 							fill="black"
 						/>
 					</svg>
-					<span>{ deployment.branch_name }</span>
+					<span style={ { paddingLeft: '2px' } }>{ deployment.branch_name }</span>
 				</span>
+				{ path && (
+					<>
+						<span>
+							<svg
+								width="16"
+								height="16"
+								viewBox="0 0 16 16"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									fillRule="evenodd"
+									clipRule="evenodd"
+									d="M8.13197 5.16699L7.4741 3.85125C7.41763 3.73833 7.30221 3.66699 7.17595 3.66699H3.33333C3.14924 3.66699 3 3.81623 3 4.00033V11.8337C3 12.0178 3.14924 12.167 3.33333 12.167H12.6667C12.8508 12.167 13 12.0178 13 11.8337V5.50033C13 5.31623 12.8508 5.16699 12.6667 5.16699H8.13197ZM8.75 4.16699L8.36852 3.40404C8.14267 2.95233 7.68098 2.66699 7.17595 2.66699H3.33333C2.59695 2.66699 2 3.26395 2 4.00033V11.8337C2 12.57 2.59695 13.167 3.33333 13.167H12.6667C13.403 13.167 14 12.57 14 11.8337V5.50033C14 4.76395 13.403 4.16699 12.6667 4.16699H8.75Z"
+									fill="#50575E"
+								/>
+							</svg>
+							<span css={ { paddingLeft: '2px' } } title={ deployment.target_dir }>
+								{ path }
+							</span>
+						</span>
+					</>
+				) }
 			</div>
 		</div>
 	);

@@ -5,6 +5,7 @@ import {
 	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { trackStatsAnalyticsEvent } from '../utils';
 
 const setUrlParam = ( url: URL, paramName: string, paramValue?: string | null ): void => {
 	if ( paramValue === null || paramValue === undefined || paramValue === '' ) {
@@ -18,17 +19,28 @@ const getStatsCheckoutURL = (
 	siteSlug: string,
 	product: string,
 	redirectUrl: string,
-	checkoutBackUrl: string
+	checkoutBackUrl: string,
+	from?: string,
+	adminUrl?: string,
+	isUpgrade?: boolean
 ) => {
-	// Get the checkout URL for the product, or the siteless checkout URL if no siteSlug is provided
+	const isFromJetpack = from?.startsWith( 'jetpack' );
+	// Get the checkout URL for the product, or the siteless checkout URL if from Jetpack or no siteSlug is provided
+	const checkoutType = ( isFromJetpack && ! isUpgrade ) || ! siteSlug ? 'jetpack' : siteSlug;
 	const checkoutProductUrl = new URL(
-		`/checkout/${ siteSlug || 'jetpack' }/${ product }`,
+		`/checkout/${ checkoutType }/${ product }`,
 		'https://wordpress.com'
 	);
 
 	// Add redirect_to parameter
 	setUrlParam( checkoutProductUrl, 'redirect_to', redirectUrl );
 	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
+
+	if ( isFromJetpack && siteSlug ) {
+		setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
+		setUrlParam( checkoutProductUrl, 'admin_url', adminUrl );
+		setUrlParam( checkoutProductUrl, 'from_site_slug', siteSlug );
+	}
 
 	return checkoutProductUrl.toString();
 };
@@ -117,6 +129,7 @@ const gotoCheckoutPage = ( {
 	redirectUri,
 	price,
 	quantity,
+	isUpgrade = false,
 }: {
 	from: string;
 	type: 'pwyw' | 'free' | 'commercial';
@@ -125,6 +138,7 @@ const gotoCheckoutPage = ( {
 	redirectUri?: string;
 	price?: number;
 	quantity?: number;
+	isUpgrade?: boolean;
 } ) => {
 	let eventName = '';
 	let product: string;
@@ -156,7 +170,13 @@ const gotoCheckoutPage = ( {
 			break;
 	}
 
+	// Keeping the event for data continuity
 	recordTracksEvent( `calypso_stats_${ eventName }_purchase_button_clicked` );
+	// Add parameters to the event
+	trackStatsAnalyticsEvent( `stats_purchase_button_clicked`, {
+		type,
+		quantity,
+	} );
 
 	const redirectUrl = getRedirectUrl( { from, type, adminUrl, redirectUri, siteSlug } );
 	const checkoutBackUrl = getCheckoutBackUrl( { from, adminUrl, siteSlug } );
@@ -168,7 +188,10 @@ const gotoCheckoutPage = ( {
 				siteSlug,
 				product,
 				redirectUrl,
-				checkoutBackUrl
+				checkoutBackUrl,
+				from,
+				adminUrl,
+				isUpgrade
 			) ),
 		250
 	);

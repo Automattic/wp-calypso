@@ -60,7 +60,7 @@ export default function useBusinessTrialIncludedFeatures(
 			),
 			illustration: jetpackBackupsAndRestores,
 			showButton: true,
-			buttonText: 'View your backup activity',
+			buttonText: translate( 'View your backup activity' ),
 			buttonClick: () => page( `/backup/${ siteSlug }` ),
 		},
 		{

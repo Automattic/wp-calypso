@@ -19,6 +19,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -52,7 +53,7 @@ object WPComTests : Project({
 	// Gutenberg Atomic Nightly
 	buildType(gutenbergPlaywrightBuildType("desktop", "a3f58555-56bb-42c6-8543-ab27213d3085" , atomic=true, nightly=true));
 	buildType(gutenbergPlaywrightBuildType("mobile", "8191e677-0682-4709-9201-66a7788980f0", atomic=true, nightly=true));
-	// Gutenberg Core 
+	// Gutenberg Core
 	buildType(gutenbergCoreE2eBuildType());
 
 	// E2E Tests for Jetpack Simple Deployment
@@ -79,6 +80,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 
 		artifactRules = """
 			gutenberg/artifacts => artifacts
+			logs/*.log => logs
 		""".trimIndent()
 
 		vcs {
@@ -103,20 +105,30 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 			bashNodeScript {
 				name = "Prepare environment"
 				scriptContent = """
-					# Clone Gutenberg
-					mkdir gutenberg
+					# Set up the logs directory and define log file path
+					logs_dir="%system.teamcity.build.checkoutDir%/logs"
+					mkdir -p "${'$'}logs_dir"
+					exec &> "${'$'}logs_dir/prepare-environment.log"
+					set -x  # Enable debugging
+
+					echo "Starting environment preparation"
+					mkdir -p gutenberg
 					cd gutenberg
 					git init
 					git remote add origin https://github.com/WordPress/gutenberg.git
 					git fetch --depth=1 origin try/run-e2e-tests-against-wpcom
 					git checkout try/run-e2e-tests-against-wpcom
 
-					# Install deps
+					echo "Installing dependencies"
 					npm ci
-					
-					# Build packages
+
+					echo "Building packages"
 					npm run build:packages
+
+					echo "Environment preparation complete"
 				""".trimIndent()
+				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
+				dockerRunParameters = "-u %env.UID% --log-driver=json-file --log-opt max-size=10m --log-opt max-file=3"
 			}
 
 			bashNodeScript {
@@ -135,7 +147,49 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 					# Run suite.
 					npm run test:e2e:playwright
 				""".trimIndent()
+				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
+				dockerRunParameters = "-u %env.UID% --log-driver=json-file --log-opt max-size=10m --log-opt max-file=3"
 			}
+
+			step(ScriptBuildStep {
+				name = "Copy Docker Container Logs and Capture Script Output"
+				scriptContent = """
+					#!/bin/bash
+					# Ensure the logs directory exists
+					logs_dir="%system.teamcity.build.checkoutDir%/logs"
+					mkdir -p "${'$'}logs_dir"
+					echo "Logs directory prepared at ${'$'}logs_dir"
+
+					# Redirect all output to script-run.log
+					exec &> "${'$'}logs_dir/script-run.log"
+					set -x  # Enable debugging
+
+					echo "Attempting to copy logs for all known containers, regardless of state:"
+					docker ps -a --no-trunc | awk '{print ${'$'}1}' | tail -n +2 > container_ids.txt
+
+					if [ ! -s container_ids.txt ]; then
+						echo "No Docker containers found. No logs to copy."
+					else
+						while read id; do
+							echo "Checking logs for container ${'$'}id"
+							src_log_file="/var/lib/docker/containers/${'$'}id/${'$'}id-json.log"
+							dest_log_file="${'$'}logs_dir/${'$'}id-json.log"
+
+							if [ -f "${'$'}src_log_file" ]; then
+								cp "${'$'}src_log_file" "${'$'}dest_log_file"
+								echo "Logs copied from ${'$'}src_log_file to ${'$'}dest_log_file"
+							else
+								echo "Log file ${'$'}src_log_file does not exist"
+							fi
+						done < container_ids.txt
+					fi
+
+					echo "Appending 'foobar' to a log file to ensure file system is writable."
+					echo "foobar" >> "${'$'}logs_dir/test-foobar-log.log"
+					echo "End of Script"
+				""".trimIndent()
+				executionMode = BuildStep.ExecutionMode.ALWAYS
+			})
 		}
 	})
 }
@@ -210,7 +264,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				name = "Post Failure Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look? @calypso-platform-team! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 		},
 		buildFeatures = {
@@ -250,7 +304,7 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		uuid = buildUuid
 		name = "Jetpack Simple Deployment E2E Tests ($targetDevice)"
 		description = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport"
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
@@ -306,13 +360,13 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
-	
+
 	return BuildType({
 		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)"
 		description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations."
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
@@ -373,7 +427,8 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			defaultE2eFailureConditions()
 			// These are long-running tests, and we have to scale back the parallelization too.
 			// Let's give them some more breathing room.
-			executionTimeoutMin = 25
+			// This number is arbitrary, but tests in mid-2024 tend to run longer than 25 minutes.
+			executionTimeoutMin = 31
 		}
 	});
 }
@@ -384,7 +439,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 		uuid = buildUuid
 		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
 		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations."
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {

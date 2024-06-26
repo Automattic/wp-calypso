@@ -1,13 +1,13 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { createElement, createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import {
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
 	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
-} from 'calypso/lib/url/support';
+} from '@automattic/urls';
+import { createElement, createInterpolateElement } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
+import PropTypes from 'prop-types';
 import { modeType } from './constants';
 
 import './style.scss';
@@ -24,10 +24,7 @@ export default function ConnectDomainStepSupportInfoLink( { baseClassName, mode 
 		return null;
 	}
 
-	const classes = classNames(
-		baseClassName + '__support-documentation',
-		baseClassName + '__info-links'
-	);
+	const classes = clsx( baseClassName + '__support-documentation', baseClassName + '__info-links' );
 
 	return (
 		<div className={ classes }>

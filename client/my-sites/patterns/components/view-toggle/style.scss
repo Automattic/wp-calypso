@@ -1,0 +1,7 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.pattern-library__view-toggle {
+	@media (max-width: $break-medium) {
+		display: none;
+	}
+}

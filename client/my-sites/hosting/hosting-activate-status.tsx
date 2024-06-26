@@ -2,10 +2,14 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
-import { useDispatch } from 'calypso/state';
-import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	TransferStates,
+	transferInProgress,
+	transferStates,
+} from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
@@ -22,17 +26,32 @@ interface HostingActivateStatusProps {
 	) => void;
 }
 
+const endStates: TransferStates[] = [
+	transferStates.NONE,
+	transferStates.COMPLETE,
+	transferStates.COMPLETED,
+	transferStates.FAILURE,
+	transferStates.ERROR,
+	transferStates.REVERTED,
+	transferStates.NULL,
+];
+
 const HostingActivateStatus = ( {
 	context,
 	siteId,
 	onTick,
 	keepAlive,
 }: HostingActivateStatusProps ) => {
-	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteId ?? 0, {
-		refetchInterval: 5000,
-	} );
+	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
+
+	const isTransferring =
+		! endStates.includes( transferStatus as TransferStates ) &&
+		transferStatus !== transferStates.INQUIRING;
+
 	const dispatch = useDispatch();
-	const isTransferCompleted = transferStatus === transferStates.COMPLETED;
+	const isTransferCompleted = endStates.includes(
+		transferStatus as ( typeof transferInProgress )[ number ]
+	);
 	const [ wasTransferring, setWasTransferring ] = useState( false );
 
 	useEffect( () => {
@@ -72,6 +91,10 @@ const HostingActivateStatus = ( {
 
 	if ( transferStatus === transferStates.ERROR ) {
 		return <Notice status="is-error" showDismiss={ false } text={ getErrorText() } icon="bug" />;
+	}
+
+	if ( isTransferCompleted ) {
+		return null;
 	}
 
 	if ( isTransferring || keepAlive ) {

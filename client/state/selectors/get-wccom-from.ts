@@ -1,6 +1,5 @@
-import { get } from 'lodash';
 import 'calypso/state/route/init';
-import getCurrentQueryArguments from './get-current-query-arguments';
+import { getParamFromUrlOrOauth2Redirect } from './get-param-from-url-or-oauth2-redirect';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -10,20 +9,5 @@ import type { AppState } from 'calypso/types';
  * Login flow uses `wccom-from` directly, while signup flow uses `oauth2_redirect` to pass the `wccom-from` value.
  */
 export default function getWccomFrom( state: AppState ): string | null {
-	const currentQuery = getCurrentQueryArguments( state );
-	const wccomFrom = get( currentQuery, 'wccom-from' ) as string | null;
-
-	if ( wccomFrom ) {
-		return wccomFrom;
-	}
-
-	try {
-		const queryOauth2Redirect = currentQuery?.oauth2_redirect;
-		const oauth2RedirectUrl = new URL( queryOauth2Redirect as string );
-		return oauth2RedirectUrl.searchParams.get( 'wccom-from' );
-	} catch ( e ) {
-		// ignore
-	}
-
-	return null;
+	return getParamFromUrlOrOauth2Redirect( state, 'wccom-from' );
 }

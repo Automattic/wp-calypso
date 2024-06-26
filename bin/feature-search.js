@@ -88,6 +88,7 @@ const configs = [
 	'jetpack-cloud-production',
 	'jetpack-cloud-stage',
 	'a8c-for-agencies-development',
+	'a8c-for-agencies-horizon',
 	'a8c-for-agencies-stage',
 	'a8c-for-agencies-production',
 	'horizon',

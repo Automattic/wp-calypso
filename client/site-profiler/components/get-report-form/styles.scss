@@ -1,0 +1,178 @@
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+
+.get-report-form__wrapper {
+	font-family: $font-sf-pro-text;
+	color: #000;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 185;
+	background-color: var(--studio-gray-0);
+	border: 1px solid #cbcbcb;
+	padding: 0 1.5rem;
+	transition: transform ease-out 500ms;
+
+	&--hidden {
+		transform: translateY(100%);
+	}
+}
+.get-report-form__container {
+	box-sizing: border-box;
+	padding: 3rem 0;
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 36px;
+	margin: 0 auto;
+	max-width: 1224px;
+
+	@media (max-width: $break-mobile) {
+		height: 100dvh;
+		overflow-y: auto;
+	}
+
+	@media (max-width: $break-large) {
+		.get-report-form__body {
+			flex-basis: 100%;
+			order: 3;
+		}
+	}
+
+	.gridicon {
+		position: absolute;
+		right: 0;
+		cursor: pointer;
+		color: var(--color-button);
+	}
+
+	.form-input-validation {
+		position: absolute;
+	}
+}
+.get-report-form__title {
+	color: #000;
+}
+
+.get-report-form__body {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	flex-basis: 620px;
+	gap: 32px;
+	flex-grow: 1;
+
+}
+
+.get-report-form__header {
+	display: flex;
+	gap: 36px;
+	margin-right: 40px;
+	justify-content: space-between;
+
+	.description {
+		color: #3c4043;
+		//stylelint-disable-next-line scales/font-weights
+		font-weight: 300;
+	}
+}
+
+.get-report-form__form {
+	display: flex;
+	gap: 32px;
+	flex-wrap: wrap;
+}
+
+
+.get-report-form__form-body {
+	display: flex;
+	gap: 32px;
+	flex-wrap: wrap;
+	flex-grow: 1;
+
+	& fieldset {
+		flex-basis: 300px;
+		margin-bottom: 0;
+		@media (max-width: $break-small) {
+			flex-basis: 100%;
+		}
+
+	}
+	label {
+		/* stylelint-disable-next-line scales/font-weights */
+		font-weight: 300;
+		font-size: 0.875rem;
+		color: var(--studio-gray-100);
+	}
+	.form-text-input.get-report-form__form-name,
+	.form-text-input.get-report-form__form-email {
+		color: var(--studio-gray-100);
+	}
+
+	& .get-report-form__form-name.form-text-input:active,
+	& .get-report-form__form-email.form-text-input:active,
+	& .get-report-form__form-name.form-text-input:focus,
+	& .get-report-form__form-email.form-text-input:focus {
+		border-color: var(--studio-blue-50);
+		box-shadow: 0 0 0 2px #68b3e8;
+	}
+}
+
+
+.get-report-form__form-footer {
+	--wp-components-color-accent: var(--color-button);
+	display: flex;
+	gap: 20px;
+	align-items: center;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	& fieldset {
+		margin-bottom: 0;
+		flex-basis: 755px;
+		@media (max-width: $break-wide) {
+			margin-bottom: 20px;
+		}
+	}
+	.terms-checkbox {
+		--checkbox-input-size: 28px;
+		color: var(--studio-gray-100);
+		font-size: 0.75rem;
+		line-height: 1.5;
+		.components-flex.components-h-stack {
+			@media (min-width: $break-small) {
+				align-items: center;
+			}
+			gap: 10px;
+		}
+
+		.components-checkbox-control__input {
+			&:focus {
+				border-color: var(--studio-blue-50);
+				box-shadow: 0 0 0 2px #68b3e8;
+			}
+		}
+		.components-checkbox-control__label {
+			line-height: 1.5;
+		}
+	}
+	.submit-button {
+		background-color: var(--color-button);
+		color: #fff;
+		border-radius: 4px;
+		font-weight: 500;
+		font-size: 1rem;
+		padding: 1rem;
+		line-height: 1;
+		text-decoration: none;
+		min-width: 191px;
+		border: none;
+		svg {
+			margin-left: 1rem;
+		}
+		@media (max-width: $break-small) {
+			width: 100%;
+		}
+	}
+}

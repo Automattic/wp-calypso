@@ -14,7 +14,7 @@
 			padding: 0 24px 24px;
 		}
 
-		@media ( max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			width: auto;
 		}
 	}
@@ -61,6 +61,18 @@
 		font-size: $font-body-small;
 		font-weight: 500;
 		line-height: rem(20px);
+	}
+
+	.add-subscribers-modal__notice {
+		margin-bottom: 24px !important;
+
+		.notice__content {
+			padding-right: 13px;
+		}
+
+		.add-subscribers-modal__notice-text {
+			margin-right: 6px;
+		}
 	}
 
 	.add-subscriber__form-submit-btn {

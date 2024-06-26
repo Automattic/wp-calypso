@@ -1,5 +1,9 @@
 .conversations__comment-list {
 	cursor: initial; // override style from .card.is-clickable
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px;
+	}
 }
 
 .conversations__comment-list-ul {

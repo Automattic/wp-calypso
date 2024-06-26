@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -52,7 +52,7 @@ class EmailPlanSubscription extends Component {
 				planName={ selectedSite.plan.product_name_short }
 				siteDomain={ selectedSite.domain }
 				purchase={ purchase }
-				withTextStatus={ true }
+				withTextStatus
 				toggleSource="email-plan-view"
 			/>
 		);
@@ -89,7 +89,7 @@ class EmailPlanSubscription extends Component {
 		return (
 			<CompactCard className="email-plan-subscription__card">
 				<div
-					className={ classNames( {
+					className={ clsx( {
 						'email-plan-subscription__expired': hasSubscriptionExpired,
 					} ) }
 				>

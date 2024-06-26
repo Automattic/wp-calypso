@@ -11,6 +11,7 @@ import versionCompare from 'calypso/lib/version-compare';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import {
 	getSiteOption,
 	isJetpackSite,
@@ -46,6 +47,8 @@ declare global {
 				authToken: string;
 				template: string;
 				urn: string;
+				origin: string;
+				originProps?: DSPOriginProps;
 				onLoaded?: () => void;
 				onClose?: () => void;
 				translateFn?: typeof translate;
@@ -118,12 +121,19 @@ const getWidgetOptions = () => {
 	};
 };
 
-export const getDSPOrigin = () => {
+export interface DSPOriginProps {
+	isAtomic?: boolean;
+	isClassicSimple?: boolean;
+}
+
+export const getDSPOrigin = ( originProps: DSPOriginProps | undefined ) => {
+	const { isAtomic = false } = originProps ?? {};
+
 	// We need to check for Woo first, because Woo Blaze is also running in Jetpack (At least in this iteration)
 	if ( config.isEnabled( 'is_running_in_woo_site' ) ) {
 		return 'wc-blaze-plugin';
 	} else if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-		return 'jetpack';
+		return isAtomic ? 'jetpack-atomic' : 'jetpack';
 	} else if ( isWpMobileApp() ) {
 		return 'wp-mobile-app';
 	} else if ( isWcMobileApp() ) {
@@ -146,8 +156,11 @@ export async function showDSP(
 	setShowTopBar?: ( show: boolean ) => void,
 	locale?: string,
 	jetpackVersion?: string,
-	dispatch?: Dispatch
+	dispatch?: Dispatch,
+	dspOriginProps?: DSPOriginProps
 ): Promise< boolean > {
+	const origin = getDSPOrigin( dspOriginProps ?? {} );
+
 	// Increase Sentry sample rate to 100% for DSP widget
 	await initSentry( { sampleRate: 1.0 } );
 
@@ -156,9 +169,7 @@ export async function showDSP(
 
 	return new Promise( ( resolve, reject ) => {
 		if ( ! window.BlazePress ) {
-			dispatch?.(
-				recordTracksEvent( 'calypso_dsp_widget_failed_to_load', { origin: getDSPOrigin() } )
-			);
+			dispatch?.( recordTracksEvent( 'calypso_dsp_widget_failed_to_load', { origin } ) );
 			reject( false );
 			return;
 		}
@@ -179,6 +190,8 @@ export async function showDSP(
 				// todo fetch rlt somehow
 				authToken: 'wpcom-proxy-request',
 				template: 'article',
+				origin,
+				originProps: dspOriginProps,
 				onLoaded: () => {
 					debug( 'showDSP: [Widget loaded]' );
 					resolve( true );
@@ -203,7 +216,7 @@ export async function showDSP(
 					: undefined,
 				jetpackVersion,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
-				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch ) : undefined,
+				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch, dspOriginProps ) : undefined,
 				options: getWidgetOptions(),
 			} );
 
@@ -212,9 +225,7 @@ export async function showDSP(
 			debug( 'showDSP: [Widget start error] the widget render method execution failed: ', error );
 			captureException( error );
 
-			dispatch?.(
-				recordTracksEvent( 'calypso_dsp_widget_failed_to_start', { origin: getDSPOrigin() } )
-			);
+			dispatch?.( recordTracksEvent( 'calypso_dsp_widget_failed_to_start', { origin } ) );
 			reject( false );
 		}
 	} );
@@ -230,10 +241,10 @@ export async function cleanupDSP() {
  * Add tracking when launching the DSP widget, in both tracks event and MC stats.
  * @param {string} entryPoint - A slug describing the entry point.
  */
-export function recordDSPEntryPoint( entryPoint: string ) {
+export function recordDSPEntryPoint( entryPoint: string, dspOrigin: DSPOriginProps ) {
 	const eventProps = {
 		entry_point: entryPoint,
-		origin: getDSPOrigin(),
+		origin: getDSPOrigin( dspOrigin ),
 	};
 
 	return composeAnalytics(
@@ -246,10 +257,10 @@ export function recordDSPEntryPoint( entryPoint: string ) {
  * Gets the recordTrack function to be used in the DSP widget
  * @param {Dispatch} dispatch - Redux disptach function
  */
-export function getRecordDSPEventHandler( dispatch: Dispatch ) {
+export function getRecordDSPEventHandler( dispatch: Dispatch, dspOriginProps?: DSPOriginProps ) {
 	return ( eventName: string, props?: any ) => {
 		const eventProps = {
-			origin: getDSPOrigin(),
+			origin: getDSPOrigin( dspOriginProps ),
 			...props,
 		};
 		dispatch( recordTracksEvent( eventName, eventProps ) );
@@ -317,6 +328,18 @@ export enum PromoteWidgetStatus {
 	ENABLED = 'enabled',
 	DISABLED = 'disabled',
 }
+
+/**
+ * Hook to get all props needed to calculate the DSP origin
+ * @returns The props to use when calculating the DSP origin
+ */
+export const useDspOriginProps = (): DSPOriginProps => {
+	const selectedSite = useSelector( getSelectedSite );
+
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSite?.ID ?? 0 ) );
+	const isClassicSimple = selectedSite?.options?.is_wpcom_simple ?? false;
+	return { isAtomic, isClassicSimple };
+};
 
 /**
  * Hook to verify if we should enable the promote widget.

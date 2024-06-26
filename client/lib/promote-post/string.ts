@@ -24,16 +24,25 @@ const BlazePressStrings = () => {
 	translate( 'Get started' );
 	translate( 'Learn more' );
 	translate( "Don't show me this step again." );
+	translate( 'Uploading images…' );
 	translate( 'Checking payment information…' );
 	translate( 'Fetching pages…' );
+	translate( 'Fetching products…' );
 	translate( 'Fetching posts…' );
 	translate( 'Fetching more pages…' );
+	translate( 'Fetching more products…' );
 	translate( 'Fetching more posts…' );
 	translate( 'No pages found.' );
+	translate( 'No products found.' );
 	translate( 'No posts found.' );
 	translate( 'Select post to promote' );
+	translate(
+		'Blaze is syncing your content as part of first-time setup – this can take up to 15 minutes or a few hours.'
+	);
 	translate( 'Post' );
 	translate( 'Type' );
+	translate( 'SKU' );
+	translate( 'Price' );
 	translate( 'Publish date' );
 	translate( 'Visitors' );
 	translate( 'Likes' );
@@ -58,6 +67,7 @@ const BlazePressStrings = () => {
 	translate( 'Ad creative' );
 	translate( "Use post's media" );
 	translate( 'Site title' );
+	translate( 'Loading page title…' );
 	translate( 'Page title' );
 	translate( 'Snippet' );
 	translate(
@@ -65,6 +75,7 @@ const BlazePressStrings = () => {
 		'%(snippetCharactersLeft)s characters remaining',
 		{ count: 1 }
 	);
+	translate( 'Loading ad text….' );
 	translate( 'Ad text' );
 	translate( 'Use + / - or simply drag the image to adjust it' );
 	translate( 'Apply' );
@@ -96,24 +107,29 @@ const BlazePressStrings = () => {
 	translate(
 		'Not enough reach to create a campaign with the current audience configuration. Please, expand your reach by changing or removing some of the audience settings'
 	);
+	translate( 'Language' );
 	translate( 'Location' );
 	translate( 'All languages' );
 	translate(
 		'Based on the language of your site we suggest targeting %(lang)s speaking users to ensure the ad is seen by the right audience and to increase its effectiveness.'
 	);
-	translate( 'Language' );
 	translate( 'All topics' );
 	translate( 'Interests' );
 	translate( 'Budget and duration' );
+	translate( 'Schedule' );
+	translate( 'Run until I stop it. ' );
+	translate( 'Specify the duration.' );
+	translate( 'Start date' );
+	translate( 'Please select a valid range' );
+	translate( 'Duration (days)' );
+	translate( 'Weekly Total' );
 	translate( 'Total' );
 	translate(
 		'Daily spend for %(durationDays)s-day duration',
-		'Daily spend for %(durationDays)s-day duration',
+		'Daily spend for %(durationDays)s day duration',
 		{ count: 1 }
 	);
 	translate( 'Estimated people reached per day' );
-	translate( 'Start date' );
-	translate( 'Duration (days)' );
 	translate( 'days' );
 	translate( 'Credits will be automatically applied to your order when available.' );
 	translate( 'Credits: %(creditsUsed)s (%(remainingCredit)s remain)' );
@@ -121,10 +137,12 @@ const BlazePressStrings = () => {
 	translate(
 		'We created this campaign to deliver the most valuable traffic, yet you can still make changes before submitting it.'
 	);
+	translate( 'Start Date' );
 	translate( 'Duration' );
 	translate( 'Budget' );
 	translate( 'day' );
-	translate( 'Estimated impressions' );
+	translate( ' impressions' );
+	translate( 'Impressions are estimated' );
 	translate( 'Payment' );
 	translate( 'Loading' );
 	translate( 'Start typing country, state or city to see available options' );
@@ -133,7 +151,10 @@ const BlazePressStrings = () => {
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
 	translate( 'Could not retrieve countries. Please try again later.' );
+	translate( 'Could not connect to payment provider. Please try again later.' );
+	translate( 'Error setting up payment. Please try again later' );
 	translate( 'Error submitting payment. Please check payment information.' );
+	translate( 'Error fetching payment method. Please try again later.' );
 	translate(
 		'There was an error with the address. Please verify that all the required data is valid'
 	);
@@ -173,10 +194,12 @@ const BlazePressStrings = () => {
 	translate( 'Tablet' );
 	translate( 'Desktop' );
 	translate( 'Everywhere' );
+	translate( 'Weekly total' );
 	translate( 'Summary' );
 	translate( 'Preview' );
 	translate( 'Depending on the platform, the ad may look different from the preview.' );
 	translate( 'Estimated Impressions' );
+	translate( 'Weekly Budget' );
 	translate( 'Max Budget' );
 	translate( 'Languages' );
 	translate( 'Devices' );
@@ -190,7 +213,6 @@ const BlazePressStrings = () => {
 		'There was a problem getting the necessary information to create your campaign. Please try again soon or {{a}}contact our support team{{/a}} for help.'
 	);
 	translate( 'Preparing the wizard…' );
-	translate( 'Fetching the AI suggestions…' );
 	translate( 'Drop image here' );
 	translate( 'Click or Drag an image here' );
 	translate( '%(field)s is required.' );

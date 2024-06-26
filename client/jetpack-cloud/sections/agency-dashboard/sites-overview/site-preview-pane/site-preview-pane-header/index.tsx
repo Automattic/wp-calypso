@@ -1,40 +1,39 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useMediaQuery } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
+import SiteFavicon from '../../site-favicon';
+import { Site } from '../../types';
 
 import './style.scss';
 
 const ICON_SIZE = 24;
 
 interface Props {
-	title: string;
-	url: string;
-	urlWithScheme: string;
-	closeSitePreviewPane: () => void;
+	site: Site;
+	closeSitePreviewPane?: () => void;
+	className?: string;
 }
 
-export default function SitePreviewPaneHeader( {
-	title,
-	url,
-	urlWithScheme,
-	closeSitePreviewPane,
-}: Props ) {
+export default function SitePreviewPaneHeader( { site, closeSitePreviewPane, className }: Props ) {
+	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
+	const size = isLargerThan960px ? 64 : 50;
 	return (
-		<div className="site-preview__header">
-			<div className="site-preview__header-bg"></div>
-			<div className="sites-dataviews__site-favicon site-preview__header-favicon"></div>
+		<div className={ clsx( 'site-preview__header', className ) }>
 			<div className="site-preview__header-content">
+				<SiteFavicon site={ site } className="site-preview__header-favicon" size={ size } />
 				<div className="site-preview__header-title-summary">
-					<div className="site-preview__header-title">{ title }</div>
+					<div className="site-preview__header-title">{ site.blogname }</div>
 					<div className="site-preview__header-summary">
 						<Button
 							variant="link"
 							className="site-preview__header-summary-link"
-							href={ urlWithScheme }
+							href={ site.url_with_scheme }
 							target="_blank"
 						>
-							<span>{ url }</span>
+							<span>{ site.url }</span>
 							<Icon className="sidebar-v2__external-icon" icon={ external } size={ ICON_SIZE } />
 						</Button>
 					</div>
@@ -44,7 +43,7 @@ export default function SitePreviewPaneHeader( {
 					className="site-preview__close-preview"
 					aria-label={ translate( 'Close Preview' ) }
 				>
-					<Gridicon icon="cross" size={ 24 } />
+					<Gridicon icon="cross" size={ ICON_SIZE } />
 				</Button>
 			</div>
 		</div>

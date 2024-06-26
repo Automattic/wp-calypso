@@ -47,6 +47,10 @@ export type DeprecatedStepperStep = {
 	 */
 	slug: string;
 	/**
+	 * Does the step require a logged-in user?
+	 */
+	requiresLoggedInUser?: boolean;
+	/**
 	 * @deprecated Use asyncComponent instead. The component that will be rendered for this step. This variation is deprecated and will be removed in the future. Please use async loaded steps instead
 	 *
 	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
@@ -59,6 +63,10 @@ export type AsyncStepperStep = {
 	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
 	 */
 	slug: string;
+	/**
+	 * Does the step require a logged-in user?
+	 */
+	requiresLoggedInUser?: boolean;
 	/**
 	 * The Async loaded component that will be rendered for this step
 	 *
@@ -102,6 +110,11 @@ export type Flow = {
 	variantSlug?: string;
 	title?: string;
 	classnames?: string | [ string ];
+	/**
+	 * Required flag to indicate if the flow is a signup flow.
+	 */
+	isSignupFlow: boolean;
+	useSignupStartEventProps?: () => Record< string, string | number >;
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;

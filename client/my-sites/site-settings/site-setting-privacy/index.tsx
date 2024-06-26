@@ -20,6 +20,7 @@ export interface Fields {
 	blog_public: number;
 	wpcom_coming_soon: number;
 	wpcom_public_coming_soon: number;
+	wpcom_data_sharing_opt_out: boolean;
 }
 
 interface SiteSettingPrivacyProps {

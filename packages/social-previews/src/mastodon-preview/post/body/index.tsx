@@ -19,16 +19,20 @@ const MastonPostBody: React.FC< Props > = ( props ) => {
 	if ( customText ) {
 		bodyTxt = <p>{ mastodonBody( customText, options ) }</p>;
 	} else if ( description ) {
-		const renderedTitle = stripHtmlTags( title );
+		if ( title ) {
+			const renderedTitle = stripHtmlTags( title );
 
-		options.offset = renderedTitle.length;
+			options.offset = renderedTitle.length;
 
-		bodyTxt = (
-			<>
-				<p>{ renderedTitle }</p>
-				<p>{ mastodonBody( description, options ) }</p>
-			</>
-		);
+			bodyTxt = (
+				<>
+					<p>{ renderedTitle }</p>
+					<p>{ mastodonBody( description, options ) }</p>
+				</>
+			);
+		} else {
+			bodyTxt = <p>{ mastodonBody( description, options ) }</p>;
+		}
 	} else {
 		bodyTxt = <p>{ mastodonBody( title, options ) }</p>;
 	}

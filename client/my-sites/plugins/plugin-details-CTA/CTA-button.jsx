@@ -11,6 +11,7 @@ import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
+import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
@@ -100,6 +101,12 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	const { isPreinstalledPremiumPlugin, preinstalledPremiumPluginProduct } =
 		usePreinstalledPremiumPlugin( plugin.slug );
 
+	// Atomic sites already include features such as Jetpack backup, scan, videopress, publicize, and search. So
+	// therefore we should prevent users from installing these standalone plugin equivalents.
+	const atomicSiteHasEquivalentFeatureToPlugin = useAtomicSiteHasEquivalentFeatureToPlugin(
+		plugin.slug
+	);
+
 	const productsList = useSelector( getProductsList );
 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
@@ -113,6 +120,8 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		buttonText = translate( 'Upgrade your plan' );
 	} else if ( shouldUpgrade ) {
 		buttonText = translate( 'Upgrade and activate' );
+	} else if ( atomicSiteHasEquivalentFeatureToPlugin ) {
+		buttonText = translate( 'Included with your plan' );
 	}
 
 	return (
@@ -146,7 +155,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
-				showCloseIcon={ true }
+				showCloseIcon
 			>
 				<EligibilityWarnings
 					currentContext="plugin-details"
@@ -198,7 +207,10 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					} );
 				} }
 				disabled={
-					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
+					( isJetpackSelfHosted && isMarketplaceProduct ) ||
+					isSiteConnected === false ||
+					atomicSiteHasEquivalentFeatureToPlugin ||
+					disabled
 				}
 			>
 				{ buttonText }

@@ -17,7 +17,9 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/material-design-icons"
 	},
-	"private": true,
+	"publishConfig": {
+		"access": "public"
+	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"src",

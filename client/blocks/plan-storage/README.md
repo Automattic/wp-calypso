@@ -20,12 +20,12 @@ media storage limits are fetched.
 ## Usage
 
 ```javascript
+import { Site } from '@automattic/data-stores';
 import PlanStorageBar from 'calypso/blocks/plan-storage/bar';
-import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 
 function MyComponent( { site, siteId } ) {
 	const planName = site.plan.product_name_short;
-	const { data: mediaStorage } = useMediaStorageQuery( siteId );
+	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
 
 	return <PlanStorageBar sitePlanName={ planName } mediaStorage={ this.props.mediaStorage } />;
 }

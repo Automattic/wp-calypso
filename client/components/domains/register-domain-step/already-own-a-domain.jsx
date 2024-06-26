@@ -1,6 +1,5 @@
-import { Button } from '@automattic/components';
+import { Button, MaterialIcon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import MaterialIcon from 'calypso/components/material-icon';
 
 function AlreadyOwnADomain( { onClick } ) {
 	const translate = useTranslate();

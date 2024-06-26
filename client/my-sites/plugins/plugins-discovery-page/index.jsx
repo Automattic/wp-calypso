@@ -1,4 +1,3 @@
-import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
@@ -90,11 +89,9 @@ const PluginsDiscoveryPage = ( props ) => {
 	} );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const { __ } = useI18n();
 
 	const {
 		isTrialAcknowledgeModalOpen,
-		setIsTrialAcknowledgeModalOpen,
 		isTransferring,
 		hasRequestedTrial,
 		trialRequested,
@@ -104,25 +101,9 @@ const PluginsDiscoveryPage = ( props ) => {
 		isAtomic,
 	} = useTrialHelpers( props );
 
-	const onStartTrialUpsellClick = () => {
-		if ( ! isEligibleForHostingTrial ) {
-			return;
-		}
-		setIsTrialAcknowledgeModalOpen( true );
-	};
-
-	const secondaryCallToAction = isEligibleForHostingTrial ? __( 'Try for free' ) : null;
-
 	return (
 		<>
-			{ ! isTransferring && ! hasRequestedTrial && (
-				<UpgradeNudge
-					{ ...props }
-					secondaryCallToAction={ secondaryCallToAction }
-					secondaryOnClick={ onStartTrialUpsellClick }
-					paidPlugins={ true }
-				/>
-			) }
+			{ ! isTransferring && ! hasRequestedTrial && <UpgradeNudge { ...props } paidPlugins /> }
 			{ ! isTrialAcknowledgeModalOpen && ! isAtomic && (
 				<HostingActivateStatus
 					context="plugin"

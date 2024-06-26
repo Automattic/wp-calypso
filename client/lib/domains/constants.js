@@ -29,6 +29,7 @@ export const domainAvailability = {
 	AVAILABILITY_CHECK_ERROR: 'availability_check_error',
 	CONFLICTING_CNAME_EXISTS: 'conflicting_cname_exists',
 	DISALLOWED: 'blacklisted_domain',
+	DOMAIN_AVAILABILITY_THROTTLED: 'domain_availability_throttle',
 	DOMAIN_SUGGESTIONS_THROTTLED: 'domain_suggestions_throttled',
 	DOTBLOG_SUBDOMAIN: 'dotblog_subdomain',
 	EMPTY_QUERY: 'empty_query',

@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FunctionComponent } from 'react';
 import usePlanOptions from '../hooks/plan-options';
 import { BlockPlan } from '../hooks/pricing-plans';
@@ -93,12 +93,12 @@ const BlockSettings: FunctionComponent<
 			<PanelBody
 				className="hb-pricing-plans-embed__settings"
 				title={ __( 'Basic', 'happy-blocks' ) }
-				initialOpen={ true }
+				initialOpen
 			>
 				<PanelRow>
 					{ planOptions.map( ( option ) => (
 						<CheckboxControl
-							className={ classNames( {
+							className={ clsx( {
 								'hb-pricing-plans-embed__settings-checkbox--disabled': isDisabled( option.value ),
 							} ) }
 							key={ option.value }

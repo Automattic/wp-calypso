@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ToggleControl } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -122,9 +122,9 @@ class Developer extends Component {
 						className="developer__header"
 					/>
 
-					<form onChange={ this.props.submitForm }>
+					<form className="developer__form" onChange={ this.props.submitForm }>
 						<FormFieldset
-							className={ classnames( 'developer__is_dev_account-fieldset', {
+							className={ clsx( 'developer__is_dev_account-fieldset', {
 								'is-loading': this.props.isFetchingUserSettings,
 							} ) }
 						>

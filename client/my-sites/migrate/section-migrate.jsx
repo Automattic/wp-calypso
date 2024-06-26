@@ -33,6 +33,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { MigrationInProgress } from './components/migration-in-progress';
 import StepConfirmMigration from './step-confirm-migration';
 import StepImportOrMigrate from './step-import-or-migrate';
 import StepSourceSelect from './step-source-select';
@@ -126,7 +127,7 @@ export class SectionMigrate extends Component {
 		}
 
 		wpcom.site( this.props.sourceSite.ID ).pluginsList( ( error, data ) => {
-			if ( data.plugins ) {
+			if ( data?.plugins ) {
 				this.setState( { sourceSitePlugins: data.plugins } );
 			}
 		} );
@@ -670,12 +671,22 @@ export class SectionMigrate extends Component {
 	}
 
 	render() {
-		const { step, sourceSite, targetSite, targetSiteSlug, translate } = this.props;
+		const { step, sourceSite, targetSite, targetSiteSlug, translate, targetSiteId } = this.props;
 		const sourceSiteSlug = get( sourceSite, 'slug' );
 
 		let migrationElement;
 
 		switch ( this.state.migrationStatus ) {
+			case 'in-progress':
+				return (
+					<MigrationInProgress
+						sourceSite={ sourceSite?.domain }
+						targetSite={ targetSite?.domain }
+						targetSiteId={ targetSiteId }
+						onComplete={ this.finishMigration }
+					/>
+				);
+
 			case 'inactive':
 				switch ( step ) {
 					case 'confirm':

@@ -6,8 +6,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { THEMES_REQUEST, THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
-import { updateThemeTiers } from 'calypso/state/themes/actions/theme-tiers';
-import { prependThemeFilterKeys } from 'calypso/state/themes/selectors';
+import { getThemeTier, prependThemeFilterKeys } from 'calypso/state/themes/selectors';
 import {
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
@@ -80,13 +79,13 @@ export function requestThemes( siteId, query = {}, locale ) {
 		// WP.org returns an `info` object containing a `results` number, so we destructure that
 		// and use it as default value for `found`.
 		return request()
-			.then( ( { themes: rawThemes, info: { results } = {}, found = results, tiers = {} } ) => {
+			.then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
 				let themes;
 				if ( siteId === 'wporg' ) {
-					themes = map( rawThemes, normalizeWporgTheme );
+					const communityThemeTier = getThemeTier( getState(), 'community' );
+					themes = map( rawThemes, ( theme ) => normalizeWporgTheme( theme, communityThemeTier ) );
 				} else if ( siteId === 'wpcom' ) {
 					themes = map( rawThemes, normalizeWpcomTheme );
-					dispatch( updateThemeTiers( tiers ) );
 				} else if ( isAtomic || isJetpack ) {
 					// Jetpack or Atomic Site
 					themes = map( rawThemes, normalizeJetpackTheme );

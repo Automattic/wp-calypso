@@ -30,7 +30,7 @@ jobs:
          node-version-file: '.nvmrc'
 
      - name: Wait for prior instances of the workflow to finish
-       uses: softprops/turnstyle@v1
+       uses: softprops/turnstyle@v2
        env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

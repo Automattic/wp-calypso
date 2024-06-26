@@ -1,14 +1,18 @@
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import { useEffect } from 'react';
+import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
+import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import CreateSite from './internals/steps-repository/create-site';
 import DesignSetup from './internals/steps-repository/design-setup';
 import ImportStep from './internals/steps-repository/import';
@@ -20,6 +24,7 @@ import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
 import ImportVerifyEmail from './internals/steps-repository/import-verify-email';
 import ImporterBlogger from './internals/steps-repository/importer-blogger';
 import ImporterMedium from './internals/steps-repository/importer-medium';
+import ImporterMigrateMessage from './internals/steps-repository/importer-migrate-message';
 import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
@@ -28,12 +33,18 @@ import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SitePickerStep from './internals/steps-repository/site-picker';
 import TrialAcknowledge from './internals/steps-repository/trial-acknowledge';
-import { Flow, ProvidedDependencies } from './internals/types';
+import {
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+	AssertConditionResult,
+} from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
+	isSignupFlow: true,
 
 	useSteps() {
 		return [
@@ -57,13 +68,29 @@ const importFlow: Flow = {
 			{ slug: 'sitePicker', component: SitePickerStep },
 			{ slug: 'error', component: MigrationError },
 			{ slug: 'verifyEmail', component: ImportVerifyEmail },
+			{ slug: 'migrateMessage', component: ImporterMigrateMessage },
 		];
+	},
+
+	useAssertConditions(): AssertConditionResult {
+		const { isAdmin, isFetching } = useIsSiteAdmin();
+		const result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		useEffect( () => {
+			if ( isAdmin === false && ! isFetching ) {
+				window.location.assign( `/setup/${ this.name }/import` );
+			}
+		}, [ isAdmin, isFetching ] );
+
+		return result;
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 		const urlQueryParams = useQuery();
+		const site = useSite();
+		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const fromParam = urlQueryParams.get( 'from' );
 		const { data: migrationStatus } = useSourceMigrationStatusQuery( fromParam );
 		const siteSlugParam = useSiteSlugParam();
@@ -179,6 +206,7 @@ const importFlow: Flow = {
 
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
+
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
 					}
@@ -194,6 +222,7 @@ const importFlow: Flow = {
 						}
 						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` );
 					}
+
 					// End of Pattern Assembler flow
 					if ( isAssemblerDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
@@ -292,9 +321,18 @@ const importFlow: Flow = {
 						return navigate( `importList?siteSlug=${ siteSlugParam }` );
 					} else if ( isMigrateFromWp && fromParam ) {
 						return navigate( `sitePicker?from=${ fromParam }` );
+					} else if ( urlQueryParams.has( 'showModal' ) ) {
+						urlQueryParams.delete( 'showModal' );
+						return navigate( `import?siteSlug=${ siteSlugParam }` );
 					}
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
+					// In this case, it means that we are in the Upgrade Plan page
+					if ( ! isSitePlanCompatible ) {
+						urlQueryParams.set( 'showModal', 'true' );
+						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					}
+
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':

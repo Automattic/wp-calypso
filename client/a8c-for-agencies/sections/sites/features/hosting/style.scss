@@ -1,0 +1,68 @@
+.item-preview__content .hosting__wrapper {
+	.hosting__card {
+		border-radius: 4px;
+		padding: 0;
+	}
+
+	.hosting__header {
+		border-bottom: 1px solid var(--color-border-subtle);
+	}
+
+	.hosting__title {
+		padding: 16px 24px;
+		font-size: rem(16px);
+		font-weight: 600;
+		line-height: 24px;
+		text-align: left;
+	}
+
+	.hosting__content {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		text-align: left;
+		padding: 8px 0;
+	}
+
+	.hosting__content-row {
+		display: contents;
+	}
+
+	.hosting__content-value,
+	.hosting__content-label {
+		padding: 12px 24px;
+	}
+
+
+	.hosting__content-label {
+		color: var(--color-accent-60, #50575e);
+		font-size: rem(13px);
+		font-weight: 500;
+		line-height: 20px;
+	}
+
+	.hosting__content-value {
+		display: flex;
+		align-items: center;
+		font-size: rem(14px);
+		font-weight: 500;
+		line-height: 20px;
+	}
+
+	.hosting__content-live-text {
+		font-size: rem(12px);
+		font-weight: 500;
+		line-height: 20px;
+		padding: 0 10px;
+		color: var(--Green-Green-80, #00450c);
+		background-color: var(--Green-Green-5, #b8e6bf);
+		border-radius: 4px;
+		box-sizing: content-box;
+		display: inline-block;
+	}
+
+	.hosting__hosting-logo {
+		margin-right: 8px;
+		max-width: 16px;
+		max-height: 16px;
+	}
+}

@@ -21,8 +21,11 @@ class SecurityKeyForm extends Component {
 		showError: false,
 	};
 
-	initiateSecurityKeyAuthentication = ( event, retryRequest = true ) => {
-		event.preventDefault();
+	componentDidMount() {
+		this.initiateSecurityKeyAuthentication();
+	}
+
+	initiateSecurityKeyAuthentication = ( retryRequest = true ) => {
 		this.setState( { isAuthenticating: true, showError: false } );
 
 		this.props.twoStepAuthorization
@@ -33,7 +36,7 @@ class SecurityKeyForm extends Component {
 				if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
 					this.props.twoStepAuthorization.fetch( () => {
 						if ( retryRequest ) {
-							this.initiateSecurityKeyAuthentication( event, false );
+							this.initiateSecurityKeyAuthentication( false );
 						} else {
 							// We only retry once, so let's show the original error.
 							this.setState( { isAuthenticating: false, showError: true } );
@@ -58,7 +61,12 @@ class SecurityKeyForm extends Component {
 		const { isAuthenticating } = this.state;
 
 		return (
-			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
+			<form
+				onSubmit={ ( event ) => {
+					event.preventDefault();
+					this.initiateSecurityKeyAuthentication();
+				} }
+			>
 				<Card compact className="security-key-form__verification-code-form">
 					{ ! isAuthenticating ? (
 						<div>

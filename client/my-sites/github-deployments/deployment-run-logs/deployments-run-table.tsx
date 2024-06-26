@@ -32,6 +32,9 @@ export const DeploymentsRunsTable = ( {
 			<thead>
 				<tr>
 					<th>
+						<span>{ __( 'Author' ) }</span>
+					</th>
+					<th style={ { width: '100%' } }>
 						<span>{ __( 'Commit' ) }</span>
 					</th>
 					<th>
@@ -68,8 +71,8 @@ export const DeploymentsRunsTable = ( {
 				</tr>
 			</thead>
 			<tbody>
-				{ deploymentsRuns.map( ( run ) => (
-					<DeploymentsRunItem key={ run.id } run={ run } />
+				{ deploymentsRuns.map( ( run, index ) => (
+					<DeploymentsRunItem key={ run.id } run={ run } rowNumber={ index } />
 				) ) }
 			</tbody>
 		</table>

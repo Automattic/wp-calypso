@@ -1,3 +1,4 @@
+import { createSelector } from '@automattic/state-utils';
 import treeSelect from '@automattic/tree-select';
 import { get, map, flatten } from 'lodash';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -243,6 +244,11 @@ export function getSiteStatsViewSummary( state, siteId ) {
 
 	return viewSummary;
 }
+
+export const getSiteStatsViewSummaryMemoized = createSelector(
+	getSiteStatsViewSummary,
+	( state, siteId ) => [ siteId ]
+);
 
 export const getMostPopularDatetime = ( state, siteId, query ) => {
 	const insightsData = getSiteStatsNormalizedData( state, siteId, 'statsInsights', query );

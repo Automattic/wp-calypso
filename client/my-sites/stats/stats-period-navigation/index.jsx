@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -25,9 +25,11 @@ import {
 	STATS_PERIOD,
 } from 'calypso/my-sites/stats/constants';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
+import { withStatsPurchases } from '../hooks/use-stats-purchases';
 import NavigationArrows from '../navigation-arrows';
 import StatsCardUpsell from '../stats-card-upsell';
 
@@ -188,13 +190,15 @@ class StatsPeriodNavigation extends PureComponent {
 			gateDateControl,
 			intervals,
 			siteId,
+			supportCommercialUse,
+			isSiteJetpackNotAtomic,
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
 
 		return (
 			<div
-				className={ classNames( 'stats-period-navigation', {
+				className={ clsx( 'stats-period-navigation', {
 					'stats-period-navigation__is-with-new-date-control': isWithNewDateControl,
 				} ) }
 			>
@@ -208,7 +212,8 @@ class StatsPeriodNavigation extends PureComponent {
 							shortcutList={ shortcutList }
 							onGatedHandler={ this.onGatedHandler }
 							overlay={
-								gateDateControl && (
+								// TODO: getDateControl is only used by WPCOM at the moment, and we should refactor to reuse it rather than having a separate supportCommercialUse here.
+								( gateDateControl || ( ! supportCommercialUse && isSiteJetpackNotAtomic ) ) && (
 									<StatsCardUpsell
 										className="stats-module__upsell"
 										statType={ STATS_FEATURE_DATE_CONTROL }
@@ -270,6 +275,9 @@ const connectComponent = connect(
 			siteId,
 			`${ STATS_FEATURE_INTERVAL_DROPDOWN }/${ period }`
 		);
+		const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
+			treatAtomicAsJetpackSite: false,
+		} );
 		const shortcutList = [
 			{
 				id: 'last_7_days',
@@ -335,7 +343,14 @@ const connectComponent = connect(
 			},
 		};
 
-		return { shortcutList, gateDateControl, gatePeriodInterval, intervals, siteId };
+		return {
+			shortcutList,
+			gateDateControl,
+			gatePeriodInterval,
+			intervals,
+			siteId,
+			isSiteJetpackNotAtomic,
+		};
 	},
 	{ recordGoogleEvent: recordGoogleEventAction, toggleUpsellModal }
 );
@@ -344,5 +359,6 @@ export default flowRight(
 	connectComponent,
 	localize,
 	withRtl,
-	withLocalizedMoment
+	withLocalizedMoment,
+	withStatsPurchases
 )( StatsPeriodNavigation );

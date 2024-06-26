@@ -1,3 +1,4 @@
+import { SiteGoal } from '../onboard';
 import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
@@ -81,6 +82,19 @@ export interface P2ThumbnailElements {
 	header_image: string | null;
 }
 
+export interface SiteFeatures {
+	/**
+	 * We don't have a `FeatureSlug` yet defined globally
+	 * @todo Features are being migrated to calypso-products in other work. Update the type here when one exists
+	 */
+	active: string[];
+	/**
+	 * We don't have a `FeatureSlug` yet defined globally
+	 * @todo Features are being migrated to calypso-products in other work. Update the type here when one exists
+	 */
+	available: Record< string, string[] >;
+}
+
 export interface SiteDetailsPlan {
 	product_id: number;
 	product_slug: string;
@@ -113,6 +127,7 @@ export interface SiteDetails {
 	is_coming_soon?: boolean;
 	is_multisite?: boolean;
 	is_private?: boolean;
+	is_deleted?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
 	is_wpcom_staging_site?: boolean;
@@ -193,6 +208,7 @@ export interface SiteDetailsCapabilities {
 	publish_posts: boolean;
 	remove_users: boolean;
 	upload_files: boolean;
+	update_plugins: boolean;
 	view_hosting: boolean;
 	view_stats: boolean;
 }
@@ -238,6 +254,7 @@ export interface SiteDetailsOptions {
 	is_pending_plan?: boolean;
 	is_redirect?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_wpcom_simple?: boolean;
 	is_wpcom_store?: boolean;
 	is_wpforteams_site?: boolean;
 	jetpack_connection_active_plugins?: string[];
@@ -254,6 +271,7 @@ export interface SiteDetailsOptions {
 	selected_features?: FeatureId[];
 	show_on_front?: string;
 	site_intent?: string;
+	site_goals?: SiteGoal[];
 	site_segment?: string | null;
 	site_vertical_id?: string | null;
 	software_version?: string;
@@ -274,6 +292,7 @@ export interface SiteDetailsOptions {
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
 	is_commercial?: boolean | null;
+	is_commercial_reasons?: string[];
 	wpcom_admin_interface?: string;
 }
 
@@ -530,6 +549,7 @@ export enum MigrationStatus {
 	BACKING_UP_QUEUED = 'backing-up-queued',
 	RESTORING = 'restoring',
 	DONE = 'done',
+	DONE_USER = 'done-user',
 	ERROR = 'error',
 }
 
@@ -642,4 +662,20 @@ export interface AssembleSiteOptions {
 	globalStyles?: GlobalStyles;
 	canReplaceContent?: boolean;
 	siteSetupOption?: string;
+}
+
+/**
+ * Site media storage from `/sites/[ siteIdOrSlug ]/media-storage` endpoint
+ */
+export interface RawSiteMediaStorage {
+	max_storage_bytes: number;
+	storage_used_bytes: number;
+}
+
+/**
+ * Site media storage transformed for frontend use
+ */
+export interface SiteMediaStorage {
+	maxStorageBytes: number;
+	storageUsedBytes: number;
 }

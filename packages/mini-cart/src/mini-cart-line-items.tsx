@@ -65,7 +65,7 @@ export function MiniCartLineItems( {
 						lineItem={ couponLineItem }
 						removeProductFromCart={ removeCoupon }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						hasDeleteButton
+						hasDeleteButton={ couponLineItem.hasDeleteButton }
 					/>
 				</MiniCartLineItemWrapper>
 			) }

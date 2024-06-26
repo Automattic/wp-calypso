@@ -1,5 +1,5 @@
 import { ProgressBar } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -140,7 +140,7 @@ class VideoEditor extends Component {
 			<Notice
 				className="video-editor__notice"
 				status="is-error"
-				showDismiss={ true }
+				showDismiss
 				text={ translate( 'We are unable to edit this video.' ) }
 				isCompact={ false }
 				onDismissClick={ onCancel }
@@ -152,7 +152,7 @@ class VideoEditor extends Component {
 		const { className, media, onCancel, uploadProgress, translate, shouldShowError } = this.props;
 		const { error, isLoading, isSelectingFrame, pauseVideo } = this.state;
 
-		const classes = classNames( 'video-editor', className );
+		const classes = clsx( 'video-editor', className );
 
 		return (
 			<div className={ classes }>
@@ -173,7 +173,7 @@ class VideoEditor extends Component {
 						{ uploadProgress && ! error && (
 							<ProgressBar
 								className="video-editor__progress-bar"
-								isPulsing={ true }
+								isPulsing
 								total={ 100 }
 								value={ uploadProgress }
 							/>

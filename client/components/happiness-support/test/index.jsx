@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
+import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT, SUPPORT_ROOT } from '@automattic/urls';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { HappinessSupport } from '..';
 
 jest.mock( 'calypso/components/support-button', () => ( { onClick, children } ) => (

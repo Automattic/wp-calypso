@@ -1,6 +1,12 @@
 import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import {
+	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID,
+	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
+	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
+} from '@automattic/urls';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -10,12 +16,6 @@ import migratingHostImage from 'calypso/assets/images/illustrations/migrating-ho
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
-import {
-	CALYPSO_CONTACT,
-	INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID,
-	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
-	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
-} from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isSupportSession as hasEnteredSupportSession } from 'calypso/state/support/selectors';
 
@@ -114,7 +114,7 @@ class TransferDomainPrecheck extends Component {
 		const { loading } = this.props;
 		const isAtCurrentStep = step === currentStep;
 		const isStepFinished = currentStep > step;
-		const sectionClasses = classNames( 'transfer-domain-step__section', {
+		const sectionClasses = clsx( 'transfer-domain-step__section', {
 			'is-expanded': isAtCurrentStep,
 			'is-complete': isStepFinished,
 		} );
@@ -328,7 +328,7 @@ class TransferDomainPrecheck extends Component {
 		const { translate, domain } = this.props;
 
 		return (
-			<Card compact={ true } className="transfer-domain-step__title">
+			<Card compact className="transfer-domain-step__title">
 				<FormattedHeader
 					headerText={ translate( "Let's get {{strong}}%(domain)s{{/strong}} ready to transfer.", {
 						args: { domain },
@@ -370,7 +370,7 @@ class TransferDomainPrecheck extends Component {
 							) }
 						</p>
 					</div>
-					<Button disabled={ disableButton } onClick={ this.onClick } primary={ true }>
+					<Button disabled={ disableButton } onClick={ this.onClick } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 				</Card>

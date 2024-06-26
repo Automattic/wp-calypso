@@ -27,7 +27,7 @@ class Starter_Page_Templates {
 	 *
 	 * @var string
 	 */
-	public $templates_cache_key;
+	public $templates_cache_key = 'starter_page_templates';
 
 	/**
 	 * Starter_Page_Templates constructor.
@@ -43,24 +43,13 @@ class Starter_Page_Templates {
 	}
 
 	/**
-	 * Gets the cache key for templates array, after setting it if it hasn't been set yet.
+	 * Gets the cache key for templates array.
 	 *
 	 * @param string $locale The templates locale.
 	 *
 	 * @return string
 	 */
 	public function get_templates_cache_key( string $locale ) {
-		if ( empty( $this->templates_cache_key ) ) {
-			$this->templates_cache_key = implode(
-				'_',
-				array(
-					'starter_page_templates',
-					A8C_ETK_PLUGIN_VERSION,
-					get_option( 'site_vertical', 'default' ),
-				)
-			);
-		}
-
 		return $this->templates_cache_key . '_' . $locale;
 	}
 
@@ -259,7 +248,7 @@ class Starter_Page_Templates {
 		$config = apply_filters(
 			'fse_starter_page_templates_config',
 			array(
-				'templates'    => array_merge( $default_templates, $page_templates, $registered_page_templates ),
+				'templates'    => array_merge( $default_templates, $registered_page_templates, $page_templates ),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'screenAction' => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
 			)
@@ -290,27 +279,17 @@ class Starter_Page_Templates {
 	public function get_page_templates( string $locale ) {
 		$page_template_data   = get_transient( $this->get_templates_cache_key( $locale ) );
 		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
-		$is_assembler_v2_site = in_array( get_stylesheet(), array( 'pub/assembler', 'assembler' ), true ) || isset( $_GET['v2_patterns'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$disable_cache        = function_exists( 'is_automattician' ) && is_automattician() || false !== $override_source_site || ( defined( 'WP_DISABLE_PATTERN_CACHE' ) && WP_DISABLE_PATTERN_CACHE );
 
-		// Load fresh data if we don't have any or vertical_id doesn't match.
-		if ( $is_assembler_v2_site || false === $page_template_data || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false !== $override_source_site ) {
-			$request_params = array(
-				'site'         => $override_source_site,
-				'tags'         => 'layout',
-				'pattern_meta' => 'is_web',
-			);
-
-			if ( $is_assembler_v2_site ) {
-				$request_params = array(
-					'site'       => 'dotcompatterns.wordpress.com',
-					'categories' => 'page',
-					'post_type'  => 'wp_block',
-				);
-			}
-
+		// Load fresh data if is automattician or we don't have any data.
+		if ( $disable_cache || false === $page_template_data ) {
 			$request_url = esc_url_raw(
 				add_query_arg(
-					$request_params,
+					array(
+						'site'       => $override_source_site ?? 'dotcompatterns.wordpress.com',
+						'categories' => 'page',
+						'post_type'  => 'wp_block',
+					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $locale
 				)
 			);
@@ -329,9 +308,9 @@ class Starter_Page_Templates {
 
 			$page_template_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
-			// Only save to cache if we have not overridden the source site.
-			if ( ! $is_assembler_v2_site && false === $override_source_site ) {
-				set_transient( $this->get_templates_cache_key( $locale ), $page_template_data, DAY_IN_SECONDS );
+			// Only save to cache when is not disabled.
+			if ( ! $disable_cache ) {
+				set_transient( $this->get_templates_cache_key( $locale ), $page_template_data, 5 * MINUTE_IN_SECONDS );
 			}
 
 			return $page_template_data;
@@ -440,7 +419,7 @@ class Starter_Page_Templates {
 	 * Custom styles are safe because they are overwritten by local block styles, global styles, or theme stylesheets.
 	 **/
 	public function add_default_editor_styles_for_classic_themes( $editor_settings, $editor_context ) {
-		$theme = wp_get_theme( normalize_theme_slug( get_stylesheet() ) );
+		$theme = wp_get_theme( get_stylesheet() );
 		if ( $theme->is_block_theme() ) {
 			// Only for classic themes
 			return $editor_settings;

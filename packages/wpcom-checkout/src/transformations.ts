@@ -36,6 +36,7 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 	}
 	return {
 		id: 'coupon-line-item',
+		hasDeleteButton: ! responseCart.has_auto_renew_coupon_been_automatically_applied,
 		// translators: The label of the coupon line item in checkout, including the coupon code
 		label: String(
 			translate( 'Coupon: %(couponCode)s', { args: { couponCode: responseCart.coupon } } )
@@ -142,16 +143,18 @@ function getDiscountReasonForIntroductoryOffer(
 	product: ResponseCartProduct,
 	terms: IntroductoryOfferTerms,
 	translate: ReturnType< typeof useTranslate >,
-	allowFreeText: boolean
+	allowFreeText: boolean,
+	isPriceIncrease: boolean
 ): string {
-	return getIntroductoryOfferIntervalDisplay(
+	return getIntroductoryOfferIntervalDisplay( {
 		translate,
-		terms.interval_unit,
-		terms.interval_count,
-		product.item_subtotal_integer === 0 && allowFreeText,
-		'checkout',
-		terms.transition_after_renewal_count
-	);
+		intervalUnit: terms.interval_unit,
+		intervalCount: terms.interval_count,
+		isFreeTrial: product.item_subtotal_integer === 0 && allowFreeText,
+		isPriceIncrease,
+		context: 'checkout',
+		remainingRenewalsUsingOffer: terms.transition_after_renewal_count,
+	} );
 }
 
 export interface CostOverrideForDisplay {
@@ -178,21 +181,14 @@ export interface LineItemCostOverrideForDisplay {
 	discountAmount?: number;
 }
 
-function isUserVisibleCostOverride(
-	costOverride: ResponseCartCostOverride,
-	product: ResponseCartProduct
-): boolean {
+export function isUserVisibleCostOverride( costOverride: {
+	does_override_original_cost: boolean;
+	override_code: string;
+} ): boolean {
 	if ( costOverride.does_override_original_cost ) {
 		// We won't display original cost overrides since they are
 		// included in the original cost that's being displayed. They
 		// are not discounts.
-		return false;
-	}
-
-	if (
-		'introductory-offer' === costOverride.override_code &&
-		! canDisplayIntroductoryOfferDiscountForProduct( product )
-	) {
 		return false;
 	}
 	return true;
@@ -217,26 +213,43 @@ function makeSaleCostOverrideUnique(
 	return costOverride;
 }
 
+/**
+ * Replace introductory offer cost override text with wording specific to that
+ * offer, like "Discount for first 3 months" instead of "Introductory offer".
+ */
 function makeIntroductoryOfferCostOverrideUnique(
 	costOverride: ResponseCartCostOverride,
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
 	allowFreeText: boolean
 ): ResponseCartCostOverride {
-	// Replace introductory offer cost override text with wording specific to
-	// that offer.
-	if ( 'introductory-offer' === costOverride.override_code && product.introductory_offer_terms ) {
+	if ( 'introductory-offer' !== costOverride.override_code || ! product.introductory_offer_terms ) {
+		return costOverride;
+	}
+	const isPriceIncrease = costOverride.old_subtotal_integer < costOverride.new_subtotal_integer;
+
+	// Renewals get generic text because an introductory offer manual renewal
+	// can be hard to explain simply and saying "Discount for first 3 months"
+	// may not be accurate.
+	if ( product.is_renewal ) {
 		return {
 			...costOverride,
-			human_readable_reason: getDiscountReasonForIntroductoryOffer(
-				product,
-				product.introductory_offer_terms,
-				translate,
-				allowFreeText
-			),
+			human_readable_reason: isPriceIncrease
+				? translate( 'Prorated renewal' )
+				: translate( 'Prorated renewal discount' ),
 		};
 	}
-	return costOverride;
+
+	return {
+		...costOverride,
+		human_readable_reason: getDiscountReasonForIntroductoryOffer(
+			product,
+			product.introductory_offer_terms,
+			translate,
+			allowFreeText,
+			isPriceIncrease
+		),
+	};
 }
 
 function getDiscountForCostOverrideForDisplay( costOverride: ResponseCartCostOverride ): number {
@@ -262,23 +275,49 @@ function getBillPeriodMonthsForIntroductoryOfferInterval(
  * discount for an annual plan).
  */
 export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
-	product: ResponseCartProduct
+	costOverrides: { override_code: string }[] | undefined,
+	introductoryOfferTerms: ResponseCartProduct[ 'introductory_offer_terms' ] | undefined,
+	monthsPerBillPeriodForProduct: number | undefined | null
 ): boolean {
 	if (
-		product.cost_overrides?.some( ( costOverride ) => {
-			costOverride.override_code !== 'introductory-offer';
+		costOverrides?.some( ( costOverride ) => {
+			! isOverrideCodeIntroductoryOffer( costOverride.override_code );
 		} )
 	) {
 		return false;
 	}
-	if ( ! product.introductory_offer_terms?.enabled ) {
+	if ( ! introductoryOfferTerms?.enabled ) {
 		return false;
 	}
 	if (
-		getBillPeriodMonthsForIntroductoryOfferInterval(
-			product.introductory_offer_terms.interval_unit
-		) === product.months_per_bill_period
+		getBillPeriodMonthsForIntroductoryOfferInterval( introductoryOfferTerms.interval_unit ) ===
+		monthsPerBillPeriodForProduct
 	) {
+		return false;
+	}
+	return true;
+}
+
+function doesIntroductoryOfferCostOverrideHavePriceIncrease(
+	costOverride: ResponseCartCostOverride
+): boolean {
+	if ( ! isOverrideCodeIntroductoryOffer( costOverride.override_code ) ) {
+		return false;
+	}
+	if ( costOverride.old_subtotal_integer >= costOverride.new_subtotal_integer ) {
+		return false;
+	}
+	return true;
+}
+
+export function doesIntroductoryOfferHavePriceIncrease( product: ResponseCartProduct ): boolean {
+	const introOffer = product.cost_overrides?.find(
+		doesIntroductoryOfferCostOverrideHavePriceIncrease
+	);
+	if ( ! introOffer ) {
+		return false;
+	}
+	if ( ! product.introductory_offer_terms?.enabled ) {
 		return false;
 	}
 	return true;
@@ -292,7 +331,7 @@ export function filterCostOverridesForLineItem(
 
 	return (
 		costOverrides
-			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
+			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
 			// Hide coupon overrides because they will be displayed separately.
 			.filter( ( costOverride ) => costOverride.override_code !== 'coupon-discount' )
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
@@ -300,12 +339,40 @@ export function filterCostOverridesForLineItem(
 				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, true )
 			)
 			.map( ( costOverride ) => {
+				// Introductory offers which are renewals may have a prorated
+				// discount amount which is hard to display as a simple
+				// discount, so we will hide the discounted amount here.
+				if ( costOverride.override_code === 'introductory-offer' && product.is_renewal ) {
+					return {
+						humanReadableReason: costOverride.human_readable_reason,
+						overrideCode: costOverride.override_code,
+					};
+				}
+
 				// Introductory offer discounts with term lengths that differ from
 				// the term length of the product (eg: a 3 month discount for an
 				// annual plan) need to be displayed differently because the
 				// discount is only temporary and the user will still be charged
 				// the remainder before the next renewal.
-				if ( doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
+				if (
+					isOverrideCodeIntroductoryOffer( costOverride.override_code ) &&
+					doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+						product.cost_overrides,
+						product.introductory_offer_terms,
+						product.months_per_bill_period
+					)
+				) {
+					return {
+						humanReadableReason: costOverride.human_readable_reason,
+						overrideCode: costOverride.override_code,
+					};
+				}
+
+				// Introductory offer discounts which are price increases
+				// should have their full details displayed because displaying
+				// them as a simple price change can be confusing. We therefore
+				// hide the price change amount.
+				if ( doesIntroductoryOfferHavePriceIncrease( product ) ) {
 					return {
 						humanReadableReason: costOverride.human_readable_reason,
 						overrideCode: costOverride.override_code,
@@ -363,7 +430,12 @@ export function filterAndGroupCostOverridesForDisplay(
 		const costOverrides = product?.cost_overrides ?? [];
 
 		costOverrides
-			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
+			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
+			// Remove intro offers which increase the cost because they are not
+			// discounts and will have their terms displayed elsewhere.
+			.filter(
+				( costOverride ) => ! doesIntroductoryOfferCostOverrideHavePriceIncrease( costOverride )
+			)
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
 			.map( ( costOverride ) =>
 				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, false )
@@ -412,19 +484,6 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 
 function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
 	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
-}
-
-/**
- * Introductory offer discounts can sometimes be misleading. If we want to hide
- * them for a product in checkout, we can do so in this function.
- */
-function canDisplayIntroductoryOfferDiscountForProduct( product: ResponseCartProduct ): boolean {
-	// Social Advanced has free trial that we don't consider an introductory
-	// offer. See https://github.com/Automattic/wp-calypso/pull/86353
-	if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
-		return false;
-	}
-	return true;
 }
 
 /**
@@ -507,6 +566,19 @@ export function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProd
 		}
 	}
 
+	// If there is an introductory offer override that increases the price,
+	// consider that part of the base price because it's confusing to show
+	// "Subtotal before discounts" as lower than the "Subtotal". The details of
+	// the price increase will be displayed elsewhere.
+	if ( doesIntroductoryOfferHavePriceIncrease( product ) ) {
+		const introOffer = product.cost_overrides?.find(
+			( offer ) => offer.override_code === 'introductory-offer'
+		);
+		if ( introOffer ) {
+			return introOffer.new_subtotal_integer + multiYearDiscount;
+		}
+	}
+
 	// If there are no original cost overrides, return the first cost override's
 	// old price.
 	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
@@ -564,4 +636,16 @@ export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {
 	const taxes = cart.total_tax_integer;
 	const totalBeforeCredits = subtotal + taxes;
 	return credits > 0 && totalBeforeCredits > 0 && credits >= totalBeforeCredits;
+}
+
+export function isOverrideCodeIntroductoryOffer( overrideCode: string ): boolean {
+	switch ( overrideCode ) {
+		case 'introductory-offer':
+			return true;
+		case 'prorated-introductory-offer':
+			return true;
+		case 'quantity-upgrade-introductory-offer':
+			return true;
+	}
+	return false;
 }

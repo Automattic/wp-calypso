@@ -1,6 +1,5 @@
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { Discount, Label, Price, PriceTextContainer, Variant } from './styles';
 import type { WPCOMProductVariant } from './types';
@@ -19,7 +18,6 @@ const JetpackDiscountDisplay: FunctionComponent< {
 	currency: string;
 } > = ( { finalPriceInteger, isFirstMonthTrial, showIntroOffer, discountInteger, currency } ) => {
 	const translate = useTranslate();
-
 	if ( isFirstMonthTrial && 0 === finalPriceInteger ) {
 		return <Discount>{ translate( 'One month free trial' ) }</Discount>;
 	}
@@ -81,14 +79,12 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 						isFirstMonthTrial={ isFirstMonthTrial( variant ) }
 					/>
 				) }
-				{ ! hasCheckoutVersion( '2' ) && (
-					<Price aria-hidden={ variant.introductoryInterval > 0 }>
-						{ formatCurrency( variant.priceInteger, variant.currency, {
-							stripZeros: true,
-							isSmallestUnit: true,
-						} ) }
-					</Price>
-				) }
+				<Price aria-hidden={ variant.introductoryInterval > 0 }>
+					{ formatCurrency( variant.priceInteger, variant.currency, {
+						stripZeros: true,
+						isSmallestUnit: true,
+					} ) }
+				</Price>
 			</PriceTextContainer>
 		</Variant>
 	);

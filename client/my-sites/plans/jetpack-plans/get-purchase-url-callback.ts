@@ -1,3 +1,4 @@
+import { getCurrentUser, getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import {
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
@@ -40,6 +41,11 @@ export function buildCheckoutURL(
 		// user is in Jetpack Cloud.
 		if ( ! urlQueryArgs.source ) {
 			urlQueryArgs.source = 'jetpack-plans';
+		}
+
+		if ( ! urlQueryArgs._tkl && ! getCurrentUser() && getTracksAnonymousUserId() ) {
+			// If the user is not logged in, going to the checkout page will override current tk_ai - we need to pass it through URL to link it to the new one.
+			urlQueryArgs._tkl = getTracksAnonymousUserId();
 		}
 
 		// This URL is used when clicking the back button in the checkout screen to redirect users
@@ -137,14 +143,15 @@ export const getPurchaseURLCallback =
 		showUpsellPage?: boolean
 	): PurchaseURLCallback =>
 	( product: SelectorProduct, isUpgradeableToYearly?, purchase?: Purchase ) => {
+		const slug = product.productAlias || product.productSlug;
+
 		if ( locale ) {
 			urlQueryArgs.lang = locale;
 		}
-		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
+		if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
 			return product.externalUrl || '';
 		}
 		if ( purchase && isUpgradeableToYearly ) {
-			const { productSlug: slug } = product;
 			const yearlySlug = getYearlySlugFromMonthly( slug );
 			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
 		}
@@ -154,7 +161,7 @@ export const getPurchaseURLCallback =
 		}
 
 		// Visit the indirect checkout URL to determine the purchasable product on another page.
-		if ( INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( product.productSlug ) ) {
+		if ( INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( slug ) ) {
 			return product.indirectCheckoutUrl?.replace( '{siteSlug}', siteSlug ) || '';
 		}
 
@@ -162,8 +169,8 @@ export const getPurchaseURLCallback =
 
 		// Link to upsell page if upsell feature enabled
 		if ( showUpsellPage ) {
-			url = buildUpsellURL( siteSlug, product.productSlug, urlQueryArgs, rootUrl );
+			url = buildUpsellURL( siteSlug, slug, urlQueryArgs, rootUrl );
 		}
 
-		return url || buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
+		return url || buildCheckoutURL( siteSlug, slug, urlQueryArgs );
 	};

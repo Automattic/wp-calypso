@@ -21,12 +21,12 @@ $common-border-radius: 4px;
 			padding: 32px;
 			min-width: 380px;
 
-			@media ( max-width: $break-mobile ) {
+			@media (max-width: $break-mobile) {
 				min-width: unset;
 			}
 		}
 
-		@media ( max-width: $custom-mobile-breakpoint ) {
+		@media (max-width: $custom-mobile-breakpoint) {
 			padding: 0;
 			border: 1px solid var(--color-neutral-5);
 			border-left: 0;
@@ -54,7 +54,7 @@ $common-border-radius: 4px;
 			white-space: normal;
 		}
 
-		@media ( max-width: $custom-mobile-breakpoint ) {
+		@media (max-width: $custom-mobile-breakpoint) {
 			display: block;
 		}
 	}
@@ -98,7 +98,7 @@ $common-border-radius: 4px;
 			}
 		}
 
-		@media ( max-width: $custom-mobile-breakpoint ) {
+		@media (max-width: $custom-mobile-breakpoint) {
 			margin-top: 16px;
 
 			.segmented-control__link {
@@ -170,7 +170,7 @@ $common-border-radius: 4px;
 				width: 100px;
 			}
 
-			@media ( max-width: $custom-mobile-breakpoint ) {
+			@media (max-width: $custom-mobile-breakpoint) {
 				padding-bottom: 12px;
 			}
 		}

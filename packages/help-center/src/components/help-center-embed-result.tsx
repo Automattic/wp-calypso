@@ -38,6 +38,12 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	}, [ query, link, sectionName, postId, blogId ] );
 
 	const redirectBack = () => {
+		recordTracksEvent( `calypso_inlinehelp_navigate_back`, {
+			result_url: link,
+			post_id: postId,
+			blog_id: blogId,
+			search_query: query,
+		} );
 		if ( canNavigateBack ) {
 			navigate( -1 );
 		} else if ( query ) {

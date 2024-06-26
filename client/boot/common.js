@@ -5,12 +5,14 @@ import { addBreadcrumb, initSentry } from '@automattic/calypso-sentry';
 import { getUrlParts } from '@automattic/calypso-url';
 import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
+import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
 import { ProviderWrappedLayout } from 'calypso/controller';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { tracksEvents } from 'calypso/lib/analytics/tracks';
@@ -27,7 +29,6 @@ import { getSiteFragment, normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { isOutsideCalypso } from 'calypso/lib/url';
-import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-interop';
@@ -50,8 +51,6 @@ import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
-
-const isA8CForAgenciesEnabled = config.isEnabled( 'a8c-for-agencies' );
 
 const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 	page( '*', ( context, next ) => {
@@ -136,7 +135,7 @@ function saveOauthFlags() {
 
 function authorizePath() {
 	const redirectUri = new URL(
-		isJetpackCloud() || isA8CForAgenciesEnabled ? '/connect/oauth/token' : '/api/oauth/token',
+		isJetpackCloud() || isA8CForAgencies() ? '/connect/oauth/token' : '/api/oauth/token',
 		window.location
 	);
 	redirectUri.search = new URLSearchParams( {
@@ -156,6 +155,7 @@ function authorizePath() {
 }
 
 const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison', '/manage/pricing' ];
+const A4A_PUBLIC_ROUTES = [ '/signup' ];
 
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
@@ -168,6 +168,12 @@ const oauthTokenMiddleware = () => {
 					...JP_CLOUD_PUBLIC_ROUTES.map( ( route ) => `/${ slug }${ route }` )
 				);
 			} );
+		}
+
+		if ( isA8CForAgencies() ) {
+			if ( config.isEnabled( 'a4a-logged-out-signup' ) ) {
+				loggedOutRoutes.push( ...A4A_PUBLIC_ROUTES );
+			}
 		}
 
 		// Forces OAuth users to the /login page if no token is present
@@ -409,7 +415,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
 
-	const queryClient = await createQueryClient( currentUser?.ID );
+	const { queryClient, unsubscribePersister } = await createQueryClient( currentUser?.ID );
 	const initialQueryState = getInitialQueryState();
 	hydrateServerState( queryClient, initialQueryState );
 
@@ -417,6 +423,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
+	onDisablePersistence( unsubscribePersister );
 	setupLocale( currentUser, reduxStore );
 	geolocateCurrencySymbol();
 	configureReduxStore( currentUser, reduxStore );

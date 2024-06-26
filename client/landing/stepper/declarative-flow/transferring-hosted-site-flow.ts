@@ -13,6 +13,7 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 const transferringHostedSite: Flow = {
 	name: TRANSFERRING_HOSTED_SITE_FLOW,
+	isSignupFlow: false,
 
 	useSteps() {
 		return [
@@ -47,7 +48,10 @@ const transferringHostedSite: Flow = {
 
 					dispatch( requestAdminMenu( siteId ) );
 
-					return exitFlow( '/home/' + siteId );
+					const redirectTo = providedDependencies?.redirectTo
+						? providedDependencies?.redirectTo
+						: `/home/${ siteId }`;
+					return exitFlow( redirectTo as string );
 				}
 
 				case 'waitForAtomic': {

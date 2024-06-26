@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { addLocaleToPath, localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -17,6 +17,7 @@ import {
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import {
@@ -127,27 +128,37 @@ class MagicLogin extends Component {
 			locale: this.props.locale,
 			emailAddress: this.props.query?.email_address,
 			signupUrl: this.props.query?.signup_url,
+			usernameOnly: true,
 		};
 
 		page( login( loginParameters ) );
 	};
 
 	renderLinks() {
-		const { isJetpackLogin, locale, showCheckYourEmail, translate } = this.props;
+		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWoo, query } = this.props;
+
+		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
+
+		if ( isWoo ) {
+			return null;
+		}
 
 		if ( showCheckYourEmail ) {
+			if ( isA4A ) {
+				return null;
+			}
 			return (
 				<AppPromo
 					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
 					campaign="calypso-login-link-check-email"
 					className="magic-link-app-promo"
 					iconSize={ 32 }
-					hasQRCode={ true }
+					hasQRCode
 					hasGetAppButton={ false }
 				/>
 			);
 		}
-		if ( this.props.query?.client_id ) {
+		if ( query?.client_id ) {
 			return null;
 		}
 
@@ -161,21 +172,28 @@ class MagicLogin extends Component {
 			signupUrl: this.props.query?.signup_url,
 		};
 
+		let linkBack = translate( 'Enter a password instead' );
+		if ( query?.username_only === 'true' ) {
+			linkBack = translate( 'Use username and password instead' );
+		}
+
 		return (
 			<>
 				<div className="magic-login__footer">
 					<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
-						{ translate( 'Enter a password instead' ) }
+						{ linkBack }
 					</a>
 				</div>
-				<AppPromo
-					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
-					campaign="calypso-login-link"
-					className="magic-link-app-promo"
-					iconSize={ 32 }
-					hasQRCode={ true }
-					hasGetAppButton={ false }
-				/>
+				{ ! isA4A && (
+					<AppPromo
+						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
+						campaign="calypso-login-link"
+						className="magic-link-app-promo"
+						iconSize={ 32 }
+						hasQRCode
+						hasGetAppButton={ false }
+					/>
+				) }
 			</>
 		);
 	}
@@ -456,19 +474,70 @@ class MagicLogin extends Component {
 		);
 	}
 
+	renderStudioLoginTos = () => {
+		const options = {
+			components: {
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				privacyLink: (
+					<a
+						href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		};
+		const tosText = this.props.translate(
+			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			options
+		);
+
+		return <p className="studio-magic-login__tos">{ tosText }</p>;
+	};
+
 	render() {
-		const { oauth2Client, showCheckYourEmail } = this.props;
+		const { oauth2Client, showCheckYourEmail, query, translate } = this.props;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			return (
 				<Main
-					className={ classNames( 'grav-powered-magic-login', {
+					className={ clsx( 'grav-powered-magic-login', {
 						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
 					{ showCheckYourEmail
 						? this.renderGravPoweredEmailVerification()
 						: this.renderGravPoweredMagicLogin() }
+				</Main>
+			);
+		}
+
+		// "query?.redirect_to" is used to determine if Studio app users are creating a new account (vs. logging in)
+		if ( isStudioAppOAuth2Client( oauth2Client ) && query?.redirect_to ) {
+			return (
+				<Main className="magic-login magic-login__request-link is-white-login">
+					{ this.renderLocaleSuggestions() }
+
+					<GlobalNotices id="notices" />
+
+					<RequestLoginEmailForm
+						headerText={ translate( 'Sign up for WordPress.com' ) }
+						tosComponent={ this.renderStudioLoginTos() }
+						subHeaderText={ translate(
+							'Connecting a WordPress.com account unlocks additional Studio features like demo sites.'
+						) }
+						customFormLabel={ translate( 'Your email address' ) }
+						submitButtonLabel={ translate( 'Send activation link' ) }
+						createAccountForNewUser
+					/>
+
+					{ this.renderLinks() }
 				</Main>
 			);
 		}

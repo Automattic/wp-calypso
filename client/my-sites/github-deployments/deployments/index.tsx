@@ -1,16 +1,14 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useI18n } from '@wordpress/react-i18n';
+import { HostingCard } from 'calypso/components/hosting-card';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import ActionPanel from '../../../components/action-panel';
-import HeaderCake from '../../../components/header-cake';
+import { GitHubDeploymentSurvey } from '../components/deployments-survey';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { PageShell } from '../components/page-shell';
-import { GitHubBrowseRepositories } from '../components/repositories/browse-repositories';
+import { GitHubDeploymentCreationForm } from '../deployment-creation/deployment-creation-form';
 import { createDeploymentPage } from '../routes';
-import { useGithubInstallationsQuery } from '../use-github-installations-query';
-import { GitHubAuthorizeButton } from './authorize-button';
-import { GitHubAuthorizeCard } from './authorize-card';
 import { ConnectionWizardButton } from './connection-wizard-button';
 import { GitHubDeploymentsList } from './deployments-list';
 import { useCodeDeploymentsQuery } from './use-code-deployments-query';
@@ -22,66 +20,49 @@ export function GitHubDeployments() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { __ } = useI18n();
 
-	const { data: installations, isLoading: isLoadingInstallations } = useGithubInstallationsQuery();
-	const { data: deployments } = useCodeDeploymentsQuery( siteId );
-
-	const hasConnectedAnInstallation = installations && installations.length > 0;
-	const hasDeployments = deployments && deployments.length > 0;
-
-	const renderTopRightButton = () => {
-		if ( hasConnectedAnInstallation && hasDeployments ) {
-			return (
-				<ConnectionWizardButton
-					onClick={ () => {
-						page( createDeploymentPage( siteSlug! ) );
-					} }
-				/>
-			);
-		}
-
-		if ( hasDeployments && ! hasConnectedAnInstallation ) {
-			return <GitHubAuthorizeButton />;
-		}
-
-		return null;
-	};
+	const { data: deployments, isLoading, refetch } = useCodeDeploymentsQuery( siteId );
 
 	const renderContent = () => {
 		if ( deployments?.length ) {
-			return <GitHubDeploymentsList deployments={ deployments } />;
-		}
-
-		if ( installations ) {
 			return (
 				<>
-					<HeaderCake isCompact>
-						<h1>{ __( 'Connect repository' ) }</h1>
-					</HeaderCake>
-					<ActionPanel>
-						<GitHubBrowseRepositories
-							onSelectRepository={ ( installation, repository ) => {
-								page(
-									createDeploymentPage( siteSlug!, {
-										installationId: installation.external_id,
-										repositoryId: repository.id,
-									} )
-								);
-							} }
-						/>
-					</ActionPanel>
+					<GitHubDeploymentsList deployments={ deployments } />
+					{ deployments.some( ( deployment ) => deployment.current_deployed_run !== null ) && (
+						<GitHubDeploymentSurvey />
+					) }
 				</>
 			);
 		}
 
-		if ( ! installations && ! isLoadingInstallations ) {
-			return <GitHubAuthorizeCard />;
+		if ( isLoading ) {
+			return <GitHubLoadingPlaceholder />;
 		}
 
-		return <GitHubLoadingPlaceholder />;
+		return (
+			<HostingCard>
+				<GitHubDeploymentCreationForm onConnected={ refetch } />
+			</HostingCard>
+		);
 	};
 
 	return (
-		<PageShell pageTitle={ __( 'GitHub Deployments' ) } topRightButton={ renderTopRightButton() }>
+		<PageShell
+			pageTitle={
+				isEnabled( 'layout/dotcom-nav-redesign-v2' )
+					? __( 'Deployments' )
+					: __( 'GitHub Deployments' )
+			}
+			topRightButton={
+				deployments &&
+				deployments?.length > 0 && (
+					<ConnectionWizardButton
+						onClick={ () => {
+							page( createDeploymentPage( siteSlug! ) );
+						} }
+					/>
+				)
+			}
+		>
 			{ renderContent() }
 		</PageShell>
 	);

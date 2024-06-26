@@ -29,3 +29,10 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 	}
 	return STORE_KEY;
 }
+
+/**
+ * Queries
+ */
+export { default as useSite } from './queries/use-site';
+export { default as useSiteFeatures } from './queries/use-site-features';
+export { default as useSiteMediaStorage } from './queries/use-site-media-storage';

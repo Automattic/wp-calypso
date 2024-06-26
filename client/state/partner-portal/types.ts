@@ -5,6 +5,7 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 
 /**
  * Utility.
@@ -115,6 +116,12 @@ export interface APIProductFamily {
 	name: string;
 	slug: string;
 	products: APIProductFamilyProduct[];
+	discounts?: {
+		tiers: {
+			quantity: number;
+			discount_percent: number;
+		}[];
+	};
 }
 
 export interface APIError {
@@ -244,6 +251,7 @@ export interface License {
 	ownerType: string | null;
 	quantity: number | null;
 	parentLicenseId: number | null;
+	referral: ReferralAPIResponse | null;
 }
 
 export interface LicenseCounts {

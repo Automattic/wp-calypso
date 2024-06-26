@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
@@ -129,6 +129,8 @@ export class FullPostView extends Component {
 		this.stopResize =
 			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
 
+		document.querySelector( 'body' ).classList.add( 'is-reader-full-post' );
+
 		document.addEventListener( 'keydown', this.handleKeydown, true );
 	}
 	componentDidUpdate( prevProps ) {
@@ -168,7 +170,7 @@ export class FullPostView extends Component {
 		// Remove WPiFrameResize listener.
 		this.stopResize?.();
 		this.props.enableAppBanner(); // reset the app banner
-
+		document.querySelector( 'body' ).classList.remove( 'is-reader-full-post' );
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
 	}
 
@@ -179,6 +181,11 @@ export class FullPostView extends Component {
 
 		const tagName = ( event.target || event.srcElement ).tagName;
 		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
+			return;
+		}
+
+		if ( event?.metaKey || event?.ctrlKey ) {
+			// avoid conflicting with the command palette shortcut cmd+k
 			return;
 		}
 
@@ -491,7 +498,7 @@ export class FullPostView extends Component {
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
-			<ReaderMain className={ classNames( classes ) }>
+			<ReaderMain className={ clsx( classes ) }>
 				{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 				{ ! post || post._state === 'pending' ? (
 					<DocumentHead title={ translate( 'Loading' ) } />
@@ -507,7 +514,7 @@ export class FullPostView extends Component {
 				<BackButton onClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
-						icon={ true }
+						icon
 						href={ post.URL }
 						onClick={ this.handleVisitSiteClick }
 						target="_blank"
@@ -559,7 +566,7 @@ export class FullPostView extends Component {
 								<LikeButton
 									siteId={ +post.site_ID }
 									postId={ +post.ID }
-									fullPost={ true }
+									fullPost
 									tagName="div"
 									likeSource="reader"
 								/>
@@ -606,7 +613,7 @@ export class FullPostView extends Component {
 							post={ post }
 							site={ site }
 							onCommentClick={ this.handleCommentClick }
-							fullPost={ true }
+							fullPost
 						/>
 
 						{ ! isLoading && <ReaderPerformanceTrackerStop /> }
@@ -639,7 +646,7 @@ export class FullPostView extends Component {
 						<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
 							{ shouldShowComments( post ) && (
 								<Comments
-									showNestingReplyArrow={ true }
+									showNestingReplyArrow
 									post={ post }
 									initialSize={ startingCommentId ? commentCount : 10 }
 									pageSize={ 25 }
@@ -647,9 +654,9 @@ export class FullPostView extends Component {
 									commentCount={ commentCount }
 									maxDepth={ 1 }
 									commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-									showConversationFollowButton={ true }
+									showConversationFollowButton
 									shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-									shouldHighlightNew={ true }
+									shouldHighlightNew
 								/>
 							) }
 						</div>

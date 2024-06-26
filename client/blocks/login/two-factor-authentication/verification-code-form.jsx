@@ -141,6 +141,7 @@ class VerificationCodeForm extends Component {
 							value={ this.state.twoStepCode }
 							onChange={ this.onChangeField }
 							isError={ requestError && requestError.field === 'twoStepCode' }
+							id="twoStepCode"
 							name="twoStepCode"
 							method={ twoFactorAuthType }
 							ref={ this.saveRef }

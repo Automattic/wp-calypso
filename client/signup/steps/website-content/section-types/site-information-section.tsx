@@ -9,7 +9,7 @@ import {
 import {
 	MediaUploadData,
 	WordpressMediaUpload,
-} from 'calypso/signup/steps/website-content/wordpress-media-upload';
+} from 'calypso/signup/steps/website-content/section-types/components/wordpress-media-upload';
 import { useSelector, useDispatch } from 'calypso/state';
 import {
 	logoUploadCompleted,

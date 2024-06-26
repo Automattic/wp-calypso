@@ -103,7 +103,7 @@ const SharingServicesGroup = ( {
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate(
-							'Connect to your social media accounts to enable sharing posts with Jetpack Social.'
+							'Please enable Jetpack Social to connect your social media accounts and share your posts automatically.'
 						) }
 					>
 						<NoticeAction onClick={ activatePublicize }>{ translate( 'Enable' ) }</NoticeAction>
@@ -130,7 +130,17 @@ const SharingServicesGroup = ( {
 								</Fragment>
 							);
 						}
-
+						{
+							/* Injecting the Fediverse above Twitter */
+							if ( service.ID === 'twitter' && type === 'publicize' ) {
+								return (
+									<>
+										<Components.fediverse key="fediverse" />
+										<Component key={ service.ID } service={ service } />
+									</>
+								);
+							}
+						}
 						return <Component key={ service.ID } service={ service } />;
 					} ) }
 			</ul>

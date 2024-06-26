@@ -1,5 +1,5 @@
 import { CompactCard as Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { useState } from 'react';
@@ -52,12 +52,12 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowT
 				) }
 			</div>
 			<ReaderPostOptionsMenu
-				showFollow={ true }
-				showConversationFollow={ true }
-				showVisitPost={ true }
+				showFollow
+				showConversationFollow
+				showVisitPost
 				showEditPost={ false }
-				showReportSite={ true }
-				showReportPost={ true }
+				showReportSite
+				showReportPost
 				openSuggestedFollows={ onFollowToggle }
 				followSource={ followSource }
 				post={ post }
@@ -117,7 +117,7 @@ export function RelatedPostCard( {
 	};
 
 	const postLink = getPostUrl( post );
-	const classes = classnames( 'reader-related-card', {
+	const classes = clsx( 'reader-related-card', {
 		'has-thumbnail': !! post.canonical_media,
 		'has-excerpt': post.excerpt && post.excerpt.length > 1,
 	} );

@@ -7,6 +7,7 @@ export interface MinimumSite {
 	visible?: boolean;
 	is_coming_soon?: boolean;
 	is_private?: boolean;
+	is_deleted?: boolean;
 	launch_status?: string;
 	user_interactions?: string[];
 	is_wpcom_staging_site?: boolean;

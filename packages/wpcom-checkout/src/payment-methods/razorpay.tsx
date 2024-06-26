@@ -30,7 +30,8 @@ export function createRazorpayMethod( {
 			/>
 		),
 		inactiveContent: <RazorpaySummary />,
-		getAriaLabel: ( __ ) => __( 'Razorpay' ),
+		// translators: UPI stands for Unified Payments Interface and may not need to be transalted.
+		getAriaLabel: ( __ ) => __( 'UPI' ),
 	};
 }
 
@@ -39,7 +40,7 @@ export function RazorpayLabel() {
 
 	return (
 		<Fragment>
-			<span>{ __( 'Razorpay' ) }</span>
+			<span>{ __( 'UPI' ) }</span>
 			<PaymentMethodLogos className="razorpay__logo payment-logos">
 				<RazorpayIcon />
 			</PaymentMethodLogos>
@@ -49,7 +50,7 @@ export function RazorpayLabel() {
 
 export function RazorpaySummary() {
 	const { __ } = useI18n();
-	return <Fragment>{ __( 'Razorpay' ) }</Fragment>;
+	return <Fragment>{ __( 'UPI' ) }</Fragment>;
 }
 
 export function RazorpaySubmitButton( {

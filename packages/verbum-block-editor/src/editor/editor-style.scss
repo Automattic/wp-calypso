@@ -112,6 +112,10 @@
 			min-height: 140px;
 		}
 	}
+
+	iframe[name="editor-canvas"] {
+		background-color: inherit;
+	}
 }
 
 
@@ -167,6 +171,11 @@ div[id^="portal/tooltip"] {
 
 		&:hover {
 			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
+
+		&:focus {
+			// the default rule uses `--wp-admin-border-width-focus` which is not always available
+			box-shadow: inset 0 0 0 1.5px var(--wp-admin-theme-color, #3858e9) !important;
 		}
 
 		svg {
@@ -410,5 +419,12 @@ div[id^="portal/tooltip"] {
 		margin: 0;
 		padding: 0;
 		list-style: none;
+	}
+
+	svg,
+	button {
+		min-width: initial;
+		max-width: initial;
+		display: initial;
 	}
 }

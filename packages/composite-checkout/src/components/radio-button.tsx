@@ -24,8 +24,8 @@ const RadioButtonWrapper = styled.div<
 		content: '';
 		border: ${ ( props ) => ( props.checked ? '1px solid ' + getBorderColor( props ) : 'none' ) };
 		border-bottom: ${ ( props ) => '1px solid ' + getBorderColor( props ) };
-		border-radius: ${ ( props ) => ( props.checked ? '3px' : '0px' ) };
 		box-sizing: border-box;
+		border-radius: 3px;
 
 		.rtl & {
 			right: 0;

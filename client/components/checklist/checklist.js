@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -91,7 +91,7 @@ class Checklist extends PureComponent {
 
 		if ( this.props.isPlaceholder ) {
 			return (
-				<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
+				<div className={ clsx( 'checklist', 'is-expanded', 'is-placeholder' ) }>
 					{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
 
 					<div className="checklist__tasks">
@@ -106,7 +106,7 @@ class Checklist extends PureComponent {
 		let skippedChildren = 0;
 
 		return (
-			<div className={ classNames( 'checklist', this.props.className ) }>
+			<div className={ clsx( 'checklist', this.props.className ) }>
 				{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
 
 				<div className="checklist__tasks">

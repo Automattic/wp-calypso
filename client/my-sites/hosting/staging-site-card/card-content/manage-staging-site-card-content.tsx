@@ -1,4 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -102,6 +104,7 @@ export const ManageStagingSiteCardContent = ( {
 }: CardContentProps ) => {
 	{
 		const translate = useTranslate();
+		const hasEnTranslation = useHasEnTranslation();
 		const productionSiteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 
 		const ConfirmationDeleteButton = () => {
@@ -110,7 +113,7 @@ export const ManageStagingSiteCardContent = ( {
 					disabled={ isButtonDisabled }
 					onConfirm={ onDeleteClick }
 					isBusy={ isBusy }
-					isScary={ true }
+					isScary
 					modalTitle={ translate( 'Confirm staging site deletion' ) }
 					modalMessage={ translate(
 						'Are you sure you want to delete the staging site? This action cannot be undone.'
@@ -128,7 +131,19 @@ export const ManageStagingSiteCardContent = ( {
 			return (
 				<Button
 					primary
-					onClick={ () => navigate( `/hosting-config/${ urlToSlug( stagingSite.url ) }` ) }
+					onClick={ () => {
+						if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+							navigate(
+								`/overview/${ urlToSlug( stagingSite.url ) }?search=${ urlToSlug(
+									productionSiteUrl as string
+								) }`,
+								false,
+								true
+							);
+						} else {
+							navigate( `/hosting-config/${ urlToSlug( stagingSite.url ) }` );
+						}
+					} }
 					disabled={ isButtonDisabled }
 				>
 					<span>{ translate( 'Manage staging site' ) }</span>
@@ -138,14 +153,29 @@ export const ManageStagingSiteCardContent = ( {
 		return (
 			<>
 				<p>
-					{ translate(
-						'Your staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
-						{
-							components: {
-								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
-							},
-						}
-					) }
+					{ hasEnTranslation(
+						'Preview and troubleshoot changes before updating your production site. {{a}}Learn more{{/a}}.'
+					)
+						? translate(
+								'Preview and troubleshoot changes before updating your production site. {{a}}Learn more{{/a}}.',
+								{
+									components: {
+										a: (
+											<InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />
+										),
+									},
+								}
+						  )
+						: translate(
+								'Your staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
+								{
+									components: {
+										a: (
+											<InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />
+										),
+									},
+								}
+						  ) }
 				</p>
 				<BorderedContainer>
 					<SiteRow>

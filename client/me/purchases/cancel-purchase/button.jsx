@@ -19,6 +19,7 @@ import {
 	getSubscriptionEndDate,
 	hasAmountAvailableToRefund,
 	isOneTimePurchase,
+	isRefundable,
 	isSubscription,
 } from 'calypso/lib/purchases';
 import {
@@ -298,6 +299,11 @@ class CancelPurchaseButton extends Component {
 
 			if ( isDomainRegistration( purchase ) ) {
 				text = translate( 'Cancel Domain' );
+
+				// Domain in AGP bought with domain credits should be canceled immediately
+				if ( isRefundable( purchase ) ) {
+					onClick = this.handleCancelPurchaseClick;
+				}
 			}
 
 			if ( isSubscription( purchase ) ) {

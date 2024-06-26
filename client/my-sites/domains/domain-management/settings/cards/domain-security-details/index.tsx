@@ -1,8 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CONTACT, HTTPS_SSL } from '@automattic/urls';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { sslStatuses } from 'calypso/lib/domains/constants';
-import { CONTACT, HTTPS_SSL } from 'calypso/lib/url/support';
 import { getSslReadableStatus, isSecuredWithUs } from '../../helpers';
 import type { DetailsCardProps } from '../types';
 

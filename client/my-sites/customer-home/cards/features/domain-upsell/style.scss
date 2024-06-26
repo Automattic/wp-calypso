@@ -52,7 +52,7 @@ body .customer-home__layout .domain-upsell__card {
 		justify-content: right;
 		padding: 28px 0 0;
 		gap: 16px;
-		@media (min-width: ( $break-large + 1 )) {
+		@media (min-width: ($break-large + 1)) {
 			flex-direction: row-reverse;
 		}
 	}

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { MonitorSettings } from '../../../sites-overview/types';
 
@@ -18,7 +18,7 @@ export default function SMSCounter( { settings }: Props ) {
 
 	return (
 		<div
-			className={ classNames( 'notification-settings__sms-counter', {
+			className={ clsx( 'notification-settings__sms-counter', {
 				'notification-settings__sms-counter-limit-reached': settings.is_over_limit,
 			} ) }
 		>

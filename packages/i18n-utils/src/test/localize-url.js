@@ -430,6 +430,44 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'learn', () => {
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'en', true ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'en', false ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'es', true ) ).toEqual(
+			'https://wordpress.com/learn/es/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'es', false ) ).toEqual(
+			'https://wordpress.com/learn/es/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'en', true ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'en', false ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'es', true ) ).toEqual(
+			'https://wordpress.com/learn/es/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'es', false ) ).toEqual(
+			'https://wordpress.com/learn/es/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+	} );
 	test( 'tos', () => {
 		expect( localizeUrl( 'https://wordpress.com/tos/', 'en' ) ).toEqual(
 			'https://wordpress.com/tos/'
@@ -445,6 +483,24 @@ describe( '#localizeUrl', () => {
 		);
 		expect( localizeUrl( 'https://wordpress.com/tos/', 'th' ) ).toEqual(
 			'https://wordpress.com/tos/'
+		);
+	} );
+
+	test( 'pricing', () => {
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'en' ) ).toEqual(
+			'https://wordpress.com/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'fr' ) ).toEqual(
+			'https://wordpress.com/fr/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/pt-br/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'zh-tw' ) ).toEqual(
+			'https://wordpress.com/zh-tw/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'xx' ) ).toEqual(
+			'https://wordpress.com/pricing/'
 		);
 	} );
 

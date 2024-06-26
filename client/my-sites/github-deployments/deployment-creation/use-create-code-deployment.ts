@@ -10,10 +10,14 @@ export interface MutationVariables {
 	targetDir: string;
 	installationId: number;
 	isAutomated: boolean;
+	workflowPath?: string;
 }
 
 interface MutationResponse {
 	message: string;
+	target_dir: string;
+	workflow_path?: string;
+	is_automated: boolean;
 }
 
 interface MutationError {
@@ -33,6 +37,7 @@ export const useCreateCodeDeployment = (
 			branchName,
 			installationId,
 			isAutomated,
+			workflowPath,
 		}: MutationVariables ) =>
 			wp.req.post(
 				{
@@ -45,6 +50,7 @@ export const useCreateCodeDeployment = (
 					target_dir: targetDir,
 					installation_id: installationId,
 					is_automated: isAutomated,
+					workflow_path: workflowPath,
 				}
 			),
 		...options,
@@ -52,6 +58,7 @@ export const useCreateCodeDeployment = (
 			await queryClient.invalidateQueries( {
 				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, siteId ],
 			} );
+
 			options.onSuccess?.( ...args );
 		},
 	} );

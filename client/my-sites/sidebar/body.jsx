@@ -16,7 +16,13 @@ import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
-export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
+export const MySitesSidebarUnifiedBody = ( {
+	isGlobalSidebarCollapsed,
+	path,
+	children,
+	onMenuItemClick,
+	isUnifiedSiteSidebarVisible,
+} ) => {
 	const menuItems = useSiteMenuItems();
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const site = useSelector( getSelectedSite );
@@ -30,41 +36,54 @@ export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
 
 	return (
 		<>
-			{ menuItems.map( ( item, i ) => {
-				const isSelected = item?.url && itemLinkMatches( item.url, path );
+			{ menuItems &&
+				menuItems.map( ( item, i ) => {
+					const isSelected =
+						( item?.url && itemLinkMatches( item.url, path ) ) ||
+						// Keep the Sites icon selected when there is a selected site.
+						( item.slug === 'sites' && site );
 
-				if ( 'current-site' === item?.type ) {
-					return (
-						<Site key={ item.type } site={ site } href={ item?.url } isSelected={ isSelected } />
-					);
-				}
-				if ( 'separator' === item?.type ) {
-					return <SidebarSeparator key={ i } />;
-				}
+					if ( 'current-site' === item?.type ) {
+						return (
+							<Site
+								key={ item.type }
+								site={ site }
+								href={ item?.url }
+								isSelected={ isSelected }
+								onSelect={ () => onMenuItemClick( item?.url ) }
+							/>
+						);
+					}
+					if ( 'separator' === item?.type ) {
+						return <SidebarSeparator key={ i } />;
+					}
 
-				if ( item?.children?.length ) {
+					if ( item?.children?.length ) {
+						return (
+							<MySitesSidebarUnifiedMenu
+								key={ item.slug }
+								path={ path }
+								link={ item.url }
+								selected={ isSelected }
+								sidebarCollapsed={ sidebarIsCollapsed }
+								shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+								isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
+								{ ...item }
+							/>
+						);
+					}
+
 					return (
-						<MySitesSidebarUnifiedMenu
+						<MySitesSidebarUnifiedItem
 							key={ item.slug }
-							path={ path }
-							link={ item.url }
 							selected={ isSelected }
-							sidebarCollapsed={ sidebarIsCollapsed }
 							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+							showTooltip={ !! isGlobalSidebarCollapsed }
+							trackClickEvent={ onMenuItemClick }
 							{ ...item }
 						/>
 					);
-				}
-
-				return (
-					<MySitesSidebarUnifiedItem
-						key={ item.slug }
-						selected={ isSelected }
-						shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-						{ ...item }
-					/>
-				);
-			} ) }
+				} ) }
 			{ children }
 		</>
 	);

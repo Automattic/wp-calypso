@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { SUPPORT_ROOT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -7,7 +8,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getTitanProductName } from 'calypso/lib/titan';
-import { SUPPORT_ROOT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
 import { getNewTitanAccountPath } from 'calypso/my-sites/email/paths';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -81,7 +81,7 @@ class TitanRedirector extends Component {
 		if ( ! loaded || ! hasAllSitesLoaded ) {
 			return (
 				<>
-					{ ! hasAllSitesLoaded && <QuerySites allSites={ true } /> }
+					{ ! hasAllSitesLoaded && <QuerySites allSites /> }
 
 					<EmptyContent title={ translate( 'Redirecting…' ) } />
 				</>

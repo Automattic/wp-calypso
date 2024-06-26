@@ -37,6 +37,15 @@ export interface ExPlatClient {
 	dangerouslyGetExperimentAssignment: ( experimentName: string ) => ExperimentAssignment;
 
 	/**
+	 * Get an experiment assignment, return null if it hasn't been loaded.
+	 *
+	 * Only intended for use in useExperiment hook.
+	 */
+	dangerouslyGetMaybeLoadedExperimentAssignment: (
+		experimentName: string
+	) => null | ExperimentAssignment;
+
+	/**
 	 * INTERNAL USE ONLY
 	 */
 	config: Config;
@@ -212,6 +221,31 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return createFallbackExperimentAssignment( experimentName );
 			}
 		},
+		dangerouslyGetMaybeLoadedExperimentAssignment: (
+			experimentName: string
+		): ExperimentAssignment | null => {
+			try {
+				if ( ! Validation.isName( experimentName ) ) {
+					throw new Error( `Invalid experimentName: ${ experimentName }` );
+				}
+
+				const storedExperimentAssignment = retrieveExperimentAssignment( experimentName );
+				if ( ! storedExperimentAssignment ) {
+					return null;
+				}
+
+				return storedExperimentAssignment;
+			} catch ( error ) {
+				if ( config.isDevelopmentMode ) {
+					safeLogError( {
+						message: ( error as Error ).message,
+						experimentName,
+						source: 'dangerouslyGetMaybeLoadedExperimentAssignment-error',
+					} );
+				}
+				return createFallbackExperimentAssignment( experimentName );
+			}
+		},
 		config,
 	};
 }
@@ -230,6 +264,13 @@ export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {
 			return createFallbackExperimentAssignment( experimentName );
 		},
 		dangerouslyGetExperimentAssignment: ( experimentName: string ) => {
+			config.logError( {
+				message: 'Attempting to dangerously get ExperimentAssignment in SSR context',
+				experimentName,
+			} );
+			return createFallbackExperimentAssignment( experimentName );
+		},
+		dangerouslyGetMaybeLoadedExperimentAssignment: ( experimentName: string ) => {
 			config.logError( {
 				message: 'Attempting to dangerously get ExperimentAssignment in SSR context',
 				experimentName,

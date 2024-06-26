@@ -4,6 +4,7 @@ import {
 	WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import filesize from 'filesize';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -49,7 +50,7 @@ class MediaSettingsPerformance extends Component {
 					text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
 					link={
 						siteIsAtomic
-							? 'https://wordpress.com/support/videopress/'
+							? localizeUrl( 'https://wordpress.com/support/videopress/' )
 							: 'https://jetpack.com/support/videopress/'
 					}
 					privacyLink={ ! siteIsAtomic }
@@ -96,8 +97,8 @@ class MediaSettingsPerformance extends Component {
 					siteSlug={ siteSlug }
 					sitePlanSlug={ sitePlanSlug }
 					mediaStorage={ {
-						max_storage_bytes: mediaStorageLimit,
-						storage_used_bytes: mediaStorageUsed,
+						maxStorageBytes: mediaStorageLimit,
+						storageUsedBytes: mediaStorageUsed,
 					} }
 				/>
 			) );
@@ -122,7 +123,7 @@ class MediaSettingsPerformance extends Component {
 					title={ upsellMessage }
 					event="jetpack_video_settings"
 					feature={ WPCOM_FEATURES_VIDEOPRESS }
-					showIcon={ true }
+					showIcon
 					href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_VIDEOPRESS }` }
 				/>
 			)
@@ -146,8 +147,8 @@ export default withMediaStorage(
 			hasVideoPress:
 				siteHasFeature( state, siteId, WPCOM_FEATURES_VIDEOPRESS ) ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE ),
-			mediaStorageLimit: mediaStorage?.max_storage_bytes ?? null,
-			mediaStorageUsed: mediaStorage?.storage_used_bytes ?? null,
+			mediaStorageLimit: mediaStorage?.maxStorageBytes ?? null,
+			mediaStorageUsed: mediaStorage?.storageUsedBytes ?? null,
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 		};

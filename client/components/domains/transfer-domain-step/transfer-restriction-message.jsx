@@ -1,12 +1,12 @@
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { MAP_EXISTING_DOMAIN } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import { getTransferRestrictionMessage } from '../use-my-domain/utilities';
 
 class TransferRestrictionMessage extends PureComponent {

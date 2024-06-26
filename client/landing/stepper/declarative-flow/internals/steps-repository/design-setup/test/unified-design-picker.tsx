@@ -54,8 +54,9 @@ jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/my-sites/themes/helpers', () => ( {
-	marketplaceThemeBillingProductSlug: () => {
+jest.mock( 'calypso/state/products-list/selectors', () => ( {
+	...jest.requireActual( 'calypso/state/products-list/selectors' ),
+	getProductBillingSlugByThemeId: () => {
 		return;
 	},
 } ) );
@@ -76,6 +77,10 @@ jest.mock( 'calypso/components/data/query-products-list', () => ( {
 	useQueryProductsList: () => {
 		return;
 	},
+} ) );
+
+jest.mock( 'calypso/state/themes/hooks/use-is-theme-allowed-on-site', () => ( {
+	useIsThemeAllowedOnSite: () => false,
 } ) );
 
 jest.mock( 'calypso/state/themes/selectors', () => ( {

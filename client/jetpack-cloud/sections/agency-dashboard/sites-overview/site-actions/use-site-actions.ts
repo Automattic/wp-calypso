@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -27,6 +29,14 @@ export default function useSiteActions(
 
 		const { url, url_with_scheme, blog_id, has_backup, is_atomic } = siteValue;
 
+		let issueLicenseURL = undefined;
+
+		if ( isA8CForAgencies() ) {
+			issueLicenseURL = A4A_MARKETPLACE_LINK;
+		} else if ( partnerCanIssueLicense ) {
+			issueLicenseURL = `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`;
+		}
+
 		const siteSlug = urlToSlug( url );
 
 		const handleClickMenuItem = ( actionType: AllowedActionTypes ) => {
@@ -35,7 +45,8 @@ export default function useSiteActions(
 		};
 
 		const isWPCOMAtomicSiteCreationEnabled =
-			isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && is_atomic;
+			( isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) || isA8CForAgencies() ) &&
+			is_atomic;
 
 		const isUrlOnly = site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
 
@@ -63,12 +74,14 @@ export default function useSiteActions(
 			},
 			{
 				name: translate( 'Issue new license' ),
-				href: partnerCanIssueLicense
-					? `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`
-					: undefined,
+				href: issueLicenseURL,
 				onClick: () => handleClickMenuItem( 'issue_license' ),
 				isExternalLink: false,
-				isEnabled: partnerCanIssueLicense && ! siteError && ! is_atomic && ! isUrlOnly,
+				isEnabled:
+					( partnerCanIssueLicense || isA8CForAgencies() ) &&
+					! siteError &&
+					! is_atomic &&
+					! isUrlOnly,
 			},
 			{
 				name: translate( 'View activity' ),
@@ -112,5 +125,13 @@ export default function useSiteActions(
 				isEnabled: true && ! isUrlOnly,
 			},
 		];
-	}, [ dispatch, isLargeScreen, partnerCanIssueLicense, siteError, siteValue, translate ] );
+	}, [
+		dispatch,
+		isLargeScreen,
+		partnerCanIssueLicense,
+		site?.value?.sticker,
+		siteError,
+		siteValue,
+		translate,
+	] );
 }

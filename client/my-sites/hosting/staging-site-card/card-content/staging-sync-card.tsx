@@ -5,6 +5,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { urlToSlug } from 'calypso/lib/url';
@@ -38,52 +39,6 @@ function useIsFailedSyncError( error: string | null | undefined ) {
 	}
 	return STAGING_SYNC_FAILED_ERROR_CODES.includes( error );
 }
-
-const synchronizationOptions: CheckboxOptionItem[] = [
-	{
-		name: 'sqls',
-		label: 'Site database (SQL)',
-		subTitle: translate(
-			'Overwrite the database, including any posts, pages, products, or orders.'
-		),
-		checked: false,
-		isDangerous: true,
-	},
-	{
-		name: 'themes',
-		label: translate( 'Theme files and directories' ),
-		checked: false,
-		isDangerous: false,
-	},
-	{
-		name: 'plugins',
-		label: translate( 'Plugin files and directories' ),
-		checked: false,
-		isDangerous: false,
-	},
-	{
-		name: 'uploads',
-		label: translate( 'Media uploads' ),
-		subTitle: translate(
-			'You must also select ‘Site database’ for the files to appear in the Media Library.'
-		),
-		checked: false,
-		isDangerous: false,
-	},
-	{
-		name: 'contents',
-		label: translate( 'wp-content files and directories' ),
-		subTitle: translate( 'Apart from themes, plugins, and uploads.' ),
-		checked: false,
-		isDangerous: false,
-	},
-	{
-		name: 'roots',
-		label: translate( 'Additional web root files and directories' ),
-		checked: false,
-		isDangerous: false,
-	},
-];
 
 const StagingSyncCardBody = styled.div( {
 	display: 'flex',
@@ -196,6 +151,61 @@ const StagingToProductionSync = ( {
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
+	const synchronizationOptions: CheckboxOptionItem[] = useMemo(
+		() => [
+			{
+				name: 'sqls',
+				label: 'Site database (SQL)',
+				subTitle: translate(
+					'Overwrite the database, including any posts, pages, products, or orders. {{a}}Learn more{{/a}}.',
+					{
+						components: {
+							a: (
+								<InlineSupportLink supportContext="staging-to-production-sync" showIcon={ false } />
+							),
+						},
+					}
+				),
+				checked: false,
+				isDangerous: true,
+			},
+			{
+				name: 'themes',
+				label: translate( 'Theme files and directories' ),
+				checked: false,
+				isDangerous: false,
+			},
+			{
+				name: 'plugins',
+				label: translate( 'Plugin files and directories' ),
+				checked: false,
+				isDangerous: false,
+			},
+			{
+				name: 'uploads',
+				label: translate( 'Media uploads' ),
+				subTitle: translate(
+					'You must also select ‘Site database’ for the files to appear in the Media Library.'
+				),
+				checked: false,
+				isDangerous: false,
+			},
+			{
+				name: 'contents',
+				label: translate( 'wp-content files and directories' ),
+				subTitle: translate( 'Apart from themes, plugins, and uploads.' ),
+				checked: false,
+				isDangerous: false,
+			},
+			{
+				name: 'roots',
+				label: translate( 'Additional web root files and directories' ),
+				checked: false,
+				isDangerous: false,
+			},
+		],
+		[ translate ]
+	);
 	return (
 		<>
 			{ showSyncPanel && (
@@ -214,7 +224,7 @@ const StagingToProductionSync = ( {
 				<ConfirmationModal
 					disabled={ disabled || isSyncButtonDisabled }
 					isConfirmationDisabled={ typedSiteName !== siteSlug }
-					isPrimary={ true }
+					isPrimary
 					onConfirm={ onConfirm }
 					modalTitle={ translate( 'You’re about to update your production site' ) }
 					extraModalContent={
@@ -272,7 +282,7 @@ const ProductionToStagingSync = ( {
 		<ConfirmationModalContainer>
 			<ConfirmationModal
 				disabled={ disabled || isSyncButtonDisabled }
-				isPrimary={ true }
+				isPrimary
 				onConfirm={ onConfirm }
 				modalTitle={ translate( 'You are about to update your staging site' ) }
 				modalMessage={ translate(

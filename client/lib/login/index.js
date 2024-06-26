@@ -10,6 +10,7 @@ import {
 	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isIntenseDebateOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 
@@ -92,8 +93,8 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
 	}
 
-	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-		// Gravatar powered clients signup via the magic login page
+	if ( isGravPoweredOAuth2Client( oauth2Client ) || isStudioAppOAuth2Client( oauth2Client ) ) {
+		// Studio app and Gravatar powered clients signup via the magic login page
 		return login( {
 			locale,
 			twoFactorAuthType: 'link',
@@ -189,7 +190,13 @@ export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCo
 	return true;
 };
 
-export const getLoginLinkPageUrl = ( locale = 'en', currentRoute, signupUrl, oauth2ClientId ) => {
+export const getLoginLinkPageUrl = ( {
+	locale = 'en',
+	currentRoute,
+	signupUrl,
+	oauth2ClientId,
+	...additionalParams
+} ) => {
 	// The email address from the URL (if present) is added to the login
 	// parameters in this.handleMagicLoginLinkClick(). But it's left out
 	// here deliberately, to ensure that if someone copies this link to
@@ -199,6 +206,7 @@ export const getLoginLinkPageUrl = ( locale = 'en', currentRoute, signupUrl, oau
 		twoFactorAuthType: 'link',
 		signupUrl: signupUrl,
 		oauth2ClientId,
+		...additionalParams,
 	};
 
 	if ( currentRoute === '/log-in/jetpack' ) {

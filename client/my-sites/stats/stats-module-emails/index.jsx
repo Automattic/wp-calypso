@@ -32,6 +32,7 @@ const StatsModuleEmails = ( props ) => {
 			metricLabel={ translate( 'Clicks' ) }
 			showSummaryLink
 			className={ className }
+			hasNoBackground
 		/>
 	);
 };

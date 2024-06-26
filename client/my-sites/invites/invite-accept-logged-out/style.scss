@@ -90,20 +90,23 @@ body.is-section-accept-invite {
 			margin-bottom: 0;
 		}
 	}
-	.signup-form__terms-of-service-link {
-		margin: 0;
-		color: var(--studio-gray-50, #2c3338);
-		font-size: $font-body-small; // 14px
-		line-height: 20px;
-		a {
-			color: var(--studio-gray-80, #2c3338);
-			font-style: normal;
-			text-decoration-line: underline;
+
+	.signup-form__passwordless-form-wrapper {
+		.signup-form__terms-of-service-link {
+			margin: 16px 0;
+			color: var(--studio-gray-50, #2c3338);
+			font-size: $font-body-small; // 14px
+			line-height: 20px;
+			a {
+				color: var(--studio-gray-80, #2c3338);
+				font-style: normal;
+				text-decoration-line: underline;
+			}
 		}
 	}
 
 	.card.logged-out-form__footer {
-		margin: 16px 0 16px 0;
+		margin: 16px 0;
 		padding: 0;
 	}
 	.logged-out-form__link-item {

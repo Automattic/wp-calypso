@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
@@ -15,11 +16,12 @@ import './style.scss';
 
 interface TrialBannerProps {
 	callToAction?: JSX.Element | null;
-	isEcommerceTrial?: boolean;
+	isWooExpressTrial?: boolean;
+	isEntrepreneurTrial?: boolean;
 }
 
 const TrialBanner = ( props: TrialBannerProps ) => {
-	const { callToAction, isEcommerceTrial } = props;
+	const { callToAction, isWooExpressTrial, isEntrepreneurTrial } = props;
 	const selectedSiteId = useSelector( getSelectedSiteId ) || -1;
 
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
@@ -48,18 +50,23 @@ const TrialBanner = ( props: TrialBannerProps ) => {
 		trialDaysLeftToDisplay,
 		trialExpiration,
 		selectedSiteId,
-		isEcommerceTrial
+		isWooExpressTrial,
+		isEntrepreneurTrial
 	);
 
 	return (
-		<Card className="trial-banner">
+		<Card className={ clsx( 'trial-banner', { 'entrepreneur-trial': isEntrepreneurTrial } ) }>
 			<div className="trial-banner__content">
 				<p className="trial-banner__title">{ translate( 'You’re in a free trial' ) }</p>
 				<p className="trial-banner__subtitle">{ bannerSubtitle }</p>
 				{ callToAction }
 			</div>
 			<div className="trial-banner__chart-wrapper">
-				<DoughnutChart progress={ trialProgress } text={ trialDaysLeftToDisplay?.toString() } />
+				<DoughnutChart
+					progress={ trialProgress }
+					text={ trialDaysLeftToDisplay?.toString() }
+					isEntrepreneurTrial={ isEntrepreneurTrial }
+				/>
 				<br />
 				<span className="trial-banner__chart-label">
 					{ trialExpired

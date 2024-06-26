@@ -1,13 +1,12 @@
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Gridicon, LoadingPlaceholder } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { PlanButton } from '@automattic/plans-grid-next';
 import styled from '@emotion/styled';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { DialogContainer, Heading } from './components';
 import PlanUpsellButton from './components/plan-upsell-button';
 import { usePlanUpsellInfo } from './hooks/use-plan-upsell-info';
@@ -96,9 +95,9 @@ export function FreePlanFreeDomainDialog( {
 	onPlanSelected,
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
-	const basicPlanUpsellInfo = usePlanUpsellInfo( PLAN_PERSONAL, currencyCode );
-	const advancePlanUpsellInfo = usePlanUpsellInfo( PLAN_PREMIUM, currencyCode );
+	const hasEnTranslation = useHasEnTranslation();
+	const basicPlanUpsellInfo = usePlanUpsellInfo( { planSlug: PLAN_PERSONAL } );
+	const advancePlanUpsellInfo = usePlanUpsellInfo( { planSlug: PLAN_PREMIUM } );
 	const buttonDisabled = generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result;
 
 	useEffect( () => {
@@ -156,29 +155,45 @@ export function FreePlanFreeDomainDialog( {
 				) }
 			</TextBox>
 			<TextBox>
-				{ translate(
-					'{{strong}}Need premium themes, live chat support, and advanced design tools?{{/strong}}{{break}}{{/break}}Go with our %(planTitle)s plan, starting at just %(planPrice)s/month. All annual plans come with a 14-day money-back guarantee.',
-					{
-						args: {
-							planTitle: advancePlanUpsellInfo.title,
-							planPrice: advancePlanUpsellInfo.formattedPriceMonthly,
-						},
-						components: {
-							strong: <strong></strong>,
-							break: <br />,
-						},
-					}
-				) }
+				{ hasEnTranslation(
+					'{{strong}}Need premium themes, fast support, and advanced design tools?{{/strong}}{{break}}{{/break}}Go with our %(planTitle)s plan, starting at just %(planPrice)s/month. All annual plans come with a 14-day money-back guarantee.'
+				)
+					? translate(
+							'{{strong}}Need premium themes, fast support, and advanced design tools?{{/strong}}{{break}}{{/break}}Go with our %(planTitle)s plan, starting at just %(planPrice)s/month. All annual plans come with a 14-day money-back guarantee.',
+							{
+								args: {
+									planTitle: advancePlanUpsellInfo.title,
+									planPrice: advancePlanUpsellInfo.formattedPriceMonthly,
+								},
+								components: {
+									strong: <strong></strong>,
+									break: <br />,
+								},
+							}
+					  )
+					: translate(
+							'{{strong}}Need premium themes, live chat support, and advanced design tools?{{/strong}}{{break}}{{/break}}Go with our %(planTitle)s plan, starting at just %(planPrice)s/month. All annual plans come with a 14-day money-back guarantee.',
+							{
+								args: {
+									planTitle: advancePlanUpsellInfo.title,
+									planPrice: advancePlanUpsellInfo.formattedPriceMonthly,
+								},
+								components: {
+									strong: <strong></strong>,
+									break: <br />,
+								},
+							}
+					  ) }
 			</TextBox>
 
 			<ButtonRow>
 				<PlanUpsellButton
-					planUpsellInfo={ basicPlanUpsellInfo }
+					planSlug={ PLAN_PERSONAL }
 					disabled={ buttonDisabled }
 					onPlanSelected={ onPlanSelected }
 				/>
 				<PlanUpsellButton
-					planUpsellInfo={ advancePlanUpsellInfo }
+					planSlug={ PLAN_PREMIUM }
 					disabled={ buttonDisabled }
 					onPlanSelected={ onPlanSelected }
 				/>

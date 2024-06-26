@@ -116,11 +116,19 @@ class SocialLoginForm extends Component {
 
 	handleGitHubResponse = ( { access_token } ) => {
 		const { onSuccess, socialService } = this.props;
-		const redirectTo = this.props.redirectTo;
 
 		if ( socialService !== 'github' ) {
 			return;
 		}
+
+		let redirectTo = this.props.redirectTo;
+
+		// load persisted redirect_to url from session storage, needed for redirect_to to work with GitHub redirect flow
+		if ( ! redirectTo ) {
+			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
+		}
+
+		window.sessionStorage.removeItem( 'login_redirect_to' );
 
 		const socialInfo = {
 			service: 'github',
@@ -175,7 +183,7 @@ class SocialLoginForm extends Component {
 				disableTosText={ ! this.props.shouldRenderToS }
 				flowName={ this.props.flowName }
 				isSocialFirst={ this.props.isSocialFirst }
-				isLogin={ true }
+				isLogin
 			>
 				{ this.props.children }
 			</SocialAuthenticationForm>

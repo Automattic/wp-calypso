@@ -6,7 +6,7 @@ import {
 	fetchAutomatedTransferStatus,
 	requestEligibility,
 } from 'calypso/state/automated-transfer/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { transferInProgress, transferStates } from 'calypso/state/automated-transfer/constants';
 import {
 	getAutomatedTransferStatus,
 	isFetchingAutomatedTransferStatus,
@@ -34,7 +34,10 @@ export const WithOnclickTrialRequest = createHigherOrderComponent(
 			if ( siteId && isSiteAtomic ) {
 				return;
 			}
-			if ( ! isFetchingTransferStatus && transferStatus !== transferStates.COMPLETED ) {
+			if (
+				! isFetchingTransferStatus &&
+				transferInProgress.includes( transferStatus as ( typeof transferInProgress )[ number ] )
+			) {
 				waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
 			}
 			// Once the transferStatus is reported complete, query the sites endpoint

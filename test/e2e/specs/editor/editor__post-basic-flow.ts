@@ -17,7 +17,7 @@ import { Page, Browser, Response } from 'playwright';
 import { skipDescribeIf, skipItIf } from '../../jest-helpers';
 
 const quote =
-	'The problem with quotes on the Internet is that it is hard to verify their authenticity.\n- Abraham Lincoln';
+	'The problem with quotes on the Internet is that it is hard to verify their authenticity.\nby Abraham Lincoln';
 const title = DataHelper.getRandomPhrase();
 const category = 'Uncategorized';
 const tag = 'test-tag';
@@ -67,7 +67,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Patterns', function () {
-		const patternName = 'About Me';
+		const patternName = 'About';
 
 		it( `Add ${ patternName } pattern`, async function () {
 			await editorPage.addPatternFromSidebar( patternName );
@@ -215,7 +215,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Post content is found in published post', async function () {
 			publishedPostPage = new PublishedPostPage( newPage );
 			await publishedPostPage.validateTitle( title );
-			for ( const part in quote.split( '\n' ) ) {
+			for ( const part of quote.split( '\n' ) ) {
 				await publishedPostPage.validateTextInPost( part );
 			}
 		} );
@@ -227,7 +227,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		// Not checking the `Press This` button as it is not available on AT.
 		// @see: paYJgx-1lp-p2
-		it.each( [ { name: 'Twitter' }, { name: 'Facebook' } ] )(
+		it.each( [ { name: 'X' }, { name: 'Facebook' } ] )(
 			'Social sharing button for $name can be clicked',
 			async function ( { name } ) {
 				publishedPostPage = new PublishedPostPage( newPage );

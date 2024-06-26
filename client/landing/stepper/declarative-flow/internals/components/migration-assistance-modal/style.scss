@@ -1,0 +1,13 @@
+@import "@automattic/onboarding/styles/mixins";
+
+.components-modal__frame.components-modal-new__frame {
+	&.import__confirm-modal {
+		@include break-medium {
+			width: 716px;
+		}
+
+		p {
+			font-size: 1rem;
+		}
+	}
+}

@@ -1,13 +1,12 @@
 import config from '@automattic/calypso-config';
-import { Popover } from '@automattic/components';
 import { loadScript } from '@automattic/load-script';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { cloneElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import wpcomRequest from 'wpcom-proxy-request';
 import GoogleIcon from 'calypso/components/social-icons/google';
-import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
@@ -39,20 +38,10 @@ class GoogleSocialButton extends Component {
 		onClick: noop,
 	};
 
-	state = {
-		error: '',
-		showError: false,
-		errorRef: null,
-		eventTimeStamp: null,
-		isDisabled: true,
-	};
-
 	constructor( props ) {
 		super( props );
 
 		this.handleClick = this.handleClick.bind( this );
-		this.showError = this.showError.bind( this );
-		this.hideError = this.hideError.bind( this );
 	}
 
 	componentDidMount() {
@@ -60,19 +49,24 @@ class GoogleSocialButton extends Component {
 			this.handleAuthorizationCode( {
 				auth_code: this.props.authCodeFromRedirect,
 				redirect_uri: this.props.redirectUri,
+				state: this.props.state,
 			} );
 		}
-
-		this.initializeGoogleSignIn();
 	}
 
-	async initializeGoogleSignIn() {
+	async initializeGoogleSignIn( state ) {
 		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
 
 		if ( ! googleSignIn ) {
-			this.setState( {
-				error: this.props.translate( 'Something went wrong while trying to load Google sign-in.' ),
+			this.props.recordTracksEvent( 'calypso_social_button_failure', {
+				social_account_type: 'google',
+				starting_point: this.props.startingPoint,
+				error_code: 'google_identity_services_api_not_loaded',
 			} );
+
+			this.props.showErrorNotice(
+				this.props.translate( 'Something went wrong while trying to load Google sign-in.' )
+			);
 
 			return;
 		}
@@ -82,6 +76,7 @@ class GoogleSocialButton extends Component {
 			scope: this.props.scope,
 			ux_mode: this.props.uxMode,
 			redirect_uri: this.props.redirectUri,
+			state: state,
 			callback: ( response ) => {
 				if ( response.error ) {
 					this.props.recordTracksEvent( 'calypso_social_button_failure', {
@@ -93,11 +88,9 @@ class GoogleSocialButton extends Component {
 					return;
 				}
 
-				this.handleAuthorizationCode( { auth_code: response.code } );
+				this.handleAuthorizationCode( { auth_code: response.code, state: response.state } );
 			},
 		} );
-
-		this.setState( { isDisabled: false } );
 	}
 
 	async loadGoogleIdentityServicesAPI() {
@@ -113,7 +106,7 @@ class GoogleSocialButton extends Component {
 		return window?.google?.accounts?.oauth2 ?? null;
 	}
 
-	async handleAuthorizationCode( { auth_code, redirect_uri } ) {
+	async handleAuthorizationCode( { auth_code, redirect_uri, state } ) {
 		let response;
 		try {
 			response = await postLoginRequest( 'exchange-social-auth-code', {
@@ -122,6 +115,7 @@ class GoogleSocialButton extends Component {
 				redirect_uri,
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
+				state,
 			} );
 		} catch ( httpError ) {
 			const { code: error_code } = getErrorFromHTTPError( httpError );
@@ -153,65 +147,46 @@ class GoogleSocialButton extends Component {
 		this.props.responseHandler( { access_token, id_token } );
 	}
 
-	handleClick( event ) {
+	async fetchNonceAndInitializeGoogleSignIn() {
+		try {
+			const response = await wpcomRequest( {
+				path: '/generate-authorization-nonce',
+				apiNamespace: 'wpcom/v2',
+				apiVersion: '2',
+				method: 'GET',
+			} );
+			const state = response.nonce;
+
+			await this.initializeGoogleSignIn( state );
+		} catch ( error ) {
+			this.props.showErrorNotice(
+				this.props.translate(
+					'Error fetching nonce or initializing Google sign-in. Please try again.'
+				)
+			);
+		}
+	}
+
+	async handleClick( event ) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		if ( this.state.error && this.state.eventTimeStamp !== event.timeStamp ) {
-			this.setState( {
-				showError: ! this.state.showError,
-				errorRef: event.currentTarget,
-				eventTimeStamp: event.timeStamp,
-			} );
-		}
-
-		if ( this.state.isDisabled ) {
-			return;
-		}
-
+		await this.fetchNonceAndInitializeGoogleSignIn();
 		this.props.onClick( event );
 
-		if ( this.state.error ) {
-			return;
-		}
-
-		this.client.requestCode();
-	}
-
-	showError( event ) {
-		if ( ! this.state.error ) {
-			return;
-		}
-
-		event.stopPropagation();
-
-		this.setState( {
-			showError: true,
-			errorRef: event.currentTarget,
-			eventTimeStamp: event.timeStamp,
-		} );
-	}
-
-	hideError() {
-		this.setState( { showError: false } );
+		this.client?.requestCode();
 	}
 
 	render() {
-		const isDisabled = Boolean(
-			this.state.isDisabled || this.props.isFormDisabled || this.state.error
-		);
+		const isDisabled = Boolean( this.props.isFormDisabled );
 
 		const { children } = this.props;
 		let customButton = null;
 
 		if ( children ) {
 			const childProps = {
-				className: classNames( { disabled: isDisabled } ),
+				className: clsx( { disabled: isDisabled } ),
 				onClick: this.handleClick,
-				onMouseOver: this.showError,
-				onFocus: this.showError,
-				onMouseOut: this.hideError,
-				onBlur: this.hideError,
 			};
 
 			customButton = cloneElement( children, childProps );
@@ -223,10 +198,9 @@ class GoogleSocialButton extends Component {
 					customButton
 				) : (
 					<button
-						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+						className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
 						onClick={ this.handleClick }
-						onMouseEnter={ this.showError }
-						onMouseLeave={ this.hideError }
+						disabled={ isDisabled }
 					>
 						<GoogleIcon
 							isDisabled={ isDisabled }
@@ -243,16 +217,6 @@ class GoogleSocialButton extends Component {
 						</span>
 					</button>
 				) }
-				<Popover
-					id="social-buttons__error"
-					className="social-buttons__error"
-					isVisible={ this.state.showError }
-					onClose={ this.hideError }
-					position="top"
-					context={ this.state.errorRef }
-				>
-					{ preventWidows( this.state.error ) }
-				</Popover>
 			</Fragment>
 		);
 	}
@@ -263,6 +227,7 @@ export default connect(
 		isFormDisabled: isFormDisabled( state ),
 		authCodeFromRedirect: getInitialQueryArguments( state ).code,
 		serviceFromRedirect: getInitialQueryArguments( state ).service,
+		state: getInitialQueryArguments( state ).state,
 	} ),
 	{
 		recordTracksEvent,

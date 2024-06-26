@@ -18,6 +18,7 @@ import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUser,
 	getCurrentUserVisibleSiteCount,
@@ -110,7 +111,7 @@ function sitelessCheckout( context, next, extraProps ) {
 				isComingFromUpsell={ !! context.query.upgrade }
 				redirectTo={ context.query.redirect_to }
 				isLoggedOutCart={ isLoggedOut }
-				isNoSiteCart={ true }
+				isNoSiteCart
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
 				{ ...extraProps }
 			/>
@@ -347,7 +348,6 @@ export function checkoutThankYou( context, next ) {
 				redirectTo={ context.query.redirect_to }
 				selectedFeature={ context.params.feature }
 				selectedSite={ selectedSite }
-				siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
 				upgradeIntent={ context.query.intent }
 			/>
 		</>
@@ -561,6 +561,11 @@ export function transferDomainToAnyUser( context, next ) {
 	// background via .is-section-checkout-thank-you
 	context.section.name = 'checkout-thank-you';
 	context.primary = <DomainTransferToAnyUser domain={ context.params.domain } />;
+	next( context );
+}
+
+export async function refreshUserSession( context, next ) {
+	await context.store.dispatch( fetchCurrentUser() );
 	next( context );
 }
 

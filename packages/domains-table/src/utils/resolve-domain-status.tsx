@@ -1,4 +1,10 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import {
+	SETTING_PRIMARY_DOMAIN,
+	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
+	GDPR_POLICIES,
+	DOMAIN_EXPIRATION_AUCTION,
+} from '@automattic/urls';
 import moment from 'moment';
 import {
 	gdprConsentStatus,
@@ -16,12 +22,6 @@ import {
 	domainUseMyDomain,
 } from './paths';
 import { ResponseDomain } from './types';
-import {
-	SETTING_PRIMARY_DOMAIN,
-	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
-	GDPR_POLICIES,
-	DOMAIN_EXPIRATION,
-} from './url-support';
 import type { I18N, TranslateResult } from 'i18n-calypso';
 
 export type ResolveDomainStatusReturn = {
@@ -189,7 +189,7 @@ export function resolveDomainStatus(
 								strong: <strong />,
 								a: (
 									<a
-										href={ localizeUrl( DOMAIN_EXPIRATION ) }
+										href={ localizeUrl( DOMAIN_EXPIRATION_AUCTION ) }
 										rel="noopener noreferrer"
 										target="_blank"
 									/>

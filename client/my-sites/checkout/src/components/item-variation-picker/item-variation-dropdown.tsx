@@ -26,7 +26,6 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	isOpen,
 } ) => {
 	const translate = useTranslate();
-
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
 	// Multi-year domain products must be compared by volume because they have the same product id.
@@ -128,7 +127,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		isJetpack( props.variant ) ? (
 			<JetpackItemVariantDropDownPrice { ...props } allVariants={ variants } />
 		) : (
-			<ItemVariantDropDownPrice { ...props } />
+			<ItemVariantDropDownPrice { ...props } product={ selectedItem } />
 		);
 
 	return (
@@ -193,6 +192,7 @@ function ItemVariantOptionList( {
 					compareTo={ compareTo }
 					variant={ variant }
 					allVariants={ variants }
+					selectedItem={ selectedItem }
 				/>
 			) ) }
 		</OptionList>
@@ -205,12 +205,14 @@ function ItemVariantOption( {
 	compareTo,
 	variant,
 	allVariants,
+	selectedItem,
 }: {
 	isSelected: boolean;
 	onSelect: () => void;
 	compareTo?: WPCOMProductVariant;
 	variant: WPCOMProductVariant;
 	allVariants: WPCOMProductVariant[];
+	selectedItem: ResponseCartProduct;
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
 	return (
@@ -226,7 +228,11 @@ function ItemVariantOption( {
 			{ isJetpack( variant ) ? (
 				<JetpackItemVariantDropDownPrice variant={ variant } allVariants={ allVariants } />
 			) : (
-				<ItemVariantDropDownPrice variant={ variant } compareTo={ compareTo } />
+				<ItemVariantDropDownPrice
+					variant={ variant }
+					compareTo={ compareTo }
+					product={ selectedItem }
+				/>
 			) }
 		</Option>
 	);

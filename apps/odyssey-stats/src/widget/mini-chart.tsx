@@ -99,7 +99,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 			<div className="stats-widget-minichart__chart-head">
 				<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
 			</div>
-			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading={ true } /> }
+			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isLoading && (
 				<>
 					<Chart

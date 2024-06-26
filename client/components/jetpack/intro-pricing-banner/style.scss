@@ -21,7 +21,7 @@
 .intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__content {
 	height: 120px;
 	margin-bottom: 2rem;
-	gap: 1.25rem;
+	column-gap: 1.25rem;
 
 	@include break-large {
 		height: 54px;
@@ -34,6 +34,8 @@
 	align-items: flex-start;
 
 	@include break-large {
+		flex-wrap: wrap;
+		justify-content: center;
 		flex-direction: row;
 		align-items: center;
 	}
@@ -48,6 +50,12 @@
 	&:not(:last-child) {
 		margin-right: 16px;
 	}
+
+	&.is-centered-mobile {
+		@media (max-width: $break-large) {
+			align-self: center;
+		}
+	}
 }
 
 .intro-pricing-banner__item-icon {
@@ -60,6 +68,7 @@
 	text-decoration: underline;
 	// This works in all major browsers except for Firefox for Android. It is also not imperative that this works
 	text-underline-offset: 3px;
+	cursor: pointer;
 }
 
 .is-section-jetpack-connect .intro-pricing-banner.is-sticky,
@@ -80,6 +89,12 @@
 		top: 14px;
 	}
 
+}
+
+.external-link {
+	.gridicons-external.intro-pricing-banner__external-link-icon {
+		color: var(--studio-gray-50);
+	}
 }
 
 

@@ -13,6 +13,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -26,7 +27,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const planMonthly = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
-		selectedSiteId,
+		siteId: selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
@@ -36,7 +37,11 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const planName = plan?.product_name_short ?? '';
 	const isLoading = ! plan || ! planMonthly;
-	const eventPrefix = isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack_odyssey' : 'calypso';
+	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
+	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+	const isSimpleClassic = useSelector( ( state ) =>
+		getSiteOption( state, selectedSiteId, 'is_wpcom_simple' )
+	);
 	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
 
 	const closeModal = () => {
@@ -49,16 +54,19 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_modal_submit`, {
 			stat_type: statType,
 		} );
-
-		page( `/checkout/${ siteSlug }/${ plan?.path_slug ?? 'premium' }` );
+		if ( isSimpleClassic ) {
+			const checkoutProductUrl = new URL(
+				`https://wordpress.com/checkout/${ siteSlug }/${ PLAN_PREMIUM }`
+			);
+			checkoutProductUrl.searchParams.set( 'redirect_to', window.location.href );
+			window.open( checkoutProductUrl, '_self' );
+		} else {
+			page( `/checkout/${ siteSlug }/${ plan?.path_slug ?? 'premium' }` );
+		}
 	};
 
 	return (
-		<Modal
-			className="stats-upsell-modal"
-			onRequestClose={ closeModal }
-			__experimentalHideHeader={ true }
-		>
+		<Modal className="stats-upsell-modal" onRequestClose={ closeModal } __experimentalHideHeader>
 			<TrackComponentView
 				eventName={ `${ eventPrefix }_stats_upsell_modal_view` }
 				eventProperties={ {

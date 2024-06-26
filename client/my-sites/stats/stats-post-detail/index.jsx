@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
@@ -18,8 +17,10 @@ import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
@@ -152,6 +153,7 @@ class StatsPostDetail extends Component {
 			siteSlug,
 			showViewLink,
 			previewUrl,
+			supportsUTMStats,
 		} = this.props;
 
 		const isLoading = isRequestingStats && ! countViews;
@@ -214,11 +216,19 @@ class StatsPostDetail extends Component {
 						</>
 					) }
 
-					{ config.isEnabled( 'stats/utm-module' ) && (
-						<div className="stats-module-utm__post-detail">
-							<StatsModuleUTM postId={ postId } />
-						</div>
-					) }
+					<StatsGlobalValuesContext.Consumer>
+						{ ( isInternal ) =>
+							( supportsUTMStats || isInternal ) && (
+								<div className="stats-module-utm__post-detail">
+									<StatsModuleUTM
+										siteId={ siteId }
+										postId={ postId }
+										query={ { num: -1, max: 0 } }
+									/>
+								</div>
+							)
+						}
+					</StatsGlobalValuesContext.Consumer>
 
 					<JetpackColophon />
 				</div>
@@ -243,6 +253,8 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
 
+	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+
 	return {
 		post: getSitePost( state, siteId, postId ),
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
@@ -254,6 +266,7 @@ const connectComponent = connect( ( state, { postId } ) => {
 		showViewLink: ! isJetpack && ! isPostHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		siteId,
+		supportsUTMStats,
 	};
 } );
 

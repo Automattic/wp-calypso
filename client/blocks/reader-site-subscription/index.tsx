@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
+import { login } from 'calypso/lib/paths';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { Path, useSiteSubscription } from './context';
 import SiteSubscriptionDetails from './details';
@@ -77,7 +78,11 @@ const ReaderSiteSubscription = ( { transition }: ReaderSiteSubscriptionProps ) =
 							className="site-subscription-page__fetch-details-error"
 							type={ NoticeType.Error }
 						>
-							{ translate( 'Subscription not found' ) }
+							{ translate( 'Subscription not found. {{a}}Switch account{{/a}}.', {
+								components: {
+									a: <a href={ login( { redirectTo: window.location.href } ) } />,
+								},
+							} ) }
 						</Notice>
 					) : (
 						<SiteSubscriptionDetails

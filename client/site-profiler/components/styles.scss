@@ -29,7 +29,7 @@ html[dir="rtl"] {
 		margin-bottom: 1rem;
 		color: var(--studio-gray-100);
 
-		@media (max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			font-size: 3rem;
 		}
 	}
@@ -71,9 +71,10 @@ html[dir="rtl"] {
 		}
 	}
 
+	// Button style overrides necessary because of conflicting WPcom styles.
 	.button-action {
 		color: #fff;
-		background: var(--wp-admin-theme-color);
+		background: var(--color-accent);
 		border-radius: 4px;
 		font-size: 1rem;
 		font-weight: 500;
@@ -85,7 +86,7 @@ html[dir="rtl"] {
 		}
 
 		&.is-busy {
-			background-image: linear-gradient(-45deg, var(--wp-admin-theme-color) 33%, var(--wp-admin-theme-color-darker-20) 33%, var(--wp-admin-theme-color-darker-20) 70%, var(--wp-admin-theme-color) 70%);
+			background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
 		}
 	}
 
@@ -191,7 +192,7 @@ html[dir="rtl"] {
 
 	.domain-analyzer-block {
 		padding-top: 10rem;
-		@media (max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			padding-top: 4rem;
 		}
 	}

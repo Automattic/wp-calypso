@@ -19,6 +19,7 @@ import {
 	isWpComPremiumPlan,
 	isTitanMail,
 	is100Year,
+	isValidFeatureKey,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -49,7 +50,6 @@ import {
 	hasStarterPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';

@@ -11,6 +11,7 @@ const freePostSetup: Flow = {
 	get title() {
 		return translate( 'Free' );
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [ STEPS.FREE_POST_SETUP ];
 	},

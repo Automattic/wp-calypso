@@ -1,11 +1,11 @@
 import { Button, ProgressBar, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { SETTING_UP_PREMIUM_SERVICES } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fireworksIllustration from 'calypso/assets/images/illustrations/fireworks.svg';
 import { preventWidows } from 'calypso/lib/formatting';
-import { SETTING_UP_PREMIUM_SERVICES } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';

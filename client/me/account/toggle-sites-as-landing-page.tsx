@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -32,13 +33,22 @@ function ToggleSitesAsLandingPage() {
 		);
 	}
 
+	const oldCopy = translate( 'Show me all my sites when logging in to WordPress.com' );
+	const updatedCopy = translate(
+		'Display all my sites instead of just my primary site when I visit WordPress.com.'
+	);
+
+	const hasTranslationForNewCopy = useHasEnTranslation()(
+		'Display all my sites instead of just my primary site when I visit WordPress.com.'
+	);
+
 	return (
 		<div>
 			<ToggleControl
 				checked={ !! useSitesAsLandingPage }
 				onChange={ handleToggle }
 				disabled={ isSaving }
-				label={ translate( 'Show me all my sites when logging in to WordPress.com' ) }
+				label={ hasTranslationForNewCopy ? updatedCopy : oldCopy }
 			/>
 		</div>
 	);

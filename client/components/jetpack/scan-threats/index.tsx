@@ -289,7 +289,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 				{ highSeverityThreats.length > 0 && lowSeverityThreats.length > 0 && (
 					<div className="scan-threats__low-risk">
 						<FoldableCard
-							clickableHeader={ true }
+							clickableHeader
 							header={ <ThreatLowRiskItemHeader threatCount={ countMap.low } /> }
 						>
 							{ lowSeverityThreats.map( ( threat ) => (

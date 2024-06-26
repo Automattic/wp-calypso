@@ -1,11 +1,13 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { FormLabel } from '@automattic/components';
-import classnames from 'classnames';
+import { localizeUrl } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -59,6 +61,7 @@ const SiteSettingPrivacyForm = ( {
 	const blogPublic = Number( fields.blog_public );
 	const wpcomComingSoon = 1 === Number( fields.wpcom_coming_soon );
 	const wpcomPublicComingSoon = 1 === Number( fields.wpcom_public_coming_soon );
+	const wpcomDataSharingOptOut = !! fields.wpcom_data_sharing_opt_out;
 	// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 	const isPrivateAndUnlaunched = -1 === blogPublic && isUnlaunchedSite;
 	const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
@@ -73,6 +76,10 @@ const SiteSettingPrivacyForm = ( {
 	const showPreviewLink = isComingSoon && hasSitePreviewLink;
 	const shouldShowPremiumStylesNotice = globalStylesInUse && shouldLimitGlobalStyles;
 
+	const discourageSearchChecked =
+		( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+		( 0 === blogPublic && ! wpcomPublicComingSoon );
+
 	const recordEvent = ( message: string ) => {
 		dispatch( recordGoogleEvent( 'Site Settings', message ) );
 	};
@@ -81,11 +88,18 @@ const SiteSettingPrivacyForm = ( {
 		blog_public,
 		wpcom_coming_soon,
 		wpcom_public_coming_soon,
+		wpcom_data_sharing_opt_out,
 	}: Fields ) => {
 		recordEvent( `Set blog_public to ${ blog_public }` );
 		recordEvent( `Set wpcom_coming_soon to ${ wpcom_coming_soon }` );
 		recordEvent( `Set wpcom_public_coming_soon to ${ wpcom_public_coming_soon }` );
-		updateFields( { blog_public, wpcom_coming_soon, wpcom_public_coming_soon } );
+		recordEvent( `Set wpcom_data_sharing_opt_out to ${ wpcom_data_sharing_opt_out }` );
+		updateFields( {
+			blog_public,
+			wpcom_coming_soon,
+			wpcom_public_coming_soon,
+			wpcom_data_sharing_opt_out,
+		} );
 	};
 
 	return (
@@ -99,7 +113,7 @@ const SiteSettingPrivacyForm = ( {
 								<SiteSettingPrivacyNotice selectedSite={ selectedSite } siteSlug={ siteSlug } />
 							) }
 							<FormLabel
-								className={ classnames( 'site-settings__visibility-label is-coming-soon', {
+								className={ clsx( 'site-settings__visibility-label is-coming-soon', {
 									'is-coming-soon-disabled': isComingSoonDisabled,
 								} ) }
 							>
@@ -113,6 +127,7 @@ const SiteSettingPrivacyForm = ( {
 											blog_public: 0,
 											wpcom_coming_soon: 0,
 											wpcom_public_coming_soon: 1,
+											wpcom_data_sharing_opt_out: false,
 										} )
 									}
 									disabled={ isComingSoonDisabled }
@@ -153,6 +168,7 @@ const SiteSettingPrivacyForm = ( {
 										blog_public: isWpcomStagingSite ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
+										wpcom_data_sharing_opt_out: false,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -178,16 +194,14 @@ const SiteSettingPrivacyForm = ( {
 							<FormInputCheckbox
 								name="blog_public"
 								value="0"
-								checked={
-									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-									( 0 === blogPublic && ! wpcomPublicComingSoon )
-								}
+								checked={ discourageSearchChecked }
 								onChange={ () =>
 									handleVisibilityOptionChange( {
 										blog_public:
 											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
+										wpcom_data_sharing_opt_out: true,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -202,6 +216,55 @@ const SiteSettingPrivacyForm = ( {
 								) }
 							</FormSettingExplanation>
 						</FormLabel>
+						{ ! isNonAtomicJetpackSite && (
+							<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
+								<FormInputCheckbox
+									name="wpcom_data_sharing_opt_out"
+									value="true"
+									checked={
+										( wpcomPublicComingSoon && wpcomDataSharingOptOut && isComingSoonDisabled ) ||
+										( wpcomDataSharingOptOut && ! wpcomPublicComingSoon ) ||
+										discourageSearchChecked
+									}
+									onChange={ () =>
+										handleVisibilityOptionChange( {
+											blog_public:
+												blogPublic === 1 || wpcomPublicComingSoon || blogPublic === -1 ? 1 : 0,
+											wpcom_coming_soon: 0,
+											wpcom_public_coming_soon: 0,
+											wpcom_data_sharing_opt_out: ! wpcomDataSharingOptOut,
+										} )
+									}
+									disabled={ isRequestingSettings || discourageSearchChecked }
+									onClick={ () => recordEvent( 'Clicked Partnership Radio Button' ) }
+								/>
+								<span>
+									{ translate( 'Prevent third-party sharing for %(siteName)s', {
+										args: {
+											siteName: siteSlug || '',
+										},
+									} ) }
+								</span>
+								<FormSettingExplanation>
+									{ translate(
+										'This option will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. {{a}}Learn more{{/a}}.',
+										{
+											components: {
+												a: (
+													<InlineSupportLink
+														showIcon={ false }
+														supportLink={ localizeUrl(
+															'https://wordpress.com/support/privacy-settings/#public'
+														) }
+														showSupportModal={ false }
+													/>
+												),
+											},
+										}
+									) }
+								</FormSettingExplanation>
+							</FormLabel>
+						) }
 					</>
 				) }
 				{ ! isNonAtomicJetpackSite && (
@@ -220,6 +283,7 @@ const SiteSettingPrivacyForm = ( {
 										blog_public: -1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
+										wpcom_data_sharing_opt_out: false,
 									} )
 								}
 								disabled={ isRequestingSettings }

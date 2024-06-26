@@ -2,7 +2,10 @@ import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
+import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
@@ -43,9 +46,12 @@ export default function LicenseInfoModal( {
 	const partner = useSelector( getCurrentPartner );
 	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
+	const isA4AEnabled = isA8CForAgencies();
 	const { hideLicenseInfo } = useContext( SitesOverviewContext );
 
-	const { products } = useContext( DashboardDataContext );
+	const { products: dashboardProducts } = useContext( DashboardDataContext );
+	const { data: A4AProducts } = useProductsQuery();
+	const products = isA4AEnabled ? A4AProducts : dashboardProducts;
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, ! isMobile );
 
 	const currentLicenseProductSlug = currentLicenseInfo
@@ -72,16 +78,29 @@ export default function LicenseInfoModal( {
 		} );
 		onCtaClick?.();
 		onHideLicenseInfo();
-		page(
-			addQueryArgs(
-				{
-					product_slug: currentLicenseProductSlug,
-					source: 'dashboard',
-					site_id: siteId,
-				},
-				'/partner-portal/issue-license/'
-			)
-		);
+		if ( isA4AEnabled ) {
+			page(
+				addQueryArgs(
+					{
+						product_slug: currentLicenseProductSlug,
+						source: 'sitesdashboard',
+						site_id: siteId,
+					},
+					A4A_MARKETPLACE_CHECKOUT_LINK
+				)
+			);
+		} else {
+			page(
+				addQueryArgs(
+					{
+						product_slug: currentLicenseProductSlug,
+						source: 'dashboard',
+						site_id: siteId,
+					},
+					'/partner-portal/issue-license/'
+				)
+			);
+		}
 	};
 
 	return (
@@ -92,7 +111,7 @@ export default function LicenseInfoModal( {
 				ctaLabel={ label ?? translate( 'Issue License' ) }
 				isCTAExternalLink={ isCTAExternalLink }
 				ctaHref={ ctaHref }
-				isDisabled={ ! partnerCanIssueLicense || isDisabled }
+				isDisabled={ isA4AEnabled ? false : ! partnerCanIssueLicense || isDisabled } // Noting that in A4A the partnerCanIssueLicense functionality is not yet implemented.
 				onActivate={ onIssueLicense }
 				onClose={ onHideLicenseInfo }
 				extraAsideContent={ extraAsideContent }

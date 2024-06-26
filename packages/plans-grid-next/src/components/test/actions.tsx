@@ -4,11 +4,11 @@
 /**
  * Default mock implementations
  */
-jest.mock( 'classnames', () => jest.fn() );
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 	combineReducers: jest.fn(),
 	createReduxStore: jest.fn(),
+	createSelector: jest.fn(),
 	register: jest.fn(),
 	useDispatch: jest.fn(),
 } ) );
@@ -19,6 +19,9 @@ jest.mock( '@wordpress/element', () => ( {
 jest.mock( '@automattic/data-stores', () => ( {
 	WpcomPlansUI: {
 		store: null,
+	},
+	AddOns: {
+		useStorageAddOns: jest.fn(),
 	},
 } ) );
 jest.mock( 'i18n-calypso', () => ( {
@@ -89,6 +92,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							...pricing,
 							billingPeriod: PLAN_ANNUAL_PERIOD,
 						},
+						features: {},
 					},
 					[ PLAN_PREMIUM_2_YEARS ]: {
 						isMonthlyPlan: false,
@@ -96,7 +100,18 @@ describe( 'PlanFeatures2023GridActions', () => {
 							...pricing,
 							billingPeriod: PLAN_BIENNIAL_PERIOD,
 						},
+						features: {},
 					},
+				},
+				helpers: {
+					useAction: () => ( {
+						primary: {
+							callback: () => {},
+							text: contactSupport,
+							status: 'disabled',
+						},
+						postButtonText: '',
+					} ),
 				},
 			} ) );
 
@@ -123,6 +138,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							...pricing,
 							billingPeriod: PLAN_ANNUAL_PERIOD,
 						},
+						features: {},
 					},
 					[ PLAN_PREMIUM ]: {
 						isMonthlyPlan: false,
@@ -130,7 +146,18 @@ describe( 'PlanFeatures2023GridActions', () => {
 							...pricing,
 							billingPeriod: PLAN_ANNUAL_PERIOD,
 						},
+						features: {},
 					},
+				},
+				helpers: {
+					useAction: () => ( {
+						primary: {
+							callback: () => {},
+							text: upgrade,
+							status: '',
+						},
+						postButtonText: '',
+					} ),
 				},
 			} ) );
 
@@ -157,6 +184,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_ANNUAL_PERIOD,
 							},
+							features: {},
 						},
 						[ PLAN_BUSINESS_MONTHLY ]: {
 							isMonthlyPlan: true,
@@ -164,7 +192,18 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_MONTHLY_PERIOD,
 							},
+							features: {},
 						},
+					},
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: upgradeToYearly,
+								status: '',
+							},
+							postButtonText: '',
+						} ),
 					},
 				} ) );
 				render(
@@ -189,7 +228,18 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_ANNUAL_PERIOD,
 							},
+							features: {},
 						},
+					},
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: '',
+								status: '',
+							},
+							postButtonText: '',
+						} ),
 					},
 				} ) );
 				usePlansGridContext.mockImplementation( () => ( {
@@ -200,7 +250,18 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_BIENNIAL_PERIOD,
 							},
+							features: {},
 						},
+					},
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: upgradeToBiennial,
+								status: '',
+							},
+							postButtonText: '',
+						} ),
 					},
 				} ) );
 
@@ -226,6 +287,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_TRIENNIAL_PERIOD,
 							},
+							features: {},
 						},
 						[ PLAN_BUSINESS_MONTHLY ]: {
 							isMonthlyPlan: true,
@@ -234,6 +296,16 @@ describe( 'PlanFeatures2023GridActions', () => {
 								billingPeriod: PLAN_MONTHLY_PERIOD,
 							},
 						},
+					},
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: upgradeToTriennial,
+								status: '',
+							},
+							postButtonText: '',
+						} ),
 					},
 				} ) );
 				render(
@@ -258,14 +330,25 @@ describe( 'PlanFeatures2023GridActions', () => {
 								...pricing,
 								billingPeriod: PLAN_TRIENNIAL_PERIOD,
 							},
+							features: {},
 						},
+					},
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: 'Upgrade – $20',
+								status: '',
+							},
+							postButtonText: '',
+						} ),
 					},
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
 						{ ...defaultProps }
 						planSlug={ PLAN_BUSINESS_3_YEARS }
-						isStuck={ true }
+						isStuck
 					/>
 				);
 				const upgradeButton = screen.getByRole( 'button', { name: 'Upgrade – $20' } );
@@ -286,14 +369,24 @@ describe( 'PlanFeatures2023GridActions', () => {
 							pricing: {
 								...pricing,
 							},
+							features: {},
 						},
+					},
+					helpers: {
+						useAction: () => ( {
+							primary: {
+								callback: () => {},
+								text: '',
+								status: '',
+							},
+							postButtonText: "You've already used your free trial! Thanks!",
+						} ),
 					},
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
 						{ ...defaultProps }
-						planActionOverrides={ planActionOverrides }
-						isInSignup={ true }
+						isInSignup
 						planSlug={ PLAN_BUSINESS }
 						isStuck={ false }
 					/>

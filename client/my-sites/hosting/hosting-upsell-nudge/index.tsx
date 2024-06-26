@@ -33,12 +33,7 @@ interface HostingUpsellNudgeProps {
 	secondaryOnClick?: () => void;
 }
 
-export function HostingUpsellNudge( {
-	siteId,
-	targetPlan,
-	secondaryCallToAction,
-	secondaryOnClick,
-}: HostingUpsellNudgeProps ) {
+export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgeProps ) {
 	const translate = useTranslate();
 	const features = useFeatureList();
 	const callToActionText = translate( 'Upgrade to %(businessPlanName)s Plan', {
@@ -66,14 +61,11 @@ export function HostingUpsellNudge( {
 			compactButton={ false }
 			title={ title }
 			event="calypso_hosting_configuration_upgrade_click"
-			secondaryEvent="calypso_hosting_configuration_upgrade_free_trial_click"
 			href={ href }
 			callToAction={ callToAction }
-			secondaryCallToAction={ secondaryCallToAction }
-			secondaryOnClick={ secondaryOnClick }
 			plan={ plan as string }
 			feature={ feature }
-			showIcon={ true }
+			showIcon
 			list={ features }
 			renderListItem={ ( { icon, title, description }: FeatureListItem ) => (
 				<>

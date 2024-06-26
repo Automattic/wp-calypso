@@ -1,5 +1,5 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -50,7 +50,7 @@ class AuthorCompactProfile extends Component {
 		const hasAuthorName = author.hasOwnProperty( 'name' );
 		const hasMatchingAuthorAndSiteNames =
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
-		const classes = classnames( {
+		const classes = clsx( {
 			'author-compact-profile': true,
 			'has-author-link': ! hasMatchingAuthorAndSiteNames,
 			'has-author-icon': siteIcon || feedIcon || author.has_avatar,

@@ -1,23 +1,25 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { camelCase } from 'lodash';
-import { ImporterPlatform } from 'calypso/blocks/import/types';
 import {
 	getImporterUrl,
 	getWpComOnboardingUrl,
 	getWpOrgImporterUrl,
 } from 'calypso/blocks/import/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
+import { getImporterEngines } from 'calypso/lib/importer/importer-config';
+import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { BASE_ROUTE } from './config';
 
 export function getFinalImporterUrl(
 	targetSlug: string,
 	fromSite: string,
-	platform: ImporterPlatform
+	platform: ImporterPlatform,
+	backToFlow?: string
 ) {
 	let importerUrl;
 	const encodedFromSite = encodeURIComponent( fromSite );
-	const productImporters = [ 'blogger', 'medium', 'substack', 'squarespace', 'wix', 'wordpress' ];
+	const productImporters = getImporterEngines();
 
 	if ( productImporters.includes( platform ) ) {
 		importerUrl = isEnabled( `onboarding/import-from-${ platform }` )
@@ -35,6 +37,12 @@ export function getFinalImporterUrl(
 		}
 	} else {
 		importerUrl = getWpOrgImporterUrl( targetSlug, platform );
+	}
+
+	if ( backToFlow ) {
+		importerUrl = addQueryArgs( importerUrl, {
+			backToFlow,
+		} );
 	}
 
 	return importerUrl;

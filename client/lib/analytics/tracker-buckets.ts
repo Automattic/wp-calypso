@@ -27,15 +27,17 @@ const allAdTrackers = [
 	'experian',
 	'iconMedia',
 	'linkedin',
+	'logrocket',
 	'criteo',
 	'pandora',
 	'quora',
 	'adroll',
 	'parsely',
 	'clarity',
+	'reddit',
 ] as const;
 
-const sessionAdTrackers = [ 'hotjar' ];
+const sessionAdTrackers = [ 'hotjar', 'logrocket' ];
 
 type AdTracker = ( typeof allAdTrackers )[ number ];
 
@@ -57,10 +59,12 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	floodlight: Bucket.ADVERTISING,
 	googleAds: Bucket.ADVERTISING,
 	googleTagManager: Bucket.ADVERTISING,
+	logrocket: Bucket.ADVERTISING,
 	outbrain: Bucket.ADVERTISING,
 	pinterest: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
+	reddit: Bucket.ADVERTISING,
 
 	// Advertising trackers (only Jetpack Cloud or on Jetpack Checkout):
 	linkedin: isJetpackCloud() || isJetpackCheckout() ? Bucket.ADVERTISING : null,
@@ -99,6 +103,7 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	quora: () => 'qp' in window,
 	adroll: () => 'adRoll' in window,
 	clarity: () => 'clarity' in window,
+	reddit: () => 'rdt' in window,
 };
 
 const isTrackerIntialized = ( tracker: AdTracker ): boolean => {

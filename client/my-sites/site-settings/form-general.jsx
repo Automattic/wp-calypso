@@ -14,7 +14,7 @@ import { Card, CompactCard, Button, FormLabel, Gridicon } from '@automattic/comp
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -28,7 +28,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import SitePreviewLink from 'calypso/components/site-preview-link';
 import Timezone from 'calypso/components/timezone';
 import { preventWidows } from 'calypso/lib/formatting';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
@@ -50,17 +49,21 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
+	isGlobalSiteViewEnabled,
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
+	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { BuiltByUpsell } from './built-by-upsell-banner';
+import { DIFMUpsell } from './difm-upsell-banner';
 import Masterbar from './masterbar';
+import SiteAdminInterface from './site-admin-interface';
+import SiteAdminInterfaceExperiment from './site-admin-interface/experiment';
 import SiteIconSetting from './site-icon-setting';
 import LaunchSite from './site-visibility/launch-site';
 import wrapSettingsForm from './wrap-settings-form';
@@ -549,6 +552,17 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 	}
 
+	renderAdminInterface() {
+		const { site, siteSlug, isSimple } = this.props;
+		if ( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) || isSimple ) {
+			return isEnabled( 'layout/wpcom-admin-interface' ) ? (
+				<SiteAdminInterfaceExperiment siteId={ site.ID } siteSlug={ siteSlug } />
+			) : null;
+		}
+
+		return <SiteAdminInterface siteId={ site.ID } siteSlug={ siteSlug } />;
+	}
+
 	render() {
 		const {
 			customizerUrl,
@@ -566,15 +580,15 @@ export class SiteSettingsFormGeneral extends Component {
 			isUnlaunchedSite: propsisUnlaunchedSite,
 			isClassicView,
 		} = this.props;
-		const classes = classNames( 'site-settings__general-settings', {
+		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
 
 		return (
-			<div className={ classNames( classes ) }>
+			<div className={ clsx( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) && (
+				{ ! isClassicView && (
 					<>
 						<SettingsSectionHeader
 							data-tip-target="settings-site-profile-save"
@@ -604,55 +618,54 @@ export class SiteSettingsFormGeneral extends Component {
 					this.privacySettings()
 				) }
 				{ this.enhancedOwnershipSettings() }
-				<BuiltByUpsell
+				<DIFMUpsell
 					site={ site }
 					isUnlaunchedSite={ propsisUnlaunchedSite }
 					urlRef="unlaunched-settings"
 				/>
+				{ this.renderAdminInterface() }
 				{ ! isWpcomStagingSite && this.giftOptions() }
-				{ ! isWPForTeamsSite &&
-					! ( siteIsJetpack && ! siteIsAtomic ) &&
-					! ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) && (
-						<div className="site-settings__footer-credit-container">
-							<SettingsSectionHeader
-								title={ translate( 'Footer credit' ) }
-								id="site-settings__footer-credit-header"
-							/>
-							<CompactCard className="site-settings__footer-credit-explanation">
-								<p>
-									{ preventWidows(
-										translate(
-											'You can customize your website by changing the footer credit in customizer.'
-										),
-										2
-									) }
-								</p>
-								<div>
-									<Button className="site-settings__footer-credit-change" href={ customizerUrl }>
-										{ translate( 'Change footer credit' ) }
-									</Button>
-								</div>
-							</CompactCard>
-							{ ! hasNoWpcomBranding && (
-								<UpsellNudge
-									feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
-									plan={ PLAN_BUSINESS }
-									title={ translate(
-										'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
+				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
+					<div className="site-settings__footer-credit-container">
+						<SettingsSectionHeader
+							title={ translate( 'Footer credit' ) }
+							id="site-settings__footer-credit-header"
+						/>
+						<CompactCard className="site-settings__footer-credit-explanation">
+							<p>
+								{ preventWidows(
+									translate(
+										'You can customize your website by changing the footer credit in customizer.'
+									),
+									2
+								) }
+							</p>
+							<div>
+								<Button className="site-settings__footer-credit-change" href={ customizerUrl }>
+									{ translate( 'Change footer credit' ) }
+								</Button>
+							</div>
+						</CompactCard>
+						{ ! hasNoWpcomBranding && (
+							<UpsellNudge
+								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
+								plan={ PLAN_BUSINESS }
+								title={ translate(
+									'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
 
-										{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
-									) }
-									description={ translate(
-										'Upgrade to remove the footer credit, use advanced SEO tools and more'
-									) }
-									showIcon={ true }
-									event="settings_remove_footer"
-									tracksImpressionName="calypso_upgrade_nudge_impression"
-									tracksClickName="calypso_upgrade_nudge_cta_click"
-								/>
-							) }
-						</div>
-					) }
+									{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+								) }
+								description={ translate(
+									'Upgrade to remove the footer credit, use advanced SEO tools and more'
+								) }
+								showIcon
+								event="settings_remove_footer"
+								tracksImpressionName="calypso_upgrade_nudge_impression"
+								tracksClickName="calypso_upgrade_nudge_cta_click"
+							/>
+						) }
+					</div>
+				) }
 				{ this.toolbarOption() }
 			</div>
 		);
@@ -661,13 +674,13 @@ export class SiteSettingsFormGeneral extends Component {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicView = getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 	return {
 		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 		hasNoWpcomBranding: siteHasFeature( state, siteId, WPCOM_FEATURES_NO_WPCOM_BRANDING ),
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),
@@ -686,7 +699,7 @@ const connectComponent = connect( ( state ) => {
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
-		isClassicView,
+		isSimple: isSimpleSite( state, siteId ),
 	};
 } );
 
@@ -698,6 +711,7 @@ const getFormSettings = ( settings ) => {
 		timezone_string: '',
 		blog_public: '',
 		wpcom_coming_soon: '',
+		wpcom_data_sharing_opt_out: false,
 		wpcom_legacy_contact: '',
 		wpcom_locked_mode: false,
 		wpcom_public_coming_soon: '',
@@ -718,6 +732,7 @@ const getFormSettings = ( settings ) => {
 		timezone_string: settings.timezone_string,
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
+		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,
 		wpcom_legacy_contact: settings.wpcom_legacy_contact,
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,

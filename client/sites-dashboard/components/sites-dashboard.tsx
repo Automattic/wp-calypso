@@ -29,10 +29,8 @@ import {
 	SitesContentControls,
 	handleQueryParamChange,
 } from './sites-content-controls';
-import { useSitesDisplayMode } from './sites-display-mode-switcher';
-import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
@@ -76,6 +74,7 @@ const HeaderControls = styled.div( {
 	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
+	paddingTop: '32px',
 	display: 'flex',
 	flexDirection: 'row',
 	alignItems: 'flex-start',
@@ -87,19 +86,12 @@ const DashboardHeading = styled.h1( {
 	lineHeight: '26px',
 	color: 'var( --studio-gray-100 )',
 	flex: 1,
+	marginInlineEnd: '1rem',
 } );
 
 const sitesMarginTable = css( {
+	backgroundColor: 'var( --studio-white )',
 	marginBlockStart: '14px',
-	marginInline: 0,
-	marginBlockEnd: '1.5em',
-	[ MEDIA_QUERIES.small ]: {
-		marginBlockStart: '0',
-	},
-} );
-
-const sitesMargin = css( {
-	marginBlockStart: '32px',
 	marginInline: 0,
 	marginBlockEnd: '1.5em',
 	[ MEDIA_QUERIES.small ]: {
@@ -153,11 +145,17 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 
 const ManageAllDomainsButton = styled( Button )`
 	margin-inline-end: 1rem;
+	white-space: nowrap;
 `;
 
 const DownloadIcon = styled( Icon )`
 	margin-right: 8px;
 	vertical-align: bottom;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
 `;
 
 const popoverHoverStyles = css`
@@ -188,9 +186,8 @@ export function SitesDashboard( {
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
+
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
-	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
-	const userPreferencesLoaded = hasSitesSortingPreferenceLoaded && 'none' !== displayMode;
 	const elementRef = useRef( window );
 
 	const isBelowThreshold = useCallback( ( containerNode: Window ) => {
@@ -275,30 +272,39 @@ export function SitesDashboard( {
 										initialSearch={ search }
 										statuses={ statuses }
 										selectedStatus={ selectedStatus }
-										displayMode={ displayMode }
-										onDisplayModeChange={ setDisplayMode }
 										sitesSorting={ sitesSorting }
 										onSitesSortingChange={ onSitesSortingChange }
 										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
+										showDeletedStatus
 									/>
 								) }
-								{ userPreferencesLoaded && (
+								{ hasSitesSortingPreferenceLoaded && (
 									<>
 										{ paginatedSites.length > 0 || isLoading ? (
 											<>
-												{ displayMode === 'list' && (
-													<SitesTable
-														isLoading={ isLoading }
-														sites={ paginatedSites }
-														className={ sitesMarginTable }
-													/>
-												) }
-												{ displayMode === 'tile' && (
-													<SitesGrid
-														isLoading={ isLoading }
-														sites={ paginatedSites }
-														className={ sitesMargin }
-													/>
+												<SitesTable
+													isLoading={ isLoading }
+													sites={ paginatedSites }
+													className={ sitesMarginTable }
+												/>
+												{ selectedStatus.name === 'deleted' && (
+													<div
+														style={ {
+															display: 'flex',
+															alignItems: 'center',
+															gap: '8px',
+														} }
+													>
+														<Gridicon icon="info" size={ 18 } />
+														<span>
+															{ createInterpolateElement(
+																__(
+																	'These sites will be permanently removed after <strong>30 days.</strong>'
+																),
+																{ strong: <strong /> }
+															) }
+														</span>
+													</div>
 												) }
 												{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
 													<PageBodyBottomContainer>
@@ -362,7 +368,10 @@ export function SitesDashboard( {
 	);
 }
 
-function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: number | undefined ) {
+export function useShowSiteCreationNotice(
+	allSites: SiteExcerptData[],
+	newSiteID: number | undefined
+) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const shownSiteCreationNotice = useRef( false );
@@ -399,7 +408,7 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: numb
 	}, [ __, allSites, dispatch, newSiteID ] );
 }
 
-function useShowSiteTransferredNotice() {
+export function useShowSiteTransferredNotice() {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	useEffect( () => {

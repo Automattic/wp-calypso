@@ -1,78 +1,91 @@
-import { StepContainer } from '@automattic/onboarding';
-import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useCallback } from 'react';
-import DocumentHead from 'calypso/components/data/document-head';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+/* eslint-disable no-console */
+import { useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import wpcom from 'calypso/lib/wp';
-import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
+import { ONBOARD_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 
-const SiteMigrationPluginInstall: Step = function SiteMigrationPluginInstall( { navigation } ) {
+const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
+
+const SiteMigrationPluginInstall: Step = ( { navigation } ) => {
 	const { submit } = navigation;
+	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
+	const site = useSite();
 
-	const siteId = useSiteIdParam();
-	const { __ } = useI18n();
+	const siteId = site?.ID;
 
-	const installSiteMigrationPlugins = useCallback( async () => {
+	useEffect( () => {
 		if ( ! siteId ) {
 			return;
 		}
 
-		try {
-			await wpcom.req.post(
-				`/sites/${ siteId }/plugins/install`,
-				{
-					apiVersion: '1.2',
-				},
-				{
-					slug: 'migrate-guru',
-				}
-			);
-		} catch ( error ) {
-			submit?.( { error } );
-			return;
-		}
+		setPendingAction( async () => {
+			setProgress( 0 );
 
-		try {
-			await wpcom.req.post(
-				`/sites/${ siteId }/plugins/migrate-guru%2fmigrateguru`,
-				{
-					apiVersion: '1.2',
-				},
-				{
-					active: true,
+			let stopPollingPlugins = false;
+			let pollingPluginsRetry = 0;
+			const maxRetry = 10;
+			let installedPlugins = null;
+
+			// Poll until plugins are installed. Once this is done, it's safe to install our plugin.
+			while ( ! stopPollingPlugins ) {
+				try {
+					const response = await wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
+						apiNamespace: 'rest/v1.1',
+					} );
+
+					if ( response?.plugins ) {
+						installedPlugins = response?.plugins;
+						stopPollingPlugins = true;
+						break;
+					}
+
+					pollingPluginsRetry++;
+					if ( pollingPluginsRetry <= maxRetry ) {
+						await wait( 5000 );
+					} else {
+						stopPollingPlugins = true;
+					}
+				} catch ( error ) {
+					// Pause and retry after an error
+					await wait( 3000 );
 				}
+			}
+			const pluginAlreadyInstalled = installedPlugins.find(
+				( plugin: { slug: string } ) => plugin.slug === 'migrate-guru'
 			);
-		} catch ( error ) {
-			submit?.( { error } );
-			return;
-		}
+
+			if ( ! pluginAlreadyInstalled ) {
+				// Install the plugin
+				await wpcom.req.post( {
+					path: `/sites/${ siteId }/plugins/migrate-guru/install`,
+					apiNamespace: 'rest/v1.2',
+				} );
+			}
+
+			// Activate the plugin
+			await wpcom.req.post( {
+				path: `/sites/${ siteId }/plugins/migrate-guru%2fmigrateguru`,
+				apiNamespace: 'rest/v1.2',
+				body: {
+					active: true,
+				},
+			} );
+
+			setProgress( 1 );
+
+			return {
+				pluginInstalled: true,
+			};
+		} );
 
 		submit?.();
-	}, [ siteId, submit ] );
 
-	useEffect( () => {
-		installSiteMigrationPlugins();
-	}, [ installSiteMigrationPlugins ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ siteId ] );
 
-	return (
-		<>
-			<DocumentHead title={ __( 'Installing plugins' ) } />
-			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
-				stepName="processing-step"
-				stepContent={
-					<div className="processing-step">
-						<h1 className="processing-step__progress-step">{ __( 'Installing plugins' ) }</h1>
-						<LoadingEllipsis />
-					</div>
-				}
-				recordTracksEvent={ recordTracksEvent }
-			/>
-		</>
-	);
+	return null;
 };
 
 export default SiteMigrationPluginInstall;

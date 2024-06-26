@@ -1,12 +1,13 @@
 import config from '@automattic/calypso-config';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { translate, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
 import { BlazablePost } from 'calypso/data/promote-post/types';
 import { useInfiniteScroll } from 'calypso/data/promote-post/use-infinite-scroll';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { DSPMessage } from 'calypso/my-sites/promote-post-i2/main';
+import { APIError } from 'calypso/state/partner-portal/types';
 import './style.scss';
 import PostsTable from '../posts-table';
 import SearchBar, { SearchOptions } from '../search-bar';
@@ -20,9 +21,11 @@ type Props = {
 	totalCampaigns: number;
 	hasMorePages: boolean;
 	posts?: BlazablePost[];
+	hasPaymentsBlocked: boolean;
 };
 
 const ERROR_NO_LOCAL_USER = 'no_local_user';
+const ERROR_POSTS_NOT_READY = 'posts_not_ready';
 
 const fetchErrorListMessage = translate(
 	'There was a problem obtaining the posts list. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
@@ -31,6 +34,13 @@ const fetchErrorListMessage = translate(
 			contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 		},
 		comment: 'Validation error when filling out domain checkout contact details form',
+	}
+);
+
+const postsNotReadyErrorMessage = translate(
+	'Blaze is syncing your content as part of first-time setup – this can take up to 15 minutes or a few hours.',
+	{
+		comment: 'Validation error when fetching the posts and they are not ready/sync',
 	}
 );
 
@@ -47,11 +57,13 @@ export default function PostsList( props: Props ) {
 		totalCampaigns,
 		hasMorePages,
 		posts,
+		hasPaymentsBlocked,
 	} = props;
 
 	const translate = useTranslate();
 
 	const hasLocalUser = ( isError as DSPMessage )?.errorCode !== ERROR_NO_LOCAL_USER;
+	const hasPostsNotReadyError = ( isError as APIError )?.code === ERROR_POSTS_NOT_READY;
 
 	const { containerRef } = useInfiniteScroll( {
 		offset: '200px',
@@ -64,6 +76,19 @@ export default function PostsList( props: Props ) {
 	const onChangeFilter = ( postType: string ) => {
 		setPostType( postType );
 	};
+
+	if ( isError && hasPostsNotReadyError ) {
+		return (
+			<Notice
+				className="promote-post-notice promote-post-i2__aux-wrapper"
+				status="is-info"
+				icon="mention"
+				showDismiss={ false }
+			>
+				{ postsNotReadyErrorMessage }
+			</Notice>
+		);
+	}
 
 	if ( isError && hasLocalUser ) {
 		return (
@@ -110,6 +135,7 @@ export default function PostsList( props: Props ) {
 								isLoading={ isLoading }
 								isFetchingPageResults={ isFetching }
 								type={ postType }
+								hasPaymentsBlocked={ hasPaymentsBlocked }
 							/>
 						) }
 					</div>

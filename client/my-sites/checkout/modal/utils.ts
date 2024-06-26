@@ -8,7 +8,11 @@ export const openCheckoutModal = (
 ) => {
 	const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
 	const path = addQueryArgs(
-		{ ...searchParams, [ KEY_PRODUCTS ]: products.join( ',' ), cancel_to: relativeCurrentPath },
+		{
+			...searchParams,
+			[ KEY_PRODUCTS ]: products.join( ',' ),
+			cancel_to: searchParams.cancel_to || relativeCurrentPath,
+		},
 		relativeCurrentPath
 	);
 

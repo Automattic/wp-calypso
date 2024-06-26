@@ -60,7 +60,7 @@ $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $
 }
 
 .wpcom-tour-kit-step-card {
-	width: 400px;
+	width: 416px;
 	max-width: 92vw;
 
 	&.wpcom-tour-kit-step-card.is-elevated {
@@ -165,7 +165,7 @@ $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $
 		}
 	}
 
-	@media ( hover: hover ) and ( pointer: fine ) {
+	@media (hover: hover) and (pointer: fine) {
 		// styles only applicable for hoverable viewports with precision pointing devices connected (eg: mouse)
 		.components-button {
 			opacity: 0;

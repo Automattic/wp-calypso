@@ -10,7 +10,7 @@ $plans-2023-small-breakpoint: 780px;
  */
 @mixin plans-section-custom-mobile-breakpoint() {
 	.is-section-plans & {
-		@media ( min-width: $plans-2023-small-breakpoint ) {
+		@media (min-width: $plans-2023-small-breakpoint) {
 			@content;
 		}
 	}

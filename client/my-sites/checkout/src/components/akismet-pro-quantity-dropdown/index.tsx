@@ -6,7 +6,6 @@ import {
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -95,8 +94,9 @@ const Dropdown = styled.div`
 const OptionList = styled.ul`
 	position: absolute;
 	width: 100%;
-	z-index: 1;
+	z-index: 4;
 	margin: 0;
+	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
 
 	${ Option } {
 		margin-top: -1px;
@@ -114,23 +114,25 @@ const CurrentOptionContainer = styled.div`
 	font-size: ${ ( props ) => props.theme.fontSize.small };
 	font-weight: ${ ( props ) => props.theme.weights.normal };
 	justify-content: space-between;
+	flex-wrap: wrap;
 	line-height: 20px;
 	width: 100%;
 	column-gap: 20px;
 	text-align: left;
-
-	${ hasCheckoutVersion( '2' ) ? `flex-direction: column; align-items: flex-start;` : null }
 `;
 
 const Price = styled.span`
-	flex: 1 0 auto;
-	text-align: right;
+	flex: 1 0 fit-content;
 	color: #646970;
+	text-align: start;
+
 	> span {
 		font-size: calc( ${ ( props ) => props.theme.fontSize.small } - 1px );
 	}
 
-	${ hasCheckoutVersion( '2' ) ? `text-align: initial;` : `text-align: right;` }
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		text-align: end;
+	}
 `;
 
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {
@@ -142,7 +144,6 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 	isOpen,
 } ) => {
 	const translate = useTranslate();
-
 	const { dropdownOptions, AkBusinessDropdownPosition } = useMemo( () => {
 		const dropdownOptions = [
 			preventWidows( translate( '1 Site' ) ),
@@ -346,7 +347,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		if ( selectedQuantity !== AkBusinessDropdownPosition ) {
 			return isMobile()
 				? translate(
-						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s/ea. ={{/span}} %(actualAmountDisplay)s',
+						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s/ea. = %(actualAmountDisplay)s{{/span}}',
 						{
 							args: {
 								quantity: selectedQuantity,
@@ -364,7 +365,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 						}
 				  )
 				: translate(
-						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s per license ={{/span}} %(actualAmountDisplay)s',
+						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s per license = %(actualAmountDisplay)s{{/span}}',
 						{
 							args: {
 								quantity: selectedQuantity,

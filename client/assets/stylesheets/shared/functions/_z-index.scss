@@ -23,7 +23,7 @@
 //
 // Usage:
 // .environment-badge {
-//     z-index: z-index( 'root', '.environment-badge' );
+//     z-index: z-index("root", ".environment-badge");
 // }
 //
 // For a refresher on stacking contexts see:
@@ -95,6 +95,7 @@ $z-layers: (
 		"ul.module-content-list-item-actions.collapsed": 3,
 		".jetpack-connect__password-form .gridicon": 3,
 		".jetpack-connect__creds-form-footer .jetpack-connect__creds-form-spinner": 3,
+		".stream__init-overlay-enabled": 10,
 		".site-selector": 10,
 		".layout__secondary .site-selector": 10,
 		".range__label": 10,
@@ -154,6 +155,8 @@ $z-layers: (
 		".theme-preview-modal": 100200,
 		".wplink__dialog.dialog.card": 100200,
 		".web-preview": 100200,
+		".theme-site-selector-modal": 100201,
+		".is-section-theme .global-notices": 100201,
 		".popover.ellipsis-menu__menu": 100201,
 		".popover.plugin-action__disabled-info": 100202,
 		".design-picker__premium-badge-tooltip": 100300,
@@ -167,6 +170,7 @@ $z-layers: (
 		".guided-tours__overlay": 200050,
 		".guided-tours__step": 201000,
 		".support-article-dialog__base.dialog__backdrop": 201001,
+		".commands-commands-menu__overlay": 201100,
 
 		".wpcom-site__global-noscript": 300000,
 

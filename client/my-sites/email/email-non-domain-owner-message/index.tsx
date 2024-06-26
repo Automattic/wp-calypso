@@ -1,4 +1,5 @@
 import { SiteDetails } from '@automattic/data-stores';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import { useDomainOwnerUserName } from 'calypso/components/data/query-domain-owner-username';
@@ -6,7 +7,6 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import {
 	getEmailManagementPath,
 	getPurchaseNewEmailAccountPath,

@@ -1,15 +1,24 @@
+import { Gridicon } from '@automattic/components';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMediaQuery } from '@wordpress/compose';
-import classNames from 'classnames';
+import {
+	globe as domainsIcon,
+	plus as plusIcon,
+	settings as settingsIcon,
+	tool as toolIcon,
+	wordpress as wordpressIcon,
+} from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
-import { useCommandsArrayWpcom } from './wpcom-smp-commands';
 
 const HostingCommandPaletteBannerRoot = styled.div( {
 	'&:not(:empty)': {
 		marginBottom: 25,
+		marginTop: 25,
 	},
 	'.hosting-command-palette-banner': {
 		background: 'linear-gradient(270deg, #E9EFF5 12.03%, rgba(233, 239, 245, 0) 40.39%)',
@@ -145,32 +154,19 @@ const ShortcutIcon = ( { size }: ShortcutIconProps ) => {
 };
 
 const AnimatedCommand = () => {
-	const commands = useCommandsArrayWpcom( {
-		setSelectedCommandName: () => {},
-	} );
+	const { __ } = useI18n();
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+	const commands = [
+		{ icon: domainsIcon, label: __( 'Register new domain' ) },
+		{ icon: <Gridicon icon="reader" />, label: __( 'Open Reader' ) },
+		{ icon: plusIcon, label: __( 'Add new post' ) },
+		{ icon: wordpressIcon, label: __( 'View my sites' ) },
+		{ icon: settingsIcon, label: __( 'Open server settings' ) },
+		{ icon: toolIcon, label: __( 'Change PHP version' ) },
+		{ icon: toolIcon, label: __( 'Manage staging sites' ) },
+	];
 
 	const [ currentCommandIndex, setCurrentCommandIndex ] = useState( 0 );
-	const commandNames = useMemo( () => {
-		if ( prefersReducedMotion ) {
-			return [];
-		}
-		return [
-			'registerDomain',
-			'openReader',
-			'addNewPost',
-			'viewMySites',
-			'openHostingConfiguration',
-			'changePHPVersion',
-			'manageStagingSites',
-		].map( ( commandName ) => {
-			const command = commands.find( ( command ) => command.name === commandName );
-			return {
-				icon: command?.icon,
-				label: command?.label,
-			};
-		} );
-	}, [ commands, prefersReducedMotion ] );
 
 	useEffect( () => {
 		if ( prefersReducedMotion ) {
@@ -178,26 +174,26 @@ const AnimatedCommand = () => {
 		}
 
 		const interval = setInterval( () => {
-			setCurrentCommandIndex( ( prevIndex ) => ( prevIndex + 1 ) % commandNames.length );
+			setCurrentCommandIndex( ( prevIndex ) => ( prevIndex + 1 ) % commands.length );
 		}, 3000 );
 
 		return () => clearInterval( interval );
-	}, [ prefersReducedMotion, commandNames.length ] );
+	}, [ prefersReducedMotion, commands.length ] );
 
 	if ( prefersReducedMotion ) {
 		return null;
 	}
 	return (
 		<CommandBoxWrapper>
-			{ commandNames.map( ( commandName, index ) => {
-				const prevIndex = ( currentCommandIndex - 1 + commandNames.length ) % commandNames.length;
+			{ commands.map( ( commandName, index ) => {
+				const prevIndex = ( currentCommandIndex - 1 + commands.length ) % commands.length;
 				if ( currentCommandIndex !== index && prevIndex !== index ) {
 					return null;
 				}
 
 				return (
 					<CommandBox
-						className={ classNames( {
+						className={ clsx( {
 							'command-box__fadeIn': currentCommandIndex === index,
 							'command-box__fadeOut': prevIndex === index,
 						} ) }

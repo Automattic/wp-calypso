@@ -37,6 +37,10 @@ type Fields = {
 	wpcom_reader_views_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	sm_enabled?: boolean;
+	jetpack_subscribe_overlay_enabled?: boolean;
+	jetpack_subscriptions_subscribe_post_end_enabled?: boolean;
+	jetpack_subscriptions_subscribe_navigation_enabled?: boolean;
+	jetpack_subscriptions_login_navigation_enabled?: boolean;
 	date_format?: string;
 	timezone_string?: string;
 };
@@ -63,6 +67,10 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		sm_enabled,
+		jetpack_subscribe_overlay_enabled,
+		jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_subscribe_navigation_enabled,
+		jetpack_subscriptions_login_navigation_enabled,
 		date_format,
 		timezone_string,
 	} = settings;
@@ -84,6 +92,13 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_reader_views_enabled: !! wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		sm_enabled: !! sm_enabled,
+		jetpack_subscribe_overlay_enabled: !! jetpack_subscribe_overlay_enabled,
+		jetpack_subscriptions_subscribe_post_end_enabled:
+			!! jetpack_subscriptions_subscribe_post_end_enabled,
+		jetpack_subscriptions_subscribe_navigation_enabled:
+			!! jetpack_subscriptions_subscribe_navigation_enabled,
+		jetpack_subscriptions_login_navigation_enabled:
+			!! jetpack_subscriptions_login_navigation_enabled,
 		date_format: date_format,
 		timezone_string: timezone_string,
 	};

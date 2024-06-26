@@ -1,5 +1,5 @@
 import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { CompositeDecorator, Editor, EditorState, Modifier, SelectionState } from 'draft-js';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -243,7 +243,7 @@ export class TitleFormatEditor extends Component {
 
 		const formattedPreview = previewText ? `${ translate( 'Preview' ) }: ${ previewText }` : '';
 
-		const editorClassNames = classNames( 'title-format-editor', {
+		const editorClassNames = clsx( 'title-format-editor', {
 			disabled,
 		} );
 

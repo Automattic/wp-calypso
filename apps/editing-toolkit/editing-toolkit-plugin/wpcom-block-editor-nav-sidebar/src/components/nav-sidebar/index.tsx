@@ -12,7 +12,7 @@ import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { ESCAPE } from '@wordpress/keycodes';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { get, isEmpty, partition } from 'lodash';
 import * as React from 'react';
 import { POST_IDS_TO_EXCLUDE } from '../../constants';
@@ -122,6 +122,13 @@ function WpcomBlockEditorNavSidebar() {
 	if ( launchpadScreenOption === 'full' && siteIntent !== false ) {
 		defaultCloseUrl = `${ siteOrigin }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 		defaultCloseLabel = __( 'Next steps', 'full-site-editing' );
+	} else if ( window.calypsoifyGutenberg ) {
+		defaultCloseUrl = window.calypsoifyGutenberg.closeUrl;
+		defaultCloseLabel = get(
+			postType,
+			[ 'labels', 'all_items' ],
+			__( 'Back', 'full-site-editing' )
+		);
 	} else {
 		defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
 		defaultCloseLabel = get(
@@ -178,7 +185,7 @@ function WpcomBlockEditorNavSidebar() {
 
 	return (
 		<IsolatedEventContainer
-			className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard', {
+			className={ clsx( 'wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard', {
 				'is-fading-out': isClosing,
 			} ) }
 			onAnimationEnd={ ( ev: React.AnimationEvent ) => {
@@ -206,7 +213,7 @@ function WpcomBlockEditorNavSidebar() {
 				// 		'full-site-editing'
 				//  	)
 				// }
-				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
+				className={ clsx( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
 					'is-sliding-left': isClosing,
 				} ) }
 				role="dialog"
@@ -217,7 +224,7 @@ function WpcomBlockEditorNavSidebar() {
 						label={ __( 'Close block editor sidebar', 'full-site-editing' ) }
 						showTooltip
 						ref={ dismissButtonMount }
-						className={ classNames(
+						className={ clsx(
 							'edit-post-fullscreen-mode-close',
 							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button',
 							'has-icon'

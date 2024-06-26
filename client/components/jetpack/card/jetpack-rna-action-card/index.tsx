@@ -1,10 +1,11 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import { useDispatch } from 'react-redux';
 import UpsellBackgroundImage from 'calypso/assets/images/jetpack/rna-card-bg.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
-
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
 interface RnaActionCardProps {
@@ -14,9 +15,13 @@ interface RnaActionCardProps {
 	onCtaButtonClick?: () => void;
 	ctaButtonURL?: string;
 	ctaButtonLabel: TranslateResult;
+	ctaTracksEvent?: string;
 	cardImage?: string;
 	cardImageAlt?: string;
 	isPlaceholder?: boolean;
+	secondaryCtaURL?: string;
+	secondaryCtaLabel?: string;
+	secondaryCtaTracksEvent?: string;
 }
 
 const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
@@ -26,14 +31,32 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 	onCtaButtonClick,
 	ctaButtonURL,
 	ctaButtonLabel,
+	ctaTracksEvent,
 	cardImage = DefaultImage,
 	cardImageAlt,
 	isPlaceholder,
+	secondaryCtaURL,
+	secondaryCtaLabel,
+	secondaryCtaTracksEvent,
 } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const handleCtaButtonClick = () => {
+		if ( ctaTracksEvent ) {
+			dispatch( recordTracksEvent( ctaTracksEvent ) );
+		}
+		if ( onCtaButtonClick ) {
+			onCtaButtonClick();
+		}
+	};
+	const handleSecondaryCtaButtonClick = () => {
+		if ( secondaryCtaTracksEvent ) {
+			dispatch( recordTracksEvent( secondaryCtaTracksEvent ) );
+		}
+	};
 	return (
 		<div
-			className={ classNames( 'jetpack-rna-action-card', {
+			className={ clsx( 'jetpack-rna-action-card', {
 				'is-placeholder': isPlaceholder,
 			} ) }
 			{ ...( ! isPlaceholder && {
@@ -53,12 +76,19 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 					<Button
 						primary
 						className="jetpack-rna-action-card__button"
-						onClick={ onCtaButtonClick && onCtaButtonClick }
+						onClick={ handleCtaButtonClick }
 						href={ ctaButtonURL ? ctaButtonURL : '#' }
 						disabled={ ! ctaButtonURL }
 					>
 						{ ctaButtonLabel }
 					</Button>
+					{ secondaryCtaURL && (
+						<div className="jetpack-rna-action-card__secondary-cta">
+							<a href={ secondaryCtaURL } onClick={ handleSecondaryCtaButtonClick }>
+								{ secondaryCtaLabel }
+							</a>
+						</div>
+					) }
 				</div>
 			</div>
 			<div className="jetpack-rna-action-card__footer">

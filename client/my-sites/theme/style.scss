@@ -4,6 +4,13 @@ $theme-sheet-content-max-width: 1462px;
 $button-border: 4px;
 
 .is-section-theme {
+	// overwrite notices z-index so they are visible on top of the theme preview
+	.global-notices {
+		// This should be - z-index: z-index("root", ".is-section-theme .global-notices")
+		// but the @automattic/onboarding/styles/mixins import overwrites the z-index function on client/assets/stylesheets/shared/functions/_z-index.scss
+		z-index: 100201;
+	}
+
 	&.theme-default.color-scheme {
 		--color-surface-backdrop: var(--studio-white);
 	}

@@ -1,3 +1,42 @@
+@import "@wordpress/base-styles/breakpoints";
 .people-team-members-list {
 	padding: 0;
+	.people-list-sso-message__wrapper {
+		border-bottom: 1px solid var(--color-neutral-0);
+		.people-list-sso-message {
+			background-color: var(--studio-gray-80);
+			min-height: 47px;
+			display: flex;
+			gap: 13px;
+			align-items: center;
+			font-size: 0.875rem;
+			p {
+				color: var(--studio-white);
+				margin: 0;
+				padding-right: 0.875rem;
+				a {
+					margin-left: 0.25rem;
+					color: var(--studio-white);
+					text-decoration: underline;
+				}
+			}
+			.people-list-sso-message__icon {
+				width: 70px;
+				height: 70px;
+				background: var(--studio-yellow-30);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				@media (min-width: $break-small) {
+					width: 47px;
+					height: 47px;
+
+				}
+				svg {
+					fill: var(--studio-white);
+				}
+			}
+		}
+	}
+
 }

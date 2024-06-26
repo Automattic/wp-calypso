@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button, FoldableCard } from '@automattic/components';
+import { Button, FoldableCard, MaterialIcon } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, chevronDown, chevronUp, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -11,7 +11,6 @@ import {
 	stepsHeading,
 	stepSlug,
 } from 'calypso/components/domains/connect-domain-step/constants';
-import MaterialIcon from 'calypso/components/material-icon';
 import { isSubdomain } from 'calypso/lib/domains';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

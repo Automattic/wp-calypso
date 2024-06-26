@@ -54,7 +54,6 @@ import {
 	getThemeTiers,
 	getThemeTier,
 	getThemeTierForTheme,
-	isThemeAllowedOnSite,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -3430,23 +3429,23 @@ describe( '#getThemeTiers', () => {
 		expect( themeTiers ).toEqual( {} );
 	} );
 	test( 'should return the tier object if it exists', () => {
-		const themeTiers = getThemeTiers( { themes: { themeTiers: { free: {} } } } );
+		const themeTiers = getThemeTiers( { themes: { themeFilters: { tier: { free: {} } } } } );
 		expect( themeTiers ).toEqual( { free: {} } );
 	} );
 } );
 describe( '#getThemeTier', () => {
-	const state = { themes: { themeTiers: { free: { foo: 'bar' } } } };
 	test( 'should return an empty object if the state is empty', () => {
-		const themeTiers = getThemeTier( {}, 'free' );
-		expect( themeTiers ).toEqual( {} );
+		const themeTier = getThemeTier( {}, 'free' );
+		expect( themeTier ).toEqual( {} );
 	} );
+	const state = { themes: { themeFilters: { tier: { free: { foo: 'bar' } } } } };
 	test( 'should return an empty object if the tier is empty', () => {
-		const themeTiers = getThemeTier( state, null );
-		expect( themeTiers ).toEqual( {} );
+		const themeTier = getThemeTier( state, null );
+		expect( themeTier ).toEqual( {} );
 	} );
 	test( 'should return the tier object if it exists', () => {
-		const themeTiers = getThemeTier( state, 'free' );
-		expect( themeTiers ).toEqual( { foo: 'bar' } );
+		const themeTier = getThemeTier( state, 'free' );
+		expect( themeTier ).toEqual( { foo: 'bar' } );
 	} );
 } );
 describe( '#getThemeTierForTheme', () => {
@@ -3473,51 +3472,5 @@ describe( '#getThemeTierForTheme', () => {
 		};
 		const themeTiers = getThemeTierForTheme( state, 'twentysixteen' );
 		expect( themeTiers ).toEqual( freeThemeTier );
-	} );
-} );
-describe( '#isThemeAllowedOnSite', () => {
-	test( 'returns true if the user has the required feature', () => {
-		const state = {
-			sites: {
-				features: {
-					1: {
-						data: {
-							active: [ FEATURE_WOOP ],
-						},
-					},
-				},
-			},
-			themes: {
-				queries: {
-					wpcom: new ThemeQueryManager( {
-						items: { twentysixteen },
-					} ),
-				},
-			},
-		};
-		const themeTiers = isThemeAllowedOnSite( state, 1, 'twentysixteen' );
-		expect( themeTiers ).toEqual( true );
-	} );
-	test( 'returns false if the user does not have the required feature', () => {
-		const state = {
-			sites: {
-				features: {
-					1: {
-						data: {
-							active: [],
-						},
-					},
-				},
-			},
-			themes: {
-				queries: {
-					wpcom: new ThemeQueryManager( {
-						items: { twentysixteen },
-					} ),
-				},
-			},
-		};
-		const themeTiers = isThemeAllowedOnSite( state, 1, 'twentysixteen' );
-		expect( themeTiers ).toEqual( false );
 	} );
 } );

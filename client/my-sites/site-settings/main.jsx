@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -10,7 +9,7 @@ import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connec
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import { isGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
@@ -20,14 +19,14 @@ import GeneralSettings from './section-general';
 import './style.scss';
 
 const getTitle = ( isClassicView ) => {
-	if ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) {
+	if ( isClassicView ) {
 		return translate( 'Settings' );
 	}
 	return translate( 'General Settings' );
 };
 
 const getSubtitle = ( isClassicView ) => {
-	if ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) {
+	if ( isClassicView ) {
 		return translate( 'Manage your site settings, including site visibility, and more.' );
 	}
 	return translate(
@@ -52,9 +51,7 @@ const SiteSettingsComponent = ( {
 			<JetpackDevModeNotice />
 			<JetpackBackupCredsBanner event="settings-backup-credentials" />
 			<NavigationHeader
-				screenOptionsTab={
-					isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ? false : 'options-general.php'
-				}
+				screenOptionsTab={ isClassicView ? false : 'options-general.php' }
 				navigationItems={ [] }
 				title={ getTitle( isClassicView ) }
 				subtitle={ getSubtitle( isClassicView ) }
@@ -73,10 +70,9 @@ SiteSettingsComponent.propTypes = {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicView = getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 	return {
 		siteId,
 		isJetpack: isJetpackSite( state, siteId ),
-		isClassicView,
+		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
 	};
 } )( localize( withJetpackConnectionProblem( SiteSettingsComponent ) ) );

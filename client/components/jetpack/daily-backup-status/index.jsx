@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
@@ -11,6 +11,7 @@ import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
+	isStorageOrRetentionReached,
 	getBackupErrorCode,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
@@ -18,6 +19,7 @@ import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import {
 	getInProgressBackupForSite,
 	getRewindStorageUsageLevel,
+	getFinishedBackupForSiteById,
 } from 'calypso/state/rewind/selectors';
 import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -25,6 +27,7 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupFailed from './status-card/backup-failed';
 import BackupInProgress from './status-card/backup-in-progress';
 import BackupJustCompleted from './status-card/backup-just-completed';
+import BackupNoStorage from './status-card/backup-no-storage';
 import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
 import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
@@ -39,7 +42,19 @@ const DailyBackupStatus = ( {
 	lastBackupDate,
 	backup,
 	deltas,
+	refetch,
 } ) => {
+	// Ref for interval ID of Activity Log fetching.
+	const activityLogIntervalRef = useRef( null );
+
+	// Clears refetching interval. Used when backup completes or component unmounts.
+	const clearActivityLogInterval = useCallback( () => {
+		if ( activityLogIntervalRef.current ) {
+			clearInterval( activityLogIntervalRef.current );
+			activityLogIntervalRef.current = null; // Reset ref after clearing.
+		}
+	}, [] );
+
 	const siteId = useSelector( getSelectedSiteId );
 	const usageLevel = useSelector( ( state ) => getRewindStorageUsageLevel( state, siteId ) );
 
@@ -69,11 +84,44 @@ const DailyBackupStatus = ( {
 		}
 	}, [ backupCurrentlyInProgress ] );
 
+	// Using the id from backupPreviouslyInProgress get the backup if it finished successfully.
+	const backupFinishedSuccessfully = useSelector( ( state ) => {
+		if ( backupPreviouslyInProgress.current ) {
+			return getFinishedBackupForSiteById( state, siteId, backupPreviouslyInProgress.current.id );
+		}
+		return null;
+	} );
+
 	// The backup "period" property is represented by
 	// an integer number of seconds since the Unix epoch
 	const inProgressDate = backupPreviouslyInProgress.current
 		? moment( backupPreviouslyInProgress.current.period * 1000 )
 		: undefined;
+
+	// State for tracking the last backup that was in progress.
+	const [ lastBackup, setLastBackup ] = useState( null );
+
+	// Effect for handling backup updates and Activity Log fetching intervals.
+	useEffect( () => {
+		// Set lastBackup on initial load or clear interval if backup's rewindId changes.
+		if ( backup && ! lastBackup ) {
+			setLastBackup( backup );
+		} else if ( backup && lastBackup && backup.rewindId !== lastBackup.rewindId ) {
+			backupPreviouslyInProgress.current = null;
+			clearActivityLogInterval();
+			setLastBackup( backup );
+		}
+
+		// Manages the interval for fetching Activity Log based on backup completion.
+		if ( backupFinishedSuccessfully && refetch ) {
+			activityLogIntervalRef.current = setInterval( refetch, 5000 ); // Let's refetch every 5 seconds.
+		} else {
+			clearActivityLogInterval();
+		}
+
+		// Ensures interval cleanup on component unmount or before effect reruns.
+		return () => clearActivityLogInterval();
+	}, [ backup, backupFinishedSuccessfully, clearActivityLogInterval, lastBackup, refetch ] );
 
 	// If we're looking at today and a backup is in progress,
 	// start tracking and showing progress
@@ -100,27 +148,35 @@ const DailyBackupStatus = ( {
 	// but unfortunately there's a lag between the time a backup completes
 	// and when it becomes visible through the Activity Log API.
 	if ( selectedDate.isSame( today, 'day' ) && backupPreviouslyInProgress.current ) {
-		return (
-			<BackupJustCompleted
-				justCompletedBackupDate={ inProgressDate }
-				lastBackupDate={ lastBackupDate }
-			/>
-		);
+		if ( backupFinishedSuccessfully ) {
+			return (
+				<BackupJustCompleted
+					justCompletedBackupDate={ inProgressDate }
+					lastBackupDate={ lastBackupDate }
+				/>
+			);
+		}
+		// There was a backup in progress, but it failed.
+		return <BackupFailed backup={ { activityTs: Date.now() } } />;
 	}
 
 	if ( backup ) {
 		const isSuccessful = hasRealtimeBackups ? isSuccessfulRealtimeBackup : isSuccessfulDailyBackup;
-		return isSuccessful( backup ) ? (
-			<BackupSuccessful
-				backup={ backup }
-				deltas={ deltas }
-				selectedDate={ selectedDate }
-				lastBackupAttemptOnDate={ lastBackupAttemptOnDate }
-				availableActions={ [ 'rewind' ] }
-			/>
-		) : (
-			<BackupFailed backup={ backup } />
-		);
+
+		if ( isSuccessful( backup ) ) {
+			return (
+				<BackupSuccessful
+					backup={ backup }
+					deltas={ deltas }
+					selectedDate={ selectedDate }
+					lastBackupAttemptOnDate={ lastBackupAttemptOnDate }
+					availableActions={ [ 'rewind' ] }
+				/>
+			);
+		} else if ( isStorageOrRetentionReached( backup ) ) {
+			return <BackupNoStorage selectedDate={ selectedDate } />;
+		}
+		return <BackupFailed backup={ backup } />;
 	}
 	if ( lastBackupDate ) {
 		// if the storage is full, don't show backup is schdeuled or delayed message to the user.

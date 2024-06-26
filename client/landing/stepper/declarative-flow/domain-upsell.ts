@@ -16,6 +16,7 @@ const domainUpsell: Flow = {
 	get title() {
 		return translate( 'Domain Upsell' );
 	},
+	isSignupFlow: false,
 
 	useSteps() {
 		return [

@@ -1,0 +1,76 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.sites-dataviews__site {
+	display: flex;
+	flex-direction: row;
+
+	.button {
+		padding: 0;
+	}
+}
+
+.sites-dataviews__site-name {
+	display: inline-block;
+	text-align: left;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	width: 180px;
+	font-weight: 500;
+	font-size: rem(14px);
+
+	.migration-badge {
+		border-radius: 2px;
+	}
+}
+
+.sites-dataviews__site-url {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	font-size: rem(12px);
+	color: var(--color-neutral-60);
+	font-weight: 400;
+}
+
+.preview-hidden {
+	@media (min-width: 2040px) {
+		.sites-dataviews__site-name {
+			width: 250px;
+		}
+	}
+}
+
+.is-section-a8c-for-agencies-sites {
+	a.site-actions__menu-item {
+		&:hover,
+		&:focus {
+			background: var(--wp-components-color-accent);
+			color: var(--color-text-inverted);
+		}
+	}
+
+	.components-dropdown-menu {
+		padding: 8px;
+		border-radius: 4px;
+
+		[role="menuitem"],
+		[role="menuitemradio"] {
+			border-radius: 4px;
+		}
+	}
+}
+
+.sites-dashboard__layout:not(.preview-hidden) {
+
+	.dataviews-pagination {
+		line-height: 1;
+		width: 368px;
+
+		.components-base-control {
+			width: unset !important;
+			margin-right: 0 !important;
+		}
+	}
+}

@@ -1,9 +1,10 @@
 import { Button, CheckboxControl, Icon } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import { chevronDown, chevronRight } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -142,6 +143,14 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const handleClick = useCallback( () => {
 		if ( ! isOpen ) {
 			setFetchContentsOnMount( true );
+
+			if ( item.type !== 'dir' ) {
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_backup_browser_view_file', {
+						file_type: item.type,
+					} )
+				);
+			}
 		}
 
 		// If the node doesn't have children, let's open the file info card
@@ -154,7 +163,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		}
 
 		setIsOpen( ! isOpen );
-	}, [ isOpen, item, path, setActiveNodePath ] );
+	}, [ dispatch, isOpen, item, path, setActiveNodePath ] );
 
 	const renderChildren = () => {
 		if ( isInitialLoading ) {
@@ -226,12 +235,12 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		return <Icon icon={ isOpen ? chevronDown : chevronRight } />;
 	};
 
-	const nodeItemClassName = classNames( 'file-browser-node__item', {
+	const nodeItemClassName = clsx( 'file-browser-node__item', {
 		'is-alternate': isAlternate,
 	} );
 	const [ label, isLabelTruncated ] = useTruncatedFileName( item.name, 30, item.type );
 
-	const nodeClassName = classNames( 'file-browser-node', item.type, {
+	const nodeClassName = clsx( 'file-browser-node', item.type, {
 		'is-root': isRoot,
 	} );
 

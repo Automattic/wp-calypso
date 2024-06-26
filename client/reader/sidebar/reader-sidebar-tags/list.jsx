@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -34,7 +35,11 @@ export class ReaderSidebarTagsList extends Component {
 		return (
 			<li className="reader-sidebar-tags__list">
 				<ul>{ this.renderItems() }</ul>
-				<a className="sidebar__menu-link" href="/tags" onClick={ this.trackTagsPageClick }>
+				<a
+					className={ clsx( 'sidebar__menu-link', 'sidebar__menu-item--see-all-tags-link' ) }
+					href="/tags"
+					onClick={ this.trackTagsPageClick }
+				>
 					<span className="reader-sidebar-tags__all-tags-link">
 						{ this.props.translate( 'See all tags' ) }
 					</span>

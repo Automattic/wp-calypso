@@ -1,8 +1,9 @@
+import { MaterialIcon } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ChatButton from 'calypso/components/chat-button';
 import FormattedHeader from 'calypso/components/formatted-header';
-import MaterialIcon from 'calypso/components/material-icon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import TransferDomains from './domains';
@@ -13,6 +14,7 @@ import './styles.scss';
 const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const handleSubmit = () => {
 		submit?.();
@@ -55,7 +57,9 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 					withHelpCenter={ false }
 				>
 					<MaterialIcon icon="chat_bubble" />
-					{ __( 'Need help? Chat with us' ) }
+					{ hasEnTranslation( 'Need help? Contact us' )
+						? __( 'Need help? Contact us' )
+						: __( 'Need help? Chat with us' ) }
 				</ChatButton>
 			}
 		/>

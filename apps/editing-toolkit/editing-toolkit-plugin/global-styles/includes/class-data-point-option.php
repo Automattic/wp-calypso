@@ -93,7 +93,15 @@ class Data_Point_Option implements Data_Point {
 		$result = $current_option_value;
 
 		if ( isset( $this->option_property ) ) {
-			$result[ $this->option_property ] = $new_value;
+			if ( is_array( $result ) ) {
+				$result[ $this->option_property ] = $new_value;
+			} else {
+				// Unexpected current option value. We were expecting an array,
+				// but it's something like a string or boolean and we can't
+				// update the single data point.  Throw away the current option
+				// value and make a new array.
+				$result = array( $this->option_property => $new_value );
+			}
 		} else {
 			$result = $new_value;
 		}

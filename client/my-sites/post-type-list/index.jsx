@@ -1,6 +1,6 @@
 import { PLAN_PREMIUM, WPCOM_FEATURES_NO_ADVERTS, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -248,7 +248,7 @@ class PostTypeList extends Component {
 		const posts = this.props.posts || [];
 		const postStatuses = query.status.split( ',' );
 		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
-		const classes = classnames( 'post-type-list', {
+		const classes = clsx( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
 		} );
 
@@ -286,7 +286,7 @@ class PostTypeList extends Component {
 						event="published_posts_no_ads"
 						tracksImpressionName="calypso_upgrade_nudge_impression"
 						tracksClickName="calypso_upgrade_nudge_cta_click"
-						showIcon={ true }
+						showIcon
 					/>
 				) }
 				{ posts.slice( 10 ).map( this.renderPost ) }

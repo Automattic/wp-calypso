@@ -54,6 +54,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-domains', () => ( {
 
 jest.mock( '@wordpress/data', () => {
 	return {
+		createSelector: jest.fn(),
 		createRegistrySelector: jest.fn(),
 		registerStore: jest.fn(),
 		combineReducers: jest.fn(),

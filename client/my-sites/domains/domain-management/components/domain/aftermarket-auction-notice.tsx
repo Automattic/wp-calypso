@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { DOMAIN_EXPIRATION_AUCTION } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
-import { DOMAIN_EXPIRATION_AUCTION } from 'calypso/lib/url/support';
 
 const AftermarketAutcionNotice = ( { domainName }: { domainName: string } ) => {
 	const translate = useTranslate();

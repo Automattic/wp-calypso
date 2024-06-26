@@ -48,6 +48,7 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 							productId: Number( productId ),
 							expiry: plan.expiry,
 							currentPlan: plan.current_plan,
+							hasRedeemedDomainCredit: plan?.has_redeemed_domain_credit,
 							purchaseId: plan.id ? Number( plan.id ) : undefined,
 							pricing: {
 								currencyCode: plan.currency_code,

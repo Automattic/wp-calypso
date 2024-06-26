@@ -1,0 +1,14 @@
+.a4a-billing__header-actions {
+	@include breakpoint-deprecated( "<660px" ) {
+		display: block;
+
+		a {
+			width: 100%;
+			margin-block-end: 1rem;
+		}
+	}
+
+	.button {
+		font-weight: 500;
+	}
+}

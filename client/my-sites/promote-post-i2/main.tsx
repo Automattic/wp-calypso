@@ -1,26 +1,28 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
 import {
 	BlazablePost,
 	BlazePagedItem,
 	Campaign,
 	CampaignQueryResult,
 } from 'calypso/data/promote-post/types';
+import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import usePostsQueryPaged, {
 	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
@@ -36,9 +38,9 @@ import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
 import WooBanner from './components/woo-banner';
+import useIsRunningInWpAdmin from './hooks/use-is-running-in-wpadmin';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
-
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
 const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 export type TabType = ( typeof TAB_OPTIONS )[ number ];
@@ -77,9 +79,9 @@ const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 };
 
 export default function PromotedPosts( { tab }: Props ) {
-	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 	const selectedTab = tab && TAB_OPTIONS.includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
+	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();
 	const onClickPromote = useOpenPromoteWidget( {
@@ -109,6 +111,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		selectedSiteId,
 		'',
 	] );
+
+	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
+	const paymentBlocked = data?.paymentsBlocked ?? false;
 
 	const { has_more_pages: campaignsHasMorePages, items: pagedCampaigns } = getPagedBlazeSearchData(
 		'campaigns',
@@ -197,9 +202,6 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
 
-	// Add Hotjar script to the page.
-	addHotJarScript();
-
 	const headerSubtitle = ( isMobile: boolean ) => {
 		if ( ! isMobile && showBanner ) {
 			// Do not show subtitle for desktops where banner should be shown
@@ -209,7 +211,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		const baseClassName = 'promote-post-i2__header-subtitle';
 		return (
 			<div
-				className={ classNames(
+				className={ clsx(
 					baseClassName,
 					`${ baseClassName }_${ isMobile ? 'mobile' : 'desktop' }`
 				) }
@@ -232,7 +234,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			<div className="promote-post-i2__top-bar">
 				<FormattedHeader
 					brandFont
-					className={ classNames( 'advertising__page-header', {
+					className={ clsx( 'advertising__page-header', {
 						'advertising__page-header_has-banner': showBanner,
 					} ) }
 					children={ headerSubtitle( false ) /* for desktop */ }
@@ -247,9 +249,13 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
-						showSupportModal={ ! isRunningInJetpack }
+						showSupportModal={ ! isRunningInWpAdmin }
 					/>
-					<Button variant="primary" onClick={ onClickPromote }>
+					<Button
+						variant="primary"
+						onClick={ onClickPromote }
+						disabled={ isLoadingBillingSummary || paymentBlocked }
+					>
 						{ translate( 'Promote' ) }
 					</Button>
 				</div>
@@ -258,7 +264,37 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			{ showBanner && ( isWooBlaze ? <WooBanner /> : <PostsListBanner /> ) }
 
+			{
+				// TODO: Uncomment when DebtNotifier is implemented
+				/* <DebtNotifier /> */
+			 }
+
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
+
+			{ ! isLoadingBillingSummary && paymentBlocked && (
+				<Notice
+					isReskinned
+					showDismiss={ false }
+					status="is-error"
+					icon="notice-outline"
+					className="promote-post-i2__payment-blocked-notice"
+				>
+					{ translate(
+						'Your account does not have the capabilities to promote. {{wpcomSupport}}Reach out to us{{/wpcomSupport}} for support.',
+						{
+							components: {
+								wpcomSupport: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</Notice>
+			) }
 
 			{ /* Render campaigns tab */ }
 			{ selectedTab === 'campaigns' && (
@@ -307,6 +343,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						totalCampaigns={ totalPostsUnfiltered || 0 }
 						hasMorePages={ postsHasMorePages }
 						posts={ posts as BlazablePost[] }
+						hasPaymentsBlocked={ paymentBlocked }
 					/>
 				</>
 			) }

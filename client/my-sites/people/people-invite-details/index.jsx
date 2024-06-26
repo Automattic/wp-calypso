@@ -96,14 +96,13 @@ export class PeopleInviteDetails extends PureComponent {
 			requesting,
 			invite,
 			translate,
-			deleteSuccess,
 			requestingResend,
 			resendSuccess,
 			inviteWasDeleted,
 			deletingInvite,
 		} = this.props;
 
-		if ( ! site || ! site.ID || deleteSuccess ) {
+		if ( ! site || ! site.ID ) {
 			return this.renderPlaceholder();
 		}
 

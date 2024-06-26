@@ -22,13 +22,13 @@ function render() {
 ### General guidelines
 
 - Follow the same guidelines as the [Button](./buttons) component.
-- To manipulate or switch visible content, use the [SegmentedControl](./segmented-control) component instead.
+- To manipulate or switch visible content, use the [SegmentedControl](/packages/components/segmented-control) component instead.
 - Group together actions that have a relationship.
 - Be thoughtful about how multiple horizontally placed buttons will look and work on small screens.
 
 ## Related components
 
 - See the [Button](./buttons) component for more detail.
-- Use the [SegmentedControl](./segmented-control) component to switch content.
+- Use the [SegmentedControl](/packages/components/segmented-control) component to switch content.
 - To use a button with a secondary popover menu, use the [SplitButton](./split-button) component.
 - To display a loading spinner with a button, use the [SpinnerButton](../design/spinner-button) component.
