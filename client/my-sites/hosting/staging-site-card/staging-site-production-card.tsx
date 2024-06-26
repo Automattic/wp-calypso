@@ -1,12 +1,11 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import dividerPattern from 'calypso/assets/images/hosting/divider-pattern.svg';
-import CardHeading from 'calypso/components/card-heading';
+import { HostingCardHeading } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { navigate } from 'calypso/lib/navigate';
@@ -27,8 +26,6 @@ import { usePullFromStagingMutation, usePushToStagingMutation } from './use-stag
 
 const ProductionCard = styled( Card )( {
 	paddingTop: '0',
-	backgroundImage: `url(${ dividerPattern })`,
-	backgroundRepeat: 'repeat-x',
 
 	'&.is-borderless': {
 		boxShadow: 'none',
@@ -48,14 +45,6 @@ const ProductionCard = styled( Card )( {
 		verticalAlign: 'middle',
 		lineHeight: '32px',
 	},
-} );
-
-const ProductionCardIcon = styled( Gridicon )( {
-	marginTop: '36px',
-} );
-
-const ProductionCardHeading = styled( CardHeading )( {
-	marginTop: '36px!important',
 } );
 
 const ActionButtons = styled.div( {
@@ -208,11 +197,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless 
 
 	return (
 		<ProductionCard className={ clsx( 'staging-site-card', { 'is-borderless': isBorderless } ) }>
-			{
-				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<ProductionCardIcon icon="science" size={ 32 } />
-			}
-			<ProductionCardHeading id="staging-site">{ __( 'Staging site' ) }</ProductionCardHeading>
+			<HostingCardHeading id="staging-site" title={ __( 'Staging site' ) } />
 			{ cardContent }
 		</ProductionCard>
 	);
