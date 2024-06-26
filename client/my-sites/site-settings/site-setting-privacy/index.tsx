@@ -62,7 +62,7 @@ const SiteSettingPrivacy = ( {
 				id="site-privacy-settings"
 				disabled={ isRequestingSettings || isSavingSettings }
 				isSaving={ isSavingSettings }
-				onButtonClick={ () => handleSubmitForm() }
+				onButtonClick={ handleSubmitForm }
 				showButton
 				title={ translate(
 					'Privacy {{infoPopover}} Control who can view your site. {{a}}Learn more{{/a}}. {{/infoPopover}}',

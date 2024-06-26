@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, PropsWithChildren, ReactNode } from 'react';
 import SectionHeader from 'calypso/components/section-header';
@@ -9,7 +9,7 @@ interface SettingsSectionHeaderProps extends PropsWithChildren {
 	isSaving?: boolean;
 	showButton?: boolean;
 	disabled?: boolean;
-	onButtonClick?: ButtonProps[ 'onClick' ];
+	onButtonClick?: () => void;
 }
 
 const SettingsSectionHeader: FC< SettingsSectionHeaderProps > = ( {

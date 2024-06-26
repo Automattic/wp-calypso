@@ -36,7 +36,7 @@ export const RssFeedSettingsSection = ( {
 			<SettingsSectionHeader
 				title={ translate( 'RSS feed settings' ) }
 				showButton
-				onButtonClick={ () => handleSubmitForm() }
+				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>

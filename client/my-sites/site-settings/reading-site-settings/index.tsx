@@ -62,7 +62,7 @@ export const SiteSettingsSection = ( {
 			<SettingsSectionHeader
 				title={ translate( 'Site settings' ) }
 				showButton
-				onButtonClick={ () => handleSubmitForm() }
+				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
