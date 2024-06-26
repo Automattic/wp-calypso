@@ -15,7 +15,7 @@ const setUrlParam = ( url: URL, paramName: string, paramValue?: string | null ):
 	}
 };
 
-function getStatsCheckoutURL(
+const getStatsCheckoutURL = (
 	siteSlug: string,
 	product: string,
 	redirectUrl: string,
@@ -23,7 +23,7 @@ function getStatsCheckoutURL(
 	from?: string,
 	adminUrl?: string,
 	isUpgrade?: boolean
-) {
+) => {
 	// Get the checkout URL for the product.
 	// The following cases get the logged out flow:
 	// - If the user is coming from My Jetpack
@@ -47,7 +47,7 @@ function getStatsCheckoutURL(
 	}
 
 	return checkoutProductUrl.toString();
-}
+};
 
 const getYearlyPrice = ( monthlyPrice: number ) => {
 	return monthlyPrice * 12;
