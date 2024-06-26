@@ -359,4 +359,19 @@ export class PluginsPage {
 	async clickManageInstalledPluginButton(): Promise< void > {
 		await this.page.locator( selectors.manageInstalledPluginButton ).click();
 	}
+
+	/**
+	 * Open the categories dropdown, shown on mobile
+	 */
+	async openCategoriesDropdown(): Promise< void > {
+		await this.page.getByRole( 'button', { name: 'More' } ).click();
+	}
+
+	/**
+	 * Open the categories dropdown, shown on mobile
+	 */
+	async clickDropdownCategory( name: string ): Promise< void > {
+		await this.openCategoriesDropdown();
+		await this.page.getByRole( 'menuitem', { name } ).click();
+	}
 }

@@ -63,7 +63,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			await pluginsPage.clickPluginsBreadcrumb();
 		} else {
-			await pluginsPage.clickBackBreadcrumb();
+			await pluginsPage.clickDropdownCategory( 'Discover' );
 		}
 		await pluginsPage.validateHasSection( PluginsPage.freeSection );
 	} );
