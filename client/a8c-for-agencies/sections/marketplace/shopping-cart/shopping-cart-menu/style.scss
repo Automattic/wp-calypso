@@ -62,10 +62,6 @@
 	font-size: 0.875rem;
 	line-height: 1.7;
 	font-weight: 400;
-
-	@include break-medium {
-		flex-direction: row;
-	}
 }
 
 .shopping-cart__menu-list-item-price-actual {
