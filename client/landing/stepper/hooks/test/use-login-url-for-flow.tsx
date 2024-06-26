@@ -9,7 +9,6 @@ import { type Flow } from '../../declarative-flow/internals/types';
 import { useLoginUrlForFlow } from '../use-login-url-for-flow';
 
 const flow = { name: 'some-flow', title: 'some-title' } as Flow;
-const signUpFlow = { ...flow, isSignupFlow: true } as Flow;
 
 describe( 'useLoginUrlForFlow', () => {
 	const Wrapper =
@@ -57,16 +56,6 @@ describe( 'useLoginUrlForFlow', () => {
 				},
 				'/start/account/user-social'
 			)
-		);
-	} );
-
-	it( 'adds additional query params to the redirect_to when the flow has IsSignupFlow set as true', () => {
-		const { result } = renderHookWithProvider( () => useLoginUrlForFlow( { flow: signUpFlow } ), {
-			wrapper: Wrapper( 'setup' ),
-		} );
-
-		expect( result.current ).toMatch(
-			'redirect_to=%2Fsetup%2Fsite-migration-flow%3Fsigned_up%3D1'
 		);
 	} );
 } );

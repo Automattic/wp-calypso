@@ -20,7 +20,6 @@ export function useLoginUrlForFlow( { flow }: UseLoginUrlForFlowProps ): string 
 		...( siteId ? { siteId } : {} ),
 		...( siteSlug ? { siteSlug } : {} ),
 		...Object.fromEntries( new URLSearchParams( location.search ).entries() ),
-		...( flow.isSignupFlow ? { signed_up: 1 } : {} ),
 	} );
 
 	return useLoginUrl( {
