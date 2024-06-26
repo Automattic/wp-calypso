@@ -77,9 +77,10 @@ describe( 'Site Migration Import or Migrate Step', () => {
 			},
 		} );
 
-		const { container } = render();
+		const { container, queryByText } = render();
 
 		expect( container.querySelectorAll( '.onboarding-subtitle' ) ).toHaveLength( 1 );
+		expect( queryByText( /WP Engine/ ) ).toBeInTheDocument();
 	} );
 
 	it( "doesn't show the host identification message when the host is a8c", async () => {
@@ -91,9 +92,10 @@ describe( 'Site Migration Import or Migrate Step', () => {
 			},
 		} );
 
-		const { container } = render();
+		const { container, queryByText } = render();
 
 		expect( container.querySelectorAll( '.onboarding-subtitle' ) ).toHaveLength( 0 );
+		expect( queryByText( /WordPress.com/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( "doesn't show the host identification message when the host is unknown", async () => {
@@ -105,8 +107,9 @@ describe( 'Site Migration Import or Migrate Step', () => {
 			},
 		} );
 
-		const { container } = render();
+		const { container, queryByText } = render();
 
 		expect( container.querySelectorAll( '.onboarding-subtitle' ) ).toHaveLength( 0 );
+		expect( queryByText( /unknown/ ) ).not.toBeInTheDocument();
 	} );
 } );
