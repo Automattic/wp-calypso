@@ -46,8 +46,6 @@ function SubscribingEmailStepContent( props ) {
 				submitButtonText={ translate( 'Create an account' ) }
 				submitForm={ handleSubmitSignup }
 				onPasswordlessCreateAccountError={ () => {} }
-				// TODO: Do we need the save property?
-				save={ () => {} }
 			/>
 		</>
 	);

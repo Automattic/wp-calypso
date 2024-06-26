@@ -11,11 +11,17 @@ import SubscribingEmailStepContent from './content';
 
 function SubscribingEmailStep( props ) {
 	const { flowName, goToNextStep, queryParams, stepName } = props;
-	const mutation = useCreateNewAccountMutation();
+	const {
+		mutate: createNewAccout,
+		isError,
+		isSuccess,
+		isPending,
+		error,
+	} = useCreateNewAccountMutation();
 
 	useEffect( () => {
 		if ( emailValidator.validate( queryParams.email ) ) {
-			mutation.mutate( {
+			createNewAccout( {
 				userData: { email: typeof queryParams.email === 'string' ? queryParams.email.trim() : '' },
 				flowName,
 				isPasswordless: true,
@@ -23,7 +29,7 @@ function SubscribingEmailStep( props ) {
 		}
 	}, [] );
 
-	if ( mutation.isSuccess ) {
+	if ( isSuccess ) {
 		props.recordTracksEvent( 'calypso_signup_new_email_subscription_success', {
 			mailing_list: queryParams.mailing_list,
 		} );
@@ -32,8 +38,8 @@ function SubscribingEmailStep( props ) {
 			{ redirect: addQueryArgs( queryParams.redirect_to, { subscribed: true } ) }
 		);
 		goToNextStep();
-	} else if ( mutation.isError ) {
-		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( mutation.error.error ) ) {
+	} else if ( isError ) {
+		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
 			// TODO: Subscribe existing user to guides emails through API endpoint https://github.com/Automattic/martech/issues/3090
 
 			props.recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {
@@ -52,9 +58,7 @@ function SubscribingEmailStep( props ) {
 			<StepWrapper
 				flowName={ flowName }
 				hideFormattedHeader
-				stepContent={
-					<SubscribingEmailStepContent { ...props } isPending={ mutation.isPending } />
-				}
+				stepContent={ <SubscribingEmailStepContent { ...props } isPending={ isPending } /> }
 				stepName={ stepName }
 			/>
 		</div>
