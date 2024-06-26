@@ -53,8 +53,6 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 
 	const hasCompletedForm = !! email && !! message;
 
-	const learnMoreLink = 'https://agencieshelp.automattic.com/knowledge-base/billing-and-payments';
-
 	const productIds = checkoutItems.map( ( item ) => item.product_id ).join( ',' );
 
 	const handleRequestPayment = useCallback( () => {
@@ -70,10 +68,6 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		);
 		requestPayment( { client_email: email, client_message: message, product_ids: productIds } );
 	}, [ dispatch, email, hasCompletedForm, message, productIds, requestPayment, translate ] );
-
-	const onClickLearnMore = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_learn_more_click' ) );
-	}, [ dispatch ] );
 
 	useEffect( () => {
 		if ( isSuccess && !! email ) {
@@ -124,6 +118,19 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 					/>
 				</FormFieldset>
 			</div>
+
+			<div className="checkout__summary-notice">
+				<h3>{ translate( 'When you send this payment request:' ) }</h3>
+				<div className="checkout__summary-notice-item">
+					{ translate(
+						"Your client will be sent an invoice where they will be asked to create a WordPress.com account to pay for these products. Once paid, you'll be able to manage these products on behalf of the client."
+					) }
+				</div>
+				<div className="checkout__summary-notice-item">
+					{ translate( 'The client can cancel their products at any time.' ) }
+				</div>
+			</div>
+
 			<div className="checkout__aside-actions">
 				<Button
 					primary
@@ -133,24 +140,6 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				>
 					{ translate( 'Request payment from client' ) }
 				</Button>
-			</div>
-
-			<div className="checkout__summary-notice margin-top">
-				{ translate(
-					'The client will be billed at the end of every month. The first month may be less than the above amount. {{a}}Learn more{{/a}}',
-					{
-						components: {
-							a: (
-								<a
-									href={ learnMoreLink }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ onClickLearnMore }
-								/>
-							),
-						},
-					}
-				) }
 			</div>
 		</>
 	);

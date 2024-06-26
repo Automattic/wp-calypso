@@ -37,7 +37,7 @@ export const useFlowNavigation = (): FlowNavigation => {
 	const intent = useOnboardingIntent();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const navigate = useNavigate();
-	const match = useMatch( '/:flow/:step/:lang?' );
+	const match = useMatch( '/:flow/:step?/:lang?' );
 	const { flow = null, step: currentStepSlug = null, lang = null } = match?.params || {};
 	const [ currentSearchParams ] = useSearchParams();
 

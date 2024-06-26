@@ -1,0 +1,30 @@
+/**
+ * WP.com styles for @wordpress/components search control component
+ * You can use this mixin to apply the WP.com styles to the search control component
+
+ * Usage:
+ * @import "@automattic/global-styles/src/components/search-control-styles";
+ * @include search-control-wpcom-styles;
+ */
+@mixin search-control-wpcom-styles {
+	.components-search-control {
+		min-width: 250px;
+
+		.components-input-control__container {
+			background: var(--studio-white);
+			border-radius: 4px;
+
+			input {
+				font-size: 0.875rem;
+			}
+
+			.components-input-control__suffix svg {
+				fill: var(--studio-gray-30);
+			}
+
+			.components-input-control__backdrop {
+				box-shadow: 0 0 0 1px var(--studio-gray-10);
+			}
+		}
+	}
+}
