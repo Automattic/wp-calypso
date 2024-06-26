@@ -1,8 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
-import { useSitePlans } from '@automattic/data-stores/src/plans';
+import { SiteDetails, Plans } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import { useI18n } from '@wordpress/react-i18n';
@@ -22,11 +21,13 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	const { __ } = useI18n();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ showFeatures, setShowFeatures ] = useState( false );
-
-	const { children, site } = props;
 	const [ selectedPlan, setSelectedPlan ] = useState<
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
 	>( PLAN_BUSINESS );
+
+	const { children, site } = props;
+	const { useSitePlans } = Plans;
+
 	const plan = getPlan( selectedPlan );
 	const sitePlans = useSitePlans( { siteId: site.ID } );
 	const pricing = sitePlans?.data ? sitePlans?.data[ selectedPlan ].pricing : undefined;
