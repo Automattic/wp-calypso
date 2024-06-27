@@ -4,11 +4,15 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import EmptyStateAction from '../../../components/empty-state-action';
 
+type StatsEmptyActionAIProps = {
+	from: string;
+};
+
 // TODO: move to a shared file if this is the final URL
 const JETPACK_SUPPORT_AI_URL =
 	'https://jetpack.com/support/jetpack-blocks/jetpack-ai-assistant-block/';
 
-const StatsEmptyActionAI: React.FC = () => {
+const StatsEmptyActionAI: React.FC< StatsEmptyActionAIProps > = ( { from } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -16,7 +20,7 @@ const StatsEmptyActionAI: React.FC = () => {
 			icon={ starEmpty }
 			text={ translate( 'Craft engaging content with Jetpack AI assistant' ) }
 			analyticsDetails={ {
-				from: 'module_top_posts',
+				from: from,
 				feature: 'ai_assistant',
 			} }
 			onClick={ () => {

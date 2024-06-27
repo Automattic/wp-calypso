@@ -67,7 +67,7 @@ const StatsRefeeres: React.FC< StatsRefeeresProps > = ( {
 									context: 'Stats: Info box label when the Referrers module is empty',
 								}
 							) }
-							cards={ <StatsEmptyActionSocial /> }
+							cards={ <StatsEmptyActionSocial from="module_referrers" /> }
 						/>
 					}
 				/>

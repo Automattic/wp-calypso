@@ -4,17 +4,21 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import EmptyStateAction from '../../../components/empty-state-action';
 
+type StatsEmptyActionSocialProps = {
+	from: string;
+};
+
 // TODO: move to a shared file if this is the final URL
 const JETPACK_SUPPORT_SOCIAL_URL = 'https://jetpack.com/support/jetpack-social/';
 
-const StatsEmptyActionSocial: React.FC = () => {
+const StatsEmptyActionSocial: React.FC< StatsEmptyActionSocialProps > = ( { from } ) => {
 	const translate = useTranslate();
 	return (
 		<EmptyStateAction
 			icon={ megaphone }
 			text={ translate( 'Share on social media with one click' ) }
 			analyticsDetails={ {
-				from: 'module_top_posts',
+				from: from,
 				feature: 'social_sharing',
 			} }
 			onClick={ () => {

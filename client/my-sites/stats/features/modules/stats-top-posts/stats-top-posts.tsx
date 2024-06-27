@@ -69,8 +69,8 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 							) }
 							cards={
 								<>
-									<StatsEmptyActionAI />
-									<StatsEmptyActionSocial />
+									<StatsEmptyActionAI from="module_top_posts" />
+									<StatsEmptyActionSocial from="module_top_posts" />
 								</>
 							}
 						/>
