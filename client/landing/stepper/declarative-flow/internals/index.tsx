@@ -45,7 +45,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const currentStepRoute = params.step || '';
 
 	// Start tracking performance for this step.
-	useStartStepperPerformanceTracking( flow.name, currentStepRoute );
+	useStartStepperPerformanceTracking( param.flow , currentStepRoute );
 
 	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
 		() =>
