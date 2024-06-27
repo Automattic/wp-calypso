@@ -7,8 +7,6 @@ import {
 	FEATURE_1GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_6GB_STORAGE,
-	FEATURE_50GB_STORAGE_ADD_ON,
-	FEATURE_100GB_STORAGE_ADD_ON,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
@@ -470,7 +468,6 @@ import type {
 	IncompleteWPcomPlan,
 	IncompleteJetpackPlan,
 	Feature,
-	StorageOption,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -673,14 +670,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 					FEATURE_SITE_ACTIVITY_LOG_JP,
 					FEATURE_SHARES_SOCIAL_MEDIA_JP,
 			  ],
-	get2023PricingGridSignupStorageOptions: () => {
-		return [
-			{
-				slug: FEATURE_1GB_STORAGE,
-				isAddOn: false,
-			},
-		];
-	},
+	getStorageFeature: () => FEATURE_1GB_STORAGE,
 	getPlanComparisonFeatureLabels: () => ( {
 		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '10%' ),
@@ -885,14 +875,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PREMIUM_THEMES,
 		];
 	},
-	get2023PricingGridSignupStorageOptions: () => {
-		return [
-			{
-				slug: FEATURE_6GB_STORAGE,
-				isAddOn: false,
-			},
-		];
-	},
+	getStorageFeature: () => FEATURE_6GB_STORAGE,
 	getPlanComparisonFeatureLabels: () => ( {
 		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
 		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
@@ -1124,27 +1107,13 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_MARKETING_AUTOMATION,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
-	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature, isCurrentPlan ) => {
-		let storageOptionSlugs = [] as StorageOption[ 'slug' ][];
-		const storageAddOns = [
-			FEATURE_50GB_STORAGE_ADD_ON,
-			FEATURE_100GB_STORAGE_ADD_ON,
-		] as StorageOption[ 'slug' ][];
-
+	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
 		if ( showLegacyStorageFeature && isCurrentPlan ) {
-			storageOptionSlugs = [ FEATURE_200GB_STORAGE ];
-		} else {
-			storageOptionSlugs = isEnabled( 'plans/updated-storage-labels' )
-				? [ FEATURE_50GB_STORAGE, ...storageAddOns ]
-				: [ FEATURE_200GB_STORAGE ];
+			return FEATURE_200GB_STORAGE;
 		}
-
-		return storageOptionSlugs.map( ( slug ) => {
-			return {
-				slug: slug,
-				isAddOn: storageAddOns.includes( slug ),
-			};
-		} );
+		return isEnabled( 'plans/updated-storage-labels' )
+			? FEATURE_50GB_STORAGE
+			: FEATURE_200GB_STORAGE;
 	},
 	getPlanComparisonFeatureLabels: () => ( {
 		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Unlimited premium themes' ),
@@ -1288,14 +1257,7 @@ const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
 	get2023PlanComparisonFeatureOverride: () => getWooExpressMediumPlanCompareFeatures(),
-	get2023PricingGridSignupStorageOptions: () => {
-		return [
-			{
-				slug: FEATURE_200GB_STORAGE,
-				isAddOn: false,
-			},
-		];
-	},
+	getStorageFeature: () => FEATURE_200GB_STORAGE,
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'
@@ -1324,14 +1286,7 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
 	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
-	get2023PricingGridSignupStorageOptions: () => {
-		return [
-			{
-				slug: FEATURE_50GB_STORAGE,
-				isAddOn: false,
-			},
-		];
-	},
+	getStorageFeature: () => FEATURE_50GB_STORAGE,
 	getTitle: () => i18n.translate( 'Essential' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
@@ -1541,14 +1496,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 					FEATURE_SITE_ACTIVITY_LOG_JP,
 					FEATURE_STATS_PAID,
 			  ],
-	get2023PricingGridSignupStorageOptions: () => {
-		return [
-			{
-				slug: FEATURE_13GB_STORAGE,
-				isAddOn: false,
-			},
-		];
-	},
+	getStorageFeature: () => FEATURE_13GB_STORAGE,
 	getPlanComparisonFeatureLabels: () => ( {
 		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Unlimited premium themes' ),
 		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
@@ -1842,30 +1790,18 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 
 		return featureLabels;
 	},
-	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature, isCurrentPlan ) => {
-		let storageOptionSlugs = [] as StorageOption[ 'slug' ][];
-		const storageAddOns = [
-			FEATURE_50GB_STORAGE_ADD_ON,
-			FEATURE_100GB_STORAGE_ADD_ON,
-		] as StorageOption[ 'slug' ][];
 
+	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
 		if ( showLegacyStorageFeature ) {
 			/* If the user is currently has a legacy plan with 200GB storage space, the capacity will decrease to
 			 * 50GB if they change their billing terms.
 			 */
-			storageOptionSlugs = isCurrentPlan ? [ FEATURE_200GB_STORAGE ] : [ FEATURE_50GB_STORAGE ];
-		} else {
-			storageOptionSlugs = isEnabled( 'plans/updated-storage-labels' )
-				? [ FEATURE_50GB_STORAGE, ...storageAddOns ]
-				: [ FEATURE_200GB_STORAGE ];
+			return isCurrentPlan ? FEATURE_200GB_STORAGE : FEATURE_50GB_STORAGE;
 		}
 
-		return storageOptionSlugs.map( ( slug ) => {
-			return {
-				slug: slug,
-				isAddOn: storageAddOns.includes( slug ),
-			};
-		} );
+		return isEnabled( 'plans/updated-storage-labels' )
+			? FEATURE_50GB_STORAGE
+			: FEATURE_200GB_STORAGE;
 	},
 	getHostingSignupFeatures: ( term ) => () =>
 		compact( [
@@ -2019,7 +1955,6 @@ const getPlanWooExpressPlusDetails = (): IncompleteWPcomPlan => ( {
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],
-	get2023PricingGridSignupStorageOptions: () => [],
 } );
 
 // The following is not a real plan, we are adding it here so that
@@ -2038,7 +1973,6 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],
-	get2023PricingGridSignupStorageOptions: () => [],
 } );
 
 const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {
@@ -3593,14 +3527,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
 			FEATURE_P2_ACTIVITY_OVERVIEW,
 		],
-		get2023PricingGridSignupStorageOptions: () => {
-			return [
-				{
-					slug: FEATURE_P2_13GB_STORAGE,
-					isAddOn: false,
-				},
-			];
-		},
+		getStorageFeature: () => FEATURE_P2_13GB_STORAGE,
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_P2_13GB_STORAGE,
@@ -3652,14 +3579,7 @@ PLANS_LIST[ PLAN_P2_FREE ] = {
 		FEATURE_P2_SIMPLE_SEARCH,
 		FEATURE_P2_CUSTOMIZATION_OPTIONS,
 	],
-	get2023PricingGridSignupStorageOptions: () => {
-		return [
-			{
-				slug: FEATURE_P2_3GB_STORAGE,
-				isAddOn: false,
-			},
-		];
-	},
+	getStorageFeature: () => FEATURE_P2_3GB_STORAGE,
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_P2_3GB_STORAGE,
