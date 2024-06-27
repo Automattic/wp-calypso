@@ -20,7 +20,7 @@ import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface Props {
-	siteId: number;
+	siteId: number | undefined;
 	children: React.ReactNode;
 }
 
