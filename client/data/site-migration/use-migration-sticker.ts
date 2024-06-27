@@ -8,7 +8,7 @@ interface MigrationStickerMutationOptions {
 }
 
 export const useMigrationStickerMutation = () => {
-	const mutation = useMutation( {
+	const addMutation = useMutation( {
 		mutationFn: ( { targetBlogId }: MigrationStickerMutationOptions ) =>
 			wp.req.post( {
 				path: `/sites/${ targetBlogId }/migration-flow`,
@@ -16,11 +16,33 @@ export const useMigrationStickerMutation = () => {
 			} ),
 	} );
 
-	const { mutate } = mutation;
+	const deleteMutation = useMutation( {
+		mutationFn: ( { targetBlogId }: MigrationStickerMutationOptions ) => {
+			return wp.req.post( {
+				path: `/sites/${ targetBlogId }/migration-flow`,
+				apiNamespace: 'wpcom/v2',
+				method: 'DELETE',
+			} );
+		},
+	} );
+
+	const { mutate: addMutate, ...addMutationRest } = addMutation;
+	const { mutate: deleteMutate, ...deleteMutationRest } = deleteMutation;
+
 	const addMigrationSticker = useCallback(
-		( targetBlogId: SiteId ) => mutate( { targetBlogId } ),
-		[ mutate ]
+		( targetBlogId: SiteId ) => addMutate( { targetBlogId } ),
+		[ addMutate ]
 	);
 
-	return { addMigrationSticker, ...mutation };
+	const deleteMigrationSticker = useCallback(
+		( targetBlogId: SiteId ) => deleteMutate( { targetBlogId } ),
+		[ deleteMutate ]
+	);
+
+	return {
+		addMigrationSticker,
+		deleteMigrationSticker,
+		addMutationRest,
+		deleteMutationRest,
+	};
 };

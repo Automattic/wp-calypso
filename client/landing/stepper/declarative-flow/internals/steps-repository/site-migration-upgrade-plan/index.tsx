@@ -138,7 +138,10 @@ const SiteMigrationUpgradePlanWithMigrationSticker: Step = function ( props ) {
 	// TODO: Handle siteId 0.
 	const siteId = Number( useSiteIdParam() ) ?? 0;
 
-	const { addMigrationSticker, isPending, isError } = useMigrationStickerMutation();
+	const {
+		addMigrationSticker,
+		addMutationRest: { isPending, isError },
+	} = useMigrationStickerMutation();
 
 	useEffect( () => {
 		addMigrationSticker( siteId );
