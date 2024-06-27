@@ -1134,7 +1134,9 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				margin-bottom: 24px;
 			}
 		}
-
+		input.signup-form__passwordless-email {
+			margin-bottom: 0;
+		}
 		.auth-form__social {
 			padding-top: 0;
 			.auth-form__social-buttons {
