@@ -124,6 +124,16 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		'/people/profile/:site_id/:user_login',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.personSiteLevelProfile,
+		makeLayout,
+		clientRender
+	);
+
 	// Anything else is unexpected and should be redirected to the default people management URL: /people/team
 	page( '/people/(.*)?', siteSelection, peopleController.redirectToTeam, makeLayout, clientRender );
 }
