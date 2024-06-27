@@ -1,0 +1,13 @@
+@import "@automattic/onboarding/styles/base-styles.scss";
+@import "@automattic/onboarding/styles/mixins.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-migration-upgrade-plan-loading {
+	min-height: calc(100vh - 2 * #{$header-height});
+	padding: 0 20px;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+}
