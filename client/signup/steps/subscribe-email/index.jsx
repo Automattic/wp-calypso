@@ -10,7 +10,7 @@ import useSubscribeToMailingList from 'calypso/signup/hooks/use-subscribe-to-mai
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import SubscribingEmailStepContent from './content';
+import SubscribeEmailStepContent from './content';
 
 function sanitizeRedirectUrl( redirect ) {
 	const isHttpOrHttps =
@@ -28,7 +28,7 @@ function sanitizeRedirectUrl( redirect ) {
  * account. This flow streamlines the process by combining account creation and email subscription handling
  * into a single step.
  */
-function SubscribingEmailStep( props ) {
+function SubscribeEmailStep( props ) {
 	const { flowName, goToNextStep, queryParams, stepName } = props;
 	const redirectUrl = sanitizeRedirectUrl( queryParams.redirect_to );
 
@@ -38,7 +38,7 @@ function SubscribingEmailStep( props ) {
 				props.recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {
 					mailing_list: queryParams.mailing_list,
 				} );
-				props.submitSignupStep( { stepName: 'subscribing' }, { redirect: redirectUrl } );
+				props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
 				goToNextStep();
 			},
 		} );
@@ -75,12 +75,12 @@ function SubscribingEmailStep( props ) {
 	}, [ createNewAccount, flowName, queryParams.user_email ] );
 
 	return (
-		<div className="subscribing-email">
+		<div className="subscribe-email">
 			<StepWrapper
 				flowName={ flowName }
 				hideFormattedHeader
 				stepContent={
-					<SubscribingEmailStepContent
+					<SubscribeEmailStepContent
 						{ ...props }
 						isPending={ isCreateNewAccountPending || isSubscribeToMailingListPending }
 						redirectUrl={ redirectUrl }
@@ -93,5 +93,5 @@ function SubscribingEmailStep( props ) {
 }
 
 export default connect( null, { recordTracksEvent, submitSignupStep } )(
-	localize( SubscribingEmailStep )
+	localize( SubscribeEmailStep )
 );
