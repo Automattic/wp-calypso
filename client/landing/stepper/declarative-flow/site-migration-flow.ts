@@ -399,6 +399,15 @@ const siteMigration: Flow = {
 						);
 					}
 
+					// If the user selected the "Do it for me" option, we should take them back to the how to migrate step skipping
+					// the modal.
+					if (
+						config.isEnabled( 'migration-flow/enable-migration-assistant' ) &&
+						urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
+					) {
+						return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
+					}
+
 					if ( isFromSiteWordPress ) {
 						urlQueryParams.set( 'showModal', 'true' );
 					}
