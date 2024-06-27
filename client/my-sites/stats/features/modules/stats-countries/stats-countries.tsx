@@ -75,8 +75,7 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 					period={ period }
 					query={ period }
 					statType="statsCountryViews"
-					// showSummaryLink={!summary}
-					// hideSummaryLink={!!summary}
+					showSummaryLink
 					className={ className }
 				>
 					<Geochart query={ period } />
