@@ -15,7 +15,7 @@ export const useUpgradePlanHostingDetailsList = () => {
 		const goodLCPercentage = Math.floor( 100 * cwvtechReportJson[ 'WordPress.com' ].goodLCP );
 
 		newHostingDetails[ 'higher-speed' ].description = translate(
-			'%(goodLCPercentage)d%% of sites on WordPress.com are at least %(lcpPercentageDifference)d%% faster than yours.',
+			'WordPress.com sites are %(lcpPercentageDifference)d%% faster than your current one, with %(goodLCPercentage)d%% more sites loading in under 100ms.',
 			{
 				args: {
 					goodLCPercentage,
@@ -30,7 +30,7 @@ export const useUpgradePlanHostingDetailsList = () => {
 		const goodFIDPercentage = Math.floor( 100 * cwvtechReportJson[ 'WordPress.com' ].goodFID );
 
 		newHostingDetails[ 'faster-response' ].description = translate(
-			'%(goodFIDPercentage)d%% of sites on WordPress.com respond at least %(fidPercentageDifference)d%% faster than yours on the first interaction.',
+			'WordPress.com sites respond %(fidPercentageDifference)d%% faster than yours, with %(goodFIDPercentage)d%% of sites responding within 0.1 seconds of the first interaction.',
 			{
 				args: {
 					goodFIDPercentage,
