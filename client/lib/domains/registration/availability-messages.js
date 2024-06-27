@@ -308,6 +308,28 @@ function getAvailabilityNotice(
 
 		case domainAvailability.MAPPABLE:
 			if ( isForTransferOnly ) {
+
+				if ( errorData?.cannot_transfer_due_to_unsupported_premium_tld ) {
+					message = translate(
+						"This domain cannot be transferred to WordPress.com because it's premium and currently we don't support premium transfers for the %(tld)s TLD. It can be connected instead. {{a}}Learn More.{{/a}}",
+						{
+							args: {
+								tld,
+							},
+							components: {
+								a: (
+									<a
+										target={ linksTarget }
+										rel="noopener noreferrer"
+										href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+									/>
+								),
+							},
+						}
+					);
+					break;
+				}
+
 				message = translate(
 					'This domain cannot be transferred to WordPress.com but it can be connected instead. {{a}}Learn More.{{/a}}',
 					{
