@@ -1,9 +1,7 @@
 import {
-	useSafeGlobalStylesOutputWithConfig,
+	useSafeGlobalStylesOutput,
 	withExperimentalBlockEditorProvider,
-	GlobalStylesContext,
 } from '@automattic/global-styles';
-import { useContext } from '@wordpress/element';
 import { useMemo } from 'react';
 import useBlockRendererSettings from '../hooks/use-block-renderer-settings';
 import BlockRendererContext from './block-renderer-context';
@@ -22,15 +20,7 @@ const useBlockRendererContext = (
 	useInlineStyles = false
 ) => {
 	const { data: settings } = useBlockRendererSettings( siteId, stylesheet, useInlineStyles );
-	const { merged: config } = useContext( GlobalStylesContext );
-	// Remove section style variations until we handle them
-	if ( config?.styles?.blocks ) {
-		delete config.styles.blocks.variations;
-		delete config.styles.blocks[ 'core/group' ]?.variations;
-		delete config.styles.blocks[ 'core/column' ]?.variations;
-		delete config.styles.blocks[ 'core/columns' ]?.variations;
-	}
-	const [ globalStyles ] = useSafeGlobalStylesOutputWithConfig( config );
+	const [ globalStyles ] = useSafeGlobalStylesOutput();
 
 	const context = useMemo(
 		() => ( {
