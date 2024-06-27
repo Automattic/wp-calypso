@@ -29,9 +29,8 @@ const getStorageOptionPrice = (
 	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null,
 	storageOptionSlug: string
 ) => {
-	return storageAddOnsForPlan?.find(
-		( addOn ) => addOn?.featureSlugs?.includes( storageOptionSlug )
-	)?.prices?.formattedMonthlyPrice;
+	return storageAddOnsForPlan?.find( ( addOn ) => addOn?.addOnSlug === storageOptionSlug )?.prices
+		?.formattedMonthlyPrice;
 };
 
 const StorageDropdownOption = ( {
