@@ -5,23 +5,18 @@ import {
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { StepContainer, Title, SubTitle } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
-import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
 import type { Step } from '../../types';
-import './style.scss';
 
 const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const siteItem = useSite();
@@ -136,37 +131,4 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	);
 };
 
-// TODO: Refactor splitting parts.
-// TODO: Try to use the same loader for the plan to avoid the screen flickering.
-const SiteMigrationUpgradePlanWithMigrationSticker: Step = function ( props ) {
-	const translate = useTranslate();
-	// TODO: Handle siteId 0.
-	const siteId = Number( useSiteIdParam() ) ?? 0;
-
-	const { addMigrationSticker, isPending, isError } = useMigrationStickerMutation();
-
-	useEffect( () => {
-		addMigrationSticker( siteId );
-	}, [ addMigrationSticker, siteId ] );
-
-	if ( isPending ) {
-		return (
-			<div className="site-migration-upgrade-plan-loading">
-				<div>
-					<Title>{ translate( 'Applying a special offer for migrations' ) }</Title>
-					<SubTitle>{ translate( "We'll be done in no time." ) }</SubTitle>
-					<LoadingEllipsis />
-				</div>
-			</div>
-		);
-	}
-
-	if ( isError ) {
-		// TODO: Improve error state.
-		return <div>Error. Try again!</div>;
-	}
-
-	return <SiteMigrationUpgradePlan { ...props } />;
-};
-
-export default SiteMigrationUpgradePlanWithMigrationSticker;
+export default SiteMigrationUpgradePlan;

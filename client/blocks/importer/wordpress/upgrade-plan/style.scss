@@ -327,10 +327,6 @@ $business-plan-color: #7f54b3;
 					}
 				}
 
-				.import__upgrade-plan-hosting-details-list-loading {
-					flex-direction: column;
-				}
-
 				.import__upgrade-plan-hosting-details-list-icon {
 					display: flex;
 					flex: 0 0 24px;
@@ -413,6 +409,10 @@ $business-plan-color: #7f54b3;
 				}
 			}
 		}
+	}
+
+	.import__upgrade-plan-loader {
+		text-align: center;
 	}
 }
 

@@ -1,15 +1,7 @@
 import { next, trendingUp, chartBar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import cwvtechReportJson from './cwvtech-report.json';
-import type { ReactNode } from 'react';
-
-type DefaultHostingDetails = {
-	[ key: string ]: {
-		title: string;
-		description: string | ReactNode;
-		icon: JSX.Element;
-	};
-};
+import type { HostingDetails } from './types';
 
 const higherSpeedPercentage = Math.floor(
 	( cwvtechReportJson[ 'WordPress.com' ].goodLCP - cwvtechReportJson[ 'WordPress' ].goodLCP ) * 100
@@ -20,7 +12,7 @@ const fastResponsePercentage = Math.floor( cwvtechReportJson[ 'WordPress.com' ].
 const wpcomPercentageUptime = '99.99';
 const otherHostsPercentageUptime = '99.85';
 
-export const useDefaultHostingDetails = (): DefaultHostingDetails => {
+export const useDefaultHostingDetails = (): HostingDetails => {
 	const translate = useTranslate();
 
 	return {
