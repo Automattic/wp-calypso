@@ -1127,6 +1127,9 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				background-color: var(--wp-admin-theme-color);
 				border-radius: 0;
 			}
+			.signup-form__terms-of-service-link {
+				display: none;
+			}
 			.logged-out-form__footer {
 				padding: 0;
 			}
