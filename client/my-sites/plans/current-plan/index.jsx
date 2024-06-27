@@ -212,7 +212,6 @@ class CurrentPlan extends Component {
 			shouldShowDomainWarnings,
 			showThankYou,
 			translate,
-			isJetpackNotAtomic,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
@@ -234,7 +233,7 @@ class CurrentPlan extends Component {
 
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
+				<ModernizedLayout />
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				{ selectedSiteId && (
 					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
