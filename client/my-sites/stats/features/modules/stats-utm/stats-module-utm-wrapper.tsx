@@ -8,7 +8,6 @@ import statsStrings from '../../../stats-strings';
 import { PeriodType } from '../../../stats-subscribers-chart-section';
 import StatsModuleUTM from './stats-module-utm';
 import StatsModuleUTMOverlay from './stats-module-utm-overlay';
-import StatsModuleUTMOverlayUpgradeVersion from './stats-module-utm-overlay-upgrde-version';
 import type { Moment } from 'moment';
 
 type StatsPeriodType = {
@@ -25,7 +24,6 @@ type StatsModuleUTMWrapperProps = {
 	query: string;
 	summary?: boolean;
 	className?: string;
-	// showUpgradeJetpackOverlay?: boolean;
 };
 
 const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
@@ -34,7 +32,6 @@ const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
 	postId,
 	query,
 	summary,
-	// showUpgradeJetpackOverlay = false,
 	className,
 } ) => {
 	const moduleStrings = statsStrings();
@@ -44,7 +41,7 @@ const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
 	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
 
 	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
-	const isFetching = isFetchingUsage || isLoadingFeatureCheck;
+	const isFetching = isFetchingUsage || isLoadingFeatureCheck; // Tis is not fetching UTM data.
 	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
 
 	// Hide the module if the specific post is the Home page.
@@ -53,11 +50,6 @@ const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
 	}
 
 	const hideSummaryLink = postId !== undefined || summary === true;
-	// const overlayComponent = showUpgradeJetpackOverlay ? (
-	// 	<StatsModuleUTMOverlayUpgradeVersion siteId={ siteId } className={ className } />
-	// ) : (
-	// 	<StatsModuleUTMOverlay className={ className } siteId={ siteId } />
-	// );
 
 	return (
 		<>
@@ -70,7 +62,6 @@ const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
 					<StatsModulePlaceholder isLoading />
 				</StatsCard>
 			) }
-
 			{ ! isFetching && ! isAdvancedFeatureEnabled && (
 				<StatsModuleUTMOverlay className={ className } siteId={ siteId } />
 			) }

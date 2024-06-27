@@ -444,7 +444,6 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								summary={ false }
-								// showUpgradeJetpackOverlay={ supportsUTMStats && isOldJetpack }
 								className={ clsx(
 									'stats__flexible-grid-item--60',
 									'stats__flexible-grid-item--full--large',
