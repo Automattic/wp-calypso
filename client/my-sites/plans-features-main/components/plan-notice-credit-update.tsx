@@ -27,6 +27,9 @@ const PlanNoticeCreditUpgrade = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
+	if ( ! planUpgradeCreditsApplicable ) {
+		return null;
+	}
 
 	const upgradeCreditDocsUrl = localizeUrl(
 		'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'

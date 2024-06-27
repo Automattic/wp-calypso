@@ -172,17 +172,13 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				</div>
 			) }
 
-			{ site && site.ID && (
-				<PlanNoticeCreditUpgrade
-					linkTarget="_blank"
-					siteId={ site.ID }
-					visiblePlans={ [ visiblePlan ] }
-				/>
-			) }
+			<PlanNoticeCreditUpgrade
+				linkTarget="_blank"
+				siteId={ site.ID }
+				visiblePlans={ [ visiblePlan ] }
+			/>
 
-			<UpgradePlanDetails siteId={ site ? site.ID : undefined }>
-				{ renderCTAs() }
-			</UpgradePlanDetails>
+			<UpgradePlanDetails siteId={ site.ID }>{ renderCTAs() }</UpgradePlanDetails>
 		</div>
 	);
 };

@@ -1,10 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	getPlan,
-	calculateMonthlyPriceForPlan,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_MONTHLY,
-} from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
@@ -15,12 +10,12 @@ import ButtonGroup from 'calypso/components/button-group';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useSelector } from 'calypso/state';
-import { getSitePlan } from 'calypso/state/sites/plans/selectors';
+import { getSitePlan, getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface Props {
-	siteId: number | undefined;
+	siteId: number;
 	children: React.ReactNode;
 }
 
@@ -39,9 +34,9 @@ export const UpgradePlanDetails = ( props: Props ) => {
 		siteId ? getSitePlan( state, siteId, selectedPlan ) : null
 	);
 
-	const rawPrice = planDetails
-		? calculateMonthlyPriceForPlan( selectedPlan, planDetails?.rawPrice )
-		: undefined;
+	const rawPrice = useSelector( ( state ) =>
+		getSitePlanRawPrice( state, siteId, selectedPlan, { returnMonthly: true } )
+	);
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
 
