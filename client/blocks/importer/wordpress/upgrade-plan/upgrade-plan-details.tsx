@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
@@ -139,6 +140,10 @@ const UpgradePlanDetailsWrapper = ( props: Props ) => {
 
 	// It uses the layout effect to avoid the screen flickering because isPending starts as `true` and changes only after this effect.
 	useLayoutEffect( () => {
+		if ( ! config.isEnabled( 'migration-flow/introductory-offer' ) ) {
+			return;
+		}
+
 		if ( 0 !== siteId ) {
 			addMigrationSticker( siteId );
 		}
