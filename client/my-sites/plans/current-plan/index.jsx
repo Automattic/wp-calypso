@@ -212,6 +212,7 @@ class CurrentPlan extends Component {
 			shouldShowDomainWarnings,
 			showThankYou,
 			translate,
+			isJetpackNotAtomic,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
@@ -231,6 +232,16 @@ class CurrentPlan extends Component {
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
 		}
 
+		let planDescription = null;
+
+		if ( isJetpackNotAtomic ) {
+			planDescription = translate( 'Learn about the features included in your Jetpack plan.' );
+		} else {
+			planDescription = translate(
+				'Learn about the features included in your WordPress.com plan.'
+			);
+		}
+
 		return (
 			<div>
 				<ModernizedLayout />
@@ -248,9 +259,7 @@ class CurrentPlan extends Component {
 						className="plans__section-header"
 						navigationItems={ [] }
 						title={ translate( 'Plans' ) }
-						subtitle={ translate(
-							'Learn about the features included in your WordPress.com plan.'
-						) }
+						subtitle={ planDescription }
 					/>
 					<div className="current-plan current-plan__content">
 						{ showThankYou && ! this.state.hideThankYouModal && (
