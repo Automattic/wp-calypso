@@ -56,11 +56,13 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 						<EmptyModuleCard
 							icon={ mapMarker }
 							description={ translate(
-								'Stats on visitors and their {{link}}viewing location{{link}} will appear here to learn from where you are getting visits.',
+								'Stats on visitors and their {{link}}viewing location{{/link}} will appear here to learn from where you are getting visits.',
 								{
+									comment: '{{link}} links to support documentation.',
 									components: {
 										link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
 									},
+									context: 'Stats: Info box label when the Countries module is empty',
 								}
 							) }
 						/>
