@@ -293,9 +293,14 @@ export default function LayoutBodyContent( {
 								description={
 									isAutomatedReferral ? (
 										<>
-											{ translate( 'Receive a revenue share of 5 basis points on the' ) }
-											<br />
-											{ translate( 'total payments volume.' ) }
+											{ translate(
+												'Receive a revenue share of 5 basis points on the total payments{{nbsp/}}volume.',
+												{
+													components: {
+														nbsp: <>&nbsp;</>,
+													},
+												}
+											) }
 										</>
 									) : (
 										translate(
