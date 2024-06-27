@@ -1,4 +1,5 @@
 import { Button, Gridicon, FormLabel } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
@@ -47,6 +48,8 @@ export default function AgencyDetailsForm( {
 	submitLabel,
 }: Props ) {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
+
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 	const showCountryFields = countryOptions.length > 0;
 
@@ -419,20 +422,21 @@ export default function AgencyDetailsForm( {
 					<div className="company-details-form__tos">
 						<p>
 							{ translate(
-								'By clicking ‘Continue’, you agree to the{{break}}{{/break}}{{link}}%(link_text)s{{icon}}{{/icon}}{{/link}}.',
+								"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement{{icon}}{{/icon}}{{/link}}.",
 								{
 									components: {
 										break: <br />,
 										link: (
 											<a
-												href="https://automattic.com/for/agencies/partnership-agreement"
+												href={ localizeUrl(
+													'https://automattic.com/for-agencies/platform-agreement/'
+												) }
 												target="_blank"
 												rel="noopener noreferrer"
 											></a>
 										),
 										icon: <Gridicon icon="external" size={ 18 } />,
 									},
-									args: { link_text: 'Terms of the Automattic for Agencies Partnership Agreement' },
 								}
 							) }
 						</p>
