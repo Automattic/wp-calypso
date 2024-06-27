@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { megaphone } from '@wordpress/icons';
+import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -54,9 +54,9 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ megaphone }
+							icon={ mapMarker }
 							description={ translate(
-								'Stats on visitors and their {{link}}viewing location{{link}} will appear here',
+								'Stats on visitors and their {{link}}viewing location{{link}} will appear here to learn from where you are getting visits.',
 								{
 									components: {
 										link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
