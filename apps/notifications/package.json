@@ -32,6 +32,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
+		"@wordpress/data": "^10.0.0",
 		"autoprefixer": "^10.2.5",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",

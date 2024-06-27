@@ -1358,6 +1358,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@wordpress/data": "npm:^10.0.0"
     autoprefixer: "npm:^10.2.5"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
