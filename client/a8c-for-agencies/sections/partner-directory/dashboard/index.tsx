@@ -252,6 +252,7 @@ const PartnerDirectoryDashboard = () => {
 							directoryApplicationStatuses.filter( ( { key } ) => key === 'rejected' ).length === 1;
 						return (
 							<StepSectionItem
+								key={ brand }
 								isNewLayout
 								iconClassName={ clsx( brandMeta.className ) }
 								icon={ brandMeta.icon }
