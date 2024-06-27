@@ -85,6 +85,17 @@ function SubscribeEmailStep( props ) {
 						isPending={ isCreateNewAccountPending || isSubscribeToMailingListPending }
 						redirectUrl={ redirectUrl }
 						subscribeToMailingList={ subscribeToMailingList }
+						handleSubmitForm={ ( form, passwordLessData ) => {
+							console.log( { form, passwordLessData } );
+						} }
+						handleCreateAccountError={ ( error, submittedEmail ) => {
+							if ( isExistingAccountError( error.error ) ) {
+								subscribeToMailingList( {
+									email_address: submittedEmail,
+									mailing_list_category: queryParams.mailing_list,
+								} );
+							}
+						} }
 					/>
 				}
 				stepName={ stepName }
