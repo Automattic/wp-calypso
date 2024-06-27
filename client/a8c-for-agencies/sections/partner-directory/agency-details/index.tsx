@@ -55,7 +55,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 		);
 	}, [ page, reduxDispatch, translate ] );
 
-	const { formData, setFormData, isValidFormData } = useDetailsForm( {
+	const { formData, setFormData } = useDetailsForm( {
 		initialFormData,
 	} );
 	const { countryOptions } = useCountryList();
@@ -210,7 +210,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			</div>
 
 			<div className="partner-directory-agency-cta__footer">
-				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
+				<Button primary onClick={ onSubmit } disabled={ isSubmitting }>
 					{ translate( 'Save public profile' ) }
 				</Button>
 			</div>
